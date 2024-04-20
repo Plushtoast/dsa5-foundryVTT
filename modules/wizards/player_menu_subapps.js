@@ -1,3 +1,5 @@
+import { mergeObject } from "../system/foundry.js"
+
 export class PlayerMenuSubApp {
     static template = ""
     static rulePath = {}

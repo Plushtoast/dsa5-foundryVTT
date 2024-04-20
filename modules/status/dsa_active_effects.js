@@ -1,4 +1,5 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
+import { getProperty, setProperty } from "../system/foundry.js"
 
 export default class DSAActiveEffect extends ActiveEffect {
     static itemChangeRegex = /^@/
@@ -19,28 +20,28 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
     }
 
-    static async _onCreateDocuments(documents, context) {
+    static async _onCreateOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.parent.documentName == "Actor")
                 await Actordsa5.postUpdateConditions(doc.parent)
         }
-        return super._onCreateDocuments(documents, context);
+        return super._onCreateOperation(documents, operation, user);
       }
 
-    static async _onUpdateDocuments(documents, context) {
+    static async _onUpdateOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.parent.documentName == "Actor")
                 await Actordsa5.postUpdateConditions(doc.parent)
         }
-        return super._onUpdateDocuments(documents, context);
+        return super._onUpdateOperation(documents, operation, user);
     }
 
-    static async _onDeleteDocuments(documents, context) {
+    static async _onDeleteOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.parent.documentName == "Actor")
                 await Actordsa5.postUpdateConditions(doc.parent)
         }
-        return super._onDeleteDocuments(documents, context);
+        return super._onDeleteOperation(documents, operation, user);
     }
 
     isVisibleEffect() {

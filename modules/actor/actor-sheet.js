@@ -20,6 +20,7 @@ import { RangeSelectDialog } from "../hooks/itemDrop.js";
 import DSA5Payment from "../system/payment.js";
 import { TradeOptions } from "./trade.js";
 import APTracker from "../system/ap-tracker.js";
+import { getProperty, mergeObject, duplicate, hasProperty } from "../system/foundry.js";
 
 export default class ActorSheetDsa5 extends ActorSheet {
     get actorType() {

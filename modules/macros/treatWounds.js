@@ -59,7 +59,7 @@ class TreatWounds extends Application {
 
             const ef = {
                 name: `${dict.treatPain} (${this.macroData.qs})`,
-                icon: "icons/svg/aura.svg",
+                img: "icons/svg/aura.svg",
                 changes: [{key: "system.resistances.effects", value: `inpain ${this.macroData.qs}`, mode: 0}],
                 duration: {},
                 flags: {

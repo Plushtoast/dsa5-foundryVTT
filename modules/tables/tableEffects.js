@@ -4,6 +4,7 @@ import CreatureType from "../system/creature-type.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
+import { getProperty, duplicate, mergeObject } from "../system/foundry.js"
 
 export default class TableEffects{
     //todo maybe add the effect later with second button and unspecific target
@@ -72,7 +73,7 @@ export default class TableEffects{
         if(source && ["meleeweapon", "rangeweapon"].includes(source.type)){
             await source.update({"system.worn.value": false})
             if(args.distance) {
-                const roll = await new Roll(args.distance).evaluate({async: true})
+                const roll = await new Roll(args.distance).evaluate()
                 const renderedRoll = await roll.render()
                 const msg = game.i18n.format("WEAPON.dropped", {distance: roll.total})
                 ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${msg}</p>${renderedRoll}`))
@@ -198,7 +199,7 @@ export default class TableEffects{
                     preparedItem = source.system.traitType.value == "meleeAttack" ? Actordsa5._prepareRangeTrait(obj, actor.system) : Actordsa5._prepareMeleetrait(obj, actor.system)
 
                 const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, "d")
-                const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ""}`).evaluate({async: true})
+                const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ""}`).evaluate()
 
                 await actor.applyDamage(Math.round(roll.total))
                 ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))
@@ -206,7 +207,7 @@ export default class TableEffects{
             return true
         } else {
             for(let actor of finalTargets){
-                const roll = await new Roll("1d6").evaluate({async: true})
+                const roll = await new Roll("1d6").evaluate()
 
                 await actor.applyDamage(Math.round(roll.total))
                 ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()))

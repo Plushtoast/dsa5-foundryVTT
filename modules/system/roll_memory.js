@@ -1,4 +1,5 @@
 import DPS from "./derepositioningsystem.js"
+import { getProperty, setProperty } from "../system/foundry.js"
 
 export default class RollMemory {
     constructor() {

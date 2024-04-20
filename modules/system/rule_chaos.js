@@ -1,6 +1,7 @@
 import DSA5StatusEffects from "../status/status_effects.js"
 import SpecialabilityRulesDSA5 from "./specialability-rules-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { getProperty, mergeObject, duplicate, setProperty } from "./foundry.js";
 
 export default class RuleChaos {
     static regex2h = /\(2H/;

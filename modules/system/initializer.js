@@ -1,5 +1,6 @@
 import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { getProperty } from "../system/foundry.js"
 
 export default class DSA5Initializer extends Dialog {
     constructor(title, content, module, lang = "") {

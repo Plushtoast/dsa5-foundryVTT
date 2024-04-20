@@ -3,6 +3,7 @@ import { ActAttackDialog } from "../dialog/dialog-react.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
 import RuleChaos from "../system/rule_chaos.js";
+import { debounce, mergeObject, getProperty } from "../system/foundry.js";
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
@@ -436,7 +437,7 @@ class RepeatingEffectsHelper {
             const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map(x => x.value).join("+")
             if(!effectvalues) continue
 
-            const damageRoll = await new Roll(effectvalues).evaluate({ async: true })
+            const damageRoll = await new Roll(effectvalues).evaluate()
             const damage = await damageRoll.render()
             const type = game.i18n.localize(damageRoll.total > 0 ? "CHATNOTIFICATION.regenerates" : "CHATNOTIFICATION.getsHurt")
             const applyDamage = `${this.buildActorName(turn)} ${type} ${game.i18n.localize(attr)} ${damage}`
@@ -462,7 +463,7 @@ class RepeatingEffectsHelper {
         const step = Number(effect.getFlag("dsa5", "value"))
         const protection = DSA5StatusEffects.resistantToEffect(turn.actor, effect)
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
-        const damageRoll = await new Roll(die).evaluate({ async: true })
+        const damageRoll = await new Roll(die).evaluate()
         const damage = await damageRoll.render()
         const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, { actor: this.buildActorName(turn), damage })
 

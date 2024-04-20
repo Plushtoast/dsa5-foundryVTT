@@ -20,6 +20,7 @@ import CreatureType from "./creature-type.js"
 import { applyDamage } from "../hooks/chat_context.js"
 import DSATriggers from "./triggers.js"
 import RuleChaos from "./rule_chaos.js"
+import { mergeObject, deepClone, getProperty, duplicate } from "./foundry.js"
 
 export default class DiceDSA5 {
     static async rollTest(testData) {
@@ -77,7 +78,7 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate()
 
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.system.characteristic1.value))
                     mergeObject(roll.dice[1].options, d3dColors(testData.source.system.characteristic2.value))
@@ -90,7 +91,7 @@ export default class DiceDSA5 {
                     if (testData.extra.actor.isMage && testData.regenerateAsP) leDie.push("1d6")
                     if (testData.extra.actor.isPriest && testData.regenerateKaP) leDie.push("1d6")
 
-                    roll = await new Roll(leDie.join("+")).evaluate({ async: true })
+                    roll = await new Roll(leDie.join("+")).evaluate()
                     if (testData.regenerateLeP ) mergeObject(roll.dice[0].options, d3dColors("mu"))
                     if (testData.extra.actor.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("ge"))
                     if (testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors("in"))
@@ -103,21 +104,21 @@ export default class DiceDSA5 {
                 case "trait":
                     if (testData.mode == "damage") {
                         let rollFormula = await this.damageFormula(testData)
-                        roll = await new Roll(rollFormula, testData.extra.actor.system).evaluate({ async: true })
+                        roll = await new Roll(rollFormula, testData.extra.actor.system).evaluate()
                         for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
                     } else {
-                        roll = await new Roll(`1d20`).evaluate({ async: true })
+                        roll = await new Roll(`1d20`).evaluate()
                         mergeObject(roll.dice[0].options, d3dColors(testData.mode))
                     }
                     break
                 case "dodge":
-                    roll = await new Roll(`1d20`).evaluate({ async: true })
+                    roll = await new Roll(`1d20`).evaluate()
                     mergeObject(roll.dice[0].options, d3dColors("dodge"))
                     break
                 case "poison":
                 case "disease":
                     let pColor = d3dColors("in")
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate({ async: true })
+                    roll = await new Roll(`1d20+1d20+1d20`).evaluate()
                     mergeObject(roll.dice[0].options, pColor)
                     mergeObject(roll.dice[1].options, pColor)
                     mergeObject(roll.dice[2].options, pColor)
@@ -125,10 +126,10 @@ export default class DiceDSA5 {
                 case "fallingDamage":
                     const baseMod =  await this._situationalModifiers(testData)
                     const formula = `${testData.fallingHeight}d6+${baseMod}-${testData.extra.options.availableQs || 0}`
-                    roll = await new Roll(formula).evaluate({ async: true })
+                    roll = await new Roll(formula).evaluate()
                     break
                 default:
-                    roll = await new Roll(`1d20`).evaluate({ async: true })
+                    roll = await new Roll(`1d20`).evaluate()
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.system.attr))
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
@@ -207,9 +208,7 @@ export default class DiceDSA5 {
         const duplicatusEffect = testData.situationalModifiers.find((x) => x.name.includes("Duplicatus") && x.value > 0 && x.value < 5)
         if (duplicatusEffect) {
             const duplicatusRollTarget = Math.round((1 / (duplicatusEffect.value + 1)) * 20)
-            const duplicatusRoll = await DiceDSA5.manualRolls(
-                await new Roll("1d20").evaluate({ async: true })
-            )
+            const duplicatusRoll = await DiceDSA5.manualRolls(await new Roll("1d20").evaluate())
             this._addRollDiceSoNice(
                 testData,
                 duplicatusRoll,
@@ -226,7 +225,7 @@ export default class DiceDSA5 {
     }
 
     static async _rollConfirm() {
-        return await (new Roll("1d20").evaluate({ async: true }))
+        return await (new Roll("1d20").evaluate())
     }
 
     static async _rollSingleD20(roll, res, id, modifier, testData, combatskill = "", multiplier = 1) {
@@ -459,7 +458,7 @@ export default class DiceDSA5 {
     }
 
     static async rollStatus(testData) {
-        let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20").evaluate()
         let result = await this._rollSingleD20(
             roll,
             testData.source.system.max,
@@ -488,7 +487,7 @@ export default class DiceDSA5 {
     }
 
     static async rollAttribute(testData) {
-        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate()
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         let result = await this._rollSingleD20(
             roll,
@@ -536,7 +535,7 @@ export default class DiceDSA5 {
         let damage = roll.total + modifiers
 
         for (let k of roll.terms) {
-            if (k instanceof Die || k.class == "Die") {
+            if (k instanceof foundry.dice.terms.Die || k.class == "Die") {
                 for (let l of k.results) chars.push({ char: testData.mode, res: l.result, die: "d" + k.faces })
             }
         }
@@ -602,7 +601,7 @@ export default class DiceDSA5 {
     }
 
     static async rollCombatTrait(testData) {
-        let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20").evaluate()
         let source = testData.source //.system == undefined ? testData.source : testData.source.system
         const isMelee = source.system.traitType.value == "meleeAttack"
         const isAttack = testData.mode == "attack"
@@ -646,7 +645,7 @@ export default class DiceDSA5 {
         const regex = /\d{1}[dDwW]\d/g;
         const modText = `${text}`
         modText.replace(regex, function (match) {
-            promises.push(new Roll(DiceDSA5.replaceDieLocalization(match), testData.extra.actor.system).evaluate({ async: true }))
+            promises.push(new Roll(DiceDSA5.replaceDieLocalization(match), testData.extra.actor.system).evaluate())
         })
         const data = await Promise.all(promises)
         const rollString = modText.replace(regex, () => {
@@ -700,7 +699,7 @@ export default class DiceDSA5 {
         }
 
         let damageRoll = testData.damageRoll || await DiceDSA5.manualRolls(
-                  await new Roll(rollFormula, testData.extra.actor.system).evaluate({ async: true }),
+                  await new Roll(rollFormula, testData.extra.actor.system).evaluate(),
                   "CHAR.DAMAGE",
                   testData.extra.options
               )
@@ -708,7 +707,7 @@ export default class DiceDSA5 {
 
         let weaponroll = 0
         for (let k of damageRoll.terms) {
-            if (k instanceof Die || k.class == "Die") {
+            if (k instanceof foundry.dice.terms.Die || k.class == "Die") {
                 for (let l of k.results) {
                     weaponroll += Number(l.result)
                     result.characteristics.push({ char: "damage", res: l.result, die: "d" + k.faces })
@@ -764,7 +763,7 @@ export default class DiceDSA5 {
     }
 
     static async rollWeapon(testData) {
-        let roll = testData.roll || await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20").evaluate()
         let weapon
 
         let source = testData.source
@@ -874,7 +873,7 @@ export default class DiceDSA5 {
     }
 
     static async rollCombatskill(testData) {
-        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate({ async: true })
+        let roll = testData.roll ? testData.roll : await new Roll("1d20").evaluate()
         let source = Actordsa5._calculateCombatSkillValues(testData.source, testData.extra.actor.system)
         let result = await this._rollSingleD20(
             roll,
@@ -897,7 +896,7 @@ export default class DiceDSA5 {
                 let form
                 let dice = []
                 for (let term of roll.terms) {
-                    if (term instanceof Die || term.class == "Die") {
+                    if (term instanceof foundry.dice.terms.Die || term.class == "Die") {
                         for (let res of term.results) {
                             dice.push({ faces: term.faces, val: res.result })
                         }
@@ -1042,7 +1041,7 @@ export default class DiceDSA5 {
         res["rollType"] = testData.source.type
         res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost
         if (res.successLevel >= 2) {
-            let extraFps = (await new Roll("1d6").evaluate({ async: true })).total
+            let extraFps = (await new Roll("1d6").evaluate()).total
             res.description = res.description + ", " + game.i18n.localize("additionalFPs") + " " + extraFps
             res.result += extraFps
             res.qualityStep = Math.min(game.settings.get("dsa5", "capQSat"), Math.ceil(res.result / 3))
@@ -1064,7 +1063,7 @@ export default class DiceDSA5 {
                 let rollEffect = testData.damageRoll ?
                     testData.damageRoll :
                     await DiceDSA5.manualRolls(
-                        await new Roll(formula, testData.extra.actor.system).evaluate({ async: true }),
+                        await new Roll(formula, testData.extra.actor.system).evaluate(),
                         "CHAR.DAMAGE",
                         testData.extra.options
                     )
@@ -1076,7 +1075,7 @@ export default class DiceDSA5 {
                 )
                 res["calculatedEffectFormula"] = formula
                 for (let k of rollEffect.terms) {
-                    if (k instanceof Die || k.class == "Die")
+                    if (k instanceof foundry.dice.terms.Die || k.class == "Die")
                         for (let l of k.results)
                             res["characteristics"].push({ char: "effect", res: l.result, die: "d" + k.faces })
                 }
@@ -1102,7 +1101,7 @@ export default class DiceDSA5 {
         for(const creature of ["minorFairies", "minorSpirits"]){
             const name = game.i18n.localize("CONDITION." + creature)
             if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, name) && !testData.extra.actor.effects.find((x) => x.name == name)) {
-                const ghostroll = await new Roll("1d20").evaluate({ async: true })
+                const ghostroll = await new Roll("1d20").evaluate()
                 if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
                     res.description += ", " + game.i18n.format("minorghostsappear", { creature: name})
                     DSA5_Utility.getSpeaker(testData.extra.speaker).addCondition(creature)
@@ -1114,10 +1113,10 @@ export default class DiceDSA5 {
     }
 
     static async _rollThreeD20(testData) {
-        let roll = testData.roll ? Roll.fromData(testData.roll) : await new Roll("1d20+1d20+1d20").evaluate({ async: true })
+        let roll = testData.roll ? (testData.roll instanceof Roll ? testData.roll : Roll.fromData(testData.roll)) : await new Roll("1d20+1d20+1d20").evaluate()
         let description = []
         let successLevel = 0
-
+{}
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         let modifiers = await this._situationalModifiers(testData)
 
@@ -1151,7 +1150,7 @@ export default class DiceDSA5 {
             testData.source.type == "skill" &&
             AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.incompetent")} (${testData.source.name})`)
         ) {
-            let reroll = await new Roll("1d20").evaluate({ async: true })
+            let reroll = await new Roll("1d20").evaluate()
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0)
             let oldValue = roll.terms[indexOfMinValue * 2].total
             fws += Math.max(res[indexOfMinValue], 0)
@@ -1250,7 +1249,7 @@ export default class DiceDSA5 {
     }
 
     static async rollItem(testData) {
-        let roll = testData.roll || await new Roll("1d20+1d20+1d20").evaluate({ async: true })
+        let roll = testData.roll || await new Roll("1d20+1d20+1d20").evaluate()
         let description = []
         let modifier = await this._situationalModifiers(testData)
         let fws = Number(testData.source.system.step.value)
@@ -1415,21 +1414,25 @@ export default class DiceDSA5 {
             chatOptions.blind
         )
 
-        chatOptions["flags.data"] = {
-            preData,
-            postData: testData,
-            template: chatOptions.template,
-            rollMode: chatOptions.rollMode,
-            isOpposedTest: chatOptions.isOpposedTest,
-            title: chatOptions.title,
-            hideData: chatData.hideData,
-            hideDamage: chatData.hideDamage,
-            isDSARoll: true,
-        }
+        mergeObject(chatOptions, {
+            flags: {
+                data: {
+                    preData,
+                    postData: testData,
+                    template: chatOptions.template,
+                    rollMode: chatOptions.rollMode,
+                    isOpposedTest: chatOptions.isOpposedTest,
+                    title: chatOptions.title,
+                    hideData: chatData.hideData,
+                    hideDamage: chatData.hideDamage,
+                    isDSARoll: true,
+                }
+            }
+        })
 
         if (!rerenderMessage) {
-            chatOptions["content"] = await renderTemplate(chatOptions.template, chatData)
-            return await ChatMessage.create(chatOptions, false)
+            chatOptions.content = await renderTemplate(chatOptions.template, chatData)
+            return await ChatMessage.create(chatOptions)
         } else {
             const postFunction = getProperty(rerenderMessage, "flags.data.preData.extra.options.postFunction")
             if(postFunction){
@@ -1448,7 +1451,9 @@ export default class DiceDSA5 {
 
             const newMsg = await rerenderMessage.update({
                     content: chatOptions["content"],
-                    ["flags.data"]: chatOptions["flags.data"],
+                    flags: {
+                        data: chatOptions.flags.data
+                    } 
                 })
 
             ui.chat.updateMessage(newMsg)

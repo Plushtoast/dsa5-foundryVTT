@@ -1,6 +1,7 @@
 import DSA5_Utility from "./utility-dsa5.js";
 import RuleChaos from "./rule_chaos.js";
 import DSA5SoundEffect from "./dsa-soundeffect.js";
+import { duplicate } from "../system/foundry.js"
 
 export default class OnUseEffect {
     constructor(item) {

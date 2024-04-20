@@ -1,5 +1,6 @@
 import WizardDSA5 from "./dsa5_wizard.js"
 import APTracker from "../system/ap-tracker.js";
+import { mergeObject, getProperty, duplicate } from "../system/foundry.js"
 
 export default class CultureWizard extends WizardDSA5 {
     static get defaultOptions() {

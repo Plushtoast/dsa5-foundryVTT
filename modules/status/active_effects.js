@@ -3,6 +3,7 @@ import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { mergeObject, getProperty, duplicate, setProperty } from "../system/foundry.js"
 
 function automatedAnimation(successLevel, options = {}) {
     if (DSA5_Utility.moduleEnabled("autoanimations")) {

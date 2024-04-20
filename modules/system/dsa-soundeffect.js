@@ -1,3 +1,5 @@
+import { getProperty } from "../system/foundry.js"
+
 export default class DSA5SoundEffect {
     static sounds
     static triedInit = false

@@ -16,6 +16,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 import APTracker from "../system/ap-tracker.js";
+import { getProperty, mergeObject, duplicate, setProperty, hasProperty } from "../system/foundry.js";
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {
@@ -292,18 +293,18 @@ export default class Actordsa5 extends Actor {
     if (isMerchant) await actor.prepareMerchant()
   }
 
-  static async _onCreateDocuments(documents, context) {
+  static async _onCreateOperation(documents, operation, user) {
     for(let doc of documents) {
         await Actordsa5.postUpdateConditions(doc)
     }
-    return super._onCreateDocuments(documents, context);
+    return super._onCreateOperation(documents, operation, user);
   }
 
-  static async _onUpdateDocuments(documents, context) {
+  static async _onUpdateOperation(documents, operation, user) {
     for(let doc of documents) {
         await Actordsa5.postUpdateConditions(doc)
     }
-    return super._onUpdateDocuments(documents, context);
+    return super._onUpdateOperation(documents, operation, user);
   }
 
   prepareSwarm(data){
@@ -335,7 +336,7 @@ export default class Actordsa5 extends Actor {
         AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.sensitiveToPain")) +
         AdvantageRulesDSA5.vantageStep(this, game.i18n.localize("LocalizedIDs.fragileAnimal"));
 
-    pain = Math.clamped(pain, 0, 4);
+    pain = Math.clamp(pain, 0, 4);
     data.condition.inpain = pain
   }
 
@@ -350,7 +351,7 @@ export default class Actordsa5 extends Actor {
         pain = Math.floor(5 - (5 * data.status[attr].value) / data.status[attr].max);
       }
     }
-    return Math.clamped(pain, 0, 4)
+    return Math.clamp(pain, 0, 4)
   }
 
   calcSpeed(data, fixated, horse){
@@ -383,7 +384,7 @@ export default class Actordsa5 extends Actor {
   }
 
   calcEncumbrance(data){
-    return Math.clamped(data.condition?.encumbered || 0, 0, 4)
+    return Math.clamp(data.condition?.encumbered || 0, 0, 4)
   }
 
   calcInitiative(data, encumbrance, horse){
@@ -429,7 +430,7 @@ export default class Actordsa5 extends Actor {
     return {
       id: "locked",
       name: game.i18n.localize("MERCHANT.locked"),
-      icon: "icons/svg/padlock.svg",
+      img: "icons/svg/padlock.svg",
       flags: {
         dsa5: {
           noEffect: true,
@@ -887,7 +888,7 @@ export default class Actordsa5 extends Actor {
 
     let updates;
     if ( isBar ) {
-      if (isDelta) value = Math.clamped(current.min || 0, Number(current.value) + value, current.max);
+      if (isDelta) value = Math.clamp(current.min || 0, Number(current.value) + value, current.max);
       updates = {[`system.${attribute}.value`]: value};
     } else {
       if ( isDelta ) value = Number(current) + value;
@@ -1604,7 +1605,7 @@ export default class Actordsa5 extends Actor {
   }
 
   async applyDamage(rollFormula) {
-    const amount = (await new Roll(`${rollFormula}`).evaluate({ async: true })).total
+    const amount = (await new Roll(`${rollFormula}`).evaluate()).total
     if(game.combat?.isBrawling) {
       const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
       await this.update({ "system.status.temporaryLeP.value": newVal });
@@ -1631,7 +1632,7 @@ export default class Actordsa5 extends Actor {
 
   async applyMana(rollFormula, type) {
     const state = type == "AsP" ? "astralenergy" : "karmaenergy";
-    const amount = (await new Roll(`${rollFormula}`).evaluate({ async: true })).total
+    const amount = (await new Roll(`${rollFormula}`).evaluate()).total
     const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
     if (newVal >= 0) {
       await this.update({[`data.status.${state}.value`]: newVal});
@@ -1674,7 +1675,7 @@ export default class Actordsa5 extends Actor {
 
     let oldDamageRoll = data.postData.damageRoll;
     let newRoll = await DiceDSA5.manualRolls(
-      await new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate({ async: true }),
+      await new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate(),
       "CHATCONTEXT.rerollDamage"
     );
 
@@ -1719,7 +1720,7 @@ export default class Actordsa5 extends Actor {
                 newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]");
               }
               newRoll = await DiceDSA5.manualRolls(
-                await new Roll(newRoll.join("+")).evaluate({ async: true }),
+                await new Roll(newRoll.join("+")).evaluate(),
                 "CHATCONTEXT.talentedReroll"
               );
               await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
@@ -1784,7 +1785,7 @@ export default class Actordsa5 extends Actor {
                 newRoll.push(term.number + "d" + term.faces + "[" + term.options.colorset + "]");
               }
               newRoll = await DiceDSA5.manualRolls(
-                await new Roll(newRoll.join("+")).evaluate({ async: true }),
+                await new Roll(newRoll.join("+")).evaluate(),
                 "CHATCONTEXT.Reroll"
               );
               await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);

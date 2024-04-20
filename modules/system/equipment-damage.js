@@ -3,6 +3,7 @@ import DSA5 from "./config-dsa5.js"
 import CreatureType from "./creature-type.js"
 import DiceDSA5 from "./dice-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { getProperty } from "../system/foundry.js"
 
 export default class EquipmentDamage {
     static armorWearModifier(armorData, armorValue) {
@@ -121,7 +122,7 @@ export default class EquipmentDamage {
 
     static async resolveBreakingTest(item, threshold, category) {
         const roll = await DiceDSA5.manualRolls(
-            await new Roll("1d20").evaluate({ async: true }),
+            await new Roll("1d20").evaluate(),
             game.i18n.format("WEAR.check", { category })
         )
         await DiceDSA5.showDiceSoNice(roll, game.settings.get("core", "rollMode"))

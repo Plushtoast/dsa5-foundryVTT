@@ -1,5 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import { tabSlider } from "./view_helper.js"
+import { mergeObject } from "../system/foundry.js"
 
 async function setupDefaulTokenConfig() {
     if (!game.settings.get("dsa5", "defaultConfigFinished")) {
@@ -47,8 +48,8 @@ export async function showPatchViewer() {
     patchViewer.render(true)
 }
 
-function betaWarning() {
-    const msg = "This is the beta version for DSA/TDE for Foundry v11. Foundry v11 is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you."
+function betaWarning(version) {
+    const msg = `This is the beta version for DSA/TDE for Foundry v${version}. Foundry v${version} is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you.`
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 
@@ -61,7 +62,7 @@ export default function migrateWorld() {
         const NEEDS_MIGRATION_VERSION = 28
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
-        //betaWarning()
+        betaWarning(12)
 
         if (!needsMigration) return;
 

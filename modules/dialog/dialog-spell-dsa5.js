@@ -4,6 +4,7 @@ import RuleChaos from "../system/rule_chaos.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
+import { mergeObject, duplicate } from "../system/foundry.js"
 
 export default class DSA5SpellDialog extends DialogShared {
     static rollChanges = ["defenseMalus"]

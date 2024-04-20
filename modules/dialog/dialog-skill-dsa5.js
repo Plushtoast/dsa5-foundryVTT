@@ -4,6 +4,7 @@ import DialogShared from "./dialog-shared.js";
 import DSA5 from "../system/config-dsa5.js";
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
+import { mergeObject } from "../system/foundry.js";
 
 export default class DSA5SkillDialog extends DialogShared {
     static getRollButtons(testData, dialogOptions, resolve, reject) {
@@ -76,7 +77,7 @@ export default class DSA5SkillDialog extends DialogShared {
 
         const fw = this.dialogData.source.system.talentValue.value + data.fw + await DiceDSA5._situationalModifiers(data, "FW")
         const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + await DiceDSA5._situationalModifiers(data)
-        const requiredFw = Math.clamped(10 - mod * 3, 1, 19)
+        const requiredFw = Math.clamp(10 - mod * 3, 1, 19)
         const enoughFw = fw >= requiredFw
         const canRoutine = routineAllowed && enoughFw
         const routine = game.i18n.localize('ROLL.routine')

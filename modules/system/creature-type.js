@@ -1,4 +1,5 @@
 import DSA5_Utility from "./utility-dsa5.js"
+import { getProperty } from "../system/foundry.js"
 
 Hooks.once("i18nInit", async() => {
     if (!CreatureType.creatureData) {

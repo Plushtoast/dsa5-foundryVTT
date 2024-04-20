@@ -1,3 +1,5 @@
+import { getProperty } from "../system/foundry.js"
+
 export default function() {
     Hooks.on("renderSettings", (app, html, data) => {
         let button = $(`<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize("DSA5Error")}</button>`)

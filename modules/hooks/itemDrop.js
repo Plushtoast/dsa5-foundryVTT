@@ -1,6 +1,7 @@
 import DSA5 from "../system/config-dsa5.js"
 import RuleChaos from "../system/rule_chaos.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
+import { getProperty } from "../system/foundry.js"
 
 export const dropToGround = async(sourceActor, item, data, amount) => {
     if (game.user.isGM) {

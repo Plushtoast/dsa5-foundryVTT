@@ -1,3 +1,5 @@
+import { getProperty, mergeObject } from "../system/foundry.js"
+
 export default class ForeignFieldEditor extends FormApplication{
     constructor(actorId, field, name){
         super()

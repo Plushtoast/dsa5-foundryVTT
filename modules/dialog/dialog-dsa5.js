@@ -2,6 +2,7 @@ import DSA5CombatDialog from './dialog-combat-dsa5.js'
 import DialogShared from './dialog-shared.js'
 import DSA5SkillDialog from './dialog-skill-dsa5.js'
 import DSA5SpellDialog from './dialog-spell-dsa5.js'
+import { mergeObject } from '../system/foundry.js'
 
 export default class DSA5Dialog extends DialogShared {
     static getDialogForItem(testData, renderData) {

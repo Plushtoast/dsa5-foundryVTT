@@ -6,6 +6,7 @@ import { slist, tabSlider } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
 import DialogShared from "../dialog/dialog-shared.js"
+import { mergeObject, duplicate, expandObject, hasProperty } from "../system/foundry.js";
 
 export default class MastersMenu {
     static registerButtons() {
@@ -467,7 +468,7 @@ class GameMasterMenu extends Application {
             }
         }
 
-        const roll = (await new Roll(`1d${counter - 1}`).evaluate({ async: true })).total
+        const roll = (await new Roll(`1d${counter - 1}`).evaluate()).total
         return probabilities[roll]
     }
 
@@ -717,7 +718,7 @@ class GameMasterMenu extends Application {
             enableDPS: game.settings.get("dsa5", "enableDPS"),
             lightSightCompensationEnabled: game.settings.get("dsa5", "lightSightCompensationEnabled"),
             visions,
-            darkness: canvas.scene?.darkness || 0
+            darkness: canvas.scene?.environment.darknessLevel || 0
         }
 
         this.heros = heros

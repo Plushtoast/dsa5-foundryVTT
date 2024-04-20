@@ -9,6 +9,7 @@ import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DPS from "../system/derepositioningsystem.js";
+import { mergeObject, getProperty, duplicate } from "../system/foundry.js";
 
 export default class DSA5CombatDialog extends DialogShared {
     static rollModifiers = {
@@ -87,7 +88,7 @@ export default class DSA5CombatDialog extends DialogShared {
                     siblings.find(".step").text(DialogShared.roman[0]);
                 }
             } else if (ev.button == 2) {
-                step = Math.clamped(maxStep, 0, step - 1)
+                step = Math.clamp(maxStep, 0, step - 1)
             }
             elem.attr("data-step", step);
             elem.toggleClass("active", step > 0);

@@ -1,6 +1,7 @@
 import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import { showPatchViewer } from "../system/migrator.js"
+import { duplicate, mergeObject } from "../system/foundry.js";
 
 export function setupConfiguration() {
     game.settings.register("dsa5", "meleeBotchTableEnabled", {

@@ -1,5 +1,6 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { getProperty } from "../system/foundry.js"
 
 export const applyDamage = async(li, mode, factor = 1) => {
     const message = game.messages.get(li.attr("data-message-id"))
@@ -209,7 +210,7 @@ export function chatContext() {
                 duration = duration ? (Number(duration[0]) || 1) : 1
                 const effect = {
                     name: `${name} (${game.i18n.localize("maintainCost")})`,
-                    icon: "icons/svg/daze.svg",
+                    img: "icons/svg/daze.svg",
                     flags: {
                         dsa5: {
                             description: maintain,

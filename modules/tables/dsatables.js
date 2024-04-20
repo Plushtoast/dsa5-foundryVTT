@@ -1,6 +1,7 @@
 import DSA5 from "../system/config-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
+import { getProperty, mergeObject } from "../system/foundry.js"
 
 export default class DSATables {
     static async showBotchCard(dataset, options = {}) {
@@ -118,7 +119,7 @@ export default class DSATables {
     }
 
     static async defaultBotch() {
-        return ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate({ async: true })).total
+        return ", " + game.i18n.localize("selfDamage") + (await new Roll("1d6+2").evaluate()).total
     }
 
     static defaultAttackCrit(confirmed) {

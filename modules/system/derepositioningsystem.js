@@ -1,4 +1,5 @@
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
+import { getProperty } from "../system/foundry.js"
 
 export default class DPS {
     RECT_SPREAD = [
@@ -78,7 +79,7 @@ export default class DPS {
     static lightLevel(actor, html) {
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
             let level = 0;
-            const darkness = canvas.scene?.darkness || 0;
+            const darkness = canvas.scene?.environment.darknessLevel || 0;
             const threholds = game.settings
                 .get("dsa5", "sightOptions")
                 .split("|")
@@ -106,7 +107,7 @@ export default class DPS {
                     if (darkSightLevel > 1) {
                         level = 0;
                     } else {
-                        level = Math.clamped(level + sightModifier - darkSightLevel, 0, 4)
+                        level = Math.clamp(level + sightModifier - darkSightLevel, 0, 4)
                     }
                 }
             }

@@ -1,4 +1,5 @@
 import { DSA5CombatTracker } from "../hooks/combat_tracker.js";
+import { mergeObject, duplicate } from "../system/foundry.js"
 
 export default class DSAIniTracker extends Application {
     static get defaultOptions() {
@@ -24,7 +25,7 @@ export default class DSAIniTracker extends Application {
         if (!el.style.width || width) {
             const tarW = width || el.offsetWidth;
             const maxW = el.style.maxWidth || window.innerWidth;
-            currentPosition.width = width = Math.clamped(tarW, 0, maxW);
+            currentPosition.width = width = Math.clamp(tarW, 0, maxW);
             el.style.width = width + "px";
             if ((width + currentPosition.left) > window.innerWidth) left = currentPosition.left;
         }

@@ -1,5 +1,6 @@
 import Riding from "../system/riding.js";
 import { TokenHoverHud } from "./actor.js";
+import { deepClone, getProperty } from "../system/foundry.js"
 
 function addThirdBarToHUD(html, actor, app) {
     if (actor.system.isPriest && actor.system.isMage) {

@@ -2,6 +2,7 @@ import { AuraTemplate, DSAAura } from "../system/aura.js";
 import DSA5 from "../system/config-dsa5.js";
 import DPS from "../system/derepositioningsystem.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { getProperty } from "../system/foundry.js"
 
 export default function() {
     Token.prototype.drawEffects = async function() {
@@ -17,7 +18,7 @@ export default function() {
 
             if(this.actor.isSwarm()) {
                 actorEffects.push(new ActiveEffect({
-                    icon: "systems/dsa5/icons/thirdparty/bee.svg",
+                    img: "systems/dsa5/icons/thirdparty/bee.svg",
                     id: "swarm",
                     name: "swarm.name",
                     flags: { dsa5: { value: this.actor.system.swarm?.effectiveCount || 1 } }

@@ -1,4 +1,5 @@
 import ActorSheetdsa5Character from './character-sheet.js'
+import { mergeObject } from "../system/foundry.js"
 
 export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     static get defaultOptions() {

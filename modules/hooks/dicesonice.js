@@ -1,4 +1,5 @@
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { mergeObject } from "../system/foundry.js";
 
 export default function() {
     Hooks.once('init', () => {

@@ -1,3 +1,5 @@
+import { getProperty } from "../system/foundry.js"
+
 export const ItemSheetObfuscation = (superclass) => class extends superclass {
     async obfuscateItem(ev){
         ev.stopPropagation()

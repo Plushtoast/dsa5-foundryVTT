@@ -1,3 +1,5 @@
+import { getProperty } from "../system/foundry.js"
+
 export default function() {
     Hooks.on('preCreateScene', function(doc, createData, options, userId) {
         if (!createData.grid?.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') }})

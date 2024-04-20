@@ -7,6 +7,7 @@ import { tinyNotification } from "./view_helper.js";
 import DSA5Payment from "./payment.js"
 import { Trade } from "../actor/trade.js";
 import Itemdsa5 from "../item/item-dsa5.js";
+import { mergeObject, getProperty, duplicate } from "./foundry.js";
 
 export default class TokenHotbar2 extends Application {
     static attackTypes = new Set(["meleeweapon", "rangeweapon"])
@@ -594,7 +595,7 @@ export default class TokenHotbar2 extends Application {
             this.position.height = itemWidth
         }
 
-        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas?.scene?.darkness || 0, opacity: game.settings.get("dsa5", "tokenhotbaropacity") })
+        mergeObject(data, { items, itemWidth, direction, count, gmMode, darkness: canvas?.scene?.environment.darknessLevel || 0, opacity: game.settings.get("dsa5", "tokenhotbaropacity") })
         return data
     }
 
@@ -698,7 +699,7 @@ export default class TokenHotbar2 extends Application {
         if (!el.style.width || width) {
             const tarW = width || el.offsetWidth;
             const maxW = el.style.maxWidth || window.innerWidth;
-            currentPosition.width = width = Math.clamped(tarW, 0, maxW);
+            currentPosition.width = width = Math.clamp(tarW, 0, maxW);
             el.style.width = width + "px";
             if ((width + currentPosition.left) > window.innerWidth) left = currentPosition.left;
         }
@@ -733,7 +734,7 @@ export class AddEffectDialog extends Dialog {
         const effects = duplicate(CONFIG.statusEffects).map(x => {
             return {
                 name: game.i18n.localize(x.name),
-                icon: x.icon,
+                icon: x.img,
                 description: game.i18n.localize(x.description),
                 id: x.id
             }

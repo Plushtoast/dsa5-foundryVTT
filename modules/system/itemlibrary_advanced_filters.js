@@ -1,5 +1,6 @@
 import DSA5 from "./config-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { mergeObject } from "./foundry.js"
 
 let ADVANCEDFILTERS = {}
 

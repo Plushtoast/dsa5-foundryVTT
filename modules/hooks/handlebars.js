@@ -1,5 +1,6 @@
 import DSA5 from "../system/config-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { getProperty } from "../system/foundry.js"
 
 const modifierTypes = {
     "": "Modifier",

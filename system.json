@@ -2,7 +2,7 @@
     "id": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
-    "version": "5.4.2",
+    "version": "6.0.0",
     "authors": [
         {
             "name": "Plushtoast"
@@ -106,24 +106,27 @@
     "background": "systems/dsa5/icons/githublogo.webp",
     "socket": true,
     "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier + 1d99*0.00001",
-    "gridDistance": 1,
-    "gridUnits": "Schritt",
+    "grid": {
+        "distance": 1,
+        "units": "Schritt"
+    },
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-        "minimum": "11.306",
-        "verified": "11",
-        "maximum": "11"
+        "minimum": "12",
+        "verified": "12",
+        "maximum": "12"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json",
     "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.4.2/dsa5-foundryVTT-5.4.2.zip",
     "name": "dsa5",
-    "minimumCoreVersion": "11.306",
+    "minimumCoreVersion": "12",
     "packFolders": [
         {
             "name": "Item",
             "sorting": "m",
+            "color": "#b2b2b2",
             "packs": [
                 "skills",
                 "skillsen",
@@ -133,6 +136,7 @@
         {
             "name": "RollTable",
             "sorting": "m",
+            "color": "#b2b2b2",
             "packs": [
                 "patzer",
                 "botch"
@@ -141,6 +145,7 @@
         {
             "name": "Macro",
             "sorting": "m",
+            "color": "#b2b2b2",
             "packs": [
                 "macros"
             ]
@@ -149,6 +154,7 @@
         {
             "name": "JournalEntry",
             "sorting": "m",
+            "color": "#b2b2b2",
             "packs": [
                 "gamemanualde",
                 "gamemanualen"

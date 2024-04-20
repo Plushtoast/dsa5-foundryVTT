@@ -1,4 +1,5 @@
 import DSA5_Utility from "./utility-dsa5.js"
+import { mergeObject, getProperty, hasProperty } from "./foundry.js"
 
 export default class Riding {
     static preRenderedUnmountHud = `
@@ -193,13 +194,13 @@ export default class Riding {
     static ridingCondition() {
         return {
             name: game.i18n.localize("RIDING.riding"),
-          icon: "systems/dsa5/icons/thirdparty/horse-head.svg",
-          changes: [{key: "system.status.dodge.gearmodifier", mode: 2, value: -2}],
-          flags: {
-            dsa5: {
-              description: game.i18n.localize("RIDING.ridingDescription"),
+            img: "systems/dsa5/icons/thirdparty/horse-head.svg",
+            changes: [{key: "system.status.dodge.gearmodifier", mode: 2, value: -2}],
+            flags: {
+                dsa5: {
+                description: game.i18n.localize("RIDING.ridingDescription"),
+                },
             },
-          },
         };
       }
 

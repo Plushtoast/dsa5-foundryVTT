@@ -14,6 +14,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 import Riding from "../system/riding.js"
 import { UserMultipickDialog } from "../dialog/addTargetDialog.js"
+import { getProperty, mergeObject, duplicate } from "../system/foundry.js"
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {
@@ -234,28 +235,28 @@ export default class Itemdsa5 extends Item {
         })
     }
 
-    static async _onCreateDocuments(documents, context) {
+    static async _onCreateOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.actor)
                 await Actordsa5.postUpdateConditions(doc.actor)
         }
-        return super._onCreateDocuments(documents, context);
+        return super._onCreateOperation(documents, operation, user);
       }
 
-    static async _onUpdateDocuments(documents, context) {
+    static async _onUpdateOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.actor)
                 await Actordsa5.postUpdateConditions(doc.actor)
         }
-        return super._onUpdateDocuments(documents, context);
+        return super._onUpdateOperation(documents, operation, user);
     }
 
-    static async _onDeleteDocuments(documents, context) {
+    static async _onDeleteOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.actor)
                 await Actordsa5.postUpdateConditions(doc.actor)
         }
-        return super._onDeleteDocuments(documents, context);
+        return super._onDeleteOperation(documents, operation, user);
     }
 
     static parseEffect(effect, actor) {

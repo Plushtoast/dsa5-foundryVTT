@@ -32,6 +32,7 @@ import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
 import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+import { mergeObject } from "../system/foundry.js";
 
 
 export default function() {

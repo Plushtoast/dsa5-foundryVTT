@@ -1,3 +1,5 @@
+import { mergeObject, getProperty } from "../system/foundry.js"
+
 export default class Migrakel {
     static async showDialog(content, migrateAll = false) {
         let [result] = await new Promise((resolve, reject) => {

@@ -1,3 +1,5 @@
+import { mergeObject } from "../system/foundry.js"
+
 export default class DSAJournalSheet extends JournalSheet{
     static get defaultOptions(){
         const optns = super.defaultOptions

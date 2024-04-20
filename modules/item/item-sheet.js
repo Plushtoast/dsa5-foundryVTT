@@ -14,6 +14,7 @@ import OpposedDsa5 from "../system/opposed-dsa5.js"
 import Itemdsa5 from "./item-dsa5.js"
 import RequestRoll from "../system/request-roll.js"
 import APTracker from "../system/ap-tracker.js"
+import { mergeObject, getProperty, duplicate } from "../system/foundry.js"
 
 export default class ItemSheetdsa5 extends ItemSheet {
     _getSubmitData(updateData = {}) {

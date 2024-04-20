@@ -2,6 +2,7 @@ import DPS from "./derepositioningsystem.js"
 import { MeasuredTemplateDSA } from "./measuretemplate.js"
 import OnUseEffect from "./onUseEffects.js"
 import DSA5_Utility from "./utility-dsa5.js"
+import { getProperty, duplicate, mergeObject } from "../system/foundry.js"
 
 export class DSAAura {
     static bindAuraHooks() {

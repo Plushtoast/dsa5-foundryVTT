@@ -1,5 +1,6 @@
 import DPS from "../system/derepositioningsystem.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
+import { mergeObject } from "../system/foundry.js"
 
 export class AddTargetDialog extends Dialog{
     static async getDialog(speaker){

@@ -2,7 +2,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
 import { clickableAbility, tabSlider } from "./view_helper.js"
 import DSA5 from "./config-dsa5.js"
-
+import { getProperty, duplicate, debounce } from "../system/foundry.js"
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
 //TODO check if we can use the uuid right from the start
