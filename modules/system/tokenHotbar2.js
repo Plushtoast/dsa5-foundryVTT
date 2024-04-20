@@ -178,7 +178,7 @@ export default class TokenHotbar2 extends Application {
 
     changeDarkness(ev){
         const darkness = Number(ev.currentTarget.value)
-        if (canvas.scene) canvas.scene.update({ darkness }, { animateDarkness: 3000 })
+        if (canvas.scene) canvas.scene.update({ "environment.darknessLevel": darkness }, { animateDarkness: 3000 })
 
         tinyNotification(darkness)
     }
@@ -659,7 +659,7 @@ export default class TokenHotbar2 extends Application {
         return (await actor.actorEffects()).map(x => { 
             const level = x.getFlag("dsa5","value") || ""
             const name = level ? `${x.name} (${level})` : x.name
-            return { name: name, id: x.id, icon: x.icon, cssClass: "effect", abbrev: `${x.name[0]} ${level}`, subfunction: "effect", indicator: level, ...options } 
+            return { name: name, id: x.id, icon: x.img, cssClass: "effect", abbrev: `${x.name[0]} ${level}`, subfunction: "effect", indicator: level, ...options } 
         })
     }
 

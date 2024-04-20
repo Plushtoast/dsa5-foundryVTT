@@ -1,20 +1,19 @@
-import { AuraTemplate, DSAAura } from "../system/aura.js";
-import DSA5 from "../system/config-dsa5.js";
+import { DSAAura } from "../system/aura.js";
 import DPS from "../system/derepositioningsystem.js";
-import DSA5_Utility from "../system/utility-dsa5.js";
 import { getProperty } from "../system/foundry.js"
 
 export default function() {
-    Token.prototype.drawEffects = async function() {
+    Token.prototype._drawEffects = async function() {
+        this.effects.renderable = false;
         this.effects.removeChildren().forEach(c => c.destroy());
         this.effects.bg = this.effects.addChild(new PIXI.Graphics());
         this.effects.overlay = null;
 
-        const tokenEffects = this.document.effects;
-        let actorEffects = []
+        let activeEffects = []
+        let hasOverlay = false;
 
         if(this.actor) {
-            actorEffects = await this.actor.actorEffects()
+            activeEffects = await this.actor.actorEffects()
 
             if(this.actor.isSwarm()) {
                 actorEffects.push(new ActiveEffect({
@@ -26,36 +25,24 @@ export default function() {
             }
         }
 
-        let overlay = {
-            src: this.document.overlayEffect,
-            tint: null
-        };
-
-        if (tokenEffects.length || actorEffects.length) {
-            const promises = [];
-
-            for (let f of actorEffects) {
-                if (!f.icon) continue;
-                const tint = Color.from(f.tint ?? null);
-                if (f.getFlag("core", "overlay")) {
-                    overlay = { src: f.icon, tint };
-                    continue;
-                }
-                promises.push(this._drawEffect(f.icon, tint, getProperty(f, "flags.dsa5.value")))
-            }
-            for (let f of tokenEffects) {
-                promises.push(this._drawEffect(f, null))//, bg, w, i));
-            }
-            await Promise.all(promises);
+        const promises = [];
+        for ( const effect of activeEffects ) {
+        if ( !effect.img ) continue;
+        if ( effect.getFlag("core", "overlay") && !hasOverlay ) {
+            promises.push(this._drawOverlay(effect.img, effect.tint));
+            hasOverlay = true;
         }
+        else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, "flags.dsa5.value")));
+        }
+        await Promise.allSettled(promises);
 
-        this.effects.overlay = await this._drawOverlay(overlay.src, overlay.tint);
-        this._refreshEffects();
+        this.effects.renderable = true;
+        this.renderFlags.set({refreshEffects: true});
     }
 
     Token.prototype._refreshEffects = function() {
         let i = 0;
-        const w = Math.round(canvas.dimensions.size / 2 / 5) * 2;
+        const w = Math.round(canvas.dimensions.size / 10) * 2;
         const rows = Math.floor(this.document.height * 5);
         const bg = this.effects.bg.clear().beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
         for ( const effect of this.effects.children ) {
@@ -64,9 +51,11 @@ export default function() {
 
           // Overlay effect
           if ( effect === this.effects.overlay ) {
-            const size = Math.min(this.w * 0.6, this.h * 0.6);
+            const {width, height} = this.getSize();
+            const size = Math.min(width * 0.6, height * 0.6);
             effect.width = effect.height = size;
-            effect.position.set((this.w - size) / 2, (this.h - size) / 2);
+            effect.position = this.getCenterPoint({x: 0, y: 0});
+            effect.anchor.set(0.5, 0.5);
           }
 
           // Status effect
@@ -93,9 +82,9 @@ export default function() {
 
     Token.prototype._drawEffect = async function(src, tint, value) {
         if ( !src ) return;
-        let tex = await loadTexture(src, {fallback: "icons/svg/hazard.svg"});
-        let icon = new PIXI.Sprite(tex);
-        if ( tint ) icon.tint = tint;
+        const tex = await loadTexture(src, {fallback: "icons/svg/hazard.svg"});
+        const icon = new PIXI.Sprite(tex);
+        icon.tint = tint ?? 0xFFFFFF;
         icon.counter = value
         return this.effects.addChild(icon);
      }

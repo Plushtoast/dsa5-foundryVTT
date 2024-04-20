@@ -69,13 +69,9 @@ export class DSA5CombatTracker extends CombatTracker {
             }
 
             turn.effects = new Set();
-            if (combatant.token) {
-                combatant.token.effects.forEach(e => turn.effects.add(e));
-                if (combatant.token.overlayEffect) turn.effects.add(combatant.token.overlayEffect);
-            }
             if (combatant.actor) combatant.actor.temporaryEffects.forEach(e => {
                 if (e.statuses.has(CONFIG.Combat.defeatedStatusId)) turn.defeated = true;
-                else if (e.icon && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.icon);
+                else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag("dsa5", "hidePlayers")) && !e.getFlag("dsa5", "hideOnToken")) turn.effects.add(e.img);
             })
         }
         data.isBrawling = game.combat?.isBrawling

@@ -334,7 +334,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
 
     async _render(force = false, options = {}) {
         if (!game.user.isGM && getProperty(this.actor.system, "merchant.merchantType") == "loot" && getProperty(this.actor.system, "merchant.locked")) {
-            AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
+            foundry.audio.AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
             return
         }
         await super._render(force, options);

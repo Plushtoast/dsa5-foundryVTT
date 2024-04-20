@@ -40,11 +40,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             ".close": "SHEET.Close",
             ".configure-sheet": "SHEET.Configure",
             ".configure-token": "SHEET.Token",
-            ".import": "SHEET.Import",
-            ".locksheet": "SHEET.Lock",
-            ".library": "SHEET.Library",
-            ".playerview": "SHEET.switchLimited",
-            ".actorConfig": "SHEET.actorConfig"
+            ".import": "SHEET.Import"
         }
         for(let key of Object.keys(tooltips)){
             elem.find(key).attr("data-tooltip", tooltips[key]);
@@ -334,24 +330,28 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "library",
+            tooltip: "SHEET.Library",
             icon: `fas fa-university`,
             onclick: async() => this._openLibrary()
         })
         if (this.actor.isOwner) {
             buttons.unshift({
                 class: "actorConfig",
+                tooltip:  "SHEET.actorConfig",
                 icon: `fas fa-link`,
                 onclick: async() => this._configActor()
             })
             buttons.unshift({
                 class: "playerview",
                 icon: `fas fa-toggle-on`,
+                tooltip: "SHEET.switchLimited",
                 onclick: async ev => this._togglePlayerview(ev)
             })
         }
         if (this.actor.system.canAdvance) {
             buttons.unshift({
                 class: "locksheet",
+                tooltip: "SHEET.Lock",
                 icon: `fas fa-${this.actor.system.sheetLocked.value ? "" : "un"}lock`,
                 onclick: async ev => this._changeAdvanceLock(ev)
             })

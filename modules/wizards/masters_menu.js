@@ -91,7 +91,7 @@ class GameMasterMenu extends Application {
                 }
             })
             Hooks.on("updateScene", async(document, data, options, userId) => {
-                const properties = ["darkness"]
+                const properties = ["environment.darknessLevel"]
                 if (game.canvas.id == document.id && properties.reduce((a, b) => {
                         return a || hasProperty(data, b)
                     }, false)) {
@@ -329,7 +329,7 @@ class GameMasterMenu extends Application {
     }
 
     async updateDarkness(ev) {
-        if (canvas.scene) canvas.scene.update({ darkness: Number(ev.currentTarget.value) }, { animateDarkness: 3000 })
+        if (canvas.scene) canvas.scene.update({ "environment.darknessLevel": Number(ev.currentTarget.value) }, { animateDarkness: 3000 })
     }
 
     async updateSightThreshold(ev) {

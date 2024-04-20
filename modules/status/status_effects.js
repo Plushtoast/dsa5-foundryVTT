@@ -1,7 +1,7 @@
 import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5 from '../system/config-dsa5.js'
 import CreatureType from '../system/creature-type.js';
-import { duplicate, getProperty, hasProperty } from '../system/foundry.js';
+import { duplicate, getProperty, hasProperty, expandObject } from '../system/foundry.js';
 
 export default class DSA5StatusEffects {
     static bindButtons(html) {

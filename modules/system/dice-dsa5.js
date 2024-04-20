@@ -1539,7 +1539,7 @@ export default class DiceDSA5 {
             rollMode: data.rollMode,
             title: data.title,
             speaker: message.speaker,
-            user: message.user.id,
+            user: message.author.id,
         }
 
         if (["gmroll", "blindroll"].includes(chatOptions.rollMode))

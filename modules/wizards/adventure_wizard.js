@@ -46,12 +46,13 @@ export default class BookWizard extends Application {
             div.append(button)
             html.find(".header-actions:first-child").after(div)
         })
-    }
+    } 
 
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "increaseFontSize",
+            tooltip: "SHEET.increaseFontSize",
             icon: "fas fa-arrows-up-down",
             onclick: async() => increaseFontSize($(this._element).find('.chapter'))
         })
@@ -59,17 +60,11 @@ export default class BookWizard extends Application {
         buttons.unshift({
             label: "Library",
             class: "library",
+            tooltip: "Book.home",
             icon: `fas fa-book`,
-            onclick: async ev => this._showBooks()
+            onclick: async () => this._showBooks()
         })
         return buttons
-    }
-
-    async _render(force = false, options = {}) {
-        await super._render(force, options)
-
-        $(this._element).find('.library').attr("data-tooltip", "Book.home")
-        $(this._element).find(".increaseFontSize").attr("data-tooltip", "SHEET.increaseFontSize");
     }
 
     _showBooks() {

@@ -51,9 +51,9 @@ export default class DSA5SoundEffect {
                             soundPath
                         }
                     })
-                    if (!blind) AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, false);
+                    if (!blind) foundry.audio.AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, false);
                 } else {
-                    AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
+                    foundry.audio.AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
                 }
             } catch (exception) {
                 console.warn(`Could not play item sound effect ${soundPath}`)
@@ -168,7 +168,7 @@ export default class DSA5SoundEffect {
         if (!game.settings.get("dsa5", "inventorySound")) return
 
         try {
-            AudioHelper.play({ src: soundPath, volume, loop: false }, soundToEveryone);
+            foundry.audio.AudioHelper.play({ src: soundPath, volume, loop: false }, soundToEveryone);
         } catch (exception) {
             console.warn(`Could not play item sound effect ${soundPath}`)
         }

@@ -76,24 +76,20 @@ export default class ItemSheetdsa5 extends ItemSheet {
         $(this._element).find(".close").attr("data-tooltip", "SHEET.Close");
         $(this._element).find(".configure-sheet").attr("data-tooltip", "SHEET.Configure");
         $(this._element).find(".import").attr("data-tooltip", "SHEET.Import");
-        $(this._element).find(".rolleffect").attr("data-tooltip", "SHEET.RollEffect");
-        $(this._element).find(".showItemHead").attr("data-tooltip", "SHEET.PostItem");
-        $(this._element).find(".consumeItem").attr("data-tooltip", "SHEET.ConsumeItem");
-        $(this._element).find(".rollDamaged").attr("data-tooltip", "DSASETTINGS.armorAndWeaponDamage");
-        $(this._element).find(".onUseEffect").attr("data-tooltip", "SHEET.onUseEffect")
-        $(this._element).find(".postAsGroupCheck").attr("data-tooltip", "SHEET.postAsGroupCheck")
     }
 
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "showItemHead",
-            icon: `fas fa-comment`,
+            icon: "fas fa-comment",
+            tooltip: "SHEET.PostItem",
             onclick: async() => this.item.postItem()
         })
         if (this.item.actor && OnUseEffect.getOnUseEffect(this.item)) {
             buttons.unshift({
                 class: "onUseEffect",
+                tooltip: "SHEET.onUseEffect",
                 icon: `fas fa-dice-six`,
                 onclick: async() => {
                     const onUse = new OnUseEffect(this.item)
@@ -278,6 +274,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
         buttons.unshift({
             class: "postAsGroupCheck",
+            tooltip: "SHEET.postAsGroupCheck",
             icon: `fas fa-dice-d20`,
             onclick: async() => this.postAsGroupCheck()
         })
@@ -741,6 +738,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
+                tooltip: "DSASETTINGS.armorAndWeaponDamage",
                 icon: `fas fa-dice-d20`,
                 onclick: async() => EquipmentDamage.breakingTest(this.item)
             })
@@ -782,6 +780,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "rolleffect",
+                tooltip: "SHEET.RollEffect",
                 icon: `fas fa-dice-d20`,
                 onclick: async ev => this.setupEffect(ev)
             })
@@ -841,7 +840,8 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "rolleffect",
-                icon: `fas fa-dice-d20`,
+                icon: `fas fa-dice-d20`,                
+                tooltip: "SHEET.RollEffect",
                 onclick: async ev => this.setupEffect(ev)
             })
         }
@@ -901,6 +901,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
             buttons.unshift({
                 class: "consumeItem",
                 icon: `fas fa-dice-d20`,
+                tooltip: "SHEET.ConsumeItem",
                 onclick: async ev => this.setupEffect(ev)
             })
         }
@@ -945,6 +946,7 @@ class DiseaseSheetDSA5 extends ItemSheetdsa5 {
         buttons.unshift({
             class: "rolleffect",
             icon: `fas fa-dice-d20`,
+            tooltip: "SHEET.RollEffect",
             onclick: async ev => this.setupEffect(ev)
         })
         return buttons
@@ -964,6 +966,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
             buttons.unshift({
                 class: "rolleffect",
                 icon: `fas fa-dice-d20`,
+                tooltip: "SHEET.RollEffect",
                 onclick: async ev => this.setupEffect(ev)
             })
         }
@@ -1067,6 +1070,7 @@ class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         buttons.unshift({
             class: "rolleffect",
             icon: `fas fa-dice-d20`,
+            tooltip: "SHEET.RollEffect",
             onclick: async ev => this.setupEffect(ev)
         })
         return buttons

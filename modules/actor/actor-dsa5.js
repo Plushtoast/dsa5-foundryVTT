@@ -1651,7 +1651,7 @@ export default class Actordsa5 extends Actor {
       speaker: message.speaker,
       template: data.template,
       title: data.title,
-      user: message.user,
+      user: message.author,
     };
     if (data.attackerMessage) cardOptions.attackerMessage = data.attackerMessage;
     if (data.defenderMessage) cardOptions.defenderMessage = data.defenderMessage;

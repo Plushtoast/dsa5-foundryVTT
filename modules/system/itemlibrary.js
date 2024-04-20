@@ -622,7 +622,7 @@ export default class DSA5ItemLibrary extends Application {
         } else if (document == "JournalEntry") {
             func = (p) => { return p.getDocuments()}
         } else {
-            func = (p) => {return p.getDocuments({type__in: game.system.documentTypes.Item })}
+            func = (p) => {return p.getDocuments({type__in: Object.keys(game.system.documentTypes.Item) })}
         }
         const items = this.indexWorldItems(worldStuff, category)
         SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: "world items"}), pct: Math.round(percentage)})

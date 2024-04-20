@@ -86,7 +86,7 @@ export function connectSocket() {
                 break
             case "playWhisperSound":
                 if (data.payload.whisper.includes(game.user.id))
-                    AudioHelper.play({ src: data.payload.soundPath, volume: 0.8, loop: false }, false);
+                    foundry.audio.AudioHelper.play({ src: data.payload.soundPath, volume: 0.8, loop: false }, false);
 
                 break
             case "socketedConditionAddActor":
