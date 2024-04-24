@@ -22,6 +22,12 @@ export function connectSocket() {
                 let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor)
                 MerchantSheetDSA5.hideDeletedSheet(target)
                 return
+            case "refreshSheets":
+                for(let app of Object.values(ui.windows)){
+                    if(data.payload.sheets.find(x => app?.options?.baseApplication == x.type && x.id == app.object?.id))
+                        app.render(true)
+                }
+                break
             default:
                 if(Trade.socketListeners(data)) return
         }
@@ -138,4 +144,3 @@ export function connectSocket() {
     })
 
 }
-

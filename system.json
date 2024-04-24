@@ -119,7 +119,7 @@
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
     "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.4.2/dsa5-foundryVTT-5.4.2.zip",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.4.3/dsa5-foundryVTT-5.4.3.zip",
     "name": "dsa5",
     "minimumCoreVersion": "12",
     "packFolders": [

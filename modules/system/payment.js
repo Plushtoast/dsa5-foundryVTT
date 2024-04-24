@@ -126,14 +126,12 @@ export default class DSA5Payment {
         let remainingSum = money
         for (let currency of availableCurrencies) {
             let amount = Math.floor(remainingSum / currency.system.price.value)
-            if (amount > 0 || money == 0) {
-                res.push({
-                    name: currency.name,
-                    amount,
-                    img: currency.img
-                })
-                remainingSum -= amount * currency.system.price.value
-            }
+            res.push({
+                name: currency.name,
+                amount,
+                img: currency.img
+            })
+            remainingSum -= amount * currency.system.price.value
         }
 
         if(remainingSum > 0.001)    
@@ -156,7 +154,9 @@ export default class DSA5Payment {
 
         return {
             money: money,
-            sum: money.reduce((total, current) => total + Number(current.system.quantity.value) * Number(current.system.price.value), 0)
+            sum: money.reduce((total, current) => {
+                return total + Number(current.system.quantity.value) * Number(current.system.price.value)
+            }, 0.0)
         }
     }
 

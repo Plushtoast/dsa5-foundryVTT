@@ -215,10 +215,19 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
                     const res = await this.updateTargetTransaction(target, item, amount, source, price)
                     await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res)                    
                 }
-                source.sheet.render()
-                target.sheet.render()                
             }
-        }
+        }        
+        source.sheet.render()
+        target.sheet.render()
+        game.socket.emit("system.dsa5", {
+            type: "refreshSheets",
+            payload: {
+                sheets: [
+                    { id: source.id, type: "ActorSheet" },
+                    { id: target.id, type: "ActorSheet" }
+                ]
+            }
+        })
     }
 
     static isTemporaryToken(target) {
