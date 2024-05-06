@@ -1,6 +1,6 @@
 import DSA5 from "./config-dsa5.js";
 import DSA5_Utility from "./utility-dsa5.js"
-import { duplicate } from "../system/foundry.js"
+const { duplicate } = foundry.utils
 
 export default class ItemRulesDSA5 {
     static children = {}

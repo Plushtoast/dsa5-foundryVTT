@@ -6,7 +6,7 @@ import { slist, tabSlider } from "../system/view_helper.js"
 import PlayerMenu from "./player_menu.js"
 import RequestRoll from "../system/request-roll.js"
 import DialogShared from "../dialog/dialog-shared.js"
-import { mergeObject, duplicate, expandObject, hasProperty } from "../system/foundry.js";
+const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils
 
 export default class MastersMenu {
     static registerButtons() {

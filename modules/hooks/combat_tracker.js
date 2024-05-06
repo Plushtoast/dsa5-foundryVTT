@@ -3,7 +3,7 @@ import { ActAttackDialog } from "../dialog/dialog-react.js"
 import DSA5_Utility from "../system/utility-dsa5.js";
 import DSA5StatusEffects from "../status/status_effects.js"
 import RuleChaos from "../system/rule_chaos.js";
-import { debounce, mergeObject, getProperty } from "../system/foundry.js";
+const { debounce, getProperty, mergeObject } = foundry.utils
 
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {

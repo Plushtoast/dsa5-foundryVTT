@@ -1,6 +1,6 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export const applyDamage = async(li, mode, factor = 1) => {
     const message = game.messages.get(li.attr("data-message-id"))

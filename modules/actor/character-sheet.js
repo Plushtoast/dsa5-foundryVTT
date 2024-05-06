@@ -2,7 +2,7 @@ import ActorSheetDsa5 from "./actor-sheet.js";
 import CultureWizard from "../wizards/culture_wizard.js";
 import CareerWizard from "../wizards/career_wizard.js"
 import SpeciesWizard from "../wizards/species_wizard.js";
-import { mergeObject } from "../system/foundry.js";
+const { mergeObject } = foundry.utils
 
 export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     static get defaultOptions() {

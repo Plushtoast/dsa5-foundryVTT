@@ -1,4 +1,4 @@
-import { getProperty, mergeObject } from "../system/foundry.js"
+const { getProperty, mergeObject } = foundry.utils
 
 export default class ForeignFieldEditor extends FormApplication{
     constructor(actorId, field, name){

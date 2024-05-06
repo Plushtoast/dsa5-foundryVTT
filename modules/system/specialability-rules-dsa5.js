@@ -2,7 +2,7 @@ import DSA5 from "./config-dsa5.js";
 import ItemRulesDSA5 from "./item-rules-dsa5.js";
 import Select2Dialog from "../dialog/select2Dialog.js"
 import APTracker from "./ap-tracker.js";
-import { duplicate } from "../system/foundry.js"
+const { duplicate } = foundry.utils
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 

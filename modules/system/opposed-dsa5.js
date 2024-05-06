@@ -6,7 +6,7 @@ import EquipmentDamage from "./equipment-damage.js";
 import DSAActiveEffectConfig from "../status/active_effects.js";
 import Itemdsa5 from "../item/item-dsa5.js";
 import DSATriggers from "./triggers.js";
-import { mergeObject, getProperty } from "../system/foundry.js"
+const { mergeObject, getProperty } = foundry.utils
 
 export default class OpposedDsa5 {
     static async handleOpposedTarget(message) {

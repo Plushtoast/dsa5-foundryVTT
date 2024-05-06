@@ -1,4 +1,4 @@
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export const ItemSheetObfuscation = (superclass) => class extends superclass {
     async obfuscateItem(ev){

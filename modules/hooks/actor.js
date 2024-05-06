@@ -4,7 +4,7 @@ import Riding from "../system/riding.js"
 import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
 import RuleChaos from "../system/rule_chaos.js";
 import { DSAAura } from "../system/aura.js";
-import { getProperty, mergeObject, hasProperty } from "../system/foundry.js"
+const { getProperty, hasProperty, mergeObject } = foundry.utils
 
 export default function() {
     Hooks.on("preDeleteActiveEffect", (effect, options, user_id) => {

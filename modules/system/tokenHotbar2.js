@@ -7,7 +7,7 @@ import { tinyNotification } from "./view_helper.js";
 import DSA5Payment from "./payment.js"
 import { Trade } from "../actor/trade.js";
 import Itemdsa5 from "../item/item-dsa5.js";
-import { mergeObject, getProperty, duplicate } from "./foundry.js";
+const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class TokenHotbar2 extends Application {
     static attackTypes = new Set(["meleeweapon", "rangeweapon"])

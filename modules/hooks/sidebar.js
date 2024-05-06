@@ -1,4 +1,4 @@
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export default function() {
     Hooks.on("renderSettings", (app, html, data) => {

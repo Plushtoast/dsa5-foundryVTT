@@ -6,7 +6,7 @@ import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
-import { getProperty } from '../system/foundry.js';
+const { getProperty } = foundry.utils
 
 export default function() {
     Hooks.on('renderChatLog', (log, html, data) => {

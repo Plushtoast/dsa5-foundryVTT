@@ -1,5 +1,5 @@
 import DSA5_Utility from "./utility-dsa5.js"
-import { mergeObject, getProperty, hasProperty } from "./foundry.js"
+const { mergeObject, getProperty, hasProperty } = foundry.utils
 
 export default class Riding {
     static preRenderedUnmountHud = `

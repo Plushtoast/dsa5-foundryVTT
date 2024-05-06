@@ -4,7 +4,7 @@ import CreatureType from "../system/creature-type.js"
 import EquipmentDamage from "../system/equipment-damage.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
-import { getProperty, duplicate, mergeObject } from "../system/foundry.js"
+const { getProperty, duplicate, mergeObject } = foundry.utils
 
 export default class TableEffects{
     //todo maybe add the effect later with second button and unspecific target

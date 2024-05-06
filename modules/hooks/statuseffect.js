@@ -1,6 +1,6 @@
 import { DSAAura } from "../system/aura.js";
 import DPS from "../system/derepositioningsystem.js";
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export default function() {
     Token.prototype._drawEffects = async function() {

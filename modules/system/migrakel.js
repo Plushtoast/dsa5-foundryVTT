@@ -1,4 +1,4 @@
-import { mergeObject, getProperty } from "../system/foundry.js"
+const { mergeObject, getProperty } = foundry.utils
 
 export default class Migrakel {
     static async showDialog(content, migrateAll = false) {

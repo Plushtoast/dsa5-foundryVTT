@@ -3,7 +3,7 @@ import DSA5 from "./config-dsa5.js"
 import CreatureType from "./creature-type.js"
 import DiceDSA5 from "./dice-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export default class EquipmentDamage {
     static armorWearModifier(armorData, armorValue) {

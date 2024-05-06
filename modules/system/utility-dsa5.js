@@ -1,7 +1,7 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import { conditionsMatcher } from '../hooks/texteditor.js';
 import DSA5 from './config-dsa5.js'
-import { duplicate, mergeObject } from './foundry.js';
+const { mergeObject, duplicate } = foundry.utils
 
 export default class DSA5_Utility {
     static async skillByName(name) {

@@ -3,7 +3,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 import { showPatchViewer } from "./migrator.js"
 import RuleChaos from "./rule_chaos.js"
 import { showPopout } from "../hooks/imagepopouttochat.js"
-import { duplicate } from "../system/foundry.js"
+const { duplicate } = foundry.utils
 
 export default class DSA5ChatListeners {
     static chatListeners(html) {

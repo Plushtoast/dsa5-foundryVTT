@@ -20,7 +20,7 @@ import CreatureType from "./creature-type.js"
 import { applyDamage } from "../hooks/chat_context.js"
 import DSATriggers from "./triggers.js"
 import RuleChaos from "./rule_chaos.js"
-import { mergeObject, deepClone, getProperty, duplicate } from "./foundry.js"
+const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils
 
 export default class DiceDSA5 {
     static async rollTest(testData) {

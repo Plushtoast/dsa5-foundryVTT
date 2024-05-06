@@ -1,4 +1,4 @@
-import { mergeObject } from "../system/foundry.js"
+const { mergeObject } = foundry.utils
 
 export default class DSAJournalSheet extends JournalSheet{
     static get defaultOptions(){

@@ -1,7 +1,7 @@
 import DSA5 from "../system/config-dsa5.js"
 import OnUseEffect from "../system/onUseEffects.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
-import { getProperty, mergeObject } from "../system/foundry.js"
+const { getProperty, mergeObject } = foundry.utils
 
 export default class DSATables {
     static async showBotchCard(dataset, options = {}) {

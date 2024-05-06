@@ -1,5 +1,5 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
-import { getProperty, setProperty } from "../system/foundry.js"
+const { getProperty, setProperty, getType } = foundry.utils
 
 export default class DSAActiveEffect extends ActiveEffect {
     static itemChangeRegex = /^@/

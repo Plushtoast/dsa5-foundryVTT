@@ -14,7 +14,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 import Riding from "../system/riding.js"
 import { UserMultipickDialog } from "../dialog/addTargetDialog.js"
-import { getProperty, mergeObject, duplicate } from "../system/foundry.js"
+const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class Itemdsa5 extends Item {
     static defaultImages = {

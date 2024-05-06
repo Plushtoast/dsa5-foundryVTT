@@ -1,5 +1,5 @@
 import AdvantageRulesDSA5 from "./advantage-rules-dsa5.js"
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export default class DPS {
     RECT_SPREAD = [

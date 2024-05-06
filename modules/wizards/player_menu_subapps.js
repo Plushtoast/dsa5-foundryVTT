@@ -1,4 +1,4 @@
-import { mergeObject } from "../system/foundry.js"
+const { mergeObject } = foundry.utils
 
 export class PlayerMenuSubApp {
     static template = ""

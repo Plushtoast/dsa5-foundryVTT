@@ -1,5 +1,5 @@
 import { DSA5CombatTracker } from "../hooks/combat_tracker.js";
-import { mergeObject, duplicate } from "../system/foundry.js"
+const { mergeObject, duplicate } = foundry.utils
 
 export default class DSAIniTracker extends Application {
     static get defaultOptions() {

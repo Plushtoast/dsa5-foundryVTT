@@ -1,7 +1,7 @@
 import ActorSheetDsa5 from "./actor-sheet.js";
 import TraitRulesDSA5 from "../system/trait-rules-dsa5.js"
 import APTracker from "../system/ap-tracker.js";
-import { mergeObject, getProperty } from "../system/foundry.js"
+const { mergeObject, getProperty } = foundry.utils
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     static get defaultOptions() {

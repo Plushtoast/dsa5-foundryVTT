@@ -1,7 +1,7 @@
 import DSA5 from "../system/config-dsa5.js";
 import WizardDSA5 from "./dsa5_wizard.js"
 import APTracker from "../system/ap-tracker.js";
-import {mergeObject} from "../system/foundry.js";
+const { mergeObject } = foundry.utils
 
 export default class SpeciesWizard extends WizardDSA5 {
     static get defaultOptions() {

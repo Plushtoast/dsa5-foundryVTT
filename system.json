@@ -126,7 +126,6 @@
         {
             "name": "Item",
             "sorting": "m",
-            "color": "#b2b2b2",
             "packs": [
                 "skills",
                 "skillsen",
@@ -136,7 +135,6 @@
         {
             "name": "RollTable",
             "sorting": "m",
-            "color": "#b2b2b2",
             "packs": [
                 "patzer",
                 "botch"
@@ -145,7 +143,6 @@
         {
             "name": "Macro",
             "sorting": "m",
-            "color": "#b2b2b2",
             "packs": [
                 "macros"
             ]
@@ -154,7 +151,6 @@
         {
             "name": "JournalEntry",
             "sorting": "m",
-            "color": "#b2b2b2",
             "packs": [
                 "gamemanualde",
                 "gamemanualen"

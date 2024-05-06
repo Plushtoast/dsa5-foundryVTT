@@ -4,7 +4,7 @@ import { tinyNotification } from "../system/view_helper.js";
 import Actordsa5 from "../actor/actor-dsa5.js";
 import TokenHotbar2 from "./tokenHotbar2.js";
 import Riding from "./riding.js";
-import { mergeObject, getProperty } from "../system/foundry.js";
+const { getProperty, mergeObject } = foundry.utils
 
 export default class DSA5Hotbar extends Hotbar {
     async _render(force = false, options = {}) {

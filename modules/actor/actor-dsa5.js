@@ -16,7 +16,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 import APTracker from "../system/ap-tracker.js";
-import { getProperty, mergeObject, duplicate, setProperty, hasProperty } from "../system/foundry.js";
+const { getProperty, mergeObject, duplicate, hasProperty, setProperty } = foundry.utils
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {

@@ -4,7 +4,7 @@ import ItemRulesDSA5 from "../system/item-rules-dsa5.js"
 import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5_Utility from "../system/utility-dsa5.js"
 import { clickableAbility, tabSlider } from "../system/view_helper.js"
-import { mergeObject, duplicate, getProperty } from "../system/foundry.js"
+const { mergeObject, duplicate, getProperty } = foundry.utils
 
 export default class WizardDSA5 extends Application {
     constructor(app) {

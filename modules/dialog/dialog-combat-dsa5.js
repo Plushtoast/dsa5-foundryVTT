@@ -9,7 +9,7 @@ import DSA5Dialog from "./dialog-dsa5.js";
 import DialogShared from "./dialog-shared.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DPS from "../system/derepositioningsystem.js";
-import { mergeObject, getProperty, duplicate } from "../system/foundry.js";
+const { mergeObject, duplicate, getProperty } = foundry.utils
 
 export default class DSA5CombatDialog extends DialogShared {
     static rollModifiers = {

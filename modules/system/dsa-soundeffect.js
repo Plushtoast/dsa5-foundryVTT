@@ -1,4 +1,4 @@
-import { getProperty } from "../system/foundry.js"
+const { getProperty } = foundry.utils
 
 export default class DSA5SoundEffect {
     static sounds

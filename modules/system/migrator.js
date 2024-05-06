@@ -1,6 +1,6 @@
 import DSA5_Utility from "./utility-dsa5.js"
 import { tabSlider } from "./view_helper.js"
-import { mergeObject } from "../system/foundry.js"
+const { mergeObject } = foundry.utils
 
 async function setupDefaulTokenConfig() {
     if (!game.settings.get("dsa5", "defaultConfigFinished")) {

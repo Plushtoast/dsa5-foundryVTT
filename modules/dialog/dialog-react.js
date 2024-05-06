@@ -1,7 +1,7 @@
 import Actordsa5 from "../actor/actor-dsa5.js";
 import OpposedDsa5 from "../system/opposed-dsa5.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
-import { mergeObject, getProperty } from "../system/foundry.js"
+const { mergeObject, getProperty } = foundry.utils
 
 export default class DialogReactDSA5 extends Dialog {
     static async showDialog(startMessage) {
