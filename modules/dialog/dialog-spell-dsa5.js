@@ -76,7 +76,7 @@ export default class DSA5SpellDialog extends DialogShared {
         const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map(x => `${x}.mod`)
         this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers)
         for(let k of parent.find('.specAbs.active')){
-            const item = fromUuidSync(k.dataset.uuid)
+            const item = await fromUuid(k.dataset.uuid)
             if(!item) continue
 
             for(let ef of item.effects){

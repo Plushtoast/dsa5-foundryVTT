@@ -4,7 +4,7 @@ import DSA5StatusEffects from "../status/status_effects.js"
 import DSA5ChatAutoCompletion from "../system/chat_autocompletion.js"
 import DSA5 from "../system/config-dsa5.js"
 import { slist } from "../system/view_helper.js"
-const { mergeObject } = foundry.utils
+const { mergeObject, duplicate } = foundry.utils
 
 export default class BookWizard extends Application {
     static wizard
@@ -54,7 +54,7 @@ export default class BookWizard extends Application {
             class: "increaseFontSize",
             tooltip: "SHEET.increaseFontSize",
             icon: "fas fa-arrows-up-down",
-            onclick: async() => increaseFontSize($(this._element).find('.chapter'))
+            onclick: async () => increaseFontSize($(this._element).find('.chapter'))
         })
 
         buttons.unshift({

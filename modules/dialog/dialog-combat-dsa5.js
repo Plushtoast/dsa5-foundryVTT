@@ -162,7 +162,7 @@ export default class DSA5CombatDialog extends DialogShared {
                     if (htmlMods.length == 0) {
                         const modBox = `<div class="modifiers form-group custom-select">
                                             <label>${game.i18n.localize("DIALOG.SituationalModifiers")}</label>
-                                            <select name="situationalModifiers" multiple data-tooltip="${game.i18n.localize("DIALOG.deselectWithStrg")}" />
+                                            <select name="situationalModifiers" multiple />
                                         </div>`
                         $(this._element).find("[name=rollMode]").parent().after(modBox)
                         this.position.height += 86

@@ -24,7 +24,6 @@ export function setEnrichers() {
         }
     }
 
-
     CONFIG.TextEditor.enrichers.push(
         {
             pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
@@ -89,7 +88,13 @@ export function setEnrichers() {
             pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñé\/]+\]({[a-zA-Z=]+})?/g,
             enricher: async(match, options) => {
                 let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
-                let document = await fromUuid(uuid)
+                let document        
+                       
+                try {
+                    document = await fromUuid(uuid)
+                }catch(e){
+                    document = null
+                }
 
                 if(!document) {
                     const parts = uuid.split(".")

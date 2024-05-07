@@ -16,7 +16,7 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 import APTracker from "../system/ap-tracker.js";
-const { getProperty, mergeObject, duplicate, hasProperty, setProperty } = foundry.utils
+const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils
 
 export default class Actordsa5 extends Actor {
   static async create(data, options) {
@@ -580,7 +580,7 @@ export default class Actordsa5 extends Actor {
       Object.assign(overrides, result);
     }
 
-    this.overrides = foundry.utils.expandObject(overrides);
+    this.overrides = expandObject(overrides);
     let tokens;
     for ( const [statusId, wasActive] of specialStatuses ) {
       const isActive = this.statuses.has(statusId);
