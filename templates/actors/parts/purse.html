@@ -1,7 +1,11 @@
 <div class="actor-purse groupbox">
     <div class="row-section">
-        <div class="col header-label">
+        <div class="col ten"></div>
+        <div class="col eighty header-label">
             <b>{{localize "purse"}}</b>
+        </div>
+        <div class="col ten">
+            {{#if prepare.moneyWeight}}<small>{{prepare.moneyWeight}} <i class="fas fa-anchor"></i></small>{{/if}}
         </div>
     </div>
     {{#grouped_each 4 prepare.money.coins}}

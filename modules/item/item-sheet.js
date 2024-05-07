@@ -121,7 +121,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
         this.wrapperLocked = true
         $(ev.currentTarget).find('i').addClass("fa-spin fa-spinner")        
-        await this[funct]()
+        const res = await this[funct]()
+        if(res) return
+            
+        this.wrapperLocked = false
+        $(ev.currentTarget).find('i').removeClass("fa-spin fa-spinner")
     }
 
     activateListeners(html) {
@@ -1093,6 +1097,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
             await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
             await this.item.update({ "system.step.value": value - 1 })
             await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value - 1 }, xpCost)
+            return true
         }
     }
 
@@ -1105,6 +1110,7 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
                 await this.item.update({ "system.step.value": value + 1 })
                 await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value + 1 }, xpCost)
+                return true
             }
         }
     }
@@ -1235,6 +1241,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
             await this.item.actor._updateAPs(xpCost * -1, {}, { render: false })
             await this.item.update({ "system.step.value": value - 1 })
             await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value - 1 }, xpCost)
+            return true
         }
     }
 
@@ -1249,6 +1256,7 @@ class VantageSheetDSA5 extends ItemSheetdsa5 {
                 await this.item.actor._updateAPs(xpCost, {}, { render: false })
                 await this.item.update({ "system.step.value": value + 1 })
                 await APTracker.track(this.item.actor, { type: "item", item: this.item, previous: value, next: value + 1 }, xpCost)
+                return true
             }
         }
     }

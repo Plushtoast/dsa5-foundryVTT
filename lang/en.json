@@ -1673,6 +1673,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "moneyHasWeight": "Money has weight",
+        "moneyHasWeightHint": "Let your Dagobert Ducks feel the weight of their greed.",
         "moneyKompendium": "Currency Compendium",
         "moneyKompendiumHint": "Choose a compendium for the standard currencies. These will be automatically added to new characters and used for payment functions, as well as merchants. You may need to create a compendium and fill it with your desired currencies first.",
         "notifyOnFadingEffects": "End of effect (notification)",

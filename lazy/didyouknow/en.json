@@ -132,6 +132,8 @@
         "Equipment items can now be paid directly from the library via drag & drop if the coins are specifically picked up at the start of the drag.",
 
         "Players can add notes to NPC with \"Limited\" permissions.",
-        "Special abilities of tradition artifacts transfer bonuses if they have been assigned to a tradition artifact and it is also carried in the hand."
+        "Special abilities of tradition artifacts transfer bonuses if they have been assigned to a tradition artifact and it is also carried in the hand.",
+
+        "You can let your greedy players feel the full weight of their loot. Activate the corresponding option in the settings."
     ]
 }

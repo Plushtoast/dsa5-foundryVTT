@@ -135,6 +135,8 @@
         "Du kannst Sammelproben Items verwenden um Gruppensammelproben für den Chat vorzubereiten.",
         "Der SL kann am Combat tracker den Modus zu einer Prügelei umschalten.",
         "Über das Context Menü von Gegenständen im Inventar kannst du einen Tausch mit anderen Spielern auslösen.",
-        "Ausrüstungsgegenstände können nun bei Drag & Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start des Drags gezielt die Münzen aufgenommen werden."
+        "Ausrüstungsgegenstände können nun bei Drag & Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start des Drags gezielt die Münzen aufgenommen werden.",
+
+        "Du kannst deine gierigen Spieler das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die entsprechende Option in den Settings."
     ]
 }

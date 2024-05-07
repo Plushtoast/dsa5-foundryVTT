@@ -346,6 +346,16 @@ export function setupConfiguration() {
             ui.notifications.notify(game.packs.get(val).index.filter(x => x.type == "money").map(x => x.name).join(", "))
         }
     });
+    
+    game.settings.register("dsa5", "moneyHasWeight", {
+        name: "DSASETTINGS.moneyHasWeight",
+        hint: "DSASETTINGS.moneyHasWeightHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean,
+        requiresReload: true
+    });
 
     const styles = duplicate(DSA5.styles)
     for(let key of Object.keys(styles)){

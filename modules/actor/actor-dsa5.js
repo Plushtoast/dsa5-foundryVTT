@@ -85,6 +85,7 @@ export default class Actordsa5 extends Actor {
 
       const familiarString = game.i18n.localize('LocalizedIDs.familiar')
       const petString = game.i18n.localize('LocalizedIDs.companion')
+      const moneyHasWeight = game.settings.get("dsa5", "moneyHasWeight")
 
       let containers = new Map();
       const bags = this.items.filter(x => x.type == "equipment" && x.system.equipmentType.value == "bags")
@@ -92,8 +93,14 @@ export default class Actordsa5 extends Actor {
         containers.set(container.id, []);
       }
 
+      this.system.moneyWeight = 0
       for(const i of this.items){
-        if(DSA5.equipmentCategories.has(i.type)){
+        if(moneyHasWeight && i.type == "money"){
+          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
+          data.totalWeight += Number(i.system.preparedWeight);
+          this.system.moneyWeight += Number(i.system.preparedWeight)
+        }
+        else if(DSA5.equipmentCategories.has(i.type)){
           let parent_id = getProperty(i, "system.parent_id");
           if (parent_id && parent_id != i._id) {
             if (containers.has(parent_id)) {
@@ -1275,6 +1282,7 @@ export default class Actordsa5 extends Actor {
       canSwarm: !this.prototypeToken.actorLink,
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
+      moneyWeight: this.system.moneyWeight,
       horseActor: horse,
       advantages,
       hasAnyItem,

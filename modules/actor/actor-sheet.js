@@ -227,6 +227,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (await this._checkEnoughXP(cost)) {
             await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous + 1 })
             await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances + 1 }, cost)
+            return true
         }
     }
 
@@ -237,6 +238,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
             await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous - 1 })
             await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances - 1 }, cost)
+            return true
         }
     }
 
@@ -246,6 +248,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 const previous = Number(this.actor.system.status[attr].rebuy)
                 await this._updateAPs(2, { [`system.status.${attr}.rebuy`]: previous + 1 })
                 await APTracker.track(this.actor, { type: "permanentLoss", attr, previous, next: previous + 1 }, 2)
+                return true
             }
         }
     }
@@ -255,6 +258,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             const previous = Number(this.actor.system.status[attr].rebuy)
             await this._updateAPs(-2, { [`system.status.${attr}.rebuy`]: previous - 1 })
             await APTracker.track(this.actor, { type: "permanentLoss", attr, previous, next: previous - 1 }, -2)
+            return true
         }
     }
 
@@ -264,6 +268,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, previous + 1)) {
             await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous + 1 })
             await APTracker.track(this.actor, { type: "point", attr, previous, next: previous + 1 }, cost)
+            return true
         }
     }
 
@@ -273,6 +278,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             const cost = DSA5_Utility._calculateAdvCost(previous, "D", 0) * -1
             await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous - 1 })
             await APTracker.track(this.actor, { type: "point", attr, previous, next: previous - 1 }, cost)
+            return true
         }
     }
 
@@ -284,6 +290,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value + 1 }])
             await this._updateAPs(cost)
             await APTracker.track(this.actor, { type: "item", item, previous: value, next: value + 1 }, cost)
+            return true
         }
     }
 
@@ -296,6 +303,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value - 1 }])
             await this._updateAPs(cost)
             await APTracker.track(this.actor, { type: "item", item, previous: value, next: value - 1 }, cost)
+            return true
         }
     }
 
@@ -373,7 +381,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
         this.wrapperLocked = true
         $(ev.currentTarget).find('i').addClass("fa-spin fa-spinner")
-        await this[funct](param)
+        const res = await this[funct](param)
+        if(res) return
+            
+        this.wrapperLocked = false
+        $(ev.currentTarget).find('i').removeClass("fa-spin fa-spinner")
     }
 
     playerViewEnabled() {

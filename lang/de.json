@@ -1740,6 +1740,8 @@
         "2": "2 Aktionen zielen"
     },
     "DSASETTINGS": {
+        "moneyHasWeight": "Geld hat Gewicht",
+        "moneyHasWeightHint": "Lass deine Dagobert Ducks das Gewicht ihrer Gier spüren.",
         "moneyKompendium": "Währungskompendium",
         "moneyKompendiumHint": "Wähle ein Kompendium für die Standardwährungen. Diese werden neuen Charakteren automatisch hinzugefügt und für Bezahlfunktionen, sowie Händler verwendet. Ggf. musst du vorher ein Kompendium anlegen und mit deinen gewünschten Währungen befüllen.",
         "notifyOnFadingEffects": "Effektende (Benachrichtigung)",
