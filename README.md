@@ -1,35 +1,38 @@
-
-
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
-![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
 
-### Current Version and Compatibility:
+## Current Version and Compatibility:
 6.0.x - FoundryVTT 12.+
 This system is intended for usage with [Foundry Virtual Tabletop](https://foundryvtt.com/) to play "Das Schwarze Auge" 5th edition.
 If you want to learn more checkout the [German](https://ulisses-spiele.de/virtual-tabletop-dsa-vtt/) or [English](https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/) VTT Page by Ulisses Spiele.
 
 ## Installation - Auto Installer
-In the FVTT Game Systems Menu, click Install System and enter the Manifest URL: 
+
+In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
 
 ```
 https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json
 ```
 
 ## Roadmap
+
 See [Roadmap](https://github.com/users/Plushtoast/projects/1/views/6) for our short term goals. Those might be subject to change.
 
 ## Current State
+
 Aventuria awaits, as TDE 5 is now fully integrated with Foundry VTT.
 The system includes all relevant mechanisms to play in the wonderous world of Aventuria and The Dark Eye and create your own adventures, characters and stories.
 
 The core system includes a character sheet and allows you to create your advantages, disadvantages, cultures, professions, special skill, spells, liturgies, rituals and equipment as you see fit.
 
 ## Discussion & Assistance
+
 If you want to discuss TDE for foundry or need some assistance you can also join the Discord Servers:
+
 * [Ulisses](https://discord.com/invite/SnqCgcvPzR)
 * [FoundryVTT](https://discord.gg/foundryvtt)
 
 ## Notable Features
+
 * Skills, attributes, liturgies, ceremonies, spells, rituals, weapon tests, prolonged tests and many more can be rolled.
 * Many special abilities, advantages and disadvantages are automatically calculated for relevant rolls.
 * Status system has been implemented.
@@ -48,7 +51,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
 
 ![Screenshot 2023-08-04 171331](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/9d9bb0f0-4be3-430c-a6c3-dc965e35e5f9)
 ![Screenshot 2023-08-04 171516](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/9aee3594-dbfd-4d41-96a7-65b9bddeae0e)
-
 
 <h2>German Modules</h2>
 <div>
@@ -250,10 +252,10 @@ As of this moment several modules are in the making. We will inform you as soon 
 ![Screenshot 2023-08-04 171331](https://github.com/Plushtoast/dsa5-foundryVTT/assets/44941845/257c258e-a495-4c9b-83a2-7e83c797332a)
 
 ## Other Recommended Modules
+
 The following modules are recommended for the best gaming experience:
-- [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
-- [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
-- [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
-- [times-up](https://gitlab.com/tposney/times-up) - Automatically expires buffs and debuffs on actors
 
-
+* [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
+* [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
+* [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
+* [times-up](https://gitlab.com/tposney/times-up) - Automatically expires buffs and debuffs on actors

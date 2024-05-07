@@ -1120,7 +1120,7 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(testData, game.i18n.localize("Difficulty"), testData.testDifficulty)
         let modifiers = await this._situationalModifiers(testData)
 
-        let fws = testData.source.system.talentValue.value + testData.advancedModifiers.fws + await this._situationalModifiers(testData, "FW")
+        let fws = Number(testData.source.system.talentValue.value) + testData.advancedModifiers.fws + await this._situationalModifiers(testData, "FW")
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
         let tar = [1, 2, 3].map(

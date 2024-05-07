@@ -533,7 +533,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 name: `${closeCombat} - ${game.i18n.localize("CHARAbbrev.damage")}`,
                 val: "system.meleeStats.damage",
                 mode: 2,
-                ph: "1d6",
+                ph: "+1d6",
             },
             {
                 name: `${closeCombat} - ${game.i18n.localize("MODS.defenseMalus")}`,
@@ -557,7 +557,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 name: `${rangeCombat} - ${game.i18n.localize("CHARAbbrev.damage")}`,
                 val: "system.rangeStats.damage",
                 mode: 2,
-                ph: "1d6",
+                ph: "+1d6",
             },
             {
                 name: `${rangeCombat} - ${game.i18n.localize("MODS.defenseMalus")}`,

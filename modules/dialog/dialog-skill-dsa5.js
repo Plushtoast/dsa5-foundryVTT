@@ -75,7 +75,7 @@ export default class DSA5SkillDialog extends DialogShared {
             }
         }
 
-        const fw = this.dialogData.source.system.talentValue.value + data.fw + await DiceDSA5._situationalModifiers(data, "FW")
+        const fw = Number(this.dialogData.source.system.talentValue.value) + data.fw + await DiceDSA5._situationalModifiers(data, "FW")
         const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + await DiceDSA5._situationalModifiers(data)
         const requiredFw = Math.clamp(10 - mod * 3, 1, 19)
         const enoughFw = fw >= requiredFw

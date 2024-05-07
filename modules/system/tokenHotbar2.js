@@ -180,7 +180,7 @@ export default class TokenHotbar2 extends Application {
         const darkness = Number(ev.currentTarget.value)
         if (canvas.scene) canvas.scene.update({ "environment.darknessLevel": darkness }, { animateDarkness: 3000 })
 
-        tinyNotification(darkness)
+        tinyNotification(`${game.i18n.localize('MASTER.darkness')} ${darkness}`)
     }
 
     activateListeners(html) {
