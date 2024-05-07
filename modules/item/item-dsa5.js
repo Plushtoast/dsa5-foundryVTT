@@ -118,7 +118,7 @@ export default class Itemdsa5 extends Item {
             ceremony: CeremonyItemDSA5,
             advantage: VantageItemDSA5,
             disadvantage: VantageItemDSA5,
-            aggregatedTest: aggregatedTestItemDSA5,
+            aggregatedTest: AggregatedTestItemDSA5,
             trait: TraitItemDSA5,
             blessing: BlessingItemDSA5,
             magictrick: CantripItemDSA5,
@@ -126,6 +126,7 @@ export default class Itemdsa5 extends Item {
             disease: DiseaseItemDSA5,
             poison: PoisonItemDSA5,
             armor: ArmorItemDSA5,
+            money: MoneyItemDSA5,
             rangeweapon: RangeweaponItemDSA5,
             meleeweapon: MeleeweaponDSA5,
             ammunition: AmmunitionItemDSA5,
@@ -789,7 +790,13 @@ class PatronItemDSA5 extends Itemdsa5 {
     }
 }
 
-class aggregatedTestItemDSA5 extends Itemdsa5 {
+class MoneyItemDSA5 extends Itemdsa5 {
+    static checkEquality(item, item2) {
+        return item2.type == item.type && game.i18n.localize(item.name) == game.i18n.localize(item2.name) && item.system.description?.value == item2.system.description?.value
+    }
+}
+
+class AggregatedTestItemDSA5 extends Itemdsa5 {
     static async _postItem(item){
         let txt = ""
         let result = game.i18n.localize("Ongoing")
