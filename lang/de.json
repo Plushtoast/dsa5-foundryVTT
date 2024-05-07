@@ -139,7 +139,6 @@
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
         "warning": "Vorsicht",
-        "deselectWithStrg": "Strg + <i class=\"fas fa-computer-mouse\"></i> zum Deselektieren",
         "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
         "noExtensions": "Keine passenden Zauber-/Liturgieerweiterungen",
         "firstTime": "Spracheinstellungen",

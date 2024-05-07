@@ -113,7 +113,6 @@
         "ItemRequiresAdoptionDescription": "The addition requires an Adaptation first. Select the matching entry for ",
         "alreadyAddedCharacterpart": "You already have a {category}. Do you want to override it? Already added modifications of the former {category} can not be removed automatically.",
         "warning": "Attention",
-        "deselectWithStrg": "CTRL + <i class=\"fas fa-computer-mouse\"></i> to deselect",
         "noCombatskills": "No matching Combat Special Abilities",
         "noExtensions": "No matching liturgy/spell extensions",
         "firstTime": "Language settings",

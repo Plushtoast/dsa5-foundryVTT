@@ -19,15 +19,13 @@
 {{#if hasSituationalModifiers}}
 <div class="modifiers form-group custom-select">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
-    <select name="situationalModifiers" multiple data-tooltip="DIALOG.deselectWithStrg">
-      {{#select selectedModifiers}}
+    <select name="situationalModifiers" multiple>
       {{#each situationalModifiers as |mod t|}}
       <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
         {{localize
         mod.name}} [{{mod.value}}]
       </option>
       {{/each}}
-      {{/select}}
     </select>
 </div>
 {{/if}}
