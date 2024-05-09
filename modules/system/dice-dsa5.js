@@ -959,7 +959,7 @@ export default class DiceDSA5 {
                         const effect = CONFIG.statusEffects.find((x) => x.id == split[1])
                         result.push(
                             `<a class="chat-condition chatButton" data-id="${effect.id}">
-                            <img src="${effect.icon}"/>${game.i18n.localize(effect.name)}
+                            <img src="${effect.img}"/>${game.i18n.localize(effect.name)}
                             </a>`
                         )
                     } else
@@ -1473,7 +1473,7 @@ export default class DiceDSA5 {
         if (actor) {
             const source = actor.items.find((x) => x.name == name && x.type == category)
             if (source) {
-                const item = new Itemdsa5(source.toObject(), { temporary: true })
+                const item = new Itemdsa5(source.toObject())
                 const removeCharge = input.attr("data-removecharge") ? input.attr("data-removecharge") == "true" : false
                 if (removeCharge) {
                     if (item.system.quantity.value < 1) {

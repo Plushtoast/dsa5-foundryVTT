@@ -124,7 +124,7 @@ export default class Actordsa5 extends Actor {
           switch(i.type){
             case "trait":
               if(i.name == familiarString) data.isFamiliar = true
-              if(i.name == petString) data.isPet = true
+              else if(i.name == petString) data.isPet = true
               break
             case "spell":
             case "ritual":
@@ -769,6 +769,8 @@ export default class Actordsa5 extends Actor {
     mergeObject(preparedData, this.prepareItems(sheetInfo));
     if (preparedData.canAdvance) {
       const attrs = ["wounds", "astralenergy", "karmaenergy"];
+      const isAnimal = this.system.isFamiliar || this.system.isPet;
+      let category = isAnimal ? "C" : "D";
       for (const k of attrs) {
         mergeObject(preparedData.system, {
           status: {
@@ -783,13 +785,14 @@ export default class Actordsa5 extends Actor {
           },
         });
       }
+      category = isAnimal ? "C" : "E";
       for (let [key, ch] of Object.entries(this.system.characteristics)) {
         preparedData.system.characteristics[key] = {
           cost: game.i18n.format("advancementCost", {
-            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E"),
+            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category),
           }),
           refund: game.i18n.format("refundCost", {
-            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, "E", 0),
+            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category, 0),
           })
         };
       }
@@ -881,11 +884,12 @@ export default class Actordsa5 extends Actor {
   }
 
   _perpareItemAdvancementCost(item) {
+    const category = this.system.isPet || this.system.isFamiliar ? "C" : item.system.StF.value
     item.cost = game.i18n.format("advancementCost", {
-      cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, item.system.StF.value),
+      cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category),
     });
     item.refund = game.i18n.format("refundCost", {
-      cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, item.system.StF.value, 0),
+      cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category, 0),
     })
     return item;
   }
@@ -1508,7 +1512,7 @@ export default class Actordsa5 extends Actor {
           damage: { value: item.system.damage.value },
           quantity: { value: 1 },
       }
-    }, { temporary: true })
+    })
    
     const options = {
       situationalModifiers: [{ name, value: hasWeaponThrow ? -4 : -8, selected: true}],

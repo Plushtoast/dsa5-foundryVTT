@@ -159,6 +159,7 @@ export class DSAAura {
 
         for(let token of canvas.scene.tokens) {
             if(token.id == trespasser.id) continue
+            if('loot' == getProperty(token.actor, "system.merchant.merchantType")) continue
 
             for(let [key, aura] of Object.entries(token.object.auras || {})) {
                 let { auraSource, effect, isAura } = getProperty(aura.template.document, "flags.dsa5")

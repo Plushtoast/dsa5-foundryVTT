@@ -406,6 +406,28 @@ class Enchantable extends ItemSheetdsa5 {
         this.item.update({ flags: { dsa5: { enchantments } } })
     }
 
+    async rollEnchantment(id, enchantments){
+        let enchantment = enchantments.find(x => x.id == id)
+        if (!enchantment.charged) return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+        let item = await this.getSpell(enchantment)
+
+        if (item) {
+            item = item.toObject()
+            item.system.talentValue.value = enchantment.fw
+            const actor = await DSA5_Utility.emptyActor(14, this.item.name)
+            actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
+                const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', { item: this.item.name, spell: item.name })
+                await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+                await actor.basicTest(setupData)
+                if (enchantment.permanent) {
+                    this.toggleChargedState(id, enchantments)
+                } else {
+                    this.deleteEnchantment(id, enchantments)
+                }
+            })
+        }
+    }
+
     activateListeners(html) {
         super.activateListeners(html)
         html.find('.ench-toggle-permanent').click(ev => {
@@ -424,25 +446,7 @@ class Enchantable extends ItemSheetdsa5 {
         })
         html.find('.ench-roll').click(async(ev) => {
             let { id, enchantments } = this.enchantMentId(ev)
-            let enchantment = enchantments.find(x => x.id == id)
-            if (!enchantment.charged) return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
-            let item = await this.getSpell(enchantment)
-
-            if (item) {
-                item = item.toObject()
-                item.system.talentValue.value = enchantment.fw
-                const actor = await DSA5_Utility.emptyActor(14, this.item.name)
-                actor.setupSpell(item, {}, "emptyActor").then(async(setupData) => {
-                    const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', { item: this.item.name, spell: item.name })
-                    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-                    await actor.basicTest(setupData)
-                    if (enchantment.permanent) {
-                        this.toggleChargedState(id, enchantments)
-                    } else {
-                        this.deleteEnchantment(id, enchantments)
-                    }
-                })
-            }
+            this.rollEnchantment(id, enchantments)
         })
         html.find('.ench-fw').change(ev => {
             let { id, enchantments } = this.enchantMentId(ev)

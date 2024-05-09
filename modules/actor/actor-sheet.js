@@ -223,7 +223,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advanceAttribute(attr) {
         const previous = Number(this.actor.system.characteristics[attr].advances)
         const advances = previous + Number(this.actor.system.characteristics[attr].initial)
-        const cost = DSA5_Utility._calculateAdvCost(advances, "E")
+        const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : "E"
+        const cost = DSA5_Utility._calculateAdvCost(advances, category)
         if (await this._checkEnoughXP(cost)) {
             await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous + 1 })
             await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances + 1 }, cost)
@@ -235,7 +236,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const previous = Number(this.actor.system.characteristics[attr].advances)
         const advances = previous + Number(this.actor.system.characteristics[attr].initial)
         if (previous > 0) {
-            const cost = DSA5_Utility._calculateAdvCost(advances, "E", 0) * -1
+            const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : "E"
+            const cost = DSA5_Utility._calculateAdvCost(advances, category, 0) * -1
             await this._updateAPs(cost, { [`system.characteristics.${attr}.advances`]: previous - 1 })
             await APTracker.track(this.actor, { type: "attribute", attr, previous: advances, next: advances - 1 }, cost)
             return true
@@ -264,7 +266,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async _advancePoints(attr) {
         const previous = Number(this.actor.system.status[attr].advances)
-        const cost = DSA5_Utility._calculateAdvCost(previous, "D")
+        const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : "D"
+        const cost = DSA5_Utility._calculateAdvCost(previous, category)
         if (await this._checkEnoughXP(cost) && this._checkMaximumPointAdvancement(attr, previous + 1)) {
             await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous + 1 })
             await APTracker.track(this.actor, { type: "point", attr, previous, next: previous + 1 }, cost)
@@ -275,7 +278,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _refundPointsAdvance(attr) {
         const previous = Number(this.actor.system.status[attr].advances)
         if (previous > 0) {
-            const cost = DSA5_Utility._calculateAdvCost(previous, "D", 0) * -1
+            const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : "D"
+            const cost = DSA5_Utility._calculateAdvCost(previous, category, 0) * -1
             await this._updateAPs(cost, { [`system.status.${attr}.advances`]: previous - 1 })
             await APTracker.track(this.actor, { type: "point", attr, previous, next: previous - 1 }, cost)
             return true
@@ -285,7 +289,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _advanceItem(itemId) {
         const item = this.actor.items.get(itemId)
         const value = Number(item.system.talentValue.value)
-        const cost = DSA5_Utility._calculateAdvCost(value, item.system.StF.value)
+        const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : item.system.StF.value
+        const cost = DSA5_Utility._calculateAdvCost(value, category)
         if (await this._checkEnoughXP(cost) && this.actor._checkMaximumItemAdvancement(item, value + 1)?.result) {
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value + 1 }])
             await this._updateAPs(cost)
@@ -299,7 +304,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         const minValue = item.type == "combatskill" ? 6 : 0
         const value = Number(item.system.talentValue.value)
         if (value > minValue) {
-            const cost = DSA5_Utility._calculateAdvCost(value, item.system.StF.value, 0) * -1
+            const category = this.actor.system.isPet || this.actor.system.isFamiliar ? "C" : item.system.StF.value
+            const cost = DSA5_Utility._calculateAdvCost(value, category, 0) * -1
             await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.talentValue.value": value - 1 }])
             await this._updateAPs(cost)
             await APTracker.track(this.actor, { type: "item", item, previous: value, next: value - 1 }, cost)
@@ -493,12 +499,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
                     let text
                     if (descriptor) {
                         effect = CONFIG.statusEffects.find(x => x.id == descriptor)
-                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
+                        text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.description)}</div>`)
                     } else {
                         //search temporary effects
                         effect = this.actor.effects.find(x => x.id == id)
                         if (effect) {
-                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.icon}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
+                            text = $(`<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`)
                         }
                     }
                     const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription')

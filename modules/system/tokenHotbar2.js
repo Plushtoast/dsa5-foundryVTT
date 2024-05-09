@@ -346,9 +346,20 @@ export default class TokenHotbar2 extends Application {
     }
 
     async handleOnUse(ev, actor, id, tokenId){
-        let item = actor.items.get(id)
+        const item = actor.items.get(id)
         const onUse = new OnUseEffect(item)
         await onUse.executeOnUseEffect()
+    }
+
+    async handleEnchantment(ev, actor, id, tokenId){
+        const ids = id.split("_")
+        const item = actor.items.get(ids[0])
+        if(ev.button == 2) {
+            if(item) item.sheet.render(true)
+        } else {
+            const enchantments = item.getFlag("dsa5", "enchantments")
+            item.sheet.rollEnchantment(ids[1], enchantments)
+        }
     }
 
     async handleGM(ev, actor, id, tokenId){
@@ -425,6 +436,9 @@ export default class TokenHotbar2 extends Application {
                 break
             case "skillgm":
                 this.handleGMRoll(ev)
+                break
+            case "enchantment":
+                this.handleEnchantment(ev, actor, id, tokenId)
                 break
             default:
                 this.handleSkillRoll(ev, actor, id, tokenId)
@@ -636,6 +650,10 @@ export default class TokenHotbar2 extends Application {
     
     _actionEntry(x, cssClass, options = {}) {
         return { name: x.name, id: x.id, icon: x.img, cssClass, abbrev: x.name[0], ...options }
+    }
+
+    _enchantmentEntry(x, cssClass, item, options = {}) {
+        return { name: `${item.name} - ${x.name}`, id: `${item.id}_${x.id}`, icon: Itemdsa5.defaultImages[x.talisman ? "liturgy" : "spell"], cssClass, abbrev: x.name[0], ...options }
     }
 
     _skillEntry(x, cssClass, options = {}) {

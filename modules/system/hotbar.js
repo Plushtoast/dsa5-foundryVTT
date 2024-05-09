@@ -316,13 +316,20 @@ export default class DSA5Hotbar extends Hotbar {
                                 entry.cssClass = "unequipped"
                             }
                             groups.attacks.push(entry)
-                            break
                         default:
                             if (x.getFlag("dsa5", "onUseEffect")) {
                                 if(!groups.skills[x.type])
                                     groups.skills[x.type] = []
                                     
                                 groups.skills[x.type].push(this.tokenHotbar._actionEntry(x, "onUse", { subfunction: "onUse" }))
+                            }
+                            if (x.getFlag("dsa5", "enchantments")) {
+                                if(!groups.skills[x.type])
+                                    groups.skills[x.type] = []                                
+                                
+                                for(let enchantment of x.getFlag("dsa5", "enchantments")) {
+                                    groups.skills[x.type].push(this.tokenHotbar._enchantmentEntry(enchantment, "enchantment", x, { subfunction: "enchantment" }))
+                                }
                             }
                             break
                     }

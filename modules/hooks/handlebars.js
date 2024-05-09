@@ -129,8 +129,8 @@ export default function() {
         select: (selected, options) => {
             const escapedValue = RegExp.escape(Handlebars.escapeExpression(selected));
             const rgx = new RegExp(` value=[\"']${escapedValue}[\"\']`);
-            const html = options.fn(this);
+            const html = options.fn(options.data.root);
             return html.replace(rgx, "$& selected");
-          }
+        }
     })
 }

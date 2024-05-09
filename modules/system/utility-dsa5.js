@@ -313,7 +313,7 @@ export default class DSA5_Utility {
             attrs = [attrs, attrs, attrs, attrs, attrs, attrs, attrs, attrs]
         }
 
-        const actor = await Actordsa5.create({
+        const actor = new Actordsa5({
             name,
             type: "npc",
             items: [],
@@ -331,7 +331,7 @@ export default class DSA5_Utility {
                 },
 
             }
-        }, { temporary: true, noHook: true })
+        }, { noHook: true })
         actor.prepareData()
         return actor
     }

@@ -498,17 +498,23 @@ class GameMasterMenu extends Application {
         const callback = async(dlg) => {
             const number = Number(dlg.find('.input-text').val())
             const familiarXP = Math.max(1, Math.round(number * 0.25))
+            const petXP = Math.max(1, Math.round(number * 0.1))
             const heros = []
             const familiars = []
+            const pets = []
             const actors = [] 
             dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)))
             
             if (!isNaN(number)) {
                 for (const actor of actors) {
                     let xpBonus = number
-                    if (actor.system.isFamiliar || actor.system.isPet) {
+                    if (actor.system.isFamiliar){
                         xpBonus = familiarXP
                         familiars.push(actor)
+                    }
+                    else if(actor.system.isPet) {
+                        xpBonus = petXP
+                        pets.push(actor)
                     } else {
                         heros.push(actor)
                     }
@@ -518,6 +524,7 @@ class GameMasterMenu extends Application {
                 const message = []
                 if (heros.length > 0) message.push(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(heros), number }))
                 if (familiars.length > 0) message.push(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(familiars), number: familiarXP }))
+                if (pets.length > 0) message.push(game.i18n.format('MASTER.xpMessage', { heros: this.getNames(pets), number: petXP }))
 
                 if(message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join("</p><p>")}</p>`))
 

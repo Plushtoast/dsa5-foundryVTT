@@ -259,7 +259,7 @@ export default class OpposedDsa5 {
                 return
             }
             let item = attackerToken.actor.items.get(attacker.testResult.source._id)
-            if (!item) item = new Itemdsa5(attacker.testResult.source, { temporary: true })
+            if (!item) item = new Itemdsa5(attacker.testResult.source)
             if (!item) return
 
             item = item.toObject()
