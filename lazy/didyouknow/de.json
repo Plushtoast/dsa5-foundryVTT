@@ -137,6 +137,13 @@
         "Über das Context Menü von Gegenständen im Inventar kannst du einen Tausch mit anderen Spielern auslösen.",
         "Ausrüstungsgegenstände können nun bei Drag & Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start des Drags gezielt die Münzen aufgenommen werden.",
 
+        "Active Effects erlauben es dir, deinen Spielern und Bösewichten Auren mit Effekten zu geben",
+        "Du kannst ein Kompendium mit deinen ganz eigenen Währungen verwenden, um immer passend für die jeweilige Region gerüstet zu sein.",
+        "Über das Kontextmenü von ausgerüsteten Nahkampfwaffen, kannst du diese auch werfen.",
+        "Mit dem Grundregelwerk-Modul lassen sich die Erfolgswahrscheinlichkeiten bei Proben im Voraus anzeigen.",
+
         "Du kannst deine gierigen Spieler das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die entsprechende Option in den Settings."
+        
+
     ]
 }

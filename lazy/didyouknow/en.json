@@ -134,6 +134,11 @@
         "Players can add notes to NPC with \"Limited\" permissions.",
         "Special abilities of tradition artifacts transfer bonuses if they have been assigned to a tradition artifact and it is also carried in the hand.",
 
+        "Active effects allow you to give your players and villains auras with effects.",
+        "You can use a compendium with your very own currencies to always be prepared for the respective region.",
+        "Via the context menu of equipped melee weapons, you can also throw them.",
+        "With the core rulebook module, you can display the probability of success for tests in advance.",
+
         "You can let your greedy players feel the full weight of their loot. Activate the corresponding option in the settings."
     ]
 }
