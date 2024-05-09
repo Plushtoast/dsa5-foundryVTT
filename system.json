@@ -107,6 +107,7 @@
     "socket": true,
     "initiative": "@status.initiative.value + @status.initiative.die + @status.initiative.diemodifier + 1d99*0.00001",
     "grid": {
+        "diagonals": 2,
         "distance": 1,
         "units": "Schritt"
     },

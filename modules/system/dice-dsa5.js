@@ -170,7 +170,6 @@ export default class DiceDSA5 {
             hasSituationalModifiers: situationalModifiers.length > 0,
             situationalModifiers,
             rollMode: dialogOptions.data.rollMode || rollMode,
-            rollModes: CONFIG.Dice.rollModes,
             defenseCount: await this.getDefenseCount(testData),
             targets,
         })

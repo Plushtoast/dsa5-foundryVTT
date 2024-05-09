@@ -20,23 +20,23 @@
             </div>
             {{/if}} {{#if isRitual}}
 
-            <div class="form-group custom-select ritual">
+            <div class="form-group ritual">
                 <label>{{localize "place"}}</label>
                 <select name="placeModifier">
                     {{selectOptions locationModifiers selected=0 localize=true}}  
                 </select>
             </div>
-            <div class="form-group custom-select">
+            <div class="form-group">
                 <label>{{localize "time"}}</label>
                 <select name="timeModifier">
                     {{selectOptions timeModifiers selected=0 localize=true}}  
                 </select>
             </div>
-            <div class="form-group custom-select">
+            <div class="form-group">
                 <label>{{localize "RITUALMODIFIER.rightClothes"}}</label>
                 <input type="checkbox" id="rightClothes" name="rightClothes" value="1">
             </div>
-            <div class="form-group custom-select">
+            <div class="form-group">
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
             </div>

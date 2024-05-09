@@ -3,21 +3,24 @@
     <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
 </div>
 {{#if difficultyLabels}}
-<div class="form-group custom-select">
+<div class="form-group">
     <label>{{localize "Difficulty"}}</label>
     <select name="testDifficulty">
       {{selectOptions difficultyLabels selected=testDifficulty localize=true}}
     </select>
 </div>
 {{/if}}
-<div class="form-group custom-select">
-    <label>{{localize "DIALOG.RollMode"}}</label>
-    <select name="rollMode">
-      {{selectOptions rollModes selected=rollMode localize=true}}  
-    </select>
+<div class="talent-test-modifier-row form-group">
+  <label>{{localize "DIALOG.RollMode"}}</label>
+  <div class="row-section dsaRollMode">
+    <label class="checkbox" data-tooltip="CHAT.RollPublic"><input type="radio" name="rollMode" value="publicroll" {{#if (eq rollMode "publicroll")}}checked=""{{/if}}><i><i class="fas fa-dice"></i></i></label>
+    <label class="checkbox" data-tooltip="CHAT.RollPrivate"><input type="radio" name="rollMode" value="gmroll" {{#if (eq rollMode "gmroll")}}checked=""{{/if}}><i><i class="fas fa-mask"></i></i></label>
+    <label class="checkbox" data-tooltip="CHAT.RollBlind"><input type="radio" name="rollMode" value="blindroll" {{#if (eq rollMode "blindroll")}}checked=""{{/if}}><i><i class="fas fa-eye-slash"></i><i class="fas fa-mask"></i></i></label>
+    <label class="checkbox" data-tooltip="CHAT.RollSelf"><input type="radio" name="rollMode" value="selfroll" {{#if (eq rollMode "selfroll")}}checked=""{{/if}}><i><i class="fas fa-user-ninja"></i></i></label>
+</div>
 </div>
 {{#if hasSituationalModifiers}}
-<div class="modifiers form-group custom-select">
+<div class="modifiers form-group">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
     <select name="situationalModifiers" multiple>
       {{#each situationalModifiers as |mod t|}}

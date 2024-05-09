@@ -42,33 +42,36 @@
 
     </div>
 
-    <div class="form-group custom-select">
+    <div class="talent-test-modifier-row form-group">
         <label>{{localize "DIALOG.RollMode"}}</label>
-        <select name="rollMode">
-            {{selectOptions rollModes selected=rollMode localize=true}}
-        </select>
+        <div class="row-section dsaRollMode">
+            <label class="checkbox" data-tooltip="CHAT.RollPublic"><input type="radio" name="rollMode" value="publicroll" {{#if (eq rollMode "publicroll")}}checked=""{{/if}}><i><i class="fas fa-dice"></i></i></label>
+            <label class="checkbox" data-tooltip="CHAT.RollPrivate"><input type="radio" name="rollMode" value="gmroll" {{#if (eq rollMode "gmroll")}}checked=""{{/if}}><i><i class="fas fa-mask"></i></i></label>
+            <label class="checkbox" data-tooltip="CHAT.RollBlind"><input type="radio" name="rollMode" value="blindroll" {{#if (eq rollMode "blindroll")}}checked=""{{/if}}><i><i class="fas fa-eye-slash"></i><i class="fas fa-mask"></i></i></label>
+            <label class="checkbox" data-tooltip="CHAT.RollSelf"><input type="radio" name="rollMode" value="selfroll" {{#if (eq rollMode "selfroll")}}checked=""{{/if}}><i><i class="fas fa-user-ninja"></i></i></label>
+        </div>
     </div>
 
-    <div class="form-group custom-select">
+    <div class="form-group">
         <label>{{localize "camplocation"}}</label>
         <select name="regnerationCampLocations">
             {{selectOptions regnerationCampLocations selected=0 localize=true}}  
         </select>
     </div>
 
-    <div class="form-group custom-select">
+    <div class="form-group">
         <label>{{localize "interruption"}}</label>
         <select name="regenerationInterruptOptions">
             {{selectOptions regenerationInterruptOptions selected=0 localize=true}}  
         </select>
     </div>
 
-    <div class="form-group custom-select">
+    <div class="form-group">
         <label>{{localize "badEnvironment"}} (x 0.5)</label>
         <input type="checkbox" name="badEnvironment" value="1">
     </div>
     {{#if hasSituationalModifiers}}
-    <div class="modifiers form-group custom-select">
+    <div class="modifiers form-group">
         <label>{{localize "DIALOG.SituationalModifiers"}}</label>
         <select name="situationalModifiers" multiple>
         {{#each situationalModifiers as |mod t|}}
@@ -82,26 +85,26 @@
     {{/if}}
 
     {{#if (or showAspModifier showKapModifier)}}
-        <div class="form-group custom-select">
+        <div class="form-group">
             <label>{{localize 'CHAR.LEP'}}</label>
             <input type="checkbox" name="regenerateLeP" value="1" checked="checked">
         </div>
     {{else}}
-        <div class="form-group custom-select" hidden>
+        <div class="form-group" hidden>
             <label hidden>nur LeP</label>
             <input type="checkbox" name="regenerateLeP" value="1" checked="checked" hidden>
         </div>    
     {{/if}}
     
     {{#if showAspModifier}}
-        <div class="form-group custom-select">
+        <div class="form-group">
             <label>{{localize 'CHAR.ASP'}}</label>
             <input type="checkbox" name="regenerateAsP" value="1" checked="checked">
         </div>    
     {{/if}}
     
     {{#if showKapModifier}}
-        <div class="form-group custom-select">
+        <div class="form-group">
             <label>{{localize 'CHAR.KAP'}}</label>
             <input type="checkbox" name="regenerateKaP" value="1" checked="checked">
         </div> 

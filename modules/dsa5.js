@@ -49,7 +49,7 @@ import APTracker from "./system/ap-tracker.js"
 
 Hooks.once("init", () => {
     console.log("Initializing DSA5 system")
-
+    
     CONFIG.statusEffects = DSA5.statusEffects
     game.dsa5 = {
         apps: {

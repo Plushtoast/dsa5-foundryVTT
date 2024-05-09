@@ -1,5 +1,10 @@
 {{#if (eq document.flags.core.sheetClass "dsa5.MerchantSheetDSA5")}}
-{{> systems/dsa5/templates/items/browse/garadan.html}}
+    {{#if (or (eq document.system.merchant.merchantType 'none') (not document.system.merchant.merchantType))}}
+        {{> systems/dsa5/templates/items/browse/actor.html}}
+    {{else}}
+        {{> systems/dsa5/templates/items/browse/garadan.html}}
+    {{/if}}
 {{else}}
-{{> systems/dsa5/templates/items/browse/actor.html}}
+    {{> systems/dsa5/templates/items/browse/actor.html}}
 {{/if}}
+{{log document.system.merchant.merchantType}}

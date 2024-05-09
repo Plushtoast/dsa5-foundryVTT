@@ -2034,7 +2034,7 @@ export default class Actordsa5 extends Actor {
         testData.situationalModifiers.push({
           name: game.i18n.localize("fallingFloor"), value: html.find('[name="fallingFloor"]').val()
         })
-        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.fallingHeight = html.find('[name="testModifier"]').val();
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
@@ -2084,7 +2084,7 @@ export default class Actordsa5 extends Actor {
       },
       callback: (html, options = {}) => {
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
-        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.situationalModifiers.push(
           {
             name:
@@ -2166,7 +2166,7 @@ export default class Actordsa5 extends Actor {
         isDodge: true
       },
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
         testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "parry"));
         testData.situationalModifiers.push(
@@ -2227,7 +2227,7 @@ export default class Actordsa5 extends Actor {
         modifier: options.modifier || 0,
       },
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
         mergeObject(testData.extra.options, options);

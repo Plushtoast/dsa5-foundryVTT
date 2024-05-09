@@ -1107,7 +1107,7 @@ class SpellItemDSA5 extends Itemdsa5 {
             template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
             data,
             callback: async(html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
                 await this.getCallbackData(testData, html, actor)
                 mergeObject(testData.extra.options, options)
                 return { testData, cardOptions }
@@ -1196,7 +1196,7 @@ class CombatskillDSA5 extends Itemdsa5 {
                 rollMode: options.rollMode,
             },
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 mergeObject(testData.extra.options, options)
                 return { testData, cardOptions }
@@ -1385,7 +1385,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
@@ -1543,7 +1543,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
 
                 testData.situationalModifiers.push({
@@ -1790,7 +1790,7 @@ class SkillItemDSA5 extends Itemdsa5 {
             template: "/systems/dsa5/templates/dialog/skill-dialog.html",
             data,
             callback: (html, options = {}) => {
-                cardOptions.rollMode = html.find('[name="rollMode"]').val()
+                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
                 testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()]
                 testData.situationalModifiers = Actordsa5._parseModifiers(html)
                 testData.advancedModifiers = {

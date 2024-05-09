@@ -7,8 +7,8 @@ export default function() {
             let curindex = 0
 
             for (let term of this.terms) {
-                const isDie = term instanceof DiceTerm || term.class == "DiceTerm" || term instanceof foundry.dice.terms.Die || term.class == "Die"
-                const isOperator = term instanceof OperatorTerm
+                const isDie = term instanceof foundry.dice.terms.DiceTerm || term.class == "DiceTerm" || term instanceof foundry.dice.terms.Die || term.class == "Die"
+                const isOperator = term instanceof foundry.dice.terms.OperatorTerm
                 if (isDie || term.faces) {
                     if (term.results[index - curindex]) {
                         let oldVal = term.results[index - curindex].result

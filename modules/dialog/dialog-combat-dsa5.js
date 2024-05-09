@@ -160,7 +160,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 const htmlMods = $(this._element).find("[name=situationalModifiers]")
                 if (situationalModifiers.length > 0) {
                     if (htmlMods.length == 0) {
-                        const modBox = `<div class="modifiers form-group custom-select">
+                        const modBox = `<div class="modifiers form-group">
                                             <label>${game.i18n.localize("DIALOG.SituationalModifiers")}</label>
                                             <select name="situationalModifiers" multiple />
                                         </div>`
@@ -511,7 +511,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     static _resolveDefault(testData, cardOptions, html, options) {
-        cardOptions.rollMode = html.find('[name="rollMode"]').val();
+        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
         mergeObject(testData.extra.options, options);
     }
