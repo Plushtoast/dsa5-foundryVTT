@@ -102,7 +102,7 @@ export function setupConfiguration() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 27,
+        default: 28,
         type: Number
     })
 
