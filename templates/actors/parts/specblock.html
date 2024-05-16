@@ -3,7 +3,7 @@
 <div class="groupbox">
     <div class="row-section">
         <div class="col header-label lineheight">
-            <b>{{localize (concat "SpecCategory." cat)}}</b>
+            <b>{{localize (concat "SpecCategory." cat)}}{{#if (eq cat 'language')}} {{{../prepare.languagePoints}}}{{/if}}</b>
         </div>
     </div>
     <div class="row-section wrap cards">

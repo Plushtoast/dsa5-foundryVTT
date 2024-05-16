@@ -1303,10 +1303,7 @@ export default class Actordsa5 extends Actor {
       diseases,
       canBuild: game.dsa5.sheets.DSACharBuilder && !actorData.system.details.species?.value,
       itemModifiers: this.system.itemModifiers,
-      languagePoints: {
-        used: actorData.system.freeLanguagePoints?.used || 0,
-        available: actorData.system.freeLanguagePoints?.value || 0,
-      },
+      languagePoints: actorData.system.freeLanguagePoints?.value ? `<span data-tooltip="languagePoints">(${actorData.system.freeLanguagePoints?.used}/${actorData.system.freeLanguagePoints?.value})</span>` : "",
       schips,
       groupschips,
       guidevalues,
