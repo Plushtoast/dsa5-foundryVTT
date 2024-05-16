@@ -1,0 +1,24 @@
+<h4>{{localize 'enchantment'}}</h4>
+<div class="row-section wrap">
+    
+    <div class="col table-title noBorder">
+        {{localize "Fw"}}
+    </div>
+    <div class="col">
+        {{enchantment.fw}}
+    </div>
+
+    <div class="col table-title noBorder">
+        {{localize "WEAPON.loaded"}}
+    </div>    
+    <div class="col">
+        <i class="fas fa-{{ifThen enchantment.charged 'check' 'close'}}"></i>
+    </div>
+
+    <div class="col table-title noBorder">
+        {{localize "permanent"}}
+    </div>
+    <div class="col">
+        <i class="fas fa-{{ifThen enchantment.permanent 'check' 'close'}}"></i>
+    </div>
+</div>

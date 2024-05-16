@@ -14,6 +14,7 @@ import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js"
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 import Riding from "../system/riding.js"
 import { UserMultipickDialog } from "../dialog/addTargetDialog.js"
+import DSA5Payment from "../system/payment.js"
 const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class Itemdsa5 extends Item {
@@ -722,16 +723,7 @@ export default class Itemdsa5 extends Item {
             let price = chatData.system.price.value
             if (chatData.system.QL) price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData)
 
-            chatData.system.price.D = Math.floor(price / 10)
-            price -= chatData.system.price.D * 10
-            chatData.system.price.S = Math.floor(price)
-            price -= chatData.system.price.S
-            chatData.system.price.H = Math.floor(price / 0.1)
-            price -= chatData.system.price.H * 0.1
-            chatData.system.price.K = Math.round(price / 0.01)
-
-            const prices = ["D", "S", "H", "K"].map(x =>
-                    `${chatData.system.price[x]} <div data-tooltip="${game.i18n.localize(`Money-${x}`)}" class="chatmoney money-${x}"></div>`).join(",")
+            const prices = await DSA5Payment._moneyToString(price)
             chatData.properties.push(`<b>${game.i18n.localize("price")}</b>: ${prices}`)
         }
 

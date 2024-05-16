@@ -16,7 +16,7 @@ export default function() {
             activeEffects = await this.actor.actorEffects()
 
             if(this.actor.isSwarm()) {
-                actorEffects.push(new ActiveEffect({
+                activeEffects.push(new ActiveEffect({
                     img: "systems/dsa5/icons/thirdparty/bee.svg",
                     id: "swarm",
                     name: "swarm.name",

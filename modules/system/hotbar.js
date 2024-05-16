@@ -167,6 +167,13 @@ export default class DSA5Hotbar extends Hotbar {
                 description = $(await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, { isGM: game.user.isGM, ...(await item.sheet.getData()), document: item, skipHeader:true, hint: true })).find('.groupbox').html()
                 
                 break
+            case "enchantment": 
+                const ids = data.id.split("_")
+                item = this.token.actor?.items.get(ids[0])
+                const enchantment = item.getFlag("dsa5", "enchantments").find(x => x.id == ids[1])
+                data.name = enchantment.name
+                description = await renderTemplate("systems/dsa5/templates/items/enchantment-preview.html", { enchantment, document: item })
+                break
             default:
                 return
         }

@@ -1578,9 +1578,12 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  async _preUpdate(data, options, user) {
-    await super._preUpdate(data, options, user);
+  _containsChangedAttribute(data, key) {
+    const newValue = getProperty(data, key)
+    return [null, undefined].includes(newValue) || newValue === getProperty(this, key) ? false : newValue
+  }
 
+  async _preUpdate(data, options, user) {
     const statusText = {
       wounds: 0x8b0000,
       astralenergy: 0x0b0bd9,
@@ -1592,28 +1595,31 @@ export default class Actordsa5 extends Actor {
 
     const scrolls = [];
     for (let key of Object.keys(statusText)) {
-      const value = getProperty(data, `system.status.${key}.value`);
-      if (value)
+      const value = this._containsChangedAttribute(data, `system.status.${key}.value`)
+      if (value !== false)
         scrolls.push({
           value: value - this.system.status[key].value,
           stroke: statusText[key],
         });
     }
+
     if (scrolls.length) this.tokenScrollingText(scrolls);
 
-    const swarmCount = getProperty(data, "system.swarm.count");
-    if (swarmCount && !options.skipSwarmUpdate) {
+    const swarmCount = this._containsChangedAttribute(data, "system.swarm.count");
+    if ((swarmCount !== false) && !options.skipSwarmUpdate) {
        const hp = getProperty(data, "system.status.wounds.value") || this.system.status.wounds.value;
        const delta = swarmCount - (this.system.swarm.count || 1);
        const baseHp = this.system.swarm.maxwounds || this.system.status.wounds.max;
        setProperty(data, "system.status.wounds.value", Math.max(0, hp + delta * baseHp));
     }
 
-    const apSum = getProperty(data, "system.details.experience.total");
-    if (apSum) {
+    const apSum = this._containsChangedAttribute(data, "system.details.experience.total");
+    if (apSum !== false) {
       const previous = this.system.details.experience.total
       APTracker.track(this, { type: "sum", previous, next: apSum }, apSum - previous)
     }
+
+    return super._preUpdate(data, options, user);
   }
 
   async applyDamage(rollFormula) {

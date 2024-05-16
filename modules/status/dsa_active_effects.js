@@ -70,7 +70,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     }
 
     async _preUpdate(changed, options, user) {
-        super._preUpdate(changed, options, user);
+        await super._preUpdate(changed, options, user);
         this._clearModifiedItems()
     }
 

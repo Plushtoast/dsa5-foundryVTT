@@ -107,11 +107,13 @@ export class DSAAura {
     }
 
     static async drawAuras(token, force = false) {
+        if(!token.actor) return
+
         token.auras ||= {}
 
         const foundAuras = []
 
-        if(force) DSAAura.removeAuras(token, foundAuras)
+        if(force) DSAAura.removeAuras(token, foundAuras)        
 
         for(let aura of token.actor.auras) {
             const effect = await fromUuid(aura)
@@ -158,7 +160,7 @@ export class DSAAura {
         if(!DSA5_Utility.isActiveGM() || !game.canvas) return
 
         for(let token of canvas.scene.tokens) {
-            if(token.id == trespasser.id) continue
+            if(!token.actor || token.id == trespasser.id) continue
             if('loot' == getProperty(token.actor, "system.merchant.merchantType")) continue
 
             for(let [key, aura] of Object.entries(token.object.auras || {})) {
