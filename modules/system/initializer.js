@@ -3,7 +3,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 const { getProperty } = foundry.utils
 
 export default class DSA5Initializer extends Dialog {
-    constructor(title, content, module, lang = "") {
+    constructor(title, content, module, lang = "", options = {}) {
         let data = {
             title,
             content,
@@ -32,6 +32,7 @@ export default class DSA5Initializer extends Dialog {
         this.scenes = {}
         this.actors = {}
         this.lock = false
+        this.scopeOptions = options
     }
 
     async initNotes(entry, journs, finishedIds){
@@ -157,7 +158,8 @@ export default class DSA5Initializer extends Dialog {
     }
 
     async loadJson() {
-        const file = await fetch(`modules/${this.module}/initialization${this.lang}.json`)
+        const initializer = this.scopeOptions.initializer || `initialization${this.lang}`
+        const file = await fetch(`modules/${this.module}/${initializer}.json`)
         return await file.json()
     }
 
@@ -167,23 +169,29 @@ export default class DSA5Initializer extends Dialog {
         initButton.prepend('<i class="fas fa-spinner fa-spin"></i>')
         let bookData = {}
         try {
-            if (game.settings.settings.has(`${this.module}.initialized`))
-                await game.settings.set(this.module, "initialized", true)
+            if (game.settings.settings.has(`${this.moduleScope}.initialized`))
+                await game.settings.set(this.moduleScope, "initialized", true)
         } catch {}
 
-        try {
-            await fetch(`modules/${this.module}/adventure${this.lang}.json`).then(async r => r.json()).then(async json => {
+        if(this.scopeOptions.scope) {
+            await fetch(`modules/${this.module}/${this.scopeOptions.scope}.json`).then(async r => r.json()).then(async json => {
                 bookData = json
             })
-        } catch {
+        } else {
             try {
-                await fetch(`modules/${this.module}/adventure.json`).then(async r => r.json()).then(async json => {
+                await fetch(`modules/${this.module}/adventure${this.lang}.json`).then(async r => r.json()).then(async json => {
                     bookData = json
                 })
             } catch {
-                console.warn(`Could not find book data for ${this.module} import.`)
+                try {
+                    await fetch(`modules/${this.module}/adventure.json`).then(async r => r.json()).then(async json => {
+                        bookData = json
+                    })
+                } catch {
+                    console.warn(`Could not find book data for ${this.moduleScope} import.`)
+                }
             }
-        }
+        }        
 
         const json = await this.loadJson()
         let foldersToCreate = json.folders
@@ -203,7 +211,7 @@ export default class DSA5Initializer extends Dialog {
             const updates = []
             for (let folder in this.folders) {
                 const flag = this.folders[folder].getFlag("dsa5", "parent")
-                let parent = flag == headReplace ? game.i18n.localize(`${this.module}.name`) : flag
+                let parent = flag == headReplace ? game.i18n.localize(`${this.moduleScope}.name`) : flag
                 if (parent) {
                     updates.push({ _id: this.folders[folder].id, parent: this.folders[parent].id })
                 }
@@ -314,8 +322,8 @@ export default class DSA5Initializer extends Dialog {
     }
 
     async dontInitialize() {
-        if (game.settings.settings.has(`${this.module}.initialized`))
-            await game.settings.set(this.module, "initialized", true)
+        if (game.settings.settings.has(`${this.moduleScope}.initialized`))
+            await game.settings.set(this.moduleScope, "initialized", true)
 
         ui.notifications.notify(game.i18n.localize("initSkipped"))
         await this.close()
@@ -330,8 +338,12 @@ export default class DSA5Initializer extends Dialog {
         }
     }
 
+    get moduleScope() {
+        return this.scopeOptions.scope || this.module
+    }
+
     async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {
-        if (!folderName) folderName = game.i18n.localize(`${this.module}.name`)
+        if (!folderName) folderName = game.i18n.localize(`${this.moduleScope}.name`)
 
         return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color)
     }
