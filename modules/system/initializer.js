@@ -31,7 +31,7 @@ export default class DSA5Initializer extends Dialog {
         this.scenes = {}
         this.actors = {}
         this.lock = false
-        this.options = options
+        this.scopeOptions = options
     }
 
     async initNotes(entry, journs, finishedIds){
@@ -157,7 +157,7 @@ export default class DSA5Initializer extends Dialog {
     }
 
     async loadJson() {
-        const initializer = this.options.initializer || `initialization${this.lang}`
+        const initializer = this.scopeOptions.initializer || `initialization${this.lang}`
         const file = await fetch(`modules/${this.module}/${initializer}.json`)
         return await file.json()
     }
@@ -172,8 +172,8 @@ export default class DSA5Initializer extends Dialog {
                 await game.settings.set(this.moduleScope, "initialized", true)
         } catch {}
 
-        if(this.options.adventure) {
-            await fetch(`modules/${this.module}/${this.options.adventure}.json`).then(async r => r.json()).then(async json => {
+        if(this.scopeOptions.scope) {
+            await fetch(`modules/${this.module}/${this.scopeOptions.scope}.json`).then(async r => r.json()).then(async json => {
                 bookData = json
             })
         } else {
@@ -338,7 +338,7 @@ export default class DSA5Initializer extends Dialog {
     }
 
     get moduleScope() {
-        return this.options.scope || this.module
+        return this.scopeOptions.scope || this.module
     }
 
     async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = "") {

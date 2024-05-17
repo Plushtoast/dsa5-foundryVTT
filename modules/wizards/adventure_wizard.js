@@ -561,7 +561,7 @@ export default class BookWizard extends Application {
             if (this.selectedChapter) {
                 if (this.selectedChapter == "prep") {
                     let info = {
-                        initDescr: game.i18n.format(`${this.bookData.moduleName}.importContent`, { defaultText: game.i18n.localize('importDefault') })
+                        initDescr: game.i18n.format(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: game.i18n.localize('importDefault') })
                     }
 
                     let modules = this.bookData.modules
@@ -736,7 +736,7 @@ export default class BookWizard extends Application {
 
 class InitializerForm extends FormApplication {
     render(mod, options) {
-        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`${mod}.importContent`, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang, options).render(true)
+        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`${options?.scope || mod}.importContent`, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang, options).render(true)
     }
 }
 
