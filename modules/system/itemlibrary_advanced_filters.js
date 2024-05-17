@@ -43,12 +43,14 @@ Hooks.once("ready", () => {
             ],
             rangeweapon: [
                 { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: range },
-                { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups }
+                { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups },
+                { label: "PLANT.region", attr: "region", type: "text" },
             ],
             meleeweapon: [
                 { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: melee },
                 { label: "guidevalue", attr: "guidevalue.value", type: "select", options: DSA5.combatskillsGuidevalues },
-                { label: "reach", attr: "reach.value", type: "select", options: DSA5.meleeRanges }
+                { label: "reach", attr: "reach.value", type: "select", options: DSA5.meleeRanges },
+                { label: "PLANT.region", attr: "region", type: "text" },
             ],
             poison: [
                 { label: "resistanceModifier", attr: "resistance.value", type: "select", options: DSA5.magicResistanceModifiers },
@@ -127,7 +129,8 @@ Hooks.once("ready", () => {
             ],
             armor: [
                 { label: "protection", attr: "protection.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4", "5": "5", "6": "6", "7": "7" } },
-                { label: "encumbrance", attr: "encumbrance.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4" } }
+                { label: "encumbrance", attr: "encumbrance.value", type: "select", options: { "0": "0", "1": "1", "2": "2", "3": "3", "4": "4" } },
+                { label: "PLANT.region", attr: "region", type: "text" },
             ],
             plant: [
                 { label: "PLANT.landscape", attr: "location.landscape", type: "text" },

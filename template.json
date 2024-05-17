@@ -753,6 +753,7 @@
             ],
             "crit": 1,
             "botch": 20,
+            "region": "",
             "damage": {
                 "value": "1d6"
             },
@@ -787,6 +788,7 @@
             ],
             "crit": 1,
             "botch": 20,
+            "region": "",
             "damage": {
                 "value": "1d6"
             },
@@ -827,6 +829,7 @@
                 "description",
                 "encumbrance"
             ],
+            "region": "",
             "protection": {
                 "value": 0,
                 "leftleg": 0,
