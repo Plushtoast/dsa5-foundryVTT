@@ -450,7 +450,7 @@ export default class BookWizard extends Application {
     }
 
     async importBook() {
-        if (game.user.isGM) new InitializerForm().render(this.bookData.moduleName)
+        if (game.user.isGM) new InitializerForm().render(this.bookData.moduleName, this.bookData.options)
     }
 
     async loadBook(id, html, type) {        
@@ -735,8 +735,8 @@ export default class BookWizard extends Application {
 }
 
 class InitializerForm extends FormApplication {
-    render(mod) {
-        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`${mod}.importContent`, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang).render(true)
+    render(mod, options) {
+        new game.dsa5.apps.DSA5Initializer("DSA5 Module Initialization", game.i18n.format(`${mod}.importContent`, { defaultText: game.i18n.localize("importDefault") }), mod, game.i18n.lang, options).render(true)
     }
 }
 
