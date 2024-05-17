@@ -23,7 +23,7 @@
         {{/each}} {{/each}}
         {{#if gmMode}}
         <li class="modifier primary" data-category="modifier" data-tooltip="TT.tokenhotbarMod" data-subfunction="none">
-            <input type="number" class="quantity-click modifierVal" step="1" name="modVal" value="0">
+            <input type="number" class="quantity-click modifierVal" data-tooltip="TT.strgx10" step="1" name="modVal" value="0">
         </li>
         <li class="itdarkness primary" data-category="darkness" data-tooltip="MASTER.threshold" data-subfunction="darkness">
             <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{darkness}}">

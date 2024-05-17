@@ -1129,6 +1129,7 @@
         "placeTemplate": "Flächeneffekt Template platzieren",
         "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern",
         "tokenhotbarMod": "Modifikator/Wert",
+        "strgx10": "<small>Links-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i>-1<br/>& STRG x10</small>",
         "tokenhotbarMoney": "Links-<i class=\"fas fa-computer-mouse\"></i>: bezahlen<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: auszahlen",
         "tokenhotbarSkill": "Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
         "effectVariant": "Alternativer Effekt wie z.B. ein zweiter oder dritter Angriff",

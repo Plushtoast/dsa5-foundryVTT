@@ -5,17 +5,17 @@
 
             <div class="form-group">
                 <label>{{localize "maintainedSpells"}}</label>
-                <input type="number" name="maintainedSpells" class="quantity-click" value="0" />
+                <input type="number" name="maintainedSpells" class="quantity-click" data-tooltip="TT.strgx10" value="0" />
             </div>
             {{#if hasSKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "skModifier"}}</label>
-                <input type="number" class="quantity-click" name="skModifier" value="{{SKModifier}}" />
+                <input type="number" class="quantity-click" data-tooltip="TT.strgx10" name="skModifier" value="{{SKModifier}}" />
             </div>
             {{/if}} {{#if hasZKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "zkModifier"}}</label>
-                <input type="number" class="quantity-click" name="zkModifier" value="{{ZKModifier}}" />
+                <input type="number" class="quantity-click" data-tooltip="TT.strgx10" name="zkModifier" value="{{ZKModifier}}" />
             </div>
             {{/if}}{{#if isCeremony}}
             <div class="form-group ritual">

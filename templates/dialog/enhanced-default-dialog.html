@@ -31,18 +31,18 @@
     <label>{{localize "Modifier"}}</label>
     <div class="row-section">
         <div class="number-input col five">
-            <input class="quantity-click" type="number" name="testModifier" value="{{testModifier}}" />
+            <input class="quantity-click" data-tooltip="TT.strgx10" type="number" name="testModifier" value="{{testModifier}}" />
         </div>
         {{#each characteristics as |item i|}}
         <div class="number-input col five" data-tooltip="MODS.partChecks">
-            <input class="quantity-click" type="number" name="ch{{i}}" value="0" />
+            <input class="quantity-click" data-tooltip="TT.strgx10" type="number" name="ch{{i}}" value="0" />
         </div>
         {{/each}}
         <div class="number-input col five" data-tooltip="MODS.FW">
-            <input class="quantity-click" type="number" name="fw" value="0" />
+            <input class="quantity-click" data-tooltip="TT.strgx10" type="number" name="fw" value="0" />
         </div>
         <div class="number-input col five" data-tooltip="MODS.QS">
-            <input class="quantity-click" type="number" name="qs" value="0" />
+            <input class="quantity-click" data-tooltip="TT.strgx10" type="number" name="qs" value="0" />
         </div>
     </div>
 </div>

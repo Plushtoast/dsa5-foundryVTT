@@ -1132,6 +1132,7 @@
         "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease",
         "onlyGM": "Only visible to the gamemaster.",
         "placeTemplate": "Place Area of Effect template",
+        "strgx10": "<small>Left-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Right-<i class=\"fas fa-computer-mouse\"></i> -1<br/>& CTRL x10</small>",
         "tokenhotbarMod": "Modifier/Value",
         "tokenhotbarMoney": "Left-<i class=\"fas fa-computer-mouse\"></i>: pay<br>Right-<i class=\"fas fa-computer-mouse\"></i>: get paid",
         "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
