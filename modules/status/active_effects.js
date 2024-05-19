@@ -358,7 +358,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
         const hasSuccessEffects = ["poison", "disease"].includes(source.type)
 
-        if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 2 : 1
+        if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 1 : 2
 
         const attacker = DSA5_Utility.getSpeaker(speaker) ||
             DSA5_Utility.getSpeaker(getProperty(message.flags, "data.preData.extra.speaker")) ||
