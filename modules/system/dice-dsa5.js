@@ -1348,7 +1348,7 @@ export default class DiceDSA5 {
         } 
         
         if (["disease", "poison"].includes(source.type)) {
-            const search = testData.successLevel > 0 ? 2 : 1
+            const search = testData.successLevel > 0 ? 1 : 2
             return source.effects.filter(x => getProperty(x, "flags.dsa5.successEffect") == search || !getProperty(x, "flags.dsa5.successEffect")).length > 0            
         }
 
