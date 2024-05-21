@@ -33,7 +33,7 @@ export default class Migrakel {
             new Dialog({
                 title: game.i18n.localize("Migrakel.Migration"),
                 content,
-                default: "yes",
+                default: "Yes",
                 buttons,
                 close: () => {
                     resolve([false]);

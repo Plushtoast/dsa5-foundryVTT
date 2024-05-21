@@ -522,7 +522,6 @@ class SelectTradefriendDialog extends Dialog{
         const dialog = new SelectTradefriendDialog({
             title: game.i18n.localize("DIALOG.setTargetToUser"),
             content: await renderTemplate('systems/dsa5/templates/dialog/selectTradeFriend.html', { users }),
-            default: "yes",
             buttons: {},
         })
         dialog.actor = actor

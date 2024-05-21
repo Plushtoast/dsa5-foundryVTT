@@ -107,7 +107,7 @@ export class DSA5Combat extends Combat {
             new Dialog({
                 title: game.i18n.localize("BRAWLING.unarmEveryone"),
                 content: `<p>${game.i18n.localize("BRAWLING.unarmEveryoneText")}</p>`,
-                default: "yes",
+                default: "Yes",
                 buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',

@@ -311,7 +311,7 @@ export default class TokenHotbar2 extends Application {
                         new Dialog({
                             title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
                             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
-                            default: 'yes',
+                            default: 'Yes',
                             buttons: {
                                 Yes: {
                                     icon: '<i class="fa fa-check"></i>',
