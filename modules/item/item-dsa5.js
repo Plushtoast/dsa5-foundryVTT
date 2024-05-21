@@ -1541,8 +1541,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
                 testData.situationalModifiers.push({
                     name: game.i18n.localize("zkModifier"),
                     value: html.find('[name="zkModifier"]').val() || 0,
-                })
-                testData.situationalModifiers.push({
+                }, {
                     name: game.i18n.localize("skModifier"),
                     value: html.find('[name="skModifier"]').val() || 0,
                 })

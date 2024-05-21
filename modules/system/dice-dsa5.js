@@ -1443,7 +1443,7 @@ export default class DiceDSA5 {
                 //Seems to be a foundry bug, after edit inline rolls are not converted anymore
             const actor =
                 ChatMessage.getSpeakerActor(rerenderMessage.speaker) ||
-                game.users.get(rerenderMessage.user).character
+                game.users.get(rerenderMessage.author)?.character
             const rollData = actor ? actor.getRollData() : {}
             const enriched = await TextEditor.enrichHTML(html, {rollData, async: true})
             chatOptions["content"] = enriched
@@ -1499,7 +1499,8 @@ export default class DiceDSA5 {
 
         let data = message.flags.data
         let newTestData = data.preData
-        newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false)
+
+        newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker)?.toObject(false)
         if(newTestData.extra.options.cheat) delete newTestData.extra.options.cheat
         let index
 

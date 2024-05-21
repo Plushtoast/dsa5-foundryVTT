@@ -241,7 +241,7 @@ export class AuraTemplate extends MeasuredTemplateDSA {
             direction: 0,
             x: token.center.x,
             y: token.center.y,
-            borderColor: effect.flags.dsa5.borderColor,
+            borderColor: effect.flags.dsa5.borderColor,        
             flags: {
                 dsa5: {
                     effect: newEffect,
@@ -265,18 +265,18 @@ export class AuraTemplate extends MeasuredTemplateDSA {
     
     highlightGrid() {
         super.highlightGrid();
-        game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;    
+        canvas.interface.grid.getHighlightLayer(this.highlightId).alpha = 0;    
     }  
 
     _applyRenderFlags(flags) {
         super._applyRenderFlags(flags); 
-        if(flags.refreshState) game.canvas.grid.getHighlightLayer(this.highlightId).alpha = 0;
+        if(flags.refreshState) canvas.interface.grid.getHighlightLayer(this.highlightId).alpha = 0;
     }
 
     _refreshTemplate() {
         const t = this.template.clear();
         if(this.document.borderColor != null)
-            t.lineStyle(this.document.flags.dsa5.borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
+            t.lineStyle(this.document.flags.dsa5.borderThickness, this.document.borderColor, 0.75).beginFill(0x000000, 0.0);
 
         t.drawShape(this.shape);
       }

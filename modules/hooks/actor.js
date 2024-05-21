@@ -300,9 +300,9 @@ export default function() {
     }
 
     Hooks.on("updateToken", (token, data, options) => {
-        Riding.updateTokenHook(token, data, options);
+        Riding.updateTokenHook(token, data, options);      
 
-        (token.object._animation || Promise.resolve()).then(() => {
+        (token.object.animationContexts.entries().next().value[1].promise || Promise.resolve()).then(() => {
            token.object.drawAuras();
         })
     })

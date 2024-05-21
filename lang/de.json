@@ -1337,7 +1337,7 @@
         "always": "Immer",
         "onSuccess": "Bei Erfolg",
         "onFailure": "Bei Misserfolg",
-        "onDelayed": "Verzögerter Start (Sekunden)",
+        "onDelayed": "Verzögerter Start",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",

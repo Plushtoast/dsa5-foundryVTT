@@ -1307,7 +1307,7 @@
         "always": "Always",
         "onSuccess": "On success",
         "onFailure": "On failure",
-        "onDelayed": "Delayed start (Seconds)",
+        "onDelayed": "Delayed start",
         "creature": "Actorlink (e.g. dsa5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
