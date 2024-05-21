@@ -10,7 +10,7 @@ export default function() {
             new Dialog({
                 title: game.i18n.localize("DIALOG.warning"),
                 content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
-                default: "yes",
+                default: "Yes",
                 buttons: {
                   Yes: {
                     icon: '<i class="fa fa-check"></i>',

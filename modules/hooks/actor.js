@@ -23,7 +23,7 @@ export default function() {
                 new Dialog({
                     title: effect.name,
                     content,
-                    default: 'yes',
+                    default: 'Yes',
                     buttons: {
                         Yes: {
                             icon: '<i class="fa fa-check"></i>',

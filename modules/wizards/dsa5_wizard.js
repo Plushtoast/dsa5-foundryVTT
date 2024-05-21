@@ -183,7 +183,6 @@ export default class WizardDSA5 extends Application {
                     ok: {
                         icon: '<i class="fas fa-check"></i>',
                         label: game.i18n.localize('Ok'),
-                        default: true,
                         callback: () => {
                             resolve(false);
                         },
@@ -191,7 +190,6 @@ export default class WizardDSA5 extends Application {
                     cancel: {
                         icon: '<i class="fas fa-close"></i>',
                         label: game.i18n.localize('Cancel'),
-                        default: true,
                         callback: () => {
                             resolve(true);
                         },

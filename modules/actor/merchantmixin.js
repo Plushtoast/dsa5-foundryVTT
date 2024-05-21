@@ -360,7 +360,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         new Dialog({
             title: game.i18n.localize("MERCHANT.clearInventory"),
             content: game.i18n.localize("MERCHANT.deleteAllGoods"),
-            default: 'yes',
+            default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
@@ -521,7 +521,6 @@ class SelectTradefriendDialog extends Dialog{
         const dialog = new SelectTradefriendDialog({
             title: game.i18n.localize("DIALOG.setTargetToUser"),
             content: await renderTemplate('systems/dsa5/templates/dialog/selectTradeFriend.html', { users }),
-            default: "yes",
             buttons: {},
         })
         dialog.actor = actor

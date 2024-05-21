@@ -22,8 +22,7 @@ export class AddTargetDialog extends Dialog{
         return new AddTargetDialog({
             title: game.i18n.localize("DIALOG.addTarget"),
             content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
-            default: "yes",
-                buttons: {},
+            buttons: {},
         })
     }
 
@@ -83,7 +82,6 @@ export class SelectUserDialog extends Dialog{
         return new SelectUserDialog({
             title: game.i18n.localize("DIALOG.setTargetToUser"),
             content: await renderTemplate('systems/dsa5/templates/dialog/selectForUserDialog.html', { users }),
-            default: "yes",
             buttons: {},
         })
     }
@@ -125,7 +123,7 @@ export class UserMultipickDialog extends Dialog{
         new UserMultipickDialog({
             title: game.i18n.localize("SHEET.PostItem"),
             content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
-            default: "yes",
+            default: "Yes",
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',

@@ -12,7 +12,6 @@ export default class DialogActorConfig extends Dialog {
         new DialogActorConfig(actor, {
             title: game.i18n.localize("SHEET.actorConfig"),
             content: template,
-            default: 'Save',
             buttons: { }
         }).render(true)
     }

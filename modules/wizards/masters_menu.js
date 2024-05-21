@@ -534,7 +534,7 @@ class GameMasterMenu extends Application {
         new DialogShared({
             title,
             content,
-            default: 'yes',
+            default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',

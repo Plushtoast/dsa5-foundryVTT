@@ -1447,7 +1447,7 @@ export default class Actordsa5 extends Actor {
         new Dialog({
           title: game.i18n.localize("DSAError.NotEnoughXP"),
           content: template,
-          default: "yes",
+          default: "Yes",
           buttons: {
             Yes: {
               icon: '<i class="fa fa-check"></i>',
