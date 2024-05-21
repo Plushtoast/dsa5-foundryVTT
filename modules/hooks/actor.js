@@ -24,7 +24,7 @@ export default function() {
                 new Dialog({
                     title: effect.name,
                     content,
-                    default: 'yes',
+                    default: 'Yes',
                     buttons: {
                         Yes: {
                             icon: '<i class="fa fa-check"></i>',
@@ -74,16 +74,21 @@ export default function() {
             const statusesId = [...effect.statuses][0]
             if (statusesId == "bloodrush") {
                 actor.addCondition("stunned", 2, false, false)
-                return false
             } else if (statusesId == "dead" && game.combat) {
                 actor.markDead(false)
-                return false
             }
             DSAActiveEffectConfig.onEffectRemove(actor, effect)
-            
+        }
+    })
+
+    Hooks.on("preDeleteActiveEffect", (effect, options, userid) => {
+        if(!DSA5_Utility.isActiveGM() || options.noHook) return
+
+        const actor = effect.parent
+
+        if (actor && actor.documentName == "Actor") {                     
             if(DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false) return false
 
-            //todo this might need to go to predelete
             if(Hooks.call("deleteActorActiveEffect", actor, effect) === false) return false
         }
     })

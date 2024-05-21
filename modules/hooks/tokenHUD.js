@@ -69,7 +69,7 @@ async function splitSwarm(actor, token) {
     new SwarmDialog({
         title: game.i18n.localize("swarm.split"),
         content,
-        default: 'yes',
+        default: 'Yes',
         buttons: {
             Yes: {
                 icon: '<i class="fa fa-check"></i>',

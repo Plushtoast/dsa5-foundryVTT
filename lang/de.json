@@ -1337,7 +1337,7 @@
         "always": "Immer",
         "onSuccess": "Bei Erfolg",
         "onFailure": "Bei Misserfolg",
-        "onDelayed": "Verzögerter Start",
+        "onDelayed": "Verzögerter Start (Sekunden)",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
@@ -1595,7 +1595,8 @@
         "keepVision": "Sichteinstellung übernehmen",
         "takeSkills": "Talente übernehmen",
         "keepItems": "Ausrüstung behalten",
-        "keepToken": "Token behalten"
+        "keepToken": "Token behalten",
+        "calculateLeP": "Anteilige LeP"
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",

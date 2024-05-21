@@ -3,6 +3,7 @@ import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import OnUseEffect from "../system/onUseEffects.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
+import { delay } from "../system/view_helper.js";
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils
 
 function automatedAnimation(successLevel, options = {}) {
@@ -75,22 +76,26 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     static onDelayedEffect(actor, effect) {
-        const onDelayedMacro = getProperty(effect, "flags.dsa5.onDelayed");
-
-        this.executeDelayedEffect(actor, effect, onDelayedMacro)
-        if(onDelayedMacro) return false
-    }
-
-    static async executeDelayedEffect(actor, effect, onDelayedMacro) {
-        console.log("delayed effect start")
-
-        //todo calculate duration
-
-        /*await effect.update({
-            "flags.dsa5.delayedEffect": false,
-            "duration.seconds": onDelayedMacro + effect.duration.seconds,
-            "enabled": true
-        })*/
+        let continueDeletion = true
+        if(effect.system.delayed) {
+            if(effect.changes.length || effect.statuses.size) {
+                const duration = effect.system.originalDuration || { seconds: "", rounds: ""}
+                mergeObject(duration, {
+                    startRound: game.combat?.round,
+                    startTurn: game.combat?.turn
+                    
+                })
+                if (!duration.rounds && duration.seconds) {
+                    duration.rounds = duration.seconds / 5
+                }
+                effect.update({ 
+                    "system.delayed": false,
+                    "duration": duration
+                })
+                continueDeletion = false
+            }            
+        }
+        return continueDeletion
     }
 
     static async onEffectRemove(actor, effect) {
@@ -278,15 +283,31 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         switch (customEf) {
                             case 1: //Systemeffekt
                                 {
-                                    const effect = duplicate(CONFIG.statusEffects.find((e) => e.id == getProperty(ef, "flags.dsa5.args0")));
                                     let value = `${getProperty(ef, "flags.dsa5.args1")}` || "1";
-                                    effect.duration = ef.duration;
                                     if (/,/.test(value)) {
                                         value = Number(value.split(",")[qs - 1]);
                                     } else {
                                         value = Number(value.replace(game.i18n.localize("CHARAbbrev.QS"), qs));
                                     }
-                                    await actor.addCondition(effect, value, false, false);
+                                    const effectId =  getProperty(ef, "flags.dsa5.args0")
+                                    const effectName = game.i18n.localize(`CONDITION.${effectId}`);
+                                    const effectData = { 
+                                        name: `${source.name} (${effectName})`, 
+                                        duration: ef.duration
+                                    }
+                                    const onDelayed = getProperty(ef, "flags.dsa5.onDelayed")
+                                    if(onDelayed) {
+                                        mergeObject(effectData, { 
+                                            duration: { 
+                                                seconds: onDelayed
+                                            },
+                                            system: {
+                                                delayed: true,
+                                                originalDuration: ef.duration
+                                            }
+                                        })
+                                    }
+                                    await actor.addTimedCondition(effectId, value, false, false, effectData);
                                 }
                                 break;
                             case 2: //Macro

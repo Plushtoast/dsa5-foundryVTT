@@ -1,4 +1,4 @@
-const { getProperty } = foundry.utils
+const { getProperty, mergeObject } = foundry.utils
 
 export default function() {
     Hooks.on('preCreateScene', function(doc, createData, options, userId) {
@@ -57,7 +57,13 @@ export default function() {
         }}
 
         if(createData.flags?.dsa5?.onDelayed) {
-            update.enabled = false
+            mergeObject(update, { 
+                duration: { seconds: createData.flags.dsa5.onDelayed },
+                system: { 
+                    delayed: true,
+                    originalDuration: createData.duration
+                } 
+            })
         }
 
         if (!game.combat) {

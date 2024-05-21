@@ -812,7 +812,6 @@ class ExportForm extends FormApplication {
         new Dialog({
             title: "Export configuration",
             content: html,
-            default: 'yes',
             buttons: {
                 export: {
                     icon: '<i class="fa fa-check"></i>',

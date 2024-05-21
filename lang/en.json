@@ -1307,7 +1307,7 @@
         "always": "Always",
         "onSuccess": "On success",
         "onFailure": "On failure",
-        "onDelayed": "Delayed start",
+        "onDelayed": "Delayed start (Seconds)",
         "creature": "Actorlink (e.g. dsa5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
@@ -1488,7 +1488,8 @@
         "keepVision": "Keep vision",
         "takeSkills": "Keep skills",
         "keepItems": "Keep equipment",
-        "keepToken": "Keep token"
+        "keepToken": "Keep token",
+        "calculateLeP": "Proportional LP"
     },
     "DSAError": {
         "noTokenSelected": "No token selected",

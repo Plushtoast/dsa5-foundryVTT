@@ -361,7 +361,7 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
         new Dialog({
             title: game.i18n.localize("MERCHANT.clearInventory"),
             content: game.i18n.localize("MERCHANT.deleteAllGoods"),
-            default: 'yes',
+            default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',
@@ -557,7 +557,7 @@ export class RandomGoodsAddition extends Dialog {
         new game.dsa5.dialogs.RandomGoodsAddition({
             title: game.i18n.localize("MERCHANT.randomGoods"),
             content: html,
-            default: 'yes',
+            default: 'Yes',
             options,
             buttons: {
                 Yes: {

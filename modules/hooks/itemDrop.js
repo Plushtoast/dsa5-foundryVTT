@@ -132,7 +132,7 @@ export class RangeSelectDialog extends Dialog {
         new RangeSelectDialog({
             title,
             content,
-            default: 'yes',
+            default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',

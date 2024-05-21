@@ -203,7 +203,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         new Dialog({
             title: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
-            default: 'yes',
+            default: 'Yes',
             buttons: {
                 Yes: {
                     icon: '<i class="fa fa-check"></i>',

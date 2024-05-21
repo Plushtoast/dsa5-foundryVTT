@@ -463,6 +463,7 @@ export default class Actordsa5 extends Actor {
     let multiply = 1
     for ( const e of this.effects ) {
       if(e.disabled) continue
+      if(e.system.delayed) continue
 
       if(getProperty(e, "flags.dsa5.isAura")){
         this.auras.push(e.uuid)
@@ -499,6 +500,7 @@ export default class Actordsa5 extends Actor {
       for(const e of item.effects) {
         if(e.disabled) continue
         if(!e.transfer) continue
+        if(e.system.delayed) continue
 
         apply = true
 
@@ -1619,14 +1621,20 @@ export default class Actordsa5 extends Actor {
     return super._preUpdate(data, options, user);
   }
 
-  async applyDamage(rollFormula) {
-    const amount = (await new Roll(`${rollFormula}`).evaluate()).total
+  async applyDamage(rollFormula, options = {}) {
+    const roll = await new Roll(`${rollFormula}`).evaluate()
+    const amount = roll.total
     if(game.combat?.isBrawling) {
       const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
       await this.update({ "system.status.temporaryLeP.value": newVal });
     } else {
       const newVal = Math.min(this.system.status.wounds.max, this.system.status.wounds.value - amount);
       await this.update({ "system.status.wounds.value": newVal });
+    }
+
+    if(options.msg) {
+      const renderedRoll = await roll.render()
+      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${game.i18n.format(options.msg, { name: this.name })}</p>${renderedRoll}`))
     }
   }
 
@@ -2810,6 +2818,10 @@ export default class Actordsa5 extends Actor {
       effect.flags.dsa5.description = game.i18n.localize(effect.name)
       effect.name = game.i18n.localize(effect.name)
 
+      effect.changes = effect.changes.map(change => {
+        if(/^system\.condition\./.test(change.key)) change.value = value
+        return change
+      })
       delete effect.description
       delete effect.flags.dsa5.value
       delete effect.flags.dsa5.max
