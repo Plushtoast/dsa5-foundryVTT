@@ -68,9 +68,33 @@ export default class CareerWizard extends WizardDSA5 {
         const liturgyChoices = this._parseAttributes(this.career.system.liturgies.value)
 
         const baseCost = Number(this.career.system.APValue.value)
-        const reqCost = requirements.reduce(function(_this, val) {
-            return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0)
-        }, 0)
+        const mins = {}
+        let reqCost = 0
+        const search = {
+            "principles": new RegExp(`^${game.i18n.localize('LocalizedIDs.principles')} \\\(`),
+            "obligations": new RegExp(`^${game.i18n.localize('LocalizedIDs.obligations')} \\\(`)
+        }
+
+        for (let req of requirements) {
+            if (req.disabled) continue
+        
+            reqCost += req.apCost || 0
+            
+            for(let [key, reg] of Object.entries(search)){
+                if(reg.test(req.name)){
+                    if(!mins[key] || req.apCost < mins[key]){
+                        mins[key] = req.apCost
+                        reqCost -= req.apCost || 0
+                    }
+                    break
+                }
+            }            
+        }
+
+        for(let min of Object.values(mins)){
+            reqCost -= min
+        }
+        
         const missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
         mergeObject(data, {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),

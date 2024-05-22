@@ -30,6 +30,7 @@ export class AddTargetDialog extends Dialog{
     activateListeners(html){
         super.activateListeners(html)
         const combatants = html.find('.combatant')
+        combatants.dblclick(ev => this.setTargets(ev, true))
         combatants.click(ev => this.setTargets(ev))
         combatants.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
         combatants.mousedown(ev => this._onRightClick(ev))
@@ -56,7 +57,7 @@ export class AddTargetDialog extends Dialog{
         return game.combats.apps[0]
     }
 
-    async setTargets(ev){
+    async setTargets(ev, close = false){
         const isShift = ev.originalEvent.shiftKey
         if(!isShift)
             $(ev.currentTarget).closest('.directory').find('.combatant').removeClass('selectedTarget')
@@ -66,6 +67,8 @@ export class AddTargetDialog extends Dialog{
         const combatant = game.combat.combatants.get(combatantId)
 
         combatant.token.object.setTarget(true, {user: game.user, releaseOthers: !isShift, groupSelection: true });
+
+        if(close) this.close()
     }
 }
 
