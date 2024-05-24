@@ -95,7 +95,7 @@ export default function() {
 
     TokenHUD.prototype._onToggleEffect = function(event, { overlay = false } = {}) {
         event.preventDefault();
-        let img = event.currentTarget;
+        const img = event.currentTarget;
         const effect = (img.dataset.statusId && this.object.actor) ?
             CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
             img.getAttribute("src");

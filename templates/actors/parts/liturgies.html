@@ -5,7 +5,8 @@
                 <div class="title-type col four">
                     {{localize "liturgies"}}
                 </div>
-                <div class="title-test col four center">{{localize "probe"}}</div>
+                <div class="col zerofive"></div>
+                <div class="title-test col five center">{{localize "probe"}}</div>
                 <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
@@ -20,12 +21,15 @@
         {{#each prepare.magic.liturgy as |item i|}}
         <div class="actor-spell-item-wrapper col spells item" data-item-id="{{item._id}}">
             <div class="actor-spell-item row-section skills lineheight">
+                <div class="equipment-item-image col zerofive image">
+                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                </div>
                 <div class="actor-spell-name col four withContext">
                     <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
                     <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                     <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
-                <div class="actor-spell-test col four center">
+                <div class="actor-spell-test col five center">
                     <a class="spell-select">
                         <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
@@ -83,7 +87,8 @@
                 <div class="title-type col four">
                     {{localize "ceremonies"}}
                 </div>
-                <div class="title-test col four center">{{localize "probe"}}</div>
+                <div class="col zerofive"></div>
+                <div class="title-test col five center">{{localize "probe"}}</div>
                 <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="KaPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
@@ -99,12 +104,15 @@
         {{#each prepare.magic.ceremony as |item i|}}
         <div class="actor-spell-item-wrapper col spells item" data-item-id="{{item._id}}">
             <div class="actor-spell-item row-section skills lineheight">
+                <div class="equipment-item-image col zerofive image">
+                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                </div>
                 <div class="actor-spell-name col four withContext">
                     <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
                     <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                     <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
-                <div class="actor-spell-test col four center">
+                <div class="actor-spell-test col five center">
                     <a class="spell-select">
                         <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>

@@ -392,7 +392,17 @@ export default class PlayerMenu extends Application {
                 mod.count = this.conjurationData.selectedIds.filter(x => x == mod.id).length
             }
 
-            const moreModifiers = this.conjurationData.moreModifiers[this.conjurationData.conjurationType]
+            let moreModifiers = this.conjurationData.moreModifiers[this.conjurationData.conjurationType]
+
+            if (moreModifiers){
+                moreModifiers = duplicate(moreModifiers)
+                for(let item of moreModifiers) {
+                    item.options = item.options.map(x => {
+                        x.label = `${x.name} (${x.val})`
+                        return x
+                    })
+                }
+            }            
             
             const conjurationSheet = await renderTemplate("systems/dsa5/templates/system/conjuration/summoning.html", {
                 actor: this.actor,

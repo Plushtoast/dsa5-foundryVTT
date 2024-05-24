@@ -5,7 +5,7 @@ import * as macroSupport from "./macro_support.js";
 import * as chatlogHooks from './chatlog.js'
 import * as ready from './ready.js'
 import { chatContext } from './chat_context.js'
-import * as statusEffects from './statuseffect.js'
+import * as tokens from './token.js'
 import * as sideBar from './sidebar.js'
 import { setupConfiguration } from './configuration.js'
 import * as journals from './journal.js'
@@ -43,7 +43,7 @@ export default function() {
     chatlogHooks.default()
     ready.default()
     chatContext()
-    statusEffects.default()
+    tokens.default()
     sideBar.default()
     journals.default()
     tokenHUD.default()

@@ -1146,8 +1146,22 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
         for (let name of Object.keys(DSA5.traditionArtifacts)) 
             traditionArtifacts[name] = game.i18n.localize(`traditionArtifacts.${name}`)
 
+
+        const categories = { 
+            general: {},
+            clerical: {},
+            magical: {}
+        }
+        let currentKey = "general"
+        for (let [key, name] of Object.entries(DSA5.specialAbilityCategories)) {
+            if(key == "clerical") currentKey = "clerical"
+            else if(key == "magical") currentKey = "magical"
+
+            categories[currentKey][key] = game.i18n.localize(name)
+        }
+
         mergeObject(data, {
-            categories: DSA5.specialAbilityCategories,
+            categories,
             subCategories: DSA5.combatSkillSubCategories,
             traditionArtifacts,
             canOnUseEffect: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
