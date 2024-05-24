@@ -41,11 +41,7 @@
         </div>
         <div class="col two">
           <select name="conjurationType" class="conjurationData" data-dtype="Number" data-refresh="true">
-            {{#select conjurationData.conjurationType}}
-            {{#each conjurationTypes as |item ch|}}
-            <option value="{{ch}}">{{item}}</option>
-            {{/each}}
-            {{/select}}
+            {{selectOptions conjurationTypes selected=conjurationData.conjurationType}}
           </select>
         </div>
         <div class="col ten center">

@@ -78,12 +78,7 @@
         <div class="form-fields">
 
             <select name="dsa5.tokenhotbarLayout" data-dtype="Number">
-                {{#select tokenhotbarLayout}}
-                <option value="0">{{localize 'DSASETTINGS.tokenhotbarLayout0'}}</option>
-                <option value="2">{{localize 'DSASETTINGS.tokenhotbarLayout1'}}</option>
-                <option value="1">{{localize 'DSASETTINGS.tokenhotbarLayout2'}}</option>
-                <option value="3">{{localize 'DSASETTINGS.tokenhotbarLayout3'}}</option>
-                {{/select}}
+                {{selectOptions layoutChoices selected=tokenhotbarLayout localize=true}}
             </select>
         </div>
 

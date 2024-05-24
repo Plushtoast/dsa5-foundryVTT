@@ -195,6 +195,8 @@ export class DSAAura {
     }
 
     static async updateAura(sourceToken, token, document, disposition, auraSource, effect) {
+        if(!token.actor) return
+        
         const inAura = await DSAAura.inAura(sourceToken, token, document)
         const existingEffect = token.actor.effects.find(e => getProperty(e, "flags.dsa5.templateSource") == auraSource)
 
@@ -219,7 +221,7 @@ export class DSAAura {
 
 export class AuraTemplate extends MeasuredTemplateDSA {
     static fromItem(effect, token, auraId) {
-        const radius = getProperty(effect, "flags.dsa5.auraRadius")
+        const radius = Number(getProperty(effect, "flags.dsa5.auraRadius"))
         if(!radius) return
 
         const newEffect = duplicate(effect)

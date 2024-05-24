@@ -274,11 +274,10 @@ export default class Itemdsa5 extends Item {
                     /=\d+/.test(vals[0]) ||
                     /\*\d(\.\d)*/.test(vals[0])
                 ) {
-                    if (itemModifiers[vals[1].toLowerCase()] == undefined) {
-                        itemModifiers[vals[1].toLowerCase()] = [vals[0]]
-                    } else {
-                        itemModifiers[vals[1].toLowerCase()].push(vals[0])
-                    }
+                    const key = vals[1].toLowerCase()
+                    if (itemModifiers[key] == undefined) itemModifiers[key] = []
+                        
+                    itemModifiers[key].push(vals[0])
                 }
             }
         }
@@ -525,6 +524,11 @@ export default class Itemdsa5 extends Item {
             mountedOptions = duplicate(DSA5.mountedRangeOptions)
         }
 
+        let finalMountedOptions = {}
+        for(let key of Object.keys(mountedOptions)){
+            finalMountedOptions[`${game.i18n.localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key]
+        }
+
         this.swarmModifiers(actor, "attack", situationalModifiers)
 
         mergeObject(data, {
@@ -532,7 +536,7 @@ export default class Itemdsa5 extends Item {
             rangeDistance: Object.keys(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
             sizeOptions: DSA5.rangeSizeCategories,
             visionOptions: DSA5.rangeVision,
-            mountedOptions,
+            mountedOptions: finalMountedOptions, 
             shooterMovementOptions: DSA5.shooterMovementOptions,
             targetMovementOptions: DSA5.targetMomevementOptions,
             targetSize,

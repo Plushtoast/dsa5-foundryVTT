@@ -1,5 +1,5 @@
 <form class="{{cssClass}} lock{{prepare.sheetLocked}}" autocomplete="off">
-    <fieldset disabled>
+    <fieldset class="noBorder" disabled>
         <header class="sheet-header row-section">
 
             <div class="charname headerInput col fourty">
@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 {{> systems/dsa5/templates/actors/parts/gearSearch.html}}
-                <fieldset disabled>
+                <fieldset class="noBorder" disabled>
                     <div class="row-section">
                         <div class="col two">
                              {{#grouped_each 4 tradeFriend.money.coins}}
@@ -195,7 +195,7 @@
             </div>
 
             <div class="tab save-scroll" data-tab="notes">
-                <fieldset disabled>
+                <fieldset class="noBorder" disabled>
                     {{> systems/dsa5/templates/actors/actor-notes.html}}
                 </fieldset>
             </div>

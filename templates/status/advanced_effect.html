@@ -38,7 +38,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize 'ActiveEffects.radius'}}</label>
-                <input type="number" name="flags.dsa5.auraRadius" value="{{effect.flags.dsa5.auraRadius}}" />
+                <input type="text" name="flags.dsa5.auraRadius" value="{{effect.flags.dsa5.auraRadius}}" />
             </div>
             <div class="form-group">
                 <label class="label-text">{{ localize "TEMPLATE.BorderColor" }}</label>
@@ -82,11 +82,7 @@
     <div class="form-group">
         <label class="label-text">{{localize "ActiveEffects.custom"}}</label>
         <select class="advancedSelector" name="flags.dsa5.advancedFunction" data-dtype="String">
-            {{#select effect.flags.dsa5.advancedFunction}}
-            {{#each advancedFunctions as |item i|}}
-            <option value="{{item.index}}">{{localize item.name}}</option>
-            {{/each}}
-            {{/select}}
+            {{selectOptions advancedFunctions selected=effect.flags.dsa5.advancedFunction valueAttr="index" labelAttr="name" localize=true}}            
         </select>
     </div>
     <div class="form-group">

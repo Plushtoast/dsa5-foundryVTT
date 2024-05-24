@@ -215,7 +215,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "application":
                 data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
                 data['localization'] = game.i18n.localize(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
-                data['allSkills'] = await DSA5_Utility.allSkillsList()
+                data['allSkills'] = await DSA5_Utility.allSkillsListObject()
                 break
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;
@@ -246,6 +246,10 @@ export default class ItemSheetdsa5 extends ItemSheet {
         data.item = this.item
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         data.isGM = game.user.isGM
+        data.yesNoGroup = {
+            "true": game.i18n.localize("yes"),
+            "false": game.i18n.localize("no")
+        }
         data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, "description.value"), {secrets: this.object.isOwner, async: true})
         data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, "gmdescription.value"), {secrets: this.object.isOwner, async: true})
         return data;
@@ -263,7 +267,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
         let renderedItem
         if(embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.html`, { document: embeddedItem})
         mergeObject(data, {
-            allSkills: await DSA5_Utility.allSkillsList(),
+            allSkills: await DSA5_Utility.allSkillsListObject(),
             embeddedItem,
             renderedItem,
             enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {secrets: this.item.isOwner, async: true}),
@@ -592,7 +596,7 @@ class InformationSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
-            allSkills: await DSA5_Utility.allSkillsList(),
+            allSkills: await DSA5_Utility.allSkillsListObject(),
             enrichedqs1: await TextEditor.enrichHTML(this.item.system.qs1, { async: true }),
             enrichedqs2: await TextEditor.enrichHTML(this.item.system.qs2, { async: true }),
             enrichedqs3: await TextEditor.enrichHTML(this.item.system.qs3, { async: true }),
@@ -921,7 +925,9 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         data.calculatedPrice = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)
         data.availableSteps = data.system.QLList.split("\n").map((x, i) => i + 1)
         data.equipmentTypes = DSA5.equipmentTypes;
-        data.targetTypes = DSA5.areaTargetTypes
+        data.targetTypes = {}
+        for (let [key, name] of Object.entries(DSA5.areaTargetTypes)) data.targetTypes[key] = game.i18n.localize(`areaTargetTypes.${name}`)
+            
         data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, "ingredients"), {secrets: this.object.isOwner, async: true})
         return data
     }
@@ -1160,7 +1166,9 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         data.characteristics = DSA5.characteristics;
         data.StFs = DSA5.StFs;
         data.resistances = DSA5.magicResistanceModifiers
-        data.targetTypes = DSA5.areaTargetTypes
+        data.targetTypes = {}
+        for (let [key, name] of Object.entries(DSA5.areaTargetTypes)) data.targetTypes[key] = game.i18n.localize(`areaTargetTypes.${name}`)
+            
         if (data.isOwned) {
             data.extensions = this.item.actor.items.filter(x => { return x.type == "spellextension" && x.system.source == this.item.name && this.item.type == x.system.category })
         }

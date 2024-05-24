@@ -6,12 +6,7 @@
         <div class="form-group">
             <label class="label-text">{{localize field.label}}</label>
             <select name="{{field.attr}}" data-dtype="String" data-notstrict="{{field.notStrict}}">
-                {{#select field.value}}
-                <option value="">{{localize 'Library.noFilter'}}</option>
-                {{#each options as |ch char|}}
-                <option value="{{char}}">{{localize ch}}</option>
-                {{/each}}
-                {{/select}}
+                {{selectOptions options selected=field.value blank=(localize 'Library.noFilter')}}
             </select>
         </div>
         {{else if (eq field.type 'text')}}
@@ -29,12 +24,7 @@
     <div class="form-group">
         <label class="label-text">{{localize 'Module'}}</label>
         <select name="compendium" data-dtype="String">
-            {{#select moduleSelected}}
-            <option value="">{{localize 'Library.noFilter'}}</option>
-            {{#each moduleOptions as |ch char|}}
-            <option value="{{char}}">{{ch}}</option>
-            {{/each}}
-            {{/select}}
+            {{selectOptions moduleOptions selected=moduleSelected blank=(localize 'Library.noFilter')}}
         </select>
     </div>
 </div>

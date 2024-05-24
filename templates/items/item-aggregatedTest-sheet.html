@@ -64,34 +64,19 @@
             <div class="form-group">
                 <label class="label-text">{{localize "skill"}} 1</label>
                 <select class="select2" name="system.talent.value" data-dtype="String">
-                    {{#select system.talent.value}}
-                    <option value="">-</option>
-                    {{#each allSkills as |ch|}}
-                    <option value="{{ch}}">{{ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions allSkills selected=system.talent.value blank="-"}}
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "skill"}} 2</label>
                 <select class="select2" name="system.talent.value2" data-dtype="String">
-                    {{#select system.talent.value2}}
-                    <option value="">-</option>
-                    {{#each allSkills as |ch|}}
-                    <option value="{{ch}}">{{ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions allSkills selected=system.talent.value2 blank="-"}}
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "skill"}} 3</label>
                 <select class="select2" name="system.talent.value3" data-dtype="String">
-                    {{#select system.talent.value3}}
-                    <option value="">-</option>
-                    {{#each allSkills as |ch|}}
-                    <option value="{{ch}}">{{ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions allSkills selected=system.talent.value3 blank="-"}}
                 </select>
             </div>
             {{#if (or isGM (gt system.cummulatedQS.value 5))}}

@@ -316,8 +316,8 @@ export function setupConfiguration() {
         type: Number,
         choices: {
             0: game.i18n.localize('DSASETTINGS.tokenhotbarLayout0'),
-            2: game.i18n.localize('DSASETTINGS.tokenhotbarLayout1'),
-            1: game.i18n.localize('DSASETTINGS.tokenhotbarLayout2'),
+            1: game.i18n.localize('DSASETTINGS.tokenhotbarLayout1'),
+            2: game.i18n.localize('DSASETTINGS.tokenhotbarLayout2'),
             3: game.i18n.localize('DSASETTINGS.tokenhotbarLayout3')
         },
         onChange: async(val) => {
@@ -875,7 +875,8 @@ class ConfigureTokenHotbar extends FormApplication {
             tokenhotbaropacity: game.settings.get("dsa5", "tokenhotbaropacity"),
             hotbarv3: game.settings.get("dsa5", "hotbarv3"),
             isGM: game.user.isGM,
-            gmButtons: game.dsa5.apps.tokenHotbar?.gmItems
+            gmButtons: game.dsa5.apps.tokenHotbar?.gmItems,
+            layoutChoices: game.settings.settings.get("dsa5.tokenhotbarLayout").choices 
         })
         return data
     }

@@ -52,8 +52,8 @@ export default class Riding {
             scene.updateEmbeddedDocuments("Token", [
                 {
                     _id: horseId,
-                    x: token.x,
-                    y: token.y
+                    x: data.x ?? token.x,
+                    y: data.y ?? token.y
                 }
             ])
         }

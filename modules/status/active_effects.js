@@ -262,6 +262,13 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 const customEf = Number(getProperty(ef, "flags.dsa5.advancedFunction"));
                 const qs = Math.min(testData.qualityStep || 0, 6);
                 const resistRoll = getProperty(ef, "flags.dsa5.resistRoll");
+                const isAura = getProperty(ef, "flags.dsa5.isAura")
+                
+                if (isAura) {
+                    const radius = `${getProperty(ef, "flags.dsa5.auraRadius") || 1}`.replace(/q(l|s)/i, qs);                    
+                    const evaluatedRadius = (await new Roll(radius).evaluate()).total;
+                    setProperty(ef, "flags.dsa5.auraRadius", evaluatedRadius)
+                }
 
                 if (resistRoll && !skipResistRolls) {
                     const skills = resistRoll.split(" ");
@@ -276,7 +283,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 } else {
                     effectApplied = true;
                     if (!effectNames.has(ef.name)) effectNames.add(ef.name)
-                    if (ef.changes && ef.changes.length > 0) {
+                    if ((ef.changes && ef.changes.length > 0) || (isAura && !customEf)) {
                         effectsWithChanges.push(ef);
                     }
                     if (customEf) {

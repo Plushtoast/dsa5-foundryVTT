@@ -42,10 +42,7 @@
                 <label class="label-text" data-tooltip="{{localize 'reach'}} ({{localize 'modifyable'}})">{{localize "reach"}} ({{localize 'CHAR.modifyable'}})</label>
                 <input class="input-text" type="text" name="system.range.value" value="{{system.range.value}}" data-dtype="String" />
                 <select name="system.canChangeRange.value" data-dtype="String">
-                    {{#select system.canChangeRange.value}}
-                    <option value="true">{{localize "yes"}}</option>
-                    <option value="false">{{localize "no"}}</option>
-                    {{/select}}
+                    {{selectOptions yesNoGroup selected=system.canChangeRange.value}}
                 </select>
             </div>
             <div class="form-group">
@@ -61,10 +58,7 @@
                 <label class="label-text" data-tooltip="{{localize 'castingTime'}} ({{localize 'modifyable'}})">{{localize "castingTime"}} ({{localize "CHAR.modifyable"}})</label>
                 <input class="input-text" type="text" name="system.castingTime.value" value="{{system.castingTime.value}}" data-dtype="String" />
                 <select name="system.canChangeCastingTime.value" data-dtype="String">
-                    {{#select system.canChangeCastingTime.value}}
-                    <option value="true">{{localize "yes"}}</option>
-                    <option value="false">{{localize "no"}}</option>
-                    {{/select}}
+                    {{selectOptions yesNoGroup selected=system.canChangeCastingTime.value}}
                 </select>
             </div>
 
@@ -72,10 +66,7 @@
                 <label class="label-text" data-tooltip="{{localize 'KaPCost'}} ({{localize 'modifyable'}})">{{localize "CHAR.KaPCost"}} ({{localize "CHAR.modifyable"}})</label>
                 <input class="input-text" type="number" name="system.AsPCost.value" value="{{system.AsPCost.value}}" data-dtype="Number" />
                 <select name="system.canChangeCost.value" data-dtype="String">
-                    {{#select system.canChangeCost.value}}
-                    <option value="true">{{localize "yes"}}</option>
-                    <option value="false">{{localize "no"}}</option>
-                    {{/select}}
+                    {{selectOptions yesNoGroup selected=system.canChangeCost.value}}
                 </select>
             </div>
             <div class="form-group">
@@ -93,11 +84,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "variableCost"}}</label>
                 <select name="system.variableBaseCost" data-dtype="String">
-                    {{#select system.variableBaseCost}}
-    
-                    <option value="true">{{localize "yes"}}</option>
-                    <option value="false">{{localize "no"}}</option>
-                    {{/select}}
+                    {{selectOptions yesNoGroup selected=system.variableBaseCost}}
                 </select>
             </div>
             <div class="form-group full-height">
@@ -115,11 +102,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "resistanceModifier"}}</label>
                 <select name="system.resistanceModifier.value" data-dtype="String">
-                    {{#select system.resistanceModifier.value}}
-                    {{#each resistances as |type sktype|}}
-                    <option value="{{sktype}}">{{localize type}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions resistances selected=system.resistanceModifier.value localize=true}}
                 </select>
             </div>
             <div class="form-group">

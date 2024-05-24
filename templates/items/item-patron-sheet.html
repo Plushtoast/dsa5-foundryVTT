@@ -29,11 +29,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "Category"}}</label>
                 <select name="system.category" data-dtype="Number">
-                    {{#select system.category}}
-                    {{#each patronCategories as |ch char|}}
-                    <option value="{{ch.val}}">{{ch.name}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions patronCategories selected=system.category valueAttr="val" labelAttr="name"}}
                 </select>
             </div>
             <div class="form-group">

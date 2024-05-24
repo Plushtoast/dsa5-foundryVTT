@@ -1,6 +1,6 @@
 import Riding from "../system/riding.js";
 import { TokenHoverHud } from "./actor.js";
-const { deepClone, getProperty } = foundry.utils
+const { getProperty } = foundry.utils
 
 function addThirdBarToHUD(html, actor, app) {
     if (actor.system.isPriest && actor.system.isMage) {
@@ -76,13 +76,14 @@ async function splitSwarm(actor, token) {
                 label: game.i18n.localize("ok"),
                 callback: async(dialog) => {
                     const split = Number(dialog.find('input[type="range"]').val())
-                    const newtoken = deepClone(token)
+                    const newtokenData = token.toObject()
+                    delete newtokenData._id
 
                     const newHp = Math.floor(actor.system.status.wounds.value / actor.system.swarm.count * split)
                     const oldHp = actor.system.status.wounds.value - newHp
 
                     await actor.update({ "system.swarm.count": actor.system.swarm.count - split, "system.status.wounds.value": oldHp }, {skipSwarmUpdate: true})
-                    await canvas.scene.createEmbeddedDocuments("Token", [newtoken])
+                    const newtoken = (await canvas.scene.createEmbeddedDocuments("Token", [newtokenData]))[0]
                     await newtoken.actor.update({ "system.swarm.count": split, "system.status.wounds.value": newHp}, {skipSwarmUpdate: true})
                     const axis = ["x", "y"][Math.floor(Math.random() * 2)]
                     const dir = Math.random() > 0.5 ? 1 : -1

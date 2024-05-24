@@ -10,7 +10,7 @@ If you want to learn more checkout the [German](https://ulisses-spiele.de/virtua
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
 
 ```
-https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json
+https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry12/system.json
 ```
 
 ## Roadmap

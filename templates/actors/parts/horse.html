@@ -35,11 +35,7 @@
                 </div>
                 <div class="combat-item-speed col five center">
                     <select class="horse-speed-selector" name="horseSpeedSelector">
-                        {{#select prepare.horseActor.horseSpeed}}
-                        {{#each horseSpeeds as |elm|}}
-                        <option value="{{elm}}">{{localize (concat 'RIDING.speeds.' elm)}}</option>
-                        {{/each}}
-                        {{/select}}
+                        {{selectOptions horseSpeeds selected=prepare.horseActor.horseSpeed}}
                     </select>
                 </div>
                 <div class="combat-item-status col ten center">

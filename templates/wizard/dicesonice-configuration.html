@@ -21,20 +21,12 @@
         <div class="col sixty row-section">
             <div class="col two">
                 <select name="entryselection" data-attr="{{@key}}">
-                    {{#select item.color}}
-                    {{#each ../choices as |itm i|}}
-                    <option value="{{@key}}">{{itm}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions ../choices selected=item.color}}
                 </select>
             </div>
             <div class="col two">
                 <select name="systemselection" data-attr="{{@key}}">
-                    {{#select item.system}}
-                    {{#each ../systems as |itm i|}}
-                    <option value="{{itm.id}}">{{itm.name}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions ../systems selected=item.system valueAttr="id" labelAttr="name"}}
                 </select>
             </div>
             <div class="col ten"></div>

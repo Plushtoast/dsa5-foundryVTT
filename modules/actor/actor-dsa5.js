@@ -2731,43 +2731,44 @@ export default class Actordsa5 extends Actor {
 
   _checkMaximumItemAdvancement(item, newValue) {
     let max = 0
+    const maxBonus = AdvantageRulesDSA5.vantageStep(this, `${game.i18n.localize(`LocalizedIDs.${item.type == "combatskill" ? "exceptionalCombatTechnique" : "exceptionalSkill"}`)} (${item.name})`)
     switch (item.type) {
         case "combatskill":
-            max = Math.max(...(item.system.guidevalue.value.split("/").map(x => this.system.characteristics[x].value))) + 2 + AdvantageRulesDSA5.vantageStep(this, `${game.i18n.localize('LocalizedIDs.exceptionalCombatTechnique')} (${item.name})`)
+            max = Math.max(...(item.system.guidevalue.value.split("/").map(x => this.system.characteristics[x].value))) + 2 + maxBonus
             break
         case "spell":
         case "ritual":
             let focusValue = 0
             for (const feature of item.system.feature.replace(/\(a-z äöü\-\)/gi, "").split(",").map(x => x.trim())) {
                 if (SpecialabilityRulesDSA5.hasAbility(this, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
-                    focusValue = this.maxByAttr(item)
+                    focusValue = this.maxByAttr(item, maxBonus)
                     break
                 }
             }
-            max = Math.max(14 + AdvantageRulesDSA5.vantageStep(this, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), focusValue)
+            max = Math.max(14 + maxBonus, focusValue)
             break
         case "liturgy":
         case "ceremony":
             const aspect = new RegExp(`^${game.i18n.localize("LocalizedIDs.aspectKnowledge")}`)
             let aspectValue = 0
             if (this.items.filter(x => x.type == "specialability" && aspect.test(x.name)).some(x => item.system.distribution.value.includes(x.name.split("(")[1].split(")")[0]))) {
-                aspectValue = this.maxByAttr(item)
+                aspectValue = this.maxByAttr(item, maxBonus)
             }
-            max = Math.max(14 + AdvantageRulesDSA5.vantageStep(this, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`), aspectValue)
+            max = Math.max(14 + maxBonus, aspectValue)
             break
         case "skill":
-            max = this.maxByAttr(item)
+            max = this.maxByAttr(item, maxBonus)
             break
     }
     const result = newValue <= max
     if (!result)
         ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
 
-    return { result, max }
+    return { result, max, maxBonus }
   }
 
-  maxByAttr(item) {
-    return Math.max(...[this.system.characteristics[item.system.characteristic1.value].value, this.system.characteristics[item.system.characteristic2.value].value, this.system.characteristics[item.system.characteristic3.value].value]) + 2 + AdvantageRulesDSA5.vantageStep(this, `${game.i18n.localize('LocalizedIDs.exceptionalSkill')} (${item.name})`)
+  maxByAttr(item, advantageBonus) {
+    return Math.max(...[this.system.characteristics[item.system.characteristic1.value].value, this.system.characteristics[item.system.characteristic2.value].value, this.system.characteristics[item.system.characteristic3.value].value]) + 2 + advantageBonus
   }
 
   async basicTest({ testData, cardOptions }, options = {}) {

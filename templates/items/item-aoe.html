@@ -2,12 +2,7 @@
     <label class="label-text" data-tooltip="ABBR.AoE">{{localize "AoE"}}</label>
     <input class="input-text" type="text" placeholder="{{localize 'gridUnits'}}" name="system.target.value" value="{{system.target.value}}" data-dtype="String" />
     <select name="system.target.type" data-dtype="String">
-        <option value="">-</option>
-        {{#select system.target.type}}
-        {{#each targetTypes as |name key|}}
-            <option value="{{key}}">{{localize (concat 'areaTargetTypes.' name)}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions targetTypes selected=system.target.type blank="-"}}
     </select>
 </div>
 {{#if (eq system.target.type 'line')}}

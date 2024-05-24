@@ -300,10 +300,15 @@ export default function() {
     }
 
     Hooks.on("updateToken", (token, data, options) => {
-        Riding.updateTokenHook(token, data, options);      
+        if ( !token.rendered ) return;
+        
+        Riding.updateTokenHook(token, data, options); 
 
-        (token.object.animationContexts.entries().next().value[1].promise || Promise.resolve()).then(() => {
-           token.object.drawAuras();
+        const animationName = options.animation?.name || token.object.animationName;
+        const animationPromise = token.object.animationContexts.get(animationName)?.promise;
+
+        (animationPromise || Promise.resolve()).then(() => {
+            token.object?.drawAuras();
         })
     })
 
@@ -318,7 +323,7 @@ export default function() {
 
     Hooks.on("canvasReady", canvas =>  {
         for(let token of canvas.scene.tokens){
-            token.object.drawAuras();
+            token.object?.drawAuras();
         }  
     })
 
@@ -355,7 +360,7 @@ export default function() {
         obfuscateName(token, {})
         randomWeaponSelection(token)
         Riding.createTokenHook(token, options, id)
-        token.object.drawAuras();
+        token.object?.drawAuras();
     })
 
     Hooks.on('hoverToken', (token, hovered) => {

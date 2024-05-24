@@ -20,13 +20,7 @@
                 </div>
                 <div class="col sixty">
                     <select name="system.merchant.garadan" data-dtype="String" style="width:100%">
-                    {{#select actor.system.merchant.garadan}}
-                    <option value="1">{{localize "GARADAN.1"}}</option>
-                    <option value="2">{{localize "GARADAN.2"}}</option>
-                    <option value="3">{{localize "GARADAN.3"}}</option>
-                    <option value="4">{{localize "GARADAN.4"}}</option>
-                    <option value="6">{{localize "GARADAN.6"}}</option>
-                    {{/select}}
+                        {{selectOptions garadanOptions selected=actor.system.merchant.garadan}}
                   </select>
                 </div>
             </div>

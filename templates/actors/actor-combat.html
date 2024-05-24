@@ -163,16 +163,15 @@
                             </div>
                             {{/if}}
                         </div>
-
+                        
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
-                                {{#select item.system.currentAmmo.value}}
-                                <option class="ammo-option" value="">None</option>
-                                {{#each item.ammo as |ammo a|}}
-                                <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.system.quantity.value}})
-                                    {{ammo.name}}</option>
-                                {{/each}}
-                                {{/select}}
-                            </select> {{#if (ne item.LZ 0)}}
+                            {{#select item.system.currentAmmo.value}}
+                            <option class="ammo-option" value="">-</option>
+                            {{#each item.ammo as |ammo a|}}
+                            <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.system.quantity.value}}) {{ammo.name}}</option>
+                            {{/each}}
+                            {{/select}}
+                        </select> {{#if (ne item.LZ 0)}}
                         <a class="loadWeapon" data-tooltip="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
