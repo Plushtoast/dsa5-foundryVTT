@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "skill"}}</label>
                 <select class="select2"  name="system.skill" data-dtype="String">
-                    {{selectOptions allSkills selected=system.skill}}
+                    {{selectOptions (selfObj allSkills) selected=system.skill}}
                 </select>
             </div>
             <div class="form-group">

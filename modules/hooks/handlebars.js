@@ -124,6 +124,7 @@ export default function() {
             return out;
         },
         plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`) },
-        oddLength: (x) => { return (x.length % 2) == 1 }
+        oddLength: (x) => { return (x.length % 2) == 1 },
+        selfObj: (a) => { return a.reduce((acc, val) => { acc[val] = val; return acc }, {}) }
     })
 }

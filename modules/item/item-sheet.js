@@ -215,7 +215,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             case "application":
                 data['hasLocalization'] = game.i18n.has(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
                 data['localization'] = game.i18n.localize(`APPLICATION.${this.item.system.skill} - ${this.item.name}`)
-                data['allSkills'] = await DSA5_Utility.allSkillsListObject()
+                data['allSkills'] = await DSA5_Utility.allSkillsList()
                 break
             case "combatskill":
                 data['weapontypes'] = DSA5.weapontypes;
@@ -267,7 +267,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
         let renderedItem
         if(embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.html`, { document: embeddedItem})
         mergeObject(data, {
-            allSkills: await DSA5_Utility.allSkillsListObject(),
+            allSkills: await DSA5_Utility.allSkillsList(),
             embeddedItem,
             renderedItem,
             enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {secrets: this.item.isOwner, async: true}),
@@ -601,7 +601,7 @@ class InformationSheet extends ItemSheetdsa5 {
     async getData(options) {
         const data = await super.getData(options)
         mergeObject(data, {
-            allSkills: await DSA5_Utility.allSkillsListObject(),
+            allSkills: await DSA5_Utility.allSkillsList(),
             enrichedqs1: await TextEditor.enrichHTML(this.item.system.qs1, { async: true }),
             enrichedqs2: await TextEditor.enrichHTML(this.item.system.qs2, { async: true }),
             enrichedqs3: await TextEditor.enrichHTML(this.item.system.qs3, { async: true }),

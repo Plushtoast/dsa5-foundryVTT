@@ -62,7 +62,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
                 <select name="system.combatskill.value" data-dtype="String">
-                    {{selectOptions combatskills selected=system.combatskill.value}}
+                    {{selectOptions (selfObj combatskills) selected=system.combatskill.value}}
                 </select>
             </div>
 

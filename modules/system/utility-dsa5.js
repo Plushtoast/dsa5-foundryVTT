@@ -90,18 +90,8 @@ export default class DSA5_Utility {
         return ((await this.allSkills()) || []).map(x => x.name).sort((a, b) => a.localeCompare(b))
     }
 
-    static async allSkillsListObject() {
-        return  (await DSA5_Utility.allSkillsList()).reduce((acc, i) => { 
-            acc[i] = i
-            return acc
-        }, {})
-    }
-
     static async allCombatSkillsList(weapontype) {
-        return ((await this.allCombatSkills()).filter(x => x.system.weapontype.value == weapontype) || []).map(x => x.name).sort((a, b) => a.localeCompare(b)).reduce((acc, i) => {
-            acc[i] = i
-            return acc
-        }, {});
+        return ((await this.allCombatSkills()).filter(x => x.system.weapontype.value == weapontype) || []).map(x => x.name).sort((a, b) => a.localeCompare(b))
     }
 
     static async callItemTransformationMacro(macroName, source, effect, args = {}) {
@@ -227,7 +217,7 @@ export default class DSA5_Utility {
                 sorting: sorting || (documentType == "JournalEntry" ? "a" : "m"),
                 color,
                 sort,
-                parent
+                folder: parent
             })
         }
         return folder

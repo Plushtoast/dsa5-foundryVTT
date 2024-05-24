@@ -125,34 +125,15 @@
     "minimumCoreVersion": "12",
     "packFolders": [
         {
-            "name": "Item",
+            "name": "DSA5/TDE5",
             "sorting": "m",
             "packs": [
                 "skills",
                 "skillsen",
-                "money"
-            ]
-        },
-        {
-            "name": "RollTable",
-            "sorting": "m",
-            "packs": [
+                "money",
                 "patzer",
-                "botch"
-            ]
-        },
-        {
-            "name": "Macro",
-            "sorting": "m",
-            "packs": [
-                "macros"
-            ]
-        },
-        
-        {
-            "name": "JournalEntry",
-            "sorting": "m",
-            "packs": [
+                "botch",
+                "macros",
                 "gamemanualde",
                 "gamemanualen"
             ]

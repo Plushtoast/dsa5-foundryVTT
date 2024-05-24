@@ -752,7 +752,7 @@ export class AddEffectDialog extends Dialog {
         const effects = duplicate(CONFIG.statusEffects).map(x => {
             return {
                 name: game.i18n.localize(x.name),
-                icon: x.img,
+                img: x.img,
                 description: game.i18n.localize(x.description),
                 id: x.id
             }
