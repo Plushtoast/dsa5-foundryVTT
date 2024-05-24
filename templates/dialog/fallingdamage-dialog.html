@@ -11,7 +11,7 @@
                 <label class="resultDamage">x <span data-tooltip="Trefferpunkte" class="display-toggle fail die-damage d6">6</span></label>
             </div>
             <div class="col center lineheight" data-tooltip="fallingHorses">
-                <i class="fas fa-info"></i>
+                <i class="fas fa-horse"></i>
             </div>
         </div>
     </div>
@@ -29,11 +29,7 @@
     <div class="form-group">
         <label>{{localize "fallingFloor"}}</label>
         <select name="fallingFloor">
-            {{#select 0}}
-            {{#each fallingFloorOptions as |mod t|}}
-            <option value="{{mod}}">{{localize (concat 'fallingConditions.' t)}}</option>
-            {{/each}}
-            {{/select}}
+            {{selectOptions fallingFloorOptions selected=0 localize=true}}
         </select>
     </div>
 

@@ -585,7 +585,12 @@ class Enchantable extends ItemSheetdsa5 {
         if (data.enchantments && data.enchantments.some(x => x.talisman)) enchantmentLabel.push("talisman")
         data.enchantmentLabel = enchantmentLabel.map(x => game.i18n.localize(x)).join("/")
 
-        data.traditionArtifacts = DSA5.traditionArtifacts
+        const traditionArtifacts = {}
+        for (let name of Object.keys(DSA5.traditionArtifacts)) 
+            traditionArtifacts[name] = game.i18n.localize(`traditionArtifacts.${name}`)
+
+        data.traditionArtifacts = traditionArtifacts
+
         data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0)
 
         return data
@@ -739,7 +744,10 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
         const data = await super.getData(options)
         mergeObject(data, {
             domains: this.prepareDomains(),
-            armorSubcategories: Object.keys(DSA5.armorSubcategories),
+            armorSubcategories: Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
+                acc[key] = game.i18n.localize(`ARMORSUBCATEGORIES.${key}`)
+                return acc
+            }, {}),
             breakPointRating: DSA5.armorSubcategories[this.item.system.subcategory]
         })
         data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
@@ -923,7 +931,10 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     async getData(options) {
         const data = await super.getData(options)
         data.calculatedPrice = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item)
-        data.availableSteps = data.system.QLList.split("\n").map((x, i) => i + 1)
+        data.availableSteps = data.system.QLList.split("\n").map((x, i) => i + 1).reduce((acc, x) => {
+            acc[x] = x
+            return acc
+        }, {})
         data.equipmentTypes = DSA5.equipmentTypes;
         data.targetTypes = {}
         for (let [key, name] of Object.entries(DSA5.areaTargetTypes)) data.targetTypes[key] = game.i18n.localize(`areaTargetTypes.${name}`)
@@ -1131,10 +1142,14 @@ class SpecialAbilitySheetDSA5 extends ItemSheetdsa5 {
 
     async getData(options) {
         const data = await super.getData(options);
+        const traditionArtifacts = {}
+        for (let name of Object.keys(DSA5.traditionArtifacts)) 
+            traditionArtifacts[name] = game.i18n.localize(`traditionArtifacts.${name}`)
+
         mergeObject(data, {
             categories: DSA5.specialAbilityCategories,
             subCategories: DSA5.combatSkillSubCategories,
-            traditionArtifacts: DSA5.traditionArtifacts,
+            traditionArtifacts,
             canOnUseEffect: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         })
         return data

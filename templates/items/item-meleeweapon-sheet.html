@@ -62,11 +62,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
                 <select name="system.combatskill.value" data-dtype="String">
-                    {{#select system.combatskill.value}}
-                    {{#each combatskills as |ch|}}
-                    <option value="{{ch}}">{{ch}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions combatskills selected=system.combatskill.value}}
                 </select>
             </div>
 

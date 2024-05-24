@@ -2034,8 +2034,8 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let situationalModifiers = []
-    let dialogOptions = {
+    const situationalModifiers = []
+    const dialogOptions = {
       title,
       template: "/systems/dsa5/templates/dialog/fallingdamage-dialog.html",
       data: {
@@ -2056,7 +2056,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/fallingdamage-card.html", title, tokenId);
+    const cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/fallingdamage-card.html", title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -2596,9 +2596,11 @@ export default class Actordsa5 extends Actor {
       item.attack = Number(skill.system.attack.value);
 
       if (item.system.ammunitiongroup.value != "-") {
-        item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
+        item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value)
+        
+        for(let am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`
 
-        currentAmmo = ammunitions.find((x) => x._id == item.system.currentAmmo.value);
+        currentAmmo = item.ammo.find((x) => x._id == item.system.currentAmmo.value);
         if (currentAmmo) {
           const rangeMultiplier = Number(currentAmmo.system.rangeMultiplier) || 1;
           item.calculatedRange = item.calculatedRange

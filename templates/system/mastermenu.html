@@ -181,11 +181,7 @@
                 </div>
                 <div class="col sixty">
                     <select name="data.skill" class="skillSelektor select2" data-dtype="String" style="width:90%">
-                        {{#select lastSkill}}
-                        {{#each abilities as |ch|}}
-                        <option value="{{ch.name}}|{{ch.type}}">{{ch.name}}</option>
-                        {{/each}}
-                        {{/select}}
+                        {{selectOptions abilities selected=lastSkill valueAttr="key" labelAttr="name" sort=true}}
                     </select>
                 </div>
          

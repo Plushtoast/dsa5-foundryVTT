@@ -333,16 +333,16 @@ DSA5.styles = {
 }
 
 DSA5.fallingConditions = {
-    normal: 0,
-    soft1: -1,
-    soft2: -2,
-    soft3: -3,
-    soft4: -4,
-    rough1: 1,
-    rough2: 2,
-    rough3: 3,
-    rough4: 4
-},
+    0: "fallingConditions.normal",
+    "-1": "fallingConditions.soft1",
+    "-2": "fallingConditions.soft2",
+    "-3": "fallingConditions.soft3",
+    "-4": "fallingConditions.soft4",
+    1: "fallingConditions.rough1",
+    2: "fallingConditions.rough2",
+    3: "fallingConditions.rough3",
+    4: "fallingConditions.rough4"
+}
 
 DSA5.combatSkillSubCategories = {
     "0": "COMBATSKILLCATEGORY.0",

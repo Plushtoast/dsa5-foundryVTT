@@ -165,12 +165,7 @@
                         </div>
                         
                         <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
-                            {{#select item.system.currentAmmo.value}}
-                            <option class="ammo-option" value="">-</option>
-                            {{#each item.ammo as |ammo a|}}
-                            <option class="ammo-option" value="{{ammo._id}}"> ({{ammo.system.quantity.value}}) {{ammo.name}}</option>
-                            {{/each}}
-                            {{/select}}
+                            {{selectOptions item.ammo selected=item.system.currentAmmo.value blank="-" valueAttr="_id" labelAttr="label"}}
                         </select> {{#if (ne item.LZ 0)}}
                         <a class="loadWeapon" data-tooltip="{{item.title}}">
                             <div class="progress blue">

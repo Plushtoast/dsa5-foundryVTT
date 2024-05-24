@@ -175,6 +175,17 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             systemEffects: this.getStatusEffects(),
             canEditMacros: game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro"),
         };
+
+        const messageReceivers = ["players", "player", "playergm", "gm"].reduce((obj, e) => {
+            obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`)
+            return obj
+        }, {})
+
+        const applySuccessConditions = {
+            1: 'ActiveEffects.onSuccess',
+            2: 'ActiveEffects.onFailure'
+        }
+
         const macroIndexes = [2, 6, 7]
         let elem = $(this._element);
         elem
@@ -185,6 +196,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             advancedFunctions,
             effectConfigs,
             macroIndexes,
+            messageReceivers,
+            applySuccessConditions,
             config,
             isWeapon,
             dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce((obj, e) => {

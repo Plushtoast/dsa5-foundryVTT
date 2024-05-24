@@ -124,13 +124,6 @@ export default function() {
             return out;
         },
         plantify: (a) => { return game.i18n.localize(`PLANT.avLevels.${a || 0}`) },
-        oddLength: (x) => { return (x.length % 2) == 1 },
-        //Deprecated by foundry
-        select: (selected, options) => {
-            const escapedValue = RegExp.escape(Handlebars.escapeExpression(selected));
-            const rgx = new RegExp(` value=[\"']${escapedValue}[\"\']`);
-            const html = options.fn(options.data.root);
-            return html.replace(rgx, "$& selected");
-        }
+        oddLength: (x) => { return (x.length % 2) == 1 }
     })
 }

@@ -2,11 +2,7 @@
 <div class="form-group">
     <label class="label-text">{{localize "SpecCategory.staff"}}</label>
     <select name="system.artifact" data-dtype="String">
-        {{#select system.artifact}}
-        {{#each traditionArtifacts as |ch char|}}
-        <option value="{{char}}">{{localize (concat 'traditionArtifacts.' char)}}</option>
-        {{/each}}
-        {{/select}}
+        {{selectOptions traditionArtifacts selected=system.artifact sort=true}}
     </select>
 </div>
 {{/if}}

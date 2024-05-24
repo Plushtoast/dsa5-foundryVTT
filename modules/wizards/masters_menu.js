@@ -793,7 +793,10 @@ class GameMasterMenu extends Application {
             this.abilities = skills.map(x => { return { name: x, type: "skill" } })
                 .concat(Object.values(game.dsa5.config.characteristics).map(x => {
                     return { name: game.i18n.localize(x), type: "attribute" }
-                }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" })).sort((x, y) => x.name.localeCompare(y.name))
+                }).concat({ name: game.i18n.localize('regenerate'), type: "regeneration" })).map(x => {
+                    x["key"] = `${x.name}|${x.type}`
+                    return x
+                })
         }
 
         mergeObject(data, {

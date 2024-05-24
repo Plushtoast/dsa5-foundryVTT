@@ -44,11 +44,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "COMBATSKILLCATEGORY.subcategory"}}</label>
                 <select name="system.subcategory" data-dtype="String">
-                    {{#select system.subcategory}}
-                    {{#each armorSubcategories as |ch|}}
-                    <option value="{{ch}}">{{localize (concat 'ARMORSUBCATEGORIES.' ch)}}</option>
-                    {{/each}}
-                    {{/select}}
+                    {{selectOptions armorSubcategories selected=system.subcategory}}
                 </select>
             </div>
             <div class="form-group double">

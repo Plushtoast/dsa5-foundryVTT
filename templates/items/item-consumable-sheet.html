@@ -60,11 +60,7 @@
             <div class="form-group">
                 <label class="label-text">{{localize "qualityStep"}}</label>
                 <select name="system.QL" data-dtype="Number">
-                  {{#select system.QL}}
-                    {{#each availableSteps as |ch|}}
-                    <option value="{{ch}}">{{ch}}</option>
-                    {{/each}}
-                  {{/select}}
+                    {{selectOptions availableSteps selected=system.QL}}
                 </select>
             </div>
 

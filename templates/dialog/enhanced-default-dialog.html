@@ -6,16 +6,7 @@
         {{#each characteristics as |item i|}}
         <div class="col five center" style="max-width: 16.66%;" data-tooltip="{{localize (concatUp 'CHAR.' item)}}">
             <select class="noAppearance" name="characteristics{{i}}">
-                {{#select item}}
-                <option value="mu"> {{localize 'CHARAbbrev.MU'}}</option>
-                <option value="kl"> {{localize 'CHARAbbrev.KL'}}</option>
-                <option value="in"> {{localize 'CHARAbbrev.IN'}}</option>
-                <option value="ch"> {{localize 'CHARAbbrev.CH'}}</option>
-                <option value="ff"> {{localize 'CHARAbbrev.FF'}}</option>
-                <option value="ge"> {{localize 'CHARAbbrev.GE'}}</option>
-                <option value="ko"> {{localize 'CHARAbbrev.KO'}}</option>
-                <option value="kk"> {{localize 'CHARAbbrev.KK'}}</option>
-                {{/select}}
+                {{selectOptions ../attributesList selected=item}}
             </select>
         </div>
         {{/each}}
@@ -65,7 +56,6 @@
 </div>
 {{#if hasSituationalModifiers}}
 <div class="modifiers form-group">
-    {{log situationalModifiers}}
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
     <select name="situationalModifiers" multiple>
         {{#each situationalModifiers as |mod t|}}

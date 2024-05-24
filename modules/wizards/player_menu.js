@@ -391,6 +391,9 @@ export default class PlayerMenu extends Application {
                 mod.max = max
                 mod.count = this.conjurationData.selectedIds.filter(x => x == mod.id).length
             }
+
+            const moreModifiers = this.conjurationData.moreModifiers[this.conjurationData.conjurationType]
+            
             const conjurationSheet = await renderTemplate("systems/dsa5/templates/system/conjuration/summoning.html", {
                 actor: this.actor,
                 conjuration: this.conjuration || { name: game.i18n.localize('CONJURATION.dragConjuration'), img: "icons/svg/mystery-man-black.svg" },
@@ -400,7 +403,7 @@ export default class PlayerMenu extends Application {
                 equipmentIndexLoaded,
                 entityAbilities,
                 entityPackages,
-                moreModifiers: this.conjurationData.moreModifiers[this.conjurationData.conjurationType],
+                moreModifiers,
                 hasMighty
             })
 
