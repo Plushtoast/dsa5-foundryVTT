@@ -911,7 +911,7 @@
         "hard": "Wenn du eine bestimmte Szene für die Helden schwerer machen möchtest, dann kannst du die Vorschläge dieses Abschnittes übernehmen.",
         "Description": "Willkommen im Journal Browser. Dieses Tool soll dich bei der Verwendung von Quellen-, Regel- und Abenteuermodulen unterstützen und einen Überblick über alle enthaltenen Inhalte liefern, wie z.B. die Szenen, Kapitel und Beschreibungen. Außerdem werden Hinweise zur Anwendung und gegebenenfalls automatische Funktionen zur Initialisierung der Module bereitgestellt.",
         "macroHint": "Folgende Macros sind teil dieses Moduls und erlauben besondere Funktionen. Du kannst sie nun in die Macroleiste ziehen oder später über das Macro Kompendium dieses Moduls finden.",
-        "availableModules": "Installierte Abenteuermodule",
+        "availableModules": "Verfügbare Abenteuermodule",
         "availableRules": "Verfügbare Regelwerke",
         "availableRSHs": "Verfügbare Regionalspielhilfen",
         "preparation": "Vorbereitung",
@@ -1742,6 +1742,8 @@
         "2": "2 Aktionen zielen"
     },
     "DSASETTINGS": {
+        "libraryModulsFilter": "Module permanent filtern",
+        "libraryModulsFilterHint": "Konfigure alle Module die in der Bibliothek nicht angezeigt werden sollen. Du kannst so z.B. Module ausblenden, die nicht für deine Spielrunde relevant sind oder das Laden der Bibliothek beschleunigen.</p><p>Änderungen werden erst nach einem Neuladen wirksam.",
         "moneyHasWeight": "Geld hat Gewicht",
         "moneyHasWeightHint": "Lass deine Dagobert Ducks das Gewicht ihrer Gier spüren.",
         "moneyKompendium": "Währungskompendium",

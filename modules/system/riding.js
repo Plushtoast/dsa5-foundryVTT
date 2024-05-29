@@ -26,7 +26,7 @@ export default class Riding {
             horseTokenSource.updateSource({ x: token.x, y: token.y, hidden: token.hidden })
 
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
-            const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}
+            const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.document.elevation ?? 0) + 1}
             mergeObject(tokenUpdate, this.adaptTokenSize(token, horseToken))
             await token.update(tokenUpdate)
 
@@ -109,7 +109,7 @@ export default class Riding {
         const tokenUpdates = []
         if(!actor.system.horse.isRiding){
             for(let token of actor.getActiveTokens()){
-                tokenUpdates.push({ _id: token.document.id, [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) })
+                tokenUpdates.push({ _id: token.document.id, [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.document.elevation ?? 0) - 1) })
             }
             await this.removeRidingCondition(actor)
         }else{
@@ -120,7 +120,7 @@ export default class Riding {
                 horseTokenId = horseToken.document.id
             }
             for(let token of actor.getActiveTokens()){
-                tokenUpdates.push({ _id: token.document.id, elevation: Math.max(0, (token.elevation ?? 0) + 1), "flags.dsa5.horseTokenId": horseTokenId })
+                tokenUpdates.push({ _id: token.document.id, elevation: Math.max(0, (token.document.elevation ?? 0) + 1), "flags.dsa5.horseTokenId": horseTokenId })
             }
 
             //TODO might need to create or search token?
@@ -164,7 +164,7 @@ export default class Riding {
     }
 
     static async unmountHorse(actor, token){
-        const tokenUpdate = { [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) }
+        const tokenUpdate = { [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.document.elevation ?? 0) - 1) }
         const tokenResized = token.getFlag("dsa5", "horseResized")
         if(tokenResized){
             mergeObject(tokenUpdate, {

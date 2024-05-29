@@ -11,6 +11,13 @@ export default class CareerWizard extends WizardDSA5 {
         this.attributes = Object.keys(DSA5.characteristics).map(x => game.i18n.localize(`CHARAbbrev.${x.toUpperCase()}`))
     }
 
+    static get abilityExceptions() {
+        return {
+            "principles": new RegExp(`^${game.i18n.localize('LocalizedIDs.principles')} \\\(`),
+            "obligations": new RegExp(`^${game.i18n.localize('LocalizedIDs.obligations')} \\\(`)
+        }
+    }
+
     static get defaultOptions() {
         const options = super.defaultOptions;
         options.title = game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("TYPES.Item.career")}` })
@@ -31,9 +38,28 @@ export default class CareerWizard extends WizardDSA5 {
                 }
             }
             let apCost = Number(parent.attr("data-cost"))
+            const mins = {}
             parent.find('.optional:checked').each(function() {
-                apCost += Number($(this).attr("data-cost"))
+                //get name attribute
+                const optionalCost = Number($(this).attr("data-cost"))
+                const name = $(this).attr("name")
+                let found = false            
+                
+                for(let [key, reg] of Object.entries(CareerWizard.abilityExceptions)){
+                    if(reg.test(name)){
+                        if(!mins[key] || optionalCost < mins[key]){
+                            mins[key] = optionalCost
+                        }
+                        found = true
+                        break
+                    }
+                }
+                
+                if(!found) apCost += optionalCost
             });
+            for(let min of Object.values(mins)){
+                apCost += min
+            }
             parent.find('.attributes:checked').each(function() {
                 apCost += Number($(this).attr("data-cost"))
             });
@@ -53,6 +79,12 @@ export default class CareerWizard extends WizardDSA5 {
         return super._validateInput(parent, app)
     }
 
+    _spendLanguagePoints() {
+        return this.actor.items.filter(x => x.type == "specialability" && x.system.category.value == "language").reduce((prev, curr) => {
+            return prev + Number(curr.system.APValue.value) * (curr.system.step.value || 1)
+        }, 0)
+    }
+
     async getData(options) {
         const data = await super.getData(options);
         const requirements = await this.parseToItem(this.career.system.requirements.value, ["disadvantage", "advantage", "specialability"])
@@ -66,33 +98,32 @@ export default class CareerWizard extends WizardDSA5 {
         const specAbChoices = this._parseAttributes(this.career.system.specialAbilities.value)
         const spellChoices = this._parseAttributes(this.career.system.spells.value)
         const liturgyChoices = this._parseAttributes(this.career.system.liturgies.value)
+        const languageCost = Math.min(this._spendLanguagePoints(), Number(this.career.system.languagePoints.value))
 
-        const baseCost = Number(this.career.system.APValue.value)
+        const baseCost = Number(this.career.system.APValue.value) - languageCost
         const mins = {}
-        let reqCost = 0
-        const search = {
-            "principles": new RegExp(`^${game.i18n.localize('LocalizedIDs.principles')} \\\(`),
-            "obligations": new RegExp(`^${game.i18n.localize('LocalizedIDs.obligations')} \\\(`)
-        }
+        let reqCost = 0        
 
         for (let req of requirements) {
             if (req.disabled) continue
         
-            reqCost += req.apCost || 0
+            let found = false            
             
-            for(let [key, reg] of Object.entries(search)){
+            for(let [key, reg] of Object.entries(CareerWizard.abilityExceptions)){
                 if(reg.test(req.name)){
                     if(!mins[key] || req.apCost < mins[key]){
                         mins[key] = req.apCost
-                        reqCost -= req.apCost || 0
                     }
+                    found = true
                     break
                 }
-            }            
+            }
+            
+            if(!found) reqCost += req.apCost || 0
         }
 
         for(let min of Object.values(mins)){
-            reqCost -= min
+            reqCost += min
         }
         
         const missingSpecialabilities = requirements.filter(x => x.type == "specialability" && !x.disabled)
@@ -100,7 +131,7 @@ export default class CareerWizard extends WizardDSA5 {
             title: game.i18n.format("WIZARD.addItem", { item: `${game.i18n.localize("career")} ${this.career.name}` }),
             career: this.career,
             description: game.i18n.format("WIZARD.careerdescr", { career: this.career.name, cost: baseCost + reqCost }),
-            baseCost,
+            baseCost: baseCost,
             advantages,
             disadvantages,
             missingVantages,
@@ -219,9 +250,10 @@ export default class CareerWizard extends WizardDSA5 {
             return
         }
 
-        let update = {
+        const update = {
             "system.details.career.value": this.career.name,
-            "system.freeLanguagePoints.value": this.career.system.languagePoints.value
+            "system.freeLanguagePoints.value": this.career.system.languagePoints.value,
+            "system.freeLanguagePoints.used": Math.min(this._spendLanguagePoints(), Number(this.career.system.languagePoints.value))
         }
         for (let k of parent.find('.attributes')) {
             let attr = $(k).attr("data-attribute").toLowerCase()

@@ -385,12 +385,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
         return await this.actor.checkEnoughXP(cost)
     }
 
-    async advanceWrapper(ev, funct, param) {
+    async advanceWrapper(ev, funct, ...params) {
         if(this.wrapperLocked) return
 
         this.wrapperLocked = true
         $(ev.currentTarget).find('i').addClass("fa-spin fa-spinner")
-        const res = await this[funct](param)
+        const res = await this[funct](...params)
         if(res) return
             
         this.wrapperLocked = false

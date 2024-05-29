@@ -1552,7 +1552,7 @@ export default class DiceDSA5 {
         if (chatOptions.rollMode === "blindroll") chatOptions["blind"] = true
 
         if (["poison", "disease"].includes(newTestData.source.type)) {
-            new Itemdsa5(newTestData.source, { temporary: true })[`${data.postData.postFunction}`](
+            new Itemdsa5(newTestData.source)[`${data.postData.postFunction}`](
                 { testData: newTestData, cardOptions: chatOptions },
                 { rerenderMessage: message }
             )

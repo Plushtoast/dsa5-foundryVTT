@@ -27,12 +27,12 @@ export default function() {
 
         const promises = [];
         for ( const effect of activeEffects ) {
-        if ( !effect.img ) continue;
-        if ( effect.getFlag("core", "overlay") && !hasOverlay ) {
-            promises.push(this._drawOverlay(effect.img, effect.tint));
-            hasOverlay = true;
-        }
-        else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, "flags.dsa5.value")));
+            if ( !effect.img ) continue;
+            if ( effect.getFlag("core", "overlay") && !hasOverlay ) {
+                promises.push(this._drawOverlay(effect.img, effect.tint));
+                hasOverlay = true;
+            }
+            else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, "flags.dsa5.value")));
         }
         await Promise.allSettled(promises);
 
@@ -78,7 +78,7 @@ export default function() {
             i++;
           }
         }
-      }
+    }
 
     Token.prototype._drawEffect = async function(src, tint, value) {
         if ( !src ) return;
@@ -87,7 +87,7 @@ export default function() {
         icon.tint = tint ?? 0xFFFFFF;
         icon.counter = value
         return this.effects.addChild(icon);
-     }
+    }
 
     Token.prototype.drawAuras = async function(force = false) {
         await DSAAura.drawAuras(this, force)

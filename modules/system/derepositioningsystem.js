@@ -19,7 +19,7 @@ export default class DPS {
         const ray = new Ray(tokenSource, tokenTarget)
         const tileDistance = ray.distance / gridSize
         const distance = tileDistance * canvas.scene.grid.distance
-        const elevation = Math.abs((getProperty(tokenSource, "system.elevation") || 0) - (getProperty(tokenTarget, "system.elevation") || 0))
+        const elevation = Math.abs((getProperty(tokenSource, "document.elevation") || 0) - (getProperty(tokenTarget, "document.elevation") || 0))
         const distanceSum = Math.hypot(distance, elevation)
         return {
             elevation,
@@ -79,13 +79,7 @@ export default class DPS {
     static lightLevel(actor, html) {
         if (canvas.scene && game.settings.get("dsa5", "sightAutomationEnabled")) {
             let level = 0;
-            const darkness = canvas.scene?.environment.darknessLevel || 0;
-            const threholds = game.settings
-                .get("dsa5", "sightOptions")
-                .split("|")
-                .map((x) => Number(x));
-
-            while (threholds[level] <= darkness) level += 1;
+            const threholds = game.settings.get("dsa5", "sightOptions").split("|").map((x) => Number(x));
 
             if (actor) {
                 const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize("LocalizedIDs.darksight"))
@@ -95,6 +89,10 @@ export default class DPS {
                 let token = Array.from(game.user.targets)
                 if(token.length) {
                     token = token[0]
+                    const darkness = canvas?.effects.getDarknessLevel(token.center, token.document.elevation) || 0
+
+                    while (threholds[level] <= darkness) level += 1;
+
                     const light = DPS.inLight(token)
                     let mod = 0
                     if(light.bright) mod = -2

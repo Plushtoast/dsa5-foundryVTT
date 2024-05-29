@@ -6,7 +6,7 @@
         <div class="form-group">
             <label class="label-text">{{localize field.label}}</label>
             <select name="{{field.attr}}" data-dtype="String" data-notstrict="{{field.notStrict}}">
-                {{selectOptions options selected=field.value blank=(localize 'Library.noFilter')}}
+                {{selectOptions options selected=field.value blank='Library.noFilter' localize=true}}
             </select>
         </div>
         {{else if (eq field.type 'text')}}

@@ -62,7 +62,7 @@ export default function migrateWorld() {
         const NEEDS_MIGRATION_VERSION = 29
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
-        betaWarning(12)
+        //betaWarning(12)
 
         if (!needsMigration) return;
 

@@ -1,6 +1,4 @@
 <div class="row-section wrap reverseFlex">
-    <button type="submit" disabled style="display: none" aria-hidden="true"></button>
-
     <div class="col morph">
         <div class="groupbox">
             <div class="row-section">
@@ -100,8 +98,8 @@
 
 {{#if (ne actor.system.merchant.merchantType "none")}} {{#if isGM}}
 <div class="row-section">
-    <button class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
-    <button class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
+    <button type="button" class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
+    <button type="button" class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
 </div>
 {{/if}}
 <div class="groupbox">

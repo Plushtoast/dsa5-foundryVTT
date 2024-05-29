@@ -17,9 +17,16 @@ const modifierTypes = {
 }
 
 function clickableAbilities(a, b){
-    return `<span class=\"searchableAbility\" data-category="${b}">` + a.split(",").map(x => {
-        return `<a>${x}</a>`
-    }).join(", ") + "<span>"
+    return a.split(/\n/g).map(sec => {
+        const data = sec.split(":")
+        const isSubsection = data.length > 1
+
+        return data.map((elems, index) => {
+            if(index == 0 && isSubsection) return `<b>${elems}</b>`
+
+            return `<span class=\"searchableAbility\" data-category="${b}">` + elems.split(",").map(x => `<a>${x}</a>`).join(", ") + "<span>"
+        }).join(":")
+    }).join("<br/>")    
 }
 
 function clickableActorItems(actor, list, rankPath, maxPath) {

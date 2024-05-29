@@ -75,25 +75,42 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         return await callMacro(packName, name, actor, item, qs, args)
     }
 
+    static async startDelayedEffect(duration, effect) {        
+        effect.update({ 
+            "system.delayed": false,
+            "duration": duration,
+            "-=flags.dsa5.onDelayed": null
+        })
+    }
+
     static onDelayedEffect(actor, effect) {
         let continueDeletion = true
         if(effect.system.delayed) {
+            const duration = effect.system?.originalDuration || { seconds: "", rounds: ""}
+            mergeObject(duration, {
+                startRound: game.combat?.round,
+                startTurn: game.combat?.turn,
+                startTime: game.time.worldTime        
+            })
+            if (!duration.rounds && duration.seconds) {
+                duration.rounds = Number(duration.seconds) / 5
+            }
             if(effect.changes.length || effect.statuses.size) {
-                const duration = effect.system.originalDuration || { seconds: "", rounds: ""}
-                mergeObject(duration, {
-                    startRound: game.combat?.round,
-                    startTurn: game.combat?.turn
-                    
-                })
-                if (!duration.rounds && duration.seconds) {
-                    duration.rounds = duration.seconds / 5
-                }
-                effect.update({ 
-                    "system.delayed": false,
-                    "duration": duration
-                })
+                this.startDelayedEffect(duration, effect)
                 continueDeletion = false
-            }            
+            }
+
+            if(effect.system.macroEffect) {                
+                const testData = effect.system.initialTestData
+                const sourceActor = game.actors.get(effect.system.sourceActor)
+                const source = effect.system.source
+                
+                const macroEffect = duplicate(effect.system.macroEffect)
+                delete macroEffect.flags.dsa5?.onDelayed
+                macroEffect.system.delayed = false
+                macroEffect.duration = duration
+                this.applyAdvancedFunction(actor, [macroEffect], source, testData, sourceActor)
+            }
         }
         return continueDeletion
     }
@@ -291,14 +308,26 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                         mod: Math.round(Roll.safeEval(`${mod}`.replace(/q(l|s)/i, qs).replaceAll("step", specStep))) || 0,
                         effect: ef,
                         target: actor,
-                        token: actor.token ? actor.token.id : undefined
+                        token: actor.token?.id
                     });
                 } else {
                     effectApplied = true;
                     if (!effectNames.has(ef.name)) effectNames.add(ef.name)
-                    if ((ef.changes && ef.changes.length > 0) || (isAura && !customEf)) {
-                        effectsWithChanges.push(ef);
+
+                    const onDelayed = getProperty(ef, "flags.dsa5.onDelayed")
+                    
+                    const delayedData = { 
+                        duration: { 
+                            seconds: onDelayed
+                        },
+                        system: {
+                            delayed: true,
+                            originalDuration: ef.duration
+                        }
                     }
+
+                    let isEffectWithChange = (ef.changes && ef.changes.length > 0) || (isAura && !customEf)
+
                     if (customEf) {
                         switch (customEf) {
                             case 1: //Systemeffekt
@@ -315,18 +344,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                                         name: `${source.name} (${effectName})`, 
                                         duration: ef.duration
                                     }
-                                    const onDelayed = getProperty(ef, "flags.dsa5.onDelayed")
-                                    if(onDelayed) {
-                                        mergeObject(effectData, { 
-                                            duration: { 
-                                                seconds: onDelayed
-                                            },
-                                            system: {
-                                                delayed: true,
-                                                originalDuration: ef.duration
-                                            }
-                                        })
-                                    }
+                                    if(onDelayed) mergeObject(effectData, delayedData)
+
                                     await actor.addTimedCondition(effectId, value, false, false, effectData);
                                 }
                                 break;
@@ -334,27 +353,51 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                                 if (!game.user.can("MACRO_SCRIPT")) {
                                     ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
                                 } else {
-                                    try {
-                                        const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
-                                        const fn = new AsyncFunction("effect", "actor", "callMacro", "msg", "source", "actor", "sourceActor", "testData", "qs", getProperty(ef, "flags.dsa5.args3"))
-                                        await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
-                                    } catch (err) {
-                                        ui.notifications.error(
-                                            `There was an error in your macro syntax. See the console (F12) for details`
-                                        );
-                                        console.error(err);
-                                        console.warn(err.stack);
+                                    if(onDelayed) {
+                                        const copy = duplicate(ef)
+                                        copy.changes = []
+                                        isEffectWithChange = true
+                                        mergeObject(ef, {
+                                            system: {
+                                                macroEffect: copy,
+                                                sourceActor: sourceActor?.id,
+                                                source: source,
+                                                initialTestData: {
+                                                    qualityStep: testData.qualityStep,
+                                                }
+                                            }})
+                                    } else {
+                                        try {
+                                            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+                                            const fn = new AsyncFunction("effect", "actor", "callMacro", "msg", "source", "actor", "sourceActor", "testData", "qs", getProperty(ef, "flags.dsa5.args3"))
+                                            await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
+                                        } catch (err) {
+                                            ui.notifications.error(
+                                                `There was an error in your macro syntax. See the console (F12) for details`
+                                            );
+                                            console.error(err);
+                                            console.warn(err.stack);
+                                        }
                                     }
                                 }
                                 break;
                             case 3: // Creature Link
-                                let creatures = (getProperty(ef, "flags.dsa5.args4") || "")
+                                const creatures = (getProperty(ef, "flags.dsa5.args4") || "")
                                     .split(",")
                                     .map((x) => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`)
                                     .join(" ");
                                 msg += `<p><b>${game.i18n.localize("ActiveEffects.advancedFunctions.creature")}</b>:</p><p>${creatures}</p>`;
                                 break;
                         }
+                    }
+
+                    if (isEffectWithChange) {
+                        if(onDelayed) {
+                            delete ef.flags.dsa5.onDelayed
+                            mergeObject(ef, delayedData)
+                        } 
+
+                        effectsWithChanges.push(ef);
                     }
                 }
             } catch (exception) {

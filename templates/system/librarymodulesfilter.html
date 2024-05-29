@@ -1,0 +1,11 @@
+<div>
+    <p>{{{localize 'DSASETTINGS.libraryModulsFilterHint'}}}</p>
+    <div class="row-section wrap">
+        {{#each moduleOptions as |item key|}}
+            <div class="col two">
+                <input type="checkbox" class="moduleSelector" id="{{key}}" name="{key}" {{checked (not (lookup ../rejectedModules key))}} />
+                <label for="{{key}}">{{item}}</label>
+            </div>
+        {{/each}}
+    </div>
+</div>

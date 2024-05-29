@@ -1635,7 +1635,7 @@
         "easy": "If you want to make a certain scene easier for the heroes, you can adopt the suggestions of this section.",
         "hard": "If you want to make a certain scene harder for the heroes, you can adopt the suggestions of this section.",
         "Description": "Welcome to the journal browser. This tool is supposed to assist in the usage of source, rule and adventure modules by giving an overview on all included contents like scenes, chapters and descriptions. Moreover hints for the usage are provided and functions for the initialisation of the modules.",
-        "availableModules": "Installed adventure modules",
+        "availableModules": "Available adventure modules",
         "availableRules": "Available rulebooks",
         "availableRSHs": "Available regional supplements",
         "preparation": "Preparation",
@@ -1675,6 +1675,8 @@
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
     "DSASETTINGS": {
+        "libraryModulsFilter": "Filter modules permanent",
+        "libraryModulsFilterHint": "Configure all modules that should not be displayed in the library. For example, you can hide modules that are not relevant to your game or speed up the loading of the library.</p><p>Changes will only take effect after a reload.",
         "moneyHasWeight": "Money has weight",
         "moneyHasWeightHint": "Let your Dagobert Ducks feel the weight of their greed.",
         "moneyKompendium": "Currency Compendium",

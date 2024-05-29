@@ -414,6 +414,14 @@ export function setupConfiguration() {
         }
     });
 
+    game.settings.register("dsa5", "libraryModulsFilter", {
+        name: "libraryModulsFilter",
+        scope: "client",
+        config: false,
+        default: {},
+        type: Object
+    });    
+
     game.settings.register("dsa5", "tokenhotbarPosition", {
         name: "tokenhotbarPosition",
         scope: "client",

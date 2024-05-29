@@ -101,7 +101,9 @@ export default class BookWizard extends Application {
 
             const ownership = { ownership: {
                 PLAYER: visibility,
-                TRUSTED: visibility
+                TRUSTED: visibility,
+                ASSISTANT: "OWNER",
+                GAMEMASTER: "OWNER"
             }}
 
             await pack.configure(ownership)
@@ -341,9 +343,9 @@ export default class BookWizard extends Application {
         this.markFindings(chapter)
     }
 
-    showSearchResults(pageContent) {
+    async showSearchResults(pageContent) {
         if(this.searchString) {
-            TextEditor._replaceTextContent(TextEditor._getTextNodes(pageContent), new RegExp(this.searchString, "ig"), (match, options) => {
+            await TextEditor._replaceTextContent(TextEditor._getTextNodes(pageContent), new RegExp(this.searchString, "ig"), (match, options) => {
                 return $(`<span class="searchMatch">${match[0]}</span>`)[0]
             })
         }
@@ -397,7 +399,7 @@ export default class BookWizard extends Application {
             pageTocs.push(await this._renderHeadings(pageToc, equalName))
 
             let pageContent = view[view.length -1]
-            this.showSearchResults(pageContent)
+            await this.showSearchResults(pageContent)
             pageContent = $(pageContent).html()           
 
             if(page.type == "video") pageContent = `<div class="video-container">${pageContent}</div>`

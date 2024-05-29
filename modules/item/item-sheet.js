@@ -753,6 +753,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
         data.canOnUseEffect = game.user.isGM || game.settings.get("dsa5", "playerCanEditSpellMacro")
         return data
     }
+    
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {

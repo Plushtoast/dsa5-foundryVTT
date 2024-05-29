@@ -2,7 +2,7 @@ import DSA5_Utility from "./utility-dsa5.js"
 import ADVANCEDFILTERS from "./itemlibrary_advanced_filters.js"
 import { clickableAbility, tabSlider } from "./view_helper.js"
 import DSA5 from "./config-dsa5.js"
-const { getProperty, duplicate, debounce } = foundry.utils
+const { getProperty, duplicate, debounce, mergeObject } = foundry.utils
 //TODO merge existing index with advanced details
 //TODO create index with getIndex(fields)
 //TODO check if we can use the uuid right from the start
@@ -602,6 +602,17 @@ export default class DSA5ItemLibrary extends Application {
         this.buildEquipmentIndex()
     }
 
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        buttons.unshift({
+            class: "libraryModulsFilter",
+            tooltip: "DSASETTINGS.libraryModulsFilter",
+            icon: "fas fa-filter",
+            onclick: async() => new LibraryModulsFilter().render(true)
+        })        
+        return buttons
+    }
+
     async buildEquipmentIndex() {
         await this._createIndex("equipment", "Item", game.items)
     }
@@ -609,10 +620,11 @@ export default class DSA5ItemLibrary extends Application {
     async _createIndex(category, document, worldStuff) {
         if (this[`${category}Build`]) return
 
+        const filteredCompendiums = game.settings.get("dsa5", "libraryModulsFilter")
         SceneNavigation.displayProgressBar({label: game.i18n.format('Library.loading', {item: ""}), pct: 0})
         const target = $(this._element).find(`*[data-tab="${category}"]`)
         this.showLoading(target, category)
-        const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || p.visible) && !p.metadata.label.startsWith("WZ-"))
+        const packs = game.packs.filter(p => p.documentName == document && (game.user.isGM || p.visible) && !p.metadata.label.startsWith("WZ-") && !filteredCompendiums[p.metadata.packageName])
         const percentage = 100 / (packs.length + 1)
         let count = percentage
         const actorFields = ["name", "system.type", "system.description.value", "img"]
@@ -740,19 +752,23 @@ export default class DSA5ItemLibrary extends Application {
             }
 
             const bindex = this.createDetailIndex(category, subcategory)
-            const moduleOptions = game.packs.filter(x => x.metadata.type == "Item").reduce((prev, cur) => {
-                if(!prev[cur.metadata.packageName]) {
-                    const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || "World")
-                    prev[cur.metadata.packageName] = name
-                }
-                return prev
-            }, {})
+            const moduleOptions = DSA5ItemLibrary.collectModulOptions()
             const template = await renderTemplate("systems/dsa5/templates/system/detailFilter.html", { fields, subcategory, moduleOptions, moduleSelected })
             await bindex
             return template
         } else {
             return `<p>${game.i18n.localize('Library.selectAdvanced')}</p>`
         }
+    }
+
+    static collectModulOptions() {
+        return game.packs.filter(x => x.metadata.type == "Item").reduce((prev, cur) => {
+            if(!prev[cur.metadata.packageName]) {
+                const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || "World")
+                prev[cur.metadata.packageName] = name
+            }
+            return prev
+        }, {})
     }
 
     checkWorldStuffIndex() {
@@ -911,5 +927,47 @@ export default class DSA5ItemLibrary extends Application {
     hideLoading(html, category) {
         this.setBGImage([], category)
         html.find('.loader').remove()
+    }
+}
+
+class LibraryModulsFilter extends Application {
+    static get defaultOptions() {
+        const options = super.defaultOptions
+        options.classes.push("dsa5")
+        options.resizable = true
+        options.width = 600
+        options.title = game.i18n.localize("DSASETTINGS.libraryModulsFilter")
+        options.template = "systems/dsa5/templates/system/librarymodulesfilter.html"
+        return options
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+
+        mergeObject(data, {
+                moduleOptions: DSA5ItemLibrary.collectModulOptions(),
+                rejectedModules: game.settings.get("dsa5", "libraryModulsFilter")
+        })
+        return data
+    }   
+
+    activateListeners(html) {
+        super.activateListeners(html)
+
+        html.find('.moduleSelector').change(ev => this.moduleFilterChanged(ev))
+    }
+
+    async moduleFilterChanged(ev) {
+        const module = ev.currentTarget.id
+        const checked = ev.currentTarget.checked
+
+        const data = game.settings.get("dsa5", "libraryModulsFilter")
+        if (checked) {
+            delete data[module]
+        } else {
+            data[module] = true
+        }
+
+        game.settings.set("dsa5", "libraryModulsFilter", data)
     }
 }

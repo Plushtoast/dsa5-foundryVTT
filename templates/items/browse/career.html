@@ -38,7 +38,7 @@
                                 {{localize "requirements"}}
                             </div>
                             <div class="col">
-                                {{document.system.requirements.value}}
+                                {{{clickableAbilities document.system.requirements.value 'advantage disadvantage specialability'}}}
                             </div>
                             {{/if}}
                             {{#if document.system.recommendedAdvantages.value}}

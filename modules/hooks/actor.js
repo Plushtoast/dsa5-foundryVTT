@@ -302,13 +302,15 @@ export default function() {
     Hooks.on("updateToken", (token, data, options) => {
         if ( !token.rendered ) return;
         
+        const prePosition = { center: token.object.center, elevation: token.elevation }
         Riding.updateTokenHook(token, data, options); 
-
+       
         const animationName = options.animation?.name || token.object.animationName;
         const animationPromise = token.object.animationContexts.get(animationName)?.promise;
 
         (animationPromise || Promise.resolve()).then(() => {
-            token.object?.drawAuras();
+            token.object?.drawAuras();            
+            if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onTokenMove(token, data, options, prePosition)
         })
     })
 
