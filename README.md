@@ -1,3 +1,6 @@
+# THIS IS A BETA RELEASE BE AWARE ABOUT UNFORSEEN ISSUES AND LACKING SUPPORT, NO WARRANTY
+
+
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 
 ## Current Version and Compatibility:
@@ -8,6 +11,8 @@ If you want to learn more checkout the [German](https://ulisses-spiele.de/virtua
 ## Installation - Auto Installer
 
 In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
+
+**THIS IS A  BETA RELEASE ONLY MANUAL INSTALL POSSIBLE**
 
 ```
 https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry12/system.json

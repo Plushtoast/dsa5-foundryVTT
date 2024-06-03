@@ -119,8 +119,8 @@
         "maximum": "12"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
-    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry11/system.json",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/5.4.5/dsa5-foundryVTT-5.4.5.zip",
+    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry12/system.json",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/archive/foundry12.zip",
     "packFolders": [
         {
             "name": "DSA5/TDE5",
