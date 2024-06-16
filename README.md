@@ -1,6 +1,3 @@
-# THIS IS A BETA RELEASE BE AWARE ABOUT UNFORSEEN ISSUES AND LACKING SUPPORT, NO WARRANTY
-
-
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 
 ## Current Version and Compatibility:
