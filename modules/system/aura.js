@@ -153,7 +153,12 @@ export class DSAAura {
     }
 
     static async inAura(sourceToken, token, template) {
-        return DPS.rangeFinder(sourceToken, token).distance <= template.distance
+        for(const sToken of sourceToken.actor.getActiveTokens()) {
+            for(const tToken of token.actor.getActiveTokens()) {
+                if(DPS.rangeFinder(sToken, tToken).distance <= template.distance) return true
+            }
+        }
+        return false
     }
 
     static async checkAuraEntered(trespasser) {        

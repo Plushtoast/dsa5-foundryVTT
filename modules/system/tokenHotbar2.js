@@ -7,6 +7,7 @@ import { tinyNotification } from "./view_helper.js";
 import DSA5Payment from "./payment.js"
 import { Trade } from "../actor/trade.js";
 import Itemdsa5 from "../item/item-dsa5.js";
+import DSA5StatusEffects from "../status/status_effects.js";
 const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class TokenHotbar2 extends Application {
@@ -770,7 +771,7 @@ export class AddEffectDialog extends Dialog {
     activateListeners(html) {
         super.activateListeners(html);
 
-        html.find('.reactClick').mouseenter((ev) => {
+        html.find('.filterable .reactClick').mouseenter((ev) => {
             if (ev.currentTarget.getElementsByClassName("hovermenu").length == 0) {
                 let div = document.createElement("div")
                 div.classList.add("hovermenu")
@@ -783,7 +784,7 @@ export class AddEffectDialog extends Dialog {
                 ev.currentTarget.appendChild(div)
             }
         })
-        html.find('.reactClick').mouseleave((ev) => {
+        html.find('.filterable .reactClick').mouseleave((ev) => {
             let e = ev.toElement || ev.relatedTarget;
             if (e.parentNode == this || e == this) return;
 
@@ -847,9 +848,16 @@ export class AddEffectDialog extends Dialog {
     }
 
     async addEffect(id, options = {}) {
-        for (let token of canvas.tokens.controlled) {
-            await token.actor.addTimedCondition(id, 1, false, false, options)
-        }
+        const isCustomEffect = id == "custom"
+        if(canvas.tokens.controlled.length == 1 && isCustomEffect) {
+            DSA5StatusEffects.createCustomEffect(canvas.tokens.controlled[0].actor)
+        } else if(isCustomEffect) {
+            ui.notifications.error(game.i18n.localize("DSAError.customEffect"))
+        } else {
+            for (let token of canvas.tokens.controlled) {
+                await token.actor.addTimedCondition(id, 1, false, false, options)
+            }
+        }        
         this.close()
     }
 

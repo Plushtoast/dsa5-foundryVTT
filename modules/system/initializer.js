@@ -133,7 +133,7 @@ export default class DSA5Initializer extends Dialog {
                 scenesToUpdate.push(entry)
             }
         }
-        let createdEntries = await Scene.create(scenesToCreate, { dsaInit: true })
+        let createdEntries = await Scene.create(scenesToCreate, { dsaInit: true, keepId: true })
         for (let entry of createdEntries) {
             this.scenes[entry.name] = entry;
             const thumb = await entry.createThumbnail()

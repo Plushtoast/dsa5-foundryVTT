@@ -727,7 +727,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
 
         html.find(".status-add").mousedown(async(ev) => {
-            let status = ev.currentTarget.dataset.id
+            const status = ev.currentTarget.dataset.id
             if (status == "custom") {
                 DSA5StatusEffects.createCustomEffect(this.actor)
             } else {

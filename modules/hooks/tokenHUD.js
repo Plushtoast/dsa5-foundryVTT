@@ -118,8 +118,9 @@ export default function() {
         const actor = app.object.actor
         if (actor) {
             addThirdBarToHUD(html, actor, app)
-            if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.lightHud(html, actor, data)
             swarmButtons(app, html, data)
+
+            game.dsa5.apps.LightDialog?.lightHud(html, actor, data)
         }
         html.find('.control-icon[data-action="target"]').mousedown(ev => {
                 if (ev.button == 2) {

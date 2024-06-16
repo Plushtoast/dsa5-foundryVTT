@@ -22,11 +22,11 @@ export default class DSA5StatusEffects {
         html.on('click', '.chat-condition', ev => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id))
     }
 
-    static createCustomEffect(owner, description = "", name) {
+    static async createCustomEffect(owner, description = "", name) {
         name = name || game.i18n.localize("CONDITION.custom")
         if (description == "") description = name
 
-        owner.addCondition({
+        const effect = await owner.addCondition({
             name,
             icon: "icons/svg/aura.svg",
             origin: owner.uuid,
@@ -36,6 +36,7 @@ export default class DSA5StatusEffects {
                 }
             }
         })
+        effect[0]?.sheet.render(true)
     }
 
     static prepareActiveEffects(target, data) {
@@ -162,16 +163,15 @@ export default class DSA5StatusEffects {
         ui.notifications.warn(msg)
     }
 
-    static resistantToEffect(target, effect) {
-        return this.collectModificationToEffect(target, effect, "system.resistances.effects")
+    static resistantToEffect(target, effectId) {
+        return this.collectModificationToEffect(target, effectId, "system.resistances.effects")
     }
 
-    static thresholdToEffect(target, effect) {
-        return this.collectModificationToEffect(target, effect, "system.thresholds.effects")
+    static thresholdToEffect(target, effectId) {
+        return this.collectModificationToEffect(target, effectId, "system.thresholds.effects")
     }
 
-    static collectModificationToEffect(target, effect, key) {
-        const effectId = [...effect.statuses][0]
+    static collectModificationToEffect(target, effectId, key) {
         if (!effectId) return 0
 
         const modifications = getProperty(target, key) || []
@@ -279,8 +279,8 @@ export default class DSA5StatusEffects {
 
         const max = Number(effect.flags.dsa5.max)
         const mod = Math.clamp(actor.system.condition[statusesId] || 0, 0, max) * -1
-        const resist = this.resistantToEffect(actor, effect)
-        const threshold = this.thresholdToEffect(actor, effect) * -1
+        const resist = this.resistantToEffect(actor, statusesId)
+        const threshold = this.thresholdToEffect(actor, statusesId) * -1
         const clamped = Math.clamp(mod + resist, -1 * max, 0)
 
         return clamped < threshold ? clamped : 0

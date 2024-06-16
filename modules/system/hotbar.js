@@ -139,7 +139,7 @@ export default class DSA5Hotbar extends Hotbar {
                 tooltip = game.i18n.format("TT.skillgm", { name: data.name })
                 break
             case "effect":
-                const effect = this.token.actor.effects.get(data.id)
+                const effect = this.token.actor?.effects.get(data.id)
                 if(effect) {
                     description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description
                 }

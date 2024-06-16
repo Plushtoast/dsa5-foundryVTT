@@ -1,0 +1,82 @@
+<h1>Wichtige Änderungen  (16.06.2024)</h1>
+<h2 id="v12-ready">V12 Ready </h2>
+<p>DSA ist nun bereit für Foundry 12. Ein großes Feature von v12 sind die Scene Regions. Diese erlauben z.B. die
+    Dunkelheit in Höhlen anzupassen, Wetter in Innenräumen auszublenden oder Token zu teleportieren (z.B. zwischen
+    Stockwerken).<br>
+    Wir haben bestehenden Content entsprechend so angepasst, dass Nutzen aus dieser Funktion gezogen werden kann.<br>
+    Für die Teleporter oder Clone Regions ist allerdings nach wie vor das Modul multilevel-tokens notwendig. Wir haben
+    den Entwickler dafür bereits auch insofern unterstützt, dass es nun ebenfalls für V12 bereit ist. Multilevel bietet
+    derzeit Funktionen die von Foundry Core leider nicht hinreichend umgesetzt sind.</p>
+<h2 id="kodex-des-götterwirkens">Kodex des Götterwirkens </h2>
+<p>Der Kodex des Götterwirkens wurde in bestehende Module integriert genauso wie alle Kodizes, das Divinarium und das
+    Grimorum zuvor.<br>
+    Ggf. lohnt es sich die Migration für deine Spieler durchzuführen. Du findest diese bei den Buttons des Headermenüs
+    auf dem Heldenbogen. Die Migration sollte immer mal wieder durchgeführt werden, um alle Charaktere auf dem letzten
+    Stand der Technik und Regeln in Foundry DSA zu halten. Dies kann alternativ auch über den Weltenzerstörer zu finden
+    in den Settings des Grundregelwerk Moduls durchgeführt werden.</p>
+<h2 id="mehr-icons">Mehr Icons </h2>
+<img src="systems/dsa5/lazy/patchimages/6.0.0/icons.webp" style="float:right;max-width:50%"/>
+<p>Angriffe von Kreaturen bekommen nun eine etwas größere Auswahl an Icons. Diese sind nicht nur nett anzuschauen sonder
+    helfen vor allem dabei in der Hotbar schneller den passenden Angriff zu finden.</p>
+<p>Das gleiche gilt für Zauber und Liturgien. Hierfür haben wir Icons von <a
+        href="https://game-icons.net/">https://game-icons.net/</a> mit einigen schicken Rahmen von Carina Wittrin
+    kombiniert, um eine große Auswahl an einzigartigen Icons für eben alle Zauber und Liturgien zu bekommen. Dadurch
+    lassen sie sich optisch besser unterscheiden und so leicht in der Hotbar finden. Wir werden versuchen die Zauber
+    grafisch nach Merkmal (Zauber, z.B. Heilung) und Verbreitung (Liturgien, z.B. Praios) zu gruppieren.<br>
+    Da es hier auch um eine sehr große Anzahl geht (600+) kann es auch sein, dass diese beim ersten Durchgang noch nicht
+    so ganz passen und vielleicht später nochmal nachjustiert werden.<br>
+    Ggf. musst du hier eine Migration deiner Zauber durchführen, um die neuen Icons eingebunden zu bekommen (siehe
+    oben).</p>
+    
+<h1 id="verbesserungen">Verbesserungen </h1>
+<ul class="dsalist">
+    <li>Du kannst deine gierigen Spieler nun das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die
+        entsprechende Option in den Settings und achte darauf, dass jede Währung ein eigenes Gewicht hat.</li>
+    <li>Einigen RSHs wurden passende Währungen hinzugefügt. Siehe dazu auch die Erklärung zur Verwendung von Währungen
+        in Foundry DSA im Game Manual.</li>
+    <li>Alle Module sollten nun das passend Tagging für die Werkstatt des Meisters haben.</li>
+    <li>Die Auswahl des Würfelmodus (öffentlich, an Spielleiter, blind an Spielleiter, nur an selbst) ist bei Proben nun
+        über Radiobuttons dargestellt. Nach einer kurzen Eingewöhnung sollte man sich so jeweils einen Click sparen.
+    </li>
+    <li>Gegenstandsverzauberungen bzw. Artefakte sind nun auch über die Hotbar Conversion verfügbar.</li>
+    <li>Die Regionsangaben aus dem Archiv der Ausrüstung wurden in die entsprechenden Gegenstände eingetragen.</li>
+    <li>Die Gestaltwandlung kann nun auch eine proportionale Umrechnung der LeP durchführen. Möchtest du dich z.B. in
+        einen Vogel mit 5 LeP verwandeln und hast nur noch 15 von 30 LeP übrig, kannst du durch aktivieren dieser Option
+        dich entsprechend in einen Vogel mit 3 LeP (gerundet) verwandeln.</li>
+    <li>Systemeffekte (Zustände und Status) die von Zaubern, Giften und sonstigen Fähigkeiten übertragen werden,
+        erzeugen nun jeweils immer einen neuen Effekt statt gestapelt zu werden. Dadurch kann jeder einzelne eine eigene
+        Ablaufdauer haben und gibt mehr Aufschluss auf dessen Quelle.</li>
+    <li>Gifte können nun einen verzögerten Effekt haben. Das bedeutet, dass ihre Auswirkungen erst nach Ablauf dieser
+        Verzögerung eintreten. Am Status sollte ein entsprechender Hinweis sein. Die Auswirkung kann durch Löschen des
+        Effekts vorzeitig ausgelöst werden. Entsprechend muss ein verzögerter Effekt zwei mal gelöscht werden. Für das
+        automatische Auslösen wird zusätzlich das Modul Times-up benötigt..</li>
+    <li>Die Bibliothek hat nun ein Konfigurationsmenü, um Module aus der Suche auszuschließen. Du findest es in der
+        Headerleiste der Bibliothek. Dadurch kannst du z.b. das Laden der Welt beschleunigen oder irrelevante Inhalte
+        (z.B. Abenteuer) ausblenden.</li>
+    <li>Die automatischen Sichtmodifikatoren (aktivierbar im Meistermenü) erkennen nun auch die Dunkelheit von Scene
+        Regions.</li>
+    <li>Die Sichtautomatisierung ändert die Sichtweite nun auch beim Betreten und Verlassen von Dunkelheitszonen (Scene
+        Regions, noch ein bisschen experimentell).</li>
+    <li>Das Konfigurations-Sheet für manuelle Active Effects wird nun standardmäßig beim Erstellen gleich mitgeöffnet.
+    </li>
+    <li>Das Zustand-Hinzufügen über die Tokenhotbar oder Hotbarkonversion ermöglicht nun auch das Hinzufügen von
+        manuellen Effekten.</li>
+    <li>Wie angekündigt sind nun die meisten Gifte automatisch anwendbar.</li>
+    <li>Wie angekündigt sind nun auch alle Modul Token in der Werkstatt des Meisters filterbar.</li>
+    <li>Besonderen Dank an Rapunzel und TarionT für unermüdlichen Fortschritt in der Umsetzung der Automatisierung aller
+        Zauber- und Liturgieerweiterungen. Mehr dazu <a href="https://github.com/Plushtoast/dsa5-extensiondb">hier</a>
+    </li>
+    <li>Ein paar Verbrauchsgegenstände (Elixiere &amp; Tränke, z.B. Waffenbalsam) wurden automatisiert.</li>
+</ul>
+<h1 id="bugfix">Bugfix </h1>
+<ul class="dsalist">
+    <li>Begleiter und Vertraute steigern nun nach Kategorie "C". Wirf auch mal ein Blick ins Game Manual, wenn du dich
+        fragst, wie diese korrekt anzulegen sind.</li>
+    <li>Krankheits- und Giftproben können nun wieder editiert werden.</li>
+    <li>Die Tiersonderfertigkeit "Trampeln" funktioniert nun richtig, und modifiziert den Ausweichenwert nicht
+        permanent.</li>
+    <li>Ein Fehler bei der Charaktererschaffung in Bezug auf Prinzipientreue und Verpflichtung wurde beseitigt.</li>
+    <li>Ein Fehler bei der Bestimmung der Gegengottheit über den Typus einer Kreatur wurde behoben.</li>
+    <li>Der Sichtbarkeitstoggle im Journalbrowser sollte nun nicht zusätzlich auch noch die Kompendien für den
+        Spielleiter verstecken.</li>
+</ul>

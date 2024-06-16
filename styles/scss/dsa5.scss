@@ -490,6 +490,11 @@
     background: rgb(188, 136, 111);
     background: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
     box-shadow: none;
+
+    .item-create {
+      display:block;
+      line-height: 30px;
+    }
   }
   
   .table-header {
@@ -1649,12 +1654,16 @@
   }
   
   .statusEffectMenu {
+    .status-create {
+      line-height: 26px;
+      display: block;
+    }
     ul {
       display: none;
       position: absolute;
       right: -10px;
       top: -10px;
-      width: 164px;
+      width: 224px;
       border: 1px solid black;
       background: rgba(0, 0, 0, 0.7);
       padding: 8px;
@@ -1675,7 +1684,7 @@
       a {
         color: white;
         border: 1px solid white;
-        padding: 3px;
+        padding: 4px 8px;
         border-radius: 2px;
       }
     }

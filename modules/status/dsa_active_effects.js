@@ -58,6 +58,7 @@ export default class DSAActiveEffect extends ActiveEffect {
         super._displayScrollingStatus(enabled);
     }
 
+    // key: "@meleeweapon.Rondrakamm (2H).system.attack.value"
     _getModifiedItems(actor, change) {
         const data = change.key.split(".")
         let type = data.shift()

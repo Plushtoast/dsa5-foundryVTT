@@ -71,10 +71,9 @@ export default function() {
         notifyFadingEffect(effect, options)
 
         if (actor && actor.documentName == "Actor") {
-            const statusesId = [...effect.statuses][0]
-            if (statusesId == "bloodrush") {
+            if (effect.statuses.has("bloodrush")) {
                 actor.addCondition("stunned", 2, false, false)
-            } else if (statusesId == "dead" && game.combat) {
+            } else if ((effect.statuses.has("dead") || effect.statuses.has("defeated")) && game.combat) {
                 actor.markDead(false)
             }
             DSAActiveEffectConfig.onEffectRemove(actor, effect)
@@ -168,10 +167,9 @@ export default function() {
         if(!actor) return
 
         await countableDependentEffects(effect, {}, actor)
-        const statusesId = [...effect.statuses][0]
 
-        if (statusesId == "dead" && game.combat) await actor.markDead(true);
-        else if (statusesId == "unconscious") await actor.addCondition("prone");
+        if ((effect.statuses.has("dead") || effect.statuses.has("defeated")) && game.combat) await actor.markDead(true);
+        if (effect.statuses.has("unconscious")) await actor.addCondition("prone");
     }
 
     const countableDependentEffects = async(effect, toCheck = {}, actor) => {
@@ -305,8 +303,8 @@ export default function() {
         const prePosition = { center: token.object.center, elevation: token.elevation }
         Riding.updateTokenHook(token, data, options); 
        
-        const animationName = options.animation?.name || token.object.animationName;
-        const animationPromise = token.object.animationContexts.get(animationName)?.promise;
+        const animationName = options.animation?.name || token.object?.animationName;
+        const animationPromise = token.object?.animationContexts.get(animationName)?.promise;
 
         (animationPromise || Promise.resolve()).then(() => {
             token.object?.drawAuras();            

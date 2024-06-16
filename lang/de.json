@@ -1533,6 +1533,7 @@
         "Peitschen": "Whips"
     },
     "DSAError": {
+        "customEffect": "Für manuelle Effekte darf nur ein Token markiert sein",
         "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",

@@ -1,0 +1,44 @@
+<h1>Important changes (6/16/2024)</h1>
+<h2 id="v12-ready">V12 Ready </h2>
+<p>DSA is now ready for Foundry 12. A big feature of v12 are the Scene Regions. These allow, for example, adjusting the darkness in caves, fading out the weather indoors or teleporting tokens (e.g. between floors).<br>
+We have adapted existing content accordingly so that this function can be utilised.<br>
+However, the multilevel tokens module is still required for the teleporters or clone regions. We have already supported the developer to the extent that it is now also ready for V12. Multilevel currently offers functions that are unfortunately not sufficiently implemented by Foundry Core.</p>
+<h2 id="codex-of-the-divinarium">Codex of the Divinarium </h2>
+<p>The Codex of Godcraft has been integrated into existing modules, just like all previous codices, the Divinarium and the Grimorum.<br>
+It may be worth migrating your players. You can find this under the buttons in the header menu on the hero sheet. The migration should be carried out from time to time to keep all characters up to date with the latest technology and rules in Foundry DSA. Alternatively, this can also be done via the World Destroyer, which can be found in the settings of the Core Rules module.</p>
+<h2 id="more-icons">More icons </h2>
+<img src="systems/dsa5/lazy/patchimages/6.0.0/icons.webp" style="float:right;max-width:50%"/>
+<p>Creature attacks now have a slightly larger selection of icons. These are not only nice to look at but above all help you to find the right attack more quickly in the hotbar.</p>
+<p>The same applies to spells and liturgies. We have combined icons from <a href="https://game-icons.net/">https://game-icons.net/</a> with some stylish frames from Carina Wittrin to create a large selection of unique icons for all spells and liturgies. This makes them easier to distinguish visually and easier to find in the hotbar. We will try to group the spells graphically according to characteristic (spells, e.g. healing) and distribution (liturgies, e.g. Praios).<br>
+Since we are dealing with a very large number of spells (600+), it is possible that they will not fit perfectly on the first run and may need to be readjusted later.<br>
+You may need to migrate your spells here in order to integrate the new icons (see above).</p>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+<li>You can now let your greedy players feel the full weight of their plunder. Activate the corresponding option in the settings and make sure that each currency has its own weight.</li>
+<li>Matching currencies have been added to some RSHs. See also the explanation of the use of currencies in Foundry DSA in the game manual.</li>
+<li>All modules should now have the appropriate tagging for the master's workshop.</li>
+<li>The selection of the dice mode (public, to game master, blind to game master, only to self) is now displayed via radio buttons for samples. After a short period of familiarisation, this should save you a click each time.</li>
+<li>Item enchantments and artefacts are now also available via the hotbar conversion.</li>
+<li>The region information from the equipment archive has been added to the corresponding items.</li>
+<li>Shapeshifting can now also perform a proportional conversion of LeP. For example, if you want to transform into a bird with 5 LeP and only have 15 of 30 LeP left, you can activate this option to transform into a bird with 3 LeP (rounded).</li>
+<li>System effects (conditions and statuses) that are transferred from spells, poisons and other abilities now always generate a new effect instead of being stacked. This allows each one to have its own duration and gives more insight into its source.</li>
+<li>Poisons can now have a delayed effect. This means that their effects only take effect after this delay has elapsed. There should be a corresponding note on the status. The effect can be triggered prematurely by cancelling the effect. Accordingly, a delayed effect must be cancelled twice. The Times-up module is also required for automatic triggering.</li>
+<li>The library now has a configuration menu to exclude modules from the search. You can find it in the header bar of the library. This allows you, for example, to speed up the loading of the world or hide irrelevant content (e.g. adventures).</li>
+<li>The automatic view modifiers (can be activated in the master menu) now also recognise the darkness of Scene Regions.</li>
+<li>The vision automation now also changes the visibility when entering and leaving dark zones (Scene Regions, still a bit experimental).</li>
+<li>The configuration sheet for manual Active Effects is now opened by default when creating.</li>
+<li>Adding states via the token hotbar or hotbar conversion now also allows manual effects to be added.</li>
+<li>As announced, most poisons are now automatically applicable.</li>
+<li>As announced, all module tokens are now filterable in the master's workshop.</li>
+<li>Special thanks to Rapunzel and TarionT for their tireless progress in implementing the automation of all spell and liturgy expansions. Read more <a href="https://github.com/Plushtoast/dsa5-extensiondb">here</a></li>
+<li>A few consumables (elixirs &amp; potions, e.g. weapon balm) have been automated.</li>
+</ul>
+<h1 id="bugfix">Bugfix </h1>
+<ul class="dsalist">
+<li>Companions and familiars now increase according to category "C". Have a look at the game manual if you are wondering how to create them correctly.</li>
+<li>Disease and poison samples can now be edited again.</li>
+<li>The animal special skill "Trample" now works correctly and does not permanently modify the dodge value.</li>
+<li>Fixed a bug in character creation related to loyalty and commitment.</li>
+<li>Fixed a bug when determining the counter deity via a creature's type.</li>
+<li>The visibility toggle in the journal browser should now not also hide the compendiums for the game master.</li>
+</ul>

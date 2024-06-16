@@ -157,6 +157,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt" target="_blank" title="Rabenkrieg III - Der Sturz des Adlers">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp" alt="Rabenkrieg III - Der Sturz des Adlers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4233/dsa5-rabenkrieg-4-kampagne-fuer-foundry-vt" target="_blank" title="Die Krallen der Löwin">
+        <img src="https://www.f-shop.de/media/image/45/7d/f8/ESD050_0_0999.jpg" alt="Die Krallen der Löwin" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt" target="_blank" title="Verhandlungskunst und Friedensschwur">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp" alt="Verhandlungskunst und Friedensschwur" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>

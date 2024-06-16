@@ -32,7 +32,8 @@ async function migrateDSA(currentVersion, migrationVersion) {
 
 async function migratTo24() {
     for(let actor of game.actors) {
-        const removeEffects = actor.effects.filter(x => ["inpain", "encumbered"].includes(x.getFlag("core", "statusId")))
+       const removeEffects = actor.effects.filter(x => ["inpain", "encumbered"].includes(x.getFlag("core", "statusId")))
+       
        if(removeEffects.length) await actor.deleteEmbeddedDocuments("ActiveEffect", removeEffects.map(x => x.id))
     }
 }
@@ -59,10 +60,10 @@ export default function migrateWorld() {
 
         await setupDefaulTokenConfig()
         const currentVersion = game.settings.get("dsa5", "migrationVersion")
-        const NEEDS_MIGRATION_VERSION = 29
+        const NEEDS_MIGRATION_VERSION = 30
         const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION
 
-        betaWarning(12)
+        //betaWarning(12)
 
         if (!needsMigration) return;
 

@@ -40,8 +40,8 @@ export default class BookWizard extends Application {
         game.dsa5.apps.journalBrowser = BookWizard.wizard
 
         Hooks.on("renderJournalDirectory", (app, html) => {
-            let div = $('<div class="header-actions action-buttons flexrow"></div>')
-            let button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)
+            const div = $('<div class="header-actions action-buttons flexrow"></div>')
+            const button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize("Book.Wizard")}</button>`)
             button.on('click', () => { BookWizard.wizard.render(true) })
             div.append(button)
             html.find(".header-actions:first-child").after(div)
@@ -49,7 +49,7 @@ export default class BookWizard extends Application {
     } 
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "increaseFontSize",
             tooltip: "SHEET.increaseFontSize",
@@ -90,14 +90,14 @@ export default class BookWizard extends Application {
         config[id] = toggle
         await game.settings.set("dsa5", "expansionPermissions", config)
 
-        let book = this[type].find(x => x.id == id)
+        const book = this[type].find(x => x.id == id)
         const json = await (await fetch(book.path)).json()
         const keys = ["actors","journal","scenes"]
         for(const key of keys){
             if(!json[key]) continue
 
-            let pack = game.packs.get(json[key]);
-            let visibility = toggle ? "OBSERVER" : "NONE"
+            const pack = game.packs.get(json[key]);
+            const visibility = toggle ? "OBSERVER" : "NONE"
 
             const ownership = { ownership: {
                 PLAYER: visibility,

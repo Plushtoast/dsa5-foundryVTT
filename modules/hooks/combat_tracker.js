@@ -406,19 +406,12 @@ class RepeatingEffectsHelper {
     }
 
     static async startOfRound(combat) {
-        const activeGM = game.users.find(u => u.active && u.isGM)
-
-        if (!(activeGM && game.user.id == activeGM.id)) return
+        if (!game.users.activeGM?.isSelf) return
 
         for (let turn of combat.turns) {
-            if (!turn.defeated) {
-                for (let x of turn.actor.effects) {
-                    if(x.disabled) continue
-
-                    const statusesId = [...x.statuses][0]
-                    if (statusesId == "bleeding") await this.applyBleeding(turn, combat)
-                    else if (statusesId == "burning") await this.applyBurning(turn, x, combat)
-                }
+            if (!turn.defeated) {                
+                if (turn.actor?.system.condition.bleeding > 0) await this.applyBleeding(turn, combat)
+                if (turn.actor?.system.condition.burning > 0) await this.applyBurning(turn, combat)
 
                 await this.startOfRoundEffects(turn, combat)
             }
@@ -453,11 +446,11 @@ class RepeatingEffectsHelper {
         await turn.actor.applyDamage(1)
     }
 
-    static async applyBurning(turn, effect, combat) {
-        if(turn.actor.system.status.wounds.value < 1) return
+    static async applyBurning(turn, combat) {
+        if(turn.actor?.system.status.wounds.value < 1) return
 
-        const step = Number(effect.getFlag("dsa5", "value"))
-        const protection = DSA5StatusEffects.resistantToEffect(turn.actor, effect)
+        const step = turn.actor?.system.condition.burning
+        const protection = DSA5StatusEffects.resistantToEffect(turn.actor, "burning")
         const die =  { 0: "1", 1: "1d3", 2: "1d6", 3: "2d6" }[step - protection] || "1"
         const damageRoll = await new Roll(die).evaluate()
         const damage = await damageRoll.render()

@@ -2822,10 +2822,14 @@ export default class Actordsa5 extends Actor {
       effect.flags.dsa5.description = game.i18n.localize(effect.name)
       effect.name = game.i18n.localize(effect.name)
 
-      effect.changes = effect.changes.map(change => {
-        if(/^system\.condition\./.test(change.key)) change.value = value
-        return change
-      })
+      if(effect.changes) {
+        effect.changes = effect.changes.map(change => {
+          if(/^system\.condition\./.test(change.key)) change.value = value
+          return change
+        })
+      }
+      effect.statuses = [effect.id]
+      
       delete effect.description
       delete effect.flags.dsa5.value
       delete effect.flags.dsa5.max

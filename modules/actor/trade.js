@@ -12,6 +12,7 @@ export class Trade extends Application {
         options.tabs = [{ navSelector: ".tabs", contentSelector: ".content", initial: "main" }]
         options.title = game.i18n.localize("MERCHANT.exchange");
         options.classes.push('noscrollWizard')
+        options.scrollY = [".scrollable"]
         return options;
     }
 

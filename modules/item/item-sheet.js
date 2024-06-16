@@ -144,7 +144,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
             if (ev.button == 2) DSA5_Utility.showArtwork(this.item)
         })
 
-        html.find(".status-add").click(() => {
+        html.find(".status-add").click(async() => {
             DSA5StatusEffects.createCustomEffect(this.item, "", this.item.name)
         })
 

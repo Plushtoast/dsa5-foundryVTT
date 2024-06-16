@@ -1492,6 +1492,7 @@
         "calculateLeP": "Proportional LP"
     },
     "DSAError": {
+        "customEffect": "For manual effects only one token can be selected",
         "noTokenSelected": "No token selected",
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
         "APUpdateError": "Unable to adapt AP value. Please configure manually.",

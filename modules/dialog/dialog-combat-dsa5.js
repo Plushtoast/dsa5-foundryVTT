@@ -322,7 +322,7 @@ export default class DSA5CombatDialog extends DialogShared {
         }]
         if (mode == "assassinate") {
             let weaponsize = DSA5.meleeRangesArray.indexOf(testData.source.system.reach.value)
-            if(!RuleChaos.isYieldedTwohanded(testData.source) && testData.source.system.worn.wrongGrip){
+            if(!RuleChaos.isYieldedTwohanded(testData.source) && testData.source.system.worn?.wrongGrip){
                 weaponsize = Math.min(weaponsize, 1)
             }
 

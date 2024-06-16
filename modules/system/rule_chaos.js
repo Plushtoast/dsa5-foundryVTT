@@ -72,6 +72,8 @@ export default class RuleChaos {
     }
 
     static isYieldedTwohanded(item){
+        if(item.type == "trait") return false
+        
         const twoHanded = this.regex2h.test(item.name)
         const wrongGrip = item.system.worn.wrongGrip
         return (twoHanded && !wrongGrip) || (!twoHanded && wrongGrip)
