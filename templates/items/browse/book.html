@@ -1,0 +1,149 @@
+<div>
+    <h3>{{document.name}}</h3>
+
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{enrichedDescription}}}
+            {{#if (and isGM enrichedGmdescription)}}
+            <div class="maskfield">
+                {{{enrichedGmdescription}}}
+            </div>
+            {{/if}}
+        </div>
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col third">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    <small>{{item.pack}}</small>
+                </div>  
+            </div>
+            <div class="col ten"></div>
+            <div class="row-section col sixty">
+                <div class="col groupbox">
+                        <div class="row-section wrap">
+                            
+                            <div class="col table-title noBorder row-section">
+                                <div class="col ninety">
+                                    {{localize "BOOKITEM.category"}}
+                                </div>
+                                <div class="col ten center">
+                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                                </div>                            
+                            </div>
+                            <div class="col">
+                                {{document.system.category}}
+                            </div>
+                            {{# if document.system.author}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.author"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.author}}
+                            </div>
+                            {{/if}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.format"}}
+                            </div>
+                            <div class="col">
+                                {{localize (concat "BOOKITEM.formats." document.system.format)}}
+                            </div> 
+                            {{# if document.system.pages}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.pages"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.pages}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.releaseDate}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.releaseDate"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.releaseDate}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.exemplar}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.exemplar"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.exemplar}}
+                            </div> 
+                            {{/if}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.exemplarType"}}
+                            </div>
+                            <div class="col">
+                                {{localize (concat "BOOKITEM.exemplarTypes." document.system.exemplarType)}}
+                            </div> 
+                            {{#if document.system.storage}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.storage"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.storage}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.language}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.language"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.language}}
+                            </div> 
+                            {{/if}}
+                       
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.quality"}}
+                            </div>
+                            <div class="col">
+                                {{localize (concat "BOOKITEM.qualities." document.system.quality)}}
+                            </div> 
+                            {{#if document.system.rule}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.rule"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.rule}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.legality}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.legality"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.legality}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.availability}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.availability"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.availability}}
+                            </div> 
+                            {{/if}}
+                            {{#if document.system.special}}
+                            <div class="col table-title noBorder">
+                                {{localize "BOOKITEM.special"}}
+                            </div>
+                            <div class="col">
+                                {{document.system.special}}
+                            </div> 
+                            {{/if}}             
+                        
+                        </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

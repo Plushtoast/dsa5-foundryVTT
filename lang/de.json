@@ -181,7 +181,9 @@
         "blessed": "Geweiht",
         "money": "Geld",
         "plant": "Pflanze",
-        "food": "Lebensmittel"
+        "food": "Lebensmittel",
+        "book": "Buch",
+        "automat": "Automat"
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
@@ -1061,6 +1063,51 @@
     "POISON": {
         "ql": "Qualität der Taverne"
     },
+    "BOOKITEM": {
+        "author": "Autor",
+        "category": "Art",
+        "format": "Format",
+        "otherNames": "Weitere Namen",
+        "pages": "Seitenanzahl",
+        "releaseDate": "Erscheinungsdatum",
+        "exemplar": "Exemplare",
+        "exemplarType": "Ausgabe",
+        "storage": "Aufbewahrung",
+        "quality": "Inhaltsqualität",
+        "language": "Sprache und Schrift",
+        "rule": "Regeltechnik",
+        "legality": "Legalität",
+        "availability": "Verfügbarkeit",
+        "special": "Besonderheiten",
+        "exemplarTypes": {
+            "0": "Abschrift",
+            "1": "Auszug",
+            "2": "Erstabschrift",
+            "3": "Gesamtausgabe",
+            "4": "Gedrucktes Exemplar",
+            "5": "Orginal",
+            "6": "Orginalabschrift",
+            "7": "Teilabschrift",
+            "8": "Übersetzung",
+            "9": "Zweitabschrift"
+        },
+        "qualities": {
+            "0": "schlicht",
+            "1": "durchschnittlich",
+            "2": "fordernd (IS I)",
+            "3": "fordernd (IS II)",
+            "4": "fordernd (IS III)"
+        },
+        "formats": {
+            "0": "Foliant",
+            "1": "Halbfoliant",
+            "2": "Quarto",
+            "3": "Octavo",
+            "4": "Halboctavo",
+            "5": "Zeitung",
+            "6": "Sonderformat"
+        }
+    },
     "ITEMSHEET": {
         "offHandMod": "Bonus/Malus als Nebenhand (z.b. Parierwaffe)",
         "effectContainerHint": "Effektcontainer können Active Effects per Drag and Drop auf Akteure übertragen. Dadurch können Effekte vorbereitet und bei Bedarf schnell hinzugefügt werden. Alle Effekte im Container werden übertragen."
@@ -1210,6 +1257,7 @@
             "0": "nie"
         }
     },
+    "TYPES.Item.book": "Buch",
     "TYPES.Item.advantage": "Vorteil",
     "TYPES.Item.aggregatedTest": "Sammelprobe",
     "TYPES.Item.information": "Information",

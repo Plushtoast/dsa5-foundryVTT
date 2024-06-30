@@ -140,8 +140,14 @@
     background-image: url("../../icons/schwierig.webp");
   }
 
-  .obfuscateSection.pale{
-    opacity: 0.3;
+  .tabs > [data-tab] > .obfuscateSection {
+    pointer-events: all;
+  }
+
+  .obfuscateSection{
+    &.pale{
+      opacity: 0.3;
+    }
   }
   
   .dsa5 {

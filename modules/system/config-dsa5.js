@@ -424,10 +424,11 @@ DSA5.equipmentTypes = {
     "service": "Equipment.service",
     "luxus": "Equipment.luxus",
     "blessed": "Equipment.blessed",
-    "food": "Equipment.food"
+    "food": "Equipment.food",
+    "automat": "Equipment.automat"
 };
 
-DSA5.equipmentCategories = new Set(["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant"])
+DSA5.equipmentCategories = new Set(["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant", "book"])
 
 DSA5.systemTables = [
     { name: "Defense", attrs: "data-weaponless=\"false\"", roll: "botch-roll", pack: { de: "dsa5.patzer", en: "dsa5.botch" }, setting: { module: "dsa5", key: "defenseBotchTableEnabled" } },
@@ -476,6 +477,37 @@ DSA5.narrowSpaceModifiers = {
         "parry": -4,
         "label": "NarrowSpaceModifiers.shield.long"
     }
+}
+
+DSA5.exemplarTypes = {
+    "0": "BOOKITEM.exemplarTypes.0",
+    "1": "BOOKITEM.exemplarTypes.1",
+    "2": "BOOKITEM.exemplarTypes.2",
+    "3": "BOOKITEM.exemplarTypes.3",
+    "4": "BOOKITEM.exemplarTypes.4",
+    "5": "BOOKITEM.exemplarTypes.5",
+    "6": "BOOKITEM.exemplarTypes.6",
+    "7": "BOOKITEM.exemplarTypes.7",
+    "8": "BOOKITEM.exemplarTypes.8",
+    "9": "BOOKITEM.exemplarTypes.9"
+},
+
+DSA5.bookQualities = {
+    "0": "BOOKITEM.qualities.0",
+    "1": "BOOKITEM.qualities.1",
+    "2": "BOOKITEM.qualities.2",
+    "3": "BOOKITEM.qualities.3",
+    "4": "BOOKITEM.qualities.4"
+}
+
+DSA5.bookFormats = {
+    "0": "BOOKITEM.formats.0",
+    "1": "BOOKITEM.formats.1",
+    "2": "BOOKITEM.formats.2",
+    "3": "BOOKITEM.formats.3",
+    "4": "BOOKITEM.formats.4",
+    "5": "BOOKITEM.formats.5",
+    "6": "BOOKITEM.formats.6"
 }
 
 DSA5.traditionArtifacts = {

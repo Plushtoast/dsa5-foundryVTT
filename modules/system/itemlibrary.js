@@ -191,7 +191,8 @@ export default class DSA5ItemLibrary extends Application {
                     poison: false,
                     disease: false,
                     consumable: false,
-                    plant: false
+                    plant: false,
+                    book: false
                 },
                 filterBy: {
                     search: ""
@@ -693,7 +694,12 @@ export default class DSA5ItemLibrary extends Application {
 
             const { index, itemType } = this.selectIndex(category)
             const worldStuff = itemType == "Item" ? game.items : game.actors
-            let items = worldStuff.filter(x => x.visible && x.type == subcategory).map(x => new AdvancedSearchDocument(x, subcategory))
+
+            const items = []
+            
+            if(game.settings.get("dsa5", "indexWorldItems")){
+                items.push(...worldStuff.filter(x => x.visible && x.type == subcategory).map(x => new AdvancedSearchDocument(x, subcategory)))
+            }
 
             const result = index.search(subcategory, { field: ["itemType"] })
             const pids = {}

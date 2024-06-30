@@ -335,7 +335,8 @@
             "patron",
             "information",
             "essence",
-            "imprint"
+            "imprint",
+            "book"
         ],
         "templates": {
             "skill": {
@@ -452,11 +453,6 @@
                 },
                 "gmdescription": {
                     "value": ""
-                }
-            },
-            "location": {
-                "location": {
-                    "value": 0
                 }
             }
         },
@@ -1169,6 +1165,27 @@
             "antidot": {
                 "value": ""
             }
+        },
+        "book": {
+            "templates": [
+                "description",
+                "equipment"
+            ],           
+            "author": "",
+            "category": "",
+            "otherNames": "",
+            "format": 0,
+            "pages": "",
+            "releaseDate": "",
+            "exemplar": "",
+            "storage": "",
+            "language": "",
+            "quality": 0,
+            "rule": "",
+            "legality": "",
+            "availability": "",
+            "exemplarType": 0,
+            "special": ""
         }
     }
 }

@@ -39,6 +39,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.unregisterSheet("core", ItemSheet);
         Items.registerSheet("dsa5", ItemSheetdsa5, { makeDefault: true });
         Items.registerSheet("dsa5", ItemSpeciesDSA5, { makeDefault: true, types: ["species"] });
+        Items.registerSheet("dsa5", ItemBookDSA5, { makeDefault: true, types: ["book"] });
         Items.registerSheet("dsa5", ItemCareerDSA5, { makeDefault: true, types: ["career"] });
         Items.registerSheet("dsa5", ItemCultureDSA5, { makeDefault: true, types: ["culture"] });
         Items.registerSheet("dsa5", VantageSheetDSA5, { makeDefault: true, types: ["advantage", "disadvantage"] });
@@ -822,6 +823,18 @@ class MagicalSignSheet extends ItemSheetdsa5 {
             res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true }
             await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage)
         })
+    }
+}
+
+class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {
+    async getData(options) {
+        const data = await super.getData(options)
+        mergeObject(data, {
+            formats: DSA5.bookFormats,
+            qualities: DSA5.bookQualities,
+            exemplarTypes: DSA5.exemplarTypes
+        })
+        return data
     }
 }
 

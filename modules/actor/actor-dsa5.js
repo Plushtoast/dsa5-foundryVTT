@@ -55,8 +55,8 @@ export default class Actordsa5 extends Actor {
   }
 
   _getItemModifiers(){
-    let wornArmor = []
-    let itemModifiers = {}
+    const wornArmor = []
+    const itemModifiers = {}
     for (let i of this.items.filter(
       (x) =>
         (["meleeweapon", "rangeweapon", "armor", "equipment"].includes(x.type) && getProperty(x, "system.worn.value")) || ["advantage", "specialability", "disadvantage"].includes(x.type)
@@ -275,6 +275,8 @@ export default class Actordsa5 extends Actor {
   }
 
   static async postUpdateConditions(actor) {
+    if(!DSA5_Utility.isActiveGM()) return
+
     const data = actor.system
     const isMerchant = actor.isMerchant()
 
@@ -996,6 +998,11 @@ export default class Actordsa5 extends Actor {
         show: false,
         dataType: "poison",
       },
+      book: {
+        items: [],
+        show: false,
+        dataType: "book",
+      },
     };
 
     for (let t in DSA5.equipmentTypes) {
@@ -1142,6 +1149,7 @@ export default class Actordsa5 extends Actor {
               armor.push(i);
             }
             break;
+          case "book":
           case "poison":
           case "plant":
             inventory[i.type].items.push(i);

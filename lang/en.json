@@ -154,7 +154,9 @@
         "blessed": "Blessed",
         "money": "Money",
         "plant": "Plant",
-        "food": "Food"
+        "food": "Food",
+        "book": "Book",
+        "automat": "Automaton"
     },
     "PLANT": {
         "healing": "Medicinal herbs",
@@ -1045,6 +1047,51 @@
     "POISON": {
         "ql": "Quality of the tavern"
     },
+    "BOOKITEM": {
+        "author": "Author",
+        "category": "Art",
+        "format": "Format",
+        "otherNames": "Other names",
+        "pages": "Number of pages",
+        "releaseDate": "Release date",
+        "exemplar": "Exemplars",
+        "exemplarType": "Type",
+        "storage": "Storage",
+        "quality": "Content quality",
+        "language": "Language and script",
+        "rule": "Rule technique",
+        "legality": "Legality",
+        "availability": "Availability",
+        "special": "Special features",
+        "exemplarTypes": {
+            "0": "Copy",
+            "1": "Excerpt",
+            "2": "First copy",
+            "3": "Complete edition",
+            "4": "Printed copy",
+            "5": "Original",
+            "6": "Original copy",
+            "7": "Partial copy",
+            "8": "Translation",
+            "9": "Second copy"
+        },
+        "qualities": {
+            "0": "plain",
+            "1": "average",
+            "2": "demanding (CL I)",
+            "3": "demanding (CL II)",
+            "4": "demanding (CL III)"
+        },
+        "formats": {
+            "0": "Folio",
+            "1": "Half-folio",
+            "2": "Quarto",
+            "3": "Octavo",
+            "4": "Half-octavo",
+            "5": "Newspaper",
+            "6": "Special format"
+        }
+    },
     "ITEMSHEET": {
         "offHandMod": "Bonus/handicap offhand (e.g. parry weapon)",
         "effectContainerHint": "Effect containers can transfer Active Effects to actors via drag and drop. This allows to prepare and add effects quickly. All effects on the container will be transferred to the actor."
@@ -1161,6 +1208,7 @@
         "groupcheck": "Group Check",
         "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
     },
+    "TYPES.Item.book": "Book",
     "TYPES.Item.advantage": "Advantage",
     "TYPES.Item.aggregatedTest": "Cumulative Check",
     "TYPES.Item.information": "Information",

@@ -41,6 +41,10 @@ Hooks.once("ready", () => {
                 { label: "equipmentType", attr: "equipmentType.value", type: "select", options: DSA5.equipmentTypes },
                 { label: "PLANT.region", attr: "region", type: "text" },
             ],
+            book: [
+                { label: "BOOKITEM.format", attr: "format", type: "select", options: DSA5.bookFormats },
+                { label: "BOOKITEM.quality", attr: "quality", type: "select", options: DSA5.bookQualities },
+            ],
             rangeweapon: [
                 { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: range },
                 { label: "ammunitiongroup", attr: "ammunitiongroup.value", type: "select", options: DSA5.ammunitiongroups },

@@ -70,7 +70,8 @@ export default class Itemdsa5 extends Item {
         patron: "systems/dsa5/icons/categories/ability_pact.webp",
         information: "systems/dsa5/icons/categories/DSA-Auge.webp",
         essence: "systems/dsa5/icons/categories/wesenszug.webp",
-        imprint: "systems/dsa5/icons/categories/praegung.webp"
+        imprint: "systems/dsa5/icons/categories/praegung.webp",
+        book: "systems/dsa5/icons/backgrounds/library.webp"
     }
 
     static defaultIcon(data) {
@@ -143,7 +144,8 @@ export default class Itemdsa5 extends Item {
             magicalsign: MagicalSignItemDSA5,
             patron: PatronItemDSA5,
             demonmark: DemonmarkItemDSA5,
-            information: InformationItemDSA5
+            information: InformationItemDSA5,
+            book: BookItemDSA5
         }
     }
 
@@ -1816,6 +1818,14 @@ class SpeciesItemDSA5 extends Itemdsa5 {}
 class SpellextensionItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
         return [this._chatLineHelper("source", data.source), this._chatLineHelper("Category", game.i18n.localize(data.category))]
+    }
+}
+
+
+
+class BookItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        return super.chatData(data, name)
     }
 }
 

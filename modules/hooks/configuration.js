@@ -340,8 +340,7 @@ export function setupConfiguration() {
         scope: "world",
         config: true,
         default: "",
-        type: String,
-        choices: moneyChoices,
+        type: new foundry.data.fields.StringField({choices: moneyChoices}),
         onChange: async(val) => {
             ui.notifications.notify(game.packs.get(val).index.filter(x => x.type == "money").map(x => x.name).join(", "))
         }
@@ -576,7 +575,7 @@ export function setupConfiguration() {
 
     game.settings.register("dsa5", "randomWeaponSelection", {
         name: "DSASETTINGS.randomWeaponSelection",
-        hint: "DSASETTINGS.randomWeaponSelection",
+        hint: "DSASETTINGS.randomWeaponSelectionHint",
         scope: "world",
         config: true,
         default: true,
@@ -585,7 +584,7 @@ export function setupConfiguration() {
 
     game.settings.register("dsa5", "showWeaponsOnHover", {
         name: "DSASETTINGS.showWeaponsOnHover",
-        hint: "DSASETTINGS.showWeaponsOnHover",
+        hint: "DSASETTINGS.showWeaponsOnHoverHint",
         scope: "world",
         config: true,
         default: true,

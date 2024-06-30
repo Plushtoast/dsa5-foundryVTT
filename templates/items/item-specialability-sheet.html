@@ -107,12 +107,26 @@
                     {{selectOptions subCategories selected=system.category.sub localize=true}}
                 </select>
             </div>
+            {{else if (eq system.category.value 'homunculus')}}
+            <div class="form-group">
+                <label class="label-text">{{localize "AsPCost"}}</label>
+                <input class="input-text" type="text" name="system.AsPCost" value="{{system.AsPCost}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "feature"}}</label>
+                <input class="input-text" type="text" name="system.feature" value="{{system.feature}}" data-dtype="String" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "duration"}}</label>
+                <input class="input-text" type="text" name="system.duration.value" value="{{system.duration.value}}" data-dtype="String" />
+            </div>
             {{/if}} {{#if isOwned}}
             <div class="form-group">
                 <label class="label-text">
-                    {{#if canAdvance}}<a class="refund-step"><i class="fas fa-minus"></i></a> {{localize "stepValue"}} <a class="advance-step"><i class="fas fa-plus"></i></a>
+                    {{#if canAdvance}}
+                        <a class="refund-step"><i class="fas fa-minus"></i></a> {{localize "stepValue"}} <a class="advance-step"><i class="fas fa-plus"></i></a>
                     {{else}}
-                    {{localize "stepValue"}}
+                        {{localize "stepValue"}}
                     {{/if}}
                 </label>
                 <input class="input-text" type="number" name="system.step.value" value="{{system.step.value}}" data-dtype="Number" />
