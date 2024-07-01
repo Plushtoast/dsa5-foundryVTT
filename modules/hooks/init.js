@@ -32,6 +32,7 @@ import { SelectUserDialog } from "../dialog/addTargetDialog.js";
 import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
 import DSA5 from "../system/config-dsa5.js";
 import DSA5SoundEffect from "../system/dsa-soundeffect.js";
+import { setActorDelta } from "./actordelta.js";
 const { mergeObject } = foundry.utils
 
 
@@ -49,7 +50,9 @@ export default function() {
     tokenHUD.default()
     migrateWorld.default()
     initScene.default()
-    rollExtensions.default()
+    rollExtensions.default()    
+    setActorDelta()
+
 }
 
 Hooks.once("init", () => {
