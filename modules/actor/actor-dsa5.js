@@ -1666,7 +1666,7 @@ export default class Actordsa5 extends Actor {
     const amount = (await new Roll(`${rollFormula}`).evaluate()).total
     const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
     if (newVal >= 0) {
-      await this.update({[`data.status.${state}.value`]: newVal});
+      await this.update({[`system.status.${state}.value`]: newVal});
       return true
     } else {
       ui.notifications.error(game.i18n.localize(`DSAError.NotEnough${type}`));

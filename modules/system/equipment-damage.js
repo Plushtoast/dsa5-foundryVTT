@@ -128,7 +128,7 @@ export default class EquipmentDamage {
         await DiceDSA5.showDiceSoNice(roll, game.settings.get("core", "rollMode"))
         const damage = roll.total > threshold ? 1 : 0
         await this.applyDamageLevelToItem(item, damage)
-        const wear = EquipmentDamage.calculateWear(item.data)
+        const wear = EquipmentDamage.calculateWear(item)
         let infoMsg = await renderTemplate("systems/dsa5/templates/system/breakingtest.html", { wear, item, threshold, category, roll, result: game.i18n.localize(`WEAR.${item.type}.${wear}`) })
         ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg))
     }
@@ -161,7 +161,7 @@ export default class EquipmentDamage {
     }
 
     static calculateWear(itemData) {
-        if (!itemData.system.structure || Number(itemData.system.structure.max <= 0)) return 0
+        if (!itemData.system.structure || Number(itemData.system.structure.max) <= 0) return 0
 
         return Math.floor((1 - itemData.system.structure.value / itemData.system.structure.max) * 4)
     }
