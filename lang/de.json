@@ -1079,6 +1079,10 @@
         "legality": "Legalität",
         "availability": "Verfügbarkeit",
         "special": "Besonderheiten",
+        "legalities": {
+            "0": "Legal",
+            "1": "Illegal"
+        },
         "exemplarTypes": {
             "0": "Abschrift",
             "1": "Auszug",

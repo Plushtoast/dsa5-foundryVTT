@@ -1063,6 +1063,10 @@
         "legality": "Legality",
         "availability": "Availability",
         "special": "Special features",
+        "legalities": {
+            "0": "Legal",
+            "1": "Illegal"
+        },
         "exemplarTypes": {
             "0": "Copy",
             "1": "Excerpt",

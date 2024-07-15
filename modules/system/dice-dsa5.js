@@ -893,7 +893,10 @@ export default class DiceDSA5 {
     }
 
     static async manualRolls(roll, description = "", options = {}) {
-        if (options.cheat || game.settings.get("dsa5", "allowPhysicalDice")) {
+        let cheat = options.cheat
+        if(options.predefinedResult && description == "CHAR.DAMAGE") cheat = false
+
+        if (cheat || game.settings.get("dsa5", "allowPhysicalDice")) {
             if (!options.predefinedResult) {
                 let result = false
                 let form

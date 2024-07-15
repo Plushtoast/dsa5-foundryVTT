@@ -832,7 +832,8 @@ class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {
         mergeObject(data, {
             formats: DSA5.bookFormats,
             qualities: DSA5.bookQualities,
-            exemplarTypes: DSA5.exemplarTypes
+            exemplarTypes: DSA5.exemplarTypes,
+            legalities: DSA5.legalities,
         })
         return data
     }

@@ -1442,10 +1442,10 @@ class MeleeweaponDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
-        let mode = options.mode
-        let title = item.name + " " + game.i18n.localize(mode + "test")
+        const mode = options.mode
+        const title = item.name + " " + game.i18n.localize(mode + "test")
 
-        let testData = {
+        const testData = {
             opposable: options.mode != "parry",
             source: item,
             mode,
@@ -1456,17 +1456,18 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             },
         }
         const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item))
-        let data = {
+        const data = {
             rollMode: options.rollMode,
             mode,
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
+            multipleDefenseValue
         }
-        let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
+        const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : []
         this.getSituationalModifiers(situationalModifiers, actor, data, item)
         data.situationalModifiers = situationalModifiers
         if(options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers)
 
-        let dialogOptions = {
+        const dialogOptions = {
             title,
             template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
@@ -1478,7 +1479,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
             },
         }
 
-        let cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
+        const cardOptions = actor._setupCardOptions("systems/dsa5/templates/chat/roll/combatskill-card.html", title, tokenId)
 
         return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions })
     }
@@ -1920,6 +1921,7 @@ class TraitItemDSA5 extends Itemdsa5 {
             rollMode: options.rollMode,
             mode,
             defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
+            multipleDefenseValue
         }
 
         const traitType = getProperty(item, "system.traitType.value")

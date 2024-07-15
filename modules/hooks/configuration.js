@@ -444,6 +444,7 @@ export function setupConfiguration() {
         default: {},
         type: Object
     });
+    
     game.settings.register("dsa5", "soundConfig", {
         name: "DSASETTINGS.soundConfig",
         hint: "DSASETTINGS.soundConfigHint",
@@ -457,7 +458,7 @@ export function setupConfiguration() {
     game.settings.registerMenu("dsa5", "changelog", {
         name: "Changelog",
         label: "Changelog",
-        hint: game.i18n.localize("DSASETTINGS.changelog"),
+        hint: "DSASETTINGS.changelog",
         type: ChangelogForm,
         restricted: false
     })
@@ -465,7 +466,7 @@ export function setupConfiguration() {
     game.settings.registerMenu("dsa5", "exportConfiguration", {
         name: "Export/Import Configuration",
         label: "Export/Import Configuration",
-        hint: game.i18n.localize("DSASETTINGS.exportConfiguration"),
+        hint: "DSASETTINGS.exportConfiguration",
         type: ExportForm,
         restricted: true
     })
@@ -473,7 +474,7 @@ export function setupConfiguration() {
     game.settings.registerMenu("dsa5", "configureTokenbar", {
         name: game.i18n.localize("DSASETTINGS.configureTokenbar"),
         label: game.i18n.localize("DSASETTINGS.configureTokenbar"),
-        hint: game.i18n.localize("DSASETTINGS.configureTokenbarHint"),
+        hint: "DSASETTINGS.configureTokenbarHint",
         type: ConfigureTokenHotbar,
         restricted: false
     })

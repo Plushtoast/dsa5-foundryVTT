@@ -382,11 +382,12 @@ export default class DSA5CombatDialog extends DialogShared {
         const isMelee = (source.type == "trait" && getProperty(source, "system.traitType.value") == "meleeAttack") || source.type == "meleeweapon" || source.type == "dodge"
         const testData = { source: this.dialogData.source, extra: { options: {} } }
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
-        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, -3, this.dialogData.mode) :
+        isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, this.dialogData.renderData.multipleDefenseValue ?? -3, this.dialogData.mode) :
             DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor, {}, this.dialogData.mode)
 
         this.dialogData.modifier = await DiceDSA5._situationalModifiers(testData)
-        this.updateRollButton(this.readTargets())
+        const multiplier = DiceDSA5._situationalMultipliers(testData)
+        this.updateRollButton(this.readTargets(), multiplier)
     }
 
     static getNarrowSpaceModifier(testData, mode){

@@ -492,6 +492,11 @@ DSA5.exemplarTypes = {
     "9": "BOOKITEM.exemplarTypes.9"
 },
 
+DSA5.legalities = {
+    "0": "BOOKITEM.legalities.0",
+    "1": "BOOKITEM.legalities.1"
+}
+
 DSA5.bookQualities = {
     "0": "BOOKITEM.qualities.0",
     "1": "BOOKITEM.qualities.1",

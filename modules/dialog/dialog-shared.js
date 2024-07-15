@@ -37,18 +37,18 @@ export default class DialogShared extends Dialog {
         return ""
     }
 
-    renderRollValueDie(){
+    renderRollValueDie(multiplier = 1){
         if(this.dialogData.rollValue && this.dialogData.mode != "damage"){
             const dieClass = this.dialogData.mode == "attack" || this.dialogData.counterAttack ? "die-mu" : "die-in"
             const modifier = this.dialogData.modifier || 0
-            return `<span class="rollValue ${dieClass} d20">${Math.clamp(this.dialogData.rollValue + modifier, 1, 20)}</span>`
+            return `<span class="rollValue ${dieClass} d20">${Math.clamp(Math.round((this.dialogData.rollValue + modifier) * multiplier), 1, 20)}</span>`
         }else{
             return ""
         }
     }
 
-    async updateRollButton(targets){
-        let rollTag = this.renderRollValueDie() + game.i18n.localize('Roll')
+    async updateRollButton(targets, multiplier = 1){
+        let rollTag = this.renderRollValueDie(multiplier) + game.i18n.localize('Roll')
         if (targets.length > 0) {
             if(targets.length > 1){
                 rollTag += this.setMultipleTargetsWarning()
