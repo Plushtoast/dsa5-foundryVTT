@@ -16,6 +16,11 @@ export default class DSAActiveEffect extends ActiveEffect {
                 item.overrides = foundry.utils.expandObject(overrides);
             }
         } else {
+            if(change.key.startsWith("data.")) {
+                const msg = game.i18n.format("DSAError.ActiveEffectDataChange", { name: actor.name })
+                console.error(msg)
+                change.key = change.key.replace(/^data\./, "system.")
+            }
             return super.apply(actor, change);
         }
     }

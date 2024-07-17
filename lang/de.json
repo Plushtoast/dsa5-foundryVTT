@@ -1635,7 +1635,8 @@
         "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",
         "PreparationError": "Die Initialisierung es Akteurs {name} ist fehlgeschlagen.",
         "mapsViaJournalbrowser": "Diese Karte sollte über den Journalbrowser (Hotkey J) importiert werden, um die korrekte Funktion zu gewährleisten (z.B. Journal Notes). Trotzdem importieren?",
-        "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter."
+        "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter.",
+        "ActiveEffectDataChange": "{name}: \"data.\" als Key ist nicht mehr erlaubt. Bitte durch \"system.\" ersetzen."
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",
