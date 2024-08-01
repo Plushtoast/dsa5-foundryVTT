@@ -580,11 +580,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 div.classList.add("hovermenu")
                 const del = document.createElement('i')
                 del.classList.add("fas", "fa-times")
-                del.title = game.i18n.localize('SHEET.DeleteItem')
+                del.dataset.tooltip = 'SHEET.DeleteItem'
                 del.addEventListener('click', deletehand, false)
                 const post = document.createElement('i')
                 post.classList.add("fas", "fa-comment")
-                post.title = game.i18n.localize('SHEET.PostItem')
+                post.dataset.tooltip = 'SHEET.PostItem'
                 post.addEventListener('click', posthand, false)
                 div.appendChild(post)
                 div.appendChild(del)
@@ -1032,15 +1032,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     async _deleteActiveEffect(id) {
         if (!this.isEditable) return
 
-        let item = this.actor.effects.find(x => x.id == id)
+        const item = this.actor.effects.get(id)
 
-        if (item) {
-            let actor = this.token ? this.token.actor : this.actor
-
-            if (actor) await this.actor.deleteEmbeddedDocuments("ActiveEffect", [item.id])
-
-            //Hooks.call("deleteActorActiveEffect", this.actor, item)
-        }
+        if (item) this.actor.deleteEmbeddedDocuments("ActiveEffect", [item.id])
     }
 
     async _itemDeleteDialog(item) {

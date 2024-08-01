@@ -7,10 +7,10 @@
             <div class="col two">
                 Colorset
             </div>
+            <div class="col ten"></div>
             <div class="col two">
                 System
-            </div>
-            <div class="col ten"></div>
+            </div>            
         </div>
     </div>
     {{#each selections as |item i|}}
@@ -24,9 +24,10 @@
                     {{selectOptions ../choices selected=item.color}}
                 </select>
             </div>
+            <div class="col ten"></div>
             <div class="col two">
                 <select name="systemselection" data-attr="{{@key}}">
-                    {{selectOptions ../systems selected=item.system valueAttr="id" labelAttr="name"}}
+                    {{selectOptions ../systems selected=item.system labelAttr="label"}}
                 </select>
             </div>
             <div class="col ten"></div>

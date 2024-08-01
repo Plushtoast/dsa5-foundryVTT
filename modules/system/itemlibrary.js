@@ -259,7 +259,6 @@ export default class DSA5ItemLibrary extends Application {
         const data = await super.getData(options);
         data.categories = this.translateFilters()
         data.isGM = game.user.isGM
-        data.items = this.items
         data.advancedMode = this.advancedFiltering ? "on" : ""
         data.worldIndexed = game.settings.get("dsa5", "indexWorldItems") ? "on" : ""
         data.fullTextEnabled = game.settings.get("dsa5", "indexDescription") ? "on" : ""

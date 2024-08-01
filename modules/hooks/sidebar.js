@@ -1,3 +1,5 @@
+import DSA5_Utility from "../system/utility-dsa5.js"
+
 const { getProperty } = foundry.utils
 
 export default function() {
@@ -23,7 +25,7 @@ export default function() {
         const button = $(`<button id="openLibrary"><i class="fas fa-university"></i>${game.i18n.localize("ItemLibrary")}</button>`);
         const headerActions = html.find(".header-actions")
         headerActions.append(button);
-        button.on('click',() => { game.dsa5.itemLibrary.render(true) })
+        button.on('click',() => DSA5_Utility.renderToggle(game.dsa5.itemLibrary))
     })
 
     Hooks.once("renderCompendiumDirectory", (app, html, data) => {

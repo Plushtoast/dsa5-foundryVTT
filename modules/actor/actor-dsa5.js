@@ -1279,7 +1279,7 @@ export default class Actordsa5 extends Actor {
     const brawling = combatskills.find((x) => x.name == game.i18n.localize("LocalizedIDs.wrestle"));
 
     return {
-      totalWeight: parseFloat(this.system.totalWeight.toFixed(3)),
+      totalWeight: parseFloat(this.system.totalWeight?.toFixed(3)),
       traditionArtifacts,
       armorSum: totalArmor,
       sortedSpecs: DSA5.sortedSpecs,
