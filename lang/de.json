@@ -1636,7 +1636,9 @@
         "PreparationError": "Die Initialisierung es Akteurs {name} ist fehlgeschlagen.",
         "mapsViaJournalbrowser": "Diese Karte sollte über den Journalbrowser (Hotkey J) importiert werden, um die korrekte Funktion zu gewährleisten (z.B. Journal Notes). Trotzdem importieren?",
         "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter.",
-        "ActiveEffectDataChange": "{name}: \"data.\" als Key ist nicht mehr erlaubt. Bitte durch \"system.\" ersetzen."
+        "ActiveEffectDataChange": "{name}: \"data.\" als Key ist nicht mehr erlaubt. Bitte durch \"system.\" ersetzen.",
+        "horseMustBeImported": "Reittier aus Kompendium nicht erlaubt",
+        "horseMustBeImportedText": "Nur in die Welt importierte Reittiere sind möglich. Möchtest du das Reittier jetzt importieren?"
     },
     "Shapeshift": {
         "title": "Gestaltwandlung",

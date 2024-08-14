@@ -1306,7 +1306,7 @@ export default class DiceDSA5 {
     }
 
     static async updateDefenseCount(testData) {
-        if (game.combat) await game.combat.updateDefenseCount(testData.extra.speaker)
+        if (game.combat && !testData.fateUsed) await game.combat.updateDefenseCount(testData.extra.speaker)
     }
 
     static _compareWeaponReach(weapon, testData) {

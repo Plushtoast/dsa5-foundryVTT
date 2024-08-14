@@ -1,5 +1,6 @@
 import { DSAAura } from "../system/aura.js";
 import DPS from "../system/derepositioningsystem.js";
+import tokenHUD from "./tokenHUD.js";
 const { getProperty } = foundry.utils
 
 export default function() {
@@ -91,36 +92,6 @@ export default function() {
 
     Token.prototype.drawAuras = async function(force = false) {
         await DSAAura.drawAuras(this, force)
-    }
-
-    TokenHUD.prototype._onToggleEffect = function(event, { overlay = false } = {}) {
-        event.preventDefault();
-        const img = event.currentTarget;
-        const effect = (img.dataset.statusId && this.object.actor) ?
-            CONFIG.statusEffects.find(e => e.id === img.dataset.statusId) :
-            img.getAttribute("src");
-
-        if (event.button == 0)
-            return this.object.incrementCondition(effect)
-        if (event.button == 2)
-            return this.object.decrementCondition(effect)
-    }
-
-    Token.prototype.incrementCondition = async function(effect, { active, overlay = false } = {}) {
-        const existing = this.actor.effects.find(e => e.statuses.has(effect.id));
-        if (!existing || Number.isNumeric(getProperty(existing, "flags.dsa5.value")))
-            await this.actor.addCondition(effect.id, 1, false, false)
-        else if (existing)
-            await this.actor.removeCondition(effect.id, 1, false)
-
-        if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
-        return active;
-    }
-
-    Token.prototype.decrementCondition = async function(effect, { active, overlay = false } = {}) {
-        this.actor.removeCondition(effect.id, 1, false)
-        if (this.hasActiveHUD) canvas.tokens.hud.refreshStatusIcons();
-        return active;
     }
 
     const defaulTokenLeftClick2 = Token.prototype._onClickLeft2

@@ -1595,7 +1595,9 @@
         "PreparationError": "The preparation of actor {name} failed.",
         "mapsViaJournalbrowser": "This scene should be imported through the journal browser (hotkey j), to ensure proper functionality (e.g. journal notes). Import nevertheless?",
         "requiresGM": "This function only works with a logged in game master.",
-        "ActiveEffectDataChange": "{name}: \"data.\" is no longer allowed as key. Please replace it with \"system.\"."
+        "ActiveEffectDataChange": "{name}: \"data.\" is no longer allowed as key. Please replace it with \"system.\".",
+        "horseMustBeImported": "Mount from compendium not allowed",
+        "horseMustBeImportedText": "Only mounts imported into the world are possible. Do you want to import the mount now?"
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

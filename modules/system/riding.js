@@ -1,3 +1,4 @@
+import actor from "../hooks/actor.js"
 import DSA5_Utility from "./utility-dsa5.js"
 const { mergeObject, getProperty, hasProperty } = foundry.utils
 
@@ -164,7 +165,7 @@ export default class Riding {
     }
 
     static async unmountHorse(actor, token){
-        const tokenUpdate = { [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.document.elevation ?? 0) - 1) }
+        const tokenUpdate = { [`flags.dsa5.-=horseTokenId`]: null, elevation: Math.max(0, (token.elevation ?? 0) - 1) }
         const tokenResized = token.getFlag("dsa5", "horseResized")
         if(tokenResized){
             mergeObject(tokenUpdate, {
@@ -204,7 +205,27 @@ export default class Riding {
         };
       }
 
-    static async setHorse(rider, horse) {
+    static async setHorse(rider, horse, riderToken) {
+        if(horse.compendium) {
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: game.i18n.localize("DSAError.horseMustBeImported")
+            },
+            content: `<p>${game.i18n.localize("DSAError.horseMustBeImportedText")}</p>`,
+            rejectClose: false
+            });
+            if ( !confirmed ) return;
+
+            const folder = await DSA5_Utility.getFolderForType("Actor", parent = null, game.i18n.localize('RIDING.horse'))
+            const importedHorse = horse.toObject()
+            importedHorse.folder = folder.id
+            horse = await Actor.implementation.create(importedHorse)
+        }
+
+        if(riderToken && !horse.token){
+            horse = (await canvas.scene.createEmbeddedDocuments("Token", [await horse.getTokenDocument({x: riderToken.x, y: riderToken.y})]))[0].actor
+        }
+
         const actorUpdate = {
             system: {
                 horse: {
@@ -223,10 +244,11 @@ export default class Riding {
         }
         await rider.update(actorUpdate)
         if(horse.isToken){
-            await canvas.scene.updateEmbeddedDocuments("Token",
-            rider.getActiveTokens().map(x => { return { _id: x.id, "flags.dsa5.horseTokenId": horse.token.id, x: horse.token.x, y: horse.token.y}}).concat(
+            const sizeUpdate = this.adaptTokenSize(riderToken, horse.token)
+            const tokenUpdates = rider.getActiveTokens().map(x => { return mergeObject({ _id: x.id, "flags.dsa5.horseTokenId": horse.token.id, x: horse.token.x, y: horse.token.y}, sizeUpdate)}).concat(
                 { _id: horse.token.id, [`flags.dsa5.-=horseTokenId`]: null }
-            ), { noHooks: true })
+            )
+            await canvas.scene.updateEmbeddedDocuments("Token", tokenUpdates, { noHooks: true })
         }
         await this.addRidingCondition(rider)
     }

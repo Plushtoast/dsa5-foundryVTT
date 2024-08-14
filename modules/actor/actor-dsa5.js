@@ -1846,6 +1846,7 @@ export default class Actordsa5 extends Actor {
 
               infoMsg += `<br><b>${game.i18n.localize("Roll")}</b>: ${changedRolls.join(", ")}`;
               ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+              newTestData.fateUsed = true
 
               this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
               await message.update({
@@ -2686,13 +2687,34 @@ export default class Actordsa5 extends Actor {
     return undefined;
   }
 
+  async toggleStatusEffect(statusId, {active, overlay=false}={}) {
+    const existing = this.effects.find(e => e.statuses.has(statusId));
+
+    if(overlay) {
+      if(active) return false
+
+      this.removeCondition(statusId, 1, false)
+    } else {
+      if (!existing || Number.isNumeric(getProperty(existing, "flags.dsa5.value"))) {
+        if(!active && active != undefined) return false
+        
+        await this.addCondition(statusId, 1, false, false)
+      }          
+      else {
+        if(active) return false
+
+        await this.removeCondition(statusId, 1, false)
+      }          
+    }    
+  }
+
   async payMiracles(testData) {
     if (!testData.extra.miraclePaid) {
       testData.extra.miraclePaid = true;
-      const hasMiracleMight = testData.situationalModifiers.some(
-        (x) => x.name.trim() == game.i18n.localize("LocalizedIDs.miracleMight")
-      );
-      const hasMiracle = testData.situationalModifiers.some((x) => x.name.trim() == game.i18n.localize("LocalizedIDs.miracle"));
+      const miracleMight = game.i18n.localize("LocalizedIDs.miracleMight")
+      const miracle = game.i18n.localize("LocalizedIDs.miracle")
+      const hasMiracleMight = testData.situationalModifiers.some(x => x.name.trim() == miracleMight);
+      const hasMiracle = testData.situationalModifiers.some((x) => x.name.trim() == miracle);
       const cost = hasMiracleMight ? 6 : hasMiracle ? 4 : 0;
       if (cost) {
         await this.update({ "system.status.karmaenergy.value": this.system.status.karmaenergy.value - cost });

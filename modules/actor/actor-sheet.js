@@ -1271,14 +1271,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
                         icon: '<i class="fas fa-horse"></i>',
                         label: game.i18n.localize("RIDING.horse"),
                         callback: () => {
-                            Riding.setHorse(this.actor, item)
+                            Riding.setHorse(this.actor, item, this.token)
                         }
                     }
                 }
             }).render(true)
         }
         else {
-            Riding.setHorse(this.actor, item)
+            Riding.setHorse(this.actor, item, this.token)
         }
     }
 
