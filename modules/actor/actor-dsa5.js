@@ -1421,7 +1421,7 @@ export default class Actordsa5 extends Actor {
     const effect = getProperty(i, "system.effect.value");
     if (!effect) return
 
-    for (let mod of effect.split(/,|;/).map((x) => x.trim())) {
+    for (let mod of `${effect}`.split(/,|;/).map((x) => x.trim())) {
       let vals = mod.replace(/(\s+)/g, " ").trim().split(" ");
       if (vals.length == 2) {
         if (!isNaN(vals[0])) {
@@ -1450,7 +1450,7 @@ export default class Actordsa5 extends Actor {
         const msg = game.i18n.format(ap > 0 ? "advancementCost" : "refundCost", { cost: Math.abs(ap) });
         tinyNotification(msg);
       } else {
-        ui.notifications.error(game.i18n.localize("DSAError.APUpdateError"));
+        ui.notifications.error("DSAError.APUpdateError", { localize: true });
       }
     }
   }
@@ -1494,7 +1494,7 @@ export default class Actordsa5 extends Actor {
         return true;
       }
     }
-    ui.notifications.error(game.i18n.localize("DSAError.NotEnoughXP"));
+    ui.notifications.error("DSAError.NotEnoughXP", { localize: true });
     return false;
   }
 
@@ -1669,7 +1669,7 @@ export default class Actordsa5 extends Actor {
       await this.update({[`system.status.${state}.value`]: newVal});
       return true
     } else {
-      ui.notifications.error(game.i18n.localize(`DSAError.NotEnough${type}`));
+      ui.notifications.error(`DSAError.NotEnough${type}`, { localize: true });
       return false
     }
   }
@@ -2666,7 +2666,7 @@ export default class Actordsa5 extends Actor {
       }
     }
     return cardOptions;
-  }
+  }  
 
   async swapMag(weaponId) {
     const weapon = this.items.get(weaponId);
@@ -2682,7 +2682,7 @@ export default class Actordsa5 extends Actor {
       DSA5SoundEffect.playEquipmentWearStatusChange(currentAmmo);
       return currentAmmo;
     }
-    ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"));
+    ui.notifications.error("DSAError.NoAmmo", { localize: true });
     return undefined;
   }
 
@@ -2771,7 +2771,7 @@ export default class Actordsa5 extends Actor {
     }
     const result = newValue <= max
     if (!result)
-        ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
+        ui.notifications.error("DSAError.AdvanceMaximumReached", { localize: true })
 
     return { result, max, maxBonus }
   }

@@ -1243,7 +1243,7 @@ class ConsumableItemDSA extends Itemdsa5 {
 
         const charges = (item.system.quantity.value - 1) * item.system.maxCharges + item.system.charges
         if (charges <= 0) {
-            ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+            ui.notifications.error("DSAError.NotEnoughCharges", { localize: true })
             return
         }
 
@@ -1656,7 +1656,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             }
             if(!hasAmmo && actor.type == "creature") hasAmmo = true
         }
-        if (!hasAmmo) ui.notifications.error(game.i18n.localize("DSAError.NoAmmo"))
+        if (!hasAmmo) ui.notifications.error("DSAError.NoAmmo", { localize: true })
 
         return hasAmmo
     }

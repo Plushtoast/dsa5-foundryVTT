@@ -197,10 +197,10 @@ export default class DSA5SpellDialog extends DialogShared {
                     if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
                         newPosition = DSA5SpellDialog.bigTimes[newIndex];
                     } else {
-                        ui.notifications.error(game.i18n.localize("DSAError.CastingTimeLimit"));
+                        ui.notifications.error("DSAError.CastingTimeLimit", { localize: true });
                     }
                 } else {
-                    ui.notifications.error(game.i18n.localize("DSAError.TimeCannotBeParsed"));
+                    ui.notifications.error("DSAError.TimeCannotBeParsed", { localize: true });
                 }
             } else {
                 newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
@@ -229,7 +229,7 @@ export default class DSA5SpellDialog extends DialogShared {
                 newReach = Number(val[0]);
                 if (isNaN(newReach)) {
                     if(event) event.currentTarget.checked = false;
-                    ui.notifications.error(game.i18n.localize("DSAError.RangeCannotBeParsed"));
+                    ui.notifications.error("DSAError.RangeCannotBeParsed", { localize: true });
                 } else {
                     reach.text(newReach * 2 + " " + game.i18n.localize("step"));
                     mod += Number(element.value);

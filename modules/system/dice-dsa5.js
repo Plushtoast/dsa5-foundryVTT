@@ -1484,7 +1484,7 @@ export default class DiceDSA5 {
                 const removeCharge = input.attr("data-removecharge") ? input.attr("data-removecharge") == "true" : false
                 if (removeCharge) {
                     if (item.system.quantity.value < 1) {
-                        ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+                        ui.notifications.error("DSAError.NotEnoughCharges", { localize: true })
                         return
                     }
                 }

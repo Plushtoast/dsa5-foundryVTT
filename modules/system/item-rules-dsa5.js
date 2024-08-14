@@ -8,7 +8,7 @@ export default class ItemRulesDSA5 {
     static getTalentBonus(actor, talent, types) {
         let modifier = []
         let selected = game.settings.get("dsa5", "talentModifierEnabled")
-        for (let k of actor.items.filter(x => { return types.includes(x.type) && x.system.effect.value.includes(talent) })) {
+        for (let k of actor.items.filter(x => { return types.includes(x.type) && `${x.system.effect.value}`.includes(talent) })) {
             for (let m of k.system.effect.value.split(/;|,/)) {
                 if (m.includes(talent)) {
                     let parsed = DSA5_Utility.parseAbilityString(m.trim())

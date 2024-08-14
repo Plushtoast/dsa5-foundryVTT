@@ -43,7 +43,7 @@ export default class DPS {
 
         if(game.settings.get("dsa5", "lightSightCompensationEnabled")) {
             for (const light of canvas.effects.lightSources) {
-                if (!light.active || !light.object) continue
+                if (!light.active || !light.object || !light.object.document) continue
 
                 if(light.object == token) {
                     bright = bright || light.data.bright > 0,
@@ -141,7 +141,7 @@ export default class DPS {
         DoorControl.prototype._onMouseDown = function(event) {
             if (!game.user.isGM && DPS.isEnabled) {
                 if (!DPS.inDistance(this))
-                    return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
+                    return ui.notifications.warn('DSAError.notInRangeToLoot', { localize: true })
             }
             return originalDoorControl.apply(this, arguments)
         }

@@ -40,7 +40,7 @@ export default class DialogReactDSA5 extends Dialog {
         const actor = DSA5_Utility.getSpeaker(speaker)
 
         if (!actor) {
-            ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
+            ui.notifications.error("DSAError.noProperActor", { localize: true })
             return {}
         }
         return {
@@ -192,7 +192,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         const actor = DSA5_Utility.getSpeaker(speaker)
 
         if (!actor) {
-            ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
+            ui.notifications.error("DSAError.noProperActor", { localize: true })
             return {}
         }
         return {

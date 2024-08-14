@@ -603,7 +603,7 @@ export default class DSA5ItemLibrary extends Application {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "libraryModulsFilter",
             tooltip: "DSASETTINGS.libraryModulsFilter",
@@ -769,7 +769,7 @@ export default class DSA5ItemLibrary extends Application {
     static collectModulOptions() {
         return game.packs.filter(x => x.metadata.type == "Item").reduce((prev, cur) => {
             if(!prev[cur.metadata.packageName]) {
-                const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || "World")
+                const name = game.i18n.has(`${cur.metadata.packageName}.name`) ? game.i18n.localize(`${cur.metadata.packageName}.name`) : (game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, "") || game.system.title)
                 prev[cur.metadata.packageName] = name
             }
             return prev

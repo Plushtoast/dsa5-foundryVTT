@@ -119,7 +119,7 @@ export default class PlayerMenu extends Application {
     }
 
     async rollConjuration(ev) {
-        if (!this.conjuration) return ui.notifications.warn(game.i18n.localize("CONJURATION.dragConjuration"))
+        if (!this.conjuration) return ui.notifications.warn("CONJURATION.dragConjuration", { localize: true })
 
         const itemId = $(ev.currentTarget).closest('.item').attr("data-item-id")
         const skill = this.actor.items.get(itemId);
@@ -207,7 +207,7 @@ export default class PlayerMenu extends Application {
     finalizeConjuration() {
         if (!this.conjurationData) return
 
-        if (!this.conjuration) return ui.notifications.warn(game.i18n.localize('DSAError.noConjurationActive'))
+        if (!this.conjuration) return ui.notifications.warn('DSAError.noConjurationActive', { localize: true })
 
         const modifiers = []
         for(let sel of this.conjurationData.selectedIds) {
@@ -234,7 +234,7 @@ export default class PlayerMenu extends Application {
                 type: "summonCreature",
                 payload
             })
-            ui.notifications.notify(game.i18n.localize('CONJURATION.requestSend'))
+            ui.notifications.info('CONJURATION.requestSend', { localize: true })
         }
     }
 

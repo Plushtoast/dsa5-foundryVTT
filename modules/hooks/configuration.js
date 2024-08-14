@@ -342,7 +342,7 @@ export function setupConfiguration() {
         default: "",
         type: new foundry.data.fields.StringField({choices: moneyChoices}),
         onChange: async(val) => {
-            ui.notifications.notify(game.packs.get(val).index.filter(x => x.type == "money").map(x => x.name).join(", "))
+            ui.notifications.info(game.packs.get(val).index.filter(x => x.type == "money").map(x => x.name).join(", "))
         }
     });
     

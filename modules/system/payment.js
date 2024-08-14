@@ -25,7 +25,7 @@ export default class DSA5Payment {
             } else {
                 result.msg = game.i18n.format("PAYMENT.cannotpay", { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })
                 if (silent) {
-                    ui.notifications.notify(result.msg)
+                    ui.notifications.info(result.msg)
                 }
             }
         }
@@ -90,7 +90,7 @@ export default class DSA5Payment {
 
     static async handlePayAction(elem, pay, amount, actor = undefined) {
         if (game.user.isGM && !actor) {
-            ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
+            ui.notifications.info("PAYMENT.onlyActors", { localize: true })
             return
         }
         if (actor) DSA5SoundEffect.playMoneySound(true)
@@ -102,7 +102,7 @@ export default class DSA5Payment {
         } else if (actor && !pay) {
             result = await DSA5Payment.getMoney(actor, amount)
         } else {
-            ui.notifications.notify(game.i18n.localize("PAYMENT.onlyActors"))
+            ui.notifications.info("PAYMENT.onlyActors", { localize: true })
         }
         if (result && elem) {
             elem.fadeOut()

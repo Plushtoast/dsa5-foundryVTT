@@ -330,7 +330,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 break
         }
         if (!result)
-            ui.notifications.error(game.i18n.localize("DSAError.AdvanceMaximumReached"))
+            ui.notifications.error("DSAError.AdvanceMaximumReached", { localize: true })
 
         return result
     }
@@ -344,7 +344,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "library",
             tooltip: "SHEET.Library",
@@ -1168,7 +1168,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
                 ui.notifications.error(game.i18n.format("DSAError.noSpellForExtension", { name: item.system.source, category: DSA5_Utility.categoryLocalization(item.system.category), extension: item.name}))
             } else {
                 if (spell.system.talentValue.value < item.system.talentValue) {
-                    ui.notifications.error(game.i18n.localize("DSAError.talentValueTooLow"))
+                    ui.notifications.error("DSAError.talentValueTooLow", { localize: true })
                     return
                 }
                 let apCost = item.system.APValue.value

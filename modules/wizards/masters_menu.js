@@ -450,7 +450,7 @@ class GameMasterMenu extends Application {
 
         const heros = this.heros.length ? this.heros : await this.getTrackedHeros()
         if(heros.length == 0) {
-            ui.notifications.warn(game.i18n.localize("DIALOG.noTarget"))
+            ui.notifications.warn("DIALOG.noTarget", { localize: true })
             return
         }
         for (const hero of heros) {

@@ -72,7 +72,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
         html.on("mousedown", ".specAbs", (ev) => {
             if (html.find(".opportunityAttack").is(":checked")) {
-                ui.notifications.error(game.i18n.localize("DSAError.opposedAttackNoSpecAbs"));
+                ui.notifications.error("DSAError.opposedAttackNoSpecAbs", { localize: true });
                 return;
             }
             const elem = $(ev.currentTarget);

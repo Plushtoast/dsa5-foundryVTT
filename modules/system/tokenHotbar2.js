@@ -336,7 +336,7 @@ export default class TokenHotbar2 extends Application {
     }
 
     async handleTradeStart(ev, actor, id, tokenId) {
-        if(!game.user.targets.size) return ui.notifications.error(game.i18n.localize("DIALOG.noTarget"))
+        if(!game.user.targets.size) return ui.notifications.error("DIALOG.noTarget", { localize: true })
 
         for(const target of game.user.targets) {
             if(target.actor) {
@@ -852,7 +852,7 @@ export class AddEffectDialog extends Dialog {
         if(canvas.tokens.controlled.length == 1 && isCustomEffect) {
             DSA5StatusEffects.createCustomEffect(canvas.tokens.controlled[0].actor)
         } else if(isCustomEffect) {
-            ui.notifications.error(game.i18n.localize("DSAError.customEffect"))
+            ui.notifications.error("DSAError.customEffect", { localize: true })
         } else {
             for (let token of canvas.tokens.controlled) {
                 await token.actor.addTimedCondition(id, 1, false, false, options)

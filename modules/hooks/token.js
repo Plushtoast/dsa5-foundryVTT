@@ -134,7 +134,7 @@ export default function() {
         const distanceAccessible = game.user.isGM || !DPS.isEnabled || !isMerchant(this.actor) || DPS.inDistance(this)
 
         if (!distanceAccessible)
-            return ui.notifications.warn(game.i18n.localize('DSAError.notInRangeToLoot'))
+            return ui.notifications.warn('DSAError.notInRangeToLoot', { localize: true })
 
         defaulTokenLeftClick2.call(this, event)
     }

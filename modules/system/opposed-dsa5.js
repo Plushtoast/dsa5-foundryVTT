@@ -49,7 +49,7 @@ export default class OpposedDsa5 {
     static async answerOpposedTest(actor, message, testResult, preData) {
         let attackMessage = game.messages.get(actor.flags.oppose.messageId)
         if (!attackMessage) {
-            ui.notifications.error(game.i18n.localize("DSAError.staleData"))
+            ui.notifications.error("DSAError.staleData", { localize: true })
             await OpposedDsa5.clearOpposed(actor)
             return OpposedDsa5.createOpposedTest(actor, message, testResult, preData)
         }

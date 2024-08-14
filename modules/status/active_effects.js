@@ -138,7 +138,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     async checkTimesUpInstalled() {
         const isInstalled = DSA5_Utility.moduleEnabled("times-up")
-        if (!isInstalled && game.user.isGM) ui.notifications.warn(game.i18n.localize('DSAError.shouldTimesUp'))
+        if (!isInstalled && game.user.isGM) ui.notifications.warn('DSAError.shouldTimesUp', { localize: true })
         return isInstalled
     }
 

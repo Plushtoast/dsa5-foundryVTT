@@ -58,7 +58,6 @@ export default function() {
         DSA5StatusEffects.bindButtons(html)
 
         html.find('.embeddedItemDrag').each(function(i, cond) {
-
             cond.setAttribute("draggable", true);
             cond.addEventListener("dragstart", ev => embeddedDragStart(ev));
         })

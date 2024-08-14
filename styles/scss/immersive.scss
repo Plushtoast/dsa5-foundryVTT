@@ -14,11 +14,13 @@
 
             h3 {
                 color: white;
+                text-shadow: 0px 0px 3px var(--color-shadow-dark);
             }
         }
 
         h3 {
             color: black;
+            text-shadow: none;
         }
     }
 

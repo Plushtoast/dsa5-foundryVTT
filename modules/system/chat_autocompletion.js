@@ -217,7 +217,7 @@ export default class DSA5ChatAutoCompletion {
         if (!actor) actor = game.actors.get(speaker.actor);
 
         if (!actor) {
-            ui.notifications.error(game.i18n.localize("DSAError.noProperActor"))
+            ui.notifications.error("DSAError.noProperActor", { localize: true })
             return{}
         }
         return {

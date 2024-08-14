@@ -15,7 +15,7 @@ const dragTileImg = (event) => {
     const ratioX = canvas.dimensions.sceneWidth / img.naturalWidth
     const ratio = Math.min(1, ratioX, ratioY)
     const tileSize = Math.round(canvas.dimensions.size / ratio);
-    let dragData = {
+    const dragData = {
         type: "Tile",
         texture: {src: imgPath},
         tileSize

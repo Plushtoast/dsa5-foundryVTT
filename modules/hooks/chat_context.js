@@ -8,7 +8,7 @@ export const applyDamage = async(li, mode, factor = 1) => {
     const defenderSpeaker = cardData?.speakerDefend;
     const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
 
-    if (!actor.isOwner) return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+    if (!actor.isOwner) return ui.notifications.error("DSAError.DamagePermission", { localize: true })
 
     await actor.applyDamage(cardData.damage[mode] * factor)
     const update = { "flags.data.damageApplied": true, content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize("damageApplied")}"></i>`) }
@@ -197,7 +197,7 @@ export function chatContext() {
         let cardData = message.flags.data
         let actor = DSA5_Utility.getSpeaker(message.speaker)
         if (!actor.isOwner)
-            return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+            return ui.notifications.error("DSAError.DamagePermission", { localize: true })
 
         const maintain = cardData.preData.calculatedSpellModifiers.maintainCost.trim()
         const payType = (["ritual", "spell"].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, "costsMana")) ? "AsP" : "KaP"
@@ -272,7 +272,7 @@ export function chatContext() {
                     const message = await game.messages.get(li.attr("data-message-id"))
                     const actor = DSA5_Utility.getSpeaker(message.speaker)
                     if (!actor.isOwner)
-                        return ui.notifications.error(game.i18n.localize("DSAError.DamagePermission"))
+                        return ui.notifications.error("DSAError.DamagePermission", { localize: true })
 
                     await message.update({ "flags.data.healApplied": true, content: message.content.replace(/<\/div>$/, '<i class="fas fa-check" style="float:right"></i></div>') });
                     await actor.applyRegeneration(message.flags.data.postData.LeP, message.flags.data.postData.AsP, message.flags.data.postData.KaP)

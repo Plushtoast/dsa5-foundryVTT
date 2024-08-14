@@ -80,7 +80,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "showItemHead",
             icon: "fas fa-comment",
@@ -278,7 +278,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if(this.item.isOwned) return buttons
 
         buttons.unshift({
@@ -357,12 +357,12 @@ class Enchantable extends ItemSheetdsa5 {
 
     async _enchant(dragDataArray) {
         const enchantments = this.item.getFlag("dsa5", "enchantments") || []
-        if (enchantments.length + dragDataArray.length > 7) return ui.notifications.error(game.i18n.localize("DSAError.tooManyEnchants"))
+        if (enchantments.length + dragDataArray.length > 7) return ui.notifications.error("DSAError.tooManyEnchants", { localize: true })
 
         for (let dragData of dragDataArray) {
             const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false)
             if (["spell", "liturgy", "ceremony", "ritual"].includes(typeClass)) {
-                if (!item.pack) return ui.notifications.error(game.i18n.localize("DSAError.onlyCompendiumSpells"))
+                if (!item.pack) return ui.notifications.error("DSAError.onlyCompendiumSpells", { localize: true })
 
                 const enchantment = {
                     name: item.name,
@@ -413,7 +413,7 @@ class Enchantable extends ItemSheetdsa5 {
 
     async rollEnchantment(id, enchantments){
         let enchantment = enchantments.find(x => x.id == id)
-        if (!enchantment.charged) return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughCharges"))
+        if (!enchantment.charged) return ui.notifications.error("DSAError.NotEnoughCharges", { localize: true })
         let item = await this.getSpell(enchantment)
 
         if (item) {
@@ -536,7 +536,7 @@ class Enchantable extends ItemSheetdsa5 {
             }            
         }
 
-        if (!item) ui.notifications.error(game.i18n.localize('DSAError.enchantmentNotFound'))
+        if (!item) ui.notifications.error('DSAError.enchantmentNotFound', { localize: true })
     
         return item
     }
@@ -756,7 +756,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
     }
     
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
@@ -798,7 +798,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
         return data
     }
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "rolleffect",
@@ -812,7 +812,7 @@ class MagicalSignSheet extends ItemSheetdsa5 {
     async setupEffect(ev) {
         const aspcost = Number(this.item.system.asp) || 0
         if (this.item.actor.system.status.astralenergy.value < aspcost)
-            return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
+            return ui.notifications.error("DSAError.NotEnoughAsP", { localize: true })
 
         const actor = this.item.actor
         const sign = game.dsa5.config.ItemSubclasses.magicalsign
@@ -845,7 +845,7 @@ class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
@@ -871,7 +871,7 @@ class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
 
 class BlessingSheetDSA5 extends ItemSheetdsa5 {
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "rolleffect",
@@ -891,7 +891,7 @@ class BlessingSheetDSA5 extends ItemSheetdsa5 {
 
     async setupEffect(ev) {
         if (this.item.actor.system.status.karmaenergy.value < 1)
-            return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughKaP"))
+            return ui.notifications.error("DSAError.NotEnoughKaP", { localize: true })
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
         await this.item.actor.update({ "system.status.karmaenergy.value": this.item.actor.system.status.karmaenergy.value -= 1 })
@@ -931,7 +931,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "consumeItem",
@@ -982,7 +982,7 @@ class ItemCultureDSA5 extends ItemSheetdsa5 {
 
 class DiseaseSheetDSA5 extends ItemSheetdsa5 {
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "rolleffect",
             icon: `fas fa-dice-d20`,
@@ -1001,7 +1001,7 @@ class DiseaseSheetDSA5 extends ItemSheetdsa5 {
 
 class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned) {
             buttons.unshift({
                 class: "rolleffect",
@@ -1021,7 +1021,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
 
     async setupEffect(ev) {
         if (this.item.actor.system.status.astralenergy.value < 1)
-            return ui.notifications.error(game.i18n.localize("DSAError.NotEnoughAsP"))
+            return ui.notifications.error("DSAError.NotEnoughAsP", { localize: true })
 
         const cantrip = game.dsa5.config.ItemSubclasses.magictrick
         await this.item.actor.update({ "system.status.astralenergy.value": this.item.actor.system.status.astralenergy.value -= 1 })
@@ -1092,7 +1092,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
     }
 
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         if (this.item.isOwned && game.settings.get("dsa5", "armorAndWeaponDamage") && this.item.system.structure.max > 0) {
             buttons.unshift({
                 class: "rollDamaged",
@@ -1106,7 +1106,7 @@ class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
 
 class PoisonSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     _getHeaderButtons() {
-        let buttons = super._getHeaderButtons();
+        const buttons = super._getHeaderButtons();
         buttons.unshift({
             class: "rolleffect",
             icon: `fas fa-dice-d20`,

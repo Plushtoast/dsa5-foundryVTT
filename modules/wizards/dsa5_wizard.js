@@ -244,7 +244,7 @@ export default class WizardDSA5 extends Application {
     }
 
     _showInputValidation(choice, parent, app){
-        ui.notifications.error(game.i18n.localize("DSAError.MissingChoices"))
+        ui.notifications.error("DSAError.MissingChoices", { localize: true })
         let tabElem = choice.closest('.tab').attr("data-tab")
         app.activateTab(tabElem)
         WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`))

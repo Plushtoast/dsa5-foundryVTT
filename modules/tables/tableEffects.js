@@ -110,7 +110,7 @@ export default class TableEffects{
                 finalTargets = newTargets
             else {
                 hasTargets = false
-                ui.notifications.warn(game.i18n.localize("DSAError.noVictim"))
+                ui.notifications.warn("DSAError.noVictim", { localize: true })
             }
         }
         return { hasTargets, finalTargets}
