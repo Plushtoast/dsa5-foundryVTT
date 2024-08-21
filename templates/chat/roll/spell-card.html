@@ -28,7 +28,7 @@
     {{/unless}} {{#if preData.extensions }}
     <div class="card-content">
         <b>{{localize 'extensions'}}</b>: {{#each preData.extensions as |item|}}
-        <a class="entity-link content-link" data-tooltip="{{item.title}}" draggable="true" data-type="Item" data-entity="Item" data-uuid="{{item.uuid}}">{{item.name}}</a>
+        <a class="content-link" draggable="true" data-link="" data-uuid="{{item.uuid}}" data-type="Item"></i>{{item.name}}</a>
         {{/each}}
     </div>
     {{/if}} 

@@ -426,7 +426,7 @@ export default class BookWizard extends Application {
         $(this._element).find(`[data-jid="${journal.id}"]`).addClass("selected")
         bindImgToCanvasDragStart(chapter)
         this.markFindings(chapter)
-        chapter.find('.documentName-link, .entity-link, .content-link').on('click', ev => {
+        chapter.find('.documentName-link, .content-link').on('click', ev => {
             const dataset = ev.currentTarget.dataset
             if (this.bookData && dataset.pack == this.bookData.journal) {
                 //todo make this work for pages
