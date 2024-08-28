@@ -406,12 +406,12 @@ class RepeatingEffectsHelper {
     }
 
     static async startOfRound(combat) {
-        if (!game.users.activeGM?.isSelf) return
+        if (!DSA5_Utility.isActiveGM()) return
 
         for (let turn of combat.turns) {
             if (!turn.defeated) {                
-                if (turn.actor?.system.condition.bleeding > 0) await this.applyBleeding(turn, combat)
-                if (turn.actor?.system.condition.burning > 0) await this.applyBurning(turn, combat)
+                if (turn.actor?.statuses.has("bleeding")) await this.applyBleeding(turn, combat)
+                if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat)
 
                 await this.startOfRoundEffects(turn, combat)
             }
@@ -421,9 +421,10 @@ class RepeatingEffectsHelper {
     static async startOfRoundEffects(turn, combat){
         const regenerationAttributes = ["wounds", "astralenergy", "karmaenergy"]
         for(const attr of regenerationAttributes){
-            if(getProperty(turn.actor.system.repeatingEffects, `disabled.${attr}`)) continue
+            if(getProperty(turn.actor?.system.repeatingEffects, `disabled.${attr}`)) continue
 
             const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map(x => x.value).join("+")
+
             if(!effectvalues) continue
 
             const damageRoll = await new Roll(effectvalues).evaluate()

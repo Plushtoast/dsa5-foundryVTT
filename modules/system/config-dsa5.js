@@ -110,6 +110,7 @@ DSA5.statusEffects = [{
         name: "CONDITION.burning",
         img: "icons/svg/fire.svg",
         description: "CONDITIONDESCRIPTION.burning",
+        changes: [ { "key": "system.condition.burning", "mode": 2, "value": 1 }],
         flags: {
             dsa5: {
                 "value": 1,

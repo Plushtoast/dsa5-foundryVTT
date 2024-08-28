@@ -18,6 +18,8 @@ import DSA5Payment from "../system/payment.js"
 const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class Itemdsa5 extends Item {
+    static DEFAULT_ICON = "systems/dsa5/icons/blank.webp"
+    
     static defaultImages = {
         advantage: "systems/dsa5/icons/categories/Vorteil.webp",
         disadvantage: "systems/dsa5/icons/categories/Nachteil.webp",
@@ -79,7 +81,7 @@ export default class Itemdsa5 extends Item {
             if (data.type in this.defaultImages) {
                 data.img = this.defaultImages[data.type]
             } else {
-                data.img = "systems/dsa5/icons/blank.webp"
+                data.img = Itemdsa5.DEFAULT_ICON
             }
         }
     }
@@ -939,15 +941,15 @@ class SpellItemDSA5 extends Itemdsa5 {
     }
 
     static getSpecAbModifiers(html) {
-        let res = []
+        const res = []
         for (let k of html.find(".specAbs.active")) {
-            res.push({name: k.dataset.name, title: k.getAttribute('title'), uuid: k.dataset.uuid})
+            res.push({name: k.dataset.name, title: k.dataset.tooltip, uuid: k.dataset.uuid})
         }
         return res
     }
 
     static attackSpellMalus(source) {
-        let res = []
+        const res = []
         if (source.system.effectFormula.value)
             res.push({ name: game.i18n.localize("MODS.defenseMalus"), value: -4, type: "defenseMalus", selected: true, source: source.name })
 

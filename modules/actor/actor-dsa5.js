@@ -19,10 +19,10 @@ import APTracker from "../system/ap-tracker.js";
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils
 
 export default class Actordsa5 extends Actor {
+  static DEFAULT_ICON = "icons/svg/mystery-man-black.svg"
+
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
-
-    if (!data.img || data.img == "icons/svg/mystery-man.svg") data.img = "icons/svg/mystery-man-black.svg";
 
     const skills = (await DSA5_Utility.allSkills()) || [];
     const combatskills = (await DSA5_Utility.allCombatSkills()) || [];

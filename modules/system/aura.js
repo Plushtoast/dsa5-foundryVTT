@@ -162,7 +162,7 @@ export class DSAAura {
     }
 
     static async checkAuraEntered(trespasser) {        
-        if(!DSA5_Utility.isActiveGM() || !game.canvas) return
+        if(!DSA5_Utility.isActiveGM(true) || !game.canvas) return
 
         for(let token of canvas.scene.tokens) {
             if(!token.actor || token.id == trespasser.id) continue
