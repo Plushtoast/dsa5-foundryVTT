@@ -3,7 +3,7 @@ import DSA5_Utility from "../system/utility-dsa5.js";
 const { getProperty } = foundry.utils
 
 export const applyDamage = async(li, mode, factor = 1) => {
-    const message = game.messages.get(li.attr("data-message-id"))
+    const message = game.messages.get(li[0].dataset.messageId)
     const cardData = message.flags.opposeData
     const defenderSpeaker = cardData?.speakerDefend;
     const actor = DSA5_Utility.getSpeaker(defenderSpeaker)
@@ -19,7 +19,7 @@ export const applyDamage = async(li, mode, factor = 1) => {
         game.socket.emit("system.dsa5", {
             type: "updateMsg",
             payload: {
-                id: li.attr("data-message-id"),
+                id: li[0].dataset.messageId,
                 updateData: update
             }
         })
@@ -29,7 +29,7 @@ export const applyDamage = async(li, mode, factor = 1) => {
 export function chatContext() {
     const fateAvailable = (actor, group) => { return DSA5_Utility.fateAvailable(actor, group) }
     const canHurt = function(li, prop = "damage.value") {
-        let cardData = game.messages.get(li.attr("data-message-id")).flags.opposeData
+        let cardData = game.messages.get(li[0].dataset.messageId).flags.opposeData
         const isOwner = cardData ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner : false
         return ((game.user.isGM || isOwner) && li.find(".opposed-card").length || li.find(".dice-roll").length) && (getProperty(cardData, prop) || 0) > 0
     }
@@ -39,7 +39,7 @@ export function chatContext() {
     }
 
     const canCostMana = function(li) {
-        const message = game.messages.get(li.attr("data-message-id"));
+        const message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner || game.user.isGM) {
@@ -50,23 +50,21 @@ export function chatContext() {
     }
 
     const canUnhideData = function(li) {
-        if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
-            let message = game.messages.get(li.attr("data-message-id"));
-            return "hideData" in message.flags && message.flags.hideData
-        }
-        return false
+        if (!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage"))) return false
+
+        const message = game.messages.get(li[0].dataset.messageId);
+        return "hideData" in message.flags && message.flags.hideData
     }
 
     const canHideData = function(li) {
-        if (game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage")) {
-            let message = game.messages.get(li.attr("data-message-id"));
-            return "hideData" in message.flags && !message.flags.hideData
-        }
-        return false
+        if(!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage"))) return false
+
+        const message = game.messages.get(li[0].dataset.messageId);
+        return "hideData" in message.flags && !message.flags.hideData
     }
 
     const canImproveRoll = function(li, group = false) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        const message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             if (message.flags.data.postData.successLevel > -2) {
                 let actor = game.actors.get(message.speaker.actor);
@@ -87,7 +85,7 @@ export function chatContext() {
     }
 
     const canIncreaseQS = function(li, group = false) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner && fateAvailable(actor, group)) {
@@ -104,7 +102,7 @@ export function chatContext() {
     }
 
     const isTalented = function(li) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner) {
@@ -115,7 +113,7 @@ export function chatContext() {
     }
 
     const canRerollDamage = function(li, group = false) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner && fateAvailable(actor, group)) {
@@ -130,7 +128,7 @@ export function chatContext() {
     }
 
     const canReroll = function(li, group = false) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
 
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
@@ -146,7 +144,7 @@ export function chatContext() {
     }
 
     const canHeal = function(li) {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
         if (message.speaker.actor && message.flags.data) {
             let actor = game.actors.get(message.speaker.actor);
             if (actor.isOwner && ["LeP", "KaP", "AsP"].some(x => getProperty(message.flags, `data.postData.${x}`) != undefined)) {
@@ -157,7 +155,7 @@ export function chatContext() {
     }
     const showHideData = function(li) {
         if (game.user.isGM) {
-            let message = game.messages.get(li.attr("data-message-id"))
+            let message = game.messages.get(li[0].dataset.messageId)
             if ("hideData" in message.flags) {
                 let newHide = !message.flags.hideData
                 let query = $(message.content)
@@ -178,7 +176,7 @@ export function chatContext() {
     };
 
     const useFate = (li, mode, fateSource = 0) => {
-        let message = game.messages.get(li.attr("data-message-id"));
+        let message = game.messages.get(li[0].dataset.messageId);
         game.actors.get(message.speaker.actor).useFateOnRoll(message, mode, fateSource);
     }
 
@@ -193,7 +191,7 @@ export function chatContext() {
     }
 
     const payMana = async(li) => {
-        let message = game.messages.get(li.attr("data-message-id"))
+        let message = game.messages.get(li[0].dataset.messageId)
         let cardData = message.flags.data
         let actor = DSA5_Utility.getSpeaker(message.speaker)
         if (!actor.isOwner)
@@ -269,7 +267,7 @@ export function chatContext() {
                 icon: '<i class="fas fa-user-plus"></i>',
                 condition: canHeal,
                 callback: async(li) => {
-                    const message = await game.messages.get(li.attr("data-message-id"))
+                    const message = await game.messages.get(li[0].dataset.messageId)
                     const actor = DSA5_Utility.getSpeaker(message.speaker)
                     if (!actor.isOwner)
                         return ui.notifications.error("DSAError.DamagePermission", { localize: true })

@@ -557,8 +557,10 @@ export default class OpposedDsa5 {
         let chatOptions = {
             user: game.user.id,
             content: html,
-            "flags.opposeData": formattedOpposeResult,
-            "flags.hideData": formattedOpposeResult.hideData,
+            flags: {
+                opposeData: formattedOpposeResult,
+                hideData: formattedOpposeResult.hideData,
+            },            
             whisper: options.whisper,
             blind: options.blind
         }

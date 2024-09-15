@@ -75,9 +75,9 @@ export function setupConfiguration() {
         default: "0",
         type: String,
         choices: {
-            0: game.i18n.localize('DSASETTINGS.information0'),
-            1: game.i18n.localize('DSASETTINGS.information1'),
-            2: game.i18n.localize('DSASETTINGS.information2')
+            0: 'DSASETTINGS.information0',
+            1: 'DSASETTINGS.information1',
+            2: 'DSASETTINGS.information2'
         }
     });
     game.settings.register("dsa5", "enableItemDropToCanvas", {
@@ -315,10 +315,10 @@ export function setupConfiguration() {
         default: 0,
         type: Number,
         choices: {
-            0: game.i18n.localize('DSASETTINGS.tokenhotbarLayout0'),
-            1: game.i18n.localize('DSASETTINGS.tokenhotbarLayout1'),
-            2: game.i18n.localize('DSASETTINGS.tokenhotbarLayout2'),
-            3: game.i18n.localize('DSASETTINGS.tokenhotbarLayout3')
+            0: 'DSASETTINGS.tokenhotbarLayout0',
+            1: 'DSASETTINGS.tokenhotbarLayout1',
+            2: 'DSASETTINGS.tokenhotbarLayout2',
+            3: 'DSASETTINGS.tokenhotbarLayout3'
         },
         onChange: async(val) => {
             game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar()
@@ -381,9 +381,9 @@ export function setupConfiguration() {
         default: 1,
         type: Number,
         choices: {
-            0: game.i18n.localize('DSASETTINGS.selfControlOnPain0'),
-            1: game.i18n.localize('DSASETTINGS.selfControlOnPain1'),
-            2: game.i18n.localize('DSASETTINGS.selfControlOnPain2')
+            0: 'DSASETTINGS.selfControlOnPain0',
+            1: 'DSASETTINGS.selfControlOnPain1',
+            2: 'DSASETTINGS.selfControlOnPain2'
         }
     });
 
@@ -707,11 +707,11 @@ export function setupConfiguration() {
         default: "0",
         type: String,
         choices: {
-            "0": game.i18n.localize('no'),
-            "1": game.i18n.localize('DSASETTINGS.yesNumbered'),
-            "2": game.i18n.localize('DSASETTINGS.renameNumbered'),
-            "3": game.i18n.localize('yes'),
-            "4": game.i18n.localize('DSASETTINGS.rename')
+            "0": 'no',
+            "1": 'DSASETTINGS.yesNumbered',
+            "2": 'DSASETTINGS.renameNumbered',
+            "3": 'yes',
+            "4": 'DSASETTINGS.rename'
         }
     });
 
@@ -723,9 +723,9 @@ export function setupConfiguration() {
         default: "0",
         type: String,
         choices: {
-            0: game.i18n.localize('no'),
-            1: game.i18n.localize('yes'),
-            2: game.i18n.localize('MERCHANT.onlyGM'),
+            0: 'no',
+            1: 'yes',
+            2: 'MERCHANT.onlyGM'
         }
     });
 
