@@ -377,6 +377,7 @@
     "Difficulty": "Difficulty",
     "didyouknow": "Did you know?",
     "distribution": "Traditions",
+    "speciesModifer": "Physique ({species})",
     "distance": "Distance",
     "damageApplied": "Damage has been applied",
     "defense": "Defense",
@@ -1539,6 +1540,10 @@
         "Two-Handed Impact Weapons": "Two-Handed Impact Weapons",
         "Two-Handed Swords": "Two-Handed Swords",
         "Whips": "Whips"
+    },
+    "LocalizedSpecies": {
+        "Dwarf": "Dwarf",
+        "Elf": "Elf"
     },
     "Shapeshift": {
         "title": "Shapeshift",

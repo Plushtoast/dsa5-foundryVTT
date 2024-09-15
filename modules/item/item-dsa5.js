@@ -1425,7 +1425,39 @@ class EquipmentItemDSA5 extends Itemdsa5 {
     }
 }
 
-class MeleeweaponDSA5 extends Itemdsa5 {
+class WeaponItemDSA5 extends Itemdsa5 {
+    static speciesModifier(situationalModifiers, actor, data, source) {
+        const creatureClass = actor.type == "creature" ? actor.system.creatureClass.value : actor.system.details.species.value
+        const localizedSpecies  = game.i18n.localize(`LocalizedSpecies.${creatureClass}`)
+
+        const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies]
+        if(speciesObject) {
+            const attackOrParry = ["attack", "parry"].includes(data.mode)
+            const domains = (getProperty(source, "system.effect.attributes") || "").split(",").map(x => game.i18n.localize(`LocalizedSpecies.${x.trim()}`))
+            const domainMalus = domains.some(domain => speciesObject.opposingDomains.has(domain)) ? 1 : 0
+
+            if(speciesObject.combatskills.has(game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`))) {
+                if(attackOrParry) {
+                    situationalModifiers.push({
+                        name: game.i18n.format("speciesModifier", { species: creatureClass}),
+                        value: -2 - domainMalus,
+                        selected: true,
+                        source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`
+                    })
+                }
+                situationalModifiers.push({
+                    name: `${game.i18n.format("speciesModifier", { species: creatureClass})} ${game.i18n.localize("CHARAbbrev.damage")}`,
+                    value: -2 - domainMalus,
+                    type: "dmg",
+                    selected: true,
+                    source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`
+                })
+            }
+        }
+    }
+}
+
+class MeleeweaponDSA5 extends WeaponItemDSA5 {
     static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
@@ -1449,6 +1481,7 @@ class MeleeweaponDSA5 extends Itemdsa5 {
         else if (data.mode == "parry") this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
         
         this.attackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode])
+        this.speciesModifier(situationalModifiers, actor, data, source)
 
         if (["attack", "parry"].includes(data.mode)) {
             situationalModifiers.push(
@@ -1580,7 +1613,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
     }
 }
 
-class RangeweaponItemDSA5 extends Itemdsa5 {
+class RangeweaponItemDSA5 extends WeaponItemDSA5 {
     static chatData(data, name) {
         let res = [
             this._chatLineHelper("damage", data.damage.value),
@@ -1649,6 +1682,7 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
             )
         }
         this.attackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode])
+        this.speciesModifier(situationalModifiers, actor, data, _source)
     }
 
     static async checkAmmunitionState(item, testData, actor, mode) {

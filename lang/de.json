@@ -432,6 +432,7 @@
     "Players": "Spieler",
     "poisonType": "Art",
     "plant": "Pflanze",
+    "speciesModifier": "Körperbau ({species})",
     "PartSuccess": "Teilerfolg",
     "place": "Ort",
     "permanentCost": "Permanente Kosten",
@@ -1594,6 +1595,10 @@
         "Zweihandhiebwaffen": "Two-Handed Impact Weapons",
         "Zweihandschwerter": "Two-Handed Swords",
         "Peitschen": "Whips"
+    },
+    "LocalizedSpecies": {
+        "Zwerg": "Dwarf",
+        "Elf": "Elf"
     },
     "DSAError": {
         "customEffect": "Für manuelle Effekte darf nur ein Token markiert sein",

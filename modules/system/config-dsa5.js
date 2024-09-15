@@ -254,8 +254,7 @@ DSA5.statusEffects = [{
         ],
         duration: { seconds: 600 },
         flags: {
-            dsa5: {
-            }
+            dsa5: { }
         }
     },
     {
@@ -286,43 +285,43 @@ DSA5.armorSubcategories = {
 }
 
 DSA5.weaponStabilities = {
-    "Blowpipes": 10,
-    "Bows": 4,
-    "Brawling": 12,
+    Blowpipes: 10,
+    Bows: 4,
+    Brawling: 12,
     "Chain Weapons": 10,
-    "Crossbows": 6,
-    "Daggers": 14,
-    "Discuses": 12,
-    "Fans": 13,
+    Crossbows: 6,
+    Daggers: 14,
+    Discuses: 12,
+    Fans: 13,
     "Fencing Weapons": 8,
     "Impact Weapons": 12,
-    "Lances": 6,
-    "Pikes": 12,
-    "Polearms": 12,
-    "Shields": 10,
-    "Slingshots": 4,
-    "Swords": 13,
+    Lances: 6,
+    Pikes: 12,
+    Polearms: 12,
+    Shields: 10,
+    Slingshots: 4,
+    Swords: 13,
     "Throwing Weapons": 10,
     "Two-Handed Impact Weapons": 11,
     "Two-Handed Swords": 12,
-    "Whips": 4
+    Whips: 4
 }
 
 DSA5.meleeAsRangeReach = {
-    "Daggers": "1/5/12",
+    Daggers: "1/5/12",
     "Fencing Weapons": "1/3/10",
     "Impact Weapons": "1/3/10",
     "Chain Weapons": "1/3/5",
-    "Lances": "1/2/3",
-    "Brawling": "1/5/12",
-    "Shields": "1/3/10",
-    "Swords": "1/3/10",
-    "Polearms": "1/3/5",
+    Lances: "1/2/3",
+    Brawling: "1/5/12",
+    Shields: "1/3/10",
+    Swords: "1/3/10",
+    Polearms: "1/3/5",
     "Two-Handed Impact Weapons": "1/3/5",
     "Two-Handed Swords": "1/3/5",
-    "Whips": "1/3/5",
-    "Fans": "1/3/5",
-    "Pikes": "1/3/5",
+    Whips: "1/3/5",
+    Fans: "1/3/5",
+    Pikes: "1/3/5",
 }
 
 DSA5.journalFontSizes = [8, 10, 12, 14, 16, 18, 20, 24, 28, 32];
@@ -402,31 +401,31 @@ DSA5.asyncHooks = {
 }
 
 DSA5.characteristics = {
-    "mu": "CHAR.MU",
-    "kl": "CHAR.KL",
-    "in": "CHAR.IN",
-    "ch": "CHAR.CH",
-    "ff": "CHAR.FF",
-    "ge": "CHAR.GE",
-    "ko": "CHAR.KO",
-    "kk": "CHAR.KK"
+    mu: "CHAR.MU",
+    kl: "CHAR.KL",
+    in: "CHAR.IN",
+    ch: "CHAR.CH",
+    ff: "CHAR.FF",
+    ge: "CHAR.GE",
+    ko: "CHAR.KO",
+    kk: "CHAR.KK"
 };
 
 DSA5.equipmentTypes = {
-    "misc": "Equipment.misc",
-    "clothes": "Equipment.clothes",
-    "tools": "Equipment.tools",
-    "light": "Equipment.light",
-    "healing": "Equipment.healing",
-    "bags": "Equipment.bags",
-    "wealth": "Equipment.wealth",
-    "writing": "Equipment.writing",
-    "alchemy": "Equipment.alchemy",
-    "service": "Equipment.service",
-    "luxus": "Equipment.luxus",
-    "blessed": "Equipment.blessed",
-    "food": "Equipment.food",
-    "automat": "Equipment.automat"
+    misc: "Equipment.misc",
+    clothes: "Equipment.clothes",
+    tools: "Equipment.tools",
+    light: "Equipment.light",
+    healing: "Equipment.healing",
+    bags: "Equipment.bags",
+    wealth: "Equipment.wealth",
+    writing: "Equipment.writing",
+    alchemy: "Equipment.alchemy",
+    service: "Equipment.service",
+    luxus: "Equipment.luxus",
+    blessed: "Equipment.blessed",
+    food: "Equipment.food",
+    automat: "Equipment.automat"
 };
 
 DSA5.equipmentCategories = new Set(["meleeweapon", "rangeweapon", "equipment", "ammunition", "armor", "poison", "consumable", "plant", "book"])
@@ -448,35 +447,35 @@ DSA5.morePackages = {
  }
 
 DSA5.narrowSpaceModifiers = {
-    "weaponshort": {
-        "attack": 0,
-        "parry": 0,
-        "label": "NarrowSpaceModifiers.weapon.short"
+    weaponshort: {
+        attack: 0,
+        parry: 0,
+        label: "NarrowSpaceModifiers.weapon.short"
     },
-    "weaponmedium": {
-        "attack": -4,
-        "parry": -4,
-        "label": "NarrowSpaceModifiers.weapon.medium"
+    weaponmedium: {
+        attack: -4,
+        parry: -4,
+        label: "NarrowSpaceModifiers.weapon.medium"
     },
-    "weaponlong": {
-        "attack": -8,
-        "parry": -8,
-        "label": "NarrowSpaceModifiers.weapon.long"
+    weaponlong: {
+        attack: -8,
+        parry: -8,
+        label: "NarrowSpaceModifiers.weapon.long"
     },
-    "shieldshort": {
-        "attack": -2,
-        "parry": -2,
-        "label": "NarrowSpaceModifiers.shield.short"
+    shieldshort: {
+        attack: -2,
+        parry: -2,
+        label: "NarrowSpaceModifiers.shield.short"
     },
-    "shieldmedium": {
-        "attack": -4,
-        "parry": -3,
-        "label": "NarrowSpaceModifiers.shield.medium"
+    shieldmedium: {
+        attack: -4,
+        parry: -3,
+        label: "NarrowSpaceModifiers.shield.medium"
     },
-    "shieldlong": {
-        "attack": -6,
-        "parry": -4,
-        "label": "NarrowSpaceModifiers.shield.long"
+    shieldlong: {
+        attack: -6,
+        parry: -4,
+        label: "NarrowSpaceModifiers.shield.long"
     }
 }
 
@@ -517,28 +516,28 @@ DSA5.bookFormats = {
 }
 
 DSA5.traditionArtifacts = {
-    "Animistenwaffe": 15,
-    "Bannschwert": 15,
-    "Druidendolch": 15,
-    "Druidensichel": 12,
-    "Zauberkleidung": 15,
-    "Goblinkeule": 15,
-    "Magierkugel": 12,
-    "Zauberinstrument": 15,
-    "Narrenkappe": 15,
-    "Hexenkessel": 15,
-    "Krallenkette": 12,
-    "Lebensring": 12,
-    "Alchimistenschale": 15,
+    Animistenwaffe: 15,
+    Bannschwert: 15,
+    Druidendolch: 15,
+    Druidensichel: 12,
+    Zauberkleidung: 15,
+    Goblinkeule: 15,
+    Magierkugel: 12,
+    Zauberinstrument: 15,
+    Narrenkappe: 15,
+    Hexenkessel: 15,
+    Krallenkette: 12,
+    Lebensring: 12,
+    Alchimistenschale: 15,
     "Scharlatanische Zauberkugel": 15,
-    "Sippenchronik": 15,
-    "Schelmenspielzeug": 12,
-    "Zauberstecken": 0,
-    "Magierstab": 18,
-    "Trinkhorn": 12,
-    "Schuppenbeutel": 18,
+    Sippenchronik: 15,
+    Schelmenspielzeug: 12,
+    Zauberstecken: 0,
+    Magierstab: 18,
+    Trinkhorn: 12,
+    Schuppenbeutel: 18,
     "Kristallomantische Kristallkugel": 15,
-    "Echsenhaube": 12
+    Echsenhaube: 12
 }
 
 DSA5.areaTargetTypes = {
@@ -549,25 +548,25 @@ DSA5.areaTargetTypes = {
 }
 
 DSA5.rangeMods = {
-    "short": {
-        "damage": 1,
-        "attack": 2
+    short: {
+        damage: 1,
+        attack: 2
     },
-    "medium": {
-        "damage": 0,
-        "attack": 0
+    medium: {
+        damage: 0,
+        attack: 0
     },
-    "long": {
-        "damage": -1,
-        "attack": -2
+    long: {
+        damage: -1,
+        attack: -2
     },
-    "rangesense": {
-        "damage": -1,
-        "attack": -1
+    rangesense: {
+        damage: -1,
+        attack: -1
     },
-    "extreme": {
-        "damage": -2,
-        "attack": -4
+    extreme: {
+        damage: -2,
+        attack: -4
     }
 }
 
@@ -600,23 +599,23 @@ DSA5.shooterMovementOptions = {
 }
 
 DSA5.mountedRangeOptionsSpecAb = {
-    "STATIONARY": "0",
-    "SCHRITT": "0",
-    "TROT": "-5000",
-    "GALOPP": "-4"
+    STATIONARY: "0",
+    SCHRITT: "0",
+    TROT: "-5000",
+    GALOPP: "-4"
 }
 
 DSA5.mountedRangeOptions = {
-    "STATIONARY": "0",
-    "SCHRITT": "-4",
-    "TROT": "-5000",
-    "GALOPP": "-8",
+    STATIONARY: "0",
+    SCHRITT: "-4",
+    TROT: "-5000",
+    GALOPP: "-8",
 }
 
 DSA5.drivingArcherOptions = {
-    "STATIONARY": "0",
-    "SCHRITT": "-2",
-    "GALOPP": "-4",
+    STATIONARY: "0",
+    SCHRITT: "-2",
+    GALOPP: "-4",
 }
 
 DSA5.aimOptions = {
@@ -628,15 +627,15 @@ DSA5.aimOptions = {
 DSA5.masterTokens = []
 
 DSA5.traitCategories = {
-    "meleeAttack": "closeCombatAttacks",
-    "rangeAttack": "rangeCombatAttacks",
-    "armor": "armor",
-    "general": "general",
-    "familiar": "familiar",
-    "trick": "trick",
-    "training": "training",
-    "entity": "entityAbility",
-    "summoning": "summoningPackage"
+    meleeAttack: "closeCombatAttacks",
+    rangeAttack: "rangeCombatAttacks",
+    armor: "armor",
+    general: "general",
+    familiar: "familiar",
+    trick: "trick",
+    training: "training",
+    entity: "entityAbility",
+    summoning: "summoningPackage"
 }
 
 DSA5.ritualLocationModifiers = {
@@ -663,11 +662,11 @@ DSA5.ceremonyLocationModifiers = {
 }
 
 DSA5.advancementCosts = {
-    "A": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    "B": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
-    "C": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42],
-    "D": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56],
-    "E": [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
+    A: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    B: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
+    C: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42],
+    D: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56],
+    E: [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
 }
 
 DSA5.hooks = {}
@@ -731,41 +730,52 @@ DSA5.ceremonyTimeModifiers = {
 }
 
 DSA5.mageLevels = {
-    "mundane": "mundane",
-    "clerical": "clerical",
-    "magical": "magical"
+    mundane: "mundane",
+    clerical: "clerical",
+    magical: "magical"
+}
+
+DSA5.speciesCombatModifiers = {
+    Dwarf: {
+        combatskills: new Set(["Fencing Weapons", "Bows"]),
+        opposingDomains: new Set(["Elf"])
+    },
+    Elf: {
+        combatskills: new Set(["Two-Handed Impact Weapons", "Two-Handed Swords"]),
+        opposingDomains: new Set(["Dwarf"])
+    }
 }
 
 DSA5.specialAbilityCategories = {
-    "Combat": "SpecCategory.Combat",
-    "command": "SpecCategory.command",
+    Combat: "SpecCategory.Combat",
+    command: "SpecCategory.command",
 
-    "general": "SpecCategory.general",
-    "generalStyle": "SpecCategory.generalStyle",
-    "extGeneral": "SpecCategory.extGeneral",
+    general: "SpecCategory.general",
+    generalStyle: "SpecCategory.generalStyle",
+    extGeneral: "SpecCategory.extGeneral",
 
-    "animal": "SpecCategory.animal",
+    animal: "SpecCategory.animal",
 
-    "fatePoints": "SpecCategory.fatePoints",
-    "vampire": "SpecCategory.vampire",
-    "lykanthrop": "SpecCategory.lykanthrop",
+    fatePoints: "SpecCategory.fatePoints",
+    vampire: "SpecCategory.vampire",
+    lykanthrop: "SpecCategory.lykanthrop",
 
-    "language": "SpecCategory.language",
-    "secret": "SpecCategory.secret",
+    language: "SpecCategory.language",
+    secret: "SpecCategory.secret",
 
-    "clerical": "SpecCategory.clerical",
-    "clericalStyle": "SpecCategory.clericalStyle",
-    "extClericalStyle": "SpecCategory.extClericalStyle",
-    "ceremonial": "SpecCategory.ceremonial",
-    "vision": "SpecCategory.vision",
-    "prayer": "SpecCategory.prayer",
+    clerical: "SpecCategory.clerical",
+    clericalStyle: "SpecCategory.clericalStyle",
+    extClericalStyle: "SpecCategory.extClericalStyle",
+    ceremonial: "SpecCategory.ceremonial",
+    vision: "SpecCategory.vision",
+    prayer: "SpecCategory.prayer",
 
-    "magical": "SpecCategory.magical",
-    "magicalStyle": "SpecCategory.magicalStyle",
-    "extMagical": "SpecCategory.extMagical",
-    "staff": "SpecCategory.staff",
-    "pact": "SpecCategory.pact",
-    "homunculus": "SpecCategory.homunculus"
+    magical: "SpecCategory.magical",
+    magicalStyle: "SpecCategory.magicalStyle",
+    extMagical: "SpecCategory.extMagical",
+    staff: "SpecCategory.staff",
+    pact: "SpecCategory.pact",
+    homunculus: "SpecCategory.homunculus"
 }
 
 DSA5.sortedSpecs = {
@@ -787,11 +797,11 @@ DSA5.AbilitiesNeedingAdaption = {}
 DSA5.addTraitRules = {}
 
 DSA5.rangeWeaponModifiers = {
-    "short": "RangeMod.short",
-    "medium": "RangeMod.medium",
-    "long": "RangeMod.long",
-    "rangesense": "RangeMod.rangesense",
-    "extreme": "RangeMod.extreme"
+    short: "RangeMod.short",
+    medium: "RangeMod.medium",
+    long: "RangeMod.long",
+    rangesense: "RangeMod.rangesense",
+    extreme: "RangeMod.extreme"
 }
 
 DSA5.meleeRangesArray = [
@@ -801,14 +811,14 @@ DSA5.meleeRangesArray = [
 ]
 
 DSA5.meleeRanges = {
-    "short": "Range-short",
-    "medium": "Range-medium",
-    "long": "Range-long"
+    short: "Range-short",
+    medium: "Range-medium",
+    long: "Range-long"
 };
 
 DSA5.weapontypes = {
-    "melee": "meleeweapon",
-    "range": "rangeweapon"
+    melee: "meleeweapon",
+    range: "rangeweapon"
 }
 
 DSA5.moneyTypes = {
@@ -818,36 +828,36 @@ DSA5.moneyTypes = {
 
 DSA5.ammunitiongroups = {
     "-": "-",
-    "arrow": "arrow",
-    "bolt": "bolt",
-    "bullet": "bullet",
-    "stone": "stone",
-    "dart": "dart",
-    "mag": "mag",
-    "infinite": "infinite"
+    arrow: "arrow",
+    bolt: "bolt",
+    bullet: "bullet",
+    stone: "stone",
+    dart: "dart",
+    mag: "mag",
+    infinite: "infinite"
 }
 
 DSA5.combatskillsGuidevalues = {
-    "ff": "CHAR.FF",
-    "ge": "CHAR.GE",
-    "kk": "CHAR.KK",
+    ff: "CHAR.FF",
+    ge: "CHAR.GE",
+    kk: "CHAR.KK",
     "ge/kk": "CHAR.GEKK"
 }
 
 DSA5.skillDifficultyModifiers = {
-    "eeasy": 5,
-    "veasy": 3,
-    "easy": 1,
-    "challenging": 0,
-    "difficult": -1,
-    "hard": -3,
-    "vhard": -5
+    eeasy: 5,
+    veasy: 3,
+    easy: 1,
+    challenging: 0,
+    difficult: -1,
+    hard: -3,
+    vhard: -5
 }
 
 DSA5.magicResistanceModifiers = {
     "-": "-",
-    "SK": "soulpower",
-    "ZK": "toughness"
+    SK: "soulpower",
+    ZK: "toughness"
 }
 
 DSA5.poisonSubTypes = {
@@ -861,57 +871,57 @@ DSA5.poisonSubTypes = {
 }
 
 DSA5.sizeCategories = {
-    "tiny": "SIZE.tiny",
-    "small": "SIZE.small",
-    "average": "SIZE.average",
-    "big": "SIZE.big",
-    "giant": "SIZE.giant"
+    tiny: "SIZE.tiny",
+    small: "SIZE.small",
+    average: "SIZE.average",
+    big: "SIZE.big",
+    giant: "SIZE.giant"
 }
 
 DSA5.tokenSizeCategories = {
-    "tiny": 0.5,
-    "small": 0.8,
-    "average": 1,
-    "big": 2,
-    "giant": 4
+    tiny: 0.5,
+    small: 0.8,
+    average: 1,
+    big: 2,
+    giant: 4
 }
 
 DSA5.rangeSizeCategories = {
-    "tiny": "RANGESIZE.tiny",
-    "small": "RANGESIZE.small",
-    "average": "RANGESIZE.average",
-    "big": "RANGESIZE.big",
-    "giant": "RANGESIZE.giant"
+    tiny: "RANGESIZE.tiny",
+    small: "RANGESIZE.small",
+    average: "RANGESIZE.average",
+    big: "RANGESIZE.big",
+    giant: "RANGESIZE.giant"
 },
 
 DSA5.meleeSizeCategories = {
-    "tiny": "MELEESIZE.tiny",
-    "small": "MELEESIZE.small",
-    "average": "MELEESIZE.average",
-    "big": "MELEESIZE.big",
-    "giant": "MELEESIZE.giant"
+    tiny: "MELEESIZE.tiny",
+    small: "MELEESIZE.small",
+    average: "MELEESIZE.average",
+    big: "MELEESIZE.big",
+    giant: "MELEESIZE.giant"
 }
 
 DSA5.shieldSizes = {
-    "short": "SIZE.small",
-    "medium": "SIZE.average",
-    "long": "SIZE.big"
+    short: "SIZE.small",
+    medium: "SIZE.average",
+    long: "SIZE.big"
 }
 
 DSA5.rangeSizeModifier = {
-    "tiny": -8,
-    "small": -4,
-    "average": 0,
-    "big": 4,
-    "giant": 8
+    tiny: -8,
+    small: -4,
+    average: 0,
+    big: 4,
+    giant: 8
 }
 
 DSA5.meleeSizeModifier = {
-    "tiny": -4,
-    "small": 0,
-    "average": 0,
-    "big": 0,
-    "giant": 0
+    tiny: -4,
+    small: 0,
+    average: 0,
+    big: 0,
+    giant: 0
 }
 
 DSA5.rangeVision = {
@@ -933,41 +943,41 @@ DSA5.meleeRangeVision = (mode) => {
 }
 
 DSA5.attributeDifficultyModifiers = {
-    "eeasy": 6,
-    "veasy": 4,
-    "easy": 2,
-    "challenging": 0,
-    "difficult": -2,
-    "hard": -4,
-    "vhard": -6
+    eeasy: 6,
+    veasy: 4,
+    easy: 2,
+    challenging: 0,
+    difficult: -2,
+    hard: -4,
+    vhard: -6
 }
 
 DSA5.skillDifficultyLabels = {
-    "eeasy": "Skill-eeasy",
-    "veasy": "Skill-veasy",
-    "easy": "Skill-easy",
-    "challenging": "Skill-challenging",
-    "difficult": "Skill-difficult",
-    "hard": "Skill-hard",
-    "vhard": "Skill-vhard"
+    eeasy: "Skill-eeasy",
+    veasy: "Skill-veasy",
+    easy: "Skill-easy",
+    challenging: "Skill-challenging",
+    difficult: "Skill-difficult",
+    hard: "Skill-hard",
+    vhard: "Skill-vhard"
 }
 
 DSA5.attributeDifficultyLabels = {
-    "eeasy": "Attribute-eeasy",
-    "veasy": "Attribute-veasy",
-    "easy": "Attribute-easy",
-    "challenging": "Attribute-challenging",
-    "difficult": "Attribute-difficult",
-    "hard": "Attribute-hard",
-    "vhard": "Attribute-vhard"
+    eeasy: "Attribute-eeasy",
+    veasy: "Attribute-veasy",
+    easy: "Attribute-easy",
+    challenging: "Attribute-challenging",
+    difficult: "Attribute-difficult",
+    hard: "Attribute-hard",
+    vhard: "Attribute-vhard"
 }
 
 DSA5.skillGroups = {
-    "body": "SKILL.body",
-    "social": "SKILL.social",
-    "knowledge": "SKILL.knowledge",
-    "trade": "SKILL.trade",
-    "nature": "SKILL.nature"
+    body: "SKILL.body",
+    social: "SKILL.social",
+    knowledge: "SKILL.knowledge",
+    trade: "SKILL.trade",
+    nature: "SKILL.nature"
 };
 
 DSA5.features = [
@@ -986,16 +996,16 @@ DSA5.features = [
 ]
 
 DSA5.skillBurdens = {
-    "yes": "yes",
-    "no": "no",
-    "maybe": "maybe"
+    yes: "yes",
+    no: "no",
+    maybe: "maybe"
 }
 
 DSA5.StFs = {
-    "A": "A",
-    "B": "B",
-    "C": "C",
-    "D": "D"
+    A: "A",
+    B: "B",
+    C: "C",
+    D: "D"
 }
 
 DSA5.noteIcons = {
@@ -1003,8 +1013,8 @@ DSA5.noteIcons = {
     "At Sea": "systems/dsa5/icons/thirdparty/at-sea.svg",
     "Medieval Gate": "systems/dsa5/icons/thirdparty/medieval-gate.svg",
     "Position Marker": "systems/dsa5/icons/thirdparty/position-marker.svg",
-    "River": "systems/dsa5/icons/thirdparty/river.svg",
-    "Trail": "systems/dsa5/icons/thirdparty/trail.svg",
+    River: "systems/dsa5/icons/thirdparty/river.svg",
+    Trail: "systems/dsa5/icons/thirdparty/trail.svg",
 }
 
 CONFIG.time.roundTime = 5

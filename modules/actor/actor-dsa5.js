@@ -2289,30 +2289,30 @@ export default class Actordsa5 extends Actor {
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
 
-  static _parseModifiers(html, search) {
-    let res = [];
-    html.find('[name="situationalModifiers"] option:selected').each(function () {
-      const val = $(this).val();
-      let data = {
-        name: $(this).text().trim().split("[")[0],
-        value: isNaN(val) ? val : Number(val),
-        type: $(this).attr("data-type"),
-      };
-      if (data.type == "dmg") {
-        data.damageBonus = data.value;
-        data.value = 0;
+  static _parseModifiers(html) {
+    return [
+      ...html.find('[name="situationalModifiers"] option:selected').map(function() {
+        const val = this.value;
+        const data = {
+          name: this.textContent.trim().split("[")[0],
+          value: isNaN(val) ? val : Number(val),
+          type: this.dataset.type,
+        };
+        if (data.type == "dmg") {
+          data.damageBonus = data.value;
+          data.value = 0;
+        }
+        if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId
+        if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen
+  
+        return data
+      }).get(),
+      {
+        name: game.i18n.localize("manual"),
+        value: Number(html.find('[name="testModifier"]').val()),
+        type: "",
       }
-      if ($(this).attr("data-specAbId")) data.specAbId = $(this).attr("data-specAbId");
-      if ($(this).attr("data-armorPen")) data.armorPen = $(this).attr("data-armorPen");
-
-      res.push(data);
-    });
-    res.push({
-      name: game.i18n.localize("manual"),
-      value: Number(html.find('[name="testModifier"]').val()),
-      type: "",
-    });
-    return res;
+    ]
   }
 
   static _prepareConsumable(item) {
