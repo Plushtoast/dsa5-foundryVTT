@@ -1741,6 +1741,12 @@
         "gearShort": "Migrate Gear",
         "gear": "Update icons, effects and effectformula of all gear, weapons and armors. THIS WILL OVERRIDE MANUAL MODIFICATIONS!"
     },
+    "hideOpposedOptions": {
+        "0": "Equal to roll mode",
+        "1": "Equal to roll mode, hide critical details",
+        "2": "Always show, hide critical details",
+        "3": "Always show"
+    },
     "DSASETTINGS": {
         "libraryModulsFilter": "Filter modules permanent",
         "libraryModulsFilterHint": "Configure all modules that should not be displayed in the library. For example, you can hide modules that are not relevant to your game or speed up the loading of the library.</p><p>Changes will only take effect after a reload.",
@@ -1774,8 +1780,8 @@
         "noConfirmationRollHint": "No confirmation roll for attacks and attribute checks.",
         "clearTargets": "Clear Target after attack",
         "clearTargetsHint": "Removes targets after a check.",
-        "hideOpposedDamage": "Hide opposed test detail result",
-        "hideOpposedDamageHint": "Hides calculated damage on opposed tests.",
+        "hideOpposedDamageSelect": "Hide opposed test detail result",
+        "hideOpposedDamageSelectHint": "Hides e.g. calculated damage on opposed tests.",
         "allowPhysicalDice": "Check with real dice",
         "allowPhysicalDiceHint": "Allow the input of the result of real dice",
         "playerCanEditSpellMacro": "Effect Macro editably by players",

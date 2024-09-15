@@ -1808,6 +1808,12 @@
         "1": "1 Aktion zielen",
         "2": "2 Aktionen zielen"
     },
+    "hideOpposedOptions": {
+        "0": "Gemäß Rollmodus",
+        "1": "Gemäß Rollmodus, kritische Details verstecken",
+        "2": "Immer anzeigen, kritische Details verstecken",
+        "3": "Immer anzeigen"
+    },
     "DSASETTINGS": {
         "libraryModulsFilter": "Module permanent filtern",
         "libraryModulsFilterHint": "Konfigure alle Module die in der Bibliothek nicht angezeigt werden sollen. Du kannst so z.B. Module ausblenden, die nicht für deine Spielrunde relevant sind oder das Laden der Bibliothek beschleunigen.</p><p>Änderungen werden erst nach einem Neuladen wirksam.",
@@ -1843,8 +1849,8 @@
         "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
-        "hideOpposedDamage": "Ergebnis bei Vergleichsprobe verstecken",
-        "hideOpposedDamageHint": "Versteckt z.B. den berechneten Schadenswert bei einer Vergleichsprobe.",
+        "hideOpposedDamageSelect": "Ergebnis bei Vergleichsprobe verstecken",
+        "hideOpposedDamageHintSelect": "Versteckt z.B. den berechneten Schadenswert bei einer Vergleichsprobe.",
         "playerCanEditSpellMacro": "Effekt Makros durch Spieler editierbar",
         "playerCanEditSpellMacroHint": "Spieler können z.B. Zaubermakros editieren (Unsicher)",
         "soundConfig": "Sound Effekt Konfiguration",

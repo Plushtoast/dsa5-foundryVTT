@@ -50,14 +50,14 @@ export function chatContext() {
     }
 
     const canUnhideData = function(li) {
-        if (!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage"))) return false
+        if (!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamageSelect"))) return false
 
         const message = game.messages.get(li[0].dataset.messageId);
         return "hideData" in message.flags && message.flags.hideData
     }
 
     const canHideData = function(li) {
-        if(!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamage"))) return false
+        if(!(game.user.isGM && game.settings.get("dsa5", "hideOpposedDamageSelect"))) return false
 
         const message = game.messages.get(li[0].dataset.messageId);
         return "hideData" in message.flags && !message.flags.hideData

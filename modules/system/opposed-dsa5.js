@@ -549,24 +549,25 @@ export default class OpposedDsa5 {
     }
 
     static async renderOpposedResult(formattedOpposeResult, options = {}) {
-        formattedOpposeResult.hideData = game.settings.get("dsa5", "hideOpposedDamage");
+        const hideConfig = game.settings.get("dsa5", "hideOpposedDamageSelect")
+        formattedOpposeResult.hideData = [1, 2].includes(hideConfig)
         formattedOpposeResult.applyDamageInChat = game.settings.get("dsa5", "applyDamageInChat");
         formattedOpposeResult.isBrawling = game.combat?.isBrawling
 
-        let html = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
-        let chatOptions = {
+        const content = await renderTemplate("systems/dsa5/templates/chat/roll/opposed-result.html", formattedOpposeResult)
+        const chatOptions = {
             user: game.user.id,
-            content: html,
+            content,
             flags: {
                 opposeData: formattedOpposeResult,
                 hideData: formattedOpposeResult.hideData,
             },            
-            whisper: options.whisper,
+            whisper: hideConfig > 1 ? [] : options.whisper,
             blind: options.blind
         }
-        if (options.target) {
-            chatOptions["flags.startMessageId"] = options.startMessageId
-        }
+
+        if (options.target) chatOptions["flags.startMessageId"] = options.startMessageId
+
         await ChatMessage.create(chatOptions)
     }
 

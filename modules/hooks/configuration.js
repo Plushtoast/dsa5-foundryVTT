@@ -219,13 +219,18 @@ export function setupConfiguration() {
         type: Boolean
     });
 
-    game.settings.register("dsa5", "hideOpposedDamage", {
-        name: "DSASETTINGS.hideOpposedDamage",
-        hint: "DSASETTINGS.hideOpposedDamageHint",
+    game.settings.register("dsa5", "hideOpposedDamageSelect", {
+        name: "DSASETTINGS.hideOpposedDamageSelect",
+        hint: "DSASETTINGS.hideOpposedDamageSelectHint",
         scope: "world",
         config: true,
-        default: false,
-        type: Boolean
+        default: 0,
+        type: Number,
+        choices: {
+            0: 'hideOpposedOptions.0',
+            1: 'hideOpposedOptions.1',
+            2: 'hideOpposedOptions.2'
+        },
     });
 
     game.settings.register("dsa5", "enableForeignSpellModifer", {
