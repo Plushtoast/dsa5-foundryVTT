@@ -255,17 +255,17 @@ export function chatContext() {
 
     Hooks.on("getChatLogEntryContext", (html, options) => {
         options.push({
-                name: game.i18n.localize("CHATCONTEXT.hideData"),
+                name: "CHATCONTEXT.hideData",
                 icon: '<i class="fas fa-eye"></i>',
                 condition: canHideData,
                 callback: (li) => { showHideData(li) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.showData"),
+                name: "CHATCONTEXT.showData",
                 icon: '<i class="fas fa-eye"></i>',
                 condition: canUnhideData,
                 callback: (li) => { showHideData(li) }
             }, {
-                name: game.i18n.localize("regenerate"),
+                name: "regenerate",
                 icon: '<i class="fas fa-user-plus"></i>',
                 condition: canHeal,
                 callback: async(li) => {
@@ -278,7 +278,7 @@ export function chatContext() {
                     await actor.applyRegeneration(message.flags.data.postData.LeP, message.flags.data.postData.AsP, message.flags.data.postData.KaP)
                 }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyMana"),
+                name: "CHATCONTEXT.ApplyMana",
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canCostMana,
                 callback: async(li) => { payMana(li) }
@@ -288,7 +288,7 @@ export function chatContext() {
                 condition: canHurt,
                 callback: li => { applyDamage(li, "value") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP"),
+                name: "CHATCONTEXT.ApplyDamageSP",
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canHurtSP,
                 callback: li => { applyDamage(li, "sp") }
@@ -298,52 +298,52 @@ export function chatContext() {
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "value") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.ApplyDamageSP"),
+                name: "CHATCONTEXT.ApplyDamageSP",
                 icon: '<i class="fas fa-user-minus"></i>',
                 condition: canApplyDefaultRolls,
                 callback: li => { applyChatCardDamage(li, "sp") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.Reroll"),
+                name: "CHATCONTEXT.Reroll",
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canReroll,
                 callback: li => { useFate(li, "reroll") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.RerollGroup"),
+                name: "CHATCONTEXT.RerollGroup",
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canRerollGroup,
                 callback: li => { useFate(li, "reroll", 1) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.talentedReroll"),
+                name: "CHATCONTEXT.talentedReroll",
                 icon: '<i class="fas fa-dice"></i>',
                 condition: isTalented,
                 callback: li => { useFate(li, "isTalented") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.AddQS"),
+                name: "CHATCONTEXT.AddQS",
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canIncreaseQS,
                 callback: li => { useFate(li, "addQS") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.AddQSGroup"),
+                name: "CHATCONTEXT.AddQSGroup",
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canIncreaseQSGroup,
                 callback: li => { useFate(li, "addQS", 1) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.rerollDamage"),
+                name: "CHATCONTEXT.rerollDamage",
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canRerollDamage,
                 callback: li => { useFate(li, "rerollDamage") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.rerollDamageGroup"),
+                name: "CHATCONTEXT.rerollDamageGroup",
                 icon: '<i class="fas fa-dice"></i>',
                 condition: canRerollDamageGroup,
                 callback: li => { useFate(li, "rerollDamage", 1) }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.improveFate"),
+                name: "CHATCONTEXT.improveFate",
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canImproveRoll,
                 callback: li => { useFate(li, "Improve") }
             }, {
-                name: game.i18n.localize("CHATCONTEXT.improveFateGroup"),
+                name: "CHATCONTEXT.improveFateGroup",
                 icon: '<i class="fas fa-plus-square"></i>',
                 condition: canImproveRollGroup,
                 callback: li => { useFate(li, "Improve", 1) }

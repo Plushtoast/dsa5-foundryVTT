@@ -242,17 +242,33 @@ export default class DSA5CombatDialog extends DialogShared {
         return this
     }
 
-    prepareWeapon() {
-        let weapon
+    syncSituationalModifiers(testData, filter = "") {
+        let result = 0
+        for(let val of testData.situationalModifiers){
+            if(val.value == undefined) continue
+
+            result += (val.type == filter || (filter == "" && val.type == undefined) ? Number(val.value) : 0)
+        }
+        return result
+    }
+
+    prepareWeapon(testData = undefined) {
+        testData = testData || this.dialogData.renderData
         const source = this.dialogData.source
+
         if (["meleeweapon", "rangeweapon"].includes(source.type)) {
             const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
 
             if (actor) {
                 const combatskill = source.system.combatskill.value
+                let weapon
                 let skill = Actordsa5._calculateCombatSkillValues(
                     actor.items.find((x) => x.type == "combatskill" && x.name == combatskill).toObject(),
-                    actor.system
+                    actor.system,
+                    { 
+                        step: this.syncSituationalModifiers(testData, 'step'),
+                        [this.dialogData.mode]: this.syncSituationalModifiers(testData, this.dialogData.mode)
+                    }
                 )
                 switch (source.type) {
                     case "meleeweapon":
@@ -385,6 +401,7 @@ export default class DSA5CombatDialog extends DialogShared {
         isMelee ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, this.dialogData.renderData.multipleDefenseValue ?? -3, this.dialogData.mode) :
             DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor, {}, this.dialogData.mode)
 
+        this.prepareWeapon(testData)
         this.dialogData.modifier = await DiceDSA5._situationalModifiers(testData)
         const multiplier = DiceDSA5._situationalMultipliers(testData)
         this.updateRollButton(this.readTargets(), multiplier)

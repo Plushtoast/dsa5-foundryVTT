@@ -17,7 +17,7 @@
         </div>
         <ul class="iniTrackerList">
             {{#each turns as |turn|}}
-            <li data-tooltip="{{turn.name}}" data-combatant-id="{{turn.id}}" class=" combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url('{{turn.img}}');">
+            <li data-tooltip="{{turn.name}}" data-combatant-id="{{turn.id}}" class="combatant iniItem {{turn.newRound}} {{turn.css}}" style="background-image:url('{{turn.img}}');">
                 <div class="combatant-advanced">
                     {{#if turn.defenseCount}}
                     <i class="fas def fa-shield-alt" data-defenseCount="{{this.defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
@@ -97,8 +97,26 @@
         <ul class="iniDetailsList initTrackerList">
             {{#each turns as |turn|}}
             <li class="{{turn.newRound}}">
-                {{#if turn.hasRolled}} <span data-combatant-id="{{turn.id}}" class="rolledInit" data-tooltip="initiative">{{turn.initiative}}</span>{{else}} ? {{/if}} <br/> <span class="turnRound" data-tooltip="COMBAT.Round">{{turn.round}}</span><br/>
-                <span class="actionCount">{{#if (and turn.owner (gt this.actionCount 1))}}{{turn.actionCounts}}{{else}}&nbsp;{{/if}}</span> 
+                <div class="flexcol">
+                    <div class="iniNumber">
+                        {{#if turn.hasRolled}} 
+                        <span data-combatant-id="{{turn.id}}" class="rolledInit" data-tooltip="initiative">{{turn.initiative}}</span>
+                        {{else}} 
+                        ?
+                        {{/if}} 
+                    </div>
+                    <div class="center" data-tooltip="COMBAT.Round">
+                        <span class="turnRound">{{turn.round}}</span>
+                    </div>
+                    <div class="actionCount center">
+                        {{#if (and turn.owner (gt this.actionCount 1))}}{{turn.actionCounts}}{{else}}&nbsp;{{/if}}
+                    </div>
+                    <div class="token-effects">
+                        {{#each turn.effects as |ef|}}
+                        <img class="token-effect" src="{{ef.img}}" data-tooltip="{{ef.name}}" />
+                        {{/each}}
+                    </div>
+                </div>                
             </li>
             {{/each}}
         </ul>

@@ -336,7 +336,8 @@
             "information",
             "essence",
             "imprint",
-            "book"
+            "book",
+            "trap"
         ],
         "templates": {
             "skill": {
@@ -1186,6 +1187,17 @@
             "availability": "",
             "exemplarType": 0,
             "special": ""
+        },
+        "trap": {
+            "templates": [
+                "description"                
+            ],
+            "stealth": 0,
+            "trigger": "",
+            "tools": "",
+            "difficulty": 0,
+            "damageText": "",
+            "complexity": 0
         }
     }
 }

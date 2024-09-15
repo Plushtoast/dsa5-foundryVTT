@@ -61,11 +61,12 @@ export default class ItemSheetdsa5 extends ItemSheet {
         Items.registerSheet("dsa5", PatronSheet, { makeDefault: true, types: ["patron"] });
         Items.registerSheet("dsa5", InformationSheet, { makeDefault: true, types: ["information"] });
         Items.registerSheet("dsa5", AggregatedTestSheet, { makeDefault: true, types: ["aggregatedTest"] });
+        Items.registerSheet("dsa5", TrapSheetDSA5, { makeDefault: true, types: ["trap"] });
 
         Items.unregisterSheet("dsa5", ItemSheetdsa5, {
             types: [
                 "armor", "equipment", "rangeweapon", "blessing", "magictrick", "spellextension", "consumable", "aggregatedTest",
-                "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "information",
+                "species", "career", "culture", "advantage", "specialability", "disadvantage", "ritual", "information", "trap",
                 "ceremony", "liturgy", "spell", "disease", "poison", "meleeweapon", "ammunition", "plant", "magicalsign", "patron"
             ]
         });
@@ -176,16 +177,15 @@ export default class ItemSheetdsa5 extends ItemSheet {
         DSA5ChatAutoCompletion.bindRollCommands(html)
         DSA5StatusEffects.bindButtons(html)
 
-        let toObserve = html.find(".item-header")
+        const toObserve = html.find("header.item-header")
         if (toObserve.length) {
-            let svg = toObserve.find('svg')
+            const svg = toObserve.find('svg')
             if (svg) {
-                let observer = new ResizeObserver(function(entries) {
-                    let entry = entries[0]
-                    svgAutoFit(svg, entry.contentRect.width)
+                const observer = new ResizeObserver(function(entries) {
+                    svgAutoFit(svg, entries[0].contentRect.width)
                 });
                 observer.observe(toObserve.get(0));
-                let input = toObserve.find('input')
+                const input = toObserve.find('input')
                 if (!input.get(0).disabled) {
                     svg.click(() => {
                         svg.hide()
@@ -277,6 +277,14 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
         return data
     }
 
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        mergeObject(options, {
+            dragDrop: [{ dragSelector: ".item-list .item", dropSelector: ".content" }]
+        });
+        return options;
+    }
+
     _getHeaderButtons() {
         const buttons = super._getHeaderButtons();
         if(this.item.isOwned) return buttons
@@ -341,6 +349,22 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
             dsa5: { embeddedItem: resultItem }
         }
         await ChatMessage.create(chatData)
+    }
+
+    _canDragDrop(selector) {
+        return this.isEditable;
+    }
+
+    async _onDrop(event) {
+        const dragData = JSON.parse(event.dataTransfer.getData("text/plain"))
+        await this.dropCreation(dragData)
+    }
+
+    async dropCreation(dragData) {       
+        const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false)
+        if (!DSA5.equipmentCategories.has(typeClass)) return
+
+        this.item.setFlag("dsa5", "embeddedItem", item.toObject())
     }
 }
 
@@ -497,9 +521,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
 
     deletePoison() {
-        this.item.update({
-            [`flags.dsa5.-=poison`]: null
-        })
+        this.item.update({[`flags.dsa5.-=poison`]: null})
     }
 
     deleteEnchantment(id, enchantments) {
@@ -1200,6 +1222,16 @@ class ItemSpeciesDSA5 extends ItemSheetdsa5 {
         mergeObject(data, {
             hasLocalization: game.i18n.has(`Racedescr.${this.item.name}`)
         })
+        return data
+    }
+}
+
+class TrapSheetDSA5 extends ItemSheetdsa5 {
+    async getData(options) {
+        const data = await super.getData(options);
+        /*mergeObject(data, {
+            
+        })*/
         return data
     }
 }

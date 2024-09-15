@@ -44,7 +44,7 @@ export default class APTracker {
     static async addEntry(page, actor, description, apCost) {
         const row = APTracker.getRow(
             this.buildDescription(description),
-            this.buildChange(description),
+            `<p>${this.buildChange(description)}</p>`,
             apCost,
             `${actor.system.details.experience.spent}/${actor.system.details.experience.total}`
         )
@@ -57,11 +57,11 @@ export default class APTracker {
 
     static buildChange(description) {
         if(description.state) {
-            return description.state > 0 ? "<i class='fas fa-plus'></i>" : "<i class='fas fa-minus'></i>"
+            return description.state > 0 ? '<em class="fas fa-plus">&nbsp;</em>' : '<em class="fas fa-minus">&nbsp;</em>'
         }
 
         const symbol = description.next > description.previous ? "angles-up" : "angles-down"
-        return `${description.previous} <i class="fas fa-${symbol}"></i> ${description.next}`
+        return `${description.previous}&nbsp;<em class="fas fa-${symbol}">&nbsp;</em>&nbsp;${description.next}`
     }
     
     static buildDescription(description) {

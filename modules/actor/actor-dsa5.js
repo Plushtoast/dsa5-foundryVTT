@@ -639,6 +639,11 @@ export default class Actordsa5 extends Actor {
           AsPCost: [],
           KaPCost: [],
         },
+        combat: {
+          step: [],
+          parry: [],
+          attack: []
+        },
         feature: {
           FP: [],
           step: [],
@@ -737,7 +742,7 @@ export default class Actordsa5 extends Actor {
   }
 
   getSkillModifier(name, sourceType) {
-    let result = [];
+    const result = [];
     const keys = ["FP", "step", "QL", "TPM", "FW"];
     for (const k of keys) {
       const type = k == "step" ? "" : k;
@@ -766,6 +771,28 @@ export default class Actordsa5 extends Actor {
       }
     }
     return result;
+  }
+
+  getCombatEffectSkillModifier(name, mode) {
+    const result = []
+    const keys = ["step", mode]
+
+    for (const k of keys) {
+      result.push(
+        ...this.system.skillModifiers.combat[k]
+          .filter((x) => x.target == name)
+          .map((f) => {
+            return {
+              name: `${f.target || f.source} - ${game.i18n.localize(`CHAR.${k.toUpperCase()}`)}`,
+              value: f.value,
+              source: f.source,
+              type: k,
+              selected: true
+            };
+          })
+      );
+    }
+    return result
   }
 
   prepareSheet(sheetInfo) {
@@ -827,9 +854,11 @@ export default class Actordsa5 extends Actor {
     };
   }
 
-  static _calculateCombatSkillValues(i, actorData) {
-    if (i.system.weapontype.value == "melee") {
-      const vals = i.system.guidevalue.value
+  static _calculateCombatSkillValues(skill, actorData,{ step, parry, attack } = { step: 0, parry: 0, attack: 0 }) {
+    const modifiedTalentValue = skill.system.talentValue.value + step;
+
+    if (skill.system.weapontype.value == "melee") {
+      const vals = skill.system.guidevalue.value
         .split("/")
         .map(
           (x) =>
@@ -838,31 +867,21 @@ export default class Actordsa5 extends Actor {
             Number(actorData.characteristics[x].advances) +
             Number(actorData.characteristics[x].gearmodifier)
         );
-      const parryChar = Math.max(...vals);
-      i.system.parry.value =
-        Math.ceil(i.system.talentValue.value / 2) +
-        Math.max(0, Math.floor((parryChar - 8) / 3)) +
-        Number(game.settings.get("dsa5", "higherDefense"));
-      const attackChar =
-        actorData.characteristics.mu.initial +
-        actorData.characteristics.mu.modifier +
-        actorData.characteristics.mu.advances +
-        actorData.characteristics.mu.gearmodifier;
 
-      i.system.attack.value = i.system.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
+      const parryChar = Math.max(...vals);
+      const attackChar = actorData.characteristics.mu.initial + actorData.characteristics.mu.modifier + actorData.characteristics.mu. advances + actorData.characteristics.mu.gearmodifier;
+
+      skill.system.parry.value = Math.ceil(modifiedTalentValue / 2) + Math.max(0, Math.floor((parryChar - 8) / 3)) + Number(game.settings.get("dsa5", "higherDefense")) + parry;
+      skill.system.attack.value = modifiedTalentValue + Math.max(0, Math.floor((attackChar - 8) / 3)) + attack;
     } else {
-      i.system.parry.value = 0;
-      let attackChar =
-        actorData.characteristics.ff.initial +
-        actorData.characteristics.ff.modifier +
-        actorData.characteristics.ff.advances +
-        actorData.characteristics.ff.gearmodifier;
-      i.system.attack.value = i.system.talentValue.value + Math.max(0, Math.floor((attackChar - 8) / 3));
+      const attackChar = actorData.characteristics.ff.initial + actorData.characteristics.ff.modifier + actorData.characteristics.ff.advances + actorData.characteristics.ff.gearmodifier;
+      
+      skill.system.parry.value = 0;
+      skill.system.attack.value = modifiedTalentValue + Math.max(0, Math.floor((attackChar - 8) / 3)) + attack;
     }
-    i.cost = game.i18n.format("advancementCost", {
-      cost: DSA5_Utility._calculateAdvCost(i.system.talentValue.value, i.system.StF.value),
-    })
-    return i;
+
+    skill.cost = game.i18n.format("advancementCost", { cost: DSA5_Utility._calculateAdvCost(skill.system.talentValue.value, skill.system.StF.value) })
+    return skill;
   }
 
   drawAuras(force = false) {
@@ -2001,6 +2020,12 @@ export default class Actordsa5 extends Actor {
   get horseSpeed(){
     return Riding.getHorseSpeed(this)
   }
+
+  async _buildEmbedHTML(config, options={}) {
+    const template = `systems/dsa5/templates/items/browse/${this.type}.html`
+    const item = await renderTemplate(template, { document: this, isGM: game.user.isGM, ...(await this.sheet.getData()), ...options})
+    return $(item)[0]
+}
 
   setupFallingDamage(options, tokenId){
     const name = game.i18n.localize("fallingDamage")

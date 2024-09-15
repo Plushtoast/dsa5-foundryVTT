@@ -50,16 +50,16 @@ export default class RequestRoll {
         RequestRoll.rerenderGC(message, data)
     }
 
-    static async requestRoll(category, name, modifier = 0) {
+    static async requestRoll(category, name, modifier = 0, options = {}) {
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor()
 
         if (actor) {
             game.user.updateTokenTargets([])
-            let options = { modifier }
+            options.modifier = modifier
 
             switch (category) {
                 case "attribute":
-                    let characteristic = Object.keys(game.dsa5.config.characteristics).find(
+                    const characteristic = Object.keys(game.dsa5.config.characteristics).find(
                         (key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == name
                     )
                     actor.setupCharacteristic(characteristic, options, tokenId).then((setupData) => {
@@ -75,7 +75,7 @@ export default class RequestRoll {
                     actor.setupFallingDamage(options, tokenId)
                     break
                 default:
-                    let skill = actor.items.find((i) => i.name == name && i.type == category)
+                    const skill = actor.items.find((i) => i.name == name && i.type == category)
                     actor.setupSkill(skill, options, tokenId).then((setupData) => {
                         actor.basicTest(setupData)
                     })
@@ -114,7 +114,7 @@ export default class RequestRoll {
     static showRQMessage(target, modifier = 0, customLabel = undefined) {
         const mod = modifier < 0 ? ` ${modifier}` : (modifier > 0 ? ` +${modifier}` : "")
         const type = DSA5ChatAutoCompletion.skills.find(x => x.name == target).type
-        const msg = game.i18n.format("CHATNOTIFICATION.requestRoll", { user: game.user.name, item: `<a class="roll-button request-roll" data-type="${type}" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>` })
+        const msg = game.i18n.format("CHATNOTIFICATION.requestRoll", { user: game.user.name, item: `<a class="roll-button request-roll" data-type="${type}" data-tooltip="TT.requestRoll" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>` })
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
 
@@ -267,9 +267,29 @@ export default class RequestRoll {
 
     static chatListeners(html) {
         html.on("change", ".editGC", (ev) => RequestRoll.editGC(ev))
-        html.on("click", ".request-roll", (ev) => {
+        html.on("mousedown", ".request-roll", (ev) => {
             const elem = ev.currentTarget.dataset
-            RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0)
+            const options = { }
+
+            if(ev.button == 2) {
+                let checks = 0;
+                const msg = $(ev.currentTarget).closest('.chat-message')
+
+                const intervalId = setInterval(function() { //workaround
+                    checks++;
+
+                    const elem = msg.find('nav')
+                    if (elem.length > 0) {
+                        elem.remove();
+                        clearInterval(intervalId);
+                    }
+
+                    if (checks >= 20) clearInterval(intervalId)
+                }, 10);
+                options.rollMode = 'blindroll'
+            }
+
+            RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0, options)
         })
         html.on("click", ".request-gc", (ev) => {
             const elem = ev.currentTarget.dataset

@@ -561,6 +561,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const QS = game.i18n.localize("MODS.QS");
         const partChecks = game.i18n.localize("MODS.partChecks");
         const demo = `${game.i18n.localize("LocalizedIDs.perception")} 1`;
+        const csdemo = `${game.i18n.localize("LocalizedIDs.wrestle")} 1`;
         const democs = `${game.i18n.localize("LocalizedIDs.wrestle")} 1`;
         const closeCombat = game.i18n.localize("closeCombatAttacks");
         const rangeCombat = game.i18n.localize("rangeCombatAttacks");
@@ -767,6 +768,24 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 val: `system.temperature.coldProtection`,
                 mode: 2,
                 ph: "1",
+            },
+            {
+                name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize("CHAR.ATTACK")}`,
+                val: `system.skillModifiers.combat.attack`,
+                mode: 0,
+                ph: csdemo
+            },
+            {
+                name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize("CHAR.PARRY")}`,
+                val: `system.skillModifiers.combat.parry`,
+                mode: 0,
+                ph: csdemo
+            },
+            {
+                name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize("KTW")}`,
+                val: `system.skillModifiers.combat.step`,
+                mode: 0,
+                ph: csdemo
             }
         ];
 
@@ -774,7 +793,12 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const k of models) {
             let key = k == "skill" ? "skillglobal" : k;
             const el = game.i18n.localize(key);
-            optns.push({ name: `${el} - ${FW}`, val: `system.skillModifiers.${k}.FW`, mode: 0, ph: demo }, { name: `${el} - ${FP}`, val: `system.skillModifiers.${k}.FP`, mode: 0, ph: demo }, { name: `${el} - ${stepValue}`, val: `system.skillModifiers.${k}.step`, mode: 0, ph: demo }, { name: `${el} - ${QS}`, val: `system.skillModifiers.${k}.QL`, mode: 0, ph: demo }, { name: `${el} - ${partChecks}`, val: `system.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
+            optns.push(
+                { name: `${el} - ${FW}`, val: `system.skillModifiers.${k}.FW`, mode: 0, ph: demo }, 
+                { name: `${el} - ${FP}`, val: `system.skillModifiers.${k}.FP`, mode: 0, ph: demo }, 
+                { name: `${el} - ${stepValue}`, val: `system.skillModifiers.${k}.step`, mode: 0, ph: demo }, 
+                { name: `${el} - ${QS}`, val: `system.skillModifiers.${k}.QL`, mode: 0, ph: demo }, 
+                { name: `${el} - ${partChecks}`, val: `system.skillModifiers.${k}.TPM`, mode: 0, ph: demo });
         }
 
         for(let ef of CONFIG.statusEffects){
@@ -799,8 +823,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         for (const k of DSA5.gearModifyableCalculatedAttributes)
             optns.push({ name: game.i18n.localize(k), val: `system.status.${k}.gearmodifier`, mode: 2, ph: "1" });
 
-
-
         for(let model of ["spell", "liturgy", "ceremony", "ritual"]){
             const modelName = DSA5_Utility.categoryLocalization(model)
             for(const k of ["soulpower", "toughness"]){
@@ -822,19 +844,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             }
         }
 
-        optns = optns.sort((a, b) => {
-            return a.name.localeCompare(b.name);
-        });
+        optns = optns.sort((a, b) => a.name.localeCompare(b.name));
 
-        for (let optn of optns) {
-            if (!optn.ph || optn.mode == undefined) console.warn(optn);
-        }
+        for (let optn of optns) if (!optn.ph || optn.mode == undefined) console.warn(optn)
 
-        optns = optns
-            .map((x) => {
-                return `<option value="${x.val}" data-mode="${x.mode}" data-ph="${x.ph}">${x.name}</option>`;
-            })
-            .join("\n");
+        optns = optns.map(x => `<option value="${x.val}" data-mode="${x.mode}" data-ph="${x.ph}">${x.name}</option>`).join("\n");
         return `<select class="selMenu">${optns}</select>`;
     }
 

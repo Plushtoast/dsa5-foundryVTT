@@ -86,10 +86,10 @@ export function setEnrichers() {
         },
         {
             pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]({[a-zA-Z=]+})?/g,
-            enricher: async(match, options) => {
-                let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
+            enricher: async(match, options) => {                
+                const uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1)
                 let document        
-                       
+                
                 try {
                     document = await fromUuid(uuid)
                 }catch(e){
@@ -118,10 +118,7 @@ export function setEnrichers() {
                             customOptions[parts[0]] = parts[1]
                     }
                 }
-
-                const template = `systems/dsa5/templates/items/browse/${document.type}.html`
-                const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData()), ...customOptions})
-                return $(item)[0]
+                return await document._buildEmbedHTML({values: []}, customOptions)
             }
         },
         {

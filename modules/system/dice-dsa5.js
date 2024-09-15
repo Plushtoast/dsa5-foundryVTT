@@ -505,22 +505,18 @@ export default class DiceDSA5 {
         return result
     }
 
-        static async damageFormula(testData){
+    static async damageFormula(testData){
         let weapon
 
         if (testData.source.type == "meleeweapon") {
             const skill = Actordsa5._calculateCombatSkillValues(
-                testData.extra.actor.items.find(
-                    (x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value
-                ),
+                testData.extra.actor.items.find((x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value),
                 testData.extra.actor.system
             )
             weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], testData.extra.actor)
         } else if (testData.source.type == "rangeweapon") {
             const skill = Actordsa5._calculateCombatSkillValues(
-                testData.extra.actor.items.find(
-                    (x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value
-                ),
+                testData.extra.actor.items.find((x) => x.type == "combatskill" && x.name == testData.source.system.combatskill.value),
                 testData.extra.actor.system
             )
             weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], testData.extra.actor)
@@ -774,7 +770,11 @@ export default class DiceDSA5 {
 
         let skill = Actordsa5._calculateCombatSkillValues(
             testData.extra.actor.items.find((x) => x.type == "combatskill" && x.name == combatskill),
-            testData.extra.actor.system
+            testData.extra.actor.system,
+            { 
+                step: await this._situationalModifiers(testData, 'step'),
+                [testData.mode]: await this._situationalModifiers(testData, testData.mode)
+            }
         )
 
         const isMelee = source.type == "meleeweapon"

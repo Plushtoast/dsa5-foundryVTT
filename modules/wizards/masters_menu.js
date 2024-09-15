@@ -15,31 +15,45 @@ export default class MastersMenu {
         Hooks.on("getSceneControlButtons", btns => {
             const dasMenuOptions = [{
                     name: "JournalBrowser",
-                    title: game.i18n.localize("Book.Wizard"),
+                    title: "Book.Wizard",
                     icon: "fa fa-book",
                     button: true,
                     onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser) }
                 },
                 {
                     name: "Library",
-                    title: game.i18n.localize("SHEET.Library"),
+                    title: "SHEET.Library",
                     icon: "fas fa-university",
                     button: true,
                     onClick: () => { DSA5_Utility.renderToggle(game.dsa5.itemLibrary) }
                 },
                 {
                     name: "PlayerMenu",
-                    title: game.i18n.localize("PLAYER.title"),
+                    title: "PLAYER.title",
                     icon: "fas fa-dsa5-player",
                     button: true,
                     onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu) }
                 }
             ]
+            if(game.settings.get("dsa5", "masterCanvasControls")){
+                if(game.dsa5.apps.tokenHotbar){
+                    for(let i=3;i<game.dsa5.apps.tokenHotbar._gmEntries().length;i++){
+                        const entry = game.dsa5.apps.tokenHotbar._gmEntries()[i]
+                        dasMenuOptions.push({
+                            name: entry.id,
+                            title: entry.name,
+                            icon: `fa-dsa5 fa-dsa5-${entry.id}`,
+                            button:true,
+                            onClick: () => game.dsa5.apps.tokenHotbar.callbackFunctions[entry.id]()
+                        })
+                    }
+                }
+            }
             if (game.user.isGM) {
                 if (!game.dsa5.apps.gameMasterMenu) game.dsa5.apps.gameMasterMenu = new GameMasterMenu()
                 dasMenuOptions.push({
                     name: "mastersMenu",
-                    title: game.i18n.localize("gmMenu"),
+                    title: "gmMenu",
                     icon: "fa fa-dsa5",
                     button: true,
                     onClick: () => { DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu) }

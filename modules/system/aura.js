@@ -168,7 +168,7 @@ export class DSAAura {
             if(!token.actor || token.id == trespasser.id) continue
             if('loot' == getProperty(token.actor, "system.merchant.merchantType")) continue
 
-            for(let [key, aura] of Object.entries(token.object.auras || {})) {
+            for(let [key, aura] of Object.entries(token.object?.auras || {})) {
                 let { auraSource, effect, isAura } = getProperty(aura.template.document, "flags.dsa5")
                 const disposition = effect.flags?.dsa5?.disposition ?? 2
 

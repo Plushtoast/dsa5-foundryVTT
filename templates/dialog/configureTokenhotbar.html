@@ -20,6 +20,13 @@
         </div>
         <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
     </div>
+    <div class="form-group" data-setting-id="dsa5.masterCanvasControls">
+        <label>{{localize 'DSASETTINGS.masterCanvasControls'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="dsa5.masterCanvasControls" data-dtype="Boolean" {{checked masterCanvasControls}}>
+        </div>
+        <p class="notes">{{localize 'DSASETTINGS.masterCanvasControlsHint'}}</p>
+    </div>
     <label>{{localize 'DSASETTINGS.enableMasterTokenFunctions'}}</label>
     <div class="bags row-section wrap" style="font-size: 45px;line-height: 50px;text-align: center;">
         {{#each gmButtons as |item i|}}

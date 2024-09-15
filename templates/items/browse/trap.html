@@ -1,0 +1,90 @@
+<div></div>
+    <h3>{{document.name}}</h3>
+
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{enrichedDescription}}}
+            {{#if (and isGM enrichedGmdescription)}}
+            <div class="maskfield">
+                {{{enrichedGmdescription}}}
+            </div>
+            {{/if}}
+        </div>
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col third">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    <small>{{item.pack}}</small>
+                </div>  
+            </div>
+            <div class="col ten"></div>
+            <div class="row-section col sixty">
+                <div class="col groupbox">
+                        <div class="row-section wrap">
+                            
+                            <div class="col table-title noBorder row-section">
+                                <div class="col ninety">
+                                    {{localize "BOOKITEM.category"}}
+                                </div>
+                                <div class="col ten center">
+                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                                </div>                            
+                            </div>
+                            <div class="col">
+                                {{document.system.category}}
+                            </div>
+                            {{# if document.stealth}}
+                            <div class="col table-title noBorder">
+                                {{localize "TRAP.stealth"}}
+                            </div>
+                            <div class="col">
+                                {{document.stealth}}
+                            </div>
+                            {{/if}}
+                            {{# if document.trigger}}
+                            <div class="col table-title noBorder">
+                                {{localize "TRAP.trigger"}}
+                            </div>
+                            <div class="col">
+                                {{document.trigger}}
+                            </div>
+                            {{/if}}
+                            {{# if document.tools}}
+                            <div class="col table-title noBorder">
+                                {{localize "TRAP.tools"}}
+                            </div>
+                            <div class="col">
+                                {{document.tools}}
+                            </div>
+                            {{/if}}
+                            {{# if document.difficulty}}
+                            <div class="col table-title noBorder">
+                                {{localize "Difficulty"}}
+                            </div>
+                            <div class="col">
+                                {{document.difficulty}}
+                            </div>
+                            {{/if}}
+                            {{# if document.damageText}}
+                            <div class="col table-title noBorder">
+                                {{localize "TRAP.damageText"}}
+                            </div>
+                            <div class="col">
+                                {{document.damageText}}
+                            </div>
+                            {{/if}}  
+                        
+                        </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

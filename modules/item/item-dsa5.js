@@ -73,7 +73,8 @@ export default class Itemdsa5 extends Item {
         information: "systems/dsa5/icons/categories/DSA-Auge.webp",
         essence: "systems/dsa5/icons/categories/wesenszug.webp",
         imprint: "systems/dsa5/icons/categories/praegung.webp",
-        book: "systems/dsa5/icons/backgrounds/library.webp"
+        book: "systems/dsa5/icons/backgrounds/library.webp",
+        trap: "systems/dsa5/icons/categories/trap.webp"
     }
 
     static defaultIcon(data) {
@@ -114,6 +115,12 @@ export default class Itemdsa5 extends Item {
         return res
     }
 
+    async _buildEmbedHTML(config, options={}) {
+        const template = `systems/dsa5/templates/items/browse/${this.type}.html`
+        const item = await renderTemplate(template, { document: this, isGM: game.user.isGM, ...(await this.sheet.getData()), ...options})
+        return $(item)[0]
+    }
+
     static setupSubClasses() {
         game.dsa5.config.ItemSubclasses = {
             ritual: RitualItemDSA5,
@@ -147,7 +154,8 @@ export default class Itemdsa5 extends Item {
             patron: PatronItemDSA5,
             demonmark: DemonmarkItemDSA5,
             information: InformationItemDSA5,
-            book: BookItemDSA5
+            book: BookItemDSA5,
+            trap: TrapItemDSA5
         }
     }
 
@@ -768,13 +776,19 @@ class MagicalSignItemDSA5 extends Itemdsa5 {
 
 class DemonmarkItemDSA5 extends Itemdsa5 {
     static chatData(data, name) {
-        let res = [
+        return [
             this._chatLineHelper("attributes", data.attribute),
             this._chatLineHelper("skills", data.skills),
             this._chatLineHelper("domains", data.domain),
         ]
+    }
+}
 
-        return res
+class TrapItemDSA5 extends Itemdsa5 {
+    static chatData(data, name) {
+        return [
+
+        ]
     }
 }
 
@@ -1047,18 +1061,17 @@ class SpellItemDSA5 extends Itemdsa5 {
             })
         }
         situationalModifiers.push(...actor.getSkillModifier(source.name, source.type))
-        for (const thing of actor.system.skillModifiers.global) {
-            situationalModifiers.push({ name: thing.source, value: thing.value })
-        }
+
+        for (const thing of actor.system.skillModifiers.global) situationalModifiers.push({ name: thing.source, value: thing.value })
 
         this.getSkZkModifier(data, source)
     }
 
     static setupDialog(ev, options, spell, actor, tokenId) {
         let sheet = "spell"
-        if (spell.type == "ceremony" || spell.type == "liturgy") sheet = "liturgy"
+        if (["ceremony", "liturgy"].includes(spell.type)) sheet = "liturgy"
 
-        let title = spell.name + " " + game.i18n.localize(`${spell.type}Test`)  + (options.subtitle || "")
+        const title = `${spell.name} ${game.i18n.localize(`${spell.type}Test`)}${(options.subtitle || "")}`
 
         let testData = {
             opposable: spell.system.effectFormula.value.length > 0,
@@ -1427,25 +1440,27 @@ class MeleeweaponDSA5 extends Itemdsa5 {
     }
 
     static getSituationalModifiers(situationalModifiers, actor, data, source) {
-        let wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.ambidextrous"))
+        const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.ambidextrous"))
         source = DSA5_Utility.toObjectIfPossible(source)
+        const toSearch = [source.system.combatskill.value]
+        const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
 
-        let toSearch = [source.system.combatskill.value]
-        let combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
-
-        if (data.mode == "attack") {
-            this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
-        } else if (data.mode == "parry") {
-            this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
-        }
+        if (data.mode == "attack") this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
+        else if (data.mode == "parry") this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
+        
         this.attackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode])
 
-        if (["attack", "parry"].includes(data.mode)) situationalModifiers.push(...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode))
+        if (["attack", "parry"].includes(data.mode)) {
+            situationalModifiers.push(
+                ...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode),
+                ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode)
+            )
+        }
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
         const mode = options.mode
-        const title = item.name + " " + game.i18n.localize(mode + "test")
+        const title = `${item.name} ${game.i18n.localize(mode + "test")}`
 
         const testData = {
             opposable: options.mode != "parry",
@@ -1628,7 +1643,10 @@ class RangeweaponItemDSA5 extends Itemdsa5 {
                     })
                 }
             }
-            situationalModifiers.push(...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode))
+            situationalModifiers.push(
+                ...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode),
+                ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode)
+            )
         }
         this.attackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode])
     }

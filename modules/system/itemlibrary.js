@@ -192,7 +192,8 @@ export default class DSA5ItemLibrary extends Application {
                     disease: false,
                     consumable: false,
                     plant: false,
-                    book: false
+                    book: false,
+                    trap: false
                 },
                 filterBy: {
                     search: ""

@@ -624,6 +624,15 @@ export function setupConfiguration() {
         onChange: () => { game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar() }
     });
 
+    game.settings.register("dsa5", "masterCanvasControls", {
+        name: "DSASETTINGS.masterCanvasControls",
+        hint: "DSASETTINGS.masterCanvasControls",
+        scope: "client",
+        config: false,
+        default: false,
+        type: Boolean
+    });    
+
     game.settings.register("dsa5", "scrollingFontsize", {
         name: "DSASETTINGS.scrollingFontsize",
         hint: "DSASETTINGS.scrollingFontsizeHint",
@@ -881,6 +890,7 @@ class ConfigureTokenHotbar extends FormApplication {
             disableTokenhotbarMaster: game.settings.get("dsa5", "disableTokenhotbarMaster"),
             disableTokenhotbar: game.settings.get("dsa5", "disableTokenhotbar"),
             tokenhotbaropacity: game.settings.get("dsa5", "tokenhotbaropacity"),
+            masterCanvasControls: game.settings.get("dsa5", "masterCanvasControls"),
             hotbarv3: game.settings.get("dsa5", "hotbarv3"),
             isGM: game.user.isGM,
             gmButtons: game.dsa5.apps.tokenHotbar?.gmItems,

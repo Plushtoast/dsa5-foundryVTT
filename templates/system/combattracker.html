@@ -97,8 +97,9 @@
                     </a>
                     {{/if}}
                     <div class="token-effects">
-                        {{#each this.effects}}
-                        <img class="token-effect" src="{{this}}" /> {{/each}}
+                        {{#each this.effects as |ef|}}
+                        <img class="token-effect" src="{{ef.img}}" data-tooltip="{{ef.name}}" />
+                        {{/each}}
                     </div>
                 </div>
             </div>
@@ -111,7 +112,8 @@
 
             <div class="token-initiative">
                 {{#if this.hasRolled}}
-                <span class="initiative">{{this.initiative}}</span> {{else if this.owner}}
+                <span class="initiative">{{this.initiative}}</span> 
+                {{else if this.owner}}
                 <a class="combatant-control roll" data-tooltip="COMBAT.InitiativeRoll" data-control="rollInitiative"></a>
                 {{/if}}
             </div>

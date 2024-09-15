@@ -43,6 +43,7 @@
         "KK": "Körperkraft",
         "ATTACK": "Angriff",
         "PARRY": "Parieren",
+        "STEP": "Kampftechnik",
         "GE/KK": "Gewandheit / Körperkraft",
         "GEKK": "Gewandheit / Körperkraft",
         "DAMAGE": "Trefferpunkte",
@@ -76,6 +77,9 @@
         "pAsP": "pAsP",
         "pKaP": "pKaP",
         "KaP": "KaP",
+        "step": "KTW",
+        "attack": "AT",
+        "parry": "PA",
         "ATFK": "AT/FK",
         "GEKK": "GE,KK",
         "GE/KK": "GE/KK",
@@ -1063,6 +1067,12 @@
     "POISON": {
         "ql": "Qualität der Taverne"
     },
+    "TRAP": {
+        "stealth": "Tarnwert",
+        "trigger": "Auslöser",
+        "tools": "Passendes Werkzeug",
+        "damageText": "Schaden"
+    },
     "BOOKITEM": {
         "author": "Autor",
         "category": "Art",
@@ -1184,7 +1194,8 @@
         "tokenhotbarMoney": "Links-<i class=\"fas fa-computer-mouse\"></i>: bezahlen<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: auszahlen",
         "tokenhotbarSkill": "Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
         "effectVariant": "Alternativer Effekt wie z.B. ein zweiter oder dritter Angriff",
-        "skillgm": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe"
+        "skillgm": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
+        "requestRoll": "<small>Probe mit aktuellem Held<br/>Links-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> Blind</small>"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1262,6 +1273,7 @@
         }
     },
     "TYPES.Item.book": "Buch",
+    "TYPES.Item.trap": "Falle",
     "TYPES.Item.advantage": "Vorteil",
     "TYPES.Item.aggregatedTest": "Sammelprobe",
     "TYPES.Item.information": "Information",
@@ -1514,7 +1526,6 @@
         "naturalArmor": "Natürliche Rüstung",
         "improvisedWeaponMaster": "Meister der improvisierten Waffen",
         "weaponThrow": "Waffenwurf",
-
         "all": "alle",
         "poisonResistance": "Giftresistenz",
         "ResistanttoDisease": "Krankheitsresistenz",
@@ -1921,7 +1932,9 @@
         "applyDamageInChat": "Zeige \"Schaden anwenden\" im Chat",
         "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten.",
         "enableAPTracking": "Abenteuerpunkte tracken",
-        "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein."
+        "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein.",
+        "masterCanvasControls": "Canvas Controls aktivieren",
+        "masterCanvasControlsHint": "Fügt Meisterfunktionen zu den Canvas Controls (linke Seite des GUI hinzu)."
     },
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie"

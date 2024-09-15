@@ -2808,12 +2808,17 @@
   }
   
   .initTracker {
-    .newRound {
+    .iniItem.newRound, .newRound {
       border-color: #496fd7;
       background-color: #496fd72d;
       box-shadow: inset 0px 0px 10px #496fd7;
       border-top-left-radius: 0px;
       border-bottom-left-radius: 0px;
+
+      .iniNumber {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
     }
   
     .turnRound {
@@ -3087,15 +3092,30 @@
   }
   
   .iniDetailsList {
-    margin: 30px 29px 0 29px;
+    margin: 10px 29px 0 29px;
     padding: 0;
     display: none;
   
     li {
-      height: 20px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.5);
       color: white;
+      background: none;
+
+      .iniNumber {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+      }
+    }
+    .token-effects {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 5px 0;
+      min-height: 30px;
+      img {
+        width: 20px;
+        border: none;
+        box-shadow: 0px 0px 10px #000 inset;
+      }
     }
   }
   
@@ -3246,6 +3266,22 @@
     right: 0;
     top: 0;
     bottom: 0;
+  }
+
+  .fa-dsa5-lighthelper:before{
+    background-image: url('../../../../modules/dsa5-core/icons/equipment/Feldflasche.webp');
+  }
+
+  .fa-dsa5-foodsearch:before{
+    background-image: url('../../icons/talents/Lebensmittelbearbeitung.webp');
+  }
+
+  .fa-dsa5-adci:before{
+    background-image: url('../../../../modules/dsa5-core/icons/equipment/Abblendlaterne.webp');
+  }
+
+  .fa-dsa5-plantHelper:before{
+    background-image: url('../../../../modules/dsa5-herbarium/icons/plant/Alraune.webp');
   }
   
   .fa-dsa5-player:before {

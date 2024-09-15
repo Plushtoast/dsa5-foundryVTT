@@ -66,6 +66,9 @@
         "pAsP": "pAE",
         "pKaP": "pKP",
         "KaP": "KP",
+        "step": "CTR",
+        "attack": "AT",
+        "parry": "PA",
         "ATFK": "AT/RC",
         "GEKK": "AGI,STR",
         "GE/KK": "AGI/STR",
@@ -1047,6 +1050,12 @@
     "POISON": {
         "ql": "Quality of the tavern"
     },
+    "TRAP": {
+        "stealth": "Stealth",
+        "trigger": "Trigger",
+        "tools": "Disarming tools",
+        "damageText": "Damage"
+    },
     "BOOKITEM": {
         "author": "Author",
         "category": "Art",
@@ -1188,7 +1197,8 @@
         "tokenhotbarMoney": "Left-<i class=\"fas fa-computer-mouse\"></i>: pay<br>Right-<i class=\"fas fa-computer-mouse\"></i>: get paid",
         "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
         "effectVariant": "Alternative effect like e.g. a second or third attack",
-        "skillgm": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: Request group check<br>CTRL + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe"
+        "skillgm": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: Request group check<br>CTRL + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
+        "requestRoll": "<small>Roll with current hero<br/>Left-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Right-<i class=\"fas fa-computer-mouse\"></i> Blind</small>"
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1207,12 +1217,13 @@
         "descrtables": "Show all rollable tables.",
         "request": "Request roll",
         "descrrequest": "Request a skill roll. (tab + number = with modifier)",
-        "threeD20Check": "3D20 Check",
+        "threeD20Check": "3d20 Check",
         "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)",
         "groupcheck": "Group Check",
         "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
     },
     "TYPES.Item.book": "Book",
+    "TYPES.Item.trap": "Trap",
     "TYPES.Item.advantage": "Advantage",
     "TYPES.Item.aggregatedTest": "Cumulative Check",
     "TYPES.Item.information": "Information",
@@ -1854,7 +1865,9 @@
         "applyDamageInChat": "Show \"Apply Damage\" in chat",
         "applyDamageInChatHint": "Show buttons in addition to the options in the context menu to apply damage on chat cards.",
         "enableAPTracking": "Track adventure points",
-        "enableAPTrackingHint": "Create journals for player characters, which list received and spent adventure points. The journals must either have write access for the player or a game master must be logged in."
+        "enableAPTrackingHint": "Create journals for player characters, which list received and spent adventure points. The journals must either have write access for the player or a game master must be logged in.",
+        "masterCanvasControls": "Activate Canvas Controls",
+        "masterCanvasControlsHint": "Add master functions to the Canvas Controls (left side of the GUI)."
     },
     "TRACKER": {
         "adventurePoints": "Adventure Points History"

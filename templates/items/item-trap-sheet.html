@@ -1,0 +1,41 @@
+<form class="dsa5 item-sheet {{cssClass}}" autocomplete="off">
+    {{> systems/dsa5/templates/items/item-header.html}} {{> systems/dsa5/templates/items/item-stat.html}}
+
+    <div class="navWrapper">
+        <i class="fas fa-angle-left left-btn"></i>
+        <i class="fas fa-angle-right right-btn"></i>
+        <nav class="sheet-tabs tabs" data-tab-container="primary">
+            <a class="item active" data-tab="description">{{localize "Description"}}</a>
+            <a class="item" data-tab="details">{{localize "Details"}}</a>
+        </nav>
+    </div>
+
+    <section class="content">
+
+        {{> systems/dsa5/templates/items/item-description.html}}
+
+        <div class="tab details" data-tab="details">
+
+            <div class="form-group">
+                <label class="label-text">{{localize "TRAP.stealth"}}</label>
+                <input class="input-text" type="number" name="system.stealth" value="{{system.stealth}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "TRAP.trigger"}}</label>
+                <input class="input-text" type="text" name="system.trigger" value="{{system.trigger}}"/>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "TRAP.tools"}}</label>
+                <input class="input-text" type="text" name="system.tools" value="{{system.tools}}" />
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "Difficulty"}}</label>
+                <input class="input-text" type="number" name="system.difficulty" value="{{system.difficulty}}"/>
+            </div>
+            <div class="form-group">
+                <label class="label-text">{{localize "TRAP.damageText"}}</label>
+                <input class="input-text" type="text" name="system.damageText" value="{{system.damageText}}" />
+            </div>
+        </div>
+    </section>
+</form>

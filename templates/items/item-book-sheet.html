@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "BOOKITEM.format"}}</label>
-                <select name="system.format" data-dtype="String">
+                <select name="system.format">
                     {{selectOptions formats selected=system.format localize=true}}  
                 </select>
             </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "BOOKITEM.exemplarType"}}</label>
-                <select name="system.exemplarType" data-dtype="String">
+                <select name="system.exemplarType">
                     {{selectOptions exemplarTypes selected=system.exemplarType localize=true}}  
                 </select>
             </div>
@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "BOOKITEM.quality"}}</label>
-                <select name="system.quality" data-dtype="String">
+                <select name="system.quality">
                     {{selectOptions qualities selected=system.quality localize=true}}  
                 </select>
             </div>
@@ -71,13 +71,13 @@
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "BOOKITEM.legality"}}</label>
-                <select name="system.quality" data-dtype="String">
+                <select name="system.quality">
                     {{selectOptions legalities selected=system.legality localize=true}}  
                 </select>
             </div>
             <div class="form-group">
                 <label class="label-text">{{localize "BOOKITEM.availability"}}</label>
-                <input class="input-text" type="text" name="system.availability" value="{{system.availability}}" data-dtype="String" />
+                <input class="input-text" type="number" name="system.availability" value="{{system.availability}}" />
             </div>
             <div class="form-group full-height">
                 <label class="label-text">{{localize "BOOKITEM.special"}}</label>

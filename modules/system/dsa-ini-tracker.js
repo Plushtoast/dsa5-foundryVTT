@@ -38,9 +38,8 @@ export default class DSAIniTracker extends Application {
             if (!game.settings.get("dsa5", "enableCombatFlow")) return
 
             if (game.combat) {
-                if (!game.dsa5.apps.initTracker) {
-                    game.dsa5.apps.initTracker = new DSAIniTracker()
-                }
+                if (!game.dsa5.apps.initTracker) game.dsa5.apps.initTracker = new DSAIniTracker()
+
                 game.dsa5.apps.initTracker.updateTracker(data)
             } else {
                 if (game.dsa5.apps.initTracker) {
@@ -111,7 +110,6 @@ export default class DSAIniTracker extends Application {
             }
             data.turns = filteredTurns
         }
-        //if(!data.round) itemWidth = 20
 
         data.isLastRound = data.turns[1]?.newRound
 

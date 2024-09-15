@@ -44,6 +44,11 @@ Hooks.once("ready", () => {
             book: [
                 { label: "BOOKITEM.format", attr: "format", type: "select", options: DSA5.bookFormats },
                 { label: "BOOKITEM.quality", attr: "quality", type: "select", options: DSA5.bookQualities },
+                { label: "BOOKITEM.exemplarType", attr: "exemplarType", type: "select", options: DSA5.exemplarTypes },
+                { label: "BOOKITEM.availability", attr: "availability", type: "range" },
+            ],
+            trap: [
+
             ],
             rangeweapon: [
                 { label: "TYPES.Item.combatskill", attr: "combatskill.value", type: "select", options: range },
