@@ -6,6 +6,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
     apply(actor, change) {
         if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
+            
             const modifiedItems = this._getModifiedItems(actor, change)
 
             for (let item of modifiedItems.items) {
@@ -71,7 +72,7 @@ export default class DSAActiveEffect extends ActiveEffect {
         const itemName = data.shift()
         const key = data.join(".")
         const value = change.value
-        const items = actor?.items?.filter(x => x.type == type && (x.name == itemName || x.id == itemName)) || []
+        const items = itemName == "self" ? [this.parent] : actor?.items?.filter(x => x.type == type && (x.name == itemName || x.id == itemName)) || []
         return { items, key, value }
     }
 

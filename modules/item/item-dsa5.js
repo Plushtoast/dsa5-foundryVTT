@@ -518,7 +518,7 @@ export default class Itemdsa5 extends Item {
             })
         }
 
-        const rangeOptions = {...DSA5.rangeWeaponModifiers }
+        const rangeOptions = { ...DSA5.rangeWeaponModifiers }
         delete rangeOptions[
             AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense"
         ]

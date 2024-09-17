@@ -243,8 +243,11 @@ export default class ItemSheetdsa5 extends ItemSheet {
             }
         }
 
-        DSA5StatusEffects.prepareActiveEffects(this.item, data)
+        data.conditions = this.item.effects
+        if(!game.user.isGM) data.conditions.filter(e => { return !e.getFlag("dsa5", "hidePlayers") })
+        
         data.item = this.item
+        data.enableWeaponAdvantages = game.settings.get("dsa5", "enableWeaponAdvantages")
         data.armorAndWeaponDamage = game.settings.get("dsa5", "armorAndWeaponDamage")
         data.isGM = game.user.isGM
         data.yesNoGroup = {

@@ -102,6 +102,20 @@
         "roll": " ",
         "effect": "Effect"
     },
+    "AdvantageRuleItems": {
+        "armor": {
+            "1": "Armor advantage",
+            "2": "Armor disadvantage"
+        },  
+        "rangeweapon": {
+            "1": "Weapon advantage",
+            "2": "Weapon disadvantage"
+        },
+        "meleeweapon": {
+            "1": "Weapon advantage",
+            "2": "Weapon disadvantage"
+        }
+    },
     "LIGHT": {
         "daylight": "Daylight"
     },
@@ -1878,7 +1892,9 @@
         "enableAPTracking": "Track adventure points",
         "enableAPTrackingHint": "Create journals for player characters, which list received and spent adventure points. The journals must either have write access for the player or a game master must be logged in.",
         "masterCanvasControls": "Activate Canvas Controls",
-        "masterCanvasControlsHint": "Add master functions to the Canvas Controls (left side of the GUI)."
+        "masterCanvasControlsHint": "Add master functions to the Canvas Controls (left side of the GUI).",
+        "enableWeaponAdvantages": "Equipment advantages/disadvantages",
+        "enableWeaponAdvantagesHint": "Activate the optional rules for weapon and armor advantages and disadvantages. If weapons contain the corresponding rules, they are automatically applied."
     },
     "TRACKER": {
         "adventurePoints": "Adventure Points History"

@@ -105,7 +105,7 @@ export default class OpposedDsa5 {
         const isDamageRoll = testResult.options?.mode == "damage"
 
        if (testResult.successLevel > 0 || isDamageRoll) {
-            let attackOfOpportunity = message.flags.data.preData.attackOfOpportunity
+            const attackOfOpportunity = message.flags.data.preData.attackOfOpportunity
             let unopposedButton = attackOfOpportunity ? "" : `<div><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`
             let startMessagesList = [];
 
@@ -375,6 +375,7 @@ export default class OpposedDsa5 {
 
     static async completeOpposedProcess(attacker, defender, options) {
         await DSATriggers.postOpposed({ attacker, defender, options })
+        console.log(attacker, defender)
         const opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
@@ -478,9 +479,12 @@ export default class OpposedDsa5 {
             messages.push(immuneToCrit)
         }
         options.origin = attackerTest.source
+        options.defender = actor
         options.damage = baseDamage
+        options.defenderTest = defenderTest
+        options.attackerTest = attackerTest
 
-        let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, 5).options.damage
+        let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, DSATriggers.EVENTS.DAMAGE_TRANSFORMATION).options.damage
         let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
 
         let multipliers = []

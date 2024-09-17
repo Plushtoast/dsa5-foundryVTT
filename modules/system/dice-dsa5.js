@@ -78,7 +78,7 @@ export default class DiceDSA5 {
                 case "ceremony":
                 case "ritual":
                 case "skill":
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate()
+                    roll = await new Roll('1d20+1d20+1d20').evaluate()
 
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.system.characteristic1.value))
                     mergeObject(roll.dice[1].options, d3dColors(testData.source.system.characteristic2.value))
@@ -107,18 +107,18 @@ export default class DiceDSA5 {
                         roll = await new Roll(rollFormula, testData.extra.actor.system).evaluate()
                         for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors("damage"))
                     } else {
-                        roll = await new Roll(`1d20`).evaluate()
+                        roll = await new Roll('1d20').evaluate()
                         mergeObject(roll.dice[0].options, d3dColors(testData.mode))
                     }
                     break
                 case "dodge":
-                    roll = await new Roll(`1d20`).evaluate()
+                    roll = await new Roll('1d20').evaluate()
                     mergeObject(roll.dice[0].options, d3dColors("dodge"))
                     break
                 case "poison":
                 case "disease":
                     let pColor = d3dColors("in")
-                    roll = await new Roll(`1d20+1d20+1d20`).evaluate()
+                    roll = await new Roll('1d20+1d20+1d20').evaluate()
                     mergeObject(roll.dice[0].options, pColor)
                     mergeObject(roll.dice[1].options, pColor)
                     mergeObject(roll.dice[2].options, pColor)
@@ -129,7 +129,7 @@ export default class DiceDSA5 {
                     roll = await new Roll(formula).evaluate()
                     break
                 default:
-                    roll = await new Roll(`1d20`).evaluate()
+                    roll = await new Roll('1d20').evaluate()
                     mergeObject(roll.dice[0].options, d3dColors(testData.source.system.attr))
             }
             roll = await DiceDSA5.manualRolls(roll, testData.source.type, testData.extra.options)
@@ -177,17 +177,16 @@ export default class DiceDSA5 {
             defenseCount: await this.getDefenseCount(testData),
             targets,
         })
-        mergeObject(cardOptions, {
-            user: game.user.id,
-        })
+        
+        cardOptions.user = game.user.id
 
         if (!testData.extra.options.bypass) {
-            let dialog = DSA5Dialog.getDialogForItem(testData, dialogOptions.data)
-            let html = await renderTemplate(dialogOptions.template, dialogOptions.data)
+            const dialog = DSA5Dialog.getDialogForItem(testData, dialogOptions.data)
+            const content = await renderTemplate(dialogOptions.template, dialogOptions.data)
             return new Promise((resolve, reject) => {
                 new dialog({
                         title: dialogOptions.title,
-                        content: html,
+                        content,
                         buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
                         default: "rollButton",
                     })
@@ -356,7 +355,9 @@ export default class DiceDSA5 {
             description,
             preData: testData,
             modifiers: modifier,
-            extra: {},
+            extra: {
+                attackFromBehind: testData.extra.attackFromBehind
+            },
         }
     }
 
@@ -696,7 +697,7 @@ export default class DiceDSA5 {
                 }
             }
         }
-
+        
         let damageRoll = testData.damageRoll || await DiceDSA5.manualRolls(
                   await new Roll(rollFormula, testData.extra.actor.system).evaluate(),
                   "CHAR.DAMAGE",
@@ -746,6 +747,17 @@ export default class DiceDSA5 {
                 damage += statusDmg
                 damageBonusDescription.push(game.i18n.localize("statuseffects") + " " + statusDmg)
             }
+            
+            const combatskill = getProperty(weapon, "system.combatskill.value")
+            const ktwDamage = testData.extra.actor.system.skillModifiers.combat.damage.reduce((prev, x) => {
+                if(x.target == combatskill) prev += Number(x.value)
+                return prev
+            }, 0)
+
+            if(ktwDamage) {                
+                damage = damage + ktwDamage
+                damageBonusDescription.push(`${game.i18n.localize("TYPES.Item.combatskill")} (${game.i18n.localize("CHARAbbrev.damage")}) ${ktwDamage}`)
+            }
         }
 
         if (doubleDamage) {
@@ -755,10 +767,10 @@ export default class DiceDSA5 {
         for (const el of dmgMultipliers) {
             damage = damage * el.val
         }
-        result["armorPen"] = armorPen
-        result["damagedescription"] = damageBonusDescription.join(", ")
-        result["damage"] = Math.round(damage)
-        result["damageRoll"] = duplicate(damageRoll)
+        result.armorPen = armorPen
+        result.damagedescription = damageBonusDescription.join(", ")
+        result.damage = Math.round(damage)
+        result.damageRoll = duplicate(damageRoll)
     }
 
     static async rollWeapon(testData) {
@@ -801,7 +813,6 @@ export default class DiceDSA5 {
         )
 
         await this.getDuplicatusRoll(result, testData)
-
         await this.detailedWeaponResult(result, testData, source)
 
         if (testData.mode == "attack" && result.successLevel > 0 && !testData.extra.counterAttack)
@@ -812,10 +823,10 @@ export default class DiceDSA5 {
             result.description += ", " + DSA5_Utility.replaceConditions(game.i18n.localize("stunnedByCounterAttack"))
         }
 
-        result["rollType"] = "weapon"
+        result.rollType = "weapon"
         const effect = DiceDSA5.parseEffect(weapon)
 
-        if (effect) result["parsedEffect"] = effect
+        if (effect) result.parsedEffect = effect
 
         return result
     }

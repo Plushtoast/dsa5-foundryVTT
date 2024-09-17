@@ -2,6 +2,7 @@ import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
 import OnUseEffect from "../system/onUseEffects.js";
+import DSATriggers from "../system/triggers.js";
 import DSA5_Utility from "../system/utility-dsa5.js";
 import { delay } from "../system/view_helper.js";
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils
@@ -64,6 +65,7 @@ Hooks.once("i18nInit", () => {
 })
 
 export default class DSAActiveEffectConfig extends ActiveEffectConfig {
+    static AdvantageRuleItems = new Set(["armor", "meleeweapon", "rangeweapon"])
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
@@ -180,12 +182,15 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
 
         if (effectConfigs.hasDamageTransformation) {
-            advancedFunctions.push({ name: "ActiveEffects.advancedFunctions.armorPostprocess", index: 4 }, { name: "ActiveEffects.advancedFunctions.damagePostprocess", index: 5 });
+            advancedFunctions.push(
+                { name: "ActiveEffects.advancedFunctions.armorPostprocess", index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION }, 
+                { name: "ActiveEffects.advancedFunctions.damagePostprocess", index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION }
+            );
         }
         if (effectConfigs.hasTriggerEffects) {
             advancedFunctions.push(
-                { name: "ActiveEffects.advancedFunctions.postRoll", index: 6 },
-                { name: "ActiveEffects.advancedFunctions.postOpposed", index: 7 }
+                { name: "ActiveEffects.advancedFunctions.postRoll", index: DSATriggers.EVENTS.POST_ROLL },
+                { name: "ActiveEffects.advancedFunctions.postOpposed", index: DSATriggers.EVENTS.POST_OPPOSED }
             );
         }
         const config = {
@@ -203,24 +208,29 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             2: 'ActiveEffects.onFailure'
         }
 
+        const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType)
         const macroIndexes = [2, 6, 7]
-        let elem = $(this._element);
-        elem
-            .find(".tabs")
-            .append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`);
-        let template = await renderTemplate("systems/dsa5/templates/status/advanced_effect.html", {
+        const elem = $(this._element);
+        elem.find(".tabs").append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize("advanced")}</a>`);
+
+        const template = await renderTemplate("systems/dsa5/templates/status/advanced_effect.html", {
             effect: this.object,
             advancedFunctions,
             effectConfigs,
             macroIndexes,
             messageReceivers,
+            canWeaponAdvantages,
+            equipmentAdvantageOptions: {
+                1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
+                2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`)
+            },
             applySuccessConditions,
             config,
             isWeapon,
             dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce((obj, e) => {
                 obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`
                 return obj;
-              }, { 2:  game.i18n.localize("all")})
+            }, { 2:  game.i18n.localize("all")})
         });
         elem.find('.tab[data-tab="effects"]').after($(template));
         elem.find(".advancedSelector").on("change", ev => {
@@ -786,6 +796,12 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                 val: `system.skillModifiers.combat.step`,
                 mode: 0,
                 ph: csdemo
+            },
+            {
+                name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize("damage")}`,
+                val: `system.skillModifiers.combat.damage`,
+                mode: 0,
+                ph: csdemo
             }
         ];
 
@@ -810,6 +826,15 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     ph: 1
                 })
             }
+        }
+
+        if(this.object.parent?.type == "armor") {
+            optns.push({
+                name: game.i18n.localize("CustomActiveEffects.armor.vulnerability"),
+                val: `self.armorVulnerability`,
+                mode: 0,
+                ph: "Swords 5"
+            })
         }
 
         for (const k of Object.keys(DSA5.characteristics))

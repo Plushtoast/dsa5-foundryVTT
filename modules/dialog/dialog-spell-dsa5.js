@@ -109,7 +109,7 @@ export default class DSA5SpellDialog extends DialogShared {
         sit.append(mods.join(""))
     }
 
-    static setData(actor, type){
+    static setData(actor, type, renderData){
         const rollModifiers = duplicate(DSA5SpellDialog.rollModifiers)
         const tt = `${type}RollModifiers`
         if(actor.system[tt]){

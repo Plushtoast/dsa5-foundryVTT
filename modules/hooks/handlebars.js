@@ -92,10 +92,14 @@ export default function() {
             const val = a.string || a
             return  game.i18n.has(val) ? game.i18n.localize(val) : ( b || "")
         },
-        successEffect: (a) => {
+        successEffect: (a, parent) => {
             const sucEf = getProperty(a, "flags.dsa5.successEffect")
             if(sucEf == 1) return ` (${game.i18n.localize("ActiveEffects.onSuccess")})`
             if(sucEf == 2) return ` (${game.i18n.localize("ActiveEffects.onFailure")})`
+
+            const advantageEffect = a.system.equipmentAdvantage
+            if(advantageEffect) return ` (${game.i18n.localize(`AdvantageRuleItems.${parent?.type}.${advantageEffect}`)})`
+
             return ""
         },
         replaceConditions: DSA5_Utility.replaceConditions,

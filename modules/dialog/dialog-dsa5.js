@@ -13,13 +13,13 @@ export default class DSA5Dialog extends DialogShared {
             case "meleeweapon":
             case "dodge":
             case "trait":
-                renderData.rollModifiers = DSA5CombatDialog.setData(actor, type, testData)
+                renderData.rollModifiers = DSA5CombatDialog.setData(actor, type, testData, renderData)
                 return DSA5CombatDialog
             case "spell":
             case "ritual":
             case "liturgy":
             case "ceremony":
-                renderData.rollModifiers = DSA5SpellDialog.setData(actor, type)
+                renderData.rollModifiers = DSA5SpellDialog.setData(actor, type, renderData)
                 return DSA5SpellDialog
             case "skill":
                 return DSA5SkillDialog

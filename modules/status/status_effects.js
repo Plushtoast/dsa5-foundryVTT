@@ -45,15 +45,9 @@ export default class DSA5StatusEffects {
         data.conditions = []
         data.transferedConditions = []
 
-        let appliedConditions
-        if(target.documentName == "Item") {
-            appliedConditions = target.effects
-        } else {
-            appliedConditions = Array.from(target.allApplicableEffects())
-
-            if(!game.user.isGM)
-                appliedConditions = appliedConditions.filter(e => { return !e.getFlag("dsa5", "hidePlayers") })
-        }
+        let appliedConditions = Array.from(target.allApplicableEffects())
+        
+        if(!game.user.isGM) appliedConditions = appliedConditions.filter(e => { return !e.getFlag("dsa5", "hidePlayers") })
 
         for (let cnd of appliedConditions) {
             let condition = cnd.toObject()
@@ -66,9 +60,8 @@ export default class DSA5StatusEffects {
                 condition.manual = cnd.getFlag("dsa5", "manual")
                 appliedSystemConditions.push(statusesId)
             }
-            if(target.documentName == "Item") {
-                data.conditions.push(condition)
-            } else if (cnd.parent?.documentName != "Item" && !cnd.notApplicable)
+            
+            if (cnd.parent?.documentName != "Item" && !cnd.notApplicable)
                 data.conditions.push(condition)
             else if (!cnd.notApplicable) {
                 condition.uuid = cnd.uuid

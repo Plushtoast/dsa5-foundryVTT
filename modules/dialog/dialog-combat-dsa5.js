@@ -34,9 +34,10 @@ export default class DSA5CombatDialog extends DialogShared {
         return options;
     }
 
-    static setData(actor, type, testData){
+    static setData(actor, type, testData, renderData){
         const rollModifiers = duplicate(DSA5CombatDialog.rollModifiers)
         rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode)
+        console.log(testData, renderData)
         const tt = `${type}RollModifiers`
         if(actor.system[tt]){
             for(let key of Object.keys(actor.system[tt])){
@@ -425,22 +426,28 @@ export default class DSA5CombatDialog extends DialogShared {
         const attackerIsSwarm = actor.isSwarm()
         testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize
         testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
+        testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0
         testData.situationalModifiers.push(
-            Itemdsa5.parseValueType(game.i18n.localize("sight"), data.vision || 0), {
+            Itemdsa5.parseValueType(game.i18n.localize("sight"), data.vision || 0), 
+            {
                 name: game.i18n.localize("attackFromBehind"),
-                value: Number(data.attackFromBehind) || 0,
-            }, {
+                value: testData.extra.attackFromBehind,
+            }, 
+            {
                 name: game.i18n.localize("MODS.damage"),
                 damageBonus: data.damageModifier,
                 value: 0,
                 step: 1,
-            }, {
+            }, 
+            {
                 name: game.i18n.format("defenseCount", { malus: multipleDefenseValue }),
                 value: (Number(data.defenseCount) || 0) * multipleDefenseValue,
-            }, {
+            }, 
+            {
                 name: game.i18n.localize("wrongHand"),
                 value: Number(data.wrongHand) || 0,
-            }, {
+            }, 
+            {
                 name: game.i18n.localize("advantageousPosition"),
                 value: Number(data.advantageousPosition) || 0,
             },

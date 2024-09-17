@@ -31,6 +31,20 @@
         "split": "Schwarum aufteilen",
         "swarmSplitMessage": "Wieviele Kreaturen sollen sich vom Schwarm trennen?"
     },
+    "AdvantageRuleItems": {
+        "armor": {
+            "1": "Rüstungsvorteil",
+            "2": "Rüstungsnachteil"
+        },  
+        "rangeweapon": {
+            "1": "Waffenvorteil",
+            "2": "Waffennachteil"
+        },
+        "meleeweapon": {
+            "1": "Waffenvorteil",
+            "2": "Waffennachteil"
+        }
+    },
     "char": "Attribut",
     "CHAR": {
         "MU": "Mut",
@@ -1437,6 +1451,11 @@
             "overwrite": "Standardnamen überschreiben"
         }
     },
+    "CustomActiveEffects": {
+        "armor": {
+            "vulnerability": "Rüstungsanpassung (Kampftechnik)"
+        }
+    },
     "ROLL": {
         "Targeting": "gegen",
         "failed": "ist gescheitert",
@@ -1945,7 +1964,9 @@
         "enableAPTracking": "Abenteuerpunkte tracken",
         "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein.",
         "masterCanvasControls": "Canvas Controls aktivieren",
-        "masterCanvasControlsHint": "Fügt Meisterfunktionen zu den Canvas Controls (linke Seite des GUI hinzu)."
+        "masterCanvasControlsHint": "Fügt Meisterfunktionen zu den Canvas Controls (linke Seite des GUI hinzu).",
+        "enableWeaponAdvantages": "Ausrüstungsvor-/nachteile",
+        "enableWeaponAdvantagesHint": "Aktiviere die optionalen Regeln für Waffen- und Rüstungsvor- und nachteile. Sofern Waffen die entsprechenden Regeln enthalten, werden diese automatisch angewendet."
     },
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie"

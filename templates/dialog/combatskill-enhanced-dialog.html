@@ -26,7 +26,8 @@
                 <label>{{localize "attackFromBehind"}} (<span class="attackFromBehindLabel">{{rollModifiers.attackFromBehindLabel.mod}}</span>)</label>
                 <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="{{rollModifiers.attackFromBehindLabel.mod}}">
             </div>
-            {{/if}} {{#if showAttack}}
+            {{/if}} 
+            {{#if showAttack}}
             <div class="form-group" >
                 <label data-tooltip="DIALOGDESCRIPTION.opportunityAttack">{{localize "opportunityAttack"}} (<span class="opportunityAttackLabel">{{rollModifiers.opportunityAttack.mod}}</span>)</label>
                 <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="{{rollModifiers.opportunityAttack.mod}}">
@@ -59,11 +60,12 @@
                     {{selectOptions meleeSizeOptions selected=targetSize localize=true}}
                 </select>
             </div>
-            {{/if}} {{#if rangeOptions}}
+            {{/if}} 
+            {{#if rangeOptions}}
             <div class="form-group">
                 <label>{{localize "distance"}}</label>
                 <select name="distance">
-                    {{selectOptions rangeOptions selected=rangeDistance localize=true}}
+                    {{selectOptions rollModifiers.rangeOptions selected=rangeDistance localize=true}}
                 </select>
             </div>
             <div class="form-group">
@@ -72,7 +74,6 @@
                     {{selectOptions sizeOptions selected=targetSize localize=true}}
                 </select>
             </div>
-
             <div class="form-group">
                 <label>{{localize "aim"}}</label>
                 <select name="aim">
@@ -91,14 +92,12 @@
                     {{selectOptions shooterMovementOptions selected="0" localize=true}}
                 </select>
             </div>
-
             <div class="form-group">
                 <label>{{localize "mount"}}</label>
                 <select name="mountedOptions">
                     {{selectOptions mountedOptions selected="0" inverted=true}}
                 </select>
             </div>
-
             <div class="form-group">
                 <label>{{localize "MODS.combatTurmoil"}} (<span class="combatTurmoilLabel">{{rollModifiers.combatTurmoil.mod}}</span>)</label>
                 <input type="checkbox" id="combatTurmoil" name="combatTurmoil" value="{{rollModifiers.combatTurmoil.mod}}">

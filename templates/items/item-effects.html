@@ -9,8 +9,6 @@
             <div class="col seventy">
                 {{localize "effect"}}
             </div>
-
-
             <div class="col five right">
                 <a class="status-add" data-tooltip="CONDITION.add"><i class="fa fa-plus"></i></a>
             </div>
@@ -18,12 +16,10 @@
         {{#each conditions as |item i|}}
         <div class="row-section col skills statusEffect" data-id="{{item._id}}">
             <div class="col ten">
-                {{#if item.disabled}}
-                <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
-                <img src="{{item.img}}" /> {{/if}}
+                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}}' src="{{item.img}}" />
             </div>
             <div class="col seventy">
-                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item}}</a>
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item ../item}}</a>
             </div>
 
             <div class="col five right">
@@ -35,9 +31,7 @@
         {{/each}} {{#each transferedConditions as |item i|}}
         <div class="row-section col skills statusEffect" data-id="{{item._id}}">
             <div class="col ten">
-                {{#if item.disabled}}
-                <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
-                <img src="{{item.img}}" /> {{/if}}
+                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}}' src="{{item.img}}" />
             </div>
             <div class="col seventy">
                 <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>

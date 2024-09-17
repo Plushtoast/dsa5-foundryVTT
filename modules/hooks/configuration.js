@@ -219,6 +219,15 @@ export function setupConfiguration() {
         type: Boolean
     });
 
+    game.settings.register("dsa5", "enableWeaponAdvantages", {
+        name: "DSASETTINGS.enableWeaponAdvantages",
+        hint: "DSASETTINGS.enableWeaponAdvantagesHint",
+        scope: "world",
+        config: true,
+        default: false,
+        type: Boolean
+    });
+
     game.settings.register("dsa5", "hideOpposedDamageSelect", {
         name: "DSASETTINGS.hideOpposedDamageSelect",
         hint: "DSASETTINGS.hideOpposedDamageSelectHint",

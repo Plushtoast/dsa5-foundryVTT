@@ -5,12 +5,21 @@ import RuleChaos from "./rule_chaos.js";
 import DSA5SoundEffect from "./dsa-soundeffect.js";
 
 export default class DSATriggers {
+    static EVENTS = {
+        ARMOR_TRANSFORMATION: 4,
+        DAMAGE_TRANSFORMATION: 5,
+        POST_ROLL: 6,
+        POST_OPPOSED: 7
+    }
+
+    //static cachedEvents = { 6: {}, 7: {} }
+
     static async postOpposed(data) {
         const actor = DSA5_Utility.getSpeaker(data.attacker.speaker);
 
         if(!actor) return
 
-        await this.runMacro(actor, data.attacker.testResult, 7, data);
+        await this.runMacro(actor, data.attacker.testResult, DSATriggers.EVENTS.POST_OPPOSED, data);
     }
 
     static async postRoll(data) {
@@ -18,7 +27,7 @@ export default class DSATriggers {
 
         if(!actor) return
 
-        await this.runMacro(actor, data.testData, 6, data);
+        await this.runMacro(actor, data.testData, DSATriggers.EVENTS.POST_ROLL, data);
     }
 
     static async callMacro(item, packName, name, args = {}) {

@@ -16,6 +16,8 @@ import DSA5SoundEffect from "../system/dsa-soundeffect.js";
 import CreatureType from "../system/creature-type.js";
 import Riding from "../system/riding.js";
 import APTracker from "../system/ap-tracker.js";
+import DSATriggers from "../system/triggers.js";
+import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js";
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils
 
 export default class Actordsa5 extends Actor {
@@ -461,6 +463,7 @@ export default class Actordsa5 extends Actor {
     }
     this.statuses.clear();
 
+    
     const changes = []
     let multiply = 1
     for ( const e of this.effects ) {
@@ -492,26 +495,26 @@ export default class Actordsa5 extends Actor {
     let apply = true;
 
     const appliedArtifacts = this.items.filter(x => ["rangeweapon", "meleeweapon", "equipment", "armor"].includes(x.type) && x.system.isArtifact && (x.system.worn.value || (x.type == "equipment" && !x.system.worn.wearable))).map(x => x.system.artifact)
+    const disableWeaponAdvantages = !game.settings.get("dsa5", "enableWeaponAdvantages")
 
-    this.dsatriggers = {
-      6: {},
-      7: {},
-    }
+    this.dsatriggers = { 6: {}, 7: {} }
 
     for(let item of this.items) {
       for(const e of item.effects) {
-        if(e.disabled) continue
-        if(!e.transfer) continue
-        if(e.system.delayed) continue
+        if(e.disabled || !e.transfer || e.system.delayed) continue
 
         apply = true
 
         switch (item.type) {
           case "meleeweapon":
           case "rangeweapon":
+            if(disableWeaponAdvantages && e.system.equipmentAdvantage) continue
+
             apply = item.system.worn.value && e.getFlag("dsa5", "applyToOwner");
             break
           case "armor":
+            if(disableWeaponAdvantages && e.system.equipmentAdvantage) continue
+
             apply = item.system.worn.value
             break;
           case "equipment":
@@ -547,19 +550,15 @@ export default class Actordsa5 extends Actor {
                 apply = true
             }
             multiply = Number(item.system.step.value) || 1
-
-            const advancedFunction = getProperty(e, "flags.dsa5.advancedFunction")
-
-            if(this.dsatriggers.hasOwnProperty(advancedFunction)) {
-              this.dsatriggers[advancedFunction][item.id] = e.id
-            }
-
             break
           case "advantage":
           case "disadvantage":
             multiply = Number(item.system.step.value) || 1
             break;
         }
+
+        const advancedFunction = getProperty(e, "flags.dsa5.advancedFunction")
+        if(this.dsatriggers.hasOwnProperty(advancedFunction)) this.dsatriggers[advancedFunction][item.id] = e.id
 
         e.notApplicable = !apply;
 
@@ -586,7 +585,7 @@ export default class Actordsa5 extends Actor {
     changes.sort((a, b) => a.priority - b.priority);
 
     for (let change of changes) {
-      if ( !change.key ) continue;
+      if ( !change.key || /^self\./.test(change.key)) continue;
       const result = change.effect.apply(this, change);
       Object.assign(overrides, result);
     }
@@ -642,7 +641,8 @@ export default class Actordsa5 extends Actor {
         combat: {
           step: [],
           parry: [],
-          attack: []
+          attack: [],
+          damage: []
         },
         feature: {
           FP: [],
@@ -835,19 +835,59 @@ export default class Actordsa5 extends Actor {
     return actorData.canAdvance;
   }
 
-  //TODO get rid of the multiple loops
-  static armorValue(actor, options = {}) {
-    let wornArmor = actor.items.filter((x) => x.type == "armor" && x.system.worn.value == true);
+  static armorOpposedTransformation(actor, wornArmor, options) {
     if (options.origin) {
+      let combatskill = getProperty(options.origin, "system.combatskill.value");
+
       wornArmor = wornArmor.map((armor) => {
-        let optnCopy = mergeObject(duplicate(options), { armor });
-        return DSAActiveEffectConfig.applyRollTransformation(actor, optnCopy, 4).options.armor;
+        const optnCopy = mergeObject(duplicate(options), { armor });       
+
+        if(combatskill) {
+          combatskill += " "
+          for(let ef of armor.effects){
+            if(ef.disabled) continue
+
+            for(let change of ef.changes) {
+              if(change.key == "self.armorVulnerability") {
+                const adaptions = change.value.split(/[,;]/)
+                let adaption 
+                if(options.defenderTest.attackFromBehind) adaption = adaptions.find(x => x.trim().startsWith("attackFromBehind "))
+                if(!adaption) adaption = adaptions.find(x => x.trim().startsWith(combatskill))
+                
+                if(adaption) {
+                  const number = Number(adaption.match(/[-+]?\d+/)[0]) || 0
+                  for(let key of ["head","rightleg","leftleg","rightarm","leftarm","value"]){
+                    if(armor.system.protection[key]) armor.system.protection[key] = Math.max(0, armor.system.protection[key] + number)
+                  }
+                } else {
+                  adaption = adaptions.find(x => x.trim().startsWith("randomArmor "))
+                  if(adaption) {
+                    //random value
+                    const randomArmorVals =  adaption.split(" ")[1].split("|")
+                    const randomArmor = randomArmorVals[Math.floor(Math.random() * randomArmorVals.length)]
+
+                    for(let key of ["head","rightleg","leftleg","rightarm","leftarm","value"]){
+                      if(armor.system.protection[key]) armor.system.protection[key] = randomArmor
+                    }
+                  }
+                }
+              }
+            }          
+          }
+        }
+        
+        return DSAActiveEffectConfig.applyRollTransformation(actor, optnCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION).options.armor;
       });
     }
+    return wornArmor
+  }
+
+  //TODO get rid of the multiple loops
+  static armorValue(actor, options = {}) {
+    const wornArmor = this.armorOpposedTransformation(actor, actor.items.filter((x) => x.type == "armor" && x.system.worn.value == true), options)
     const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b, b.system.protection.value), 0);
-    const animalArmor = actor.items
-      .filter((x) => x.type == "trait" && x.system.traitType.value == "armor")
-      .reduce((a, b) => a + Number(b.system.at.value), 0);
+    const animalArmor = actor.items.reduce((a, b) => a + (b.type == "trait" && b.system.traitType.value == "armor" ? Number(b.system.at.value) : 0), 0);
+
     return {
       wornArmor,
       armor: protection + animalArmor + (actor.system.totalArmor || 0),
@@ -1554,23 +1594,25 @@ export default class Actordsa5 extends Actor {
   }
 
   setupWeaponless(statusId, options = {}, tokenId) {
-    let item = foundry.utils.duplicate(DSA5.defaultWeapon);
-    item.name = game.i18n.localize(`${statusId}Weaponless`);
-    item.system.combatskill = {
-      value: game.i18n.localize("LocalizedIDs.wrestle"),
-    };
-    item.system.damageThreshold.value = 14;
-
     const attributes = []
-
     if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyAstralBody")))
       attributes.push(game.i18n.localize("magical"))
     if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize("LocalizedIDs.mightyKarmalBody")))
       attributes.push(game.i18n.localize("blessed"))
 
-    mergeObject(item, { system: { effect: { attributes: attributes.join(", ") } }});
+    const item = DSA5.defaultWeapon({
+      name: game.i18n.localize(`${statusId}Weaponless`),
+      system: {
+        combatskill: {
+          value: game.i18n.localize("LocalizedIDs.wrestle"),
+        },
+        effect: {
+          attributes: attributes.join(", ")
+        }
+      }
+    })
 
-    options["mode"] = statusId;
+    options.mode = statusId;
     return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
 
@@ -2175,14 +2217,10 @@ export default class Actordsa5 extends Actor {
   }
 
   setupDodge(options = {}, tokenId) {
-    //todo clean this up
     const statusId = "dodge";
-    let char = this.system.status[statusId];
-    let title = game.i18n.localize(statusId) + " " + game.i18n.localize("Test");
-
-    let testData = {
+    const testData = {
       source: {
-        system: char,
+        system: this.system.status[statusId],
         type: statusId,
       },
       opposable: false,
@@ -2194,52 +2232,35 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let toSearch = [game.i18n.localize(statusId), game.i18n.localize('LocalizedIDs.wrestle')];
-    let combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry").concat(Itemdsa5.buildCombatSpecAbs(this, ["animal"], undefined, "parry"))
-
-    let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
+    const toSearch = [game.i18n.localize(statusId), game.i18n.localize('LocalizedIDs.wrestle')];
+    const combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry").concat(Itemdsa5.buildCombatSpecAbs(this, ["animal"], undefined, "parry"))
+    const situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this);
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
-    let dialogOptions = {
-      title,
+    const data = {
+      rollMode: options.rollMode,
+      combatSpecAbs: combatskills,
+      showDefense: true,
+      situationalModifiers,
+      isRangeAttack,
+      defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue, }),
+      multipleDefenseValue,
+      isDodge: true
+    }
+    const dialogOptions = {
+      title: `${game.i18n.localize(statusId)} ${game.i18n.localize("Test")}`,
       template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
-      data: {
-        rollMode: options.rollMode,
-        combatSpecAbs: combatskills,
-        showDefense: true,
-        situationalModifiers,
-        isRangeAttack,
-        defenseCountString: game.i18n.format("defenseCount", { malus: multipleDefenseValue, }),
-        multipleDefenseValue,
-        isDodge: true
-      },
+      data,
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
-        testData.situationalModifiers.push(...Itemdsa5.getSpecAbModifiers(html, "parry"));
-        testData.situationalModifiers.push(
-          {
-            name: game.i18n.localize("attackFromBehind"),
-            value: html.find('[name="attackFromBehind"]').is(":checked") ? -4 : 0,
-          },
-          {
-            name: game.i18n.format("defenseCount", {
-              malus: multipleDefenseValue,
-            }),
-            value: (Number(html.find('[name="defenseCount"]').val()) || 0) * multipleDefenseValue,
-          },
-          {
-            name: game.i18n.localize("advantageousPosition"),
-            value: html.find('[name="advantageousPosition"]').is(":checked") ? 2 : 0,
-          },
-        );
-        mergeObject(testData.extra.options, options);
-        return { testData, cardOptions };
+        DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, this, options, multipleDefenseValue, "parry")
+        Hooks.call("callbackDialogCombatDSA5", testData, this, html, testData.source, tokenId)
+        testData.isRangeDefense = data.isRangeDefense
+        return { testData, cardOptions }
       },
     };
 
-    let cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", title, tokenId);
+    const cardOptions = this._setupCardOptions("systems/dsa5/templates/chat/roll/status-card.html", dialogOptions.title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,

@@ -5,6 +5,20 @@
                 {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}} 
             </div>
         </div>
+        {{#if enableWeaponAdvantages}}
+            {{#each conditions as |item i|}}
+                {{#if (and item.description item.system.equipmentAdvantage)}}
+                <div class="row-section">
+                    <div class="col third">
+                        <p><b>{{localize (concat 'AdvantageRuleItems.' ...item.type '.' item.system.equipmentAdvantage)}}</b>:</p>
+                    </div>
+                    <div class="col seventy">
+                        {{{item.description}}}
+                    </div>             
+                </div>
+                {{/if}}
+            {{/each}}
+        {{/if}}
     </div>
     {{#if isGM}}
     <div class="row-section" style="margin-top:20px">

@@ -54,6 +54,14 @@
         <input type="checkbox" name="flags.dsa5.applyToOwner" {{checked effect.flags.dsa5.applyToOwner}}/>
     </div>
     {{/if}}
+    {{#if canWeaponAdvantages}}
+    <div class="form-group">
+        <label class="label-text">{{localize "DSASETTINGS.enableWeaponAdvantages"}}</label>
+        <select name="system.equipmentAdvantage">
+            {{selectOptions equipmentAdvantageOptions selected=effect.system.equipmentAdvantage blank="-"}}
+        </select>
+    </div>
+    {{/if}}
     <div class="form-group">
         <label class="label-text">{{localize "DSASETTINGS.notifyOnFadingEffects"}}</label>
         <select class="advancedSelector" name="flags.dsa5.removeMessage">
