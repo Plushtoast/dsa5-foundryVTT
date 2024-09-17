@@ -205,7 +205,6 @@
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
-    "advantageousPosition": "Vorteilhafte Position",
     "APValue": "AP-Wert",
     "additionalFPs": "zusätzliche FPs",
     "attacktest": "Angriffsprobe",
@@ -214,15 +213,12 @@
     "arrow": "Pfeil",
     "armor": "Rüstung",
     "application": "Anwendungsgebiet",
-    "aim": "Zielen",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "rebuyCost": "Zurückkaufen für 2 AP",
     "rebuyRevertCost": "Rückkauf rückgängig machen für 2 AP",
     "animal": "Tier",
     "attributeChange": "Eigenschaftsänderung",
     "attackOfOpportunity": "Der Kämpfer kann einen Passierschlag ausführen.",
-    "opportunityAttack": "Passierschlag",
-    "attackFromBehind": "Angriff von Hinten",
     "Advances": "Steigerungen",
     "attributes": "Eigenschaften",
     "astralenergy": "Astralenergie",
@@ -314,7 +310,6 @@
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "doubleDamage": "{x}-facher Schaden",
     "duration": "Wirkungsdauer",
-    "doubleAttack": "Beidhändiger Kampf",
     "DSA5Error": "DSA5 - Fehler melden",
     "DSA5Wiki": "DSA5 - Wiki",
     "Description": "Beschreibung",
@@ -429,7 +424,6 @@
     "maxSpellMods": "Maximale Modifikatorenanzahl",
     "misc": "Sonstiges",
     "Name": "Name",
-    "narrowSpace": "Beengte Umgebung",
     "notsuitableAdvantages": "Ungeeignete Vorteile",
     "notsuitableDisadvantages": "Ungeeignete Nachteile",
     "notsuitableTalents": "Ungeeignete Talente",
@@ -563,7 +557,6 @@
     "worn": "Ausgerüstet",
     "each": "je",
     "wearable": "Ausrüstbar",
-    "wrongHand": "Falsche Hand",
     "writing": "Schrift",
     "doNothing": "Keine Reaktion",
     "volume": "Volumen",
@@ -748,8 +741,16 @@
     },
     "MODS": {
         "partChecks": "Teilprobenmodifikator",
+        "attackFromBehind": "Angriff von Hinten",
+        "opportunityAttack": "Passierschlag",
+        "aim": "Zielen",
         "FP": "Fertigkeitspunktemodifikator",
         "FW": "Fertigkeitswertmodifikator",
+        "narrowSpace": "Beengte Umgebung",
+        "doubleAttack": "Beidhändiger Kampf",
+        "advantageousPosition": "Vorteilhafte Position",
+        "wrongHand": "Falsche Hand",
+        "quickChange": "Ziel schlägt Haken",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
         "damage": "Schadensmodifikator",
@@ -760,7 +761,26 @@
         "creatureBonus": "Bonusschaden (Kreatur)",
         "armorPen": "Rüstungsdurchdringung",
         "sight": "Sichtmodifikator",
-        "sightMax": "Sichtmodifikator inkl. Stufe 4"
+        "sightMax": "Sichtmodifikator inkl. Stufe 4",
+        "RangeMod": {
+            "short": "Nah ({fk} auf FK, {tp} TP)",
+            "medium": "Mittel ({fk} auf FK, {tp} TP)",
+            "long": "Weit ({fk} auf FK, {tp} TP)",
+            "rangesense": "Weit ({fk} auf FK, {tp} TP)",
+            "extreme": "Extrem ({fk} auf FK, {tp} TP)"
+        },
+        "RangeSize": {
+            "tiny": "Winzig ({f})",
+            "small": "Klein ({f})",
+            "average": "Mittel ({f})",
+            "big": "Groß ({f})",
+            "giant": "Riesig ({f})"
+        },
+        "aimOptions": {
+            "0": "Ungezielt ({f})",
+            "1": "1 Aktion zielen ({f})",
+            "2": "2 Aktionen zielen ({f})"
+        }
     },
     "WIZARD": {
         "addItem": "{item} hinzufügen",
@@ -1147,13 +1167,6 @@
         "AutoBarHint": "Die Ressourcenleiste werden anhand der Fähigkeiten des Akteurs definiert (AsP, KaP).",
         "AutoSizeHint": "Die Tokengröße wird anhand der Größenkategorie des Akteurs definiert."
     },
-    "RangeMod": {
-        "short": "Nah [+2 auf FK, +1 TP]",
-        "medium": "Mittel [+/–0 auf FK]",
-        "long": "Weit [–2 auf FK, –1 TP]",
-        "rangesense": "Weit [–1 auf FK, –1 TP]",
-        "extreme": "Extrem [–4 auf FK, –2 TP]"
-    },
     "VisionDisruption": {
         "step0": "Klare Sicht",
         "step1": "Leichte Störung [-2]",
@@ -1362,13 +1375,6 @@
             "medium": "Mittlerer Schild, -4 AT/-3 PA",
             "long": "Großer Schild, -6 AT/-4 PA"
         }
-    },
-    "RANGESIZE": {
-        "tiny": "Winzig [-8]",
-        "small": "Klein [-4]",
-        "average": "Mittel",
-        "big": "Groß [+4]",
-        "giant": "Riesig [+8]"
     },
     "MELEESIZE": {
         "tiny": "Winzig [-4]",
@@ -1782,7 +1788,6 @@
         "STATIONARY": "steht still (+2)",
         "SLOW": "bewegt sich leicht (+-0)",
         "FAST": "bewegt sich schnell (-2)",
-        "QUICKCHANGE": "Ziel schlägt Haken",
         "SHOOTERMOVING": "geht (-2)",
         "SHOOTERRUNNING": "rennt (-4)",
         "SHOOTERSTATIONARY": "ist stationär (+-0)"
@@ -1827,11 +1832,7 @@
         "dodge": "Ausweichen verbessern",
         "char": "Eigenschaft verbessern"
     },
-    "aimOptions": {
-        "0": "Ungezielt",
-        "1": "1 Aktion zielen",
-        "2": "2 Aktionen zielen"
-    },
+    
     "hideOpposedOptions": {
         "0": "Gemäß Rollmodus",
         "1": "Gemäß Rollmodus, kritische Details verstecken",

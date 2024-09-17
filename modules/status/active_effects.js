@@ -1,3 +1,4 @@
+import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js";
 import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js";
 import DSA5 from "../system/config-dsa5.js";
 import DiceDSA5 from "../system/dice-dsa5.js";
@@ -865,6 +866,34 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     val: `system.${model}RollModifiers.${k}.custom`,
                     mode: 0,
                     ph: descriptor,
+                })
+            }
+        }
+
+        for(let model of ["meleeweapon"]){
+            const modelName = DSA5_Utility.categoryLocalization(model)
+
+            for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog.meleeRollModifiers))){
+                console.log(`${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`)
+                optns.push({
+                    name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`,
+                    val: `system.${model}RollModifiers.${k}`,
+                    mode: 2,
+                    ph: "1",
+                })
+            }
+        }
+
+        for(let model of ["rangeweapon"]){
+            const modelName = DSA5_Utility.categoryLocalization(model)
+
+            for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog.rangeRollModifiers))){
+                console.log(`${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`)
+                optns.push({
+                    name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`,
+                    val: `system.${model}RollModifiers.${k}`,
+                    mode: 2,
+                    ph: "1",
                 })
             }
         }

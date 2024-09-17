@@ -264,11 +264,9 @@
     },
     "advanced": "Advanced",
     "requiredFW": "Required SR",
-    "advantageousPosition": "Advantageous Position",
     "APValue": "AP-Value",
     "additionalFPs": "additional SPs",
     "attacktest": "Attack test",
-    "aim": "Aim",
     "arrow": "Arrow",
     "armor": "Armor",
     "ok": "Ok",
@@ -281,8 +279,6 @@
     "animal": "Animal",
     "attributeChange": "Attribute change",
     "attackOfOpportunity": "The defender can make an immediate attack of opportunity against the opponent",
-    "opportunityAttack": "Attack of Opportunity",
-    "attackFromBehind": "Attack from behind",
     "Advances": "Advances",
     "attributes": "Attributes",
     "botchCritEffect": "Botch/Crit",
@@ -383,7 +379,6 @@
     "damageOverThreshold": "Including bonus damage of the damage threshold",
     "doubleDamage": "{x}-times damage",
     "duration": "Effect duration",
-    "doubleAttack": "Two-Weapon Combat",
     "domains": "Domains",
     "DSA5Error": "TDE5 - Report error",
     "DSA5Wiki": "TDE5 - Wiki",
@@ -495,7 +490,6 @@
     "maxSpellMods": "Max modifier count",
     "misc": "Misc",
     "Name": "Name",
-    "narrowSpace": "Cramped",
     "notsuitableAdvantages": "Unsuitable advantages",
     "notsuitableDisadvantages": "Unsuitable disadvantages",
     "notsuitableTalents": "Unsuitable skills",
@@ -626,7 +620,6 @@
     "weaponModifier": "Weapon Modifier",
     "worn": "Worn",
     "wearable": "Wearable",
-    "wrongHand": "Wrong hand",
     "volume": "Volume",
     "writing": "Writing",
     "yes": "Yes",
@@ -804,11 +797,20 @@
     },
     "MODS": {
         "partChecks": "Part of skill check modifier",
+        "attackFromBehind": "Attack from behind",
+        "opportunityAttack": "Attack of Opportunity",
+        "aim": "Aim",
+        "narrowSpace": "Cramped",
+        "advantageousPosition": "Advantageous Position",
         "FP": "Skill points modifier",
         "FW": "Skill rating modifier",
+        "wrongHand": "Wrong hand",
+        "doubleAttack": "Two-Weapon Combat",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
         "damage": "Damage modifier",
+        "quickChange": "Zigzagging",
+        "targetMovement": "Target",
         "defenseMalus": "Defense malus",
         "global": "Global modifier",
         "armor": "Armor modifier",
@@ -816,7 +818,26 @@
         "creatureBonus": "Bonus damage (creature)",
         "armorPen": "Armor penetration",
         "sight": "Sight modifier",
-        "sightMax": "Sight modifier incl. Level 4"
+        "sightMax": "Sight modifier incl. Level 4",
+        "RangeMod": {
+            "short": "Close ({fk} to RC, {tp} DP)",
+            "medium": "Medium ({fk} to RC, {tp} DP)",
+            "long": "Far ({fk} to RC, {tp} DP)",
+            "rangesense": "Far ({fk} to RC, {tp} DP)",
+            "extreme": "Extreme ({fk} to RC, {tp} DP)"
+        },
+        "RangeSize": {
+            "tiny": "Tiny ({f})",
+            "small": "Small ({f})",
+            "average": "Medium ({f})",
+            "big": "Large ({f})",
+            "giant": "Huge ({f})"
+        },
+        "aimOptions": {
+            "0": "Unaimed ({f})",
+            "1": "Aim 1 action ({f})",
+            "2": "Aim 2 actions ({f})"
+        }
     },
     "wrongGrip": {
         "oneHanded": "One-handed guided",
@@ -1130,13 +1151,6 @@
         "AutoBarHint": "The ressource bars will be defined by the actor's abilities (AE, KE).",
         "AutoSizeHint": "The token size will be defined by the actor's size category."
     },
-    "RangeMod": {
-        "short": "Close [+2 to RC, +1 DP]",
-        "medium": "Medium [+/-0 to RC]",
-        "long": "Far [-2 to RC, -1 DP]",
-        "rangesense": "Far [-1 to RC, -1 DP]",
-        "extreme": "Far [-4 to RC, -2 DP]"
-    },
     "VisionDisruption": {
         "step0": "Clear sight",
         "step1": "Slight impairment [-2]",
@@ -1310,13 +1324,6 @@
             "medium": "Medium shields, -4 AT/-3 PA",
             "long": "Large shields, -6 AT/-4 PA"
         }
-    },
-    "RANGESIZE": {
-        "tiny": "Tiny [-8]",
-        "small": "Small [-4]",
-        "average": "Medium",
-        "big": "Large [+4]",
-        "giant": "Huge [+8]"
     },
     "MELEESIZE": {
         "tiny": "Tiny [-4]",
@@ -1671,7 +1678,6 @@
         "STATIONARY": "motionless (+2)",
         "SLOW": "moving slowly (+-0)",
         "FAST": "moving quickly (-2)",
-        "QUICKCHANGE": "Zigzagging",
         "SHOOTERMOVING": "walking (-2)",
         "SHOOTERRUNNING": "running (-4)",
         "SHOOTERSTATIONARY": "stationary (+-0)"
@@ -1708,11 +1714,6 @@
         "showData": "Show details to players",
         "improveFate": "Improve roll (1 FtP)",
         "improveFateGroup": "Improve roll (1 Group FtP)"
-    },
-    "aimOptions": {
-        "0": "Unaimed",
-        "1": "Aim 1 action",
-        "2": "Aim 2 actions"
     },
     "Book": {
         "Wizard": "Journal Browser",

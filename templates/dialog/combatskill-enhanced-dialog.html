@@ -3,17 +3,17 @@
         <div class="col sixty">
             {{> systems/dsa5/templates/dialog/default-combat-dialog.html}} {{#if melee}}
             <div class="form-group" >
-                <label data-tooltip="DIALOGDESCRIPTION.narrowSpace">{{localize "narrowSpace"}} (<span class="narrowSpaceLabel">{{rollModifiers.narrowSpace.mod}}</span>)</label>
+                <label data-tooltip="DIALOGDESCRIPTION.narrowSpace">{{localize "MODS.narrowSpace"}} (<span class="narrowSpaceLabel">{{rollModifiers.narrowSpace.mod}}</span>)</label>
                 <input type="checkbox" id="narrowSpace" name="narrowSpace" value="{{rollModifiers.narrowSpace.mod}}" {{checked constricted}}>
             </div>
             <div class="form-group">
-                <label>{{localize "wrongHand"}} (<span class="wrongHandLabel">{{rollModifiers.wrongHand.mod}}</span>)</label>
+                <label>{{localize "MODS.wrongHand"}} (<span class="wrongHandLabel">{{rollModifiers.wrongHand.mod}}</span>)</label>
                 <input type="checkbox" id="wrongHand" name="wrongHand" value="{{rollModifiers.wrongHand.mod}}" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
             </div>            
             {{/if}} 
             {{#if (or melee isDodge)}}          
             <div class="form-group" >
-                <label data-tooltip="DIALOGDESCRIPTION.advantageousPosition">{{localize "advantageousPosition"}} (<span class="advantageousPositionLabel">{{rollModifiers.advantageousPosition.mod}}</span>)</label>
+                <label data-tooltip="DIALOGDESCRIPTION.advantageousPosition">{{localize "MODS.advantageousPosition"}} (<span class="advantageousPositionLabel">{{rollModifiers.advantageousPosition.mod}}</span>)</label>
                 <input type="checkbox" id="advantageousPosition" name="advantageousPosition" value="{{rollModifiers.advantageousPosition.mod}}">
             </div>
             {{/if}}
@@ -23,13 +23,13 @@
                 <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="defenseCount" value="{{defenseCount}}" />
             </div>
             <div class="form-group">
-                <label>{{localize "attackFromBehind"}} (<span class="attackFromBehindLabel">{{rollModifiers.attackFromBehindLabel.mod}}</span>)</label>
-                <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="{{rollModifiers.attackFromBehindLabel.mod}}">
+                <label>{{localize "MODS.attackFromBehind"}} (<span class="attackFromBehind">{{rollModifiers.attackFromBehind.mod}}</span>)</label>
+                <input type="checkbox" id="attackFromBehind" name="attackFromBehind" value="{{rollModifiers.attackFromBehind.mod}}">
             </div>
             {{/if}} 
             {{#if showAttack}}
             <div class="form-group" >
-                <label data-tooltip="DIALOGDESCRIPTION.opportunityAttack">{{localize "opportunityAttack"}} (<span class="opportunityAttackLabel">{{rollModifiers.opportunityAttack.mod}}</span>)</label>
+                <label data-tooltip="DIALOGDESCRIPTION.opportunityAttack">{{localize "MODS.opportunityAttack"}} (<span class="opportunityAttackLabel">{{rollModifiers.opportunityAttack.mod}}</span>)</label>
                 <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="{{rollModifiers.opportunityAttack.mod}}">
             </div>
             <div class="form-group" data-tooltip="DIALOG.assassinateDescr">
@@ -43,7 +43,7 @@
             {{/if}} 
             {{#if (or showDefense showAttack)}}
             <div class="form-group" >
-                <label data-tooltip="DIALOGDESCRIPTION.twoWeaponCombat">{{localize "doubleAttack"}} (<span class="doubleAttackLabel">{{rollModifiers.doubleAttack.mod}}</span>)</label>
+                <label data-tooltip="DIALOGDESCRIPTION.twoWeaponCombat">{{localize "MODS.doubleAttack"}} (<span class="doubleAttackLabel">{{rollModifiers.doubleAttack.mod}}</span>)</label>
                 <input type="checkbox" id="doubleAttack" name="doubleAttack" value="{{rollModifiers.doubleAttack.mod}}">
             </div>
             {{/if}}
@@ -65,23 +65,29 @@
             <div class="form-group">
                 <label>{{localize "distance"}}</label>
                 <select name="distance">
-                    {{selectOptions rollModifiers.rangeOptions selected=rangeDistance localize=true}}
+                    {{#each rollModifiers.RangeMod as |item key|}}
+                    <option value="{{key}}" data-damage="{{item.damage}}" data-attack="{{item.attack}}" {{#if (eq key ../rangeDistance)}}selected{{/if}}>{{localize (concat 'MODS.RangeMod.' key) fk=item.attack tp=item.damage}}</option>
+                    {{/each}}
                 </select>
             </div>
             <div class="form-group">
                 <label>{{localize "sizeCategory"}}</label>
                 <select name="size">
-                    {{selectOptions sizeOptions selected=targetSize localize=true}}
+                    {{#each rollModifiers.RangeSize as |item key|}}
+                    <option value="{{item.mod}}" {{#if (eq key ../targetSize)}}selected{{/if}}>{{localize (concat 'MODS.RangeSize.' key) f=item.mod}}</option>
+                    {{/each}}
                 </select>
             </div>
             <div class="form-group">
-                <label>{{localize "aim"}}</label>
+                <label>{{localize "MODS.aim"}}</label>
                 <select name="aim">
-                    {{selectOptions aimOptions selected="0" localize=true}}
+                    {{#each rollModifiers.aimOptions as |item key|}}
+                    <option value="{{item.mod}}">{{localize (concat 'MODS.aimOptions.' key) f=item.mod}}</option>
+                    {{/each}}
                 </select>
             </div>
             <div class="form-group">
-                <label>{{localize "target"}}</label>
+                <label>{{localize "MODS.targetMovement"}}</label>
                 <select name="targetMovement">
                     {{selectOptions targetMovementOptions selected=rollModifiers.targetMovement.mod localize=true}}
                 </select>
@@ -103,7 +109,7 @@
                 <input type="checkbox" id="combatTurmoil" name="combatTurmoil" value="{{rollModifiers.combatTurmoil.mod}}">
             </div>
             <div class="form-group">
-                <label>{{localize "rangeMovementOptions.QUICKCHANGE"}} (<span class="quickChangeLabel">{{rollModifiers.quickChange.mod}}</span>)</label>
+                <label>{{localize "MODS.quickChange"}} (<span class="quickChangeLabel">{{rollModifiers.quickChange.mod}}</span>)</label>
                 <input type="checkbox" id="quickChange" name="quickChange" value="{{rollModifiers.quickChange.mod}}">
             </div>
             {{/if}}

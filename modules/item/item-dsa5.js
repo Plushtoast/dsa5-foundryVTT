@@ -517,12 +517,11 @@ export default class Itemdsa5 extends Item {
                 selected: true,
             })
         }
-
-        const rangeOptions = { ...DSA5.rangeWeaponModifiers }
-        delete rangeOptions[
-            AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense"
-        ]
-        if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.extremeShot"))) delete rangeOptions["extreme"]
+        
+        const rangeOptions = new Set(["short", "medium", "long", "rangesense", "extreme"])
+        rangeOptions.delete(AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.senseOfRange")) ? "long" : "rangesense")
+        if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.extremeShot"))) rangeOptions.delete("extreme")
+        
         const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.drivingArcher"))
         const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize("LocalizedIDs.mountedArcher"))
         let mountedOptions
@@ -545,15 +544,13 @@ export default class Itemdsa5 extends Item {
 
         mergeObject(data, {
             rangeOptions,
-            rangeDistance: Object.keys(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
-            sizeOptions: DSA5.rangeSizeCategories,
+            rangeDistance: Array.from(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
             visionOptions: DSA5.rangeVision,
             mountedOptions: finalMountedOptions, 
             shooterMovementOptions: DSA5.shooterMovementOptions,
             targetMovementOptions: DSA5.targetMomevementOptions,
             targetSize,
-            combatSpecAbs: combatskills,
-            aimOptions: DSA5.aimOptions,
+            combatSpecAbs: combatskills
         })
     }
 

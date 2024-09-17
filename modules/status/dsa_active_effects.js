@@ -3,6 +3,7 @@ const { getProperty, setProperty, getType } = foundry.utils
 
 export default class DSAActiveEffect extends ActiveEffect {
     static itemChangeRegex = /^@/
+    static deprecatedDataRegex = /^data\./
 
     apply(actor, change) {
         if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
@@ -20,7 +21,7 @@ export default class DSAActiveEffect extends ActiveEffect {
             if(change.key.startsWith("data.")) {
                 const msg = game.i18n.format("DSAError.ActiveEffectDataChange", { name: actor.name })
                 console.error(msg)
-                change.key = change.key.replace(/^data\./, "system.")
+                change.key = change.key.replace(DSAActiveEffect.deprecatedDataRegex, "system.")
             }
             return super.apply(actor, change);
         }

@@ -232,126 +232,69 @@ export default class DiceDSA5 {
 
     static async _rollSingleD20(roll, res, id, modifier, testData, combatskill = "", multiplier = 1) {
         let description = ""
-
-        let chars = []
-        res += modifier
-        res = Math.round(res * multiplier)
-        let res1 = res - roll.terms[0].results[0].result
-
+        res = Math.round((res + modifier) * multiplier)
+        const rollTotal = roll.total ?? roll._total
         const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id)
-
-        chars.push({ char: id, res: roll.terms[0].results[0].result, suc: res1 >= 0, tar: res })
-        let successLevel = res1 >= 0 ? 1 : -1
-
+        const suc = res - rollTotal >= 0
+        const characteristics = [{ char: id, res: rollTotal, suc, tar: res }]
+        let successLevel = suc ? 1 : -1
         let botch = 20
         let crit = 1
-        if (testData.source.type == "meleeweapon") {
-            botch = Math.min(testData.extra.actor.system.meleeStats.botch, testData.source.system.botch)
-            crit = Math.max(testData.extra.actor.system.meleeStats.crit, testData.source.system.crit)
+        const statKey = { "meleeweapon": "meleeStats", "rangeweapon": "rangeStats" }[testData.source.type]
+
+        if (statKey) {
+            botch = Math.min(testData.extra.actor.system[statKey].botch, testData.source.system.botch)
+            crit = Math.max(testData.extra.actor.system[statKey].crit, testData.source.system.crit)
         }
-        if (testData.source.type == "rangeweapon") {
-            botch = Math.min(testData.extra.actor.system.rangeStats.botch, testData.source.system.botch)
-            crit = Math.max(testData.extra.actor.system.rangeStats.crit, testData.source.system.crit)
-        }
+
         if (RuleChaos.improvisedWeapon.test(testData.source.name)) {
-            if (!SpecialabilityRulesDSA5.hasAbility(
-                    testData.extra.actor,
-                    game.i18n.localize("LocalizedIDs.improvisedWeaponMaster")
-                ))
+            if (!SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, game.i18n.localize("LocalizedIDs.improvisedWeaponMaster")))
                 botch = Math.min(19, botch)
 
-            this._appendSituationalModifiers(
-                testData,
-                `${game.i18n.localize("CHAR.ATTACK")} - ${game.i18n.localize("WEAPON.improvised")}`,
-                2,
-                "defenseMalus"
-            )
+            this._appendSituationalModifiers(testData, `${game.i18n.localize("CHAR.ATTACK")} - ${game.i18n.localize("WEAPON.improvised")}`, 2, "defenseMalus")
         }
 
-        if (testData.situationalModifiers.find((x) => x.name == game.i18n.localize("opportunityAttack") && x.value != 0)) {
+        if (testData.situationalModifiers.find((x) => x.name == game.i18n.localize("MODS.opportunityAttack") && x.value != 0)) {
             botch = 50
             crit = -50
         }
 
-        if (roll.terms[0].results.filter((x) => x.result <= crit).length == 1) {
-            description = game.i18n.localize("CriticalSuccess")
-            if (game.settings.get("dsa5", "noConfirmationRoll")) {
-                successLevel = 3
-            } else {
-                let rollConfirm = await DiceDSA5.manualRolls(
-                    await DiceDSA5._rollConfirm(),
-                    "confirmationRoll",
-                    testData.extra.options
-                )
-                let res2 = res - rollConfirm.terms[0].results[0].result
-                if (
-                    AdvantageRulesDSA5.hasVantage(
-                        testData.extra.actor,
-                        `${game.i18n.localize("LocalizedIDs.weaponAptitude")} (${combatskill})`
-                    ) &&
-                    !(res2 >= 0)
-                ) {
-                    let a = rollConfirm.terms[0].results[0].result
-                    rollConfirm = await DiceDSA5.manualRolls(
-                        await DiceDSA5._rollConfirm(),
-                        "LocalizedIDs.weaponAptitude",
-                        testData.extra.options
-                    )
-                    res2 = res - rollConfirm.terms[0].results[0].result
-                    description +=
-                        ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
-                }
-                this._addRollDiceSoNice(testData, rollConfirm, color)
-                chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res })
-                successLevel = res2 >= 0 ? 3 : 2
-            }
-        } else if (roll.terms[0].results.filter((x) => x.result >= botch).length == 1) {
-            description = game.i18n.localize("CriticalFailure")
-            if (game.settings.get("dsa5", "noConfirmationRoll")) {
-                successLevel = -3
-            } else {
-                let rollConfirm = await DiceDSA5.manualRolls(
-                    await DiceDSA5._rollConfirm(),
-                    "confirmationRoll",
-                    testData.extra.options
-                )
-                let res2 = res - rollConfirm.terms[0].results[0].result
-                if (
-                    AdvantageRulesDSA5.hasVantage(
-                        testData.extra.actor,
-                        `${game.i18n.localize("LocalizedIDs.weaponAptitude")} (${combatskill})`
-                    ) &&
-                    !(res2 >= 0)
-                ) {
-                    let a = rollConfirm.terms[0].results[0].result
-                    rollConfirm = await DiceDSA5.manualRolls(
-                        await DiceDSA5._rollConfirm(),
-                        "LocalizedIDs.weaponAptitude",
-                        testData.extra.options
-                    )
-                    res2 = res - rollConfirm.terms[0].results[0].result
-                    description +=
-                        ", " + game.i18n.format("usedWeaponExpertise", { a: a, b: rollConfirm.terms[0].results[0].result })
-                }
-                this._addRollDiceSoNice(testData, rollConfirm, color)
-                chars.push({ char: id, res: rollConfirm.terms[0].results[0].result, suc: res2 >= 0, tar: res })
-                successLevel = res2 >= 0 ? -2 : -3
-            }
-        }
+        const isCrit = rollTotal <= crit
+        const isBotch = rollTotal >= botch
 
-        if (description == "") {
-            description = game.i18n.localize(res1 >= 0 ? "Success" : "Failure")
-        } else if (!game.settings.get("dsa5", "noConfirmationRoll")) {
-            if (Math.abs(successLevel) == 3) {
-                description = `${game.i18n.localize("confirmed")} ${description}`
-            } else if (Math.abs(successLevel) == 2) {
-                description = `${game.i18n.localize("unconfirmed")} ${description}`
-            }
+        if (isCrit || isBotch) {
+            description = game.i18n.localize(isCrit ? "CriticalSuccess" : "CriticalFailure")
+
+            successLevel = isCrit ? 3 : -3
+            if (!game.settings.get("dsa5", "noConfirmationRoll")) {
+                let rollConfirm = await DiceDSA5.manualRolls(await DiceDSA5._rollConfirm(), "confirmationRoll", testData.extra.options)
+                const confirmTarget = res + (getProperty(testData.source, `system.${isCrit ? "critConfirm" : "botchConfirm"}`) || 0)
+                let res2 = confirmTarget - rollConfirm.total
+
+                if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.weaponAptitude")} (${combatskill})`) && !(res2 >= 0)) {
+                    let a = rollConfirm.total
+                    rollConfirm = await DiceDSA5.manualRolls(await DiceDSA5._rollConfirm(), "LocalizedIDs.weaponAptitude", testData.extra.options)
+                    res2 = confirmTarget - rollConfirm.total
+                    description += `, ${game.i18n.format("usedWeaponExpertise", { a, b: rollConfirm.total })}`
+                }
+
+                this._addRollDiceSoNice(testData, rollConfirm, color)    
+                const confirmed = res2 >= 0
+                characteristics.push({ char: id, res: rollConfirm.total, suc: confirmed, tar: confirmTarget })                
+                description = `${game.i18n.localize(confirmed ? "confirmed" : "unconfirmed")} ${description}`
+
+                if(confirmed)
+                    successLevel = isCrit ? 3 : -3
+                else
+                    successLevel = isCrit ? 2 : -2
+            }            
+        } else {
+            description = game.i18n.localize(suc ? "Success" : "Failure")
         }
 
         return {
             successLevel,
-            characteristics: chars,
+            characteristics,
             description,
             preData: testData,
             modifiers: modifier,
@@ -879,9 +822,9 @@ export default class DiceDSA5 {
 
     static async _addRollDiceSoNice(testData, roll, color) {
         if (testData.rollMode) {
-            for (let i = 0; i < roll.dice.length; i++) {
+            for (let i = 0; i < roll.dice.length; i++)
                 mergeObject(roll.dice[i].options, color)
-            }
+
             await this.showDiceSoNice(roll, testData.rollMode)
         }
     }
@@ -914,35 +857,30 @@ export default class DiceDSA5 {
                 let dice = []
                 for (let term of roll.terms) {
                     if (term instanceof foundry.dice.terms.Die || term.class == "Die") {
-                        for (let res of term.results) {
+                        for (let res of term.results)
                             dice.push({ faces: term.faces, val: res.result })
-                        }
                     }
                 }
 
-                let template = await renderTemplate("systems/dsa5/templates/dialog/manualroll-dialog.html", {
+                const content = await renderTemplate("systems/dsa5/templates/dialog/manualroll-dialog.html", {
                     dice,
                     description,
                 });
                 [result, form] = await new Promise((resolve, reject) => {
                     new DSA5Dialog({
                         title: game.i18n.localize(options.cheat ? "DIALOG.cheat" : "DSASETTINGS.allowPhysicalDice"),
-                        content: template,
+                        content,
                         default: "ok",
                         buttons: {
                             ok: {
                                 icon: '<i class="fa fa-check"></i>',
                                 label: game.i18n.localize("yes"),
-                                callback: (dlg) => {
-                                    resolve([true, dlg])
-                                },
+                                callback: (dlg) => resolve([true, dlg])
                             },
                             cancel: {
                                 icon: '<i class="fas fa-times"></i>',
                                 label: game.i18n.localize("cancel"),
-                                callback: () => {
-                                    resolve([false, 0])
-                                },
+                                callback: () => resolve([false, 0])
                             },
                         },
                     }).render(true)
@@ -1112,7 +1050,6 @@ export default class DiceDSA5 {
         }
 
         await this.calculateEnergyCost(isClerical, res, testData)
-
         await this.getDuplicatusRoll(res, testData)
 
         for(const creature of ["minorFairies", "minorSpirits"]){
@@ -1140,19 +1077,19 @@ export default class DiceDSA5 {
         let fws = Number(testData.source.system.talentValue.value) + testData.advancedModifiers.fws + await this._situationalModifiers(testData, "FW")
         const pcms = this._situationalPartCheckModifiers(testData, "TPM")
 
-        let tar = [1, 2, 3].map(
-            (x) =>
-                testData.extra.actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value +
-                modifiers +
-                testData.advancedModifiers.chars[x - 1] +
-                pcms[x - 1]
+        let tar = [1, 2, 3].map((x) =>
+            testData.extra.actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value +
+            modifiers +
+            testData.advancedModifiers.chars[x - 1] +
+            pcms[x - 1]
         )
         let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x])
 
         if(testData.routine)
             fws = Math.round(fws / 2)
         else
-            for (let k of res) if (k > 0) fws -= k
+            for (let k of res) 
+                if (k > 0) fws -= k
 
 
         let crit = testData.extra.actor.system.skillModifiers.crit
@@ -1194,13 +1131,7 @@ export default class DiceDSA5 {
             description.push(game.i18n.localize("LocalizedIDs.automaticSuccess"))
             successLevel = 1
             automaticResult = 1
-        } else if (
-            testData.source.type == "skill" &&
-            TraitRulesDSA5.hasTrait(
-                testData.extra.actor,
-                `${game.i18n.localize("LocalizedIDs.automaticFail")} (${testData.source.name})`
-            )
-        ) {
+        } else if (testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.automaticFail")} (${testData.source.name})`)) {
             description.push(game.i18n.localize("LocalizedIDs.automaticFail"))
             successLevel = -1
         } else {
@@ -1258,11 +1189,7 @@ export default class DiceDSA5 {
     }
 
     static getSuccessDescription(successLevel) {
-        return game.i18n.localize(
-            ["AstoundingFailure", "CriticalFailure", "Failure", "", "Success", "CriticalSuccess", "AstoundingSuccess"][
-                successLevel + 3
-            ]
-        )
+        return game.i18n.localize(["AstoundingFailure", "CriticalFailure", "Failure", "", "Success", "CriticalSuccess", "AstoundingSuccess"][successLevel + 3])
     }
 
     static async rollItem(testData) {
@@ -1355,12 +1282,11 @@ export default class DiceDSA5 {
         const source = testData.preData.source
 
         if(testData.successLevel > 0){
-            if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
+            if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value)))
                 if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
-            }
-            else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type)) {
+
+            else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type))
                 if (source.effects.length > 0) return true
-            }
         } 
         
         if (["disease", "poison"].includes(source.type)) {
@@ -1371,9 +1297,8 @@ export default class DiceDSA5 {
         const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId)
         if (specAbIds.length > 0) {
             const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id))
-            for (const spec of specAbs) {
+            for (const spec of specAbs)
                 if (spec.effects.length > 0) return true
-            }
         }
 
         return false

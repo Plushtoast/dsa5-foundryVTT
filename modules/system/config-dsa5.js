@@ -537,29 +537,6 @@ DSA5.areaTargetTypes = {
     cone: "cone"
 }
 
-DSA5.rangeMods = {
-    short: {
-        damage: 1,
-        attack: 2
-    },
-    medium: {
-        damage: 0,
-        attack: 0
-    },
-    long: {
-        damage: -1,
-        attack: -2
-    },
-    rangesense: {
-        damage: -1,
-        attack: -1
-    },
-    extreme: {
-        damage: -2,
-        attack: -4
-    }
-}
-
 DSA5.regnerationCampLocations = {
     "0": "regnerationCampLocations.normal",
     "-1": "regnerationCampLocations.bad",
@@ -606,12 +583,6 @@ DSA5.drivingArcherOptions = {
     STATIONARY: "0",
     SCHRITT: "-2",
     GALOPP: "-4",
-}
-
-DSA5.aimOptions = {
-    "0": "aimOptions.0",
-    "2": "aimOptions.1",
-    "4": "aimOptions.2"
 }
 
 DSA5.masterTokens = []
@@ -786,14 +757,6 @@ DSA5.removeAbilityRules = {}
 DSA5.AbilitiesNeedingAdaption = {}
 DSA5.addTraitRules = {}
 
-DSA5.rangeWeaponModifiers = {
-    short: "RangeMod.short",
-    medium: "RangeMod.medium",
-    long: "RangeMod.long",
-    rangesense: "RangeMod.rangesense",
-    extreme: "RangeMod.extreme"
-}
-
 DSA5.meleeRangesArray = [
     "short",
     "medium",
@@ -876,14 +839,6 @@ DSA5.tokenSizeCategories = {
     giant: 4
 }
 
-DSA5.rangeSizeCategories = {
-    tiny: "RANGESIZE.tiny",
-    small: "RANGESIZE.small",
-    average: "RANGESIZE.average",
-    big: "RANGESIZE.big",
-    giant: "RANGESIZE.giant"
-},
-
 DSA5.meleeSizeCategories = {
     tiny: "MELEESIZE.tiny",
     small: "MELEESIZE.small",
@@ -896,14 +851,6 @@ DSA5.shieldSizes = {
     short: "SIZE.small",
     medium: "SIZE.average",
     long: "SIZE.big"
-}
-
-DSA5.rangeSizeModifier = {
-    tiny: -8,
-    small: -4,
-    average: 0,
-    big: 4,
-    giant: 8
 }
 
 DSA5.meleeSizeModifier = {

@@ -22,6 +22,7 @@ const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObj
 
 export default class Actordsa5 extends Actor {
   static DEFAULT_ICON = "icons/svg/mystery-man-black.svg"
+  static selfRegex = /^self\./
 
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
@@ -585,7 +586,8 @@ export default class Actordsa5 extends Actor {
     changes.sort((a, b) => a.priority - b.priority);
 
     for (let change of changes) {
-      if ( !change.key || /^self\./.test(change.key)) continue;
+      if ( !change.key || Actordsa5.selfRegex.test(change.key)) continue;
+
       const result = change.effect.apply(this, change);
       Object.assign(overrides, result);
     }
