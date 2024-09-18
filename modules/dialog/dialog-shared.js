@@ -18,7 +18,7 @@ export default class DialogShared extends Dialog {
 
     async _render(force, options) {
         await super._render(force, options)
-        this.prepareFormRecall($(this._element))
+        await this.prepareFormRecall($(this._element))
     }
 
     setRollButtonWarning() {
@@ -129,7 +129,7 @@ export default class DialogShared extends Dialog {
          (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true)
     }
 
-    prepareFormRecall(html) {
+    async prepareFormRecall(html) {
         if (this.recallData) {
             for (const key in this.recallData) {
                 if (key == "specAbs") {

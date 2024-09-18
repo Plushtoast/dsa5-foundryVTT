@@ -15,6 +15,7 @@ import DSA5SpellDialog from "../dialog/dialog-spell-dsa5.js"
 import Riding from "../system/riding.js"
 import { UserMultipickDialog } from "../dialog/addTargetDialog.js"
 import DSA5Payment from "../system/payment.js"
+import DSAActiveEffect from "../status/dsa_active_effects.js"
 const { getProperty, mergeObject, duplicate } = foundry.utils
 
 export default class Itemdsa5 extends Item {
@@ -338,26 +339,32 @@ export default class Itemdsa5 extends Item {
         source.system.characteristic3.value = ch3
     }
 
-    static attackSpecAbs(combatSpecAbs, actor, path="effect.value"){
-        const at = game.i18n.localize("LocalizedAbilityModifiers.at")
-        const tp = game.i18n.localize("LocalizedAbilityModifiers.tp")
-        const dm = game.i18n.localize("LocalizedAbilityModifiers.dm")
+    static specAbsDataset(combatSpecAbs, actor, mode, path="effect.value"){
+        const isDefense = mode == "parry"
+        const keys = isDefense ? ["pa"] : ["at", "tp", "dm"]
+        const translatedKeys = keys.reduce((acc, key) => {
+            acc[key] = game.i18n.localize(`LocalizedAbilityModifiers.${key}`)
+            return acc
+        }, {})
         const combatskills = []
+        const validSpecAb = isDefense ? (vals, com) => vals.pa != 0 : (vals, com) => vals.at != 0 || vals.tp != 0 || vals.dm != 0 || com.effects.size > 0
 
         for (let com of combatSpecAbs) {
             const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor)
-            const atbonus = effects[at] || 0
-            const tpbonus = effects[tp] || 0
-            const dmmalus = effects[dm] || 0
-            const variantCount = ["","2","3"].map(x => getProperty(com, `system.effect.value${x}`)).filter(x => x).length
-            if (atbonus != 0 || tpbonus != 0 || dmmalus != 0 || com.effects.size > 0) {
+            const variantCount = ["","2","3"].filter(x => getProperty(com, `system.effect.value${x}`)).length
+            const vals = keys.reduce((acc, key) => {
+                acc[key] = effects[translatedKeys[key]] || [0]
+                return acc
+            }, {})
+           
+            if (validSpecAb(vals, com)) {
                 const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
                 combatskills.push({
                     name: com.name,
-                    atbonus,
-                    tpbonus,
-                    dmmalus,
-                    label: `${at.toUpperCase()}: ${atbonus}, ${tp.toUpperCase()}: ${tpbonus}, ${dm.toUpperCase()}: ${dmmalus}`,
+                    atbonus: vals.at || [0],
+                    pabonus: vals.pa || [0],
+                    tpbonus: vals.tp || [0],
+                    dmmalus: vals.dm || [0],
                     steps: com.system.step.value,
                     category: {
                         id: com.system.category.sub,
@@ -373,39 +380,8 @@ export default class Itemdsa5 extends Item {
         return combatskills
     }
 
-    static defenseSpecAbs(combatSpecAbs, actor, path="effect.value"){
-        const combatskills = []
-        const pa = game.i18n.localize("LocalizedAbilityModifiers.pa")
-
-        for (let com of combatSpecAbs) {
-            const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor)
-            const pabonus = effects[pa] || 0
-            if (pabonus != 0) {
-                const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub])
-                const variantCount = ["","2","3"].map(x => getProperty(com, `system.effect.value${x}`)).filter(x => x).length
-                combatskills.push({
-                    name: com.name,
-                    pabonus,
-                    tpbonus: 0,
-                    dmmalus: 0,
-                    label: `${pa}: ${pabonus}`,
-                    steps: com.system.step.value,
-                    category: {
-                        id: com.system.category.sub,
-                        css: `ab_${com.system.category.sub}`,
-                        name: subCategory,
-                    },
-                    id: com.id,
-                    actor: actor.id,
-                    variantCount
-                })
-            }
-        }
-        return combatskills
-    }
-
-    static buildCombatSpecAbs(actor, categories, toSearch, mode) {
-        let searchFilter
+    static buildCombatSpecAbs(actor, categories, toSearch, mode, source) {
+        let searchFilter = () => true
         if (toSearch) {
             toSearch.push(game.i18n.localize("LocalizedIDs.all"))
             toSearch = toSearch.map((x) => x.toLowerCase())
@@ -414,29 +390,57 @@ export default class Itemdsa5 extends Item {
                     x.system.list.value
                     .split(/;|,/)
                     .map((x) => x.trim().toLowerCase())
-                    .filter((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ""))).length > 0
+                    .some((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, "")))
                 )
             }
-        } else
-            searchFilter = () => true
+        }
 
         const brawlingFilter = game.combat?.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5
+        const allowedNames = new Set([])
+        const forbiddenNames = new Set([])
+        const effectChanges = {}
+        for(let effect of source.effects || []){
+            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
 
+            for(let change of effect.changes){
+                if(change.key.startsWith('self.maneuver.')){
+                    const parsed = DSA5_Utility.parseAbilityString(change.value)
+                    if(/\-$/.test(parsed.name))
+                        forbiddenNames.add(parsed.name.replace(/\-$/, '').trim())
+                    else if(/\+$/.test(parsed.name))
+                        allowedNames.add(parsed.name.replace(/\+$/, '').trim())
+                    else {
+                        const changeMode = change.key.split('.')[2]
+                        if(!effectChanges[parsed.name]) effectChanges[parsed.name] = {}
+                        if(!effectChanges[parsed.name][changeMode]) effectChanges[parsed.name][changeMode] = 0
+
+                        effectChanges[parsed.name][changeMode] += parsed.step
+                    }
+                }
+            }
+        }
+        
         const combatSpecAbs = actor.items.filter((x) => {
             return (
                 x.type == "specialability" &&
                 categories.includes(x.system.category.value) &&
                 x.system.effect.value != "" &&
-                searchFilter(x, toSearch) &&
-                brawlingFilter(x)
+                (searchFilter(x, toSearch) || allowedNames.has(x.name)) &&
+                brawlingFilter(x) &&
+                !forbiddenNames.has(x.name)
             )
         })
 
-        if (mode == "attack") {
-            return this.attackSpecAbs(combatSpecAbs, actor)
-        } else {
-            return this.defenseSpecAbs(combatSpecAbs, actor)
+        const result = this.specAbsDataset(combatSpecAbs, actor, mode)        
+        for(let specAb of result) {
+            if(effectChanges[specAb.name]){
+                for(let key of Object.keys(effectChanges[specAb.name])){
+                    specAb[key].push(effectChanges[specAb.name][key])
+                }
+            }
         }
+
+        return result
     }
 
     static getCombatSkillModifier(actor, source, situationalModifiers) {
@@ -1114,7 +1118,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: `/systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
+            template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
             data,
             callback: async(html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
@@ -1392,7 +1396,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/poison-dialog.html",
+            template: "systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
@@ -1452,6 +1456,24 @@ class WeaponItemDSA5 extends Itemdsa5 {
             }
         }
     }
+
+    static weaponModifiers(situationalModifiers, source, mode) {
+        for(let effect of source.effects || []){
+            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
+
+            for(let change of effect.changes){
+                if(change.key == `self.situational.${mode}`){
+                    const type = { damage: "dmg" }[mode] || ''
+                    situationalModifiers.push({
+                        name: `${effect.name}`,
+                        value: change.value,
+                        source: source.name,
+                        type
+                    })
+                }
+            }
+        }
+    }
 }
 
 class MeleeweaponDSA5 extends WeaponItemDSA5 {
@@ -1472,10 +1494,16 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
         const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize("LocalizedIDs.ambidextrous"))
         source = DSA5_Utility.toObjectIfPossible(source)
         const toSearch = [source.system.combatskill.value]
-        const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
+        const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode, source)
 
-        if (data.mode == "attack") this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
-        else if (data.mode == "parry") this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
+        if (data.mode == "attack") {
+            this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
+            this.weaponModifiers(situationalModifiers, source, "damage")
+        }
+        else if (data.mode == "parry") {
+            this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled)
+        }
+        this.weaponModifiers(situationalModifiers, source, data.mode)
         
         this.attackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode])
         this.speciesModifier(situationalModifiers, actor, data, source)
@@ -1516,7 +1544,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
         const dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
+            template: "systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
                 DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode)
@@ -1586,7 +1614,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/poison-dialog.html",
+            template: "systems/dsa5/templates/dialog/poison-dialog.html",
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
@@ -1627,7 +1655,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             const source = DSA5_Utility.toObjectIfPossible(_source)
 
             const toSearch = [source.system.combatskill.value]
-            const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode)
+            const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat"], toSearch, data.mode, source)
             let currentAmmo = actor.items.get(source.system.currentAmmo.value)
 
             if (currentAmmo) {
@@ -1673,6 +1701,10 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
                     })
                 }
             }
+
+            this.weaponModifiers(situationalModifiers, source, "attack")
+            this.weaponModifiers(situationalModifiers, source, "damage")
+
             situationalModifiers.push(
                 ...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, "", data.mode),
                 ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode)
@@ -1740,7 +1772,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
+            template: "systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
                 DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options)
@@ -1836,7 +1868,7 @@ class SkillItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/skill-dialog.html",
+            template: "systems/dsa5/templates/dialog/skill-dialog.html",
             data,
             callback: (html, options = {}) => {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val()
@@ -1881,7 +1913,7 @@ class BookItemDSA5 extends Itemdsa5 {
     }
 }
 
-class TraitItemDSA5 extends Itemdsa5 {
+class TraitItemDSA5 extends WeaponItemDSA5 {
     static chatData(data, name) {
         let res = []
         switch (data.traitType.value) {
@@ -1938,16 +1970,18 @@ class TraitItemDSA5 extends Itemdsa5 {
     static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
         source = DSA5_Utility.toObjectIfPossible(source)
         const traitType = source.system.traitType.value
-        const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat", "animal"], undefined, data.mode)
-
+        const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ["Combat", "animal"], undefined, data.mode, source)
+        
         if (data.mode == "attack" && traitType == "meleeAttack") {
-            this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, false)
+            this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, false)            
+            this.weaponModifiers(situationalModifiers, source, "damage")
         } else if (data.mode == "attack" && traitType == "rangeAttack") {
             this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills)
+            this.weaponModifiers(situationalModifiers, source, "damage")
         } else if (data.mode == "parry") {
             this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, false)
         }
-
+        this.weaponModifiers(situationalModifiers, source, data.mode)
         this.attackStatEffect(
             situationalModifiers,
             actor.system[traitType == "meleeAttack" ? "meleeStats" : "rangeStats"][data.mode]
@@ -1955,7 +1989,7 @@ class TraitItemDSA5 extends Itemdsa5 {
     }
 
     static setupDialog(ev, options, item, actor, tokenId) {
-        let mode = options["mode"]
+        let mode = options.mode
         let title = item.name + " " + game.i18n.localize(mode + "test")
         let testData = {
             opposable: options.mode != "parry",
@@ -1983,7 +2017,7 @@ class TraitItemDSA5 extends Itemdsa5 {
 
         let dialogOptions = {
             title,
-            template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
+            template: "systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
             data,
             callback: (html, options = {}) => {
                 if (traitType == "meleeAttack") {

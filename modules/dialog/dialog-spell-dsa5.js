@@ -31,8 +31,8 @@ export default class DSA5SpellDialog extends DialogShared {
 
     static bigTimes = [5, 30, 120, 480, 960, 1920];
 
-    prepareFormRecall(html) {
-        super.prepareFormRecall(html);
+    async prepareFormRecall(html) {
+        await super.prepareFormRecall(html);
         html.find(".spellModifier").trigger("change");
     }
 

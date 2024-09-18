@@ -153,9 +153,7 @@ export default class DSA5_Utility {
     }
 
     static async callAsyncHooks(hook, args){
-        for(let func of DSA5.asyncHooks[hook]){
-            await func(...args)
-        }
+        for(let func of DSA5.asyncHooks[hook]) await func(...args)
     }
 
     static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {

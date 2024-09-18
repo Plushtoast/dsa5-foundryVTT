@@ -18,6 +18,7 @@ import Riding from "../system/riding.js";
 import APTracker from "../system/ap-tracker.js";
 import DSATriggers from "../system/triggers.js";
 import DSA5CombatDialog from "../dialog/dialog-combat-dsa5.js";
+import DSAActiveEffect from "../status/dsa_active_effects.js";
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils
 
 export default class Actordsa5 extends Actor {
@@ -847,7 +848,7 @@ export default class Actordsa5 extends Actor {
         if(combatskill) {
           combatskill += " "
           for(let ef of armor.effects){
-            if(ef.disabled) continue
+            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
 
             for(let change of ef.changes) {
               if(change.key == "self.armorVulnerability") {
@@ -2115,7 +2116,7 @@ export default class Actordsa5 extends Actor {
     const situationalModifiers = []
     const dialogOptions = {
       title,
-      template: "/systems/dsa5/templates/dialog/fallingdamage-dialog.html",
+      template: "systems/dsa5/templates/dialog/fallingdamage-dialog.html",
       data: {
         rollMode: options.rollMode,
         situationalModifiers,
@@ -2165,7 +2166,7 @@ export default class Actordsa5 extends Actor {
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     let dialogOptions = {
       title,
-      template: "/systems/dsa5/templates/dialog/regeneration-dialog.html",
+      template: "systems/dsa5/templates/dialog/regeneration-dialog.html",
       data: {
         rollMode: options.rollMode,
         regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
@@ -2235,7 +2236,10 @@ export default class Actordsa5 extends Actor {
     };
 
     const toSearch = [game.i18n.localize(statusId), game.i18n.localize('LocalizedIDs.wrestle')];
-    const combatskills = Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry").concat(Itemdsa5.buildCombatSpecAbs(this, ["animal"], undefined, "parry"))
+    const combatskills = [
+      ...Itemdsa5.buildCombatSpecAbs(this, ["Combat"], toSearch, "parry", testData.source),
+      ...Itemdsa5.buildCombatSpecAbs(this, ["animal"], undefined, "parry", testData.source)
+    ]
     const situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
     const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this);
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
@@ -2252,7 +2256,7 @@ export default class Actordsa5 extends Actor {
     }
     const dialogOptions = {
       title: `${game.i18n.localize(statusId)} ${game.i18n.localize("Test")}`,
-      template: "/systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
+      template: "systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html",
       data,
       callback: (html, options = {}) => {
         DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, this, options, multipleDefenseValue, "parry")
@@ -2292,7 +2296,7 @@ export default class Actordsa5 extends Actor {
 
     let dialogOptions = {
       title,
-      template: "/systems/dsa5/templates/dialog/characteristic-dialog.html",
+      template: "systems/dsa5/templates/dialog/characteristic-dialog.html",
       data: {
         rollMode: options.rollMode,
         difficultyLabels: DSA5.attributeDifficultyLabels,

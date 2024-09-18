@@ -165,7 +165,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     "ammunition"
                 ].includes(itemType) ||
                 (["specialability"].includes(itemType) && getProperty(this.object, "parent.system.category.value") == "Combat"),
-            hasDamageTransformation: ["ammunition"].includes(itemType),
+            hasDamageTransformation: ["ammunition", "meleeweapon", "rangeweapon"].includes(itemType),
             hasTriggerEffects: ["specialability"].includes(itemType),
             hasSuccessEffects: ["poison", "disease"].includes(itemType)
         };
@@ -870,10 +870,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             }
         }
 
-        for(let model of ["meleeweapon"]){
+        for(let model of ["meleeweapon", "rangeweapon"]){
             const modelName = DSA5_Utility.categoryLocalization(model)
 
-            for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog.meleeRollModifiers))){
+            for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog[`${model}RollModifiers`]))){
                 console.log(`${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`)
                 optns.push({
                     name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`,
@@ -884,18 +884,39 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             }
         }
 
-        for(let model of ["rangeweapon"]){
-            const modelName = DSA5_Utility.categoryLocalization(model)
+        if(["meleeweapon", "rangeweapon"].includes(this.object.parent?.type)){
+            const modelName = DSA5_Utility.categoryLocalization(this.object.parent.type)
+            const maneuver = game.i18n.localize('combatmaneuver')
+            const maneuverExample = game.i18n.localize('LocalizedIDs.weaponThrow')
 
-            for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog.rangeRollModifiers))){
-                console.log(`${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`)
+            for(let k of ["attack", "parry", "damage"]){
+                if(k == "parry" && this.object.parent.type == "rangeweapon") continue
+
+                const mode = game.i18n.localize(`CHAR.${k.toUpperCase()}`)
                 optns.push({
-                    name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`,
-                    val: `system.${model}RollModifiers.${k}`,
-                    mode: 2,
+                    name: `${modelName} - ${mode}`,
+                    val: `self.situational.${k}`,
+                    mode: 0,
                     ph: "1",
                 })
             }
+
+            optns.push({
+                name: `${maneuver} - ${game.i18n.localize('CHAR.attack')}`,
+                val: `self.maneuver.atbonus`,
+                mode: 0,
+                ph: `${maneuverExample} 1`,
+            }, {
+                name: `${maneuver} - ${game.i18n.localize('CHAR.parry')}`,
+                val: `self.maneuver.pabonus`,
+                mode: 0,
+                ph: `${maneuverExample} 1`,
+            }, {
+                name: `${maneuver} - ${game.i18n.localize('CHAR.damage')}`,
+                val: `self.maneuver.tpbonus`,
+                mode: 0,
+                ph: `${maneuverExample} 1`,
+            })
         }
 
         optns = optns.sort((a, b) => a.name.localeCompare(b.name));

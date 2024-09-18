@@ -12,7 +12,7 @@ import DPS from "../system/derepositioningsystem.js";
 const { mergeObject, duplicate, getProperty } = foundry.utils
 
 export default class DSA5CombatDialog extends DialogShared {
-    static meleeRollModifiers = {
+    static meleeweaponRollModifiers = {
         wrongHand: { mod: -4 },
         advantageousPosition: {  mod: 2 },
         attackFromBehind: { mod: -4 },
@@ -21,7 +21,7 @@ export default class DSA5CombatDialog extends DialogShared {
         narrowSpace: { mod: 0 }
     }
 
-    static rangeRollModifiers = {
+    static rangeweaponRollModifiers = {
         combatTurmoil: { mod: -2 },
         quickChange: { mod: -4 },
         narrowSpace: { mod: 0 },
@@ -72,7 +72,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     static setData(actor, type, testData, renderData){
-        let rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeRollModifiers : DSA5CombatDialog.rangeRollModifiers)
+        let rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers)
         rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode)
         if(renderData.rangeOptions) {
             for(let key of Object.keys(rollModifiers.RangeMod))
@@ -103,19 +103,41 @@ export default class DSA5CombatDialog extends DialogShared {
         return foundry.utils.expandObject(flattendRollModifiers)
     }
 
+    setCombatSpecTooltip(el) {
+        const dataset = el.dataset
+        const keys = {
+            pa: dataset.pabonus,
+            at: dataset.atbonus,
+            tp: dataset.tpbonus,
+            dm: dataset.dmmalus
+        }
+
+        const label = []
+        if(dataset.step > 1) label.push(`${dataset.step} x  `)
+
+        for(let key of Object.keys(keys))
+            if(keys[key] != 0) label.push(`${game.i18n.localize(`LocalizedAbilityModifiers.${key}`).toUpperCase()}: ${keys[key]}`)
+
+        const tooltip = label.join(" ")
+        $('#tooltip').html(tooltip)
+        el.dataset.tooltip = tooltip
+    }
+
     activateListeners(html) {
         super.activateListeners(html);
         let specAbs = html.find(".specAbs");
         specAbs.mouseenter((ev) => {
-            if (ev.currentTarget.getElementsByClassName("hovermenu").length == 0) {
+            const el = ev.currentTarget
+            this.setCombatSpecTooltip(el)
+            if (el.getElementsByClassName("hovermenu").length == 0) {
                 let div = document.createElement("div");
                 div.classList.add("hovermenu");
                 let post = document.createElement("i");
                 post.classList.add("fas", "fa-comment");
-                post.title = game.i18n.localize("SHEET.PostItem");
+                post.dataset.tooltip = "SHEET.PostItem";
                 post.addEventListener("mousedown", this._postItem, false);
                 div.appendChild(post);
-                ev.currentTarget.appendChild(div);
+                el.appendChild(div);
             }
         });
         specAbs.mouseleave((ev) => {
@@ -133,9 +155,10 @@ export default class DSA5CombatDialog extends DialogShared {
                 return;
             }
             const elem = $(ev.currentTarget);
-            let step = Number(elem.attr("data-step"));
-            const maxStep = Number(elem.attr("data-maxStep"));
-            const subcategory = Number(elem.attr("data-category"));
+            const dataset = ev.currentTarget.dataset;
+            let step = Number(dataset.step);
+            const maxStep = Number(dataset.maxstep);
+            const subcategory = Number(dataset.category);
 
             if (ev.button == 0) {
                 step = Math.min(maxStep, step + 1);
@@ -147,12 +170,13 @@ export default class DSA5CombatDialog extends DialogShared {
             } else if (ev.button == 2) {
                 step = Math.clamp(maxStep, 0, step - 1)
             }
-            elem.attr("data-step", step);
+            dataset.step = step;
             elem.toggleClass("active", step > 0);
 
             elem.find(".step").text(DialogShared.roman[step]);
             this.checkCounterAttack(ev)
             this.calculateModifier()
+            this.setCombatSpecTooltip(ev.currentTarget)
         });
         html.find(".opportunityAttack").change((ev) => {
             if ($(ev.currentTarget).is(":checked")) {
@@ -162,12 +186,10 @@ export default class DSA5CombatDialog extends DialogShared {
             }
         });
         html.on("change", "input,select", ev => this.calculateModifier(ev))
-        html.find(".modifiers option").mousedown((ev) => {
-            this.calculateModifier(ev)
-        })
+        html.find(".modifiers option").mousedown((ev) => this.calculateModifier(ev))
         html.find('.quantity-click').mousedown(ev => this.calculateModifier(ev));
+        
         let targets = this.readTargets();
-        this.calculateModifier()
             // not great
         const that = this
         this.checkTargets = setInterval(function() {
@@ -264,14 +286,14 @@ export default class DSA5CombatDialog extends DialogShared {
             const specAb = actor.items.get(parent.dataset.id)
             const path = `effect.value${["","2","3"][next]}`
 
-            const res = (this.dialogData.mode == "attack" ? Itemdsa5.attackSpecAbs([specAb], actor, path) : Itemdsa5.defenseSpecAbs([specAb], actor, path))[0]
+            const res = Itemdsa5.specAbsDataset([specAb], actor, this.dialogData.mode, path)[0]
 
             parent.dataset.dmmalus = res.dmmalus || 0
             parent.dataset.atbonus = res.atbonus || 0
             parent.dataset.tpbonus = res.tpbonus || 0
             parent.dataset.pabonus = res.pabonus || 0
-            parent.dataset.tooltip = res.label
 
+            this.setCombatSpecTooltip(parent)
             this.calculateModifier()
         }
     }
@@ -352,8 +374,8 @@ export default class DSA5CombatDialog extends DialogShared {
         }
     }
 
-    prepareFormRecall(html) {
-        super.prepareFormRecall(html);
+    async prepareFormRecall(html) {
+        await super.prepareFormRecall(html);
         const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker)
         DPS.lightLevel(actor, html)
         const isRider = Riding.isRiding(actor)
@@ -378,7 +400,7 @@ export default class DSA5CombatDialog extends DialogShared {
             if(advantageousPosition && (attackerIsRider || isRider))
                 advantageousPosition.checked = isRider && !attackerIsRider
         }
-        this.calculateModifier()
+        await this.calculateModifier()
     }
 
     static assassinationModifiers(testData, formData) {

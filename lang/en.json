@@ -1007,6 +1007,7 @@
     "randomValue": "Random value",
     "Money-S": "Silverthaler",
     "Money-H": "Haler",
+    "combatmaneuver": "Combat Maneuver",
     "Money-K": "Kreutzer",
     "WELCOME": "<p><h2>Welcome to TDE5<br> for Foundry VTT</h2></p><p>We wish you a lot of fun playing TDE5</p><h3>Quick start</h3>For a fast and easy start we recommend to install the core module in your system. This way you can start immediately to explore Aventuria. If you don't have the core module, you have to create all items, spells, special abilities etc. yourself.</p><p>You can get the core module in the <a href=\"https://www.ulissesf-shop.com/\" target=\"_blank\">F-Shop/</a>.</p><p>To create your character make sure to drag and drop the species onto your character sheet (to calculate dependent character stats).</p><p>You can also try out the free introduction adventure at <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Introduction Module</a>. It includes maps, characters and a tiny adventure.</p><h3>Help</h3>In case of issues use the Help (/help in chat) or visit our <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> or the Game Manual (via the Journalbrowser).</p><p><b>If you are a german user, make sure to set the language right, to avoid compatibility problems.</b><p>This message will only be shown once.</p>",
     "SHEET": {

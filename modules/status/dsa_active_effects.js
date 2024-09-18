@@ -27,6 +27,12 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
     }
 
+    static reallyReallyEnabled(effect) {
+        if(effect.disabled || !effect.transfer || effect.system.delayed || !game.settings.get("dsa5", "enableWeaponAdvantages") && effect.system.equipmentAdvantage) return false
+
+        return true
+    }
+
     static async _onCreateOperation(documents, operation, user) {
         for(let doc of documents) {
             if(doc.parent.documentName == "Actor")

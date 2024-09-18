@@ -227,7 +227,7 @@ class GameMasterMenu extends Application {
                 div.classList.add("hovermenu")
                 let del = document.createElement('i')
                 del.classList.add("fas", "fa-times")
-                del.title = game.i18n.localize('SHEET.DeleteItem')
+                del.dataset.tooltip = 'SHEET.DeleteItem'
                 del.addEventListener('click', deletehand, false)
                 div.appendChild(del)
                 ev.currentTarget.appendChild(div)

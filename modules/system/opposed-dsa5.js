@@ -484,8 +484,12 @@ export default class OpposedDsa5 {
         options.defenderTest = defenderTest
         options.attackerTest = attackerTest
 
-        let damage = DSAActiveEffectConfig.applyRollTransformation(actor, options, DSATriggers.EVENTS.DAMAGE_TRANSFORMATION).options.damage
         let { wornArmor, armor } = Actordsa5.armorValue(actor, options)
+        options.armor = armor
+        
+        const transformed = DSAActiveEffectConfig.applyRollTransformation(actor, options, DSATriggers.EVENTS.DAMAGE_TRANSFORMATION).options
+        armor = transformed.armor
+        let damage = transformed.damage        
 
         let multipliers = []
         let armorMod = 0
@@ -496,6 +500,7 @@ export default class OpposedDsa5 {
         }
         let spellArmor = 0
         let liturgyArmor = 0
+
         if (["spell", "ritual"].includes(attackerTest.source.type)) spellArmor += actor.system.spellArmor || 0
         else if (["liturgy", "ceremony"].includes(attackerTest.source.type)) spellArmor += actor.system.liturgyArmor || 0
 

@@ -388,7 +388,7 @@ export class TokenHoverHud {
         })
 
         if(weapons.length){
-            const icons = weapons.map(x => `<img src="${x.img}" class="tinyHudIcons" title="${x.name}"/>`).join(" ")
+            const icons = weapons.map(x => `<img src="${x.img}" class="tinyHudIcons" data-tooltip="${x.name}"/>`).join(" ")
 
             const elem = $(`<div id="hoverhud_${token.id}" style="position:absolute;">${icons}</div>`)
             $("#hud").append(elem)

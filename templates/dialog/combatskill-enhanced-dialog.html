@@ -126,8 +126,7 @@
                 </div>
 
                 {{else}} {{#each combatSpecAbs as |item i|}}
-                <div class="row-section specAbs" data-actor="{{item.actor}}" data-category="{{item.category.id}}" data-id="{{item.id}}" data-step="0" data-maxStep="{{item.steps}}" data-dmmalus="{{item.dmmalus}}" data-atbonus="{{item.atbonus}}" data-tpbonus="{{item.tpbonus}}"
-                    data-pabonus="{{item.pabonus}}" data-tooltip="{{item.label}}">
+                <div class="row-section specAbs" data-actor="{{item.actor}}" data-tooltip="placeholder" data-category="{{item.category.id}}" data-id="{{item.id}}" data-step="0" data-maxStep="{{item.steps}}" data-dmmalus="{{item.dmmalus}}" data-atbonus="{{item.atbonus}}" data-tpbonus="{{item.tpbonus}}" data-pabonus="{{item.pabonus}}">
                     {{#if (gt item.variantCount 1)}}
                     <div data-current="0" data-variantcount="{{item.variantCount}}" data-tooltip="TT.effectVariant" class="variantChange">A</div>
                     {{/if}}

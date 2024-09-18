@@ -8,7 +8,7 @@ const { debounce, getProperty, mergeObject } = foundry.utils
 export class DSA5CombatTracker extends CombatTracker {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
-            template: "/systems/dsa5/templates/system/combattracker.html"
+            template: "systems/dsa5/templates/system/combattracker.html"
         });
     }
 

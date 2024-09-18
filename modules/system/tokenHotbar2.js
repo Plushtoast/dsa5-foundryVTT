@@ -778,7 +778,7 @@ export class AddEffectDialog extends Dialog {
                 div.style.cssText = "font-size: var(--font-size-20);"
                 let conf = document.createElement("i")
                 conf.classList.add("fas", "fa-cogs")
-                conf.title = game.i18n.localize("ActiveEffects.custom")
+                conf.dataset.tooltip = "ActiveEffects.custom"
                 conf.addEventListener("click", async ev => this.configureEffect(ev), false)
                 div.appendChild(conf)
                 ev.currentTarget.appendChild(div)
