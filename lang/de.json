@@ -1634,7 +1634,7 @@
         "RangeCannotBeParsed": "Die Reichweite kann nicht automatisch angepasst werden. Format nicht erkannt.",
         "CastingTimeLimit": "Die Aktionsdauer ist bereits am Limit.",
         "TimeCannotBeParsed": "Die Aktionsdauer kann nicht automatisch angepasst werden. Format nicht erkannt.",
-        "DamagePermission": "Du darfst den Schaden nicht übertragen.",
+        "DamagePermission": "Du musst \"Besitzerrechte\" für diesen Akteur haben um dessen Ressourcen zu editieren.",
         "NotEnoughXP": "Nicht genug Abenteuerpunkte",
         "NotEnoughAsP": "Nicht genug Astralpunkte",
         "NotEnoughKaP": "Nicht genug Karmapunkte",

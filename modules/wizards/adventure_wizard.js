@@ -154,7 +154,11 @@ export default class BookWizard extends Application {
             const name = $(ev.currentTarget).text()
             const jid = ev.currentTarget.dataset.jid
             if (jid) {
-                await this.loadJournalById(jid)
+                if(this.selectedSubChapter == jid) {
+                    $(this.element.find('h1.journalHeader'))[0].scrollIntoView({behavior: "smooth"})
+                } else {
+                    await this.loadJournalById(jid)
+                }                
             } else {
                 $(this._element).find('.subChapter').removeClass('selected')
                 $(this._element).find(`[data-id="${name}"]`).addClass("selected")
@@ -352,7 +356,7 @@ export default class BookWizard extends Application {
     }
 
     _onClickPageLink(ev) {
-        const anchor = ev.currentTarget.closest("[data-anchor]")?.dataset.anchor;        
+        const anchor = ev.currentTarget.closest("[data-anchor]")?.dataset.anchor;
         if ( anchor ) {
           const element = this.element[0].querySelector(`.chapter [data-anchor="${anchor}"]`)
           if ( element ) {

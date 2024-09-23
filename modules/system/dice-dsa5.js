@@ -268,19 +268,19 @@ export default class DiceDSA5 {
             successLevel = isCrit ? 3 : -3
             if (!game.settings.get("dsa5", "noConfirmationRoll")) {
                 let rollConfirm = await DiceDSA5.manualRolls(await DiceDSA5._rollConfirm(), "confirmationRoll", testData.extra.options)
-                const confirmTarget = res + (getProperty(testData.source, `system.${isCrit ? "critConfirm" : "botchConfirm"}`) || 0)
-                let res2 = confirmTarget - rollConfirm.total
+                const confirmChange = (getProperty(testData.source, `system.${isCrit ? "critConfirm" : "botchConfirm"}`) || 0)
+                let res2 = res - Math.clamp(rollConfirm.total + confirmChange, 1, 20)
 
                 if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.weaponAptitude")} (${combatskill})`) && !(res2 >= 0)) {
                     let a = rollConfirm.total
                     rollConfirm = await DiceDSA5.manualRolls(await DiceDSA5._rollConfirm(), "LocalizedIDs.weaponAptitude", testData.extra.options)
-                    res2 = confirmTarget - rollConfirm.total
+                    res2 = res - Math.clamp(rollConfirm.total + confirmChange, 1, 20)
                     description += `, ${game.i18n.format("usedWeaponExpertise", { a, b: rollConfirm.total })}`
                 }
 
                 this._addRollDiceSoNice(testData, rollConfirm, color)    
                 const confirmed = res2 >= 0
-                characteristics.push({ char: id, res: rollConfirm.total, suc: confirmed, tar: confirmTarget })                
+                characteristics.push({ char: id, res: Math.clamp(rollConfirm.total + confirmChange, 1, 20), suc: confirmed, tar: res })                
                 description = `${game.i18n.localize(confirmed ? "confirmed" : "unconfirmed")} ${description}`
 
                 if(confirmed)

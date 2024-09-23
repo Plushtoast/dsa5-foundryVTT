@@ -1589,7 +1589,7 @@
         "RangeCannotBeParsed": "Range can not be assigned automatically. Format not recognized",
         "CastingTimeLimit": "The duration is already at its limit.",
         "TimeCannotBeParsed": "The duration can not be assigned automatically. Format not recognized.",
-        "DamagePermission": "You are not allowed to transfer the damage.",
+        "DamagePermission": "You need to have \"owner\" permissions to modify this actor's ressources.",
         "NotEnoughXP": "Not enough adventure points",
         "NotEnoughAsP": "Not enough Astral Energy",
         "NotEnoughKaP": "Not enough Karma Points",
