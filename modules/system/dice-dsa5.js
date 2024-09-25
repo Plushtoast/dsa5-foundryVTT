@@ -197,7 +197,7 @@ export default class DiceDSA5 {
         } else {
             cardOptions.rollMode = testData.extra.options.rollMode || rollMode
             if (!testData.situationalModifiers) testData.situationalModifiers = []
-            return { testData, cardOptions }
+            return { testData, cardOptions, dialogOptions }
         }
     }
 
