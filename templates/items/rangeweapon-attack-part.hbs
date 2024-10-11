@@ -1,0 +1,88 @@
+<div class="row-section">
+    <div class="col eighty"></div>
+    <div class="col ten center">
+        {{#if scope}}
+        <a class="attack-delete" data-key="{{scopeKey}}" data-tooltip="SHEET.DeleteItem"><i class="fa fa-minus"></i></a>
+        {{/if}}
+    </div>
+    <div class="col ten center">
+        <a class="attack-add" data-tooltip="SHEET.alternateAttack"><i class="fa fa-plus"></i></a>
+    </div>
+</div>
+{{#if scope}}
+<div class="form-group">
+    <label class="label-text">{{localize "Name"}}</label>
+    <input class="input-text" type="text" name="{{scope}}name" value="{{name}}"/>
+</div>
+{{/if}}
+
+<div class="form-group">
+    <label class="label-text">{{localize "damage"}}</label>
+    <input class="input-text" type="text" name="{{scope}}system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
+</div>
+
+<div class="form-group">
+    <label class="label-text">{{localize "reloadTime"}}</label>
+    <input class="input-text" type="text" name="{{scope}}system.reloadTime.value" value="{{system.reloadTime.value}}" data-dtype="String" />
+</div>
+
+<div class="form-group">
+    <label class="label-text">{{localize "reach"}}</label>
+    <input class="input-text weaponreach" type="text" name="{{scope}}system.reach.value" value="{{system.reach.value}}" data-dtype="String" />
+</div>
+
+<div class="form-group">
+    <label class="label-text">{{localize "ammunitiongroup"}}</label>
+    <select name="{{scope}}system.ammunitiongroup.value" data-dtype="String">
+        {{selectOptions ammunitiongroups selected=system.ammunitiongroup.value localize=true}}
+    </select>
+</div>
+
+<div class="form-group">
+    <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
+    <select name="{{scope}}system.combatskill.value" data-dtype="String">
+        {{selectOptions (selfObj combatskills) selected=system.combatskill.value}}
+    </select>
+</div>
+
+<div class="form-group doubleInput">
+    <label class="label-text">{{localize 'critBotch'}}</label>
+    <input class="input-text" type="number" name="{{scope}}system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
+    <input class="input-text" type="number" name="{{scope}}system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
+</div>
+
+
+<div class="form-group">
+    <label class="label-text">{{localize "effect"}}</label>
+    <input class="input-text" type="text" name="{{scope}}system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
+</div>
+<div class="form-group autoHeight">
+    <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
+    <div class="input-text domainsPretty">
+        <ul>{{{domains}}}</ul>
+    </div>
+    {{/if}}
+    <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="{{scope}}system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String"
+    />
+</div>
+
+{{#unless scope}}
+<div class="form-group double">
+    <label class="label-text">{{localize "structure"}}</label>
+    <input class="input-text" type="number" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
+    <input class="input-text" type="number" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
+</div>
+{{#if armorAndWeaponDamage}}
+<div class="form-group">
+    <label class="label-text">{{localize "WEAR.value"}}</label>
+    <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+</div>
+{{/if}}
+
+<div class="form-group">
+    <label class="label-text">{{localize "PLANT.region"}}</label>
+    <input class="input-text" type="text" name="system.region" value="{{system.region}}" data-dtype="String" />
+</div>
+
+{{> systems/dsa5/templates/items/traditionArtifact.html}}
+{{/unless}}

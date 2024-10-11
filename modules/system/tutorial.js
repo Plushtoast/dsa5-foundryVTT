@@ -14,20 +14,22 @@ export default class DSA5Tutorial {
 
     static firstTimeLanguage() {
         const langs = ["de", "en"]
-        let data = {
-            title: game.i18n.localize("DIALOG.firstTime"),
-            content: game.i18n.localize("DIALOG.firstTimeWarning"),
-            default: 'de',
-            buttons: {}
+        const data = {
+            window: {
+                title: "DIALOG.firstTime"
+            },           
+            content: `<p>${game.i18n.localize("DIALOG.firstTimeWarning")}</p>`,
+            buttons: []
         }
         for (const lang of langs) {
-            data.buttons[lang] = {
+            data.buttons.push({
+                action: lang,
                 label: game.i18n.localize(lang),
                 callback: () => DSA5Tutorial.setLanguage(lang)
-            }
+            })
         }
 
-        new Dialog(data).render(true)
+        new foundry.applications.api.DialogV2(data).render(true)
     }
 
     static async setLanguage(lang) {

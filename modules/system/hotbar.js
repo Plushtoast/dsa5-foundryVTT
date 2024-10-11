@@ -318,11 +318,13 @@ export default class DSA5Hotbar extends Hotbar {
                             break
                         case "meleeweapon":
                         case "rangeweapon":
-                            const entry = this.tokenHotbar._combatEntry(x, combatskills, actor)
-                            if(!x.system.worn.value) {
-                                entry.cssClass = "unequipped"
+                            const entries = this.tokenHotbar._combatEntry(x, combatskills, actor)
+                            for(let entry of entries) {
+                                if(!x.system.worn.value) {
+                                    entry.cssClass = "unequipped"
+                                }
+                                groups.attacks.push(entry)
                             }
-                            groups.attacks.push(entry)
                         default:
                             if (x.getFlag("dsa5", "onUseEffect")) {
                                 if(!groups.skills[x.type])

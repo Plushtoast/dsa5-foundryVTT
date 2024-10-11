@@ -17,73 +17,27 @@
         {{> systems/dsa5/templates/items/item-description.html}}
 
         <div class="tab details" data-tab="details">
-
-            <div class="form-group">
-                <label class="label-text">{{localize "damage"}}</label>
-                <input class="input-text" type="text" name="system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
-            </div>
-
-            <div class="form-group">
-                <label class="label-text">{{localize "reloadTime"}}</label>
-                <input class="input-text" type="text" name="system.reloadTime.value" value="{{system.reloadTime.value}}" data-dtype="String" />
-            </div>
-
-            <div class="form-group">
-                <label class="label-text">{{localize "reach"}}</label>
-                <input class="input-text weaponreach" type="text" name="system.reach.value" value="{{system.reach.value}}" data-dtype="String" />
-            </div>
-
-            <div class="form-group">
-                <label class="label-text">{{localize "ammunitiongroup"}}</label>
-                <select name="system.ammunitiongroup.value" data-dtype="String">
-                    {{selectOptions ammunitiongroups selected=system.ammunitiongroup.value localize=true}}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
-                <select name="system.combatskill.value" data-dtype="String">
-                    {{selectOptions (selfObj combatskills) selected=system.combatskill.value}}
-                </select>
-            </div>
-
-            <div class="form-group doubleInput">
-                <label class="label-text">{{localize 'critBotch'}}</label>
-                <input class="input-text" type="number" name="system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
-                <input class="input-text" type="number" name="system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
-            </div>
-
-
-            <div class="form-group">
-                <label class="label-text">{{localize "effect"}}</label>
-                <input class="input-text" type="text" name="system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
-            </div>
-            <div class="form-group autoHeight">
-                <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
-                <div class="input-text domainsPretty">
-                    <ul>{{{domains}}}</ul>
+            
+            {{#if hasAlternateAttacks}}
+            <nav class="sheet-tabs tabs2" data-tab-container="secondary">
+                <a class="item active lineheight" data-tab="baseAttack">{{localize 'CHAR.ATTACK'}}</a>
+                {{#each alternateAttacks as |item key|}}
+                    <a class="item lineheight" data-tab="{{key}}">{{item.name}}</a>
+                {{/each}}
+            </nav>
+            <section class="content2">
+                <div class="tab active" data-tab="baseAttack">
+                    {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
                 </div>
-                {{/if}}
-                <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String"
-                />
-            </div>
-
-            <div class="form-group double">
-                <label class="label-text">{{localize "structure"}}</label>
-                <input class="input-text" type="number" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
-                <input class="input-text" type="number" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
-            </div>
-            {{#if armorAndWeaponDamage}}
-            <div class="form-group">
-                <label class="label-text">{{localize "WEAR.value"}}</label>
-                <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
-            </div>
+                {{#each alternateAttacks as |item key|}}
+                <div class="tab" data-tab="{{key}}">
+                    {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs item ammunitiongroups=../ammunitiongroups combatskills=../combatskills  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+                </div>
+                {{/each}}
+            </section>
+            {{else}}
+            {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs}}
             {{/if}}
-            <div class="form-group">
-                <label class="label-text">{{localize "PLANT.region"}}</label>
-                <input class="input-text" type="text" name="system.region" value="{{system.region}}" data-dtype="String" />
-            </div>
-            {{> systems/dsa5/templates/items/traditionArtifact.html}}
         </div>
 
         {{> systems/dsa5/templates/items/item-effects.html}} {{> systems/dsa5/templates/items/item-enchantment.html}}

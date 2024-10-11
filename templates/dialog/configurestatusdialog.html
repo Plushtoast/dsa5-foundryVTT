@@ -1,22 +1,24 @@
 <form class="dsa5 item" autocomplete="off">
     <div class="form-group">
-        <label class="label-text">{{localize 'ActiveEffects.dialog.duration'}}</label>
-        <input class="input-text duration quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" value="">
+        <label>{{localize 'ActiveEffects.dialog.duration'}}</label>
+        <div class="form-fields">
+            <input class="duration quantity-click" data-tooltip="TT.strgx10" name="duration" data-tooltip-direction="RIGHT" type="number" value="">
+        </div>
     </div>
-    <div class="form-group doubleInput">
-        <label class="label-text">{{localize 'ActiveEffects.dialog.unit'}}</label>
-        <div class="input-text">
+    <div class="form-group">
+        <label>{{localize 'ActiveEffects.dialog.unit'}}</label>
+        <div class="form-fields">
             <input type="radio" id="rounds" name="unit" value="rounds" checked>
             <label for="left">{{localize 'ActiveEffects.dialog.rounds'}}</label>
-        </div>
-        <div class="input-text">
             <input type="radio" id="seconds" name="unit" value="seconds">
             <label for="right">{{localize 'ActiveEffects.dialog.seconds'}}</label>
         </div>
     </div>
     <hr>
     <div class="form-group">
-        <label class="label-text">{{localize 'ActiveEffects.dialog.name'}}</label>
-        <input class="input-text effectname" type="text" value="" data-tooltip="{{localize 'ActiveEffects.dialog.overwrite'}}" placeholder="{{localize 'ActiveEffects.placeholder.effectname'}}">
+        <label>{{localize 'ActiveEffects.dialog.name'}}</label>
+        <div class="form-fields">
+            <input class="effectname" type="text" value="" name="effectname" data-tooltip="{{localize 'ActiveEffects.dialog.overwrite'}}" placeholder="{{localize 'ActiveEffects.placeholder.effectname'}}">
+        </div>
     </div>
 </form>

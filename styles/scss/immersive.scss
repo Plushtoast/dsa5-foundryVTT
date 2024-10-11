@@ -486,6 +486,21 @@
         }
     }
 
+    #chat {
+        a.content-link,
+        .chat-condition,
+        a.inline-roll {
+            border: none;
+            color: #b93d00;
+            font-weight: bold;
+            background: none;
+
+            i {
+                color: #b93d00;
+            }
+        }
+    }
+
     .itemTooltip {
         background-image: url("../../icons/backgrounds/macrobg.webp");
         background-size: cover;

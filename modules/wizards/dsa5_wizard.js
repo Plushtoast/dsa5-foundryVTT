@@ -176,29 +176,30 @@ export default class WizardDSA5 extends Application {
         if (string == "") return false
 
         let result = false
-        result = await new Promise((resolve, reject) => {
-            new Dialog({
-                title: game.i18n.localize("DIALOG.warning"),
-                content: game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: DSA5_Utility.categoryLocalization(category) }),
-                default: 'ok',
-                buttons: {
-                    ok: {
-                        icon: '<i class="fas fa-check"></i>',
-                        label: game.i18n.localize('Ok'),
-                        callback: () => {
-                            resolve(false);
-                        },
+        try {
+            result = await foundry.applications.api.DialogV2.wait({
+                window: {
+                    title: "DIALOG.warning"
+                },
+                content: `<p>${game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: DSA5_Utility.categoryLocalization(category) })}</p>`,
+                buttons: [
+                    {
+                        action: 'ok',
+                        default: true,
+                        icon: "fas fa-check",
+                        label: 'Ok',
+                        callback: () => false
                     },
-                    cancel: {
-                        icon: '<i class="fas fa-close"></i>',
-                        label: game.i18n.localize('Cancel'),
-                        callback: () => {
-                            resolve(true);
-                        },
+                    {
+                        action: 'cancel',
+                        icon: "fas fa-close",
+                        label: 'Cancel',
+                        callback: () => true
                     }
-                }
-            }).render(true);
-        });
+                ]
+            })
+        } catch (error) { }
+            
         return result
     }
 

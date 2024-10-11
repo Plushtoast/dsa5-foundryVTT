@@ -1,13 +1,13 @@
 <div class="directory targetChoser">
     <p>{{localize 'MERCHANT.otherTradeFriend'}}</p>
     {{#if users}}
-    <ul class="directory-list">
+    <ul class="directory-list" style="padding-bottom:20px;">
         {{#each users as |usr|}}
-        <li class="combatant actor directory-item flexrow" data-id="{{usr.id}}">
-            <div class="combatant-advanced">
+        <li class="combatant actor directory-item row-section" data-id="{{usr.id}}">
+            <div class="combatant-advanced col five">
                 <img class="token-image" data-tooltip="{{usr.name}}" src="{{usr.img}}">
             </div>
-            <div class="token-name flexcol">
+            <div class="token-name flexcol col eighty">
                 <h4>{{usr.name}}</h4>
             </div>
         </li>

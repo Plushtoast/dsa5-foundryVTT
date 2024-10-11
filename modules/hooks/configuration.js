@@ -103,7 +103,7 @@ export function setupConfiguration() {
         hint: "migrationVersion",
         scope: "world",
         config: false,
-        default: 29,
+        default: 30,
         type: Number
     })
 
@@ -787,11 +787,10 @@ export function setupConfiguration() {
 }
 
 
-const exportSetting = (dlg) => {
+const exportSetting = (form) => {
     let toExport = Array.from(game.settings.settings)
-
-    const exportOnlyDSA = dlg.find("[name=\"exportOnlyDSA\"]").is(":checked")
-
+    const exportOnlyDSA = form.elements.exportOnlyDSA.checked
+    
     if(exportOnlyDSA) toExport = toExport.filter(x => /^dsa5\./.test(x[0]))
 
     const exportData = {}
@@ -811,8 +810,7 @@ const exportSetting = (dlg) => {
     saveDataToFile(JSON.stringify(exportData, null, 2), "text/json", filename)
 }
 
-const importSettings = async(dlg) => {
-    const form = dlg.find("form")[0]
+const importSettings = async(form) => {
     if (!form.data.files.length)
             return ui.notifications?.error("You did not upload a data file!")
 
@@ -839,22 +837,26 @@ class ChangelogForm extends FormApplication {
 
 class ExportForm extends FormApplication {
     async render(){
-        const html = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {  })
-        new Dialog({
-            title: "Export configuration",
-            content: html,
-            buttons: {
-                export: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("Export"),
-                    callback: (dlg) => exportSetting(dlg)
+        const content = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {  })
+        new foundry.applications.api.DialogV2({
+            window: {
+                title: "Export configuration",
+            },            
+            content,
+            buttons: [
+                {
+                    action: 'export',
+                    icon: "fa fa-check",
+                    label: "Export",
+                    callback: (event, button, dialog) => { exportSetting(button.form) }
                 },
-                import: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("Import"),
-                    callback: dlg => importSettings(dlg)
+                {
+                    action: 'import',
+                    icon: "fas fa-check",
+                    label: "Import",
+                    callback: (event, button, dialog) => { importSettings(button.form) }
                 }
-            }
+            ]
         }).render(true)
     }
 }

@@ -16,19 +16,22 @@ export default function() {
                 const effectsToRemove = [effect._id]
                 const searchEffect = effect.name.replace('(' + game.i18n.localize('maintainCost') +')', "").trim()
                 const relatedEffects = actor.effects.filter(x => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id)
-                let content = game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name})
+                let content = `<p>${game.i18n.format('DIALOG.updateMaintainSpell',  {actor: actor.name})}</p>`
                 if(relatedEffects){
                     content += `<p>${game.i18n.localize("DIALOG.dependentMaintainEffects")}</p>`
-                    content +=  relatedEffects.map(x => `<p><label for="rel${x.id}">${x.name}</label><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" name="rel${x.id}"/></p>` ).join("")
+                    content +=  relatedEffects.map(x => `<div class="form-group"><label for="rel${x.id}">${x.name}</label><div class="form-fields"><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" id="rel${x.id}" name="rel${x.id}"/></div></div>` ).join("")
                 }
-                new Dialog({
-                    title: effect.name,
+                new foundry.applications.api.DialogV2({
+                    window: {
+                        title: effect.name
+                    },
                     content,
-                    default: 'Yes',
-                    buttons: {
-                        Yes: {
-                            icon: '<i class="fa fa-check"></i>',
-                            label: game.i18n.localize("HELP.pay"),
+                    buttons: [
+                        {
+                            action: 'yes',
+                            icon: "fa fa-check",
+                            label: "HELP.pay",
+                            default: true,
                             callback: async() => {
                                 const paid = await actor.applyMana(Number(getProperty(effect, "flags.dsa5.maintain")), getProperty(effect, "flags.dsa5.payType"))
                                 if(paid){
@@ -43,17 +46,18 @@ export default function() {
                                 }
                             }
                         },
-                        delete: {
-                            icon: '<i class="fas fa-trash"></i>',
-                            label: game.i18n.localize("delete"),
-                            callback: dlg => {
-                                for(let it of dlg.find(".effectRemoveSelector:checked")){
-                                    effectsToRemove.push($(it).val())
+                        {
+                            action: 'delete',
+                            icon: "fas fa-trash",
+                            label: "delete",
+                            callback: (event, button, dialog) => {
+                                for(let it of button.form.elements){
+                                    if(it.classList.contains('effectRemoveSelector')) effectsToRemove.push(it.value)
                                 }
                                 actor.deleteEmbeddedDocuments("ActiveEffect", effectsToRemove, {noHook: true})
                             }
                         }
-                    }
+                    ]
                 }).render(true)
                 return false
             }
@@ -417,19 +421,25 @@ export class TokenHoverHud {
     }
 }
 
-class AskForNameDialog extends Dialog{
+class AskForNameDialog extends foundry.applications.api.DialogV2{
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "DSASETTINGS.obfuscateTokenNames",
+        }
+    }
+
     static async getDialog(tokenObject, setting){
-        new Dialog({
-            title: game.i18n.localize("DSASETTINGS.obfuscateTokenNames"),
-            content: `<label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label> <input dtype="string" name="name" type="text" value="${tokenObject.actor.name}"/>`,
-            default: 'Yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: async(html) => {
+        new AskForNameDialog({
+            content: `<div class="form-group"><label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
+            buttons: [
+                {
+                    action: 'yes',
+                    icon: "fa fa-check",
+                    label: "yes",
+                    default: true,
+                    callback: async(event, button, dialog) => {
                         const tokenId = tokenObject.id || tokenObject._id
-                        let name = html.find('[name="name"]').val()
+                        let name = button.form.elements.name.value
                         if(setting == 2){
                             let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
                             if (sameActorTokens.length > 0) {
@@ -446,20 +456,22 @@ class AskForNameDialog extends Dialog{
                         await token.update({ name })
                     }
                 },
-                unknown: {
-                    icon: '<i class="fa fa-question"></i>',
-                    label: game.i18n.localize("unknown"),
+                {
+                    action: 'unknown',
+                    icon: "fa fa-question",
+                    label: "unknown",
                     callback: async() => {
                         const tokenId = tokenObject.id || tokenObject._id
                         const token = canvas.scene.tokens.get(tokenId)
                         await token.update({ name: game.i18n.localize("unknown") })
                     }
                 },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
+                {
+                    action: 'cancel',
+                    icon: "fas fa-times",
+                    label: "cancel"
                 }
-            }
+            ]
         }).render(true)
     }
 }

@@ -97,7 +97,8 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             if (rule.items == "text") {
                 template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-string-dialog.html', { original: item })
                 callback = function(dlg) {
-                    let adoption = { name: dlg.find('[name="entryselection"]').val() }
+                    const value = dlg.entryselection.value
+                    const adoption = { name: value }
                     SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                 }
             } else {
@@ -105,34 +106,39 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                     let items = rule.elems.map(x => { return { name: x } })
                     template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item, area: rule.area })
                     callback = function(dlg) {
-                        let adoption = items.find(x => x.name == dlg.find('[name="entryselection"]').val())
+                        const value = dlg.entryselection.value
+                        const adoption = items.find(x => x.name == value)
                         SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                     }
                 } else {
                     let items = actor.items.filter(x => rule.items.includes(x.type)).sort((a, b) => a.name.localeCompare(b.name))
                     template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item, area: rule.area })
                     callback = function(dlg) {
-                        let adoption = items.find(x => x.name == dlg.find('[name="entryselection"]').val())
-                        adoption.customEntry = dlg.find('[name="custom"]').val()
+                        const value = dlg.entryselection.value
+                        let adoption = items.find(x => x.name == value)
+                        adoption.customEntry = dlg.custom.value
                         SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                     }
                 }
             }
-            await new Select2Dialog({
-                title: game.i18n.localize("DIALOG.ItemRequiresAdoption"),
+            new Select2Dialog({
+                window: {
+                    title: "DIALOG.ItemRequiresAdoption",
+                },                
                 content: template,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback
+                buttons: [
+                    {
+                        action: 'yes',
+                        icon: "fa fa-check",
+                        label: "yes",
+                        callback: (event, button, dialog) => callback(button.form.elements)
                     },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    },
-                },
-                default: 'Yes'
+                    {
+                        action: 'no',
+                        icon: "fas fa-times",
+                        label: "cancel"
+                    }
+                ],
             }).render(true)
         } else {
             SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, null)

@@ -42,7 +42,7 @@
                     {{#if token.groups.attacks}}
                     <ul class="wrap skillItems thinscroll {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}" data-category="attacks">
                         {{#each token.groups.attacks as |item i|}}
-                        <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                        <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-subweapon="{{item.subweapon}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
                             <span class="nameContent">{{item.name}}</span>
                         </li>

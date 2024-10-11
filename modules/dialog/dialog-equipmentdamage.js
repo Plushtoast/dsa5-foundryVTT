@@ -1,27 +1,43 @@
 import EquipmentDamage from "../system/equipment-damage.js";
 
-export default class EquipmentDamageDialog extends Dialog {
-    static async showDialog(items) {
-        const dialog = new EquipmentDamageDialog({
-            title: game.i18n.localize("WEAR.checkShort"),
-            content: await this.getTemplate(items),
-            buttons: {}
-        })
-        dialog.items = items
-        dialog.render(true)
+export default class EquipmentDamageDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "WEAR.checkShort",
+        }
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
-        html.find('.reactClick').click(ev => {
+    static PARTS = {
+        main: {
+            template: 'systems/dsa5/templates/dialog/dialog-reaction-attack.html'
+        }
+    }
+
+    constructor(items) {
+        super()
+        this.items = items
+    }
+
+    async _prepareContext(_options) {
+        const data = await super._prepareContext(_options)
+        data.items = this.items.map(x => { return { name: x.name, id: x.id, img: x.img } })
+        data.title = "WEAR.checkShort"
+        return data
+    }
+
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+        html.find('.reactClick').on('click', ev => {
             this.callbackResult(ev)
             this.close()
         })
     }
 
-    static async getTemplate(data) {
-        const items = data.map(x => { return { name: x.name, id: x.id, img: x.img } })
-        return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { items, title: "WEAR.checkShort" })
+    static async showDialog(items) {
+        const dialog = new EquipmentDamageDialog(items)
+        dialog.render(true)
     }
 
     callbackResult(ev) {

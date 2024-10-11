@@ -104,28 +104,13 @@ export class DSA5Combat extends Combat {
     }
 
     async brawlingDialog() {
-        return new Promise((resolve, reject) => {
-            new Dialog({
-                title: game.i18n.localize("BRAWLING.unarmEveryone"),
-                content: `<p>${game.i18n.localize("BRAWLING.unarmEveryoneText")}</p>`,
-                default: "Yes",
-                buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: () => {
-                        resolve(true);
-                    },
-                },
-                No: {
-                    icon: '<i class="fa fa-times"></i>',
-                    label: game.i18n.localize("no"),
-                    callback: () => {
-                        resolve(false);
-                    },
-                }
-                },
-            }).render(true);
+        return await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: "BRAWLING.unarmEveryone",
+            },
+            content: `<p>${game.i18n.localize("BRAWLING.unarmEveryoneText")}</p>`,
+            rejectClose: false,
+            modal: true
         });
     }
 

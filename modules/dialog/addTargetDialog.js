@@ -72,22 +72,27 @@ export class AddTargetDialog extends Dialog{
     }
 }
 
-export class SelectUserDialog extends Dialog{
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        mergeObject(options, {
-            classes: options.classes.concat(["dsa5Decent"]),
-        });
-        return options;
+export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2){
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "DIALOG.setTargetToUser",
+        }
+    }
+
+    static PARTS = {
+        main: {
+            template: 'systems/dsa5/templates/dialog/selectForUserDialog.html'
+        }
     }
 
     static async getDialog(){
-        const users = game.users.filter(x => x.active && !x.isGM)
-        return new SelectUserDialog({
-            title: game.i18n.localize("DIALOG.setTargetToUser"),
-            content: await renderTemplate('systems/dsa5/templates/dialog/selectForUserDialog.html', { users }),
-            buttons: {},
-        })
+        return new SelectUserDialog()
+    }
+
+    async _prepareContext(_options) {
+        const data = await super._prepareContext(_options)
+        data.users = game.users.filter(x => x.active && !x.isGM)
+        return data
     }
 
     static registerButtons(){
@@ -96,7 +101,7 @@ export class SelectUserDialog extends Dialog{
 
             const userSelect = {
                 name: "targetUser",
-                title: game.i18n.localize("CONTROLS.targetForUser"),
+                title: "CONTROLS.targetForUser",
                 icon: "fa fa-bullseye",
                 button: true,
                 onClick: async() => { (await SelectUserDialog.getDialog()).render(true) }
@@ -105,9 +110,11 @@ export class SelectUserDialog extends Dialog{
         })
     }
 
-    activateListeners(html){
-        super.activateListeners(html)
-        html.find('.combatant').click(ev => this.setTargetToUser(ev))
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+        html.find('.combatant').on('click', ev => this.setTargetToUser(ev))
     }
 
     setTargetToUser(ev){
@@ -120,47 +127,50 @@ export class SelectUserDialog extends Dialog{
     }
 }
 
-export class UserMultipickDialog extends Dialog{
+export class UserMultipickDialog extends foundry.applications.api.DialogV2{
     static async getDialog(content){
         const users = game.users.filter(x => x.active && !x.isGM)
 
-        new UserMultipickDialog({
-            title: game.i18n.localize("SHEET.PostItem"),
+        new UserMultipickDialog({         
+            window: {
+                title: "SHEET.PostItem"
+            },   
             content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
-            default: "Yes",
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: (dlg) => {
-                        this.postContent(dlg, content)
-                    }
+            buttons: [
+                {
+                    action: 'done',
+                    icon: "fa fa-check",
+                    label: "yes",
+                    default: true,
+                    callback: (event, button, dialog) => { this.postContent(button.form.elements, content) }
                 },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
+                {
+                    action: 'cancel',
+                    icon: "fas fa-times",
+                    label: "cancel"
                 }
-            },
+            ],
         }).render(true)
     }
 
     static async postContent(dlg, content){
         const chatOptions = DSA5_Utility.chatDataSetup(content)
-        if(!dlg.find('#sel_all').is(':checked')){
+        if(!dlg.sel_all.checked){
             const ids = []
-            dlg.find('.usersel:checked').each(function(){
-                ids.push($(this).val());
-            });
+            for(let key of Object.keys(dlg)){
+                if(dlg[key].checked && key != 'sel_all') ids.push(dlg[key].value)
+            }
             chatOptions.whisper = ids
         }
 
         ChatMessage.create(chatOptions)
     }
 
-    activateListeners(html){
-        super.activateListeners(html)
+    _onRender(context, options) {
+        super._onRender((context, options))
 
-        html.find('[name="sel_all"]').change(ev => {
+        const html = $(this.element)
+        html.find('[name="sel_all"]').on('change', ev => {
             html.find('.usersel').prop('disabled', ev.currentTarget.checked).prop('checked', ev.currentTarget.checked)
         })
     }

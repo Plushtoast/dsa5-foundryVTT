@@ -167,7 +167,7 @@ export default class DSA5ChatAutoCompletion {
     }
 
     _setList(result, cmd, ev) {
-        let html = $(`<div class="quickfind dsalist"><ul>${result.map(x=> `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join("")}</ul></div>`)
+        const html = $(`<div class="quickfind dsalist"><ul>${result.map(x=> `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join("")}</ul></div>`)
 
         html.find(`.quick-item:first`).addClass("focus")
         const par = $(ev.currentTarget).closest('#chat-form')

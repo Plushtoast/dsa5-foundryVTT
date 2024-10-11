@@ -2,27 +2,34 @@ import Itemdsa5 from "../item/item-dsa5.js"
 import DSA5_Utility from "./utility-dsa5.js"
 const { getProperty } = foundry.utils
 
-export default class DSA5Initializer extends Dialog {
+export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     constructor(title, content, module, lang = "", options = {}) {
         let data = {
-            title,
+            window: {
+                title
+            },
+            position: {
+                width: 500
+            },
             content,
-            buttons: {
-                initialize: {
-                    label: game.i18n.localize("initialize"),
-                    callback: async() => {
-                        if (this.lock) return
-                        await this.initialize()
-                    }
-                },
-                cancel: {
-                    label: game.i18n.localize("cancel"),
-                    callback: async() => {
-                        if (this.lock) return
-                        await this.dontInitialize()
-                    }
+            buttons: [{
+                action: 'initialize',
+                label: "initialize",
+                callback: () => {
+                    if (this.lock) return
+
+                    this.initialize()
                 }
-            }
+            },
+            {
+                action: 'cancel',
+                label: "cancel",
+                callback: () => {
+                    if (this.lock) return
+
+                    this.dontInitialize()
+                }
+            }]
         }
         super(data)
         this.module = module
@@ -88,37 +95,38 @@ export default class DSA5Initializer extends Dialog {
             let resetScene = resetAll
             let found = game.scenes.find(x => x.name == entry.name && x.folder?.id == head.id)
             if (!resetAll && found) {
-                [resetScene, resetAll] = await new Promise((resolve, reject) => {
-                    new Dialog({
-                        title: game.i18n.localize("Book.sceneReset"),
-                        content: game.i18n.format("Book.sceneResetDescription", { name: entry.name }),
-                        default: 'Yes',
-                        buttons: {
-                            Yes: {
-                                icon: '<i class="fa fa-check"></i>',
-                                label: game.i18n.localize("yes"),
-                                callback: () => {
-                                    resolve([true, false])
-                                }
-                            },
-                            all: {
-                                icon: '<i class="fa fa-check"></i>',
-                                label: game.i18n.localize("LocalizedIDs.all"),
-                                callback: () => {
-                                    resolve([true, true])
-                                }
-                            },
-                            cancel: {
-                                icon: '<i class="fas fa-times"></i>',
-                                label: game.i18n.localize("cancel"),
-                                callback: () => {
-                                    resolve([false, false])
-                                }
-                            }
+                try {
+                    [resetScene, resetAll] = await foundry.applications.api.DialogV2.wait({
+                        window: {
+                            title: "Book.sceneReset",
                         },
-                        close: () => { resolve([false, false]) }
-                    }).render(true)
-                })
+                        content: `<p>${game.i18n.format("Book.sceneResetDescription", { name: entry.name })}</p>`,	
+                        buttons: [
+                            {
+                                action: 'yes',
+                                icon: "fa fa-check",
+                                label: "yes",
+                                callback: () => [true, false]
+                            },
+                            {
+                                action: 'all',
+                                icon: "fa fa-check",
+                                label: "LocalizedIDs.all",
+                                callback: () => [true, true]
+                            },
+                            {
+                                action: 'no',
+                                icon: "fas fa-times",
+                                label: "cancel",
+                                default: true,
+                                callback: () => [false, false]
+                            }
+                        ]
+                    })
+                } catch (err) {
+                    resetScene = false
+                    resetAll = false
+                }
             }
             if (found && !resetScene) {
                 this.scenes[found.name] = found
@@ -165,7 +173,7 @@ export default class DSA5Initializer extends Dialog {
 
     async initialize() {
         this.lock = true
-        let initButton = $(this._element).find('.initialize')
+        let initButton = $(this.element).find('[data-action="initialize"]')
         initButton.prepend('<i class="fas fa-spinner fa-spin"></i>')
         let bookData = {}
         try {

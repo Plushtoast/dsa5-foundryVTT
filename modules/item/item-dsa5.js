@@ -83,13 +83,23 @@ export default class Itemdsa5 extends Item {
             if (data.type in this.defaultImages) {
                 data.img = this.defaultImages[data.type]
             } else {
-                data.img = Itemdsa5.DEFAULT_ICON
+                if(data.type.startsWith('ability')) {
+                    data.img = this.defaultImages.specialability
+                } else {
+                    data.img = Itemdsa5.DEFAULT_ICON
+                }
             }
         }
     }
 
     static async create(data, options) {
-        this.defaultIcon(data)
+        if(Array.isArray(data)) {
+            for(let d of data) {
+                this.defaultIcon(d)
+            }
+        } else {
+            this.defaultIcon(data)
+        }
         return await super.create(data, options)
     }
 
@@ -1464,9 +1474,19 @@ class WeaponItemDSA5 extends Itemdsa5 {
             for(let change of effect.changes){
                 if(change.key == `self.situational.${mode}`){
                     const type = { damage: "dmg" }[mode] || ''
+                    const data = `${change.value}`.split(" ")
+                    let value
+                    const name = [effect.name]
+                    if(data.length > 1){
+                        value = Number(data.pop())
+                        name.push(data.join(" "))
+                    }
+                    else
+                        value = Number(data[0])
+
                     situationalModifiers.push({
-                        name: `${effect.name}`,
-                        value: change.value,
+                        name: name.join(" - "),
+                        value,
                         source: source.name,
                         type
                     })

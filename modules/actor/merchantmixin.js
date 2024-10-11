@@ -358,24 +358,15 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 
     async clearInventory(ev) {
-        new Dialog({
-            title: game.i18n.localize("MERCHANT.clearInventory"),
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: "MERCHANT.clearInventory",
+            },
             content: game.i18n.localize("MERCHANT.deleteAllGoods"),
-            default: 'Yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: () => {
-                        this.removeAllGoods(this.actor, ev)
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
-        }).render(true)
+            rejectClose: false,
+            modal: true
+        });
+        if(proceed) this.removeAllGoods(this.actor, ev)
     }
 
     async removeAllGoods(actor, ev) {
@@ -509,28 +500,40 @@ export const MerchantSheetMixin = (superclass) => class extends superclass {
     }
 }
 
-class SelectTradefriendDialog extends Dialog{
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        mergeObject(options, {
-        });
-        return options;
+class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2){
+    static DEFAULT_OPTIONS = {
+        window: {
+            title: "DIALOG.setTargetToUser",
+            resizable: true
+        },
+        position: {
+            width: 400,
+        }
+    }
+
+    static PARTS = {
+        main: {
+            template: 'systems/dsa5/templates/dialog/selectTradeFriend.html'
+        }
+    }
+
+    async _prepareContext(_options) {
+        const data = await super._prepareContext(_options)
+        data.users = game.user.isGM ? await game.dsa5.apps.gameMasterMenu.getTrackedHeros() : game.actors.filter(x => x.isOwner)        
+        return data
     }
 
     static async getDialog(actor){
-        const users = game.user.isGM ? await game.dsa5.apps.gameMasterMenu.getTrackedHeros() : game.actors.filter(x => x.isOwner)
-        const dialog = new SelectTradefriendDialog({
-            title: game.i18n.localize("DIALOG.setTargetToUser"),
-            content: await renderTemplate('systems/dsa5/templates/dialog/selectTradeFriend.html', { users }),
-            buttons: {},
-        })
+        const dialog = new SelectTradefriendDialog()
         dialog.actor = actor
         return dialog
     }
 
-    activateListeners(html){
-        super.activateListeners(html)
-        html.find('.combatant').click(ev => this.setTargetToUser(ev))
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+        html.find('.combatant').on('click', ev => this.setTargetToUser(ev))
     }
 
     setTargetToUser(ev){

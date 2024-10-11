@@ -27,7 +27,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
     static get defaultOptions() {
         const options = super.defaultOptions;
         mergeObject(options, {
-            tabs: [{ navSelector: ".tabs", contentSelector: ".content" }],
+            tabs: [{ navSelector: ".tabs", contentSelector: ".content", group: "primary" }, { group: "secondary", navSelector: ".tabs2", contentSelector: ".content2" }],
             classes: options.classes.concat(["dsa5", "item"]),
             width: 471,
             height: 500,
@@ -864,7 +864,57 @@ class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {
     }
 }
 
-class RangeweaponSheet extends ItemSheetObfuscation(Enchantable) {
+class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
+    activateListeners(html) {   
+        super.activateListeners(html)
+        html.find('.attack-add').on('click', () => this.addAttackSheet())
+        html.find('.attack-delete').on('click', ev => this.deleteAttack(ev))
+    }
+
+    async getData(options) {
+        const data = await super.getData(options)
+        data.alternateAttacks = getProperty(this.item, "flags.dsa5.alternateAttacks")
+        data.hasAlternateAttacks = data.alternateAttacks && Object.keys(data.alternateAttacks).length > 0
+        return data
+    }
+
+    async deleteAttack(ev) {
+        const key = ev.currentTarget.dataset.key
+        await this.item.update({ [`flags.dsa5.alternateAttacks.-=${key}`]: null })
+    }
+
+    activateTab(tabName, {group, triggerCallback=true}={}) {
+        super.activateTab(tabName, {group, triggerCallback})
+        if (tabName == "details") {
+            
+        }
+    }
+
+    _onChangeTab(event, tabs, active) {
+        super._onChangeTab(event, tabs, active)
+        if(active == "details") {
+            this.activateTab('baseAttack', {group: 'secondary'})
+        }
+    }
+
+    async addAttackSheet() {
+        const attackName = foundry.utils.randomID()
+
+        await this.item.update({
+            flags: {
+                dsa5: {
+                    alternateAttacks: {
+                        [attackName]: {
+                            name: game.i18n.localize("CHAR.ATTACK")
+                        }
+                    }
+                }
+            }
+        })
+    }
+}
+
+class RangeweaponSheet extends WeaponSheetDSA5 {
     get isPoisonable() {
         return game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`) == "Throwing Weapons"
     }
@@ -1055,7 +1105,7 @@ class MagictrickSheetDSA5 extends ItemSheetdsa5 {
     }
 }
 
-class MeleeweaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
+class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
     constructor(item, options) {
         super(item, options);
         this.isPoisonable = true
@@ -1268,31 +1318,23 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
         });
     }
 
-    _deleteItem(ev) {
-        let itemId = this._getItemId(ev);
-        let item = this.actor.items.find(x => x.id == itemId)
-        let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
-        renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message }).then(html => {
-            new Dialog({
-                title: game.i18n.localize("DIALOG.deleteConfirmation"),
-                content: html,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback: () => {
-                            this._cleverDeleteItem(itemId)
-                            $(ev.currentTarget).closest('.item').remove()
-                        }
-                    },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    }
-                },
-                default: 'Yes'
-            }).render(true)
+    async _deleteItem(ev) {
+        const itemId = this._getItemId(ev);
+        const item = this.actor.items.find(x => x.id == itemId)
+        const message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
+        const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message })
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: "DIALOG.deleteConfirmation",
+            },
+            content,
+            rejectClose: false,
+            modal: true
         });
+        if(proceed) {
+            this._cleverDeleteItem(itemId)
+            $(ev.currentTarget).closest('.item').remove()
+        }
     }
 
     async _cleverDeleteItem(itemId) {

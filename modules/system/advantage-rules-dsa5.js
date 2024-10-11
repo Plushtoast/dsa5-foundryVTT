@@ -74,32 +74,36 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
             if (DSA5.vantagesNeedingAdaption[item.name].items == "text") {
                 template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-string-dialog.html', { original: item })
                 callback = function(dlg) {
-                    let adoption = { name: dlg.find('[name="entryselection"]').val() }
+                    const adoption = { name: dlg.entryselection.value }
                     AdvantageRulesDSA5._vantageReturnFunction(actor, item, typeClass, adoption)
                 }
             } else {
                 let items = actor.items.filter(x => DSA5.vantagesNeedingAdaption[item.name].items.includes(x.type))
                 template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item })
                 callback = function(dlg) {
-                    let adoption = items.find(x => x.name == dlg.find('[name="entryselection"]').val())
+                    const value = dlg.entryselection.value
+                    const adoption = items.find(x => x.name == value)
                     AdvantageRulesDSA5._vantageReturnFunction(actor, item, typeClass, adoption)
                 }
             }
-            await new Select2Dialog({
-                title: game.i18n.localize("DIALOG.ItemRequiresAdoption"),
+            new Select2Dialog({
+                window: {
+                    title: "DIALOG.ItemRequiresAdoption",
+                },               
                 content: template,
-                buttons: {
-                    Yes: {
-                        icon: '<i class="fa fa-check"></i>',
-                        label: game.i18n.localize("yes"),
-                        callback
+                buttons: [
+                    {
+                        action: 'yes',
+                        icon: "fa fa-check",
+                        label: "yes",
+                        callback: (event, button, dialog) => callback(button.form.elements)
                     },
-                    cancel: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: game.i18n.localize("cancel")
-                    },
-                },
-                default: 'Yes'
+                    {
+                        action: 'no',
+                        icon: "fas fa-times",
+                        label: "cancel"
+                    }
+                ]
             }).render(true)
         } else {
             AdvantageRulesDSA5._vantageReturnFunction(actor, item, typeClass, null)

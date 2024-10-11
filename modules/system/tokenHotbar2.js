@@ -37,9 +37,9 @@ export default class TokenHotbar2 extends Application {
             this.callbackFunctions = {}
             const setting = game.settings.get("dsa5", "enableMasterTokenFunctions")
             this.gmItems = [
-                { name: 'gmMenu', disabled: setting["masterMenu"], icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: 'MASTER.randomPlayer', disabled: setting["randomVictim"], iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
-                { name: "TT.tokenhotbarMoney", disabled: setting["payMoney"], icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" }
+                { name: 'gmMenu', disabled: setting.masterMenu, icon: "systems/dsa5/icons/categories/DSA-Auge.webp", id: "masterMenu", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: 'MASTER.randomPlayer', disabled: setting.randomVictim, iconClass: "fa fa-dice-six", id: "randomVictim", cssClass: "gm", abbrev: "", subfunction: "gm" },
+                { name: "TT.tokenhotbarMoney", disabled: setting.payMoney, icon: "systems/dsa5/icons/money-D.webp", id: "payMoney", cssClass: "gm", abbrev: "", subfunction: "gm" }
             ]
         }
 
@@ -269,7 +269,7 @@ export default class TokenHotbar2 extends Application {
         }
     }
 
-    async handleSkillRoll(ev, actor, id, tokenId){
+    async handleSkillRoll(ev, actor, id, tokenId, subweapon = undefined){
         const options = {}
         if(ev.button == 2) options.rollMode = "blindroll"
 
@@ -292,6 +292,7 @@ export default class TokenHotbar2 extends Application {
                             result.update({"system.worn.value": false })
                         }
                         else if(result.system.worn.value) {
+                            result = Actordsa5.buildSubweapon(result, subweapon)
                             actor.setupWeapon(result, "attack", options, tokenId).then(setupData => { actor.basicTest(setupData) });
                         }
                         else {
@@ -309,25 +310,18 @@ export default class TokenHotbar2 extends Application {
                         actor.setupSkill(result, options, tokenId).then(setupData => { actor.basicTest(setupData) })
                         break
                     case "consumable":
-                        new Dialog({
-                            title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+                        const proceed = await foundry.applications.api.DialogV2.confirm({
+                            window: {
+                                title: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
+                            },
                             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + result.name,
-                            default: 'Yes',
-                            buttons: {
-                                Yes: {
-                                    icon: '<i class="fa fa-check"></i>',
-                                    label: game.i18n.localize("yes"),
-                                    callback: async() => {
-                                        await result.setupEffect(null, {}, tokenId)
-                                        await this.updateDSA5Hotbar()
-                                    }
-                                },
-                                cancel: {
-                                    icon: '<i class="fas fa-times"></i>',
-                                    label: game.i18n.localize("cancel"),
-                                }
-                            }
-                        }).render(true)
+                            rejectClose: false,
+                            modal: true
+                        });
+                        if(proceed) {
+                            await result.setupEffect(null, {}, tokenId)
+                            await this.updateDSA5Hotbar()
+                        }
                         break
                 }
 
@@ -412,6 +406,7 @@ export default class TokenHotbar2 extends Application {
         const tokenId = canvas.tokens.controlled[0]?.id
         const id = ev.currentTarget.dataset.id
         const subFunction = ev.currentTarget.dataset.subfunction
+        const subweapon = ev.currentTarget.dataset.subweapon
 
         switch (subFunction) {
             case "trade":
@@ -442,7 +437,7 @@ export default class TokenHotbar2 extends Application {
                 this.handleEnchantment(ev, actor, id, tokenId)
                 break
             default:
-                this.handleSkillRoll(ev, actor, id, tokenId)
+                this.handleSkillRoll(ev, actor, id, tokenId, subweapon)
         }
     }
 
@@ -493,7 +488,7 @@ export default class TokenHotbar2 extends Application {
                         items.attacks.push(this._traitEntry(x, actor.system))
                     }
                     else if (TokenHotbar2.attackTypes.has(x.type) && x.system.worn.value == true) {
-                        items.attacks.push(this._combatEntry(x, combatskills, actor))
+                        items.attacks.push(...this._combatEntry(x, combatskills, actor))
                     } else if (TokenHotbar2.spellTypes.has(x.type)) {
                         if (x.system.effectFormula.value) items.spells.push(this._skillEntry(x, "spell filterable"))
                         else moreSpells.push(this._skillEntry(x, "spell filterable"))
@@ -670,8 +665,11 @@ export default class TokenHotbar2 extends Application {
 
     _combatEntry(x, combatskills, actor, options = []) {
         const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
-
-        return { name: x.name, id: x.id, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd, ...options }
+        const entries = [{ name: x.name, id: x.id, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: x.name[0], attack: preparedItem.attack, damage: preparedItem.damagedie, dadd: preparedItem.damageAdd, ...options }]
+        for(let [key, value] of Object.entries(preparedItem.subweapons || {})) {
+            entries.push({ name: value.name, id: x.id, subweapon: key, icon: x.img, cssClass: `weapon i${x.id}`, abbrev: value.name[0], attack: value.attack, damage: value.damagedie, dadd: value.damageAdd, ...options })
+        }
+        return entries
     }
 
     async _effectEntries(actor, options = {}) {
@@ -748,9 +746,28 @@ export default class TokenHotbar2 extends Application {
     }
 }
 
-export class AddEffectDialog extends Dialog {
-    static async showDialog() {
-        const effects = duplicate(CONFIG.statusEffects).map(x => {
+export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+    static DEFAULT_OPTIONS = {
+        classes: ["dsa5", "tokenStatusEffects"],
+        window: {
+            title: "CONDITION.add",
+            resizable: true
+        },
+        position: {
+            width: 700,
+            height: 'auto'
+        }
+    }
+
+    static PARTS = {
+        main: {
+            template: 'systems/dsa5/templates/dialog/addstatusdialog.html'
+        }
+    }
+
+    async _prepareContext(_options) {
+        const data = await super._prepareContext(_options)
+        data.effects = duplicate(CONFIG.statusEffects).map(x => {
             return {
                 name: game.i18n.localize(x.name),
                 img: x.img,
@@ -758,20 +775,19 @@ export class AddEffectDialog extends Dialog {
                 id: x.id
             }
         }).sort((a, b) => a.name.localeCompare(b.name))
-
-        const dialog = new AddEffectDialog({
-            title: game.i18n.localize("CONDITION.add"),
-            content: await renderTemplate('systems/dsa5/templates/dialog/addstatusdialog.html', { effects }),
-            buttons: {}
-        })
-        dialog.position.height = Math.ceil(effects.length / 3) * 36 + 170
-        dialog.render(true)
+        return data
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
+    static async showDialog() {
+        new AddEffectDialog().render(true)
+    }
 
-        html.find('.filterable .reactClick').mouseenter((ev) => {
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+
+        html.find('.filterable .reactClick').on('mouseenter', (ev) => {
             if (ev.currentTarget.getElementsByClassName("hovermenu").length == 0) {
                 let div = document.createElement("div")
                 div.classList.add("hovermenu")
@@ -784,22 +800,26 @@ export class AddEffectDialog extends Dialog {
                 ev.currentTarget.appendChild(div)
             }
         })
-        html.find('.filterable .reactClick').mouseleave((ev) => {
-            let e = ev.toElement || ev.relatedTarget;
+        html.find('.filterable .reactClick').on('mouseleave', (ev) => {
+            let e = ev.relatedTarget;
             if (e.parentNode == this || e == this) return;
 
             ev.currentTarget.querySelectorAll(".hovermenu").forEach((e) => e.remove());
         })
 
-        html.find('.quantity-click').mousedown(ev => RuleChaos.quantityClick(ev));
-
-        html.find('.reactClick').click(ev => this.addEffect(ev.currentTarget.dataset.value))
+        html.find('.quantity-click').on('mousedown', ev => RuleChaos.quantityClick(ev));
+        html.find('.reactClick').on('click', ev => this.addEffect(ev.currentTarget.dataset.value))
 
         let filterConditions = ev => this._filterConditions($(ev.currentTarget), html)
 
         let search = html.find('.conditionSearch')
-        search.keyup(event => this._filterConditions($(event.currentTarget), html))
+        search.on('keyup', event => this._filterConditions($(event.currentTarget), html))
         search[0] && search[0].addEventListener("search", filterConditions, false);
+
+        const positionUpdate = {};
+        if ( this.options.position.width === "auto" ) positionUpdate.width = "auto";
+        if ( this.options.position.height === "auto" ) positionUpdate.height = "auto";
+        if ( !foundry.utils.isEmpty(positionUpdate) ) this.setPosition(positionUpdate);
     }
 
     _filterConditions(tar, html) {
@@ -814,29 +834,36 @@ export class AddEffectDialog extends Dialog {
     }
 
     static async modifyEffectDialog(id, callback){
-        new AddEffectDialog({
-            title: game.i18n.localize("CONDITION." + id),
+        new foundry.applications.api.DialogV2({
+            //classes: ["dsa5", "dialog"],
+            window: {
+                title: game.i18n.localize("CONDITION." + id)
+            },
+            position: {
+                width: 400,
+            },
             content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.html'),
-            default: 'add',
-            buttons: {
-                add: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("CONDITION.add"),
-                    callback: async(html) => {
+            buttons: [
+                {
+                    action: 'add',
+                    icon: "fa fa-check",
+                    label: "CONDITION.add",
+                    callback: async(event, button, dialog) => {
+                        const form = button.form.elements
                         const options = {}
-                        const duration = html.find('[name=unit]:checked').val() == "seconds" ? Math.round(html.find('.duration').val() / 5) : html.find('.duration').val()
-                        const label = html.find('.effectname').val()
-                        if (duration > 0) {
-                            mergeObject(options, RuleChaos._buildDuration(duration))
-                        }
-                        if (label) {
-                            options.name = label
-                        }
+
+                        let duration = Number(form.duration.value) || 0
+                        if(form.unit.value == "seconds") duration = Math.round(duration / 5)
+
+                        const label = form.effectname.value
+                        if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration))
+                        if (label) options.name = label
+
                         await callback(id, options)
                     }
                 }
-            }
-        }).render(true, { width: 400, resizable: false, classes: ["dsa5", "dialog"] })
+            ]
+        }).render(true)
     }
 
     async configureEffect(ev) {
@@ -859,17 +886,5 @@ export class AddEffectDialog extends Dialog {
             }
         }        
         this.close()
-    }
-
-    static get defaultOptions() {
-        const options = super.defaultOptions;
-        //const height = Math.ceil(CONFIG.statusEffects.length / 3) * 32
-        mergeObject(options, {
-            classes: ["dsa5", "tokenStatusEffects"],
-            width: 700,
-            resizable: true,
-           // height
-        });
-        return options;
     }
 }

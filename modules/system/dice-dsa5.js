@@ -279,7 +279,9 @@ export default class DiceDSA5 {
                 }
 
                 this._addRollDiceSoNice(testData, rollConfirm, color)    
-                const confirmed = res2 >= 0
+                let confirmed = res2 >= 0
+                if(isBotch) confirmed = !confirmed
+
                 characteristics.push({ char: id, res: Math.clamp(rollConfirm.total + confirmChange, 1, 20), suc: confirmed, tar: res })                
                 description = `${game.i18n.localize(confirmed ? "confirmed" : "unconfirmed")} ${description}`
 
@@ -287,6 +289,7 @@ export default class DiceDSA5 {
                     successLevel = isCrit ? 3 : -3
                 else
                     successLevel = isCrit ? 2 : -2
+
             }            
         } else {
             description = game.i18n.localize(suc ? "Success" : "Failure")
@@ -352,55 +355,24 @@ export default class DiceDSA5 {
             }
         } else {
             for (let k of attrs) {
-                this._appendSituationalModifiers(
-                    testData,
-                    game.i18n.localize(`LocalizedIDs.regeneration${k}`),
-                    AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)),
-                    k
-                )
-                this._appendSituationalModifiers(
-                    testData,
-                    game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
-                    AdvantageRulesDSA5.vantageStep(
-                        testData.extra.actor,
-                        game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)
-                    ) * -1,
-                    k
-                )
-                this._appendSituationalModifiers(
-                    testData,
-                    game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`),
-                    SpecialabilityRulesDSA5.abilityStep(
-                        testData.extra.actor,
-                        game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)
-                    ),
-                    k
-                )
-                this._appendSituationalModifiers(
-                        testData,
-                        `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("Modifier")}`,
-                testData[`${k}Modifier`],
-                k
-            )
-            this._appendSituationalModifiers(
-                testData,
-                `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("regenerate")}`,
-                testData[`regeneration${k}`],
-                k
-            )
+                this._appendSituationalModifiers( testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.regeneration${k}`)), k )
+                this._appendSituationalModifiers( testData, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`), AdvantageRulesDSA5.vantageStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`)) * -1, k )
+                this._appendSituationalModifiers( testData, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`), SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`)), k )
+                this._appendSituationalModifiers( testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("Modifier")}`, testData[`${k}Modifier`], k )
+                this._appendSituationalModifiers( testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize("regenerate")}`, testData[`regeneration${k}`], k )
 
-            chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
-            result[k] = Math.round(
-                Math.max(
-                    0,
-                    Number(roll.terms[index].results[0].result) + Number(modifier) + await this._situationalModifiers(testData, k)
-                ) * Number(testData.regenerationFactor)
-            )
-            index += 2
+                chars.push({ char: k, res: roll.terms[index].results[0].result, die: "d6" })
+                result[k] = Math.round(
+                    Math.max(
+                        0,
+                        Number(roll.terms[index].results[0].result) + Number(modifier) + await this._situationalModifiers(testData, k)
+                    ) * Number(testData.regenerationFactor)
+                )
+                index += 2
             }
         }
 
-        result["characteristics"] = chars
+        result.characteristics = chars
         return result
     }
 
@@ -415,19 +387,19 @@ export default class DiceDSA5 {
             "",
             this._situationalMultipliers(testData)
         )
-        result["rollType"] = "dodge"
+        result.rollType = "dodge"
         const isDodge = testData.extra.statusId == "dodge"
         if (isDodge && result.successLevel == 3) {
             if (await DSATables.tableEnabledFor("criticalMeleeDefense")) {
-                result["description"] += DSATables.rollCritBotchButton("criticalMeleeDefense", false, testData, testData)
+                result.description += DSATables.rollCritBotchButton("criticalMeleeDefense", false, testData, testData)
             }else{
-                result["description"] += DSATables.defaultParryCrit()
+                result.description += DSATables.defaultParryCrit()
             }
         } else if (isDodge && result.successLevel == -3) {
             if (await DSATables.tableEnabledFor("Defense")) {
-                result["description"] += DSATables.rollCritBotchButton("Defense", true, testData, testData)
+                result.description += DSATables.rollCritBotchButton("Defense", true, testData, testData)
             } else {
-                result["description"] += await DSATables.defaultBotch()
+                result.description += await DSATables.defaultBotch()
             }
         }
         return result
@@ -445,7 +417,7 @@ export default class DiceDSA5 {
             "",
             this._situationalMultipliers(testData)
         )
-        result["rollType"] = "attribute"
+        result.rollType = "attribute"
         return result
     }
 
@@ -576,7 +548,7 @@ export default class DiceDSA5 {
         if (isAttack && success) {
             await DiceDSA5.evaluateDamage(testData, result, source, !isMelee, result.doubleDamage)
         }
-        result["rollType"] = "weapon"
+        result.rollType = "weapon"
         const effect = DiceDSA5.parseEffect(source)
         if (effect) result["parsedEffect"] = effect
 
@@ -774,6 +746,26 @@ export default class DiceDSA5 {
         return result
     }
 
+    static _weaponBotchCritEffect(source, key, actor) {
+        const result = []
+        for(let effect of source.effects) {
+            for(let change of effect.changes){
+                if(change.key == key) {
+                    if(change.value == "description"){
+                        result.push(effect.description)
+                    } else if(/^condition /.test(change.value)) {
+                        const value = change.value.replace(/^condition /, "").split(" ")
+                        const count = Number(value[1]) || 1
+                        const condition = game.i18n.localize(`CONDITION.${value[0]}`)
+                        const msg = DSA5_Utility.replaceConditions(game.i18n.format("CHATNOTIFICATION.suffersCondition", { actor: actor.name, condition, count }))
+                        result.push(`<p>${msg}</p>`)
+                    }
+                }  
+            }
+        }
+        return result.join("<br/>")
+    }
+
     static async detailedWeaponResult(result, testData, source) {
         const isAttack = testData.mode == "attack" && !testData.extra.counterAttack
         const isMelee = source.type == "meleeweapon" || getProperty(source, "system.traitType.value") == "meleeAttack"
@@ -797,6 +789,7 @@ export default class DiceDSA5 {
                         result.description += DSATables.defaultParryCrit()
                     }
                 }
+                result.description += this._weaponBotchCritEffect(source, "self.criteffect", testData.extra.actor)
                 break
             case -3:
                 const isWeaponless = getProperty(source, "system.combatskill.value") == game.i18n.localize("LocalizedIDs.wrestle") || source.type == "trait"
@@ -808,6 +801,8 @@ export default class DiceDSA5 {
                     result.description += DSATables.rollCritBotchButton("Defense", isWeaponless, testData)
                 else
                     result.description += await DSATables.defaultBotch()
+
+                result.description += this._weaponBotchCritEffect(source, "self.botcheffect", testData.extra.actor)
                 break
             case 2:
                 if (isAttack) {
@@ -842,7 +837,7 @@ export default class DiceDSA5 {
             this._situationalMultipliers(testData)
         )
         await this.detailedWeaponResult(result, testData, source)
-        result["rollType"] = "combatskill"
+        result.rollType = "combatskill"
         return result
     }
 
@@ -1094,16 +1089,10 @@ export default class DiceDSA5 {
 
         let crit = testData.extra.actor.system.skillModifiers.crit
         let botch = testData.extra.actor.system.skillModifiers.botch
-        if (
-            ["spell", "ritual"].includes(testData.source.type) &&
-            AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("LocalizedIDs.wildMagic"))
-        )
+        if ( ["spell", "ritual"].includes(testData.source.type) && AdvantageRulesDSA5.hasVantage(testData.extra.actor, game.i18n.localize("LocalizedIDs.wildMagic")) )
             botch = 19
 
-        if (
-            testData.source.type == "skill" &&
-            AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.incompetent")} (${testData.source.name})`)
-        ) {
+        if ( testData.source.type == "skill" && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.incompetent")} (${testData.source.name})`) ) {
             let reroll = await new Roll("1d20").evaluate()
             let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0)
             let oldValue = roll.terms[indexOfMinValue * 2].total
@@ -1121,13 +1110,7 @@ export default class DiceDSA5 {
             )
         }
         let automaticResult = 0
-        if (
-            testData.source.type == "skill" &&
-            TraitRulesDSA5.hasTrait(
-                testData.extra.actor,
-                `${game.i18n.localize("LocalizedIDs.automaticSuccess")} (${testData.source.name})`
-            )
-        ) {
+        if ( testData.source.type == "skill" && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize("LocalizedIDs.automaticSuccess")} (${testData.source.name})`) ) {
             description.push(game.i18n.localize("LocalizedIDs.automaticSuccess"))
             successLevel = 1
             automaticResult = 1
@@ -1176,7 +1159,7 @@ export default class DiceDSA5 {
 
     static async rollTalent(testData) {
         let res = await this._rollThreeD20(testData)
-        res["rollType"] = "talent"
+        res.rollType = "talent"
         return res
     }
 
@@ -1282,11 +1265,12 @@ export default class DiceDSA5 {
         const source = testData.preData.source
 
         if(testData.successLevel > 0){
-            if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value)))
+            if(["meleeweapon", "rangeweapon"].includes(source.type) || (source.type == "trait" && ["rangeAttack", "meleeAttack"].includes(source.system.traitType.value))){
                 if (source.effects.some(x => { return !getProperty(x, "flags.dsa5.applyToOwner")})) return true
-
-            else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type))
+            }
+            else if (["spell", "liturgy", "ritual", "ceremony", "trait", "skill"].includes(source.type)){
                 if (source.effects.length > 0) return true
+            }
         } 
         
         if (["disease", "poison"].includes(source.type)) {

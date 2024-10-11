@@ -9,23 +9,27 @@ export default function() {
         }
 
         if(!doc.pack && !options.dsaInit && createData.notes?.some(x => getProperty(x, "flags.dsa5.initName"))){
-            new Dialog({
-                title: game.i18n.localize("DIALOG.warning"),
+            new foundry.applications.api.DialogV2({
+                window: {
+                    title: "DIALOG.warning",
+                },                
                 content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
-                default: "Yes",
-                buttons: {
-                  Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
+                buttons: [
+                  {
+                    action: 'yes',
+                    icon: "fa fa-check",
+                    default: true,
+                    label: "yes",
                     callback: () => {
                         const newOptions = options || {}
                         options.dsaInit = true
                         Scene.create(createData, newOptions)
                     },
                   },
-                  withJournals: {
-                    icon: '<i class="fas fa-book"></i>',
-                    label: game.i18n.localize("Book.tryInit"),
+                  {
+                    action: 'withJournals',
+                    icon: "fas fa-book",
+                    label: "Book.tryInit",
                     callback: async() => {
                         try{
                             const mod = doc.flags.core.sourceId.split(".")[1]
@@ -39,11 +43,12 @@ export default function() {
                         }    
                     },
                   },    
-                  cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                  },
-                },
+                  {
+                    action: 'no',
+                    icon: "fas fa-times",
+                    label: "cancel"
+                  }
+                ]
               }).render(true)
             return false
         }

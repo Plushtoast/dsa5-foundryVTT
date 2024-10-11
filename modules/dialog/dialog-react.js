@@ -106,7 +106,7 @@ export class ActAttackDialog extends Dialog {
     activateListeners(html) {
         super.activateListeners(html);
         html.find('.reactClick').click(ev => {
-            this.callbackResult(ev.currentTarget.dataset.value, this.actor, this.tokenId)
+            this.callbackResult(ev.currentTarget.dataset, this.actor, this.tokenId)
             this.close()
         })
     }
@@ -124,36 +124,49 @@ export class ActAttackDialog extends Dialog {
         const types = ["meleeweapon", "rangeweapon"]
         const traitTypes = ["meleeAttack", "rangeAttack"]
 
-        for (let x of actor.items) {
-            if (types.includes(x.type) && x.system.worn.value == true) {
-                const preparedItem = x.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor)
+        for (let item of actor.items) {
+            if (types.includes(item.type) && item.system.worn.value == true) {
+                const preparedItem = item.type == "meleeweapon" ? Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(item.toObject(), [], combatskills, actor)
                 items.push({
-                    name: x.name,
-                    id: x.name,
-                    img: x.img,
+                    name: item.name,
+                    id: item.name,
+                    img: item.img,
                     value: preparedItem.attack,
                     item: preparedItem
                 })
-            } else if (x.type == "trait" && traitTypes.includes(x.system.traitType.value)) {
+                for(let [key, value] of Object.entries(preparedItem.subweapons || {})){
+                    items.push({
+                        name: value.name,
+                        id: item.name,
+                        subweapon: key,
+                        img: item.img,
+                        value: value.attack,
+                        item: value
+                    })
+                }
+            } else if (item.type == "trait" && traitTypes.includes(item.system.traitType.value)) {
                 items.push({
-                    name: x.name,
-                    id: x.name,
-                    img: x.img,
-                    value: x.system.at.value
+                    name: item.name,
+                    id: item.name,
+                    img: item.img,
+                    value: item.system.at.value
                 })
             }
         }
         return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: "die-mu", items, title: "DIALOG.selectAction" })
     }
 
-    callbackResult(text, actor, tokenId) {
-        if ("attackWeaponless" == text) {
+    callbackResult(dataset, actor, tokenId) {
+        if ("attackWeaponless" == dataset.value) {
             actor.setupWeaponless("attack", {}, tokenId).then(setupData => {
                 actor.basicTest(setupData)
             });
         } else {
             const types = ["meleeweapon", "trait", "rangeweapon"]
-            const result = actor.items.find(x => { return types.includes(x.type) && x.name == text })
+            let result = actor.items.find(x => { return types.includes(x.type) && x.name == dataset.value })
+            if (dataset.subweapon) {
+                result = Actordsa5.buildSubweapon(result, dataset.subweapon)
+            }
             if (result) {
                 actor.setupWeapon(result, "attack", {}, tokenId).then(setupData => {
                     actor.basicTest(setupData)
@@ -164,9 +177,7 @@ export class ActAttackDialog extends Dialog {
 
     static get defaultOptions() {
         const options = super.defaultOptions;
-        mergeObject(options, {
-            width: 550,
-        });
+        options.width = 550
         return options;
     }
 }

@@ -24,6 +24,7 @@ const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObj
 export default class Actordsa5 extends Actor {
   static DEFAULT_ICON = "icons/svg/mystery-man-black.svg"
   static selfRegex = /^self\./
+  static skipAlternateWeaponKeys = new Set([["flags", "system.description"]])
 
   static async create(data, options) {
     if (data instanceof Array || data.items) return await super.create(data, options);
@@ -1296,14 +1297,7 @@ export default class Actordsa5 extends Actor {
 
     for (let wep of wornweapons) {
       try {
-        meleeweapons.push(
-          Actordsa5._prepareMeleeWeapon(
-            wep,
-            combatskills,
-            actorData,
-            wornweapons.filter((x) => x._id != wep._id && !RuleChaos.isYieldedTwohanded(x))
-          )
-        );
+        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, actorData, wornweapons.filter((x) => x._id != wep._id && !RuleChaos.isYieldedTwohanded(x))));
       } catch (error) {
         this._itemPreparationError(wep, error);
       }
@@ -1524,35 +1518,36 @@ export default class Actordsa5 extends Actor {
     if (Number(this.system.details.experience.total) - Number(this.system.details.experience.spent) >= cost) {
       return true;
     } else if (Number(this.system.details.experience.total) == 0) {
-      const template = await renderTemplate("systems/dsa5/templates/dialog/parts/expChoices.html", { entries: DSA5.startXP })
+      const content = await renderTemplate("systems/dsa5/templates/dialog/parts/expChoices.html", { entries: DSA5.startXP })
       let newXp = 0;
       let result = false;
 
-      [result, newXp] = await new Promise((resolve, reject) => {
-        new Dialog({
-          title: game.i18n.localize("DSAError.NotEnoughXP"),
-          content: template,
-          default: "Yes",
-          buttons: {
-            Yes: {
-              icon: '<i class="fa fa-check"></i>',
-              label: game.i18n.localize("yes"),
-              callback: (dlg) => {
-                resolve([true, dlg.find('.APsel')[0].value]);
-              },
+      try {
+        [result, newXp] = await foundry.applications.api.DialogV2.wait({
+          window: {
+            title: "DSAError.NotEnoughXP"
+          },          
+          content,
+          buttons: [
+            {
+              action: 'yes',
+              icon: "fa fa-check",
+              label: "yes",
+              default: true,
+              callback: (event, button, dialog) => { return [true, Number(button.form.elements.APsel.value)] }
             },
-            cancel: {
-              icon: '<i class="fas fa-times"></i>',
-              label: game.i18n.localize("cancel"),
-              callback: () => {
-                resolve([false, 0]);
-              },
+            {
+              action: 'cancel',
+              icon: "fas fa-times",
+              label: "cancel",
+              callback: () => { return [false, 0] }
             },
-          },
-        }).render(true);
+          ],        
       });
+      } catch (error) { }
+      
       if (result) {
-        await this.update({ "system.details.experience.total": Number(newXp) });
+        await this.update({ "system.details.experience.total": newXp });
         return true;
       }
     }
@@ -2398,7 +2393,7 @@ export default class Actordsa5 extends Actor {
     return this._parseDmg(item, actorData);
   }
 
-  static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null) {
+  static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null, isBaseWeapon = true) {
     let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     if (skill) {
       item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
@@ -2469,7 +2464,6 @@ export default class Actordsa5 extends Actor {
           ...item.system.guidevalue.value.split("/").map((x) => Number(actorData.system.characteristics[x].value))
         );
         let extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
-
         if (extra > 0) {
           item.extraDamage = extra;
           item.damageAdd = Roll.safeEval(item.damageAdd + " + " + Number(extra));
@@ -2477,16 +2471,35 @@ export default class Actordsa5 extends Actor {
         }
       }
       EquipmentDamage.weaponWearModifier(item);
-      item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
+      
+      if(isBaseWeapon) {
+        item.subweapons = {}
+        for(let key of Object.keys(getProperty(item, "flags.dsa5.alternateAttacks") || {})) {
+          const dup = this.buildSubweapon(item, key)
+          const done = this._prepareMeleeWeapon(dup, combatskills, actorData, wornWeapons, false)
+          item.subweapons[key] = done
+        }
+        item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
+      }
+      
     } else {
-      ui.notifications.error(
-        game.i18n.format("DSAError.unknownCombatSkill", {
-          skill: item.system.combatskill.value,
-          item: item.name,
-        })
-      );
+      if(isBaseWeapon) ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", { skill: item.system.combatskill.value, item: item.name}));
     }
     return item;
+  }
+
+  static buildSubweapon(item, id) {
+    if(!id) return item
+
+    const dup = duplicate(item)
+    const value = getProperty(item, `flags.dsa5.alternateAttacks.${id}`)
+    const data = foundry.utils.flattenObject(value)
+    for(let key of Object.keys(data)) {
+      if (this.skipAlternateWeaponKeys.has(data[key]) || data[key] == null || data[key] == undefined) 
+        delete data[key]
+    }
+    mergeObject(dup, data)
+    return dup
   }
 
   async actorEffects() {
@@ -2647,7 +2660,7 @@ export default class Actordsa5 extends Actor {
     return item;
   }
 
-  static _prepareRangeWeapon(item, ammunitions, combatskills, actor) {
+  static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {
     let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     item.calculatedRange = item.system.reach.value;
 
@@ -2678,14 +2691,20 @@ export default class Actordsa5 extends Actor {
       if (item.LZ > 0) Actordsa5.buildReloadProgress(item);
 
       EquipmentDamage.weaponWearModifier(item);
-      item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
+      
+      if(isBaseWeapon) {
+        
+        item.subweapons = {}
+        for(let key of Object.keys(getProperty(item, "flags.dsa5.alternateAttacks") || {})) {
+          const dup = this.buildSubweapon(item, key)         
+          const done = this._prepareRangeWeapon(dup, ammunitions, combatskills, actor, false)
+          item.subweapons[key] = done
+        }
+
+        item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
+      }
     } else {
-      ui.notifications.error(
-        game.i18n.format("DSAError.unknownCombatSkill", {
-          skill: item.system.combatskill.value,
-          item: item.name,
-        })
-      );
+      if(isBaseWeapon) ui.notifications.error(game.i18n.format("DSAError.unknownCombatSkill", {skill: item.system.combatskill.value, item: item.name}));
     }
 
     return this._parseDmg(item, actor.system, currentAmmo);

@@ -85,7 +85,7 @@ const handleItemDrop = async(canvas, data) => {
         dropToGround(sourceActor, item, data, count)
     }
 
-    RangeSelectDialog.create(game.i18n.localize("DSASETTINGS.enableItemDropToCanvas"), game.i18n.format('MERCHANT.dropGround', {name: item.name}), item.system.quantity.value, callback)
+    RangeSelectDialog.create("DSASETTINGS.enableItemDropToCanvas", game.i18n.format('MERCHANT.dropGround', {name: item.name}), item.system.quantity.value, callback)
 }
 
 const handleGroupDrop = async(canvas, data) => {
@@ -124,32 +124,38 @@ export const connectHook = () => {
     })
 }
 
-export class RangeSelectDialog extends Dialog {
+export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
     static async create(title, name, count, callback, min = 1, max = undefined) {
         max = max || count
         const content = await renderTemplate("systems/dsa5/templates/dialog/dropToGround.html", { name, min, max, count })
 
         new RangeSelectDialog({
-            title,
+            window: {
+                title
+            },
             content,
-            default: 'Yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: async(dlg) => callback(Number(dlg.find('[name="count"]').val()))
+            buttons: [
+                {
+                    action: 'yes',
+                    icon: "fa fa-check",
+                    label: "yes",
+                    default: true,
+                    callback: (event, button, dialog) => { callback(button.form.elements.count.valueAsNumber) }
                 },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
+                {
+                    action: 'no',
+                    icon: "fas fa-times",
+                    label: "cancel"
                 }
-            }
+            ]
         }).render(true)
     }
 
-    activateListeners(html) {
-        super.activateListeners(html)
-        html.find('input[type="range"]').change(ev => {
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+        html.find('input[type="range"]').on('change', ev => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').html($(ev.currentTarget).val())
         })
     }

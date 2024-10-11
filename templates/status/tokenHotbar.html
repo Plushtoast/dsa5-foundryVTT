@@ -1,26 +1,28 @@
 <div class="tokenHotbarInner direction{{direction}}" style="--tokenHotbarOpacity:{{opacity}};--tokenQuickhotsize:{{itemWidth}}px;--tokenQuickhotdistance:{{itemWidth}}px;">
     <ul>
-        {{#each items as |cat i|}} {{#each cat as |item j|}}
-        <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
-            {{#if item.more}}
-            <ul class="subbuttons skillsBtns" {{{item.subwidth}}}>
-                {{#each item.more as |mo i|}}
-                <li class="{{mo.cssClass}} {{mo.addClass}} secondary" data-category="{{item.cssClass}}" data-id="{{mo.id}}" data-name="{{mo.name}}" data-subfunction="{{mo.subfunction}}">
-                    <div style="background-image:url('{{mo.icon}}')"></div><label>{{mo.name}}</label>
-                </li>
-                {{/each}}
-            </ul>
-            {{/if}}
-            {{#if item.attack}}
-            <ul class="subbuttons" {{{item.subwidth}}}>
-            <li class="combatTooltip secondary" data-category="{{item.cssClass}}">
-                <label class="die-mu d20">{{item.attack}}</label> <label class="die-damage d6">{{item.damage}}</label><label>{{item.dadd}}</label>
+        {{#each items as |cat i|}} 
+            {{#each cat as |item j|}}
+            <li class="{{item.cssClass}} primary" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}</div>
+                {{#if item.more}}
+                <ul class="subbuttons skillsBtns" {{{item.subwidth}}}>
+                    {{#each item.more as |mo i|}}
+                    <li class="{{mo.cssClass}} {{mo.addClass}} secondary" data-category="{{item.cssClass}}" data-id="{{mo.id}}" data-name="{{mo.name}}" data-subfunction="{{mo.subfunction}}">
+                        <div style="background-image:url('{{mo.icon}}')"></div><label>{{mo.name}}</label>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+                {{#if item.attack}}
+                <ul class="subbuttons" {{{item.subwidth}}}>
+                    <li class="combatTooltip secondary" data-category="{{item.cssClass}}">
+                        <label class="die-mu d20">{{item.attack}}</label> <label class="die-damage d6">{{item.damage}}</label><label>{{item.dadd}}</label>
+                    </li>
+                </ul>
+                {{/if}}
             </li>
-        </ul>
-            {{/if}}
-        </li>
-        {{/each}} {{/each}}
+            {{/each}} 
+        {{/each}}
         {{#if gmMode}}
         <li class="modifier primary" data-category="modifier" data-tooltip="TT.tokenhotbarMod" data-subfunction="none">
             <input type="number" class="quantity-click modifierVal" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" step="1" name="modVal" value="0">

@@ -2,44 +2,40 @@ const { mergeObject, getProperty } = foundry.utils
 
 export default class Migrakel {
     static async showDialog(content, migrateAll = false) {
-        let [result] = await new Promise((resolve, reject) => {
-            const buttons = {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("update"),
-                    callback: () => {
-                        resolve([true]);
-                    },
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel"),
-                    callback: () => {
-                        resolve([false]);
-                    },
-                },
+        let result = false
+        const buttons = [
+            {
+                action: 'yes',
+                icon: "fa fa-check",
+                label: "update",
+                default: true,
+                callback: () => true,
+            },
+            {
+                action: 'cancel',
+                icon: "fas fa-times",
+                label: "cancel",
+                callback: () => false
             }
-            if(migrateAll){
-                buttons["migrateAll"] = {
-                    icon: '<i class="fas fa-exclamation-triangle "></i>',
-                    label: game.i18n.localize("replace"),
-                    callback: () => {
-                        resolve([2]);
-                    },
-                }
-            }
+        ]
+        if(migrateAll){
+            buttons.push({
+                action: 'migrateAll',
+                icon: "fas fa-exclamation-triangle ",
+                label: "replace",
+                callback: () => 2,
+            })
+        }
 
-
-            new Dialog({
-                title: game.i18n.localize("Migrakel.Migration"),
-                content,
-                default: "Yes",
-                buttons,
-                close: () => {
-                    resolve([false]);
+        try{
+            result = await foundry.applications.api.DialogV2.wait({
+                window: {
+                    title: "Migrakel.Migration",
                 },
-            }).render(true);
-        });
+                content: `<p>${content}</p>`,
+                buttons
+            })
+        } catch (e) { }  
         return result;
     }
 

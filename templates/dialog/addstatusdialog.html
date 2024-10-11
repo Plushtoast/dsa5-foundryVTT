@@ -1,5 +1,5 @@
 <div class="selection">
-    <div class="row-section skills searchbox">
+    <div class="row-section skills searchbox" style="color: var(--color-text-primary)">
         <div class="col zerofive lineheight center">
             <a class="reactClick" data-value="custom" style="display:block" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
         </div>
@@ -12,7 +12,7 @@
             <input type="search" data-dtype="String" class="conditionSearch" placeholder="{{localize 'Library.search'}}" />
         </div>
     </div>
-    <div class="row-section wrap statusEffect">
+    <div class="row-section wrap statusEffect" style="height: auto;">
         {{#each effects as |itm i|}}
         <div class="col third filterable">
             <button class="reactClick" style="position: relative;" data-value="{{itm.id}}" data-tooltip="{{itm.description}}"><img src="{{itm.img}}" /><span>{{itm.name}}</span></button>

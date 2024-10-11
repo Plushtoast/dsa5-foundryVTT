@@ -82,7 +82,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         effect.update({ 
             "system.delayed": false,
             "duration": duration,
-            "-=flags.dsa5.onDelayed": null
+            "flags.dsa5.-=onDelayed": null
         })
     }
 
@@ -874,7 +874,6 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             const modelName = DSA5_Utility.categoryLocalization(model)
 
             for(const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog[`${model}RollModifiers`]))){
-                console.log(`${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`)
                 optns.push({
                     name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, "")}`)}`,
                     val: `system.${model}RollModifiers.${k}`,

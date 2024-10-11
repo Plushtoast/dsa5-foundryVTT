@@ -49,10 +49,12 @@ function swarmButtons(app, html, data) {
 
 }
 
-class SwarmDialog extends Dialog {
-    activateListeners(html) {
-        super.activateListeners(html)
-        html.find('input[type="range"]').change(ev => {
+class SwarmDialog extends foundry.applications.api.DialogV2 {
+    _onRender(context, options) {
+        super._onRender((context, options))
+
+        const html = $(this.element)
+        html.find('input[type="range"]').on('change', ev => {
             $(ev.currentTarget).closest('.row-section').find('.range-value').html($(ev.currentTarget).val())
         })
     }
@@ -67,15 +69,18 @@ async function splitSwarm(actor, token) {
     const content = await renderTemplate("systems/dsa5/templates/dialog/swarm-split-dialog.html", { actor, maxSplitsize })
 
     new SwarmDialog({
-        title: game.i18n.localize("swarm.split"),
+        window: {
+            title: "swarm.split",
+        },
         content,
-        default: 'Yes',
-        buttons: {
-            Yes: {
-                icon: '<i class="fa fa-check"></i>',
-                label: game.i18n.localize("ok"),
-                callback: async(dialog) => {
-                    const split = Number(dialog.find('input[type="range"]').val())
+        buttons: [
+            {
+                action: 'yes',
+                icon: "fa fa-check",
+                label: "ok",
+                default: true,
+                callback: async(event, button, dialog) => {
+                    const split = button.form.elements.newswarmsplit.valueAsNumber
                     const newtokenData = token.toObject()
                     delete newtokenData._id
 
@@ -90,11 +95,12 @@ async function splitSwarm(actor, token) {
                     await canvas.scene.updateEmbeddedDocuments("Token", [{ _id: newtoken.id, [axis]: token[axis] + canvas.scene.grid.size * dir }])
                 }
             },
-            delete: {
-                icon: '<i class="fas fa-trash"></i>',
-                label: game.i18n.localize("cancel")
+            {
+                action: 'delete',
+                icon: "fas fa-trash",
+                label: "cancel"
             }
-        }
+        ]
     }).render(true)
 }
 

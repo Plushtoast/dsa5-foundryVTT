@@ -3,16 +3,9 @@ import DSA5_Utility from "./utility-dsa5.js"
 const { mergeObject, getProperty, hasProperty } = foundry.utils
 
 export default class Riding {
-    static preRenderedUnmountHud = `
-    <div class="control-icon" data-action="ride">
-        <i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36">
-    </div>
-    `
-    static preRenderedMountHud = `<div class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></div>`
-    static preRenderedSpeedHud = `
-    <div class="control-icon" data-action="rideIncrease"><i class="fas fa-caret-up" data-tooltip="RIDING.increase" width="36" height="36"></div>
-    <div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></div>
-    `
+    static preRenderedUnmountHud = '<div class="control-icon" data-action="ride"><i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36"></i></div>'
+    static preRenderedMountHud = '<div class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></div>'
+    static preRenderedSpeedHud = '<div class="control-icon" data-action="rideIncrease"><i class="fas fa-caret-up" data-tooltip="RIDING.increase" width="36" height="36"></i></div><div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></i></div>'
 
     static async createTokenHook(token, options, id){
         if(!DSA5_Utility.isActiveGM()) return
@@ -23,11 +16,9 @@ export default class Riding {
 
             if(!horse) return
 
-            const horseTokenSource = await horse.getTokenDocument()
-            horseTokenSource.updateSource({ x: token.x, y: token.y, hidden: token.hidden })
-
+            const horseTokenSource = await horse.getTokenDocument({ x: token.x, y: token.y, hidden: token.hidden })
             const horseToken = (await scene.createEmbeddedDocuments("Token", [horseTokenSource]))[0]
-            const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.document.elevation ?? 0) + 1}
+            const tokenUpdate = {"flags.dsa5.horseTokenId": horseToken.id, elevation: (horseToken.elevation ?? 0) + 1}
             mergeObject(tokenUpdate, this.adaptTokenSize(token, horseToken))
             await token.update(tokenUpdate)
 
@@ -209,7 +200,7 @@ export default class Riding {
         if(horse.compendium) {
             const confirmed = await foundry.applications.api.DialogV2.confirm({
             window: {
-                title: game.i18n.localize("DSAError.horseMustBeImported")
+                title: "DSAError.horseMustBeImported"
             },
             content: `<p>${game.i18n.localize("DSAError.horseMustBeImportedText")}</p>`,
             rejectClose: false

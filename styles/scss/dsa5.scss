@@ -2383,6 +2383,10 @@
     }
   } 
   
+  .subweapon {
+    margin-left: 15px;
+  }
+
   .adventurePoints {
     .row-section:hover {
       background-color: rgba(0, 0, 0, 0.2);
@@ -3614,9 +3618,18 @@
   }
   
   .item .image {
+    position: relative;
+    
     &.rar, &.common {
       z-index: 0;
-      position: relative;
+    }
+
+    .overlayicon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: #7d5900;
+      text-shadow: 0 0 1px white;
     }
   }
   
@@ -4077,6 +4090,15 @@
   
   .select2-results__option[role="group"]:hover {
     background-color: transparent;
+  }
+
+  .theme-dark {
+    .application {
+      .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: white;
+      }
+
+    }
   }
 
   .postChatSection {

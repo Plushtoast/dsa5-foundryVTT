@@ -116,7 +116,6 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt" target="_blank" title="Aventurisches Herbarium">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp" alt="Aventurisches Herbarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
@@ -137,6 +136,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/detail/index/sArticle/3942" target="_blank" title="Körperlose Schrecken">
         <img src="https://www.f-shop.de/media/image/4f/4b/99/ESD045_0_0999.jpg" alt="Körperlose Schrecken" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4342/dsa5-brut-der-niederhoellen-fuer-foundry-vtt" target="_blank" title="Brut der Niederhöllen">
+        <img src="https://www.f-shop.de/media/image/22/b6/98/ESD051_0_0999.jpg" alt="Brut der Niederhöllen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/detail/index/sArticle/3907" target="_blank" title="Rahjas Diener">
         <img src="https://www.f-shop.de/media/image/17/40/f3/ESD043_0_0999.jpg" alt="Rahjas Diener" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">

@@ -94,6 +94,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html",
         "systems/dsa5/templates/actors/parts/status_effects.html",
         "systems/dsa5/templates/actors/parts/purse.html",
+        "systems/dsa5/templates/actors/parts/combat_weapon.hbs",
+        "systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs",
         "systems/dsa5/templates/actors/parts/horse.html",
         "systems/dsa5/templates/actors/parts/healthbar.html",
         "systems/dsa5/templates/actors/merchant/merchant-commerce.html",
@@ -120,6 +122,8 @@ Hooks.once("init", () => {
         "systems/dsa5/templates/items/browse/culture.html",
         "systems/dsa5/templates/items/browse/species.html",
         "systems/dsa5/templates/items/browse/career.html",
+        "systems/dsa5/templates/items/meleeweapon-attack-part.hbs",
+        "systems/dsa5/templates/items/rangeweapon-attack-part.hbs",
         "systems/dsa5/templates/actors/parts/specblock.html"
     ]);
 
@@ -174,7 +178,7 @@ Hooks.once("i18nInit", () => {
     setupKnownEquipmentModifiers()
 })
 
-class ForbiddenLanguageDialog extends Dialog{
+class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2{
     async close(options = {}){
         if(!["de", "en"].includes(game.i18n.lang)) return
 
@@ -183,60 +187,65 @@ class ForbiddenLanguageDialog extends Dialog{
 }
 
 const showForbiddenLanguageDialog = () => {
-    let data = {
-        title: game.i18n.localize("language"),
+    new ForbiddenLanguageDialog({
+        window: {
+            title: "language",
+        },
         content: `<p>Your foundry language is not supported by this system. Due to technical reasons your foundry language setting has to be switched to either english or german.</p>`,
-        buttons: {
-            de: {
-                icon: '<i class="fa fa-check"></i>',
+        buttons: [
+            {
+                action: 'de',
+                icon: "fa fa-check",
                 label: "en",
                 callback: async() => {
                     await game.settings.set("core", "language", "de")
                     foundry.utils.debouncedReload()
                 }
             },
-            en: {
-                icon: '<i class="fas fa-check"></i>',
+            {
+                action: 'en',
+                icon: "fas fa-check",
                 label: "de",
                 callback: async() => {
                     await game.settings.set("core", "language", "en")
                     foundry.utils.debouncedReload()
                 }
             },
-            logout: {
-                icon: '<i class="fas fa-door-closed"></i>',
-                label: game.i18n.localize('SETTINGS.Logout'),
+            {
+                action: 'logout',
+                icon: "fas fa-door-closed",
+                label: 'SETTINGS.Logout',
                 callback: async() => {
                     ui.menu.items.logout.onClick()
                 }
             }
-        }
-    }
-
-    new ForbiddenLanguageDialog(data).render(true)
+        ]
+    }).render(true)
 }
 
 const showWrongLanguageDialog = (forceLanguage) => {
-    let data = {
-        title: game.i18n.localize("DSASETTINGS.forceLanguage"),
-        content: game.i18n.format("DSAError.wrongLanguage", { lang: forceLanguage }),
-        buttons: {
-            ok: {
-                icon: '<i class="fa fa-check"></i>',
-                label: game.i18n.localize("ok"),
+    new foundry.applications.api.DialogV2({
+        window: {
+            title: "DSASETTINGS.forceLanguage"
+        },
+        content: `<p>${game.i18n.format("DSAError.wrongLanguage", { lang: forceLanguage })}</p>`,
+        buttons: [
+            {
+                action: 'ok',
+                icon: "fa fa-check",
+                label: "ok",
                 callback: async() => {
                     await game.settings.set("core", "language", forceLanguage)
                     foundry.utils.debouncedReload()
                 }
             },
-            cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize("cancel"),
-
+            {
+                action: 'cancel',
+                icon: "fas fa-times",
+                label: "cancel",
             }
-        }
-    }
-    new Dialog(data).render(true)
+        ]
+    }).render(true)
 }
 
 function setupKnownEquipmentModifiers() {

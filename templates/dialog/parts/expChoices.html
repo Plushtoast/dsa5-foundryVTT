@@ -1,7 +1,12 @@
 <p>{{localize "DSAError.zeroXP"}}</p>
-<label>{{localize "APValue"}}</label>
-<select class="APsel">
-    {{#each entries as |val key|}}
-    <option value="{{key}}">{{localize val}} ({{key}})</option>
-    {{/each}}
-</select>
+
+<div class="form-group">
+    <label>{{localize "APValue"}}</label>
+    <div class="form-fields">
+        <select class="APsel" name="APsel">
+            {{#each entries as |val key|}}
+            <option value="{{key}}">{{localize val}} ({{key}})</option>
+            {{/each}}
+        </select>
+    </div>
+</div>

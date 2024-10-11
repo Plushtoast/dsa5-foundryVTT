@@ -203,24 +203,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async consumeItem(item) {
-        new Dialog({
-            title: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
+            },
             content: game.i18n.localize("SHEET.ConsumeItem") + ": " + item.name,
-            default: 'Yes',
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: () => {
-                        item.setupEffect(null, {}, this.getTokenId())
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel"),
-                }
-            }
-        }).render(true)
+            rejectClose: false,
+            modal: true
+        });
+        if(proceed) item.setupEffect(null, {}, this.getTokenId())
     }
 
     async _advanceAttribute(attr) {
@@ -340,7 +331,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _configActor() {
-        DialogActorConfig.buildDialog(this.actor)
+        new DialogActorConfig(this.actor, {}).render(true)
     }
 
     _getHeaderButtons() {
@@ -566,9 +557,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         })
         html.find('.ch-rollCombat').click(event => {
             event.preventDefault();
-            let itemId = this._getItemId(event);
+            const dataset = this._getItemDataset(event)
             const mode = event.currentTarget.dataset.mode
-            const item = this.actor.items.get(itemId)
+            const item = Actordsa5.buildSubweapon(this.actor.items.get(dataset.itemId), dataset.subweapon)
             this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then(setupData => this.actor.basicTest(setupData))
         });
 
@@ -933,7 +924,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             await this.actor.updateEmbeddedDocuments("Item", [{_id: item.id, "system.quantity.value": item.system.quantity.value - count}])
         }
 
-        RangeSelectDialog.create(game.i18n.localize('SHEET.SplitItem'), game.i18n.format('MERCHANT.splitItem', {name: item.name}), item.system.quantity.value - 1, callback, 1, item.system.quantity.value - 1)
+        RangeSelectDialog.create('SHEET.SplitItem', game.i18n.format('MERCHANT.splitItem', {name: item.name}), item.system.quantity.value - 1, callback, 1, item.system.quantity.value - 1)
     }
 
     _bindKeepFieldsEnabled(html) {
@@ -1038,29 +1029,19 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     async _itemDeleteDialog(item) {
-        let message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
+        const message = game.i18n.format("DIALOG.DeleteItemDetail", { item: item.name })
         const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message })
-        await new Promise((resolve, reject) => {
-            new Dialog({
-            title: game.i18n.localize("DIALOG.deleteConfirmation"),
-            content,
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: async() => {
-                        await this._cleverDeleteItem(item.id)
-                        resolve(true)
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: "DIALOG.deleteConfirmation",
             },
-            default: 'Yes'
-            }).render(true)
-        })
+            content,
+            rejectClose: false,
+            modal: true
+        });
+        if(proceed) {
+            await this._cleverDeleteItem(item.id)
+        }
     }
 
     async _deleteItem(ev) {
@@ -1111,6 +1092,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     _getItemId(ev) {
         return $(ev.currentTarget).closest(".item").attr("data-item-id")
+    }
+
+    _getItemDataset(ev) {
+        return $(ev.currentTarget).closest(".item")[0].dataset
     }
 
     async _addMoney(item) {
@@ -1253,28 +1238,32 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     async creatureDrop(item) {
         if (game.dsa5.config.hooks.shapeshift) {
-            new Dialog({
-                title: game.i18n.localize("DIALOG.ItemRequiresAdoption") + ": " + item.name,
-                content: game.i18n.localize("DIALOG.whichFunction") + ": " + item.name,
-                default: 'horse',
-                buttons: {
-                    shapeshift: {
-                        icon: '<i class="fas fa-paw"></i>',
-                        label: game.i18n.localize("CONDITION.shapeshift"),
+            new foundry.applications.api.DialogV2({
+                window: {
+                    title: game.i18n.localize("DIALOG.ItemRequiresAdoption") + ": " + item.name,
+                },                
+                content: `<p>${game.i18n.localize("DIALOG.whichFunction") + ": " + item.name}</p>`,
+                buttons: [
+                    {
+                        action: 'shapeshift',
+                        icon: "fas fa-paw",
+                        label: "CONDITION.shapeshift",
                         callback: () => {
                             const shapeshift = game.dsa5.config.hooks.shapeshift
                             shapeshift.setShapeshift(this.actor, item)
                             shapeshift.render(true)
                         }
                     },
-                    horse: {
-                        icon: '<i class="fas fa-horse"></i>',
-                        label: game.i18n.localize("RIDING.horse"),
+                    {
+                        action: 'horse',
+                        icon: "fas fa-horse",
+                        label: "RIDING.horse",
+                        default: true,
                         callback: () => {
                             Riding.setHorse(this.actor, item, this.token)
                         }
                     }
-                }
+                ]
             }).render(true)
         }
         else {
