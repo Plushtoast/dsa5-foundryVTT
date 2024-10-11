@@ -377,9 +377,6 @@ DSA5.defaultWeapon = ( data ) => {
             },
             guidevalue: {
                 value: "ge/kk"
-            },
-            damageThreshold: {
-                value: "5000"
             }
         }
     }, data))

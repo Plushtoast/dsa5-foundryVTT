@@ -17,6 +17,7 @@
         "FF": "Dexterity",
         "GE": "Agility",
         "KO": "Constitution",
+        "STEP": "Combat Technique",
         "KK": "Strength",
         "ATTACK": "Attack",
         "PARRY": "Parry",
@@ -256,6 +257,11 @@
         "5": "Runner",
         "6": "Deceased"
     },
+    "CustomActiveEffects": {
+        "armor": {
+            "vulnerability": "Armor adjustment (combat technique)"
+        }
+    },
     "KEYBINDINGS": {
         "masterMenu": "Open the Master's Menu",
         "journalBrowser": "Open the journal browser",
@@ -386,7 +392,7 @@
     "Difficulty": "Difficulty",
     "didyouknow": "Did you know?",
     "distribution": "Traditions",
-    "speciesModifer": "Physique ({species})",
+    "speciesModifier": "Physique ({species})",
     "distance": "Distance",
     "damageApplied": "Damage has been applied",
     "defense": "Defense",
