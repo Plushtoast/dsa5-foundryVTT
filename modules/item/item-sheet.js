@@ -883,16 +883,9 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
         await this.item.update({ [`flags.dsa5.alternateAttacks.-=${key}`]: null })
     }
 
-    activateTab(tabName, {group, triggerCallback=true}={}) {
-        super.activateTab(tabName, {group, triggerCallback})
-        if (tabName == "details") {
-            
-        }
-    }
-
     _onChangeTab(event, tabs, active) {
         super._onChangeTab(event, tabs, active)
-        if(active == "details") {
+        if(active == "details" && $(this.element).find('[data-tab-container="secondary"]').length) {
             this.activateTab('baseAttack', {group: 'secondary'})
         }
     }

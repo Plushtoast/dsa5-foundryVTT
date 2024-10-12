@@ -147,7 +147,9 @@ Hooks.once("init", () => {
 
     DSA5SoundEffect.prepareSoundEffects()
 
-    $('body').addClass(game.settings.get("dsa5", "globalStyle"))
+    let style = game.settings.get("dsa5", "globalStyle")
+    if(!DSA5.styles[style]) style = Object.keys(DSA5.styles)[0]
+    $('body').addClass(style)
 })
 
 Hooks.once('setup', () => {

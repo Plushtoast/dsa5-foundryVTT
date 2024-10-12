@@ -142,8 +142,9 @@
         "Über das Kontextmenü von ausgerüsteten Nahkampfwaffen, kannst du diese auch werfen.",
         "Mit dem Grundregelwerk-Modul lassen sich die Erfolgswahrscheinlichkeiten bei Proben im Voraus anzeigen.",
 
-        "Du kannst deine gierigen Spieler das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die entsprechende Option in den Settings."
-        
+        "Du kannst deine gierigen Spieler das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die entsprechende Option in den Settings.",
+
+        "Rechtclick auf eine Wurfaufforderung im Chat löst einen verdeckten Wurf an den Spielleiter aus."
 
     ]
 }

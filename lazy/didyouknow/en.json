@@ -139,6 +139,8 @@
         "Via the context menu of equipped melee weapons, you can also throw them.",
         "With the core rulebook module, you can display the probability of success for tests in advance.",
 
-        "You can let your greedy players feel the full weight of their loot. Activate the corresponding option in the settings."
+        "You can let your greedy players feel the full weight of their loot. Activate the corresponding option in the settings.",
+
+        "Rightclick on a roll request message in the chat triggers a hidden roll to the GM."
     ]
 }
