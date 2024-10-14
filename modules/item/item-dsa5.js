@@ -410,7 +410,7 @@ export default class Itemdsa5 extends Item {
         const forbiddenNames = new Set([])
         const effectChanges = {}
         for(let effect of source.effects || []){
-            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
+            if(!DSAActiveEffect.realyRealyEnabled(effect)) continue
 
             for(let change of effect.changes){
                 if(change.key.startsWith('self.maneuver.')){
@@ -1469,7 +1469,7 @@ class WeaponItemDSA5 extends Itemdsa5 {
 
     static weaponModifiers(situationalModifiers, source, mode) {
         for(let effect of source.effects || []){
-            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
+            if(!DSAActiveEffect.realyRealyEnabled(effect)) continue
 
             for(let change of effect.changes){
                 if(change.key == `self.situational.${mode}`){

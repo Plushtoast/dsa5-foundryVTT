@@ -269,8 +269,8 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     } else {
                         try {
                             const syncFunction = Object.getPrototypeOf(function(){}).constructor
-                            const fn = new syncFunction("ef", "callMacro", "actor", "msg", "source", getProperty(ef, "flags.dsa5.args3"))
-                            fn.call(this, ef, callMacro, actor, msg, source);
+                            const fn = new syncFunction("ef", "callMacro", "actor", "msg", "source", "options", getProperty(ef, "flags.dsa5.args3"))
+                            fn.call(this, ef, callMacro, actor, msg, source, options);
                         } catch (err) {
                             ui.notifications.error(
                                 `There was an error in your macro syntax. See the console (F12) for details`

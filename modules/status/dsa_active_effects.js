@@ -27,7 +27,7 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
     }
 
-    static reallyReallyEnabled(effect) {
+    static realyRealyEnabled(effect) {
         if(effect.disabled || !effect.transfer || effect.system.delayed || !game.settings.get("dsa5", "enableWeaponAdvantages") && effect.system.equipmentAdvantage) return false
 
         return true

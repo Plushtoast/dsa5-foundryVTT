@@ -254,7 +254,7 @@ export default class Migrakel {
                     img: find.img,
                     effects: find.effects.toObject(),
                 };
-                if (!["poison", "consumable"].includes(find.type)) {
+                if (!["poison", "consumable", "disease"].includes(find.type)) {
                     mergeObject(update, {
                         system: { effect: { value: find.system.effect.value } },
                     });

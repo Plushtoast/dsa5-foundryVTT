@@ -844,12 +844,12 @@ export default class Actordsa5 extends Actor {
       let combatskill = getProperty(options.origin, "system.combatskill.value");
 
       wornArmor = wornArmor.map((armor) => {
-        const optnCopy = mergeObject(duplicate(options), { armor });       
+        const optnCopy = mergeObject(duplicate(options), { armor: duplicate(armor) });
 
         if(combatskill) {
           combatskill += " "
-          for(let ef of armor.effects){
-            if(!DSAActiveEffect.reallyReallyEnabled(effect)) continue
+          for(let ef of optnCopy.armor.effects){
+            if(!DSAActiveEffect.realyRealyEnabled(ef)) continue
 
             for(let change of ef.changes) {
               if(change.key == "self.armorVulnerability") {
@@ -861,7 +861,7 @@ export default class Actordsa5 extends Actor {
                 if(adaption) {
                   const number = Number(adaption.match(/[-+]?\d+/)[0]) || 0
                   for(let key of ["head","rightleg","leftleg","rightarm","leftarm","value"]){
-                    if(armor.system.protection[key]) armor.system.protection[key] = Math.max(0, armor.system.protection[key] + number)
+                    if(optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = Math.max(0, optnCopy.armor.system.protection[key] + number)
                   }
                 } else {
                   adaption = adaptions.find(x => x.trim().startsWith("randomArmor "))
@@ -871,7 +871,7 @@ export default class Actordsa5 extends Actor {
                     const randomArmor = randomArmorVals[Math.floor(Math.random() * randomArmorVals.length)]
 
                     for(let key of ["head","rightleg","leftleg","rightarm","leftarm","value"]){
-                      if(armor.system.protection[key]) armor.system.protection[key] = randomArmor
+                      if(optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = randomArmor
                     }
                   }
                 }

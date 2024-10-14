@@ -375,7 +375,6 @@ export default class OpposedDsa5 {
 
     static async completeOpposedProcess(attacker, defender, options) {
         await DSATriggers.postOpposed({ attacker, defender, options })
-        console.log(attacker, defender)
         const opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
         this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
         this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
