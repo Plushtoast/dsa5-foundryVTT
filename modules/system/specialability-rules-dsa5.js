@@ -116,7 +116,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
                     callback = function(dlg) {
                         const value = dlg.entryselection.value
                         let adoption = items.find(x => x.name == value)
-                        adoption.customEntry = dlg.custom.value
+                        adoption.customEntry = dlg.custom?.value || ''
                         SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption)
                     }
                 }

@@ -17,7 +17,10 @@ export default class DSA5Tutorial {
         const data = {
             window: {
                 title: "DIALOG.firstTime"
-            },           
+            },
+            position: {
+                width: 400,
+            },
             content: `<p>${game.i18n.localize("DIALOG.firstTimeWarning")}</p>`,
             buttons: []
         }
