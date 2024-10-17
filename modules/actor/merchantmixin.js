@@ -1,625 +1,866 @@
-import Itemdsa5 from "../item/item-dsa5.js";
-import DSA5 from "../system/config-dsa5.js";
-import DSA5SoundEffect from "../system/dsa-soundeffect.js";
-import DSA5Payment from "../system/payment.js";
-import RuleChaos from "../system/rule_chaos.js";
-import DSA5_Utility from "../system/utility-dsa5.js";
-import { itemFromDrop } from "../system/view_helper.js";
-const { mergeObject, getProperty, duplicate } = foundry.utils
+import Itemdsa5 from '../item/item-dsa5.js';
+import DSA5 from '../system/config-dsa5.js';
+import DSA5SoundEffect from '../system/dsa-soundeffect.js';
+import DSA5Payment from '../system/payment.js';
+import RuleChaos from '../system/rule_chaos.js';
+import DSA5_Utility from '../system/utility-dsa5.js';
+import { itemFromDrop } from '../system/view_helper.js';
+const { mergeObject, getProperty, duplicate } = foundry.utils;
 
 //todo add on use button to merchant sheet
 
-export const MerchantSheetMixin = (superclass) => class extends superclass {
+export const MerchantSheetMixin = (superclass) =>
+  class extends superclass {
     static get defaultOptions() {
-        const options = super.defaultOptions;
-        mergeObject(options, { classes: options.classes.concat(["merchant-sheet"]) });
-        return options;
+      const options = super.defaultOptions;
+      mergeObject(options, {
+        classes: options.classes.concat(['merchant-sheet']),
+      });
+      return options;
     }
 
     static get merchantTemplate() {
-        return "systems/dsa5/templates/actors/merchant/merchant-sheet.html";
+      return 'systems/dsa5/templates/actors/merchant/merchant-sheet.html';
     }
 
     get template() {
-        if (this.merchantSheetActivated()) {
-            switch (getProperty(this.actor.system, "merchant.merchantType")) {
-                case "merchant":
-                    return "systems/dsa5/templates/actors/merchant/merchant-limited.html";
-                case "loot":
-                    return "systems/dsa5/templates/actors/merchant/merchant-limited-loot.html";
-                case "epic":
-                    return "systems/dsa5/templates/actors/merchant/merchant-epic.html";
-                default:
-                    return super.template
-            }
+      if (this.merchantSheetActivated()) {
+        switch (getProperty(this.actor.system, 'merchant.merchantType')) {
+          case 'merchant':
+            return 'systems/dsa5/templates/actors/merchant/merchant-limited.html';
+          case 'loot':
+            return 'systems/dsa5/templates/actors/merchant/merchant-limited-loot.html';
+          case 'epic':
+            return 'systems/dsa5/templates/actors/merchant/merchant-epic.html';
+          default:
+            return super.template;
         }
+      }
 
-        return this.constructor.merchantTemplate
+      return this.constructor.merchantTemplate;
     }
 
     merchantSheetActivated() {
-        return this.showLimited() || (this.playerViewEnabled() && ["merchant", "loot", "epic"].includes(getProperty(this.actor.system, "merchant.merchantType")))
+      return (
+        this.showLimited() ||
+        (this.playerViewEnabled() &&
+          ['merchant', 'loot', 'epic'].includes(
+            getProperty(this.actor.system, 'merchant.merchantType'),
+          ))
+      );
     }
 
     async allowMerchant(ids, allow) {
-        let curPermissions = duplicate(this.actor.ownership)
-        const newPerm = allow ? 1 : 0
-        for (const id of ids) {
-            curPermissions[id] = newPerm
-        }
-        await this.actor.update({ ownership: curPermissions }, { diff: false, recursive: false, noHook: true })
+      let curPermissions = duplicate(this.actor.ownership);
+      const newPerm = allow ? 1 : 0;
+      for (const id of ids) {
+        curPermissions[id] = newPerm;
+      }
+      await this.actor.update(
+        { ownership: curPermissions },
+        { diff: false, recursive: false, noHook: true },
+      );
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
-        html.find('.allowMerchant').click(async(ev) => {
-            const id = ev.currentTarget.dataset.userId
-            const i = $(ev.currentTarget).find('i')
-            await this.allowMerchant([id], !(i.hasClass("fa-check-circle")))
-            i.toggleClass("fa-circle fa-check-circle")
-        })
-        html.find('.toggleAllAllowMerchant').click(async(ev) => {
-            const ids = game.users.filter(x => !x.isGM).map(x => x.id)
-            const allow = ev.currentTarget.dataset.lock == "true"
-            await this.allowMerchant(ids, allow)
-            this.render()
-        })
-        html.find('.lockTradeSection').click(ev => this.lockTradeSection(ev))
-        html.find('.item-tradeLock').click(ev => this.toggleTradeLock(ev))
-        html.find('.randomGoods').click(ev => game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev))
-        html.find(".clearInventory").click(ev => this.clearInventory(ev))
-        html.find('.removeOtherTradeFriend').click(() => this.removeOtherTradeFriend())
-        html.find('.choseTradefriend').click(() => this.choseTradefriend())
-        html.find('.setCustomPrice').click(ev => $(ev.currentTarget).addClass("edit"))
-        html.find('.customPriceTag').change(async ev => this.setCustomPrice(ev))
-            .blur(ev => $(ev.currentTarget).closest('.setCustomPrice').removeClass("edit"))
+      super.activateListeners(html);
+      html.find('.allowMerchant').click(async (ev) => {
+        const id = ev.currentTarget.dataset.userId;
+        const i = $(ev.currentTarget).find('i');
+        await this.allowMerchant([id], !i.hasClass('fa-check-circle'));
+        i.toggleClass('fa-circle fa-check-circle');
+      });
+      html.find('.toggleAllAllowMerchant').click(async (ev) => {
+        const ids = game.users.filter((x) => !x.isGM).map((x) => x.id);
+        const allow = ev.currentTarget.dataset.lock == 'true';
+        await this.allowMerchant(ids, allow);
+        this.render();
+      });
+      html.find('.lockTradeSection').click((ev) => this.lockTradeSection(ev));
+      html.find('.item-tradeLock').click((ev) => this.toggleTradeLock(ev));
+      html
+        .find('.randomGoods')
+        .click((ev) =>
+          game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev),
+        );
+      html.find('.clearInventory').click((ev) => this.clearInventory(ev));
+      html
+        .find('.removeOtherTradeFriend')
+        .click(() => this.removeOtherTradeFriend());
+      html.find('.choseTradefriend').click(() => this.choseTradefriend());
+      html
+        .find('.setCustomPrice')
+        .click((ev) => $(ev.currentTarget).addClass('edit'));
+      html
+        .find('.customPriceTag')
+        .change(async (ev) => this.setCustomPrice(ev))
+        .blur((ev) =>
+          $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'),
+        );
 
-        html.find('.buy-item').click(ev => {
-            this.advanceWrapper(ev, "buyItem", ev)
-            DSA5SoundEffect.playMoneySound()
-        })
-        html.find('.sell-item').click(ev => {
-            this.advanceWrapper(ev, "sellItem", ev)
-            DSA5SoundEffect.playMoneySound()
-        })
-        html.find('.item-external-edit').click(ev => {
-            ev.preventDefault()
-            let itemId = this._getItemId(ev);
-            const item = this.getTradeFriend().items.get(itemId)
-            item.sheet.render(true);
-        });
-        html.find('.changeAmountAllItems').mousedown(ev => this.changeAmountAllItems(ev))
+      html.find('.buy-item').click((ev) => {
+        this.advanceWrapper(ev, 'buyItem', ev);
+        DSA5SoundEffect.playMoneySound();
+      });
+      html.find('.sell-item').click((ev) => {
+        this.advanceWrapper(ev, 'sellItem', ev);
+        DSA5SoundEffect.playMoneySound();
+      });
+      html.find('.item-external-edit').click((ev) => {
+        ev.preventDefault();
+        let itemId = this._getItemId(ev);
+        const item = this.getTradeFriend().items.get(itemId);
+        item.sheet.render(true);
+      });
+      html
+        .find('.changeAmountAllItems')
+        .mousedown((ev) => this.changeAmountAllItems(ev));
 
-        html.find('.gearSearch').prop("disabled", false)
+      html.find('.gearSearch').prop('disabled', false);
     }
 
     _canDragStart(selector) {
-        return !this.merchantSheetActivated() && this.isEditable;
+      return !this.merchantSheetActivated() && this.isEditable;
     }
 
     async toggleTradeLock(ev) {
-        const itemId = this._getItemId(ev);
-        let item = this.actor.items.get(itemId)
-        this.actor.updateEmbeddedDocuments("Item", [{ _id: item.id, "system.tradeLocked": !item.system.tradeLocked }]);
+      const itemId = this._getItemId(ev);
+      let item = this.actor.items.get(itemId);
+      this.actor.updateEmbeddedDocuments('Item', [
+        { _id: item.id, 'system.tradeLocked': !item.system.tradeLocked },
+      ]);
     }
 
     async setCustomPrice(ev) {
-        ev.stopPropagation()
-        ev.preventDefault()
-        const itemId = this._getItemId(ev);
+      ev.stopPropagation();
+      ev.preventDefault();
+      const itemId = this._getItemId(ev);
 
-        await this.actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "flags.dsa5.customPriceTag": Number(ev.target.value) }])
+      await this.actor.updateEmbeddedDocuments('Item', [
+        { _id: itemId, 'flags.dsa5.customPriceTag': Number(ev.target.value) },
+      ]);
     }
 
     removeOtherTradeFriend() {
-        this.otherTradeFriend = undefined
-        this.render(true)
+      this.otherTradeFriend = undefined;
+      this.render(true);
     }
 
-    async choseTradefriend(){
-        (await SelectTradefriendDialog.getDialog(this)).render(true)
+    async choseTradefriend() {
+      (await SelectTradefriendDialog.getDialog(this)).render(true);
     }
 
     async lockTradeSection(ev) {
-        const updates = []
-        const rule = this.filterRule(ev)
-        let newValue
-        for (let item of this.actor.items) {
-            if (rule(item)) {
-                let upd = item.toObject()
-                if (newValue === undefined) newValue = !upd.system.tradeLocked
+      const updates = [];
+      const rule = this.filterRule(ev);
+      let newValue;
+      for (let item of this.actor.items) {
+        if (rule(item)) {
+          let upd = item.toObject();
+          if (newValue === undefined) newValue = !upd.system.tradeLocked;
 
-                upd.system.tradeLocked = newValue
-                updates.push(upd)
-            }
+          upd.system.tradeLocked = newValue;
+          updates.push(upd);
         }
-        this.actor.updateEmbeddedDocuments("Item", updates);
+      }
+      this.actor.updateEmbeddedDocuments('Item', updates);
     }
 
     filterRule(ev) {
-        const filter = ev.currentTarget.dataset.type
-        if (DSA5.equipmentTypes[filter]) {
-            return (item) => { return item.type == "equipment" && item.system.equipmentType.value == filter }
-        } else {
-            return (item) => { return item.type == filter && DSA5.equipmentCategories.has(item.type) }
-        }
+      const filter = ev.currentTarget.dataset.type;
+      if (DSA5.equipmentTypes[filter]) {
+        return (item) => {
+          return (
+            item.type == 'equipment' &&
+            item.system.equipmentType.value == filter
+          );
+        };
+      } else {
+        return (item) => {
+          return item.type == filter && DSA5.equipmentCategories.has(item.type);
+        };
+      }
     }
 
     async changeAmountAllItems(ev) {
-        const updates = []
-        const rule = this.filterRule(ev)
-        for (let item of this.actor.items) {
-            if (rule(item)) {
-                let upd = item.toObject()
-                RuleChaos.increment(ev, upd, "system.quantity.value", 0)
-                updates.push(upd)
-            }
+      const updates = [];
+      const rule = this.filterRule(ev);
+      for (let item of this.actor.items) {
+        if (rule(item)) {
+          let upd = item.toObject();
+          RuleChaos.increment(ev, upd, 'system.quantity.value', 0);
+          updates.push(upd);
         }
-        this.actor.updateEmbeddedDocuments("Item", updates);
+      }
+      this.actor.updateEmbeddedDocuments('Item', updates);
     }
 
     async buyItem(ev) {
-        await this.transferItem(this.actor, this.getTradeFriend(), ev, true)
+      await this.transferItem(this.actor, this.getTradeFriend(), ev, true);
     }
     async sellItem(ev) {
-        await this.transferItem(this.getTradeFriend(), this.actor, ev, false)
+      await this.transferItem(this.getTradeFriend(), this.actor, ev, false);
     }
 
     async transferItem(source, target, ev, buy = true) {
-        let itemId = this._getItemId(ev);
-        let price = ev.currentTarget.dataset.price
-        let amount = ev.ctrlKey ? 10 : 1
+      let itemId = this._getItemId(ev);
+      let price = ev.currentTarget.dataset.price;
+      let amount = ev.ctrlKey ? 10 : 1;
 
-        if (game.user.isGM) {
-            await this.constructor.finishTransaction(source, target, price, itemId, buy, amount)
-        } else if (this.constructor.noNeedToPay(target, source, price) || await DSA5Payment.canPay(target, price, true)) {
-            game.socket.emit("system.dsa5", {
-                type: "trade",
-                payload: {
-                    target: this.constructor.transferTokenData(target),
-                    source: this.constructor.transferTokenData(source),
-                    price,
-                    itemId,
-                    buy,
-                    amount
-                }
-            })
-        }
+      if (game.user.isGM) {
+        await this.constructor.finishTransaction(
+          source,
+          target,
+          price,
+          itemId,
+          buy,
+          amount,
+        );
+      } else if (
+        this.constructor.noNeedToPay(target, source, price) ||
+        (await DSA5Payment.canPay(target, price, true))
+      ) {
+        game.socket.emit('system.dsa5', {
+          type: 'trade',
+          payload: {
+            target: this.constructor.transferTokenData(target),
+            source: this.constructor.transferTokenData(source),
+            price,
+            itemId,
+            buy,
+            amount,
+          },
+        });
+      }
     }
 
     static transferTokenData(tokenData) {
-        let id = { actor: tokenData.id }
-        if (tokenData.token)
-            id["token"] = tokenData.token.id
+      let id = { actor: tokenData.id };
+      if (tokenData.token) id['token'] = tokenData.token.id;
 
-        return id
+      return id;
     }
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
-        const item = source.items.get(itemId).toObject()
-        if (Number(item.system.quantity.value) > 0) {
-            amount = Math.min(Number(item.system.quantity.value), amount)
-            price = `${Number(price) * amount}`
-            const noNeedToPay = this.noNeedToPay(target, source, price)
-            const hasPaid = noNeedToPay || await DSA5Payment.payMoney(target, price, true, false)
-            if (hasPaid) {
-                if (getProperty(item, "system.worn.value")) item.system.worn.value = false
+      const item = source.items.get(itemId).toObject();
+      if (Number(item.system.quantity.value) > 0) {
+        amount = Math.min(Number(item.system.quantity.value), amount);
+        price = `${Number(price) * amount}`;
+        const noNeedToPay = this.noNeedToPay(target, source, price);
+        const hasPaid =
+          noNeedToPay ||
+          (await DSA5Payment.payMoney(target, price, true, false));
+        if (hasPaid) {
+          if (getProperty(item, 'system.worn.value'))
+            item.system.worn.value = false;
 
-                if (buy) {
-                    const res = await this.updateTargetTransaction(target, item, amount, source, price)
-                    await this.updateSourceTransaction(source, target, item, price, itemId, amount)
-                    await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res)
-                    await this.selfDestruction(source)
-                } else {
-                    await this.updateSourceTransaction(source, target, item, price, itemId, amount)
-                    const res = await this.updateTargetTransaction(target, item, amount, source, price)
-                    await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res)                    
-                }
-            }
-        }        
-        source.sheet.render()
-        target.sheet.render()
-        game.socket.emit("system.dsa5", {
-            type: "refreshSheets",
-            payload: {
-                sheets: [
-                    { id: source.id, type: "ActorSheet" },
-                    { id: target.id, type: "ActorSheet" }
-                ]
-            }
-        })
+          if (buy) {
+            const res = await this.updateTargetTransaction(
+              target,
+              item,
+              amount,
+              source,
+              price,
+            );
+            await this.updateSourceTransaction(
+              source,
+              target,
+              item,
+              price,
+              itemId,
+              amount,
+            );
+            await this.transferNotification(
+              item,
+              target,
+              source,
+              buy,
+              price,
+              amount,
+              noNeedToPay,
+              res,
+            );
+            await this.selfDestruction(source);
+          } else {
+            await this.updateSourceTransaction(
+              source,
+              target,
+              item,
+              price,
+              itemId,
+              amount,
+            );
+            const res = await this.updateTargetTransaction(
+              target,
+              item,
+              amount,
+              source,
+              price,
+            );
+            await this.transferNotification(
+              item,
+              source,
+              target,
+              buy,
+              price,
+              amount,
+              noNeedToPay,
+              res,
+            );
+          }
+        }
+      }
+      source.sheet.render();
+      target.sheet.render();
+      game.socket.emit('system.dsa5', {
+        type: 'refreshSheets',
+        payload: {
+          sheets: [
+            { id: source.id, type: 'ActorSheet' },
+            { id: target.id, type: 'ActorSheet' },
+          ],
+        },
+      });
     }
 
     static isTemporaryToken(target) {
-        return getProperty(target.system, "merchant.merchantType") == "loot" && getProperty(target.system, "merchant.temporary")
+      return (
+        getProperty(target.system, 'merchant.merchantType') == 'loot' &&
+        getProperty(target.system, 'merchant.temporary')
+      );
     }
 
     static async selfDestruction(target) {
-        if (this.isTemporaryToken(target)) {
-            const hasItemsLeft = target.items.some(x => DSA5.equipmentCategories.has(x.type) || (x.type == "money" && x.system.quantity.value > 0))
-            if (!hasItemsLeft) {
-                game.socket.emit("system.dsa5", {
-                    type: "hideDeletedSheet",
-                    payload: {
-                        target: this.transferTokenData(target)
-                    }
-                })
-                const tokens = target.getActiveTokens().map(x => x.id)
-                await canvas.scene.deleteEmbeddedDocuments("Token", tokens)
-                await game.actors.get(target.id).delete()
-                this.hideDeletedSheet(target)
-            }
+      if (this.isTemporaryToken(target)) {
+        const hasItemsLeft = target.items.some(
+          (x) =>
+            DSA5.equipmentCategories.has(x.type) ||
+            (x.type == 'money' && x.system.quantity.value > 0),
+        );
+        if (!hasItemsLeft) {
+          game.socket.emit('system.dsa5', {
+            type: 'hideDeletedSheet',
+            payload: {
+              target: this.transferTokenData(target),
+            },
+          });
+          const tokens = target.getActiveTokens().map((x) => x.id);
+          await canvas.scene.deleteEmbeddedDocuments('Token', tokens);
+          await game.actors.get(target.id).delete();
+          this.hideDeletedSheet(target);
         }
+      }
     }
 
     static async hideDeletedSheet(target) {
-        target.sheet.close(true)
+      target.sheet.close(true);
     }
 
-    static async transferNotification(item, source, target, buy, price, amount, noNeedToPay, res) {
-        const notify = game.settings.get("dsa5", "merchantNotification")
-        if (notify == 0 || getProperty(item, "system.equipmentType.value") == "service") return
+    static async transferNotification(
+      item,
+      source,
+      target,
+      buy,
+      price,
+      amount,
+      noNeedToPay,
+      res,
+    ) {
+      const notify = game.settings.get('dsa5', 'merchantNotification');
+      if (
+        notify == 0 ||
+        getProperty(item, 'system.equipmentType.value') == 'service'
+      )
+        return;
 
-        const notif = "MERCHANT." + (buy ? "buy" : "sell") + (noNeedToPay ? "Loot" : "") + "Notification"
-        const anchor = item.type == "money" ? game.i18n.localize(item.name) : res.toAnchor().outerHTML
-        const template = game.i18n.format(notif, { item: anchor, source: source.name, target: target.name, amount, price, buy })
-        const chatData = DSA5_Utility.chatDataSetup(template)
-        if (notify == 2) chatData["whisper"] = ChatMessage.getWhisperRecipients("GM").map(u => u.id)
-        await ChatMessage.create(chatData)
+      const notif =
+        'MERCHANT.' +
+        (buy ? 'buy' : 'sell') +
+        (noNeedToPay ? 'Loot' : '') +
+        'Notification';
+      const anchor =
+        item.type == 'money'
+          ? game.i18n.localize(item.name)
+          : res.toAnchor().outerHTML;
+      const template = game.i18n.format(notif, {
+        item: anchor,
+        source: source.name,
+        target: target.name,
+        amount,
+        price,
+        buy,
+      });
+      const chatData = DSA5_Utility.chatDataSetup(template);
+      if (notify == 2)
+        chatData['whisper'] = ChatMessage.getWhisperRecipients('GM').map(
+          (u) => u.id,
+        );
+      await ChatMessage.create(chatData);
     }
 
     static noNeedToPay(target, source, price) {
-        return price == 0 || getProperty(target.system, "merchant.merchantType") == "loot" || getProperty(source.system, "merchant.merchantType") == "loot"
+      return (
+        price == 0 ||
+        getProperty(target.system, 'merchant.merchantType') == 'loot' ||
+        getProperty(source.system, 'merchant.merchantType') == 'loot'
+      );
     }
 
-    static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
-        const item = duplicate(sourceItem)
-        if (Number(item.system.quantity.value) > amount || item.type == "money") {
-            item.system.quantity.value = Number(item.system.quantity.value) - amount
-            await source.updateEmbeddedDocuments("Item", [item], { render: false })
-        } else {
-            await source.deleteEmbeddedDocuments("Item", [itemId], { render: false })
-        }
-        if (!this.noNeedToPay(source, target, price)) await DSA5Payment.getMoney(source, price, true, false)
+    static async updateSourceTransaction(
+      source,
+      target,
+      sourceItem,
+      price,
+      itemId,
+      amount,
+    ) {
+      const item = duplicate(sourceItem);
+      if (Number(item.system.quantity.value) > amount || item.type == 'money') {
+        item.system.quantity.value =
+          Number(item.system.quantity.value) - amount;
+        await source.updateEmbeddedDocuments('Item', [item], { render: false });
+      } else {
+        await source.deleteEmbeddedDocuments('Item', [itemId], {
+          render: false,
+        });
+      }
+      if (!this.noNeedToPay(source, target, price))
+        await DSA5Payment.getMoney(source, price, true, false);
     }
 
-    static async updateTargetTransaction(target, sourceItem, amount, source, price) {
-        const item = duplicate(sourceItem)
-        const isService = getProperty(item, "system.equipmentType.value") == "service"
-        if (isService) {
-            const msg = game.i18n.format("MERCHANT.buyNotification", { item: item.name, amount, source: target.name, target: source.name, price })
-            ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+    static async updateTargetTransaction(
+      target,
+      sourceItem,
+      amount,
+      source,
+      price,
+    ) {
+      const item = duplicate(sourceItem);
+      const isService =
+        getProperty(item, 'system.equipmentType.value') == 'service';
+      if (isService) {
+        const msg = game.i18n.format('MERCHANT.buyNotification', {
+          item: item.name,
+          amount,
+          source: target.name,
+          target: source.name,
+          price,
+        });
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+      } else {
+        const res = target.items.find((i) => Itemdsa5.areEquals(item, i));
+        item.system.quantity.value = amount;
+        if (!res) {
+          return (
+            await target.createEmbeddedDocuments('Item', [item], {
+              render: false,
+            })
+          )[0];
         } else {
-            const res = target.items.find(i => Itemdsa5.areEquals(item, i));
-            item.system.quantity.value = amount
-            if (!res) {
-                return (await target.createEmbeddedDocuments("Item", [item], { render: false }))[0];
-            } else {
-                await Itemdsa5.stackItems(res, item, target, false)
-                return res
-            }
+          await Itemdsa5.stackItems(res, item, target, false);
+          return res;
         }
+      }
     }
 
     getTradeFriend() {
-        return this.otherTradeFriend || game.user.character
+      return this.otherTradeFriend || game.user.character;
     }
 
     async _manageDragItems(item, typeClass) {
-        switch (typeClass) {
-            case "creature":
-            case "npc":
-            case "character":
-                //TODO skip if not trading window enabled
-                this.setTradeFriend(item)
-                break;
-            default:
-                return super._manageDragItems(item, typeClass)
-        }
+      switch (typeClass) {
+        case 'creature':
+        case 'npc':
+        case 'character':
+          //TODO skip if not trading window enabled
+          this.setTradeFriend(item);
+          break;
+        default:
+          return super._manageDragItems(item, typeClass);
+      }
     }
 
     async _onDropActor(event, data) {
-        const limited = this.actor.limited
-        const owner = this.actor.isOwner
+      const limited = this.actor.limited;
+      const owner = this.actor.isOwner;
 
-        if ( !(limited || owner)  ) return false
+      if (!(limited || owner)) return false;
 
-        const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false)
+      const { item, typeClass, selfTarget } = await itemFromDrop(
+        data,
+        this.id,
+        false,
+      );
 
-        if(selfTarget) return
+      if (selfTarget) return;
 
-        if(owner || (limited && item.documentName == "Actor")) {
-            return await this._manageDragItems(item, typeClass)
-        }
+      if (owner || (limited && item.documentName == 'Actor')) {
+        return await this._manageDragItems(item, typeClass);
+      }
     }
 
     setTradeFriend(otherTradeFriend) {
-        const newTradeFriend = game.actors.get(otherTradeFriend._id)
-        if (newTradeFriend.isOwner) {
-            this.otherTradeFriend = newTradeFriend
-            this.render(true)
-        }
+      const newTradeFriend = game.actors.get(otherTradeFriend._id);
+      if (newTradeFriend.isOwner) {
+        this.otherTradeFriend = newTradeFriend;
+        this.render(true);
+      }
     }
 
     async _render(force = false, options = {}) {
-        if (!game.user.isGM && getProperty(this.actor.system, "merchant.merchantType") == "loot" && getProperty(this.actor.system, "merchant.locked")) {
-            foundry.audio.AudioHelper.play({ src: "sounds/lock.wav", loop: false }, false);
-            return
-        }
-        await super._render(force, options);
+      if (
+        !game.user.isGM &&
+        getProperty(this.actor.system, 'merchant.merchantType') == 'loot' &&
+        getProperty(this.actor.system, 'merchant.locked')
+      ) {
+        foundry.audio.AudioHelper.play(
+          { src: 'sounds/lock.wav', loop: false },
+          false,
+        );
+        return;
+      }
+      await super._render(force, options);
     }
 
     _togglePlayerview(ev) {
-        this.actor.update({ "system.merchant.playerView": !getProperty(this.actor.system, "merchant.playerView") })
+      this.actor.update({
+        'system.merchant.playerView': !getProperty(
+          this.actor.system,
+          'merchant.playerView',
+        ),
+      });
     }
 
-    playerViewEnabled(){
-        return getProperty(this.actor.system, "merchant.playerView")
+    playerViewEnabled() {
+      return getProperty(this.actor.system, 'merchant.playerView');
     }
 
     async clearInventory(ev) {
-        const proceed = await foundry.applications.api.DialogV2.confirm({
-            window: {
-                title: "MERCHANT.clearInventory",
-            },
-            content: game.i18n.localize("MERCHANT.deleteAllGoods"),
-            rejectClose: false,
-            modal: true
-        });
-        if(proceed) this.removeAllGoods(this.actor, ev)
+      const proceed = await foundry.applications.api.DialogV2.confirm({
+        window: {
+          title: 'MERCHANT.clearInventory',
+        },
+        content: game.i18n.localize('MERCHANT.deleteAllGoods'),
+        rejectClose: false,
+        modal: true,
+      });
+      if (proceed) this.removeAllGoods(this.actor, ev);
     }
 
     async removeAllGoods(actor, ev) {
-        let text = $(ev.currentTarget).text()
-        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')
-        let ids = actor.items.filter(x => DSA5.equipmentCategories.has(x.type) && !getProperty(x, "worn.value")).map(x => x.id)
-        await actor.deleteEmbeddedDocuments("Item", ids);
-        $(ev.currentTarget).text(text)
+      let text = $(ev.currentTarget).text();
+      $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>');
+      let ids = actor.items
+        .filter(
+          (x) =>
+            DSA5.equipmentCategories.has(x.type) &&
+            !getProperty(x, 'worn.value'),
+        )
+        .map((x) => x.id);
+      await actor.deleteEmbeddedDocuments('Item', ids);
+      $(ev.currentTarget).text(text);
     }
 
     async getData(options) {
-        const data = await super.getData(options);
-        data["merchantType"] = getProperty(this.actor.system, "merchant.merchantType") || "none"
-        data["merchantTypes"] = {
-            none: game.i18n.localize("MERCHANT.typeNone"),
-            merchant: game.i18n.localize("MERCHANT.typeMerchant"),
-            loot: game.i18n.localize("MERCHANT.typeLoot"),
-            epic: game.i18n.localize("MERCHANT.typeEpic")
-        }
-        data["invName"] = data["merchantTypes"][data["merchantType"]]
-        data["players"] = game.users.filter(x => !x.isGM).map(x => {
-            x.allowedMerchant = this.actor.testUserPermission(x, "LIMITED", false)
-            x.buyingFactor = getProperty(this.actor.system, `merchant.factors.buyingFactor.${x.id}`)
-            x.sellingFactor = getProperty(this.actor.system, `merchant.factors.sellingFactor.${x.id}`)
-            return x
-        })
+      const data = await super.getData(options);
+      data['merchantType'] =
+        getProperty(this.actor.system, 'merchant.merchantType') || 'none';
+      data['merchantTypes'] = {
+        none: game.i18n.localize('MERCHANT.typeNone'),
+        merchant: game.i18n.localize('MERCHANT.typeMerchant'),
+        loot: game.i18n.localize('MERCHANT.typeLoot'),
+        epic: game.i18n.localize('MERCHANT.typeEpic'),
+      };
+      data['invName'] = data['merchantTypes'][data['merchantType']];
+      data['players'] = game.users
+        .filter((x) => !x.isGM)
+        .map((x) => {
+          x.allowedMerchant = this.actor.testUserPermission(
+            x,
+            'LIMITED',
+            false,
+          );
+          x.buyingFactor = getProperty(
+            this.actor.system,
+            `merchant.factors.buyingFactor.${x.id}`,
+          );
+          x.sellingFactor = getProperty(
+            this.actor.system,
+            `merchant.factors.sellingFactor.${x.id}`,
+          );
+          return x;
+        });
 
-        if (data.merchantType != "epic") {
-            this.prepareStorage(data)
-            if (this.merchantSheetActivated()) {
-                this.filterWornEquipment(data)
-                this.prepareTradeFriend(data)
-                if (data.prepare.inventory["misc"].items.length == 0) data.prepare.inventory["misc"].show = false
-            }
-        } else {
-            this.prepareStorage(data)
-            data.garadanOptions = {
-                1: game.i18n.localize('GARADAN.1'),
-                2: game.i18n.localize('GARADAN.2'),
-                3: game.i18n.localize('GARADAN.3'),
-                4: game.i18n.localize('GARADAN.4'),
-                6: game.i18n.localize('GARADAN.6')
-            }
+      if (data.merchantType != 'epic') {
+        this.prepareStorage(data);
+        if (this.merchantSheetActivated()) {
+          this.filterWornEquipment(data);
+          this.prepareTradeFriend(data);
+          if (data.prepare.inventory['misc'].items.length == 0)
+            data.prepare.inventory['misc'].show = false;
         }
-        data.hasOtherTradeFriend = !!this.otherTradeFriend
+      } else {
+        this.prepareStorage(data);
+        data.garadanOptions = {
+          1: game.i18n.localize('GARADAN.1'),
+          2: game.i18n.localize('GARADAN.2'),
+          3: game.i18n.localize('GARADAN.3'),
+          4: game.i18n.localize('GARADAN.4'),
+          6: game.i18n.localize('GARADAN.6'),
+        };
+      }
+      data.hasOtherTradeFriend = !!this.otherTradeFriend;
 
-        return data;
+      return data;
     }
 
     filterWornEquipment(data) {
-        for (const [key, value] of Object.entries(data.prepare.inventory)) {
-            value.items = value.items.filter(x => !getProperty(x, "system.worn.value"))
-        }
+      for (const [key, value] of Object.entries(data.prepare.inventory)) {
+        value.items = value.items.filter(
+          (x) => !getProperty(x, 'system.worn.value'),
+        );
+      }
     }
 
     prepareStorage(data) {
-        if (data["merchantType"] == "merchant") {
-            for (const [key, value] of Object.entries(data.prepare.inventory)) {
-                for (const item of value.items) {
-                    item.defaultPrice = this.getItemPrice(item)
-                    item.calculatedPrice = Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.system, "merchant.sellingFactor") || 1)}`).toFixed(2)) * (getProperty(this.actor.system, `merchant.factors.sellingFactor.${game.user.id}`) || 1)
-                    item.priceTag = ` / ${item.calculatedPrice}`
-                }
-            }
-        } else if (data["merchantType"] == "loot") {
-            for (const [key, value] of Object.entries(data.prepare.inventory)) {
-                for (const item of value.items) {
-                    item.calculatedPrice = this.getItemPrice(item)
-                }
-            }
-            const money = {
-                items: data.prepare.money.coins.map(x => {
-                    x.name = game.i18n.localize(x.name)
-                    return x
-                }),
-                show: true,
-                dataType: "money"
-            }
-            if (money.items.length) data.prepare.inventory["money"] = money
+      if (data['merchantType'] == 'merchant') {
+        for (const [key, value] of Object.entries(data.prepare.inventory)) {
+          for (const item of value.items) {
+            item.defaultPrice = this.getItemPrice(item);
+            item.calculatedPrice =
+              Number(
+                parseFloat(
+                  `${item.defaultPrice * (getProperty(this.actor.system, 'merchant.sellingFactor') || 1)}`,
+                ).toFixed(2),
+              ) *
+              (getProperty(
+                this.actor.system,
+                `merchant.factors.sellingFactor.${game.user.id}`,
+              ) || 1);
+            item.priceTag = ` / ${item.calculatedPrice}`;
+          }
         }
+      } else if (data['merchantType'] == 'loot') {
+        for (const [key, value] of Object.entries(data.prepare.inventory)) {
+          for (const item of value.items) {
+            item.calculatedPrice = this.getItemPrice(item);
+          }
+        }
+        const money = {
+          items: data.prepare.money.coins.map((x) => {
+            x.name = game.i18n.localize(x.name);
+            return x;
+          }),
+          show: true,
+          dataType: 'money',
+        };
+        if (money.items.length) data.prepare.inventory['money'] = money;
+      }
     }
 
     getItemPrice(item) {
-        return Number(getProperty(item, "flags.dsa5.customPriceTag")) || (item.type == "consumable" ? Itemdsa5.getSubClass(item.type).consumablePrice(item) : Number(item.system.price.value))
+      return (
+        Number(getProperty(item, 'flags.dsa5.customPriceTag')) ||
+        (item.type == 'consumable'
+          ? Itemdsa5.getSubClass(item.type).consumablePrice(item)
+          : Number(item.system.price.value))
+      );
     }
 
     prepareTradeFriend(data) {
-        let friend = this.getTradeFriend()
-        if (friend) {
-            let tradeData = friend.prepareItems({ details: [] })
-            let factor = getProperty(this.actor.system, "merchant.merchantType") == "loot" ? 1 : (getProperty(this.actor.system, "merchant.buyingFactor") || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1)
-            let inventory = this.prepareSellPrices(tradeData.inventory, factor)
-            if (inventory["misc"].items.length == 0) inventory["misc"].show = false
+      let friend = this.getTradeFriend();
+      if (friend) {
+        let tradeData = friend.prepareItems({ details: [] });
+        let factor =
+          getProperty(this.actor.system, 'merchant.merchantType') == 'loot'
+            ? 1
+            : (getProperty(this.actor.system, 'merchant.buyingFactor') || 1) *
+              (getProperty(
+                this.actor.system,
+                `merchant.factors.buyingFactor.${game.user.id}`,
+              ) || 1);
+        let inventory = this.prepareSellPrices(tradeData.inventory, factor);
+        if (inventory['misc'].items.length == 0) inventory['misc'].show = false;
 
-            if (data["merchantType"] == "loot") {
-                inventory["money"] = {
-                    items: tradeData.money.coins.map(x => {
-                        x.name = game.i18n.localize(x.name)
-                        return x
-                    }),
-                    show: true,
-                    dataType: "money"
-                }
-            }
-
-            mergeObject(data, {
-                tradeFriend: {
-                    img: friend.img,
-                    name: friend.name,
-                    inventory,
-                    money: tradeData.money
-                }
-            })
-        } else {
-            mergeObject(data, {
-                tradeFriend: {
-                    inventory: [],
-                    money: { coins: [] }
-                }
-            })
+        if (data['merchantType'] == 'loot') {
+          inventory['money'] = {
+            items: tradeData.money.coins.map((x) => {
+              x.name = game.i18n.localize(x.name);
+              return x;
+            }),
+            show: true,
+            dataType: 'money',
+          };
         }
+
+        mergeObject(data, {
+          tradeFriend: {
+            img: friend.img,
+            name: friend.name,
+            inventory,
+            money: tradeData.money,
+          },
+        });
+      } else {
+        mergeObject(data, {
+          tradeFriend: {
+            inventory: [],
+            money: { coins: [] },
+          },
+        });
+      }
     }
 
     prepareSellPrices(inventory, factor) {
-        for (const [key, value] of Object.entries(inventory)) {
-            for (const item of value.items) {
-                item.calculatedPrice = Number(parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2))
-            }
+      for (const [key, value] of Object.entries(inventory)) {
+        for (const item of value.items) {
+          item.calculatedPrice = Number(
+            parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2),
+          );
         }
-        return inventory
+      }
+      return inventory;
     }
-}
+  };
 
-class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2){
-    static DEFAULT_OPTIONS = {
-        window: {
-            title: "DIALOG.setTargetToUser",
-            resizable: true
-        },
-        position: {
-            width: 400,
-        }
-    }
+class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2,
+) {
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: 'DIALOG.setTargetToUser',
+      resizable: true,
+    },
+    position: {
+      width: 400,
+    },
+  };
 
-    static PARTS = {
-        main: {
-            template: 'systems/dsa5/templates/dialog/selectTradeFriend.html'
-        }
-    }
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/selectTradeFriend.html',
+    },
+  };
 
-    async _prepareContext(_options) {
-        const data = await super._prepareContext(_options)
-        data.users = game.user.isGM ? await game.dsa5.apps.gameMasterMenu.getTrackedHeros() : game.actors.filter(x => x.isOwner)        
-        return data
-    }
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.users = game.user.isGM
+      ? await game.dsa5.apps.gameMasterMenu.getTrackedHeros()
+      : game.actors.filter((x) => x.isOwner);
+    return data;
+  }
 
-    static async getDialog(actor){
-        const dialog = new SelectTradefriendDialog()
-        dialog.actor = actor
-        return dialog
-    }
+  static async getDialog(actor) {
+    const dialog = new SelectTradefriendDialog();
+    dialog.actor = actor;
+    return dialog;
+  }
 
-    _onRender(context, options) {
-        super._onRender((context, options))
+  _onRender(context, options) {
+    super._onRender((context, options));
 
-        const html = $(this.element)
-        html.find('.combatant').on('click', ev => this.setTargetToUser(ev))
-    }
+    const html = $(this.element);
+    html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
+  }
 
-    setTargetToUser(ev){
-        this.actor.setTradeFriend({_id: ev.currentTarget.dataset.id})
-        this.close()
-    }
+  setTargetToUser(ev) {
+    this.actor.setTradeFriend({ _id: ev.currentTarget.dataset.id });
+    this.close();
+  }
 }
 
 export class RandomGoodsAddition extends Dialog {
-    static get template() {
-        return "systems/dsa5/templates/dialog/randomGoods-dialog.html"
-    } 
+  static get template() {
+    return 'systems/dsa5/templates/dialog/randomGoods-dialog.html';
+  }
 
-    static async contentData(options = {}) {
-        return {
-            categories: Array.from(DSA5.equipmentCategories),
-            options
-        }
+  static async contentData(options = {}) {
+    return {
+      categories: Array.from(DSA5.equipmentCategories),
+      options,
+    };
+  }
+
+  static async showDialog(actor, ev, options = {}) {
+    const html = await renderTemplate(
+      this.template,
+      await this.contentData(options),
+    );
+    new game.dsa5.dialogs.RandomGoodsAddition({
+      title: game.i18n.localize('MERCHANT.randomGoods'),
+      content: html,
+      default: 'Yes',
+      options,
+      buttons: {
+        Yes: {
+          icon: '<i class="fa fa-check"></i>',
+          label: game.i18n.localize('yes'),
+          callback: (dlg) => this.addRandomGoods(actor, dlg, ev),
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: game.i18n.localize('cancel'),
+        },
+      },
+    }).render(true);
+  }
+
+  static async generateItems(dlg, actor) {
+    const itemLibrary = game.dsa5.itemLibrary;
+    await itemLibrary.buildEquipmentIndex();
+
+    const items = [];
+    for (const cat of dlg.find('input[type="checkbox"]:checked')) {
+      const name = cat.value;
+      const count = Number(dlg.find(`input[name="each_${name}"]`).val());
+      const number = Number(dlg.find(`input[name="number_${name}"]`).val());
+      const randomItems = (await itemLibrary.getRandomItems(name, number)).map(
+        (x) => {
+          const elem = x.toObject();
+          elem.system.quantity.value = count;
+          return elem;
+        },
+      );
+
+      items.push(...randomItems);
     }
 
-    static async showDialog(actor, ev, options = {}) {
-        const html = await renderTemplate(this.template, await this.contentData(options))
-        new game.dsa5.dialogs.RandomGoodsAddition({
-            title: game.i18n.localize("MERCHANT.randomGoods"),
-            content: html,
-            default: 'Yes',
-            options,
-            buttons: {
-                Yes: {
-                    icon: '<i class="fa fa-check"></i>',
-                    label: game.i18n.localize("yes"),
-                    callback: dlg => this.addRandomGoods(actor, dlg, ev)
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("cancel")
-                }
-            }
-        }).render(true)
-    }
+    return this.filterSeen(items, actor);
+  }
 
-    static async generateItems(dlg, actor) {
-        const itemLibrary = game.dsa5.itemLibrary        
-        await itemLibrary.buildEquipmentIndex()
+  static filterSeen(items, actor) {
+    const seen = {};
+    const actorItems = (actor?.items || []).reduce((acc, x) => {
+      acc.add(`${x.type}_${x.name}`);
+      return acc;
+    }, new Set());
 
-        const items = []
-        for(const cat of dlg.find('input[type="checkbox"]:checked')){
-            const name = cat.value
-            const count = Number(dlg.find(`input[name="each_${name}"]`).val())
-            const number = Number(dlg.find(`input[name="number_${name}"]`).val())
-            const randomItems = (await itemLibrary.getRandomItems(name, number)).map(x => {
-                const elem = x.toObject()
-                elem.system.quantity.value = count
-                return elem
-            })
+    const filtered = items.filter((x) => {
+      let domain = getProperty(x, 'system.effect');
+      domain =
+        typeof domain === 'object' && domain !== null
+          ? getProperty(domain, 'attributes') || ''
+          : '';
+      const price = Number(getProperty(x, 'system.price.value')) || 0;
+      if (domain != '' || price > 10000) return false;
 
-            items.push(...randomItems)
-        }
+      const seeName = `${x.type}_${x.name}`;
+      return (
+        (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) &&
+        !actorItems.has(seeName)
+      );
+    });
 
-        return this.filterSeen(items, actor)
-    }
+    return filtered;
+  }
 
-    static filterSeen(items, actor) {
-        const seen = {}
-        const actorItems = (actor?.items || []).reduce((acc, x) => {
-            acc.add(`${x.type}_${x.name}`)
-            return acc            
-        }, new Set())
-            
-        const filtered = items.filter(x => {
-            let domain = getProperty(x, "system.effect")
-            domain = typeof domain === 'object' && domain !== null ? getProperty(domain, "attributes") || "" : ""
-            const price = Number(getProperty(x, "system.price.value")) || 0
-            if (domain != "" || price > 10000) return false
-
-            const seeName = `${x.type}_${x.name}`
-            return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && !actorItems.has(seeName)
-        })
-
-        return filtered
-    }
-
-    static async addRandomGoods(actor, dlg, ev) {
-        let text = $(ev.currentTarget).text()
-        $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>')        
-        await actor.createEmbeddedDocuments("Item", await this.generateItems(dlg, actor))
-        $(ev.currentTarget).text(text)
-    }
+  static async addRandomGoods(actor, dlg, ev) {
+    let text = $(ev.currentTarget).text();
+    $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>');
+    await actor.createEmbeddedDocuments(
+      'Item',
+      await this.generateItems(dlg, actor),
+    );
+    $(ev.currentTarget).text(text);
+  }
 }

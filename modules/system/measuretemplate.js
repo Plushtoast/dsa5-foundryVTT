@@ -1,144 +1,153 @@
-import DSA5_Utility from "./utility-dsa5.js";
+import DSA5_Utility from './utility-dsa5.js';
 
 export class MeasuredTemplateDSA extends MeasuredTemplate {
-    #initialLayer;
-    #moveTime = 0;
-    #events;
+  #initialLayer;
+  #moveTime = 0;
+  #events;
 
+  static async placeTemplateFromChat(ev) {
+    const id = $(ev.currentTarget).parents('.message').attr('data-message-id');
+    const message = game.messages.get(id);
+    const preData = message.flags.data.preData;
+    const testData = message.flags.data.postData;
 
-    static async placeTemplateFromChat(ev){
-        const id = $(ev.currentTarget).parents(".message").attr("data-message-id")
-        const message = game.messages.get(id);
-        const preData = message.flags.data.preData;
-        const testData = message.flags.data.postData;
+    const actor = DSA5_Utility.getSpeaker(preData.extra.speaker);
+    const source = actor.items.get(preData.source._id);
 
-        const actor = DSA5_Utility.getSpeaker(preData.extra.speaker);
-        const source = actor.items.get(preData.source._id);
+    const template = this.fromItem(source, testData.qualityStep, id);
+    if (template) template.drawPreview();
+  }
 
-        const template = this.fromItem(source, testData.qualityStep, id)
-        if ( template ) template.drawPreview();
+  static fromItem(item, qs, messageId) {
+    const target = item.system.target || {};
+    const templateShape = game.dsa5.config.areaTargetTypes[target.type];
+    if (!templateShape || !target.value) return null;
+
+    const distance =
+      Number(Roll.safeEval(`${target.value}`.replace(/(qs|ql)/gi, qs))) || 1;
+    const templateData = {
+      t: templateShape,
+      user: game.user.id,
+      distance,
+      direction: 0,
+      x: 0,
+      y: 0,
+      fillColor: game.user.color,
+      flags: {
+        dsa5: {
+          origin: item.uuid,
+          messageId,
+        },
+      },
+    };
+
+    switch (templateShape) {
+      case 'cone':
+        templateData.angle =
+          Number(target.angle) || CONFIG.MeasuredTemplate.defaults.angle;
+        break;
+      case 'rect':
+        templateData.distance = Math.hypot(distance, distance);
+        templateData.width = distance;
+        templateData.direction = 45;
+        break;
+      case 'ray':
+        templateData.width = target.width
+          ? Number(Roll.safeEval(`${target.width}`.replace(/(qs|ql)/gi, qs))) ||
+            canvas.dimensions.distance
+          : canvas.dimensions.distance;
+        break;
     }
 
-    static fromItem(item, qs, messageId) {
-        const target = item.system.target || {};
-        const templateShape = game.dsa5.config.areaTargetTypes[target.type];
-        if (!templateShape || !target.value) return null;
+    const cls = CONFIG.MeasuredTemplate.documentClass;
+    const template = new cls(templateData, { parent: canvas.scene });
+    const object = new this(template);
+    object.item = item;
+    //object.actorSheet = item.actor?.sheet || null;
+    return object;
+  }
 
-        const distance = Number(Roll.safeEval(`${target.value}`.replace(/(qs|ql)/gi, qs))) || 1
-        const templateData = {
-            t: templateShape,
-            user: game.user.id,
-            distance,
-            direction: 0,
-            x: 0,
-            y: 0,
-            fillColor: game.user.color,
-            flags: { dsa5: { 
-                origin: item.uuid,
-                messageId
-            }},
-        };
+  drawPreview() {
+    const initialLayer = canvas.activeLayer;
 
-        switch (templateShape) {
-            case "cone":
-                templateData.angle = Number(target.angle) || CONFIG.MeasuredTemplate.defaults.angle;
-                break;
-            case "rect":
-                templateData.distance = Math.hypot(distance, distance);
-                templateData.width = distance;
-                templateData.direction = 45;
-                break;
-            case "ray":
-                templateData.width = target.width ? (Number(Roll.safeEval(`${target.width}`.replace(/(qs|ql)/gi, qs))) || canvas.dimensions.distance) : canvas.dimensions.distance;
-                break;
-        }
+    this.draw();
+    this.layer.activate();
+    this.layer.preview.addChild(this);
 
-        const cls = CONFIG.MeasuredTemplate.documentClass;
-        const template = new cls(templateData, { parent: canvas.scene });
-        const object = new this(template);
-        object.item = item;
-        //object.actorSheet = item.actor?.sheet || null;
-        return object;
-    }
+    return this.activatePreviewListeners(initialLayer);
+  }
 
-    drawPreview() {
-        const initialLayer = canvas.activeLayer;
+  activatePreviewListeners(initialLayer) {
+    return new Promise((resolve, reject) => {
+      this.#initialLayer = initialLayer;
+      this.#events = {
+        cancel: this._onCancelPlacement.bind(this),
+        confirm: this._onConfirmPlacement.bind(this),
+        move: this._onMovePlacement.bind(this),
+        resolve,
+        reject,
+        rotate: this._onRotatePlacement.bind(this),
+      };
 
-        this.draw();
-        this.layer.activate();
-        this.layer.preview.addChild(this);
+      canvas.stage.on('mousemove', this.#events.move);
+      canvas.stage.on('mousedown', this.#events.confirm);
+      canvas.app.view.oncontextmenu = this.#events.cancel;
+      canvas.app.view.onwheel = this.#events.rotate;
+    });
+  }
 
-        return this.activatePreviewListeners(initialLayer);
-    }
+  async _finishPlacement(event) {
+    this.layer._onDragLeftCancel(event);
+    canvas.stage.off('mousemove', this.#events.move);
+    canvas.stage.off('mousedown', this.#events.confirm);
+    canvas.app.view.oncontextmenu = null;
+    canvas.app.view.onwheel = null;
+    this.#initialLayer.activate();
+    await this.actorSheet?.maximize();
+  }
 
-    activatePreviewListeners(initialLayer) {
-        return new Promise((resolve, reject) => {
-            this.#initialLayer = initialLayer;
-            this.#events = {
-                cancel: this._onCancelPlacement.bind(this),
-                confirm: this._onConfirmPlacement.bind(this),
-                move: this._onMovePlacement.bind(this),
-                resolve,
-                reject,
-                rotate: this._onRotatePlacement.bind(this),
-            };
+  _onMovePlacement(event) {
+    event.stopPropagation();
+    let now = Date.now();
+    if (now - this.#moveTime <= 20) return;
+    const center = event.data.getLocalPosition(this.layer);
+    const snapped = canvas.grid.getSnappedPoint(
+      { x: center.x, y: center.y },
+      2,
+    );
+    this.document.updateSource({ x: snapped.x, y: snapped.y });
+    this.refresh();
+    this.#moveTime = now;
+  }
 
-            canvas.stage.on("mousemove", this.#events.move);
-            canvas.stage.on("mousedown", this.#events.confirm);
-            canvas.app.view.oncontextmenu = this.#events.cancel;
-            canvas.app.view.onwheel = this.#events.rotate;
-        });
-    }
+  _onRotatePlacement(event) {
+    if (event.ctrlKey) event.preventDefault();
+    event.stopPropagation();
+    let delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+    let snap = event.shiftKey ? delta : 5;
+    const update = {
+      direction: this.document.direction + snap * Math.sign(event.deltaY),
+    };
+    this.document.updateSource(update);
+    this.refresh();
+  }
 
-    async _finishPlacement(event) {
-        this.layer._onDragLeftCancel(event);
-        canvas.stage.off("mousemove", this.#events.move);
-        canvas.stage.off("mousedown", this.#events.confirm);
-        canvas.app.view.oncontextmenu = null;
-        canvas.app.view.onwheel = null;
-        this.#initialLayer.activate();
-        await this.actorSheet?.maximize();
-    }
+  async _onConfirmPlacement(event) {
+    await this._finishPlacement(event);
+    const destination = canvas.grid.getSnappedPoint(
+      { x: this.document.x, y: this.document.y },
+      2,
+    );
+    this.document.updateSource(destination);
+    this.#events.resolve(
+      canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [
+        this.document.toObject(),
+      ]),
+    );
+  }
 
-    _onMovePlacement(event) {
-        event.stopPropagation();
-        let now = Date.now();
-        if (now - this.#moveTime <= 20) return;
-        const center = event.data.getLocalPosition(this.layer);
-        const snapped = canvas.grid.getSnappedPoint({x: center.x, y: center.y}, 2);
-        this.document.updateSource({ x: snapped.x, y: snapped.y });
-        this.refresh();
-        this.#moveTime = now;
-    }
-
-    _onRotatePlacement(event) {
-        if (event.ctrlKey) event.preventDefault();
-        event.stopPropagation();
-        let delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
-        let snap = event.shiftKey ? delta : 5;
-        const update = {
-            direction: this.document.direction + snap * Math.sign(event.deltaY),
-        };
-        this.document.updateSource(update);
-        this.refresh();
-    }
-
-    async _onConfirmPlacement(event) {
-        await this._finishPlacement(event);
-        const destination = canvas.grid.getSnappedPoint(
-            {x: this.document.x, y: this.document.y},
-            2
-        );
-        this.document.updateSource(destination);
-        this.#events.resolve(
-            canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [
-                this.document.toObject(),
-            ])
-        );
-    }
-
-    async _onCancelPlacement(event) {
-        await this._finishPlacement(event);
-        this.#events.reject();
-    }
+  async _onCancelPlacement(event) {
+    await this._finishPlacement(event);
+    this.#events.reject();
+  }
 }

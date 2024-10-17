@@ -1,177 +1,213 @@
-import DPS from "../system/derepositioningsystem.js"
-import DSA5_Utility from "../system/utility-dsa5.js"
-const { mergeObject } = foundry.utils
+import DPS from '../system/derepositioningsystem.js';
+import DSA5_Utility from '../system/utility-dsa5.js';
+const { mergeObject } = foundry.utils;
 
-export class AddTargetDialog extends Dialog{
-    static async getDialog(speaker){
-        const targets = Array.from(game.user.targets).map(x => x.id)
-        const selectables = []
-        const token = canvas.scene ? canvas.scene.tokens.get(speaker.token)?.object : undefined
-        if(game.combat){
-            game.combat.combatants.forEach(combatant => {
-                if (!combatant.visible ) return
+export class AddTargetDialog extends Dialog {
+  static async getDialog(speaker) {
+    const targets = Array.from(game.user.targets).map((x) => x.id);
+    const selectables = [];
+    const token = canvas.scene
+      ? canvas.scene.tokens.get(speaker.token)?.object
+      : undefined;
+    if (game.combat) {
+      game.combat.combatants.forEach((combatant) => {
+        if (!combatant.visible) return;
 
-                combatant.isSelected = targets.includes(combatant.token.id)
-                if(token && combatant.token){
-                    const combatantToken = canvas.scene.tokens.get(combatant.token.id).object
-                    combatant.distance = DPS.rangeFinder(token, combatantToken)
-                    combatant.distance.distanceSum = Number(combatant.distance.distanceSum.toFixed(1))
-                }
-                selectables.push(combatant)
-            })
+        combatant.isSelected = targets.includes(combatant.token.id);
+        if (token && combatant.token) {
+          const combatantToken = canvas.scene.tokens.get(
+            combatant.token.id,
+          ).object;
+          combatant.distance = DPS.rangeFinder(token, combatantToken);
+          combatant.distance.distanceSum = Number(
+            combatant.distance.distanceSum.toFixed(1),
+          );
         }
-        return new AddTargetDialog({
-            title: game.i18n.localize("DIALOG.addTarget"),
-            content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
-            buttons: {},
-        })
+        selectables.push(combatant);
+      });
     }
+    return new AddTargetDialog({
+      title: game.i18n.localize('DIALOG.addTarget'),
+      content: await renderTemplate(
+        'systems/dsa5/templates/dialog/addTarget-dialog.html',
+        { selectables },
+      ),
+      buttons: {},
+    });
+  }
 
-    activateListeners(html){
-        super.activateListeners(html)
-        const combatants = html.find('.combatant')
-        combatants.dblclick(ev => this.setTargets(ev, true))
-        combatants.click(ev => this.setTargets(ev))
-        combatants.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
-        combatants.mousedown(ev => this._onRightClick(ev))
+  activateListeners(html) {
+    super.activateListeners(html);
+    const combatants = html.find('.combatant');
+    combatants.dblclick((ev) => this.setTargets(ev, true));
+    combatants.click((ev) => this.setTargets(ev));
+    combatants.hover(
+      this._onCombatantHoverIn.bind(this),
+      this._onCombatantHoverOut.bind(this),
+    );
+    combatants.mousedown((ev) => this._onRightClick(ev));
+  }
+
+  _onCombatantHoverOut(ev) {
+    this._getCombatApp()._onCombatantHoverOut(ev);
+  }
+
+  _onCombatantHoverIn(ev) {
+    this._getCombatApp()._onCombatantHoverIn(ev);
+  }
+
+  _onRightClick(ev) {
+    if (ev.button == 2) {
+      const combatant = game.combat.combatants.get(
+        ev.currentTarget.dataset.combatantId,
+      );
+      if (combatant.token) {
+        return canvas.animatePan({
+          x: combatant.token.x,
+          y: combatant.token.y,
+        });
+      }
     }
+  }
 
-    _onCombatantHoverOut(ev) {
-        this._getCombatApp()._onCombatantHoverOut(ev)
-    }
+  _getCombatApp() {
+    return game.combats.apps[0];
+  }
 
-    _onCombatantHoverIn(ev) {
-        this._getCombatApp()._onCombatantHoverIn(ev)
-    }
+  async setTargets(ev, close = false) {
+    const isShift = ev.originalEvent.shiftKey;
+    if (!isShift)
+      $(ev.currentTarget)
+        .closest('.directory')
+        .find('.combatant')
+        .removeClass('selectedTarget');
 
-    _onRightClick(ev){
-        if(ev.button == 2){
-            const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId)
-            if ( combatant.token) {
-                return canvas.animatePan({x: combatant.token.x, y: combatant.token.y});
-            }
-        }
-    }
+    $(ev.currentTarget).addClass('selectedTarget');
+    const combatantId = ev.currentTarget.dataset.combatantId;
+    const combatant = game.combat.combatants.get(combatantId);
 
-    _getCombatApp() {
-        return game.combats.apps[0]
-    }
+    combatant.token.object.setTarget(true, {
+      user: game.user,
+      releaseOthers: !isShift,
+      groupSelection: true,
+    });
 
-    async setTargets(ev, close = false){
-        const isShift = ev.originalEvent.shiftKey
-        if(!isShift)
-            $(ev.currentTarget).closest('.directory').find('.combatant').removeClass('selectedTarget')
-
-        $(ev.currentTarget).addClass("selectedTarget")
-        const combatantId = ev.currentTarget.dataset.combatantId
-        const combatant = game.combat.combatants.get(combatantId)
-
-        combatant.token.object.setTarget(true, {user: game.user, releaseOthers: !isShift, groupSelection: true });
-
-        if(close) this.close()
-    }
+    if (close) this.close();
+  }
 }
 
-export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2){
-    static DEFAULT_OPTIONS = {
-        window: {
-            title: "DIALOG.setTargetToUser",
-        }
-    }
+export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2,
+) {
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: 'DIALOG.setTargetToUser',
+    },
+  };
 
-    static PARTS = {
-        main: {
-            template: 'systems/dsa5/templates/dialog/selectForUserDialog.html'
-        }
-    }
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/selectForUserDialog.html',
+    },
+  };
 
-    static async getDialog(){
-        return new SelectUserDialog()
-    }
+  static async getDialog() {
+    return new SelectUserDialog();
+  }
 
-    async _prepareContext(_options) {
-        const data = await super._prepareContext(_options)
-        data.users = game.users.filter(x => x.active && !x.isGM)
-        return data
-    }
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.users = game.users.filter((x) => x.active && !x.isGM);
+    return data;
+  }
 
-    static registerButtons(){
-        Hooks.on("getSceneControlButtons", btns => {
-            if(!game.user.isGM) return
+  static registerButtons() {
+    Hooks.on('getSceneControlButtons', (btns) => {
+      if (!game.user.isGM) return;
 
-            const userSelect = {
-                name: "targetUser",
-                title: "CONTROLS.targetForUser",
-                icon: "fa fa-bullseye",
-                button: true,
-                onClick: async() => { (await SelectUserDialog.getDialog()).render(true) }
-            }
-            btns[0].tools.splice(2, 0, userSelect)
-        })
-    }
+      const userSelect = {
+        name: 'targetUser',
+        title: 'CONTROLS.targetForUser',
+        icon: 'fa fa-bullseye',
+        button: true,
+        onClick: async () => {
+          (await SelectUserDialog.getDialog()).render(true);
+        },
+      };
+      btns[0].tools.splice(2, 0, userSelect);
+    });
+  }
 
-    _onRender(context, options) {
-        super._onRender((context, options))
+  _onRender(context, options) {
+    super._onRender((context, options));
 
-        const html = $(this.element)
-        html.find('.combatant').on('click', ev => this.setTargetToUser(ev))
-    }
+    const html = $(this.element);
+    html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
+  }
 
-    setTargetToUser(ev){
-        const targetIds = Array.from(game.user.targets).map(x => x.id)
-        const userId = ev.currentTarget.dataset.userId
-        const user = game.users.get(userId)
-        user.updateTokenTargets(targetIds)
-        game.socket.emit('userActivity', userId, { targets: targetIds})
-        this.close()
-    }
+  setTargetToUser(ev) {
+    const targetIds = Array.from(game.user.targets).map((x) => x.id);
+    const userId = ev.currentTarget.dataset.userId;
+    const user = game.users.get(userId);
+    user.updateTokenTargets(targetIds);
+    game.socket.emit('userActivity', userId, { targets: targetIds });
+    this.close();
+  }
 }
 
-export class UserMultipickDialog extends foundry.applications.api.DialogV2{
-    static async getDialog(content){
-        const users = game.users.filter(x => x.active && !x.isGM)
+export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
+  static async getDialog(content) {
+    const users = game.users.filter((x) => x.active && !x.isGM);
 
-        new UserMultipickDialog({         
-            window: {
-                title: "SHEET.PostItem"
-            },   
-            content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
-            buttons: [
-                {
-                    action: 'done',
-                    icon: "fa fa-check",
-                    label: "yes",
-                    default: true,
-                    callback: (event, button, dialog) => { this.postContent(button.form.elements, content) }
-                },
-                {
-                    action: 'cancel',
-                    icon: "fas fa-times",
-                    label: "cancel"
-                }
-            ],
-        }).render(true)
+    new UserMultipickDialog({
+      window: {
+        title: 'SHEET.PostItem',
+      },
+      content: await renderTemplate(
+        'systems/dsa5/templates/dialog/usermultipickdialog.html',
+        { users },
+      ),
+      buttons: [
+        {
+          action: 'done',
+          icon: 'fa fa-check',
+          label: 'yes',
+          default: true,
+          callback: (event, button, dialog) => {
+            this.postContent(button.form.elements, content);
+          },
+        },
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'cancel',
+        },
+      ],
+    }).render(true);
+  }
+
+  static async postContent(dlg, content) {
+    const chatOptions = DSA5_Utility.chatDataSetup(content);
+    if (!dlg.sel_all.checked) {
+      const ids = [];
+      for (let key of Object.keys(dlg)) {
+        if (dlg[key].checked && key != 'sel_all') ids.push(dlg[key].value);
+      }
+      chatOptions.whisper = ids;
     }
 
-    static async postContent(dlg, content){
-        const chatOptions = DSA5_Utility.chatDataSetup(content)
-        if(!dlg.sel_all.checked){
-            const ids = []
-            for(let key of Object.keys(dlg)){
-                if(dlg[key].checked && key != 'sel_all') ids.push(dlg[key].value)
-            }
-            chatOptions.whisper = ids
-        }
+    ChatMessage.create(chatOptions);
+  }
 
-        ChatMessage.create(chatOptions)
-    }
+  _onRender(context, options) {
+    super._onRender((context, options));
 
-    _onRender(context, options) {
-        super._onRender((context, options))
-
-        const html = $(this.element)
-        html.find('[name="sel_all"]').on('change', ev => {
-            html.find('.usersel').prop('disabled', ev.currentTarget.checked).prop('checked', ev.currentTarget.checked)
-        })
-    }
+    const html = $(this.element);
+    html.find('[name="sel_all"]').on('change', (ev) => {
+      html
+        .find('.usersel')
+        .prop('disabled', ev.currentTarget.checked)
+        .prop('checked', ev.currentTarget.checked);
+    });
+  }
 }

@@ -1,0 +1,6 @@
+modules/tables/source/
+modules/tables/source/*.json
+modules/tours/en/
+modules/tours/en/*.json
+modules/tours/de/
+modules/tours/de/*.json

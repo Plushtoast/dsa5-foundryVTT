@@ -1,0 +1,39 @@
+{
+    "env": {
+      "browser": true,  // Includes browser globals like File, Blob, etc.
+      "jquery": true,    // Includes jQuery globals like $
+      "es2022": true
+    },
+    "extends": [
+      "eslint:recommended",        // Base ESLint rules
+      "plugin:prettier/recommended" // Prettier integration for formatting
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2022,  // Use ECMAScript 12
+      "sourceType": "module"  // Use ES modules
+    },
+    "ignorePatterns": [
+        "modules/tables/source/*.json",  // Ignore JSON files in the folder
+        "modules/tables/source/",         // Ignore the entire folder
+        "modules/tours/de/*.json",         // Ignore all files in the folder
+        "modules/tours/de/",         // Ignore the entire folder
+        "modules/tours/en/*.json",         // Ignore all files in the folder
+        "modules/tours/en/"         // Ignore the entire folder
+    ],
+
+
+    "rules": {
+      "no-unused-vars": "off",    // Warn about unused variables
+      "no-undef": "off",           // Turn off undefined variable checking for declared globals
+      "no-case-declarations": "off" // Turn off case declarations
+    },
+    "overrides": [
+      {
+        "files": [
+          "./modules/*.js",
+          "./modules/**/*.js"
+        ]
+      }
+    ]
+  }
+  

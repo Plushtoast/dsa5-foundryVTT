@@ -4,7 +4,6 @@ package-lock.json
 webpack.config.js
 .babelrc
 test
-.eslintrc.json
 installSys.rb
 oldpackage
 build.js

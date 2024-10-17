@@ -1,274 +1,331 @@
-import * as initHandleBars from "./handlebars.js";
-import * as initDiceSoNice from "./dicesonice.js";
-import * as initActorHooks from "./actor.js";
-import * as macroSupport from "./macro_support.js";
-import * as chatlogHooks from './chatlog.js'
-import * as ready from './ready.js'
-import { chatContext } from './chat_context.js'
-import * as tokens from './token.js'
-import * as sideBar from './sidebar.js'
-import { setupConfiguration } from './configuration.js'
-import * as journals from './journal.js'
-import * as tokenHUD from './tokenHUD.js'
-import * as migrateWorld from '../system/migrator.js'
-import * as initScene from './scene.js'
-import * as initKeybindings from './keybindings.js'
-import * as rollExtensions from './../system/dsarolls.js'
+import * as initHandleBars from './handlebars.js';
+import * as initDiceSoNice from './dicesonice.js';
+import * as initActorHooks from './actor.js';
+import * as macroSupport from './macro_support.js';
+import * as chatlogHooks from './chatlog.js';
+import * as ready from './ready.js';
+import { chatContext } from './chat_context.js';
+import * as tokens from './token.js';
+import * as sideBar from './sidebar.js';
+import { setupConfiguration } from './configuration.js';
+import * as journals from './journal.js';
+import * as tokenHUD from './tokenHUD.js';
+import * as migrateWorld from '../system/migrator.js';
+import * as initScene from './scene.js';
+import * as initKeybindings from './keybindings.js';
+import * as rollExtensions from './../system/dsarolls.js';
 
-import ActorSheetdsa5Character from "./../actor/character-sheet.js";
-import ActorSheetdsa5Creature from "./../actor/creature-sheet.js";
-import ActorSheetdsa5NPC from "./../actor/npc-sheet.js";
-import ItemSheetdsa5 from "./../item/item-sheet.js";
-import MerchantSheetDSA5 from "../actor/merchant-sheet.js";
-import BookWizard from "../wizards/adventure_wizard.js";
-import MastersMenu from "../wizards/masters_menu.js";
-import AdvantageRulesDSA5 from "../system/advantage-rules-dsa5.js";
-import SpecialabilityRulesDSA5 from "../system/specialability-rules-dsa5.js";
-import DSAActiveEffectConfig from "../status/active_effects.js";
-import CreatureMerchantSheetDSA5 from "../actor/creature-merchant-sheet.js";
-import CharacterMerchantSheetDSA5 from "../actor/character-merchant-sheet.js";
-import DPS from "../system/derepositioningsystem.js";
-import { SelectUserDialog } from "../dialog/addTargetDialog.js";
-import DSAJournalSheet from "../journal/dsa_journal_sheet.js";
-import DSA5 from "../system/config-dsa5.js";
-import DSA5SoundEffect from "../system/dsa-soundeffect.js";
-import { setActorDelta } from "./actordelta.js";
-const { mergeObject } = foundry.utils
+import ActorSheetdsa5Character from './../actor/character-sheet.js';
+import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
+import ActorSheetdsa5NPC from './../actor/npc-sheet.js';
+import ItemSheetdsa5 from './../item/item-sheet.js';
+import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
+import BookWizard from '../wizards/adventure_wizard.js';
+import MastersMenu from '../wizards/masters_menu.js';
+import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
+import SpecialabilityRulesDSA5 from '../system/specialability-rules-dsa5.js';
+import DSAActiveEffectConfig from '../status/active_effects.js';
+import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
+import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
+import DPS from '../system/derepositioningsystem.js';
+import { SelectUserDialog } from '../dialog/addTargetDialog.js';
+import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
+import DSA5 from '../system/config-dsa5.js';
+import DSA5SoundEffect from '../system/dsa-soundeffect.js';
+import { setActorDelta } from './actordelta.js';
+const { mergeObject } = foundry.utils;
 
-
-export default function() {
-    initHandleBars.default();
-    initDiceSoNice.default();
-    initActorHooks.default();
-    macroSupport.default();
-    chatlogHooks.default()
-    ready.default()
-    chatContext()
-    tokens.default()
-    sideBar.default()
-    journals.default()
-    tokenHUD.default()
-    migrateWorld.default()
-    initScene.default()
-    rollExtensions.default()    
-    setActorDelta()
-
+export default function () {
+  initHandleBars.default();
+  initDiceSoNice.default();
+  initActorHooks.default();
+  macroSupport.default();
+  chatlogHooks.default();
+  ready.default();
+  chatContext();
+  tokens.default();
+  sideBar.default();
+  journals.default();
+  tokenHUD.default();
+  migrateWorld.default();
+  initScene.default();
+  rollExtensions.default();
+  setActorDelta();
 }
 
-Hooks.once("init", () => {
-    loadTemplates([
-        "systems/dsa5/templates/actors/actor-main.html",
-        "systems/dsa5/templates/actors/actor-talents.html",
-        "systems/dsa5/templates/items/item-description.html",
-        "systems/dsa5/templates/dialog/default-dialog.html",
-        "systems/dsa5/templates/dialog/parts/targets.html",
-        "systems/dsa5/templates/dialog/enhanced-default-dialog.html",
-        "systems/dsa5/templates/dialog/default-combat-dialog.html",
-        "systems/dsa5/templates/chat/roll/test-card.html",
-        "systems/dsa5/templates/items/item-equipment.html",
-        "systems/dsa5/templates/items/item-enchantment.html",
-        "systems/dsa5/templates/actors/actor-combat.html",
-        "systems/dsa5/templates/actors/actor-equipment.html",
-        "systems/dsa5/templates/actors/actor-notes.html",
-        "systems/dsa5/templates/dialog/parts/spellmodifiers.html",
-        "systems/dsa5/templates/dialog/parts/canChangeCastingTime.html",
-        "systems/dsa5/templates/actors/parts/schipspart.html",
-        "systems/dsa5/templates/chat/post-item.html",
-        "systems/dsa5/templates/items/item-stat.html",
-        "systems/dsa5/templates/items/item-extension.html",
-        "systems/dsa5/templates/actors/creature/creature-main.html",
-        "systems/dsa5/templates/actors/creature/creature-loot.html",
-        "systems/dsa5/templates/actors/creature/creature-notes.html",
-        "systems/dsa5/templates/actors/creature/creature-magic.html",
-        "systems/dsa5/templates/system/masterHeros.html",
-        "systems/dsa5/templates/actors/creature/creature-religion.html",
-        "systems/dsa5/templates/actors/parts/characteristics-large.html",
-        "systems/dsa5/templates/actors/parts/gearSearch.html",
-        "systems/dsa5/templates/actors/parts/magicalSigns.html",
-        "systems/dsa5/templates/actors/parts/containerContent.html",
-        "systems/dsa5/templates/actors/npc/npc-main.html",
-        "systems/dsa5/templates/actors/character/actor-magic.html",
-        "systems/dsa5/templates/actors/character/actor-religion.html",
-        "systems/dsa5/templates/actors/character/actor-aggregatedtests.html",
-        "systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html",
-        "systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html",
-        "systems/dsa5/templates/actors/parts/status_effects.html",
-        "systems/dsa5/templates/actors/parts/purse.html",
-        "systems/dsa5/templates/actors/parts/combat_weapon.hbs",
-        "systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs",
-        "systems/dsa5/templates/actors/parts/horse.html",
-        "systems/dsa5/templates/actors/parts/healthbar.html",
-        "systems/dsa5/templates/actors/merchant/merchant-commerce.html",
-        "systems/dsa5/templates/items/item-header.html",
-        "systems/dsa5/templates/items/item-effects.html",
-        "systems/dsa5/templates/items/item-aoe.html",
-        "systems/dsa5/templates/items/traditionArtifact.html",
-        "systems/dsa5/templates/status/advanced_functions.html",
-        "systems/dsa5/templates/actors/parts/information.html",
-        "systems/dsa5/templates/actors/parts/personaltrait.html",
-        "systems/dsa5/templates/actors/parts/combatskills.html",
-        "systems/dsa5/templates/actors/parts/attributes.html",
-        "systems/dsa5/templates/actors/parts/swarm.html",
-        "systems/dsa5/templates/actors/parts/carryandpurse.html",
-        "systems/dsa5/templates/actors/parts/specialabilities.html",
-        "systems/dsa5/templates/actors/parts/experienceBox.html",
-        "systems/dsa5/templates/actors/parts/temperature.html",
-        "systems/dsa5/templates/actors/parts/temperatureSmall.html",
-        "systems/dsa5/templates/actors/parts/spells.html",
-        "systems/dsa5/templates/dialog/parts/expChoices.html",
-        "systems/dsa5/templates/actors/parts/liturgies.html",
-        "systems/dsa5/templates/items/browse/actor.html",
-        "systems/dsa5/templates/items/browse/garadan.html",
-        "systems/dsa5/templates/items/browse/culture.html",
-        "systems/dsa5/templates/items/browse/species.html",
-        "systems/dsa5/templates/items/browse/career.html",
-        "systems/dsa5/templates/items/meleeweapon-attack-part.hbs",
-        "systems/dsa5/templates/items/rangeweapon-attack-part.hbs",
-        "systems/dsa5/templates/actors/parts/specblock.html"
-    ]);
+Hooks.once('init', () => {
+  loadTemplates([
+    'systems/dsa5/templates/actors/actor-main.html',
+    'systems/dsa5/templates/actors/actor-talents.html',
+    'systems/dsa5/templates/items/item-description.html',
+    'systems/dsa5/templates/dialog/default-dialog.html',
+    'systems/dsa5/templates/dialog/parts/targets.html',
+    'systems/dsa5/templates/dialog/enhanced-default-dialog.html',
+    'systems/dsa5/templates/dialog/default-combat-dialog.html',
+    'systems/dsa5/templates/chat/roll/test-card.html',
+    'systems/dsa5/templates/items/item-equipment.html',
+    'systems/dsa5/templates/items/item-enchantment.html',
+    'systems/dsa5/templates/actors/actor-combat.html',
+    'systems/dsa5/templates/actors/actor-equipment.html',
+    'systems/dsa5/templates/actors/actor-notes.html',
+    'systems/dsa5/templates/dialog/parts/spellmodifiers.html',
+    'systems/dsa5/templates/dialog/parts/canChangeCastingTime.html',
+    'systems/dsa5/templates/actors/parts/schipspart.html',
+    'systems/dsa5/templates/chat/post-item.html',
+    'systems/dsa5/templates/items/item-stat.html',
+    'systems/dsa5/templates/items/item-extension.html',
+    'systems/dsa5/templates/actors/creature/creature-main.html',
+    'systems/dsa5/templates/actors/creature/creature-loot.html',
+    'systems/dsa5/templates/actors/creature/creature-notes.html',
+    'systems/dsa5/templates/actors/creature/creature-magic.html',
+    'systems/dsa5/templates/system/masterHeros.html',
+    'systems/dsa5/templates/actors/creature/creature-religion.html',
+    'systems/dsa5/templates/actors/parts/characteristics-large.html',
+    'systems/dsa5/templates/actors/parts/gearSearch.html',
+    'systems/dsa5/templates/actors/parts/magicalSigns.html',
+    'systems/dsa5/templates/actors/parts/containerContent.html',
+    'systems/dsa5/templates/actors/npc/npc-main.html',
+    'systems/dsa5/templates/actors/character/actor-magic.html',
+    'systems/dsa5/templates/actors/character/actor-religion.html',
+    'systems/dsa5/templates/actors/character/actor-aggregatedtests.html',
+    'systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html',
+    'systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html',
+    'systems/dsa5/templates/actors/parts/status_effects.html',
+    'systems/dsa5/templates/actors/parts/purse.html',
+    'systems/dsa5/templates/actors/parts/combat_weapon.hbs',
+    'systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs',
+    'systems/dsa5/templates/actors/parts/horse.html',
+    'systems/dsa5/templates/actors/parts/healthbar.html',
+    'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
+    'systems/dsa5/templates/items/item-header.html',
+    'systems/dsa5/templates/items/item-effects.html',
+    'systems/dsa5/templates/items/item-aoe.html',
+    'systems/dsa5/templates/items/traditionArtifact.html',
+    'systems/dsa5/templates/status/advanced_functions.html',
+    'systems/dsa5/templates/actors/parts/information.html',
+    'systems/dsa5/templates/actors/parts/personaltrait.html',
+    'systems/dsa5/templates/actors/parts/combatskills.html',
+    'systems/dsa5/templates/actors/parts/attributes.html',
+    'systems/dsa5/templates/actors/parts/swarm.html',
+    'systems/dsa5/templates/actors/parts/carryandpurse.html',
+    'systems/dsa5/templates/actors/parts/specialabilities.html',
+    'systems/dsa5/templates/actors/parts/experienceBox.html',
+    'systems/dsa5/templates/actors/parts/temperature.html',
+    'systems/dsa5/templates/actors/parts/temperatureSmall.html',
+    'systems/dsa5/templates/actors/parts/spells.html',
+    'systems/dsa5/templates/dialog/parts/expChoices.html',
+    'systems/dsa5/templates/actors/parts/liturgies.html',
+    'systems/dsa5/templates/items/browse/actor.html',
+    'systems/dsa5/templates/items/browse/garadan.html',
+    'systems/dsa5/templates/items/browse/culture.html',
+    'systems/dsa5/templates/items/browse/species.html',
+    'systems/dsa5/templates/items/browse/career.html',
+    'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
+    'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
+    'systems/dsa5/templates/actors/parts/specblock.html',
+  ]);
 
-    Actors.unregisterSheet("core", ActorSheet);
-    Actors.registerSheet("dsa5", ActorSheetdsa5Character, { types: ["character"], makeDefault: true });
-    Actors.registerSheet("dsa5", ActorSheetdsa5Creature, { types: ["creature"], makeDefault: true });
-    Actors.registerSheet("dsa5", ActorSheetdsa5NPC, { types: ["npc"], makeDefault: true });
-    Actors.registerSheet("dsa5", MerchantSheetDSA5, { types: ["npc"] });
-    Actors.registerSheet("dsa5", CreatureMerchantSheetDSA5, { types: ["creature"] })
-    Actors.registerSheet("dsa5", CharacterMerchantSheetDSA5, { types: ["character"] })
-    DocumentSheetConfig.registerSheet(ActiveEffect, "dsa5", DSAActiveEffectConfig, { makeDefault: true })
-    Journal.registerSheet("dsa5", DSAJournalSheet, {makeDefault: true})
+  Actors.unregisterSheet('core', ActorSheet);
+  Actors.registerSheet('dsa5', ActorSheetdsa5Character, {
+    types: ['character'],
+    makeDefault: true,
+  });
+  Actors.registerSheet('dsa5', ActorSheetdsa5Creature, {
+    types: ['creature'],
+    makeDefault: true,
+  });
+  Actors.registerSheet('dsa5', ActorSheetdsa5NPC, {
+    types: ['npc'],
+    makeDefault: true,
+  });
+  Actors.registerSheet('dsa5', MerchantSheetDSA5, { types: ['npc'] });
+  Actors.registerSheet('dsa5', CreatureMerchantSheetDSA5, {
+    types: ['creature'],
+  });
+  Actors.registerSheet('dsa5', CharacterMerchantSheetDSA5, {
+    types: ['character'],
+  });
+  DocumentSheetConfig.registerSheet(
+    ActiveEffect,
+    'dsa5',
+    DSAActiveEffectConfig,
+    { makeDefault: true },
+  );
+  Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
-    ItemSheetdsa5.setupSheets()
+  ItemSheetdsa5.setupSheets();
 
-    Hooks.call('registerDSAstyle', DSA5.styles)
+  Hooks.call('registerDSAstyle', DSA5.styles);
 
-    setupConfiguration()
-    DPS.initDoorMinDistance()
-    mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons)
+  setupConfiguration();
+  DPS.initDoorMinDistance();
+  mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons);
 
-    DSA5SoundEffect.prepareSoundEffects()
+  DSA5SoundEffect.prepareSoundEffects();
 
-    let style = game.settings.get("dsa5", "globalStyle")
-    if(!DSA5.styles[style]) style = Object.keys(DSA5.styles)[0]
-    $('body').addClass(style)
-})
+  let style = game.settings.get('dsa5', 'globalStyle');
+  if (!DSA5.styles[style]) style = Object.keys(DSA5.styles)[0];
+  $('body').addClass(style);
+});
 
 Hooks.once('setup', () => {
-    if (!["de", "en"].includes(game.i18n.lang)) {
-        console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`)
-        showForbiddenLanguageDialog()
-    } else {
-        const forceLanguage = game.settings.get("dsa5", "forceLanguage")
-        if (["de", "en"].includes(forceLanguage) && game.i18n.lang != forceLanguage) showWrongLanguageDialog(forceLanguage)
-    }
+  if (!['de', 'en'].includes(game.i18n.lang)) {
+    console.warn(
+      `DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`,
+    );
+    showForbiddenLanguageDialog();
+  } else {
+    const forceLanguage = game.settings.get('dsa5', 'forceLanguage');
+    if (['de', 'en'].includes(forceLanguage) && game.i18n.lang != forceLanguage)
+      showWrongLanguageDialog(forceLanguage);
+  }
 
-    BookWizard.initHook()
+  BookWizard.initHook();
 
-    initKeybindings.default()
-    MastersMenu.registerButtons()
-    SelectUserDialog.registerButtons()
+  initKeybindings.default();
+  MastersMenu.registerButtons();
+  SelectUserDialog.registerButtons();
 
-    CONFIG.Canvas.lightAnimations.daylight = {
-        label: "LIGHT.daylight",
-        illuminationShader: DaylightIlluminationShader
-    }
+  CONFIG.Canvas.lightAnimations.daylight = {
+    label: 'LIGHT.daylight',
+    illuminationShader: DaylightIlluminationShader,
+  };
 
-    AdvantageRulesDSA5.setupFunctions()
-    SpecialabilityRulesDSA5.setupFunctions()
-})
+  AdvantageRulesDSA5.setupFunctions();
+  SpecialabilityRulesDSA5.setupFunctions();
+});
 
-Hooks.once("i18nInit", () => {
-    setupKnownEquipmentModifiers()
-})
+Hooks.once('i18nInit', () => {
+  setupKnownEquipmentModifiers();
+});
 
-class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2{
-    async close(options = {}){
-        if(!["de", "en"].includes(game.i18n.lang)) return
+class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2 {
+  async close(options = {}) {
+    if (!['de', 'en'].includes(game.i18n.lang)) return;
 
-        return super.close(options)
-    }
+    return super.close(options);
+  }
 }
 
 const showForbiddenLanguageDialog = () => {
-    new ForbiddenLanguageDialog({
-        window: {
-            title: "language",
+  new ForbiddenLanguageDialog({
+    window: {
+      title: 'language',
+    },
+    content: `<p>Your foundry language is not supported by this system. Due to technical reasons your foundry language setting has to be switched to either english or german.</p>`,
+    buttons: [
+      {
+        action: 'de',
+        icon: 'fa fa-check',
+        label: 'en',
+        callback: async () => {
+          await game.settings.set('core', 'language', 'de');
+          foundry.utils.debouncedReload();
         },
-        content: `<p>Your foundry language is not supported by this system. Due to technical reasons your foundry language setting has to be switched to either english or german.</p>`,
-        buttons: [
-            {
-                action: 'de',
-                icon: "fa fa-check",
-                label: "en",
-                callback: async() => {
-                    await game.settings.set("core", "language", "de")
-                    foundry.utils.debouncedReload()
-                }
-            },
-            {
-                action: 'en',
-                icon: "fas fa-check",
-                label: "de",
-                callback: async() => {
-                    await game.settings.set("core", "language", "en")
-                    foundry.utils.debouncedReload()
-                }
-            },
-            {
-                action: 'logout',
-                icon: "fas fa-door-closed",
-                label: 'SETTINGS.Logout',
-                callback: async() => {
-                    ui.menu.items.logout.onClick()
-                }
-            }
-        ]
-    }).render(true)
-}
+      },
+      {
+        action: 'en',
+        icon: 'fas fa-check',
+        label: 'de',
+        callback: async () => {
+          await game.settings.set('core', 'language', 'en');
+          foundry.utils.debouncedReload();
+        },
+      },
+      {
+        action: 'logout',
+        icon: 'fas fa-door-closed',
+        label: 'SETTINGS.Logout',
+        callback: async () => {
+          ui.menu.items.logout.onClick();
+        },
+      },
+    ],
+  }).render(true);
+};
 
 const showWrongLanguageDialog = (forceLanguage) => {
-    new foundry.applications.api.DialogV2({
-        window: {
-            title: "DSASETTINGS.forceLanguage"
+  new foundry.applications.api.DialogV2({
+    window: {
+      title: 'DSASETTINGS.forceLanguage',
+    },
+    content: `<p>${game.i18n.format('DSAError.wrongLanguage', { lang: forceLanguage })}</p>`,
+    buttons: [
+      {
+        action: 'ok',
+        icon: 'fa fa-check',
+        label: 'ok',
+        callback: async () => {
+          await game.settings.set('core', 'language', forceLanguage);
+          foundry.utils.debouncedReload();
         },
-        content: `<p>${game.i18n.format("DSAError.wrongLanguage", { lang: forceLanguage })}</p>`,
-        buttons: [
-            {
-                action: 'ok',
-                icon: "fa fa-check",
-                label: "ok",
-                callback: async() => {
-                    await game.settings.set("core", "language", forceLanguage)
-                    foundry.utils.debouncedReload()
-                }
-            },
-            {
-                action: 'cancel',
-                icon: "fas fa-times",
-                label: "cancel",
-            }
-        ]
-    }).render(true)
-}
+      },
+      {
+        action: 'cancel',
+        icon: 'fas fa-times',
+        label: 'cancel',
+      },
+    ],
+  }).render(true);
+};
 
 function setupKnownEquipmentModifiers() {
-    game.dsa5.config.knownShortcuts = {
-        [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: ["status", "initiative", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: ["status", "speed", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: ["status", "astralenergy", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: ["status", "wounds", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: ["status", "karmaenergy", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: ["status", "dodge", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: ["status", "soulpower", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ["status", "toughness", "gearmodifier"],
-        [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ["status", "fatePoints", "gearmodifier"]
-    }
-    for (const k of Object.keys(DSA5.characteristics)) {
-        game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ["characteristics", k.toLowerCase(), "gearmodifier"]
-    }
+  game.dsa5.config.knownShortcuts = {
+    [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: [
+      'status',
+      'initiative',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: [
+      'status',
+      'speed',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: [
+      'status',
+      'astralenergy',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: [
+      'status',
+      'wounds',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: [
+      'status',
+      'karmaenergy',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: [
+      'status',
+      'dodge',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: [
+      'status',
+      'soulpower',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: [
+      'status',
+      'toughness',
+      'gearmodifier',
+    ],
+    [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: [
+      'status',
+      'fatePoints',
+      'gearmodifier',
+    ],
+  };
+  for (const k of Object.keys(DSA5.characteristics)) {
+    game.dsa5.config.knownShortcuts[
+      game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()
+    ] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
+  }
 }
 
 class DaylightIlluminationShader extends AdaptiveIlluminationShader {
-    static fragmentShader =  `
+  static fragmentShader = `
     ${this.SHADER_HEADER}
     ${this.PERCEIVED_BRIGHTNESS}
 
