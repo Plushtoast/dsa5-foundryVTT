@@ -12,27 +12,17 @@ export default class OnUseEffect {
     const pack = game.packs.get(packName);
     let documents = await pack?.getDocuments({ name });
     if (!documents || !documents.length) {
-      for (let pack of game.packs.filter(
-        (x) =>
-          x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label),
-      )) {
+      for (let pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
         documents = await pack.getDocuments({ name });
         if (documents.length) break;
       }
     }
     let result = {};
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(
-        async function () {},
-      ).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       try {
         args.result = result;
-        const fn = new AsyncFunction(
-          'args',
-          'actor',
-          'item',
-          documents[0].command,
-        );
+        const fn = new AsyncFunction('args', 'actor', 'item', documents[0].command);
         result.ret = await fn.call(this, args, this.item.actor, this.item);
       } catch (err) {
         //Todo passing multiple scopes kind of fails
@@ -43,22 +33,18 @@ export default class OnUseEffect {
             'item',
             `
                     const that = this;
-                    ${documents[0].command.replace(/(?=[ |\(|{]+)?this\./g, 'that.')}
+                    ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
                     `,
           );
           result.ret = await fn2.call(this, args, this.item.actor);
         } catch (err) {
-          ui.notifications.error(
-            `There was an error in your macro syntax. See the console (F12) for details`,
-          );
+          ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
           result.error = true;
         }
       }
     } else {
-      ui.notifications.error(
-        game.i18n.format('DSAError.macroNotFound', { name }),
-      );
+      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name }));
     }
     return result;
   }
@@ -67,22 +53,16 @@ export default class OnUseEffect {
     if (!this.item.actor) return;
 
     if (!game.user.can('MACRO_SCRIPT')) {
-      return ui.notifications.warn(
-        `You are not allowed to use JavaScript macros.`,
-      );
+      return ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     }
 
     const macro = OnUseEffect.getOnUseEffect(this.item);
     try {
-      const AsyncFunction = Object.getPrototypeOf(
-        async function () {},
-      ).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       const fn = new AsyncFunction('item', 'actor', macro);
       await fn.call(this, this.item, this.item.actor);
     } catch (err) {
-      ui.notifications.error(
-        `There was an error in your macro syntax. See the console (F12) for details`,
-      );
+      ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
       console.error(err);
       console.warn(err.stack);
     }
@@ -148,9 +128,7 @@ export default class OnUseEffect {
 
   async createInfoMessage(data, names, added = true) {
     if (names.length) {
-      const format = added
-        ? 'ActiveEffects.appliedEffect'
-        : 'ActiveEffects.removedEffect';
+      const format = added ? 'ActiveEffects.appliedEffect' : 'ActiveEffects.removedEffect';
       const infoMsg = game.i18n.format(format, {
         source: data.name,
         target: names.join(', '),

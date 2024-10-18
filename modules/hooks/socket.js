@@ -19,21 +19,12 @@ export function connectSocket() {
         DSA5Combat.brawlStart(2000, false);
         return;
       case 'hideDeletedSheet':
-        let target = data.payload.target.token
-          ? game.actors.tokens[data.payload.target.token]
-          : game.actors.get(data.payload.target.actor);
+        let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
         MerchantSheetDSA5.hideDeletedSheet(target);
         return;
       case 'refreshSheets':
         for (let app of Object.values(ui.windows)) {
-          if (
-            data.payload.sheets.find(
-              (x) =>
-                app?.options?.baseApplication == x.type &&
-                x.id == app.object?.id,
-            )
-          )
-            app.render(true);
+          if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
         }
         break;
       default:
@@ -54,18 +45,12 @@ export function connectSocket() {
       case 'target':
         {
           let scene = game.scenes.get(data.payload.scene);
-          let token = new Token(
-            scene.getEmbeddedDocument('Token', data.payload.target),
-          );
+          let token = new Token(scene.getEmbeddedDocument('Token', data.payload.target));
           token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
         }
         break;
       case 'addEffect':
-        DSAActiveEffectConfig.applyEffect(
-          data.payload.id,
-          data.payload.mode,
-          data.payload.actors,
-        );
+        DSAActiveEffectConfig.applyEffect(data.payload.id, data.payload.mode, data.payload.actors);
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
@@ -74,19 +59,13 @@ export function connectSocket() {
         game.messages.get(data.payload.id).delete();
         break;
       case 'showDamage':
-        OpposedDsa5.showDamage(
-          game.messages.get(data.payload.id),
-          data.payload.hide,
-        );
+        OpposedDsa5.showDamage(game.messages.get(data.payload.id), data.payload.hide);
         break;
       case 'hideQueryButton':
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        RequestRoll.rerenderGC(
-          game.messages.get(data.payload.messageId),
-          data.payload.data,
-        );
+        RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTracker':
         APTracker.receiveSocketEvent(data);
@@ -107,28 +86,13 @@ export function connectSocket() {
         break;
       case 'trade':
         {
-          let source = data.payload.source.token
-            ? game.actors.tokens[data.payload.source.token]
-            : game.actors.get(data.payload.source.actor);
-          let target = data.payload.target.token
-            ? game.actors.tokens[data.payload.target.token]
-            : game.actors.get(data.payload.target.actor);
-          MerchantSheetDSA5.finishTransaction(
-            source,
-            target,
-            data.payload.price,
-            data.payload.itemId,
-            data.payload.buy,
-            data.payload.amount,
-          );
+          let source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
+          let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
+          MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount);
         }
         break;
       case 'playWhisperSound':
-        if (data.payload.whisper.includes(game.user.id))
-          foundry.audio.AudioHelper.play(
-            { src: data.payload.soundPath, volume: 0.8, loop: false },
-            false,
-          );
+        if (data.payload.whisper.includes(game.user.id)) foundry.audio.AudioHelper.play({ src: data.payload.soundPath, volume: 0.8, loop: false }, false);
 
         break;
       case 'socketedConditionAddActor':
@@ -149,33 +113,20 @@ export function connectSocket() {
       case 'socketedRemoveCondition':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
-          onUse.socketedRemoveCondition(
-            data.payload.targets,
-            data.payload.coreId,
-          );
+          onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId);
         });
         break;
       case 'socketedActorTransformation':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
-          onUse.socketedActorTransformation(
-            data.payload.targets,
-            data.payload.update,
-          );
+          onUse.socketedActorTransformation(data.payload.targets, data.payload.update);
         });
         break;
       case 'itemDrop':
         {
-          let sourceActor = data.payload.sourceActorId
-            ? game.actors.get(data.payload.sourceActorId)
-            : undefined;
+          let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
-            dropToGround(
-              sourceActor,
-              item,
-              data.payload.data,
-              data.payload.amount,
-            );
+            dropToGround(sourceActor, item, data.payload.data, data.payload.amount);
           });
         }
         break;

@@ -127,20 +127,7 @@ export class DiceSoNiceCustomization extends Application {
   static unloadedModels = [];
   static retries = 0;
   static retrying = false;
-  static attrs = [
-    'mu',
-    'kl',
-    'in',
-    'ch',
-    'ff',
-    'ge',
-    'ko',
-    'kk',
-    'attack',
-    'dodge',
-    'parry',
-    'damage',
-  ];
+  static attrs = ['mu', 'kl', 'in', 'ch', 'ff', 'ge', 'ko', 'kk', 'attack', 'dodge', 'parry', 'damage'];
 
   initConfigs() {
     const otherKey = { damage: 'black' };
@@ -186,18 +173,10 @@ export class DiceSoNiceCustomization extends Application {
   activateListeners(html) {
     super.activateListeners();
     html.find('[name="entryselection"]').change(async (ev) => {
-      await game.settings.set(
-        'dsa5',
-        `dice3d_${ev.currentTarget.dataset.attr}`,
-        ev.currentTarget.value,
-      );
+      await game.settings.set('dsa5', `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value);
     });
     html.find('[name="systemselection"]').change(async (ev) => {
-      await game.settings.set(
-        'dsa5',
-        `dice3d_system_${ev.currentTarget.dataset.attr}`,
-        ev.currentTarget.value,
-      );
+      await game.settings.set('dsa5', `dice3d_system_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value);
       DiceSoNiceCustomization.preloadDiceAssets([ev.currentTarget.value]);
       game.socket.emit('system.dsa5', {
         type: 'preloadDice3d',
@@ -255,9 +234,7 @@ export class DiceSoNiceCustomization extends Application {
         continue;
       }
 
-      const dieModelsToLoad = dieModel.dice.filter(
-        (el) => types.length == 0 || types.includes(el.type),
-      );
+      const dieModelsToLoad = dieModel.dice.filter((el) => types.length == 0 || types.includes(el.type));
       for (const model of dieModelsToLoad) {
         try {
           if (model.modelFile) {

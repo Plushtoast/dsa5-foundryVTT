@@ -26,42 +26,26 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     const pack = game.packs.get(packName);
     let documents = await pack?.getDocuments({ name });
     if (!documents || !documents.length) {
-      for (let pack of game.packs.filter(
-        (x) =>
-          x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label),
-      )) {
+      for (let pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
         documents = await pack.getDocuments({ name });
         if (documents.length) break;
       }
     }
 
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(
-        async function () {},
-      ).constructor;
-      const fn = new AsyncFunction(
-        'actor',
-        'item',
-        'qs',
-        'automatedAnimation',
-        'args',
-        documents[0].command,
-      );
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const fn = new AsyncFunction('actor', 'item', 'qs', 'automatedAnimation', 'args', documents[0].command);
       try {
         args.result = result;
         const context = mergeObject({ automatedAnimation, effectDummy }, this);
         await fn.call(context, actor, item, qs, automatedAnimation, args);
       } catch (err) {
-        ui.notifications.error(
-          `There was an error in your macro syntax. See the console (F12) for details`,
-        );
+        ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);
         result.error = true;
       }
     } else {
-      ui.notifications.error(
-        game.i18n.format('DSAError.macroNotFound', { name }),
-      );
+      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name }));
     }
   }
   return result;
@@ -150,13 +134,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         delete macroEffect.flags.dsa5?.onDelayed;
         macroEffect.system.delayed = false;
         macroEffect.duration = duration;
-        this.applyAdvancedFunction(
-          actor,
-          [macroEffect],
-          source,
-          testData,
-          sourceActor,
-        );
+        this.applyAdvancedFunction(actor, [macroEffect], source, testData, sourceActor);
       }
     }
     return continueDeletion;
@@ -169,15 +147,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
-          const AsyncFunction = Object.getPrototypeOf(
-            async function () {},
-          ).constructor;
+          const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
           await fn.call(this, effect, actor);
         } catch (err) {
-          ui.notifications.error(
-            `There was an error in your macro syntax. See the console (F12) for details`,
-          );
+          ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
           console.warn(err.stack);
         }
@@ -187,8 +161,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
   async checkTimesUpInstalled() {
     const isInstalled = DSA5_Utility.moduleEnabled('times-up');
-    if (!isInstalled && game.user.isGM)
-      ui.notifications.warn('DSAError.shouldTimesUp', { localize: true });
+    if (!isInstalled && game.user.isGM) ui.notifications.warn('DSAError.shouldTimesUp', { localize: true });
     return isInstalled;
   }
 
@@ -200,42 +173,20 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     const itemType = getProperty(this.object, 'parent.type');
     const isWeapon =
       ['meleeweapon', 'rangeweapon'].includes(itemType) ||
-      (itemType == 'trait' &&
-        ['meleeAttack', 'rangeAttack'].includes(
-          getProperty(this.object, 'parent.system.traitType.value'),
-        ));
+      (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(getProperty(this.object, 'parent.system.traitType.value')));
     const effectConfigs = {
       hasSpellEffects:
         isWeapon ||
-        [
-          'spell',
-          'liturgy',
-          'ritual',
-          'skill',
-          'ceremony',
-          'consumable',
-          'poison',
-          'disease',
-          'ammunition',
-        ].includes(itemType) ||
-        (['specialability'].includes(itemType) &&
-          getProperty(this.object, 'parent.system.category.value') == 'Combat'),
-      hasDamageTransformation: [
-        'ammunition',
-        'meleeweapon',
-        'rangeweapon',
-      ].includes(itemType),
+        ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType) ||
+        (['specialability'].includes(itemType) && getProperty(this.object, 'parent.system.category.value') == 'Combat'),
+      hasDamageTransformation: ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType),
       hasTriggerEffects: ['specialability'].includes(itemType),
       hasSuccessEffects: ['poison', 'disease'].includes(itemType),
     };
 
     let advancedFunctions = [];
 
-    if (
-      effectConfigs.hasSpellEffects ||
-      effectConfigs.hasDamageTransformation ||
-      effectConfigs.hasTriggerEffects
-    ) {
+    if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
       advancedFunctions.push({
         name: `ActiveEffects.advancedFunctions.none`,
         index: 0,
@@ -277,58 +228,46 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
     const config = {
       systemEffects: this.getStatusEffects(),
-      canEditMacros:
-        game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
+      canEditMacros: game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
     };
 
-    const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce(
-      (obj, e) => {
-        obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
-        return obj;
-      },
-      {},
-    );
+    const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
+      obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
+      return obj;
+    }, {});
 
     const applySuccessConditions = {
       1: 'ActiveEffects.onSuccess',
       2: 'ActiveEffects.onFailure',
     };
 
-    const canWeaponAdvantages =
-      DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
+    const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
     const macroIndexes = [2, 6, 7];
     const elem = $(this._element);
-    elem
-      .find('.tabs')
-      .append(
-        `<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize('advanced')}</a>`,
-      );
+    elem.find('.tabs').append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize('advanced')}</a>`);
 
-    const template = await renderTemplate(
-      'systems/dsa5/templates/status/advanced_effect.html',
-      {
-        effect: this.object,
-        advancedFunctions,
-        effectConfigs,
-        macroIndexes,
-        messageReceivers,
-        canWeaponAdvantages,
-        equipmentAdvantageOptions: {
-          1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
-          2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`),
-        },
-        applySuccessConditions,
-        config,
-        isWeapon,
-        dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
-          (obj, e) => {
-            obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
-            return obj;
-          },
-          { 2: game.i18n.localize('all') },
-        ),
+    const template = await renderTemplate('systems/dsa5/templates/status/advanced_effect.html', {
+      effect: this.object,
+      advancedFunctions,
+      effectConfigs,
+      macroIndexes,
+      messageReceivers,
+      canWeaponAdvantages,
+      equipmentAdvantageOptions: {
+        1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
+        2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`),
       },
-    );
+      applySuccessConditions,
+      config,
+      isWeapon,
+      dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
+        (obj, e) => {
+          obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
+          return obj;
+        },
+        { 2: game.i18n.localize('all') },
+      ),
+    });
     elem.find('.tab[data-tab="effects"]').after($(template));
     elem.find('.advancedSelector').on('change', (ev) => {
       let effect = this.object;
@@ -343,15 +282,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
       });
     });
     elem.find('.auraSelector').on('change', (ev) => {
-      elem
-        .find('.auraDetails')
-        .toggleClass('dsahidden', !ev.currentTarget.checked);
+      elem.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
       elem.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
     if (this.object.statuses.size && game.i18n.has(this.object.description)) {
-      elem
-        .find('[data-tab="details"] .editor')
-        .replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`);
+      elem.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`);
     }
     this.checkTimesUpInstalled();
   }
@@ -369,32 +304,16 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     let source = options.origin;
     for (const ef of source.effects) {
       try {
-        if (
-          Number(getProperty(ef, 'flags.dsa5.advancedFunction')) == functionID
-        ) {
+        if (Number(getProperty(ef, 'flags.dsa5.advancedFunction')) == functionID) {
           if (!game.user.can('MACRO_SCRIPT')) {
-            ui.notifications.warn(
-              `You are not allowed to use JavaScript macros.`,
-            );
+            ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
-              const syncFunction = Object.getPrototypeOf(
-                function () {},
-              ).constructor;
-              const fn = new syncFunction(
-                'ef',
-                'callMacro',
-                'actor',
-                'msg',
-                'source',
-                'options',
-                getProperty(ef, 'flags.dsa5.args3'),
-              );
+              const syncFunction = Object.getPrototypeOf(function () {}).constructor;
+              const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', getProperty(ef, 'flags.dsa5.args3'));
               fn.call(this, ef, callMacro, actor, msg, source, options);
             } catch (err) {
-              ui.notifications.error(
-                `There was an error in your macro syntax. See the console (F12) for details`,
-              );
+              ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
               console.error(err);
               console.warn(err.stack);
             }
@@ -408,14 +327,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     return { msg, options };
   }
 
-  static async applyAdvancedFunction(
-    actor,
-    effects,
-    source,
-    testData,
-    sourceActor,
-    skipResistRolls = true,
-  ) {
+  static async applyAdvancedFunction(actor, effects, source, testData, sourceActor, skipResistRolls = true) {
     let msg = '';
     const resistRolls = [];
     let effectApplied = false;
@@ -433,11 +345,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         const isAura = getProperty(ef, 'flags.dsa5.isAura');
 
         if (isAura) {
-          const radius =
-            `${getProperty(ef, 'flags.dsa5.auraRadius') || 1}`.replace(
-              /q(l|s)/i,
-              qs,
-            );
+          const radius = `${getProperty(ef, 'flags.dsa5.auraRadius') || 1}`.replace(/q(l|s)/i, qs);
           const evaluatedRadius = (await new Roll(radius).evaluate()).total;
           setProperty(ef, 'flags.dsa5.auraRadius', evaluatedRadius);
         }
@@ -447,12 +355,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
           const mod = `${skills.pop()}`;
           resistRolls.push({
             skill: skills.join(' '),
-            mod:
-              Math.round(
-                Roll.safeEval(
-                  `${mod}`.replace(/q(l|s)/i, qs).replaceAll('step', specStep),
-                ),
-              ) || 0,
+            mod: Math.round(Roll.safeEval(`${mod}`.replace(/q(l|s)/i, qs).replaceAll('step', specStep))) || 0,
             effect: ef,
             target: actor,
             token: actor.token?.id,
@@ -473,8 +376,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
             },
           };
 
-          let isEffectWithChange =
-            (ef.changes && ef.changes.length > 0) || (isAura && !customEf);
+          let isEffectWithChange = (ef.changes && ef.changes.length > 0) || (isAura && !customEf);
 
           if (customEf) {
             switch (customEf) {
@@ -484,34 +386,22 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                   if (/,/.test(value)) {
                     value = Number(value.split(',')[qs - 1]);
                   } else {
-                    value = Number(
-                      value.replace(game.i18n.localize('CHARAbbrev.QS'), qs),
-                    );
+                    value = Number(value.replace(game.i18n.localize('CHARAbbrev.QS'), qs));
                   }
                   const effectId = getProperty(ef, 'flags.dsa5.args0');
-                  const effectName = game.i18n.localize(
-                    `CONDITION.${effectId}`,
-                  );
+                  const effectName = game.i18n.localize(`CONDITION.${effectId}`);
                   const effectData = {
                     name: `${source.name} (${effectName})`,
                     duration: ef.duration,
                   };
                   if (onDelayed) mergeObject(effectData, delayedData);
 
-                  await actor.addTimedCondition(
-                    effectId,
-                    value,
-                    false,
-                    false,
-                    effectData,
-                  );
+                  await actor.addTimedCondition(effectId, value, false, false, effectData);
                 }
                 break;
               case 2: //Macro
                 if (!game.user.can('MACRO_SCRIPT')) {
-                  ui.notifications.warn(
-                    `You are not allowed to use JavaScript macros.`,
-                  );
+                  ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
                 } else {
                   if (onDelayed) {
                     const copy = duplicate(ef);
@@ -529,37 +419,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
                     });
                   } else {
                     try {
-                      const AsyncFunction = Object.getPrototypeOf(
-                        async function () {},
-                      ).constructor;
-                      const fn = new AsyncFunction(
-                        'effect',
-                        'actor',
-                        'callMacro',
-                        'msg',
-                        'source',
-                        'actor',
-                        'sourceActor',
-                        'testData',
-                        'qs',
-                        getProperty(ef, 'flags.dsa5.args3'),
-                      );
-                      await fn.call(
-                        this,
-                        ef,
-                        actor,
-                        callMacro,
-                        msg,
-                        source,
-                        actor,
-                        sourceActor,
-                        testData,
-                        qs,
-                      );
+                      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'actor', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
+                      await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
                     } catch (err) {
-                      ui.notifications.error(
-                        `There was an error in your macro syntax. See the console (F12) for details`,
-                      );
+                      ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                       console.error(err);
                       console.warn(err.stack);
                     }
@@ -569,10 +433,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
               case 3: // Creature Link
                 const creatures = (getProperty(ef, 'flags.dsa5.args4') || '')
                   .split(',')
-                  .map(
-                    (x) =>
-                      `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`,
-                  )
+                  .map((x) => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`)
                   .join(' ');
                 msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
                 break;
@@ -608,24 +469,20 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     const target = { token: data.token, actor: data.actor, scene: canvas.id };
     const actor = DSA5_Utility.getSpeaker(target);
     if (actor) {
-      const skill = actor.items.find(
-        (x) => x.type == 'skill' && x.name == data.skill,
-      );
-      actor
-        .setupSkill(skill, { modifier: data.mod }, data.token)
-        .then(async (setupData) => {
-          setupData.testData.opposable = false;
-          const res = await actor.basicTest(setupData);
-          const availableQs = res.result.qualityStep || 0;
-          //this.automatedAnimation(res.result.successLevel);
+      const skill = actor.items.find((x) => x.type == 'skill' && x.name == data.skill);
+      actor.setupSkill(skill, { modifier: data.mod }, data.token).then(async (setupData) => {
+        setupData.testData.opposable = false;
+        const res = await actor.basicTest(setupData);
+        const availableQs = res.result.qualityStep || 0;
+        //this.automatedAnimation(res.result.successLevel);
 
-          if (availableQs < 1) {
-            await this.applyEffect(data.message, data.mode, [target], {
-              effectIds: [data.effect],
-              skipResistRolls: true,
-            });
-          }
-        });
+        if (availableQs < 1) {
+          await this.applyEffect(data.message, data.mode, [target], {
+            effectIds: [data.effect],
+            skipResistRolls: true,
+          });
+        }
+      });
     } else {
       console.warn('Actor not found for resist roll.');
     }
@@ -639,36 +496,18 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     const hasSuccessEffects = ['poison', 'disease'].includes(source.type);
 
-    if (hasSuccessEffects)
-      testData.qualityStep = testData.successLevel > 0 ? 1 : 2;
+    if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 1 : 2;
 
     const attacker =
       DSA5_Utility.getSpeaker(speaker) ||
-      DSA5_Utility.getSpeaker(
-        getProperty(message.flags, 'data.preData.extra.speaker'),
-      ) ||
-      game.actors.get(
-        getProperty(message.flags, 'data.preData.extra.actor.id'),
-      );
+      DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker')) ||
+      game.actors.get(getProperty(message.flags, 'data.preData.extra.actor.id'));
 
     const sourceActor = attacker;
-    let effects = (
-      await this._parseEffectDuration(
-        source,
-        testData,
-        message.flags.data.preData,
-        attacker,
-      )
-    ).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));
+    let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));
 
-    if (hasSuccessEffects)
-      effects = effects.filter(
-        (x) =>
-          getProperty(x, 'flags.dsa5.successEffect') == testData.qualityStep ||
-          !getProperty(x, 'flags.dsa5.successEffect'),
-      );
-    if (options.effectIds)
-      effects = effects.filter((x) => options.effectIds.includes(x._id));
+    if (hasSuccessEffects) effects = effects.filter((x) => getProperty(x, 'flags.dsa5.successEffect') == testData.qualityStep || !getProperty(x, 'flags.dsa5.successEffect'));
+    if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
     let actors = [];
     if (mode == 'self') {
       if (attacker) actors.push(attacker);
@@ -682,23 +521,19 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
     if (game.user.isGM) {
       for (let actor of actors) {
-        const { msg, resistRolls, effectApplied, effectNames } =
-          await DSAActiveEffectConfig.applyAdvancedFunction(
-            actor,
-            effects,
-            source,
-            testData,
-            sourceActor,
-            options.skipResistRolls || false,
-          );
+        const { msg, resistRolls, effectApplied, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(
+          actor,
+          effects,
+          source,
+          testData,
+          sourceActor,
+          options.skipResistRolls || false,
+        );
         if (effectApplied) {
-          const appliedEffect = game.i18n.format(
-            'ActiveEffects.appliedEffect',
-            {
-              target: actor.token?.name || actor.name,
-              source: effectNames.join(', '),
-            },
-          );
+          const appliedEffect = game.i18n.format('ActiveEffects.appliedEffect', {
+            target: actor.token?.name || actor.name,
+            source: effectNames.join(', '),
+          });
           const infoMsg = `${appliedEffect}${msg || ''}`;
           await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         }
@@ -726,14 +561,11 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
   static async createResistRollMessage(resistRolls, id, mode) {
     for (const resist of resistRolls) {
-      const template = await renderTemplate(
-        'systems/dsa5/templates/chat/roll/resist-roll.html',
-        {
-          resist,
-          id,
-          mode,
-        },
-      );
+      const template = await renderTemplate('systems/dsa5/templates/chat/roll/resist-roll.html', {
+        resist,
+        id,
+        mode,
+      });
       await ChatMessage.create(DSA5_Utility.chatDataSetup(template));
     }
   }
@@ -744,9 +576,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
       specAbIds[spec.specAbId] = spec.step;
     }
     const specKeys = Object.keys(specAbIds);
-    const specAbs = attacker
-      ? attacker.items.filter((x) => specKeys.includes(x.id))
-      : [];
+    const specAbs = attacker ? attacker.items.filter((x) => specKeys.includes(x.id)) : [];
     let effects = source.effects ? duplicate(source.effects) : [];
     for (const spec of specAbs) {
       const specEffects = duplicate(spec).effects;
@@ -757,9 +587,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     let duration = getProperty(source, 'system.duration.value') || '';
-    duration = duration
-      .replace(/ x /g, ' * ')
-      .replace(game.i18n.localize('CHARAbbrev.QS'), testData.qualityStep);
+    duration = duration.replace(/ x /g, ' * ').replace(game.i18n.localize('CHARAbbrev.QS'), testData.qualityStep);
     try {
       for (const reg of DSAActiveEffectConfig.effectDurationRegexes) {
         if (reg.regEx.test(duration)) {
@@ -768,15 +596,10 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
           if (!isNaN(time)) {
             for (let ef of effects) {
               let calcTime = time * reg.seconds;
-              const customDuration = getProperty(
-                ef,
-                'flags.dsa5.customDuration',
-              );
+              const customDuration = getProperty(ef, 'flags.dsa5.customDuration');
               if (customDuration) {
-                let qsDuration =
-                  customDuration.split(',')[testData.qualityStep - 1];
-                if (qsDuration && qsDuration != '-')
-                  calcTime = Number(qsDuration);
+                let qsDuration = customDuration.split(',')[testData.qualityStep - 1];
+                if (qsDuration && qsDuration != '-') calcTime = Number(qsDuration);
               }
               ef.duration.seconds = calcTime;
               ef.duration.rounds = ef.duration.seconds / 5;
@@ -786,9 +609,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
         }
       }
     } catch (e) {
-      console.error(
-        `Could not parse duration '${duration}' of '${source.name}'`,
-      );
+      console.error(`Could not parse duration '${duration}' of '${source.name}'`);
     }
     return effects;
   }
@@ -1096,14 +917,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
       },
     ];
 
-    const models = [
-      'liturgy',
-      'ceremony',
-      'spell',
-      'ritual',
-      'skill',
-      'feature',
-    ];
+    const models = ['liturgy', 'ceremony', 'spell', 'ritual', 'skill', 'feature'];
     for (const k of models) {
       let key = k == 'skill' ? 'skillglobal' : k;
       const el = game.i18n.localize(key);
@@ -1208,9 +1022,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     for (let model of ['meleeweapon', 'rangeweapon']) {
       const modelName = DSA5_Utility.categoryLocalization(model);
 
-      for (const k of Object.keys(
-        foundry.utils.flattenObject(DSA5CombatDialog[`${model}RollModifiers`]),
-      )) {
+      for (const k of Object.keys(foundry.utils.flattenObject(DSA5CombatDialog[`${model}RollModifiers`]))) {
         optns.push({
           name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
           val: `system.${model}RollModifiers.${k}`,
@@ -1221,9 +1033,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     }
 
     if (['meleeweapon', 'rangeweapon'].includes(this.object.parent?.type)) {
-      const modelName = DSA5_Utility.categoryLocalization(
-        this.object.parent.type,
-      );
+      const modelName = DSA5_Utility.categoryLocalization(this.object.parent.type);
       const maneuver = game.i18n.localize('combatmaneuver');
       const maneuverExample = game.i18n.localize('LocalizedIDs.weaponThrow');
 
@@ -1263,15 +1073,9 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     optns = optns.sort((a, b) => a.name.localeCompare(b.name));
 
-    for (let optn of optns)
-      if (!optn.ph || optn.mode == undefined) console.warn(optn);
+    for (let optn of optns) if (!optn.ph || optn.mode == undefined) console.warn(optn);
 
-    optns = optns
-      .map(
-        (x) =>
-          `<option value="${x.val}" data-mode="${x.mode}" data-ph="${x.ph}">${x.name}</option>`,
-      )
-      .join('\n');
+    optns = optns.map((x) => `<option value="${x.val}" data-mode="${x.mode}" data-ph="${x.ph}">${x.name}</option>`).join('\n');
     return `<select class="selMenu">${optns}</select>`;
   }
 

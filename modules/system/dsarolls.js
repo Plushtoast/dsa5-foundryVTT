@@ -7,11 +7,7 @@ export default function () {
       let curindex = 0;
 
       for (let term of this.terms) {
-        const isDie =
-          term instanceof foundry.dice.terms.DiceTerm ||
-          term.class == 'DiceTerm' ||
-          term instanceof foundry.dice.terms.Die ||
-          term.class == 'Die';
+        const isDie = term instanceof foundry.dice.terms.DiceTerm || term.class == 'DiceTerm' || term instanceof foundry.dice.terms.Die || term.class == 'Die';
         const isOperator = term instanceof foundry.dice.terms.OperatorTerm;
         if (isDie || term.faces) {
           if (term.results[index - curindex]) {
@@ -29,10 +25,7 @@ export default function () {
           curindex += term.results.length;
         }
         //Todo this should not be necessary once toJSON of Roll class fixed
-        else if (
-          !isOperator &&
-          (term.class == 'OperatorTerm' || term.operator)
-        ) {
+        else if (!isOperator && (term.class == 'OperatorTerm' || term.operator)) {
           term.total = term.operator;
         }
       }

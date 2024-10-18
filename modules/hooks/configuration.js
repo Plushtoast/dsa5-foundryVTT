@@ -282,8 +282,7 @@ export function setupConfiguration() {
       step: 5,
     },
     onChange: async (val) => {
-      if (game.dsa5.apps.initTracker)
-        game.dsa5.apps.initTracker.constructor.defaultOptions.itemWidth = val;
+      if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.itemWidth = val;
     },
   });
 
@@ -300,8 +299,7 @@ export function setupConfiguration() {
       step: 1,
     },
     onChange: async (val) => {
-      if (game.dsa5.apps.initTracker)
-        game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val;
+      if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val;
     },
   });
 
@@ -343,11 +341,7 @@ export function setupConfiguration() {
   const moneyChoices = () => {
     const moneyChoices = {};
     for (let pack of game.packs) {
-      if (
-        pack.metadata.type == 'Item' &&
-        pack.index.some((x) => x.type == 'money')
-      )
-        moneyChoices[pack.metadata.id] = pack.metadata.id;
+      if (pack.metadata.type == 'Item' && pack.index.some((x) => x.type == 'money')) moneyChoices[pack.metadata.id] = pack.metadata.id;
     }
     return moneyChoices;
   };
@@ -808,8 +802,7 @@ const exportSetting = (form) => {
   if (exportOnlyDSA) toExport = toExport.filter((x) => /^dsa5\./.test(x[0]));
 
   const exportData = {};
-  const skipSettings =
-    /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.breadcrumbs_)/;
+  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.breadcrumbs_)/;
 
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;
@@ -826,8 +819,7 @@ const exportSetting = (form) => {
 };
 
 const importSettings = async (form) => {
-  if (!form.data.files.length)
-    return ui.notifications?.error('You did not upload a data file!');
+  if (!form.data.files.length) return ui.notifications?.error('You did not upload a data file!');
 
   readTextFromFile(form.data.files[0]).then(async (data) => {
     const json = JSON.parse(data);
@@ -852,10 +844,7 @@ class ChangelogForm extends FormApplication {
 
 class ExportForm extends FormApplication {
   async render() {
-    const content = await renderTemplate(
-      'systems/dsa5/templates/dialog/exportConfiguration-dialog.html',
-      {},
-    );
+    const content = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {});
     new foundry.applications.api.DialogV2({
       window: {
         title: 'Export configuration',
@@ -902,10 +891,7 @@ class ConfigureTokenHotbar extends FormApplication {
     html.find('.resetTokenhotbar').click((ev) => this.resetTokenHotbar(ev));
     html.find('select, input').change(async (ev) => {
       const name = ev.currentTarget.name.split('.');
-      let val =
-        ev.currentTarget.dataset.dtype == 'Number'
-          ? Number(ev.currentTarget.value)
-          : ev.currentTarget.value;
+      let val = ev.currentTarget.dataset.dtype == 'Number' ? Number(ev.currentTarget.value) : ev.currentTarget.value;
       if (ev.currentTarget.type == 'checkbox') val = ev.currentTarget.checked;
 
       await game.settings.set(name[0], name[1], val);
@@ -919,8 +905,7 @@ class ConfigureTokenHotbar extends FormApplication {
     const setting = game.settings.get('dsa5', 'enableMasterTokenFunctions');
     setting[id] = !setting[id];
     $(ev.currentTarget).toggleClass('deactivated', setting[id]);
-    game.dsa5.apps.tokenHotbar.gmItems.find((x) => x.id == id).disabled =
-      setting[id];
+    game.dsa5.apps.tokenHotbar.gmItems.find((x) => x.id == id).disabled = setting[id];
     await game.settings.set('dsa5', 'enableMasterTokenFunctions', setting);
   }
 
@@ -929,18 +914,14 @@ class ConfigureTokenHotbar extends FormApplication {
     mergeObject(data, {
       tokenhotbarSize: game.settings.get('dsa5', 'tokenhotbarSize'),
       tokenhotbarLayout: game.settings.get('dsa5', 'tokenhotbarLayout'),
-      disableTokenhotbarMaster: game.settings.get(
-        'dsa5',
-        'disableTokenhotbarMaster',
-      ),
+      disableTokenhotbarMaster: game.settings.get('dsa5', 'disableTokenhotbarMaster'),
       disableTokenhotbar: game.settings.get('dsa5', 'disableTokenhotbar'),
       tokenhotbaropacity: game.settings.get('dsa5', 'tokenhotbaropacity'),
       masterCanvasControls: game.settings.get('dsa5', 'masterCanvasControls'),
       hotbarv3: game.settings.get('dsa5', 'hotbarv3'),
       isGM: game.user.isGM,
       gmButtons: game.dsa5.apps.tokenHotbar?.gmItems,
-      layoutChoices: game.settings.settings.get('dsa5.tokenhotbarLayout')
-        .choices,
+      layoutChoices: game.settings.settings.get('dsa5.tokenhotbarLayout').choices,
     });
     return data;
   }

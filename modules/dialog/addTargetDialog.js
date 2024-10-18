@@ -6,32 +6,23 @@ export class AddTargetDialog extends Dialog {
   static async getDialog(speaker) {
     const targets = Array.from(game.user.targets).map((x) => x.id);
     const selectables = [];
-    const token = canvas.scene
-      ? canvas.scene.tokens.get(speaker.token)?.object
-      : undefined;
+    const token = canvas.scene ? canvas.scene.tokens.get(speaker.token)?.object : undefined;
     if (game.combat) {
       game.combat.combatants.forEach((combatant) => {
         if (!combatant.visible) return;
 
         combatant.isSelected = targets.includes(combatant.token.id);
         if (token && combatant.token) {
-          const combatantToken = canvas.scene.tokens.get(
-            combatant.token.id,
-          ).object;
+          const combatantToken = canvas.scene.tokens.get(combatant.token.id).object;
           combatant.distance = DPS.rangeFinder(token, combatantToken);
-          combatant.distance.distanceSum = Number(
-            combatant.distance.distanceSum.toFixed(1),
-          );
+          combatant.distance.distanceSum = Number(combatant.distance.distanceSum.toFixed(1));
         }
         selectables.push(combatant);
       });
     }
     return new AddTargetDialog({
       title: game.i18n.localize('DIALOG.addTarget'),
-      content: await renderTemplate(
-        'systems/dsa5/templates/dialog/addTarget-dialog.html',
-        { selectables },
-      ),
+      content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
       buttons: {},
     });
   }
@@ -41,10 +32,7 @@ export class AddTargetDialog extends Dialog {
     const combatants = html.find('.combatant');
     combatants.dblclick((ev) => this.setTargets(ev, true));
     combatants.click((ev) => this.setTargets(ev));
-    combatants.hover(
-      this._onCombatantHoverIn.bind(this),
-      this._onCombatantHoverOut.bind(this),
-    );
+    combatants.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
     combatants.mousedown((ev) => this._onRightClick(ev));
   }
 
@@ -58,9 +46,7 @@ export class AddTargetDialog extends Dialog {
 
   _onRightClick(ev) {
     if (ev.button == 2) {
-      const combatant = game.combat.combatants.get(
-        ev.currentTarget.dataset.combatantId,
-      );
+      const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId);
       if (combatant.token) {
         return canvas.animatePan({
           x: combatant.token.x,
@@ -76,11 +62,7 @@ export class AddTargetDialog extends Dialog {
 
   async setTargets(ev, close = false) {
     const isShift = ev.originalEvent.shiftKey;
-    if (!isShift)
-      $(ev.currentTarget)
-        .closest('.directory')
-        .find('.combatant')
-        .removeClass('selectedTarget');
+    if (!isShift) $(ev.currentTarget).closest('.directory').find('.combatant').removeClass('selectedTarget');
 
     $(ev.currentTarget).addClass('selectedTarget');
     const combatantId = ev.currentTarget.dataset.combatantId;
@@ -96,9 +78,7 @@ export class AddTargetDialog extends Dialog {
   }
 }
 
-export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.api.ApplicationV2,
-) {
+export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'DIALOG.setTargetToUser',
@@ -163,10 +143,7 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
       window: {
         title: 'SHEET.PostItem',
       },
-      content: await renderTemplate(
-        'systems/dsa5/templates/dialog/usermultipickdialog.html',
-        { users },
-      ),
+      content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
       buttons: [
         {
           action: 'done',
@@ -204,10 +181,7 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
     html.find('[name="sel_all"]').on('change', (ev) => {
-      html
-        .find('.usersel')
-        .prop('disabled', ev.currentTarget.checked)
-        .prop('checked', ev.currentTarget.checked);
+      html.find('.usersel').prop('disabled', ev.currentTarget.checked).prop('checked', ev.currentTarget.checked);
     });
   }
 }

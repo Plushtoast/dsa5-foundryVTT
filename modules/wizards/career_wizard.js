@@ -8,19 +8,13 @@ const { mergeObject, getProperty, duplicate } = foundry.utils;
 export default class CareerWizard extends WizardDSA5 {
   constructor(app) {
     super(app);
-    this.attributes = Object.keys(DSA5.characteristics).map((x) =>
-      game.i18n.localize(`CHARAbbrev.${x.toUpperCase()}`),
-    );
+    this.attributes = Object.keys(DSA5.characteristics).map((x) => game.i18n.localize(`CHARAbbrev.${x.toUpperCase()}`));
   }
 
   static get abilityExceptions() {
     return {
-      principles: new RegExp(
-        `^${game.i18n.localize('LocalizedIDs.principles')} \\\(`,
-      ),
-      obligations: new RegExp(
-        `^${game.i18n.localize('LocalizedIDs.obligations')} \\\(`,
-      ),
+      principles: new RegExp(`^${game.i18n.localize('LocalizedIDs.principles')} \\\(`),
+      obligations: new RegExp(`^${game.i18n.localize('LocalizedIDs.obligations')} \\\(`),
     };
   }
 
@@ -38,9 +32,7 @@ export default class CareerWizard extends WizardDSA5 {
     html.find('.optional').change((ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       if ($(ev.currentTarget).hasClass('exclusiveTricks')) {
-        let maxSelections = Number(
-          parent.find('.maxTricks').attr('data-spelltricklimit'),
-        );
+        let maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit'));
         if (parent.find('.exclusiveTricks:checked').length > maxSelections) {
           ev.currentTarget.checked = false;
           WizardDSA5.flashElem(parent.find('.maxTricks'));
@@ -91,55 +83,26 @@ export default class CareerWizard extends WizardDSA5 {
 
   _spendLanguagePoints() {
     return this.actor.items
-      .filter(
-        (x) =>
-          x.type == 'specialability' && x.system.category.value == 'language',
-      )
+      .filter((x) => x.type == 'specialability' && x.system.category.value == 'language')
       .reduce((prev, curr) => {
-        return (
-          prev +
-          Number(curr.system.APValue.value) * (curr.system.step.value || 1)
-        );
+        return prev + Number(curr.system.APValue.value) * (curr.system.step.value || 1);
       }, 0);
   }
 
   async getData(options) {
     const data = await super.getData(options);
-    const requirements = await this.parseToItem(
-      this.career.system.requirements.value,
-      ['disadvantage', 'advantage', 'specialability'],
-    );
-    const missingVantages = requirements.filter(
-      (x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled,
-    );
-    const advantages = await this.parseToItem(
-      this.career.system.recommendedAdvantages.value,
-      ['advantage'],
-    );
+    const requirements = await this.parseToItem(this.career.system.requirements.value, ['disadvantage', 'advantage', 'specialability']);
+    const missingVantages = requirements.filter((x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled);
+    const advantages = await this.parseToItem(this.career.system.recommendedAdvantages.value, ['advantage']);
     this.fixPreviousCosts(requirements, advantages);
-    const disadvantages = await this.parseToItem(
-      this.career.system.recommendedDisadvantages.value,
-      ['disadvantage'],
-    );
+    const disadvantages = await this.parseToItem(this.career.system.recommendedDisadvantages.value, ['disadvantage']);
     this.fixPreviousCosts(requirements, disadvantages);
-    const attributeRequirements = requirements.filter(
-      (x) => x.attributeRequirement,
-    );
-    const combatskillchoices = this._parseAttributes(
-      this.career.system.combatSkills.value,
-      /,|;/,
-    );
-    const specAbChoices = this._parseAttributes(
-      this.career.system.specialAbilities.value,
-    );
+    const attributeRequirements = requirements.filter((x) => x.attributeRequirement);
+    const combatskillchoices = this._parseAttributes(this.career.system.combatSkills.value, /,|;/);
+    const specAbChoices = this._parseAttributes(this.career.system.specialAbilities.value);
     const spellChoices = this._parseAttributes(this.career.system.spells.value);
-    const liturgyChoices = this._parseAttributes(
-      this.career.system.liturgies.value,
-    );
-    const languageCost = Math.min(
-      this._spendLanguagePoints(),
-      Number(this.career.system.languagePoints.value),
-    );
+    const liturgyChoices = this._parseAttributes(this.career.system.liturgies.value);
+    const languageCost = Math.min(this._spendLanguagePoints(), Number(this.career.system.languagePoints.value));
 
     const baseCost = Number(this.career.system.APValue.value) - languageCost;
     const mins = {};
@@ -167,9 +130,7 @@ export default class CareerWizard extends WizardDSA5 {
       reqCost += min;
     }
 
-    const missingSpecialabilities = requirements.filter(
-      (x) => x.type == 'specialability' && !x.disabled,
-    );
+    const missingSpecialabilities = requirements.filter((x) => x.type == 'specialability' && !x.disabled);
     mergeObject(data, {
       title: game.i18n.format('WIZARD.addItem', {
         item: `${game.i18n.localize('career')} ${this.career.name}`,
@@ -188,34 +149,20 @@ export default class CareerWizard extends WizardDSA5 {
       liturgyChoices,
       missingSpecialabilities,
       combatskillchoices: combatskillchoices,
-      spelltricks: await this.parseToItem(
-        this.career.system.spelltricks.value,
-        ['magictrick'],
-      ),
+      spelltricks: await this.parseToItem(this.career.system.spelltricks.value, ['magictrick']),
       attributeRequirements,
       advantagesToChose: advantages.length,
       disadvantagesToChose: disadvantages.length,
-      vantagesToChose:
-        advantages.length || disadvantages.length || missingVantages.length,
+      vantagesToChose: advantages.length || disadvantages.length || missingVantages.length,
       missingVantagesToChose: missingVantages.length,
       missingSpecialabiltiesToChose: missingSpecialabilities.length,
       combatToChose: combatskillchoices.length,
-      magicToChose:
-        this.career.system.spelltrickCount.value || spellChoices.length,
+      magicToChose: this.career.system.spelltrickCount.value || spellChoices.length,
       religionToChose: liturgyChoices.length,
       anyAttributeRequirements: attributeRequirements.length,
-      generalToChose:
-        missingSpecialabilities.length ||
-        attributeRequirements.length ||
-        specAbChoices.length,
-      enrichedClothing: await TextEditor.enrichHTML(
-        getProperty(this.career.system, 'clothing.value'),
-        { secrets: false, async: true },
-      ),
-      enrichedDescription: await TextEditor.enrichHTML(
-        getProperty(this.career.system, 'description.value'),
-        { secrets: false, async: true },
-      ),
+      generalToChose: missingSpecialabilities.length || attributeRequirements.length || specAbChoices.length,
+      enrichedClothing: await TextEditor.enrichHTML(getProperty(this.career.system, 'clothing.value'), { secrets: false, async: true }),
+      enrichedDescription: await TextEditor.enrichHTML(getProperty(this.career.system, 'description.value'), { secrets: false, async: true }),
     });
     return data;
   }
@@ -237,20 +184,13 @@ export default class CareerWizard extends WizardDSA5 {
       if (k.includes(selectionString) || k == '') continue;
 
       let parsed = DSA5_Utility.parseAbilityString(k.trim());
-      let item = this.actor.items.find(
-        (x) => types.includes(x.type) && x.name == parsed.original,
-      );
+      let item = this.actor.items.find((x) => types.includes(x.type) && x.name == parsed.original);
       if (item) {
         item = duplicate(item);
-        if (item.system.talentValue)
-          item.system.talentValue.value = parsed.step;
+        if (item.system.talentValue) item.system.talentValue.value = parsed.step;
         else if (item.system.step) item.system.step.value = parsed.step;
 
-        item = ItemRulesDSA5.reverseAdoptionCalculation(
-          this.actor,
-          parsed,
-          item,
-        );
+        item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
         itemsToUpdate.push(item);
       } else {
         item = await this.findCompendiumItem(parsed.original, types);
@@ -260,20 +200,13 @@ export default class CareerWizard extends WizardDSA5 {
         if (item) {
           item = duplicate(item);
           item.name = parsed.original;
-          if (item.system.talentValue)
-            item.system.talentValue.value = parsed.step;
+          if (item.system.talentValue) item.system.talentValue.value = parsed.step;
           else if (item.system.step) item.system.step.value = parsed.step;
 
-          item = ItemRulesDSA5.reverseAdoptionCalculation(
-            this.actor,
-            parsed,
-            item,
-          );
+          item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
           itemsToCreate.push(item);
         } else {
-          const langCats = types
-            .map((x) => DSA5_Utility.categoryLocalization(x))
-            .join('/');
+          const langCats = types.map((x) => DSA5_Utility.categoryLocalization(x)).join('/');
           this.errors.push(`${langCats}: ${k}`);
           ui.notifications.error(
             game.i18n.format('DSAError.notFound', {
@@ -331,80 +264,41 @@ export default class CareerWizard extends WizardDSA5 {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
     let apCost = Number(parent.find('.apCost').text());
-    if (
-      !this._validateInput(parent, app) ||
-      !(await this.actor.checkEnoughXP(apCost)) ||
-      (await this.alreadyAdded(
-        this.actor.system.details.career.value,
-        'career',
-      ))
-    ) {
+    if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.career.value, 'career'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
     }
 
     const update = {
       'system.details.career.value': this.career.name,
-      'system.freeLanguagePoints.value':
-        this.career.system.languagePoints.value,
-      'system.freeLanguagePoints.used': Math.min(
-        this._spendLanguagePoints(),
-        Number(this.career.system.languagePoints.value),
-      ),
+      'system.freeLanguagePoints.value': this.career.system.languagePoints.value,
+      'system.freeLanguagePoints.used': Math.min(this._spendLanguagePoints(), Number(this.career.system.languagePoints.value)),
     };
     for (let k of parent.find('.attributes')) {
       let attr = $(k).attr('data-attribute').toLowerCase();
       attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1];
-      if (
-        Number(this.actor.system.characteristics[attr].initial) +
-          Number(this.actor.system.characteristics[attr].advances) <
-        Number($(k).val())
-      ) {
-        if (this.actor.canAdvance)
-          update[`system.characteristics.${attr}.advances`] =
-            Number($(k).val()) -
-            Number(this.actor.system.characteristics[attr].initial);
-        else
-          update[`system.characteristics.${attr}.initial`] = Number($(k).val());
+      if (Number(this.actor.system.characteristics[attr].initial) + Number(this.actor.system.characteristics[attr].advances) < Number($(k).val())) {
+        if (this.actor.canAdvance) update[`system.characteristics.${attr}.advances`] = Number($(k).val()) - Number(this.actor.system.characteristics[attr].initial);
+        else update[`system.characteristics.${attr}.initial`] = Number($(k).val());
       }
     }
 
     if (this.career.system.mageLevel.value != 'mundane') {
-      update[`system.guidevalue.${this.career.system.mageLevel.value}`] =
-        this.career.system.guidevalue.value;
-      update[`system.energyfactor.${this.career.system.mageLevel.value}`] =
-        this.career.system.guidevalue.factor;
-      update[`system.tradition.${this.career.system.mageLevel.value}`] =
-        this.career.system.tradition.value;
-      update[`system.feature.${this.career.system.mageLevel.value}`] =
-        this.career.system.feature.value;
+      update[`system.guidevalue.${this.career.system.mageLevel.value}`] = this.career.system.guidevalue.value;
+      update[`system.energyfactor.${this.career.system.mageLevel.value}`] = this.career.system.guidevalue.factor;
+      update[`system.tradition.${this.career.system.mageLevel.value}`] = this.career.system.tradition.value;
+      update[`system.feature.${this.career.system.mageLevel.value}`] = this.career.system.feature.value;
     }
     if (this.career.system.mageLevel.value == 'clerical') {
-      update['system.happyTalents.value'] =
-        this.career.system.happyTalents.value;
-      await this.setAbility(
-        this.career.system.liturgies.value,
-        ['liturgy', 'ceremony'],
-        this.getExclusiveChoices(parent, '.liturgy'),
-      );
-      await this.addBlessing(
-        this.career.system.blessings.value.split(','),
-        'blessing',
-      );
+      update['system.happyTalents.value'] = this.career.system.happyTalents.value;
+      await this.setAbility(this.career.system.liturgies.value, ['liturgy', 'ceremony'], this.getExclusiveChoices(parent, '.liturgy'));
+      await this.addBlessing(this.career.system.blessings.value.split(','), 'blessing');
     }
     if (this.career.system.mageLevel.value == 'magical') {
-      await this.setAbility(
-        this.career.system.spells.value,
-        ['spell', 'ritual'],
-        this.getExclusiveChoices(parent, '.spell'),
-      );
+      await this.setAbility(this.career.system.spells.value, ['spell', 'ritual'], this.getExclusiveChoices(parent, '.spell'));
     }
 
-    await this.setAbility(
-      this.career.system.specialAbilities.value,
-      ['specialability'],
-      this.getExclusiveChoices(parent, '.specialability'),
-    );
+    await this.setAbility(this.career.system.specialAbilities.value, ['specialability'], this.getExclusiveChoices(parent, '.specialability'));
     await this.actor._updateAPs(apCost, {}, { render: false });
     await this.addSelections(parent.find('.optional:checked'), false);
     await this.updateSkill(this.career.system.skills.value.split(','), 'skill');
@@ -412,22 +306,11 @@ export default class CareerWizard extends WizardDSA5 {
     const combatSkills = this.career.system.combatSkills.value
       .split(',')
       .concat(this.getExclusiveChoices(parent, '.combatskill'))
-      .filter(
-        (skill) =>
-          !(
-            skill.includes(
-              game.i18n.localize('combatskillcountdivider') + ':',
-            ) || skill == ''
-          ),
-      );
+      .filter((skill) => !(skill.includes(game.i18n.localize('combatskillcountdivider') + ':') || skill == ''));
     await this.updateSkill(combatSkills, 'combatskill', 1, false);
     await this.actor.update(update);
 
-    await APTracker.track(
-      this.actor,
-      { type: 'item', item: this.career, state: 1 },
-      apCost,
-    );
+    await APTracker.track(this.actor, { type: 'item', item: this.career, state: 1 }, apCost);
 
     this.finalizeUpdate();
   }

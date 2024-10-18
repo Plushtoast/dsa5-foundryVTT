@@ -145,12 +145,7 @@ Hooks.once('init', () => {
   Actors.registerSheet('dsa5', CharacterMerchantSheetDSA5, {
     types: ['character'],
   });
-  DocumentSheetConfig.registerSheet(
-    ActiveEffect,
-    'dsa5',
-    DSAActiveEffectConfig,
-    { makeDefault: true },
-  );
+  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
   Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();
@@ -170,14 +165,11 @@ Hooks.once('init', () => {
 
 Hooks.once('setup', () => {
   if (!['de', 'en'].includes(game.i18n.lang)) {
-    console.warn(
-      `DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`,
-    );
+    console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`);
     showForbiddenLanguageDialog();
   } else {
     const forceLanguage = game.settings.get('dsa5', 'forceLanguage');
-    if (['de', 'en'].includes(forceLanguage) && game.i18n.lang != forceLanguage)
-      showWrongLanguageDialog(forceLanguage);
+    if (['de', 'en'].includes(forceLanguage) && game.i18n.lang != forceLanguage) showWrongLanguageDialog(forceLanguage);
   }
 
   BookWizard.initHook();
@@ -271,56 +263,18 @@ const showWrongLanguageDialog = (forceLanguage) => {
 
 function setupKnownEquipmentModifiers() {
   game.dsa5.config.knownShortcuts = {
-    [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: [
-      'status',
-      'initiative',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: [
-      'status',
-      'speed',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: [
-      'status',
-      'astralenergy',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: [
-      'status',
-      'wounds',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: [
-      'status',
-      'karmaenergy',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: [
-      'status',
-      'dodge',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: [
-      'status',
-      'soulpower',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: [
-      'status',
-      'toughness',
-      'gearmodifier',
-    ],
-    [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: [
-      'status',
-      'fatePoints',
-      'gearmodifier',
-    ],
+    [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: ['status', 'initiative', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: ['status', 'speed', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: ['status', 'astralenergy', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: ['status', 'wounds', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: ['status', 'karmaenergy', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: ['status', 'dodge', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: ['status', 'soulpower', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ['status', 'toughness', 'gearmodifier'],
+    [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ['status', 'fatePoints', 'gearmodifier'],
   };
   for (const k of Object.keys(DSA5.characteristics)) {
-    game.dsa5.config.knownShortcuts[
-      game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()
-    ] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
+    game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
   }
 }
 

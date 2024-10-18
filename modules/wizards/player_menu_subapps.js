@@ -13,10 +13,7 @@ export class PlayerMenuSubApp {
   async _renderData(data) {
     const renderData = await this._getData(data);
     mergeObject(renderData, data);
-    const template = await renderTemplate(
-      this.constructor.template,
-      renderData,
-    );
+    const template = await renderTemplate(this.constructor.template, renderData);
     return template;
   }
 
@@ -32,9 +29,7 @@ export class PlayerMenuSubApp {
   }
 
   async activateTab() {
-    await game.dsa5.apps.playerMenu.activateTab(
-      game.i18n.localize(`PLAYER.${this.constructor.name}`),
-    );
+    await game.dsa5.apps.playerMenu.activateTab(game.i18n.localize(`PLAYER.${this.constructor.name}`));
   }
 
   get actor() {

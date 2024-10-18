@@ -55,23 +55,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
           if (this.folders[parent]) {
             parenthead = this.folders[parent];
           } else if (parent) {
-            parenthead = await this.getFolderForType(
-              'JournalEntry',
-              journHead.id,
-              parent,
-              0,
-              getProperty(journ, 'flags.dsa5.foldercolor') || '',
-            );
+            parenthead = await this.getFolderForType('JournalEntry', journHead.id, parent, 0, getProperty(journ, 'flags.dsa5.foldercolor') || '');
           }
 
           journ.folder = parenthead.id;
 
-          let existingJourn = game.journal.find(
-            (x) =>
-              x.name == journ.name &&
-              x.folder?.id == parenthead.id &&
-              x.flags.dsa5.initId == n.entryId,
-          );
+          let existingJourn = game.journal.find((x) => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId);
           if (existingJourn) {
             await existingJourn.update(journ);
             finishedIds.set(journ._id, existingJourn.id);
@@ -83,9 +72,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
         n.entryId = finishedIds.get(journ._id);
       } catch (e) {
-        console.warn(
-          `Could not initialize Scene Notes for scene :${entry.name}` + e,
-        );
+        console.warn(`Could not initialize Scene Notes for scene :${entry.name}` + e);
       }
     }
   }
@@ -107,40 +94,36 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
     for (let entry of entries) {
       let resetScene = resetAll;
-      let found = game.scenes.find(
-        (x) => x.name == entry.name && x.folder?.id == head.id,
-      );
+      let found = game.scenes.find((x) => x.name == entry.name && x.folder?.id == head.id);
       if (!resetAll && found) {
         try {
-          [resetScene, resetAll] = await foundry.applications.api.DialogV2.wait(
-            {
-              window: {
-                title: 'Book.sceneReset',
-              },
-              content: `<p>${game.i18n.format('Book.sceneResetDescription', { name: entry.name })}</p>`,
-              buttons: [
-                {
-                  action: 'yes',
-                  icon: 'fa fa-check',
-                  label: 'yes',
-                  callback: () => [true, false],
-                },
-                {
-                  action: 'all',
-                  icon: 'fa fa-check',
-                  label: 'LocalizedIDs.all',
-                  callback: () => [true, true],
-                },
-                {
-                  action: 'no',
-                  icon: 'fas fa-times',
-                  label: 'cancel',
-                  default: true,
-                  callback: () => [false, false],
-                },
-              ],
+          [resetScene, resetAll] = await foundry.applications.api.DialogV2.wait({
+            window: {
+              title: 'Book.sceneReset',
             },
-          );
+            content: `<p>${game.i18n.format('Book.sceneResetDescription', { name: entry.name })}</p>`,
+            buttons: [
+              {
+                action: 'yes',
+                icon: 'fa fa-check',
+                label: 'yes',
+                callback: () => [true, false],
+              },
+              {
+                action: 'all',
+                icon: 'fa fa-check',
+                label: 'LocalizedIDs.all',
+                callback: () => [true, true],
+              },
+              {
+                action: 'no',
+                icon: 'fas fa-times',
+                label: 'cancel',
+                default: true,
+                callback: () => [false, false],
+              },
+            ],
+          });
         } catch (err) {
           resetScene = false;
           resetAll = false;
@@ -187,8 +170,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async loadJson() {
-    const initializer =
-      this.scopeOptions.initializer || `initialization${this.lang}`;
+    const initializer = this.scopeOptions.initializer || `initialization${this.lang}`;
     const file = await fetch(`modules/${this.module}/${initializer}.json`);
     return await file.json();
   }
@@ -199,9 +181,10 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     initButton.prepend('<i class="fas fa-spinner fa-spin"></i>');
     let bookData = {};
     try {
-      if (game.settings.settings.has(`${this.moduleScope}.initialized`))
-        await game.settings.set(this.moduleScope, 'initialized', true);
-    } catch {}
+      if (game.settings.settings.has(`${this.moduleScope}.initialized`)) await game.settings.set(this.moduleScope, 'initialized', true);
+    } catch {
+      /* empty */
+    }
 
     if (this.scopeOptions.scope) {
       await fetch(`modules/${this.module}/${this.scopeOptions.scope}.json`)
@@ -224,9 +207,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
               bookData = json;
             });
         } catch {
-          console.warn(
-            `Could not find book data for ${this.moduleScope} import.`,
-          );
+          console.warn(`Could not find book data for ${this.moduleScope} import.`);
         }
       }
     }
@@ -242,16 +223,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       }
       let createdFolders = await Folder.create(foldersToCreate);
       if (!Array.isArray(createdFolders)) createdFolders = [createdFolders];
-      for (let folder of createdFolders)
-        this.folders[folder.data.name] = folder;
+      for (let folder of createdFolders) this.folders[folder.data.name] = folder;
 
       const updates = [];
       for (let folder in this.folders) {
         const flag = this.folders[folder].getFlag('dsa5', 'parent');
-        let parent =
-          flag == headReplace
-            ? game.i18n.localize(`${this.moduleScope}.name`)
-            : flag;
+        let parent = flag == headReplace ? game.i18n.localize(`${this.moduleScope}.name`) : flag;
         if (parent) {
           updates.push({
             _id: this.folders[folder].id,
@@ -267,9 +244,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       let itemsToUpdate = [];
       for (let k of json.items) {
         k.folder = head.id;
-        let existingItem = game.items.find(
-          (x) => x.name == k.name && x.folder?.id == head.id,
-        );
+        let existingItem = game.items.find((x) => x.name == k.name && x.folder?.id == head.id);
         if (existingItem) {
           k._id = existingItem.id;
           itemsToUpdate.push(k);
@@ -288,9 +263,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       let entries = (await playlist.getDocuments()).map((x) => x.toObject());
       for (let k of entries) {
         k.folder = head.id;
-        let existingItem = game.playlists.find(
-          (x) => x.name == k.name && x.folder?.id == head.id,
-        );
+        let existingItem = game.playlists.find((x) => x.name == k.name && x.folder?.id == head.id);
         if (existingItem) {
           k._id = existingItem._id;
           itemsToUpdate.push(k);
@@ -325,12 +298,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
                 }
               }
               if (subChapterHasActors) {
-                await this.getFolderForType(
-                  'Actor',
-                  head.id,
-                  subChapter.name,
-                  sort,
-                );
+                await this.getFolderForType('Actor', head.id, subChapter.name, sort);
                 sort += 1;
               }
             }
@@ -338,22 +306,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
         }
       }
       for (let entry of entries) {
-        const parentFolder = actorFolders.has(entry.name)
-          ? await this.getFolderForType(
-              'Actor',
-              head.id,
-              actorFolders.get(entry.name),
-            )
-          : head;
+        const parentFolder = actorFolders.has(entry.name) ? await this.getFolderForType('Actor', head.id, actorFolders.get(entry.name)) : head;
 
         entry.folder = parentFolder.id;
         if (entry._id) delete entry._id;
 
-        let existingActor = game.actors.find(
-          (x) =>
-            x.name == entry.name &&
-            [head.id, parentFolder.id].includes(x.folder?.id),
-        );
+        let existingActor = game.actors.find((x) => x.name == entry.name && [head.id, parentFolder.id].includes(x.folder?.id));
         if (existingActor) {
           entry._id = existingActor.id;
           await existingActor.deleteEmbeddedDocuments(
@@ -375,9 +333,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     if (json.macro) {
       Hooks.once('renderCompendium', (app, html, data) => {
         const compendiumUi = html.find(`[data-pack="${json.macro}"] header`);
-        compendiumUi.append(
-          $(`<p>${game.i18n.localize('Book.macroHint')}</p>`),
-        );
+        compendiumUi.append($(`<p>${game.i18n.localize('Book.macroHint')}</p>`));
       });
       await game.packs.get(json.macro).render(true);
     }
@@ -389,8 +345,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async dontInitialize() {
-    if (game.settings.settings.has(`${this.moduleScope}.initialized`))
-      await game.settings.set(this.moduleScope, 'initialized', true);
+    if (game.settings.settings.has(`${this.moduleScope}.initialized`)) await game.settings.set(this.moduleScope, 'initialized', true);
 
     ui.notifications.info('initSkipped', { localize: true });
     await this.close();
@@ -398,8 +353,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
   submit(button) {
     try {
-      if (button.callback)
-        button.callback(this.options.jQuery ? this.element : this.element[0]);
+      if (button.callback) button.callback(this.options.jQuery ? this.element : this.element[0]);
     } catch (err) {
       ui.notifications.error(err);
       throw new Error(err);
@@ -410,22 +364,9 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     return this.scopeOptions.scope || this.module;
   }
 
-  async getFolderForType(
-    documentType,
-    parent = null,
-    folderName = null,
-    sort = 0,
-    color = '',
-  ) {
-    if (!folderName)
-      folderName = game.i18n.localize(`${this.moduleScope}.name`);
+  async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = '') {
+    if (!folderName) folderName = game.i18n.localize(`${this.moduleScope}.name`);
 
-    return DSA5_Utility.getFolderForType(
-      documentType,
-      parent,
-      folderName,
-      sort,
-      color,
-    );
+    return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color);
   }
 }

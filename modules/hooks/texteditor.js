@@ -30,12 +30,8 @@ export function setEnrichers() {
   };
 
   if (!DSA5.statusRegex) {
-    let effects = DSA5.statusEffects.map((x) =>
-      game.i18n.localize(x.name).toLowerCase(),
-    );
-    let keywords = ['status', 'condition', 'level', 'levels']
-      .map((x) => game.i18n.localize(x))
-      .join('|');
+    let effects = DSA5.statusEffects.map((x) => game.i18n.localize(x.name).toLowerCase());
+    let keywords = ['status', 'condition', 'level', 'levels'].map((x) => game.i18n.localize(x)).join('|');
     DSA5.statusRegex = {
       effects: effects,
       regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi'),
@@ -44,25 +40,15 @@ export function setEnrichers() {
 
   CONFIG.TextEditor.enrichers.push(
     {
-      pattern:
-        /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
+      pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
         const mod = Number(str.match(modRegex)[0]);
-        const json = str.match(optionRegex)
-          ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, ''))
-          : {};
+        const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
-        const skill = str
-          .replace(mod, '')
-          .replace(optionRegex, '')
-          .match(replaceRegex)[0]
-          .replace(replaceRegex2, '')
-          .trim();
-        let customText = str.match(/\]\{.*\}/)
-          ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, '')
-          : skill;
+        const skill = str.replace(mod, '').replace(optionRegex, '').match(replaceRegex)[0].replace(replaceRegex2, '').trim();
+        let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, '') : skill;
 
         if (json.attrs) {
           customText += ` (${json.attrs.split(',').join('/')}, ${game.i18n.localize('CHARAbbrev.FW')} ${json.fw || 0})`;
@@ -74,15 +60,12 @@ export function setEnrichers() {
       },
     },
     {
-      pattern:
-        /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -0-9]+})?/g,
+      pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -0-9]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
         const mod = Number(str.match(payRegex)[0]);
-        const customText = str.match(/\{.*\}/)
-          ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '')
-          : payStrings[type];
+        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '') : payStrings[type];
         return $(
           `<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
         )[0];
@@ -100,14 +83,8 @@ export function setEnrichers() {
         let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1);
         const item = await fromUuid(uuid);
 
-        if (!item || item.type != 'information')
-          return $(
-            '<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>',
-          )[0];
-        if (!game.user.isGM)
-          return $(
-            `<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`,
-          )[0];
+        if (!item || item.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
+        if (!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`)[0];
 
         const enriched = {
           enrichedqs1: await TextEditor.enrichHTML(item.system.qs1, {
@@ -139,16 +116,12 @@ export function setEnrichers() {
           }),
         };
 
-        const templ = await renderTemplate(
-          'systems/dsa5/templates/items/infopreview.html',
-          { item, enriched },
-        );
+        const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.html', { item, enriched });
         return $(templ)[0];
       },
     },
     {
-      pattern:
-        /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]({[a-zA-Z=]+})?/g,
+      pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]({[a-zA-Z=]+})?/g,
       enricher: async (match, options) => {
         const uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1);
         let document;
@@ -168,15 +141,10 @@ export function setEnrichers() {
           }
         }
 
-        if (!document)
-          return $(
-            '<a class="content-link broken"><i class="fas fa-unlink"></i></a>',
-          )[0];
+        if (!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i></a>')[0];
 
         const str = match[0];
-        const customText = str.match(/\{.*\}/)
-          ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '')
-          : '';
+        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '') : '';
 
         let customOptions = {};
         if (customText) {
@@ -205,7 +173,6 @@ export function conditionsMatcher(match) {
   let parts = str.split(' ');
   const elem = parts.shift();
   parts = parts.join(' ');
-  const cond =
-    DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts.toLowerCase())];
+  const cond = DSA5.statusEffects[DSA5.statusRegex.effects.indexOf(parts.toLowerCase())];
   return `<span>${elem} <a class="chatButton chat-condition" data-id="${cond.id}"><img src="${cond.img}"/>${parts}</a></span>`;
 }

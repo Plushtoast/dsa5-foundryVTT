@@ -46,10 +46,7 @@ export default function () {
       }
 
       html.find('.hideData').remove();
-      const hiddenForMe = getProperty(
-        msg.message,
-        `flags.dsa5.userHidden.${game.user.id}`,
-      );
+      const hiddenForMe = getProperty(msg.message, `flags.dsa5.userHidden.${game.user.id}`);
       if (hiddenForMe) {
         html.find('.payButton').remove();
       }
@@ -74,13 +71,11 @@ export default function () {
     switch (cmd) {
       case '/pay':
         if (game.user.isGM) DSA5Payment.createPayChatMessage(content);
-        else
-          DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
         return false;
       case '/getPaid':
         if (game.user.isGM) DSA5Payment.createGetPaidChatMessage(content);
-        else
-          DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
         return false;
       case '/help':
         DSA5ChatListeners.getHelp();
@@ -103,9 +98,7 @@ export default function () {
       for (let term of rolls) {
         if (term.faces && term.faces == 6) {
           for (let i = 0; i < term.number; i++) {
-            dies.push(
-              `<span class="die-damage d${term.faces}">${term.results[i].result}</span>`,
-            );
+            dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`);
           }
         }
       }
@@ -128,9 +121,7 @@ export default function () {
 }
 
 function embeddedDragStart(ev) {
-  const messageId = $(ev.currentTarget)
-    .parents('.message')
-    .attr('data-message-id');
+  const messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
   let message = game.messages.get(messageId);
   const item = message.getFlag('dsa5', 'embeddedItem');
   let dataTransfer = {

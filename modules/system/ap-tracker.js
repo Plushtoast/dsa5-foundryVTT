@@ -3,9 +3,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 export default class APTracker {
   static async track(actor, description, apCost) {
     if (game.settings.get('dsa5', 'enableAPTracking') && actor.hasPlayerOwner) {
-      let journal = game.journal.find(
-        (e) => e.flags.dsa5?.apTrackerId == actor.id,
-      );
+      let journal = game.journal.find((e) => e.flags.dsa5?.apTrackerId == actor.id);
       if (game.user.isGM || journal?.isOwner) {
         if (!journal) journal = await APTracker.createJournal(actor);
 
@@ -58,13 +56,10 @@ export default class APTracker {
 
   static buildChange(description) {
     if (description.state) {
-      return description.state > 0
-        ? '<em class="fas fa-plus">&nbsp;</em>'
-        : '<em class="fas fa-minus">&nbsp;</em>';
+      return description.state > 0 ? '<em class="fas fa-plus">&nbsp;</em>' : '<em class="fas fa-minus">&nbsp;</em>';
     }
 
-    const symbol =
-      description.next > description.previous ? 'angles-up' : 'angles-down';
+    const symbol = description.next > description.previous ? 'angles-up' : 'angles-down';
     return `${description.previous}&nbsp;<em class="fas fa-${symbol}">&nbsp;</em>&nbsp;${description.next}`;
   }
 
@@ -77,9 +72,7 @@ export default class APTracker {
       case 'point':
         return game.i18n.localize(description.attr);
       case 'item':
-        return description.item['toAnchor']
-          ? description.item.toAnchor().outerHTML
-          : `${game.i18n.localize('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
+        return description.item['toAnchor'] ? description.item.toAnchor().outerHTML : `${game.i18n.localize('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
       case 'sum':
         return game.i18n.localize('MASTER.awardXP');
     }
@@ -132,15 +125,9 @@ export default class APTracker {
   }
 
   static async createJournal(actor) {
-    const folder = await DSA5_Utility.getFolderForType(
-      'JournalEntry',
-      null,
-      game.i18n.localize('TRACKER.adventurePoints'),
-    );
+    const folder = await DSA5_Utility.getFolderForType('JournalEntry', null, game.i18n.localize('TRACKER.adventurePoints'));
 
-    let journal = game.journal.find(
-      (e) => e.flags.dsa5?.apTrackerId == actor.id,
-    );
+    let journal = game.journal.find((e) => e.flags.dsa5?.apTrackerId == actor.id);
 
     if (!journal) {
       journal = await JournalEntry.create({

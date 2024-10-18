@@ -11,9 +11,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
       for (let item of modifiedItems.items) {
         const overrides = foundry.utils.flattenObject(item.overrides || {});
-        overrides[modifiedItems.key] = Number.isNumeric(item.value)
-          ? Number(modifiedItems.value)
-          : modifiedItems.value;
+        overrides[modifiedItems.key] = Number.isNumeric(item.value) ? Number(modifiedItems.value) : modifiedItems.value;
         const newChange = {
           ...change,
           key: modifiedItems.key,
@@ -28,70 +26,47 @@ export default class DSAActiveEffect extends ActiveEffect {
           name: actor.name,
         });
         console.error(msg);
-        change.key = change.key.replace(
-          DSAActiveEffect.deprecatedDataRegex,
-          'system.',
-        );
+        change.key = change.key.replace(DSAActiveEffect.deprecatedDataRegex, 'system.');
       }
       return super.apply(actor, change);
     }
   }
 
   static realyRealyEnabled(effect) {
-    if (
-      effect.disabled ||
-      !effect.transfer ||
-      effect.system.delayed ||
-      (!game.settings.get('dsa5', 'enableWeaponAdvantages') &&
-        effect.system.equipmentAdvantage)
-    )
-      return false;
+    if (effect.disabled || !effect.transfer || effect.system.delayed || (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)) return false;
 
     return true;
   }
 
   static async _onCreateOperation(documents, operation, user) {
     for (let doc of documents) {
-      if (doc.parent.documentName == 'Actor')
-        await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
     for (let doc of documents) {
-      if (doc.parent.documentName == 'Actor')
-        await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onUpdateOperation(documents, operation, user);
   }
 
   static async _onDeleteOperation(documents, operation, user) {
     for (let doc of documents) {
-      if (doc.parent.documentName == 'Actor')
-        await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onDeleteOperation(documents, operation, user);
   }
 
   isVisibleEffect() {
-    return (
-      !this.disabled &&
-      !this.notApplicable &&
-      (game.user.isGM || !this.getFlag('dsa5', 'hidePlayers')) &&
-      !this.getFlag('dsa5', 'hideOnToken')
-    );
+    return !this.disabled && !this.notApplicable && (game.user.isGM || !this.getFlag('dsa5', 'hidePlayers')) && !this.getFlag('dsa5', 'hideOnToken');
   }
 
   _displayScrollingStatus(enabled) {
     const allowedEffects = ['dead'];
-    const isAllowedToSeeEffects =
-      game.user.isGM ||
-      this.target?.testUserPermission(game.user, 'OBSERVER') ||
-      !game.settings.get('dsa5', 'hideEffects');
-    const visibleEffect = isAllowedToSeeEffects
-      ? this.isVisibleEffect()
-      : allowedEffects.some((y) => this.statuses.has(y));
+    const isAllowedToSeeEffects = game.user.isGM || this.target?.testUserPermission(game.user, 'OBSERVER') || !game.settings.get('dsa5', 'hideEffects');
+    const visibleEffect = isAllowedToSeeEffects ? this.isVisibleEffect() : allowedEffects.some((y) => this.statuses.has(y));
 
     if (!visibleEffect) return;
 
@@ -106,12 +81,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     const itemName = data.shift();
     const key = data.join('.');
     const value = change.value;
-    const items =
-      itemName == 'self'
-        ? [this.parent]
-        : actor?.items?.filter(
-            (x) => x.type == type && (x.name == itemName || x.id == itemName),
-          ) || [];
+    const items = itemName == 'self' ? [this.parent] : actor?.items?.filter((x) => x.type == type && (x.name == itemName || x.id == itemName)) || [];
     return { items, key, value };
   }
 
@@ -150,10 +120,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
 const applyCustomEffect = (elem, change) => {
   let current = getProperty(elem, change.key) || null;
-  if (
-    current == null &&
-    /^system\.(vulnerabilities|resistances)/.test(change.key)
-  ) {
+  if (current == null && /^system\.(vulnerabilities|resistances)/.test(change.key)) {
     current = [];
     setProperty(elem, change.key, current);
   }

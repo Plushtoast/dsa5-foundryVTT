@@ -12,9 +12,7 @@ export default function () {
     html.find('.share-image').attr('data-tooltip', 'SHEET.showToPlayers');
     html.find('.import').attr('data-tooltip', 'SHEET.import');
     html.find('.panMapNote').attr('data-tooltip', 'SHEET.panMapNote');
-    html
-      .find('.increaseFontSize')
-      .attr('data-tooltip', 'SHEET.increaseFontSize');
+    html.find('.increaseFontSize').attr('data-tooltip', 'SHEET.increaseFontSize');
   });
 
   Hooks.on('renderJournalPageSheet', (obj, html, data) => {
@@ -35,15 +33,10 @@ export default function () {
     buttons.unshift({
       class: 'increaseFontSize',
       icon: 'fas fa-arrows-up-down',
-      onclick: async () =>
-        increaseFontSize($(sheet._element).find('.journal-page-content')),
+      onclick: async () => increaseFontSize($(sheet._element).find('.journal-page-content')),
     });
 
-    if (
-      !sheet.document.sceneNote &&
-      !sheet.document.pages.some((x) => x.sceneNote)
-    )
-      return;
+    if (!sheet.document.sceneNote && !sheet.document.pages.some((x) => x.sceneNote)) return;
 
     buttons.unshift({
       class: 'panMapNote',
@@ -72,9 +65,7 @@ export async function increaseFontSize(element) {
     newIndex = 0;
     await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);
     element.css('fontSize', '');
-    tinyNotification(
-      game.i18n.format('CHATNOTIFICATION.fontsize', { size: 'Default ' }),
-    );
+    tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
   } else {
     await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);
     setOuterFontSize(element);

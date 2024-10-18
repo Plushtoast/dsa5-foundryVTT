@@ -5,8 +5,7 @@ const { mergeObject, getProperty, hasProperty } = foundry.utils;
 export default class Riding {
   static preRenderedUnmountHud =
     '<div class="control-icon" data-action="ride"><i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36"></i></div>';
-  static preRenderedMountHud =
-    '<div class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></div>';
+  static preRenderedMountHud = '<div class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></div>';
   static preRenderedSpeedHud =
     '<div class="control-icon" data-action="rideIncrease"><i class="fas fa-caret-up" data-tooltip="RIDING.increase" width="36" height="36"></i></div><div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></i></div>';
 
@@ -24,9 +23,7 @@ export default class Riding {
         y: token.y,
         hidden: token.hidden,
       });
-      const horseToken = (
-        await scene.createEmbeddedDocuments('Token', [horseTokenSource])
-      )[0];
+      const horseToken = (await scene.createEmbeddedDocuments('Token', [horseTokenSource]))[0];
       const tokenUpdate = {
         'flags.dsa5.horseTokenId': horseToken.id,
         elevation: (horseToken.elevation ?? 0) + 1,
@@ -52,12 +49,7 @@ export default class Riding {
 
     const horseId = getProperty(token, 'flags.dsa5.horseTokenId');
     const scene = token.parent;
-    if (
-      horseId &&
-      scene.active &&
-      (data.x || data.y) &&
-      this.isRiding(token.actor)
-    ) {
+    if (horseId && scene.active && (data.x || data.y) && this.isRiding(token.actor)) {
       scene.updateEmbeddedDocuments('Token', [
         {
           _id: horseId,
@@ -102,18 +94,12 @@ export default class Riding {
   }
 
   static getLoyaltyFromHorse(horse) {
-    return horse.items.find(
-      (x) =>
-        x.type == 'skill' &&
-        x.name.startsWith(game.i18n.localize('LocalizedIDs.loyalty')),
-    );
+    return horse.items.find((x) => x.type == 'skill' && x.name.startsWith(game.i18n.localize('LocalizedIDs.loyalty')));
   }
 
   static activateListeners(html, actor) {
     html.find('.riding-toggle').click(() => this.toggleIsRiding(actor));
-    html
-      .find('.showHorse')
-      .click(() => this.getHorse(actor).sheet.render(true));
+    html.find('.showHorse').click(() => this.getHorse(actor).sheet.render(true));
     html.find('.horse-delete').click(() => this.clearMount(actor));
     html.find('.horse-loyalty').click(() => this.rollLoyalty(actor));
     html.find('[name="horseSpeedSelector"]').change(async (ev) => {
@@ -170,8 +156,7 @@ export default class Riding {
   }
 
   static async addRidingCondition(actor) {
-    if (!this.getRidingCondition(actor))
-      await actor.addCondition(this.ridingCondition());
+    if (!this.getRidingCondition(actor)) await actor.addCondition(this.ridingCondition());
   }
 
   static async removeRidingCondition(actor) {
@@ -186,8 +171,7 @@ export default class Riding {
   static getHorse(actor, returnEmptyHorse = false) {
     let horse;
     if (actor.system.horse) {
-      if (actor.system.horse.token && !actor.system.horse.actorLink)
-        horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
+      if (actor.system.horse.token && !actor.system.horse.actorLink) horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
       else horse = game.actors.get(actor.system.horse.actorId);
 
       if (!horse && returnEmptyHorse && actor.system.horse.isRiding) {
@@ -232,9 +216,7 @@ export default class Riding {
     return {
       name: game.i18n.localize('RIDING.riding'),
       img: 'systems/dsa5/icons/thirdparty/horse-head.svg',
-      changes: [
-        { key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 },
-      ],
+      changes: [{ key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 }],
       flags: {
         dsa5: {
           description: game.i18n.localize('RIDING.ridingDescription'),
@@ -254,22 +236,14 @@ export default class Riding {
       });
       if (!confirmed) return;
 
-      const folder = await DSA5_Utility.getFolderForType(
-        'Actor',
-        (parent = null),
-        game.i18n.localize('RIDING.horse'),
-      );
+      const folder = await DSA5_Utility.getFolderForType('Actor', null, game.i18n.localize('RIDING.horse'));
       const importedHorse = horse.toObject();
       importedHorse.folder = folder.id;
       horse = await Actor.implementation.create(importedHorse);
     }
 
     if (riderToken && !horse.token) {
-      horse = (
-        await canvas.scene.createEmbeddedDocuments('Token', [
-          await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y }),
-        ])
-      )[0].actor;
+      horse = (await canvas.scene.createEmbeddedDocuments('Token', [await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y })]))[0].actor;
     }
 
     const actorUpdate = {
@@ -329,9 +303,7 @@ export default class Riding {
   }
 
   static async mountHorse(rider) {
-    const horse = canvas.tokens.controlled.find(
-      (x) => x.document.id != rider.id,
-    );
+    const horse = canvas.tokens.controlled.find((x) => x.document.id != rider.id);
     const scene = rider.parent;
 
     const actorUpdate = {
@@ -360,19 +332,9 @@ export default class Riding {
       y: horse.y,
       elevation: (horse.document.elevation ?? 0) + 1,
     };
-    mergeObject(
-      riderTokenUpdate,
-      this.adaptTokenSize(rider.document, horse.document),
-    );
+    mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document));
     await rider.actor.update(actorUpdate);
-    await canvas.scene.updateEmbeddedDocuments(
-      'Token',
-      [
-        riderTokenUpdate,
-        { _id: horse.id, [`flags.dsa5.-=horseTokenId`]: null },
-      ],
-      { noHooks: true },
-    );
+    await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, [`flags.dsa5.-=horseTokenId`]: null }], { noHooks: true });
     await this.addRidingCondition(rider.actor);
   }
 
@@ -384,10 +346,7 @@ export default class Riding {
   };
 
   static getHorseSpeed(horse) {
-    return (
-      horse.effects.find((x) => getProperty(x, 'flags.dsa5.horseSpeed'))?.flags
-        .dsa5.horseSpeed || 0
-    );
+    return horse.effects.find((x) => getProperty(x, 'flags.dsa5.horseSpeed'))?.flags.dsa5.horseSpeed || 0;
   }
 
   static horseSpeedModifier(horse) {
@@ -405,10 +364,7 @@ export default class Riding {
         .map((x) => Number(x))
         .indexOf(speed) + 1,
     );
-    this.setSpeed(
-      horse,
-      Object.keys(this.speedKeys).map((x) => Number(x))[newIndex],
-    );
+    this.setSpeed(horse, Object.keys(this.speedKeys).map((x) => Number(x))[newIndex]);
   }
 
   static decreaseSpeed(horse) {
@@ -419,24 +375,16 @@ export default class Riding {
         .map((x) => Number(x))
         .indexOf(speed) - 1,
     );
-    this.setSpeed(
-      horse,
-      Object.keys(this.speedKeys).map((x) => Number(x))[newIndex],
-    );
+    this.setSpeed(horse, Object.keys(this.speedKeys).map((x) => Number(x))[newIndex]);
   }
 
   static async setSpeed(horse, speed) {
     await horse.deleteEmbeddedDocuments(
       'ActiveEffect',
-      horse.effects
-        .filter((x) => hasProperty(x, 'flags.dsa5.horseSpeed'))
-        .map((x) => x.id),
+      horse.effects.filter((x) => hasProperty(x, 'flags.dsa5.horseSpeed')).map((x) => x.id),
     );
     await horse.addCondition({
-      name:
-        game.i18n.localize('speed') +
-        ': ' +
-        game.i18n.localize(`RIDING.speeds.${speed}`),
+      name: game.i18n.localize('speed') + ': ' + game.i18n.localize(`RIDING.speeds.${speed}`),
       icon: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       changes: [this.speedKeys[speed]],
       flags: {

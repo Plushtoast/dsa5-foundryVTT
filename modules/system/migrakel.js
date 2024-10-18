@@ -35,7 +35,9 @@ export default class Migrakel {
         content: `<p>${content}</p>`,
         buttons,
       });
-    } catch (e) {}
+    } catch (e) {
+      /* empty */
+    }
     return result;
   }
 
@@ -58,9 +60,7 @@ export default class Migrakel {
     if (condition({ type: 'equipment' })) {
       const bagsToDelete = [];
       const bagsToCreate = [];
-      for (let item of actor.items.filter(
-        (x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags',
-      )) {
+      for (let item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
         let find = await itemLibrary.findCompendiumItem(item.name, item.type);
         if (find.length > 0) {
           find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -81,11 +81,7 @@ export default class Migrakel {
       await actor.deleteEmbeddedDocuments('Item', bagsToDelete);
     }
 
-    for (let item of actor.items.filter(
-      (x) =>
-        condition(x) &&
-        !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'),
-    )) {
+    for (let item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
       let find = await itemLibrary.findCompendiumItem(item.name, item.type);
       if (find.length > 0) {
         find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -93,13 +89,7 @@ export default class Migrakel {
 
         console.log(`MIGRATION - Updated ${item.name}`);
         const newData = mergeObject(item.toObject(), updater(find));
-        if (
-          newData.system.parent_id &&
-          containersIDs.has(newData.system.parent_id)
-        )
-          newData.system.parent_id = containersIDs.get(
-            newData.system.parent_id,
-          );
+        if (newData.system.parent_id && containersIDs.has(newData.system.parent_id)) newData.system.parent_id = containersIDs.get(newData.system.parent_id);
 
         itemsToCreate.push(newData);
         itemsToDelete.push(item.id);
@@ -108,22 +98,13 @@ export default class Migrakel {
     await actor.createEmbeddedDocuments('Item', itemsToCreate);
     await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
 
-    if (!Migrakel.silent)
-      ui.notifications.info('Migrakel.migrationDone', { localize: true });
+    if (!Migrakel.silent) ui.notifications.info('Migrakel.migrationDone', { localize: true });
   }
 
   static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
-    const res =
-      preChoice ??
-      (await this.showDialog(game.i18n.localize('Migrakel.spells'), true));
+    const res = preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.spells'), true));
     const condition = (x) => {
-      return [
-        'spell',
-        'liturgy',
-        'ritual',
-        'ceremony',
-        'spellextension',
-      ].includes(x.type);
+      return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension'].includes(x.type);
     };
     if (res == 2) {
       const updator = (find) => {
@@ -151,19 +132,13 @@ export default class Migrakel {
   }
 
   static async updateSpecialAbilities(actor, preChoice = undefined) {
-    const res =
-      preChoice ??
-      (await this.showDialog(game.i18n.localize('Migrakel.abilities')));
+    const res = preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.abilities')));
     if (res) {
       const updator = (find) => {
         let update = {
           effects: find.effects.toObject(),
         };
-        if (
-          ['specialability', 'advantage', 'disadvantage', 'trait'].includes(
-            find.type,
-          )
-        ) {
+        if (['specialability', 'advantage', 'disadvantage', 'trait'].includes(find.type)) {
           mergeObject(update, {
             system: { effect: { value: find.system.effect.value } },
           });
@@ -186,8 +161,7 @@ export default class Migrakel {
                 AsPCost: getProperty(find, 'system.AsPCost') || '',
                 volume: Number(getProperty(find, 'system.volume')) || 0,
                 artifact: getProperty(find, 'system.artifact') || '',
-                permanentEffects:
-                  getProperty(find, 'system.permanentEffects') || false,
+                permanentEffects: getProperty(find, 'system.permanentEffects') || false,
               },
             });
           }
@@ -197,14 +171,7 @@ export default class Migrakel {
       };
 
       const condition = (x) => {
-        return [
-          'specialability',
-          'advantage',
-          'disadvantage',
-          'trait',
-          'essence',
-          'imprint',
-        ].includes(x.type);
+        return ['specialability', 'advantage', 'disadvantage', 'trait', 'essence', 'imprint'].includes(x.type);
       };
       await this.updateVals(actor, condition, updator);
     }
@@ -212,9 +179,7 @@ export default class Migrakel {
   }
 
   static async updateCombatskills(actor, preChoice = undefined) {
-    const res =
-      preChoice ??
-      (await this.showDialog(game.i18n.localize('Migrakel.cskills')));
+    const res = preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.cskills')));
     if (res) {
       const updator = (find) => {
         return {
@@ -230,9 +195,7 @@ export default class Migrakel {
   }
 
   static async updateSkills(actor, preChoice = undefined) {
-    const res =
-      preChoice ??
-      (await this.showDialog(game.i18n.localize('Migrakel.skills')));
+    const res = preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.skills')));
     if (res) {
       const condition = (x) => {
         return ['skill'].includes(x.type);
@@ -258,20 +221,10 @@ export default class Migrakel {
   }
 
   static async updateGear(actor, preChoice = undefined) {
-    const choice =
-      preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.gear')));
+    const choice = preChoice ?? (await this.showDialog(game.i18n.localize('Migrakel.gear')));
     if (choice) {
       let condition = (x) => {
-        return [
-          'meleeweapon',
-          'armor',
-          'rangeweapon',
-          'equipment',
-          'poison',
-          'disease',
-          'consumable',
-          'ammunition',
-        ].includes(x.type);
+        return ['meleeweapon', 'armor', 'rangeweapon', 'equipment', 'poison', 'disease', 'consumable', 'ammunition'].includes(x.type);
       };
       let updator = (find) => {
         let update = {

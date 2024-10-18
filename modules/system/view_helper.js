@@ -110,16 +110,11 @@ function IconVisibility(html, menu, btnLeft, btnRight) {
 }
 
 export async function clickableAbility(ev) {
-  const categories = $(ev.currentTarget)
-    .closest('.searchableAbility')[0]
-    .dataset.category.split(' ');
+  const categories = $(ev.currentTarget).closest('.searchableAbility')[0].dataset.category.split(' ');
   let search = ev.currentTarget.text.replace(/\d+$/, '').trim();
 
   for (let category of categories) {
-    const items = await game.dsa5.itemLibrary.findCompendiumItem(
-      search,
-      category,
-    );
+    const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
     const res = items.find((x) => x.name == search);
     if (res) {
       res.sheet.render(true);
@@ -130,10 +125,7 @@ export async function clickableAbility(ev) {
     search = search.split('(')[0].trim() + ' ()';
 
     for (let category of categories) {
-      const items = await game.dsa5.itemLibrary.findCompendiumItem(
-        search,
-        category,
-      );
+      const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
       const res = items.find((x) => x.name == search);
       if (res) {
         res.sheet.render(true);
@@ -145,16 +137,8 @@ export async function clickableAbility(ev) {
 
 function columnLayout(html) {
   const width = html.width();
-  const minWidth = Number(
-    getComputedStyle(document.body)
-      .getPropertyValue('--minColumnWidth')
-      .replace('px', ''),
-  );
-  const width60 = Number(
-    getComputedStyle(document.body)
-      .getPropertyValue('--minColumnWidth60')
-      .replace('px', ''),
-  );
+  const minWidth = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth').replace('px', ''));
+  const width60 = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth60').replace('px', ''));
   const borderWidth = +6;
 
   if (width >= minWidth * 2 + borderWidth) {
@@ -187,9 +171,7 @@ export function tabSlider(html) {
       setTimeout(() => IconVisibility(html, menu, btnLeft, btnRight), 500);
     });
 
-    new ResizeObserver(() =>
-      IconVisibility(html, menu, btnLeft, btnRight),
-    ).observe(slider);
+    new ResizeObserver(() => IconVisibility(html, menu, btnLeft, btnRight)).observe(slider);
 
     menu.addEventListener('mousemove', (drag) => {
       if (!activeDrag) return;

@@ -20,10 +20,7 @@ export default class DSA5_Utility {
   }
 
   static async allCombatSkills() {
-    return await this.getCompendiumEntries(
-      this.getLanguagePack(),
-      'combatskill',
-    );
+    return await this.getCompendiumEntries(this.getLanguagePack(), 'combatskill');
   }
 
   static getLanguagePack() {
@@ -35,9 +32,7 @@ export default class DSA5_Utility {
     if (!pack) return ui.notifications.error('No content found');
 
     const search = Array.isArray(itemType) ? itemType : [itemType];
-    const items = (await pack.getDocuments()).filter((i) =>
-      search.includes(i.type),
-    );
+    const items = (await pack.getDocuments()).filter((i) => search.includes(i.type));
     return items.map((x) => x.toObject());
   }
 
@@ -49,8 +44,7 @@ export default class DSA5_Utility {
   }
 
   static calcTokenSize(actorData, data) {
-    let tokenSize =
-      game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value];
+    let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value];
     if (tokenSize) {
       if (tokenSize < 1) {
         mergeObject(data, {
@@ -84,9 +78,7 @@ export default class DSA5_Utility {
 
   static async allMoneyItems() {
     const customPack = game.settings.get('dsa5', 'moneyKompendium');
-    const moneyPack = game.packs.get(customPack)
-      ? customPack
-      : this.getLanguagePack();
+    const moneyPack = game.packs.get(customPack) ? customPack : this.getLanguagePack();
     return (await this.getCompendiumEntries(moneyPack, 'money'))
       .sort((a, b) => a.system.price.value - b.system.price.value)
       .map((x) => {
@@ -96,27 +88,14 @@ export default class DSA5_Utility {
   }
 
   static async allSkillsList() {
-    return ((await this.allSkills()) || [])
-      .map((x) => x.name)
-      .sort((a, b) => a.localeCompare(b));
+    return ((await this.allSkills()) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
   }
 
   static async allCombatSkillsList(weapontype) {
-    return (
-      (await this.allCombatSkills()).filter(
-        (x) => x.system.weapontype.value == weapontype,
-      ) || []
-    )
-      .map((x) => x.name)
-      .sort((a, b) => a.localeCompare(b));
+    return ((await this.allCombatSkills()).filter((x) => x.system.weapontype.value == weapontype) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
   }
 
-  static async callItemTransformationMacro(
-    macroName,
-    source,
-    effect,
-    args = {},
-  ) {
+  static async callItemTransformationMacro(macroName, source, effect, args = {}) {
     const parts = macroName.split('.');
     const pack = game.packs.get(`${parts[0]}.${parts[1]}`);
     if (!pack) {
@@ -127,29 +106,18 @@ export default class DSA5_Utility {
     let documents = await pack.getDocuments({ name: parts[2] });
     let result = {};
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(
-        async function () {},
-      ).constructor;
-      const fn = new AsyncFunction(
-        'args',
-        'source',
-        'effect',
-        documents[0].command,
-      );
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const fn = new AsyncFunction('args', 'source', 'effect', documents[0].command);
       try {
         args.result = result;
         await fn.call(this, args, source, effect);
       } catch (err) {
-        ui.notifications.error(
-          `There was an error in your macro syntax. See the console (F12) for details`,
-        );
+        ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);
         result.error = true;
       }
     } else {
-      ui.notifications.error(
-        game.i18n.format('DSAError.macroNotFound', { name: macroName }),
-      );
+      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name: macroName }));
     }
     return result;
   }
@@ -157,8 +125,7 @@ export default class DSA5_Utility {
   static isActiveGM(suppress = false) {
     const activeGM = game.users.activeGM;
 
-    if (!activeGM && !suppress)
-      ui.notifications.warn('DSAError.requiresGM', { localize: true });
+    if (!activeGM && !suppress) ui.notifications.warn('DSAError.requiresGM', { localize: true });
 
     return activeGM?.isSelf;
   }
@@ -172,11 +139,7 @@ export default class DSA5_Utility {
         .trim(),
       step: Number((ability.match(/[+-]?\d{1,2}$/) || [1])[0]),
       special: (ability.match(/\(([^()]+)\)/) || ['', ''])[1],
-      type: ability.match(/ (FP|SP)[+-]?\d{1,2}/)
-        ? 'FP'
-        : ability.match(/ (FW|SR)[+-]?\d{1,2}/)
-          ? 'FW'
-          : '',
+      type: ability.match(/ (FP|SP)[+-]?\d{1,2}/) ? 'FP' : ability.match(/ (FW|SR)[+-]?\d{1,2}/) ? 'FW' : '',
       bonus: ability.match(/[-+]\d{1,2}$/) != undefined,
     };
   }
@@ -204,13 +167,9 @@ export default class DSA5_Utility {
       content,
     };
 
-    if (['gmroll', 'blindroll'].includes(chatData.rollMode))
-      chatData['whisper'] = ChatMessage.getWhisperRecipients('GM').map(
-        (u) => u.id,
-      );
+    if (['gmroll', 'blindroll'].includes(chatData.rollMode)) chatData['whisper'] = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
     if (chatData.rollMode === 'blindroll') chatData['blind'] = true;
-    else if (chatData.rollMode === 'selfroll')
-      chatData['whisper'] = [game.user];
+    else if (chatData.rollMode === 'selfroll') chatData['whisper'] = [game.user];
 
     if (forceWhisper) {
       chatData['speaker'] = ChatMessage.getSpeaker();
@@ -233,10 +192,10 @@ export default class DSA5_Utility {
     if (!actor) {
       let scene = game.scenes.get(speaker.scene);
       try {
-        if (scene)
-          actor = new Token(scene.getEmbeddedDocument('Token', speaker.token))
-            ?.actor;
-      } catch (error) {}
+        if (scene) actor = new Token(scene.getEmbeddedDocument('Token', speaker.token))?.actor;
+      } catch (error) {
+        /* empty */
+      }
     }
 
     return actor;
@@ -258,20 +217,8 @@ export default class DSA5_Utility {
     return DSA5.advancementCosts[type][Number(currentAdvances) + modifier];
   }
 
-  static async getFolderForType(
-    documentType,
-    parent = null,
-    folderName = null,
-    sort = 0,
-    color = '',
-    sorting = undefined,
-  ) {
-    let folder = await game.folders.contents.find(
-      (x) =>
-        x.name == folderName &&
-        x.type == documentType &&
-        x.folder?.id == parent,
-    );
+  static async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = '', sorting = undefined) {
+    let folder = await game.folders.contents.find((x) => x.name == folderName && x.type == documentType && x.folder?.id == parent);
     if (!folder) {
       folder = await Folder.create({
         name: folderName,
@@ -286,9 +233,7 @@ export default class DSA5_Utility {
   }
 
   static toObjectIfPossible(source) {
-    return typeof source.toObject === 'function'
-      ? source.toObject(false)
-      : duplicate(source);
+    return typeof source.toObject === 'function' ? source.toObject(false) : duplicate(source);
   }
 
   static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
@@ -325,18 +270,16 @@ export default class DSA5_Utility {
       for (let pack of sortedPacks) {
         let p = game.packs.get(pack);
         if (p.documentName == 'Item' && (game.user.isGM || p.visible)) {
-          await p
-            .getDocuments({ name__in: names, type__in: types })
-            .then((content) => {
-              for (let k of content) {
-                let index = names.indexOf(k.name);
-                if (index >= 0 && types[index] == k.type) {
-                  names.splice(index, 1);
-                  types.splice(index, 1);
-                  results.push(k.toObject());
-                }
+          await p.getDocuments({ name__in: names, type__in: types }).then((content) => {
+            for (let k of content) {
+              let index = names.indexOf(k.name);
+              if (index >= 0 && types[index] == k.type) {
+                names.splice(index, 1);
+                types.splice(index, 1);
+                results.push(k.toObject());
               }
-            });
+            }
+          });
           if (names.length <= 0) break;
         }
       }
@@ -353,29 +296,19 @@ export default class DSA5_Utility {
   }
 
   static escapeRegex(input) {
-    const source =
-      typeof input === 'string' || input instanceof String ? input : '';
+    const source = typeof input === 'string' || input instanceof String ? input : '';
     return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 
   static replaceConditions(content) {
     if (!content) return content;
 
-    return content.replace(DSA5.statusRegex.regex, (str) =>
-      conditionsMatcher([str]),
-    );
+    return content.replace(DSA5.statusRegex.regex, (str) => conditionsMatcher([str]));
   }
 
   static experienceDescription(experience) {
     const grades = [2100, 1700, 1400, 1200, 1100, 1000];
-    const labels = [
-      'EXP.legendary',
-      'EXP.brillant',
-      'EXP.masterful',
-      'EXP.competent',
-      'EXP.experienced',
-      'EXP.average',
-    ];
+    const labels = ['EXP.legendary', 'EXP.brillant', 'EXP.masterful', 'EXP.competent', 'EXP.experienced', 'EXP.average'];
     let index = 0;
     for (const grade of grades) {
       if (Number(experience) >= Number(grade)) return labels[index];

@@ -6,13 +6,10 @@ const { mergeObject, randomID } = foundry.utils;
 export class Trade extends Application {
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.template =
-      'systems/dsa5/templates/actors/merchant/merchant-trade.html';
+    options.template = 'systems/dsa5/templates/actors/merchant/merchant-trade.html';
     options.width = 900;
     options.resizable = true;
-    options.tabs = [
-      { navSelector: '.tabs', contentSelector: '.content', initial: 'main' },
-    ];
+    options.tabs = [{ navSelector: '.tabs', contentSelector: '.content', initial: 'main' }];
     options.title = game.i18n.localize('MERCHANT.exchange');
     options.classes.push('noscrollWizard');
     options.scrollY = ['.scrollable'];
@@ -51,14 +48,7 @@ export class Trade extends Application {
       gear.removeClass('filterHide');
       gear
         .filter(function () {
-          return (
-            $(this)
-              .find('a.item-edit')
-              .text()
-              .toLowerCase()
-              .trim()
-              .indexOf(val) == -1
-          );
+          return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
@@ -81,8 +71,7 @@ export class Trade extends Application {
     for (let section of Object.values(inventory.inventory)) {
       for (let item of section.items) {
         if (this.tradeData.offer[item._id]) {
-          item.system.quantity.value -=
-            this.tradeData.offer[item._id].system.quantity.value;
+          item.system.quantity.value -= this.tradeData.offer[item._id].system.quantity.value;
         }
       }
     }
@@ -121,17 +110,12 @@ export class Trade extends Application {
     super.activateListeners(html);
     html.find('.trade').click((ev) => this._offerItem(ev));
     const filterGear = (ev) => this._filterGear($(ev.currentTarget));
-    html
-      .find('.item-edit')
-      .click((ev) => this._editItem(ev, this.tradeData.sourceId));
-    html
-      .find('.item-external-edit')
-      .click((ev) => this._editItem(ev, this.tradeData.targetId));
+    html.find('.item-edit').click((ev) => this._editItem(ev, this.tradeData.sourceId));
+    html.find('.item-external-edit').click((ev) => this._editItem(ev, this.tradeData.targetId));
     html.find('.acceptTrade').click((ev) => this.acceptTrade(ev));
     let gearSearch = html.find('.gearSearch');
     gearSearch.keyup((event) => filterGear(event));
-    gearSearch[0] &&
-      gearSearch[0].addEventListener('search', filterGear, false);
+    gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
   }
 
   _editItem(ev, id) {
@@ -149,15 +133,10 @@ export class Trade extends Application {
 
     let amount = ev.ctrlKey ? 10 : 1;
     let isStopTrade = ev.currentTarget.dataset.stopTrade;
-    let availableCount = isStopTrade
-      ? this.tradeData.offer[id].system.quantity.value
-      : item.system.quantity.value;
+    let availableCount = isStopTrade ? this.tradeData.offer[id].system.quantity.value : item.system.quantity.value;
     if (item) {
       if (isStopTrade) {
-        this.tradeData.offer[id].system.quantity.value -= Math.min(
-          amount,
-          availableCount,
-        );
+        this.tradeData.offer[id].system.quantity.value -= Math.min(amount, availableCount);
         if (this.tradeData.offer[id].system.quantity.value <= 0) {
           delete this.tradeData.offer[id];
         }
@@ -172,10 +151,7 @@ export class Trade extends Application {
         }
 
         if (availableCount > 0) {
-          this.tradeData.offer[id].system.quantity.value += Math.min(
-            amount,
-            availableCount,
-          );
+          this.tradeData.offer[id].system.quantity.value += Math.min(amount, availableCount);
           this.offerChanged();
           this.render();
         }
@@ -285,16 +261,12 @@ export class Trade extends Application {
     for (let id of Object.keys(toRemove)) {
       const item = actor.items.get(id);
       if (item) {
-        if (
-          item.system.quantity.value <= toRemove[id].system.quantity.value &&
-          item.type != 'money'
-        ) {
+        if (item.system.quantity.value <= toRemove[id].system.quantity.value && item.type != 'money') {
           removeIds.push(id);
         } else {
           updateItems.push({
             _id: id,
-            'system.quantity.value':
-              item.system.quantity.value - toRemove[id].system.quantity.value,
+            'system.quantity.value': item.system.quantity.value - toRemove[id].system.quantity.value,
           });
         }
       }
@@ -354,16 +326,13 @@ export class TradeOptions extends Application {
 
   async getData(options) {
     const data = await super.getData(options);
-    data.actors = game.actors.filter(
-      (x) => x.hasPlayerOwner && x.id != this.actorId.actor,
-    );
+    data.actors = game.actors.filter((x) => x.hasPlayerOwner && x.id != this.actorId.actor);
     return data;
   }
 
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.template =
-      'systems/dsa5/templates/actors/merchant/merchant-tradeoptions.html';
+    options.template = 'systems/dsa5/templates/actors/merchant/merchant-tradeoptions.html';
     options.resizable = true;
     options.title = game.i18n.localize('MERCHANT.exchange');
     return options;
@@ -371,10 +340,7 @@ export class TradeOptions extends Application {
 
   _startTrade(ev) {
     const target = game.actors.get(ev.currentTarget.dataset.id);
-    const app = new Trade(
-      this.actorId,
-      Itemdsa5.buildSpeaker(target, target.token?.id),
-    );
+    const app = new Trade(this.actorId, Itemdsa5.buildSpeaker(target, target.token?.id));
     app.startTrade();
     this.close();
   }

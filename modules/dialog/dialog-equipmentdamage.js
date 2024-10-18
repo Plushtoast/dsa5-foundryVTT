@@ -1,8 +1,6 @@
 import EquipmentDamage from '../system/equipment-damage.js';
 
-export default class EquipmentDamageDialog extends foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.api.ApplicationV2,
-) {
+export default class EquipmentDamageDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'WEAR.checkShort',
@@ -45,8 +43,6 @@ export default class EquipmentDamageDialog extends foundry.applications.api.Hand
   }
 
   callbackResult(ev) {
-    EquipmentDamage.breakingTest(
-      this.items.find((x) => x.id == ev.currentTarget.dataset.value),
-    );
+    EquipmentDamage.breakingTest(this.items.find((x) => x.id == ev.currentTarget.dataset.value));
   }
 }

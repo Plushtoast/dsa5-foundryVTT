@@ -4,25 +4,15 @@ const { getProperty } = foundry.utils;
 
 export default function () {
   Hooks.on('renderSettings', (app, html, data) => {
-    let button = $(
-      `<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize('DSA5Error')}</button>`,
-    );
+    let button = $(`<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize('DSA5Error')}</button>`);
     button.on('click', () => {
-      window.open(
-        'https://github.com/Plushtoast/dsa5-foundryVTT/issues',
-        '_blank',
-      );
+      window.open('https://github.com/Plushtoast/dsa5-foundryVTT/issues', '_blank');
     });
     html.find('#settings-documentation').append(button);
 
-    button = $(
-      `<button><i class="fas fa-info-circle"></i> ${game.i18n.localize('DSA5Wiki')}</button>`,
-    );
+    button = $(`<button><i class="fas fa-info-circle"></i> ${game.i18n.localize('DSA5Wiki')}</button>`);
     button.on('click', () => {
-      window.open(
-        'https://github.com/Plushtoast/dsa5-foundryVTT/wiki',
-        '_blank',
-      );
+      window.open('https://github.com/Plushtoast/dsa5-foundryVTT/wiki', '_blank');
     });
     html.find('#settings-documentation').append(button);
 
@@ -32,20 +22,13 @@ export default function () {
     });
     html.find('#settings-documentation').append(button);
 
-    const systemName =
-      game.system.title.split('/')[game.i18n.lang == 'de' ? 0 : 1];
+    const systemName = game.system.title.split('/')[game.i18n.lang == 'de' ? 0 : 1];
     const version = html.find('#game-details .system .system-info').html();
-    html
-      .find('#game-details .system')
-      .html(
-        `<span class="system-title">${systemName}</span><span class="system-info">${version}</span>`,
-      );
+    html.find('#game-details .system').html(`<span class="system-title">${systemName}</span><span class="system-info">${version}</span>`);
   });
 
   Hooks.on('renderCompendiumDirectory', (app, html, data) => {
-    const button = $(
-      `<button id="openLibrary"><i class="fas fa-university"></i>${game.i18n.localize('ItemLibrary')}</button>`,
-    );
+    const button = $(`<button id="openLibrary"><i class="fas fa-university"></i>${game.i18n.localize('ItemLibrary')}</button>`);
     const headerActions = html.find('.header-actions');
     headerActions.append(button);
     button.on('click', () => DSA5_Utility.renderToggle(game.dsa5.itemLibrary));
@@ -53,9 +36,7 @@ export default function () {
 
   Hooks.once('renderCompendiumDirectory', (app, html, data) => {
     const toRemove = game.i18n.lang == 'de' ? 'en' : 'de';
-    const packsToRemove = game.packs.filter(
-      (p) => getProperty(p.metadata, 'flags.dsalang') == toRemove,
-    );
+    const packsToRemove = game.packs.filter((p) => getProperty(p.metadata, 'flags.dsalang') == toRemove);
 
     for (let pack of packsToRemove) {
       let name = `${pack.metadata.packageName}.${pack.metadata.name}`;
@@ -68,9 +49,7 @@ export default function () {
   Hooks.on('renderActorDirectory', (app, html, data) => {
     if (game.user.isGM) return;
 
-    for (let act of app.documents.filter(
-      (x) => x.isMerchant() && getProperty(x, 'system.merchant.hidePlayer'),
-    )) {
+    for (let act of app.documents.filter((x) => x.isMerchant() && getProperty(x, 'system.merchant.hidePlayer'))) {
       html.find(`[data-document-id="${act.id}"]`).remove();
     }
   });

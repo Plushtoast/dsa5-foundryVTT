@@ -56,38 +56,28 @@ export default class DSA5Hotbar extends Hotbar {
       if (parry.test(macro.macro.name)) {
         macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass('parry');
       } else if (attack.test(macro.macro.name)) {
-        macroList
-          .find(`[data-macro-id="${macro.macro.id}"]`)
-          .addClass('attack');
+        macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass('attack');
       }
     }
   }
 
   _contextMenu(html) {
     if (game.settings.get('dsa5', 'hotbarv3')) {
-      HotbarV3ContextMenu.create(
-        this,
-        html,
-        '.macro',
-        this._getEntryContextOptions(),
-      );
+      HotbarV3ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
     } else {
       ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
     }
   }
 
   get template() {
-    if (game.settings.get('dsa5', 'hotbarv3'))
-      return 'systems/dsa5/templates/system/hud/hotbar.html';
+    if (game.settings.get('dsa5', 'hotbarv3')) return 'systems/dsa5/templates/system/hud/hotbar.html';
     else return super.template;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
     if (game.settings.get('dsa5', 'hotbarv3')) {
-      html
-        .find('.quantity-click')
-        .mousedown((ev) => RuleChaos.quantityClick(ev));
+      html.find('.quantity-click').mousedown((ev) => RuleChaos.quantityClick(ev));
       html.on('mousedown', 'li.primary', async (ev) => {
         game.tooltip.deactivate();
 
@@ -110,22 +100,16 @@ export default class DSA5Hotbar extends Hotbar {
       const filterOff = function () {
         $(document).off('keydown.sectionFilter', fn);
         that.searching = '';
-        html
-          .find('.macro,.primary,.sections .skillItems')
-          .removeClass('dsahidden');
+        html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
         html.find('.longLayout').removeClass('longLayout');
       };
       html.find('.sections').hover(function () {
-        $(document)
-          .off('keydown.sectionFilter', fn)
-          .on('keydown.sectionFilter', fn);
+        $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
       }, filterOff);
 
       html.find('.primary').hover((ev) => this._betterTooltip(ev));
 
-      html
-        .find('.itdarkness input')
-        .change((ev) => this.tokenHotbar.changeDarkness(ev));
+      html.find('.itdarkness input').change((ev) => this.tokenHotbar.changeDarkness(ev));
     }
   }
 
@@ -155,9 +139,7 @@ export default class DSA5Hotbar extends Hotbar {
       case 'effect':
         const effect = this.token.actor?.effects.get(data.id);
         if (effect) {
-          description = game.i18n.has(effect.description)
-            ? game.i18n.localize(effect.description)
-            : effect.description;
+          description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
         }
 
         break;
@@ -181,16 +163,13 @@ export default class DSA5Hotbar extends Hotbar {
         item = this.token.actor?.items.get(data.id);
 
         description = $(
-          await renderTemplate(
-            `systems/dsa5/templates/items/browse/${item.type}.html`,
-            {
-              isGM: game.user.isGM,
-              ...(await item.sheet.getData()),
-              document: item,
-              skipHeader: true,
-              hint: true,
-            },
-          ),
+          await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
+            isGM: game.user.isGM,
+            ...(await item.sheet.getData()),
+            document: item,
+            skipHeader: true,
+            hint: true,
+          }),
         )
           .find('.groupbox')
           .html();
@@ -199,14 +178,9 @@ export default class DSA5Hotbar extends Hotbar {
       case 'enchantment':
         const ids = data.id.split('_');
         item = this.token.actor?.items.get(ids[0]);
-        const enchantment = item
-          .getFlag('dsa5', 'enchantments')
-          .find((x) => x.id == ids[1]);
+        const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
         data.name = enchantment.name;
-        description = await renderTemplate(
-          'systems/dsa5/templates/items/enchantment-preview.html',
-          { enchantment, document: item },
-        );
+        description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.html', { enchantment, document: item });
         break;
       default:
         return;
@@ -228,13 +202,9 @@ export default class DSA5Hotbar extends Hotbar {
 
     if (category) {
       html.find('.skillItems').addClass('collapsed');
-      html
-        .find(`.skillItems[data-category="${category}"]`)
-        .removeClass('collapsed');
+      html.find(`.skillItems[data-category="${category}"]`).removeClass('collapsed');
       html.find('.categoryFilter').removeClass('active');
-      html
-        .find(`.categoryFilter[data-filter="${category}"]`)
-        .addClass('active');
+      html.find(`.categoryFilter[data-filter="${category}"]`).addClass('active');
       if (this.token?.actor) this.activeFilters = [category];
       else this.gmFilters = [category];
     } else {
@@ -284,11 +254,7 @@ export default class DSA5Hotbar extends Hotbar {
     for (let sec of sections.find('.skillItems')) {
       const category = sec.dataset.category;
       const section = $(sec);
-      section.toggleClass(
-        'dsahidden',
-        section.find(`li.${category}.dsahidden`).length ==
-          section.find(`li.${category}`).length,
-      );
+      section.toggleClass('dsahidden', section.find(`li.${category}.dsahidden`).length == section.find(`li.${category}`).length);
     }
     return false;
   }
@@ -316,17 +282,9 @@ export default class DSA5Hotbar extends Hotbar {
     let activeFilters = [];
     const actor = this.token?.actor;
     if (actor) {
-      if (
-        !['epic', 'loot'].includes(
-          getProperty(actor, 'system.merchant.merchantType'),
-        )
-      ) {
+      if (!['epic', 'loot'].includes(getProperty(actor, 'system.merchant.merchantType'))) {
         activeFilters = (this.activeFilters || []).filter((x) => x != 'gm');
-        const combatskills = actor.items
-          .filter((x) => x.type == 'combatskill')
-          .map((x) =>
-            Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system),
-          );
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
         effects = await this.tokenHotbar._effectEntries(actor);
         const brawl = this.tokenHotbar._brawlEntry(combatskills);
         const isRiding = Riding.isRiding(actor);
@@ -346,23 +304,16 @@ export default class DSA5Hotbar extends Hotbar {
             case 'skill':
               if (!groups.skills[x.type]) groups.skills[x.type] = [];
 
-              groups.skills[x.type].push(
-                this.tokenHotbar._skillEntry(x, 'skill'),
-              );
+              groups.skills[x.type].push(this.tokenHotbar._skillEntry(x, 'skill'));
               break;
             case 'spell':
             case 'liturgy':
               if (!groups.skills[x.type]) groups.skills[x.type] = [];
 
-              groups.skills[x.type].push(
-                this.tokenHotbar._skillEntry(x, 'spell'),
-              );
+              groups.skills[x.type].push(this.tokenHotbar._skillEntry(x, 'spell'));
               break;
             case 'trait':
-              if (TokenHotbar2.traitTypes.has(x.system.traitType.value))
-                groups.attacks.push(
-                  this.tokenHotbar._traitEntry(x, actor.system),
-                );
+              if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
               break;
             case 'consumable':
               if (!groups.skills[x.type]) groups.skills[x.type] = [];
@@ -375,11 +326,7 @@ export default class DSA5Hotbar extends Hotbar {
               break;
             case 'meleeweapon':
             case 'rangeweapon':
-              const entries = this.tokenHotbar._combatEntry(
-                x,
-                combatskills,
-                actor,
-              );
+              const entries = this.tokenHotbar._combatEntry(x, combatskills, actor);
               for (let entry of entries) {
                 if (!x.system.worn.value) {
                   entry.cssClass = 'unequipped';
@@ -400,30 +347,17 @@ export default class DSA5Hotbar extends Hotbar {
                 if (!groups.skills[x.type]) groups.skills[x.type] = [];
 
                 for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-                  groups.skills[x.type].push(
-                    this.tokenHotbar._enchantmentEntry(
-                      enchantment,
-                      'enchantment',
-                      x,
-                      { subfunction: 'enchantment' },
-                    ),
-                  );
+                  groups.skills[x.type].push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
                 }
               }
               break;
           }
         }
       }
-    } else if (
-      game.user.isGM &&
-      !game.settings.get('dsa5', 'disableTokenhotbarMaster')
-    ) {
+    } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
       activeFilters = this.gmFilters || [];
       groups.skills.gm = this.tokenHotbar?._gmEntries() || [];
-      const skills =
-        this.tokenHotbar?.skills ||
-        (await this.tokenHotbar?.prepareSkills()) ||
-        [];
+      const skills = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
 
       groups.skills.skillgm = skills;
       gmMode = true;
@@ -445,33 +379,22 @@ export default class DSA5Hotbar extends Hotbar {
       const i18nkey = `TYPES.Item.${key}`;
       filterCategories.push({
         key,
-        tooltip: game.i18n.has(i18nkey)
-          ? game.i18n.localize(i18nkey)
-          : game.i18n.localize(fallbackNames[key]),
+        tooltip: game.i18n.has(i18nkey) ? game.i18n.localize(i18nkey) : game.i18n.localize(fallbackNames[key]),
         img: Itemdsa5.defaultImages[key] || fallbacks[key],
       });
     }
 
     const orderGroups = ['body', 'social', 'nature', 'knowledge', 'trade'];
     groups.skills.skill?.sort((a, b) => {
-      return (
-        orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) ||
-        a.name.localeCompare(b.name)
-      );
+      return orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name);
     });
     groups.skills.skillgm?.sort((a, b) => {
-      return (
-        orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) ||
-        a.name.localeCompare(b.name)
-      );
+      return orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name);
     });
 
     if (groups.attacks.length > 0) {
       groups.attacks.sort((a, b) => {
-        return (
-          (b.cssClass || '').localeCompare(a.cssClass || '') ||
-          a.name.localeCompare(b.name)
-        );
+        return (b.cssClass || '').localeCompare(a.cssClass || '') || a.name.localeCompare(b.name);
       });
 
       filterCategories.unshift({
@@ -483,18 +406,11 @@ export default class DSA5Hotbar extends Hotbar {
 
     if (this.showEffects) {
       if (canvas.tokens.controlled.length > 1) {
-        let sharedEffects = await this.tokenHotbar._effectEntries(
-          canvas.tokens.controlled[0].actor,
-          { subfunction: 'sharedEffect' },
-        );
+        let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
         for (let token of canvas.tokens.controlled) {
-          const tokenEffects = (await token.actor.actorEffects()).map(
-            (x) => x.name,
-          );
-          sharedEffects = sharedEffects.filter((x) =>
-            tokenEffects.includes(x.name),
-          );
+          const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
+          sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
         effects = sharedEffects;
       }
@@ -562,17 +478,10 @@ class HotbarV3ContextMenu extends ContextMenu {
     super._setPosition(html, target);
   }
 
-  static create(
-    app,
-    html,
-    selector,
-    menuItems,
-    { hookName = 'EntryContext', ...options } = {},
-  ) {
+  static create(app, html, selector, menuItems, { hookName = 'EntryContext', ...options } = {}) {
     for (const cls of app.constructor._getInheritanceChain()) {
       Hooks.call(`get${cls.name}${hookName}`, html, menuItems);
     }
-    if (menuItems)
-      return new HotbarV3ContextMenu(html, selector, menuItems, options);
+    if (menuItems) return new HotbarV3ContextMenu(html, selector, menuItems, options);
   }
 }

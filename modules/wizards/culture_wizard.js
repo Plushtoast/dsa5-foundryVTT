@@ -29,24 +29,15 @@ export default class CultureWizard extends WizardDSA5 {
 
   async getData(options) {
     const data = await super.getData(options);
-    let advantages = await this.parseToItem(
-      this.culture.system.recommendedAdvantages.value,
-      ['advantage'],
-    );
-    let disadvantages = await this.parseToItem(
-      this.culture.system.recommendedDisadvantages.value,
-      ['disadvantage'],
-    );
+    let advantages = await this.parseToItem(this.culture.system.recommendedAdvantages.value, ['advantage']);
+    let disadvantages = await this.parseToItem(this.culture.system.recommendedDisadvantages.value, ['disadvantage']);
     let writings =
       this.culture.system.writing.value == ''
         ? []
         : await this.parseToItem(
             this.culture.system.writing.value
               .split(',')
-              .map(
-                (x) =>
-                  `${game.i18n.localize('LocalizedIDs.literacy')} (${x.trim()})`,
-              )
+              .map((x) => `${game.i18n.localize('LocalizedIDs.literacy')} (${x.trim()})`)
               .join(', '),
             ['specialability'],
           );
@@ -56,10 +47,7 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.language.value
               .split(',')
-              .map(
-                (x) =>
-                  `${game.i18n.localize('LocalizedIDs.language')} (${x.trim()}) 3`,
-              )
+              .map((x) => `${game.i18n.localize('LocalizedIDs.language')} (${x.trim()}) 3`)
               .join(', '),
             ['specialability'],
           );
@@ -85,14 +73,8 @@ export default class CultureWizard extends WizardDSA5 {
       languagesToSelect: languages.length > 1,
       vantagesToChose: advantages.length > 0 || disadvantages.length > 0,
       generalToChose: writings.length > 0 || languages.length > 0,
-      enrichedClothing: await TextEditor.enrichHTML(
-        getProperty(this.culture.system, 'clothing.value'),
-        { secrets: false, async: true },
-      ),
-      enrichedDescription: await TextEditor.enrichHTML(
-        getProperty(this.culture.system, 'description.value'),
-        { secrets: false, async: true },
-      ),
+      enrichedClothing: await TextEditor.enrichHTML(getProperty(this.culture.system, 'clothing.value'), { secrets: false, async: true }),
+      enrichedDescription: await TextEditor.enrichHTML(getProperty(this.culture.system, 'description.value'), { secrets: false, async: true }),
     });
     return data;
   }
@@ -123,24 +105,14 @@ export default class CultureWizard extends WizardDSA5 {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
     let apCost = Number(parent.find('.apCost').text());
-    if (
-      !this._validateInput(parent, app) ||
-      !(await this.actor.checkEnoughXP(apCost)) ||
-      (await this.alreadyAdded(
-        this.actor.system.details.culture.value,
-        'culture',
-      ))
-    ) {
+    if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.culture.value, 'culture'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
     }
 
     let update = { 'system.details.culture.value': this.culture.name };
 
-    let localKnowledge = await this.findCompendiumItem(
-      `${game.i18n.localize('LocalizedIDs.localKnowledge')} ()`,
-      ['specialability'],
-    );
+    let localKnowledge = await this.findCompendiumItem(`${game.i18n.localize('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
     if (localKnowledge) {
       localKnowledge = duplicate(localKnowledge);
       localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
@@ -152,17 +124,10 @@ export default class CultureWizard extends WizardDSA5 {
 
     await this.addSelections(parent.find('.optional:checked'), false);
     await this.actor._updateAPs(apCost, {}, { render: false });
-    await this.updateSkill(
-      this.culture.system.skills.value.split(','),
-      'skill',
-    );
+    await this.updateSkill(this.culture.system.skills.value.split(','), 'skill');
     await this.actor.update(update);
 
-    await APTracker.track(
-      this.actor,
-      { type: 'item', item: this.culture, state: 1 },
-      apCost,
-    );
+    await APTracker.track(this.actor, { type: 'item', item: this.culture, state: 1 }, apCost);
 
     this.finalizeUpdate();
   }

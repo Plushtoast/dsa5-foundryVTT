@@ -1,28 +1,20 @@
 import { delay } from '../system/view_helper.js';
 
 export default class DSATour extends Tour {
-  static tours = [
-    'systems/dsa5/modules/tours/lang/initial',
-    'systems/dsa5/modules/tours/lang/library',
-    'systems/dsa5/modules/tours/lang/actor',
-  ];
+  static tours = ['systems/dsa5/modules/tours/lang/initial', 'systems/dsa5/modules/tours/lang/library', 'systems/dsa5/modules/tours/lang/actor'];
   static gmTours = ['systems/dsa5/modules/tours/lang/mastermenu'];
 
   static async travelAgency() {
     const lang = game.i18n.lang == 'de' ? 'de' : 'en';
     console.log('Adding DSA/TDE Tours');
     for (let tour of this.tours) {
-      const obj = await game.dsa5.apps.DSATour.fromJSON(
-        `${tour.replace('/lang/', `/${lang}/`)}.json`,
-      );
+      const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace('/lang/', `/${lang}/`)}.json`);
       game.tours.register(obj.config.module, obj.id, obj);
     }
     if (!game.user.isGM) return;
 
     for (let tour of this.gmTours) {
-      const obj = await game.dsa5.apps.DSATour.fromJSON(
-        `${tour.replace('/lang/', `/${lang}/`)}.json`,
-      );
+      const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace('/lang/', `/${lang}/`)}.json`);
       game.tours.register(obj.config.module, obj.id, obj);
     }
   }
@@ -30,10 +22,7 @@ export default class DSATour extends Tour {
   async _preStep() {
     if (this.currentStep.activateTab) {
       ui.sidebar.activateTab(this.currentStep.activateTab);
-    } else if (
-      this.currentStep.activateLayer &&
-      canvas.activeLayer.options.name != this.currentStep.activateLayer
-    ) {
+    } else if (this.currentStep.activateLayer && canvas.activeLayer.options.name != this.currentStep.activateLayer) {
       await canvas[this.currentStep.activateLayer].activate();
       await delay(100);
     } else if (this.currentStep.appTab) {
@@ -47,9 +36,7 @@ export default class DSATour extends Tour {
 
   async start() {
     if (this.config.preCommand) {
-      const AsyncFunction = Object.getPrototypeOf(
-        async function () {},
-      ).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       const fn = new AsyncFunction(this.config.preCommand);
       await fn.call(this);
     }
@@ -57,9 +44,7 @@ export default class DSATour extends Tour {
       await this.app.render(true, { focus: true });
       while (!this.app.rendered) await delay(50);
     }
-    if (this.app || this.config.preCommand)
-      while (!$(this.steps[this.stepIndex + 1].selector + ':visible').length)
-        await delay(50);
+    if (this.app || this.config.preCommand) while (!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await delay(50);
 
     const res = await super.start();
     $('#tooltip').show();

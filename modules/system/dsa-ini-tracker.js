@@ -7,9 +7,7 @@ export default class DSAIniTracker extends Application {
     mergeObject(options, {
       classes: options.classes.concat(['dsa5', 'initTracker']),
       template: 'systems/dsa5/templates/system/initracker.html',
-      dragDrop: [
-        { dragSelector: '.iniItem', dropSelector: ['.iniTrackerList'] },
-      ],
+      dragDrop: [{ dragSelector: '.iniItem', dropSelector: ['.iniTrackerList'] }],
       top: 100,
       left: 170,
       title: 'DSAIniTracker',
@@ -35,8 +33,7 @@ export default class DSAIniTracker extends Application {
       const maxW = el.style.maxWidth || window.innerWidth;
       currentPosition.width = width = Math.clamp(tarW, 0, maxW);
       el.style.width = width + 'px';
-      if (width + currentPosition.left > window.innerWidth)
-        left = currentPosition.left;
+      if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
     }
     game.settings.set('dsa5', 'iniTrackerPosition', {
       left: currentPosition.left,
@@ -50,8 +47,7 @@ export default class DSAIniTracker extends Application {
       if (!game.settings.get('dsa5', 'enableCombatFlow')) return;
 
       if (game.combat) {
-        if (!game.dsa5.apps.initTracker)
-          game.dsa5.apps.initTracker = new DSAIniTracker();
+        if (!game.dsa5.apps.initTracker) game.dsa5.apps.initTracker = new DSAIniTracker();
 
         game.dsa5.apps.initTracker.updateTracker(data);
       } else {
@@ -77,19 +73,11 @@ export default class DSAIniTracker extends Application {
     const turnsToUse = data.turns;
 
     const waitingTurns = [];
-    const skipDefeated = game.settings.get(
-      'core',
-      Combat.CONFIG_SETTING,
-    ).skipDefeated;
+    const skipDefeated = game.settings.get('core', Combat.CONFIG_SETTING).skipDefeated;
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    let unRolled = data.turns.some(
-      (x) =>
-        x.owner &&
-        !x.hasRolled &&
-        (!game.user.isGM || data.combat.combatants.get(x.id).isNPC),
-    );
+    let unRolled = data.turns.some((x) => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
     if (turnsToUse.length) {
       const filteredTurns = [];
 
@@ -102,36 +90,22 @@ export default class DSAIniTracker extends Application {
       while (!(toAdd == 0 || loops == actorCount)) {
         const turn = duplicate(turnsToUse[index]);
         const combatant = data.combat.combatants.get(turn.id);
-        if (started && index == startIndex)
-          turn.css = turn.css.replace('active', '');
+        if (started && index == startIndex) turn.css = turn.css.replace('active', '');
 
-        if (
-          !combatStarted ||
-          (turn.active && !started) ||
-          (!anyActive && !started)
-        ) {
+        if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
           started = true;
           startIndex = index;
-        } else if (
-          combatant.getFlag('dsa5', 'waitInit') == data.round + loops &&
-          !combatant.defeated &&
-          (game.user.isGM || !combatant.hidden)
-        ) {
+        } else if (combatant.getFlag('dsa5', 'waitInit') == data.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
           waitingTurns.push(turn);
         }
 
-        if (
-          started &&
-          !(skipDefeated && combatant.defeated) &&
-          (game.user.isGM || !combatant.hidden)
-        ) {
+        if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
           turn.round = data.round + loops;
           if (turn.owner && combatant.token?.actor) {
             turn.maxLP = combatant.token.actor.system.status.wounds.max;
             turn.currentLP = combatant.token.actor.system.status.wounds.value;
           }
-          if (currentRound && currentRound != turn.round)
-            turn.newRound = 'newRound';
+          if (currentRound && currentRound != turn.round) turn.newRound = 'newRound';
 
           currentRound = turn.round;
           filteredTurns.push(turn);
@@ -163,8 +137,7 @@ export default class DSAIniTracker extends Application {
   }
 
   hasChangedTurn(data) {
-    const res =
-      data.turn != this.lastTurnUpdate || data.round != this.lastRoundUpdate;
+    const res = data.turn != this.lastTurnUpdate || data.round != this.lastRoundUpdate;
     this.lastTurnUpdate = data.turn;
     this.lastRoundUpdate = data.round;
     return res;
@@ -224,15 +197,10 @@ export default class DSAIniTracker extends Application {
       game.combat?.convertToBrawl();
     });
     const turns = html.find('.iniItem');
-    turns.hover(
-      this._onCombatantHoverIn.bind(this),
-      this._onCombatantHoverOut.bind(this),
-    );
+    turns.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
     turns.click(this._onCombatantMouseDown.bind(this));
 
-    html
-      .find('.waitingTackerList .iniItem')
-      .mousedown((ev) => this._onRightClick(ev));
+    html.find('.waitingTackerList .iniItem').mousedown((ev) => this._onRightClick(ev));
 
     html.find('.combatant-control').click((ev) => this._onCombatantControl(ev));
 
@@ -258,9 +226,7 @@ export default class DSAIniTracker extends Application {
 
   _onRightClick(ev) {
     if (ev.button == 2) {
-      const combatant = game.combat.combatants.get(
-        ev.currentTarget.dataset.combatantId,
-      );
+      const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId);
       if (combatant.isOwner) {
         combatant.unsetFlag('dsa5', 'waitInit');
       }
@@ -284,9 +250,7 @@ export default class DSAIniTracker extends Application {
   }
 
   async waitInit(ev) {
-    const combatant = game.combat.combatants.get(
-      game.combat.current.combatantId,
-    );
+    const combatant = game.combat.combatants.get(game.combat.current.combatantId);
     await combatant.setFlag('dsa5', 'waitInit', game.combat.current.round);
     ev.currentTarget.dataset.control = 'nextTurn';
     this._getCombatApp()._onCombatControl(ev);

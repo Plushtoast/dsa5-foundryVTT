@@ -7,30 +7,20 @@ const { duplicate } = foundry.utils;
 
 export default class DSA5ChatListeners {
   static chatListeners(html) {
-    html.on('click', '.openJournalBrowser', () =>
-      game.dsa5.apps.journalBrowser.render(true),
-    );
+    html.on('click', '.openJournalBrowser', () => game.dsa5.apps.journalBrowser.render(true));
     html.on('click', '.openBookInJournalBrowser', async (ev) => {
       const book = ev.currentTarget.dataset.book;
       const bookType = ev.currentTarget.dataset.type || 'books';
       await game.dsa5.apps.journalBrowser.render(false);
-      await game.dsa5.apps.journalBrowser.loadBook(
-        book,
-        $(game.dsa5.apps.journalBrowser._element),
-        bookType,
-      );
+      await game.dsa5.apps.journalBrowser.loadBook(book, $(game.dsa5.apps.journalBrowser._element), bookType);
       await game.dsa5.apps.journalBrowser.render(true);
     });
 
-    const helpButton = $(
-      '<a class="button showHelp" data-tooltip="HELP.showHelp"><i class="fas fa-question"></i></a>',
-    );
+    const helpButton = $('<a class="button showHelp" data-tooltip="HELP.showHelp"><i class="fas fa-question"></i></a>');
     helpButton.on('click', () => DSA5ChatListeners.getHelp());
     $(html.find('.control-buttons')).prepend(helpButton);
     html.on('click', '.showPatchViewer', () => showPatchViewer());
-    html.on('click', '.functionswitch', (ev) =>
-      RuleChaos[ev.currentTarget.dataset.function](ev),
-    );
+    html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev));
     html.on('click', '.panToToken', (ev) => DSA5ChatListeners.panToToken(ev));
     html.on('click', '.popoutImage', (ev) => showPopout(ev));
   }
@@ -76,12 +66,7 @@ export default class DSA5ChatListeners {
       .sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
-    let msg = effects
-      .map(
-        (x) =>
-          `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.img}"/>${x.name}</a>`,
-      )
-      .join(' ');
+    let msg = effects.map((x) => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.img}"/>${x.name}</a>`).join(' ');
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
@@ -92,8 +77,7 @@ export default class DSA5ChatListeners {
       target = target.get(0);
       skill = await DSA5_Utility.skillByName(skill || target.textContent);
       if (target.dataset.attrs) attrs = target.dataset.attrs.split('|');
-      if (target.dataset.json)
-        json = JSON.parse(decodeURIComponent(target.dataset.json));
+      if (target.dataset.json) json = JSON.parse(decodeURIComponent(target.dataset.json));
     } else if (skill) {
       skill = await DSA5_Utility.skillByName(skill);
     }
@@ -120,9 +104,7 @@ export default class DSA5ChatListeners {
       const attrs = json.attrs.split(',');
 
       for (let i = 1; i <= attrs.length; i++) {
-        actor.system.characteristics[
-          skill.system[`characteristic${i}`].value
-        ].initial = Number(attrs[i - 1]) || 12;
+        actor.system.characteristics[skill.system[`characteristic${i}`].value].initial = Number(attrs[i - 1]) || 12;
       }
       actor.prepareData();
     }
@@ -134,10 +116,7 @@ export default class DSA5ChatListeners {
   }
 
   static async showTables() {
-    const msg = await renderTemplate(
-      'systems/dsa5/templates/tables/systemtables.html',
-      { tables: DSA5.systemTables },
-    );
+    const msg = await renderTemplate('systems/dsa5/templates/tables/systemtables.html', { tables: DSA5.systemTables });
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 }

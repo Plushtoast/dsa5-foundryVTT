@@ -7,11 +7,7 @@ import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogActorConfig from '../dialog/dialog-actorConfig.js';
 import Actordsa5 from './actor-dsa5.js';
-import {
-  itemFromDrop,
-  tabSlider,
-  tinyNotification,
-} from '../system/view_helper.js';
+import { itemFromDrop, tabSlider, tinyNotification } from '../system/view_helper.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import RuleChaos from '../system/rule_chaos.js';
 import OnUseEffect from '../system/onUseEffects.js';
@@ -61,9 +57,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
   static get defaultOptions() {
     const options = super.defaultOptions;
-    options.tabs = [
-      { navSelector: '.tabs', contentSelector: '.content', initial: 'skills' },
-    ];
+    options.tabs = [{ navSelector: '.tabs', contentSelector: '.content', initial: 'skills' }];
     mergeObject(options, {
       width: 770,
       height: 740,
@@ -128,14 +122,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       let boxes = html.find('.ch-collapse i');
       for (let i = 0; i < boxes.length; i++) {
         $(boxes[i]).attr('class', this.collapsedBoxes[i]);
-        if (
-          this.collapsedBoxes[i] &&
-          this.collapsedBoxes[i].indexOf('fa-angle-down') != -1
-        )
-          $(boxes[i])
-            .closest('.groupbox')
-            .find('.row-section:nth-child(2)')
-            .hide();
+        if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf('fa-angle-down') != -1) $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide();
       }
     }
   }
@@ -166,22 +153,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
       return acc;
     }, {});
     DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
-    sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(
-      getProperty(this.actor.system, 'details.notes.ownerdescription'),
-      { secrets: this.object.isOwner, async: true },
-    );
-    sheetData.enrichedGmdescription = await TextEditor.enrichHTML(
-      getProperty(this.actor.system, 'details.notes.gmdescription'),
-      { secrets: this.object.isOwner, async: true },
-    );
-    sheetData.enrichedNotes = await TextEditor.enrichHTML(
-      getProperty(this.actor.system, 'details.notes.value'),
-      { secrets: this.object.isOwner, async: true },
-    );
-    sheetData.enrichedBiography = await TextEditor.enrichHTML(
-      getProperty(this.actor.system, 'details.biography.value'),
-      { secrets: this.object.isOwner, async: true },
-    );
+    sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.ownerdescription'), {
+      secrets: this.object.isOwner,
+      async: true,
+    });
+    sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.gmdescription'), { secrets: this.object.isOwner, async: true });
+    sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.value'), { secrets: this.object.isOwner, async: true });
+    sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.biography.value'), { secrets: this.object.isOwner, async: true });
 
     return sheetData;
   }
@@ -194,16 +172,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     if (DSA5.equipmentTypes[data.type]) {
       data.type = 'equipment';
       data = mergeObject(data, {
-        'system.equipmentType.value':
-          event.currentTarget.attributes['item-section'].value,
+        'system.equipmentType.value': event.currentTarget.attributes['item-section'].value,
         'system.effect.value': '',
       });
     }
-    if (
-      !['aggregatedTest', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(
-        data.type,
-      )
-    ) {
+    if (!['aggregatedTest', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(data.type)) {
       data['system.weight.value'] = 0;
       data['system.quantity.value'] = 0;
     }
@@ -216,16 +189,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
   _handleAggregatedProbe(ev) {
     const itemId = this._getItemId(ev);
     let aggregated = this.actor.items.get(itemId).toObject();
-    const attr =
-      aggregated.system.talent[`value${ev.currentTarget.dataset.which}`];
-    let skill = this.actor.items.find(
-      (i) => i.name == attr && i.type == 'skill',
-    );
+    const attr = aggregated.system.talent[`value${ev.currentTarget.dataset.which}`];
+    let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
     let infoMsg = `<h3 class="center"><b>${game.i18n.localize('TYPES.Item.aggregatedTest')}</b></h3>`;
-    if (
-      aggregated.system.usedTestCount.value >=
-      aggregated.system.allowedTestCount.value
-    ) {
+    if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
       infoMsg += `${game.i18n.localize('Aggregated.noMoreAllowed')}`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
     } else {
@@ -251,26 +218,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
         .then((setupData) => {
           this.actor.basicTest(setupData).then((res) => {
             if (res.result.successLevel > 0) {
-              aggregated.system.cummulatedQS.value =
-                res.result.qualityStep + aggregated.system.cummulatedQS.value;
-              aggregated.system.cummulatedQS.value = Math.min(
-                10,
-                aggregated.system.cummulatedQS.value,
-              );
+              aggregated.system.cummulatedQS.value = res.result.qualityStep + aggregated.system.cummulatedQS.value;
+              aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value);
             } else {
               aggregated.system.previousFailedTests.value += 1;
             }
             aggregated.system.usedTestCount.value += 1;
-            this.actor
-              .updateEmbeddedDocuments('Item', [aggregated])
-              .then(() => {
-                const updated = this.actor.items.get(itemId);
-                updated.postItem();
+            this.actor.updateEmbeddedDocuments('Item', [aggregated]).then(() => {
+              const updated = this.actor.items.get(itemId);
+              updated.postItem();
 
-                if (aggregated.system.cummulatedQS.value >= 10) {
-                  updated.sheet.postFinishedItem();
-                }
-              });
+              if (aggregated.system.cummulatedQS.value >= 10) {
+                updated.sheet.postFinishedItem();
+              }
+            });
           });
         });
     }
@@ -290,40 +251,28 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
   async _advanceAttribute(attr) {
     const previous = Number(this.actor.system.characteristics[attr].advances);
-    const advances =
-      previous + Number(this.actor.system.characteristics[attr].initial);
-    const category =
-      this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'E';
+    const advances = previous + Number(this.actor.system.characteristics[attr].initial);
+    const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'E';
     const cost = DSA5_Utility._calculateAdvCost(advances, category);
     if (await this._checkEnoughXP(cost)) {
       await this._updateAPs(cost, {
         [`system.characteristics.${attr}.advances`]: previous + 1,
       });
-      await APTracker.track(
-        this.actor,
-        { type: 'attribute', attr, previous: advances, next: advances + 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'attribute', attr, previous: advances, next: advances + 1 }, cost);
       return true;
     }
   }
 
   async _refundAttributeAdvance(attr) {
     const previous = Number(this.actor.system.characteristics[attr].advances);
-    const advances =
-      previous + Number(this.actor.system.characteristics[attr].initial);
+    const advances = previous + Number(this.actor.system.characteristics[attr].initial);
     if (previous > 0) {
-      const category =
-        this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'E';
+      const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'E';
       const cost = DSA5_Utility._calculateAdvCost(advances, category, 0) * -1;
       await this._updateAPs(cost, {
         [`system.characteristics.${attr}.advances`]: previous - 1,
       });
-      await APTracker.track(
-        this.actor,
-        { type: 'attribute', attr, previous: advances, next: advances - 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'attribute', attr, previous: advances, next: advances - 1 }, cost);
       return true;
     }
   }
@@ -335,11 +284,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         await this._updateAPs(2, {
           [`system.status.${attr}.rebuy`]: previous + 1,
         });
-        await APTracker.track(
-          this.actor,
-          { type: 'permanentLoss', attr, previous, next: previous + 1 },
-          2,
-        );
+        await APTracker.track(this.actor, { type: 'permanentLoss', attr, previous, next: previous + 1 }, 2);
         return true;
       }
     }
@@ -351,32 +296,20 @@ export default class ActorSheetDsa5 extends ActorSheet {
       await this._updateAPs(-2, {
         [`system.status.${attr}.rebuy`]: previous - 1,
       });
-      await APTracker.track(
-        this.actor,
-        { type: 'permanentLoss', attr, previous, next: previous - 1 },
-        -2,
-      );
+      await APTracker.track(this.actor, { type: 'permanentLoss', attr, previous, next: previous - 1 }, -2);
       return true;
     }
   }
 
   async _advancePoints(attr) {
     const previous = Number(this.actor.system.status[attr].advances);
-    const category =
-      this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'D';
+    const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'D';
     const cost = DSA5_Utility._calculateAdvCost(previous, category);
-    if (
-      (await this._checkEnoughXP(cost)) &&
-      this._checkMaximumPointAdvancement(attr, previous + 1)
-    ) {
+    if ((await this._checkEnoughXP(cost)) && this._checkMaximumPointAdvancement(attr, previous + 1)) {
       await this._updateAPs(cost, {
         [`system.status.${attr}.advances`]: previous + 1,
       });
-      await APTracker.track(
-        this.actor,
-        { type: 'point', attr, previous, next: previous + 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'point', attr, previous, next: previous + 1 }, cost);
       return true;
     }
   }
@@ -384,17 +317,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
   async _refundPointsAdvance(attr) {
     const previous = Number(this.actor.system.status[attr].advances);
     if (previous > 0) {
-      const category =
-        this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'D';
+      const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : 'D';
       const cost = DSA5_Utility._calculateAdvCost(previous, category, 0) * -1;
       await this._updateAPs(cost, {
         [`system.status.${attr}.advances`]: previous - 1,
       });
-      await APTracker.track(
-        this.actor,
-        { type: 'point', attr, previous, next: previous - 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'point', attr, previous, next: previous - 1 }, cost);
       return true;
     }
   }
@@ -402,24 +330,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
   async _advanceItem(itemId) {
     const item = this.actor.items.get(itemId);
     const value = Number(item.system.talentValue.value);
-    const category =
-      this.actor.system.isPet || this.actor.system.isFamiliar
-        ? 'C'
-        : item.system.StF.value;
+    const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : item.system.StF.value;
     const cost = DSA5_Utility._calculateAdvCost(value, category);
-    if (
-      (await this._checkEnoughXP(cost)) &&
-      this.actor._checkMaximumItemAdvancement(item, value + 1)?.result
-    ) {
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.talentValue.value': value + 1 },
-      ]);
+    if ((await this._checkEnoughXP(cost)) && this.actor._checkMaximumItemAdvancement(item, value + 1)?.result) {
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': value + 1 }]);
       await this._updateAPs(cost);
-      await APTracker.track(
-        this.actor,
-        { type: 'item', item, previous: value, next: value + 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'item', item, previous: value, next: value + 1 }, cost);
       return true;
     }
   }
@@ -429,20 +345,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
     const minValue = item.type == 'combatskill' ? 6 : 0;
     const value = Number(item.system.talentValue.value);
     if (value > minValue) {
-      const category =
-        this.actor.system.isPet || this.actor.system.isFamiliar
-          ? 'C'
-          : item.system.StF.value;
+      const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : item.system.StF.value;
       const cost = DSA5_Utility._calculateAdvCost(value, category, 0) * -1;
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.talentValue.value': value - 1 },
-      ]);
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': value - 1 }]);
       await this._updateAPs(cost);
-      await APTracker.track(
-        this.actor,
-        { type: 'item', item, previous: value, next: value - 1 },
-        cost,
-      );
+      await APTracker.track(this.actor, { type: 'item', item, previous: value, next: value - 1 }, cost);
       return true;
     }
   }
@@ -456,24 +363,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
       case 'astralenergy':
         result =
           newValue <=
-          (this.actor.system.characteristics[
-            this.actor.system.guidevalue.magical
-          ] == undefined
+          (this.actor.system.characteristics[this.actor.system.guidevalue.magical] == undefined
             ? 0
-            : this.actor.system.characteristics[
-                this.actor.system.guidevalue.magical
-              ].value * this.actor.system.energyfactor.magical);
+            : this.actor.system.characteristics[this.actor.system.guidevalue.magical].value * this.actor.system.energyfactor.magical);
         break;
       case 'karmaenergy':
         result =
           newValue <=
-          (this.actor.system.characteristics[
-            this.actor.system.guidevalue.clerical
-          ] == undefined
+          (this.actor.system.characteristics[this.actor.system.guidevalue.clerical] == undefined
             ? 0
-            : this.actor.system.characteristics[
-                this.actor.system.guidevalue.clerical
-              ].value * this.actor.system.energyfactor.clerical);
+            : this.actor.system.characteristics[this.actor.system.guidevalue.clerical].value * this.actor.system.energyfactor.clerical);
         break;
     }
     if (!result)
@@ -577,9 +476,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       })
       .then(async (setupData) => {
         const result = await item.itemTest(setupData);
-        await this.actor.updateEmbeddedDocuments('Item', [
-          { _id: item.id, 'system.duration.resolved': result.result.duration },
-        ]);
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
       });
   }
 
@@ -587,14 +484,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     const itemId = item?.id || this._getItemId(ev);
     item = item || this.actor.items.get(itemId);
 
-    if (
-      !['Daggers', 'Fencing Weapons'].includes(
-        game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`),
-      )
-    ) {
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.worn.wrongGrip': !item.system.worn.wrongGrip },
-      ]);
+    if (!['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))) {
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.wrongGrip': !item.system.worn.wrongGrip }]);
     }
   }
 
@@ -605,25 +496,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
       this.actor.items.get(this._getItemId(ev)).postItem();
     };
 
-    html
-      .find('.roll-disease')
-      .click((ev) => this.rollDisease(this._getItemId(ev)));
+    html.find('.roll-disease').click((ev) => this.rollDisease(this._getItemId(ev)));
 
     tabSlider(html);
 
     html.find('.condition-edit').click(async (ev) => {
-      const effect = ev.currentTarget.dataset.uuid
-        ? await fromUuid(ev.currentTarget.dataset.uuid)
-        : this.actor.effects.get(ev.currentTarget.dataset.id);
+      const effect = ev.currentTarget.dataset.uuid ? await fromUuid(ev.currentTarget.dataset.uuid) : this.actor.effects.get(ev.currentTarget.dataset.id);
       effect.sheet.render(true);
     });
 
     html.find('.ch-collapse').click((ev) => {
       $(ev.currentTarget).find('i').toggleClass('fa-angle-up fa-angle-down');
-      $(ev.currentTarget)
-        .closest('.groupbox')
-        .find('.row-section:nth-child(2)')
-        .fadeToggle();
+      $(ev.currentTarget).closest('.groupbox').find('.row-section:nth-child(2)').fadeToggle();
     });
 
     html.find('.status-create').click((ev) => {
@@ -632,24 +516,18 @@ export default class ActorSheetDsa5 extends ActorSheet {
         menu.find('input').trigger('focus');
       });
     });
-    html
-      .find('.statusEffectMenu ul')
-      .mouseleave((ev) => $(ev.currentTarget).fadeOut());
+    html.find('.statusEffectMenu ul').mouseleave((ev) => $(ev.currentTarget).fadeOut());
 
-    html
-      .find('.roll-aggregated')
-      .mousedown((ev) => this._handleAggregatedProbe(ev));
+    html.find('.roll-aggregated').mousedown((ev) => this._handleAggregatedProbe(ev));
 
     html.find('.skill-select').mousedown((ev) => {
       const itemId = this._getItemId(ev);
       let skill = this.actor.items.get(itemId);
 
       if (ev.button == 0)
-        this.actor
-          .setupSkill(skill, {}, this.getTokenId())
-          .then((setupData) => {
-            this.actor.basicTest(setupData);
-          });
+        this.actor.setupSkill(skill, {}, this.getTokenId()).then((setupData) => {
+          this.actor.basicTest(setupData);
+        });
       else if (ev.button == 2) skill.sheet.render(true);
     });
 
@@ -657,10 +535,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       const itemId = this._getItemId(ev);
       let skill = this.actor.items.get(itemId);
 
-      if (ev.button == 0)
-        this.actor
-          .setupSpell(skill, {}, this.getTokenId())
-          .then((setupData) => this.actor.basicTest(setupData));
+      if (ev.button == 0) this.actor.setupSpell(skill, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
       else if (ev.button == 2) skill.sheet.render(true);
     });
 
@@ -668,22 +543,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     html.find('.item-dropdown').click((ev) => {
       ev.preventDefault();
-      $(ev.currentTarget)
-        .closest('.item')
-        .find('.expandDetails:first')
-        .toggleClass('shown');
+      $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown');
     });
 
     html.find('.condition-show').mousedown((ev) => {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
-      const descriptor = $(ev.currentTarget)
-        .parents('.statusEffect')
-        .attr('data-descriptor');
+      const descriptor = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
       if (ev.button == 0) {
-        const origin = $(ev.currentTarget)
-          .parents('.statusEffect')
-          .attr('data-origin');
+        const origin = $(ev.currentTarget).parents('.statusEffect').attr('data-origin');
         if (origin) {
           fromUuid(origin).then((document) => document.sheet.render(true));
         } else {
@@ -703,9 +571,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
               );
             }
           }
-          const elem = $(ev.currentTarget)
-            .closest('.groupbox')
-            .find('.effectDescription');
+          const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription');
           elem.fadeOut('fast', function () {
             elem.html(text).fadeIn('fast');
           });
@@ -714,13 +580,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         this._deleteActiveEffect(id);
       }
     });
-    html.on('click', '.chat-condition', (ev) =>
-      DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id),
-    );
+    html.on('click', '.chat-condition', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
     html.find('.money-change, .skill-advances').focusin((ev) => {
-      this.currentFocus = $(ev.currentTarget)
-        .closest('[data-item-id]')
-        .attr('data-item-id');
+      this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
 
     html.find('.item-edit').click((ev) => {
@@ -744,9 +606,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     html.find('.ch-value').click((event) => {
       event.preventDefault();
       let characteristic = event.currentTarget.attributes['data-char'].value;
-      this.actor
-        .setupCharacteristic(characteristic, {}, this.getTokenId())
-        .then((setupData) => this.actor.basicTest(setupData));
+      this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
     html.find('.ch-status').click((event) => {
       event.preventDefault();
@@ -756,16 +616,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
     });
     html.find('.ch-regenerate').click((event) => {
       event.preventDefault();
-      this.actor
-        .setupRegeneration('regenerate', {}, this.getTokenId())
-        .then((setupData) => this.actor.basicTest(setupData));
+      this.actor.setupRegeneration('regenerate', {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
     html.find('.ch-weaponless').click((event) => {
       event.preventDefault();
       let characteristic = event.currentTarget.attributes['data-char'].value;
-      this.actor
-        .setupWeaponless(characteristic, {}, this.getTokenId())
-        .then((setupData) => this.actor.basicTest(setupData));
+      this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
     html.find('.ch-fallingDamage').click((ev) => {
       ev.preventDefault();
@@ -775,13 +631,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
       event.preventDefault();
       const dataset = this._getItemDataset(event);
       const mode = event.currentTarget.dataset.mode;
-      const item = Actordsa5.buildSubweapon(
-        this.actor.items.get(dataset.itemId),
-        dataset.subweapon,
-      );
-      this.actor
-        .setupWeapon(item, mode, {}, this.getTokenId())
-        .then((setupData) => this.actor.basicTest(setupData));
+      const item = Actordsa5.buildSubweapon(this.actor.items.get(dataset.itemId), dataset.subweapon);
+      this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
 
     const deletehand = (ev) => this._deleteItem(ev);
@@ -807,9 +658,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       let e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
-      ev.currentTarget
-        .querySelectorAll('.hovermenu')
-        .forEach((e) => e.remove());
+      ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
     });
 
     const uuid = this.actor.uuid;
@@ -825,10 +674,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     });
 
     html.find('.filterTalents').click((ev) => {
-      $(ev.currentTarget)
-        .closest('.content')
-        .find('.allTalents')
-        .toggleClass('showAll');
+      $(ev.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll');
       $(ev.currentTarget).toggleClass('filtered');
     });
 
@@ -841,20 +687,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
     let filterTalents = (ev) => this._filterTalents($(ev.currentTarget));
     let talSearch = html.find('.talentSearch');
     talSearch.keyup((event) => this._filterTalents($(event.currentTarget)));
-    talSearch[0] &&
-      talSearch[0].addEventListener('search', filterTalents, false);
+    talSearch[0] && talSearch[0].addEventListener('search', filterTalents, false);
 
     let filterConditions = (ev) => this._filterConditions($(ev.currentTarget));
     let condSearch = html.find('.conditionSearch');
     condSearch.keyup((event) => this._filterConditions($(event.currentTarget)));
-    condSearch[0] &&
-      condSearch[0].addEventListener('search', filterConditions, false);
+    condSearch[0] && condSearch[0].addEventListener('search', filterConditions, false);
 
     let filterGear = (ev) => this._filterGear($(ev.currentTarget));
     let gearSearch = html.find('.gearSearch');
     gearSearch.keyup((event) => this._filterGear($(event.currentTarget)));
-    gearSearch[0] &&
-      gearSearch[0].addEventListener('search', filterGear, false);
+    gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
 
     bindImgToCanvasDragStart(html, 'img.charimg');
 
@@ -871,11 +714,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       onOpen: this._onWeaponItemContext.bind(this),
     });
 
-    html
-      .find('.startCharacterBuilder')
-      .click(() =>
-        this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'),
-      );
+    html.find('.startCharacterBuilder').click(() => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
 
     html.find('.schipUpdate').click((ev) => {
       ev.preventDefault();
@@ -901,14 +740,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
       const update = { _id: itemId };
       if (ev.button == 0) {
-        const lz =
-          item.type == 'trait'
-            ? item.system.reloadTime.value
-            : Actordsa5.calcLZ(item, this.actor);
-        update['system.reloadTime.progress'] = Math.min(
-          item.system.reloadTime.progress + 1,
-          lz,
-        );
+        const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
+        update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
       } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
 
       await this.actor.updateEmbeddedDocuments('Item', [update]);
@@ -918,11 +751,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       const itemId = this._getItemId(ev);
       const item = this.actor.items.get(itemId).toObject();
       const lz = Number(item.system.castingTime.modified);
-      if (ev.button == 0)
-        item.system.castingTime.progress = Math.min(
-          item.system.castingTime.progress + 1,
-          lz,
-        );
+      if (ev.button == 0) item.system.castingTime.progress = Math.min(item.system.castingTime.progress + 1, lz);
       else if (ev.button == 2) {
         item.system.castingTime.progress = 0;
         item.system.castingTime.modified = 0;
@@ -937,9 +766,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     html.find('.ammo-selector').change(async (ev) => {
       ev.preventDefault();
       const itemId = this._getItemId(ev);
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() },
-      ]);
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() }]);
     });
 
     html.find('.item-toggle').click((ev) => {
@@ -951,9 +778,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         case 'rangeweapon':
         case 'meleeweapon':
         case 'equipment':
-          this.actor.updateEmbeddedDocuments('Item', [
-            { _id: itemId, 'system.worn.value': !item.system.worn.value },
-          ]);
+          this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
           DSA5SoundEffect.playEquipmentWearStatusChange(item);
           break;
       }
@@ -974,115 +799,49 @@ export default class ActorSheetDsa5 extends ActorSheet {
         if (ev.button == 0) {
           await this.actor.addCondition(status, 1, false, false);
         } else if (ev.button == 2) {
-          AddEffectDialog.modifyEffectDialog(status, async (id, options) =>
-            this.actor.addTimedCondition(id, 1, false, false, options),
-          );
+          AddEffectDialog.modifyEffectDialog(status, async (id, options) => this.actor.addTimedCondition(id, 1, false, false, options));
         }
       }
     });
 
     html.find('.money-change').change(async (ev) => {
       const itemId = this._getItemId(ev);
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.quantity.value': Number(ev.target.value) },
-      ]);
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': Number(ev.target.value) }]);
     });
     html.find('.skill-advances').change(async (ev) => {
       const itemId = this._getItemId(ev);
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: itemId, 'system.talentValue.value': Number(ev.target.value) },
-      ]);
+      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
     });
 
-    html
-      .find('.advance-attribute')
-      .mousedown((ev) =>
-        this.advanceWrapper(
-          ev,
-          '_advanceAttribute',
-          ev.currentTarget.dataset.attr,
-        ),
-      );
-    html
-      .find('.refund-attribute')
-      .mousedown((ev) =>
-        this.advanceWrapper(
-          ev,
-          '_refundAttributeAdvance',
-          ev.currentTarget.dataset.attr,
-        ),
-      );
-    html
-      .find('.advance-item')
-      .mousedown((ev) =>
-        this.advanceWrapper(ev, '_advanceItem', this._getItemId(ev)),
-      );
-    html
-      .find('.refund-item')
-      .mousedown((ev) =>
-        this.advanceWrapper(ev, '_refundItemAdvance', this._getItemId(ev)),
-      );
-    html
-      .find('.advance-points')
-      .mousedown((ev) =>
-        this.advanceWrapper(
-          ev,
-          '_advancePoints',
-          ev.currentTarget.dataset.attr,
-        ),
-      );
-    html
-      .find('.refund-points')
-      .mousedown((ev) =>
-        this.advanceWrapper(
-          ev,
-          '_refundPointsAdvance',
-          ev.currentTarget.dataset.attr,
-        ),
-      );
-    html
-      .find('.rebuy-pc')
-      .mousedown((ev) =>
-        this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr),
-      );
-    html
-      .find('.refund-pc')
-      .mousedown((ev) =>
-        this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr),
-      );
+    html.find('.advance-attribute').mousedown((ev) => this.advanceWrapper(ev, '_advanceAttribute', ev.currentTarget.dataset.attr));
+    html.find('.refund-attribute').mousedown((ev) => this.advanceWrapper(ev, '_refundAttributeAdvance', ev.currentTarget.dataset.attr));
+    html.find('.advance-item').mousedown((ev) => this.advanceWrapper(ev, '_advanceItem', this._getItemId(ev)));
+    html.find('.refund-item').mousedown((ev) => this.advanceWrapper(ev, '_refundItemAdvance', this._getItemId(ev)));
+    html.find('.advance-points').mousedown((ev) => this.advanceWrapper(ev, '_advancePoints', ev.currentTarget.dataset.attr));
+    html.find('.refund-points').mousedown((ev) => this.advanceWrapper(ev, '_refundPointsAdvance', ev.currentTarget.dataset.attr));
+    html.find('.rebuy-pc').mousedown((ev) => this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr));
+    html.find('.refund-pc').mousedown((ev) => this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr));
 
     html.find('.onUseItem').mousedown((ev) => this._onMacroUseItem(ev));
-    html
-      .find('.traditionPayCost')
-      .mousedown((ev) => this._payAeSpecialAbilityCost(ev));
+    html.find('.traditionPayCost').mousedown((ev) => this._payAeSpecialAbilityCost(ev));
 
     html.find('.item-create').click((ev) => this._onItemCreate(ev));
 
     html.find('.condition-toggle').mousedown(async (ev) => {
-      let condKey = $(ev.currentTarget)
-        .parents('.statusEffect')
-        .attr('data-id');
+      let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
       let ef = this.actor.effects.get(condKey);
       await ef.update({ disabled: !ef.disabled });
     });
 
     html.find('.condition-value').mousedown(async (ev) => {
-      let condKey = $(ev.currentTarget)
-        .parents('.statusEffect')
-        .attr('data-descriptor');
-      if (ev.button == 0)
-        await this.actor.addCondition(condKey, 1, false, false);
-      else if (ev.button == 2)
-        await this.actor.removeCondition(condKey, 1, false);
+      let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
+      if (ev.button == 0) await this.actor.addCondition(condKey, 1, false, false);
+      else if (ev.button == 2) await this.actor.removeCondition(condKey, 1, false);
     });
 
     html.find('.item-delete').click((ev) => this._deleteItem(ev));
-    html
-      .find('.tradition-delete')
-      .click((ev) => this._deleteTraditionArtifact(ev));
-    html
-      .find('.selectTraditionartifact')
-      .click(() => this.selectTraditionartifact());
+    html.find('.tradition-delete').click((ev) => this._deleteTraditionArtifact(ev));
+    html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact());
 
     html.find('.disableRegeneration').click((ev) => {
       const type = ev.currentTarget.dataset.type;
@@ -1092,9 +851,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
   }
 
   _onItemContext(ev) {
-    const item = this.actor.items.get(
-      $(ev).closest('.item').attr('data-item-id'),
-    );
+    const item = this.actor.items.get($(ev).closest('.item').attr('data-item-id'));
 
     if (!item) return;
     ui.context.menuItems = this._getItemContextOptions(item);
@@ -1113,9 +870,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     const options = [];
 
     if (item.type == 'meleeweapon') {
-      const localizedCT = game.i18n.localize(
-        `LocalizedCTs.${item.system.combatskill.value}`,
-      );
+      const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
       if (!['Daggers', 'Fencing Weapons'].includes(localizedCT)) {
         const weaponYield = item.sheet.getGripInfo(this.item).wrongGripLabel;
 
@@ -1126,17 +881,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
       }
       const hasWeaponThrow =
-        [
-          'Daggers',
-          'Fencing Weapons',
-          'Impact Weapons',
-          'Swords',
-          'Polearms',
-        ].includes(localizedCT) &&
-        SpecialabilityRulesDSA5.hasAbility(
-          this.actor,
-          game.i18n.localize('LocalizedIDs.weaponThrow'),
-        );
+        ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) &&
+        SpecialabilityRulesDSA5.hasAbility(this.actor, game.i18n.localize('LocalizedIDs.weaponThrow'));
       const throwLabel = `${game.i18n.localize('TYPES.Item.rangeweapon')} ${game.i18n.localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${game.i18n.localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
       options.push(
         {
@@ -1147,19 +893,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
         {
           name: 'SHEET.EquipItem',
           icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-          callback: () =>
-            item.update({ 'system.worn.value': !item.system.worn.value }),
+          callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
         },
       );
     } else if (item.type == 'rangeweapon') {
       options.push({
         name: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () =>
-          item.update({ 'system.worn.value': !item.system.worn.value }),
+        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
       });
-    } else {
     }
+
     options.push({
       name: 'SHEET.PostItem',
       icon: "<i class='fas fa-comment fa-fw'></i>",
@@ -1217,15 +961,11 @@ export default class ActorSheetDsa5 extends ActorSheet {
       },
     ];
 
-    if (
-      hasProperty(item, 'system.worn.wearable') ||
-      ['meleeweapon', 'rangeweapon', 'armor'].includes(item.type)
-    ) {
+    if (hasProperty(item, 'system.worn.wearable') || ['meleeweapon', 'rangeweapon', 'armor'].includes(item.type)) {
       options.push({
         name: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () =>
-          item.update({ 'system.worn.value': !item.system.worn.value }),
+        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
       });
     }
     if (Number(getProperty(item, 'system.quantity.value')) > 1) {
@@ -1274,11 +1014,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       for (let k of keepFields) {
         const attr = k.dataset.attr;
         const name = k.dataset.name;
-        $(k)
-          .find('.editor')
-          .append(
-            `<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`,
-          );
+        $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
         $(k)
           .find('.editor-edit')
           .click((ev) => this._openKeepFieldEditpage(ev));
@@ -1326,14 +1062,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       gear.removeClass('filterHide');
       gear
         .filter(function () {
-          return (
-            $(this)
-              .find('a.item-edit')
-              .text()
-              .toLowerCase()
-              .trim()
-              .indexOf(val) == -1
-          );
+          return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
@@ -1357,27 +1086,16 @@ export default class ActorSheetDsa5 extends ActorSheet {
     if (tar.val() != undefined) {
       let val = tar.val().toLowerCase().trim();
       let talents = $(this.form).parent().find('.allTalents');
-      talents
-        .find('.item, .table-header, .table-title')
-        .removeClass('filterHide');
+      talents.find('.item, .table-header, .table-title').removeClass('filterHide');
       talents
         .addClass('showAll')
         .find('.item')
         .filter(function () {
-          return (
-            $(this)
-              .find('.talentName')
-              .text()
-              .toLowerCase()
-              .trim()
-              .indexOf(val) == -1
-          );
+          return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
       if (val.length > 0) {
-        talents
-          .find('.table-header, .table-title:not(:eq(0))')
-          .addClass('filterHide');
+        talents.find('.table-header, .table-title:not(:eq(0))').addClass('filterHide');
         talents.addClass('filterfull');
       } else talents.removeClass('filterfull');
     }
@@ -1390,13 +1108,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       conditions.removeClass('filterHide');
       conditions
         .filter(function () {
-          return (
-            game.i18n
-              .localize($(this).find('a').attr('data-tooltip'))
-              .toLowerCase()
-              .trim()
-              .indexOf(val) == -1
-          );
+          return game.i18n.localize($(this).find('a').attr('data-tooltip')).toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
@@ -1414,10 +1126,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     const message = game.i18n.format('DIALOG.DeleteItemDetail', {
       item: item.name,
     });
-    const content = await renderTemplate(
-      'systems/dsa5/templates/dialog/delete-item-dialog.html',
-      { message },
-    );
+    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title: 'DIALOG.deleteConfirmation',
@@ -1453,11 +1162,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       case 'blessing':
       case 'magictrick':
         await this._updateAPs(-1, {}, { render: false });
-        await APTracker.track(
-          this.actor,
-          { type: 'item', item, state: -1 },
-          -1,
-        );
+        await APTracker.track(this.actor, { type: 'item', item, state: -1 }, -1);
         break;
       case 'ritual':
       case 'ceremony':
@@ -1466,18 +1171,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
         {
           let xpCost = 0;
           for (let i = 0; i <= item.system.talentValue.value; i++) {
-            xpCost += DSA5_Utility._calculateAdvCost(
-              i,
-              item.system.StF.value,
-              0,
-            );
+            xpCost += DSA5_Utility._calculateAdvCost(i, item.system.StF.value, 0);
           }
-          const extensions = this.actor.items.filter(
-            (i) =>
-              i.type == 'spellextension' &&
-              item.type == i.system.category &&
-              item.name == i.system.source,
-          );
+          const extensions = this.actor.items.filter((i) => i.type == 'spellextension' && item.type == i.system.category && item.name == i.system.source);
           if (extensions) {
             xpCost += extensions.reduce((a, b) => {
               return a + (Number(b.system.APValue.value) || 0);
@@ -1485,11 +1181,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
             itemsToDelete.push(...extensions.map((x) => x.id));
           }
           await this._updateAPs(xpCost * -1, {}, { render: false });
-          await APTracker.track(
-            this.actor,
-            { type: 'item', item, state: -1 },
-            xpCost,
-          );
+          await APTracker.track(this.actor, { type: 'item', item, state: -1 }, xpCost);
         }
         break;
     }
@@ -1551,14 +1243,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
   }
 
   async _handleSpellExtension(item) {
-    let res = this.actor.items.find(
-      (i) => i.type == item.type && i.name == item.name,
-    );
+    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) {
       item = duplicate(item);
-      let spell = this.actor.items.find(
-        (i) => i.type == item.system.category && i.name == item.system.source,
-      );
+      let spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
       if (!spell) {
         ui.notifications.error(
           game.i18n.format('DSAError.noSpellForExtension', {
@@ -1577,23 +1265,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
         let apCost = item.system.APValue.value;
         if (await this.actor.checkEnoughXP(apCost)) {
           await this._updateAPs(apCost, {}, { render: false });
-          const createdItem = (
-            await this.actor.createEmbeddedDocuments('Item', [item])
-          )[0];
-          await APTracker.track(
-            this.actor,
-            { type: 'item', item: createdItem, state: 1 },
-            apCost,
-          );
+          const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
+          await APTracker.track(this.actor, { type: 'item', item: createdItem, state: 1 }, apCost);
         }
       }
     }
   }
 
   async _addSpellOrLiturgy(item) {
-    let res = this.actor.items.find(
-      (i) => i.type == item.type && i.name == item.name,
-    );
+    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     let apCost;
     item = duplicate(item);
     if (!res) {
@@ -1616,14 +1296,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
       }
       if (await this.actor.checkEnoughXP(apCost)) {
         await this._updateAPs(apCost, {}, { render: false });
-        const createdItem = (
-          await this.actor.createEmbeddedDocuments('Item', [item])
-        )[0];
-        await APTracker.track(
-          this.actor,
-          { type: 'item', item: createdItem, state: 1 },
-          apCost,
-        );
+        const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
+        await APTracker.track(this.actor, { type: 'item', item: createdItem, state: 1 }, apCost);
       }
     }
   }
@@ -1632,8 +1306,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     item = duplicate(item);
     let res = this.actor.items.find((i) => Itemdsa5.areEquals(item, i));
     if (!res) {
-      if (this._tabs[0].active == 'combat' && item.system.worn)
-        item.system.worn.value = true;
+      if (this._tabs[0].active == 'combat' && item.system.worn) item.system.worn.value = true;
 
       return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
     } else {
@@ -1643,8 +1316,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
   async _addUniqueItem(item) {
     item = duplicate(item);
-    if (!this.actor.items.some((i) => Itemdsa5.areEquals(item, i)))
-      return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
+    if (!this.actor.items.some((i) => Itemdsa5.areEquals(item, i))) return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
   }
 
   async _addDemonMarkOrPatron(item) {
@@ -1663,12 +1335,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
   async _addFullPack(item) {
     let docs = await game.packs.get(item.name).getDocuments();
-    let newAppls = docs.filter(
-      (x) =>
-        !this.actor.items.find((y) => y.type == x.type && y.name == x.name),
-    );
-    if (item.onlyType)
-      newAppls = newAppls.filter((x) => x.type == item.onlyType);
+    let newAppls = docs.filter((x) => !this.actor.items.find((y) => y.type == x.type && y.name == x.name));
+    if (item.onlyType) newAppls = newAppls.filter((x) => x.type == item.onlyType);
 
     await this.actor.createEmbeddedDocuments(
       'Item',
@@ -1680,10 +1348,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     if (game.dsa5.config.hooks.shapeshift) {
       new foundry.applications.api.DialogV2({
         window: {
-          title:
-            game.i18n.localize('DIALOG.ItemRequiresAdoption') +
-            ': ' +
-            item.name,
+          title: game.i18n.localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
         },
         content: `<p>${game.i18n.localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
         buttons: [
@@ -1794,13 +1459,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
     if (lookup) {
       for (let thing of item.items) {
         if (thing.count) {
-          let elem = lookup.find(
-            (x) => x.name == thing.name && x.type == thing.type,
-          );
+          let elem = lookup.find((x) => x.name == thing.name && x.type == thing.type);
           if (elem) {
             elem.system.quantity.value = thing.count;
-            if (thing.qs && thing.type == 'consumable')
-              elem.system.QL = thing.qs;
+            if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
           } else {
             ui.notifications.warn(
               game.i18n.format('DSAError.notFound', {
@@ -1828,17 +1490,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
   async _handleApplication(item) {
     item = duplicate(item);
-    let res = this.actor.items.find(
-      (i) => i.type == item.type && i.name == item.name,
-    );
+    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) await this.actor.createEmbeddedDocuments('Item', [item]);
   }
 
   async _handleRemoveSourceOnDrop(item) {
     let sourceActor = item.parent;
 
-    if (sourceActor && sourceActor.isOwner)
-      await sourceActor.deleteEmbeddedDocuments('Item', [item._id]);
+    if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments('Item', [item._id]);
   }
 
   async _onDropItemCreate(itemData) {
@@ -1851,11 +1510,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
   async _onDropActor(event, data) {
     if (!this.actor.isOwner) return false;
 
-    const { item, typeClass, selfTarget } = await itemFromDrop(
-      data,
-      this.id,
-      false,
-    );
+    const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false);
 
     if (selfTarget) return;
 
@@ -1891,11 +1546,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
           container_id = parentId;
         } else {
           parentItem = this.actor.items.get(parentId);
-          mergeItems =
-            parentItem &&
-            hasProperty(item, 'system.quantity.value') &&
-            hasProperty(parentItem, 'system.quantity.value') &&
-            Itemdsa5.areEquals(item, parentItem);
+          mergeItems = parentItem && hasProperty(item, 'system.quantity.value') && hasProperty(parentItem, 'system.quantity.value') && Itemdsa5.areEquals(item, parentItem);
         }
       }
     }
@@ -1907,21 +1558,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
       } else if (mergeItems) {
         await parentItem.update(
           {
-            'system.quantity.value':
-              parentItem.system.quantity.value + item.system.quantity.value,
+            'system.quantity.value': parentItem.system.quantity.value + item.system.quantity.value,
           },
           { render: false },
         );
         await this.actor.deleteEmbeddedDocuments('Item', [item.id]);
       } else if (container_id) {
         const upd = { _id: item.id, 'system.parent_id': container_id };
-        if (item.system.worn && item.system.worn.value)
-          upd['system.worn.value'] = false;
+        if (item.system.worn && item.system.worn.value) upd['system.worn.value'] = false;
         await this.actor.updateEmbeddedDocuments('Item', [upd]);
       } else if (DSA5.equipmentCategories.has(item.type)) {
-        await this.actor.updateEmbeddedDocuments('Item', [
-          { _id: item.id, system: { parent_id: 0 } },
-        ]);
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, system: { parent_id: 0 } }]);
       }
       //return this._onSortItem(event, itemData);
     } else {
@@ -1929,11 +1576,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       if (hasPrice) {
         const price = `${item.type == 'consumable' ? Itemdsa5.getSubClass(itemData.type).consumablePrice(itemData) : Number(itemData.system.price.value)}`;
 
-        if (
-          price &&
-          !(await DSA5Payment.payMoney(this.actor, price, true, false))
-        )
-          return;
+        if (price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return;
 
         tinyNotification(
           game.i18n.format('PAYMENT.pay', {
@@ -1946,8 +1589,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       await this._onDropItemCreate(itemData);
     }
 
-    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type))
-      await this._handleRemoveSourceOnDrop(item);
+    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) await this._handleRemoveSourceOnDrop(item);
   }
 
   _itemHasPrice(data) {
@@ -1976,9 +1618,7 @@ class TraditionArtifactpicker extends Application {
 
   async getData(optns) {
     const data = await super.getData(optns);
-    const items = this.actor.items.filter((x) =>
-      ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type),
-    );
+    const items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
     mergeObject(data, {
       items,
     });

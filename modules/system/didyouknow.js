@@ -6,21 +6,15 @@ export default class DidYouKnow {
     ev.preventDefault();
     if (this.fadeOut) {
       this.fadeOut = false;
-      $(ev.currentTarget)
-        .find('i')
-        .removeClass('fa-stop')
-        .addClass('fa-angle-right');
+      $(ev.currentTarget).find('i').removeClass('fa-stop').addClass('fa-angle-right');
       $('.didYouKnow').off('click');
-      $('.didYouKnow .closeDidYou').click(() => $('.didYouKnow').remove());
+      $('.didYouKnow .closeDidYou').on('click', () => $('.didYouKnow').remove());
     } else {
       fetch(`systems/dsa5/lazy/didyouknow/${game.i18n.lang}.json`)
         .then(async (r) => r.json())
         .then(async (json) => {
           const msg = json.data[Math.floor(Math.random() * json.data.length)];
-          const didYouKnow = await renderTemplate(
-            'systems/dsa5/templates/system/didyouknow.html',
-            { msg, fadeOut: DidYouKnow.fadeOut },
-          );
+          const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
           $('body').find('.didYouKnow').replaceWith(didYouKnow);
           DidYouKnow.activateListeners();
         });
@@ -28,8 +22,8 @@ export default class DidYouKnow {
   }
 
   static activateListeners() {
-    $('.didYouKnow .stopFade').click(async (ev) => await this.stopFade(ev));
-    $('.didYouKnow').click(() => $('.didYouKnow').remove());
+    $('.didYouKnow .stopFade').on('click', async (ev) => await this.stopFade(ev));
+    $('.didYouKnow').on('click', () => $('.didYouKnow').remove());
     $('.didYouKnow').fadeIn();
   }
 
@@ -40,15 +34,11 @@ export default class DidYouKnow {
       .then(async (r) => r.json())
       .then(async (json) => {
         const msg = json.data[Math.floor(Math.random() * json.data.length)];
-        const didYouKnow = await renderTemplate(
-          'systems/dsa5/templates/system/didyouknow.html',
-          { msg, fadeOut: DidYouKnow.fadeOut },
-        );
+        const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
         $('body').append(didYouKnow);
         this.activateListeners();
         setTimeout(function () {
-          if (DidYouKnow.fadeOut)
-            $('.didYouKnow').fadeOut(1000, () => $('.didYouKnow').remove());
+          if (DidYouKnow.fadeOut) $('.didYouKnow').fadeOut(1000, () => $('.didYouKnow').remove());
         }, timeout);
       });
   }

@@ -4,18 +4,9 @@ import DSA5_Utility from './utility-dsa5.js';
 export default class DSA5Payment {
   static async payMoney(actor, moneyString, silent = false, render = true) {
     const canPay = await DSA5Payment.canPay(actor, moneyString, silent);
-    if (canPay.success)
-      await DSA5Payment._updateMoney(
-        actor,
-        canPay.actorsMoney.money,
-        canPay.actorsMoney.sum - canPay.money,
-        render,
-      );
+    if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render);
 
-    if (!silent && canPay.msg != '')
-      ChatMessage.create(
-        DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'),
-      );
+    if (!silent && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
 
     return canPay.success;
   }
@@ -50,12 +41,7 @@ export default class DSA5Payment {
 
     if (money) {
       let actorsMoney = this._actorsMoney(actor);
-      await DSA5Payment._updateMoney(
-        actor,
-        actorsMoney.money,
-        actorsMoney.sum + money,
-        render,
-      );
+      await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render);
       let msg = `<p>${game.i18n.format('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
       if (!silent) {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
@@ -137,12 +123,9 @@ export default class DSA5Payment {
   }
 
   static async _moneyToCoins(money, currencies = undefined) {
-    const availableCurrencies = (
-      currencies ||
-      (await DSA5_Utility.allMoneyItems()).filter(
-        (x) => x.system.subcategory != 1,
-      )
-    ).sort((a, b) => b.system.price.value - a.system.price.value);
+    const availableCurrencies = (currencies || (await DSA5_Utility.allMoneyItems()).filter((x) => x.system.subcategory != 1)).sort(
+      (a, b) => b.system.price.value - a.system.price.value,
+    );
 
     const res = [];
     let remainingSum = money;
@@ -162,9 +145,7 @@ export default class DSA5Payment {
   }
 
   static _parseMoneyString(moneyString) {
-    const match = moneyString
-      .replace(',', '.')
-      .match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/);
+    const match = moneyString.replace(',', '.').match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/);
     if (match) {
       return Number(match[0]);
     } else {
@@ -173,18 +154,12 @@ export default class DSA5Payment {
   }
 
   static _actorsMoney(actor) {
-    const money = actor.items.filter(
-      (i) => i.type == 'money' && i.system.subcategory != 1,
-    );
+    const money = actor.items.filter((i) => i.type == 'money' && i.system.subcategory != 1);
 
     return {
       money: money,
       sum: money.reduce((total, current) => {
-        return (
-          total +
-          Number(current.system.quantity.value) *
-            Number(current.system.price.value)
-        );
+        return total + Number(current.system.quantity.value) * Number(current.system.price.value);
       }, 0.0),
     };
   }
@@ -201,11 +176,7 @@ export default class DSA5Payment {
     await actor.createEmbeddedDocuments('Item', standardMoney, {
       render: false,
     });
-    await DSA5Payment._updateMoney(
-      actor,
-      DSA5Payment._actorsMoney(actor).money,
-      money.sum,
-    );
+    await DSA5Payment._updateMoney(actor, DSA5Payment._actorsMoney(actor).money, money.sum);
   }
 
   static async _updateMoney(actor, money, newSum, render = true) {
@@ -229,10 +200,7 @@ export default class DSA5Payment {
     const res = [];
 
     for (const mon of coins) {
-      if (mon.amount > 0)
-        res.push(
-          `<span class="nobr">${mon.amount} <span data-tooltip="${mon.name}" style="background-image:url('${mon.img}')" class="chatmoney"></span></span>`,
-        );
+      if (mon.amount > 0) res.push(`<span class="nobr">${mon.amount} <span data-tooltip="${mon.name}" style="background-image:url('${mon.img}')" class="chatmoney"></span></span>`);
     }
     return res.join(', ');
   }
@@ -240,11 +208,7 @@ export default class DSA5Payment {
   static async chatListeners(html) {
     html.on('click', '.payButton', (ev) => {
       const elem = $(ev.currentTarget);
-      DSA5Payment.handlePayAction(
-        elem,
-        Number(elem.attr('data-pay')) != 1,
-        elem.attr('data-amount'),
-      );
+      DSA5Payment.handlePayAction(elem, Number(elem.attr('data-pay')) != 1, elem.attr('data-amount'));
       DSA5SoundEffect.playMoneySound();
     });
   }

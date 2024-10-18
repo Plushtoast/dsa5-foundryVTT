@@ -44,7 +44,7 @@ export default class DSA5ChatAutoCompletion {
 
   get regex() {
     ///^\/(sk |at |pa |sp |li |rq |gc |w |ch)/
-    return new RegExp(`^\/(${DSA5ChatAutoCompletion.cmds.join(' |')})`);
+    return new RegExp(`^/(${DSA5ChatAutoCompletion.cmds.join(' |')})`);
   }
 
   async chatListeners(html) {
@@ -93,9 +93,7 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _completeCurrentEntry(target) {
-    $('#chat-message').val(
-      $('#chat-message').val().split(' ')[0] + ' ' + target.text(),
-    ) + ' ';
+    $('#chat-message').val($('#chat-message').val().split(' ')[0] + ' ' + target.text()) + ' ';
   }
 
   _closeQuickfind(ev) {
@@ -105,9 +103,7 @@ export default class DSA5ChatAutoCompletion {
 
   _filterW(search, ev) {
     let result = game.users.contents
-      .filter(
-        (x) => x.active && x.name.toLowerCase().trim().indexOf(search) != -1,
-      )
+      .filter((x) => x.active && x.name.toLowerCase().trim().indexOf(search) != -1)
       .map((x) => {
         return { name: x.name, type: 'user' };
       });
@@ -123,9 +119,7 @@ export default class DSA5ChatAutoCompletion {
       let result = actor.items
         .filter((x) => {
           return (
-            ((types.includes(x.type) && x.system.worn.value == true) ||
-              (x.type == 'trait' &&
-                traitTypes.includes(x.system.traitType.value))) &&
+            ((types.includes(x.type) && x.system.worn.value == true) || (x.type == 'trait' && traitTypes.includes(x.system.traitType.value))) &&
             x.name.toLowerCase().trim().indexOf(search) != -1
           );
         })
@@ -133,11 +127,7 @@ export default class DSA5ChatAutoCompletion {
         .map((x) => {
           return { name: x.name, type: 'item' };
         })
-        .concat(
-          [
-            { name: this.combatConstants.attackWeaponless, type: 'item' },
-          ].filter((x) => x.name.toLowerCase().trim().indexOf(search) != -1),
-        );
+        .concat([{ name: this.combatConstants.attackWeaponless, type: 'item' }].filter((x) => x.name.toLowerCase().trim().indexOf(search) != -1));
       this._checkEmpty(result);
       this._setList(result, 'AT', ev);
     }
@@ -149,11 +139,7 @@ export default class DSA5ChatAutoCompletion {
       let types = ['meleeweapon'];
       let result = actor.items
         .filter((x) => {
-          return (
-            types.includes(x.type) &&
-            x.name.toLowerCase().trim().indexOf(search) != -1 &&
-            x.system.worn.value == true
-          );
+          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.system.worn.value == true;
         })
         .slice(0, 5)
         .map((x) => {
@@ -176,10 +162,7 @@ export default class DSA5ChatAutoCompletion {
       let types = ['spell', 'ritual'];
       let result = actor.items
         .filter((x) => {
-          return (
-            types.includes(x.type) &&
-            x.name.toLowerCase().trim().indexOf(search) != -1
-          );
+          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1;
         })
         .slice(0, 5)
         .map((x) => {
@@ -204,10 +187,7 @@ export default class DSA5ChatAutoCompletion {
       let types = ['liturgy', 'ceremony'];
       let result = actor.items
         .filter((x) => {
-          return (
-            types.includes(x.type) &&
-            x.name.toLowerCase().trim().indexOf(search) != -1
-          );
+          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1;
         })
         .slice(0, 5)
         .map((x) => {
@@ -222,10 +202,7 @@ export default class DSA5ChatAutoCompletion {
     search = search.replace(/(-|\+)?\d+/g, '').trim();
     let result = DSA5ChatAutoCompletion.skills
       .filter((x) => {
-        return (
-          x.name.toLowerCase().trim().indexOf(search) != -1 &&
-          (type == undefined || type == x.type)
-        );
+        return x.name.toLowerCase().trim().indexOf(search) != -1 && (type == undefined || type == x.type);
       })
       .slice(0, 5);
     this._checkEmpty(result);
@@ -268,12 +245,10 @@ export default class DSA5ChatAutoCompletion {
       let target = $(ev.currentTarget).closest('#chat-form').find('.focus');
       switch (ev.which) {
         case 38: // Up
-          if (target.prev('.quick-item').length)
-            target.removeClass('focus').prev('.quick-item').addClass('focus');
+          if (target.prev('.quick-item').length) target.removeClass('focus').prev('.quick-item').addClass('focus');
           return false;
         case 40: // Down
-          if (target.next('.quick-item').length)
-            target.removeClass('focus').next('.quick-item').addClass('focus');
+          if (target.next('.quick-item').length) target.removeClass('focus').next('.quick-item').addClass('focus');
           return false;
         case 13: // Enter
           if (target.attr('data-category') == 'W') {
@@ -341,25 +316,17 @@ export default class DSA5ChatAutoCompletion {
   _quickSK(target, actor, tokenId) {
     switch (target.attr('data-type')) {
       case 'skill':
-        let skill = actor.items.find(
-          (i) => i.name == target.text() && i.type == 'skill',
-        );
+        let skill = actor.items.find((i) => i.name == target.text() && i.type == 'skill');
         if (skill)
           actor.setupSkill(skill, {}, tokenId).then((setupData) => {
             actor.basicTest(setupData);
           });
         break;
       case 'attribute':
-        let characteristic = Object.keys(game.dsa5.config.characteristics).find(
-          (key) =>
-            game.i18n.localize(game.dsa5.config.characteristics[key]) ==
-            target.text(),
-        );
-        actor
-          .setupCharacteristic(characteristic, {}, tokenId)
-          .then((setupData) => {
-            actor.basicTest(setupData);
-          });
+        let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == target.text());
+        actor.setupCharacteristic(characteristic, {}, tokenId).then((setupData) => {
+          actor.basicTest(setupData);
+        });
         break;
       case 'regeneration':
         actor.setupRegeneration('regenerate', {}, tokenId).then((setupData) => {
@@ -435,11 +402,7 @@ export default class DSA5ChatAutoCompletion {
       });
       if (!result)
         result = actor.items.find((x) => {
-          return (
-            x.type == 'trait' &&
-            x.name == target.text() &&
-            traitTypes.includes(x.system.traitType.value)
-          );
+          return x.type == 'trait' && x.name == target.text() && traitTypes.includes(x.system.traitType.value);
         });
 
       if (result) {
@@ -480,11 +443,7 @@ export default class DSA5ChatAutoCompletion {
   static bindRollCommands(html) {
     html.on('click', '.request-roll', (ev) => {
       const dataset = ev.currentTarget.dataset;
-      RequestRoll.showRQMessage(
-        dataset.name,
-        Number(dataset.modifier) || 0,
-        dataset.label,
-      );
+      RequestRoll.showRQMessage(dataset.name, Number(dataset.modifier) || 0, dataset.label);
       ev.stopPropagation();
       return false;
     });
@@ -502,26 +461,16 @@ export default class DSA5ChatAutoCompletion {
       return false;
     });
     html.on('click', '.postContentChat', async (ev) => {
-      const content = $(ev.currentTarget)
-        .closest('.postChatSection')
-        .find('.postChatContent')
-        .html();
+      const content = $(ev.currentTarget).closest('.postChatSection').find('.postChatContent').html();
       UserMultipickDialog.getDialog(content);
     });
     html.on('click', '.request-GC', (ev) => {
-      RequestRoll.showGCMessage(
-        ev.currentTarget.dataset.name,
-        Number(ev.currentTarget.dataset.modifier) || 0,
-      );
+      RequestRoll.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0);
       ev.stopPropagation();
       return false;
     });
     html.on('click', '.request-CH', (ev) => {
-      DSA5ChatListeners.check3D20(
-        $(ev.currentTarget),
-        ev.currentTarget.dataset.name,
-        { modifier: Number(ev.currentTarget.dataset.modifier) || 0 },
-      );
+      DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { modifier: Number(ev.currentTarget.dataset.modifier) || 0 });
       ev.stopPropagation();
       return false;
     });
@@ -529,21 +478,13 @@ export default class DSA5ChatAutoCompletion {
       if (!game.user.isGM) return;
 
       const master = game.dsa5.apps.gameMasterMenu;
-      master.doPayment(
-        master.selectedIDs(),
-        true,
-        ev.currentTarget.dataset.modifier,
-      );
+      master.doPayment(master.selectedIDs(), true, ev.currentTarget.dataset.modifier);
     });
     html.on('click', '.request-GetPaid', (ev) => {
       if (!game.user.isGM) return;
 
       const master = game.dsa5.apps.gameMasterMenu;
-      master.doPayment(
-        master.selectedIDs(),
-        false,
-        ev.currentTarget.dataset.modifier,
-      );
+      master.doPayment(master.selectedIDs(), false, ev.currentTarget.dataset.modifier);
     });
     html.on('click', '.request-AP', (ev) => {
       if (!game.user.isGM) return;
@@ -571,9 +512,7 @@ export default class DSA5ChatAutoCompletion {
       const item = await fromUuid(itemId);
       item.sheet.render(true);
     });
-    showItem
-      .attr('draggable', true)
-      .on('dragstart', (event) => itemDragStart(event));
+    showItem.attr('draggable', true).on('dragstart', (event) => itemDragStart(event));
 
     html.on('click', '.actorEmbeddedAbility', async (ev) => {
       const actor = await fromUuid(ev.currentTarget.dataset.actor);

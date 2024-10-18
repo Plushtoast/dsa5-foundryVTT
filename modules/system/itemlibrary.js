@@ -38,9 +38,7 @@ class SearchDocument {
       data: $('<div>').html(data).text(),
       id: item.id || item._id,
       visible: item.visible ? item.visible : true,
-      compendium: item.compendium
-        ? item.compendium.metadata.packageName
-        : pack.packageName || '',
+      compendium: item.compendium ? item.compendium.metadata.packageName : pack.packageName || '',
       pack: item.pack || (pack.packageName ? pack.id : undefined),
       img: item.img,
       price: item.system?.price?.value,
@@ -95,8 +93,7 @@ class SearchDocument {
     return this.document.compendium;
   }
   get img() {
-    if (this.itemType == 'JournalEntry')
-      return 'systems/dsa5/icons/categories/DSA-Auge.webp';
+    if (this.itemType == 'JournalEntry') return 'systems/dsa5/icons/categories/DSA-Auge.webp';
 
     return this.document.img;
   }
@@ -251,24 +248,12 @@ export default class DSA5ItemLibrary extends Application {
     data.categories = this.translateFilters();
     data.isGM = game.user.isGM;
     data.advancedMode = this.advancedFiltering ? 'on' : '';
-    data.worldIndexed = game.settings.get('dsa5', 'indexWorldItems')
-      ? 'on'
-      : '';
-    data.fullTextEnabled = game.settings.get('dsa5', 'indexDescription')
-      ? 'on'
-      : '';
-    data.filterDuplicateItems = game.settings.get(
-      'dsa5',
-      'filterDuplicateItems',
-    )
-      ? 'on'
-      : '';
+    data.worldIndexed = game.settings.get('dsa5', 'indexWorldItems') ? 'on' : '';
+    data.fullTextEnabled = game.settings.get('dsa5', 'indexDescription') ? 'on' : '';
+    data.filterDuplicateItems = game.settings.get('dsa5', 'filterDuplicateItems') ? 'on' : '';
     data.browseEnabled = this.browseEnabled ? 'on' : '';
     if (this.advancedFiltering) {
-      data.advancedFilter = await this.buildDetailFilter(
-        'tbd',
-        this.subcategory,
-      );
+      data.advancedFilter = await this.buildDetailFilter('tbd', this.subcategory);
     }
     return data;
   }
@@ -332,9 +317,7 @@ export default class DSA5ItemLibrary extends Application {
   async getRandomItems(category, limit) {
     let filteredItems = [];
     let index = this.equipmentIndex;
-    filteredItems.push(
-      ...(await index.search(category, { field: ['itemType'] })),
-    );
+    filteredItems.push(...(await index.search(category, { field: ['itemType'] })));
     return (
       await Promise.all(
         this.shuffle(filteredItems.filter((x) => x.hasPermission))
@@ -382,23 +365,13 @@ export default class DSA5ItemLibrary extends Application {
   async getCategoryItems(category, asItemData = false, asItem = false) {
     await this.buildEquipmentIndex();
     const res = this.equipmentIndex.search(category, { field: ['itemType'] });
-    if (asItemData)
-      return (await Promise.all(res.map((x) => x.getItem()))).map((x) =>
-        x.toObject(),
-      );
+    if (asItemData) return (await Promise.all(res.map((x) => x.getItem()))).map((x) => x.toObject());
     else if (asItem) return await Promise.all(res.map((x) => x.getItem()));
 
     return res;
   }
 
-  async executeAdvancedFilter(
-    search,
-    index,
-    selectSearches,
-    textSearches,
-    booleanSearches,
-    rangeSearches = [],
-  ) {
+  async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {
     const selFnct = (x) => {
       for (let k of selectSearches) {
         if (k[2] ? x[k[0]] != k[1] : x[k[0]].indexOf(k[1]) == -1) return false;
@@ -425,21 +398,12 @@ export default class DSA5ItemLibrary extends Application {
       return true;
     };
 
-    let result = index.where(
-      (x) =>
-        (search == '' || x.name.toLowerCase().indexOf(search) != -1) &&
-        selFnct(x) &&
-        txtFnct(x) &&
-        cbFnct(x) &&
-        rangeFct(x),
-    );
+    let result = index.where((x) => (search == '' || x.name.toLowerCase().indexOf(search) != -1) && selFnct(x) && txtFnct(x) && cbFnct(x) && rangeFct(x));
 
     //this.pages[category].next = result.length
 
     let filteredItems = result;
-    filteredItems = filteredItems
-      .filter((x) => x.hasPermission)
-      .sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
+    filteredItems = filteredItems.filter((x) => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
 
     return filteredItems;
   }
@@ -451,24 +415,16 @@ export default class DSA5ItemLibrary extends Application {
     for (let elem of htmlElement.find('select')) {
       let val = $(elem).val();
       if (val != '') {
-        sels.push([
-          $(elem).attr('name'),
-          val,
-          elem.dataset.notstrict != 'true',
-        ]);
+        sels.push([$(elem).attr('name'), val, elem.dataset.notstrict != 'true']);
       }
     }
-    for (let elem of htmlElement.find(
-      'input[type="text"]:not(.manualFilter)',
-    )) {
+    for (let elem of htmlElement.find('input[type="text"]:not(.manualFilter)')) {
       let val = $(elem).val();
       if (val != '') {
         inps.push([$(elem).attr('name'), val.toLowerCase()]);
       }
     }
-    for (let elem of htmlElement.find(
-      'input[type="checkbox"]:checked:not(.manualFilter)',
-    )) {
+    for (let elem of htmlElement.find('input[type="checkbox"]:checked:not(.manualFilter)')) {
       let val = $(elem).val();
       if (val != '') {
         checkboxes.push([$(elem).attr('name'), val.toLowerCase()]);
@@ -483,13 +439,7 @@ export default class DSA5ItemLibrary extends Application {
     const index = this.detailFilter[subcategory];
     const search = this.filters[category].filterBy.search.toLowerCase();
     const { sels, inps, checkboxes } = this.collectDetailSearch(dataFilters);
-    let result = await this.executeAdvancedFilter(
-      search,
-      index,
-      sels,
-      inps,
-      checkboxes,
-    );
+    let result = await this.executeAdvancedFilter(search, index, sels, inps, checkboxes);
     this.setBGImage(result, category);
     result = this.filterDuplications(result);
     return result;
@@ -500,26 +450,14 @@ export default class DSA5ItemLibrary extends Application {
 
     let index = this.detailFilter[category];
 
-    let result = await this.executeAdvancedFilter(
-      search.search || '',
-      index,
-      search.selects || [],
-      search.inputs || [],
-      search.booleans || [],
-      search.rangeSearches || [],
-    );
+    let result = await this.executeAdvancedFilter(search.search || '', index, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || []);
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
     return await Promise.all(result.map((x) => x.getItem()));
   }
 
   filterDuplications(filteredItems) {
-    if (game.settings.get('dsa5', 'filterDuplicateItems'))
-      filteredItems = [
-        ...new Map(
-          filteredItems.map((item) => [`${item.name}_${item.type}`, item]),
-        ).values(),
-      ];
+    if (game.settings.get('dsa5', 'filterDuplicateItems')) filteredItems = [...new Map(filteredItems.map((item) => [`${item.name}_${item.type}`, item])).values()];
 
     return filteredItems;
   }
@@ -552,18 +490,14 @@ export default class DSA5ItemLibrary extends Application {
         }
 
         let startIndex = Number(page) || 0;
-        result = result.slice(
-          startIndex,
-          Math.min(startIndex + 60, result.length),
-        );
+        result = result.slice(startIndex, Math.min(startIndex + 60, result.length));
 
         if (result.length == 60) next = `${startIndex + 60}`;
 
         this.pages[category].next = next;
         filteredItems.push(...result);
       }
-      oneFilterSelected =
-        this.filters[category].categories[filter] || oneFilterSelected;
+      oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected;
     }
 
     if (!oneFilterSelected) {
@@ -584,9 +518,7 @@ export default class DSA5ItemLibrary extends Application {
   }
 
   setBGImage(filterdItems, category) {
-    $(this._element)
-      .find(`.${category} .libcontainer`)
-      [`${filterdItems.length > 0 ? 'remove' : 'add'}Class`]('libraryImg');
+    $(this._element).find(`.${category} .libcontainer`)[`${filterdItems.length > 0 ? 'remove' : 'add'}Class`]('libraryImg');
   }
 
   async getItemTemplate(filteredItems, itemType) {
@@ -646,24 +578,17 @@ export default class DSA5ItemLibrary extends Application {
 
     innerhtml.each(function () {
       const li = $(this);
-      li.attr('draggable', true).on('dragstart', (event) =>
-        itemDragStart(event, index, itemType),
-      );
+      li.attr('draggable', true).on('dragstart', (event) => itemDragStart(event, index, itemType));
       li.find('.priceDrag')
         .attr('draggable', true)
-        .on('dragstart', (event) =>
-          itemDragStart(event, index, itemType, true),
-        );
+        .on('dragstart', (event) => itemDragStart(event, index, itemType, true));
     });
 
     resultField.append(innerhtml);
 
     const items = resultField.find('.loader');
     if (items.length > 0) {
-      const observer = new IntersectionObserver(
-        this.intersectionObserved.bind(this),
-        { root: html.find('.window-content')[0] },
-      );
+      const observer = new IntersectionObserver(this.intersectionObserved.bind(this), { root: html.find('.window-content')[0] });
       for (let item of items) {
         observer.observe(item);
       }
@@ -672,10 +597,7 @@ export default class DSA5ItemLibrary extends Application {
 
   async filterItems(html, category, page) {
     const index = this.selectIndex(category);
-    const filteredItems =
-      this.advancedFiltering && category != 'journal'
-        ? await this.advancedFilterStuff(category, page)
-        : await this.filterStuff(category, index.index, page);
+    const filteredItems = this.advancedFiltering && category != 'journal' ? await this.advancedFilterStuff(category, page) : await this.filterStuff(category, index.index, page);
     await this.renderResult(html, filteredItems, index, page);
     return filteredItems;
   }
@@ -719,10 +641,7 @@ export default class DSA5ItemLibrary extends Application {
   async _createIndex(category, document, worldStuff) {
     if (this[`${category}Build`]) return;
 
-    const filteredCompendiums = game.settings.get(
-      'dsa5',
-      'libraryModulsFilter',
-    );
+    const filteredCompendiums = game.settings.get('dsa5', 'libraryModulsFilter');
     SceneNavigation.displayProgressBar({
       label: game.i18n.format('Library.loading', { item: '' }),
       pct: 0,
@@ -730,20 +649,11 @@ export default class DSA5ItemLibrary extends Application {
     const target = $(this._element).find(`*[data-tab="${category}"]`);
     this.showLoading(target, category);
     const packs = game.packs.filter(
-      (p) =>
-        p.documentName == document &&
-        (game.user.isGM || p.visible) &&
-        !p.metadata.label.startsWith('WZ-') &&
-        !filteredCompendiums[p.metadata.packageName],
+      (p) => p.documentName == document && (game.user.isGM || p.visible) && !p.metadata.label.startsWith('WZ-') && !filteredCompendiums[p.metadata.packageName],
     );
     const percentage = 100 / (packs.length + 1);
     let count = percentage;
-    const actorFields = [
-      'name',
-      'system.type',
-      'system.description.value',
-      'img',
-    ];
+    const actorFields = ['name', 'system.type', 'system.description.value', 'img'];
     let func;
     if (document == 'Actor') {
       func = (p) => {
@@ -801,11 +711,7 @@ export default class DSA5ItemLibrary extends Application {
   indexWorldItems(worldStuff, category) {
     const items = [];
     if (game.settings.get('dsa5', 'indexWorldItems')) {
-      items.push(
-        ...worldStuff
-          .filter((x) => x.visible)
-          .map((x) => new SearchDocument(x)),
-      );
+      items.push(...worldStuff.filter((x) => x.visible).map((x) => new SearchDocument(x)));
       this[`${category}WorldBuild`] = true;
     }
     return items;
@@ -838,11 +744,7 @@ export default class DSA5ItemLibrary extends Application {
       const items = [];
 
       if (game.settings.get('dsa5', 'indexWorldItems')) {
-        items.push(
-          ...worldStuff
-            .filter((x) => x.visible && x.type == subcategory)
-            .map((x) => new AdvancedSearchDocument(x, subcategory)),
-        );
+        items.push(...worldStuff.filter((x) => x.visible && x.type == subcategory).map((x) => new AdvancedSearchDocument(x, subcategory)));
       }
 
       const result = index.search(subcategory, { field: ['itemType'] });
@@ -861,11 +763,7 @@ export default class DSA5ItemLibrary extends Application {
       let count = 0;
       for (const key of Object.entries(pids)) {
         count += 1;
-        promises.push(
-          game.packs
-            .get(key[0])
-            .getDocuments({ _id__in: key[1], type: subcategory }),
-        );
+        promises.push(game.packs.get(key[0]).getDocuments({ _id__in: key[1], type: subcategory }));
         SceneNavigation.displayProgressBar({
           label: game.i18n.format('Library.loading', { item: catName }),
           pct: Math.round(10 + count * percentage),
@@ -917,17 +815,12 @@ export default class DSA5ItemLibrary extends Application {
               break;
           }
         }
-        moduleSelected = savedSettings.selects.find(
-          (x) => x[0] == 'compendium',
-        )?.[1];
+        moduleSelected = savedSettings.selects.find((x) => x[0] == 'compendium')?.[1];
       }
 
       const bindex = this.createDetailIndex(category, subcategory);
       const moduleOptions = DSA5ItemLibrary.collectModulOptions();
-      const template = await renderTemplate(
-        'systems/dsa5/templates/system/detailFilter.html',
-        { fields, subcategory, moduleOptions, moduleSelected },
-      );
+      const template = await renderTemplate('systems/dsa5/templates/system/detailFilter.html', { fields, subcategory, moduleOptions, moduleSelected });
       await bindex;
       return template;
     } else {
@@ -942,10 +835,7 @@ export default class DSA5ItemLibrary extends Application {
         if (!prev[cur.metadata.packageName]) {
           const name = game.i18n.has(`${cur.metadata.packageName}.name`)
             ? game.i18n.localize(`${cur.metadata.packageName}.name`)
-            : game.modules
-                .get(cur.metadata.packageName)
-                ?.title.replace(/The Dark Eye 5th Ed. - /i, '') ||
-              game.system.title;
+            : game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, '') || game.system.title;
           prev[cur.metadata.packageName] = name;
         }
         return prev;
@@ -1061,20 +951,12 @@ export default class DSA5ItemLibrary extends Application {
     });
 
     html.find('.toggleWorldIndex').click((ev) => {
-      game.settings.set(
-        'dsa5',
-        'indexWorldItems',
-        !game.settings.get('dsa5', 'indexWorldItems'),
-      );
+      game.settings.set('dsa5', 'indexWorldItems', !game.settings.get('dsa5', 'indexWorldItems'));
       this.checkWorldStuffIndex();
       $(ev.currentTarget).toggleClass('on');
     });
     html.find('.fulltextsearch').click((ev) => {
-      game.settings.set(
-        'dsa5',
-        'indexDescription',
-        !game.settings.get('dsa5', 'indexDescription'),
-      );
+      game.settings.set('dsa5', 'indexDescription', !game.settings.get('dsa5', 'indexDescription'));
       $(ev.currentTarget).toggleClass('on');
     });
     html.find('.browseEnabled').click((ev) => {
@@ -1082,11 +964,7 @@ export default class DSA5ItemLibrary extends Application {
       $(ev.currentTarget).toggleClass('on');
     });
     html.find('.filterDuplicateItems').click((ev) => {
-      game.settings.set(
-        'dsa5',
-        'filterDuplicateItems',
-        !game.settings.get('dsa5', 'filterDuplicateItems'),
-      );
+      game.settings.set('dsa5', 'filterDuplicateItems', !game.settings.get('dsa5', 'filterDuplicateItems'));
       $(ev.currentTarget).toggleClass('on');
     });
 
@@ -1100,26 +978,18 @@ export default class DSA5ItemLibrary extends Application {
           if (source.advancedFiltering) return;
 
           const log = $(ev.target);
-          const pct =
-            log.scrollTop() + log.innerHeight() >= log[0].scrollHeight - 100;
+          const pct = log.scrollTop() + log.innerHeight() >= log[0].scrollHeight - 100;
           const category = html.find('.tabs .item.active').attr('data-tab');
           if (pct && source.pages[category].next) {
             const tab = html.find('.tab.active');
-            source.filterItems.call(
-              source,
-              tab,
-              category,
-              source.pages[category].next,
-            );
+            source.filterItems.call(source, tab, category, source.pages[category].next);
           }
         }, 100),
       );
   }
 
   getItemFromHTML(ev) {
-    const itemId = $(ev.currentTarget)
-      .parents('.browser-item')
-      .attr('data-item-id');
+    const itemId = $(ev.currentTarget).parents('.browser-item').attr('data-item-id');
     const type = $(ev.currentTarget).closest('.tab').attr('data-tab');
     switch (type) {
       case 'zoo':
@@ -1133,9 +1003,7 @@ export default class DSA5ItemLibrary extends Application {
 
   showLoading(html, category) {
     this.setBGImage([1], category);
-    const loading = $(
-      `<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`,
-    );
+    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`);
     loading.appendTo(html.find('.searchResult'));
   }
 
@@ -1152,8 +1020,7 @@ class LibraryModulsFilter extends Application {
     options.resizable = true;
     options.width = 600;
     options.title = game.i18n.localize('DSASETTINGS.libraryModulsFilter');
-    options.template =
-      'systems/dsa5/templates/system/librarymodulesfilter.html';
+    options.template = 'systems/dsa5/templates/system/librarymodulesfilter.html';
     return options;
   }
 

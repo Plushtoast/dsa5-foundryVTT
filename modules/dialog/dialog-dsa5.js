@@ -13,22 +13,13 @@ export default class DSA5Dialog extends DialogShared {
       case 'meleeweapon':
       case 'dodge':
       case 'trait':
-        renderData.rollModifiers = DSA5CombatDialog.setData(
-          actor,
-          type,
-          testData,
-          renderData,
-        );
+        renderData.rollModifiers = DSA5CombatDialog.setData(actor, type, testData, renderData);
         return DSA5CombatDialog;
       case 'spell':
       case 'ritual':
       case 'liturgy':
       case 'ceremony':
-        renderData.rollModifiers = DSA5SpellDialog.setData(
-          actor,
-          type,
-          renderData,
-        );
+        renderData.rollModifiers = DSA5SpellDialog.setData(actor, type, renderData);
         return DSA5SpellDialog;
       case 'skill':
         return DSA5SkillDialog;
@@ -41,12 +32,7 @@ export default class DSA5Dialog extends DialogShared {
       rollButton: {
         label: game.i18n.localize('Roll'),
         callback: (html) => {
-          game.dsa5.memory.remember(
-            testData.extra.speaker,
-            testData.source,
-            testData.mode,
-            html,
-          );
+          game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           resolve(dialogOptions.callback(html));
         },
       },
@@ -56,12 +42,7 @@ export default class DSA5Dialog extends DialogShared {
         cheat: {
           label: game.i18n.localize('DIALOG.cheat'),
           callback: (html) => {
-            game.dsa5.memory.remember(
-              testData.extra.speaker,
-              testData.source,
-              testData.mode,
-              html,
-            );
+            game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
             resolve(dialogOptions.callback(html, { cheat: true }));
           },
         },
@@ -75,10 +56,7 @@ export default class DSA5Dialog extends DialogShared {
     html.find('.dieButton').click((ev) => {
       let elem = $(ev.currentTarget);
       if (elem.attr('data-single') == 'true') {
-        elem
-          .closest('.dialog-content')
-          .find('.dieButton')
-          .removeClass('dieSelected');
+        elem.closest('.dialog-content').find('.dieButton').removeClass('dieSelected');
       }
       elem.toggleClass('dieSelected');
     });

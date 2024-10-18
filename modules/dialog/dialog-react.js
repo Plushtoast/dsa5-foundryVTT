@@ -64,9 +64,7 @@ export default class DialogReactDSA5 extends Dialog {
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
   static async getTemplate(startMessage) {
-    const attackMessage = game.messages.get(
-      startMessage.flags.unopposeData.attackMessageId,
-    );
+    const attackMessage = game.messages.get(startMessage.flags.unopposeData.attackMessageId);
     const source = attackMessage.flags.data.preData.source;
     const item = source.name;
     let items = (await DSA5_Utility.allSkillsList()).map((k) => {
@@ -88,9 +86,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     if ('doNothing' == text) {
       OpposedDsa5.resolveUndefended(message);
     } else {
-      const skill = actor.items.find(
-        (i) => i.name == text && i.type == 'skill',
-      );
+      const skill = actor.items.find((i) => i.name == text && i.type == 'skill');
       if (skill) {
         actor.setupSkill(skill, {}, tokenId).then((setupData) => {
           actor.basicTest(setupData);
@@ -121,14 +117,8 @@ export class ActAttackDialog extends Dialog {
   }
 
   static async getTemplate(actor) {
-    const combatskills = actor.items
-      .filter((x) => x.type == 'combatskill')
-      .map((x) =>
-        Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system),
-      );
-    const brawl = combatskills.find(
-      (x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'),
-    );
+    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
     let items = [
       {
         name: game.i18n.localize('attackWeaponless'),
@@ -145,17 +135,8 @@ export class ActAttackDialog extends Dialog {
       if (types.includes(item.type) && item.system.worn.value == true) {
         const preparedItem =
           item.type == 'meleeweapon'
-            ? Actordsa5._prepareMeleeWeapon(
-                item.toObject(),
-                combatskills,
-                actor,
-              )
-            : Actordsa5._prepareRangeWeapon(
-                item.toObject(),
-                [],
-                combatskills,
-                actor,
-              );
+            ? Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, actor)
+            : Actordsa5._prepareRangeWeapon(item.toObject(), [], combatskills, actor);
         items.push({
           name: item.name,
           id: item.name,
@@ -163,9 +144,7 @@ export class ActAttackDialog extends Dialog {
           value: preparedItem.attack,
           item: preparedItem,
         });
-        for (let [key, value] of Object.entries(
-          preparedItem.subweapons || {},
-        )) {
+        for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
           items.push({
             name: value.name,
             id: item.name,
@@ -175,10 +154,7 @@ export class ActAttackDialog extends Dialog {
             item: value,
           });
         }
-      } else if (
-        item.type == 'trait' &&
-        traitTypes.includes(item.system.traitType.value)
-      ) {
+      } else if (item.type == 'trait' && traitTypes.includes(item.system.traitType.value)) {
         items.push({
           name: item.name,
           id: item.name,
@@ -187,10 +163,7 @@ export class ActAttackDialog extends Dialog {
         });
       }
     }
-    return await renderTemplate(
-      'systems/dsa5/templates/dialog/dialog-reaction-attack.html',
-      { dieClass: 'die-mu', items, title: 'DIALOG.selectAction' },
-    );
+    return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: 'die-mu', items, title: 'DIALOG.selectAction' });
   }
 
   callbackResult(dataset, actor, tokenId) {
@@ -270,14 +243,8 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
   static async getTemplate(startMessage) {
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage);
     const attackActor = ReactToAttackDialog.getAttackActor(startMessage);
-    const combatskills = actor.items
-      .filter((x) => x.type == 'combatskill')
-      .map((x) =>
-        Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system),
-      );
-    const brawl = combatskills.find(
-      (x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'),
-    );
+    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
     let items = [
       {
         name: game.i18n.localize('doNothing'),
@@ -305,11 +272,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
 
       for (let x of actor.items) {
         if (types.includes(x.type) && x.system.worn.value == true) {
-          const preparedItem = Actordsa5._prepareMeleeWeapon(
-            x.toObject(),
-            combatskills,
-            actor,
-          );
+          const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor);
           items.push({
             name: x.name,
             id: x.name,
@@ -329,8 +292,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
       if (attackActor) {
         const size = getProperty(attackActor.actor.system, 'status.size.value');
         if (size == 'big') sizeNotification = 'DIALOGDESCRIPTION.bigEnemy';
-        else if (size == 'giant')
-          sizeNotification = 'DIALOGDESCRIPTION.giantEnemy';
+        else if (size == 'giant') sizeNotification = 'DIALOGDESCRIPTION.giantEnemy';
       }
 
       if (game.combat)
@@ -341,16 +303,13 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         });
     }
 
-    return await renderTemplate(
-      'systems/dsa5/templates/dialog/dialog-reaction-attack.html',
-      {
-        dieClass: 'die-in',
-        items: items,
-        defenses,
-        title: 'DIALOG.selectReaction',
-        sizeNotification,
-      },
-    );
+    return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', {
+      dieClass: 'die-in',
+      items: items,
+      defenses,
+      title: 'DIALOG.selectReaction',
+      sizeNotification,
+    });
   }
 
   callbackResult(text, message) {

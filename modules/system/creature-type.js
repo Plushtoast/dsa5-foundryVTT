@@ -3,9 +3,7 @@ const { getProperty } = foundry.utils;
 
 Hooks.once('i18nInit', async () => {
   if (!CreatureType.creatureData) {
-    const r = await fetch(
-      `systems/dsa5/lazy/creaturetype/${game.i18n.lang}.json`,
-    );
+    const r = await fetch(`systems/dsa5/lazy/creaturetype/${game.i18n.lang}.json`);
     CreatureType.creatureData = await r.json();
     CreatureType.magical = game.i18n.localize('WEAPON.magical');
     CreatureType.clerical = game.i18n.localize('WEAPON.clerical');
@@ -31,16 +29,9 @@ export default class CreatureType {
   }
 
   static detectCreatureType(actor) {
-    const creatureClass =
-      actor.type == 'creature'
-        ? actor.system.creatureClass.value
-        : actor.system.details.species.value;
-    const types = Object.keys(CreatureType.creatureData.types).filter(
-      (x) => creatureClass.indexOf(x) >= 0,
-    );
-    return types.map((x) =>
-      this.getClass(CreatureType.creatureData.types[x], creatureClass),
-    );
+    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
+    const types = Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0);
+    return types.map((x) => this.getClass(CreatureType.creatureData.types[x], creatureClass));
   }
 
   static getClass(type, creatureClass) {
@@ -67,9 +58,7 @@ export default class CreatureType {
   }
 
   getName() {
-    return Object.keys(CreatureType.creatureData.types).find(
-      (x) => CreatureType.creatureData.types[x] == this.constructor.name,
-    );
+    return Object.keys(CreatureType.creatureData.types).find((x) => CreatureType.creatureData.types[x] == this.constructor.name);
   }
 
   static checkImmunity(testData) {
@@ -77,16 +66,10 @@ export default class CreatureType {
     switch (testData.preData.source.type) {
       case 'poison':
       case 'disease': {
-        const immunityName =
-          game.i18n.localize('LocalizedIDs.immuneTo') +
-          ' (' +
-          testData.preData.source.name +
-          ')';
+        const immunityName = game.i18n.localize('LocalizedIDs.immuneTo') + ' (' + testData.preData.source.name + ')';
         for (let target of game.user.targets) {
           const actor = target.actor;
-          const immunity = actor.items.find(
-            (x) => x.name == immunityName && x.type == 'advantage',
-          );
+          const immunity = actor.items.find((x) => x.name == immunityName && x.type == 'advantage');
           if (immunity) {
             immuneTo.push({
               name: immunity.name,
@@ -114,9 +97,7 @@ export default class CreatureType {
       case 'ritual': {
         for (let target of game.user.targets) {
           const types = CreatureType.detectCreatureType(target.actor);
-          const features = testData.preData.source.system.feature
-            .split(',')
-            .map((x) => x.trim());
+          const features = testData.preData.source.system.feature.split(',').map((x) => x.trim());
 
           let found = false;
           for (let type of types) {
@@ -144,22 +125,13 @@ export default class CreatureType {
   static creatureTypeName(actor) {
     if (actor.type == 'creature') {
       const creatureClass = actor.system.creatureClass.value;
-      return Object.keys(CreatureType.creatureData.types).filter(
-        (x) => creatureClass.indexOf(x) >= 0,
-      )[0];
+      return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0];
     } else return actor.system.details.species.value;
   }
 
-  static addCreatureTypeModifiers(
-    actorData,
-    source,
-    situationalModifiers,
-    attacker,
-  ) {
+  static addCreatureTypeModifiers(actorData, source, situationalModifiers, attacker) {
     const creatureTypes = CreatureType.detectCreatureType(actorData);
-    const isSpell = ['spell', 'ceremony', 'liturgy', 'ritual'].includes(
-      source.type,
-    );
+    const isSpell = ['spell', 'ceremony', 'liturgy', 'ritual'].includes(source.type);
     for (let k of creatureTypes) {
       const modifiers = k.damageModifier(source);
       if (isSpell) {
@@ -170,11 +142,7 @@ export default class CreatureType {
       situationalModifiers.push(...modifiers);
     }
     situationalModifiers.push(...this.creatureBonusDamage(actorData, attacker));
-    CreatureType.addVulnerabilitiesToSource(
-      actorData,
-      source,
-      situationalModifiers,
-    );
+    CreatureType.addVulnerabilitiesToSource(actorData, source, situationalModifiers);
   }
 
   static addVulnerabilitiesToSource(actorData, source, situationalModifiers) {
@@ -185,16 +153,9 @@ export default class CreatureType {
 
         toCombatskills.reduce((prev, x) => {
           if (x.target == source.system.combatskill.value) {
-            const isBonus = /\*/.test(x.value)
-              ? Number(x.value.replace('*', '')) > 1
-              : Number(x.value) > 0;
+            const isBonus = /\*/.test(x.value) ? Number(x.value.replace('*', '')) > 1 : Number(x.value) > 0;
             const key = isBonus ? 'WEAPON.vulnerableTo' : 'WEAPON.resistantTo';
-            situationalModifiers.push(
-              ...CreatureType.buildDamageMod(
-                `${game.i18n.format(key, { name: source.system.combatskill.value })} (${x.source})`,
-                x.value,
-              ),
-            );
+            situationalModifiers.push(...CreatureType.buildDamageMod(`${game.i18n.format(key, { name: source.system.combatskill.value })} (${x.source})`, x.value));
           }
         }, situationalModifiers);
       }
@@ -209,16 +170,10 @@ export default class CreatureType {
   }
   static creatureBonusDamage(actor, attacker) {
     const bonusModifiers = [];
-    const creatureClass =
-      actor.type == 'creature'
-        ? actor.system.creatureClass.value
-        : actor.system.details.species.value;
+    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
     const mods = getProperty(attacker, 'system.creatureBonus');
     for (let mod of mods) {
-      if (creatureClass.indexOf(mod.target) >= 0)
-        bonusModifiers.push(
-          ...this.buildDamageMod(mod.source, mod.value, true),
-        );
+      if (creatureClass.indexOf(mod.target) >= 0) bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true));
     }
     return bonusModifiers;
   }
@@ -255,16 +210,11 @@ export default class CreatureType {
   }
 
   getTypeByClass(className) {
-    return Object.keys(CreatureType.creatureData.types).find(
-      (key) => CreatureType.creatureData.types[key] === className,
-    );
+    return Object.keys(CreatureType.creatureData.types).find((key) => CreatureType.creatureData.types[key] === className);
   }
 
   isAttackItem(attackItem) {
-    return (
-      ['meleeweapon', 'trait', 'rangeweapon'].includes(attackItem.type) &&
-      isNotEmpty(this.weaponAttributes(attackItem))
-    );
+    return ['meleeweapon', 'trait', 'rangeweapon'].includes(attackItem.type) && isNotEmpty(this.weaponAttributes(attackItem));
   }
 
   attributesRegex(attackItem) {
@@ -280,10 +230,7 @@ export default class CreatureType {
   }
 
   specificGodMatch(gods, attackItem) {
-    const regex = new RegExp(
-      `(${gods.map((god) => DSA5_Utility.escapeRegex(`${CreatureType.clerical} (${god})`)).join('|')})`,
-      'ig',
-    );
+    const regex = new RegExp(`(${gods.map((god) => DSA5_Utility.escapeRegex(`${CreatureType.clerical} (${god})`)).join('|')})`, 'ig');
     return Array.from(this.weaponAttributes(attackItem).matchAll(regex))
       .map((x) => x[0])
       .join(', ');
@@ -293,10 +240,7 @@ export default class CreatureType {
 class VulnerableToLifeGods extends CreatureType {
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
-      const specificGods = this.specificGodMatch(
-        CreatureType.creatureData.godOfLife,
-        attackItem,
-      );
+      const specificGods = this.specificGodMatch(CreatureType.creatureData.godOfLife, attackItem);
 
       if (specificGods) return CreatureType.buildDamageMod(specificGods, '*2');
     }
@@ -309,17 +253,14 @@ class ChimeraType extends VulnerableToLifeGods {}
 class DaimonidType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Influence', 'Transformation'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Influence', 'Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
   }
 
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
       const regex = this.attributesRegex(attackItem);
 
-      if (regex.test(CreatureType.clerical))
-        return CreatureType.buildDamageMod(CreatureType.clerical, '*2');
+      if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, '*2');
     }
     return super.damageModifier(attackItem);
   }
@@ -330,12 +271,7 @@ class DragonType extends CreatureType {}
 class DemonType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = [
-      'Influence',
-      'Transformation',
-      'Healing',
-      'Illusion',
-    ].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Influence', 'Transformation', 'Healing', 'Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -343,24 +279,13 @@ class DemonType extends CreatureType {
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
       const regex = this.attributesRegex(attackItem);
-      if (regex.test(CreatureType.clerical))
-        return CreatureType.buildDamageMod(
-          `${CreatureType.clerical} (${CreatureType.creatureData.opposingGod})`,
-          '*2',
-          false,
-        );
+      if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(`${CreatureType.clerical} (${CreatureType.creatureData.opposingGod})`, '*2', false);
 
-      if (regex.test(CreatureType.magical))
-        return super.damageModifier(attackItem);
-    } else if (
-      ['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)
-    ) {
+      if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem);
+    } else if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
       return super.damageModifier(attackItem);
     }
-    return CreatureType.buildDamageMod(
-      this.getTypeByClass('DemonType'),
-      '*0.5',
-    );
+    return CreatureType.buildDamageMod(this.getTypeByClass('DemonType'), '*0.5');
   }
 
   spellArmorModifier(actorData) {
@@ -385,20 +310,11 @@ class ElementalType extends CreatureType {
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
       const regex = this.attributesRegex(attackItem);
-      if (regex.test(CreatureType.magical))
-        return super.damageModifier(attackItem);
-    } else if (
-      ['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)
-    ) {
-      return CreatureType.buildDamageMod(
-        this.getTypeByClass('ElementalType'),
-        '*1',
-      );
+      if (regex.test(CreatureType.magical)) return super.damageModifier(attackItem);
+    } else if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
+      return CreatureType.buildDamageMod(this.getTypeByClass('ElementalType'), '*1');
     }
-    return CreatureType.buildDamageMod(
-      this.getTypeByClass('ElementalType'),
-      '*0.5',
-    );
+    return CreatureType.buildDamageMod(this.getTypeByClass('ElementalType'), '*0.5');
   }
 
   spellArmorModifier(actorData) {
@@ -417,9 +333,7 @@ class ElementalType extends CreatureType {
 class FairyType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Illusion'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -428,34 +342,22 @@ class FairyType extends CreatureType {
 class GhostType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = [
-      'Illusion',
-      'Healing',
-      'Telekinesis',
-      'Transformation',
-    ].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Illusion', 'Healing', 'Telekinesis', 'Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
 
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
-      const specificGods = this.specificGodMatch(
-        CreatureType.creatureData.godOfDeath,
-        attackItem,
-      );
+      const specificGods = this.specificGodMatch(CreatureType.creatureData.godOfDeath, attackItem);
 
       if (specificGods) return super.damageModifier(attackItem);
 
       let regex = this.attributesRegex(attackItem);
 
-      if (regex.test(CreatureType.clerical))
-        return CreatureType.buildDamageMod(CreatureType.clerical, '*0.5');
-      if (regex.test(CreatureType.magical))
-        return CreatureType.buildDamageMod(CreatureType.magical, '*0.5');
-    } else if (
-      ['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)
-    ) {
+      if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, '*0.5');
+      if (regex.test(CreatureType.magical)) return CreatureType.buildDamageMod(CreatureType.magical, '*0.5');
+    } else if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
       return CreatureType.buildDamageMod(CreatureType.magical, '*0.5');
     }
     return CreatureType.buildDamageMod(this.getTypeByClass('GhostType'), '*0');
@@ -469,9 +371,7 @@ class GhostType extends CreatureType {
 class GolemType extends VulnerableToLifeGods {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Transformation'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -484,20 +384,11 @@ class GolemType extends VulnerableToLifeGods {
 class HomunculiType extends VulnerableToLifeGods {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Healing'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Healing'].map((x) => game.i18n.localize(`Features.${x}`));
   }
 
   ignoredCondition(condition) {
-    return ![
-      'inpain',
-      'encumbered',
-      'stunned',
-      'feared',
-      'paralysed',
-      'confused',
-    ].includes(condition);
+    return !['inpain', 'encumbered', 'stunned', 'feared', 'paralysed', 'confused'].includes(condition);
   }
 }
 
@@ -510,19 +401,14 @@ class AnimalType extends CreatureType {}
 class UndeadType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Influence', 'Healing', 'Illusion'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Influence', 'Healing', 'Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
 
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
-      const specificGods = this.specificGodMatch(
-        CreatureType.creatureData.godOfDeath,
-        attackItem,
-      );
+      const specificGods = this.specificGodMatch(CreatureType.creatureData.godOfDeath, attackItem);
 
       if (specificGods) return CreatureType.buildDamageMod(specificGods, '*2');
     }
@@ -539,9 +425,7 @@ class SupernaturalType extends CreatureType {}
 class MagicalConstructType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Transformation'].map((x) =>
-      game.i18n.localize(`Features.${x}`),
-    );
+    this.spellImmunities = ['Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -554,20 +438,11 @@ class WerCreatureType extends CreatureType {
   damageModifier(attackItem) {
     if (this.isAttackItem(attackItem)) {
       const regex = this.attributesRegex(attackItem);
-      if (regex.test(CreatureType.silverPlated))
-        return CreatureType.buildDamageMod(
-          this.getTypeByClass('WerCreatureType'),
-          '*2',
-        );
-    } else if (
-      ['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)
-    ) {
+      if (regex.test(CreatureType.silverPlated)) return CreatureType.buildDamageMod(this.getTypeByClass('WerCreatureType'), '*2');
+    } else if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
       return super.damageModifier(attackItem);
     }
-    return CreatureType.buildDamageMod(
-      this.getTypeByClass('WerCreatureType'),
-      '*0.5',
-    );
+    return CreatureType.buildDamageMod(this.getTypeByClass('WerCreatureType'), '*0.5');
   }
 }
 
@@ -576,10 +451,7 @@ class VampireType extends CreatureType {
     if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
       return super.damageModifier(attackItem);
     }
-    return CreatureType.buildDamageMod(
-      this.getTypeByClass('VampireType'),
-      '*0.5',
-    );
+    return CreatureType.buildDamageMod(this.getTypeByClass('VampireType'), '*0.5');
   }
 }
 

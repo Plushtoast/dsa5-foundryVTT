@@ -14,13 +14,8 @@ export default function () {
     if (actor && actor.documentName == 'Actor') {
       if (getProperty(effect, 'flags.dsa5.maintain')) {
         const effectsToRemove = [effect._id];
-        const searchEffect = effect.name
-          .replace('(' + game.i18n.localize('maintainCost') + ')', '')
-          .trim();
-        const relatedEffects = actor.effects.filter(
-          (x) =>
-            x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id,
-        );
+        const searchEffect = effect.name.replace('(' + game.i18n.localize('maintainCost') + ')', '').trim();
+        const relatedEffects = actor.effects.filter((x) => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id);
         let content = `<p>${game.i18n.format('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
         if (relatedEffects) {
           content += `<p>${game.i18n.localize('DIALOG.dependentMaintainEffects')}</p>`;
@@ -43,10 +38,7 @@ export default function () {
               label: 'HELP.pay',
               default: true,
               callback: async () => {
-                const paid = await actor.applyMana(
-                  Number(getProperty(effect, 'flags.dsa5.maintain')),
-                  getProperty(effect, 'flags.dsa5.payType'),
-                );
+                const paid = await actor.applyMana(Number(getProperty(effect, 'flags.dsa5.maintain')), getProperty(effect, 'flags.dsa5.payType'));
                 if (paid) {
                   const duration = {
                     startTime: game.time.worldTime,
@@ -55,9 +47,7 @@ export default function () {
                     duration.startRound = game.combat.round;
                     duration.startTurn = game.combat.turn;
                   }
-                  actor.updateEmbeddedDocuments('ActiveEffect', [
-                    { _id: effect._id, duration },
-                  ]);
+                  actor.updateEmbeddedDocuments('ActiveEffect', [{ _id: effect._id, duration }]);
                 }
               },
             },
@@ -67,8 +57,7 @@ export default function () {
               label: 'delete',
               callback: (event, button, dialog) => {
                 for (let it of button.form.elements) {
-                  if (it.classList.contains('effectRemoveSelector'))
-                    effectsToRemove.push(it.value);
+                  if (it.classList.contains('effectRemoveSelector')) effectsToRemove.push(it.value);
                 }
                 actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove, {
                   noHook: true,
@@ -83,12 +72,7 @@ export default function () {
   });
 
   Hooks.on('updateActor', (actor, updates) => {
-    if (
-      !game.user.isGM &&
-      actor.limited &&
-      hasProperty(updates, 'system.merchant.hidePlayer')
-    )
-      ui.sidebar.render(true);
+    if (!game.user.isGM && actor.limited && hasProperty(updates, 'system.merchant.hidePlayer')) ui.sidebar.render(true);
   });
 
   Hooks.on('deleteActiveEffect', (effect, options) => {
@@ -100,10 +84,7 @@ export default function () {
     if (actor && actor.documentName == 'Actor') {
       if (effect.statuses.has('bloodrush')) {
         actor.addCondition('stunned', 2, false, false);
-      } else if (
-        (effect.statuses.has('dead') || effect.statuses.has('defeated')) &&
-        game.combat
-      ) {
+      } else if ((effect.statuses.has('dead') || effect.statuses.has('defeated')) && game.combat) {
         actor.markDead(false);
       }
       DSAActiveEffectConfig.onEffectRemove(actor, effect);
@@ -116,11 +97,9 @@ export default function () {
     const actor = effect.parent;
 
     if (actor && actor.documentName == 'Actor') {
-      if (DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false)
-        return false;
+      if (DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false) return false;
 
-      if (Hooks.call('deleteActorActiveEffect', actor, effect) === false)
-        return false;
+      if (Hooks.call('deleteActorActiveEffect', actor, effect) === false) return false;
     }
   });
 
@@ -159,18 +138,9 @@ export default function () {
   });
 
   function checkIniChange(effect) {
-    if (
-      game.combat &&
-      effect.changes.some((x) =>
-        /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(
-          x.key,
-        ),
-      )
-    ) {
+    if (game.combat && effect.changes.some((x) => /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(x.key))) {
       const actorId = effect.parent.id;
-      const combatant = game.combat.combatants.find(
-        (x) => x.actor.id == actorId,
-      );
+      const combatant = game.combat.combatants.find((x) => x.actor.id == actorId);
       if (combatant) combatant.recalcInitiative();
     }
   }
@@ -180,26 +150,15 @@ export default function () {
 
     const target = getProperty(effect, 'flags.dsa5.removeMessage');
 
-    if (
-      !(
-        (game.settings.get('dsa5', 'notifyOnFadingEffects') &&
-          effect.parent.documentName == 'Actor') ||
-        target
-      )
-    )
-      return;
+    if (!((game.settings.get('dsa5', 'notifyOnFadingEffects') && effect.parent.documentName == 'Actor') || target)) return;
 
     let forceWhisperIDs = [];
     switch (target) {
       case 'player':
-        forceWhisperIDs = game.users.filter(
-          (u) => !u.isGM && effect.parent.testUserPermission(u, 'OWNER'),
-        );
+        forceWhisperIDs = game.users.filter((u) => !u.isGM && effect.parent.testUserPermission(u, 'OWNER'));
         break;
       case 'playergm':
-        forceWhisperIDs = game.users.filter((u) =>
-          effect.parent.testUserPermission(u, 'OWNER'),
-        );
+        forceWhisperIDs = game.users.filter((u) => effect.parent.testUserPermission(u, 'OWNER'));
         break;
       case 'players':
         forceWhisperIDs = undefined;
@@ -229,11 +188,7 @@ export default function () {
 
     await countableDependentEffects(effect, {}, actor);
 
-    if (
-      (effect.statuses.has('dead') || effect.statuses.has('defeated')) &&
-      game.combat
-    )
-      await actor.markDead(true);
+    if ((effect.statuses.has('dead') || effect.statuses.has('defeated')) && game.combat) await actor.markDead(true);
     if (effect.statuses.has('unconscious')) await actor.addCondition('prone');
   };
 
@@ -251,12 +206,7 @@ export default function () {
     for (let key of Object.keys(toCheck)) {
       if (actor.system.condition[key] >= 4) {
         if (key == 'inpain') await actor.initResistPainRoll(effect);
-        else if (
-          ['encumbered', 'stunned', 'feared', 'confused', 'trance'].includes(
-            key,
-          )
-        )
-          await actor.addCondition('incapacitated');
+        else if (['encumbered', 'stunned', 'feared', 'confused', 'trance'].includes(key)) await actor.addCondition('incapacitated');
         else if (key == 'paralysed') await actor.addCondition('rooted');
         else if (['drunken', 'exhaustion'].includes(key)) {
           await actor.addCondition('stunned');
@@ -267,10 +217,7 @@ export default function () {
         (Number(toCheck.inpain) || 0) > 0 &&
         !actor.hasCondition('bloodrush') &&
         actor.system.condition.inpain > 0 &&
-        AdvantageRulesDSA5.hasVantage(
-          actor,
-          game.i18n.localize('LocalizedIDs.frenzy'),
-        )
+        AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.frenzy'))
       ) {
         await actor.addCondition('bloodrush');
         const msg = DSA5_Utility.replaceConditions(
@@ -284,31 +231,24 @@ export default function () {
   };
 
   const askForName = async (tokenObject, setting) => {
-    const dialogConstructor =
-      game.dsa5.apps.AskForNameDialog || AskForNameDialog;
+    const dialogConstructor = game.dsa5.apps.AskForNameDialog || AskForNameDialog;
     dialogConstructor.getDialog(tokenObject, setting);
   };
 
   const randomWeaponSelection = async (token) => {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    if (
-      game.settings.get('dsa5', 'randomWeaponSelection') &&
-      token.actor.type != 'character'
-    ) {
+    if (game.settings.get('dsa5', 'randomWeaponSelection') && token.actor.type != 'character') {
       const meleeweapons = [];
       const shields = [];
       const rangeweapons = [];
       for (let itm of token.actor.items) {
-        if (itm.type == 'meleeweapon' && itm.system.worn.value)
-          RuleChaos.isShield(itm) ? shields.push(itm) : meleeweapons.push(itm);
-        else if (itm.type == 'rangeweapon' && itm.system.worn.value)
-          rangeweapons.push(itm);
+        if (itm.type == 'meleeweapon' && itm.system.worn.value) RuleChaos.isShield(itm) ? shields.push(itm) : meleeweapons.push(itm);
+        else if (itm.type == 'rangeweapon' && itm.system.worn.value) rangeweapons.push(itm);
       }
       const updates = [];
       if (meleeweapons.length) {
-        const weapon =
-          meleeweapons[Math.floor(Math.random() * meleeweapons.length)];
+        const weapon = meleeweapons[Math.floor(Math.random() * meleeweapons.length)];
         const wornId = weapon._id;
         let shieldId;
         if (!RuleChaos.regex2h.test(weapon.name) && shields.length) {
@@ -326,8 +266,7 @@ export default function () {
         }
       }
       if (rangeweapons.length) {
-        const weaponid =
-          rangeweapons[Math.floor(Math.random() * rangeweapons.length)]._id;
+        const weaponid = rangeweapons[Math.floor(Math.random() * rangeweapons.length)]._id;
         for (let itm of rangeweapons) {
           if (itm._id == weaponid) continue;
 
@@ -346,12 +285,9 @@ export default function () {
     if (actor.hasPlayerOwner) return;
 
     const setting = Number(game.settings.get('dsa5', 'obfuscateTokenNames'));
-    if (setting == 0 || getProperty(actor, 'merchant.merchantType') == 'loot')
-      return;
+    if (setting == 0 || getProperty(actor, 'merchant.merchantType') == 'loot') return;
 
-    let sameActorTokens = canvas.scene.tokens.filter(
-      (x) => x.actor && x.actor.id === actor.id,
-    );
+    let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
     let name = game.i18n.localize('unknown');
     if ([2, 4].includes(setting)) {
       const tokenId = token.id || token._id;
@@ -381,20 +317,12 @@ export default function () {
     };
     Riding.updateTokenHook(token, data, options);
 
-    const animationName =
-      options.animation?.name || token.object?.animationName;
-    const animationPromise =
-      token.object?.animationContexts.get(animationName)?.promise;
+    const animationName = options.animation?.name || token.object?.animationName;
+    const animationPromise = token.object?.animationContexts.get(animationName)?.promise;
 
     (animationPromise || Promise.resolve()).then(() => {
       token.object?.drawAuras();
-      if (game.dsa5.apps.LightDialog)
-        game.dsa5.apps.LightDialog.onTokenMove(
-          token,
-          data,
-          options,
-          prePosition,
-        );
+      if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onTokenMove(token, data, options, prePosition);
     });
   });
 
@@ -472,16 +400,9 @@ export class TokenHoverHud {
     });
 
     if (weapons.length) {
-      const icons = weapons
-        .map(
-          (x) =>
-            `<img src="${x.img}" class="tinyHudIcons" data-tooltip="${x.name}"/>`,
-        )
-        .join(' ');
+      const icons = weapons.map((x) => `<img src="${x.img}" class="tinyHudIcons" data-tooltip="${x.name}"/>`).join(' ');
 
-      const elem = $(
-        `<div id="hoverhud_${token.id}" style="position:absolute;">${icons}</div>`,
-      );
+      const elem = $(`<div id="hoverhud_${token.id}" style="position:absolute;">${icons}</div>`);
       $('#hud').append(elem);
       this.position(elem, token, weapons.length);
     }
@@ -528,9 +449,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
             const tokenId = tokenObject.id || tokenObject._id;
             let name = button.form.elements.name.value;
             if (setting == 2) {
-              let sameActorTokens = canvas.scene.tokens.filter(
-                (x) => x.name === name,
-              );
+              let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
               if (sameActorTokens.length > 0) {
                 let max = sameActorTokens.length;
                 for (let x of sameActorTokens) {

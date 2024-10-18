@@ -16,10 +16,7 @@ export const applyDamage = async (li, mode, factor = 1) => {
   await actor.applyDamage(cardData.damage[mode] * factor);
   const update = {
     'flags.data.damageApplied': true,
-    content: message.content.replace(
-      /hideAnchor">/,
-      `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize('damageApplied')}"></i>`,
-    ),
+    content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize('damageApplied')}"></i>`),
   };
 
   if (game.user.isGM) {
@@ -41,14 +38,8 @@ export function chatContext() {
   };
   const canHurt = function (li, prop = 'damage.value') {
     let cardData = game.messages.get(li[0].dataset.messageId).flags.opposeData;
-    const isOwner = cardData
-      ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner
-      : false;
-    return (
-      (((game.user.isGM || isOwner) && li.find('.opposed-card').length) ||
-        li.find('.dice-roll').length) &&
-      (getProperty(cardData, prop) || 0) > 0
-    );
+    const isOwner = cardData ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner : false;
+    return (((game.user.isGM || isOwner) && li.find('.opposed-card').length) || li.find('.dice-roll').length) && (getProperty(cardData, prop) || 0) > 0;
   };
 
   const canHurtSP = function (li) {
@@ -61,13 +52,8 @@ export function chatContext() {
       let actor = game.actors.get(message.speaker.actor);
       if (actor.isOwner || game.user.isGM) {
         return (
-          ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'].includes(
-            message.flags.data.preData.source.type,
-          ) ||
-          getProperty(
-            message.flags.data.preData,
-            'calculatedSpellModifiers.costsMana',
-          )
+          ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'].includes(message.flags.data.preData.source.type) ||
+          getProperty(message.flags.data.preData, 'calculatedSpellModifiers.costsMana')
         );
       }
     }
@@ -75,20 +61,14 @@ export function chatContext() {
   };
 
   const canUnhideData = function (li) {
-    if (
-      !(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))
-    )
-      return false;
+    if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
 
     const message = game.messages.get(li[0].dataset.messageId);
     return 'hideData' in message.flags && message.flags.hideData;
   };
 
   const canHideData = function (li) {
-    if (
-      !(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))
-    )
-      return false;
+    if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
 
     const message = game.messages.get(li[0].dataset.messageId);
     return 'hideData' in message.flags && !message.flags.hideData;
@@ -102,16 +82,9 @@ export function chatContext() {
         if (actor.isOwner && fateAvailable(actor, group)) {
           let rollType = message.flags.data.preData.source.type;
           const mode = message.flags.data.preData.mode || '';
-          if (
-            ['skill', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(
-              rollType,
-            )
-          )
-            rollType = 'char';
+          if (['skill', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(rollType)) rollType = 'char';
           let schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`);
-          return (
-            !message.flags.data.fateImproved && actor.items.getName(schipSkill)
-          );
+          return !message.flags.data.fateImproved && actor.items.getName(schipSkill);
         }
       }
     }
@@ -128,10 +101,7 @@ export function chatContext() {
       let actor = game.actors.get(message.speaker.actor);
       if (actor.isOwner && fateAvailable(actor, group)) {
         if (!message.flags.data.fatePointAddQSUsed) {
-          return (
-            message.flags.data.postData.successLevel > 0 &&
-            message.flags.data.postData.qualityStep != undefined
-          );
+          return message.flags.data.postData.successLevel > 0 && message.flags.data.postData.qualityStep != undefined;
         }
       }
     }
@@ -148,11 +118,8 @@ export function chatContext() {
       let actor = game.actors.get(message.speaker.actor);
       if (actor.isOwner) {
         return (
-          actor.items.find(
-            (x) =>
-              x.name ==
-              `${game.i18n.localize('LocalizedIDs.aptitude')} (${message.flags.data.preData.source.name})`,
-          ) != undefined && !message.flags.data.talentedRerollUsed
+          actor.items.find((x) => x.name == `${game.i18n.localize('LocalizedIDs.aptitude')} (${message.flags.data.preData.source.name})`) != undefined &&
+          !message.flags.data.talentedRerollUsed
         );
       }
     }
@@ -164,10 +131,7 @@ export function chatContext() {
     if (message.speaker.actor && message.flags.data) {
       let actor = game.actors.get(message.speaker.actor);
       if (actor.isOwner && fateAvailable(actor, group)) {
-        return (
-          message.flags.data.postData.damageRoll != undefined &&
-          !message.flags.data.fatePointDamageRerollUsed
-        );
+        return message.flags.data.postData.damageRoll != undefined && !message.flags.data.fatePointDamageRerollUsed;
       }
     }
     return false;
@@ -183,10 +147,7 @@ export function chatContext() {
     if (message.speaker.actor && message.flags.data) {
       let actor = game.actors.get(message.speaker.actor);
       if (actor.isOwner && fateAvailable(actor, group)) {
-        return (
-          !message.flags.data.fatePointRerollUsed &&
-          !(message.flags.data.postData.rollType == 'regenerate')
-        );
+        return !message.flags.data.fatePointRerollUsed && !(message.flags.data.postData.rollType == 'regenerate');
       }
     }
     return false;
@@ -200,12 +161,7 @@ export function chatContext() {
     let message = game.messages.get(li[0].dataset.messageId);
     if (message.speaker.actor && message.flags.data) {
       let actor = game.actors.get(message.speaker.actor);
-      if (
-        actor.isOwner &&
-        ['LeP', 'KaP', 'AsP'].some(
-          (x) => getProperty(message.flags, `data.postData.${x}`) != undefined,
-        )
-      ) {
+      if (actor.isOwner && ['LeP', 'KaP', 'AsP'].some((x) => getProperty(message.flags, `data.postData.${x}`) != undefined)) {
         return !message.flags.data.healApplied;
       }
     }
@@ -217,9 +173,7 @@ export function chatContext() {
       if ('hideData' in message.flags) {
         let newHide = !message.flags.hideData;
         let query = $(message.content);
-        query
-          .find('.hideAnchor')
-          [newHide ? 'addClass' : 'removeClass']('hideData');
+        query.find('.hideAnchor')[newHide ? 'addClass' : 'removeClass']('hideData');
         query = $('<div></div>').append(query);
         message.update({
           content: query.html(),
@@ -232,19 +186,12 @@ export function chatContext() {
   const canApplyDefaultRolls = (li) => {
     const message = game.messages.get(li.data('messageId'));
     if (!message || !canvas.tokens) return false;
-    return (
-      message.isRoll &&
-      message.isContentVisible &&
-      canvas.tokens.controlled.length &&
-      li.find('.dice-roll').length
-    );
+    return message.isRoll && message.isContentVisible && canvas.tokens.controlled.length && li.find('.dice-roll').length;
   };
 
   const useFate = (li, mode, fateSource = 0) => {
     let message = game.messages.get(li[0].dataset.messageId);
-    game.actors
-      .get(message.speaker.actor)
-      .useFateOnRoll(message, mode, fateSource);
+    game.actors.get(message.speaker.actor).useFateOnRoll(message, mode, fateSource);
   };
 
   const applyChatCardDamage = (li, mode, factor = 1) => {
@@ -253,11 +200,7 @@ export function chatContext() {
     return Promise.all(
       canvas.tokens.controlled.map((token) => {
         const actor = token.actor;
-        const damage = Math.round(
-          (mode != 'sp'
-            ? roll.total - Actordsa5.armorValue(actor).armor
-            : roll.total) * factor,
-        );
+        const damage = Math.round((mode != 'sp' ? roll.total - Actordsa5.armorValue(actor).armor : roll.total) * factor);
         return actor.applyDamage(Math.max(0, damage));
       }),
     );
@@ -272,23 +215,10 @@ export function chatContext() {
         localize: true,
       });
 
-    const maintain =
-      cardData.preData.calculatedSpellModifiers.maintainCost.trim();
-    const payType =
-      ['ritual', 'spell'].includes(cardData.preData.source.type) ||
-      getProperty(cardData.preData.calculatedSpellModifiers, 'costsMana')
-        ? 'AsP'
-        : 'KaP';
-    const manaApplied = await actor.applyMana(
-      cardData.preData.calculatedSpellModifiers.finalcost,
-      payType,
-    );
-    if (
-      maintain &&
-      maintain != 0 &&
-      manaApplied &&
-      cardData.postData.successLevel > 0
-    ) {
+    const maintain = cardData.preData.calculatedSpellModifiers.maintainCost.trim();
+    const payType = ['ritual', 'spell'].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, 'costsMana') ? 'AsP' : 'KaP';
+    const manaApplied = await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, payType);
+    if (maintain && maintain != 0 && manaApplied && cardData.postData.successLevel > 0) {
       const name = cardData.preData.source.name;
       try {
         const cost = maintain.match(/^\d{1,3}/)[0];
@@ -309,59 +239,35 @@ export function chatContext() {
         };
         const regexes = [
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.combatRounds'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.combatRounds'), 'gi'),
             seconds: 5,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.minutes'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.minutes'), 'gi'),
             seconds: 60,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.hours'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.hours'), 'gi'),
             seconds: 3600,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.days'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.days'), 'gi'),
             seconds: 3600 * 24,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.seconds'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.seconds'), 'gi'),
             seconds: 1,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.weeks'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.weeks'), 'gi'),
             seconds: 3600 * 24 * 7,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.months'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.months'), 'gi'),
             seconds: 3600 * 24 * 30,
           },
           {
-            regEx: new RegExp(
-              game.i18n.localize('DSAREGEXmaintain.years'),
-              'gi',
-            ),
+            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.years'), 'gi'),
             seconds: 3600 * 24 * 350,
           },
         ];
@@ -381,19 +287,12 @@ export function chatContext() {
     }
     await message.update({
       'flags.data.manaApplied': true,
-      content: message.content.replace(
-        /<span class="costCheck">/,
-        `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`,
-      ),
+      content: message.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`),
     });
   };
 
   const applyDamageLabel = () => {
-    return game.i18n.localize(
-      game.combat?.isBrawling
-        ? 'CHATCONTEXT.ApplyDamagePP'
-        : 'CHATCONTEXT.ApplyDamage',
-    );
+    return game.i18n.localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
   Hooks.on('getChatLogEntryContext', (html, options) => {
@@ -428,16 +327,9 @@ export function chatContext() {
 
           await message.update({
             'flags.data.healApplied': true,
-            content: message.content.replace(
-              /<\/div>$/,
-              '<i class="fas fa-check" style="float:right"></i></div>',
-            ),
+            content: message.content.replace(/<\/div>$/, '<i class="fas fa-check" style="float:right"></i></div>'),
           });
-          await actor.applyRegeneration(
-            message.flags.data.postData.LeP,
-            message.flags.data.postData.AsP,
-            message.flags.data.postData.KaP,
-          );
+          await actor.applyRegeneration(message.flags.data.postData.LeP, message.flags.data.postData.AsP, message.flags.data.postData.KaP);
         },
       },
       {

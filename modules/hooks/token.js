@@ -36,14 +36,7 @@ export default function () {
       if (effect.getFlag('core', 'overlay') && !hasOverlay) {
         promises.push(this._drawOverlay(effect.img, effect.tint));
         hasOverlay = true;
-      } else
-        promises.push(
-          this._drawEffect(
-            effect.img,
-            effect.tint,
-            getProperty(effect, 'flags.dsa5.value'),
-          ),
-        );
+      } else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, 'flags.dsa5.value')));
     }
     await Promise.allSettled(promises);
 
@@ -55,10 +48,7 @@ export default function () {
     let i = 0;
     const w = Math.round(canvas.dimensions.size / 10) * 2;
     const rows = Math.floor(this.document.height * 5);
-    const bg = this.effects.bg
-      .clear()
-      .beginFill(0x000000, 0.4)
-      .lineStyle(1.0, 0x000000);
+    const bg = this.effects.bg.clear().beginFill(0x000000, 0.4).lineStyle(1.0, 0x000000);
     for (const effect of this.effects.children) {
       if (effect === bg) continue;
       if (effect.isCounter) continue;
@@ -83,9 +73,7 @@ export default function () {
           let textEffect = game.dsa5.config.effectTextStyle;
           let color = game.settings.get('dsa5', 'statusEffectCounterColor');
           textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : '#000000';
-          let text = this.effects.addChild(
-            new PreciseText(effect.counter, textEffect),
-          );
+          let text = this.effects.addChild(new PreciseText(effect.counter, textEffect));
           text.x = effect.x;
           text.y = effect.y;
           text.isCounter = true;
@@ -113,17 +101,11 @@ export default function () {
   const isMerchant = (actor) => {
     if (!actor) return false;
 
-    return ['merchant', 'loot'].includes(
-      getProperty(actor.system, 'merchant.merchantType'),
-    );
+    return ['merchant', 'loot'].includes(getProperty(actor.system, 'merchant.merchantType'));
   };
 
   Token.prototype._onClickLeft2 = function (event) {
-    const distanceAccessible =
-      game.user.isGM ||
-      !DPS.isEnabled ||
-      !isMerchant(this.actor) ||
-      DPS.inDistance(this);
+    const distanceAccessible = game.user.isGM || !DPS.isEnabled || !isMerchant(this.actor) || DPS.inDistance(this);
 
     if (!distanceAccessible)
       return ui.notifications.warn('DSAError.notInRangeToLoot', {

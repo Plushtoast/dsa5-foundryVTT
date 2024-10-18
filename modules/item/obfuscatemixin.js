@@ -34,9 +34,7 @@ export const ItemSheetObfuscation = (superclass) =>
         if (!ele.length) continue;
 
         const invisible = options.tabsinvisible || this.isObfuscated(tab);
-        const tooltip = game.i18n.localize(
-          `SHEET.${invisible ? 'deobfuscateItem' : 'obfuscateItem'}`,
-        );
+        const tooltip = game.i18n.localize(`SHEET.${invisible ? 'deobfuscateItem' : 'obfuscateItem'}`);
         if (game.user.isGM) {
           const sectionName = `obfuscateSection${this.obfuscationCss(tab)}`;
           const existingElem = ele.find(`.${sectionName}`);
@@ -51,9 +49,7 @@ export const ItemSheetObfuscation = (superclass) =>
           ele.remove();
 
           if (tab == 'details') {
-            $(this._element)
-              .find('[name="system.price.value"],[name="system.price.raw"]')
-              .replaceWith('<label>?</label>');
+            $(this._element).find('[name="system.price.value"],[name="system.price.raw"]').replaceWith('<label>?</label>');
           }
         }
       }
@@ -62,10 +58,7 @@ export const ItemSheetObfuscation = (superclass) =>
         if (tabs.length) {
           this.activateTab(tabs.attr('data-tab'));
         } else {
-          const templ = await renderTemplate(
-            'systems/dsa5/templates/items/obfuscatedItem.html',
-            { item: this.item },
-          );
+          const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', { item: this.item });
           $(this._element).find('.content').html(templ);
         }
       }

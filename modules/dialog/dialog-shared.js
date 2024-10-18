@@ -3,19 +3,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import { AddTargetDialog } from './addTargetDialog.js';
 
 export default class DialogShared extends Dialog {
-  static roman = [
-    '',
-    ' I',
-    ' II',
-    ' III',
-    ' IV',
-    ' V',
-    ' VI',
-    ' VII',
-    ' VIII',
-    ' IX',
-    ' X',
-  ];
+  static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
 
   recallSettings(speaker, source, mode, renderData) {
     this.recallData = game.dsa5.memory.recall(speaker, source, mode);
@@ -51,10 +39,7 @@ export default class DialogShared extends Dialog {
 
   renderRollValueDie(multiplier = 1) {
     if (this.dialogData.rollValue && this.dialogData.mode != 'damage') {
-      const dieClass =
-        this.dialogData.mode == 'attack' || this.dialogData.counterAttack
-          ? 'die-mu'
-          : 'die-in';
+      const dieClass = this.dialogData.mode == 'attack' || this.dialogData.counterAttack ? 'die-mu' : 'die-in';
       const modifier = this.dialogData.modifier || 0;
       return `<span class="rollValue ${dieClass} d20">${Math.clamp(Math.round((this.dialogData.rollValue + modifier) * multiplier), 1, 20)}</span>`;
     } else {
@@ -63,8 +48,7 @@ export default class DialogShared extends Dialog {
   }
 
   async updateRollButton(targets, multiplier = 1) {
-    let rollTag =
-      this.renderRollValueDie(multiplier) + game.i18n.localize('Roll');
+    let rollTag = this.renderRollValueDie(multiplier) + game.i18n.localize('Roll');
     if (targets.length > 0) {
       if (targets.length > 1) {
         rollTag += this.setMultipleTargetsWarning();
@@ -76,10 +60,7 @@ export default class DialogShared extends Dialog {
   }
 
   async updateTargets(html, targets) {
-    const template = await renderTemplate(
-      'systems/dsa5/templates/dialog/parts/targets.html',
-      { targets },
-    );
+    const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.html', { targets });
     html.find('.targets').html(template);
     this.updateRollButton(targets);
   }
@@ -102,26 +83,15 @@ export default class DialogShared extends Dialog {
         const possibilities = [];
         for (let i = 0; i < 6; i++) {
           const qs = 1 + i;
-          let probability =
-            game.dsa5.apps.DSACharacterCalculator.rollSuccessCalculation(
-              actor,
-              item,
-              mod,
-              qs,
-              fw,
-            );
+          let probability = game.dsa5.apps.DSACharacterCalculator.rollSuccessCalculation(actor, item, mod, qs, fw);
           if (probability > 1) {
             probability = `${probability}`.padStart(2, '0');
-            possibilities.push(
-              `${game.i18n.localize('CHARAbbrev.QS')} ${qs}: ${probability}%`,
-            );
+            possibilities.push(`${game.i18n.localize('CHARAbbrev.QS')} ${qs}: ${probability}%`);
           } else {
             break;
           }
         }
-        $(this.element)
-          .find('.nonOpposedButton,.rollButton')
-          .attr('data-tooltip', possibilities.join('<br>'));
+        $(this.element).find('.nonOpposedButton,.rollButton').attr('data-tooltip', possibilities.join('<br>'));
       }
     }
   }
@@ -129,8 +99,7 @@ export default class DialogShared extends Dialog {
   readTargets() {
     let targets = [];
     game.user.targets.forEach((x) => {
-      if (x.actor)
-        targets.push({ name: x.actor.name, img: x.actor.img, id: x.id });
+      if (x.actor) targets.push({ name: x.actor.name, img: x.actor.img, id: x.id });
     });
     return targets;
   }
@@ -149,10 +118,7 @@ export default class DialogShared extends Dialog {
     html.find('.quantity-click').mousedown((ev) => RuleChaos.quantityClick(ev));
     html.find('.modifiers option').mousedown((ev) => {
       ev.preventDefault();
-      $(ev.currentTarget).prop(
-        'selected',
-        !$(ev.currentTarget).prop('selected'),
-      );
+      $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
       return false;
     });
     html.on('click', '.rollTarget', (ev) => this.removeTarget(ev));
@@ -178,14 +144,11 @@ export default class DialogShared extends Dialog {
           if (Array.isArray(this.recallData[key])) {
             const options = elem.find('option');
             for (let opt of options) {
-              let mod = this.recallData[key].find(
-                (x) => x.name == $(opt).text().trim(),
-              );
+              let mod = this.recallData[key].find((x) => x.name == $(opt).text().trim());
               if (mod) opt.selected = mod.selected;
             }
           } else {
-            if (elem.attr('type') == 'checkbox')
-              elem[0].checked = this.recallData[key];
+            if (elem.attr('type') == 'checkbox') elem[0].checked = this.recallData[key];
             else elem.val(this.recallData[key]);
           }
         }

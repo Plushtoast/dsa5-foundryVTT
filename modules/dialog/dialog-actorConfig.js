@@ -1,8 +1,6 @@
 import Migrakel from '../system/migrakel.js';
 
-export default class DialogActorConfig extends foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.api.ApplicationV2,
-) {
+export default class DialogActorConfig extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'SHEET.actorConfig',
@@ -31,25 +29,11 @@ export default class DialogActorConfig extends foundry.applications.api.Handleba
     super._onRender((context, options));
 
     const html = $(this.element);
-    html
-      .find('.updateSpells')
-      .on('click', async (ev) =>
-        this.updateWrapper('updateSpellsAndLiturgies', ev),
-      );
-    html
-      .find('.updateAbilities')
-      .on('click', async (ev) =>
-        this.updateWrapper('updateSpecialAbilities', ev),
-      );
-    html
-      .find('.updatecSkills')
-      .on('click', async (ev) => this.updateWrapper('updateCombatskills', ev));
-    html
-      .find('.updateSkills')
-      .on('click', async (ev) => this.updateWrapper('updateSkills', ev));
-    html
-      .find('.updateGear')
-      .on('click', async (ev) => this.updateWrapper('updateGear', ev));
+    html.find('.updateSpells').on('click', async (ev) => this.updateWrapper('updateSpellsAndLiturgies', ev));
+    html.find('.updateAbilities').on('click', async (ev) => this.updateWrapper('updateSpecialAbilities', ev));
+    html.find('.updatecSkills').on('click', async (ev) => this.updateWrapper('updateCombatskills', ev));
+    html.find('.updateSkills').on('click', async (ev) => this.updateWrapper('updateSkills', ev));
+    html.find('.updateGear').on('click', async (ev) => this.updateWrapper('updateGear', ev));
   }
 
   async updateWrapper(fnct, ev) {

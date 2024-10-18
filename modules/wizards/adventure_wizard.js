@@ -28,12 +28,7 @@ export default class BookWizard extends Application {
       },
     ];
     mergeObject(options, {
-      classes: options.classes.concat([
-        'dsa5',
-        'largeDialog',
-        'noscrollWizard',
-        'bookWizardsheet',
-      ]),
+      classes: options.classes.concat(['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet']),
       width: 800,
       height: 880,
       scrollY: ['.pages-list .scrollable'],
@@ -51,12 +46,8 @@ export default class BookWizard extends Application {
     game.dsa5.apps.journalBrowser = BookWizard.wizard;
 
     Hooks.on('renderJournalDirectory', (app, html) => {
-      const div = $(
-        '<div class="header-actions action-buttons flexrow"></div>',
-      );
-      const button = $(
-        `<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize('Book.Wizard')}</button>`,
-      );
+      const div = $('<div class="header-actions action-buttons flexrow"></div>');
+      const button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize('Book.Wizard')}</button>`);
       button.on('click', () => {
         BookWizard.wizard.render(true);
       });
@@ -160,11 +151,7 @@ export default class BookWizard extends Application {
     html.on('click', '.movePage', async (ev) => this.movePage(ev));
 
     html.on('click', '.loadBook', (ev) => {
-      this.loadBook(
-        $(ev.currentTarget).text(),
-        html,
-        ev.currentTarget.dataset.type,
-      );
+      this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.type);
     });
     html.on('click', '.getChapter', (ev) => {
       this.selectedType = $(ev.currentTarget).closest('.toc').attr('data-type');
@@ -200,9 +187,7 @@ export default class BookWizard extends Application {
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
     html.find('.tocCollapser').click((ev) => {
-      $(ev.currentTarget)
-        .find('i')
-        .toggleClass('fa-chevron-right fa-chevron-left');
+      $(ev.currentTarget).find('i').toggleClass('fa-chevron-right fa-chevron-left');
       html.find('.tocCollapsing').toggleClass('expanded');
     });
     html.on('mousedown', '.openPin', async (ev) => {
@@ -222,10 +207,7 @@ export default class BookWizard extends Application {
       this.pinJournal(id, name);
     });
     html.on('click', '.activateScene', (ev) => {
-      this.showSzene(
-        ev.currentTarget.dataset.id,
-        ev.currentTarget.dataset.mode,
-      );
+      this.showSzene(ev.currentTarget.dataset.id, ev.currentTarget.dataset.mode);
     });
     html.on('click', '.fulltextsearch', (ev) => {
       this.fulltextsearch = !this.fulltextsearch;
@@ -254,19 +236,14 @@ export default class BookWizard extends Application {
   }
 
   async getPagy(chapter, journalId) {
-    const journals = this.journals
-      .filter((x) => x.flags.dsa5.parent == chapter)
-      .sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
+    const journals = this.journals.filter((x) => x.flags.dsa5.parent == chapter).sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
     const targetindex = journals.findIndex((x) => x._id == journalId);
     return { journals, targetindex };
   }
 
   async movePage(ev) {
     const dir = ev.currentTarget.dataset.action;
-    let { journals, targetindex } = await this.getPagy(
-      this.selectedChapter,
-      this.selectedSubChapter,
-    );
+    let { journals, targetindex } = await this.getPagy(this.selectedChapter, this.selectedSubChapter);
     let flattenedChapters = [];
 
     for (let chap of this.bookData.chapters) {
@@ -275,9 +252,7 @@ export default class BookWizard extends Application {
       }
     }
 
-    let curChapterIndex = flattenedChapters.findIndex(
-      (x) => x == this.selectedChapter,
-    );
+    let curChapterIndex = flattenedChapters.findIndex((x) => x == this.selectedChapter);
     this.bookData.chapters.findIndex((x) => x.name == this.selectedChapter);
 
     if (dir == 'next') targetindex++;
@@ -312,11 +287,7 @@ export default class BookWizard extends Application {
   }
 
   async loadJournal(name) {
-    await this.showJournal(
-      this.journals.find(
-        (x) => x.name == name && x.flags.dsa5.parent == this.selectedChapter,
-      ),
-    );
+    await this.showJournal(this.journals.find((x) => x.name == name && x.flags.dsa5.parent == this.selectedChapter));
   }
 
   async loadJournalById(id) {
@@ -328,11 +299,7 @@ export default class BookWizard extends Application {
     for (let elem of target.getElementsByTagName('div')) {
       breadcrumbs[elem.dataset.uuid] = elem.innerText;
     }
-    await game.settings.set(
-      'dsa5',
-      `breadcrumbs_${game.world.id}`,
-      JSON.stringify(breadcrumbs),
-    );
+    await game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
   }
 
   markFindings(html) {
@@ -346,9 +313,7 @@ export default class BookWizard extends Application {
     const boundingRect = html.find('> div')[0].getBoundingClientRect();
     for (let finding of findings) {
       const bounding = finding.getBoundingClientRect();
-      markers.push(
-        `<div class="marker" style="top:${((bounding.top - boundingRect.top) / boundingRect.height) * 100}%"></div>`,
-      );
+      markers.push(`<div class="marker" style="top:${((bounding.top - boundingRect.top) / boundingRect.height) * 100}%"></div>`);
     }
     const lines = $(`<div class="searchLines">${markers.join('')}</div>`);
     container.append(lines);
@@ -372,9 +337,7 @@ export default class BookWizard extends Application {
                 field: ['name', 'data'],
               },
             });
-            await this.journalIndex.add(
-              this.journals.map((x) => new JournalSearch(x)),
-            );
+            await this.journalIndex.add(this.journals.map((x) => new JournalSearch(x)));
           }
           result = await this.journalIndex.search(val);
         } else {
@@ -382,21 +345,14 @@ export default class BookWizard extends Application {
             return x.name.toLowerCase().trim().indexOf(val) != -1;
           });
         }
-        result = result.map(
-          (x) =>
-            `<li class="fas fa-caret-right"><a data-jid="${x.id}" class="subChapter">${x.name}</a></li>`,
-        );
+        result = result.map((x) => `<li class="fas fa-caret-right"><a data-jid="${x.id}" class="subChapter">${x.name}</a></li>`);
 
         $(this._element)
           .find('.tocContent')
           .html(`<ul>${result.join('\n')}</ul>`);
       } else {
         const content = await this.getToc();
-        $(this._element)
-          .find('.toc')
-          .html(content)
-          .find('.filterJournals')
-          .trigger('focus');
+        $(this._element).find('.toc').html(content).find('.filterJournals').trigger('focus');
       }
     }
 
@@ -408,22 +364,16 @@ export default class BookWizard extends Application {
 
   async showSearchResults(pageContent) {
     if (this.searchString) {
-      await TextEditor._replaceTextContent(
-        TextEditor._getTextNodes(pageContent),
-        new RegExp(this.searchString, 'ig'),
-        (match, options) => {
-          return $(`<span class="searchMatch">${match[0]}</span>`)[0];
-        },
-      );
+      await TextEditor._replaceTextContent(TextEditor._getTextNodes(pageContent), new RegExp(this.searchString, 'ig'), (match, options) => {
+        return $(`<span class="searchMatch">${match[0]}</span>`)[0];
+      });
     }
   }
 
   _onClickPageLink(ev) {
     const anchor = ev.currentTarget.closest('[data-anchor]')?.dataset.anchor;
     if (anchor) {
-      const element = this.element[0].querySelector(
-        `.chapter [data-anchor="${anchor}"]`,
-      );
+      const element = this.element[0].querySelector(`.chapter [data-anchor="${anchor}"]`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
         return;
@@ -470,10 +420,8 @@ export default class BookWizard extends Application {
       await this.showSearchResults(pageContent);
       pageContent = $(pageContent).html();
 
-      if (page.type == 'video')
-        pageContent = `<div class="video-container">${pageContent}</div>`;
-      if (!equalName)
-        pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
+      if (page.type == 'video') pageContent = `<div class="video-container">${pageContent}</div>`;
+      if (!equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
 
       content += pageContent;
     }
@@ -513,21 +461,14 @@ export default class BookWizard extends Application {
 
   findSceneNote(entryId) {
     if (entryId) {
-      const importedJournalEntry = game.journal.find(
-        (x) => x.getFlag('dsa5', 'initId') == entryId,
-      );
-      if (importedJournalEntry && importedJournalEntry.sceneNote)
-        return `<a class="showMapNote" data-entryId="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
+      const importedJournalEntry = game.journal.find((x) => x.getFlag('dsa5', 'initId') == entryId);
+      if (importedJournalEntry && importedJournalEntry.sceneNote) return `<a class="showMapNote" data-entryId="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
     }
     return '';
   }
 
   async importBook() {
-    if (game.user.isGM)
-      new InitializerForm().render(
-        this.bookData.moduleName,
-        this.bookData.options,
-      );
+    if (game.user.isGM) new InitializerForm().render(this.bookData.moduleName, this.bookData.options);
   }
 
   async loadBook(id, html, type) {
@@ -584,23 +525,10 @@ export default class BookWizard extends Application {
     if (!chapter.actors) return [];
 
     let result = [];
-    const head = await game.folders.contents.find(
-      (x) =>
-        x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) &&
-        x.type == 'Actor' &&
-        x.folder == null,
-    );
-    const folderids = head
-      ? await game.folders.contents
-          .filter((x) => x.type == 'Actor' && x.folder?.id == head.id)
-          .map((x) => x.id)
-      : undefined;
+    const head = await game.folders.contents.find((x) => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == 'Actor' && x.folder == null);
+    const folderids = head ? await game.folders.contents.filter((x) => x.type == 'Actor' && x.folder?.id == head.id).map((x) => x.id) : undefined;
     for (let k of chapter.actors) {
-      let actor = folderids?.length
-        ? game.actors.contents.find(
-            (x) => x.name == k && folderids.includes(x.folder?.id),
-          )
-        : undefined;
+      let actor = folderids?.length ? game.actors.contents.find((x) => x.name == k && folderids.includes(x.folder?.id)) : undefined;
       let pack = undefined;
       let id = actor?.id;
       let uuid = actor?.uuid;
@@ -655,66 +583,46 @@ export default class BookWizard extends Application {
       if (this.selectedChapter) {
         if (this.selectedChapter == 'prep') {
           let info = {
-            initDescr: game.i18n.format(
-              `${this.bookData.options?.scope || this.bookData.moduleName}.importContent`,
-              { defaultText: game.i18n.localize('importDefault') },
-            ),
+            initDescr: game.i18n.format(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: game.i18n.localize('importDefault') }),
           };
 
           let modules = this.bookData.modules;
           for (let k of modules) k.enabled = this.moduleEnabled(k.id);
 
-          return await renderTemplate(
-            'systems/dsa5/templates/wizard/adventure/adventure_preparation.html',
-            { modules, info },
-          );
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_preparation.html', { modules, info });
         } else if (this.selectedChapter == 'foundryUsage') {
-          return await renderTemplate(
-            'systems/dsa5/templates/wizard/adventure/adventure_foundry.html',
-          );
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_foundry.html');
         }
 
-        let chapter = this.bookData.chapters
-          .find((x) => x.name == this.selectedType)
-          .content.find((x) => x.id == this.selectedChapter);
+        let chapter = this.bookData.chapters.find((x) => x.name == this.selectedType).content.find((x) => x.id == this.selectedChapter);
         const subChapters = this.getSubChapters();
         if (chapter.scenes || chapter.actors || subChapters.length == 0) {
-          return await renderTemplate(
-            'systems/dsa5/templates/wizard/adventure/adventure_chapter.html',
-            {
-              chapter,
-              subChapters: this.getSubChapters(),
-              actors: await this.prefillActors(chapter),
-            },
-          );
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', {
+            chapter,
+            subChapters: this.getSubChapters(),
+            actors: await this.prefillActors(chapter),
+          });
         } else {
           this.selectedSubChapter = subChapters[0].id;
           return await this.loadJournalById(subChapters[0].id);
         }
       }
-      return await renderTemplate(
-        'systems/dsa5/templates/wizard/adventure/adventure_cover.html',
-        { book: this.book, bookData: this.bookData },
-      );
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData });
     } else {
-      return await renderTemplate(
-        'systems/dsa5/templates/wizard/adventure/adventure_intro.html',
-        {
-          rshs: this.filterBooks(this.rshs),
-          rules: this.filterBooks(this.books),
-          adventures: this.filterBooks(this.adventures),
-          manuals: this.filterBooks(this.manuals),
-          isGM: game.user.isGM,
-        },
-      );
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', {
+        rshs: this.filterBooks(this.rshs),
+        rules: this.filterBooks(this.books),
+        adventures: this.filterBooks(this.adventures),
+        manuals: this.filterBooks(this.manuals),
+        isGM: game.user.isGM,
+      });
     }
   }
 
   filterBooks(books) {
     const bookPermissions = game.settings.get('dsa5', 'expansionPermissions');
     for (const book of books) {
-      if (bookPermissions[book.id] != undefined)
-        book.visible = bookPermissions[book.id];
+      if (bookPermissions[book.id] != undefined) book.visible = bookPermissions[book.id];
     }
     return game.user.isGM
       ? books
@@ -728,13 +636,9 @@ export default class BookWizard extends Application {
   getSubChapters() {
     let jrns;
     if (this.bookData.isDynamic) {
-      jrns = this.journals
-        .filter((x) => x.folder.id == this.selectedChapter)
-        .sort((a, b) => (a.sort > b.sort ? 1 : -1));
+      jrns = this.journals.filter((x) => x.folder.id == this.selectedChapter).sort((a, b) => (a.sort > b.sort ? 1 : -1));
     } else {
-      jrns = this.journals
-        .filter((x) => x.flags.dsa5.parent == this.selectedChapter)
-        .sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
+      jrns = this.journals.filter((x) => x.flags.dsa5.parent == this.selectedChapter).sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
     }
 
     return jrns.map((x) => {
@@ -763,16 +667,13 @@ export default class BookWizard extends Application {
           chapter.subChapters = this.getSubChapters();
         }
       }
-      return await renderTemplate(
-        'systems/dsa5/templates/wizard/adventure/adventure_toc.html',
-        {
-          chapters,
-          searchString: this.searchString,
-          book: this.book,
-          pageTocs: this.pageTocs,
-          fulltextsearch: this.fulltextsearch ? 'on' : '',
-        },
-      );
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', {
+        chapters,
+        searchString: this.searchString,
+        book: this.book,
+        pageTocs: this.pageTocs,
+        fulltextsearch: this.fulltextsearch ? 'on' : '',
+      });
     } else {
       return '<div class="libraryImg"></div>';
     }
@@ -810,22 +711,14 @@ export default class BookWizard extends Application {
     let breadcrumbs = this.readBreadCrumbs();
     if (!name) name = (await fromUuid(uuid))?.name || '';
     breadcrumbs[uuid] = name;
-    game.settings.set(
-      'dsa5',
-      `breadcrumbs_${game.world.id}`,
-      JSON.stringify(breadcrumbs),
-    );
+    game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
     this.render(true);
   }
 
   unpinJournal(uuid) {
     let breadcrumbs = this.readBreadCrumbs();
     delete breadcrumbs[uuid];
-    game.settings.set(
-      'dsa5',
-      `breadcrumbs_${game.world.id}`,
-      JSON.stringify(breadcrumbs),
-    );
+    game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
     this.render(true);
   }
 
@@ -841,20 +734,14 @@ export default class BookWizard extends Application {
       return false;
     }
     if (data.type == 'JournalEntry') {
-      this.pinJournal(
-        data.pack
-          ? `Compendium.${data.pack}.${data.id}`
-          : `JournalEntry.${data.id}`,
-      );
+      this.pinJournal(data.pack ? `Compendium.${data.pack}.${data.id}` : `JournalEntry.${data.id}`);
     }
   }
 
   readBreadCrumbs() {
     let breadcrumbs = {};
     try {
-      breadcrumbs = JSON.parse(
-        game.settings.get('dsa5', `breadcrumbs_${game.world.id}`),
-      );
+      breadcrumbs = JSON.parse(game.settings.get('dsa5', `breadcrumbs_${game.world.id}`));
     } catch (e) {
       console.log('No Journalbrowser notes found');
     }
@@ -863,13 +750,9 @@ export default class BookWizard extends Application {
 
   renderBreadcrumbs() {
     const breadcrumbs = this.readBreadCrumbs();
-    const btns = Object.entries(breadcrumbs).map(
-      (x) =>
-        `<div data-tooltip="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`,
-    );
+    const btns = Object.entries(breadcrumbs).map((x) => `<div data-tooltip="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`);
 
-    if (btns.length > 0)
-      return `<div id="breadcrumbs" class="breadcrumbs wrap row-section">${btns.join('')}</div>`;
+    if (btns.length > 0) return `<div id="breadcrumbs" class="breadcrumbs wrap row-section">${btns.join('')}</div>`;
 
     return '';
   }

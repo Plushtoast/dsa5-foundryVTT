@@ -19,8 +19,7 @@ export default class TokenHotbar2 extends Application {
     if (!game.dsa5.apps.tokenHotbar) {
       game.dsa5.apps.tokenHotbar = new TokenHotbar2();
       game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
-      if (!game.settings.get('dsa5', 'disableTokenhotbar'))
-        game.dsa5.apps.tokenHotbar.render(true);
+      if (!game.settings.get('dsa5', 'disableTokenhotbar')) game.dsa5.apps.tokenHotbar.render(true);
 
       Hooks.call('dsa5TokenHotbarReady', game.dsa5.apps.tokenHotbar);
     }
@@ -30,16 +29,8 @@ export default class TokenHotbar2 extends Application {
     super(options);
     this.searching = '';
 
-    TokenHotbar2.combatSkills = [
-      'selfControl',
-      'featOfStrength',
-      'bodyControl',
-      'perception',
-      'loyalty',
-    ].map((x) => game.i18n.localize(`LocalizedIDs.${x}`));
-    TokenHotbar2.defaultSkills = new Set([
-      game.i18n.localize('LocalizedIDs.perception'),
-    ]);
+    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`));
+    TokenHotbar2.defaultSkills = new Set([game.i18n.localize('LocalizedIDs.perception')]);
 
     if (game.user.isGM) {
       this.callbackFunctions = {};
@@ -91,11 +82,7 @@ export default class TokenHotbar2 extends Application {
     Hooks.on('updateToken', (scene, token, updates) => {
       if (!game.dsa5.apps.tokenHotbar) return;
 
-      if (
-        token._id ==
-        getProperty(game.dsa5.apps.tokenHotbar, 'actor.prototypeToken.id')
-      )
-        game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+      if (token._id == getProperty(game.dsa5.apps.tokenHotbar, 'actor.prototypeToken.id')) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
@@ -162,18 +149,14 @@ export default class TokenHotbar2 extends Application {
       };
     });
     this.skills = this.skills.sort((a, b) => {
-      return (
-        a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name)
-      );
+      return a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name);
     });
     return this.skills;
   }
 
   static hookUpdate(changeId) {
-    if (changeId == game.dsa5.apps.tokenHotbar?.actor?.id)
-      game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
-    else if (ui.hotbar.token?.actor?.id == changeId)
-      ui.hotbar.updateDSA5Hotbar();
+    if (changeId == game.dsa5.apps.tokenHotbar?.actor?.id) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+    else if (ui.hotbar.token?.actor?.id == changeId) ui.hotbar.updateDSA5Hotbar();
   }
 
   resetPosition() {
@@ -226,11 +209,7 @@ export default class TokenHotbar2 extends Application {
 
   changeDarkness(ev) {
     const darkness = Number(ev.currentTarget.value);
-    if (canvas.scene)
-      canvas.scene.update(
-        { 'environment.darknessLevel': darkness },
-        { animateDarkness: 3000 },
-      );
+    if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': darkness }, { animateDarkness: 3000 });
 
     tinyNotification(`${game.i18n.localize('MASTER.darkness')} ${darkness}`);
   }
@@ -239,8 +218,7 @@ export default class TokenHotbar2 extends Application {
     super.activateListeners(html);
 
     const container = html.find('.dragHandler');
-    if (container[0])
-      new Draggable(this, html, container[0], this.options.resizable);
+    if (container[0]) new Draggable(this, html, container[0], this.options.resizable);
 
     container.on('wheel', async (ev) => {
       ev.stopPropagation();
@@ -279,8 +257,7 @@ export default class TokenHotbar2 extends Application {
       this.category = cat;
       setTimeout(() => {
         html.find('.secondary').removeClass('shown');
-        if (cat == this.category)
-          html.find(`.secondary[data-category="${cat}"]`).addClass('shown');
+        if (cat == this.category) html.find(`.secondary[data-category="${cat}"]`).addClass('shown');
       }, 700);
     });
 
@@ -302,8 +279,7 @@ export default class TokenHotbar2 extends Application {
     const effect = actor.effects.get(id);
     const isSystemEffect = [...effect.statuses][0];
     if (ev.button == 0) {
-      if (isSystemEffect)
-        await actor.addCondition(isSystemEffect, 1, false, false);
+      if (isSystemEffect) await actor.addCondition(isSystemEffect, 1, false, false);
       else effect.sheet.render(true);
     } else if (ev.button == 2) {
       if (isSystemEffect) await actor.removeCondition(isSystemEffect, 1, false);
@@ -313,12 +289,7 @@ export default class TokenHotbar2 extends Application {
 
   async handleGMRoll(ev) {
     const skill = ev.currentTarget.dataset.id;
-    const mod = Math.round(
-      $(ev.currentTarget)
-        .closest('.tokenHotbarInner,#hotbar')
-        .find('.modifierVal')
-        .val(),
-    );
+    const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
     if (ev.ctrlKey) {
       game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, {
         modifier: mod,
@@ -352,21 +323,17 @@ export default class TokenHotbar2 extends Application {
               result.update({ 'system.worn.value': false });
             } else if (result.system.worn.value) {
               result = Actordsa5.buildSubweapon(result, subweapon);
-              actor
-                .setupWeapon(result, 'attack', options, tokenId)
-                .then((setupData) => {
-                  actor.basicTest(setupData);
-                });
+              actor.setupWeapon(result, 'attack', options, tokenId).then((setupData) => {
+                actor.basicTest(setupData);
+              });
             } else {
               actor.exclusiveEquipWeapon(result.id, ev.button == 2);
             }
             break;
           case 'trait':
-            actor
-              .setupWeapon(result, 'attack', options, tokenId)
-              .then((setupData) => {
-                actor.basicTest(setupData);
-              });
+            actor.setupWeapon(result, 'attack', options, tokenId).then((setupData) => {
+              actor.basicTest(setupData);
+            });
             break;
           case 'liturgy':
           case 'spell':
@@ -382,11 +349,9 @@ export default class TokenHotbar2 extends Application {
           case 'consumable':
             const proceed = await foundry.applications.api.DialogV2.confirm({
               window: {
-                title:
-                  game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
+                title: game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
               },
-              content:
-                game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
+              content: game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
               rejectClose: false,
               modal: true,
             });
@@ -401,15 +366,11 @@ export default class TokenHotbar2 extends Application {
   }
 
   async handleTradeStart(ev, actor, id, tokenId) {
-    if (!game.user.targets.size)
-      return ui.notifications.error('DIALOG.noTarget', { localize: true });
+    if (!game.user.targets.size) return ui.notifications.error('DIALOG.noTarget', { localize: true });
 
     for (const target of game.user.targets) {
       if (target.actor) {
-        const app = new Trade(
-          Itemdsa5.buildSpeaker(actor, tokenId),
-          Itemdsa5.buildSpeaker(target.actor, target.id),
-        );
+        const app = new Trade(Itemdsa5.buildSpeaker(actor, tokenId), Itemdsa5.buildSpeaker(target.actor, target.id));
         app.startTrade();
       }
     }
@@ -444,8 +405,7 @@ export default class TokenHotbar2 extends Application {
         this.handleGMRandomVictim(ev);
         break;
       default:
-        if (id in this.callbackFunctions)
-          this.callbackFunctions[id](ev, actor, id, tokenId);
+        if (id in this.callbackFunctions) this.callbackFunctions[id](ev, actor, id, tokenId);
     }
   }
 
@@ -460,9 +420,7 @@ export default class TokenHotbar2 extends Application {
   }
 
   async handleGMRandomVictim(ev) {
-    const randomPlayer = await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(
-      ev.button == 2,
-    );
+    const randomPlayer = await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button == 2);
     const actor = game.actors.get(randomPlayer);
     if (actor) {
       const k = await DSA5_Utility.showArtwork(actor);
@@ -477,9 +435,7 @@ export default class TokenHotbar2 extends Application {
     for (let token of canvas.tokens.controlled) {
       const actor = token.actor;
       const tokenId = token.id;
-      const id = actor.effects.find(
-        (x) => x.name == ev.currentTarget.dataset.name,
-      )?.id;
+      const id = actor.effects.find((x) => x.name == ev.currentTarget.dataset.name)?.id;
       await this.handleEffect(ev, actor, id, tokenId);
     }
   }
@@ -557,37 +513,22 @@ export default class TokenHotbar2 extends Application {
 
       effects = await this._effectEntries(actor);
       if (game.combat) {
-        const combatskills = actor.items
-          .filter((x) => x.type == 'combatskill')
-          .map((x) =>
-            Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system),
-          );
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
         const brawl = this._brawlEntry(combatskills);
 
         if (brawl) items.attacks.push(brawl);
 
         for (const x of actor.items) {
-          if (
-            'skill' == x.type &&
-            (TokenHotbar2.combatSkills.some((y) => x.name.startsWith(y)) ||
-              (isRiding && rideName == x.name))
-          ) {
+          if ('skill' == x.type && (TokenHotbar2.combatSkills.some((y) => x.name.startsWith(y)) || (isRiding && rideName == x.name))) {
             items.default.push(this._skillEntry(x, 'skill filterable'));
           }
 
-          if (
-            x.type == 'trait' &&
-            TokenHotbar2.traitTypes.has(x.system.traitType.value)
-          ) {
+          if (x.type == 'trait' && TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
             items.attacks.push(this._traitEntry(x, actor.system));
-          } else if (
-            TokenHotbar2.attackTypes.has(x.type) &&
-            x.system.worn.value == true
-          ) {
+          } else if (TokenHotbar2.attackTypes.has(x.type) && x.system.worn.value == true) {
             items.attacks.push(...this._combatEntry(x, combatskills, actor));
           } else if (TokenHotbar2.spellTypes.has(x.type)) {
-            if (x.system.effectFormula.value)
-              items.spells.push(this._skillEntry(x, 'spell filterable'));
+            if (x.system.effectFormula.value) items.spells.push(this._skillEntry(x, 'spell filterable'));
             else moreSpells.push(this._skillEntry(x, 'spell filterable'));
           } else if ('skill' == x.type) {
             moreSkills.push(
@@ -604,9 +545,7 @@ export default class TokenHotbar2 extends Application {
           }
 
           if (x.getFlag('dsa5', 'onUseEffect')) {
-            onUsages.push(
-              this._actionEntry(x, 'onUse', { subfunction: 'onUse' }),
-            );
+            onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }
         consumable = consumables.pop();
@@ -619,11 +558,7 @@ export default class TokenHotbar2 extends Application {
       } else {
         const descendingSkills = [];
         for (const x of actor.items) {
-          if (
-            'skill' == x.type &&
-            (TokenHotbar2.defaultSkills.has(x.name) ||
-              (isRiding && rideName == x.name))
-          ) {
+          if ('skill' == x.type && (TokenHotbar2.defaultSkills.has(x.name) || (isRiding && rideName == x.name))) {
             items.default.push(this._skillEntry(x, 'skill filterable'));
           }
           if ('skill' == x.type) {
@@ -636,15 +571,12 @@ export default class TokenHotbar2 extends Application {
 
             moreSkills.push(elem);
           } else if (TokenHotbar2.spellTypes.has(x.type)) {
-            if (x.system.effectFormula.value)
-              items.spells.push(this._actionEntry(x, 'spell filterable'));
+            if (x.system.effectFormula.value) items.spells.push(this._actionEntry(x, 'spell filterable'));
             else moreSpells.push(this._actionEntry(x, 'spell filterable'));
           }
 
           if (x.getFlag('dsa5', 'onUseEffect')) {
-            onUsages.push(
-              this._actionEntry(x, 'onUse', { subfunction: 'onUse' }),
-            );
+            onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }
         items.skills.push(
@@ -671,9 +603,7 @@ export default class TokenHotbar2 extends Application {
       }
       if (items.default.length > 0 && moreSkills.length > 0) {
         items.default[0].more = moreSkills.sort((a, b) => {
-          return (
-            a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name)
-          );
+          return a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name);
         });
         items.default[0].subwidth = this.subWidth(moreSkills, itemWidth, 20);
       }
@@ -693,10 +623,7 @@ export default class TokenHotbar2 extends Application {
         }
         items.onUsages = [onUse];
       }
-    } else if (
-      game.user.isGM &&
-      !game.settings.get('dsa5', 'disableTokenhotbarMaster')
-    ) {
+    } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
       gmMode = true;
       const skills = this.skills || (await this.prepareSkills());
       items.gm = this._gmEntries().concat([
@@ -727,18 +654,11 @@ export default class TokenHotbar2 extends Application {
         effect.more = effects;
         effect.subwidth = this.subWidth(effects, itemWidth);
       } else if (canvas.tokens.controlled.length > 1) {
-        let sharedEffects = await this.tokenHotbar._effectEntries(
-          canvas.tokens.controlled[0].actor,
-          { subfunction: 'sharedEffect' },
-        );
+        let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
         for (let token of canvas.tokens.controlled) {
-          const tokenEffects = (await token.actor.actorEffects()).map(
-            (x) => x.name,
-          );
-          sharedEffects = sharedEffects.filter((x) =>
-            tokenEffects.includes(x.name),
-          );
+          const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
+          sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
         effect.more = sharedEffects;
         effect.subwidth = this.subWidth(sharedEffects, itemWidth);
@@ -786,9 +706,7 @@ export default class TokenHotbar2 extends Application {
   }
 
   _brawlEntry(combatskills) {
-    const brawl = combatskills.find(
-      (x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'),
-    );
+    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
     if (brawl) {
       return {
         name: game.i18n.localize('attackWeaponless'),
@@ -874,9 +792,7 @@ export default class TokenHotbar2 extends Application {
 
   _combatEntry(x, combatskills, actor, options = []) {
     const preparedItem =
-      x.type == 'meleeweapon'
-        ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor)
-        : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
+      x.type == 'meleeweapon' ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
     const entries = [
       {
         name: x.name,
@@ -942,10 +858,7 @@ export default class TokenHotbar2 extends Application {
     btns.find('.dsahidden').removeClass('dsahidden');
     btns
       .filter(function () {
-        return (
-          $(this).find('label').text().toLowerCase().trim().indexOf(search) ==
-          -1
-        );
+        return $(this).find('label').text().toLowerCase().trim().indexOf(search) == -1;
       })
       .addClass('dsahidden');
   }
@@ -973,8 +886,7 @@ export default class TokenHotbar2 extends Application {
       const maxW = el.style.maxWidth || window.innerWidth;
       currentPosition.width = width = Math.clamp(tarW, 0, maxW);
       el.style.width = width + 'px';
-      if (width + currentPosition.left > window.innerWidth)
-        left = currentPosition.left;
+      if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
     }
     game.settings.set('dsa5', 'tokenhotbarPosition', {
       left: currentPosition.left,
@@ -1005,9 +917,7 @@ export default class TokenHotbar2 extends Application {
   }
 }
 
-export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.api.ApplicationV2,
-) {
+export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'tokenStatusEffects'],
     window: {
@@ -1058,11 +968,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
         let conf = document.createElement('i');
         conf.classList.add('fas', 'fa-cogs');
         conf.dataset.tooltip = 'ActiveEffects.custom';
-        conf.addEventListener(
-          'click',
-          async (ev) => this.configureEffect(ev),
-          false,
-        );
+        conf.addEventListener('click', async (ev) => this.configureEffect(ev), false);
         div.appendChild(conf);
         ev.currentTarget.appendChild(div);
       }
@@ -1071,32 +977,22 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
       let e = ev.relatedTarget;
       if (e.parentNode == this || e == this) return;
 
-      ev.currentTarget
-        .querySelectorAll('.hovermenu')
-        .forEach((e) => e.remove());
+      ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
     });
 
-    html
-      .find('.quantity-click')
-      .on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html
-      .find('.reactClick')
-      .on('click', (ev) => this.addEffect(ev.currentTarget.dataset.value));
+    html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
+    html.find('.reactClick').on('click', (ev) => this.addEffect(ev.currentTarget.dataset.value));
 
-    let filterConditions = (ev) =>
-      this._filterConditions($(ev.currentTarget), html);
+    let filterConditions = (ev) => this._filterConditions($(ev.currentTarget), html);
 
     let search = html.find('.conditionSearch');
-    search.on('keyup', (event) =>
-      this._filterConditions($(event.currentTarget), html),
-    );
+    search.on('keyup', (event) => this._filterConditions($(event.currentTarget), html));
     search[0] && search[0].addEventListener('search', filterConditions, false);
 
     const positionUpdate = {};
     if (this.options.position.width === 'auto') positionUpdate.width = 'auto';
     if (this.options.position.height === 'auto') positionUpdate.height = 'auto';
-    if (!foundry.utils.isEmpty(positionUpdate))
-      this.setPosition(positionUpdate);
+    if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate);
   }
 
   _filterConditions(tar, html) {
@@ -1106,9 +1002,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
       html.find('.filterHide').removeClass('filterHide');
       conditions
         .filter(function () {
-          return (
-            $(this).find('span').text().toLowerCase().trim().indexOf(val) == -1
-          );
+          return $(this).find('span').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
@@ -1123,9 +1017,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
       position: {
         width: 400,
       },
-      content: await renderTemplate(
-        'systems/dsa5/templates/dialog/configurestatusdialog.html',
-      ),
+      content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.html'),
       buttons: [
         {
           action: 'add',
@@ -1136,12 +1028,10 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
             const options = {};
 
             let duration = Number(form.duration.value) || 0;
-            if (form.unit.value == 'seconds')
-              duration = Math.round(duration / 5);
+            if (form.unit.value == 'seconds') duration = Math.round(duration / 5);
 
             const label = form.effectname.value;
-            if (duration > 0)
-              mergeObject(options, RuleChaos._buildDuration(duration));
+            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration));
             if (label) options.name = label;
 
             await callback(id, options);
@@ -1156,9 +1046,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
     const elem = $(ev.currentTarget).closest('.reactClick');
     const id = elem.attr('data-value');
     this.close();
-    AddEffectDialog.modifyEffectDialog(id, async (id, options) =>
-      this.addEffect(id, options),
-    );
+    AddEffectDialog.modifyEffectDialog(id, async (id, options) => this.addEffect(id, options));
   }
 
   async addEffect(id, options = {}) {

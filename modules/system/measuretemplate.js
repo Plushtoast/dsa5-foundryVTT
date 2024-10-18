@@ -23,8 +23,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
     const templateShape = game.dsa5.config.areaTargetTypes[target.type];
     if (!templateShape || !target.value) return null;
 
-    const distance =
-      Number(Roll.safeEval(`${target.value}`.replace(/(qs|ql)/gi, qs))) || 1;
+    const distance = Number(Roll.safeEval(`${target.value}`.replace(/(qs|ql)/gi, qs))) || 1;
     const templateData = {
       t: templateShape,
       user: game.user.id,
@@ -43,8 +42,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
 
     switch (templateShape) {
       case 'cone':
-        templateData.angle =
-          Number(target.angle) || CONFIG.MeasuredTemplate.defaults.angle;
+        templateData.angle = Number(target.angle) || CONFIG.MeasuredTemplate.defaults.angle;
         break;
       case 'rect':
         templateData.distance = Math.hypot(distance, distance);
@@ -52,10 +50,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
         templateData.direction = 45;
         break;
       case 'ray':
-        templateData.width = target.width
-          ? Number(Roll.safeEval(`${target.width}`.replace(/(qs|ql)/gi, qs))) ||
-            canvas.dimensions.distance
-          : canvas.dimensions.distance;
+        templateData.width = target.width ? Number(Roll.safeEval(`${target.width}`.replace(/(qs|ql)/gi, qs))) || canvas.dimensions.distance : canvas.dimensions.distance;
         break;
     }
 
@@ -111,10 +106,7 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
     let now = Date.now();
     if (now - this.#moveTime <= 20) return;
     const center = event.data.getLocalPosition(this.layer);
-    const snapped = canvas.grid.getSnappedPoint(
-      { x: center.x, y: center.y },
-      2,
-    );
+    const snapped = canvas.grid.getSnappedPoint({ x: center.x, y: center.y }, 2);
     this.document.updateSource({ x: snapped.x, y: snapped.y });
     this.refresh();
     this.#moveTime = now;
@@ -134,16 +126,9 @@ export class MeasuredTemplateDSA extends MeasuredTemplate {
 
   async _onConfirmPlacement(event) {
     await this._finishPlacement(event);
-    const destination = canvas.grid.getSnappedPoint(
-      { x: this.document.x, y: this.document.y },
-      2,
-    );
+    const destination = canvas.grid.getSnappedPoint({ x: this.document.x, y: this.document.y }, 2);
     this.document.updateSource(destination);
-    this.#events.resolve(
-      canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [
-        this.document.toObject(),
-      ]),
-    );
+    this.#events.resolve(canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [this.document.toObject()]));
   }
 
   async _onCancelPlacement(event) {

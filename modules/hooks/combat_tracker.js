@@ -36,8 +36,7 @@ export class DSA5CombatTracker extends CombatTracker {
     if (!game.combat) return;
 
     const combatant = game.combat.combatant;
-    if (game.user.isGM || combatant.isOwner)
-      ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
+    if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
 
   async getData(options) {
@@ -45,39 +44,24 @@ export class DSA5CombatTracker extends CombatTracker {
 
     for (let turn of data.turns) {
       const combatant = data.combat.turns.find((x) => x.id == turn.id);
-      const isAllowedToSeeEffects =
-        game.user.isGM ||
-        (combatant.actor &&
-          combatant.actor.testUserPermission(game.user, 'OBSERVER')) ||
-        !game.settings.get('dsa5', 'hideEffects');
+      const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
       turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;
-      turn.actionCount =
-        Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
+      turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
       turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
 
       let remainders = [];
       if (combatant.actor) {
         for (const x of combatant.actor.items) {
-          if (
-            x.type == 'rangeweapon' &&
-            x.system.worn.value &&
-            x.system.reloadTime.progress > 0
-          ) {
+          if (x.type == 'rangeweapon' && x.system.worn.value && x.system.reloadTime.progress > 0) {
             const wpn = {
               name: x.name,
-              remaining:
-                Actordsa5.calcLZ(x, combatant.actor) -
-                x.system.reloadTime.progress,
+              remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress,
             };
             if (wpn.remaining > 0) remainders.push(wpn);
-          } else if (
-            ['spell', 'liturgy'].includes(x.type) &&
-            x.system.castingTime.modified > 0
-          ) {
+          } else if (['spell', 'liturgy'].includes(x.type) && x.system.castingTime.modified > 0) {
             const wpn = {
               name: x.name,
-              remaining:
-                x.system.castingTime.modified - x.system.castingTime.progress,
+              remaining: x.system.castingTime.modified - x.system.castingTime.progress,
             };
             if (wpn.remaining > 0) remainders.push(wpn);
           }
@@ -93,13 +77,7 @@ export class DSA5CombatTracker extends CombatTracker {
       turn.effects = [];
       for (const e of combatant.actor?.temporaryEffects || []) {
         if (e.statuses.has('defeated')) turn.defeated = true;
-        else if (
-          e.img &&
-          isAllowedToSeeEffects &&
-          !e.notApplicable &&
-          (game.user.isGM || !e.getFlag('dsa5', 'hidePlayers')) &&
-          !e.getFlag('dsa5', 'hideOnToken')
-        ) {
+        else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag('dsa5', 'hidePlayers')) && !e.getFlag('dsa5', 'hideOnToken')) {
           turn.effects.push({ img: e.img, name: e.name });
         }
       }
@@ -115,8 +93,7 @@ export class DSA5Combat extends Combat {
   }
 
   async refreshTokenbars() {
-    if (game.dsa5.apps.tokenHotbar)
-      game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+    if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
   }
 
   get isBrawling() {
@@ -200,10 +177,7 @@ export class DSA5Combat extends Combat {
   }
 
   async showBrawlingDamage(messages) {
-    const template = await renderTemplate(
-      'systems/dsa5/templates/chat/brawling-damage.html',
-      { messages },
-    );
+    const template = await renderTemplate('systems/dsa5/templates/chat/brawling-damage.html', { messages });
     ChatMessage.create(DSA5_Utility.chatDataSetup(template));
   }
 
@@ -216,10 +190,7 @@ export class DSA5Combat extends Combat {
     }
 
     $('.bumFight').remove();
-    const brawlAnim = await renderTemplate(
-      'systems/dsa5/templates/system/bumFight/animation.html',
-      {},
-    );
+    const brawlAnim = await renderTemplate('systems/dsa5/templates/system/bumFight/animation.html', {});
     $('body').append(brawlAnim);
 
     const bum = $('.bumFight');
@@ -264,11 +235,7 @@ export class DSA5Combat extends Combat {
     if (game.user.isGM) {
       const comb = this.getCombatantFromActor(speaker);
       if (comb && !getProperty(comb.actor, 'system.config.defense')) {
-        await comb.setFlag(
-          'dsa5',
-          'defenseCount',
-          (comb.getFlag('dsa5', 'defenseCount') || 0) + 1,
-        );
+        await comb.setFlag('dsa5', 'defenseCount', (comb.getFlag('dsa5', 'defenseCount') || 0) + 1);
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -315,12 +282,7 @@ export class DSA5Combatant extends Combatant {
     };
 
     if (unarm) {
-      const items = this.actor.items.filter(
-        (x) =>
-          x.type == 'meleeweapon' &&
-          x.system.worn.value &&
-          !RuleChaos.improvisedWeapon.test(x.name),
-      );
+      const items = this.actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && !RuleChaos.improvisedWeapon.test(x.name));
       if (items.length) {
         actorChange.items = items.map((x) => {
           return { _id: x.id, 'system.worn.value': false };
@@ -333,16 +295,10 @@ export class DSA5Combatant extends Combatant {
 
   async getBrawlingTable() {
     if (!this.brawlingTable) {
-      const pack = game.packs.get(
-        game.i18n.lang == 'de' ? 'dsa5.patzer' : 'dsa5.botch',
-      );
+      const pack = game.packs.get(game.i18n.lang == 'de' ? 'dsa5.patzer' : 'dsa5.botch');
       const table = (
         await pack.getDocuments({
-          name__in: [
-            game.i18n.lang == 'de'
-              ? 'Prügelei - Verletzungen'
-              : 'Brawling - Injuries',
-          ],
+          name__in: [game.i18n.lang == 'de' ? 'Prügelei - Verletzungen' : 'Brawling - Injuries'],
         })
       )[0];
       this.brawlingTable = table;
@@ -362,18 +318,12 @@ export class DSA5Combatant extends Combatant {
           return { _id: x.id, bar1: { attribute: 'status.wounds' } };
         })
       : [];
-    const lostLP = Math.max(
-      0,
-      actor.system.status.temporaryLeP.max -
-        actor.system.status.temporaryLeP.value,
-    );
+    const lostLP = Math.max(0, actor.system.status.temporaryLeP.max - actor.system.status.temporaryLeP.value);
     let brawlDamage = 0;
 
     let result;
     if (lostLP > 0) {
-      result = await (
-        await this.getBrawlingTable()
-      ).draw({ displayChat: false });
+      result = await (await this.getBrawlingTable()).draw({ displayChat: false });
       result = result.results[0];
       const multiplier = result.getFlag('dsa5', 'brawlDamage');
       brawlDamage = Math.round(lostLP * multiplier);
@@ -414,8 +364,7 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (getProperty(actor.system, 'merchant.merchantType') == 'loot')
-    return false;
+  if (getProperty(actor.system, 'merchant.merchantType') == 'loot') return false;
 
   if (data.combat.isBrawling) {
     const conf = data.brawlingChange();
@@ -432,8 +381,7 @@ Hooks.on('deleteCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (getProperty(actor.system, 'merchant.merchantType') == 'loot')
-    return false;
+  if (getProperty(actor.system, 'merchant.merchantType') == 'loot') return false;
 
   if (data.combat.isBrawling) {
     data.undoBrawlingChange().then(async (conf) => {
@@ -441,14 +389,9 @@ Hooks.on('deleteCombatant', (data, options, user) => {
 
       delete conf.actorChange._id;
       await actor.update(conf.actorChange);
-      await game.canvas.scene.updateEmbeddedDocuments(
-        'Token',
-        conf.tokenChange,
-      );
+      await game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
       if (conf.damage.brawlDamage > 0) {
-        data.combat.showBrawlingDamage([
-          { name: data.token.name, id: data.token.id, data: conf.damage },
-        ]);
+        data.combat.showBrawlingDamage([{ name: data.token.name, id: data.token.id, data: conf.damage }]);
       }
     });
   }
@@ -472,9 +415,7 @@ Hooks.on('updateCombatant', (combatant, change, user) => {
     const baseRoll = combatant.getFlag('dsa5', 'baseRoll');
     if (!baseRoll) {
       const parts = `${change.initiative}`.split('.');
-      const roll =
-        Number(parts[0]) -
-        Math.round(combatant.actor.system.status.initiative.value);
+      const roll = Number(parts[0]) - Math.round(combatant.actor.system.status.initiative.value);
       combatant.setFlag('dsa5', 'baseRoll', roll);
     }
   } else if ('initiative' in change && change.initiative == null) {
@@ -487,8 +428,7 @@ class RepeatingEffectsHelper {
     if (!updateData.round && !updateData.turn) return;
 
     if (combat.round != 0 && combat.turns && combat.active) {
-      if (combat.previous.round < combat.current.round)
-        await RepeatingEffectsHelper.startOfRound(combat);
+      if (combat.previous.round < combat.current.round) await RepeatingEffectsHelper.startOfRound(combat);
     }
   }
 
@@ -497,10 +437,8 @@ class RepeatingEffectsHelper {
 
     for (let turn of combat.turns) {
       if (!turn.defeated) {
-        if (turn.actor?.statuses.has('bleeding'))
-          await this.applyBleeding(turn, combat);
-        if (turn.actor?.system.condition.burning)
-          await this.applyBurning(turn, combat);
+        if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
+        if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
 
         await this.startOfRoundEffects(turn, combat);
       }
@@ -510,31 +448,20 @@ class RepeatingEffectsHelper {
   static async startOfRoundEffects(turn, combat) {
     const regenerationAttributes = ['wounds', 'astralenergy', 'karmaenergy'];
     for (const attr of regenerationAttributes) {
-      if (getProperty(turn.actor?.system.repeatingEffects, `disabled.${attr}`))
-        continue;
+      if (getProperty(turn.actor?.system.repeatingEffects, `disabled.${attr}`)) continue;
 
-      const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr]
-        .map((x) => x.value)
-        .join('+');
+      const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map((x) => x.value).join('+');
 
       if (!effectvalues) continue;
 
       const damageRoll = await new Roll(effectvalues).evaluate();
       const damage = await damageRoll.render();
-      const type = game.i18n.localize(
-        damageRoll.total > 0
-          ? 'CHATNOTIFICATION.regenerates'
-          : 'CHATNOTIFICATION.getsHurt',
-      );
+      const type = game.i18n.localize(damageRoll.total > 0 ? 'CHATNOTIFICATION.regenerates' : 'CHATNOTIFICATION.getsHurt');
       const applyDamage = `${this.buildActorName(turn)} ${type} ${game.i18n.localize(attr)} ${damage}`;
 
       await this.sendEventMessage(applyDamage, combat, turn);
       if (attr == 'wounds') await turn.actor.applyDamage(damageRoll.total * -1);
-      else
-        await turn.actor.applyMana(
-          damageRoll.total * -1,
-          attr == 'astralenergy' ? 'AsP' : 'KaP',
-        );
+      else await turn.actor.applyMana(damageRoll.total * -1, attr == 'astralenergy' ? 'AsP' : 'KaP');
     }
   }
 
@@ -552,12 +479,8 @@ class RepeatingEffectsHelper {
     if (turn.actor?.system.status.wounds.value < 1) return;
 
     const step = turn.actor?.system.condition.burning;
-    const protection = DSA5StatusEffects.resistantToEffect(
-      turn.actor,
-      'burning',
-    );
-    const die =
-      { 0: '1', 1: '1d3', 2: '1d6', 3: '2d6' }[step - protection] || '1';
+    const protection = DSA5StatusEffects.resistantToEffect(turn.actor, 'burning');
+    const die = { 0: '1', 1: '1d3', 2: '1d6', 3: '2d6' }[step - protection] || '1';
     const damageRoll = await new Roll(die).evaluate();
     const damage = await damageRoll.render();
     const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, {
@@ -572,8 +495,7 @@ class RepeatingEffectsHelper {
   static buildActorName(turn) {
     let name = turn.token.name;
     if (game.settings.get('dsa5', 'hideRegenerationToOwner')) {
-      if (turn.token.name != turn.token.actor.name)
-        name += ` (${turn.token.actor.name})`;
+      if (turn.token.name != turn.token.actor.name) name += ` (${turn.token.actor.name})`;
     }
     return turn.token.actor.toAnchor({ name }).outerHTML;
   }
@@ -582,12 +504,7 @@ class RepeatingEffectsHelper {
     if (game.settings.get('dsa5', 'hideRegenerationToOwner')) {
       const recipients = combat.combatants.get(turn.id).players;
       recipients.push(...game.users.filter((x) => x.isGM).map((x) => x.id));
-      const chatData = DSA5_Utility.chatDataSetup(
-        content,
-        undefined,
-        undefined,
-        recipients,
-      );
+      const chatData = DSA5_Utility.chatDataSetup(content, undefined, undefined, recipients);
       delete chatData.speaker;
       await ChatMessage.create(chatData);
     } else {

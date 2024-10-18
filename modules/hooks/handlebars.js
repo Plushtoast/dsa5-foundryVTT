@@ -53,9 +53,7 @@ function clickableActorItems(actor, list, rankPath, maxPath) {
     for (let item of list) {
       const level = getProperty(item.system, rankPath);
       if (level) {
-        res.push(
-          `<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`,
-        );
+        res.push(`<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`);
         continue;
       }
     }
@@ -83,18 +81,7 @@ function clickableSection(actor, section, rankPath, maxPath) {
 function roman(a, max) {
   if (max != undefined && Number(max) < 2) return '';
 
-  const roman = [
-    ' I',
-    ' II',
-    ' III',
-    ' IV',
-    ' V',
-    ' VI',
-    ' VII',
-    ' VIII',
-    ' IX',
-    ' X',
-  ];
+  const roman = [' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
   return roman[a - 1];
 }
 
@@ -122,14 +109,11 @@ export default function () {
     },
     successEffect: (a, parent) => {
       const sucEf = getProperty(a, 'flags.dsa5.successEffect');
-      if (sucEf == 1)
-        return ` (${game.i18n.localize('ActiveEffects.onSuccess')})`;
-      if (sucEf == 2)
-        return ` (${game.i18n.localize('ActiveEffects.onFailure')})`;
+      if (sucEf == 1) return ` (${game.i18n.localize('ActiveEffects.onSuccess')})`;
+      if (sucEf == 2) return ` (${game.i18n.localize('ActiveEffects.onFailure')})`;
 
       const advantageEffect = a.system.equipmentAdvantage;
-      if (advantageEffect)
-        return ` (${game.i18n.localize(`AdvantageRuleItems.${parent?.type}.${advantageEffect}`)})`;
+      if (advantageEffect) return ` (${game.i18n.localize(`AdvantageRuleItems.${parent?.type}.${advantageEffect}`)})`;
 
       return '';
     },

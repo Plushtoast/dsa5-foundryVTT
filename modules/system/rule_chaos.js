@@ -11,37 +11,14 @@ export default class RuleChaos {
     let multipleDefense = -3;
 
     if (
-      (item.type == 'dodge' ||
-        getProperty(item, 'system.combatskill.value') ==
-          game.i18n.localize('LocalizedIDs.wrestle')) &&
-      SpecialabilityRulesDSA5.hasAbility(
-        actor,
-        game.i18n.localize('LocalizedIDs.masterfulDodge'),
-      )
+      (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle')) &&
+      SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.masterfulDodge'))
     )
       multipleDefense = -2;
-    else if (
-      SpecialabilityRulesDSA5.hasAbility(
-        actor,
-        game.i18n.localize('LocalizedIDs.mightyMasterfulParry'),
-      )
-    )
-      multipleDefense = -1;
-    else if (
-      SpecialabilityRulesDSA5.hasAbility(
-        actor,
-        game.i18n.localize('LocalizedIDs.masterfulParry'),
-      )
-    )
-      multipleDefense = -2;
+    else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.mightyMasterfulParry'))) multipleDefense = -1;
+    else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.masterfulParry'))) multipleDefense = -2;
 
-    if (
-      SpecialabilityRulesDSA5.hasAbility(
-        actor,
-        game.i18n.localize('LocalizedIDs.vinsaltStyle'),
-      )
-    )
-      multipleDefense -= 1;
+    if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.vinsaltStyle'))) multipleDefense -= 1;
 
     return Math.min(0, multipleDefense);
   }
@@ -59,10 +36,7 @@ export default class RuleChaos {
   }
 
   static isShield(item) {
-    return (
-      game.i18n.localize('LocalizedIDs.Shields') ==
-      getProperty(item, 'system.combatskill.value')
-    );
+    return game.i18n.localize('LocalizedIDs.Shields') == getProperty(item, 'system.combatskill.value');
   }
 
   static _getFunctionData(ev) {
@@ -107,8 +81,7 @@ export default class RuleChaos {
 
   //todo this should not be necessary
   static ensureNumber(source) {
-    source.system.AsPCost.value =
-      Number(source.system.AsPCost.value) || source.system.AsPCost.value;
+    source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value;
   }
 
   static isYieldedTwohanded(item) {
@@ -121,8 +94,7 @@ export default class RuleChaos {
 
   static obfuscateDropData(item, obfuscations) {
     if (obfuscations) {
-      for (let section of obfuscations)
-        mergeObject(item, { system: { obfuscation: { [section]: true } } });
+      for (let section of obfuscations) mergeObject(item, { system: { obfuscation: { [section]: true } } });
     }
   }
 
@@ -150,11 +122,7 @@ export default class RuleChaos {
     const { data, actor } = RuleChaos._getFunctionData(ev);
     if (!actor) return;
 
-    const skill = actor.items.find(
-      (i) =>
-        i.name == game.i18n.localize('LocalizedIDs.selfControl') &&
-        i.type == 'skill',
-    );
+    const skill = actor.items.find((i) => i.name == game.i18n.localize('LocalizedIDs.selfControl') && i.type == 'skill');
     actor.setupSkill(skill, {}, data.token).then(async (setupData) => {
       const result = await actor.basicTest(setupData);
 
@@ -170,16 +138,10 @@ export default class RuleChaos {
         const durationUpdate = RuleChaos._buildDuration(duration);
 
         if (existing) {
-          const remaining = game.combat
-            ? (existing.data.duration.startRound || 1) +
-              existing.data.duration.rounds -
-              game.combat.round
-            : existing.data.duration.rounds;
+          const remaining = game.combat ? (existing.data.duration.startRound || 1) + existing.data.duration.rounds - game.combat.round : existing.data.duration.rounds;
           if (duration > remaining) await existing.update(durationUpdate);
         } else {
-          const bleeding = duplicate(
-            CONFIG.statusEffects.find((x) => x.id == 'bleeding'),
-          );
+          const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));
           mergeObject(bleeding, durationUpdate);
           await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
           await ChatMessage.create(

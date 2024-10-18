@@ -25,7 +25,8 @@
     "rules": {
       "no-unused-vars": "off",    // Warn about unused variables
       "no-undef": "off",           // Turn off undefined variable checking for declared globals
-      "no-case-declarations": "off" // Turn off case declarations
+      "no-case-declarations": "off", // Turn off case declarations
+      "no-useless-escape": "off" // Turn off useless escape
     },
     "overrides": [
       {

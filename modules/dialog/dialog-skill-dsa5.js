@@ -8,23 +8,13 @@ const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = DSA5Dialog.getRollButtons(
-      testData,
-      dialogOptions,
-      resolve,
-      reject,
-    );
+    let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     buttons.rollButton.label = game.i18n.localize('Opposed');
     const nonOpposedButton = {
       nonOpposedButton: {
         label: game.i18n.localize('Roll'),
         callback: (html) => {
-          game.dsa5.memory.remember(
-            testData.extra.speaker,
-            testData.source,
-            testData.mode,
-            html,
-          );
+          game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.opposable = false;
           resolve(dialogOptions.callback(html));
         },
@@ -32,12 +22,7 @@ export default class DSA5SkillDialog extends DialogShared {
       routineRoll: {
         label: game.i18n.localize('ROLL.routine'),
         callback: (html) => {
-          game.dsa5.memory.remember(
-            testData.extra.speaker,
-            testData.source,
-            testData.mode,
-            html,
-          );
+          game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.routine = true;
           mergeObject(testData.extra.options, {
             cheat: true,
@@ -88,33 +73,20 @@ export default class DSA5SkillDialog extends DialogShared {
 
     let routineAllowed = true;
     for (let i = 0; i < 3; i++) {
-      if (
-        actor.system.characteristics[data[`characteristics${i}`]].max *
-          data[`ch${i}`].max <
-        13
-      ) {
+      if (actor.system.characteristics[data[`characteristics${i}`]].max * data[`ch${i}`].max < 13) {
         routineAllowed = false;
         break;
       }
     }
 
-    const fw =
-      Number(this.dialogData.source.system.talentValue.value) +
-      data.fw +
-      (await DiceDSA5._situationalModifiers(data, 'FW'));
-    const mod =
-      DSA5.skillDifficultyModifiers[data.testDifficulty] +
-      (await DiceDSA5._situationalModifiers(data));
+    const fw = Number(this.dialogData.source.system.talentValue.value) + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
+    const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + (await DiceDSA5._situationalModifiers(data));
     const requiredFw = Math.clamp(10 - mod * 3, 1, 19);
     const enoughFw = fw >= requiredFw;
     const canRoutine = routineAllowed && enoughFw;
     const routine = game.i18n.localize('ROLL.routine');
     routineButton.prop('disabled', !canRoutine);
-    routineButton.html(
-      canRoutine
-        ? `${routine} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw / 2)})`
-        : routine,
-    );
+    routineButton.html(canRoutine ? `${routine} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw / 2)})` : routine);
 
     this.calculateProbability(actor, this.dialogData.source, mod, fw);
   }

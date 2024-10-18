@@ -54,10 +54,7 @@ class SwarmDialog extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
     html.find('input[type="range"]').on('change', (ev) => {
-      $(ev.currentTarget)
-        .closest('.row-section')
-        .find('.range-value')
-        .html($(ev.currentTarget).val());
+      $(ev.currentTarget).closest('.row-section').find('.range-value').html($(ev.currentTarget).val());
     });
   }
 }
@@ -68,10 +65,7 @@ function swarmHud(tooltip) {
 
 async function splitSwarm(actor, token) {
   const maxSplitsize = Number(actor.system.swarm.count) - 1;
-  const content = await renderTemplate(
-    'systems/dsa5/templates/dialog/swarm-split-dialog.html',
-    { actor, maxSplitsize },
-  );
+  const content = await renderTemplate('systems/dsa5/templates/dialog/swarm-split-dialog.html', { actor, maxSplitsize });
 
   new SwarmDialog({
     window: {
@@ -89,10 +83,7 @@ async function splitSwarm(actor, token) {
           const newtokenData = token.toObject();
           delete newtokenData._id;
 
-          const newHp = Math.floor(
-            (actor.system.status.wounds.value / actor.system.swarm.count) *
-              split,
-          );
+          const newHp = Math.floor((actor.system.status.wounds.value / actor.system.swarm.count) * split);
           const oldHp = actor.system.status.wounds.value - newHp;
 
           await actor.update(
@@ -102,9 +93,7 @@ async function splitSwarm(actor, token) {
             },
             { skipSwarmUpdate: true },
           );
-          const newtoken = (
-            await canvas.scene.createEmbeddedDocuments('Token', [newtokenData])
-          )[0];
+          const newtoken = (await canvas.scene.createEmbeddedDocuments('Token', [newtokenData]))[0];
           await newtoken.actor.update(
             {
               'system.swarm.count': split,
@@ -138,13 +127,8 @@ async function combineSwarm(actor, token) {
     swarmSum += Number(token.actor.system.swarm?.count) || 1;
     lepSum += Number(token.actor.system.status.wounds.value);
   }
-  await token.actor.update(
-    { 'system.swarm.count': swarmSum, 'system.status.wounds.value': lepSum },
-    { skipSwarmUpdate: true },
-  );
-  const tokensToRemove = canvas.tokens.controlled
-    .map((x) => x.id)
-    .filter((x) => x != token.id);
+  await token.actor.update({ 'system.swarm.count': swarmSum, 'system.status.wounds.value': lepSum }, { skipSwarmUpdate: true });
+  const tokensToRemove = canvas.tokens.controlled.map((x) => x.id).filter((x) => x != token.id);
   await canvas.scene.updateEmbeddedDocuments(
     'Token',
     tokensToRemove.map((x) => {

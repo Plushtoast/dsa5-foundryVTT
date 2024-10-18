@@ -19,10 +19,7 @@ export default class DPS {
     const ray = new Ray(tokenSource, tokenTarget);
     const tileDistance = ray.distance / gridSize;
     const distance = tileDistance * canvas.scene.grid.distance;
-    const elevation = Math.abs(
-      (getProperty(tokenSource, 'document.elevation') || 0) -
-        (getProperty(tokenTarget, 'document.elevation') || 0),
-    );
+    const elevation = Math.abs((getProperty(tokenSource, 'document.elevation') || 0) - (getProperty(tokenTarget, 'document.elevation') || 0));
     const distanceSum = Math.hypot(distance, elevation);
     return {
       elevation,
@@ -35,11 +32,7 @@ export default class DPS {
 
   static inDistance(toToken) {
     for (let token of canvas.scene.tokens) {
-      if (
-        token.isOwner &&
-        DPS.rangeFinder(toToken, token.object).tileDistance <= 2
-      )
-        return true;
+      if (token.isOwner && DPS.rangeFinder(toToken, token.object).tileDistance <= 2) return true;
     }
     return false;
   }
@@ -53,25 +46,20 @@ export default class DPS {
         if (!light.active || !light.object || !light.object.document) continue;
 
         if (light.object == token) {
-          (bright = bright || light.data.bright > 0),
-            (dim = dim || light.data.dim > 0);
+          (bright = bright || light.data.bright > 0), (dim = dim || light.data.dim > 0);
 
           if (bright) break;
           else continue;
         }
 
         const distance = DPS.rangeFinder(token, light.object).distanceSum;
-        const lightConfig =
-          light.object.document.config || light.object.document.light;
+        const lightConfig = light.object.document.config || light.object.document.light;
         const inBright = lightConfig.bright >= distance;
         const inDim = lightConfig.dim >= distance;
 
         if (!inBright && !inDim) continue;
 
-        if (
-          light.data.walls === false ||
-          light.shape.contains(token.center.x, token.center.y)
-        ) {
+        if (light.data.walls === false || light.shape.contains(token.center.x, token.center.y)) {
           bright = inBright || bright;
           dim = inDim || dim;
         }
@@ -84,9 +72,7 @@ export default class DPS {
 
   static get isEnabled() {
     const sceneFlag = canvas?.scene?.getFlag('dsa5', 'enableDPS');
-    return sceneFlag
-      ? sceneFlag == '2'
-      : game.settings.get('dsa5', 'enableDPS');
+    return sceneFlag ? sceneFlag == '2' : game.settings.get('dsa5', 'enableDPS');
   }
 
   static lightLevel(actor, html) {
@@ -98,23 +84,14 @@ export default class DPS {
         .map((x) => Number(x));
 
       if (actor) {
-        const darkSightLevel = AdvantageRulesDSA5.vantageStep(
-          actor,
-          game.i18n.localize('LocalizedIDs.darksight'),
-        );
-        const sightModifier =
-          Number(getProperty(actor, 'system.sightModifier.value')) || 0;
-        const modifyableLevel =
-          Number(getProperty(actor, 'system.sightModifier.maxLevel')) || 3;
+        const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize('LocalizedIDs.darksight'));
+        const sightModifier = Number(getProperty(actor, 'system.sightModifier.value')) || 0;
+        const modifyableLevel = Number(getProperty(actor, 'system.sightModifier.maxLevel')) || 3;
 
         let token = Array.from(game.user.targets);
         if (token.length) {
           token = token[0];
-          const darkness =
-            canvas?.effects.getDarknessLevel(
-              token.center,
-              token.document.elevation,
-            ) || 0;
+          const darkness = canvas?.effects.getDarknessLevel(token.center, token.document.elevation) || 0;
 
           while (threholds[level] <= darkness) level += 1;
 
@@ -150,11 +127,8 @@ export default class DPS {
     }
 
     if (maxDist.unit == game.i18n.localize('gridUnits')) {
-      const rangeMultiplier =
-        Number(getProperty(currentAmmo, 'system.rangeMultiplier')) || 1;
-      const rangeBands = rangeweapon.system.reach.value
-        .split('/')
-        .map((x) => Number(x) * rangeMultiplier);
+      const rangeMultiplier = Number(getProperty(currentAmmo, 'system.rangeMultiplier')) || 1;
+      const rangeBands = rangeweapon.system.reach.value.split('/').map((x) => Number(x) * rangeMultiplier);
       let index = 0;
       while (index < 2 && rangeBands[index] < maxDist.distanceSum) {
         index++;

@@ -30,9 +30,7 @@ export default class MacroDSA5 {
 
   static itemMacroById(actorId, itemName, itemType, bypassData) {
     let actor = game.actors.get(actorId);
-    let item = actor
-      ? actor.items.find((i) => i.name === itemName && i.type == itemType)
-      : null;
+    let item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
     this.runItem(actor, item, itemName, bypassData);
   }
 
@@ -42,9 +40,7 @@ export default class MacroDSA5 {
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
 
-    let item = actor
-      ? actor.items.find((i) => i.name === itemName && i.type == itemType)
-      : null;
+    let item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
     this.runItem(actor, item, itemName, bypassData, speaker.token);
   }
 
@@ -63,10 +59,7 @@ export default class MacroDSA5 {
   }
 
   static runWeaponless(actor, char, tokenId) {
-    if (!actor)
-      return ui.notifications.error(
-        game.i18n.format('DSAError.MacroItemMissing', { item: char }),
-      );
+    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: char }));
     let characteristic = char.split('Weaponless')[0];
     actor.setupWeaponless(characteristic, {}, tokenId).then((setupData) => {
       actor.basicTest(setupData);
@@ -74,10 +67,7 @@ export default class MacroDSA5 {
   }
 
   static runChar(actor, char, tokenId) {
-    if (!actor)
-      return ui.notifications.error(
-        game.i18n.format('DSAError.MacroItemMissing', { item: char }),
-      );
+    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: char }));
 
     actor.setupDodge({}, tokenId).then((setupData) => {
       actor.basicTest(setupData);
@@ -85,26 +75,19 @@ export default class MacroDSA5 {
   }
 
   static runItem(actor, item, itemName, bypassData, tokenId) {
-    if (!actor)
-      return ui.notifications.error(
-        game.i18n.format('DSAError.MacroItemMissing', { item: itemName }),
-      );
+    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: itemName }));
 
     switch (item.type) {
       case 'combatskill':
       case 'trait':
       case 'meleeweapon':
-        return actor
-          .setupWeapon(item, bypassData.mod, bypassData, tokenId)
-          .then((setupData) => {
-            actor.basicTest(setupData);
-          });
+        return actor.setupWeapon(item, bypassData.mod, bypassData, tokenId).then((setupData) => {
+          actor.basicTest(setupData);
+        });
       case 'rangeweapon':
-        return actor
-          .setupWeapon(item, 'attack', bypassData, tokenId)
-          .then((setupData) => {
-            actor.basicTest(setupData);
-          });
+        return actor.setupWeapon(item, 'attack', bypassData, tokenId).then((setupData) => {
+          actor.basicTest(setupData);
+        });
       case 'skill':
         return actor.setupSkill(item, bypassData, tokenId).then((setupData) => {
           actor.basicTest(setupData);

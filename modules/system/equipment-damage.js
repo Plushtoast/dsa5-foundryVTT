@@ -22,10 +22,7 @@ export default class EquipmentDamage {
   }
 
   static armorGetsDamage(damage, attackData) {
-    return (
-      (damage > 14 || attackData.successLevel > 2) &&
-      game.settings.get('dsa5', 'armorAndWeaponDamage')
-    );
+    return (damage > 14 || attackData.successLevel > 2) && game.settings.get('dsa5', 'armorAndWeaponDamage');
   }
 
   static armorEncumbranceModifier(armor) {
@@ -42,18 +39,11 @@ export default class EquipmentDamage {
       const opposeMessageId = getProperty(actor, 'flags.oppose.messageId');
       if (opposeMessageId) {
         const attackMessage = game.messages.get(opposeMessageId);
-        if (attackMessage)
-          attackSuccessLevel =
-            getProperty(attackMessage, 'flags.data.postData.successLevel') || 0;
+        if (attackMessage) attackSuccessLevel = getProperty(attackMessage, 'flags.data.postData.successLevel') || 0;
       }
 
       const source = preData.source;
-      if (
-        source._id &&
-        source.system.structure &&
-        (testData.successLevel < -2 || attackSuccessLevel > 2) &&
-        ['meleeweapon', 'rangeweapon', 'armor'].includes(source.type)
-      ) {
+      if (source._id && source.system.structure && (testData.successLevel < -2 || attackSuccessLevel > 2) && ['meleeweapon', 'rangeweapon', 'armor'].includes(source.type)) {
         actor = await DSA5_Utility.getSpeaker(testData.speaker);
         return actor.items.get(source._id).uuid;
       }
@@ -69,59 +59,39 @@ export default class EquipmentDamage {
           name: game.i18n.localize('equipment'),
         }),
       );
-    if (item.system.structure.max <= 0)
-      return ui.notifications.warn(
-        game.i18n.format('DSAError.noBreakingStructure', { name: item.name }),
-      );
+    if (item.system.structure.max <= 0) return ui.notifications.warn(game.i18n.format('DSAError.noBreakingStructure', { name: item.name }));
 
     let breakingResistance = 0;
     let category;
     if (item.type == 'armor') {
-      category = game.i18n.localize(
-        `ARMORSUBCATEGORIES.${item.system.subcategory}`,
-      );
-      breakingResistance =
-        getProperty(item, 'system.structure.breakPointRating') ||
-        DSA5.armorSubcategories[item.system.subcategory];
+      category = game.i18n.localize(`ARMORSUBCATEGORIES.${item.system.subcategory}`);
+      breakingResistance = getProperty(item, 'system.structure.breakPointRating') || DSA5.armorSubcategories[item.system.subcategory];
     } else {
       category = item.system.combatskill.value;
-      breakingResistance =
-        getProperty(item, 'system.structure.breakPointRating') ||
-        DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)];
+      breakingResistance = getProperty(item, 'system.structure.breakPointRating') || DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)];
     }
     if (!breakingResistance) {
-      ui.notifications.error(
-        game.i18n.format('DSAError.noBreakingResistance', { item: item.name }),
-      );
+      ui.notifications.error(game.i18n.format('DSAError.noBreakingResistance', { item: item.name }));
       return;
     }
 
     let magicalWarning = '';
     const attributes = getProperty(item, 'effect.attributes') || '';
 
-    if (new RegExp(`${CreatureType.magical}`, 'i').test(attributes))
-      magicalWarning = `${game.i18n.format('WEAPON.attributeWarning', { domain: CreatureType.clerical })}<br/>`;
-    else if (new RegExp(`${CreatureType.clerical}`, 'i').test(attributes))
-      magicalWarning = `${game.i18n.format('WEAPON.attributeWarning', { domain: CreatureType.magical })}<br/>`;
+    if (new RegExp(`${CreatureType.magical}`, 'i').test(attributes)) magicalWarning = `${game.i18n.format('WEAPON.attributeWarning', { domain: CreatureType.clerical })}<br/>`;
+    else if (new RegExp(`${CreatureType.clerical}`, 'i').test(attributes)) magicalWarning = `${game.i18n.format('WEAPON.attributeWarning', { domain: CreatureType.magical })}<br/>`;
 
     new DialogShared({
       title: game.i18n.localize('DSASETTINGS.armorAndWeaponDamage'),
-      content: `${magicalWarning}<label for="threshold">${game.i18n.format(
-        'WEAR.check',
-        {
-          category,
-        },
-      )}</label>: <input class="quantity-click" style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
+      content: `${magicalWarning}<label for="threshold">${game.i18n.format('WEAR.check', {
+        category,
+      })}</label>: <input class="quantity-click" style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
       buttons: {
         Yes: {
           icon: '<i class="fas fa-dice-d20"></i>',
           label: game.i18n.localize('Roll'),
           callback: (dlg) => {
-            EquipmentDamage.resolveBreakingTest(
-              item,
-              Number(dlg.find('[name="threshold"]').val()),
-              category,
-            );
+            EquipmentDamage.resolveBreakingTest(item, Number(dlg.find('[name="threshold"]').val()), category);
           },
         },
         cancel: {
@@ -136,43 +106,31 @@ export default class EquipmentDamage {
   static async applyDamageLevelToItem(item, amount) {
     const damage = Math.ceil(item.system.structure.max * 0.25) * amount;
     await item.update({
-      'system.structure.value': Math.max(
-        0,
-        item.system.structure.value - damage,
-      ),
+      'system.structure.value': Math.max(0, item.system.structure.value - damage),
     });
   }
 
   static async absoluteDamageLevelToItem(item, amount) {
     const damage = Math.ceil(item.system.structure.max * 0.25) * amount;
     await item.update({
-      'system.structure.value': Math.min(
-        item.system.structure.value,
-        Math.max(0, item.system.structure.max - damage),
-      ),
+      'system.structure.value': Math.min(item.system.structure.value, Math.max(0, item.system.structure.max - damage)),
     });
   }
 
   static async resolveBreakingTest(item, threshold, category) {
-    const roll = await DiceDSA5.manualRolls(
-      await new Roll('1d20').evaluate(),
-      game.i18n.format('WEAR.check', { category }),
-    );
+    const roll = await DiceDSA5.manualRolls(await new Roll('1d20').evaluate(), game.i18n.format('WEAR.check', { category }));
     await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'rollMode'));
     const damage = roll.total > threshold ? 1 : 0;
     await this.applyDamageLevelToItem(item, damage);
     const wear = EquipmentDamage.calculateWear(item);
-    let infoMsg = await renderTemplate(
-      'systems/dsa5/templates/system/breakingtest.html',
-      {
-        wear,
-        item,
-        threshold,
-        category,
-        roll,
-        result: game.i18n.localize(`WEAR.${item.type}.${wear}`),
-      },
-    );
+    let infoMsg = await renderTemplate('systems/dsa5/templates/system/breakingtest.html', {
+      wear,
+      item,
+      threshold,
+      category,
+      roll,
+      result: game.i18n.localize(`WEAR.${item.type}.${wear}`),
+    });
     ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
   }
 
@@ -207,14 +165,8 @@ export default class EquipmentDamage {
   }
 
   static calculateWear(itemData) {
-    if (
-      !itemData.system.structure ||
-      Number(itemData.system.structure.max) <= 0
-    )
-      return 0;
+    if (!itemData.system.structure || Number(itemData.system.structure.max) <= 0) return 0;
 
-    return Math.floor(
-      (1 - itemData.system.structure.value / itemData.system.structure.max) * 4,
-    );
+    return Math.floor((1 - itemData.system.structure.value / itemData.system.structure.max) * 4);
   }
 }

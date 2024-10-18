@@ -21,17 +21,11 @@ export default class DSA5SoundEffect {
         'modules/gAudioBundle-3/src/Mint Coins And Money/Coins_In_Sack_Held_By_Drawstring_06.ogg',
         'modules/gAudioBundle-3/src/Money/Money_Coins_Handle.ogg',
       );
-      DSA5SoundEffect.soundPaths.meleeweapon.push(
-        'modules/gAudioBundle-3/src/Medieval Armor And Impacts/Weapon_Impact_Parry_01.ogg',
-      );
+      DSA5SoundEffect.soundPaths.meleeweapon.push('modules/gAudioBundle-3/src/Medieval Armor And Impacts/Weapon_Impact_Parry_01.ogg');
     }
     if (game.modules.get('gAudioBundle-2')) {
-      DSA5SoundEffect.soundPaths.meleeweapon.push(
-        'modules/gAudioBundle-2/src/Gore/Melee_Sword_Attack_04.ogg',
-      );
-      DSA5SoundEffect.soundPaths.armor.push(
-        'modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Foley_Soldier_Gear_Equipment_Metal_Cloth_Heavy_Movement_Light_08.ogg',
-      );
+      DSA5SoundEffect.soundPaths.meleeweapon.push('modules/gAudioBundle-2/src/Gore/Melee_Sword_Attack_04.ogg');
+      DSA5SoundEffect.soundPaths.armor.push('modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Foley_Soldier_Gear_Equipment_Metal_Cloth_Heavy_Movement_Light_08.ogg');
       DSA5SoundEffect.soundPaths.default.push(
         'modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Foley_Sports_Bag_Grab_Pickup_Catch_04.ogg',
         'modules/gAudioBundle-2/src/Footsteps/Footstep And Foley Sounds/Footstep_Ice_Crunchy_Run_01.ogg',
@@ -39,21 +33,13 @@ export default class DSA5SoundEffect {
       );
     }
     if (game.modules.get('gAudioBundle-4')) {
-      DSA5SoundEffect.soundPaths.rangeweapon.push(
-        "modules/gAudioBundle-4/src/Super Heroes Sound Design/Hawk's_Arrow_Flies_Bow_And_Arrow_Shoot_2.ogg",
-      );
+      DSA5SoundEffect.soundPaths.rangeweapon.push("modules/gAudioBundle-4/src/Super Heroes Sound Design/Hawk's_Arrow_Flies_Bow_And_Arrow_Shoot_2.ogg");
     }
 
     Hooks.call('setDefaultDSASounds', DSA5SoundEffect.soundPaths);
   }
 
-  static async playEffect(
-    action,
-    item,
-    successLevel,
-    whisper = undefined,
-    blind = false,
-  ) {
+  static async playEffect(action, item, successLevel, whisper = undefined, blind = false) {
     const soundPath = await this.getSound(action, item, successLevel);
     if (soundPath) {
       try {
@@ -65,16 +51,9 @@ export default class DSA5SoundEffect {
               soundPath,
             },
           });
-          if (!blind)
-            foundry.audio.AudioHelper.play(
-              { src: soundPath, volume: 0.8, loop: false },
-              false,
-            );
+          if (!blind) foundry.audio.AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, false);
         } else {
-          foundry.audio.AudioHelper.play(
-            { src: soundPath, volume: 0.8, loop: false },
-            true,
-          );
+          foundry.audio.AudioHelper.play({ src: soundPath, volume: 0.8, loop: false }, true);
         }
       } catch (exception) {
         console.warn(`Could not play item sound effect ${soundPath}`);
@@ -126,28 +105,19 @@ export default class DSA5SoundEffect {
       case 'meleeweapon':
       case 'rangeweapon':
         paths = [
-          ...successLevels.map(
-            (x) => `${item.type}.manual.${item.name}.${action}_${x}`,
-          ),
+          ...successLevels.map((x) => `${item.type}.manual.${item.name}.${action}_${x}`),
           `${item.type}.manual.${item.name}.${action}`,
           `${item.type}.manual.${item.name}.default.${action}`,
           `${item.type}.manual.${item.name}.default`,
-          ...successLevels.map(
-            (x) =>
-              `${item.type}.${item.system.combatskill.value}.${action}_${x}`,
-          ),
+          ...successLevels.map((x) => `${item.type}.${item.system.combatskill.value}.${action}_${x}`),
           `${item.type}.${item.system.combatskill.value}.${action}`,
-          ...successLevels.map(
-            (x) => `${item.type}.${item.system.combatskill.value}.default_${x}`,
-          ),
+          ...successLevels.map((x) => `${item.type}.${item.system.combatskill.value}.default_${x}`),
           `${item.type}.${item.system.combatskill.value}.default`,
         ];
         break;
       case 'skill':
         paths = [
-          ...successLevels.map(
-            (x) => `${item.type}.${item.name}.${action}_${x}`,
-          ),
+          ...successLevels.map((x) => `${item.type}.${item.name}.${action}_${x}`),
           `${item.type}.${item.name}.${action}`,
           ...successLevels.map((x) => `${item.type}.${item.name}.default_${x}`),
           `${item.type}.${item.name}.default`,
@@ -158,25 +128,19 @@ export default class DSA5SoundEffect {
       case 'ceremony':
       case 'ritual':
         paths = [
-          ...successLevels.map(
-            (x) => `${item.type}.${item.name}.${action}_${x}`,
-          ),
+          ...successLevels.map((x) => `${item.type}.${item.name}.${action}_${x}`),
           `${item.type}.${item.name}.${action}`,
           ...successLevels.map((x) => `${item.type}.${item.name}.default_${x}`),
           `${item.type}.${item.name}.default`,
         ];
         break;
     }
-    paths.push(
-      ...successLevels.map((x) => `${item.type}.default_${x}`),
-      `${item.type}.default`,
-    );
+    paths.push(...successLevels.map((x) => `${item.type}.default_${x}`), `${item.type}.default`);
     for (const p of paths) {
       if (!hasProperty(this.sounds, p)) continue;
 
       result = getProperty(this.sounds, p);
-      if (result && (typeof result === 'string' || result instanceof String))
-        break;
+      if (result && (typeof result === 'string' || result instanceof String)) break;
     }
 
     return result;
@@ -184,19 +148,15 @@ export default class DSA5SoundEffect {
 
   static async playMoneySound(soundToEveryone = false) {
     const soundOptions = DSA5SoundEffect.soundPaths.money;
-    const soundPath =
-      soundOptions[Math.floor(Math.random() * soundOptions.length)];
+    const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
     await this.playSoundPath(soundPath, soundToEveryone);
   }
 
   static async playEquipmentWearStatusChange(item, soundToEveryone = false) {
-    let soundOptions =
-      DSA5SoundEffect.soundPaths[item.type] ||
-      DSA5SoundEffect.soundPaths.default;
+    let soundOptions = DSA5SoundEffect.soundPaths[item.type] || DSA5SoundEffect.soundPaths.default;
 
     if (soundOptions.length > 0) {
-      const soundPath =
-        soundOptions[Math.floor(Math.random() * soundOptions.length)];
+      const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
       await this.playSoundPath(soundPath, soundToEveryone, 0.5);
     }
   }
@@ -205,10 +165,7 @@ export default class DSA5SoundEffect {
     if (!game.settings.get('dsa5', 'inventorySound')) return;
 
     try {
-      foundry.audio.AudioHelper.play(
-        { src: soundPath, volume, loop: false },
-        soundToEveryone,
-      );
+      foundry.audio.AudioHelper.play({ src: soundPath, volume, loop: false }, soundToEveryone);
     } catch (exception) {
       console.warn(`Could not play item sound effect ${soundPath}`);
     }

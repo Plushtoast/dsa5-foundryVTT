@@ -25,11 +25,7 @@ export default class WizardDSA5 extends Application {
       },
     ];
     mergeObject(options, {
-      classes: options.classes.concat([
-        'dsa5',
-        'largeDialog',
-        'generationWizard',
-      ]),
+      classes: options.classes.concat(['dsa5', 'largeDialog', 'generationWizard']),
       width: 770,
       height: 740,
     });
@@ -77,14 +73,7 @@ export default class WizardDSA5 extends Application {
           if (this.attributes.includes(parsed.name)) {
             let cost = 0;
 
-            for (
-              let i =
-                this.actor.system.characteristics[
-                  game.dsa5.config.knownShortcuts[parsed.name.toLowerCase()][1]
-                ].value + 1;
-              i < parsed.step + 1;
-              i++
-            ) {
+            for (let i = this.actor.system.characteristics[game.dsa5.config.knownShortcuts[parsed.name.toLowerCase()][1]].value + 1; i < parsed.step + 1; i++) {
               cost += DSA5.advancementCosts.E[i];
             }
             item = {
@@ -100,9 +89,7 @@ export default class WizardDSA5 extends Application {
             };
           } else {
             console.warn(`Not found <${x}>`);
-            const langCats = types
-              .map((x) => DSA5_Utility.categoryLocalization(x))
-              .join('/');
+            const langCats = types.map((x) => DSA5_Utility.categoryLocalization(x)).join('/');
             this.errors.push(`${langCats}: ${x}`);
             item = {
               name: x.trim(),
@@ -116,24 +103,15 @@ export default class WizardDSA5 extends Application {
           item = duplicate(item);
           item.uuid = uuid;
           item.tooltip = game.i18n.localize('Details');
-          item = ItemRulesDSA5.reverseAdoptionCalculation(
-            this.actor,
-            parsed,
-            item,
-          );
+          item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
           if (item.system.APValue) {
             item.APunparseable = isNaN(item.system.APValue.value);
-            item.apCost = item.APunparseable
-              ? item.system.APValue.value
-              : parsed.step * Number(item.system.APValue.value);
+            item.apCost = item.APunparseable ? item.system.APValue.value : parsed.step * Number(item.system.APValue.value);
           }
         }
         item.replaceName = parsed.original;
         item.step = parsed.step;
-        let actorHasItem =
-          this.actor.items.find(
-            (y) => types.includes(y.type) && y.name == parsed.original,
-          ) != undefined;
+        let actorHasItem = this.actor.items.find((y) => types.includes(y.type) && y.name == parsed.original) != undefined;
         item.disabled = actorHasItem || item.notFound || item.APunparseable;
         if (actorHasItem) item.tooltip = game.i18n.localize('YouAlreadyHaveit');
         return item;
@@ -143,17 +121,12 @@ export default class WizardDSA5 extends Application {
 
   mergeLevels(itemsToAdd, item, keyMax) {
     let merged = false;
-    let existing = itemsToAdd.find(
-      (x) => x.name == item.name && x.type == item.type,
-    );
+    let existing = itemsToAdd.find((x) => x.name == item.name && x.type == item.type);
     if (existing) {
       merged = true;
       let level = Number(getProperty(item, 'system.step.value'));
       if (level) {
-        existing.system.step.value = Math.min(
-          (existing.system.step.value += level),
-          existing.system[keyMax].value,
-        );
+        existing.system.step.value = Math.min((existing.system.step.value += level), existing.system[keyMax].value);
       }
     } else {
       itemsToAdd.push(item);
@@ -176,28 +149,18 @@ export default class WizardDSA5 extends Application {
         case 'advantage':
         case 'disadvantage':
           item.system.step.value = Number(k.dataset.step);
-          item = ItemRulesDSA5.reverseAdoptionCalculation(
-            this.actor,
-            parsed,
-            item,
-          );
+          item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
 
-          if (!this.mergeLevels(itemsToAdd, item, 'max'))
-            AdvantageRulesDSA5.vantageAdded(this.actor, item);
+          if (!this.mergeLevels(itemsToAdd, item, 'max')) AdvantageRulesDSA5.vantageAdded(this.actor, item);
           break;
         case 'specialability':
           item.system.step.value = Number(k.dataset.step);
 
           if (k.dataset.free == 'true') item.system.APValue.value = 0;
 
-          item = ItemRulesDSA5.reverseAdoptionCalculation(
-            this.actor,
-            parsed,
-            item,
-          );
+          item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
 
-          if (!this.mergeLevels(itemsToAdd, item, 'maxRank'))
-            SpecialabilityRulesDSA5.abilityAdded(this.actor, item);
+          if (!this.mergeLevels(itemsToAdd, item, 'maxRank')) SpecialabilityRulesDSA5.abilityAdded(this.actor, item);
           break;
         case 'magictrick':
           this.mergeLevels(itemsToAdd, item);
@@ -209,9 +172,7 @@ export default class WizardDSA5 extends Application {
 
   async fixPreviousCosts(previous, toFix) {
     for (let item of toFix) {
-      const hasFixable = previous.find(
-        (x) => x.type == item.type && x.name == item.name,
-      );
+      const hasFixable = previous.find((x) => x.type == item.type && x.name == item.name);
 
       if (hasFixable) item.apCost -= hasFixable.apCost;
     }
@@ -243,7 +204,9 @@ export default class WizardDSA5 extends Application {
           },
         ],
       });
-    } catch (error) {}
+    } catch (error) {
+      /* empty */
+    }
 
     return result;
   }
@@ -258,17 +221,11 @@ export default class WizardDSA5 extends Application {
       if (res) {
         itemsToUpdate.push({
           _id: res.id,
-          'system.talentValue.value': Math.max(
-            0,
-            factor * parsed.step +
-              (bonus ? Number(res.system.talentValue.value) : 0),
-          ),
+          'system.talentValue.value': Math.max(0, factor * parsed.step + (bonus ? Number(res.system.talentValue.value) : 0)),
         });
       } else {
         console.warn(`Could not find ${itemType} ${skill}`);
-        this.errors.push(
-          `${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`,
-        );
+        this.errors.push(`${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`);
       }
     }
     await this.actor.updateEmbeddedDocuments('Item', itemsToUpdate, {
@@ -288,9 +245,7 @@ export default class WizardDSA5 extends Application {
       const tb = $(tab);
       let exclusives = new Set();
       for (let k of tb.find('.exclusive')) {
-        exclusives.add(
-          k.className.split(/\s+/).filter((x) => regex.test(x))[0],
-        );
+        exclusives.add(k.className.split(/\s+/).filter((x) => regex.test(x))[0]);
       }
       for (let k of exclusives) {
         let choice = tb.find('.allowedCount_' + k.split('_')[1]);
@@ -319,9 +274,7 @@ export default class WizardDSA5 extends Application {
     html.find('button.ok').click(() => {
       if (!this.updating) {
         this.updating = true;
-        this.updateCharacter($(this._element)).then(
-          () => (this.updating = false),
-        );
+        this.updateCharacter($(this._element)).then(() => (this.updating = false));
       }
     });
     html.find('button.cancel').click(() => {
@@ -348,9 +301,7 @@ export default class WizardDSA5 extends Application {
       const item = await fromUuid(itemId);
       item.sheet.render(true);
     });
-    showItem
-      .attr('draggable', true)
-      .on('dragstart', (event) => itemDragStart(event));
+    showItem.attr('draggable', true).on('dragstart', (event) => itemDragStart(event));
 
     html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
 
@@ -380,9 +331,7 @@ export default class WizardDSA5 extends Application {
     } else {
       $(this._element)
         .find('.dialog-buttons')
-        .html(
-          `<div class="error"><p>${game.i18n.localize('DSAError.notUnderstood')}</p><ul><li>${this.errors.join('</li><li>')}</li></ul></div>`,
-        );
+        .html(`<div class="error"><p>${game.i18n.localize('DSAError.notUnderstood')}</p><ul><li>${this.errors.join('</li><li>')}</li></ul></div>`);
     }
   }
 }

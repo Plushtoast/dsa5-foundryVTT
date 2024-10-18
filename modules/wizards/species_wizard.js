@@ -53,26 +53,11 @@ export default class SpeciesWizard extends WizardDSA5 {
 
   async getData(options) {
     const data = await super.getData(options);
-    const requirements = await this.parseToItem(
-      this.species.system.requirements.value,
-      ['disadvantage', 'advantage'],
-    );
-    const missingVantages = requirements.filter(
-      (x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled,
-    );
-    const advantagegroups = await this._toGroups(
-      this.species.system.recommendedAdvantages.value,
-      ['advantage'],
-      requirements,
-    );
-    const disadvantagegroups = await this._toGroups(
-      this.species.system.recommendedDisadvantages.value,
-      ['disadvantage'],
-      requirements,
-    );
-    const attributeRequirements = this._parseAttributes(
-      this.species.system.attributeChange.value,
-    );
+    const requirements = await this.parseToItem(this.species.system.requirements.value, ['disadvantage', 'advantage']);
+    const missingVantages = requirements.filter((x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled);
+    const advantagegroups = await this._toGroups(this.species.system.recommendedAdvantages.value, ['advantage'], requirements);
+    const disadvantagegroups = await this._toGroups(this.species.system.recommendedDisadvantages.value, ['disadvantage'], requirements);
+    const attributeRequirements = this._parseAttributes(this.species.system.attributeChange.value);
     const baseCost = Number(this.species.system.APValue.value);
     const reqCost = requirements.reduce(function (_this, val) {
       return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0);
@@ -96,10 +81,7 @@ export default class SpeciesWizard extends WizardDSA5 {
       advantagesToChose: advantagegroups.length > 0,
       missingVantagesToChose: missingVantages.length > 0,
       disadvantagesToChose: disadvantagegroups.length > 0,
-      vantagesToChose:
-        advantagegroups.length > 0 ||
-        disadvantagegroups.length > 0 ||
-        missingVantages.length > 0,
+      vantagesToChose: advantagegroups.length > 0 || disadvantagegroups.length > 0 || missingVantages.length > 0,
       generalToChose: attributeRequirements.length > 0,
     });
     return data;
@@ -114,14 +96,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
     let apCost = Number(parent.find('.apCost').text());
-    if (
-      !this._validateInput(parent, app) ||
-      !(await this.actor.checkEnoughXP(apCost)) ||
-      (await this.alreadyAdded(
-        this.actor.system.details.species.value,
-        'species',
-      ))
-    ) {
+    if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.species.value, 'species'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
     }
@@ -129,15 +104,10 @@ export default class SpeciesWizard extends WizardDSA5 {
     let update = {
       'system.details.species.value': this.species.name,
       'system.status.speed.initial': this.species.system.baseValues.speed.value,
-      'system.status.soulpower.initial':
-        this.species.system.baseValues.soulpower.value,
-      'system.status.toughness.initial':
-        this.species.system.baseValues.toughness.value,
-      'system.status.wounds.initial':
-        this.species.system.baseValues.wounds.value,
-      'system.status.wounds.value':
-        this.species.system.baseValues.wounds.value +
-        this.actor.system.characteristics['ko'].value * 2,
+      'system.status.soulpower.initial': this.species.system.baseValues.soulpower.value,
+      'system.status.toughness.initial': this.species.system.baseValues.toughness.value,
+      'system.status.wounds.initial': this.species.system.baseValues.wounds.value,
+      'system.status.wounds.value': this.species.system.baseValues.wounds.value + this.actor.system.characteristics['ko'].value * 2,
     };
 
     let attributeChoices = [];
@@ -149,18 +119,11 @@ export default class SpeciesWizard extends WizardDSA5 {
       update[`system.characteristics.${k}.species`] = 0;
     });
 
-    for (let attr of this.species.system.attributeChange.value
-      .split(',')
-      .concat(attributeChoices)) {
-      if (
-        attr.includes(game.i18n.localize('combatskillcountdivider') + ':') ||
-        attr == ''
-      )
-        continue;
+    for (let attr of this.species.system.attributeChange.value.split(',').concat(attributeChoices)) {
+      if (attr.includes(game.i18n.localize('combatskillcountdivider') + ':') || attr == '') continue;
 
       let attrs = attr.trim().split(' ');
-      let dataAttr =
-        game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0);
+      let dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0);
       dataAttr[dataAttr.length - 1] = 'species';
       update[`system.${dataAttr.join('.')}`] = Number(attrs[1]);
     }
@@ -171,11 +134,7 @@ export default class SpeciesWizard extends WizardDSA5 {
 
     await this.actor.removeCondition('incapacitated');
 
-    await APTracker.track(
-      this.actor,
-      { type: 'item', item: this.species, state: 1 },
-      apCost,
-    );
+    await APTracker.track(this.actor, { type: 'item', item: this.species, state: 1 }, apCost);
 
     this.finalizeUpdate();
   }

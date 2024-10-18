@@ -5,14 +5,8 @@ const { mergeObject } = foundry.utils;
 let ADVANCEDFILTERS = {};
 
 Hooks.once('ready', () => {
-  Promise.all([
-    DSA5_Utility.allSkillsList(),
-    DSA5_Utility.allCombatSkills(),
-  ]).then((result) => {
-    const skills = result[0].reduce(
-      (prev, now) => ({ ...prev, [now]: now }),
-      {},
-    );
+  Promise.all([DSA5_Utility.allSkillsList(), DSA5_Utility.allCombatSkills()]).then((result) => {
+    const skills = result[0].reduce((prev, now) => ({ ...prev, [now]: now }), {});
     const range = result[1]
       .filter((x) => x.system.weapontype.value == 'range')
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -28,18 +22,10 @@ Hooks.once('ready', () => {
 
     const content = [];
     for (const [cat, value] of Object.entries(DSA5.specialAbilityCategories)) {
-      if (cat == 'clerical')
-        content.push(
-          `</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`,
-        );
-      else if (cat == 'magical')
-        content.push(
-          `</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`,
-        );
+      if (cat == 'clerical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`);
+      else if (cat == 'magical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`);
 
-      content.push(
-        `<option value="${cat}">${game.i18n.localize(value)}</option>`,
-      );
+      content.push(`<option value="${cat}">${game.i18n.localize(value)}</option>`);
     }
 
     const specialabilies = `<div class="form-group">
@@ -386,8 +372,7 @@ Hooks.once('ready', () => {
 
     for (const [key, value] of Object.entries(filters)) {
       for (const filter of value) {
-        if (filter.type == 'text')
-          filter.placeholder = `Library.advancedSearchPlaceholders.${key}.${filter.attr}`;
+        if (filter.type == 'text') filter.placeholder = `Library.advancedSearchPlaceholders.${key}.${filter.attr}`;
       }
     }
 

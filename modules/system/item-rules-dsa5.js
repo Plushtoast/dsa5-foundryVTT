@@ -9,9 +9,7 @@ export default class ItemRulesDSA5 {
     let modifier = [];
     let selected = game.settings.get('dsa5', 'talentModifierEnabled');
     for (let k of actor.items.filter((x) => {
-      return (
-        types.includes(x.type) && `${x.system.effect.value}`.includes(talent)
-      );
+      return types.includes(x.type) && `${x.system.effect.value}`.includes(talent);
     })) {
       for (let m of k.system.effect.value.split(/;|,/)) {
         if (m.includes(talent)) {
@@ -41,12 +39,9 @@ export default class ItemRulesDSA5 {
   }
 
   static calcAPCostSum(item) {
-    let xpCost =
-      Number(item.system.APValue.value) * (Number(item.system.step.value) || 1);
+    let xpCost = Number(item.system.APValue.value) * (Number(item.system.step.value) || 1);
     if (/;/.test(item.system.APValue.value)) {
-      const steps = item.system.APValue.value
-        .split(';')
-        .map((x) => Number(x.trim()));
+      const steps = item.system.APValue.value.split(';').map((x) => Number(x.trim()));
       xpCost = 0;
       for (let i = 0; i < item.system.step.value; i++) xpCost += steps[i];
     }
@@ -83,17 +78,9 @@ export default class ItemRulesDSA5 {
     const elems = [DSA5.vantagesNeedingAdaption, DSA5.AbilitiesNeedingAdaption];
     for (let elem of elems) {
       if (elem[parsed.name]) {
-        let adoption = actor.items.find(
-          (x) =>
-            elem[parsed.name].items.includes(x.type) &&
-            x.name == parsed.special,
-        );
+        let adoption = actor.items.find((x) => elem[parsed.name].items.includes(x.type) && x.name == parsed.special);
         if (adoption) {
-          item.system.APValue.value = item.system.APValue.value
-            ? item.system.APValue.value.split('/')[
-                adoption.system.StF.value.charCodeAt(0) - 65
-              ]
-            : 0;
+          item.system.APValue.value = item.system.APValue.value ? item.system.APValue.value.split('/')[adoption.system.StF.value.charCodeAt(0) - 65] : 0;
           ItemRulesDSA5.simpleAdoption(item, adoption, parsed.name, elem);
         }
         break;
@@ -103,16 +90,11 @@ export default class ItemRulesDSA5 {
   }
 
   static hasItem(actor, name, types) {
-    return (
-      actor.items.find((x) => types.includes(x.type) && x.name == name) !=
-      undefined
-    );
+    return actor.items.find((x) => types.includes(x.type) && x.name == name) != undefined;
   }
 
   static itemStep(actorData, name, types) {
-    let item = actorData.items.find(
-      (x) => types.includes(x.type) && x.name == name,
-    );
+    let item = actorData.items.find((x) => types.includes(x.type) && x.name == name);
     if (item) {
       return Number(item.system.step.value);
     } else {
@@ -120,21 +102,10 @@ export default class ItemRulesDSA5 {
     }
   }
 
-  static itemAsModifier(
-    actor,
-    name,
-    factor,
-    types,
-    startsWith = false,
-    selected = false,
-  ) {
+  static itemAsModifier(actor, name, factor, types, startsWith = false, selected = false) {
     let res = [];
-    const regex = startsWith
-      ? new RegExp(`^${DSA5_Utility.escapeRegex(`${name} (`)}`)
-      : new RegExp(`^${DSA5_Utility.escapeRegex(name)}$`);
-    const item = actor.items.find(
-      (x) => types.includes(x.type) && regex.test(x.name),
-    );
+    const regex = startsWith ? new RegExp(`^${DSA5_Utility.escapeRegex(`${name} (`)}`) : new RegExp(`^${DSA5_Utility.escapeRegex(name)}$`);
+    const item = actor.items.find((x) => types.includes(x.type) && regex.test(x.name));
     if (item) {
       res.push({
         name: item.name,

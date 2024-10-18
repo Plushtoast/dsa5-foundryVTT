@@ -108,18 +108,13 @@ export default class Itemdsa5 extends Item {
     for (let k of html.find('.specAbs')) {
       let step = Number($(k).attr('data-step'));
       if (step > 0) {
-        const val =
-          mode == 'attack'
-            ? $(k).attr('data-atbonus')
-            : $(k).attr('data-pabonus');
+        const val = mode == 'attack' ? $(k).attr('data-atbonus') : $(k).attr('data-pabonus');
         const reducedVal = val.split(',').reduce((prev, cur) => {
           return prev + Number(cur);
         }, 0);
         res.push({
           name: $(k).find('a').text(),
-          value: isNaN(reducedVal)
-            ? Number(val.replace('*', ''))
-            : Number(reducedVal) * step,
+          value: isNaN(reducedVal) ? Number(val.replace('*', '')) : Number(reducedVal) * step,
           damageBonus: $(k).attr('data-tpbonus'),
           dmmalus: $(k).attr('data-dmmalus') * step,
           step: step,
@@ -202,23 +197,11 @@ export default class Itemdsa5 extends Item {
   }
 
   async addCondition(effect, value = 1, absolute = false, auto = true) {
-    return await DSA5StatusEffects.addCondition(
-      this,
-      effect,
-      value,
-      absolute,
-      auto,
-    );
+    return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 
   async removeCondition(effect, value = 1, auto = true, absolute = false) {
-    return DSA5StatusEffects.removeCondition(
-      this,
-      effect,
-      value,
-      auto,
-      absolute,
-    );
+    return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute);
   }
 
   hasCondition(conditionKey) {
@@ -227,9 +210,7 @@ export default class Itemdsa5 extends Item {
 
   static getMiracleModifiers(actor, source, type, bonusAttribute) {
     const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi');
-    const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '')
-      .split(/;|,/)
-      .map((x) => x.replace(regex, '').trim());
+    const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '').split(/;|,/).map((x) => x.replace(regex, '').trim());
     const result = [];
     if (happyTalents.includes(source.name)) {
       const availableKaP = actor.system.status.karmaenergy.value;
@@ -243,10 +224,7 @@ export default class Itemdsa5 extends Item {
         selected: false,
       });
       const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight');
-      if (
-        availableKaP >= 6 &&
-        SpecialabilityRulesDSA5.hasAbility(actor, miracleMight)
-      ) {
+      if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight)) {
         result.push({
           name: miracleMight,
           value: 3 + bonus,
@@ -262,9 +240,7 @@ export default class Itemdsa5 extends Item {
     let skMod = [];
     let zkMod = [];
 
-    const hasSpellResistance =
-      ['spell', 'liturgy', 'ceremony', 'ritual'].includes(source.type) &&
-      source.system.effectFormula.value.trim() == '';
+    const hasSpellResistance = ['spell', 'liturgy', 'ceremony', 'ritual'].includes(source.type) && source.system.effectFormula.value.trim() == '';
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
         if (target.actor) {
@@ -275,26 +251,10 @@ export default class Itemdsa5 extends Item {
               return sum + x.spellResistanceModifier(target.actor);
             }, 0);
           }
-          const itemResistSoulpower =
-            getProperty(
-              target.actor,
-              `system.status.soulpower.${source.type}resist`,
-            ) || 0;
-          const itemResistToughness =
-            getProperty(
-              target.actor,
-              `system.status.toughness.${source.type}resist`,
-            ) || 0;
-          skMod.push(
-            (target.actor.system.status.soulpower.max + itemResistSoulpower) *
-              -1 -
-              spellResistance,
-          );
-          zkMod.push(
-            (target.actor.system.status.toughness.max + itemResistToughness) *
-              -1 -
-              spellResistance,
-          );
+          const itemResistSoulpower = getProperty(target.actor, `system.status.soulpower.${source.type}resist`) || 0;
+          const itemResistToughness = getProperty(target.actor, `system.status.toughness.${source.type}resist`) || 0;
+          skMod.push((target.actor.system.status.soulpower.max + itemResistSoulpower) * -1 - spellResistance);
+          zkMod.push((target.actor.system.status.toughness.max + itemResistToughness) * -1 - spellResistance);
         }
       });
     }
@@ -333,13 +293,7 @@ export default class Itemdsa5 extends Item {
       let vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
       vals[0] = vals[0].replace(regex, actor.system.status.speed.max);
       if (vals.length == 2) {
-        if (
-          !isNaN(vals[0]) ||
-          /(=)?[+-]\d([+-]\d)?/.test(vals[0]) ||
-          /(=)?\d[dDwW]\d/.test(vals[0]) ||
-          /=\d+/.test(vals[0]) ||
-          /\*\d(\.\d)*/.test(vals[0])
-        ) {
+        if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0]) || /\*\d(\.\d)*/.test(vals[0])) {
           const key = vals[1].toLowerCase();
           if (itemModifiers[key] == undefined) itemModifiers[key] = [];
 
@@ -355,10 +309,7 @@ export default class Itemdsa5 extends Item {
     if (actor.flags.oppose) {
       let message = game.messages.get(actor.flags.oppose.messageId);
       const preData = message.flags.data.preData;
-      isRangeDefense = !(
-        getProperty(preData, 'source.type') == 'meleeweapon' ||
-        getProperty(preData, 'source.system.traitType.value') == 'meleeAttack'
-      );
+      isRangeDefense = !(getProperty(preData, 'source.type') == 'meleeweapon' || getProperty(preData, 'source.system.traitType.value') == 'meleeAttack');
 
       const regex = / \[(-)?\d{1,}\]/;
       for (let mal of preData.situationalModifiers) {
@@ -402,28 +353,18 @@ export default class Itemdsa5 extends Item {
       return acc;
     }, {});
     const combatskills = [];
-    const validSpecAb = isDefense
-      ? (vals, com) => vals.pa != 0
-      : (vals, com) =>
-          vals.at != 0 || vals.tp != 0 || vals.dm != 0 || com.effects.size > 0;
+    const validSpecAb = isDefense ? (vals, com) => vals.pa != 0 : (vals, com) => vals.at != 0 || vals.tp != 0 || vals.dm != 0 || com.effects.size > 0;
 
     for (let com of combatSpecAbs) {
-      const effects = Itemdsa5.parseEffect(
-        getProperty(com.system, path),
-        actor,
-      );
-      const variantCount = ['', '2', '3'].filter((x) =>
-        getProperty(com, `system.effect.value${x}`),
-      ).length;
+      const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor);
+      const variantCount = ['', '2', '3'].filter((x) => getProperty(com, `system.effect.value${x}`)).length;
       const vals = keys.reduce((acc, key) => {
         acc[key] = effects[translatedKeys[key]] || [0];
         return acc;
       }, {});
 
       if (validSpecAb(vals, com)) {
-        const subCategory = game.i18n.localize(
-          DSA5.combatSkillSubCategories[com.system.category.sub],
-        );
+        const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
         combatskills.push({
           name: com.name,
           atbonus: vals.at || [0],
@@ -454,15 +395,11 @@ export default class Itemdsa5 extends Item {
         return x.system.list.value
           .split(/;|,/)
           .map((x) => x.trim().toLowerCase())
-          .some((y) =>
-            toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, '')),
-          );
+          .some((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, '')));
       };
     }
 
-    const brawlingFilter = game.combat?.isBrawling
-      ? () => true
-      : (x) => Number(x.system.category.sub) != 5;
+    const brawlingFilter = game.combat?.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5;
     const allowedNames = new Set([]);
     const forbiddenNames = new Set([]);
     const effectChanges = {};
@@ -472,15 +409,12 @@ export default class Itemdsa5 extends Item {
       for (let change of effect.changes) {
         if (change.key.startsWith('self.maneuver.')) {
           const parsed = DSA5_Utility.parseAbilityString(change.value);
-          if (/\-$/.test(parsed.name))
-            forbiddenNames.add(parsed.name.replace(/\-$/, '').trim());
-          else if (/\+$/.test(parsed.name))
-            allowedNames.add(parsed.name.replace(/\+$/, '').trim());
+          if (/-$/.test(parsed.name)) forbiddenNames.add(parsed.name.replace(/-$/, '').trim());
+          else if (/\+$/.test(parsed.name)) allowedNames.add(parsed.name.replace(/\+$/, '').trim());
           else {
             const changeMode = change.key.split('.')[2];
             if (!effectChanges[parsed.name]) effectChanges[parsed.name] = {};
-            if (!effectChanges[parsed.name][changeMode])
-              effectChanges[parsed.name][changeMode] = 0;
+            if (!effectChanges[parsed.name][changeMode]) effectChanges[parsed.name][changeMode] = 0;
 
             effectChanges[parsed.name][changeMode] += parsed.step;
           }
@@ -514,10 +448,7 @@ export default class Itemdsa5 extends Item {
   static getCombatSkillModifier(actor, source, situationalModifiers) {
     if (source.type == 'trait') return;
 
-    const combatskill = actor.items.find(
-      (x) =>
-        x.type == 'combatskill' && x.name == source.system.combatskill.value,
-    );
+    const combatskill = actor.items.find((x) => x.type == 'combatskill' && x.name == source.system.combatskill.value);
 
     for (let ef of combatskill.effects) {
       for (let change of ef.changes) {
@@ -554,12 +485,7 @@ export default class Itemdsa5 extends Item {
         const size = getProperty(target.actor, 'system.status.size.value');
         if (size) targetSize = size;
 
-        CreatureType.addCreatureTypeModifiers(
-          target.actor,
-          source,
-          situationalModifiers,
-          actor,
-        );
+        CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor);
         this.checkDuplicatus(actor, target.actor, situationalModifiers);
       }
     });
@@ -568,9 +494,7 @@ export default class Itemdsa5 extends Item {
 
   static checkDuplicatus(actor, target, situationalModifiers) {
     const val = getProperty(target, 'system.extra.duplicatus');
-    const immuneToIllusion = CreatureType.detectCreatureType(actor).some((x) =>
-      x.spellImmunities.includes('Illusion'),
-    );
+    const immuneToIllusion = CreatureType.detectCreatureType(actor).some((x) => x.spellImmunities.includes('Illusion'));
     if (val) {
       situationalModifiers.push({
         name: `Duplicatus - ${game.i18n.localize('doppelganger')}`,
@@ -582,29 +506,11 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  static prepareRangeAttack(
-    situationalModifiers,
-    actor,
-    data,
-    source,
-    tokenId,
-    combatskills,
-    currentAmmo = undefined,
-  ) {
-    situationalModifiers.push(
-      ...AdvantageRulesDSA5.getVantageAsModifier(
-        actor,
-        game.i18n.localize('LocalizedIDs.restrictedSenseSight'),
-        -2,
-      ),
-    );
+  static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
+    situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2));
     this.getCombatSkillModifier(actor, source, situationalModifiers);
 
-    const targetSize = this.getTargetSizeAndModifier(
-      actor,
-      source,
-      situationalModifiers,
-    );
+    const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers);
 
     const defenseMalus = Number(actor.system.rangeStats.defenseMalus) * -1;
     if (defenseMalus != 0) {
@@ -616,37 +522,12 @@ export default class Itemdsa5 extends Item {
       });
     }
 
-    const rangeOptions = new Set([
-      'short',
-      'medium',
-      'long',
-      'rangesense',
-      'extreme',
-    ]);
-    rangeOptions.delete(
-      AdvantageRulesDSA5.hasVantage(
-        actor,
-        game.i18n.localize('LocalizedIDs.senseOfRange'),
-      )
-        ? 'long'
-        : 'rangesense',
-    );
-    if (
-      !SpecialabilityRulesDSA5.hasAbility(
-        actor,
-        game.i18n.localize('LocalizedIDs.extremeShot'),
-      )
-    )
-      rangeOptions.delete('extreme');
+    const rangeOptions = new Set(['short', 'medium', 'long', 'rangesense', 'extreme']);
+    rangeOptions.delete(AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? 'long' : 'rangesense');
+    if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.extremeShot'))) rangeOptions.delete('extreme');
 
-    const drivingArcher = SpecialabilityRulesDSA5.hasAbility(
-      actor,
-      game.i18n.localize('LocalizedIDs.drivingArcher'),
-    );
-    const mountedArcher = SpecialabilityRulesDSA5.hasAbility(
-      actor,
-      game.i18n.localize('LocalizedIDs.mountedArcher'),
-    );
+    const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.drivingArcher'));
+    const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.mountedArcher'));
     let mountedOptions;
     if (mountedArcher && Riding.isRiding(actor)) {
       mountedOptions = duplicate(DSA5.mountedRangeOptionsSpecAb);
@@ -658,23 +539,14 @@ export default class Itemdsa5 extends Item {
 
     let finalMountedOptions = {};
     for (let key of Object.keys(mountedOptions)) {
-      finalMountedOptions[
-        `${game.i18n.localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`
-      ] = mountedOptions[key];
+      finalMountedOptions[`${game.i18n.localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
     }
 
     this.swarmModifiers(actor, 'attack', situationalModifiers);
 
     mergeObject(data, {
       rangeOptions,
-      rangeDistance:
-        Array.from(rangeOptions)[
-          DPS.distanceModifier(
-            game.canvas.tokens.get(tokenId),
-            source,
-            currentAmmo,
-          )
-        ],
+      rangeDistance: Array.from(rangeOptions)[DPS.distanceModifier(game.canvas.tokens.get(tokenId), source, currentAmmo)],
       visionOptions: DSA5.rangeVision,
       mountedOptions: finalMountedOptions,
       shooterMovementOptions: DSA5.shooterMovementOptions,
@@ -716,30 +588,14 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  static prepareMeleeAttack(
-    situationalModifiers,
-    actor,
-    data,
-    source,
-    combatskills,
-    wrongHandDisabled,
-  ) {
+  static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
     let targetWeaponSize = 'short';
 
     game.user.targets.forEach((target) => {
       if (target.actor) {
         for (let x of target.actor.items) {
-          if (
-            (x.type == 'meleeweapon' && x.system.worn.value) ||
-            (x.type == 'trait' &&
-              x.system.traitType.value == 'meleeAttack' &&
-              x.system.pa)
-          ) {
-            if (
-              DSA5.meleeRangesArray.indexOf(x.system.reach.value) >
-              DSA5.meleeRangesArray.indexOf(targetWeaponSize)
-            )
-              targetWeaponSize = x.system.reach.value;
+          if ((x.type == 'meleeweapon' && x.system.worn.value) || (x.type == 'trait' && x.system.traitType.value == 'meleeAttack' && x.system.pa)) {
+            if (DSA5.meleeRangesArray.indexOf(x.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) targetWeaponSize = x.system.reach.value;
 
             if (targetWeaponSize == 'long') break;
           }
@@ -747,11 +603,7 @@ export default class Itemdsa5 extends Item {
       }
     });
 
-    const targetSize = this.getTargetSizeAndModifier(
-      actor,
-      source,
-      situationalModifiers,
-    );
+    const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers);
     this.getCombatSkillModifier(actor, source, situationalModifiers);
 
     const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1;
@@ -781,29 +633,15 @@ export default class Itemdsa5 extends Item {
     });
   }
 
-  static prepareMeleeParry(
-    situationalModifiers,
-    actor,
-    data,
-    source,
-    combatskills,
-    wrongHandDisabled,
-  ) {
-    const isRangeDefense = Itemdsa5.getDefenseMalus(
-      situationalModifiers,
-      actor,
-    );
+  static prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
+    const isRangeDefense = Itemdsa5.getDefenseMalus(situationalModifiers, actor);
     this.swarmModifiers(actor, 'parry', situationalModifiers);
     mergeObject(data, {
       visionOptions: DSA5.meleeRangeVision(data.mode),
       showDefense: true,
       isRangeDefense,
-      wrongHandDisabled:
-        wrongHandDisabled && getProperty(source, 'system.worn.offHand'),
-      offHand:
-        !wrongHandDisabled &&
-        getProperty(source, 'system.worn.offHand') &&
-        !RuleChaos.isShield(source),
+      wrongHandDisabled: wrongHandDisabled && getProperty(source, 'system.worn.offHand'),
+      offHand: !wrongHandDisabled && getProperty(source, 'system.worn.offHand') && !RuleChaos.isShield(source),
       melee: true,
       combatSpecAbs: combatskills,
       constricted: actor.hasCondition('constricted'),
@@ -819,21 +657,11 @@ export default class Itemdsa5 extends Item {
   }
 
   setupEffect(ev, options = {}, tokenId) {
-    return Itemdsa5.getSubClass(this.type).setupDialog(
-      ev,
-      options,
-      this,
-      this.parent,
-      tokenId,
-    );
+    return Itemdsa5.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId);
   }
 
   static checkEquality(item, item2) {
-    return (
-      item2.type == item.type &&
-      item.name == item2.name &&
-      item.system.description?.value == item2.system.description?.value
-    );
+    return item2.type == item.type && item.name == item2.name && item.system.description?.value == item2.system.description?.value;
   }
 
   static async combineItem(item1, item2, actor, render = true) {
@@ -850,12 +678,7 @@ export default class Itemdsa5 extends Item {
   }
 
   static async stackItems(stackOn, newItem, actor, render = true) {
-    return await Itemdsa5.getSubClass(stackOn.type).combineItem(
-      stackOn,
-      newItem,
-      actor,
-      render,
-    );
+    return await Itemdsa5.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor, render);
   }
 
   _setupCardOptions(template, title, tokenId) {
@@ -866,9 +689,7 @@ export default class Itemdsa5 extends Item {
         scene: speaker.scene,
       },
       flags: {
-        img: speaker.token
-          ? canvas.tokens.get(speaker.token).document.img
-          : this.img,
+        img: speaker.token ? canvas.tokens.get(speaker.token).document.img : this.img,
       },
       title,
       template,
@@ -884,15 +705,10 @@ export default class Itemdsa5 extends Item {
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
       const opposed = ` - ${game.i18n.localize('Opposed')}`;
-      if (
-        cardOptions.isOpposedTest &&
-        cardOptions.title.match(opposed + '$') != opposed
-      )
-        cardOptions.title += opposed;
+      if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) cardOptions.title += opposed;
     }
 
-    if (!options.suppressMessage)
-      DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);
+    if (!options.suppressMessage) DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);
 
     return { result, cardOptions };
   }
@@ -912,45 +728,28 @@ export default class Itemdsa5 extends Item {
   static async _postItem(item) {
     let chatData = duplicate(item);
 
-    const detailsObfuscated = getProperty(
-      chatData,
-      'system.obfuscation.details',
-    );
-    const descriptionObfuscated = getProperty(
-      chatData,
-      'system.obfuscation.description',
-    );
+    const detailsObfuscated = getProperty(chatData, 'system.obfuscation.details');
+    const descriptionObfuscated = getProperty(chatData, 'system.obfuscation.description');
 
     mergeObject(chatData, {
-      properties: detailsObfuscated
-        ? []
-        : Itemdsa5.getSubClass(item.type).chatData(
-            duplicate(chatData.system),
-            item.name,
-          ),
+      properties: detailsObfuscated ? [] : Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name),
       descriptionObfuscated,
     });
 
     chatData.hasPrice = 'price' in chatData.system && !detailsObfuscated;
     if (chatData.hasPrice) {
       let price = chatData.system.price.value;
-      if (chatData.system.QL)
-        price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData);
+      if (chatData.system.QL) price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData);
 
       const prices = await DSA5Payment._moneyToString(price);
-      chatData.properties.push(
-        `<b>${game.i18n.localize('price')}</b>: ${prices}`,
-      );
+      chatData.properties.push(`<b>${game.i18n.localize('price')}</b>: ${prices}`);
     }
 
     if (item.pack) chatData.itemLink = item.link;
 
     if (chatData.img.includes('/blank.webp')) chatData.img = null;
 
-    const html = await renderTemplate(
-      'systems/dsa5/templates/chat/post-item.html',
-      chatData,
-    );
+    const html = await renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData);
     const chatOptions = DSA5_Utility.chatDataSetup(html);
     ChatMessage.create(chatOptions);
   }
@@ -958,11 +757,7 @@ export default class Itemdsa5 extends Item {
 
 class PlantItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    let res = [
-      this._chatLineHelper('effect', data.effect),
-      this._chatLineHelper('PLANT.recipes', data.recipes),
-      this._chatLineHelper('PLANT.usages', data.usages),
-    ];
+    let res = [this._chatLineHelper('effect', data.effect), this._chatLineHelper('PLANT.recipes', data.recipes), this._chatLineHelper('PLANT.usages', data.usages)];
 
     return res;
   }
@@ -971,8 +766,7 @@ class PlantItemDSA5 extends Itemdsa5 {
 class MagicalSignItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
     let res = [this._chatLineHelper('AsPCost', data.asp)];
-    if (data.category == 2)
-      res.push(this._chatLineHelper('feature', data.feature));
+    if (data.category == 2) res.push(this._chatLineHelper('feature', data.feature));
 
     return res;
   }
@@ -980,11 +774,7 @@ class MagicalSignItemDSA5 extends Itemdsa5 {
 
 class DemonmarkItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    return [
-      this._chatLineHelper('attributes', data.attribute),
-      this._chatLineHelper('skills', data.skills),
-      this._chatLineHelper('domains', data.domain),
-    ];
+    return [this._chatLineHelper('attributes', data.attribute), this._chatLineHelper('skills', data.skills), this._chatLineHelper('domains', data.domain)];
   }
 }
 
@@ -999,10 +789,7 @@ class PatronItemDSA5 extends Itemdsa5 {
     let res = [
       this._chatLineHelper('skills', data.talents),
       this._chatLineHelper('culture', data.culture),
-      this._chatLineHelper(
-        'Category',
-        game.i18n.localize(`PATRON.${data.category}`),
-      ),
+      this._chatLineHelper('Category', game.i18n.localize(`PATRON.${data.category}`)),
     ];
 
     return res;
@@ -1011,11 +798,7 @@ class PatronItemDSA5 extends Itemdsa5 {
 
 class MoneyItemDSA5 extends Itemdsa5 {
   static checkEquality(item, item2) {
-    return (
-      item2.type == item.type &&
-      game.i18n.localize(item.name) == game.i18n.localize(item2.name) &&
-      item.system.description?.value == item2.system.description?.value
-    );
+    return item2.type == item.type && game.i18n.localize(item.name) == game.i18n.localize(item2.name) && item.system.description?.value == item2.system.description?.value;
   }
 }
 
@@ -1025,41 +808,26 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
     let result = game.i18n.localize('Ongoing');
     if (item.system.cummulatedQS.value >= 10) {
       result = game.i18n.localize('Success');
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}${await TextEditor.enrichHTML(
-        item.system.success,
-        { secrets: this.isOwner, async: true },
-      )}`;
+      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}${await TextEditor.enrichHTML(item.system.success, {
+        secrets: this.isOwner,
+        async: true,
+      })}`;
     } else if (item.system.cummulatedQS.value >= 6) {
       result = game.i18n.localize('PartSuccess');
       txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}`;
-    } else if (
-      item.system.allowedTestCount.value - item.system.usedTestCount.value <=
-      0
-    ) {
+    } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
       result = game.i18n.localize('Failure');
     }
     const properties = [
-      this._chatLineHelper(
-        'cummulatedQS',
-        `${item.system.cummulatedQS.value} / 10`,
-      ),
+      this._chatLineHelper('cummulatedQS', `${item.system.cummulatedQS.value} / 10`),
       this._chatLineHelper('interval', item.system.interval.value),
-      this._chatLineHelper(
-        'probes',
-        `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`,
-      ),
+      this._chatLineHelper('probes', `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`),
       this._chatLineHelper('result', result),
       txt,
     ];
-    const descriptionObfuscated = getProperty(
-      item,
-      'system.obfuscation.description',
-    );
+    const descriptionObfuscated = getProperty(item, 'system.obfuscation.description');
 
-    const html = await renderTemplate(
-      'systems/dsa5/templates/chat/aggregatedTestResult.html',
-      { descriptionObfuscated, item, properties },
-    );
+    const html = await renderTemplate('systems/dsa5/templates/chat/aggregatedTestResult.html', { descriptionObfuscated, item, properties });
     const chatOptions = DSA5_Utility.chatDataSetup(html);
     ChatMessage.create(chatOptions);
   }
@@ -1067,12 +835,7 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
 
 class AmmunitionItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    return [
-      this._chatLineHelper(
-        'ammunitiongroup',
-        game.i18n.localize(data.ammunitiongroup.value),
-      ),
-    ];
+    return [this._chatLineHelper('ammunitiongroup', game.i18n.localize(data.ammunitiongroup.value))];
   }
 }
 
@@ -1080,12 +843,8 @@ class EffectWrapperItemDSA5 extends Itemdsa5 {}
 
 class ArmorItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    let properties = [
-      this._chatLineHelper('protection', data.protection.value),
-      this._chatLineHelper('encumbrance', data.encumbrance.value),
-    ];
-    if (data.effect.value != '')
-      properties.push(this._chatLineHelper('effect', data.effect.value));
+    let properties = [this._chatLineHelper('protection', data.protection.value), this._chatLineHelper('encumbrance', data.encumbrance.value)];
+    if (data.effect.value != '') properties.push(this._chatLineHelper('effect', data.effect.value));
 
     return properties;
   }
@@ -1112,12 +871,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       this._chatLineHelper('duration', data.duration.value),
       this._chatLineHelper('reach', data.range.value),
       this._chatLineHelper('targetCategory', data.targetCategory.value),
-      this._chatLineHelper(
-        'effect',
-        DSA5_Utility.replaceConditions(
-          DSA5_Utility.replaceDies(data.effect.value),
-        ),
-      ),
+      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
     ];
   }
 
@@ -1171,18 +925,13 @@ class SpellItemDSA5 extends Itemdsa5 {
       fws: formData.fw,
       qls: formData.qs,
     };
-    Itemdsa5.changeChars(
-      testData.source,
-      ...[0, 1, 2].map((x) => formData[`characteristics${x}`]),
-    );
+    Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]));
     await this.applyExtensions(testData.source, testData.extensions, actor);
   }
 
   static async applyExtensions(source, extensions, actor) {
     RuleChaos.ensureNumber(source);
-    const rollModifiers = Object.keys(DSA5SpellDialog.rollModifiers).map(
-      (x) => `${x}.mod`,
-    );
+    const rollModifiers = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
     for (let extension of extensions) {
       const item = fromUuidSync(extension.uuid);
       if (!item) continue;
@@ -1193,11 +942,7 @@ class SpellItemDSA5 extends Itemdsa5 {
           if (rollModifiers.includes(change.key)) continue;
 
           if (change.key == 'macro.transform') {
-            await DSA5_Utility.callItemTransformationMacro(
-              change.value,
-              source,
-              ef,
-            );
+            await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else {
             ef.apply(source, change);
           }
@@ -1235,7 +980,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   static getPropertyModifiers(actor, item) {
     const isClerical = ['ceremony', 'liturgy'].includes(item.type);
     const features = (getProperty(item, 'system.feature') || '')
-      .replace(/\(a-z äöü\-\)/gi, '')
+      .replace(/\(a-z äöü-\)/gi, '')
       .split(',')
       .map((x) => x.trim());
     const res = [];
@@ -1244,10 +989,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     const keys = ['FP', 'step', 'QL', 'TPM', 'FW', cost];
     for (const k of keys) {
       const type = k == 'step' ? '' : k;
-      const modifiers = getProperty(
-        actor.system.skillModifiers,
-        `feature.${k}`,
-      );
+      const modifiers = getProperty(actor.system.skillModifiers, `feature.${k}`);
       res.push(
         ...modifiers
           .filter((x) => features.includes(x.target))
@@ -1261,10 +1003,7 @@ class SpellItemDSA5 extends Itemdsa5 {
           }),
       );
     }
-    const conditional = getProperty(
-      actor.system.skillModifiers,
-      `conditional.${cost}`,
-    );
+    const conditional = getProperty(actor.system.skillModifiers, `conditional.${cost}`);
     res.push(
       ...conditional.map((f) => {
         return {
@@ -1280,18 +1019,9 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
-    if (
-      game.settings.get('dsa5', 'enableForeignSpellModifer') &&
-      ['npc', 'character'].includes(actor.type) &&
-      ['spell', 'ritual'].includes(source.type)
-    ) {
-      const distributions = source.system.distribution.value
-        .split(',')
-        .map((x) => x.trim().toLowerCase());
-      const regx = new RegExp(
-        `(${game.i18n.localize('tradition')}|\\\)|\\\()`,
-        'g',
-      );
+    if (game.settings.get('dsa5', 'enableForeignSpellModifer') && ['npc', 'character'].includes(actor.type) && ['spell', 'ritual'].includes(source.type)) {
+      const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
+      const regx = new RegExp(`(${game.i18n.localize('tradition')}|\\\)|\\\()`, 'g');
       const traditions = actor.system.tradition.magical
         .replace(regx, '')
         .split(',')
@@ -1311,30 +1041,10 @@ class SpellItemDSA5 extends Itemdsa5 {
 
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
-      ...ItemRulesDSA5.getTalentBonus(actor, source.name, [
-        'advantage',
-        'disadvantage',
-        'specialability',
-        'equipment',
-      ]),
-      ...AdvantageRulesDSA5.getVantageAsModifier(
-        actor,
-        game.i18n.localize('LocalizedIDs.magicalAttunement'),
-        1,
-        true,
-      ),
-      ...AdvantageRulesDSA5.getVantageAsModifier(
-        actor,
-        game.i18n.localize('LocalizedIDs.magicalRestriction'),
-        -1,
-        true,
-      ),
-      ...AdvantageRulesDSA5.getVantageAsModifier(
-        actor,
-        game.i18n.localize('LocalizedIDs.boundToArtifact'),
-        -1,
-        true,
-      ),
+      ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.magicalAttunement'), 1, true),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true),
       ...this.getPropertyModifiers(actor, source),
       ...this.attackSpellMalus(source),
     );
@@ -1343,22 +1053,14 @@ class SpellItemDSA5 extends Itemdsa5 {
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
         if (target.actor) {
-          CreatureType.addCreatureTypeModifiers(
-            target.actor,
-            source,
-            situationalModifiers,
-            actor,
-          );
+          CreatureType.addCreatureTypeModifiers(target.actor, source, situationalModifiers, actor);
           this.checkDuplicatus(actor, target.actor, situationalModifiers);
         }
       });
     }
-    situationalModifiers.push(
-      ...actor.getSkillModifier(source.name, source.type),
-    );
+    situationalModifiers.push(...actor.getSkillModifier(source.name, source.type));
 
-    for (const thing of actor.system.skillModifiers.global)
-      situationalModifiers.push({ name: thing.source, value: thing.value });
+    for (const thing of actor.system.skillModifiers.global) situationalModifiers.push({ name: thing.source, value: thing.value });
 
     this.getSkZkModifier(data, source);
   }
@@ -1404,14 +1106,10 @@ class SpellItemDSA5 extends Itemdsa5 {
       maxMods: Math.floor(Number(spell.system.talentValue.value) / 4),
       extensions: this.prepareExtensions(actor, spell),
       variableBaseCost: spell.system.variableBaseCost == 'true',
-      characteristics: [1, 2, 3].map(
-        (x) => spell.system[`characteristic${x}`].value,
-      ),
+      characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),
     };
 
-    let situationalModifiers = actor
-      ? DSA5StatusEffects.getRollModifiers(actor, spell)
-      : [];
+    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, spell);
     data['situationalModifiers'] = situationalModifiers;
 
@@ -1427,26 +1125,16 @@ class SpellItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/spell-card.html',
-      title,
-      tokenId,
-    );
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/spell-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
 
   static prepareExtensions(actor, spell) {
     return actor.items
-      .filter(
-        (x) =>
-          x.type == 'spellextension' &&
-          x.system.source == spell.name &&
-          x.system.category == spell.type,
-      )
+      .filter((x) => x.type == 'spellextension' && x.system.source == spell.name && x.system.category == spell.type)
       .map((x) => {
-        x.shortName =
-          x.name.split(' - ').length > 1 ? x.name.split(' - ')[1] : x.name;
+        x.shortName = x.name.split(' - ').length > 1 ? x.name.split(' - ')[1] : x.name;
         x.descr = $(x.system.description.value).text() || '';
         return x;
       });
@@ -1462,12 +1150,7 @@ class LiturgyItemDSA5 extends SpellItemDSA5 {
       this._chatLineHelper('duration', data.duration.value),
       this._chatLineHelper('reach', data.range.value),
       this._chatLineHelper('targetCategory', data.targetCategory.value),
-      this._chatLineHelper(
-        'effect',
-        DSA5_Utility.replaceConditions(
-          DSA5_Utility.replaceDies(data.effect.value),
-        ),
-      ),
+      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
     ];
   }
 }
@@ -1503,12 +1186,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
 class CombatskillDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    return [
-      this._chatLineHelper(
-        'Description',
-        game.i18n.localize(`Combatskilldescr.${name}`),
-      ),
-    ];
+    return [this._chatLineHelper('Description', game.i18n.localize(`Combatskilldescr.${name}`))];
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
@@ -1540,11 +1218,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/combatskill-card.html',
-      title,
-      tokenId,
-    );
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1554,10 +1228,7 @@ class ConsumableItemDSA extends Itemdsa5 {
   static chatData(data, name) {
     return [
       this._chatLineHelper('qualityStep', data.QL),
-      this._chatLineHelper(
-        'effect',
-        DSA5_Utility.replaceDies(data.QLList.split('\n')[data.QL - 1]),
-      ),
+      this._chatLineHelper('effect', DSA5_Utility.replaceDies(data.QLList.split('\n')[data.QL - 1])),
       this._chatLineHelper('charges', data.charges),
     ];
   }
@@ -1576,47 +1247,27 @@ class ConsumableItemDSA extends Itemdsa5 {
   }
 
   static checkEquality(item, item2) {
-    return (
-      item.type == item2.type &&
-      item.name == item2.name &&
-      item.system.description.value == item2.system.description.value &&
-      item.system.QL == item2.system.QL
-    );
+    return item.type == item2.type && item.name == item2.name && item.system.description.value == item2.system.description.value && item.system.QL == item2.system.QL;
   }
 
   static async setupDialog(ev, options, item, actor, tokenId) {
     if (!item.isOwned) return;
 
-    const charges =
-      (item.system.quantity.value - 1) * item.system.maxCharges +
-      item.system.charges;
+    const charges = (item.system.quantity.value - 1) * item.system.maxCharges + item.system.charges;
     if (charges <= 0) {
       ui.notifications.error('DSAError.NotEnoughCharges', { localize: true });
       return;
     }
 
-    const newCharges =
-      item.system.charges <= 1
-        ? item.system.maxCharges
-        : item.system.charges - 1;
-    const newQuantity =
-      item.system.charges <= 1
-        ? item.system.quantity.value - 1
-        : item.system.quantity.value;
+    const newCharges = item.system.charges <= 1 ? item.system.maxCharges : item.system.charges - 1;
+    const newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value;
 
-    const effect = DSA5_Utility.replaceDies(
-      item.system.QLList.split('\n')[item.system.QL - 1],
-      false,
-    );
-    const msg = await renderTemplate(
-      'systems/dsa5/templates/chat/consumable-used.html',
-      {
-        item,
-        effect,
-        hasAreaTemplate:
-          item.system.target && item.system.target.type in DSA5.areaTargetTypes,
-      },
-    );
+    const effect = DSA5_Utility.replaceDies(item.system.QLList.split('\n')[item.system.QL - 1], false);
+    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.html', {
+      item,
+      effect,
+      hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
+    });
     if (newQuantity == 0) {
       await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
     } else {
@@ -1645,16 +1296,15 @@ class ConsumableItemDSA extends Itemdsa5 {
   static async _applyActiveEffect(source) {
     let effects = source.effects.toObject();
     if (effects.length > 0) {
-      const { msg, resistRolls, effectNames } =
-        await DSAActiveEffectConfig.applyAdvancedFunction(
-          source.actor,
-          effects,
-          source,
-          {
-            qualityStep: source.system.QL,
-          },
-          source.actor,
-        );
+      const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(
+        source.actor,
+        effects,
+        source,
+        {
+          qualityStep: source.system.QL,
+        },
+        source.actor,
+      );
 
       const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', {
         target: source.actor.token?.name || source.actor.name,
@@ -1666,14 +1316,9 @@ class ConsumableItemDSA extends Itemdsa5 {
 
   static async combineItem(item1, item2, actor, render = true) {
     item1 = duplicate(item1);
-    const charges =
-      (item1.system.quantity.value - 1) * item1.system.maxCharges +
-      item1.system.charges;
-    const item2charges =
-      (item2.system.quantity.value - 1) * item2.system.maxCharges +
-      item2.system.charges;
-    let newQuantity =
-      Math.floor((charges + item2charges) / item1.system.maxCharges) + 1;
+    const charges = (item1.system.quantity.value - 1) * item1.system.maxCharges + item1.system.charges;
+    const item2charges = (item2.system.quantity.value - 1) * item2.system.maxCharges + item2.system.charges;
+    let newQuantity = Math.floor((charges + item2charges) / item1.system.maxCharges) + 1;
     let newCharges = (charges + item2charges) % item1.system.maxCharges;
     if (newCharges == 0) {
       newQuantity -= 1;
@@ -1687,10 +1332,7 @@ class ConsumableItemDSA extends Itemdsa5 {
 
 class InformationItemDSA5 extends Itemdsa5 {
   static async _postItem(item) {
-    const html = await renderTemplate(
-      'systems/dsa5/templates/chat/informationRequestRoll.html',
-      { item },
-    );
+    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.html', { item });
     UserMultipickDialog.getDialog(html);
   }
 }
@@ -1700,17 +1342,9 @@ class DiseaseItemDSA5 extends Itemdsa5 {
     return [
       this._chatLineHelper('stepValue', data.step.value),
       this._chatLineHelper('incubation', data.incubation.value),
-      this._chatLineHelper(
-        'damage',
-        DSA5_Utility.replaceConditions(
-          DSA5_Utility.replaceDies(data.damage.value),
-        ),
-      ),
+      this._chatLineHelper('damage', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.damage.value))),
       this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper(
-        'source',
-        DSA5_Utility.replaceDies(data.source.value),
-      ),
+      this._chatLineHelper('source', DSA5_Utility.replaceDies(data.source.value)),
       this._chatLineHelper('treatment', data.treatment.value),
       this._chatLineHelper('antidot', data.antidot.value),
       this._chatLineHelper('resistanceModifier', data.resistance.value),
@@ -1722,15 +1356,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
         if (target.actor)
-          situationalModifiers.push(
-            ...AdvantageRulesDSA5.getVantageAsModifier(
-              target.actor,
-              game.i18n.localize('LocalizedIDs.ResistanttoDisease'),
-              -1,
-              false,
-              true,
-            ),
-          );
+          situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, game.i18n.localize('LocalizedIDs.ResistanttoDisease'), -1, false, true));
       });
     }
     this.getSkZkModifier(data, source);
@@ -1741,12 +1367,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    let title =
-      item.name +
-      ' ' +
-      DSA5_Utility.categoryLocalization(item.type) +
-      ' ' +
-      game.i18n.localize('Test');
+    let title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
 
     let testData = {
       opposable: false,
@@ -1790,11 +1411,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(
-      `systems/dsa5/templates/chat/roll/${item.type}-card.html`,
-      title,
-      tokenId,
-    );
+    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1802,42 +1419,22 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 
 class EquipmentItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    return [
-      this._chatLineHelper(
-        'equipmentType',
-        game.i18n.localize(`Equipment.${data.equipmentType.value}`),
-      ),
-    ];
+    return [this._chatLineHelper('equipmentType', game.i18n.localize(`Equipment.${data.equipmentType.value}`))];
   }
 }
 
 class WeaponItemDSA5 extends Itemdsa5 {
   static speciesModifier(situationalModifiers, actor, data, source) {
-    const creatureClass =
-      actor.type == 'creature'
-        ? actor.system.creatureClass.value
-        : actor.system.details.species.value;
-    const localizedSpecies = game.i18n.localize(
-      `LocalizedSpecies.${creatureClass}`,
-    );
+    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
+    const localizedSpecies = game.i18n.localize(`LocalizedSpecies.${creatureClass}`);
 
     const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
     if (speciesObject) {
       const attackOrParry = ['attack', 'parry'].includes(data.mode);
-      const domains = (getProperty(source, 'system.effect.attributes') || '')
-        .split(',')
-        .map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
-      const domainMalus = domains.some((domain) =>
-        speciesObject.opposingDomains.has(domain),
-      )
-        ? 1
-        : 0;
+      const domains = (getProperty(source, 'system.effect.attributes') || '').split(',').map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
+      const domainMalus = domains.some((domain) => speciesObject.opposingDomains.has(domain)) ? 1 : 0;
 
-      if (
-        speciesObject.combatskills.has(
-          game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`),
-        )
-      ) {
+      if (speciesObject.combatskills.has(game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`))) {
         if (attackOrParry) {
           situationalModifiers.push({
             name: game.i18n.format('speciesModifier', {
@@ -1892,77 +1489,35 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
       this._chatLineHelper('damage', data.damage.value),
       this._chatLineHelper('atmod', data.atmod.value),
       this._chatLineHelper('pamod', data.pamod.value),
-      this._chatLineHelper(
-        'reach',
-        game.i18n.localize(`Range-${data.reach.value}`),
-      ),
+      this._chatLineHelper('reach', game.i18n.localize(`Range-${data.reach.value}`)),
       this._chatLineHelper('TYPES.Item.combatskill', data.combatskill.value),
     ];
-    if (data.effect.value != '')
-      res.push(
-        this._chatLineHelper(
-          DSA5_Utility.replaceConditions('effect', data.effect.value),
-        ),
-      );
+    if (data.effect.value != '') res.push(this._chatLineHelper(DSA5_Utility.replaceConditions('effect', data.effect.value)));
 
     return res;
   }
 
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
-    const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(
-      actor,
-      game.i18n.localize('LocalizedIDs.ambidextrous'),
-    );
+    const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.ambidextrous'));
     source = DSA5_Utility.toObjectIfPossible(source);
     const toSearch = [source.system.combatskill.value];
-    const combatskills = Itemdsa5.buildCombatSpecAbs(
-      actor,
-      ['Combat'],
-      toSearch,
-      data.mode,
-      source,
-    );
+    const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
 
     if (data.mode == 'attack') {
-      this.prepareMeleeAttack(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        combatskills,
-        wrongHandDisabled,
-      );
+      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'parry') {
-      this.prepareMeleeParry(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        combatskills,
-        wrongHandDisabled,
-      );
+      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);
 
-    this.attackStatEffect(
-      situationalModifiers,
-      actor.system.meleeStats[data.mode],
-    );
+    this.attackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode]);
     this.speciesModifier(situationalModifiers, actor, data, source);
 
     if (['attack', 'parry'].includes(data.mode)) {
       situationalModifiers.push(
-        ...MeleeweaponDSA5.getMiracleModifiers(
-          actor,
-          { name: source.system.combatskill.value },
-          '',
-          data.mode,
-        ),
-        ...actor.getCombatEffectSkillModifier(
-          source.system.combatskill.value,
-          data.mode,
-        ),
+        ...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, '', data.mode),
+        ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
       );
     }
   }
@@ -1981,10 +1536,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
     };
-    const multipleDefenseValue = RuleChaos.multipleDefenseValue(
-      actor,
-      DSA5_Utility.toObjectIfPossible(item),
-    );
+    const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item));
     const data = {
       rollMode: options.rollMode,
       mode,
@@ -1993,47 +1545,24 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
       }),
       multipleDefenseValue,
     };
-    const situationalModifiers = actor
-      ? DSA5StatusEffects.getRollModifiers(actor, item, { mode })
-      : [];
+    const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item);
     data.situationalModifiers = situationalModifiers;
-    if (options.situationalModifiers)
-      data.situationalModifiers.push(...options.situationalModifiers);
+    if (options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers);
 
     const dialogOptions = {
       title,
-      template:
-        'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
       data,
       callback: (html, options = {}) => {
-        DSA5CombatDialog.resolveMeleeDialog(
-          testData,
-          cardOptions,
-          html,
-          actor,
-          options,
-          multipleDefenseValue,
-          mode,
-        );
-        Hooks.call(
-          'callbackDialogCombatDSA5',
-          testData,
-          actor,
-          html,
-          item,
-          tokenId,
-        );
+        DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode);
+        Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
         testData.isRangeDefense = data.isRangeDefense;
         return { testData, cardOptions };
       },
     };
 
-    const cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/combatskill-card.html',
-      title,
-      tokenId,
-    );
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2047,12 +1576,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
       this._chatLineHelper('start', data.start.value),
       this._chatLineHelper('duration', data.duration.value),
       this._chatLineHelper('resistanceModifier', data.resistance.value),
-      this._chatLineHelper(
-        'effect',
-        DSA5_Utility.replaceConditions(
-          DSA5_Utility.replaceDies(data.effect.value),
-        ),
-      ),
+      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
     ];
   }
 
@@ -2060,16 +1584,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
     source = DSA5_Utility.toObjectIfPossible(source);
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
-        if (target.actor)
-          situationalModifiers.push(
-            ...AdvantageRulesDSA5.getVantageAsModifier(
-              target.actor,
-              game.i18n.localize('LocalizedIDs.poisonResistance'),
-              -1,
-              false,
-              true,
-            ),
-          );
+        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, game.i18n.localize('LocalizedIDs.poisonResistance'), -1, false, true));
       });
     }
     this.getSkZkModifier(data, source);
@@ -2080,12 +1595,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    let title =
-      item.name +
-      ' ' +
-      DSA5_Utility.categoryLocalization(item.type) +
-      ' ' +
-      game.i18n.localize('Test');
+    let title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
 
     let testData = {
       opposable: false,
@@ -2125,11 +1635,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(
-      `systems/dsa5/templates/chat/roll/${item.type}-card.html`,
-      title,
-      tokenId,
-    );
+    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2142,41 +1648,22 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       this._chatLineHelper('TYPES.Item.combatskill', data.combatskill.value),
       this._chatLineHelper('reach', data.reach.value),
     ];
-    if (data.effect.value != '')
-      res.push(
-        this._chatLineHelper(
-          DSA5_Utility.replaceConditions('effect', data.effect.value),
-        ),
-      );
+    if (data.effect.value != '') res.push(this._chatLineHelper(DSA5_Utility.replaceConditions('effect', data.effect.value)));
 
     return res;
   }
 
-  static getSituationalModifiers(
-    situationalModifiers,
-    actor,
-    data,
-    _source,
-    tokenId,
-  ) {
+  static getSituationalModifiers(situationalModifiers, actor, data, _source, tokenId) {
     if (data.mode == 'attack') {
       const source = DSA5_Utility.toObjectIfPossible(_source);
 
       const toSearch = [source.system.combatskill.value];
-      const combatskills = Itemdsa5.buildCombatSpecAbs(
-        actor,
-        ['Combat'],
-        toSearch,
-        data.mode,
-        source,
-      );
+      const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
       let currentAmmo = actor.items.get(source.system.currentAmmo.value);
 
       if (currentAmmo) {
         currentAmmo = currentAmmo.toObject(false);
-        source.system.effect.attributes = (
-          source.system.effect.attributes || ''
-        )
+        source.system.effect.attributes = (source.system.effect.attributes || '')
           .split(',')
           .concat((currentAmmo.system.effect.attributes || '').split(','))
           .filter((x) => x != '')
@@ -2185,15 +1672,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (poison) mergeObject(_source.flags, { dsa5: { poison } });
       }
 
-      this.prepareRangeAttack(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        tokenId,
-        combatskills,
-        currentAmmo,
-      );
+      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo);
 
       if (currentAmmo) {
         if (currentAmmo.system.atmod) {
@@ -2212,8 +1691,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             selected: true,
             specAbId: source.system.currentAmmo.value,
           };
-          if (currentAmmo.system.armorMod)
-            dmgMod['armorPen'] = currentAmmo.system.armorMod;
+          if (currentAmmo.system.armorMod) dmgMod['armorPen'] = currentAmmo.system.armorMod;
           situationalModifiers.push(dmgMod);
         }
         if (currentAmmo.effects.length) {
@@ -2231,22 +1709,11 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       this.weaponModifiers(situationalModifiers, source, 'damage');
 
       situationalModifiers.push(
-        ...RangeweaponItemDSA5.getMiracleModifiers(
-          actor,
-          { name: source.system.combatskill.value },
-          '',
-          data.mode,
-        ),
-        ...actor.getCombatEffectSkillModifier(
-          source.system.combatskill.value,
-          data.mode,
-        ),
+        ...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, '', data.mode),
+        ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
       );
     }
-    this.attackStatEffect(
-      situationalModifiers,
-      actor.system.rangeStats[data.mode],
-    );
+    this.attackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode]);
     this.speciesModifier(situationalModifiers, actor, data, _source);
   }
 
@@ -2264,10 +1731,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (ammoItem) {
           testData.extra.ammo = ammoItem.toObject();
           if (itemData.ammunitiongroup.value == 'mag') {
-            hasAmmo =
-              testData.extra.ammo.system.quantity.value > 1 ||
-              (testData.extra.ammo.system.mag.value > 0 &&
-                testData.extra.ammo.system.quantity.value > 0);
+            hasAmmo = testData.extra.ammo.system.quantity.value > 1 || (testData.extra.ammo.system.mag.value > 0 && testData.extra.ammo.system.quantity.value > 0);
           } else {
             hasAmmo = testData.extra.ammo.system.quantity.value > 0;
           }
@@ -2303,50 +1767,23 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       rollMode: options.rollMode,
       mode,
     };
-    let situationalModifiers = actor
-      ? DSA5StatusEffects.getRollModifiers(actor, item, { mode })
-      : [];
-    this.getSituationalModifiers(
-      situationalModifiers,
-      actor,
-      data,
-      item,
-      tokenId,
-    );
+    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
+    this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId);
     data.situationalModifiers = situationalModifiers;
-    if (options.situationalModifiers)
-      data.situationalModifiers.push(...options.situationalModifiers);
+    if (options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers);
 
     let dialogOptions = {
       title,
-      template:
-        'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
       data,
       callback: (html, options = {}) => {
-        DSA5CombatDialog.resolveRangeDialog(
-          testData,
-          cardOptions,
-          html,
-          actor,
-          options,
-        );
-        Hooks.call(
-          'callbackDialogCombatDSA5',
-          testData,
-          actor,
-          html,
-          item,
-          tokenId,
-        );
+        DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
+        Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
         return { testData, cardOptions };
       },
     };
 
-    let cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/combatskill-card.html',
-      title,
-      tokenId,
-    );
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2388,12 +1825,8 @@ class RitualItemDSA5 extends SpellItemDSA5 {
 
 class ApplicationItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    const hasLocalization = game.i18n.has(
-      `APPLICATION.${data.skill} - ${name}`,
-    );
-    const description = hasLocalization
-      ? game.i18n.localize(`APPLICATION.${data.skill} - ${name}`)
-      : data.description.value;
+    const hasLocalization = game.i18n.has(`APPLICATION.${data.skill} - ${name}`);
+    const description = hasLocalization ? game.i18n.localize(`APPLICATION.${data.skill} - ${name}`) : data.description.value;
     return [this._chatLineHelper('Description', description)];
   }
 }
@@ -2401,20 +1834,13 @@ class ApplicationItemDSA5 extends Itemdsa5 {
 class SkillItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
     const hasLocalization = game.i18n.has(`SKILLdescr.${name}`);
-    const description = hasLocalization
-      ? game.i18n.localize(`SKILLdescr.${name}`)
-      : data.description.value;
+    const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value;
     return [this._chatLineHelper('Description', description)];
   }
 
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
-      ...ItemRulesDSA5.getTalentBonus(actor, source.name, [
-        'advantage',
-        'disadvantage',
-        'specialability',
-        'equipment',
-      ]),
+      ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
       ...actor.getSkillModifier(source.name, source.type),
       ...SkillItemDSA5.getMiracleModifiers(actor, source, 'FW', 'skill'),
     );
@@ -2425,8 +1851,7 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, skill, actor, tokenId) {
-    let title =
-      skill.name + ' ' + game.i18n.localize('Test') + (options.subtitle || '');
+    let title = skill.name + ' ' + game.i18n.localize('Test') + (options.subtitle || '');
     let testData = {
       opposable: true,
       source: skill,
@@ -2441,16 +1866,11 @@ class SkillItemDSA5 extends Itemdsa5 {
       rollMode: options.rollMode,
       difficultyLabels: DSA5.skillDifficultyLabels,
       modifier: options.modifier || 0,
-      characteristics: [1, 2, 3].map(
-        (x) => skill.system[`characteristic${x}`].value,
-      ),
-      situationalModifiers: actor
-        ? DSA5StatusEffects.getRollModifiers(actor, skill)
-        : [],
+      characteristics: [1, 2, 3].map((x) => skill.system[`characteristic${x}`].value),
+      situationalModifiers: actor ? DSA5StatusEffects.getRollModifiers(actor, skill) : [],
     };
 
-    if (options.situationalModifiers)
-      data.situationalModifiers.push(...options.situationalModifiers);
+    if (options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers);
     this.getSituationalModifiers(data.situationalModifiers, actor, data, skill);
 
     let dialogOptions = {
@@ -2459,34 +1879,20 @@ class SkillItemDSA5 extends Itemdsa5 {
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.testDifficulty =
-          DSA5.skillDifficultyModifiers[
-            html.find('[name="testDifficulty"]').val()
-          ];
+        testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
         testData.advancedModifiers = {
-          chars: [0, 1, 2].map((x) =>
-            Number(html.find(`[name="ch${x}"]`).val()),
-          ),
+          chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
           fws: Number(html.find(`[name="fw"]`).val()),
           qls: Number(html.find(`[name="qs"]`).val()),
         };
-        Itemdsa5.changeChars(
-          testData.source,
-          ...[0, 1, 2].map((x) =>
-            html.find(`[name="characteristics${x}"]`).val(),
-          ),
-        );
+        Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()));
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
       },
     };
 
-    let cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/skill-card.html',
-      title,
-      tokenId,
-    );
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/skill-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2502,10 +1908,7 @@ class SpeciesItemDSA5 extends Itemdsa5 {}
 
 class SpellextensionItemDSA5 extends Itemdsa5 {
   static chatData(data, name) {
-    return [
-      this._chatLineHelper('source', data.source),
-      this._chatLineHelper('Category', game.i18n.localize(data.category)),
-    ];
+    return [this._chatLineHelper('source', data.source), this._chatLineHelper('Category', game.i18n.localize(data.category))];
   }
 }
 
@@ -2520,11 +1923,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
     let res = [];
     switch (data.traitType.value) {
       case 'meleeAttack':
-        res = [
-          this._chatLineHelper('attack', data.at.value),
-          this._chatLineHelper('damage', data.damage.value),
-          this._chatLineHelper('reach', data.reach.value),
-        ];
+        res = [this._chatLineHelper('attack', data.at.value), this._chatLineHelper('damage', data.damage.value), this._chatLineHelper('reach', data.reach.value)];
         break;
       case 'rangeAttack':
         res = [
@@ -2552,78 +1951,33 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
         res = [this._chatLineHelper('APValue', data.APValue.value)];
         break;
       case 'entity':
-        res = [
-          this._chatLineHelper('distribution', data.distribution),
-          this._chatLineHelper('CHARAbbrev.QL', data.AsPCost.value),
-        ];
+        res = [this._chatLineHelper('distribution', data.distribution), this._chatLineHelper('CHARAbbrev.QL', data.AsPCost.value)];
         break;
       case 'summoning':
-        res = [
-          this._chatLineHelper('distribution', data.distribution),
-          this._chatLineHelper('conjuringDifficulty', data.at.value),
-        ];
+        res = [this._chatLineHelper('distribution', data.distribution), this._chatLineHelper('conjuringDifficulty', data.at.value)];
         break;
     }
-    if (data.effect.value != '')
-      res.push(this._chatLineHelper('effect', data.effect.value));
+    if (data.effect.value != '') res.push(this._chatLineHelper('effect', data.effect.value));
 
     return res;
   }
 
-  static getSituationalModifiers(
-    situationalModifiers,
-    actor,
-    data,
-    source,
-    tokenId,
-  ) {
+  static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
     source = DSA5_Utility.toObjectIfPossible(source);
     const traitType = source.system.traitType.value;
-    const combatskills = Itemdsa5.buildCombatSpecAbs(
-      actor,
-      ['Combat', 'animal'],
-      undefined,
-      data.mode,
-      source,
-    );
+    const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat', 'animal'], undefined, data.mode, source);
 
     if (data.mode == 'attack' && traitType == 'meleeAttack') {
-      this.prepareMeleeAttack(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        combatskills,
-        false,
-      );
+      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, false);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'attack' && traitType == 'rangeAttack') {
-      this.prepareRangeAttack(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        tokenId,
-        combatskills,
-      );
+      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'parry') {
-      this.prepareMeleeParry(
-        situationalModifiers,
-        actor,
-        data,
-        source,
-        combatskills,
-        false,
-      );
+      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, false);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);
-    this.attackStatEffect(
-      situationalModifiers,
-      actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats'][
-        data.mode
-      ],
-    );
+    this.attackStatEffect(situationalModifiers, actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats'][data.mode]);
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
@@ -2639,10 +1993,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
     };
-    const multipleDefenseValue = RuleChaos.multipleDefenseValue(
-      actor,
-      item.toObject(),
-    );
+    const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject());
     let data = {
       rollMode: options.rollMode,
       mode,
@@ -2654,61 +2005,27 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     const traitType = getProperty(item, 'system.traitType.value');
 
-    let situationalModifiers = actor
-      ? DSA5StatusEffects.getRollModifiers(actor, item, { mode })
-      : [];
-    this.getSituationalModifiers(
-      situationalModifiers,
-      actor,
-      data,
-      item,
-      tokenId,
-    );
+    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
+    this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId);
     data['situationalModifiers'] = situationalModifiers;
 
     let dialogOptions = {
       title,
-      template:
-        'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
       data,
       callback: (html, options = {}) => {
         if (traitType == 'meleeAttack') {
-          DSA5CombatDialog.resolveMeleeDialog(
-            testData,
-            cardOptions,
-            html,
-            actor,
-            options,
-            multipleDefenseValue,
-            mode,
-          );
+          DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode);
         } else {
-          DSA5CombatDialog.resolveRangeDialog(
-            testData,
-            cardOptions,
-            html,
-            actor,
-            options,
-          );
+          DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
         }
         testData.isRangeDefense = data.isRangeDefense;
-        Hooks.call(
-          'callbackDialogCombatDSA5',
-          testData,
-          actor,
-          html,
-          item,
-          tokenId,
-        );
+        Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
         return { testData, cardOptions };
       },
     };
 
-    let cardOptions = actor._setupCardOptions(
-      'systems/dsa5/templates/chat/roll/combatskill-card.html',
-      title,
-      tokenId,
-    );
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }

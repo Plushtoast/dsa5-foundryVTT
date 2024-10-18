@@ -32,9 +32,7 @@ async function migrateDSA(currentVersion, migrationVersion) {
 
 async function migratTo24() {
   for (let actor of game.actors) {
-    const removeEffects = actor.effects.filter((x) =>
-      ['inpain', 'encumbered'].includes(x.getFlag('core', 'statusId')),
-    );
+    const removeEffects = actor.effects.filter((x) => ['inpain', 'encumbered'].includes(x.getFlag('core', 'statusId')));
 
     if (removeEffects.length)
       await actor.deleteEmbeddedDocuments(
@@ -112,9 +110,7 @@ class PatchViewer extends Application {
   }
 
   async showMore(html) {
-    const prevVersions = [
-      this.json['notes'][this.json['notes'].length - this.versionIndex],
-    ];
+    const prevVersions = [this.json['notes'][this.json['notes'].length - this.versionIndex]];
     if (prevVersions[0].version == '2.3.0') {
       html.find('.showMore').hide();
       return;
@@ -128,22 +124,8 @@ class PatchViewer extends Application {
 
   async fetchVersions(versions) {
     const lang = game.i18n.lang;
-    const changelog = await Promise.all(
-      versions.map(
-        async (x) =>
-          await renderTemplate(
-            `systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`,
-          ),
-      ),
-    );
-    const news = await Promise.all(
-      versions.map(
-        async (x) =>
-          await renderTemplate(
-            `systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`,
-          ),
-      ),
-    );
+    const changelog = await Promise.all(versions.map(async (x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/changelog_${lang}_${x.version}.html`)));
+    const news = await Promise.all(versions.map(async (x) => await renderTemplate(`systems/dsa5/lazy/patchhtml/news_${lang}_${x.version}.html`)));
     return {
       changelog,
       news,
@@ -160,9 +142,7 @@ class PatchViewer extends Application {
     const curVersion = await this.fetchVersions([version]);
     const prevVersions = [this.json['notes'][this.json['notes'].length - 2]];
     const preVersions = await this.fetchVersions(prevVersions);
-    const modules = await renderTemplate(
-      `systems/dsa5/lazy/patchhtml/modules_${lang}.html`,
-    );
+    const modules = await renderTemplate(`systems/dsa5/lazy/patchhtml/modules_${lang}.html`);
 
     return {
       patchName,

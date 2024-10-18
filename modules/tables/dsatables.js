@@ -13,24 +13,13 @@ export default class DSATables {
     options.source = dataset.source;
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
-    const tableResults = await DSATables.getRollTable(
-      table.pack[game.i18n.lang],
-      game.i18n.localize(`TABLENAMES.${dataset.table}`),
-      dataset,
-    );
+    const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], game.i18n.localize(`TABLENAMES.${dataset.table}`), dataset);
     for (let tableResult of tableResults) {
-      const hasEffect = options.speaker
-        ? await DSATables.hasEffect(tableResult)
-        : false;
-      const result = DSA5_Utility.replaceDies(
-        DSA5_Utility.replaceConditions(tableResult.results[0].text),
-      );
+      const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
+      const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].text));
       const title = `${game.i18n.localize('TABLENAMES.' + dataset.table)}`;
 
-      const content = await renderTemplate(
-        `systems/dsa5/templates/tables/tableCard.html`,
-        { result, title, hasEffect },
-      );
+      const content = await renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result, title, hasEffect });
 
       const effects = await this.buildEffects(tableResult, hasEffect);
 
@@ -69,15 +58,9 @@ export default class DSATables {
   static async buildEffects(tableResult, hasEffect) {
     let effects = [];
     if (hasEffect && hasEffect.resistEffect) {
-      const failEffects = Array.isArray(hasEffect.resistEffect.fail)
-        ? hasEffect.resistEffect.fail
-        : [hasEffect.resistEffect.fail];
+      const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail];
       for (let fail of failEffects) {
-        const ef = OnUseEffect.effectBaseDummy(
-          fail.description,
-          hasEffect.resistEffect.changes || [],
-          hasEffect.resistEffect.duration || {},
-        );
+        const ef = OnUseEffect.effectBaseDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || {});
         if (fail.systemEffect) {
           //todo add duration
           mergeObject(ef, {
@@ -87,7 +70,7 @@ export default class DSATables {
                 hideOnToken: false,
                 hidePlayers: false,
                 advancedFunction: 2,
-                args3: `await actor.addCondition(\"${fail.systemEffect}\", ${fail.level || 1});`,
+                args3: `await actor.addCondition("${fail.systemEffect}", ${fail.level || 1});`,
               },
             },
           });
@@ -123,9 +106,7 @@ export default class DSATables {
 
   static async tableEnabledFor(key) {
     const table = DSA5.systemTables.find((x) => x.name == key);
-    return table
-      ? game.settings.get(table.setting.module, table.setting.key)
-      : false;
+    return table ? game.settings.get(table.setting.module, table.setting.key) : false;
   }
 
   static rollCritBotchButton(table, weaponless, testData) {
@@ -136,11 +117,7 @@ export default class DSATables {
   }
 
   static async defaultBotch() {
-    return (
-      ', ' +
-      game.i18n.localize('selfDamage') +
-      (await new Roll('1d6+2').evaluate()).total
-    );
+    return ', ' + game.i18n.localize('selfDamage') + (await new Roll('1d6+2').evaluate()).total;
   }
 
   static defaultAttackCrit(confirmed) {

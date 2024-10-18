@@ -36,12 +36,7 @@ export class DSAAura {
       wait += 100;
     }
     for (let token of canvas.scene.tokens) {
-      if (
-        template.object.shape.contains(
-          token.object.center.x - template.x,
-          token.object.center.y - template.y,
-        )
-      ) {
+      if (template.object.shape.contains(token.object.center.x - template.x, token.object.center.y - template.y)) {
         console.log('Token in template', token.name);
       }
     }
@@ -82,13 +77,9 @@ export class DSAAura {
 
   static async removeAura(aura, token) {
     for (const otherToken of canvas.scene.tokens) {
-      const existingEffect = otherToken.actor.effects.find(
-        (e) => getProperty(e, 'flags.dsa5.templateSource') == aura,
-      );
+      const existingEffect = otherToken.actor.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == aura);
       if (existingEffect) {
-        await otherToken.actor.deleteEmbeddedDocuments('ActiveEffect', [
-          existingEffect.id,
-        ]);
+        await otherToken.actor.deleteEmbeddedDocuments('ActiveEffect', [existingEffect.id]);
       }
     }
   }
@@ -173,8 +164,7 @@ export class DSAAura {
   static async inAura(sourceToken, token, template) {
     for (const sToken of sourceToken.actor.getActiveTokens()) {
       for (const tToken of token.actor.getActiveTokens()) {
-        if (DPS.rangeFinder(sToken, tToken).distance <= template.distance)
-          return true;
+        if (DPS.rangeFinder(sToken, tToken).distance <= template.distance) return true;
       }
     }
     return false;
@@ -185,26 +175,15 @@ export class DSAAura {
 
     for (let token of canvas.scene.tokens) {
       if (!token.actor || token.id == trespasser.id) continue;
-      if ('loot' == getProperty(token.actor, 'system.merchant.merchantType'))
-        continue;
+      if ('loot' == getProperty(token.actor, 'system.merchant.merchantType')) continue;
 
       for (let [key, aura] of Object.entries(token.object?.auras || {})) {
-        let { auraSource, effect, isAura } = getProperty(
-          aura.template.document,
-          'flags.dsa5',
-        );
+        let { auraSource, effect, isAura } = getProperty(aura.template.document, 'flags.dsa5');
         const disposition = effect.flags?.dsa5?.disposition ?? 2;
 
         if (!isAura) continue;
 
-        await DSAAura.updateAura(
-          token,
-          trespasser,
-          aura.template.document,
-          disposition,
-          auraSource,
-          effect,
-        );
+        await DSAAura.updateAura(token, trespasser, aura.template.document, disposition, auraSource, effect);
       }
     }
   }
@@ -223,40 +202,19 @@ export class DSAAura {
     }
 
     for (let token of canvas.scene.tokens) {
-      if (!sourceToken.isToken && sourceToken.actor?.id == token.actor?.id)
-        continue;
+      if (!sourceToken.isToken && sourceToken.actor?.id == token.actor?.id) continue;
 
-      await DSAAura.updateAura(
-        sourceToken,
-        token,
-        document,
-        disposition,
-        auraSource,
-        effect,
-      );
+      await DSAAura.updateAura(sourceToken, token, document, disposition, auraSource, effect);
     }
   }
 
-  static async updateAura(
-    sourceToken,
-    token,
-    document,
-    disposition,
-    auraSource,
-    effect,
-  ) {
+  static async updateAura(sourceToken, token, document, disposition, auraSource, effect) {
     if (!token.actor) return;
 
     const inAura = await DSAAura.inAura(sourceToken, token, document);
-    const existingEffect = token.actor.effects.find(
-      (e) => getProperty(e, 'flags.dsa5.templateSource') == auraSource,
-    );
+    const existingEffect = token.actor.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == auraSource);
 
-    if (
-      inAura &&
-      DSAAura.validAuraTarget(token, disposition) &&
-      !existingEffect
-    ) {
+    if (inAura && DSAAura.validAuraTarget(token, disposition) && !existingEffect) {
       const newEffect = duplicate(effect);
       mergeObject(newEffect, {
         name: `${effect.name} (Aura)`,
@@ -268,9 +226,7 @@ export class DSAAura {
       });
       await token.actor.addCondition(newEffect);
     } else if (!inAura && existingEffect) {
-      await token.actor.deleteEmbeddedDocuments('ActiveEffect', [
-        existingEffect.id,
-      ]);
+      await token.actor.deleteEmbeddedDocuments('ActiveEffect', [existingEffect.id]);
     }
   }
 }
@@ -328,18 +284,12 @@ export class AuraTemplate extends MeasuredTemplateDSA {
 
   _applyRenderFlags(flags) {
     super._applyRenderFlags(flags);
-    if (flags.refreshState)
-      canvas.interface.grid.getHighlightLayer(this.highlightId).alpha = 0;
+    if (flags.refreshState) canvas.interface.grid.getHighlightLayer(this.highlightId).alpha = 0;
   }
 
   _refreshTemplate() {
     const t = this.template.clear();
-    if (this.document.borderColor != null)
-      t.lineStyle(
-        this.document.flags.dsa5.borderThickness,
-        this.document.borderColor,
-        0.75,
-      ).beginFill(0x000000, 0.0);
+    if (this.document.borderColor != null) t.lineStyle(this.document.flags.dsa5.borderThickness, this.document.borderColor, 0.75).beginFill(0x000000, 0.0);
 
     t.drawShape(this.shape);
   }

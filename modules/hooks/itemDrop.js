@@ -6,11 +6,7 @@ const { getProperty } = foundry.utils;
 export const dropToGround = async (sourceActor, item, data, amount) => {
   if (game.user.isGM) {
     let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems();
-    let folder = await DSA5_Utility.getFolderForType(
-      'Actor',
-      null,
-      'Dropped Items',
-    );
+    let folder = await DSA5_Utility.getFolderForType('Actor', null, 'Dropped Items');
     const userIds = game.users.filter((x) => !x.isGM).map((x) => x.id);
 
     const ownership = userIds.reduce(
@@ -25,8 +21,7 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
     newItem.system.quantity.value = amount;
     RuleChaos.obfuscateDropData(newItem, data.tabsinvisible);
 
-    if (getProperty(newItem, 'system.worn.value'))
-      newItem.system.worn.value = false;
+    if (getProperty(newItem, 'system.worn.value')) newItem.system.worn.value = false;
 
     const actor = {
       type: 'npc',
@@ -70,9 +65,7 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
       if (newCount < 1) {
         await sourceActor.deleteEmbeddedDocuments('Item', [item.id]);
       } else {
-        await sourceActor.updateEmbeddedDocuments('Item', [
-          { _id: item.id, 'system.quantity.value': newCount },
-        ]);
+        await sourceActor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.quantity.value': newCount }]);
       }
     } else {
       await canvas.scene.createEmbeddedDocuments('Token', [td]);
@@ -101,12 +94,7 @@ const handleItemDrop = async (canvas, data) => {
     dropToGround(sourceActor, item, data, count);
   };
 
-  RangeSelectDialog.create(
-    'DSASETTINGS.enableItemDropToCanvas',
-    game.i18n.format('MERCHANT.dropGround', { name: item.name }),
-    item.system.quantity.value,
-    callback,
-  );
+  RangeSelectDialog.create('DSASETTINGS.enableItemDropToCanvas', game.i18n.format('MERCHANT.dropGround', { name: item.name }), item.system.quantity.value, callback);
 };
 
 const handleGroupDrop = async (canvas, data) => {
@@ -133,14 +121,7 @@ const handleGroupDrop = async (canvas, data) => {
 
 export const connectHook = () => {
   Hooks.on('dropCanvasData', async (canvas, data) => {
-    if (
-      !(
-        game.settings.get('dsa5', 'enableItemDropToCanvas') ||
-        game.user.isGM ||
-        data.tokenId
-      )
-    )
-      return;
+    if (!(game.settings.get('dsa5', 'enableItemDropToCanvas') || game.user.isGM || data.tokenId)) return;
 
     if (data.type == 'Item') {
       handleItemDrop(canvas, data);
@@ -155,10 +136,7 @@ export const connectHook = () => {
 export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
   static async create(title, name, count, callback, min = 1, max = undefined) {
     max = max || count;
-    const content = await renderTemplate(
-      'systems/dsa5/templates/dialog/dropToGround.html',
-      { name, min, max, count },
-    );
+    const content = await renderTemplate('systems/dsa5/templates/dialog/dropToGround.html', { name, min, max, count });
 
     new RangeSelectDialog({
       window: {
@@ -189,10 +167,7 @@ export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
     html.find('input[type="range"]').on('change', (ev) => {
-      $(ev.currentTarget)
-        .closest('.row-section')
-        .find('.range-value')
-        .html($(ev.currentTarget).val());
+      $(ev.currentTarget).closest('.row-section').find('.range-value').html($(ev.currentTarget).val());
     });
   }
 }

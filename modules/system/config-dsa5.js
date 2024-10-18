@@ -362,17 +362,7 @@ DSA5.effectTextStyle.fontFamily = 'GentiumBasic';
 
 DSA5.knownShortcuts = {};
 
-DSA5.gearModifyableCalculatedAttributes = [
-  'fatePoints',
-  'initiative',
-  'speed',
-  'astralenergy',
-  'karmaenergy',
-  'wounds',
-  'dodge',
-  'soulpower',
-  'toughness',
-];
+DSA5.gearModifyableCalculatedAttributes = ['fatePoints', 'initiative', 'speed', 'astralenergy', 'karmaenergy', 'wounds', 'dodge', 'soulpower', 'toughness'];
 
 DSA5.defaultWeapon = (data) => {
   return new Item(
@@ -432,17 +422,7 @@ DSA5.equipmentTypes = {
   automat: 'Equipment.automat',
 };
 
-DSA5.equipmentCategories = new Set([
-  'meleeweapon',
-  'rangeweapon',
-  'equipment',
-  'ammunition',
-  'armor',
-  'poison',
-  'consumable',
-  'plant',
-  'book',
-]);
+DSA5.equipmentCategories = new Set(['meleeweapon', 'rangeweapon', 'equipment', 'ammunition', 'armor', 'poison', 'consumable', 'plant', 'book']);
 
 DSA5.systemTables = [
   {
@@ -674,26 +654,11 @@ DSA5.ceremonyLocationModifiers = {
 };
 
 DSA5.advancementCosts = {
-  A: [
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-    13, 14,
-  ],
-  B: [
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22,
-    24, 26, 28,
-  ],
-  C: [
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33,
-    36, 39, 42,
-  ],
-  D: [
-    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40,
-    44, 48, 52, 56,
-  ],
-  E: [
-    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75,
-    90, 105, 120, 135, 150, 165, 180,
-  ],
+  A: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+  B: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28],
+  C: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42],
+  D: [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56],
+  E: [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180],
 };
 
 DSA5.hooks = {};
@@ -809,30 +774,12 @@ DSA5.specialAbilityCategories = {
 
 DSA5.sortedSpecs = {
   combat: new Set(['Combat', 'command']),
-  magical: new Set([
-    'magical',
-    'magicalStyle',
-    'extMagical',
-    'pact',
-    'homunculus',
-  ]),
-  clerical: new Set([
-    'clerical',
-    'clericalStyle',
-    'extClericalStyle',
-    'ceremonial',
-    'vision',
-    'prayer',
-  ]),
+  magical: new Set(['magical', 'magicalStyle', 'extMagical', 'pact', 'homunculus']),
+  clerical: new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'ceremonial', 'vision', 'prayer']),
   unUsed: new Set(['staff']),
 };
 
-DSA5.sortedSpecs.general = new Set(
-  Object.keys(DSA5.specialAbilityCategories).filter(
-    (x) =>
-      !Object.keys(DSA5.sortedSpecs).some((y) => DSA5.sortedSpecs[y].has(x)),
-  ),
-);
+DSA5.sortedSpecs.general = new Set(Object.keys(DSA5.specialAbilityCategories).filter((x) => !Object.keys(DSA5.sortedSpecs).some((y) => DSA5.sortedSpecs[y].has(x))));
 
 DSA5.addvantageRules = {};
 DSA5.removevantageRules = {};
@@ -999,20 +946,7 @@ DSA5.skillGroups = {
   nature: 'SKILL.nature',
 };
 
-DSA5.features = [
-  'Object',
-  'Spheres',
-  'Influence',
-  'Clairvoyance',
-  'Healing',
-  'Transformation',
-  'Telekinesis',
-  'Elemental',
-  'Illusion',
-  'Anti-Magic',
-  'Demonic',
-  'Temporal',
-];
+DSA5.features = ['Object', 'Spheres', 'Influence', 'Clairvoyance', 'Healing', 'Transformation', 'Telekinesis', 'Elemental', 'Illusion', 'Anti-Magic', 'Demonic', 'Temporal'];
 
 DSA5.skillBurdens = {
   yes: 'yes',

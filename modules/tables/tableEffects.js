@@ -19,15 +19,7 @@ export default class TableEffects {
 
     if (hasEffect) {
       //maintain order
-      const methods = [
-        'damageModifier',
-        'gearDamaged',
-        'gearLost',
-        'resistEffect',
-        'malus',
-        'selfDamage',
-        'nextAction',
-      ];
+      const methods = ['damageModifier', 'gearDamaged', 'gearLost', 'resistEffect', 'malus', 'selfDamage', 'nextAction'];
 
       let targets = [];
       let source = undefined;
@@ -41,22 +33,8 @@ export default class TableEffects {
       for (let method of methods) {
         const ef = getProperty(hasEffect, method);
         if (ef) {
-          const result = await TableEffects[method](
-            ef,
-            mode,
-            targets,
-            source,
-            id,
-            message,
-          );
-          if (!result)
-            console.warn(
-              `Table effect for <${method} not working yet`,
-              ef,
-              mode,
-              targets,
-              source,
-            );
+          const result = await TableEffects[method](ef, mode, targets, source, id, message);
+          if (!result) console.warn(`Table effect for <${method} not working yet`, ef, mode, targets, source);
         }
       }
       const tt = game.i18n.format('ActiveEffects.appliedEffect', {
@@ -64,10 +42,7 @@ export default class TableEffects {
         target: targets.map((x) => x.name).join(', '),
       });
       await message.update({
-        content: message.content.replace(
-          /hideAnchor">/,
-          `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${tt}"></i>`,
-        ),
+        content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${tt}"></i>`),
       });
     }
   }
@@ -87,10 +62,7 @@ export default class TableEffects {
   static async gearDamaged(args, mode, targets, source) {
     if (source && ['meleeweapon', 'rangeweapon'].includes(source.type)) {
       const attributes = getProperty(source, 'system.effect.attributes') || '';
-      const regex = new RegExp(
-        `(${CreatureType.magical}|${CreatureType.clerical})`,
-        'i',
-      );
+      const regex = new RegExp(`(${CreatureType.magical}|${CreatureType.clerical})`, 'i');
       const isMagical = regex.test(attributes);
       if (isMagical) await source.update({ 'system.worn.value': false });
       else await EquipmentDamage.absoluteDamageLevelToItem(source, args);
@@ -108,9 +80,7 @@ export default class TableEffects {
         const msg = game.i18n.format('WEAPON.dropped', {
           distance: roll.total,
         });
-        ChatMessage.create(
-          DSA5_Utility.chatDataSetup(`<p>${msg}</p>${renderedRoll}`),
-        );
+        ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${msg}</p>${renderedRoll}`));
       }
       return true;
     }
@@ -151,43 +121,27 @@ export default class TableEffects {
 
   static async malus(args, mode, targets, source) {
     for (let malus of args) {
-      const { hasTargets, finalTargets } = this.evaluateTargetArg(
-        malus,
-        targets,
-      );
+      const { hasTargets, finalTargets } = this.evaluateTargetArg(malus, targets);
       const alternateEffect = !hasTargets && malus.noTarget;
-      const systemEffect = alternateEffect
-        ? malus.noTarget.systemEffect
-        : malus.systemEffect;
-      const systemEffectLevel = alternateEffect
-        ? malus.noTarget.level
-        : malus.level || 1;
+      const systemEffect = alternateEffect ? malus.noTarget.systemEffect : malus.systemEffect;
+      const systemEffectLevel = alternateEffect ? malus.noTarget.level : malus.level || 1;
 
       let changes = alternateEffect ? malus.noTarget.changes : malus.changes;
-      const duration = alternateEffect
-        ? malus.noTarget.duration
-        : malus.duration;
+      const duration = alternateEffect ? malus.noTarget.duration : malus.duration;
 
       if (systemEffect) {
-        const baseEffect = CONFIG.statusEffects.find(
-          (x) => x.id == systemEffect,
-        );
+        const baseEffect = CONFIG.statusEffects.find((x) => x.id == systemEffect);
 
         if (!changes) {
           changes = duplicate(baseEffect.changes || []);
-          const baseChange = changes.find(
-            (x) => x.key == `system.condition.${systemEffect}`,
-          );
+          const baseChange = changes.find((x) => x.key == `system.condition.${systemEffect}`);
           if (baseChange) {
             baseChange.value = systemEffectLevel;
           }
         }
         let ef;
         if (changes) {
-          const lbl =
-            game.i18n.localize(`CONDITION.${systemEffect}`) +
-            ' - ' +
-            game.i18n.localize('botchCritEffect');
+          const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + ' - ' + game.i18n.localize('botchCritEffect');
           ef = OnUseEffect.effectBaseDummy(lbl, changes, duration || {});
           ef.icon = baseEffect.icon;
         } else {
@@ -200,11 +154,7 @@ export default class TableEffects {
         }
         return true;
       } else if (changes) {
-        const ef = OnUseEffect.effectBaseDummy(
-          game.i18n.localize('botchCritEffect'),
-          changes || [],
-          duration || {},
-        );
+        const ef = OnUseEffect.effectBaseDummy(game.i18n.localize('botchCritEffect'), changes || [], duration || {});
 
         mergeObject(ef, {
           flags: {
@@ -239,39 +189,15 @@ export default class TableEffects {
     if (source) {
       const obj = DSA5_Utility.toObjectIfPossible(source);
       for (let actor of finalTargets) {
-        const combatskills = actor.items
-          .filter((x) => x.type == 'combatskill')
-          .map((x) =>
-            Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system),
-          );
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
         let preparedItem;
-        if (args.damage)
-          preparedItem = { damagedie: args.damage, damageAdd: '' };
-        else if (source.type == 'rangeweapon')
-          preparedItem = Actordsa5._prepareRangeWeapon(
-            obj,
-            [],
-            combatskills,
-            actor,
-          );
-        else if (source.type == 'meleeweapon')
-          preparedItem = Actordsa5._prepareMeleeWeapon(
-            obj,
-            combatskills,
-            actor,
-          );
-        else
-          preparedItem =
-            source.system.traitType.value == 'meleeAttack'
-              ? Actordsa5._prepareRangeTrait(obj, actor.system)
-              : Actordsa5._prepareMeleetrait(obj, actor.system);
+        if (args.damage) preparedItem = { damagedie: args.damage, damageAdd: '' };
+        else if (source.type == 'rangeweapon') preparedItem = Actordsa5._prepareRangeWeapon(obj, [], combatskills, actor);
+        else if (source.type == 'meleeweapon') preparedItem = Actordsa5._prepareMeleeWeapon(obj, combatskills, actor);
+        else preparedItem = source.system.traitType.value == 'meleeAttack' ? Actordsa5._prepareRangeTrait(obj, actor.system) : Actordsa5._prepareMeleetrait(obj, actor.system);
 
-        const damage = (
-          preparedItem.damagedie + preparedItem.damageAdd
-        ).replace(/wWD/g, 'd');
-        const roll = await new Roll(
-          `(${damage})*${args.multiplier || 1}${args.modifier || ''}`,
-        ).evaluate();
+        const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, 'd');
+        const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ''}`).evaluate();
 
         await actor.applyDamage(Math.round(roll.total));
         ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()));

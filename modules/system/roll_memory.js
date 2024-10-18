@@ -31,15 +31,12 @@ export default class RollMemory {
   getPath(speaker, source, mode) {
     let subMod = mode || '';
     const itemId = source._id || source.type;
-    return speaker.token
-      ? `tokens.${speaker.token || speaker.actor}.${itemId}${subMod}`
-      : `actors.${speaker.actor}.${itemId}${subMod}`;
+    return speaker.token ? `tokens.${speaker.token || speaker.actor}.${itemId}${subMod}` : `actors.${speaker.actor}.${itemId}${subMod}`;
   }
 
   remember(speaker, source, mode, formData) {
     const data = this.formDataSerialize(formData);
-    if (Object.entries(data).length > 0)
-      setProperty(this, this.getPath(speaker, source, mode), data);
+    if (Object.entries(data).length > 0) setProperty(this, this.getPath(speaker, source, mode), data);
   }
 
   recall(speaker, source, mode) {

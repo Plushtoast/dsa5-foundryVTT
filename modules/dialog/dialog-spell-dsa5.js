@@ -37,12 +37,7 @@ export default class DSA5SpellDialog extends DialogShared {
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = DSA5Dialog.getRollButtons(
-      testData,
-      dialogOptions,
-      resolve,
-      reject,
-    );
+    let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     if (['spell', 'liturgy'].includes(testData.source.type)) {
       const LZ = Number(testData.source.system.castingTime.value);
       const progress = testData.source.system.castingTime.progress;
@@ -53,9 +48,7 @@ export default class DSA5SpellDialog extends DialogShared {
           reloadButton: {
             label: `${game.i18n.localize('SPELL.reload')}${progressLabel}`,
             callback: async (dlg) => {
-              const actor = await DSA5_Utility.getSpeaker(
-                testData.extra.speaker,
-              );
+              const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
               let reloadUpdate = {
                 _id: testData.source._id,
                 'system.castingTime.progress': progress + 1,
@@ -83,12 +76,8 @@ export default class DSA5SpellDialog extends DialogShared {
     const sit = parent.find('[name="situationalModifiers"]');
     sit.find('option[data-extension="1"]').remove();
     const mods = [];
-    const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map(
-      (x) => `${x}.mod`,
-    );
-    this.dialogData.renderData.rollModifiersPrepared = duplicate(
-      this.dialogData.renderData.rollModifiers,
-    );
+    const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
+    this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers);
     for (let k of parent.find('.specAbs.active')) {
       const item = await fromUuid(k.dataset.uuid);
       if (!item) continue;
@@ -100,15 +89,9 @@ export default class DSA5SpellDialog extends DialogShared {
             const typeName = game.i18n.localize(`MODS.${change.key}`);
             name = `${name[1] || name[0]}`;
             const tooltip = `${typeName}: ${change.value}<br/>${game.i18n.localize('spellextension')}: ${name}`;
-            mods.push(
-              `<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`,
-            );
+            mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`);
           } else if (change.key == 'macro.transform') {
-            await DSA5_Utility.callItemTransformationMacro(
-              change.value,
-              source,
-              ef,
-            );
+            await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
             ef.apply(this.dialogData.renderData.rollModifiersPrepared, change);
           } else {
@@ -117,15 +100,12 @@ export default class DSA5SpellDialog extends DialogShared {
         }
       }
     }
-    const extensionMod =
-      this.dialogData.renderData.rollModifiersPrepared.extensionModifier.mod;
+    const extensionMod = this.dialogData.renderData.rollModifiersPrepared.extensionModifier.mod;
     if (extensionMod) {
       const typeName = game.i18n.localize(`ABBR.modifiers`);
       const ext = game.i18n.localize('spellextension');
       const tooltip = `${typeName}: ${extensionMod}<br/>${ext}`;
-      mods.push(
-        `<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="" value="${extensionMod}">${ext} - ${typeName}</option>`,
-      );
+      mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="" value="${extensionMod}">${ext} - ${typeName}</option>`);
     }
     sit.append(mods.join(''));
   }
@@ -163,9 +143,7 @@ export default class DSA5SpellDialog extends DialogShared {
       return;
     }
 
-    for (let key of Object.keys(
-      this.dialogData.renderData.rollModifiersPrepared,
-    )) {
+    for (let key of Object.keys(this.dialogData.renderData.rollModifiersPrepared)) {
       const val = this.dialogData.renderData.rollModifiersPrepared[key].mod;
       html.find(`.${key}Label`).text(`(${val})`);
       html.find(`#${key}`).val(val);
@@ -174,12 +152,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const changeCast = html.find('.canChangeCastingTime');
     if (source.system.canChangeCastingTime.value == 'true') {
       if (changeCast.is(':empty')) {
-        changeCast.html(
-          await renderTemplate(
-            'systems/dsa5/templates/dialog/parts/canChangeCastingTime.html',
-            { rollModifiers: this.dialogData.renderData.rollModifiers },
-          ),
-        );
+        changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html', { rollModifiers: this.dialogData.renderData.rollModifiers }));
         this.setPosition({ height: 'auto' });
       }
     } else {
@@ -196,23 +169,17 @@ export default class DSA5SpellDialog extends DialogShared {
     let newPosition = baseAsp;
     let newMaintainCost = source.system.maintainCost.value;
 
-    parent
-      .find('.variableBaseCost')
-      [source.system.variableBaseCost == 'true' ? 'show' : 'hide']();
+    parent.find('.variableBaseCost')[source.system.variableBaseCost == 'true' ? 'show' : 'hide']();
     let mod = 0;
-    parent
-      .find('.spellModifier[data-cost]:checked')
-      .each(function (index, element) {
-        newPosition = newPosition * (element.value < 0 ? 0.5 : 2);
-        if (newMaintainCost != '' && newMaintainCost != undefined) {
-          let maintains = String(newMaintainCost).split(' ');
-          maintains[0] = Math.max(
-            Number(maintains[0]) * (element.value < 0 ? 0.5 : 2),
-          );
-          newMaintainCost = maintains.join(' ');
-        }
-        mod += Number(element.value);
-      });
+    parent.find('.spellModifier[data-cost]:checked').each(function (index, element) {
+      newPosition = newPosition * (element.value < 0 ? 0.5 : 2);
+      if (newMaintainCost != '' && newMaintainCost != undefined) {
+        let maintains = String(newMaintainCost).split(' ');
+        maintains[0] = Math.max(Number(maintains[0]) * (element.value < 0 ? 0.5 : 2));
+        newMaintainCost = maintains.join(' ');
+      }
+      mod += Number(element.value);
+    });
     if (newPosition < 1) {
       if (event) event.currentTarget.checked = false;
     } else {
@@ -223,31 +190,29 @@ export default class DSA5SpellDialog extends DialogShared {
 
     mod = 0;
     newPosition = baseCastingTime;
-    parent
-      .find('.spellModifier[data-castingTime]:checked')
-      .each(function (index, element) {
-        if (bigCasts) {
-          let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
-          if (ind != undefined) {
-            let newIndex = ind + (element.value > 0 ? 1 : -1);
-            if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
-              newPosition = DSA5SpellDialog.bigTimes[newIndex];
-            } else {
-              ui.notifications.error('DSAError.CastingTimeLimit', {
-                localize: true,
-              });
-            }
+    parent.find('.spellModifier[data-castingTime]:checked').each(function (index, element) {
+      if (bigCasts) {
+        let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
+        if (ind != undefined) {
+          let newIndex = ind + (element.value > 0 ? 1 : -1);
+          if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
+            newPosition = DSA5SpellDialog.bigTimes[newIndex];
           } else {
-            ui.notifications.error('DSAError.TimeCannotBeParsed', {
+            ui.notifications.error('DSAError.CastingTimeLimit', {
               localize: true,
             });
           }
         } else {
-          newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
+          ui.notifications.error('DSAError.TimeCannotBeParsed', {
+            localize: true,
+          });
         }
+      } else {
+        newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
+      }
 
-        mod += Number(element.value);
-      });
+      mod += Number(element.value);
+    });
     if (newPosition < 1) {
       if (event) event.currentTarget.checked = false;
     } else {
@@ -258,32 +223,28 @@ export default class DSA5SpellDialog extends DialogShared {
     mod = 0;
     let newReach = game.i18n.localize('ReverseSpellRanges.' + baseReach);
     reach.text(baseReach);
-    parent
-      .find('.spellModifier[data-reach]:checked')
-      .each(function (index, element) {
-        if (newReach == 'self') {
-          element.checked = false;
-        } else if (newReach == 'touch') {
-          reach.text('4 ' + game.i18n.localize('step'));
-          mod += Number(element.value);
+    parent.find('.spellModifier[data-reach]:checked').each(function (index, element) {
+      if (newReach == 'self') {
+        element.checked = false;
+      } else if (newReach == 'touch') {
+        reach.text('4 ' + game.i18n.localize('step'));
+        mod += Number(element.value);
+      } else {
+        let val = baseReach.split(' ');
+        newReach = Number(val[0]);
+        if (isNaN(newReach)) {
+          if (event) event.currentTarget.checked = false;
+          ui.notifications.error('DSAError.RangeCannotBeParsed', {
+            localize: true,
+          });
         } else {
-          let val = baseReach.split(' ');
-          newReach = Number(val[0]);
-          if (isNaN(newReach)) {
-            if (event) event.currentTarget.checked = false;
-            ui.notifications.error('DSAError.RangeCannotBeParsed', {
-              localize: true,
-            });
-          } else {
-            reach.text(newReach * 2 + ' ' + game.i18n.localize('step'));
-            mod += Number(element.value);
-          }
+          reach.text(newReach * 2 + ' ' + game.i18n.localize('step'));
+          mod += Number(element.value);
         }
-      });
+      }
+    });
     reach.attr('data-mod', mod);
-    html
-      .find('.reloadButton')
-      .prop('disabled', Number(html.find('.castingTime').text()) < 2);
+    html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2);
 
     this.calculateProbability();
   }
@@ -292,10 +253,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     const data = new FormDataExtended(this.element.find('form')[0]).object;
     data.situationalModifiers = Actordsa5._parseModifiers(this._element);
-    const fw =
-      this.dialogData.source.system.talentValue.value +
-      data.fw +
-      (await DiceDSA5._situationalModifiers(data, 'FW'));
+    const fw = this.dialogData.source.system.talentValue.value + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
     let mod =
       (await DiceDSA5._situationalModifiers(data)) +
       $(this.element)
@@ -310,9 +268,7 @@ export default class DSA5SpellDialog extends DialogShared {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html
-      .find('.reloadButton')
-      .prop('disabled', Number(html.find('.castingTime').text()) < 2);
+    html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2);
 
     html.find('.specAbs').mousedown((ev) => {
       $(ev.currentTarget).toggleClass('active');
@@ -324,14 +280,10 @@ export default class DSA5SpellDialog extends DialogShared {
       let oldVal = parent.find('.aspcost').attr('data-base');
       let newVal = $(ev.currentTarget).val();
       parent.find('.aspcost').attr('data-base', newVal);
-      parent
-        .find('.aspcost')
-        .text((Number(parent.find('.aspcost').text()) * newVal) / oldVal);
+      parent.find('.aspcost').text((Number(parent.find('.aspcost').text()) * newVal) / oldVal);
     });
 
-    html.on('change', '.spellModifier', (event) =>
-      this.recalcSpellModifiers(html, event),
-    );
+    html.on('change', '.spellModifier', (event) => this.recalcSpellModifiers(html, event));
     html.on('change', 'input,select', () => this.calculateProbability());
     html.on('mousedown', '.quantity-click', () => this.calculateProbability());
 

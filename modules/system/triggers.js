@@ -19,12 +19,7 @@ export default class DSATriggers {
 
     if (!actor) return;
 
-    await this.runMacro(
-      actor,
-      data.attacker.testResult,
-      DSATriggers.EVENTS.POST_OPPOSED,
-      data,
-    );
+    await this.runMacro(actor, data.attacker.testResult, DSATriggers.EVENTS.POST_OPPOSED, data);
   }
 
   static async postRoll(data) {
@@ -32,12 +27,7 @@ export default class DSATriggers {
 
     if (!actor) return;
 
-    await this.runMacro(
-      actor,
-      data.testData,
-      DSATriggers.EVENTS.POST_ROLL,
-      data,
-    );
+    await this.runMacro(actor, data.testData, DSATriggers.EVENTS.POST_ROLL, data);
   }
 
   static async callMacro(item, packName, name, args = {}) {
@@ -55,23 +45,11 @@ export default class DSATriggers {
         const macro = ef.getFlag('dsa5', 'args3');
 
         try {
-          const AsyncFunction = Object.getPrototypeOf(
-            async function () {},
-          ).constructor;
-          const fn = new AsyncFunction(
-            'actor',
-            'testData',
-            'type',
-            'data',
-            'source',
-            'ef',
-            macro,
-          );
+          const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+          const fn = new AsyncFunction('actor', 'testData', 'type', 'data', 'source', 'ef', macro);
           return await fn.call(this, actor, testData, type, data, source, ef);
         } catch (err) {
-          ui.notifications.error(
-            `There was an error in your macro syntax. See the console (F12) for details`,
-          );
+          ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
         }
       }
