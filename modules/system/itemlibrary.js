@@ -359,6 +359,17 @@ export default class DSA5ItemLibrary extends Application {
     let result = await this.equipmentIndex.search(search, query);
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
+    result = result.sort((a, b) => {
+      const aStartsWithCore = a.compendium.startsWith('dsa5-core');
+      const bStartsWithCore = b.compendium.startsWith('dsa5-core');
+
+      if (aStartsWithCore && bStartsWithCore) return 0;
+      if (aStartsWithCore) return 1;
+      if (bStartsWithCore) return -1;
+
+      return 0;
+    });
+
     return await Promise.all(result.map((x) => x.getItem()));
   }
 

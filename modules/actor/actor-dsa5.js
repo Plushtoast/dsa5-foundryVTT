@@ -735,6 +735,7 @@ export default class Actordsa5 extends Actor {
             return {
               name: f.source,
               value: f.value,
+              source: f.item,
               type,
             };
           }),

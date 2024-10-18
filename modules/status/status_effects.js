@@ -41,7 +41,6 @@ export default class DSA5StatusEffects {
 
   static prepareActiveEffects(target, data) {
     let systemConditions = duplicate(CONFIG.statusEffects);
-    let appliedSystemConditions = [];
     data.conditions = [];
     data.transferedConditions = [];
 
@@ -61,7 +60,6 @@ export default class DSA5StatusEffects {
         condition.editable = cnd.getFlag('dsa5', 'max');
         condition.descriptor = statusesId;
         condition.manual = cnd.getFlag('dsa5', 'manual');
-        appliedSystemConditions.push(statusesId);
       }
 
       if (cnd.parent?.documentName != 'Item' && !cnd.notApplicable) data.conditions.push(condition);
@@ -74,7 +72,7 @@ export default class DSA5StatusEffects {
         data.transferedConditions.push(condition);
       }
     }
-    data.manualConditions = systemConditions.filter((x) => !appliedSystemConditions.includes(x.id));
+    data.manualConditions = systemConditions;
 
     const cumulativeConditions = [];
     for (let key of Object.keys(target.system?.condition || {})) {
@@ -298,26 +296,9 @@ export default class DSA5StatusEffects {
     const source = game.i18n.localize('status') + '/' + game.i18n.localize('condition');
     const result = [];
     const finishedCoreIds = [];
-    for (const ef of actor.effects) {
-      if (ef.disabled) continue;
 
-      const coreId = [...ef.statuses][0];
-      const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
-      const value = effectClass.calculateRollModifier(ef, actor, item, options);
-
-      if (coreId) finishedCoreIds.push(coreId);
-
-      if (value != 0) {
-        result.push({
-          name: ef.name,
-          value,
-          selected: effectClass.ModifierIsSelected(item, options, actor),
-          source,
-        });
-      }
-    }
     for (let [key, val] of Object.entries(actor.system.condition)) {
-      if (val && !finishedCoreIds.includes(key)) {
+      if (val) {
         const ef = duplicate(DSA5.statusEffects.find((x) => x.id == key));
 
         if (!ef) continue;
@@ -326,6 +307,27 @@ export default class DSA5StatusEffects {
         ef.flags.dsa5.value = val;
 
         ef.statuses = [key];
+        const value = effectClass.calculateRollModifier(ef, actor, item, options);
+
+        finishedCoreIds.push(key);
+
+        if (value != 0) {
+          result.push({
+            name: ef.name,
+            value,
+            selected: effectClass.ModifierIsSelected(item, options, actor),
+            source,
+          });
+        }
+      }
+
+      for (const ef of actor.effects) {
+        if (ef.disabled) continue;
+
+        const coreId = [...ef.statuses][0];
+        if (finishedCoreIds.includes(coreId)) continue;
+
+        const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
         const value = effectClass.calculateRollModifier(ef, actor, item, options);
 
         if (value != 0) {

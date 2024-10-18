@@ -134,7 +134,7 @@ const applyCustomEffect = (elem, change) => {
         let vals = elem.split(' ');
         const value = vals.pop();
         const target = vals.join(' ');
-        newElems.push({ source, value, target });
+        newElems.push({ source, value, target, item: change.effect.parent?.name });
       }
       update = current.concat(newElems);
   }
