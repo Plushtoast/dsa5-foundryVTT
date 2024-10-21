@@ -465,8 +465,8 @@ export default class OpposedDsa5 {
       opposeResult.winner = 'attacker';
 
       const title = [
-        damage.armorMod != 0 ? `${damage.armorMod + ' ' + game.i18n.localize('Modifier')}` : '',
-        damage.armorMultiplier != 1 ? '*' + damage.armorMultiplier + ' ' + game.i18n.localize('Modifier') : '',
+        damage.armorMod != 0 ? `${damage.armorMod} ${game.i18n.localize('Modifier')}` : '',
+        damage.armorMultiplier != 1 ? `*${damage.armorMultiplier} ${game.i18n.localize('Modifier')}` : '',
         damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : '',
         damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : '',
       ].join('');
@@ -477,6 +477,10 @@ export default class OpposedDsa5 {
         description,
         value: damage.sum,
         sp: damage.damage,
+        armorMod: damage.armorMod,
+        armorMultiplier: damage.armorMultiplier,
+        spellArmor: damage.spellArmor,
+        liturgyArmor: damage.liturgyArmor,
       };
     } else {
       opposeResult.winner = 'defender';

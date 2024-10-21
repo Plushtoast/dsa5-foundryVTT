@@ -1821,17 +1821,22 @@ export default class Actordsa5 extends Actor {
               await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
 
               let ind = 0;
-              let changedRolls = [];
+              const changedRolls = [];
+              const changes = [];
 
+              newTestData.roll = Roll.fromData(newTestData.roll);
               for (let k of diesToReroll) {
                 const characteristic = newTestData.source.system[`characteristic${k + 1}`];
                 const attr = characteristic ? game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`) + ' - ' : '';
 
-                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${newRoll.terms[ind * 2].results[0].result}`);
-                newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.terms[ind * 2].results[0].result, newTestData.roll.terms[k * 2].results[0].result);
+                let val = newRoll.terms[ind * 2].results[0].result;
+                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${val}`);
+                val = Math.min(val, newTestData.roll.terms[k * 2].results[0].result);
 
+                changes.push({ index: k, val });
                 ind += 1;
               }
+              newTestData.roll.editRollAtIndex(changes);
               infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
               ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
 
@@ -1888,17 +1893,21 @@ export default class Actordsa5 extends Actor {
               const phexTradition = game.i18n.localize('LocalizedIDs.traditionPhex');
               const isPhex = actor.items.some((x) => x.type == 'specialability' && x.name == phexTradition);
 
-              //todo replace with roll.editrollatindex & istalented
+              newTestData.roll = Roll.fromData(newTestData.roll);
+
+              const changes = [];
               for (let k of diesToReroll) {
                 const characteristic = newTestData.source.system[`characteristic${k + 1}`];
                 const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : '';
-                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${newRoll.terms[ind * 2].results[0].result}`);
-                if (isPhex) newTestData.roll.terms[k * 2].results[0].result = Math.min(newRoll.terms[ind * 2].results[0].result, newTestData.roll.terms[k * 2].results[0].result);
-                else newTestData.roll.terms[k * 2].results[0].result = newRoll.terms[ind * 2].results[0].result;
 
+                let val = newRoll.terms[ind * 2].results[0].result;
+                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${val}`);
+
+                if (isPhex) val = Math.min(val, newTestData.roll.terms[k * 2].results[0].result);
+                changes.push({ index: k, val });
                 ind += 1;
               }
-
+              newTestData.roll.editRollAtIndex(changes);
               infoMsg += `<br><b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
               ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
               newTestData.fateUsed = true;
@@ -1971,7 +1980,8 @@ export default class Actordsa5 extends Actor {
                   value: fws.join('|'),
                   type: 'roll',
                 };
-                newTestData.roll.terms[diesToUpgrade * 2].results[0].result = Math.max(1, newTestData.roll.terms[diesToUpgrade * 2].results[0].result - 2);
+                newTestData.roll = Roll.fromData(newTestData.roll);
+                newTestData.roll.editRollAtIndex([{ index: diesToUpgrade, val: Math.max(1, newTestData.roll.terms[diesToUpgrade * 2].results[0].result - 2) }]);
                 newTestData.situationalModifiers.push(modifier);
                 this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                 await message.update({ 'flags.data.fateImproved': true });
@@ -1993,7 +2003,8 @@ export default class Actordsa5 extends Actor {
         type: 'roll',
       };
       newTestData.situationalModifiers.push(modifier);
-      newTestData.roll.terms[0].results[0].result = Math.max(1, newTestData.roll.terms[0].results[0].result - 2);
+      newTestData.roll = Roll.fromData(newTestData.roll);
+      newTestData.roll.editRollAtIndex([{ index: 0, val: Math.max(1, newTestData.roll.terms[0].results[0].result - 2) }]);
       this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
       await message.update({ 'flags.data.fateImproved': true });
       await this.reduceSchips(schipsource);
@@ -2471,7 +2482,7 @@ export default class Actordsa5 extends Actor {
       if (item.system.guidevalue.value != '-') {
         let val = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actorData.system.characteristics[x].value)));
         let extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
-        if (extra > 0) {
+        if (extra != 0) {
           item.extraDamage = extra;
           item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));
           item.damageAdd = (item.damageAdd > 0 ? '+' : '') + item.damageAdd;
