@@ -320,24 +320,24 @@ export default class DSA5StatusEffects {
           });
         }
       }
+    }
+    
+    for (const ef of actor.effects) {
+      if (ef.disabled) continue;
 
-      for (const ef of actor.effects) {
-        if (ef.disabled) continue;
+      const coreId = [...ef.statuses][0];
+      if (finishedCoreIds.includes(coreId)) continue;
 
-        const coreId = [...ef.statuses][0];
-        if (finishedCoreIds.includes(coreId)) continue;
+      const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
+      const value = effectClass.calculateRollModifier(ef, actor, item, options);
 
-        const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
-        const value = effectClass.calculateRollModifier(ef, actor, item, options);
-
-        if (value != 0) {
-          result.push({
-            name: ef.name,
-            value,
-            selected: effectClass.ModifierIsSelected(item, options, actor),
-            source,
-          });
-        }
+      if (value != 0) {
+        result.push({
+          name: ef.name,
+          value,
+          selected: effectClass.ModifierIsSelected(item, options, actor),
+          source,
+        });
       }
     }
     const playerOwned = actor.hasPlayerOwner;

@@ -138,9 +138,7 @@ export default class DSA5Hotbar extends Hotbar {
         break;
       case 'effect':
         const effect = this.token.actor?.effects.get(data.id);
-        if (effect) {
-          description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
-        }
+        if (effect) description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
 
         break;
       case 'onUse':
@@ -161,26 +159,33 @@ export default class DSA5Hotbar extends Hotbar {
       case 'weapon':
       case 'spell':
         item = this.token.actor?.items.get(data.id);
+        const itemData = await item.sheet.getData()
 
-        description = $(
-          await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
-            isGM: game.user.isGM,
-            ...(await item.sheet.getData()),
-            document: item,
-            skipHeader: true,
-            hint: true,
-          }),
-        )
-          .find('.groupbox')
-          .html();
-
+        if(!game.user.isGM && itemData.item.system.obfuscation?.details) {
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', itemData)
+        } else {
+          description = $(
+            await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
+              isGM: game.user.isGM,
+              ...itemData,
+              document: item,
+              skipHeader: true,
+              hint: true,
+            }),
+          ).find('.groupbox').html();
+        }
         break;
       case 'enchantment':
         const ids = data.id.split('_');
         item = this.token.actor?.items.get(ids[0]);
-        const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
-        data.name = enchantment.name;
-        description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.html', { enchantment, document: item });
+        if(item.system.obfuscation?.enchantment) {
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', item)
+          data.name = `${game.i18n.localize('enchantment')} (${item.name})`
+        } else {
+          const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
+          data.name = `${enchantment.name} (${item.name})`;
+          description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.html', { enchantment, document: item });
+        }        
         break;
       default:
         return;
@@ -344,10 +349,10 @@ export default class DSA5Hotbar extends Hotbar {
                 );
               }
               if (x.getFlag('dsa5', 'enchantments')) {
-                if (!groups.skills[x.type]) groups.skills[x.type] = [];
+                if (!groups.skills['enchantment']) groups.skills['enchantment'] = [];
 
                 for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-                  groups.skills[x.type].push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
+                  groups.skills['enchantment'].push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
                 }
               }
               break;
@@ -369,10 +374,12 @@ export default class DSA5Hotbar extends Hotbar {
     const fallbacks = {
       gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
       skillgm: 'systems/dsa5/icons/categories/Skill.webp',
+      enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
     };
     const fallbackNames = {
       gm: 'gmMenu',
       skillgm: 'TYPES.Item.skill',
+      enchantment: 'enchantment'
     };
 
     for (let key of Object.keys(groups.skills)) {

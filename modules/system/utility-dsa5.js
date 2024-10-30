@@ -295,6 +295,14 @@ export default class DSA5_Utility {
     });
   }
 
+  static pushOnlyIfUnique(array, object) {
+    if (!array.find((x) => DSA5_Utility.shallowEquals(x, object))) array.push(object);
+  }
+
+  static shallowEquals(a, b) {
+    return JSON.stringify(a) == JSON.stringify(b);
+  }
+
   static escapeRegex(input) {
     const source = typeof input === 'string' || input instanceof String ? input : '';
     return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');

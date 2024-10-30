@@ -1597,10 +1597,7 @@ export default class Actordsa5 extends Actor {
     this.setupWeapon(range, 'attack', options, tokenId).then(async (setupData) => {
       if (!hasWeaponThrow) {
         setupData.testData.source.dmgMultipliers ||= [];
-        setupData.testData.source.dmgMultipliers.push({
-          name: 'LocalizedIDs.Throwing Weapons',
-          val: '0.5',
-        });
+        DSA5_Utility.pushOnlyIfUnique(setupData.testData.source.dmgMultipliers, { name: 'LocalizedIDs.Throwing Weapons', val: '0.5', });
       }
       await this.basicTest(setupData);
     });
@@ -2468,7 +2465,7 @@ export default class Actordsa5 extends Actor {
                 const oneHanded = game.i18n.localize('wrongGrip.oneHanded');
                 item.gripDamageText = ` (${oneHanded} * 0.5)`;
                 item.dmgMultipliers ||= [];
-                item.dmgMultipliers.push({ name: oneHanded, val: '0.5' });
+                DSA5_Utility.pushOnlyIfUnique(item.dmgMultipliers, { name: oneHanded, val: '0.5' });
               }
               break;
             default:

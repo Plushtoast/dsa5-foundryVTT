@@ -614,10 +614,7 @@ export default class DiceDSA5 {
       if (val.armorPen) armorPen.push(val.armorPen);
       if (val.damageBonus) {
         if (/^\*/.test(val.damageBonus)) {
-          dmgMultipliers.push({
-            name: val.name,
-            val: Number(val.damageBonus.replace('*', '')),
-          });
+          DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
           continue;
         }
         const isOverride = /^=/.test(val.damageBonus);

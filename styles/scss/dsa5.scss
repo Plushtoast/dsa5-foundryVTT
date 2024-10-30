@@ -1,3 +1,4 @@
+@use "sass:meta";
 
 :root {
     --border-color:#736953a6;
@@ -4542,6 +4543,6 @@
   }
 }
 
-  @import "./immersive.scss";
-  @import "./legacy.scss";
-  @import "./applefix.scss";
+  @include meta.load-css("immersive.scss");
+  @include meta.load-css("legacy.scss");
+  @include meta.load-css("applefix.scss");
