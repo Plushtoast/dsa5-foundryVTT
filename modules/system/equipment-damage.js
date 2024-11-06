@@ -54,9 +54,9 @@ export default class EquipmentDamage {
   static breakingTest(item) {
     if (!item)
       return ui.notifications.warn(
-        game.i18n.format('DSAError.notfound', {
+        game.i18n.format('DSAError.notFound', {
           category: '',
-          name: game.i18n.localize('equipment'),
+          name: game.i18n.localize('TYPES.Item.equipment'),
         }),
       );
     if (item.system.structure.max <= 0) return ui.notifications.warn(game.i18n.format('DSAError.noBreakingStructure', { name: item.name }));

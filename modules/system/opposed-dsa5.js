@@ -531,7 +531,7 @@ export default class OpposedDsa5 {
     armor = Math.max(Math.round(armor * armorMultiplier), 0);
     armor += spellArmor + liturgyArmor;
     const armorDamaged = EquipmentDamage.armorGetsDamage(damage, attackerTest);
-    const ids = wornArmor.map((x) => x.uuid);
+    const ids = wornArmor.map((x) => actor.items.get(x._id).uuid);
 
     return {
       damage,

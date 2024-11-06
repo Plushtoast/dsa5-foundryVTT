@@ -159,10 +159,10 @@ export default class DSA5Hotbar extends Hotbar {
       case 'weapon':
       case 'spell':
         item = this.token.actor?.items.get(data.id);
-        const itemData = await item.sheet.getData()
+        const itemData = await item.sheet.getData();
 
-        if(!game.user.isGM && itemData.item.system.obfuscation?.details) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', itemData)
+        if (!game.user.isGM && itemData.item.system.obfuscation?.details) {
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', itemData);
         } else {
           description = $(
             await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
@@ -172,20 +172,22 @@ export default class DSA5Hotbar extends Hotbar {
               skipHeader: true,
               hint: true,
             }),
-          ).find('.groupbox').html();
+          )
+            .find('.groupbox')
+            .html();
         }
         break;
       case 'enchantment':
         const ids = data.id.split('_');
         item = this.token.actor?.items.get(ids[0]);
-        if(item.system.obfuscation?.enchantment) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', item)
-          data.name = `${game.i18n.localize('enchantment')} (${item.name})`
+        if (item.system.obfuscation?.enchantment) {
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', item);
+          data.name = `${game.i18n.localize('enchantment')} (${item.name})`;
         } else {
           const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
           data.name = `${enchantment.name} (${item.name})`;
           description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.html', { enchantment, document: item });
-        }        
+        }
         break;
       default:
         return;
@@ -245,9 +247,9 @@ export default class DSA5Hotbar extends Hotbar {
     } else {
       sections.removeClass('longLayout');
     }
-    let btns = html.find('.primary');
-    btns.removeClass('dsahidden');
-    btns
+    html
+      .find('.primary')
+      .removeClass('dsahidden')
       .filter(function () {
         const find = this.dataset?.name?.toLowerCase().trim();
         if (find) return find.indexOf(search) == -1;
@@ -379,7 +381,7 @@ export default class DSA5Hotbar extends Hotbar {
     const fallbackNames = {
       gm: 'gmMenu',
       skillgm: 'TYPES.Item.skill',
-      enchantment: 'enchantment'
+      enchantment: 'enchantment',
     };
 
     for (let key of Object.keys(groups.skills)) {

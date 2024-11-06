@@ -232,7 +232,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
         if (parent) {
           updates.push({
             _id: this.folders[folder].id,
-            parent: this.folders[parent].id,
+            folder: this.folders[parent].id,
           });
         }
       }
