@@ -490,7 +490,7 @@ class GameMasterMenu extends Application {
 
       probabilities[counter] = hero.id;
       counter++;
-      if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, game.i18n.localize('LocalizedIDs.misfortune'))) {
+      if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, 'LocalizedIDs.misfortune')) {
         probabilities[counter] = hero.id;
         counter++;
       }

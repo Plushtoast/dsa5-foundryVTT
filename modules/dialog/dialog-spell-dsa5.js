@@ -183,7 +183,7 @@ export default class DSA5SpellDialog extends DialogShared {
     if (newPosition < 1) {
       if (event) event.currentTarget.checked = false;
     } else {
-      aspcost.text(newPosition);
+      aspcost.text(Math.round(newPosition));
       maintainCost.text(newMaintainCost);
       aspcost.attr('data-mod', mod);
     }

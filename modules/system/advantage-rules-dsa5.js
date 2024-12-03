@@ -149,15 +149,18 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     return AdvantageRulesDSA5._calculateSingularVantages(item, actor, xpCost, filter, result);
   }
 
-  static hasVantage(actor, talent) {
+  static hasVantage(actor, talent, localize = true) {
+    if (localize) talent = game.i18n.localize(talent);
     return super.hasItem(actor, talent, ['advantage', 'disadvantage']);
   }
 
-  static vantageStep(actor, talent) {
+  static vantageStep(actor, talent, localize = true) {
+    if (localize) talent = game.i18n.localize(talent);
     return super.itemStep(actor, talent, ['advantage', 'disadvantage']);
   }
 
   static getVantageAsModifier(actor, talent, factor = 1, startsWith = false, selected = false) {
+    talent = game.i18n.localize(talent);
     return super.itemAsModifier(actor, talent, factor, ['advantage', 'disadvantage'], startsWith, selected);
   }
 }

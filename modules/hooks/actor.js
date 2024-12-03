@@ -217,7 +217,7 @@ export default function () {
         (Number(toCheck.inpain) || 0) > 0 &&
         !actor.hasCondition('bloodrush') &&
         actor.system.condition.inpain > 0 &&
-        AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.frenzy'))
+        AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.frenzy')
       ) {
         await actor.addCondition('bloodrush');
         const msg = DSA5_Utility.replaceConditions(

@@ -882,7 +882,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       }
       const hasWeaponThrow =
         ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) &&
-        SpecialabilityRulesDSA5.hasAbility(this.actor, game.i18n.localize('LocalizedIDs.weaponThrow'));
+        SpecialabilityRulesDSA5.hasAbility(this.actor, 'LocalizedIDs.weaponThrow');
       const throwLabel = `${game.i18n.localize('TYPES.Item.rangeweapon')} ${game.i18n.localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${game.i18n.localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
       options.push(
         {

@@ -364,32 +364,6 @@ DSA5.knownShortcuts = {};
 
 DSA5.gearModifyableCalculatedAttributes = ['fatePoints', 'initiative', 'speed', 'astralenergy', 'karmaenergy', 'wounds', 'dodge', 'soulpower', 'toughness'];
 
-DSA5.defaultWeapon = (data) => {
-  return new Item(
-    foundry.utils.mergeObject(
-      {
-        name: 'default',
-        type: 'meleeweapon',
-        system: {
-          type: 'meleeweapon',
-          crit: 1,
-          botch: 20,
-          damageThreshold: {
-            value: 14,
-          },
-          reach: {
-            value: 'short',
-          },
-          guidevalue: {
-            value: 'ge/kk',
-          },
-        },
-      },
-      data,
-    ),
-  );
-};
-
 DSA5.asyncHooks = {
   postProcessDSARoll: [],
 };

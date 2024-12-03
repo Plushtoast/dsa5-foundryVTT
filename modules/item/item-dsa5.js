@@ -224,7 +224,7 @@ export default class Itemdsa5 extends Item {
         selected: false,
       });
       const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight');
-      if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight)) {
+      if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight, false)) {
         result.push({
           name: miracleMight,
           value: 3 + bonus,
@@ -507,7 +507,7 @@ export default class Itemdsa5 extends Item {
   }
 
   static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
-    situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.restrictedSenseSight'), -2));
+    situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.restrictedSenseSight', -2));
     this.getCombatSkillModifier(actor, source, situationalModifiers);
 
     const targetSize = this.getTargetSizeAndModifier(actor, source, situationalModifiers);
@@ -523,11 +523,11 @@ export default class Itemdsa5 extends Item {
     }
 
     const rangeOptions = new Set(['short', 'medium', 'long', 'rangesense', 'extreme']);
-    rangeOptions.delete(AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.senseOfRange')) ? 'long' : 'rangesense');
-    if (!SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.extremeShot'))) rangeOptions.delete('extreme');
+    rangeOptions.delete(AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.senseOfRange') ? 'long' : 'rangesense');
+    if (!SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.extremeShot')) rangeOptions.delete('extreme');
 
-    const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.drivingArcher'));
-    const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.mountedArcher'));
+    const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.drivingArcher');
+    const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.mountedArcher');
     let mountedOptions;
     if (mountedArcher && Riding.isRiding(actor)) {
       mountedOptions = duplicate(DSA5.mountedRangeOptionsSpecAb);
@@ -1042,9 +1042,9 @@ class SpellItemDSA5 extends Itemdsa5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
-      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.magicalAttunement'), 1, true),
-      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.magicalRestriction'), -1, true),
-      ...AdvantageRulesDSA5.getVantageAsModifier(actor, game.i18n.localize('LocalizedIDs.boundToArtifact'), -1, true),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalAttunement', 1, true),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalRestriction', -1, true),
+      ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.boundToArtifact', -1, true),
       ...this.getPropertyModifiers(actor, source),
       ...this.attackSpellMalus(source),
     );
@@ -1356,7 +1356,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
         if (target.actor)
-          situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, game.i18n.localize('LocalizedIDs.ResistanttoDisease'), -1, false, true));
+          situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.ResistanttoDisease', -1, false, true));
       });
     }
     this.getSkZkModifier(data, source);
@@ -1498,7 +1498,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
   }
 
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
-    const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.ambidextrous'));
+    const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.ambidextrous');
     source = DSA5_Utility.toObjectIfPossible(source);
     const toSearch = [source.system.combatskill.value];
     const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
@@ -1584,7 +1584,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
     source = DSA5_Utility.toObjectIfPossible(source);
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
-        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, game.i18n.localize('LocalizedIDs.poisonResistance'), -1, false, true));
+        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.poisonResistance', -1, false, true));
       });
     }
     this.getSkZkModifier(data, source);
@@ -1692,6 +1692,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             specAbId: source.system.currentAmmo.value,
           };
           if (currentAmmo.system.armorMod) dmgMod['armorPen'] = currentAmmo.system.armorMod;
+          
           situationalModifiers.push(dmgMod);
         }
         if (currentAmmo.effects.length) {

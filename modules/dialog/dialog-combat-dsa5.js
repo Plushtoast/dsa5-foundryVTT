@@ -155,7 +155,7 @@ export default class DSA5CombatDialog extends DialogShared {
       const elem = $(ev.currentTarget);
       const dataset = ev.currentTarget.dataset;
       let step = Number(dataset.step);
-      const maxStep = Number(dataset.maxstep);
+      const maxStep = Number(dataset.maxStep);
       const subcategory = Number(dataset.category);
 
       if (ev.button == 0) {
@@ -250,8 +250,8 @@ export default class DSA5CombatDialog extends DialogShared {
             mods += `<option value="${mod.value}"
                                         data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
                                         ${mod.type ? ' data-type=' + mod.type : ''}
-                                        ${mod.specAbId ? ' data-specAbId=' + mod.specAbId : ''}
-                                        ${mod.armorPen ? ' data-armorPen=' + mod.armorPen : ''}
+                                        ${mod.specAbId ? ' data-spec-ab-id=' + mod.specAbId : ''}
+                                        ${mod.armorPen ? ' data-armor-pen=' + mod.armorPen : ''}
                                         ${mod.selected ? ' selected' : ''}>
                                     ${mod.name} [${mod.value}]
                                 </option>`;

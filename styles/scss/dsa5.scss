@@ -950,6 +950,10 @@
   
   .very-small {
     font-size: 10px;
+
+    input[type="checkbox"] {
+      --checkbox-size: 10px;
+    }
   }
   
   .inventory .very-small {

@@ -43,7 +43,7 @@ export default class Actordsa5 extends Actor {
   }
 
   _getArmorCompensation(actor, wornArmors, itemModifiers) {
-    const armorCompensation = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.inuredToEncumbrance'));
+    const armorCompensation = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.inuredToEncumbrance');
     const armorEncumbrance = wornArmors.reduce((sum, x) => {
       return (sum += Number(x.system.encumbrance.value));
     }, 0);
@@ -264,7 +264,7 @@ export default class Actordsa5 extends Actor {
     const data = actor.system;
     const isMerchant = actor.isMerchant();
 
-    if (!TraitRulesDSA5.hasTrait(actor, game.i18n.localize('LocalizedIDs.painImmunity'))) {
+    if (!TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) {
       const pain = actor.woundPain(data);
       await this.deferredEffectAddition('inpain', actor, pain);
     }
@@ -279,9 +279,9 @@ export default class Actordsa5 extends Actor {
     const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
     await this.deferredEffectAddition('stunned', actor, brawlingPoints);
 
-    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.blind'))) await actor.addCondition('blind');
-    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.mute'))) await actor.addCondition('mute');
-    if (AdvantageRulesDSA5.hasVantage(actor, game.i18n.localize('LocalizedIDs.deaf'))) await actor.addCondition('deaf');
+    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
+    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
+    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.deaf')) await actor.addCondition('deaf');
 
     if (isMerchant) await actor.prepareMerchant();
   }
@@ -321,13 +321,13 @@ export default class Actordsa5 extends Actor {
     let pain = data.condition.inpain || 0;
     if (pain < 4)
       pain -=
-        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedFighter')) +
-        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.ruggedAnimal')) +
-        (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.traditionKor')) ? 1 : 0);
+        AdvantageRulesDSA5.vantageStep(this, 'LocalizedIDs.ruggedFighter') +
+        AdvantageRulesDSA5.vantageStep(this, 'LocalizedIDs.ruggedAnimal') +
+        (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.traditionKor') ? 1 : 0);
     if (pain > 0)
       pain +=
-        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.sensitiveToPain')) +
-        AdvantageRulesDSA5.vantageStep(this, game.i18n.localize('LocalizedIDs.fragileAnimal'));
+        AdvantageRulesDSA5.vantageStep(this, 'LocalizedIDs.sensitiveToPain') +
+        AdvantageRulesDSA5.vantageStep(this, 'LocalizedIDs.fragileAnimal');
 
     pain = Math.clamp(pain, 0, 4);
     data.condition.inpain = pain;
@@ -716,6 +716,19 @@ export default class Actordsa5 extends Actor {
         botch: 20,
         crit: 1,
       },
+      defaultWeapon: {
+        system: {
+          damageThreshold: {
+            value: 14,
+          },
+          reach: {
+            value: 'short',
+          },
+          guidevalue: {
+            value: 'ge/kk',
+          },
+        },
+      }
     });
 
     for (const k of DSA5.gearModifyableCalculatedAttributes) if (system.status[k]) system.status[k].gearmodifier = 0;
@@ -1163,6 +1176,7 @@ export default class Actordsa5 extends Actor {
                 break;
             }
             traits[i.system.traitType.value].push(i);
+            this._setOnUseEffect(i);
             hasTrait = true;
             break;
           case 'combatskill':
@@ -1407,7 +1421,7 @@ export default class Actordsa5 extends Actor {
       return (sum += a.system.calculatedEncumbrance);
     }, 0);
     const ridingModifier = Riding.isRiding(this) ? -1 : 0;
-    return Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, game.i18n.localize('LocalizedIDs.inuredToEncumbrance')) + ridingModifier);
+    return Math.max(0, encumbrance - SpecialabilityRulesDSA5.abilityStep(actorData, 'LocalizedIDs.inuredToEncumbrance') + ridingModifier);
   }
 
   _calcBagweight(elem, containers, topLevel = true) {
@@ -1576,7 +1590,7 @@ export default class Actordsa5 extends Actor {
 
     const hasWeaponThrow =
       ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) &&
-      SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.weaponThrow'));
+      SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
     const name = item.name + ' (' + throwingWeapons + ')';
     const range = new Itemdsa5({
       name,
@@ -1605,11 +1619,12 @@ export default class Actordsa5 extends Actor {
 
   setupWeaponless(statusId, options = {}, tokenId) {
     const attributes = [];
-    if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.mightyAstralBody'))) attributes.push(game.i18n.localize('magical'));
-    if (SpecialabilityRulesDSA5.hasAbility(this, game.i18n.localize('LocalizedIDs.mightyKarmalBody'))) attributes.push(game.i18n.localize('blessed'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(game.i18n.localize('magical'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(game.i18n.localize('blessed'));
 
-    const item = DSA5.defaultWeapon({
+    const weaponData = mergeObject({
       name: game.i18n.localize(`${statusId}Weaponless`),
+      type: 'meleeweapon',
       system: {
         combatskill: {
           value: game.i18n.localize('LocalizedIDs.wrestle'),
@@ -1617,9 +1632,10 @@ export default class Actordsa5 extends Actor {
         effect: {
           attributes: attributes.join(', '),
         },
-      },
-    });
+      }
+    }, this.system.defaultWeapon)
 
+    const item = new Item(weaponData);
     options.mode = statusId;
     return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
@@ -2588,14 +2604,14 @@ export default class Actordsa5 extends Actor {
     let factor = 1;
     let modifier = 0;
     if (item.system.combatskill.value == game.i18n.localize('LocalizedIDs.Throwing Weapons'))
-      modifier = SpecialabilityRulesDSA5.abilityStep(actor, game.i18n.localize('LocalizedIDs.quickdraw')) * -1;
+      modifier = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.quickdraw') * -1;
     else if (
       item.system.combatskill.value == game.i18n.localize('LocalizedIDs.Crossbows') &&
-      SpecialabilityRulesDSA5.hasAbility(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize('LocalizedIDs.Crossbows')})`)
+      SpecialabilityRulesDSA5.hasAbility(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize('LocalizedIDs.Crossbows')})`, false)
     )
       factor = 0.5;
     else {
-      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.system.combatskill.value)})`) * -1;
+      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${game.i18n.localize('LocalizedIDs.quickload')} (${game.i18n.localize(item.system.combatskill.value)})`, false) * -1;
     }
 
     let reloadTime = `${item.system.reloadTime.value}`.split('/');
@@ -2854,7 +2870,7 @@ export default class Actordsa5 extends Actor {
     let max = 0;
     const maxBonus = AdvantageRulesDSA5.vantageStep(
       this,
-      `${game.i18n.localize(`LocalizedIDs.${item.type == 'combatskill' ? 'exceptionalCombatTechnique' : 'exceptionalSkill'}`)} (${item.name})`,
+      `${game.i18n.localize(`LocalizedIDs.${item.type == 'combatskill' ? 'exceptionalCombatTechnique' : 'exceptionalSkill'}`)} (${item.name})`, false
     );
     switch (item.type) {
       case 'combatskill':
@@ -2867,7 +2883,7 @@ export default class Actordsa5 extends Actor {
           .replace(/\(a-z äöü-\)/gi, '')
           .split(',')
           .map((x) => x.trim())) {
-          if (SpecialabilityRulesDSA5.hasAbility(this, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`)) {
+          if (SpecialabilityRulesDSA5.hasAbility(this, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
             focusValue = this.maxByAttr(item, maxBonus);
             break;
           }

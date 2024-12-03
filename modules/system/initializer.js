@@ -16,10 +16,10 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
         {
           action: 'initialize',
           label: 'initialize',
-          callback: () => {
+          callback: async() => {
             if (this.lock) return;
 
-            this.initialize();
+            await this.initialize();
           },
         },
         {

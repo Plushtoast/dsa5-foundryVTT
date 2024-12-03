@@ -7,7 +7,8 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
     if (DSA5.addTraitRules[item.name]) await DSA5.addTraitRules[item.name](actor, item);
   }
 
-  static hasTrait(actor, talent) {
+  static hasTrait(actor, talent, localize = true) {
+    if(localize) talent = game.i18n.localize(talent);
     return super.hasItem(actor, talent, ['trait']);
   }
 }

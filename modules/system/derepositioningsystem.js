@@ -84,7 +84,7 @@ export default class DPS {
         .map((x) => Number(x));
 
       if (actor) {
-        const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, game.i18n.localize('LocalizedIDs.darksight'));
+        const darkSightLevel = AdvantageRulesDSA5.vantageStep(actor, 'LocalizedIDs.darksight');
         const sightModifier = Number(getProperty(actor, 'system.sightModifier.value')) || 0;
         const modifyableLevel = Number(getProperty(actor, 'system.sightModifier.maxLevel')) || 3;
 

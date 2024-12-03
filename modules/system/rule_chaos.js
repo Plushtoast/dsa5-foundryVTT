@@ -12,13 +12,13 @@ export default class RuleChaos {
 
     if (
       (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle')) &&
-      SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.masterfulDodge'))
+      SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.masterfulDodge')
     )
       multipleDefense = -2;
-    else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.mightyMasterfulParry'))) multipleDefense = -1;
-    else if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.masterfulParry'))) multipleDefense = -2;
+    else if (SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.mightyMasterfulParry')) multipleDefense = -1;
+    else if (SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.masterfulParry')) multipleDefense = -2;
 
-    if (SpecialabilityRulesDSA5.hasAbility(actor, game.i18n.localize('LocalizedIDs.vinsaltStyle'))) multipleDefense -= 1;
+    if (SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.vinsaltStyle')) multipleDefense -= 1;
 
     return Math.min(0, multipleDefense);
   }

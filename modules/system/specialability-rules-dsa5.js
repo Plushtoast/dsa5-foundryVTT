@@ -177,15 +177,18 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     }
   }
 
-  static hasAbility(actorData, talent) {
+  static hasAbility(actorData, talent, localize = true) {
+    if(localize) talent = game.i18n.localize(talent);
     return super.hasItem(actorData, talent, ['specialability']);
   }
 
-  static abilityStep(actorData, talent) {
+  static abilityStep(actorData, talent, localize = true) {
+    if (localize) talent = game.i18n.localize(talent);
     return super.itemStep(actorData, talent, ['specialability']);
   }
 
   static abilityAsModifier(actor, talent, factor = 1, startsWith = false) {
+    talent = game.i18n.localize(talent);
     return super.itemAsModifier(actor, talent, factor, ['specialability'], startsWith);
   }
 }

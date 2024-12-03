@@ -143,6 +143,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/detail/index/sArticle/3907" target="_blank" title="Rahjas Diener">
         <img src="https://www.f-shop.de/media/image/17/40/f3/ESD043_0_0999.jpg" alt="Rahjas Diener" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>    
+    <a href="https://www.f-shop.de/detail/index/sArticle/4457" target="_blank" title="Aventurische Bibliothek">
+        <img src="https://www.f-shop.de/media/image/50/34/01/ESD052_0_0999.jpg" alt="Aventurische Bibliothek" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <h2>Abenteuer</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">

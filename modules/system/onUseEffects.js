@@ -32,9 +32,9 @@ export default class OnUseEffect {
             'actor',
             'item',
             `
-                    const that = this;
-                    ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
-                    `,
+              const that = this;
+              ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
+            `,
           );
           result.ret = await fn2.call(this, args, this.item.actor);
         } catch (err) {

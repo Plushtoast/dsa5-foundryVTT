@@ -132,7 +132,7 @@ export default class BookWizard extends Application {
     });
 
     html.on('click', '.showMapNote', (ev) => {
-      game.journal.get(ev.currentTarget.dataset.entryid).panToNote();
+      game.journal.get(ev.currentTarget.dataset.entryId).panToNote();
     });
 
     html.on('search keyup', '.filterJournals', (ev) => {
@@ -462,7 +462,7 @@ export default class BookWizard extends Application {
   findSceneNote(entryId) {
     if (entryId) {
       const importedJournalEntry = game.journal.find((x) => x.getFlag('dsa5', 'initId') == entryId);
-      if (importedJournalEntry && importedJournalEntry.sceneNote) return `<a class="showMapNote" data-entryId="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
+      if (importedJournalEntry && importedJournalEntry.sceneNote) return `<a class="showMapNote" data-entry-id="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
     }
     return '';
   }

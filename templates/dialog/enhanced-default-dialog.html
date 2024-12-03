@@ -48,10 +48,10 @@
 <div class="talent-test-modifier-row form-group">
     <label>{{localize "DIALOG.RollMode"}}</label>
     <div class="row-section dsaRollMode">
-        <label class="checkbox" data-tooltip="CHAT.RollPublic"><input type="radio" name="rollMode" value="publicroll" {{#if (eq rollMode "publicroll")}}checked=""{{/if}}><i><i class="fas fa-dice"></i></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollPrivate"><input type="radio" name="rollMode" value="gmroll" {{#if (eq rollMode "gmroll")}}checked=""{{/if}}><i><i class="fas fa-mask"></i></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollBlind"><input type="radio" name="rollMode" value="blindroll" {{#if (eq rollMode "blindroll")}}checked=""{{/if}}><i><i class="fas fa-eye-slash"></i><i class="fas fa-mask"></i></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollSelf"><input type="radio" name="rollMode" value="selfroll" {{#if (eq rollMode "selfroll")}}checked=""{{/if}}><i><i class="fas fa-user-ninja"></i></i></label>
+        <label class="checkbox" data-tooltip="CHAT.RollPublic"><input type="radio" name="rollMode" value="publicroll" {{checked (eq rollMode "publicroll")}}><i><i class="fas fa-dice"></i></i></label>
+        <label class="checkbox" data-tooltip="CHAT.RollPrivate"><input type="radio" name="rollMode" value="gmroll" {{checked (eq rollMode "gmroll")}}><i><i class="fas fa-mask"></i></i></label>
+        <label class="checkbox" data-tooltip="CHAT.RollBlind"><input type="radio" name="rollMode" value="blindroll" {{checked (eq rollMode "blindroll")}}><i><i class="fas fa-eye-slash"></i><i class="fas fa-mask"></i></i></label>
+        <label class="checkbox" data-tooltip="CHAT.RollSelf"><input type="radio" name="rollMode" value="selfroll" {{checked (eq rollMode "selfroll")}}><i><i class="fas fa-user-ninja"></i></i></label>
     </div>
 </div>
 {{#if hasSituationalModifiers}}
@@ -59,8 +59,7 @@
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
     <select name="situationalModifiers" multiple>
         {{#each situationalModifiers as |mod t|}}
-        <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" {{#if mod.armorPen}}data-armorPen="{{mod.armorPen}}"{{/if}} value="{{mod.value}}" {{#if
-            mod.selected}}selected{{/if}}>
+        <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" {{#if mod.armorPen}}data-armor-pen="{{mod.armorPen}}"{{/if}} value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
             {{localize mod.name}} [{{mod.value}} {{mod.type}}]
         </option>
         {{/each}}
