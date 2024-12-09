@@ -471,7 +471,9 @@
   .table-title, .label-text {
     font-weight: bold;
     font-family: var(--boldFont);
-  
+  }
+
+  .label-text {
     /*box-shadow: 0 0 14px #00000052 inset;*/
     background: rgb(188, 136, 111);
     background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);    
@@ -492,9 +494,7 @@
     border-color: var(--border-color);
   }
   
-  .table-title {
-    background: rgb(188, 136, 111);
-    background: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  .table-title {    
     box-shadow: none;
 
     .item-create {

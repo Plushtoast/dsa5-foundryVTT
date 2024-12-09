@@ -763,6 +763,7 @@ DSA5.addAbilityRules = {};
 DSA5.removeAbilityRules = {};
 DSA5.AbilitiesNeedingAdaption = {};
 DSA5.addTraitRules = {};
+DSA5.spellRules = {}
 
 DSA5.meleeRangesArray = ['short', 'medium', 'long'];
 

@@ -1297,6 +1297,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       if (await this.actor.checkEnoughXP(apCost)) {
         await this._updateAPs(apCost, {}, { render: false });
         const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
+        if(DSA5.spellRules[createdItem.name]) DSA5.spellRules[createdItem.name](this.actor, createdItem)
         await APTracker.track(this.actor, { type: 'item', item: createdItem, state: 1 }, apCost);
       }
     }
