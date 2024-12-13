@@ -8,7 +8,6 @@ import ItemSheetdsa5 from './item/item-sheet.js';
 import initHooks from './hooks/init.js';
 import MacroDSA5 from './system/macroControl.js';
 import DSA5 from './system/config-dsa5.js';
-import DSA5ItemLibrary from './system/itemlibrary.js';
 import DSA5_Utility from './system/utility-dsa5.js';
 import DSA5Initializer from './system/initializer.js';
 import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';
@@ -110,20 +109,18 @@ Hooks.once('init', () => {
     },
     macro: MacroDSA5,
     config: DSA5,
-    memory: new RollMemory(),
-    itemLibrary: new DSA5ItemLibrary(),
+    memory: new RollMemory()
   };
 
   CONFIG.Actor.documentClass = Actordsa5;
   CONFIG.Item.documentClass = Itemdsa5;
-  CONFIG.ChatMessage.template = 'systems/dsa5/templates/chat/chat-message.html';
+  CONFIG.ChatMessage.template = 'systems/dsa5/templates/chat/chat-message.hbs';
   CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll;
   CONFIG.ui.combat = DSA5CombatTracker;
   CONFIG.ui.hotbar = DSA5Hotbar;
   CONFIG.Combat.documentClass = DSA5Combat;
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
-  CONFIG.ActiveEffect.legacyTransferral = false;
 });
 
 initHooks();

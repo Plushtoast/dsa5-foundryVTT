@@ -334,9 +334,6 @@
   z-index: -1;
   background-position: 8px 11px, calc(100% - 8px) 11px, center;
 }
-.dsa5-immersive #hotbar.collapsedHotbar:before {
-  background-image: url("../../icons/backgrounds/hotbarpart.webp");
-}
 .dsa5-immersive #hotbar .macro {
   background: none;
   border: 1px solid rgba(0, 0, 0, 0.5);

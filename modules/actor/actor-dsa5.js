@@ -510,7 +510,7 @@ export default class Actordsa5 extends Actor {
           case 'plant':
           case 'consumable':
           case 'combatskill':
-          case 'magicsign':
+          case 'magicalsign':
           case 'poison':
           case 'spell':
           case 'liturgy':
@@ -1816,7 +1816,7 @@ export default class Actordsa5 extends Actor {
       buttons: {
         Yes: {
           icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('Ok'),
+          label: game.i18n.localize('ok'),
           callback: async (dlg) => {
             let diesToReroll = dlg
               .find('.dieSelected')
@@ -1883,7 +1883,7 @@ export default class Actordsa5 extends Actor {
       buttons: {
         Yes: {
           icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('Ok'),
+          label: game.i18n.localize('ok'),
           callback: async (dlg) => {
             let diesToReroll = dlg
               .find('.dieSelected')
@@ -1977,7 +1977,7 @@ export default class Actordsa5 extends Actor {
         buttons: {
           Yes: {
             icon: '<i class="fa fa-check"></i>',
-            label: game.i18n.localize('Ok'),
+            label: game.i18n.localize('ok'),
             callback: async (dlg) => {
               let fws = [0, 0, 0];
               let diesToUpgrade = dlg

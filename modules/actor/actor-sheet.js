@@ -20,6 +20,7 @@ import { RangeSelectDialog } from '../hooks/itemDrop.js';
 import DSA5Payment from '../system/payment.js';
 import { TradeOptions } from './trade.js';
 import APTracker from '../system/ap-tracker.js';
+import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 
 export default class ActorSheetDsa5 extends ActorSheet {
@@ -496,21 +497,21 @@ export default class ActorSheetDsa5 extends ActorSheet {
       this.actor.items.get(this._getItemId(ev)).postItem();
     };
 
-    html.find('.roll-disease').click((ev) => this.rollDisease(this._getItemId(ev)));
+    html.find('.roll-disease').on('click', (ev) => this.rollDisease(this._getItemId(ev)));
 
     tabSlider(html);
 
-    html.find('.condition-edit').click(async (ev) => {
+    html.find('.condition-edit').on('click', async (ev) => {
       const effect = ev.currentTarget.dataset.uuid ? await fromUuid(ev.currentTarget.dataset.uuid) : this.actor.effects.get(ev.currentTarget.dataset.id);
       effect.sheet.render(true);
     });
 
-    html.find('.ch-collapse').click((ev) => {
+    html.find('.ch-collapse').on('click', (ev) => {
       $(ev.currentTarget).find('i').toggleClass('fa-angle-up fa-angle-down');
       $(ev.currentTarget).closest('.groupbox').find('.row-section:nth-child(2)').fadeToggle();
     });
 
-    html.find('.status-create').click((ev) => {
+    html.find('.status-create').on('click', (ev) => {
       let menu = $(ev.currentTarget).closest('.statusEffectMenu').find('ul');
       menu.fadeIn('fast', () => {
         menu.find('input').trigger('focus');
@@ -518,9 +519,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
     });
     html.find('.statusEffectMenu ul').mouseleave((ev) => $(ev.currentTarget).fadeOut());
 
-    html.find('.roll-aggregated').mousedown((ev) => this._handleAggregatedProbe(ev));
+    html.find('.roll-aggregated').on('mousedown', (ev) => this._handleAggregatedProbe(ev));
 
-    html.find('.skill-select').mousedown((ev) => {
+    html.find('.skill-select').on('mousedown', (ev) => {
       const itemId = this._getItemId(ev);
       let skill = this.actor.items.get(itemId);
 
@@ -531,7 +532,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       else if (ev.button == 2) skill.sheet.render(true);
     });
 
-    html.find('.spell-select').mousedown((ev) => {
+    html.find('.spell-select').on('mousedown', (ev) => {
       const itemId = this._getItemId(ev);
       let skill = this.actor.items.get(itemId);
 
@@ -539,14 +540,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
       else if (ev.button == 2) skill.sheet.render(true);
     });
 
-    html.find('.item-post').click((ev) => posthand(ev));
+    html.find('.item-post').on('click', (ev) => posthand(ev));
 
-    html.find('.item-dropdown').click((ev) => {
+    html.find('.item-dropdown').on('click', (ev) => {
       ev.preventDefault();
       $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown');
     });
 
-    html.find('.condition-show').mousedown((ev) => {
+    html.find('.condition-show').on('mousedown', (ev) => {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
       const descriptor = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
@@ -585,13 +586,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
 
-    html.find('.item-edit').click((ev) => {
+    html.find('.item-edit').on('click', (ev) => {
       ev.preventDefault();
       const itemId = this._getItemId(ev);
       const item = this.actor.items.get(itemId);
       item.sheet.render(true);
     });
-    html.find('.showApplication').mousedown((ev) => {
+    html.find('.showApplication').on('mousedown', (ev) => {
       ev.preventDefault();
 
       if (ev.button == 2) {
@@ -603,31 +604,31 @@ export default class ActorSheetDsa5 extends ActorSheet {
       }
     });
 
-    html.find('.ch-value').click((event) => {
+    html.find('.ch-value').on('click', (event) => {
       event.preventDefault();
       let characteristic = event.currentTarget.attributes['data-char'].value;
       this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
-    html.find('.ch-status').click((event) => {
+    html.find('.ch-status').on('click', (event) => {
       event.preventDefault();
       this.actor.setupDodge({}, this.getTokenId()).then((setupData) => {
         this.actor.basicTest(setupData);
       });
     });
-    html.find('.ch-regenerate').click((event) => {
+    html.find('.ch-regenerate').on('click', (event) => {
       event.preventDefault();
       this.actor.setupRegeneration('regenerate', {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
-    html.find('.ch-weaponless').click((event) => {
+    html.find('.ch-weaponless').on('click', (event) => {
       event.preventDefault();
       let characteristic = event.currentTarget.attributes['data-char'].value;
       this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
     });
-    html.find('.ch-fallingDamage').click((ev) => {
+    html.find('.ch-fallingDamage').on('click', (ev) => {
       ev.preventDefault();
       this.actor.setupFallingDamage({}, this.getTokenId());
     });
-    html.find('.ch-rollCombat').click((event) => {
+    html.find('.ch-rollCombat').on('click', (event) => {
       event.preventDefault();
       const dataset = this._getItemDataset(event);
       const mode = event.currentTarget.dataset.mode;
@@ -673,12 +674,12 @@ export default class ActorSheetDsa5 extends ActorSheet {
       });
     });
 
-    html.find('.filterTalents').click((ev) => {
+    html.find('.filterTalents').on('click', (ev) => {
       $(ev.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll');
       $(ev.currentTarget).toggleClass('filtered');
     });
 
-    html.find('.charimg').mousedown((ev) => {
+    html.find('.charimg').on('mousedown', (ev) => {
       if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true);
     });
 
@@ -686,17 +687,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     let filterTalents = (ev) => this._filterTalents($(ev.currentTarget));
     let talSearch = html.find('.talentSearch');
-    talSearch.keyup((event) => this._filterTalents($(event.currentTarget)));
+    talSearch.on('keyup', (event) => this._filterTalents($(event.currentTarget)));
     talSearch[0] && talSearch[0].addEventListener('search', filterTalents, false);
 
     let filterConditions = (ev) => this._filterConditions($(ev.currentTarget));
     let condSearch = html.find('.conditionSearch');
-    condSearch.keyup((event) => this._filterConditions($(event.currentTarget)));
+    condSearch.on('keyup', (event) => this._filterConditions($(event.currentTarget)));
     condSearch[0] && condSearch[0].addEventListener('search', filterConditions, false);
 
     let filterGear = (ev) => this._filterGear($(ev.currentTarget));
     let gearSearch = html.find('.gearSearch');
-    gearSearch.keyup((event) => this._filterGear($(event.currentTarget)));
+    gearSearch.on('keyup', (event) => this._filterGear($(event.currentTarget)));
     gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
 
     bindImgToCanvasDragStart(html, 'img.charimg');
@@ -714,9 +715,9 @@ export default class ActorSheetDsa5 extends ActorSheet {
       onOpen: this._onWeaponItemContext.bind(this),
     });
 
-    html.find('.startCharacterBuilder').click(() => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
+    html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
 
-    html.find('.schipUpdate').click((ev) => {
+    html.find('.schipUpdate').on('click', (ev) => {
       ev.preventDefault();
       let val = Number(ev.currentTarget.getAttribute('data-val'));
       if (val == 1 && $(this.form).find('.fullSchip').length == 1) val = 0;
@@ -724,15 +725,15 @@ export default class ActorSheetDsa5 extends ActorSheet {
       this.actor.update({ 'system.status.fatePoints.value': val });
     });
 
-    html.find('.swapWeaponHand').click((ev) => this.swapWeaponHand(ev));
+    html.find('.swapWeaponHand').on('click', (ev) => this.swapWeaponHand(ev));
 
-    html.find('.defenseToggle').click(() =>
+    html.find('.defenseToggle').on('click', () =>
       this.actor.update({
         'system.config.defense': !this.actor.system.config.defense,
       }),
     );
 
-    html.find('.loadWeapon').mousedown(async (ev) => {
+    html.find('.loadWeapon').on('mousedown', async (ev) => {
       const itemId = this._getItemId(ev);
       const item = this.actor.items.get(itemId).toObject();
 
@@ -747,7 +748,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       await this.actor.updateEmbeddedDocuments('Item', [update]);
     });
 
-    html.find('.chargeSpell').mousedown(async (ev) => {
+    html.find('.chargeSpell').on('mousedown', async (ev) => {
       const itemId = this._getItemId(ev);
       const item = this.actor.items.get(itemId).toObject();
       const lz = Number(item.system.castingTime.modified);
@@ -759,17 +760,17 @@ export default class ActorSheetDsa5 extends ActorSheet {
       await this.actor.updateEmbeddedDocuments('Item', [item]);
     });
 
-    html.find('.item-swapMag').click(async (ev) => {
+    html.find('.item-swapMag').on('click', async (ev) => {
       await this.actor.swapMag(this._getItemId(ev));
     });
 
-    html.find('.ammo-selector').change(async (ev) => {
+    html.find('.ammo-selector').on('change', async (ev) => {
       ev.preventDefault();
       const itemId = this._getItemId(ev);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() }]);
     });
 
-    html.find('.item-toggle').click((ev) => {
+    html.find('.item-toggle').on('click', (ev) => {
       const itemId = this._getItemId(ev);
       let item = this.actor.items.get(itemId).toObject();
 
@@ -784,14 +785,14 @@ export default class ActorSheetDsa5 extends ActorSheet {
       }
     });
 
-    html.find('.quantity-click').mousedown((ev) => {
+    html.find('.quantity-click').on('mousedown', (ev) => {
       const itemId = this._getItemId(ev);
       let item = this.actor.items.get(itemId).toObject();
       RuleChaos.increment(ev, item, 'system.quantity.value', 0);
       this.actor.updateEmbeddedDocuments('Item', [item]);
     });
 
-    html.find('.status-add').mousedown(async (ev) => {
+    html.find('.status-add').on('mousedown', async (ev) => {
       const status = ev.currentTarget.dataset.id;
       if (status == 'custom') {
         DSA5StatusEffects.createCustomEffect(this.actor);
@@ -804,46 +805,46 @@ export default class ActorSheetDsa5 extends ActorSheet {
       }
     });
 
-    html.find('.money-change').change(async (ev) => {
+    html.find('.money-change').on('change', async (ev) => {
       const itemId = this._getItemId(ev);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': Number(ev.target.value) }]);
     });
-    html.find('.skill-advances').change(async (ev) => {
+    html.find('.skill-advances').on('change', async (ev) => {
       const itemId = this._getItemId(ev);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
     });
 
-    html.find('.advance-attribute').mousedown((ev) => this.advanceWrapper(ev, '_advanceAttribute', ev.currentTarget.dataset.attr));
-    html.find('.refund-attribute').mousedown((ev) => this.advanceWrapper(ev, '_refundAttributeAdvance', ev.currentTarget.dataset.attr));
-    html.find('.advance-item').mousedown((ev) => this.advanceWrapper(ev, '_advanceItem', this._getItemId(ev)));
-    html.find('.refund-item').mousedown((ev) => this.advanceWrapper(ev, '_refundItemAdvance', this._getItemId(ev)));
-    html.find('.advance-points').mousedown((ev) => this.advanceWrapper(ev, '_advancePoints', ev.currentTarget.dataset.attr));
-    html.find('.refund-points').mousedown((ev) => this.advanceWrapper(ev, '_refundPointsAdvance', ev.currentTarget.dataset.attr));
-    html.find('.rebuy-pc').mousedown((ev) => this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr));
-    html.find('.refund-pc').mousedown((ev) => this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr));
+    html.find('.advance-attribute').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceAttribute', ev.currentTarget.dataset.attr));
+    html.find('.refund-attribute').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundAttributeAdvance', ev.currentTarget.dataset.attr));
+    html.find('.advance-item').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceItem', this._getItemId(ev)));
+    html.find('.refund-item').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundItemAdvance', this._getItemId(ev)));
+    html.find('.advance-points').on('mousedown', (ev) => this.advanceWrapper(ev, '_advancePoints', ev.currentTarget.dataset.attr));
+    html.find('.refund-points').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPointsAdvance', ev.currentTarget.dataset.attr));
+    html.find('.rebuy-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr));
+    html.find('.refund-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr));
 
-    html.find('.onUseItem').mousedown((ev) => this._onMacroUseItem(ev));
-    html.find('.traditionPayCost').mousedown((ev) => this._payAeSpecialAbilityCost(ev));
+    html.find('.onUseItem').on('mousedown', (ev) => this._onMacroUseItem(ev));
+    html.find('.traditionPayCost').on('mousedown', (ev) => this._payAeSpecialAbilityCost(ev));
 
-    html.find('.item-create').click((ev) => this._onItemCreate(ev));
+    html.find('.item-create').on('click', (ev) => this._onItemCreate(ev));
 
-    html.find('.condition-toggle').mousedown(async (ev) => {
+    html.find('.condition-toggle').on('mousedown', async (ev) => {
       let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
       let ef = this.actor.effects.get(condKey);
       await ef.update({ disabled: !ef.disabled });
     });
 
-    html.find('.condition-value').mousedown(async (ev) => {
+    html.find('.condition-value').on('mousedown', async (ev) => {
       let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
       if (ev.button == 0) await this.actor.addCondition(condKey, 1, false, false);
       else if (ev.button == 2) await this.actor.removeCondition(condKey, 1, false);
     });
 
-    html.find('.item-delete').click((ev) => this._deleteItem(ev));
-    html.find('.tradition-delete').click((ev) => this._deleteTraditionArtifact(ev));
-    html.find('.selectTraditionartifact').click(() => this.selectTraditionartifact());
+    html.find('.item-delete').on('click', (ev) => this._deleteItem(ev));
+    html.find('.tradition-delete').on('click', (ev) => this._deleteTraditionArtifact(ev));
+    html.find('.selectTraditionartifact').on('click', () => this.selectTraditionartifact());
 
-    html.find('.disableRegeneration').click((ev) => {
+    html.find('.disableRegeneration').on('click', (ev) => {
       const type = ev.currentTarget.dataset.type;
       const prop = `system.repeatingEffects.disabled.${type}`;
       this.actor.update({ [prop]: !getProperty(this.actor, prop) });
@@ -1017,7 +1018,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
         $(k)
           .find('.editor-edit')
-          .click((ev) => this._openKeepFieldEditpage(ev));
+          .on('click', (ev) => this._openKeepFieldEditpage(ev));
       }
     }
   }
@@ -1597,27 +1598,30 @@ export default class ActorSheetDsa5 extends ActorSheet {
   }
 }
 
-class TraditionArtifactpicker extends Application {
+class TraditionArtifactpicker extends DefaultAppv2 {
   constructor(actor, optns = {}) {
     super(optns);
     this.actor = actor;
   }
 
-  get template() {
-    return 'systems/dsa5/templates/actors/traditionPicker.html';
-  }
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
+  static DEFAULT_OPTIONS = {
+    position: {
       width: 440,
+    },
+    window: {
+      title: 'SHEET.selectTraditionartifact',
       resizable: true,
-    });
-    return options;
-  }
+    },
+  };
 
-  async getData(optns) {
-    const data = await super.getData(optns);
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/actors/traditionPicker.hbs',
+    },
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
     mergeObject(data, {
       items,
@@ -1625,10 +1629,10 @@ class TraditionArtifactpicker extends Application {
     return data;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    html.find('.slot').click(async (ev) => {
+  _onRender(context, options) {
+    super._onRender((context, options));
+    const html = $(this.element);
+    html.find('.slot').on('click', async (ev) => {
       const item = this.actor.items.get(ev.currentTarget.dataset.itemId);
       await item.update({ 'system.isArtifact': !item.system.isArtifact });
     });
