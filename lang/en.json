@@ -654,6 +654,15 @@
             "equipment": {
                 "region": "Nostria..."
             },
+            "meleeweapon": {
+                "region": "Nostria..."
+            },
+            "rangeweapon": {
+                "region": "Nostria..."
+            },
+            "armor": {
+                "region": "Nostria..."
+            },
             "specialability": {
                 "distribution": "Witch..."
             },

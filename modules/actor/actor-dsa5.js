@@ -510,7 +510,7 @@ export default class Actordsa5 extends Actor {
           case 'plant':
           case 'consumable':
           case 'combatskill':
-          case 'magicsign':
+          case 'magicalsign':
           case 'poison':
           case 'spell':
           case 'liturgy':
