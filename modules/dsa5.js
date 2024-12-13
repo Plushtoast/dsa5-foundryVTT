@@ -45,6 +45,7 @@ import DialogReactDSA5 from './dialog/dialog-react.js';
 import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/ap-tracker.js';
+import OnUseEffect from './system/onUseEffects.js';
 
 Hooks.once('init', () => {
   console.log('Initializing DSA5 system');
@@ -76,6 +77,7 @@ Hooks.once('init', () => {
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,
+      OnUseEffect
     },
     entities: {
       Actordsa5,
