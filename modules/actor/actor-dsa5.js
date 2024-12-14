@@ -486,7 +486,7 @@ export default class Actordsa5 extends Actor {
         if (e.disabled || !e.transfer || e.system.delayed) continue;
 
         apply = true;
-
+        multiply = 1;
         switch (item.type) {
           case 'meleeweapon':
           case 'rangeweapon':
@@ -496,7 +496,7 @@ export default class Actordsa5 extends Actor {
             break;
           case 'armor':
             if (disableWeaponAdvantages && e.system.equipmentAdvantage) continue;
-
+            
             apply = item.system.worn.value;
             break;
           case 'equipment':
