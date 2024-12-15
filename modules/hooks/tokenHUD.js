@@ -7,7 +7,7 @@ function addThirdBarToHUD(html, actor, app) {
     let currentKaP = actor.system.status.karmaenergy.value;
     let attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`;
     html.find('.col.middle').prepend(attrBar);
-    html.find('.bar3 input').change(async (ev) => {
+    html.find('.bar3 input').on('change', async (ev) => {
       const input = ev.currentTarget;
       let strVal = input.value.trim();
       let isDelta = strVal.startsWith('+') || strVal.startsWith('-');
@@ -34,14 +34,14 @@ function swarmButtons(app, html, data) {
 
     html.find('.col.left').prepend(swarmHud('swarm.combine'));
     const btn = html.find('.control-icon[data-action="swarm"]');
-    btn.click(() => {
+    btn.on('click', () => {
       combineSwarm(actor, app.object.document);
       btn.remove();
     });
   } else if (actor.isSwarm()) {
     html.find('.col.left').prepend(swarmHud('swarm.split'));
     const btn = html.find('.control-icon[data-action="swarm"]');
-    btn.click(() => {
+    btn.on('click', () => {
       splitSwarm(actor, app.object.document);
       btn.remove();
     });
@@ -49,8 +49,8 @@ function swarmButtons(app, html, data) {
 }
 
 class SwarmDialog extends foundry.applications.api.DialogV2 {
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('input[type="range"]').on('change', (ev) => {
@@ -149,7 +149,7 @@ export default function () {
 
       game.dsa5.apps.LightDialog?.lightHud(html, actor, data);
     }
-    html.find('.control-icon[data-action="target"]').mousedown((ev) => {
+    html.find('.control-icon[data-action="target"]').on('mousedown', (ev) => {
       if (ev.button == 2) {
         game.user.updateTokenTargets([]);
         $(ev.currentTarget).trigger('click');

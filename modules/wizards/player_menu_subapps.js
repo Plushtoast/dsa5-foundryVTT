@@ -8,7 +8,26 @@ export class PlayerMenuSubApp {
     return {};
   }
 
-  activateListeners(html) {}
+  get name() {
+    return `PLAYER.${this.tabName}`;
+  }
+
+  get tabName() {
+    return this.constructor.name;
+  }
+
+  addTab(tabs, activeTab) {
+    const active = activeTab === this.tabName;
+    tabs[this.tabName] = {
+      id: this.tabName,
+      label: this.name,
+      icon: this.icon,
+      active,
+      cssClass: active ? "active" : ""
+    };
+  }
+
+  async _onRender(html) {}
 
   async _renderData(data) {
     const renderData = await this._getData(data);
@@ -19,7 +38,7 @@ export class PlayerMenuSubApp {
 
   async prepareApp(data) {
     return {
-      name: game.i18n.localize(`PLAYER.${this.constructor.name}`),
+      name: this.name,
       view: await this._renderData(data),
     };
   }
@@ -29,7 +48,7 @@ export class PlayerMenuSubApp {
   }
 
   async activateTab() {
-    await game.dsa5.apps.playerMenu.activateTab(game.i18n.localize(`PLAYER.${this.constructor.name}`));
+    await game.dsa5.apps.playerMenu.changeTab(this.tabName, 'sheet');
   }
 
   get actor() {

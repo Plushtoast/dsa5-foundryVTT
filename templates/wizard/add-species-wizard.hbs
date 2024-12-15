@@ -1,0 +1,84 @@
+    <div class="scrollable">
+    <section class="content" data-cost="{{baseCost}}">
+        <p style="margin-bottom:10px;">{{{description}}}</p>
+
+        {{> systems/dsa5/templates/system/dsatabs.hbs}}
+
+        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}" class="tab description">
+            {{> systems/dsa5/templates/items/browse/species.html document=species hasLocalization=hasLocalization}}
+        </div>
+
+        {{#if vantagesToChose}}
+        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}" class="tab vantagesToChose">
+
+            <p>{{localize 'WIZARD.vantageDescriptionSpecies'}}</p>
+            {{#if missingVantagesToChose}}
+            <h2>{{localize 'WIZARD.missingVantages'}}</h2>
+            <div class="row-section wrap">
+                {{#each missingVantages as |item i|}}
+                <div class="col two row-section lineheight">
+                    <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
+                    <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step (or item.system.max.value item.system.maxRank.value)}} ({{item.apCost}} AP)</label>
+                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}} {{#if advantagesToChose}}
+            <h2>{{localize 'recommendedAdvantages'}}</h2>
+            {{#each advantagegroups as |group j|}}
+            {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
+            <div class="row-section wrap">
+                {{#each group.res as |item i|}}
+                <div class="col two row-section lineheight">
+                    <input type="checkbox" id="advantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                    <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
+                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                </div>
+                {{/each}}
+            </div>
+            {{/each }} {{/if}} {{#if disadvantagesToChose}}
+            <h2>{{localize 'recommendedDisadvantages'}}</h2>
+            {{#each disadvantagegroups as |group j|}}
+            {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
+            <div class="row-section wrap">
+                {{#each group.res as |item i|}}
+                <div class="col two row-section lineheight">
+                    <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                    <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
+                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                </div>
+                {{/each}}
+            </div>
+            {{/each}} {{/if}}
+        </div>
+        {{/if}} {{#if generalToChose}}
+        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}" class="tab generalToChose">
+            {{#if anyAttributeRequirements}}
+            <h2>{{localize 'WIZARD.attributesToChose'}}</h2>
+            <p>{{localize 'WIZARD.attributesToChoseHint'}}</p>
+            {{#each attributeRequirements as |item i|}}
+                <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}.</p>
+                <div class="row-section wrap">
+                    {{#each item.choices as |choice j|}}
+                    <div class="col two row-section lineheight">
+                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}"/>
+                        <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+                    </div>
+                    {{/each}}
+                </div>
+                <hr /> 
+            {{/each}} 
+            {{/if}}
+        </div>
+        {{/if}}
+
+    </section>
+    <div class="dialog-buttons">
+        <button class="dialog-button ok default" data-button="ok">
+            <i class="fas fa-check"></i> {{localize 'ok'}}
+        </button>
+            <button class="dialog-button cancel default" data-button="cancel">
+            <i class="fas fa-close"></i> {{localize 'cancel'}}
+        </button>
+    </div>
+</div>

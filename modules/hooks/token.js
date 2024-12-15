@@ -2,6 +2,7 @@ import { DSAAura } from '../system/aura.js';
 import DPS from '../system/derepositioningsystem.js';
 import tokenHUD from './tokenHUD.js';
 const { getProperty } = foundry.utils;
+const { Token } = foundry.canvas.placeables;
 
 export default function () {
   Token.prototype._drawEffects = async function () {
@@ -73,7 +74,7 @@ export default function () {
           let textEffect = game.dsa5.config.effectTextStyle;
           let color = game.settings.get('dsa5', 'statusEffectCounterColor');
           textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : '#000000';
-          let text = this.effects.addChild(new PreciseText(effect.counter, textEffect));
+          let text = this.effects.addChild(new foundry.canvas.containers.PreciseText(effect.counter, textEffect));
           text.x = effect.x;
           text.y = effect.y;
           text.isCounter = true;
@@ -86,7 +87,7 @@ export default function () {
 
   Token.prototype._drawEffect = async function (src, tint, value) {
     if (!src) return;
-    const tex = await loadTexture(src, { fallback: 'icons/svg/hazard.svg' });
+    const tex = await foundry.canvas.loadTexture(src, { fallback: 'icons/svg/hazard.svg' });
     const icon = new PIXI.Sprite(tex);
     icon.tint = tint ?? 0xffffff;
     icon.counter = value;

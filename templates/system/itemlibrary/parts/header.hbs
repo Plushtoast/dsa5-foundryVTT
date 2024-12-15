@@ -1,0 +1,19 @@
+<div class="standard-form flexcol">
+    <div class="flexrow">
+        <div class="form-group libButton">
+            <label>{{ localize "Library.search"}}</label>
+            <div class="flexrow">
+                {{#each settings as |setting|}}
+                <a data-tooltip="Library.{{@key}}" data-key="{{@key}}"
+                    class="changeSettings {{ifThen setting.val 'on' ''}}">
+                    <i class="fas fa-toggle-off"></i> <i class="fas {{setting.icon}}"></i>
+                </a>
+                {{/each}}
+                <a data-tooltip="Library.info"><i class="fas fa-info"></i></a>                
+            </div>
+        </div>
+    </div>
+    <div class="flexrow marginBottom">
+        <input class="input-text filterBy-search" name="librarySearch" type="search" placeholder="{{localize 'Library.searchPlaceholder'}}" />
+    </div>
+</div>

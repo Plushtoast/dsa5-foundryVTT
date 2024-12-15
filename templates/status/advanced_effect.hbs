@@ -1,0 +1,135 @@
+<section class="tab scollable" data-group="sheet" data-tab="advanced" data-application-part="advanced">
+    <div class="form-group">
+        <label>{{localize 'ActiveEffects.hideOnToken'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="flags.dsa5.hideOnToken" {{checked document.flags.dsa5.hideOnToken}} />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'ActiveEffects.hidePlayers'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked document.flags.dsa5.hidePlayers}}/>
+        </div>        
+    </div>
+    {{#if effectConfigs.hasSuccessEffects}}
+    <div class="form-group">
+        <label>{{localize "ActiveEffects.apply"}}</label>
+        <div class="form-fields">
+            <select name="flags.dsa5.successEffect">
+                {{selectOptions applySuccessConditions selected=document.flags.dsa5.successEffect localize=true blank="ActiveEffects.always"}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'ActiveEffects.onDelayed'}} ({{localize 'ActiveEffects.dialog.seconds'}})</label>
+        <div class="form-fields">
+            <input type="text" name="flags.dsa5.onDelayed" value="{{document.flags.dsa5.onDelayed}}" />
+        </div>
+    </div>
+    {{/if}}
+    <div class="auraBox paddingBox{{#if document.flags.dsa5.isAura}} groupbox{{/if}}">
+        <div class="form-group">
+            <label>{{localize 'ActiveEffects.isAura'}}</label>
+            
+            <div class="form-fields">
+                <input type="checkbox" class="auraSelector" name="flags.dsa5.isAura" {{checked document.flags.dsa5.isAura}}/>
+            </div>
+        </div>
+        
+        <div class="auraDetails{{#unless document.flags.dsa5.isAura}} dsahidden{{/unless}}">
+            <div class="form-group">
+                <label>{{localize "ActiveEffects.disposition"}}</label>
+                <div class="form-fields">
+                    <select name="flags.dsa5.disposition">
+                        {{selectOptions dispositions selected=document.flags.dsa5.disposition localize=true}}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{localize 'ActiveEffects.radius'}}</label>
+                <div class="form-fields">
+                    <input type="text" name="flags.dsa5.auraRadius" value="{{document.flags.dsa5.auraRadius}}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{ localize "TEMPLATE.FIELDS.BorderColor.label" }}</label>
+                <div class="form-fields">
+                    <color-picker name="flags.dsa5.borderColor" value="{{document.flags.dsa5.borderColor}}"></color-picker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{ localize "TEMPLATE.BorderThickness" }}</label>
+                <div class="form-fields">
+                    <input type="number" name="flags.dsa5.borderThickness" value="{{document.flags.dsa5.borderThickness}}" />
+                </div>
+            </div>
+        </div>
+    </div>
+    {{#if isWeapon}}
+    <div class="form-group" data-tooltip="ActiveEffects.applyToOwnerHint">
+        <label>{{localize 'ActiveEffects.applyToOwner'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="flags.dsa5.applyToOwner" {{checked document.flags.dsa5.applyToOwner}}/>
+        </div>
+    </div>
+    {{/if}}
+    {{#if canWeaponAdvantages}}
+    <div class="form-group">
+        <label>{{localize "DSASETTINGS.enableWeaponAdvantages"}}</label>
+        <div class="form-fields">
+            <select name="system.equipmentAdvantage">
+                {{selectOptions equipmentAdvantageOptions selected=document.system.equipmentAdvantage blank="-"}}
+            </select>
+        </div>
+    </div>
+    {{/if}}
+    <div class="form-group">
+        <label>{{localize "DSASETTINGS.notifyOnFadingEffects"}}</label>
+        <div class="form-fields">
+            <select class="advancedSelector" name="flags.dsa5.removeMessage">
+                {{selectOptions messageReceivers selected=document.flags.dsa5.removeMessage blank="-"}}
+            </select>
+        </div>        
+    </div>
+    <div class="form-group">
+        <label>{{localize 'Description'}}</label>
+        <div class="form-fields">
+            <input type="text" name="flags.dsa5.description" value="{{document.flags.dsa5.description}}" />
+        </div>
+    </div>
+    {{#if advancedFunctions}}
+    <div class="form-group">
+        <label>{{localize 'duration'}}</label>
+        <div class="form-fields">
+            <input type="text" name="flags.dsa5.customDuration" value="{{document.flags.dsa5.customDuration}}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize "ActiveEffects.custom"}}</label>
+        <div class="form-fields">
+            <select class="advancedSelector" name="flags.dsa5.advancedFunction" data-dtype="String">
+                {{selectOptions advancedFunctions selected=document.flags.dsa5.advancedFunction valueAttr="index" labelAttr="name" localize=true}}            
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'ActiveEffects.resistRoll'}}</label>
+        <div class="form-fields">
+            <input type="text" name="flags.dsa5.resistRoll" value="{{document.flags.dsa5.resistRoll}}" placeholder="{{localize 'LocalizedIDs.perception'}} -2" />
+        </div>
+    </div>
+    <div class="advancedFunctions">
+        {{> systems/dsa5/templates/status/advanced_functions.hbs}}
+    </div>
+    {{/if}}
+    <div class="form-group full-height">
+        <label>{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label>
+        <div class="form-fields">
+            {{#if config.canEditMacros}}
+                <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onRemove" placeholder="{{localize 'ActiveEffects.placeholder.onRemove'}}">{{document.flags.dsa5.onRemove}}</textarea> 
+            {{else}}
+                <p class="input-text">{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.onRemove}}{{else}} - {{/if}}</p>
+            {{/if}}
+        </div>        
+    </div>
+</section>

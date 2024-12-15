@@ -1,6 +1,7 @@
 import DSA5 from '../system/config-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import { showPatchViewer } from '../system/migrator.js';
+import { FormAppv2 } from '../actor/formapp.js';
 const { duplicate, mergeObject } = foundry.utils;
 
 export function setupConfiguration() {
@@ -836,13 +837,13 @@ const importSettings = async (form) => {
   });
 };
 
-class ChangelogForm extends FormApplication {
+class ChangelogForm extends FormAppv2 {
   render() {
     showPatchViewer();
   }
 }
 
-class ExportForm extends FormApplication {
+class ExportForm extends FormAppv2 {
   async render() {
     const content = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {});
     new foundry.applications.api.DialogV2({
@@ -872,24 +873,27 @@ class ExportForm extends FormApplication {
   }
 }
 
-class ConfigureTokenHotbar extends FormApplication {
-  get template() {
-    return 'systems/dsa5/templates/dialog/configureTokenhotbar.html';
-  }
+class ConfigureTokenHotbar extends FormAppv2 {
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: 'DSASETTINGS.configureTokenbar',
+    },
+    position: {
+      width: 600,
+    },
+  };
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      title: game.i18n.localize('DSASETTINGS.configureTokenbar'),
-      width: 500,
-    });
-    return options;
-  }
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/configureTokenhotbar.hbs'
+    },
+  };
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.resetTokenhotbar').click((ev) => this.resetTokenHotbar(ev));
-    html.find('select, input').change(async (ev) => {
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+    html.find('.resetTokenhotbar').on('click', (ev) => this.resetTokenHotbar(ev));
+    html.find('select, input').on('change', async (ev) => {
       const name = ev.currentTarget.name.split('.');
       let val = ev.currentTarget.dataset.dtype == 'Number' ? Number(ev.currentTarget.value) : ev.currentTarget.value;
       if (ev.currentTarget.type == 'checkbox') val = ev.currentTarget.checked;
@@ -897,7 +901,7 @@ class ConfigureTokenHotbar extends FormApplication {
       await game.settings.set(name[0], name[1], val);
       this.render();
     });
-    html.find('.bags .slot').click((ev) => this._onMasterFunctionClicked(ev));
+    html.find('.bags .slot').on('click', (ev) => this._onMasterFunctionClicked(ev));
   }
 
   async _onMasterFunctionClicked(ev) {
@@ -909,8 +913,8 @@ class ConfigureTokenHotbar extends FormApplication {
     await game.settings.set('dsa5', 'enableMasterTokenFunctions', setting);
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     mergeObject(data, {
       tokenhotbarSize: game.settings.get('dsa5', 'tokenhotbarSize'),
       tokenhotbarLayout: game.settings.get('dsa5', 'tokenhotbarLayout'),

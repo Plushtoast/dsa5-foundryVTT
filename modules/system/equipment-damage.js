@@ -59,7 +59,7 @@ export default class EquipmentDamage {
           name: game.i18n.localize('TYPES.Item.equipment'),
         }),
       );
-    if (item.system.structure.max <= 0) return ui.notifications.warn(game.i18n.format('DSAError.noBreakingStructure', { name: item.name }));
+    if (item.system.structure.max <= 0) return ui.notifications.warn('DSAError.noBreakingStructure', { format: { name: item.name }, localize: true });
 
     let breakingResistance = 0;
     let category;
@@ -71,7 +71,7 @@ export default class EquipmentDamage {
       breakingResistance = getProperty(item, 'system.structure.breakPointRating') || DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${category}`)];
     }
     if (!breakingResistance) {
-      ui.notifications.error(game.i18n.format('DSAError.noBreakingResistance', { item: item.name }));
+      ui.notifications.error('DSAError.noBreakingResistance', { format: { item: item.name }, localize: true });
       return;
     }
 
@@ -82,24 +82,25 @@ export default class EquipmentDamage {
     else if (new RegExp(`${CreatureType.clerical}`, 'i').test(attributes)) magicalWarning = `${game.i18n.format('WEAPON.attributeWarning', { domain: CreatureType.magical })}<br/>`;
 
     new DialogShared({
-      title: game.i18n.localize('DSASETTINGS.armorAndWeaponDamage'),
+      window: { title: 'DSASETTINGS.armorAndWeaponDamage' },
       content: `${magicalWarning}<label for="threshold">${game.i18n.format('WEAR.check', {
         category,
       })}</label>: <input class="quantity-click" style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
-      buttons: {
-        Yes: {
-          icon: '<i class="fas fa-dice-d20"></i>',
-          label: game.i18n.localize('Roll'),
-          callback: (dlg) => {
-            EquipmentDamage.resolveBreakingTest(item, Number(dlg.find('[name="threshold"]').val()), category);
-          },
+      buttons: [
+        {
+          action: 'yes',
+          icon: 'fas fa-dice-d20',
+          label: 'yes',
+          callback: (event, button, dialog) => {
+            EquipmentDamage.resolveBreakingTest(item, Number($(button.form).find('[name="threshold"]').val()), category);
+          }
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'no',
+          icon: 'fas fa-times',
+          label: 'cancel',
         },
-      },
-      default: 'Yes',
+      ],
     }).render(true);
   }
 

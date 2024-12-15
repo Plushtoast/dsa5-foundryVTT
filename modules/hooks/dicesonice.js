@@ -1,5 +1,6 @@
 import DSA5_Utility from '../system/utility-dsa5.js';
-const { mergeObject } = foundry.utils;
+import { DefaultAppv2 } from '../actor/baseapp.js';
+import { FormAppv2 } from '../actor/formapp.js';
 
 export default function () {
   Hooks.once('init', () => {
@@ -123,7 +124,7 @@ export default function () {
   });
 }
 
-export class DiceSoNiceCustomization extends Application {
+export class DiceSoNiceCustomization extends DefaultAppv2 {
   static unloadedModels = [];
   static retries = 0;
   static retrying = false;
@@ -170,12 +171,13 @@ export class DiceSoNiceCustomization extends Application {
     return { colorset: value };
   }
 
-  activateListeners(html) {
-    super.activateListeners();
-    html.find('[name="entryselection"]').change(async (ev) => {
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+    html.find('[name="entryselection"]').on('change', async (ev) => {
       await game.settings.set('dsa5', `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value);
     });
-    html.find('[name="systemselection"]').change(async (ev) => {
+    html.find('[name="systemselection"]').on('change', async (ev) => {
       await game.settings.set('dsa5', `dice3d_system_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value);
       DiceSoNiceCustomization.preloadDiceAssets([ev.currentTarget.value]);
       game.socket.emit('system.dsa5', {
@@ -259,8 +261,8 @@ export class DiceSoNiceCustomization extends Application {
     }
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     data.choices = game.dice3d.exports.Utils.prepareColorsetList();
     delete data.choices.custom;
     data.systems = game.dice3d.exports.Utils.prepareSystemList();
@@ -274,18 +276,23 @@ export class DiceSoNiceCustomization extends Application {
     return data;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      template: 'systems/dsa5/templates/wizard/dicesonice-configuration.html',
-      title: game.i18n.localize('DSASETTINGS.dicesonicesettings'),
+  static DEFAULT_OPTIONS = {
+    position: {
       width: 600,
-    });
-    return options;
-  }
+    },
+    window: {
+      title: 'DSASETTINGS.dicesonicesettings',
+    },
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/wizard/dicesonice-configuration.hbs',
+    },
+  };
 }
 
-class DiceSoNiceForm extends FormApplication {
+class DiceSoNiceForm extends FormAppv2 {
   render() {
     game.dsa5.apps.DiceSoNiceCustomization.render(true);
   }

@@ -3,26 +3,28 @@
         {{#if (eq field.type 'prerendered')}}
         {{{field.content}}}
         {{else if (eq field.type 'select')}}
-        <div class="form-group">
-            <label class="label-text">{{localize field.label}}</label>
+        <div class="flexcol">
+            <label>{{localize field.label}}</label>
             <select name="{{field.attr}}" data-dtype="String" data-notstrict="{{field.notStrict}}">
                 {{selectOptions options selected=field.value blank='Library.noFilter' localize=true}}
-            </select>
+            </select>            
         </div>
         {{else if (eq field.type 'text')}}
-        <div class="form-group">
-            <label class="label-text">{{localize field.label}}</label>
-            <input class="input-text" type="text" name="{{field.attr}}" placeholder="{{localize field.placeholder}}" value="{{field.value}}" data-dtype="String" />
+        <div class="flexcol">
+            <label>{{localize field.label}}</label>
+            <input type="text" name="{{field.attr}}" placeholder="{{localize field.placeholder}}" value="{{field.value}}" data-dtype="String" />
         </div>
         {{else if (eq field.type 'checkbox')}}
-        <div class="form-group cbParent row-section">
-            <label class="label-text col eighty">{{localize field.label}}</label>
-            <input class="input-text col five" type="checkbox" name="{{field.attr}}" value="1" data-dtype="Boolean" {{checked field.value}}/>
+        <div class="cbParent row-section">
+            <label class="col eighty">{{localize field.label}}</label>
+            <div class="form-fields col ten">
+                <input type="checkbox" name="{{field.attr}}" value="1" data-dtype="Boolean" {{checked field.value}}/>
+            </div>
         </div>
         {{/if}} 
     {{/each}}
-    <div class="form-group">
-        <label class="label-text">{{localize 'Module'}}</label>
+    <div class="flexcol">
+        <label>{{localize 'Module'}}</label>
         <select name="compendium" data-dtype="String">
             {{selectOptions moduleOptions selected=moduleSelected blank=(localize 'Library.noFilter')}}
         </select>

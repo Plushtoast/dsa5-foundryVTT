@@ -26,6 +26,9 @@ export function connectSocket() {
         for (let app of Object.values(ui.windows)) {
           if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
         }
+        for(let app of Object.values(foundry.applications.instances)) {
+          if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
+        }
         break;
       default:
         if (Trade.socketListeners(data)) return;
@@ -45,7 +48,7 @@ export function connectSocket() {
       case 'target':
         {
           let scene = game.scenes.get(data.payload.scene);
-          let token = new Token(scene.getEmbeddedDocument('Token', data.payload.target));
+          let token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
           token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
         }
         break;

@@ -6,24 +6,46 @@ import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from './riding.js';
 const { getProperty, mergeObject } = foundry.utils;
 
-export default class DSA5Hotbar extends Hotbar {
-  async _render(force = false, options = {}) {
-    await super._render(force, options);
+export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
+  async _onRender(context, options) {
+    await super._onRender((context, options));
     this.addContextColor();
-  }
+    if (game.settings.get('dsa5', 'hotbarv3')) {
+      const html = $(this.element);
+      html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
+      html.on('mousedown', 'li.primary', async (ev) => {
+        game.tooltip.deactivate();
 
-  async collapse() {
-    if (this._collapsed) return true;
+        if (ev.currentTarget.classList.contains('macro')) return false;
 
-    $(this.element).addClass('collapsedHotbar');
-    return super.collapse();
-  }
+        ev.stopPropagation();
+        await this.tokenHotbar.executeQuickButton(ev);
+        return false;
+      });
+      html.find('.categoryFilter').on('click', (ev) => {
+        this.filterCategory(ev, html);
+      });
+      const that = this;
+      const fn = function (ev) {
+        if (!html.find('.sections').is(':hover')) return;
 
-  async expand() {
-    if (!this._collapsed) return true;
+        that.filterSections(ev, html);
+        return false;
+      };
+      const filterOff = function () {
+        $(document).off('keydown.sectionFilter', fn);
+        that.searching = '';
+        html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
+        html.find('.longLayout').removeClass('longLayout');
+      };
+      html.find('.sections').on('hover', () => {
+        $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
+      }, filterOff);
 
-    $(this.element).removeClass('collapsedHotbar');
-    return super.expand();
+      html.find('.primary').on('hover', (ev) => this._betterTooltip(ev));
+
+      html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
+    }
   }
 
   async updateDSA5Hotbar() {
@@ -49,8 +71,8 @@ export default class DSA5Hotbar extends Hotbar {
   addContextColor() {
     const parry = new RegExp(` ${game.i18n.localize('CHAR.PARRY')}$`);
     const attack = new RegExp(` ${game.i18n.localize('CHAR.ATTACK')}$`);
-    const macroList = $(this._element).find('#macro-list');
-    for (const macro of this.macros) {
+    const macroList = $(this.element).find('#macro-list');
+    for (const macro of this.slots) {
       if (!macro.macro) continue;
 
       if (parry.test(macro.macro.name)) {
@@ -69,55 +91,25 @@ export default class DSA5Hotbar extends Hotbar {
     }
   }
 
-  get template() {
-    if (game.settings.get('dsa5', 'hotbarv3')) return 'systems/dsa5/templates/system/hud/hotbar.html';
-    else return super.template;
+  constructor(options) {
+    super(options);
+
+    if(game.settings.get('dsa5', 'hotbarv3')) {
+      this.constructor.PARTS = {
+        hotbar: {
+          root: true,
+          template: 'systems/dsa5/templates/system/hud/hotbar.html',
+          scrollable: ["#macro-list"]
+        },
+      }
+    }    
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      html.find('.quantity-click').mousedown((ev) => RuleChaos.quantityClick(ev));
-      html.on('mousedown', 'li.primary', async (ev) => {
-        game.tooltip.deactivate();
-
-        if (ev.currentTarget.classList.contains('macro')) return false;
-
-        ev.stopPropagation();
-        await this.tokenHotbar.executeQuickButton(ev);
-        return false;
-      });
-      html.find('.categoryFilter').click((ev) => {
-        this.filterCategory(ev, html);
-      });
-      const that = this;
-      const fn = function (ev) {
-        if (!html.find('.sections').is(':hover')) return;
-
-        that.filterSections(ev, html);
-        return false;
-      };
-      const filterOff = function () {
-        $(document).off('keydown.sectionFilter', fn);
-        that.searching = '';
-        html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
-        html.find('.longLayout').removeClass('longLayout');
-      };
-      html.find('.sections').hover(function () {
-        $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
-      }, filterOff);
-
-      html.find('.primary').hover((ev) => this._betterTooltip(ev));
-
-      html.find('.itdarkness input').change((ev) => this.tokenHotbar.changeDarkness(ev));
+  static PARTS = {    
+    hotbar: {
+      root: true,
+      template: "templates/ui/hotbar.hbs"
     }
-  }
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.scrollY = options.scrollY || [];
-    options.scrollY.push('#macro-list');
-    return options;
   }
 
   async _betterTooltip(ev) {
@@ -266,8 +258,8 @@ export default class DSA5Hotbar extends Hotbar {
     return false;
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     if (game.settings.get('dsa5', 'hotbarv3')) {
       await this._h3Data(data);
     }

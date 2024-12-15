@@ -152,13 +152,15 @@ export default class RequestRoll {
       skills: DSA5ChatAutoCompletion.skills.filter((x) => x.type == 'skill').sort((x, y) => x.name.localeCompare(y.name)),
     });
     let data = {
-      title: game.i18n.localize('HELP.groupcheck'),
+      window: { title: 'HELP.groupcheck' },
       content,
-      buttons: {
-        ok: {
-          icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('ok'),
-          callback: async (dlg) => {
+      buttons: [
+        {
+          action: 'ok',
+          icon: "fa fa-check",
+          label: 'ok',
+          callback: async (event, button, dialog) => {
+            const dlg = $(button.form)
             const message = game.messages.get(messageID);
             const data = message.flags;
             data.rollOptions.push({
@@ -169,11 +171,12 @@ export default class RequestRoll {
             RequestRoll.rerenderGC(message, data);
           },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'cancel',
+          icon: "fas fa-times",
+          label: 'cancel',
         },
-      },
+      ],
     };
     new DSA5Dialog(data).render(true);
   }

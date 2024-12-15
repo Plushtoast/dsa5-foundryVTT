@@ -16,12 +16,12 @@ export default class DidYouKnow {
           const msg = json.data[Math.floor(Math.random() * json.data.length)];
           const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
           $('body').find('.didYouKnow').replaceWith(didYouKnow);
-          DidYouKnow.activateListeners();
+          DidYouKnow.onRender();
         });
     }
   }
 
-  static activateListeners() {
+  static onRender() {
     $('.didYouKnow .stopFade').on('click', async (ev) => await this.stopFade(ev));
     $('.didYouKnow').on('click', () => $('.didYouKnow').remove());
     $('.didYouKnow').fadeIn();
@@ -36,7 +36,7 @@ export default class DidYouKnow {
         const msg = json.data[Math.floor(Math.random() * json.data.length)];
         const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
         $('body').append(didYouKnow);
-        this.activateListeners();
+        this.onRender();
         setTimeout(function () {
           if (DidYouKnow.fadeOut) $('.didYouKnow').fadeOut(1000, () => $('.didYouKnow').remove());
         }, timeout);

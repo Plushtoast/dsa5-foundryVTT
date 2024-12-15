@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import DSA5Dialog from '../dialog/dialog-dsa5.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
 import RuleChaos from '../system/rule_chaos.js';
@@ -10,7 +11,7 @@ const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 
 //TODO magical weapon resistance
 
-export default class PlayerMenu extends Application {
+export default class PlayerMenu extends DefaultAppv2 {
   constructor(app) {
     super(app);
     this.entityAbilities = [];
@@ -178,53 +179,54 @@ export default class PlayerMenu extends Application {
     });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
 
     tabSlider(html);
 
-    html.find('.conjurationData').change((ev) => {
+    html.find('.conjurationData').on('change', (ev) => {
       const elem = $(ev.currentTarget);
       setProperty(this.conjurationData, elem.attr('name'), elem.val());
 
       if (elem.attr('data-refresh')) this.render();
     });
-    html.find('.skill-select').click((ev) => this.rollConjuration(ev));
-    html.find('.initLibrary').click(async (ev) => {
+    html.find('.skill-select').on('click', (ev) => this.rollConjuration(ev));
+    html.find('.initLibrary').on('click', async (ev) => {
       $(ev.currentTarget).html('<i class="fas fa-spin fa-spinner"></i>');
       await game.dsa5.itemLibrary.buildEquipmentIndex();
       this.render();
     });
-    html.find('.item-edit').click((ev) => {
+    html.find('.item-edit').on('click', (ev) => {
       const itemId = $(ev.currentTarget).closest('.item').attr('data-item-id');
       const item = this.actor.items.get(itemId);
       item.sheet.render(true);
     });
-    html.find('.selectableRow').click((ev) => this.selectImprovement(ev));
-    html.find('.finalizeConjuration').click(() => this.finalizeConjuration());
-    html.find('.ruleLink').click((ev) => this.openRules(ev));
-    html.find('.openChar').click(() => {
+    html.find('.selectableRow').on('click', (ev) => this.selectImprovement(ev));
+    html.find('.finalizeConjuration').on('click', () => this.finalizeConjuration());
+    html.find('.ruleLink').on('click', (ev) => this.openRules(ev));
+    html.find('.openChar').on('click', () => {
       this.actor?.sheet.render(true);
     });
-    html.find('.showCC').click(() => {
+    html.find('.showCC').on('click', () => {
       const cc = new game.dsa5.apps.DSACharacterCalculator();
       cc.actor = this.actor;
       cc.render(true);
     });
-    html.find('.showEntity').click((ev) => {
+    html.find('.showEntity').on('click', (ev) => {
       ev.stopPropagation();
       const fun = async () => {
         (await fromUuid(ev.currentTarget.dataset.uuid)).sheet.render(true);
       };
       fun();
     });
-    html.find('.moreModifiers').change((ev) => {
+    html.find('.moreModifiers').on('change', (ev) => {
       const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find((x) => x.name == ev.currentTarget.dataset.name);
       mod.selected = $(ev.currentTarget).val();
     });
 
     for (let app of this.subApps) {
-      app.activateListeners(html);
+      app._onRender(html);
     }
   }
 
@@ -235,6 +237,7 @@ export default class PlayerMenu extends Application {
     ];
     const fun = async () => {
       const pack = game.packs.get(rule.pack);
+      if(!pack) return ui.notifications.warn('DSAError.notFound', { format: { category: 'Pack', name: rule.pack }, localize: true });
       const docs = await pack.getDocuments({ name: rule.name });
       for (let doc of docs) {
         doc.sheet.render(true);
@@ -299,7 +302,7 @@ export default class PlayerMenu extends Application {
     const selectedPackageIds = [];
     let entityCost = 0;
     let packageModifier = 0;
-    $(this._element)
+    $(this.element)
       .find('.selectableRow.selected')
       .each((index, element) => {
         for (let i = 0; i < Number(element.dataset.selected); i++) {
@@ -322,30 +325,27 @@ export default class PlayerMenu extends Application {
     this.render();
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [
-      {
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'summoning',
-      },
-    ];
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'largeDialog', 'playerMenu', 'sheet']),
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'largeDialog', 'playerMenu', 'sheet'],
+    window: {
+      title: 'PLAYER.title',
+      resizable: true,
+    },
+    position: {
       width: 500,
       height: 740,
-      title: game.i18n.localize('PLAYER.title'),
-      dragDrop: [{ dragSelector: null, dropSelector: null }],
-    });
-    options.template = 'systems/dsa5/templates/system/playermenu.html';
-    options.resizable = true;
-    return options;
-  }
+    },
+  };
 
-  _canDragDrop(selector) {
-    return true;
-  }
+  static TABS = [
+    { id: 'elementals', group: 'sheet', icon: '', label: 'PLAYER.conjuration'}
+  ]
+
+  tabGroups = { sheet: "elementals" };
+
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/system/playermenu.hbs'},
+  };
 
   async _onDrop(event) {
     let data;
@@ -417,8 +417,8 @@ export default class PlayerMenu extends Application {
     return data;
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
 
     if (!game.user.isGM && !this.actor) this.actor = game.user.character;
 
@@ -489,10 +489,20 @@ export default class PlayerMenu extends Application {
     return data;
   }
 
+  prepareTabs() {
+    const tabs = super.prepareTabs();
+    for (let app of this.subApps) {
+      app.addTab(tabs, this.tabGroups.sheet); 
+    }
+    return tabs
+  }
+
   async prepareSubApps(data) {
     data.subApps = [];
     for (let app of this.subApps) {
-      data.subApps.push(await app.prepareApp(data));
+      const subData = await app.prepareApp(data)
+      subData.cssClass = this.tabGroups.sheet == subData.name ? "active" : "";
+      data.subApps.push();
     }
   }
 }
@@ -500,9 +510,8 @@ export default class PlayerMenu extends Application {
 class ConjurationRequest extends DSA5Dialog {
   constructor(conjuration, summoner, creationData) {
     super({
-      title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})`,
-      default: 'ok',
-      buttons: {},
+      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },
+      buttons: [],
     });
     this.conjuration = conjuration;
     this.summoner = summoner;
@@ -510,8 +519,8 @@ class ConjurationRequest extends DSA5Dialog {
     this.confirmed = false;
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const uniqueIds = this.uniqueCountIds(this.creationData.entityIds);
     mergeObject(data, {
       conjuration: this.conjuration,
@@ -535,16 +544,22 @@ class ConjurationRequest extends DSA5Dialog {
     return data;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [{ navSelector: '.tabs', contentSelector: '.content', initial: 'main' }];
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'largeDialog']),
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: 'DIALOG.setTargetToUser',
+      resizable: true,
+    },
+    position: {
       width: 470,
-    });
-    options.template = 'systems/dsa5/templates/system/conjuration/request.html';
-    return options;
-  }
+    },
+    classes: ['dsa5', 'largeDialog']
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/system/conjuration/request.html',
+    },
+  };
 
   uniqueCountIds(uids) {
     return uids.reduce((acc, curr) => {
@@ -629,9 +644,7 @@ class ConjurationRequest extends DSA5Dialog {
 
     for (let item of entityAbilities) await TraitRulesDSA5.traitAdded(this.actor, item);
 
-    await this.actor.update({
-      'system.status.wounds.value': this.actor.system.status.wounds.max,
-    });
+    await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max, });
 
     const chatmsg = await renderTemplate('systems/dsa5/templates/system/conjuration/chat.html', {
       actor: this.actor,
@@ -645,10 +658,12 @@ class ConjurationRequest extends DSA5Dialog {
     this.render();
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
-    html.find('.createActor').click(() => {
+    const html = $(this.element);
+
+    html.find('.createActor').on('click', () => {
       this.createActor();
     });
 
@@ -670,7 +685,7 @@ class ConjurationRequest extends DSA5Dialog {
       let dragData = { type: 'Actor', uuid: a.dataset.uuid };
       event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
     });
-    html.find('.showEntity').click((ev) => {
+    html.find('.showEntity').on('click', (ev) => {
       ev.stopPropagation();
       const fun = async () => {
         (await fromUuid(ev.currentTarget.dataset.uuid)).sheet.render(true);

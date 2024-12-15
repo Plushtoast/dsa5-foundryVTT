@@ -28,32 +28,37 @@ export default class DSA5Dialog extends DialogShared {
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = {
-      rollButton: {
-        label: game.i18n.localize('Roll'),
-        callback: (html) => {
+    const buttons = [
+      {
+        action: 'rollButton',
+        label: 'Roll',
+        callback: (event, button, dialog) => {
+          const html = $(button.form)
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           resolve(dialogOptions.callback(html));
         },
-      },
-    };
+      }
+    ];
     if (game.user.isGM) {
-      mergeObject(buttons, {
-        cheat: {
-          label: game.i18n.localize('DIALOG.cheat'),
-          callback: (html) => {
-            game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
-            resolve(dialogOptions.callback(html, { cheat: true }));
-          },
-        },
+      buttons.push({
+        action: 'cheat',
+        label: 'DIALOG.cheat',
+        callback: (event, button, dialog) => {
+          const html = $(button.form)
+          game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
+          resolve(dialogOptions.callback(html, { cheat: true }));
+        },        
       });
     }
     return buttons;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.dieButton').click((ev) => {
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
+    html.find('.dieButton').on('click', (ev) => {
       let elem = $(ev.currentTarget);
       if (elem.attr('data-single') == 'true') {
         elem.closest('.dialog-content').find('.dieButton').removeClass('dieSelected');
@@ -61,12 +66,9 @@ export default class DSA5Dialog extends DialogShared {
       elem.toggleClass('dieSelected');
     });
   }
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      resizable: true,
-    });
-    return options;
-  }
+  static DEFAULT_OPTIONS = {
+    window: {
+        resizable: true,
+    },
+  };
 }

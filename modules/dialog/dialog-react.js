@@ -1,34 +1,31 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
+import Select2Dialog from './select2Dialog.js';
 const { mergeObject, getProperty } = foundry.utils;
 
-export default class DialogReactDSA5 extends Dialog {
+export default class DialogReactDSA5 extends Select2Dialog {
   static async showDialog(startMessage) {
     let fun = this.callbackResult;
     new DialogReactDSA5({
-      title: game.i18n.localize('Unopposed'),
+      window: { title: 'Unopposed' },
       content: await this.getTemplate(startMessage),
-      default: 'ok',
-      buttons: {
-        ok: {
-          icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('ok'),
-          callback: (dlg) => {
-            fun(dlg.find('[name="entryselection"]').val(), startMessage);
+      buttons: [
+        {
+          action: 'ok',
+          icon: "fa fa-check",
+          label: 'ok',
+          callback: (event, button, dialog) => {
+            fun($(button.form).find('[name="entryselection"]').val(), startMessage);
           },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'cancel',
+          icon: "fas fa-times",
+          label: 'cancel',
         },
-      },
+      ],
     }).render(true);
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.select2').select2();
   }
 
   static getTargetActor(message) {
@@ -52,14 +49,6 @@ export default class DialogReactDSA5 extends Dialog {
   }
 
   static callbackResult(selection, message, ev) {}
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      resizable: true,
-    });
-    return options;
-  }
 }
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
@@ -96,21 +85,24 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
   }
 }
 
-export class ActAttackDialog extends Dialog {
+export class ActAttackDialog extends foundry.applications.api.DialogV2 {
   static async showDialog(actor, tokenId) {
     const dialog = new ActAttackDialog({
-      title: game.i18n.localize('attacktest'),
+      window: { title: 'attacktest' },
       content: await this.getTemplate(actor),
-      buttons: {},
+      buttons: [],
     });
     dialog.actor = actor;
     dialog.tokenId = tokenId;
     dialog.render(true);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.reactClick').click((ev) => {
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
+    html.find('.reactClick').on('click', (ev) => {
       this.callbackResult(ev.currentTarget.dataset, this.actor, this.tokenId);
       this.close();
     });
@@ -187,19 +179,19 @@ export class ActAttackDialog extends Dialog {
     }
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.width = 550;
-    return options;
-  }
+  static DEFAULT_OPTIONS = {
+    position: {
+        width: 550
+    },
+  };
 }
 
 export class ReactToAttackDialog extends DialogReactDSA5 {
   static async showDialog(startMessage) {
     const dialog = new ReactToAttackDialog({
-      title: game.i18n.localize('Unopposed'),
+      window: { title: 'Unopposed' },
       content: await this.getTemplate(startMessage),
-      buttons: {},
+      buttons: [],
     });
     dialog.startMessage = startMessage;
     dialog.render(true);
@@ -224,21 +216,23 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.reactClick').click((ev) => {
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
+    html.find('.reactClick').on('click', (ev) => {
       this.callbackResult(ev.currentTarget.dataset.value, this.startMessage);
       this.close();
     });
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      width: 550,
-    });
-    return options;
-  }
+
+  static DEFAULT_OPTIONS = {
+    position: {
+        width: 550
+    },
+  };
 
   static async getTemplate(startMessage) {
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage);

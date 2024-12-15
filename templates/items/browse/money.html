@@ -1,0 +1,29 @@
+<div>
+    <h3>{{document.name}}</h3>
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{enrichedDescription}}}
+            {{#if (and isGM enrichedGmdescription)}}
+            <div class="maskfield">
+                {{{enrichedGmdescription}}}
+            </div>
+            {{/if}}
+        </div>
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    <small>{{item.pack}}</small>
+                </div>  
+            </div>  
+            
+        </div>
+    </div>
+</div>

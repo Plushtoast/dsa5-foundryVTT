@@ -18,18 +18,29 @@ export default class CareerWizard extends WizardDSA5 {
     };
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.title = game.i18n.format('WIZARD.addItem', {
-      item: `${game.i18n.localize('TYPES.Item.career')}`,
-    });
-    options.template = 'systems/dsa5/templates/wizard/add-career-wizard.html';
-    return options;
+  get title() {
+    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.career')} ${this.career?.name}`, })
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.optional').change((ev) => {
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/wizard/add-career-wizard.hbs'},
+  };
+
+  static TABS = [
+    { id: 'description', group: 'sheet', icon: '', label: 'Description'},
+    { id: 'generalToChose', group: 'sheet', icon: '', label: 'WIZARD.generalTab'},
+    { id: 'combatToChose', group: 'sheet', icon: '', label: 'Combat'},
+    { id: 'vantagesToChose', group: 'sheet', icon: '', label: 'vantages'},
+    { id: 'magicToChose', group: 'sheet', icon: '', label: 'Magic'},
+    { id: 'religionToChose', group: 'sheet', icon: '', label: 'Religion'},
+  ]
+
+  tabGroups = { sheet: "description" };
+
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+    html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       if ($(ev.currentTarget).hasClass('exclusiveTricks')) {
         let maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit'));
@@ -89,8 +100,8 @@ export default class CareerWizard extends WizardDSA5 {
       }, 0);
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const requirements = await this.parseToItem(this.career.system.requirements.value, ['disadvantage', 'advantage', 'specialability']);
     const missingVantages = requirements.filter((x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled);
     const advantages = await this.parseToItem(this.career.system.recommendedAdvantages.value, ['advantage']);
@@ -132,9 +143,6 @@ export default class CareerWizard extends WizardDSA5 {
 
     const missingSpecialabilities = requirements.filter((x) => x.type == 'specialability' && !x.disabled);
     mergeObject(data, {
-      title: game.i18n.format('WIZARD.addItem', {
-        item: `${game.i18n.localize('career')} ${this.career.name}`,
-      }),
       career: this.career,
       description: game.i18n.format('WIZARD.careerdescr', {
         career: this.career.name,
@@ -164,8 +172,9 @@ export default class CareerWizard extends WizardDSA5 {
       enrichedClothing: await TextEditor.enrichHTML(getProperty(this.career.system, 'clothing.value'), { secrets: false, async: true }),
       enrichedDescription: await TextEditor.enrichHTML(getProperty(this.career.system, 'description.value'), { secrets: false, async: true }),
     });
+    this.filterTabs(data);
     return data;
-  }
+  }  
 
   async addCareer(actor, item) {
     this.actor = actor;

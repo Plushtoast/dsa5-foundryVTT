@@ -117,7 +117,7 @@ export default class DSA5_Utility {
         result.error = true;
       }
     } else {
-      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name: macroName }));
+      ui.notifications.error('DSAError.macroNotFound', { localize: true, format: { name: macroName } });
     }
     return result;
   }
@@ -192,7 +192,7 @@ export default class DSA5_Utility {
     if (!actor) {
       let scene = game.scenes.get(speaker.scene);
       try {
-        if (scene) actor = new Token(scene.getEmbeddedDocument('Token', speaker.token))?.actor;
+        if (scene) actor = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', speaker.token))?.actor;
       } catch (error) {
         /* empty */
       }
@@ -237,10 +237,11 @@ export default class DSA5_Utility {
   }
 
   static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
-    return new ImagePopout(img, {
-      title: hide ? (isOwner ? name : '-') : name,
+    return new foundry.applications.apps.ImagePopout({
+      window: { title: hide ? (isOwner ? name : '-') : name },
       shareable: true,
       uuid,
+      src: img
     }).render(true);
   }
 

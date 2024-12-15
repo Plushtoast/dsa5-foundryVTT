@@ -18,7 +18,7 @@ export default function () {
   Hooks.on('renderJournalPageSheet', (obj, html, data) => {
     DSA5ChatAutoCompletion.bindRollCommands(html);
     DSA5StatusEffects.bindButtons(html);
-    html.find('img').mousedown((ev) => {
+    html.find('img').on('mousedown', (ev) => {
       if (ev.button == 2)
         game.dsa5.apps.DSA5_Utility.showArtwork({
           name: obj.name,

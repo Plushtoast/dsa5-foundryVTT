@@ -15,7 +15,7 @@ export class DSA5CombatTracker extends CombatTracker {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find('.combatant.actor .aggroButton').click((ev) => {
+    html.find('.combatant.actor .aggroButton').on('click', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
       DSA5CombatTracker.runActAttackDialog();
@@ -29,7 +29,7 @@ export class DSA5CombatTracker extends CombatTracker {
         html.find('.aggroButton').animate({ top: comb - log.scrollTop() }, 50);
       }, 50),
     );
-    html.find('.convertToBrawl').click(() => game.combat.convertToBrawl());
+    html.find('.convertToBrawl').on('click', () => game.combat.convertToBrawl());
   }
 
   static runActAttackDialog() {

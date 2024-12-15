@@ -3,19 +3,25 @@ import APTracker from '../system/ap-tracker.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 
 export default class CultureWizard extends WizardDSA5 {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.title = game.i18n.format('WIZARD.addItem', {
-      item: `${game.i18n.localize('TYPES.Item.culture')}`,
-    });
-    options.template = 'systems/dsa5/templates/wizard/add-culture-wizard.html';
-    return options;
+  get title() {
+    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.culture')} ${this.culture.name}`, })
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/wizard/add-culture-wizard.hbs'},
+  };
 
-    html.find('.optional').change((ev) => {
+  static TABS = [
+    { id: 'description', group: 'sheet', icon: '', label: 'Description'},
+    { id: 'generalToChose', group: 'sheet', icon: '', label: 'WIZARD.generalTab'},
+    { id: 'vantagesToChose', group: 'sheet', icon: '', label: 'vantages'},
+  ]
+
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+
+    html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
       parent.find('.optional:checked').each(function () {
@@ -27,8 +33,8 @@ export default class CultureWizard extends WizardDSA5 {
     });
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     let advantages = await this.parseToItem(this.culture.system.recommendedAdvantages.value, ['advantage']);
     let disadvantages = await this.parseToItem(this.culture.system.recommendedDisadvantages.value, ['disadvantage']);
     let writings =
@@ -54,9 +60,6 @@ export default class CultureWizard extends WizardDSA5 {
 
     let baseCost = Number(this.culture.system.APValue.value);
     mergeObject(data, {
-      title: game.i18n.format('WIZARD.addItem', {
-        item: `${game.i18n.localize('TYPES.Item.culture')} ${this.culture.name}`,
-      }),
       culture: this.culture,
       description: game.i18n.format('WIZARD.culturedescr', {
         culture: this.culture.name,
@@ -76,6 +79,7 @@ export default class CultureWizard extends WizardDSA5 {
       enrichedClothing: await TextEditor.enrichHTML(getProperty(this.culture.system, 'clothing.value'), { secrets: false, async: true }),
       enrichedDescription: await TextEditor.enrichHTML(getProperty(this.culture.system, 'description.value'), { secrets: false, async: true }),
     });
+    this.filterTabs(data);
     return data;
   }
 

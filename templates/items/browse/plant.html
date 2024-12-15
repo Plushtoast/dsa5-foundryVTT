@@ -38,7 +38,7 @@
                         
                             <div class="col">
                                 {{#each attributes}}
-                                <label class="plantContainer {{this.name}}" data-tooltip="{{localize (concat 'PLANT.' this.name)}}">
+                                <label class="plantContainer {{this.name}}" data-tooltip="{{concat 'PLANT.' this.name}}">
                                     <input type="checkbox" name="system.planttype.{{this.name}}" value="true" data-dtype="Boolean" disabled="true" {{checked this.checked}}/>
                                     <span></span>
                                 </label> {{/each}}

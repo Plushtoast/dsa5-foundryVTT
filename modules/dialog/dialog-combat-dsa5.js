@@ -62,14 +62,14 @@ export default class DSA5CombatDialog extends DialogShared {
     },
   };
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      width: 700,
-      resizable: true,
-    });
-    return options;
-  }
+  static DEFAULT_OPTIONS = {
+    position: {
+        width: 700
+    },
+    window: {
+        resizable: true,
+    },
+  };
 
   static setData(actor, type, testData, renderData) {
     let rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
@@ -119,8 +119,11 @@ export default class DSA5CombatDialog extends DialogShared {
     el.dataset.tooltip = tooltip;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
     let specAbs = html.find('.specAbs');
     specAbs.mouseenter((ev) => {
       const el = ev.currentTarget;
@@ -143,7 +146,7 @@ export default class DSA5CombatDialog extends DialogShared {
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
     });
 
-    html.find('.variantChange').mousedown((ev) => this.changeSpecAbVariant(ev));
+    html.find('.variantChange').on('mousedown', (ev) => this.changeSpecAbVariant(ev));
 
     html.on('mousedown', '.specAbs', (ev) => {
       if (html.find('.opportunityAttack').is(':checked')) {
@@ -176,7 +179,7 @@ export default class DSA5CombatDialog extends DialogShared {
       this.calculateModifier();
       this.setCombatSpecTooltip(ev.currentTarget);
     });
-    html.find('.opportunityAttack').change((ev) => {
+    html.find('.opportunityAttack').on('change', (ev) => {
       if ($(ev.currentTarget).is(':checked')) {
         for (let k of html.find('.specAbs')) {
           $(k).removeClass('active').attr('data-step', 0).find('.step').text('');
@@ -184,8 +187,8 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     });
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
-    html.find('.modifiers option').mousedown((ev) => this.calculateModifier(ev));
-    html.find('.quantity-click').mousedown((ev) => this.calculateModifier(ev));
+    html.find('.modifiers option').on('mousedown', (ev) => this.calculateModifier(ev));
+    html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
     let targets = this.readTargets();
     // not great
@@ -234,14 +237,15 @@ export default class DSA5CombatDialog extends DialogShared {
             situationalModifiers.push(defenseStatEffect);
           }
         }
-        const htmlMods = $(this._element).find('[name=situationalModifiers]');
+        const html = $(this.element);
+        const htmlMods = html.find('[name=situationalModifiers]');
         if (situationalModifiers.length > 0) {
           if (htmlMods.length == 0) {
             const modBox = `<div class="modifiers form-group">
-                                            <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
-                                            <select name="situationalModifiers" multiple />
-                                        </div>`;
-            $(this._element).find('[name=rollMode]').parent().after(modBox);
+            <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
+            <select name="situationalModifiers" multiple />
+            </div>`;
+            html.find('[name=rollMode]').parent().after(modBox);
             this.position.height += 86;
             this.setPosition(this.position);
           }
@@ -256,7 +260,7 @@ export default class DSA5CombatDialog extends DialogShared {
                                     ${mod.name} [${mod.value}]
                                 </option>`;
           }
-          $(this._element).find('.modifiers select').html(mods);
+          html.find('.modifiers select').html(mods);
         } else if (htmlMods.length > 0) {
           htmlMods.parent().remove();
           this.position.height -= 86;
@@ -682,13 +686,14 @@ export default class DSA5CombatDialog extends DialogShared {
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+    const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     if (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) {
       const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, testData.extra.actor);
       const progress = testData.source.system.reloadTime.progress;
       if (progress < LZ) {
-        mergeObject(buttons, {
-          reloadButton: {
+        buttons.push(
+          {
+            action: 'reloadButton',
             label: `${game.i18n.localize('WEAPON.reload')} (${progress}/${LZ})`,
             callback: async () => {
               const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
@@ -705,8 +710,8 @@ export default class DSA5CombatDialog extends DialogShared {
               });
               await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
             },
-          },
-        });
+          }
+        );
       }
     }
     return buttons;

@@ -397,7 +397,7 @@ DSA5.equipmentTypes = {
 };
 
 DSA5.equipmentCategories = new Set(['meleeweapon', 'rangeweapon', 'equipment', 'ammunition', 'armor', 'poison', 'consumable', 'plant', 'book']);
-DSA5.magicCategories = new Set(['ritual', 'ceremony', 'spell', 'liturgy', 'blessing', 'magictrick', 'spellextension', 'patron', 'demonmark', 'magicalsign']);
+DSA5.magicCategories = new Set(['ritual', 'ceremony', 'spell', 'liturgy', 'blessing', 'magictrick', 'spellextension', 'magicalsign']);
 
 DSA5.systemTables = [
   {

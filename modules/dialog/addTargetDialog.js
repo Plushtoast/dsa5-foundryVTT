@@ -1,8 +1,8 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import DPS from '../system/derepositioningsystem.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
-const { mergeObject } = foundry.utils;
 
-export class AddTargetDialog extends Dialog {
+export class AddTargetDialog extends foundry.applications.api.DialogV2 {
   static async getDialog(speaker) {
     const targets = Array.from(game.user.targets).map((x) => x.id);
     const selectables = [];
@@ -21,19 +21,21 @@ export class AddTargetDialog extends Dialog {
       });
     }
     return new AddTargetDialog({
-      title: game.i18n.localize('DIALOG.addTarget'),
+      window: { title: 'DIALOG.addTarget' },
       content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
-      buttons: {},
+      buttons: [],
     });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+
+    const html = $(this.element);
     const combatants = html.find('.combatant');
     combatants.dblclick((ev) => this.setTargets(ev, true));
-    combatants.click((ev) => this.setTargets(ev));
-    combatants.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
-    combatants.mousedown((ev) => this._onRightClick(ev));
+    combatants.on('click', (ev) => this.setTargets(ev));
+    combatants.on('hover', this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
+    combatants.on('mousedown', (ev) => this._onRightClick(ev));
   }
 
   _onCombatantHoverOut(ev) {
@@ -78,7 +80,7 @@ export class AddTargetDialog extends Dialog {
   }
 }
 
-export class SelectUserDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+export class SelectUserDialog extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'DIALOG.setTargetToUser',
@@ -110,16 +112,15 @@ export class SelectUserDialog extends foundry.applications.api.HandlebarsApplica
         title: 'CONTROLS.targetForUser',
         icon: 'fa fa-bullseye',
         button: true,
-        onClick: async () => {
-          (await SelectUserDialog.getDialog()).render(true);
-        },
+        order: 2,
+        onChange: async () => {(await SelectUserDialog.getDialog()).render(true);},
       };
-      btns[0].tools.splice(2, 0, userSelect);
+      btns.tokens.tools.targetUser = userSelect;
     });
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
@@ -176,8 +177,8 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
     ChatMessage.create(chatOptions);
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('[name="sel_all"]').on('change', (ev) => {

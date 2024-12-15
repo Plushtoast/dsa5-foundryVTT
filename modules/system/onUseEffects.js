@@ -44,7 +44,7 @@ export default class OnUseEffect {
         }
       }
     } else {
-      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name }));
+      ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
     }
     return result;
   }

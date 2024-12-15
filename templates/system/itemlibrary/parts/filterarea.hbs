@@ -1,0 +1,38 @@
+<div class="row-section">
+    {{#if categories.length}}
+    <div class="col third advancedSearch" {{#unless advancedFilter}}style="display:none" {{/unless}}>
+        <fieldset>
+            <legend>{{localize 'Library.advanced'}}</legend>
+            <div class="advancedSearchContent">
+                {{{advancedFilter}}}
+            </div>  
+        </fieldset>
+    </div>
+    {{/if}}
+    <div class="col seventy contentShow">
+        {{#if categories.length}}
+        <div class="flexrow filterCategories">
+            <div class="flexcol">
+                <fieldset>
+                    <legend>{{localize "Library.searchCategoryDescription"}}</legend>
+                    <div class="flexrow flexwrap">
+                        {{#each categories as |val|}}
+                        <div class="browser-item form-group" data-tooltip="{{val.label}}">
+                            <input class="filter" id="filter_{{val.key}}" type="checkbox"
+                                data-category="{{../category}}" data-type="{{val.key}}" {{checked val.selected}} />
+                            <label for="filter_{{val.key}}">{{val.label}}</label>
+                        </div>
+                        {{/each}}
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        {{/if}}
+        <div class="flexrow libcontainer libraryImg">
+            <div class="flexcol seventy flexrow wrap searchResult">
+                <ul class="item-list">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

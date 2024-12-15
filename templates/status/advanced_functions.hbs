@@ -1,0 +1,80 @@
+{{#if (eq document.flags.dsa5.advancedFunction '1')}}
+  <div class='form-group'>
+    <label>{{localize 'effect'}}</label>
+    <div class='form-fields'>
+      <select name='flags.dsa5.args0' data-dtype='String'>
+        {{selectOptions config.systemEffects selected=document.flags.dsa5.args0 valueAttr='id' labelAttr='name'}}
+      </select>
+    </div>
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'stepValue'}}</label>
+    <div class='form-fields'>
+      <input type='text' name='flags.dsa5.args1' value='{{document.flags.dsa5.args1}}' />
+    </div>
+  </div>
+{{/if}}
+{{#if (hasElem macroIndexes document.flags.dsa5.advancedFunction)}}
+  <div class='form-group full-height'>
+    <label>{{localize 'ActiveEffects.advancedFunctions.macro'}}</label>
+    <div class='form-fields'>
+      {{#if config.canEditMacros}}
+        <textarea
+          class='input-text'
+          rows='10'
+          type='text'
+          name='flags.dsa5.args3'
+          placeholder='{{localize "ActiveEffects.placeholder.macros"}}'
+        >{{document.flags.dsa5.args3}}</textarea>
+      {{else}}
+        <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+      {{/if}}
+    </div>
+
+  </div>
+{{/if}}
+{{#if (eq document.flags.dsa5.advancedFunction '3')}}
+  <div class='form-group'>
+    <label>{{localize 'ActiveEffects.creature'}}</label>
+    <div class='form-fields'>
+      <input type='text' name='flags.dsa5.args4' value='{{document.flags.dsa5.args4}}' />
+    </div>
+
+  </div>
+{{/if}}
+{{#if (eq document.flags.dsa5.advancedFunction '4')}}
+  <div class='form-group full-height'>
+    <label>{{localize 'ActiveEffects.advancedFunctions.armorPostprocess'}}</label>
+    <div class='form-fields'>
+      {{#if config.canEditMacros}}
+        <textarea
+          class='input-text'
+          rows='10'
+          type='text'
+          name='flags.dsa5.args3'
+          placeholder='{{localize "ActiveEffects.placeholder.armorPostprocess"}}'
+        >{{document.flags.dsa5.args3}}</textarea>
+      {{else}}
+        <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+      {{/if}}
+    </div>
+  </div>
+{{/if}}
+{{#if (eq document.flags.dsa5.advancedFunction '5')}}
+  <div class='form-group full-height'>
+    <label>{{localize 'ActiveEffects.advancedFunctions.damagePostprocess'}}</label>
+    <div class='form-fields'>
+      {{#if config.canEditMacros}}
+        <textarea
+          class='input-text'
+          rows='10'
+          type='text'
+          name='flags.dsa5.args3'
+          placeholder='{{localize "ActiveEffects.placeholder.armorPostprocess"}}'
+        >{{document.flags.dsa5.args3}}</textarea>
+      {{else}}
+        <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
+      {{/if}}
+    </div>
+  </div>
+{{/if}}

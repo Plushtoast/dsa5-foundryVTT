@@ -8,9 +8,10 @@ import DSA5Payment from './payment.js';
 import { Trade } from '../actor/trade.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import { DefaultAppv2 } from '../actor/baseapp.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 
-export default class TokenHotbar2 extends Application {
+export default class TokenHotbar2 extends DefaultAppv2 {
   static attackTypes = new Set(['meleeweapon', 'rangeweapon']);
   static traitTypes = new Set(['meleeAttack', 'rangeAttack']);
   static spellTypes = new Set(['liturgy', 'spell']);
@@ -166,6 +167,20 @@ export default class TokenHotbar2 extends Application {
     this.position.top = hotbarPosition.top - itemWidth - 25;
   }
 
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'tokenQuickHot'],
+    window: {
+      frame: false,
+    },
+  };
+
+  static PARTS = {
+    main: {
+      root: true,
+      template: 'systems/dsa5/templates/status/tokenHotbar.hbs'
+    },
+  };
+
   static get defaultOptions() {
     const options = super.defaultOptions;
     const hotbarPosition = $('#hotbar').first().position();
@@ -173,15 +188,11 @@ export default class TokenHotbar2 extends Application {
     const position = game.settings.get('dsa5', 'tokenhotbarPosition');
 
     mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'tokenQuickHot']),
       itemWidth,
-      resizable: false,
       height: itemWidth + 45,
       zIndex: 61,
       left: hotbarPosition.left + 8,
       top: hotbarPosition.top - itemWidth - 25,
-      template: 'systems/dsa5/templates/status/tokenHotbar.html',
-      title: 'TokenHotbar',
     });
     mergeObject(options, position);
     return options;
@@ -214,9 +225,9 @@ export default class TokenHotbar2 extends Application {
     tinyNotification(`${game.i18n.localize('MASTER.darkness')} ${darkness}`);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
     const container = html.find('.dragHandler');
     if (container[0]) new Draggable(this, html, container[0], this.options.resizable);
 
@@ -227,14 +238,14 @@ export default class TokenHotbar2 extends Application {
       return false;
     });
 
-    html.find('.itdarkness input').change((ev) => this.changeDarkness(ev));
+    html.find('.itdarkness input').on('change', (ev) => this.changeDarkness(ev));
 
     const that = this;
     const fn = function (ev) {
       that.filterButtons(ev);
       return false;
     };
-    html.find('.filterable').hover(
+    html.find('.filterable').on('hover', 
       function () {
         $(document).on('keydown', fn);
       },
@@ -243,7 +254,7 @@ export default class TokenHotbar2 extends Application {
       },
     );
 
-    html.find('.quantity-click').mousedown((ev) => RuleChaos.quantityClick(ev));
+    html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
 
     html.on('mousedown', 'li', async (ev) => {
       ev.stopPropagation();
@@ -484,8 +495,8 @@ export default class TokenHotbar2 extends Application {
     return `style="width:${Math.ceil(items.length / defaultCount) * 200}px"`;
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const actor = this.actor;
     const items = {
       attacks: [],
@@ -865,8 +876,8 @@ export default class TokenHotbar2 extends Application {
 
   async render(force, options = {}) {
     const rend = await super.render(force, options);
-    if (this._element) {
-      this._element.css({ zIndex: 61 });
+    if (this.element) {
+      $(this.element).css({ zIndex: 61 });
     }
     return rend;
   }
@@ -917,7 +928,7 @@ export default class TokenHotbar2 extends Application {
   }
 }
 
-export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+export class AddEffectDialog extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'tokenStatusEffects'],
     window: {
@@ -925,8 +936,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
       resizable: true,
     },
     position: {
-      width: 700,
-      height: 'auto',
+      width: 700
     },
   };
 
@@ -955,11 +965,10 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
     new AddEffectDialog().render(true);
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
-
     html.find('.filterable .reactClick').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
         let div = document.createElement('div');
@@ -1012,7 +1021,7 @@ export class AddEffectDialog extends foundry.applications.api.HandlebarsApplicat
     new foundry.applications.api.DialogV2({
       //classes: ["dsa5", "dialog"],
       window: {
-        title: game.i18n.localize('CONDITION.' + id),
+        title: 'CONDITION.' + id,
       },
       position: {
         width: 400,

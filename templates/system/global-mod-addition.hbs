@@ -1,0 +1,41 @@
+<div class="scrollable">
+    <div class="form-group">
+        <label>{{localize "Name"}}</label>
+        <div class="form-fields">
+            <input type="text" name="name" value="{{config.name}}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize "Modifier"}}</label>
+        <div class="form-fields">
+            <input type="number" name="value" value="{{config.value}}" />
+        </div>
+    </div>
+    <fieldset>
+        <legend>{{localize 'Category'}}</legend>
+        {{#each categories as |cat|}}
+        <div class="form-group">
+            <label>{{itemCategory cat}}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="target.{{cat}}" value="1" {{checked (lookup ../config.target cat)}}/>
+            </div>
+        </div>
+        {{/each}}
+    </fieldset>
+    <fieldset>
+        <legend>{{localize 'target'}}</legend>
+        <div class="form-group">
+            <label>{{localize 'TYPES.Actor.character'}}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="victim.player" value="1" {{checked config.victim.player}}/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>{{localize 'TYPES.Actor.npc'}}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="victim.npc" value="1" {{checked config.victim.npc}}/>
+            </div>
+        </div>
+    </fieldset>
+    <button style="margin-top:20px" class="addGlobalMod">{{localize 'save'}}</button>
+</div>

@@ -8,20 +8,24 @@ const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
-    buttons.rollButton.label = game.i18n.localize('Opposed');
-    const nonOpposedButton = {
-      nonOpposedButton: {
-        label: game.i18n.localize('Roll'),
-        callback: (html) => {
+    const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+    buttons.find(x => x.action == 'rollButton').label = 'Opposed';
+    buttons.unshift(
+      {
+        action: 'nonOpposedButton',
+        label: 'Roll',
+        callback: (event, button, dialog) => {
+          const html = $(button.form);
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.opposable = false;
           resolve(dialogOptions.callback(html));
         },
       },
-      routineRoll: {
-        label: game.i18n.localize('ROLL.routine'),
-        callback: (html) => {
+      {
+        action: 'routineRoll',
+        label: 'ROLL.routine',
+        callback: (event, button, dialog) => {
+          const html = $(button.form);
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.routine = true;
           mergeObject(testData.extra.options, {
@@ -34,14 +38,16 @@ export default class DSA5SkillDialog extends DialogShared {
           });
           resolve(dialogOptions.callback(html));
         },
-      },
-    };
-    mergeObject(nonOpposedButton, buttons);
-    return nonOpposedButton;
+      
+      });
+    return buttons;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
 
     html.on('change', 'input,select', (ev) => this.rememberFormData(ev));
 
@@ -55,20 +61,21 @@ export default class DSA5SkillDialog extends DialogShared {
     this.rememberFormData();
     html.on('mousedown', '.quantity-click', (ev) => this.rememberFormData(ev));
 
-    html.find('.modifiers option').mousedown((ev) => {
+    html.find('.modifiers option').on('mousedown', (ev) => {
       this.rememberFormData(ev);
     });
   }
 
   rememberFormData(ev) {
-    const data = new FormDataExtended(this.element.find('form')[0]).object;
-    data.situationalModifiers = Actordsa5._parseModifiers(this._element);
+    const html = $(this.element);
+    const data = new FormDataExtended(html.find('form')[0]).object;
+    data.situationalModifiers = Actordsa5._parseModifiers(html);
     this.calculateRoutine(data);
   }
 
   async calculateRoutine(data) {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-    const routineButton = this.element.find('.routineRoll');
+    const routineButton = $(this.element).find('.routineRoll');
     if (!actor) return routineButton.prop('disabled', true);
 
     let routineAllowed = true;
@@ -91,12 +98,12 @@ export default class DSA5SkillDialog extends DialogShared {
     this.calculateProbability(actor, this.dialogData.source, mod, fw);
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      width: 700,
+  static DEFAULT_OPTIONS = {
+    window: {
       resizable: true,
-    });
-    return options;
-  }
+    },
+    position: {
+      width: 700,
+    },
+  };
 }

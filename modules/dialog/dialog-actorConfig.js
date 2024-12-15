@@ -1,6 +1,7 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import Migrakel from '../system/migrakel.js';
 
-export default class DialogActorConfig extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+export default class DialogActorConfig extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'SHEET.actorConfig',
@@ -25,8 +26,8 @@ export default class DialogActorConfig extends foundry.applications.api.Handleba
     return data;
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('.updateSpells').on('click', async (ev) => this.updateWrapper('updateSpellsAndLiturgies', ev));

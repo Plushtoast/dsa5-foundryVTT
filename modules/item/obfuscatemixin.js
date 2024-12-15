@@ -15,22 +15,24 @@ export const ItemSheetObfuscation = (superclass) =>
       return getProperty(this.item, `system.obfuscation.${section}`);
     }
 
-    activateListeners(html) {
-      super.activateListeners(html);
+    async _onRender(context, options) {
+      await super._onRender((context, options));
+
+      const html = $(this.element);
       html.on('click', '.obfuscateSection', (ev) => this.obfuscateItem(ev));
+      this.obfuscateTabs();
     }
 
     obfuscationCss(section) {
       return this.isObfuscated(section) ? '' : ' pale';
     }
 
-    async _render(force = false, options = {}) {
-      await super._render(force, options);
-
+    async obfuscateTabs() {
       const tabs = ['details', 'effects', 'description', 'enchantment'];
+      const html = $(this.element);
       let swaptab = false;
       for (let tab of tabs) {
-        const ele = $(this._element).find(`nav [data-tab="${tab}"]`);
+        const ele = html.find(`nav [data-tab="${tab}"]`);
         if (!ele.length) continue;
 
         const invisible = options.tabsinvisible || this.isObfuscated(tab);
@@ -49,17 +51,17 @@ export const ItemSheetObfuscation = (superclass) =>
           ele.remove();
 
           if (tab == 'details') {
-            $(this._element).find('[name="system.price.value"],[name="system.price.raw"]').replaceWith('<label>?</label>');
+            html.find('[name="system.price.value"],[name="system.price.raw"]').replaceWith('<label>?</label>');
           }
         }
       }
       if (swaptab) {
-        const tabs = $(this._element).find('nav .item:first-child');
+        const tabs = html.find('nav .item:first-child');
         if (tabs.length) {
-          this.activateTab(tabs.attr('data-tab'));
+          this.changeTab(tabs[0].dataset.tab, tabs[0].dataset.group);
         } else {
           const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', { item: this.item });
-          $(this._element).find('.content').html(templ);
+          html.find('.content').html(templ);
         }
       }
     }

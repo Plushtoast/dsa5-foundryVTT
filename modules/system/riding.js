@@ -97,12 +97,12 @@ export default class Riding {
     return horse.items.find((x) => x.type == 'skill' && x.name.startsWith(game.i18n.localize('LocalizedIDs.loyalty')));
   }
 
-  static activateListeners(html, actor) {
-    html.find('.riding-toggle').click(() => this.toggleIsRiding(actor));
-    html.find('.showHorse').click(() => this.getHorse(actor).sheet.render(true));
-    html.find('.horse-delete').click(() => this.clearMount(actor));
-    html.find('.horse-loyalty').click(() => this.rollLoyalty(actor));
-    html.find('[name="horseSpeedSelector"]').change(async (ev) => {
+  static onRender(html, actor) {
+    html.find('.riding-toggle').on('click', () => this.toggleIsRiding(actor));
+    html.find('.showHorse').on('click', () => this.getHorse(actor).sheet.render(true));
+    html.find('.horse-delete').on('click', () => this.clearMount(actor));
+    html.find('.horse-loyalty').on('click', () => this.rollLoyalty(actor));
+    html.find('[name="horseSpeedSelector"]').on('change', async (ev) => {
       ev.preventDefault();
       const horse = Riding.getHorse(actor);
       Riding.setSpeed(horse, ev.currentTarget.value);
@@ -402,20 +402,20 @@ export default class Riding {
     if (canvas.tokens.controlled.length == 2) {
       html.find('.col.left').prepend(this.preRenderedMountHud);
       const btn = html.find('.control-icon[data-action="ride"]');
-      btn.click(() => this.mountHorse(app.object));
+      btn.on('click', () => this.mountHorse(app.object));
     } else if (this.isRiding(actor)) {
       html.find('.col.left').prepend(this.preRenderedUnmountHud);
       const btn = html.find('.control-icon[data-action="ride"]');
-      btn.click(() => {
+      btn.on('click', () => {
         this.unmountHorse(actor, app.object.document);
         btn.remove();
       });
       const horse = this.getHorse(actor);
       html.find('.col.right').prepend(this.preRenderedSpeedHud);
       const btn2 = html.find('.control-icon[data-action="rideIncrease"]');
-      btn2.click(() => this.increaseSpeed(horse));
+      btn2.on('click', () => this.increaseSpeed(horse));
       const btn3 = html.find('.control-icon[data-action="rideDecrease"]');
-      btn3.click(() => this.decreaseSpeed(horse));
+      btn3.on('click', () => this.decreaseSpeed(horse));
     }
   }
 }

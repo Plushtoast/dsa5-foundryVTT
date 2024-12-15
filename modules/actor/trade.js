@@ -1,19 +1,26 @@
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
+import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, randomID } = foundry.utils;
 
-export class Trade extends Application {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.template = 'systems/dsa5/templates/actors/merchant/merchant-trade.html';
-    options.width = 900;
-    options.resizable = true;
-    options.tabs = [{ navSelector: '.tabs', contentSelector: '.content', initial: 'main' }];
-    options.title = game.i18n.localize('MERCHANT.exchange');
-    options.classes.push('noscrollWizard');
-    options.scrollY = ['.scrollable'];
-    return options;
+export class Trade extends DefaultAppv2 {
+  static DEFAULT_OPTIONS = {
+    classes: ['noscrollWizard'],
+    position: {
+      width: 900,
+    },
+    window: {
+      title: 'MERCHANT.exchange',
+      resizable: true,
+    },
+  };
+
+  static PARTS = {    
+    main: {
+      template: 'systems/dsa5/templates/actors/merchant/merchant-trade.hbs',
+      scrollable: [".scrollable"]
+    }
   }
 
   constructor(sourceId, targetId, options = {}) {
@@ -54,8 +61,8 @@ export class Trade extends Application {
     }
   }
 
-  async getData() {
-    const data = await super.getData();
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const tradeFriend = DSA5_Utility.getSpeaker(this.tradeData.sourceId);
     let inventory = tradeFriend.prepareItems({ details: [] });
 
@@ -86,7 +93,7 @@ export class Trade extends Application {
   }
 
   static findTradeApp(id) {
-    for (const app of Object.values(ui.windows)) {
+    for (const app of Object.values(foundry.applications.instances)) {
       if (app instanceof this && app?.tradeData?.id === id) {
         return app;
       }
@@ -106,15 +113,16 @@ export class Trade extends Application {
     return super.close(options);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.trade').click((ev) => this._offerItem(ev));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+    html.find('.trade').on('click', (ev) => this._offerItem(ev));
     const filterGear = (ev) => this._filterGear($(ev.currentTarget));
-    html.find('.item-edit').click((ev) => this._editItem(ev, this.tradeData.sourceId));
-    html.find('.item-external-edit').click((ev) => this._editItem(ev, this.tradeData.targetId));
-    html.find('.acceptTrade').click((ev) => this.acceptTrade(ev));
+    html.find('.item-edit').on('click', (ev) => this._editItem(ev, this.tradeData.sourceId));
+    html.find('.item-external-edit').on('click', (ev) => this._editItem(ev, this.tradeData.targetId));
+    html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
     let gearSearch = html.find('.gearSearch');
-    gearSearch.keyup((event) => filterGear(event));
+    gearSearch.on('keyup', (event) => filterGear(event));
     gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
   }
 
@@ -318,24 +326,31 @@ export class Trade extends Application {
   }
 }
 
-export class TradeOptions extends Application {
+export class TradeOptions extends DefaultAppv2 {
   constructor(actor, options) {
     super(options);
     this.actorId = Itemdsa5.buildSpeaker(actor, actor.token?.id);
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     data.actors = game.actors.filter((x) => x.hasPlayerOwner && x.id != this.actorId.actor);
     return data;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.template = 'systems/dsa5/templates/actors/merchant/merchant-tradeoptions.html';
-    options.resizable = true;
-    options.title = game.i18n.localize('MERCHANT.exchange');
-    return options;
+  static DEFAULT_OPTIONS = {
+    classes: ['noscrollWizard'],
+    window: {
+      title: 'MERCHANT.exchange',
+      resizable: true,
+    },
+  };
+
+  static PARTS = {    
+    main: {
+      template: 'systems/dsa5/templates/actors/merchant/merchant-tradeoptions.hbs',
+      scrollable: [".scrollable"]
+    }
   }
 
   _startTrade(ev) {
@@ -345,8 +360,9 @@ export class TradeOptions extends Application {
     this.close();
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
     html.find('.startTrade').on('dblclick', (ev) => this._startTrade(ev));
   }
 }

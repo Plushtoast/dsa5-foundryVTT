@@ -33,6 +33,7 @@ import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
 import DSA5 from '../system/config-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
+import DSA5ItemLibrary from '../system/itemlibrary.js';
 const { mergeObject } = foundry.utils;
 
 export default function () {
@@ -55,6 +56,8 @@ export default function () {
 
 Hooks.once('init', () => {
   loadTemplates([
+    'systems/dsa5/templates/system/dsatabs.hbs',
+    'systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs',
     'systems/dsa5/templates/actors/actor-main.html',
     'systems/dsa5/templates/actors/actor-talents.html',
     'systems/dsa5/templates/items/item-description.html',
@@ -101,7 +104,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/item-effects.html',
     'systems/dsa5/templates/items/item-aoe.html',
     'systems/dsa5/templates/items/traditionArtifact.html',
-    'systems/dsa5/templates/status/advanced_functions.html',
+    'systems/dsa5/templates/status/advanced_functions.hbs',
     'systems/dsa5/templates/actors/parts/information.html',
     'systems/dsa5/templates/actors/parts/personaltrait.html',
     'systems/dsa5/templates/actors/parts/combatskills.html',
@@ -189,6 +192,8 @@ Hooks.once('setup', () => {
 
 Hooks.once('i18nInit', () => {
   setupKnownEquipmentModifiers();
+  
+  game.dsa5.itemLibrary = new DSA5ItemLibrary();
 });
 
 class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2 {
@@ -278,7 +283,7 @@ function setupKnownEquipmentModifiers() {
   }
 }
 
-class DaylightIlluminationShader extends AdaptiveIlluminationShader {
+class DaylightIlluminationShader extends foundry.canvas.rendering.shaders.AdaptiveIlluminationShader {
   static fragmentShader = `
     ${this.SHADER_HEADER}
     ${this.PERCEIVED_BRIGHTNESS}

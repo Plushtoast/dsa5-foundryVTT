@@ -1,362 +1,421 @@
 import DSA5_Utility from './utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
 import { clickableAbility, tabSlider } from './view_helper.js';
+import { DefaultAppv2 } from '../actor/baseapp.js';
+const { duplicate, mergeObject } = foundry.utils;
+import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
 import DSA5 from './config-dsa5.js';
-const { getProperty, duplicate, debounce, mergeObject } = foundry.utils;
-//TODO merge existing index with advanced details
-//TODO create index with getIndex(fields)
-//TODO check if we can use the uuid right from the start
+
+//todo check if items on index have permission
 
 class SearchDocument {
-  constructor(item, pack = {}) {
-    let filterType = item.documentName || item.type;
-    switch (item.documentName) {
+  static cachedKeys = {
+      Item: {},
+      Actor: {},
+  }
+
+  static getSearchFields(documentName, type) {
+      const cached = this.cachedKeys[documentName][type]
+
+      if(!cached) {
+          const fields = ["name", "img", "type"]
+          const descriptionKey = game.dsa5.itemLibrary.fullTextSearch ? this.getDescriptionKey(documentName, type) : undefined
+          this.cachedKeys[documentName][type] = { fields, descriptionKey }
+      }
+
+      return this.cachedKeys[documentName][type]
+  }
+
+  static getDescriptionKey(documentName, type) {
+    switch (documentName) {
       case 'Actor':
       case 'Item':
-        filterType = item.type;
-        break;
+        return 'system.description.value'
+      default:
+        return 'description.value'
     }
-    let data = '';
-    if (game.settings.get('dsa5', 'indexDescription')) {
-      switch (filterType) {
-        case 'creature':
-        case 'npc':
-        case 'character':
-          data = getProperty(item, 'system.description.value');
-          break;
-        case 'JournalEntry':
-          data = getProperty(item, 'system.content');
-          break;
-        default:
-          data = getProperty(item, 'description.value');
-      }
-    }
+  }
 
-    this.document = {
+  static toJournalSearchableObject(item) {
+    return {
+      uuid: item.uuid,
       name: item.name,
-      filterType,
-      data: $('<div>').html(data).text(),
-      id: item.id || item._id,
-      visible: item.visible ? item.visible : true,
-      compendium: item.compendium ? item.compendium.metadata.packageName : pack.packageName || '',
-      pack: item.pack || (pack.packageName ? pack.id : undefined),
-      img: item.img,
-      price: item.system?.price?.value,
-    };
-  }
-
-  get uuid() {
-    if (this.document.compendium) {
-      return `Compendium.${this.document.pack}.${this.document.id}`;
-    } else {
-      switch (this.itemType) {
-        case 'character':
-        case 'creature':
-        case 'npc':
-          return `Actor.${this.id}`;
-        case 'JournalEntry':
-          return `JournalEntry.${this.id}`;
-        default:
-          return `Item.${this.id}`;
-      }
+      compendium: item.pack,
+      img: 'systems/dsa5/icons/categories/DSA-Auge.webp',
+      type: 'JournalEntry',
+      description: item.pages.map(x => x.text?.content).join(" ")      
     }
   }
 
-  get name() {
-    return this.document.name;
-  }
-  get data() {
-    return this.document.data;
-  }
-  get id() {
-    return this.document.id;
-  }
-  get itemType() {
-    return this.document.filterType;
-  }
+  static toSearchableObject(item, documentName) {
+      if(documentName == "JournalEntry") return this.toJournalSearchableObject(item)
 
-  get hasPrice() {
-    return DSA5.equipmentCategories.has(this.document.filterType);
-  }
+      const { descriptionKey, fields } = this.getSearchFields(documentName, item.type)
+      const object = {}
 
-  async getItem() {
-    return await fromUuid(this.uuid);
-  }
+      object.uuid = item.uuid
+      object.compendium = item.pack || ''
+      if (DSA5.equipmentCategories.has(item.type)) {
+        object.price = item.system.price?.value || 0
+      }
 
-  hasPermission() {
-    return this.document.visible;
-  }
-  async render() {
-    (await this.getItem()).sheet.render(true);
-  }
-  get compendium() {
-    return this.document.compendium;
-  }
-  get img() {
-    if (this.itemType == 'JournalEntry') return 'systems/dsa5/icons/categories/DSA-Auge.webp';
+      if(descriptionKey)
+          object.description = foundry.utils.getProperty(item, descriptionKey) ?? ""
 
-    return this.document.img;
+      for (const field of fields)
+          object[field] = foundry.utils.getProperty(item, field) ?? ""
+
+      return object
   }
 }
 
+
 class AdvancedSearchDocument extends SearchDocument {
-  constructor(item, subcategory) {
-    super(item);
+  static toSearchableObject(item, subcategory) {
+    const object = super.toSearchableObject(item, item.documentName)
 
     const attrs = ADVANCEDFILTERS[subcategory] || [];
     for (let attr of attrs) {
-      this[attr.attr] = attr.attr.split('.').reduce((prev, cure) => {
+      object[attr.attr] = attr.attr.split('.').reduce((prev, cure) => {
         return prev[cure] === undefined ? {} : prev[cure];
       }, item.system);
     }
+    return object;
   }
 }
 
-export default class DSA5ItemLibrary extends Application {
-  constructor(app) {
-    super(app);
-    this.advancedFiltering = false;
-    this.journalBuild = false;
-    this.journalWorldBuild = false;
-    this.equipmentBuild = false;
-    this.equipmentWorldBuild;
-    this.zooBuild = false;
-    this.zooWorldBuild = false;
-    this.currentDetailFilter = {
-      equipment: [],
-      character: [],
-      spell: [],
-      journal: [],
-      zoo: [],
-    };
-    this.journalIndex = new FlexSearch({
-      encode: 'simple',
-      tokenize: 'reverse',
-      cache: true,
-      doc: {
-        id: 'id',
-        field: ['name', 'data'],
-      },
-    });
-    this.equipmentIndex = new FlexSearch({
-      encode: 'simple',
-      tokenize: 'reverse',
-      cache: true,
-      doc: {
-        id: 'id',
-        field: ['name', 'data', 'itemType'],
-        tag: ['itemType'],
-      },
-    });
-    this.zooIndex = new FlexSearch({
-      encode: 'simple',
-      tokenize: 'reverse',
-      cache: true,
-      doc: {
-        id: 'id',
-        field: ['name', 'data', 'itemType'],
-        tag: ['itemType'],
-      },
-    });
-
-    this.detailFilter = {};
-
-    this.pages = {
-      equipment: {},
-      character: {},
-      spell: {},
-      journal: {},
-      zoo: {},
-    };
-
-    this.filters = {
-      equipment: {
-        categories: {
-          armor: false,
-          ammunition: false,
-          equipment: false,
-          meleeweapon: false,
-          rangeweapon: false,
-          poison: false,
-          disease: false,
-          consumable: false,
-          plant: false,
-          book: false,
-          trap: false,
-        },
-        filterBy: {
-          search: '',
-        },
-      },
-      character: {
-        categories: {
-          career: false,
-          advantage: false,
-          combatskill: false,
-          culture: false,
-          disadvantage: false,
-          trait: false,
-          skill: false,
-          specialability: false,
-          species: false,
-          application: false,
-          demonmark: false,
-          patron: false,
-          essence: false,
-          imprint: false,
-        },
-        filterBy: {
-          search: '',
-        },
-      },
-      spell: {
-        categories: {
-          blessing: false,
-          ceremony: false,
-          liturgy: false,
-          magictrick: false,
-          ritual: false,
-          spell: false,
-          spellextension: false,
-          magicalsign: false,
-        },
-        filterBy: {
-          search: '',
-        },
-      },
-      journal: {
-        categories: {},
-        filterBy: {
-          search: '',
-        },
-      },
-      zoo: {
-        categories: {
-          npc: false,
-          character: false,
-          creature: false,
-        },
-        filterBy: {
-          search: '',
-        },
-      },
-    };
-  }
-
-  async getData(options) {
-    const data = await super.getData(options);
-    data.categories = this.translateFilters();
-    data.isGM = game.user.isGM;
-    data.advancedMode = this.advancedFiltering ? 'on' : '';
-    data.worldIndexed = game.settings.get('dsa5', 'indexWorldItems') ? 'on' : '';
-    data.fullTextEnabled = game.settings.get('dsa5', 'indexDescription') ? 'on' : '';
-    data.filterDuplicateItems = game.settings.get('dsa5', 'filterDuplicateItems') ? 'on' : '';
-    data.browseEnabled = this.browseEnabled ? 'on' : '';
-    if (this.advancedFiltering) {
-      data.advancedFilter = await this.buildDetailFilter('tbd', this.subcategory);
+class DSASystemConfiguration {
+  static hasDescription = {
+    "Item": {
+        default: "system.description.value"
+    },
+    "Actor": {
+        default: "system.description.value"
+    },
+    "JournalEntry": {
+        default: "description"
     }
-    return data;
   }
 
-  translateFilters() {
-    return {
-      equipment: this.buildFilter(this.filters.equipment),
-      character: this.buildFilter(this.filters.character),
-      spell: this.buildFilter(this.filters.spell),
-      zoo: this.buildFilter(this.filters.zoo, 'Actor'),
-      journal: this.buildFilter(this.filters.journal),
+  static documentGroups = { "Items": 0, "Character": 0, "Religion": 0, "Actors": 1, "JournalEntries": 2 }
+  static documentNames = ["Item", "Actor", "JournalEntry"]
+
+  static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper"]
+  
+  static initialize() {
+      
+  }
+
+  static documentNameFromGroup(documentGroup) {
+    return this.documentNames[this.documentGroups[documentGroup]]
+  }
+
+  static categoryByType(documentName, type) {
+    switch(documentName) {
+        case "Item":
+          if(DSA5.equipmentCategories.has(type) || ["trap", "money", "disease"].includes(type)) return "Items"
+          if(DSA5.magicCategories.has(type)) return "Religion"
+          return "Character"
+        case "Actor":
+          return "Actors"
+        default:
+          return documentName;
+    }
+  }
+
+  static getDescription(item) {
+      const descriptionKey = this.getDescriptionKey(item)
+      return descriptionKey ? foundry.utils.getProperty(item, descriptionKey) : ""
+  }
+
+  static getDescriptionKey(item) {
+      return foundry.utils.getProperty(this.hasDescription, `${item.documentName}.${item.type}`) || foundry.utils.getProperty(this.hasDescription, `${item.documentName}.default`)
+  }
+
+  static async renderTooltip(item, fullTextSearch) {
+      const description = this.getDescription(item, fullTextSearch)
+      const langKey = `TYPES.${item.documentName}.${item.type}`
+      const type = game.i18n.has(langKey) ? game.i18n.localize(langKey) : item.type
+      return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
+  }
+
+  static getSearchFields(documentName, type, fullTextSearch) {
+      const fields = { index: ["name"] }
+
+      if(fullTextSearch) {
+          const descriptionKey = this.getDescriptionKey({ documentName, type })
+
+          if(descriptionKey) fields.index.push("description")
+      }
+      return fields
+  }
+}
+
+export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+    tabGroups = {
+        sheet: "Items"
+    }
+
+    pageSize = 60
+
+    windowtabs = {
+        Items: { id: "Items", group: "sheet", icon: "fa-solid fa-suitcase", label: "TYPES.Item.equipment" },
+        Character: { id: "Character", group: "sheet", icon: "fa-solid fa-user", label: "TYPES.Actor.character" },
+        Religion: { id: "Religion", group: "sheet", icon: "fa-solid fa-hat-wizard", label: `${game.i18n.localize("Magic")}/${game.i18n.localize("Religion")}` },
+        JournalEntries: { id: "JournalEntries", group: "sheet", icon: "fa-solid fa-book-open", label: "DOCUMENT.JournalEntries" },
+        Actors: { id: "Actors", group: "sheet", icon: "fa-solid fa-dragon", label: "zoo" },
+    }
+
+    static DEFAULT_OPTIONS = {
+        id: "DSA5ItemLibrary",
+        tag: "aside",
+        position: {
+            height: 800,
+            width: 800
+        },
+        window: {
+            title: "ItemLibrary",
+            icon: "fa-regular fa-book",
+            minimizable: true,
+            resizable: true,
+            controls: [
+                {
+                    action: "showCompendiumFilter",
+                    icon: "fas fa-filter",
+                    label: "DSASETTINGS.libraryModulsFilter",
+                    visible: true,
+                }
+            ],
+        },
+        actions: {},
+        classes: ["dsa5", "sheet", "itemlibrary"]
     };
+
+    static PARTS = {
+        tabs: {
+            template: "systems/dsa5/templates/system/dsatabs.hbs"
+        },
+        header: {
+            template: "systems/dsa5/templates/system/itemlibrary/parts/header.hbs"
+        },
+        Items: {
+            template: "systems/dsa5/templates/system/itemlibrary/Items.hbs"
+        },
+        Religion: {
+          template: "systems/dsa5/templates/system/itemlibrary/Religion.hbs"
+        },
+        Character: {
+          template: "systems/dsa5/templates/system/itemlibrary/Character.hbs"
+        },
+        Actors: {
+            template: "systems/dsa5/templates/system/itemlibrary/Actors.hbs"
+        },
+        JournalEntries: {
+            template: "systems/dsa5/templates/system/itemlibrary/JournalEntries.hbs"
+        }
+    }
+
+
+  constructor(app) {
+      super(app)
+
+      this.loadSystemSpecificConfig().then(() => {
+        this.prepareDataModels()
+        this.prepareIndexes()
+      })
   }
 
-  purgeAdvancedFilters() {
-    for (let key in this.filters) {
-      for (let subkey in this.filters[key]['categories']) {
-        this.filters[key]['categories'][subkey] = false;
+  async loadSystemSpecificConfig() {
+    this.systemConfiguration = DSASystemConfiguration
+    this.systemConfiguration.initialize()
+    this.fullTextSearch = game.settings.get("dsa5", "indexDescription") && this.systemConfiguration.hasDescription
+  }
+
+  prepareIndexes() {
+    this.indexes = {}
+    this.detailFilter = {}
+
+    for (let className of this.systemConfiguration.documentNames) {
+        const fields = this.systemConfiguration.getSearchFields(className, undefined, this.fullTextSearch).index
+
+        this.indexes[className] = {
+            search: "",
+            index: new FlexSearch.Document({
+                tokenize: "full",
+                cache: true,
+                document: {
+                    id: "uuid",
+                    store: true,
+                    tag: "type",
+                    index: fields
+                }
+            }),
+            build: false,
+            worldBuild: false,
+            next: undefined
+        }
+    }
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options)
+
+    data.tabs = this.getTabs()
+    data.isGM = game.user.isGM
+    data.models = this.models
+
+    if (this.advancedFiltering) {
+      data.advancedFilter = await this.buildDetailFilter('none', 'none');
+    }
+
+    this.prepareSettings(data)
+
+    return data
+  }
+ 
+  prepareSettings(data) {
+    data.settings = {
+        advanced: {
+            icon: "fa-brain",
+            val: this.advancedFiltering
+        },
+        indexWorldItems: {
+            icon: "fa-globe",
+            val: game.settings.get('dsa5', 'indexWorldItems')
+        },
+        fullTextSearch: {
+            icon: "fa-align-center",
+            val: game.settings.get('dsa5', 'indexDescription')
+        },
+        browseEnabled: {
+            icon: "fa-maximize",
+            val: this.browseEnabled
+        },
+        filterDuplicateItems: {
+            icon: "fa-filter",
+            val: game.settings.get('dsa5', 'filterDuplicateItems')
+        }
+    }
+  }
+
+  async onChangeSetting(ev) {
+    const key = ev.currentTarget.dataset.key
+    let val
+    const html = $(this.element)
+    switch(key) {
+        case "advanced":
+            val = !this.advancedFiltering
+            this.advancedFiltering = val
+            if (this.advancedFiltering) {
+              html.find('.advancedSearch').fadeIn();
+              this.setAdvancedFilters();
+            } else {
+              html.find('.advancedSearch').fadeOut();
+            }
+            break
+        case "indexWorldItems":
+            val = !game.settings.get('dsa5', 'indexWorldItems')
+            await game.settings.set('dsa5', 'indexWorldItems', val)
+            break
+        case "fullTextSearch":
+            val = !game.settings.get('dsa5', 'indexDescription')
+            await game.settings.set('dsa5', 'indexDescription', val)
+            break
+        case "browseEnabled":
+            val = !this.browseEnabled
+            this.browseEnabled = val
+            break
+        case "filterDuplicateItems":
+            val = !game.settings.get('dsa5', 'filterDuplicateItems')
+            await game.settings.set('dsa5', 'filterDuplicateItems', val)
+            break
+    }
+
+    $(ev.currentTarget).toggleClass('on', val)
+  }
+
+  prepareDataModels() {
+    this.models = {}
+
+    for (const documentName of this.systemConfiguration.documentNames) {
+        const modelData = Object.keys(game.model[documentName]).filter(x => !this.systemConfiguration.skipCategories.includes(x))
+        
+        for (const key of modelData) {
+            const category = this.systemConfiguration.categoryByType(documentName, key)      
+            if (!this.models[category]) this.models[category] = []
+            const langKey = `TYPES.${documentName}.${key}`
+            this.models[category].push({
+                label: game.i18n.has(langKey) ? game.i18n.localize(langKey) : key,
+                selected: false,
+                key
+            })
+        }
+    }
+    for (let key of Object.keys(this.models)) {
+        this.models[key].sort((a, b) => a.label.localeCompare(b.label))
+    }
+  }
+
+  async buildEquipmentIndex() {
+    await this.buildItemIndex()
+  }
+
+  async buildItemIndex() {
+    await this._createIndex("Item", game.items)
+  }
+
+  async buildActorIndex() {
+      await this._createIndex("Actor", game.actors)
+  }
+
+  async buildJournalEntryIndex() {
+      await this._createIndex("JournalEntry", game.journal)
+  }
+
+
+  async setAdvancedFilters(category = 'none', subcategory = 'none') {
+    for (let key in this.models) {
+      for (let subkey of this.models[key]) {
+        subkey.selected = false;
       }
     }
-    $(this._element).find('.filter[type="checkbox"]').prop('checked', false);
-    this.buildDetailFilter('none', 'none').then((templ) => {
-      $(this._element).find('.advancedSearch .groupbox').html(templ);
-    });
-  }
-
-  buildFilter(elem, parentCat = 'Item') {
-    let res = [];
-    Object.keys(elem.categories).forEach(function (key) {
-      res.push({
-        label: game.i18n.localize(`TYPES.${parentCat}.${key}`),
-        selected: elem.categories[key],
-        key: key,
-      });
-    });
-    res = res.sort(function (a, b) {
-      return a.label.localeCompare(b.label);
-    });
-    return res;
-  }
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.id = 'DSA5ItemLibrary';
-    options.classes.push('dsa5', 'itemlibrary');
-    options.height = 800;
-    options.width = 800;
-    options.resizable = true;
-    options.title = game.i18n.localize('ItemLibrary');
-    options.template = 'systems/dsa5/templates/system/itemlibrary.html';
-    options.tabs = [
-      {
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'equipment',
-      },
-    ];
-    return options;
+    const html = $(this.element)
+    html.find('.filter[type="checkbox"]').prop('checked', false);
+    let templ = await this.buildDetailFilter('none', 'none')
+    html.find('.advancedSearch .advancedSearchContent').html(templ);
   }
 
   async getRandomItems(category, limit) {
-    let filteredItems = [];
-    let index = this.equipmentIndex;
-    filteredItems.push(...(await index.search(category, { field: ['itemType'] })));
-    return (
-      await Promise.all(
-        this.shuffle(filteredItems.filter((x) => x.hasPermission))
-          .slice(0, limit + 5)
-          .map((x) => x.getItem()),
-      )
-    )
-      .filter((x) => {
-        const enchantments = x.getFlag('dsa5', 'enchantments');
-        return !enchantments || !enchantments.find((x) => x.talisman);
-      })
-      .slice(0, limit);
+    const filteredItems = (await this.indexes.Item.searchAsync({ tag: category })).map(x => x.result).flat()
+    return (await Promise.all(this.shuffle(filteredItems).slice(0, limit + 5).map(uuid => fromUuid(uuid)))).filter((x) => {
+      const enchantments = x.getFlag('dsa5', 'enchantments');
+      return !enchantments || !enchantments.find((x) => x.talisman);
+    }).slice(0, limit)
   }
 
   shuffle(array) {
-    let currentIndex = array.length,
-      temporaryValue,
-      randomIndex;
+    let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
 
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
     }
 
     return array;
   }
 
   async findCompendiumItem(search, category, filterCompendium = true) {
-    await this.buildEquipmentIndex();
+    await this.buildItemIndex();
 
     const query = {
-      field: ['name'],
-      where: { itemType: category },
+      index: ["name"],
+      tag: [category],
     };
-    let result = await this.equipmentIndex.search(search, query);
+    let result = (await this.indexes.Item.index.searchAsync(search, query)).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x));
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
     result = result.sort((a, b) => {
@@ -370,14 +429,14 @@ export default class DSA5ItemLibrary extends Application {
       return 0;
     });
 
-    return await Promise.all(result.map((x) => x.getItem()));
+    return await Promise.all(result.map((x) => fromUuid(x.uuid)));
   }
 
   async getCategoryItems(category, asItemData = false, asItem = false) {
-    await this.buildEquipmentIndex();
-    const res = this.equipmentIndex.search(category, { field: ['itemType'] });
-    if (asItemData) return (await Promise.all(res.map((x) => x.getItem()))).map((x) => x.toObject());
-    else if (asItem) return await Promise.all(res.map((x) => x.getItem()));
+    await this.buildItemIndex();
+    const res = (await this.indexes.Item.searchAsync({ tag: [category] })).map(x => x.result).flat();
+    if (asItemData) return (await Promise.all(res.map((x) => fromUuid(x)))).map((x) => x.toObject());
+    else if (asItem) return await Promise.all(res.map((x) => fromUuid(x)));
 
     return res;
   }
@@ -408,13 +467,9 @@ export default class DSA5ItemLibrary extends Application {
       }
       return true;
     };
-
-    let result = index.where((x) => (search == '' || x.name.toLowerCase().indexOf(search) != -1) && selFnct(x) && txtFnct(x) && cbFnct(x) && rangeFct(x));
-
-    //this.pages[category].next = result.length
-
+    const result = Object.values(index?.store || {}).filter((x) => (search == '' || x.name.toLowerCase().indexOf(search) != -1) && selFnct(x) && txtFnct(x) && cbFnct(x) && rangeFct(x));
     let filteredItems = result;
-    filteredItems = filteredItems.filter((x) => x.hasPermission).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
+    filteredItems = filteredItems.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1));
 
     return filteredItems;
   }
@@ -444,14 +499,14 @@ export default class DSA5ItemLibrary extends Application {
     return { sels, inps, checkboxes };
   }
 
-  async advancedFilterStuff(category, page) {
-    const dataFilters = $(this._element).find('.detailFilters');
+  async advancedFilterStuff(documentGroup, page) {
+    const dataFilters = $(this.element).find('.detailFilters');
     const subcategory = dataFilters.attr('data-subc');
-    const index = this.detailFilter[subcategory];
-    const search = this.filters[category].filterBy.search.toLowerCase();
+    const index = subcategory ? this.detailFilter[subcategory] : this.findIndex(documentGroup).index;
+    const search = this.findIndex(documentGroup).search.toLowerCase();
     const { sels, inps, checkboxes } = this.collectDetailSearch(dataFilters);
     let result = await this.executeAdvancedFilter(search, index, sels, inps, checkboxes);
-    this.setBGImage(result, category);
+    this.setBGImage(result, documentGroup);
     result = this.filterDuplications(result);
     return result;
   }
@@ -464,254 +519,166 @@ export default class DSA5ItemLibrary extends Application {
     let result = await this.executeAdvancedFilter(search.search || '', index, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || []);
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
-    return await Promise.all(result.map((x) => x.getItem()));
+    return await Promise.all(result.map((x) => fromUuid(x.uuid)));
   }
 
   filterDuplications(filteredItems) {
-    if (game.settings.get('dsa5', 'filterDuplicateItems')) filteredItems = [...new Map(filteredItems.map((item) => [`${item.name}_${item.type}`, item])).values()];
+    if (game.settings.get('dsa5', 'filterDuplicateItems')) 
+      filteredItems = [...new Map(filteredItems.map((item) => [`${item.name}_${item.type}`, item])).values()];
 
     return filteredItems;
   }
 
-  async filterStuff(category, index, page) {
-    let search = this.filters[category].filterBy.search;
+  async _openItem(ev) {
+    const uuid = $(ev.currentTarget).data("uuid")
+    const item = await fromUuid(uuid)
+    item.sheet.render(true)
+  }
 
-    let fields = {
-      field: ['name', 'data'],
-    };
-    let filteredItems = [];
+  async filterStuff(category, page) {
+    const { index, itemType } = this.selectIndex(category)
+    const search = index.search
+    let filteredItems
+    const fields = this.systemConfiguration.getSearchFields(itemType, undefined, this.fullTextSearch)
+    const collectTags = this.models[category]?.filter(x => x.selected).map(x => x.key) || []
+    let startIndex = Number(page) || 0
 
-    let oneFilterSelected = false;
-    for (let filter in this.filters[category].categories) {
-      if (this.filters[category].categories[filter]) {
-        let result;
-        let next = null;
-        if (search == '') {
-          result = index.search(filter, {
-            field: ['itemType'],
-            sort: 'name',
-            where: { itemType: filter },
-          });
-        } else {
-          result = index.search(search, {
-            ...fields,
-            sort: 'name',
-            where: { itemType: filter },
-          });
-        }
-
-        let startIndex = Number(page) || 0;
-        result = result.slice(startIndex, Math.min(startIndex + 60, result.length));
-
-        if (result.length == 60) next = `${startIndex + 60}`;
-
-        this.pages[category].next = next;
-        filteredItems.push(...result);
-      }
-      oneFilterSelected = this.filters[category].categories[filter] || oneFilterSelected;
+    if(collectTags.length == 0) {
+      filteredItems = (await index.index.searchAsync(search, { ...fields })).map(x => x.result).flat()
+    }
+    else {
+      filteredItems = (await (search == "" ? index.index.searchAsync({ tag: collectTags }) : index.index.searchAsync(search, { ...fields, tag: collectTags }))).map(x => x.result).flat()
     }
 
-    if (!oneFilterSelected) {
-      filteredItems = index.search(search, {
-        ...fields,
-        limit: 60,
-        page: page || true,
-        sort: 'name',
-      });
-      this.pages[category].next = filteredItems.next;
+    filteredItems = filteredItems.slice(startIndex, Math.min(startIndex + this.pageSize, filteredItems.length))
+
+    if (filteredItems.length == this.pageSize) startIndex += this.pageSize
+
+    index.next = startIndex
+
+    filteredItems = filteredItems.map(x => index.index.get(x))
+    filteredItems = this.filterDuplications(filteredItems)
+    this.setBGImage(filteredItems, category)
+    return filteredItems
+  }
+
+  changeTab(tab, group, options) {
+    super.changeTab(tab, group, options)
+
+    switch(tab) {
+        case "Character":
+        case "Religion":
+        case "Items":
+            this.buildItemIndex()
+            break
+        case "Actors":
+            this.buildActorIndex()
+            break
+        case "JournalEntries":
+            this.buildJournalEntryIndex()
+            break
     }
-
-    filteredItems = filteredItems.result ? filteredItems.result : filteredItems;
-    filteredItems = filteredItems.filter((x) => x.hasPermission);
-    this.setBGImage(filteredItems, category);
-
-    return filteredItems;
   }
 
   setBGImage(filterdItems, category) {
-    $(this._element).find(`.${category} .libcontainer`)[`${filterdItems.length > 0 ? 'remove' : 'add'}Class`]('libraryImg');
+    $(this.element).find(`[data-tab="${category}"] .libcontainer`)[`${filterdItems.length ? "remove" : "add"}Class`]("libraryImg")
   }
 
   async getItemTemplate(filteredItems, itemType) {
-    if (this.browseEnabled && ['Item', 'Actor'].includes(itemType)) {
-      return filteredItems
-        .map((x) => {
-          return `<div class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></div>`;
-        })
-        .join('');
+    if (this.browseEnabled && ['Items','Actors','Character','Religion'].includes(itemType)) {
+        return filteredItems.map(x => {
+            return `<li class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></li>`
+        }).join("")
     } else {
-      const template = 'systems/dsa5/templates/system/libraryItem.html';
-      return await renderTemplate(template, { items: filteredItems });
+        const template = 'systems/dsa5/templates/system/itemlibrary/parts/libraryItem.hbs'
+        return await renderTemplate(template, { items: filteredItems })
     }
+  }
+  
+  getObserver(itemType) {
+    const observer = this.findIndex(itemType).observer ||= new IntersectionObserver(this.intersectionObserved.bind(this), { root: $(this.element).find('.window-content')[0] });
+    return observer
   }
 
   async renderBrowseItem(uuid) {
-    const document = await fromUuid(uuid);
-    const template = `systems/dsa5/templates/items/browse/${document.type}.html`;
-    const item = await renderTemplate(template, {
-      document,
-      isGM: game.user.isGM,
-      ...(await document.sheet.getData()),
-    });
-    return `<div class="uuid libItem ${document.type} col" data-uuid="${uuid}" data-item-id="${document.id}">${item}</div>`;
-  }
+    const document = await fromUuid(uuid)
+    const template = `systems/dsa5/templates/items/browse/${document.type}.html`
+    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+    return `<div class="uuid libItem ${document.type} col" draggable="true" data-uuid="${uuid}">${item}</div>`
+  } 
 
   intersectionObserved(entries, observer) {
     for (let entry of entries) {
-      if (entry.isIntersecting) {
-        const uuid = entry.target.dataset.uuid;
-        this.renderBrowseItem(uuid).then((html) => {
-          entry.target.outerHTML = html;
-        });
-        observer.unobserve(entry.target);
-      }
+        if (entry.isIntersecting) {
+            const uuid = entry.target.dataset.uuid
+            this.renderBrowseItem(uuid).then(html => {
+                entry.target.outerHTML = html
+            })
+            observer.unobserve(entry.target)
+        }
     }
   }
 
-  async renderResult(html, filteredItems, { index, itemType }, isPaged) {
-    const resultField = html.find('.searchResult .item-list');
-    let innerhtml = await this.getItemTemplate(filteredItems, itemType);
-    if (!isPaged) resultField.empty();
+  async renderResult(filteredItems, category, isPaged) {
+    const resultField = $(this.element).find(`[data-tab="${category}"] .searchResult .item-list`)
+    const innerhtml = $(await this.getItemTemplate(filteredItems, category))
 
-    innerhtml = $(innerhtml);
-    const itemDragStart = (event, index, type, pay = false) => {
-      event.stopPropagation();
-      let item = index.find(event.currentTarget.dataset.itemId);
-      event.originalEvent.dataTransfer.setData(
-        'text/plain',
-        JSON.stringify({
-          type,
-          uuid: item.uuid,
-          pay,
-        }),
-      );
-    };
+    if (!isPaged) resultField.html(innerhtml)
+    else resultField.append(innerhtml)
 
-    innerhtml.each(function () {
-      const li = $(this);
-      li.attr('draggable', true).on('dragstart', (event) => itemDragStart(event, index, itemType));
-      li.find('.priceDrag')
-        .attr('draggable', true)
-        .on('dragstart', (event) => itemDragStart(event, index, itemType, true));
-    });
-
-    resultField.append(innerhtml);
-
-    const items = resultField.find('.loader');
+    const items = resultField.find('.loader')
     if (items.length > 0) {
-      const observer = new IntersectionObserver(this.intersectionObserved.bind(this), { root: html.find('.window-content')[0] });
-      for (let item of items) {
-        observer.observe(item);
-      }
+        const observer = this.getObserver(category)
+        
+        for (let item of items) observer.observe(item)
     }
   }
 
-  async filterItems(html, category, page) {
-    const index = this.selectIndex(category);
-    const filteredItems = this.advancedFiltering && category != 'journal' ? await this.advancedFilterStuff(category, page) : await this.filterStuff(category, index.index, page);
-    await this.renderResult(html, filteredItems, index, page);
-    return filteredItems;
+  async filterItems(documentGroup, page) {
+    const filteredItems = this.advancedFiltering && documentGroup != "JournalEntries" ? await this.advancedFilterStuff(documentGroup, page) : await this.filterStuff(documentGroup, page)
+    await this.renderResult(filteredItems, documentGroup, page)
+    return filteredItems
   }
 
-  selectIndex(category) {
-    let itemType = 'Item';
-    let index = this.equipmentIndex;
-    switch (category) {
-      case 'zoo':
-        itemType = 'Actor';
-        index = this.zooIndex;
-        break;
-      case 'journal':
-        itemType = 'JournalEntry';
-        index = this.journalIndex;
-        break;
-    }
-    return { index, itemType };
-  }
+  async _createIndex(documentName, worldItems) {
+    const index = this.findIndex(documentName)
+    if (index.build) return
 
-  async _render(force = false, options = {}) {
-    await super._render(force, options);
-    this.buildEquipmentIndex();
-  }
-
-  _getHeaderButtons() {
-    const buttons = super._getHeaderButtons();
-    buttons.unshift({
-      class: 'libraryModulsFilter',
-      tooltip: 'DSASETTINGS.libraryModulsFilter',
-      icon: 'fas fa-filter',
-      onclick: async () => new LibraryModulsFilter().render(true),
-    });
-    return buttons;
-  }
-
-  async buildEquipmentIndex() {
-    await this._createIndex('equipment', 'Item', game.items);
-  }
-
-  async _createIndex(category, document, worldStuff) {
-    if (this[`${category}Build`]) return;
-
-    const filteredCompendiums = game.settings.get('dsa5', 'libraryModulsFilter');
-    SceneNavigation.displayProgressBar({
-      label: game.i18n.format('Library.loading', { item: '' }),
-      pct: 0,
-    });
-    const target = $(this._element).find(`*[data-tab="${category}"]`);
-    this.showLoading(target, category);
-    const packs = game.packs.filter(
-      (p) => p.documentName == document && (game.user.isGM || p.visible) && !p.metadata.label.startsWith('WZ-') && !filteredCompendiums[p.metadata.packageName],
-    );
-    const percentage = 100 / (packs.length + 1);
-    let count = percentage;
-    const actorFields = ['name', 'system.type', 'system.description.value', 'img'];
-    let func;
-    if (document == 'Actor') {
-      func = (p) => {
-        return p.getIndex({ actorFields });
-      };
-    } else if (document == 'JournalEntry') {
-      func = (p) => {
-        return p.getDocuments();
-      };
+    index.build = true
+    const filteredCompendiums = game.settings.get("dsa5", "libraryModulsFilter")
+    const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true})
+    this.showLoading(documentName)
+    const packs = game.packs.filter(p => p.documentName == documentName && (game.user.isGM || p.visible) && !filteredCompendiums[p.metadata.packageName])
+    const percentage = 100 / (packs.length + 1)
+    let count = percentage
+    const actorFields = ["name", "img", "type"]
+    let func
+    if (documentName == "Actor") {
+        func = (p) => { return p.getIndex({ actorFields }) }
+    } else if (documentName == "JournalEntry") {
+        func = (p) => { return p.getDocuments() }
     } else {
-      func = (p) => {
-        return p.getDocuments({
-          type__in: Object.keys(game.system.documentTypes.Item),
-        });
-      };
+        func = (p) => { return p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item) }) }
     }
-    const items = this.indexWorldItems(worldStuff, category);
-    SceneNavigation.displayProgressBar({
-      label: game.i18n.format('Library.loading', { item: 'world items' }),
-      pct: Math.round(percentage),
-    });
+    this.indexWorldItems(worldItems, documentName)
+    progress.update({message: game.i18n.format('Library.loading', { item: "world items" }), pct: Math.round(percentage) / 100})
 
-    let promise = packs.map(async (p) => {
-      const index = await func(p);
-      count += percentage;
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', {
-          item: `${p.metadata.label} (${p.metadata.id})`,
-        }),
-        pct: Math.round(count),
-      });
-      items.push(...index.map((x) => new SearchDocument(x, p.metadata)));
-    });
+    const promise = packs.map(async (p) => {
+        const documents = await func(p)
+        count += percentage
+        for(const item of documents) index.index.add(SearchDocument.toSearchableObject(item, documentName))
 
-    return Promise.all(promise).then((indexes) => {
-      this[`${category}Index`].add(items);
-      this[`${category}Build`] = true;
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', { item: '' }),
-        pct: 100,
-      });
-      this.hideLoading(target, category);
-    });
+        progress.update({message: game.i18n.format('Library.loading', { item: `${p.metadata.label} (${p.metadata.id})` }), pct: Math.round(count) / 100})
+    })
+
+    return Promise.all(promise).then(async() => {
+        progress.update({message: game.i18n.format('Library.loading', { item: "" }), pct: 1})
+        this.hideLoading(documentName)
+    })
   }
 
   subcategoryFields(subcategory) {
-    let field = ['name', 'itemType'];
+    let field = ['name', 'type'];
     const attrs = ADVANCEDFILTERS[subcategory] || [];
     for (let attr of attrs) {
       field.push(attr.attr);
@@ -719,96 +686,88 @@ export default class DSA5ItemLibrary extends Application {
     return field;
   }
 
-  indexWorldItems(worldStuff, category) {
-    const items = [];
+  async indexWorldItems(worldItems, documentName) {
     if (game.settings.get('dsa5', 'indexWorldItems')) {
-      items.push(...worldStuff.filter((x) => x.visible).map((x) => new SearchDocument(x)));
-      this[`${category}WorldBuild`] = true;
+        for(const item of worldItems.filter(x => x.visible)){
+          this.findIndex(documentName).index.add(SearchDocument.toSearchableObject(item, documentName))
+        }            
     }
-    return items;
+    this.findIndex(documentName).worldBuild = true
+  }
+
+  selectIndex(category) {
+    let itemType = 'Item';
+    switch (category) {
+      case 'Actor':
+      case 'Actors':
+        itemType = 'Actor';
+        break;
+      case 'JournalEntry':
+      case 'JournalEntries':
+        itemType = 'JournalEntry';
+        break;
+    }
+    return { index: this.indexes[itemType], itemType };
   }
 
   async createDetailIndex(category, subcategory) {
     if (!this.detailFilter[subcategory]) {
-      const catName = game.i18n.localize(`TYPES.Item.${subcategory}`);
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', { item: catName }),
-        pct: 0,
-      });
-      const field = this.subcategoryFields(subcategory);
-      const target = $(this._element).find(`*[data-tab="${category}"]`);
+      const { index, itemType } = this.selectIndex(category);
+      const catName = game.i18n.localize(`TYPES.${itemType}.${subcategory}`);
+      const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true})
+      const fields = this.subcategoryFields(subcategory);
+      const target = $(this.element).find(`*[data-tab="${category}"]`);
       target.find('.searchResult ul').html('');
       this.showLoading(target, category);
-      this.detailFilter[subcategory] = new FlexSearch({
-        encode: 'simple',
-        tokenize: 'full',
+      this.detailFilter[subcategory] = new FlexSearch.Document({
+        tokenize: "full",
         cache: true,
-        doc: {
-          id: 'id',
-          field,
-        },
-      });
-
-      const { index, itemType } = this.selectIndex(category);
+        document: {
+            id: "uuid",
+            store: true,
+            tag: "type",
+            index: fields
+        }
+      });      
       const worldStuff = itemType == 'Item' ? game.items : game.actors;
-
       const items = [];
 
       if (game.settings.get('dsa5', 'indexWorldItems')) {
-        items.push(...worldStuff.filter((x) => x.visible && x.type == subcategory).map((x) => new AdvancedSearchDocument(x, subcategory)));
+        items.push(...worldStuff.filter((x) => x.visible && x.type == subcategory).map((x) => AdvancedSearchDocument.toSearchableObject(x, subcategory)));
       }
 
-      const result = index.search(subcategory, { field: ['itemType'] });
-      const pids = {};
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', { item: catName }),
-        pct: 10,
-      });
-      for (let res of result) {
-        if (!res.document.pack) continue;
-        if (!pids[res.document.pack]) pids[res.document.pack] = [];
-        pids[res.document.pack].push(res.document.id);
-      }
+      const result = (await index.index.searchAsync({ tag: [subcategory] })).map(x => x.result).flat()
+      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 0.1 })
+
       const promises = [];
-      let percentage = 60 / Object.keys(pids).length;
+      let percentage = 60 / result.length;
       let count = 0;
-      for (const key of Object.entries(pids)) {
+      for (const uuid of result) {
         count += 1;
-        promises.push(game.packs.get(key[0]).getDocuments({ _id__in: key[1], type: subcategory }));
-        SceneNavigation.displayProgressBar({
-          label: game.i18n.format('Library.loading', { item: catName }),
-          pct: Math.round(10 + count * percentage),
-        });
+        if(uuid.startsWith('Compendium')) promises.push(fromUuid(uuid));
+        progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: Math.round(10 + count * percentage) / 100 })
       }
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', { item: catName }),
-        pct: 70,
-      });
+      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 0.7 })
 
-      let final = await Promise.all(promises);
+      const final = await Promise.all(promises);
       percentage = 30 / final.length;
       count = 0;
       for (let k of final) {
         count += 1;
-        items.push(...k.map((x) => new AdvancedSearchDocument(x, subcategory)));
-        SceneNavigation.displayProgressBar({
-          label: game.i18n.format('Library.loading', { item: catName }),
-          pct: Math.round(70 + count * percentage),
-        });
+        items.push(AdvancedSearchDocument.toSearchableObject(k, subcategory));
+        progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: Math.round(70 + count * percentage) / 100 })
       }
-      this.detailFilter[subcategory].add(items);
+
+      for(const item of items) this.detailFilter[subcategory].add(item);
       this.hideLoading(target, category);
-      SceneNavigation.displayProgressBar({
-        label: game.i18n.format('Library.loading', { item: catName }),
-        pct: 100,
-      });
+      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 1 })
     }
   }
 
   async buildDetailFilter(category, subcategory, savedSettings = undefined) {
-    const fields = duplicate(ADVANCEDFILTERS[subcategory] || []);
-    let moduleSelected = false;
-    if (fields) {
+    if (category != 'none') {
+      const fields = duplicate(ADVANCEDFILTERS[subcategory] || []);
+      let moduleSelected = false;   
       if (savedSettings) {
         for (let field of fields) {
           switch (field.type) {
@@ -831,7 +790,7 @@ export default class DSA5ItemLibrary extends Application {
 
       const bindex = this.createDetailIndex(category, subcategory);
       const moduleOptions = DSA5ItemLibrary.collectModulOptions();
-      const template = await renderTemplate('systems/dsa5/templates/system/detailFilter.html', { fields, subcategory, moduleOptions, moduleSelected });
+      const template = await renderTemplate('systems/dsa5/templates/system/itemlibrary/parts/detailFilter.hbs', { fields, subcategory, moduleOptions, moduleSelected });
       await bindex;
       return template;
     } else {
@@ -853,190 +812,165 @@ export default class DSA5ItemLibrary extends Application {
       }, {});
   }
 
-  checkWorldStuffIndex() {
-    if (game.settings.get('dsa5', 'indexWorldItems')) {
-      if (!this.journalWorldBuild && this.journalBuild) {
-        this.journalIndex.add(this.indexWorldItems(game.journal, 'journal'));
-      }
-      if (!this.equipmentWorldBuild && this.equipmentBuild) {
-        this.equipmentIndex.add(this.indexWorldItems(game.items, 'equipment'));
-      }
-      if (!this.zooWorldBuild && this.zooBuild) {
-        this.zooIndex.add(this.indexWorldItems(game.actors, 'zoo'));
-      }
-    }
+  itemDragStart (ev) {
+    ev.stopPropagation()
+    $(this.element).animate({ opacity: 0.2 }, 100);
+    const uuid = ev.target.dataset.uuid
+    const pay = ev.target.dataset.pay
+    const { type } = foundry.utils.parseUuid(uuid);
+    ev.dataTransfer.setData("text/plain", JSON.stringify({ type, uuid, dragSource: "itemlibrary", pay }));
+    ev.target.addEventListener("dragend", () => {
+        window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: "" })))
+    }, { once: true });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
-    tabSlider(html);
+    //activatelisteners
+    const html = $(this.element)
+    tabSlider(html);     
+    const source = this
+    html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
+    html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
+    html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
+    html.on("mousedown", ".searchResult .browser-item", ev => this._onItemNameClick(ev))
+    html.on("mouseenter", ".searchResult .browser-item", ev => this._onItemHover(ev))
+    html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))       
+    this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
+    html.find('.scrollable').on('scroll.infinit', ev => foundry.utils.debounce(this._infiniteScroll(ev, source), 100));
+    this.element.addEventListener("dragover", ev => this._onDragOver(ev));
+    html.on('change', '.detailFilters input, .detailFilters select', () => {
+      const category = $(this.element).find('.tab.active')[0].dataset.tab;
+      this.filterItems(category);
+    }); 
 
     html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
 
-    html.on('click', '.toggleAdvancedMode', () => {
-      this.advancedFiltering = !this.advancedFiltering;
-      if (this.advancedFiltering) {
-        $(this._element).find('.toggleAdvancedMode').addClass('on');
-        $(this._element).find('.advancedSearch').fadeIn();
-        this.purgeAdvancedFilters();
-      } else {
-        $(this._element).find('.toggleAdvancedMode').removeClass('on');
-        $(this._element).find('.advancedSearch').fadeOut();
-      }
-    });
-
-    html.on('change', '.detailFilters input, .detailFilters select', () => {
-      const tab = $(this._element).find('.tab.active');
-      const category = tab.attr('data-tab');
-      this.filterItems(tab, category);
-    });
-
-    html.on('click', '.filter', async (ev) => {
-      const tab = $(ev.currentTarget).closest('.tab');
-      const category = tab.attr('data-tab');
-      const subcategory = ev.currentTarget.dataset.category;
-      const isChecked = $(ev.currentTarget).is(':checked');
-      if (this.advancedFiltering && isChecked) {
-        this.purgeAdvancedFilters();
-        this.subcategory = subcategory;
-        $(ev.currentTarget).prop('checked', isChecked);
-        $(this._element)
-          .find('.advancedSearch .groupbox')
-          .html(await this.buildDetailFilter(category, subcategory));
-      }
-      this.filters[category].categories[subcategory] = isChecked;
-      this.filterItems(tab, category);
-    });
-
-    html.on('click', '.item-name', (ev) => {
-      this.getItemFromHTML(ev).render();
-    });
-
-    html.on('mousedown', '.item-name', (ev) => {
-      if (ev.button == 2) DSA5_Utility.showArtwork(this.getItemFromHTML(ev));
-    });
-
-    html.on('keyup', '.filterBy-search', (ev) => {
-      const tab = $(ev.currentTarget).closest('.tab');
-      const category = tab.attr('data-tab');
-      this.filters[category].filterBy.search = $(ev.currentTarget).val();
-      this.filterItems(tab, category);
-    });
-
-    const itemDragStart = (event) => {
-      event.stopPropagation();
-      const type = event.currentTarget.dataset.type;
-      const uuid = event.currentTarget.dataset.uuid;
-      if (!uuid || !type) return;
-
-      event.originalEvent.dataTransfer.setData(
-        'text/plain',
-        JSON.stringify({
-          type,
-          uuid,
-        }),
-      );
-    };
-    html.on('click', '.show-item', async (ev) => {
-      let itemId = ev.currentTarget.dataset.uuid;
-      const item = await fromUuid(itemId);
-      item.sheet.render(true);
-    });
-    html
-      .find('.show-item')
-      .attr('draggable', true)
-      .on('dragstart', (event) => itemDragStart(event));
-
-    html.find(`*[data-tab="journal"]`).click((x) => {
-      this._createIndex('journal', 'JournalEntry', game.journal);
-    });
-    html.find(`*[data-tab="zoo"]`).click((x) => {
-      this._createIndex('zoo', 'Actor', game.actors);
-    });
-
-    html.find('.showDetails').click((ev) => {
-      const tab = ev.currentTarget.dataset.btn;
-      $(ev.currentTarget).find('i').toggleClass('fa-caret-left fa-caret-right');
-      html.find(`.${tab} .detailBox`).toggleClass('dsahidden');
-    });
-
-    html.find('.toggleWorldIndex').click((ev) => {
-      game.settings.set('dsa5', 'indexWorldItems', !game.settings.get('dsa5', 'indexWorldItems'));
-      this.checkWorldStuffIndex();
-      $(ev.currentTarget).toggleClass('on');
-    });
-    html.find('.fulltextsearch').click((ev) => {
-      game.settings.set('dsa5', 'indexDescription', !game.settings.get('dsa5', 'indexDescription'));
-      $(ev.currentTarget).toggleClass('on');
-    });
-    html.find('.browseEnabled').click((ev) => {
-      this.browseEnabled = !this.browseEnabled;
-      $(ev.currentTarget).toggleClass('on');
-    });
-    html.find('.filterDuplicateItems').click((ev) => {
-      game.settings.set('dsa5', 'filterDuplicateItems', !game.settings.get('dsa5', 'filterDuplicateItems'));
-      $(ev.currentTarget).toggleClass('on');
-    });
-
-    const source = this;
-
-    $(this._element)
-      .find('.window-content')
-      .on(
-        'scroll.infinit',
-        debounce(function (ev) {
-          if (source.advancedFiltering) return;
-
-          const log = $(ev.target);
-          const pct = log.scrollTop() + log.innerHeight() >= log[0].scrollHeight - 100;
-          const category = html.find('.tabs .item.active').attr('data-tab');
-          if (pct && source.pages[category].next) {
-            const tab = html.find('.tab.active');
-            source.filterItems.call(source, tab, category, source.pages[category].next);
-          }
-        }, 100),
-      );
+    this.buildItemIndex()
   }
 
-  getItemFromHTML(ev) {
-    const itemId = $(ev.currentTarget).parents('.browser-item').attr('data-item-id');
-    const type = $(ev.currentTarget).closest('.tab').attr('data-tab');
-    switch (type) {
-      case 'zoo':
-        return this.zooIndex.find(itemId);
-      case 'journal':
-        return this.journalIndex.find(itemId);
-      default:
-        return this.equipmentIndex.find(itemId);
+  async _onItemHover(ev) {
+    const uuid = ev.currentTarget.dataset.uuid
+    const item = await fromUuid(uuid)
+    let tooltip = await item.toEmbed({ classes: 'itemLibraryTooltip'}, { skipHeader: true })
+
+    if(!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item)
+
+    $('#tooltip').html(tooltip)
+  }
+
+  _infiniteScroll(ev, source) {
+    if (source.advancedFiltering) return
+
+    const log = $(ev.target);
+    const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
+    const category = $(this.element).find('.tab.active')[0].dataset.tab;
+    const documentName = this.systemConfiguration.documentNameFromGroup(category)
+    if (pct && source.indexes[documentName].next) {
+        source.filterItems.call(source, category, source.indexes[documentName].next )
+    }
+  }
+  
+  async _onItemNameClick(ev) {
+    const uuid = ev.currentTarget.dataset.uuid
+    const item = await fromUuid(uuid)
+    if (ev.button == 2) DSA5_Utility.showArtwork(item)
+  }
+
+  findIndex(category) {
+    return this.selectIndex(category).index
+  }
+
+  _onFilterBySearch(ev) {
+    const category = $(this.element).find('.tab.active')[0].dataset.tab
+    this.findIndex(category).search = ev.currentTarget.value
+    this.filterItems(category);
+  }
+
+  async filterChanged(ev) {
+    const category = ev.currentTarget.dataset.category
+    const tab = $(ev.currentTarget).closest('.tab')[0].dataset.tab
+    const type = ev.currentTarget.dataset.type
+    const isChecked = ev.currentTarget.checked
+
+    if (this.advancedFiltering) {
+      await this.setAdvancedFilters(category, type);
+      ev.currentTarget.checked = isChecked;
+      
+      if (isChecked) {
+        const templ = await this.buildDetailFilter(category, type)
+        $(this.element).find('.tab.active .advancedSearch .advancedSearchContent').html(templ);
+      }
+    }
+
+    this.models[tab].find(x => x.key == type).selected = isChecked
+    this.filterItems(tab)
+  }
+
+  _onClickAction(event, target) {
+    if (target.classList.contains("disabled")) return
+
+    switch (target.dataset.action) {
+        case "showCompendiumFilter":
+            new LibraryModulsFilter().render(true)
+            break
     }
   }
 
-  showLoading(html, category) {
-    this.setBGImage([1], category);
-    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`);
-    loading.appendTo(html.find('.searchResult'));
+  getTabs() {
+    const tabs = foundry.utils.duplicate(this.windowtabs)
+    if(!game.user.isGM) delete tabs.Actors
+
+    for (const v of Object.values(tabs)) {
+        v.active = this.tabGroups[v.group] === v.id;
+        v.cssClass = v.active ? "active" : "";
+    }
+    return tabs;
   }
 
-  hideLoading(html, category) {
-    this.setBGImage([], category);
-    html.find('.loader').remove();
+  _onDragOver(ev) {
+    if(ev.dataTransfer?.types.includes("dragSource"))
+        $(this.element).css({ pointerEvents: "none" });
+  }
+
+  showLoading(documentName) {
+    this.setBGImage([1], documentName)
+    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`)
+    loading.appendTo($(this.element).find('.searchResult'))
+  }
+
+  hideLoading(documentName) {
+    this.setBGImage([], documentName)
+    $(this.element).find('.loader').remove()
   }
 }
 
-class LibraryModulsFilter extends Application {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.classes.push('dsa5');
-    options.resizable = true;
-    options.width = 600;
-    options.title = game.i18n.localize('DSASETTINGS.libraryModulsFilter');
-    options.template = 'systems/dsa5/templates/system/librarymodulesfilter.html';
-    return options;
+class LibraryModulsFilter extends DefaultAppv2 {
+  static DEFAULT_OPTIONS = {
+    id: "LibraryModulsFilter",
+    position: {
+        width: 600
+    },
+    window: {
+        title: "DSASETTINGS.libraryModulsFilter",
+        icon: "fa-regular fa-globe",
+        minimizable: true,
+        resizable: true,
+    },
+    actions: {},
+
+    classes: ["dsa5"]
+  };
+  
+  static PARTS = {
+    modules: {
+        template: "systems/dsa5/templates/system/librarymodulesfilter.hbs"
+    }
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options)
 
     mergeObject(data, {
       moduleOptions: DSA5ItemLibrary.collectModulOptions(),
@@ -1045,18 +979,17 @@ class LibraryModulsFilter extends Application {
     return data;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
-    html.find('.moduleSelector').change((ev) => this.moduleFilterChanged(ev));
+    $(this.element).find('.moduleSelector').on('change', (ev) => this.moduleFilterChanged(ev));
   }
 
   async moduleFilterChanged(ev) {
     const module = ev.currentTarget.id;
-    const checked = ev.currentTarget.checked;
 
     const data = game.settings.get('dsa5', 'libraryModulsFilter');
-    if (checked) {
+    if (ev.currentTarget.checked) {
       delete data[module];
     } else {
       data[module] = true;

@@ -59,7 +59,7 @@ export default class MacroDSA5 {
   }
 
   static runWeaponless(actor, char, tokenId) {
-    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: char }));
+    if (!actor) return ui.notifications.error('DSAError.MacroItemMissing', { localize: true, format: { item: char } });
     let characteristic = char.split('Weaponless')[0];
     actor.setupWeaponless(characteristic, {}, tokenId).then((setupData) => {
       actor.basicTest(setupData);
@@ -67,7 +67,7 @@ export default class MacroDSA5 {
   }
 
   static runChar(actor, char, tokenId) {
-    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: char }));
+    if (!actor) return ui.notifications.error('DSAError.MacroItemMissing', { localize: true, format: { item: char } });
 
     actor.setupDodge({}, tokenId).then((setupData) => {
       actor.basicTest(setupData);
@@ -75,7 +75,7 @@ export default class MacroDSA5 {
   }
 
   static runItem(actor, item, itemName, bypassData, tokenId) {
-    if (!actor) return ui.notifications.error(game.i18n.format('DSAError.MacroItemMissing', { item: itemName }));
+    if (!actor) return ui.notifications.error('DSAError.MacroItemMissing', { localize: true, format: { item: itemName } });
 
     switch (item.type) {
       case 'combatskill':

@@ -1,18 +1,10 @@
 <div class="masterMenu">
-    <div class="navWrapper">
-        <i class="fas fa-angle-left left-btn"></i>
-        <i class="fas fa-angle-right right-btn"></i>
-        <nav class="sheet-tabs tabs" data-tab-container="primary">
-            <a class="item active" data-tab="main">{{localize "TYPES.Actor.character"}}</a>
-            <a class="item" data-tab="randomGen">{{localize "MASTER.randomGen"}}</a>
-            <a class="item" data-tab="sceneConfig">{{localize "MASTER.sceneConfig"}}</a>
-        </nav>
-    </div>
+    {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
     <section class="content">
-        <div class="tab sceneConfig" data-tab="sceneConfig">
-            <div class="groupbox">
-                <h2>{{localize 'MASTER.globalMods'}}</h2>
+        <div class="tab {{tabs.sceneConfig.cssClass}}" data-tab="sceneConfig" data-group="{{tabs.sceneConfig.group}}" class="tab sceneConfig">
+            <fieldset>
+                <legend>{{localize 'MASTER.globalMods'}}</legend>
                 <div class="row-section lineheight table-title">
                     <div class="col sixty">
                         <a class="addGlobalMod" style="margin-left:10px;"><i class="fas fa-plus"></i></a>
@@ -61,9 +53,9 @@
                     </div>
                     {{/each}}
                 </div>
-            </div>
-            <div class="groupbox">
-                <h2>{{localize 'sight'}}</h2>
+            </fieldset>
+            <fieldset>
+                <legend>{{localize 'sight'}}</legend>
                 
                 <div class="row-section lineheight">
                     <div class="col fourty table-title">
@@ -124,9 +116,9 @@
                     </div>
                 </div>
                 {{/each}} {{{lightButton}}}
-            </div>
-            <div class="groupbox">
-                <h2>{{localize 'MASTER.automation'}}</h2>
+            </fieldset>
+            <fieldset>
+                <legend>{{localize 'MASTER.automation'}}</legend>
 
                 <div class="row-section lineheight" data-tooltip="DSASETTINGS.enableDPSHint">
                     <div class="col fourty table-title">
@@ -140,10 +132,10 @@
                     </div>
                 </div>
 
-            </div>
+            </fieldset>
 
         </div>
-        <div class="tab randomGen" data-tab="randomGen">
+        <div class="tab {{tabs.randomGen.cssClass}}" data-tab="randomGen" data-group="{{tabs.randomGen.group}}" class="tab randomGen">
             {{#unless randomCreation}}
             <div class="row-section">
                 <div class="col center">
@@ -158,7 +150,7 @@
             </div>
             {{/each}}
         </div>
-        <div class="tab main" data-tab="main">
+        <div class="tab {{tabs.main.cssClass}}" data-tab="main" data-group="{{tabs.main.group}}" class="tab main">
             <div class="row-section">
                 <div class="col third lineheight center" data-tooltip="groupFatePoints">
                     <b>{{{localize 'CHARAbbrev.groupFatePoints'}}}</b>

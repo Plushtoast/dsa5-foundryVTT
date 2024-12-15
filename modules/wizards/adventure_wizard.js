@@ -1,3 +1,4 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import { bindImgToCanvasDragStart } from '../hooks/imgTileDrop.js';
 import { increaseFontSize } from '../hooks/journal.js';
 import DSA5StatusEffects from '../status/status_effects.js';
@@ -6,7 +7,7 @@ import DSA5 from '../system/config-dsa5.js';
 import { slist } from '../system/view_helper.js';
 const { mergeObject, duplicate } = foundry.utils;
 
-export default class BookWizard extends Application {
+export default class BookWizard extends DefaultAppv2 {
   static wizard;
 
   constructor(app) {
@@ -18,27 +19,23 @@ export default class BookWizard extends Application {
     this.fulltextsearch = true;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [
-      {
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'description',
-      },
-    ];
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet']),
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet'],
+    window: {
+      title: 'Book.Wizard',
+      resizable: true,
+    },
+    position: {
       width: 800,
       height: 880,
-      scrollY: ['.pages-list .scrollable'],
-      template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.html',
-      title: game.i18n.localize('Book.Wizard'),
-      resizable: true,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    });
-    return options;
-  }
+    },
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.hbs',
+    },
+  };
 
   static initHook() {
     BookWizard.wizard = new BookWizard();
@@ -46,6 +43,7 @@ export default class BookWizard extends Application {
     game.dsa5.apps.journalBrowser = BookWizard.wizard;
 
     Hooks.on('renderJournalDirectory', (app, html) => {
+      html = $(html);
       const div = $('<div class="header-actions action-buttons flexrow"></div>');
       const button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize('Book.Wizard')}</button>`);
       button.on('click', () => {
@@ -62,7 +60,7 @@ export default class BookWizard extends Application {
       class: 'increaseFontSize',
       tooltip: 'SHEET.increaseFontSize',
       icon: 'fas fa-arrows-up-down',
-      onclick: async () => increaseFontSize($(this._element).find('.chapter')),
+      onclick: async () => increaseFontSize($(this.element).find('.chapter')),
     });
 
     buttons.unshift({
@@ -90,7 +88,7 @@ export default class BookWizard extends Application {
     this.currentType = undefined;
     this.pageTocs = undefined;
     this.selectedSubChapter = undefined;
-    this.loadPage(this._element);
+    this.loadPage(this.element);
   }
 
   async toggleBookVisibility(id, type, toggle) {
@@ -121,8 +119,9 @@ export default class BookWizard extends Application {
     this.render();
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
 
     html.on('click', '.toggleVisibility', async (ev) => {
       const id = ev.currentTarget.dataset.itemid;
@@ -165,15 +164,15 @@ export default class BookWizard extends Application {
       const jid = ev.currentTarget.dataset.jid;
       if (jid) {
         if (this.selectedSubChapter == jid) {
-          $(this.element.find('h1.journalHeader'))[0].scrollIntoView({
+          html.find('h1.journalHeader')[0].scrollIntoView({
             behavior: 'smooth',
           });
         } else {
           await this.loadJournalById(jid);
         }
       } else {
-        $(this._element).find('.subChapter').removeClass('selected');
-        $(this._element).find(`[data-id="${name}"]`).addClass('selected');
+        html.find('.subChapter').removeClass('selected');
+        html.find(`[data-id="${name}"]`).addClass('selected');
         await this.loadJournal(name);
       }
 
@@ -186,7 +185,7 @@ export default class BookWizard extends Application {
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
-    html.find('.tocCollapser').click((ev) => {
+    html.find('.tocCollapser').on('click', (ev) => {
       $(ev.currentTarget).find('i').toggleClass('fa-chevron-right fa-chevron-left');
       html.find('.tocCollapsing').toggleClass('expanded');
     });
@@ -281,9 +280,9 @@ export default class BookWizard extends Application {
     }
 
     const toc = await this.getToc();
-    this._saveScrollPositions(this._element);
-    this._element.find('.toc').html(toc);
-    this._restoreScrollPositions(this._element);
+    this._saveScrollPositions(this.element);
+    $(this.element).find('.toc').html(toc);
+    this._restoreScrollPositions(this.element);
   }
 
   async loadJournal(name) {
@@ -321,6 +320,7 @@ export default class BookWizard extends Application {
 
   async filterToc(val) {
     this.searchString = val;
+    const html = $(this.element);
     if (val != undefined) {
       val = val.toLowerCase().trim();
 
@@ -347,17 +347,15 @@ export default class BookWizard extends Application {
         }
         result = result.map((x) => `<li class="fas fa-caret-right"><a data-jid="${x.id}" class="subChapter">${x.name}</a></li>`);
 
-        $(this._element)
-          .find('.tocContent')
-          .html(`<ul>${result.join('\n')}</ul>`);
+        html.find('.tocContent').html(`<ul>${result.join('\n')}</ul>`);
       } else {
         const content = await this.getToc();
-        $(this._element).find('.toc').html(content).find('.filterJournals').trigger('focus');
+        html.find('.toc').html(content).find('.filterJournals').trigger('focus');
       }
     }
 
     const journal = await this.getChapter();
-    const chapter = $(this._element).find('.chapter');
+    const chapter = html.find('.chapter');
     chapter.html(journal);
     this.markFindings(chapter);
   }
@@ -408,7 +406,7 @@ export default class BookWizard extends Application {
     const pageTocs = [];
     for (let page of journal.pages) {
       const sheet = journal.sheet.getPageSheet(page.id);
-      const data = await sheet.getData();
+      const data = await sheet._prepareContext();
       const view = (await sheet._renderInner(data)).get();
       const pageName = page.name.replace(/ Text$/gi, '');
       const equalName = journal.name == pageName;
@@ -438,13 +436,14 @@ export default class BookWizard extends Application {
   }
 
   async showJournal(journal) {
-    const chapter = $(this._element).find('.chapter');
+    const html = $(this.element);
+    const chapter = html.find('.chapter');
     chapter.html(await this.renderContent(journal));
 
     this.selectedSubChapter = journal.id;
 
-    $(this._element).find('.subChapter').removeClass('selected');
-    $(this._element).find(`[data-jid="${journal.id}"]`).addClass('selected');
+    html.find('.subChapter').removeClass('selected');
+    html.find(`[data-jid="${journal.id}"]`).addClass('selected');
     bindImgToCanvasDragStart(chapter);
     this.markFindings(chapter);
     chapter.find('.documentName-link, .content-link').on('click', (ev) => {
@@ -468,7 +467,20 @@ export default class BookWizard extends Application {
   }
 
   async importBook() {
-    if (game.user.isGM) new InitializerForm().render(this.bookData.moduleName, this.bookData.options);
+    if (!game.user.isGM) return;    
+
+    const mod = this.bookData.moduleName;
+    const options = this.bookData.options
+
+    new game.dsa5.apps.DSA5Initializer(
+      'DSA5 Module Initialization',
+      game.i18n.format(`${options?.scope || mod}.importContent`, {
+        defaultText: game.i18n.localize('importDefault'),
+      }),
+      mod,
+      game.i18n.lang,
+      options,
+    ).render(true);
   }
 
   async loadBook(id, html, type) {
@@ -679,6 +691,26 @@ export default class BookWizard extends Application {
     }
   }
 
+  //TODO this is gone in v2
+  _saveScrollPositions(html) {
+    const selectors = ['.scrollable'];
+    this._scrollPositions = selectors.reduce((pos, sel) => {
+      const el = html.find(sel);
+      pos[sel] = Array.from(el).map(el => el.scrollTop);
+      return pos;
+    }, {});
+  }
+
+  //TODO this is gone in v2
+  _restoreScrollPositions(html) {
+    const selectors = ['.scrollable'];
+    const positions = this._scrollPositions || {};
+    for ( const sel of selectors ) {
+      const el = html.find(sel);
+      el.each((i, el) => el.scrollTop = positions[sel]?.[i] || 0);
+    }
+  }
+
   async loadPage(html) {
     const template = await this.getChapter();
     const toc = await this.getToc();
@@ -691,8 +723,8 @@ export default class BookWizard extends Application {
     this._restoreScrollPositions(html);
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const currentChapter = await this.getChapter();
     const toc = await this.getToc();
     const index = game.settings.get('dsa5', 'journalFontSizeIndex');
@@ -720,10 +752,6 @@ export default class BookWizard extends Application {
     delete breadcrumbs[uuid];
     game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
     this.render(true);
-  }
-
-  _canDragDrop(selector) {
-    return true;
   }
 
   async _onDrop(event) {
@@ -762,20 +790,6 @@ export default class BookWizard extends Application {
       return game.modules.get(id).active ? 'fa-check' : 'fa-dash';
     }
     return 'fa-times';
-  }
-}
-
-class InitializerForm extends FormApplication {
-  render(mod, options) {
-    new game.dsa5.apps.DSA5Initializer(
-      'DSA5 Module Initialization',
-      game.i18n.format(`${options?.scope || mod}.importContent`, {
-        defaultText: game.i18n.localize('importDefault'),
-      }),
-      mod,
-      game.i18n.lang,
-      options,
-    ).render(true);
   }
 }
 

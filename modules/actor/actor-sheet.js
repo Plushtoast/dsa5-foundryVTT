@@ -702,7 +702,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     bindImgToCanvasDragStart(html, 'img.charimg');
 
-    Riding.activateListeners(html, this.actor);
+    Riding.onRender(html, this.actor);
 
     this._bindKeepFieldsEnabled(html);
 
@@ -1630,8 +1630,8 @@ class TraditionArtifactpicker extends DefaultAppv2 {
     return data;
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
     const html = $(this.element);
     html.find('.slot').on('click', async (ev) => {
       const item = this.actor.items.get(ev.currentTarget.dataset.itemId);

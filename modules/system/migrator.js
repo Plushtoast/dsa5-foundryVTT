@@ -1,3 +1,4 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import DSA5_Utility from './utility-dsa5.js';
 import { tabSlider } from './view_helper.js';
 const { mergeObject } = foundry.utils;
@@ -5,13 +6,15 @@ const { mergeObject } = foundry.utils;
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
     console.log('Configuring default token settings');
-    let defaultToken = game.settings.get('core', 'defaultToken');
+    let defaultToken = game.settings.get('core', 'prototypeTokenOverrides');
 
-    defaultToken.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
-    defaultToken.bar1 = { attribute: 'status.wounds' };
-    await game.settings.set('core', 'defaultToken', defaultToken);
+    defaultToken.base.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
+    defaultToken.base.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
+    defaultToken.base.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
+    defaultToken.base.lockRotation = true;
+    defaultToken.base.bar1 = { attribute: 'status.wounds' };
+    defaultToken.character.sight.enabled = true
+    await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);
     await game.settings.set('core', 'leftClickRelease', true);
     await game.settings.set('dsa5', 'defaultConfigFinished', true);
   }
@@ -75,38 +78,43 @@ export default function migrateWorld() {
   });
 }
 
-class PatchViewer extends Application {
+class PatchViewer extends DefaultAppv2 {
   constructor(json, app) {
     super(app);
     this.json = json;
     this.versionIndex = 3;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [
-      {
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'newcontent',
-      },
-    ];
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'largeDialog', 'patches']),
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'largeDialog', 'patches'],
+    position: {
       width: 740,
       height: 740,
+    },
+    window: {
       title: 'Changelog',
-    });
-    options.template = 'systems/dsa5/templates/system/patchviewer.html';
-    options.resizable = true;
-    return options;
-  }
+      resizable: true,
+    },
+  };
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/system/patchviewer.hbs'},
+  };
+
+  static TABS = [
+    {id: "newcontent", group: "sheet", icon: "", label: "News"},
+    {id: "changelog", group: "sheet", icon: "", label: "Changelog"},
+    {id: "content", group: "sheet", icon: "", label: "modules"}
+  ]
+
+  tabGroups = { sheet: "newcontent" };
+
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
 
     tabSlider(html);
-    html.find('.showMore').click((ev) => this.showMore(html));
+    html.find('.showMore').on('click', () => this.showMore(html));
   }
 
   async showMore(html) {
@@ -132,7 +140,8 @@ class PatchViewer extends Application {
     };
   }
 
-  async getData() {
+  async _prepareContext(_options) {
+    const data  = await super._prepareContext(_options);
     let version = this.json['notes'][this.json['notes'].length - 1];
     const patchName = this.json['default'].replace(/VERSION/g, version.version);
     let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
@@ -144,7 +153,7 @@ class PatchViewer extends Application {
     const preVersions = await this.fetchVersions(prevVersions);
     const modules = await renderTemplate(`systems/dsa5/lazy/patchhtml/modules_${lang}.html`);
 
-    return {
+    return mergeObject(data, {
       patchName,
       changelog: curVersion.changelog[0],
       news: curVersion.news[0],
@@ -152,6 +161,6 @@ class PatchViewer extends Application {
       prevChangeLogs: preVersions.changelog,
       prevNews: preVersions.news,
       modules,
-    };
+    });
   }
 }

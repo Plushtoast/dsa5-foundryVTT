@@ -1,6 +1,7 @@
-const { getProperty, mergeObject } = foundry.utils;
+const { getProperty } = foundry.utils;
+import { FormAppv2 } from '../actor/formapp.js';
 
-export default class ForeignFieldEditor extends FormApplication {
+export default class ForeignFieldEditor extends FormAppv2 {
   constructor(actorId, field, name) {
     super();
     this.editfield = field;
@@ -12,19 +13,19 @@ export default class ForeignFieldEditor extends FormApplication {
     };
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/dialog/foreignfieldeditor.html'},
+  };
+
+  static DEFAULT_OPTIONS = {
+    window: {
       resizable: true,
+    },
+    position: {
       width: 600,
       height: 600,
-    });
-    return options;
-  }
-
-  isEditable() {
-    return true;
-  }
+    },
+  };
 
   get title() {
     const actor = game.actors.get(this.actorId);
@@ -42,19 +43,9 @@ export default class ForeignFieldEditor extends FormApplication {
     });
   }
 
-  async getData(options) {
-    const data = super.getData(options);
-    mergeObject(data, {
-      fieldContent: this.object.fieldContent,
-    });
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.fieldContent = this.object.fieldContent;
     return data;
-  }
-
-  get template() {
-    return 'systems/dsa5/templates/dialog/foreignfieldeditor.html';
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html);
   }
 }

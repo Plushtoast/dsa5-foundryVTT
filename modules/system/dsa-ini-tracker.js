@@ -187,33 +187,33 @@ export default class DSAIniTracker extends Application {
       return false;
     });
 
-    html.find('.toggleTracker').click(() => {
+    html.find('.toggleTracker').on('click', () => {
       const tabApp = ui.combat;
       tabApp.renderPopout(tabApp);
     });
 
-    html.find('.combat-control').click((ev) => this._onCombatControl(ev));
-    html.find('.convertToBrawl').click((ev) => {
+    html.find('.combat-control').on('click', (ev) => this._onCombatControl(ev));
+    html.find('.convertToBrawl').on('click', (ev) => {
       game.combat?.convertToBrawl();
     });
     const turns = html.find('.iniItem');
-    turns.hover(this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
-    turns.click(this._onCombatantMouseDown.bind(this));
+    turns.on('hover', this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
+    turns.on('click', this._onCombatantMouseDown.bind(this));
 
-    html.find('.waitingTackerList .iniItem').mousedown((ev) => this._onRightClick(ev));
+    html.find('.waitingTackerList .iniItem').on('mousedown', (ev) => this._onRightClick(ev));
 
-    html.find('.combatant-control').click((ev) => this._onCombatantControl(ev));
+    html.find('.combatant-control').on('click', (ev) => this._onCombatantControl(ev));
 
-    html.find('.combatant .aggroButton').click((ev) => {
+    html.find('.combatant .aggroButton').on('click', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
       DSA5CombatTracker.runActAttackDialog();
     });
-    html.find('.rollMine').click((ev) => this.rollMyChars());
+    html.find('.rollMine').on('click', (ev) => this.rollMyChars());
 
     if (!game.user.isGM) return;
 
-    html.find('.rolledInit').click((ev) => this.editCombatant(ev));
+    html.find('.rolledInit').on('click', (ev) => this.editCombatant(ev));
   }
 
   rollMyChars() {

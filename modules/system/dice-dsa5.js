@@ -191,10 +191,9 @@ export default class DiceDSA5 {
       const content = await renderTemplate(dialogOptions.template, dialogOptions.data);
       return new Promise((resolve, reject) => {
         new dialog({
-          title: dialogOptions.title,
+          window: { title: dialogOptions.title },
           content,
           buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
-          default: 'rollButton',
         })
           .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data)
           .render(true);
@@ -880,21 +879,22 @@ export default class DiceDSA5 {
         });
         [result, form] = await new Promise((resolve, reject) => {
           new DSA5Dialog({
-            title: game.i18n.localize(options.cheat ? 'DIALOG.cheat' : 'DSASETTINGS.allowPhysicalDice'),
+            window: { title: options.cheat ? 'DIALOG.cheat' : 'DSASETTINGS.allowPhysicalDice' },
             content,
-            default: 'ok',
-            buttons: {
-              ok: {
-                icon: '<i class="fa fa-check"></i>',
-                label: game.i18n.localize('yes'),
-                callback: (dlg) => resolve([true, dlg]),
+            buttons: [
+              {
+                action: 'ok',
+                icon: "fa fa-check",
+                label: 'yes',
+                callback: (event, button, dlg) => resolve([true, $(button.form)]),
               },
-              cancel: {
-                icon: '<i class="fas fa-times"></i>',
-                label: game.i18n.localize('cancel'),
+              {
+                action: 'cancel',
+                icon: "fas fa-times",
+                label: 'cancel',
                 callback: () => resolve([false, 0]),
               },
-            },
+            ],
           }).render(true);
         });
 

@@ -5,6 +5,7 @@ import DSA5Payment from '../system/payment.js';
 import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { itemFromDrop } from '../system/view_helper.js';
+import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 
 //todo add on use button to merchant sheet
@@ -55,45 +56,45 @@ export const MerchantSheetMixin = (superclass) =>
 
     activateListeners(html) {
       super.activateListeners(html);
-      html.find('.allowMerchant').click(async (ev) => {
+      html.find('.allowMerchant').on('click', async (ev) => {
         const id = ev.currentTarget.dataset.userId;
         const i = $(ev.currentTarget).find('i');
         await this.allowMerchant([id], !i.hasClass('fa-check-circle'));
         i.toggleClass('fa-circle fa-check-circle');
       });
-      html.find('.toggleAllAllowMerchant').click(async (ev) => {
+      html.find('.toggleAllAllowMerchant').on('click', async (ev) => {
         const ids = game.users.filter((x) => !x.isGM).map((x) => x.id);
         const allow = ev.currentTarget.dataset.lock == 'true';
         await this.allowMerchant(ids, allow);
         this.render();
       });
-      html.find('.lockTradeSection').click((ev) => this.lockTradeSection(ev));
-      html.find('.item-tradeLock').click((ev) => this.toggleTradeLock(ev));
-      html.find('.randomGoods').click((ev) => game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev));
-      html.find('.clearInventory').click((ev) => this.clearInventory(ev));
-      html.find('.removeOtherTradeFriend').click(() => this.removeOtherTradeFriend());
-      html.find('.choseTradefriend').click(() => this.choseTradefriend());
-      html.find('.setCustomPrice').click((ev) => $(ev.currentTarget).addClass('edit'));
+      html.find('.lockTradeSection').on('click', (ev) => this.lockTradeSection(ev));
+      html.find('.item-tradeLock').on('click', (ev) => this.toggleTradeLock(ev));
+      html.find('.randomGoods').on('click', (ev) => game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev));
+      html.find('.clearInventory').on('click', (ev) => this.clearInventory(ev));
+      html.find('.removeOtherTradeFriend').on('click', () => this.removeOtherTradeFriend());
+      html.find('.choseTradefriend').on('click', () => this.choseTradefriend());
+      html.find('.setCustomPrice').on('click', (ev) => $(ev.currentTarget).addClass('edit'));
       html
         .find('.customPriceTag')
-        .change(async (ev) => this.setCustomPrice(ev))
+        .on('change', async (ev) => this.setCustomPrice(ev))
         .blur((ev) => $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'));
 
-      html.find('.buy-item').click((ev) => {
+      html.find('.buy-item').on('click', (ev) => {
         this.advanceWrapper(ev, 'buyItem', ev);
         DSA5SoundEffect.playMoneySound();
       });
-      html.find('.sell-item').click((ev) => {
+      html.find('.sell-item').on('click', (ev) => {
         this.advanceWrapper(ev, 'sellItem', ev);
         DSA5SoundEffect.playMoneySound();
       });
-      html.find('.item-external-edit').click((ev) => {
+      html.find('.item-external-edit').on('click', (ev) => {
         ev.preventDefault();
         let itemId = this._getItemId(ev);
         const item = this.getTradeFriend().items.get(itemId);
         item.sheet.render(true);
       });
-      html.find('.changeAmountAllItems').mousedown((ev) => this.changeAmountAllItems(ev));
+      html.find('.changeAmountAllItems').on('mousedown', (ev) => this.changeAmountAllItems(ev));
 
       html.find('.gearSearch').prop('disabled', false);
     }
@@ -539,7 +540,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
   };
 
-class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+class SelectTradefriendDialog extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'DIALOG.setTargetToUser',
@@ -568,8 +569,8 @@ class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplica
     return dialog;
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
@@ -581,7 +582,7 @@ class SelectTradefriendDialog extends foundry.applications.api.HandlebarsApplica
   }
 }
 
-export class RandomGoodsAddition extends Dialog {
+export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
   static get template() {
     return 'systems/dsa5/templates/dialog/randomGoods-dialog.html';
   }
@@ -596,21 +597,27 @@ export class RandomGoodsAddition extends Dialog {
   static async showDialog(actor, ev, options = {}) {
     const html = await renderTemplate(this.template, await this.contentData(options));
     new game.dsa5.dialogs.RandomGoodsAddition({
-      title: game.i18n.localize('MERCHANT.randomGoods'),
+      window: {
+        title: 'MERCHANT.randomGoods',
+      },      
       content: html,
-      default: 'Yes',
       options,
-      buttons: {
-        Yes: {
-          icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('yes'),
-          callback: (dlg) => this.addRandomGoods(actor, dlg, ev),
+      buttons: [
+        {
+          action: 'yes',
+          icon: 'fa fa-check',
+          label: 'yes',
+          default: true,
+          callback: (event, button, dialog) => {
+            this.addRandomGoods(actor, $(button.form), ev)
+          },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'no',
+          icon: 'fas fa-times',
+          label: 'cancel',
         },
-      },
+      ],
     }).render(true);
   }
 

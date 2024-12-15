@@ -60,11 +60,12 @@ export default class DSA5ChatAutoCompletion {
       target._quickSelect($(ev.currentTarget));
     });
 
-    cmMessage.on('keydown', function (ev) {
+    html.on('keydown', '#chat-message', function (ev) {
       target._navigateQuickFind(ev);
     });
-    const handlers = jQuery._data(cmMessage[0]).events['keydown'];
-    handlers.unshift(handlers.pop());
+    //const handlers = jQuery._data(cmMessage[0]).events['keydown'];
+    //handlers.unshift(handlers.pop());
+    //TODO foundry13 breaking
   }
 
   _parseInput(ev) {
@@ -507,7 +508,7 @@ export default class DSA5ChatAutoCompletion {
       );
     };
     const showItem = html.find('.show-item');
-    showItem.click(async (ev) => {
+    showItem.on('click', async (ev) => {
       let itemId = ev.currentTarget.dataset.uuid;
       const item = await fromUuid(itemId);
       item.sheet.render(true);

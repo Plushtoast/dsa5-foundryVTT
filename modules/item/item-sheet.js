@@ -238,22 +238,22 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     tabSlider(html);
 
-    html.find('.advance-step').mousedown((ev) => this.advanceWrapper(ev, '_advanceStep'));
-    html.find('.refund-step').mousedown((ev) => this.advanceWrapper(ev, '_refundStep'));
-    html.find('.domainsPretty').click((ev) => {
+    html.find('.advance-step').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceStep'));
+    html.find('.refund-step').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundStep'));
+    html.find('.domainsPretty').on('click', (ev) => {
       $(ev.currentTarget).hide();
       $(ev.currentTarget).next('.domainToggle').show();
     });
 
-    html.find('[data-edit="img"]').mousedown((ev) => {
+    html.find('[data-edit="img"]').on('mousedown', (ev) => {
       if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
     });
 
-    html.find('.status-add').click(async () => {
+    html.find('.status-add').on('click', async () => {
       DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
     });
 
-    html.find('.condition-show').mousedown((ev) => {
+    html.find('.condition-show').on('mousedown', (ev) => {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
       if (ev.button == 0) {
@@ -266,13 +266,13 @@ export default class ItemSheetdsa5 extends ItemSheet {
 
     html.find('.select2').select2();
 
-    html.find('.condition-toggle').mousedown((ev) => {
+    html.find('.condition-toggle').on('mousedown', (ev) => {
       let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
       let ef = this.item.effects.get(condKey);
       ef.update({ disabled: !ef.disabled });
     });
 
-    html.find('.condition-edit').click((ev) => {
+    html.find('.condition-edit').on('click', (ev) => {
       const effect = this.item.effects.get(ev.currentTarget.dataset.id);
       effect.sheet.render(true);
     });
@@ -290,7 +290,7 @@ export default class ItemSheetdsa5 extends ItemSheet {
         observer.observe(toObserve.get(0));
         const input = toObserve.find('input');
         if (!input.get(0).disabled) {
-          svg.click(() => {
+          svg.on('click', () => {
             svg.hide();
             input.show();
             input.focus();
@@ -446,7 +446,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find('.buildItem').click(async () => this.postFinishedItem());
+    html.find('.buildItem').on('click', async () => this.postFinishedItem());
   }
 
   async postFinishedItem() {
@@ -587,7 +587,7 @@ class Enchantable extends ItemSheetdsa5 {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find('.ench-toggle-permanent').click((ev) => {
+    html.find('.ench-toggle-permanent').on('click', (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       for (let ench of enchantments) {
         if (ench.id == id) {
@@ -597,15 +597,15 @@ class Enchantable extends ItemSheetdsa5 {
       }
       this.item.update({ flags: { dsa5: { enchantments } } });
     });
-    html.find('.ench-toggle-charge').click((ev) => {
+    html.find('.ench-toggle-charge').on('click', (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       this.toggleChargedState(id, enchantments);
     });
-    html.find('.ench-roll').click(async (ev) => {
+    html.find('.ench-roll').on('click', async (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       this.rollEnchantment(id, enchantments);
     });
-    html.find('.ench-fw').change((ev) => {
+    html.find('.ench-fw').on('change', (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       let fw = Number($(ev.currentTarget).val());
       if (!fw) return;
@@ -618,11 +618,11 @@ class Enchantable extends ItemSheetdsa5 {
       }
       this.item.update({ flags: { dsa5: { enchantments } } });
     });
-    html.find('.ench-delete').click((ev) => {
+    html.find('.ench-delete').on('click', (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       this.deleteEnchantment(id, enchantments);
     });
-    html.find('.ench-show').click(async (ev) => {
+    html.find('.ench-show').on('click', async (ev) => {
       let { id, enchantments } = this.enchantMentId(ev);
       let enchantment = enchantments.find((x) => x.id == id);
       let item = await this.getSpell(enchantment);
@@ -631,7 +631,7 @@ class Enchantable extends ItemSheetdsa5 {
         item.sheet.render(true);
       }
     });
-    html.find('.poison-toggle-permanent').click((ev) => {
+    html.find('.poison-toggle-permanent').on('click', (ev) => {
       this.item.update({
         flags: {
           dsa5: {
@@ -640,10 +640,10 @@ class Enchantable extends ItemSheetdsa5 {
         },
       });
     });
-    html.find('.poison-delete').click((ev) => {
+    html.find('.poison-delete').on('click', (ev) => {
       this.deletePoison();
     });
-    html.find('.poison-show').click(async () => {
+    html.find('.poison-show').on('click', async () => {
       let item;
       if (this.item.actor) item = this.item.actor.items.find((x) => x.type == 'poison' && x.name == this.item.flags.dsa5.poison.name);
       if (!item) item = await this.getSpell(this.item.flags.dsa5.poison);
@@ -878,7 +878,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
       });
     });
 
-    slots.mousedown(async (ev) => {
+    slots.on('mousedown', async (ev) => {
       let itemId = ev.currentTarget.dataset.itemId;
       let item = this.actor.items.get(itemId);
 
@@ -1065,7 +1065,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   _onChangeTab(event, tabs, active) {
     super._onChangeTab(event, tabs, active);
     if (active == 'details' && $(this.element).find('[data-tab-container="secondary"]').length) {
-      this.activateTab('baseAttack', { group: 'secondary' });
+      this.changeTab('baseAttack', 'secondary');
     }
   }
 
@@ -1486,14 +1486,14 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find('.item-edit').click((ev) => {
+    html.find('.item-edit').on('click', (ev) => {
       ev.preventDefault();
       let itemId = this._getItemId(ev);
       const item = this.item.actor.items.get(itemId);
       item.sheet.render(true);
     });
 
-    html.find('.item-delete').click((ev) => {
+    html.find('.item-delete').on('click', (ev) => {
       this._deleteItem(ev);
     });
   }

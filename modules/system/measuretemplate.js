@@ -1,6 +1,6 @@
 import DSA5_Utility from './utility-dsa5.js';
 
-export class MeasuredTemplateDSA extends MeasuredTemplate {
+export class MeasuredTemplateDSA extends foundry.canvas.placeables.MeasuredTemplate {
   #initialLayer;
   #moveTime = 0;
   #events;

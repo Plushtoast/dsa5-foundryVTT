@@ -273,8 +273,8 @@ export default class DSA5SpellDialog extends DialogShared {
     super.calculateProbability(actor, this.dialogData.source, mod, fw);
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
     //activatelisteners
     const html = $(this.element)

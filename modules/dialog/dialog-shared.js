@@ -2,7 +2,7 @@ import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { AddTargetDialog } from './addTargetDialog.js';
 
-export default class DialogShared extends Dialog {
+export default class DialogShared extends foundry.applications.api.DialogV2 {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
 
   recallSettings(speaker, source, mode, renderData) {
@@ -14,11 +14,6 @@ export default class DialogShared extends Dialog {
       renderData,
     };
     return this;
-  }
-
-  async _render(force, options) {
-    await super._render(force, options);
-    await this.prepareFormRecall($(this._element));
   }
 
   setRollButtonWarning() {
@@ -56,7 +51,7 @@ export default class DialogShared extends Dialog {
     } else {
       rollTag += this.setRollButtonWarning();
     }
-    $(this._element).find('.dialog-buttons .rollButton').html(rollTag);
+    $(this.element).find('.dialog-buttons .rollButton').html(rollTag);
   }
 
   async updateTargets(html, targets) {
@@ -113,10 +108,14 @@ export default class DialogShared extends Dialog {
     return targets;
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.quantity-click').mousedown((ev) => RuleChaos.quantityClick(ev));
-    html.find('.modifiers option').mousedown((ev) => {
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+
+    const html = $(this.element);
+    
+    await this.prepareFormRecall($(this.element));
+    html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
+    html.find('.modifiers option').on('mousedown', (ev) => {
       ev.preventDefault();
       $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
       return false;

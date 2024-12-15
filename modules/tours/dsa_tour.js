@@ -20,13 +20,13 @@ export default class DSATour extends Tour {
   }
 
   async _preStep() {
-    if (this.currentStep.activateTab) {
-      ui.sidebar.activateTab(this.currentStep.activateTab);
+    if (this.currentStep.changeTab) {
+      ui.sidebar.changeTab(this.currentStep.changeTab, 'sheet');
     } else if (this.currentStep.activateLayer && canvas.activeLayer.options.name != this.currentStep.activateLayer) {
       await canvas[this.currentStep.activateLayer].activate();
       await delay(100);
     } else if (this.currentStep.appTab) {
-      this.app.activateTab(this.currentStep.appTab);
+      this.app.changeTab(this.currentStep.appTab);
     }
   }
 

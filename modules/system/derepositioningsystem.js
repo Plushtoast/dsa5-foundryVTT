@@ -16,7 +16,7 @@ export default class DPS {
 
   static rangeFinder(tokenSource, tokenTarget) {
     const gridSize = canvas.scene.grid.size;
-    const ray = new Ray(tokenSource, tokenTarget);
+    const ray = new foundry.canvas.geometry.Ray(tokenSource, tokenTarget);
     const tileDistance = ray.distance / gridSize;
     const distance = tileDistance * canvas.scene.grid.distance;
     const elevation = Math.abs((getProperty(tokenSource, 'document.elevation') || 0) - (getProperty(tokenTarget, 'document.elevation') || 0));
@@ -141,8 +141,8 @@ export default class DPS {
   }
 
   static initDoorMinDistance() {
-    const originalDoorControl = DoorControl.prototype._onMouseDown;
-    DoorControl.prototype._onMouseDown = function (event) {
+    const originalDoorControl = foundry.canvas.containers.DoorControl.prototype._onMouseDown;
+    foundry.canvas.containers.DoorControl.prototype._onMouseDown = function (event) {
       if (!game.user.isGM && DPS.isEnabled) {
         if (!DPS.inDistance(this))
           return ui.notifications.warn('DSAError.notInRangeToLoot', {
@@ -164,6 +164,5 @@ Hooks.on('renderSceneConfig', (app, html, msg) => {
             <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${game.i18n.localize('no')}</option>
         </select>
     </div>`;
-  html.find('.dpsSelector').remove();
-  html.find('.tab[data-tab="grid"]').append(dpsSelector);
+  $(html).find('.tab[data-tab="grid"]').append(dpsSelector);
 });

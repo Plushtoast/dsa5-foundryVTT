@@ -10,6 +10,7 @@ const { getProperty } = foundry.utils;
 
 export default function () {
   Hooks.on('renderChatLog', (log, html, data) => {
+    html = $(html);
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
@@ -19,7 +20,8 @@ export default function () {
     DSA5ChatListeners.chatListeners(html);
   });
 
-  Hooks.on('renderChatMessage', (app, html, msg) => {
+  Hooks.on('renderChatMessageHTML', (app, html, msg) => {
+    html = $(html);
     if (!game.user.isGM) {
       html.find('.chat-button-gm').remove();
       let actor;

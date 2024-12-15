@@ -1,4 +1,4 @@
-<div class="patchviewer" style="padding:20px">
+<div class="patchviewer scrollable" style="padding:20px">
     <div class="row-section table-title">
         <div class="col eighty">
             <h1 style="border:none;text-decoration:none;line-height:90px">{{{patchName}}}</h1>
@@ -8,31 +8,25 @@
         </div>
     </div>
 
-    <div class="navWrapper">
-        <i class="fas fa-angle-left left-btn"></i>
-        <i class="fas fa-angle-right right-btn"></i>
-        <nav class="sheet-tabs tabs" data-tab-container="primary">
-            <a class="item active" data-tab="newcontent">News</a>
-            <a class="item" data-tab="changelog">Changelog</a>
-            <a class="item" data-tab="content">{{localize 'modules'}}</a>
-        </nav>
-    </div>
+    {{> systems/dsa5/templates/system/dsatabs.hbs}}
+    
     <section class="content">
-        <div class="tab newcontent" data-tab="newcontent">
+        <section >
+        <div class="tab {{tabs.newcontent.cssClass}}" data-tab="newcontent" data-group="{{tabs.newcontent.group}}" class="tab newcontent">
             <div class="newssection">
                 {{{news}}} {{#each prevNews as |item i|}}
                 <hr style="margin-top:100px" /> {{{item}}} {{/each}}
             </div>
             <button class="showMore">More..</button>
         </div>
-        <div class="tab changelog" data-tab="changelog">
+        <div class="tab {{tabs.changelog.cssClass}}" data-tab="changelog" data-group="{{tabs.changelog.group}}" class="tab changelog">
             <div class="changelogsection">
                 {{{changelog}}} {{#each prevChangeLogs as |item i|}}
                 <hr style="margin-top:100px" /> {{{item}}} {{/each}}
             </div>
             <button class="showMore">More..</button>
         </div>
-        <div class="tab content" data-tab="content">
+        <div class="tab {{tabs.content.cssClass}}" data-tab="content" data-group="{{tabs.content.group}}" class="tab content">
             {{{modules}}}
         </div>
     </section>

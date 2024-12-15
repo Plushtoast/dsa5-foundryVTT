@@ -4,19 +4,25 @@ import APTracker from '../system/ap-tracker.js';
 const { mergeObject } = foundry.utils;
 
 export default class SpeciesWizard extends WizardDSA5 {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.title = game.i18n.format('WIZARD.addItem', {
-      item: `${game.i18n.localize('TYPES.Item.species')}`,
-    });
-    options.template = 'systems/dsa5/templates/wizard/add-species-wizard.html';
-    return options;
+  get title() {
+    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.species')} ${this.culture.name}`, })
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  static PARTS = {
+    main: {template: 'systems/dsa5/templates/wizard/add-species-wizard.hbs'},
+  };
 
-    html.find('.optional').change((ev) => {
+  static TABS = [
+    { id: 'description', group: 'sheet', icon: '', label: 'Description'},
+    { id: 'generalToChose', group: 'sheet', icon: '', label: 'WIZARD.generalTab'},
+    { id: 'vantagesToChose', group: 'sheet', icon: '', label: 'vantages'},
+  ]
+
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
+
+    html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
       parent.find('.optional:checked').each(function () {
@@ -51,8 +57,8 @@ export default class SpeciesWizard extends WizardDSA5 {
     return groups;
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const requirements = await this.parseToItem(this.species.system.requirements.value, ['disadvantage', 'advantage']);
     const missingVantages = requirements.filter((x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled);
     const advantagegroups = await this._toGroups(this.species.system.recommendedAdvantages.value, ['advantage'], requirements);
@@ -63,9 +69,6 @@ export default class SpeciesWizard extends WizardDSA5 {
       return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0);
     }, 0);
     mergeObject(data, {
-      title: game.i18n.format('WIZARD.addItem', {
-        item: `${game.i18n.localize('TYPES.Item.species')} ${this.species.name}`,
-      }),
       species: this.species,
       description: game.i18n.format('WIZARD.speciesdescr', {
         species: this.species.name,
@@ -84,6 +87,7 @@ export default class SpeciesWizard extends WizardDSA5 {
       vantagesToChose: advantagegroups.length > 0 || disadvantagegroups.length > 0 || missingVantages.length > 0,
       generalToChose: attributeRequirements.length > 0,
     });
+    this.filterTabs(data);
     return data;
   }
 

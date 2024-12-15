@@ -45,7 +45,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
         result.error = true;
       }
     } else {
-      ui.notifications.error(game.i18n.format('DSAError.macroNotFound', { name }));
+      ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
     }
   }
   return result;
@@ -84,14 +84,32 @@ Hooks.once('i18nInit', () => {
   ];
 });
 
-export default class DSAActiveEffectConfig extends ActiveEffectConfig {
+export default class DSAActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
+  static macroIndexes = [2, 6, 7];
 
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+  static DEFAULT_OPTIONS = {
+    window: {
       resizable: true,
-    });
-  }
+    }
+  };
+
+  static PARTS = {
+    header: {template: "templates/sheets/active-effect-config/header.hbs"},
+    tags: {template: "templates/generic/tab-navigation.hbs"},
+    details: {template: "templates/sheets/active-effect-config/details.hbs"},
+    duration: {template: "templates/sheets/active-effect-config/duration.hbs"},
+    changes: {template: "templates/sheets/active-effect-config/changes.hbs"},
+    advanced: {template: "systems/dsa5/templates/status/advanced_effect.hbs"},
+    footer: {template: "templates/generic/form-footer.hbs"}
+  };
+
+  static TABS = [
+    {id: "details", group: "sheet", icon: "fa-solid fa-book", label: "EFFECT.TABS.Details"},
+    {id: "duration", group: "sheet", icon: "fa-solid fa-clock", label: "EFFECT.TABS.Duration"},
+    {id: "changes", group: "sheet", icon: "fa-solid fa-cogs", label: "EFFECT.TABS.Changes"},
+    {id: "advanced", group: "sheet", icon: "fa-solid fa-shield-alt", label: "advanced"},
+  ];
 
   static async callMacro(packName, name, actor, item, qs, args = {}) {
     return await callMacro(packName, name, actor, item, qs, args);
@@ -100,7 +118,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
   static async startDelayedEffect(duration, effect) {
     effect.update({
       'system.delayed': false,
-      duration: duration,
+      duration,
       'flags.dsa5.-=onDelayed': null,
     });
   }
@@ -165,129 +183,134 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
     return isInstalled;
   }
 
-  async _render(force = false, options = {}) {
-    await super._render(force, options);
+  async _preparePartContext(partId, context) {
+    const partContext = await super._preparePartContext(partId, context);
+    if ( partId in partContext.tabs ) partContext.tab = partContext.tabs[partId];
+    const document = this.document;
+    switch ( partId ) {
+      case "advanced":
+        let index = 0;
 
-    let index = 0;
-
-    const itemType = getProperty(this.object, 'parent.type');
-    const isWeapon =
-      ['meleeweapon', 'rangeweapon'].includes(itemType) ||
-      (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(getProperty(this.object, 'parent.system.traitType.value')));
-    const effectConfigs = {
-      hasSpellEffects:
-        isWeapon ||
-        ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType) ||
-        (['specialability'].includes(itemType) && getProperty(this.object, 'parent.system.category.value') == 'Combat'),
-      hasDamageTransformation: ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType),
-      hasTriggerEffects: ['specialability'].includes(itemType),
-      hasSuccessEffects: ['poison', 'disease'].includes(itemType),
-    };
-
-    let advancedFunctions = [];
-
-    if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
-      advancedFunctions.push({
-        name: `ActiveEffects.advancedFunctions.none`,
-        index: 0,
-      });
+        const itemType = getProperty(document, 'parent.type');
+        const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(getProperty(document, 'parent.system.traitType.value')));
+        const effectConfigs = {
+          hasSpellEffects:
+            isWeapon ||
+            ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType) ||
+            (['specialability'].includes(itemType) && getProperty(document, 'parent.system.category.value') == 'Combat'),
+          hasDamageTransformation: ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType),
+          hasTriggerEffects: ['specialability'].includes(itemType),
+          hasSuccessEffects: ['poison', 'disease'].includes(itemType),
+        };
+    
+        let advancedFunctions = [];
+    
+        if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
+          advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 });
+        }
+    
+        if (effectConfigs.hasSpellEffects) {
+          for (let x of ['systemEffect', 'macro', 'creature']) {
+            advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) });
+          }
+        }
+    
+        if (effectConfigs.hasDamageTransformation) {
+          advancedFunctions.push(
+            { name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION },
+            { name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION },
+          );
+        }
+        if (effectConfigs.hasTriggerEffects) {
+          advancedFunctions.push(
+            { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL, },
+            { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED, },
+          );
+        }    
+        const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
+          obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
+          return obj;
+        }, {});
+    
+        const applySuccessConditions = {
+          1: 'ActiveEffects.onSuccess',
+          2: 'ActiveEffects.onFailure',
+        };
+    
+        const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
+        
+    
+        mergeObject(partContext,{
+          advancedFunctions,
+          effectConfigs,
+          macroIndexes: DSAActiveEffectConfig.macroIndexes,
+          messageReceivers,
+          canWeaponAdvantages,
+          equipmentAdvantageOptions: {
+            1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
+            2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`),
+          },
+          applySuccessConditions,
+          config: this.getConfig(),
+          isWeapon,
+          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce( (obj, e) => {
+              obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
+              return obj;
+          }, { 2: game.i18n.localize('all') })
+        })
+        break;        
     }
+    return partContext;
+  }
 
-    if (effectConfigs.hasSpellEffects) {
-      for (let x of ['systemEffect', 'macro', 'creature']) {
-        advancedFunctions.push({
-          name: `ActiveEffects.advancedFunctions.${x}`,
-          index: (index += 1),
-        });
-      }
-    }
-
-    if (effectConfigs.hasDamageTransformation) {
-      advancedFunctions.push(
-        {
-          name: 'ActiveEffects.advancedFunctions.armorPostprocess',
-          index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION,
-        },
-        {
-          name: 'ActiveEffects.advancedFunctions.damagePostprocess',
-          index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION,
-        },
-      );
-    }
-    if (effectConfigs.hasTriggerEffects) {
-      advancedFunctions.push(
-        {
-          name: 'ActiveEffects.advancedFunctions.postRoll',
-          index: DSATriggers.EVENTS.POST_ROLL,
-        },
-        {
-          name: 'ActiveEffects.advancedFunctions.postOpposed',
-          index: DSATriggers.EVENTS.POST_OPPOSED,
-        },
-      );
-    }
-    const config = {
+  getConfig() {
+    return { 
       systemEffects: this.getStatusEffects(),
       canEditMacros: game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
-    };
+    }
+  }
 
-    const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
-      obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
-      return obj;
-    }, {});
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
-    const applySuccessConditions = {
-      1: 'ActiveEffects.onSuccess',
-      2: 'ActiveEffects.onFailure',
-    };
-
-    const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
-    const macroIndexes = [2, 6, 7];
-    const elem = $(this._element);
-    elem.find('.tabs').append(`<a class="item" data-tab="advanced"><i class="fas fa-shield-alt"></i>${game.i18n.localize('advanced')}</a>`);
-
-    const template = await renderTemplate('systems/dsa5/templates/status/advanced_effect.html', {
-      effect: this.object,
-      advancedFunctions,
-      effectConfigs,
-      macroIndexes,
-      messageReceivers,
-      canWeaponAdvantages,
-      equipmentAdvantageOptions: {
-        1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
-        2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`),
-      },
-      applySuccessConditions,
-      config,
-      isWeapon,
-      dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
-        (obj, e) => {
-          obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
-          return obj;
-        },
-        { 2: game.i18n.localize('all') },
-      ),
-    });
-    elem.find('.tab[data-tab="effects"]').after($(template));
-    elem.find('.advancedSelector').on('change', (ev) => {
-      let effect = this.object;
+    const html = $(this.element);
+    html.find('.advancedSelector').on('change', (ev) => {
+      let effect = this.document;
       effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
 
-      renderTemplate('systems/dsa5/templates/status/advanced_functions.html', {
-        effect,
-        config,
-        macroIndexes,
+      renderTemplate('systems/dsa5/templates/status/advanced_functions.hbs', {
+        document: this.document,
+        config: this.getConfig(),
+        macroIndexes: DSAActiveEffectConfig.macroIndexes,
       }).then((template) => {
-        elem.find('.advancedFunctions').html(template);
+        html.find('.advancedFunctions').html(template);
       });
     });
-    elem.find('.auraSelector').on('change', (ev) => {
-      elem.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
-      elem.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
+    html.find('.auraSelector').on('change', (ev) => {
+      html.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
+      html.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
-    if (this.object.statuses.size && game.i18n.has(this.object.description)) {
-      elem.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.object.description)}</p>`);
+    if (this.document.statuses.size && game.i18n.has(this.document.description)) {
+      html.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.document.description)}</p>`);
     }
+
+    const dropDown = this.dropDownMenu();
+    html.find('.changes-list .effect-change .key').append(dropDown);
+    html
+      .find('.selMenu')
+      .select2({ width: 'element' })
+      .on('change', (ev) => {
+        const elem = $(ev.currentTarget);
+        elem.siblings('input').val(elem.val());
+        const parent = elem.closest('.effect-change');
+        const data = elem.find('option:selected');
+        parent.find('.mode select').val(data.attr('data-mode'));
+        parent.find('.value input').attr('placeholder', data.attr('data-ph'));
+        elem.trigger('blur');
+      });
+    html.find('.select2').each((i, el) => {
+      $(el)[0].style.removeProperty('width');
+    });
     this.checkTimesUpInstalled();
   }
 
@@ -966,7 +989,7 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
       }
     }
 
-    if (this.object.parent?.type == 'armor') {
+    if (this.document.parent?.type == 'armor') {
       optns.push({
         name: game.i18n.localize('CustomActiveEffects.armor.vulnerability'),
         val: `self.armorVulnerability`,
@@ -1032,13 +1055,13 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
       }
     }
 
-    if (['meleeweapon', 'rangeweapon'].includes(this.object.parent?.type)) {
-      const modelName = DSA5_Utility.categoryLocalization(this.object.parent.type);
+    if (['meleeweapon', 'rangeweapon'].includes(this.document.parent?.type)) {
+      const modelName = DSA5_Utility.categoryLocalization(this.document.parent.type);
       const maneuver = game.i18n.localize('combatmaneuver');
       const maneuverExample = game.i18n.localize('LocalizedIDs.weaponThrow');
 
       for (let k of ['attack', 'parry', 'damage']) {
-        if (k == 'parry' && this.object.parent.type == 'rangeweapon') continue;
+        if (k == 'parry' && this.document.parent.type == 'rangeweapon') continue;
 
         const mode = game.i18n.localize(`CHAR.${k.toUpperCase()}`);
         optns.push({
@@ -1077,26 +1100,5 @@ export default class DSAActiveEffectConfig extends ActiveEffectConfig {
 
     optns = optns.map((x) => `<option value="${x.val}" data-mode="${x.mode}" data-ph="${x.ph}">${x.name}</option>`).join('\n');
     return `<select class="selMenu">${optns}</select>`;
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html);
-    const dropDown = this.dropDownMenu();
-    html.find('.changes-list .effect-change .key').append(dropDown);
-    html
-      .find('.selMenu')
-      .select2({ width: 'element' })
-      .change((ev) => {
-        const elem = $(ev.currentTarget);
-        elem.siblings('input').val(elem.val());
-        const parent = elem.closest('.effect-change');
-        const data = elem.find('option:selected');
-        parent.find('.mode select').val(data.attr('data-mode'));
-        parent.find('.value input').attr('placeholder', data.attr('data-ph'));
-        elem.trigger('blur');
-      });
-    html.find('.select2').each((i, el) => {
-      $(el)[0].style.removeProperty('width');
-    });
   }
 }

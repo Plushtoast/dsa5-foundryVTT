@@ -34,9 +34,9 @@ class TreatWounds extends Application {
 
   activateListeners(html) {
     super.activateListeners(html);
-    html.find('.treatWounds').click(this._onTreatWounds.bind(this));
-    html.find('.treatPain').click(this._onTreatPain.bind(this));
-    html.find('.content-link').click((ev) => this.openUuid(ev));
+    html.find('.treatWounds').on('click', this._onTreatWounds.bind(this));
+    html.find('.treatPain').on('click', this._onTreatPain.bind(this));
+    html.find('.content-link').on('click', (ev) => this.openUuid(ev));
   }
 
   async openUuid(ev) {

@@ -16,9 +16,9 @@ export default class DSA5ChatListeners {
       await game.dsa5.apps.journalBrowser.render(true);
     });
 
-    const helpButton = $('<a class="button showHelp" data-tooltip="HELP.showHelp"><i class="fas fa-question"></i></a>');
+    const helpButton = $(`<button type="button" class="ui-control icon fas fa-question" data-tooltip="HELP.showHelp" aria-label="Help"></button>`);
     helpButton.on('click', () => DSA5ChatListeners.getHelp());
-    $(html.find('.control-buttons')).prepend(helpButton);
+    html.find('.control-buttons').prepend(helpButton);
     html.on('click', '.showPatchViewer', () => showPatchViewer());
     html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev));
     html.on('click', '.panToToken', (ev) => DSA5ChatListeners.panToToken(ev));

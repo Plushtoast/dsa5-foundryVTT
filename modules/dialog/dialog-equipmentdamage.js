@@ -1,6 +1,7 @@
 import EquipmentDamage from '../system/equipment-damage.js';
+import { DefaultAppv2 } from '../actor/baseapp.js';
 
-export default class EquipmentDamageDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+export default class EquipmentDamageDialog extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     window: {
       title: 'WEAR.checkShort',
@@ -27,8 +28,8 @@ export default class EquipmentDamageDialog extends foundry.applications.api.Hand
     return data;
   }
 
-  _onRender(context, options) {
-    super._onRender((context, options));
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
     const html = $(this.element);
     html.find('.reactClick').on('click', (ev) => {

@@ -1,12 +1,13 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
 import ItemRulesDSA5 from '../system/item-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/specialability-rules-dsa5.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { clickableAbility, tabSlider } from '../system/view_helper.js';
-const { mergeObject, duplicate, getProperty } = foundry.utils;
+const { duplicate, getProperty } = foundry.utils;
 
-export default class WizardDSA5 extends Application {
+export default class WizardDSA5 extends DefaultAppv2 {
   constructor(app) {
     super(app);
     this.actor = null;
@@ -15,23 +16,19 @@ export default class WizardDSA5 extends Application {
     this.updating = false;
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [
-      {
-        navSelector: '.tabs',
-        contentSelector: '.content',
-        initial: 'description',
-      },
-    ];
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'largeDialog', 'generationWizard']),
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'largeDialog', 'generationWizard'],
+    window: {
+      title: 'PLAYER.title',
+      resizable: true,
+    },
+    position: {
       width: 770,
       height: 740,
-    });
-    options.resizable = true;
-    return options;
-  }
+    },
+  };
+
+  tabGroups = { sheet: "description" };
 
   async findCompendiumItem(name, types) {
     for (let type of types) {
@@ -57,6 +54,12 @@ export default class WizardDSA5 extends Application {
       }
     }
     return result;
+  }
+
+  filterTabs(data) {
+    for(let tab of Object.keys(data.tabs)) {
+      if(!data[data.tabs[tab].id]) delete data.tabs[tab]
+    }
   }
 
   async parseToItem(value, types) {
@@ -193,13 +196,13 @@ export default class WizardDSA5 extends Application {
             action: 'ok',
             default: true,
             icon: 'fas fa-check',
-            label: 'Ok',
+            label: 'ok',
             callback: () => false,
           },
           {
             action: 'cancel',
             icon: 'fas fa-close',
-            label: 'Cancel',
+            label: 'cancel',
             callback: () => true,
           },
         ],
@@ -228,13 +231,11 @@ export default class WizardDSA5 extends Application {
         this.errors.push(`${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`);
       }
     }
-    await this.actor.updateEmbeddedDocuments('Item', itemsToUpdate, {
-      render: false,
-    });
+    await this.actor.updateEmbeddedDocuments('Item', itemsToUpdate, { render: false, });
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     await game.dsa5.itemLibrary.buildEquipmentIndex();
     return data;
   }
@@ -261,23 +262,23 @@ export default class WizardDSA5 extends Application {
 
   _showInputValidation(choice, parent, app) {
     ui.notifications.error('DSAError.MissingChoices', { localize: true });
-    let tabElem = choice.closest('.tab').attr('data-tab');
-    app.activateTab(tabElem);
-    WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem}']`));
+    const tabElem = choice.closest('.tab')[0].dataset;
+    app.changeTab(tabElem.tab, group.group);
+    WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem.tab}']`));
     WizardDSA5.flashElem(choice.closest('div'));
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
     tabSlider(html);
-    html.find('button.ok').click(() => {
+    html.find('button.ok').on('click', () => {
       if (!this.updating) {
         this.updating = true;
-        this.updateCharacter($(this._element)).then(() => (this.updating = false));
+        this.updateCharacter($(this.element)).then(() => (this.updating = false));
       }
     });
-    html.find('button.cancel').click(() => {
+    html.find('button.cancel').on('click', () => {
       this.close();
     });
 
@@ -296,7 +297,7 @@ export default class WizardDSA5 extends Application {
       );
     };
     const showItem = html.find('.show-item');
-    showItem.click(async (ev) => {
+    showItem.on('click', async (ev) => {
       let itemId = ev.currentTarget.dataset.uuid;
       const item = await fromUuid(itemId);
       item.sheet.render(true);
@@ -305,7 +306,7 @@ export default class WizardDSA5 extends Application {
 
     html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
 
-    html.find('.exclusive').change((ev) => {
+    html.find('.exclusive').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.tab');
       let sel = $(ev.currentTarget).attr('data-sel');
       let maxDomElem = parent.find(`.allowedCount_${sel}`);
@@ -329,7 +330,7 @@ export default class WizardDSA5 extends Application {
     if (this.errors.length == 0) {
       this.close();
     } else {
-      $(this._element)
+      $(this.element)
         .find('.dialog-buttons')
         .html(`<div class="error"><p>${game.i18n.localize('DSAError.notUnderstood')}</p><ul><li>${this.errors.join('</li><li>')}</li></ul></div>`);
     }

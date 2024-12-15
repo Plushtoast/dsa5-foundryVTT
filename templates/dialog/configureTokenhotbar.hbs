@@ -1,96 +1,81 @@
-<form>
-    
-    
+<div class="scrollable">
     <div class="form-group" data-setting-id="dsa5.hotbarv3">
         <label>{{localize 'DSASETTINGS.hotbarv3'}}</label>
         <div class="form-fields">
-
             <input type="checkbox" name="dsa5.hotbarv3" data-dtype="Boolean" {{checked hotbarv3}}>
-
         </div>
-
-        <p class="notes">{{localize 'DSASETTINGS.hotbarv3Hint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.hotbarv3Hint'}}</p>
     </div>
-    <hr/>
+    <hr>
     {{#if isGM}}
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbarMaster">
         <label>{{localize 'DSASETTINGS.disableTokenhotbarMaster'}}</label>
         <div class="form-fields">
             <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>
         </div>
-        <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.masterCanvasControls">
         <label>{{localize 'DSASETTINGS.masterCanvasControls'}}</label>
         <div class="form-fields">
             <input type="checkbox" name="dsa5.masterCanvasControls" data-dtype="Boolean" {{checked masterCanvasControls}}>
         </div>
-        <p class="notes">{{localize 'DSASETTINGS.masterCanvasControlsHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.masterCanvasControlsHint'}}</p>
     </div>
-    <label>{{localize 'DSASETTINGS.enableMasterTokenFunctions'}}</label>
-    <div class="bags row-section wrap" style="font-size: 45px;line-height: 50px;text-align: center;">
-        {{#each gmButtons as |item i|}}
-        <div class="slot {{#if item.disabled}}deactivated{{/if}}" data-id="{{item.id}}" data-tooltip="{{item.name}}">
-            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')"></div>
+    
+    <div class="form-group">
+        <label>{{localize 'DSASETTINGS.enableMasterTokenFunctions'}}</label>
+        <div class="bags row-section wrap" style="font-size: 45px;line-height: 50px;text-align: center;">
+            {{#each gmButtons as |item i|}}
+            <div class="slot {{#if item.disabled}}deactivated{{/if}}" data-id="{{item.id}}" data-tooltip="{{item.name}}">
+                <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')"></div>
+            </div>
+            {{/each}}
         </div>
-        {{/each}}
+        <p class="hint">{{localize 'DSASETTINGS.enableMasterTokenFunctionsHint'}}</p>
     </div>
-    <p class="notes">{{localize 'DSASETTINGS.enableMasterTokenFunctionsHint'}}</p>
+    
     {{/if}}
-    <hr/>
+    <hr>
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbar">
         <label>{{localize 'DSASETTINGS.disableTokenhotbar'}}</label>
         <div class="form-fields">
-
             <input type="checkbox" name="dsa5.disableTokenhotbar" data-dtype="Boolean" {{checked disableTokenhotbar}}>
-
         </div>
-
-        <p class="notes">{{localize 'DSASETTINGS.disableTokenhotbarHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.disableTokenhotbarHint'}}</p>
     </div>
     {{#unless disableTokenhotbar}}
     <div class="form-group submenu">
         <label>{{localize 'DSASETTINGS.resetTokenbar'}}</label>
-        <button class="resetTokenhotbar">
-
-            <label>{{localize 'DSASETTINGS.resetTokenbar'}}</label>
-        </button>
-        <p class="notes">{{localize 'DSASETTINGS.resetTokenbarHint'}}</p>
+        <div class="form-fields">
+            <button class="resetTokenhotbar">
+                <label>{{localize 'DSASETTINGS.resetTokenbar'}}</label>
+            </button>
+        </div>        
+        <p class="hint">{{localize 'DSASETTINGS.resetTokenbarHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.tokenhotbarSize">
         <label>{{localize 'DSASETTINGS.tokenhotbarSize'}}</label>
         <div class="form-fields">
-
-            <input type="range" name="dsa5.tokenhotbarSize" data-dtype="Number" value="{{tokenhotbarSize}}" min="15"
-                max="100" step="5">
-            <span class="range-value">{{tokenhotbarSize}}</span>
-
+            {{{rangePicker name="dsa5.tokenhotbarSize" value=tokenhotbarSize min=15 max=100 step=5}}}
         </div>
-
-        <p class="notes">{{localize 'DSASETTINGS.tokenhotbarSizeHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.tokenhotbarSizeHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.tokenhotbaropacity">
         <label>{{localize 'DSASETTINGS.tokenhotbaropacity'}}</label>
         <div class="form-fields">
-
-            <input type="range" name="dsa5.tokenhotbaropacity" data-dtype="Number" value="{{tokenhotbaropacity}}" min="0" max="1" step="0.05">
-            <span class="range-value">{{tokenhotbaropacity}}</span>
-
+            {{{rangePicker name="dsa5.tokenhotbaropacity" value=tokenhotbaropacity min=0 max=1 step=0.05}}}
         </div>
-
-        <p class="notes">{{localize 'DSASETTINGS.tokenhotbaropacityHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.tokenhotbaropacityHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.tokenhotbarLayout">
         <label>{{localize 'DSASETTINGS.tokenhotbarLayout'}}</label>
         <div class="form-fields">
-
             <select name="dsa5.tokenhotbarLayout" data-dtype="Number">
                 {{selectOptions layoutChoices selected=tokenhotbarLayout localize=true}}
             </select>
         </div>
-
-        <p class="notes">{{localize 'DSASETTINGS.tokenhotbarLayoutHint'}}</p>
+        <p class="hint">{{localize 'DSASETTINGS.tokenhotbarLayoutHint'}}</p>
     </div>
     {{/unless}}
-    
-</form>
+</div>
