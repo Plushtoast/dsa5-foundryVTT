@@ -20,14 +20,14 @@ export default class DSA5SpellDialog extends DialogShared {
     extensionModifier: { mod: 0 },
   };
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      width: 700,
-      resizable: true,
-    });
-    return options;
-  }
+  static DEFAULT_OPTIONS = {
+    position: {
+        width: 700
+    },
+    window: {
+        resizable: true,
+    },
+  };
 
   static bigTimes = [5, 30, 120, 480, 960, 1920];
 
@@ -37,17 +37,19 @@ export default class DSA5SpellDialog extends DialogShared {
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
-    let buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+    const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     if (['spell', 'liturgy'].includes(testData.source.type)) {
       const LZ = Number(testData.source.system.castingTime.value);
       const progress = testData.source.system.castingTime.progress;
       let modified = testData.source.system.castingTime.modified;
       if (LZ && testData.extra.speaker.token != 'emptyActor') {
         const progressLabel = modified > 0 ? ` (${progress}/${modified})` : '';
-        mergeObject(buttons, {
-          reloadButton: {
+        buttons.push(
+          {
+            action: 'reloadButton',
             label: `${game.i18n.localize('SPELL.reload')}${progressLabel}`,
-            callback: async (dlg) => {
+            callback: async (event, button, dialog) => {
+              const dlg = $(button.form);
               const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
               let reloadUpdate = {
                 _id: testData.source._id,
@@ -66,7 +68,7 @@ export default class DSA5SpellDialog extends DialogShared {
               await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
             },
           },
-        });
+        );
       }
     }
     return buttons;
@@ -251,31 +253,35 @@ export default class DSA5SpellDialog extends DialogShared {
 
   async calculateProbability() {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-    const data = new FormDataExtended(this.element.find('form')[0]).object;
-    data.situationalModifiers = Actordsa5._parseModifiers(this._element);
+    const html = $(this.element);
+    const data = new FormDataExtended(html.find('form')[0]).object;
+    data.situationalModifiers = Actordsa5._parseModifiers(html);
     const fw = this.dialogData.source.system.talentValue.value + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
     let mod =
       (await DiceDSA5._situationalModifiers(data)) +
-      $(this.element)
+      html
         .find('input.spellModifier:checked')
         .map((i, x) => Number(x.value))
         .get()
         .reduce((a, b) => a + b, 0) +
-      $(this.element).find('[name=maintainedSpells]')[0].value * -1;
+        html.find('[name=maintainedSpells]')[0].value * -1;
 
     super.calculateProbability(actor, this.dialogData.source, mod, fw);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    //activatelisteners
+    const html = $(this.element)
     html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2);
 
-    html.find('.specAbs').mousedown((ev) => {
+    html.find('.specAbs').on('mousedown', (ev) => {
       $(ev.currentTarget).toggleClass('active');
       this.recalcSpellModifiers(html);
     });
 
-    html.find('.variableBaseCost').change((ev) => {
+    html.find('.variableBaseCost').on('change', (ev) => {
       let parent = $(ev.currentTarget).parents('.skill-test');
       let oldVal = parent.find('.aspcost').attr('data-base');
       let newVal = $(ev.currentTarget).val();

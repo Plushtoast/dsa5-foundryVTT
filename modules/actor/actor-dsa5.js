@@ -1811,13 +1811,15 @@ export default class Actordsa5 extends Actor {
       postData: data.postData,
     });
     new DSA5Dialog({
-      title: game.i18n.localize('CHATFATE.selectDice'),
+      window: { title: 'CHATFATE.selectDice' },
       content: html,
-      buttons: {
-        Yes: {
-          icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('ok'),
-          callback: async (dlg) => {
+      buttons: [
+        {
+          action: 'yes',
+          icon: "fa fa-check",
+          label: 'ok',
+          callback: async (event, button, dialog) => {
+            const dlg = $(button.form)
             let diesToReroll = dlg
               .find('.dieSelected')
               .map(function () {
@@ -1858,12 +1860,12 @@ export default class Actordsa5 extends Actor {
             }
           },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'cancel',
+          icon: "fas fa-times",
+          label: 'cancel',
         },
-      },
-      default: 'Yes',
+      ],
     }).render(true);
   }
 
@@ -1878,13 +1880,15 @@ export default class Actordsa5 extends Actor {
       singleDie: data.postData.characteristics.length == 1,
     });
     new DSA5Dialog({
-      title: game.i18n.localize('CHATFATE.selectDice'),
+      window: { title: 'CHATFATE.selectDice' },
       content: html,
-      buttons: {
-        Yes: {
-          icon: '<i class="fa fa-check"></i>',
-          label: game.i18n.localize('ok'),
-          callback: async (dlg) => {
+      buttons: [
+        {
+          action: 'yes',
+          icon: "fa fa-check",
+          label: 'ok',
+          callback: async (event, button, dialog) => {
+            const dlg = $(button.form)
             let diesToReroll = dlg
               .find('.dieSelected')
               .map(function () {
@@ -1933,12 +1937,12 @@ export default class Actordsa5 extends Actor {
             }
           },
         },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize('cancel'),
+        {
+          action: 'cancel',
+          icon: "fas fa-times",
+          label: 'cancel',
         },
-      },
-      default: 'Yes',
+      ],
     }).render(true);
   }
 
@@ -1972,13 +1976,15 @@ export default class Actordsa5 extends Actor {
         postData: data.postData,
       });
       new DSA5Dialog({
-        title: game.i18n.localize('CHATFATE.selectDice'),
+        window: { title: 'CHATFATE.selectDice' },
         content: html,
-        buttons: {
-          Yes: {
-            icon: '<i class="fa fa-check"></i>',
-            label: game.i18n.localize('ok'),
-            callback: async (dlg) => {
+        buttons: [
+          {
+            action: 'Yes',
+            icon: "fa fa-check",
+            label: 'ok',
+            callback: async (event, button, dialog) => {
+              const dlg = $(button.form)
               let fws = [0, 0, 0];
               let diesToUpgrade = dlg
                 .find('.dieSelected')
@@ -2002,12 +2008,12 @@ export default class Actordsa5 extends Actor {
               }
             },
           },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: game.i18n.localize('cancel'),
+          {
+            action: 'cancel',
+            icon: "fas fa-times",
+            label: 'cancel',
           },
-        },
-        default: 'Yes',
+        ],
       }).render(true);
     } else {
       const modifier = {
