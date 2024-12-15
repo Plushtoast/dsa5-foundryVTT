@@ -96,6 +96,10 @@ export default class DSA5SpellDialog extends DialogShared {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
             ef.apply(this.dialogData.renderData.rollModifiersPrepared, change);
+          }  else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+            source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
+              return x + change.value
+            }).join(',');
           } else {
             ef.apply(source, change);
           }
@@ -192,7 +196,7 @@ export default class DSA5SpellDialog extends DialogShared {
 
     mod = 0;
     newPosition = baseCastingTime;
-    parent.find('.spellModifier[data-castingTime]:checked').each(function (index, element) {
+    parent.find('.spellModifier[data-casting-time]:checked').each(function (index, element) {
       if (bigCasts) {
         let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
         if (ind != undefined) {
@@ -212,7 +216,7 @@ export default class DSA5SpellDialog extends DialogShared {
       } else {
         newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
       }
-
+      console.log(element.value, newPosition);
       mod += Number(element.value);
     });
     if (newPosition < 1) {

@@ -943,6 +943,10 @@ class SpellItemDSA5 extends Itemdsa5 {
 
           if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
+          } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+            source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
+              return x + change.value
+            }).join(',');
           } else {
             ef.apply(source, change);
           }
