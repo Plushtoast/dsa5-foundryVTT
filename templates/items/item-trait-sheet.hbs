@@ -1,0 +1,136 @@
+<div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'traitType'}}</label>
+    <select name='system.traitType.value' data-dtype='String'>
+      {{selectOptions traitCategories selected=document.system.traitType.value localize=true}}
+    </select>
+  </div>
+
+  {{#if (eq document.system.traitType.value 'rangeAttack')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'CHAR.ATTACK'}}</label>
+      <input class='input-text' type='text' name='system.at.value' value='{{document.system.at.value}}' data-dtype='String' />
+    </div>
+
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'damage'}}</label>
+      <input class='input-text' type='text' name='system.damage.value' value='{{document.system.damage.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'reach'}}</label>
+      <input class='input-text' type='text' name='system.reach.value' value='{{document.system.reach.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'reloadTime'}}</label>
+      <input class='input-text' type='text' name='system.reloadTime.value' value='{{document.system.reloadTime.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'effect'}}</label>
+      <input class='input-text' type='text' name='system.effect.value' value='{{document.system.effect.value}}' data-dtype='String' />
+    </div>
+  {{else if (eq document.system.traitType.value 'meleeAttack')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'CHAR.ATTACK'}}</label>
+      <input class='input-text' type='number' name='system.at.value' value='{{document.system.at.value}}' data-dtype='Number' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'CHAR.PARRY'}}</label>
+      <input class='input-text' type='number' name='system.pa' value='{{document.system.pa}}' data-dtype='Number' />
+    </div>
+
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'damage'}}</label>
+      <input class='input-text' type='text' name='system.damage.value' value='{{document.system.damage.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'reach'}}</label>
+      <select name='system.reach.value' data-dtype='String'>
+        {{selectOptions ranges selected=document.system.reach.value localize=true}}
+      </select>
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'effect'}}</label>
+      <input class='input-text' type='text' name='system.effect.value' value='{{document.system.effect.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group autoHeight'>
+      <label class='label-text'>{{localize 'domains'}}</label>
+      {{#if domains}}
+        <div class='input-text domainsPretty'>
+          <ul>{{{domains}}}</ul>
+        </div>
+      {{/if}}
+      <input
+        class='input-text {{ifThen domains "domainToggle"}}'
+        placeholder='{{localize "WEAPON.clerical"}}, {{localize "WEAPON.magical"}}'
+        type='text'
+        name='system.effect.attributes'
+        value='{{document.system.effect.attributes}}'
+        data-dtype='String'
+      />
+    </div>
+  {{else if (eq document.system.traitType.value 'armor')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'protection'}}</label>
+      <input class='input-text' type='text' name='system.at.value' value='{{document.system.at.value}}' data-dtype='String' />
+    </div>
+
+  {{else if (eq document.system.traitType.value 'familiar')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'APValue'}}</label>
+      <input class='input-text' type='text' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'AsPCost'}}</label>
+      <input class='input-text' type='text' name='system.AsPCost.value' value='{{document.system.AsPCost.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'duration'}}</label>
+      <input class='input-text' type='text' name='system.duration.value' value='{{document.system.duration.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'aspect'}}</label>
+      <input class='input-text' type='text' name='system.aspect.value' value='{{document.system.aspect.value}}' data-dtype='String' />
+    </div>
+  {{else if (eq document.system.traitType.value 'trick')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'APValue'}}</label>
+      <input class='input-text' type='text' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'requirements'}}</label>
+      <input class='input-text' type='text' name='system.aspect.value' value='{{document.system.aspect.value}}' data-dtype='String' />
+    </div>
+  {{else if (eq document.system.traitType.value 'entity')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'distribution'}}</label>
+      <input class='input-text' type='text' name='system.distribution' value='{{document.system.distribution}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'CHARAbbrev.QS'}}</label>
+      <input class='input-text' type='number' name='system.AsPCost.value' value='{{document.system.AsPCost.value}}' data-dtype='Number' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'maxlevel'}}</label>
+      <input class='input-text' type='number' name='system.at.value' value='{{document.system.at.value}}' data-dtype='Number' />
+    </div>
+    {{#if isOwned}}
+      <div class='form-group'>
+        <label class='label-text'>
+          {{localize 'stepValue'}}
+        </label>
+        <input class='input-text' type='number' name='system.step.value' value='{{document.system.step.value}}' data-dtype='Number' placeholder='1' />
+      </div>
+    {{/if}}
+  {{else if (eq document.system.traitType.value 'summoning')}}
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'distribution'}}</label>
+      <input class='input-text' type='text' name='system.distribution' value='{{document.system.distribution}}' data-dtype='String' />
+    </div>
+    <div class='form-group'>
+      <label class='label-text'>{{localize 'conjuringDifficulty'}}</label>
+      <input class='input-text' type='number' name='system.at.value' value='{{document.system.at.value}}' data-dtype='Number' />
+    </div>
+  {{/if}}
+
+</div>

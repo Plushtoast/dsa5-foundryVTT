@@ -20,14 +20,14 @@ export const ItemSheetObfuscation = (superclass) =>
 
       const html = $(this.element);
       html.on('click', '.obfuscateSection', (ev) => this.obfuscateItem(ev));
-      this.obfuscateTabs();
+      this.obfuscateTabs(options);
     }
 
     obfuscationCss(section) {
       return this.isObfuscated(section) ? '' : ' pale';
     }
 
-    async obfuscateTabs() {
+    async obfuscateTabs(options) {
       const tabs = ['details', 'effects', 'description', 'enchantment'];
       const html = $(this.element);
       let swaptab = false;
@@ -60,7 +60,7 @@ export const ItemSheetObfuscation = (superclass) =>
         if (tabs.length) {
           this.changeTab(tabs[0].dataset.tab, tabs[0].dataset.group);
         } else {
-          const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', { item: this.item });
+          const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', { item: this.item });
           html.find('.content').html(templ);
         }
       }

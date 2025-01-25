@@ -46,6 +46,7 @@ import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/ap-tracker.js';
 import OnUseEffect from './system/onUseEffects.js';
+import TestSuite from './system/testsuite.js';
 
 Hooks.once('init', () => {
   console.log('Initializing DSA5 system');
@@ -111,6 +112,7 @@ Hooks.once('init', () => {
     },
     macro: MacroDSA5,
     config: DSA5,
+    TestSuite,
     memory: new RollMemory()
   };
 

@@ -1,0 +1,18 @@
+<div class='tab standard-form scrollable {{tabs.production.cssClass}}' data-tab='production' data-group='{{tabs.production.group}}' class='tab'>
+  {{#if embeddedItem}}
+    <div class='row-section' style='margin-top:20px'>
+      <div class='col ninety'>
+        <p>{{localize 'productionInfo'}}</p>
+      </div>
+      <div class='col ten centerCell'>
+        {{#if (gt document.system.cummulatedQS.value 5)}}
+          <a data-action='buildItem' data-tooltip='SHEET.PostItem'><i class='fas fa-gavel'></i></a>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class='constructionPreview' style='margin-top:20px'>
+      {{{renderedItem}}}
+    </div>
+  {{/if}}
+</div>

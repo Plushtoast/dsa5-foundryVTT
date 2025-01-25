@@ -104,12 +104,18 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     footer: {template: "templates/generic/form-footer.hbs"}
   };
 
-  static TABS = [
-    {id: "details", group: "sheet", icon: "fa-solid fa-book", label: "EFFECT.TABS.Details"},
-    {id: "duration", group: "sheet", icon: "fa-solid fa-clock", label: "EFFECT.TABS.Duration"},
-    {id: "changes", group: "sheet", icon: "fa-solid fa-cogs", label: "EFFECT.TABS.Changes"},
-    {id: "advanced", group: "sheet", icon: "fa-solid fa-shield-alt", label: "advanced"},
-  ];
+  static TABS = {
+    sheet: {
+      tabs: [
+        {id: "details", icon: "fa-solid fa-book" },
+        {id: "duration", icon: "fa-solid fa-clock" },
+        {id: "changes", icon: "fa-solid fa-cogs" },
+        {id: "advanced", icon: "fa-solid fa-shield-alt", label: "advanced"},
+      ],
+      initial: "details",
+      labelPrefix: "EFFECT.TABS"
+    }
+  };
 
   static async callMacro(packName, name, actor, item, qs, args = {}) {
     return await callMacro(packName, name, actor, item, qs, args);

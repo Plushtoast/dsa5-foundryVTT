@@ -1260,18 +1260,21 @@ form.dsa5.item-sheet {
     background-repeat: no-repeat;
     height: 50px;
 
+    svg text {
+      fill: var(--color-text-primary);
+    }
+
     h1 {
       margin: 0 10%;
       cursor: pointer;
     }
-  }
-
-  div.item-header,
-  .item-header input {
-    text-align: center;
-    padding: 8px;
-    background: none;
-    border: none;
+    
+    input {
+      text-align: center;
+      padding: 8px;
+      background: none;
+      border: none;
+    }
   }
 }
 

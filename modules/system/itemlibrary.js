@@ -152,18 +152,19 @@ class DSASystemConfiguration {
 }
 
 export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-    tabGroups = {
-        sheet: "Items"
-    }
-
     pageSize = 60
 
-    windowtabs = {
-        Items: { id: "Items", group: "sheet", icon: "fa-solid fa-suitcase", label: "TYPES.Item.equipment" },
-        Character: { id: "Character", group: "sheet", icon: "fa-solid fa-user", label: "TYPES.Actor.character" },
-        Religion: { id: "Religion", group: "sheet", icon: "fa-solid fa-hat-wizard", label: `${game.i18n.localize("Magic")}/${game.i18n.localize("Religion")}` },
-        JournalEntries: { id: "JournalEntries", group: "sheet", icon: "fa-solid fa-book-open", label: "DOCUMENT.JournalEntries" },
-        Actors: { id: "Actors", group: "sheet", icon: "fa-solid fa-dragon", label: "zoo" },
+    static TABS = {
+        sheet: {
+          tabs: [
+            { id: "Items", icon: "fa-solid fa-suitcase", label: "TYPES.Item.equipment" },
+            { id: "Character", icon: "fa-solid fa-user", label: "TYPES.Actor.character" },
+            { id: "Religion", icon: "fa-solid fa-hat-wizard", label: 'MagicReligion' },
+            { id: "JournalEntries", icon: "fa-solid fa-book-open", label: "DOCUMENT.JournalEntries" },
+            { id: "Actors", icon: "fa-solid fa-dragon", label: "zoo" }
+          ],
+          initial: "Items"
+        } 
     }
 
     static DEFAULT_OPTIONS = {
@@ -259,8 +260,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options)
-
-    data.tabs = this.getTabs()
     data.isGM = game.user.isGM
     data.models = this.models
 
@@ -269,7 +268,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     }
 
     this.prepareSettings(data)
-
     return data
   }
  
@@ -827,7 +825,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     tabSlider(html);     
     const source = this
@@ -916,17 +913,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
             new LibraryModulsFilter().render(true)
             break
     }
-  }
-
-  getTabs() {
-    const tabs = foundry.utils.duplicate(this.windowtabs)
-    if(!game.user.isGM) delete tabs.Actors
-
-    for (const v of Object.values(tabs)) {
-        v.active = this.tabGroups[v.group] === v.id;
-        v.cssClass = v.active ? "active" : "";
-    }
-    return tabs;
   }
 
   _onDragOver(ev) {

@@ -46,7 +46,6 @@ export default class DSA5SkillDialog extends DialogShared {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
 
     html.on('change', 'input,select', (ev) => this.rememberFormData(ev));

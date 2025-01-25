@@ -890,13 +890,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       height,
       scale,
     });
-    const el = this.element[0];
 
-    if (!el.style.width || width) {
-      const tarW = width || el.offsetWidth;
-      const maxW = el.style.maxWidth || window.innerWidth;
+    if (!this.element.style.width || width) {
+      const tarW = width || this.element.offsetWidth;
+      const maxW = this.element.style.maxWidth || window.innerWidth;
       currentPosition.width = width = Math.clamp(tarW, 0, maxW);
-      el.style.width = width + 'px';
+      this.element.style.width = width + 'px';
       if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
     }
     game.settings.set('dsa5', 'tokenhotbarPosition', {

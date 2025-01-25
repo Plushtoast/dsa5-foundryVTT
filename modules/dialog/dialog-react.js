@@ -100,7 +100,6 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     html.find('.reactClick').on('click', (ev) => {
       this.callbackResult(ev.currentTarget.dataset, this.actor, this.tokenId);
@@ -219,7 +218,6 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     html.find('.reactClick').on('click', (ev) => {
       this.callbackResult(ev.currentTarget.dataset.value, this.startMessage);

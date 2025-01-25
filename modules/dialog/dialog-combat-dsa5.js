@@ -122,7 +122,6 @@ export default class DSA5CombatDialog extends DialogShared {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     let specAbs = html.find('.specAbs');
     specAbs.mouseenter((ev) => {

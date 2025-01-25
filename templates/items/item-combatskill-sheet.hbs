@@ -1,0 +1,23 @@
+<div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'StF'}}</label>
+    <select name='system.StF.value' data-dtype='Strings'>
+      {{selectOptions StFs selected=document.system.StF.value localize=true}}
+    </select>
+  </div>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'guidevalue'}}</label>
+    <select name='system.guidevalue.value' data-dtype='String'>
+      {{selectOptions guidevalues selected=document.system.guidevalue.value localize=true}}
+    </select>
+  </div>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'weapontype'}}</label>
+    <select name='system.weapontype.value' data-dtype='String'>
+      {{selectOptions weapontypes selected=document.system.weapontype.value localize=true}}
+    </select>
+  </div>
+</div>

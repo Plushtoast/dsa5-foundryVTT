@@ -139,7 +139,8 @@ async function combineSwarm(actor, token) {
 }
 
 export default function () {
-  Hooks.on('renderTokenHUD', (app, html, data) => {
+  Hooks.on('renderTokenHUD', (app, jhtml, data) => {
+    const html = $(jhtml);
     TokenHoverHud.hide(app.object);
 
     const actor = app.object.actor;

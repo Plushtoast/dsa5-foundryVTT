@@ -1,0 +1,13 @@
+<div
+  class='tab standard-form scrollable {{tabs.description.cssClass}}'
+  data-tab='description'
+  data-group='{{tabs.description.group}}'
+  class='tab description'
+  data-tab='description'
+>
+  {{#if hasLocalization}} 
+    {{{localize (concat localizerPrefix document.name)}}}
+  {{else}}
+    {{editor enrichedDescription target='system.description.value' button=true owner=owner editable=editable engine='prosemirror'}}
+  {{/if}}
+</div>

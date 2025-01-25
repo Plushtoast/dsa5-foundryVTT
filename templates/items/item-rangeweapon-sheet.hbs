@@ -1,0 +1,22 @@
+<div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}" class="tab">    
+    {{#if hasAlternateAttacks}}
+    <nav class="sheet-tabs tabs">
+        <a class="item lineheight active" data-action="tab" data-tab="baseAttack" data-group="alternateAttacks" >{{localize 'CHAR.ATTACK'}}</a>
+        {{#each alternateAttacks as |item key|}}
+            <a class="item lineheight {{item.cssClass}}" data-action="tab" data-group="alternateAttacks" data-tab="{{key}}">{{item.name}}</a>
+        {{/each}}
+    </nav>
+    <section class="content2">
+        <div class="tab active" data-group="alternateAttacks" class="tab" data-tab="baseAttack">
+            {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
+        </div>
+        {{#each alternateAttacks as |item key|}}
+        <div class="tab" data-tab="{{key}}" data-group="alternateAttacks" class="tab">
+            {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs item ammunitiongroups=../ammunitiongroups combatskills=../combatskills  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+        </div>
+        {{/each}}
+    </section>
+    {{else}}
+        {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
+    {{/if}}
+</div>

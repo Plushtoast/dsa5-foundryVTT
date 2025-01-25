@@ -20,7 +20,7 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    <small>{{item.pack}}</small>
+                    <small>{{document.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
@@ -45,7 +45,7 @@
                             <div class="col">
                                 {{document.system.asp}}
                             </div>
-                            {{#if (eq system.category 2)}}
+                            {{#if (eq document.system.category 2)}}
                             <div class="col table-title noBorder">
                                 {{localize "feature"}}
                             </div>

@@ -416,6 +416,7 @@
     "mount": "Reittier",
     "additionalsign": "Zusatzzeichen",
     "Magic": "Magie",
+    "MagicReligion": "Magie/Religion",
     "maintainCost": "Aufrechterhalten",
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",

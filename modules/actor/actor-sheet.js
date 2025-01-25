@@ -708,11 +708,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     if (!this.isEditable) return;
 
-    new ContextMenu(html, '.item .withContext', [], {
+    new foundry.applications.ui.ContextMenu(this._element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
+      jQuery: false
     });
-    new ContextMenu(html, '.combat-weapon', [], {
+    new foundry.applications.ui.ContextMenu(this._element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
+      jQuery: false
     });
 
     html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
@@ -1624,9 +1626,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
-    mergeObject(data, {
-      items,
-    });
+    mergeObject(data, { items, });
     return data;
   }
 

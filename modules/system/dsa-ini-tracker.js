@@ -1,22 +1,36 @@
+import { DefaultAppv2 } from '../actor/baseapp.js';
 import { DSA5CombatTracker } from '../hooks/combat_tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 
-export default class DSAIniTracker extends Application {
+export default class DSAIniTracker extends DefaultAppv2 {
   static get defaultOptions() {
     const options = super.defaultOptions;
     mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'initTracker']),
-      template: 'systems/dsa5/templates/system/initracker.html',
-      dragDrop: [{ dragSelector: '.iniItem', dropSelector: ['.iniTrackerList'] }],
-      top: 100,
-      left: 170,
-      title: 'DSAIniTracker',
-      itemWidth: game.settings.get('dsa5', 'iniTrackerSize'),
-      actorCount: game.settings.get('dsa5', 'iniTrackerCount'),
+      
       position: game.settings.get('dsa5', 'iniTrackerPosition'),
     });
     return options;
   }
+
+  static DEFAULT_OPTIONS = {
+    position: {
+      width: 440,
+      top: 100,
+      left: 170,
+    },
+    window: {
+      title: 'DSAIniTracker',
+      resizable: true,
+      frame: false,
+    },
+    classes: ['dsa5', 'initTracker'],
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/system/initracker.html'
+    },
+  };
 
   setPosition({ left, top, width, height, scale } = {}) {
     const currentPosition = super.setPosition({
@@ -26,13 +40,12 @@ export default class DSAIniTracker extends Application {
       height,
       scale,
     });
-    const el = this.element[0];
 
-    if (!el.style.width || width) {
-      const tarW = width || el.offsetWidth;
-      const maxW = el.style.maxWidth || window.innerWidth;
+    if (!this.element.style.width || width) {
+      const tarW = width || this.element.offsetWidth;
+      const maxW = this.element.style.maxWidth || window.innerWidth;
       currentPosition.width = width = Math.clamp(tarW, 0, maxW);
-      el.style.width = width + 'px';
+      this.element.style.width = width + 'px';
       if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
     }
     game.settings.set('dsa5', 'iniTrackerPosition', {
@@ -43,7 +56,8 @@ export default class DSAIniTracker extends Application {
   }
 
   static connectHooks() {
-    Hooks.on('renderDSA5CombatTracker', (app, html, data) => {
+    Hooks.on('renderDSA5CombatTracker', (app, html, data, what) => {
+      console.log('renderDSA5CombatTracker', app, html, data, what);
       if (!game.settings.get('dsa5', 'enableCombatFlow')) return;
 
       if (game.combat) {
@@ -64,10 +78,11 @@ export default class DSAIniTracker extends Application {
     this.render(true, { focus: false });
   }
 
-  async getData(options) {
+  async _prepareContext(_options) {
     const data = this.combatData;
-    const itemWidth = DSAIniTracker.defaultOptions.itemWidth;
-    const actorCount = DSAIniTracker.defaultOptions.actorCount;
+    console.log(this.combatData)
+    const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
+    const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
 
     const combatStarted = data.round;
     const turnsToUse = data.turns;
@@ -174,8 +189,9 @@ export default class DSAIniTracker extends Application {
     await this.render(true);
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
 
     const container = html.find('.dragHandler');
     new Draggable(this, html, container[0], this.options.resizable);
@@ -270,32 +286,5 @@ export default class DSAIniTracker extends Application {
 
   _getCombatApp() {
     return game.combats.apps[0];
-  }
-
-  _canDragStart(selector) {
-    return false; // game.user.isGM;
-  }
-
-  _canDragDrop(selector) {
-    return false; // game.user.isGM;
-  }
-
-  _onDragStart(event) {
-    const combatantId = $(event.currentTarget).closestData('combatant-id');
-    event.dataTransfer.setData(
-      'text/plain',
-      JSON.stringify({
-        type: 'IniChange',
-        combatantId: combatantId,
-      }),
-    );
-  }
-
-  _onDrop(event) {
-    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-
-    if (data.type == 'IniChange') {
-      //TODO init tracker resorting
-    }
   }
 }

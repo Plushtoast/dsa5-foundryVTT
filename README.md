@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry12%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
+![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry13%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
 
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
@@ -13,7 +13,7 @@ In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
 
 
 ```
-https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry12/system.json
+https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry13/system.json
 ```
 
 ## Roadmap

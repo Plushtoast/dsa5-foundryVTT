@@ -28,8 +28,6 @@ export default class WizardDSA5 extends DefaultAppv2 {
     },
   };
 
-  tabGroups = { sheet: "description" };
-
   async findCompendiumItem(name, types) {
     for (let type of types) {
       //todo make sure this loads the right thing e.g. armory instead of core

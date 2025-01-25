@@ -70,7 +70,7 @@ export default function migrateWorld() {
     const NEEDS_MIGRATION_VERSION = 31;
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
-    //betaWarning(12)
+    betaWarning(13)
 
     if (!needsMigration) return;
 
@@ -98,16 +98,19 @@ class PatchViewer extends DefaultAppv2 {
   };
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/system/patchviewer.hbs'},
+    main: { template: 'systems/dsa5/templates/system/patchviewer.hbs' },
   };
 
-  static TABS = [
-    {id: "newcontent", group: "sheet", icon: "", label: "News"},
-    {id: "changelog", group: "sheet", icon: "", label: "Changelog"},
-    {id: "content", group: "sheet", icon: "", label: "modules"}
-  ]
-
-  tabGroups = { sheet: "newcontent" };
+  static TABS = {
+    sheet:  {
+      tabs: [
+        {id: "newcontent", label: "News"},
+        {id: "changelog", label: "Changelog"},
+        {id: "content", label: "modules"}
+      ],
+      initial: "newcontent"
+    }
+  }
 
   async _onRender(context, options) {
     await super._onRender((context, options));

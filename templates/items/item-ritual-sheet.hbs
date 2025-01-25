@@ -1,0 +1,107 @@
+<div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}" class="tab">
+
+    <div class="form-group">
+        <label class="label-text">{{localize "Characteristic"}} 1</label>
+        <select name="system.characteristic1.value" data-dtype="String">
+            {{selectOptions characteristics selected=document.system.characteristic1.value localize=true}}  
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="label-text">{{localize "Characteristic"}} 2</label>
+        <select name="system.characteristic2.value" data-dtype="String">
+            {{selectOptions characteristics selected=document.system.characteristic2.value localize=true}}  
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="label-text">{{localize "Characteristic"}} 3</label>
+        <select name="system.characteristic3.value" data-dtype="String">
+            {{selectOptions characteristics selected=document.system.characteristic3.value localize=true}}  
+        </select>
+    </div>
+
+    <div class="form-group tripple">
+        <label class="label-text" data-tooltip="{{localize 'reach'}} ({{localize 'modifyable'}})">{{localize "reach"}} ({{localize 'CHAR.modifyable'}})</label>
+        <input class="input-text" type="text" name="system.range.value" value="{{document.system.range.value}}" data-dtype="String" />
+        <select name="system.canChangeRange.value" data-dtype="String">
+            {{selectOptions yesNoGroup selected=document.system.canChangeRange.value}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "duration"}}</label>
+        <input class="input-text" type="text" name="system.duration.value" value="{{document.system.duration.value}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "targetCategory"}}</label>
+        <input class="input-text" type="text" name="system.targetCategory.value" value="{{document.system.targetCategory.value}}" data-dtype="String" />
+    </div>
+
+    <div class="form-group tripple">
+        <label class="label-text" data-tooltip="{{localize 'castingTime'}} ({{localize 'modifyable'}})">{{localize "castingTime"}} ({{localize "CHAR.modifyable"}})</label>
+        <input class="input-text" type="text" name="system.castingTime.value" value="{{document.system.castingTime.value}}" data-dtype="String" />
+        <select name="system.canChangeCastingTime.value" data-dtype="String">
+            {{selectOptions yesNoGroup selected=document.system.canChangeCastingTime.value}}
+        </select>
+    </div>
+
+    <div class="form-group tripple">
+        <label class="label-text" data-tooltip="{{localize 'AsPCost'}} ({{localize 'modifyable'}})">{{localize "CHAR.AsPCost"}} ({{localize "CHAR.modifyable"}})</label>
+        <input class="input-text" type="number" name="system.AsPCost.value" value="{{document.system.AsPCost.value}}" data-dtype="Number" />
+        <select name="system.canChangeCost.value" data-dtype="String">
+            {{selectOptions yesNoGroup selected=document.system.canChangeCost.value}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "permanentCost"}}</label>
+        <input class="input-text" type="number" name="system.permanentCost.value" value="{{document.system.permanentCost.value}}" data-dtype="Number" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "KaPCostDetail"}}</label>
+        <input class="input-text" type="text" name="system.AsPCostDetail.value" value="{{document.system.AsPCostDetail.value}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "maintainCost"}}</label>
+        <input class="input-text" type="text" name="system.maintainCost.value" value="{{document.system.maintainCost.value}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "variableCost"}}</label>
+        <select name="system.variableBaseCost" data-dtype="String">
+            {{selectOptions yesNoGroup selected=document.system.variableBaseCost}}
+        </select>
+    </div>
+    <div class="form-group full-height">
+        <label class="label-text">{{localize "effect"}}</label>
+        <textarea class="input-text" type="text" name="system.effect.value" data-dtype="String">{{document.system.effect.value}}</textarea>
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "effectFormula"}}</label>
+        <input class="input-text" type="text" name="system.effectFormula.value" value="{{document.system.effectFormula.value}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "distribution"}}</label>
+        <input class="input-text" type="text" name="system.distribution.value" value="{{document.system.distribution.value}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "feature"}}</label>
+        <input class="input-text" type="text" name="system.feature" value="{{document.system.feature}}" data-dtype="String" />
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "resistanceModifier"}}</label>
+        <select name="system.resistanceModifier.value" data-dtype="String">
+            {{selectOptions resistances selected=document.system.resistanceModifier.value localize=true}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="label-text">{{localize "StF"}}</label>
+        <select name="system.StF.value" data-dtype="String">
+            {{selectOptions StFs selected=document.system.StF.value localize=true}}
+        </select>
+    </div>
+    <div class="form-group full-height">
+        <label class="label-text">{{localize "LocalizedIDs.reversalis"}}</label>
+        <textarea class="input-text" type="text" name="system.reversalis" data-dtype="String">{{document.system.reversalis}}</textarea>
+    </div>
+
+    {{> systems/dsa5/templates/items/item-aoe.hbs}}
+</div>

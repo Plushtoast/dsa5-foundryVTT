@@ -5,15 +5,23 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import RuleChaos from '../system/rule_chaos.js';
 const { debounce, getProperty, mergeObject } = foundry.utils;
 
-export class DSA5CombatTracker extends CombatTracker {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      template: 'systems/dsa5/templates/system/combattracker.html',
-    });
-  }
+export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  static PARTS = {
+    header: {
+      template: "templates/sidebar/tabs/combat/header.hbs"
+    },
+    tracker: {
+      template: 'systems/dsa5/templates/system/combattracker.hbs',
+    },
+    footer: {
+      template: "templates/sidebar/tabs/combat/footer.hbs"
+    }
+  };
+
+  async _onRender(context, options) {
+    await super._onRender((context, options));
+    const html = $(this.element);
 
     html.find('.combatant.actor .aggroButton').on('click', (ev) => {
       ev.preventDefault();
@@ -39,10 +47,11 @@ export class DSA5CombatTracker extends CombatTracker {
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    console.log(data);
 
-    for (let turn of data.turns) {
+    for (let turn of data.turns || []) {
       const combatant = data.combat.turns.find((x) => x.id == turn.id);
       const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
       turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;

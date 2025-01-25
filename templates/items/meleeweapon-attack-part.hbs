@@ -2,11 +2,11 @@
     <div class="col eighty"></div>
     <div class="col ten center">
         {{#if scope}}
-        <a class="attack-delete" data-key="{{scopeKey}}" data-tooltip="SHEET.DeleteItem"><i class="fa fa-minus"></i></a>
+        <a data-action="attackDelete" data-key="{{scopeKey}}" data-tooltip="SHEET.DeleteItem"><i class="fa fa-minus"></i></a>
         {{/if}}
     </div>
     <div class="col ten center">
-        <a class="attack-add" data-tooltip="SHEET.alternateAttack"><i class="fa fa-plus"></i></a>
+        <a data-action="attackAdd" data-tooltip="SHEET.alternateAttack"><i class="fa fa-plus"></i></a>
     </div>
 </div>
 {{#if scope}}
@@ -18,77 +18,77 @@
 
 <div class="form-group">
     <label class="label-text">{{localize "damage"}}</label>
-    <input class="input-text" type="text" name="{{scope}}system.damage.value" value="{{system.damage.value}}" data-dtype="String" />
+    <input class="input-text" type="text" name="{{scope}}system.damage.value" value="{{document.system.damage.value}}" data-dtype="String" />
 </div>
 
 {{#if twoHanded}}
 <div class="form-group">
     <label class="label-text">{{localize "atmod"}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.atmod.value" value="{{system.atmod.value}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="{{scope}}system.atmod.value" value="{{document.system.atmod.value}}" data-dtype="Number" />
 </div>
 
 <div class="form-group">
     <label class="label-text">{{localize "pamod"}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.pamod.value" value="{{system.pamod.value}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="{{scope}}system.pamod.value" value="{{document.system.pamod.value}}" data-dtype="Number" />
 </div>
 {{else}}
 <div class="form-group doubleInput">
     <label class="label-text">{{localize "atmod"}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.atmod.value" value="{{system.atmod.value}}" data-dtype="Number" />
-    <input class="input-text" type="number" name="{{scope}}system.atmod.offhandMod" value="{{system.atmod.offhandMod}}" data-dtype="Number" data-tooltip="ITEMSHEET.offHandMod" />
+    <input class="input-text" type="number" name="{{scope}}system.atmod.value" value="{{document.system.atmod.value}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="{{scope}}system.atmod.offhandMod" value="{{document.system.atmod.offhandMod}}" data-dtype="Number" data-tooltip="ITEMSHEET.offHandMod" />
 </div>
 
 <div class="form-group doubleInput">
     <label class="label-text">{{localize "pamod"}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.pamod.value" value="{{system.pamod.value}}" data-dtype="Number" />
-    <input class="input-text" type="number" name="{{scope}}system.pamod.offhandMod" value="{{system.pamod.offhandMod}}" data-dtype="Number" data-tooltip="ITEMSHEET.offHandMod" />
+    <input class="input-text" type="number" name="{{scope}}system.pamod.value" value="{{document.system.pamod.value}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="{{scope}}system.pamod.offhandMod" value="{{document.system.pamod.offhandMod}}" data-dtype="Number" data-tooltip="ITEMSHEET.offHandMod" />
 </div>
 {{/if}}
 
 <div class="form-group">
     <label class="label-text">{{localize "damageThreshold"}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.damageThreshold.value" value="{{system.damageThreshold.value}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="{{scope}}system.damageThreshold.value" value="{{document.system.damageThreshold.value}}" data-dtype="Number" />
 </div>
 
 <div class="form-group">
     <label class="label-text">{{localize "guidevalue"}}</label>
     <select name="{{scope}}system.guidevalue.value" data-dtype="String">
-        {{selectOptions characteristics selected=system.guidevalue.value localize=true}}
+        {{selectOptions characteristics selected=document.system.guidevalue.value localize=true}}
     </select>
 </div>
 
 <div class="form-group">
     <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
     <select name="{{scope}}system.combatskill.value" data-dtype="String">
-        {{selectOptions (selfObj combatskills) selected=system.combatskill.value}}
+        {{selectOptions (selfObj combatskills) selected=document.system.combatskill.value}}
     </select>
 </div>
 
 <div class="form-group">
     <label class="label-text">{{localize "reach"}}</label>
     <select name="{{scope}}system.reach.value" data-dtype="String">
-        {{selectOptions ranges selected=system.reach.value localize=true}}
+        {{selectOptions ranges selected=document.system.reach.value localize=true}}
     </select>
 </div>
 
 <div class="form-group doubleInput">
     <label class="label-text">{{localize 'critBotch'}}</label>
-    <input class="input-text" type="number" name="{{scope}}system.crit" value="{{system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
-    <input class="input-text" type="number" name="{{scope}}system.botch" value="{{system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
+    <input class="input-text" type="number" name="{{scope}}system.crit" value="{{document.system.crit}}" data-dtype="Number" data-tooltip="CriticalSuccess" />
+    <input class="input-text" type="number" name="{{scope}}system.botch" value="{{document.system.botch}}" data-dtype="Number" data-tooltip="CriticalFailure" />
 </div>
 
 {{#if isShield}}
 <div class="form-group">
     <label class="label-text">{{localize "shieldSize"}}</label>
     <select name="{{scope}}system.reach.shieldSize" data-dtype="String">
-        {{selectOptions shieldSizes selected=system.reach.shieldSize localize=true}}
+        {{selectOptions shieldSizes selected=document.system.reach.shieldSize localize=true}}
     </select>
 </div>
 {{/if}}
 
 <div class="form-group">
     <label class="label-text">{{localize "effect"}}</label>
-    <input class="input-text" type="text" name="{{scope}}system.effect.value" value="{{system.effect.value}}" data-dtype="String" />
+    <input class="input-text" type="text" name="{{scope}}system.effect.value" value="{{document.system.effect.value}}" data-dtype="String" />
 </div>
 <div class="form-group autoHeight">
     <label class="label-text">{{localize "domains"}}</label> {{#if domains}}
@@ -96,20 +96,20 @@
         <ul>{{{domains}}}</ul>
     </div>
     {{/if}}
-    <input class="input-text {{#if domains}}domainToggle{{/if}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="{{scope}}system.effect.attributes" value="{{system.effect.attributes}}" data-dtype="String"
+    <input class="input-text {{ifThen domains 'domainToggle'}}" placeholder="{{localize 'WEAPON.clerical'}}, {{localize 'WEAPON.magical'}}, {{localize 'WEAPON.silverPlated'}}" type="text" name="{{scope}}system.effect.attributes" value="{{document.system.effect.attributes}}" data-dtype="String"
     />
 </div>
 
 {{#unless scope}}
 <div class="form-group double">
     <label class="label-text">{{localize "structure"}}</label>
-    <input class="input-text" type="number" name="system.structure.value" value="{{system.structure.value}}" data-dtype="Number" /><span> / </span>
-    <input class="input-text" type="number" name="system.structure.max" value="{{system.structure.max}}" data-dtype="Number" />
+    <input class="input-text" type="number" name="system.structure.value" value="{{document.system.structure.value}}" data-dtype="Number" /><span> / </span>
+    <input class="input-text" type="number" name="system.structure.max" value="{{document.system.structure.max}}" data-dtype="Number" />
 </div>
 {{#if armorAndWeaponDamage}}
 <div class="form-group">
     <label class="label-text">{{localize "WEAR.value"}}</label>
-    <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
+    <input class="input-text" type="number" name="system.structure.breakPointRating" value="{{document.system.structure.breakPointRating}}" placeholder="{{breakPointRating}}" data-dtype="Number" step="1" />
 </div>
 {{/if}}
 {{/unless}}
@@ -118,13 +118,13 @@
 {{#if canBeOffHand}}
 <div class="form-group">
     <label class="label-text">{{localize "offHand"}}</label>
-    <input type="checkbox" name="{{scope}}system.worn.offHand" value="{{system.worn.offHand}}" data-dtype="Boolean" {{checked system.worn.offHand}} />
+    <input type="checkbox" name="{{scope}}system.worn.offHand" value="{{document.system.worn.offHand}}" data-dtype="Boolean" {{checked document.system.worn.offHand}} />
 </div>
 {{/if}}
 {{#if canBeWrongGrip}}
 <div class="form-group" data-tooltip="{{wrongGripHint}}">
     <label class="label-text">{{localize wrongGripLabel}}</label>
-    <input type="checkbox" name="{{scope}}system.worn.wrongGrip" value="{{system.worn.wrongGrip}}" data-dtype="Boolean" {{checked system.worn.wrongGrip}} />
+    <input type="checkbox" name="{{scope}}system.worn.wrongGrip" value="{{document.system.worn.wrongGrip}}" data-dtype="Boolean" {{checked document.system.worn.wrongGrip}} />
 </div>
 {{/if}}
 {{/if}}
@@ -132,8 +132,8 @@
 {{#unless scope}}
 <div class="form-group">
     <label class="label-text">{{localize "PLANT.region"}}</label>
-    <input class="input-text" type="text" name="{{scope}}system.region" value="{{system.region}}" data-dtype="String" />
+    <input class="input-text" type="text" name="{{scope}}system.region" value="{{document.system.region}}" data-dtype="String" />
 </div>
 
-{{> systems/dsa5/templates/items/traditionArtifact.html}}
+{{> systems/dsa5/templates/items/traditionArtifact.hbs}}
 {{/unless}}

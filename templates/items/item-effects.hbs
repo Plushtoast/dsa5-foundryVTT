@@ -1,0 +1,58 @@
+<div class="tab standard-form scrollable {{tabs.effects.cssClass}}" data-tab="effects" data-group="{{tabs.effects.group}}" class="tab">
+    <div class="row-section wrap">
+
+        <div class="col row-section skills table-title">
+            <div class="col ten">
+
+            </div>
+            <div class="col seventy">
+                {{localize "effect"}}
+            </div>
+            <div class="col five right">
+                <a class="status-add" data-tooltip="CONDITION.add"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+        {{#each conditions as |item i|}}
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
+            <div class="col ten">
+                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
+            </div>
+            <div class="col seventy">
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item ../item}}</a>
+            </div>
+
+            <div class="col five right">
+                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
+                {{#if item.disabled}}
+                <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a>
+                {{else}}
+                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}} 
+        {{#each transferedConditions as |item i|}}
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
+            <div class="col ten">
+                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
+            </div>
+            <div class="col seventy">
+                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+            </div>
+            <div class="col five right">
+                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
+                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{#if canOnUseEffect}}
+
+    <div class="form-group full-height" style="margin-top:40px;">
+        <label class="label-text">{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
+        <textarea class="input-text" rows="10" type="text" data-dtype="String" name="flags.dsa5.onUseEffect" placeholder="{{localize 'ActiveEffects.placeholder.onUseEffect'}}">{{flags.dsa5.onUseEffect}}</textarea>
+    </div>
+
+    {{/if}}
+</div>

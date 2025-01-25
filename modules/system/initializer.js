@@ -353,7 +353,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
   submit(button) {
     try {
-      if (button.callback) button.callback(this.options.jQuery ? this.element : this.element[0]);
+      if (button.callback) button.callback(this.options.jQuery ? $(this.element) : this.element);
     } catch (err) {
       ui.notifications.error(err);
       throw new Error(err);

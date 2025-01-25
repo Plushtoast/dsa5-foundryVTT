@@ -616,7 +616,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
           action: 'no',
           icon: 'fas fa-times',
           label: 'cancel',
-        },
+        }
       ],
     }).render(true);
   }

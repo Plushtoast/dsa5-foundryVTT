@@ -56,7 +56,6 @@ export default class DSA5Dialog extends DialogShared {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     html.find('.dieButton').on('click', (ev) => {
       let elem = $(ev.currentTarget);

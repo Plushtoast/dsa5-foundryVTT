@@ -486,6 +486,7 @@
     "maxlevel": "Max rating",
     "mount": "Mount",
     "Magic": "Magic",
+    "MagicReligion": "Magic/Religion",
     "maintainCost": "Maintain",
     "combinationWith": "Combinable with",
     "maintainedSpells": "Maintained Spells/Chants (each -1)",

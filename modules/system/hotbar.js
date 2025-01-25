@@ -87,7 +87,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (game.settings.get('dsa5', 'hotbarv3')) {
       HotbarV3ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
     } else {
-      ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
+      foundry.applications.ui.ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
     }
   }
 
@@ -154,7 +154,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         const itemData = await item.sheet.getData();
 
         if (!game.user.isGM && itemData.item.system.obfuscation?.details) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', itemData);
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', itemData);
         } else {
           description = $(
             await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
@@ -173,12 +173,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         const ids = data.id.split('_');
         item = this.token.actor?.items.get(ids[0]);
         if (item.system.obfuscation?.enchantment) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.html', item);
+          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', item);
           data.name = `${game.i18n.localize('enchantment')} (${item.name})`;
         } else {
           const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
           data.name = `${enchantment.name} (${item.name})`;
-          description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.html', { enchantment, document: item });
+          description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.hbs', { enchantment, document: item });
         }
         break;
       default:
@@ -473,13 +473,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 }
 
-class HotbarV3ContextMenu extends ContextMenu {
+class HotbarV3ContextMenu extends foundry.applications.ui.ContextMenu {
   _setPosition(html, target) {
     target = target.closest('.flexrow');
     super._setPosition(html, target);
   }
 
   static create(app, html, selector, menuItems, { hookName = 'EntryContext', ...options } = {}) {
+    // FIXME APPV13
     for (const cls of app.constructor._getInheritanceChain()) {
       Hooks.call(`get${cls.name}${hookName}`, html, menuItems);
     }

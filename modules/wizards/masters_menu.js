@@ -795,13 +795,16 @@ class GameMasterMenu extends DefaultAppv2 {
     return heros;
   }
 
-  tabGroups = { sheet: "main" };
-
-  static TABS = [
-    {id: "main", group: "sheet", icon: "", label: "TYPES.Actor.character"},
-    {id: "randomGen", group: "sheet", icon: "", label: "MASTER.randomGen"},
-    {id: "sceneConfig", group: "sheet", icon: "", label: "MASTER.sceneConfig"}
-  ]
+  static TABS = {
+    sheet: {
+      tabs: [
+        {id: "main", label: "TYPES.Actor.character"},
+        {id: "randomGen", label: "MASTER.randomGen"},
+        {id: "sceneConfig", label: "MASTER.sceneConfig"}
+      ],
+      initial: "main"
+    }
+  }
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);

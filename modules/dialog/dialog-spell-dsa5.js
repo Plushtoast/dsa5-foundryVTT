@@ -276,7 +276,6 @@ export default class DSA5SpellDialog extends DialogShared {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    //activatelisteners
     const html = $(this.element)
     html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2);
 

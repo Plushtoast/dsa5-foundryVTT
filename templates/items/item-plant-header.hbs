@@ -1,0 +1,44 @@
+<div class='row-section'>
+  <div class='col ten'>
+    <img src='{{document.img}}' data-action='editImage' />
+  </div>
+  <div class='col ninety item-main'>
+    <div class='row-section'>
+      <div class='col four'>
+        <label class='label-text table-title'>{{localize 'Category'}}</label>
+      </div>
+      <div class='col fourty'>
+        <label>{{itemCategory document.type}}</label>
+      </div>
+      <div class='col four'>
+        <label class='label-text table-title'>{{localize 'quantity'}}</label>
+      </div>
+      <div class='col fifteen'>
+        <input class='input-text' type='number' name='system.quantity.value' value='{{document.system.quantity.value}}' data-dtype='Number' />
+
+      </div>
+
+    </div>
+    <div class='row-section'>
+      <div class='col four'>
+        <label data-tooltip='UNITS.money' class='label-text table-title'>{{localize 'price'}}</label>
+      </div>
+      <div class='col fifteen'>
+        <input data-tooltip='UNITS.money' class='input-text' type='number' name='system.price.raw' value='{{document.system.price.raw}}' data-dtype='Number' />
+      </div>
+      <div class='col ten lineheight center'>
+        /
+      </div>
+      <div class='col fifteen'>
+        <input data-tooltip='UNITS.money' class='input-text' type='number' name='system.price.value' value='{{document.system.price.value}}' data-dtype='Number' />
+      </div>
+
+      <div class='col four'>
+        <label data-tooltip='UNITS.weight' class='label-text table-title'>{{localize 'Weight'}}</label>
+      </div>
+      <div class='col fifteen'>
+        <input data-tooltip='UNITS.weight' class='input-text' type='number' name='system.weight.value' value='{{document.system.weight.value}}' data-dtype='Number' />
+      </div>
+    </div>
+  </div>
+</div>

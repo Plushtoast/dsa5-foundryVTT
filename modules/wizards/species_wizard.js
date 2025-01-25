@@ -12,12 +12,17 @@ export default class SpeciesWizard extends WizardDSA5 {
     main: {template: 'systems/dsa5/templates/wizard/add-species-wizard.hbs'},
   };
 
-  static TABS = [
-    { id: 'description', group: 'sheet', icon: '', label: 'Description'},
-    { id: 'generalToChose', group: 'sheet', icon: '', label: 'WIZARD.generalTab'},
-    { id: 'vantagesToChose', group: 'sheet', icon: '', label: 'vantages'},
-  ]
-
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'description', label: 'Description'},
+        { id: 'generalToChose', label: 'WIZARD.generalTab'},
+        { id: 'vantagesToChose', label: 'vantages'}
+      ],
+      initial: 'description',
+    }
+  }
+    
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);

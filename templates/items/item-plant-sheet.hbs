@@ -1,0 +1,88 @@
+<div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
+  <div class='center'>
+    {{#each attributes}}
+      <label class='plantContainer {{this.name}}' data-tooltip='{{concat "PLANT." this.name}}'>
+        <input type='checkbox' name='system.planttype.{{this.name}}' value='true' data-dtype='Boolean' {{checked this.checked}} />
+        <span></span>
+      </label>
+    {{/each}}
+
+  </div>
+
+  {{#if isGM}}
+    {{{enrichedInformation}}}
+  {{/if}}
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'PLANT.landscape'}}</label>
+    <input class='input-text' type='text' name='system.location.landscape' value='{{document.system.location.landscape}}' data-dtype='String' />
+  </div>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'PLANT.region'}}</label>
+    <input class='input-text' type='text' name='system.location.region' value='{{document.system.location.region}}' data-dtype='String' />
+  </div>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'PLANT.search'}}</label>
+    <input class='input-text' type='number' name='system.difficulty.search' value='{{document.system.difficulty.search}}' data-dtype='Number' />
+  </div>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'PLANT.identify'}}</label>
+    <input class='input-text' type='number' name='system.difficulty.identify' value='{{document.system.difficulty.identify}}' data-dtype='Number' />
+  </div>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'PLANT.usages'}}</label>
+    <input class='input-text' type='text' name='system.usages' value='{{document.system.usages}}' data-dtype='String' />
+  </div>
+
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'effect'}}</label>
+    {{editor enrichedEffect target='system.effect' button=true owner=owner editable=editable engine='prosemirror'}}
+  </div>
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'PLANT.recipes'}}</label>
+    {{editor enrichedRecipes target='system.recipes' button=true owner=owner editable=editable engine='prosemirror'}}
+  </div>
+  <div class='form-group'>
+    <b class='label-text'>{{localize 'PLANT.availability'}}</b>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.highNorth'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.highNorth' value='{{document.system.availability.highNorth}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.highNorth}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.grasLands'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.grasLands' value='{{document.system.availability.grasLands}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.grasLands}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.swamps'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.swamps' value='{{document.system.availability.swamps}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.swamps}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.woods'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.woods' value='{{document.system.availability.woods}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.woods}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.jungle'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.jungle' value='{{document.system.availability.jungle}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.jungle}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.mountains'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.mountains' value='{{document.system.availability.mountains}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.mountains}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.desert'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.desert' value='{{document.system.availability.desert}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.desert}}</label>
+  </div>
+  <div class='form-group doubleInput'>
+    <label class='label-text'>{{localize 'PLANT.maraskan'}}</label>
+    <input class='input-text' type='range' dtype='number' name='system.availability.maraskan' value='{{document.system.availability.maraskan}}' min='0' max='5' />
+    <label class='input-text'>{{plantify document.system.availability.maraskan}}</label>
+  </div>
+</div>

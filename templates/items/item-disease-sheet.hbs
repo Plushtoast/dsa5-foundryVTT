@@ -1,0 +1,39 @@
+<div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'stepValue'}}</label>
+    <input class='input-text' type='number' name='system.step.value' value='{{document.system.step.value}}' data-dtype='Number' />
+  </div>
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'incubation'}}</label>
+    <input class='input-text' type='text' name='system.incubation.value' value='{{document.system.incubation.value}}' data-dtype='String' />
+  </div>
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'effect'}}</label>
+    <textarea class='input-text' type='text' name='system.damage.value' data-dtype='String'>{{document.system.damage.value}}</textarea>
+  </div>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'duration'}}</label>
+    <input class='input-text' type='text' name='system.duration.value' value='{{document.system.duration.value}}' data-dtype='String' />
+  </div>
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'source'}}</label>
+    <textarea class='input-text' type='text' name='system.source.value' data-dtype='String'>{{document.system.source.value}}</textarea>
+  </div>
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'treatment'}}</label>
+    <textarea class='input-text' type='text' name='system.treatment.value' data-dtype='String'>{{document.system.treatment.value}}</textarea>
+  </div>
+  <div class='form-group full-height'>
+    <label class='label-text'>{{localize 'antidot'}}</label>
+    <textarea class='input-text' type='text' name='system.antidot.value' data-dtype='String'>{{document.system.antidot.value}}</textarea>
+  </div>
+
+  <div class='form-group'>
+    <label class='label-text'>{{localize 'resistanceModifier'}}</label>
+    <select name='system.resistance.value' data-dtype='String'>
+      {{selectOptions resistances selected=document.system.resistance.value localize=true}}
+    </select>
+  </div>
+
+</div>

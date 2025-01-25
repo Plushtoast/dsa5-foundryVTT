@@ -20,7 +20,7 @@
                     <img src="{{document.img}}" style="width:100%;border:none;" >
                 </div>
                 <div class="col compendium">
-                    <small>{{item.pack}}</small>
+                    <small>{{document.pack}}</small>
                 </div>  
             </div>
             <div class="col ten"></div>
@@ -40,7 +40,7 @@
                             {{traitName document.system.traitType.value}}
                         </div>
 
-                        {{#if (eq system.traitType.value "rangeAttack")}}
+                        {{#if (eq document.system.traitType.value "rangeAttack")}}
                         <div class="col table-title noBorder">
                             {{localize "CHAR.ATTACK"}}
                         </div>
@@ -115,7 +115,7 @@
                                 {{document.system.effect.attributes}}
                             </div>
                             {{/if}}
-                        {{else if (eq system.traitType.value "armor")}}
+                        {{else if (eq document.system.traitType.value "armor")}}
     
                         <div class="col table-title noBorder">
                             {{localize "protection"}}

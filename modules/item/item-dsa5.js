@@ -41,6 +41,8 @@ export default class Itemdsa5 extends Item {
     Weltliche: 'systems/dsa5/icons/categories/Weltliche.webp',
     Zauberer: 'systems/dsa5/icons/categories/Zauberer.webp',
     ritual: 'systems/dsa5/icons/categories/ritual.webp',
+    culture: 'icons/environment/people/charge.webp',
+    money: 'systems/dsa5/icons/money-S.webp',
     ceremony: 'systems/dsa5/icons/categories/ceremony.webp',
     abilityclerical: 'systems/dsa5/icons/categories/ability_clerical.webp',
     abilityCombat: 'systems/dsa5/icons/categories/ability_combat.webp',

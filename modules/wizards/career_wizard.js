@@ -26,16 +26,19 @@ export default class CareerWizard extends WizardDSA5 {
     main: {template: 'systems/dsa5/templates/wizard/add-career-wizard.hbs'},
   };
 
-  static TABS = [
-    { id: 'description', group: 'sheet', icon: '', label: 'Description'},
-    { id: 'generalToChose', group: 'sheet', icon: '', label: 'WIZARD.generalTab'},
-    { id: 'combatToChose', group: 'sheet', icon: '', label: 'Combat'},
-    { id: 'vantagesToChose', group: 'sheet', icon: '', label: 'vantages'},
-    { id: 'magicToChose', group: 'sheet', icon: '', label: 'Magic'},
-    { id: 'religionToChose', group: 'sheet', icon: '', label: 'Religion'},
-  ]
-
-  tabGroups = { sheet: "description" };
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'description', label: 'Description'},
+        { id: 'generalToChose', label: 'WIZARD.generalTab'},
+        { id: 'combatToChose', label: 'Combat'},
+        { id: 'vantagesToChose', label: 'vantages'},
+        { id: 'magicToChose', label: 'Magic'},
+        { id: 'religionToChose', label: 'Religion'},
+      ],
+      initial: "description"
+    }
+  }
 
   async _onRender(context, options) {
     await super._onRender((context, options));

@@ -337,11 +337,14 @@ export default class PlayerMenu extends DefaultAppv2 {
     },
   };
 
-  static TABS = [
-    { id: 'elementals', group: 'sheet', icon: '', label: 'PLAYER.conjuration'}
-  ]
-
-  tabGroups = { sheet: "elementals" };
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'elementals', label: 'PLAYER.conjuration'}
+      ],
+      initial: 'elementals',
+    }
+  }
 
   static PARTS = {
     main: {template: 'systems/dsa5/templates/system/playermenu.hbs'},

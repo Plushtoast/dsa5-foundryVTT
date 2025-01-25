@@ -60,14 +60,11 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs',
     'systems/dsa5/templates/actors/actor-main.html',
     'systems/dsa5/templates/actors/actor-talents.html',
-    'systems/dsa5/templates/items/item-description.html',
     'systems/dsa5/templates/dialog/default-dialog.html',
     'systems/dsa5/templates/dialog/parts/targets.html',
     'systems/dsa5/templates/dialog/enhanced-default-dialog.html',
     'systems/dsa5/templates/dialog/default-combat-dialog.html',
     'systems/dsa5/templates/chat/roll/test-card.html',
-    'systems/dsa5/templates/items/item-equipment.html',
-    'systems/dsa5/templates/items/item-enchantment.html',
     'systems/dsa5/templates/actors/actor-combat.html',
     'systems/dsa5/templates/actors/actor-equipment.html',
     'systems/dsa5/templates/actors/actor-notes.html',
@@ -75,8 +72,6 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/parts/canChangeCastingTime.html',
     'systems/dsa5/templates/actors/parts/schipspart.html',
     'systems/dsa5/templates/chat/post-item.html',
-    'systems/dsa5/templates/items/item-stat.html',
-    'systems/dsa5/templates/items/item-extension.html',
     'systems/dsa5/templates/actors/creature/creature-main.html',
     'systems/dsa5/templates/actors/creature/creature-loot.html',
     'systems/dsa5/templates/actors/creature/creature-notes.html',
@@ -100,10 +95,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/horse.html',
     'systems/dsa5/templates/actors/parts/healthbar.html',
     'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
-    'systems/dsa5/templates/items/item-header.html',
-    'systems/dsa5/templates/items/item-effects.html',
-    'systems/dsa5/templates/items/item-aoe.html',
-    'systems/dsa5/templates/items/traditionArtifact.html',
+    'systems/dsa5/templates/items/traditionArtifact.hbs',
     'systems/dsa5/templates/status/advanced_functions.hbs',
     'systems/dsa5/templates/actors/parts/information.html',
     'systems/dsa5/templates/actors/parts/personaltrait.html',
@@ -127,28 +119,22 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
     'systems/dsa5/templates/actors/parts/specblock.html',
   ]);
-
+  
   Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('dsa5', ActorSheetdsa5Character, {
-    types: ['character'],
-    makeDefault: true,
+
+  const actorSheets = [
+    { sheetClass: ActorSheetdsa5Character, types: ['character'], makeDefault: true },
+    { sheetClass: ActorSheetdsa5Creature, types: ['creature'], makeDefault: true },
+    { sheetClass: ActorSheetdsa5NPC, types: ['npc'], makeDefault: true },
+    { sheetClass: MerchantSheetDSA5, types: ['npc'] },
+    { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
+    { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
+  ];
+  
+  actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
+    Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
   });
-  Actors.registerSheet('dsa5', ActorSheetdsa5Creature, {
-    types: ['creature'],
-    makeDefault: true,
-  });
-  Actors.registerSheet('dsa5', ActorSheetdsa5NPC, {
-    types: ['npc'],
-    makeDefault: true,
-  });
-  Actors.registerSheet('dsa5', MerchantSheetDSA5, { types: ['npc'] });
-  Actors.registerSheet('dsa5', CreatureMerchantSheetDSA5, {
-    types: ['creature'],
-  });
-  Actors.registerSheet('dsa5', CharacterMerchantSheetDSA5, {
-    types: ['character'],
-  });
-  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
   Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();
