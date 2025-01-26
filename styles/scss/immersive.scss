@@ -24,7 +24,8 @@
         }
     }
 
-    .table-title, .label-text {
+    .table-title,
+    .label-text {
         background: rgb(188, 136, 111);
         background: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
     }
@@ -60,6 +61,11 @@
         border-image-width: 30px;
         border-image-slice: 50 50 fill;
         border-image-repeat: round;
+    }
+
+    form.dsa5.item-sheet {
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
     .app.sidebar-popout .window-content {
@@ -492,6 +498,7 @@
     }
 
     #chat {
+
         a.content-link,
         .chat-condition,
         a.inline-roll {
@@ -644,7 +651,7 @@
         }
     }
 
-    .window-app.npc-sheet.app .window-content {
+    .npc-sheet.application .window-content {
         box-shadow: none;
     }
 
@@ -781,10 +788,6 @@
 
     .sound-name {
         color: rgb(92, 92, 92);
-    }
-
-    .app.sidebar-popout {
-        backdrop-filter: none;
     }
 
     .coinIcon:before {

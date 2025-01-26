@@ -21,13 +21,10 @@ import DSA5Payment from '../system/payment.js';
 import { TradeOptions } from './trade.js';
 import APTracker from '../system/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
+import { AppV2Mixin } from './appv2_mixin.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 
-export default class ActorSheetDsa5 extends ActorSheet {
-  get actorType() {
-    return this.actor.type;
-  }
-
+export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   async _render(force = false, options = {}) {
     this._saveSearchFields();
     this._saveCollapsed();
@@ -35,7 +32,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     this._setCollapsed();
     this._restoreSeachFields();
 
-    let elem = $(this._element);
+    let elem = $(this.element);
 
     const tooltips = {
       '.close': 'SHEET.Close',
@@ -56,20 +53,37 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.tabs = [{ navSelector: '.tabs', contentSelector: '.content', initial: 'skills' }];
-    mergeObject(options, {
+  static DEFAULT_OPTIONS = {
+    position: {
       width: 770,
       height: 740,
-      scrollY: ['.save-scroll'],
-      dragDrop: [
-        { dragSelector: '.content .item', dropSelector: null },
-        { dragSelector: '.mainEffects .statusEffect', dropSelector: null },
+    },
+    actions: {
+      itemCreate: ActorSheetDsa5._onItemCreate,
+    },
+    form: {
+      submitOnChange: true,
+    },
+    window: {
+      resizable: true,
+    },
+  };
+
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'skills', label: 'skills' },
+        { id: 'combat', label: 'Combat' },
+        { id: 'magic', label: 'Magic' },
+        { id: 'religion', label: 'Religion' },
+        { id: 'main', label: 'attributes' },
+        { id: 'inventory', label: 'TYPES.Item.equipment' },
+        { id: 'status', label: 'status' },
+        { id: 'notes', label: 'Notes' },
       ],
-    });
-    return options;
-  }
+      initial: 'skills',
+    },
+  };
 
   _saveSearchFields() {
     if (this.form === null) return;
@@ -102,6 +116,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
   }
 
+  _configureRenderParts(options) {
+    if(this.showLimited() && this.constructor.LIMITEDPARTS) {
+      return foundry.utils.deepClone(this.constructor.LIMITEDPARTS);
+    }
+    return super._configureRenderParts(options);
+  }
+
   _saveCollapsed() {
     if (this.form === null) return;
 
@@ -128,21 +149,22 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
   }
 
-  async getData(options) {
-    const baseData = await super.getData(options);
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if(!this.actor.system.isMage) delete tabs.magic
+    if(!this.actor.system.isPriest) delete tabs.religion
+    return tabs;
+  }
+
+  async _prepareContext(_options) {
+    const sheetData = await super._prepareContext(_options);
     this.wrapperLocked = false;
-    const sheetData = {
-      actor: baseData.actor,
-      editable: baseData.editable,
-      limited: baseData.limited,
-      owner: baseData.owner,
-    };
-    sheetData['prepare'] = this.actor.prepareSheet({
-      details: this.openDetails,
-    });
-    sheetData['sizeCategories'] = DSA5.sizeCategories;
+    sheetData.limited = this.actor.limited;
+    sheetData.owner = this.actor.isOwner;
+    sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
+    sheetData.sizeCategories = DSA5.sizeCategories;
     sheetData.isGM = game.user.isGM;
-    sheetData['initDies'] = {
+    sheetData.initDies = {
       '': '-',
       '1d6': '1d6',
       '2d6': '2d6',
@@ -150,30 +172,39 @@ export default class ActorSheetDsa5 extends ActorSheet {
       '4d6': '4d6',
     };
     sheetData.horseSpeeds = Object.keys(Riding.speedKeys).reduce((acc, key) => {
-      acc[key] = game.i18n.localize(`RIDING.speeds.${key}`);
+      acc[key] = `RIDING.speeds.${key}`;
       return acc;
     }, {});
     DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
-    sheetData.enrichedOwnerdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.ownerdescription'), {
-      secrets: this.object.isOwner,
-      async: true,
-    });
-    sheetData.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.gmdescription'), { secrets: this.object.isOwner, async: true });
-    sheetData.enrichedNotes = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.notes.value'), { secrets: this.object.isOwner, async: true });
-    sheetData.enrichedBiography = await TextEditor.enrichHTML(getProperty(this.actor.system, 'details.biography.value'), { secrets: this.object.isOwner, async: true });
 
+    const propertiesToEnrich = [
+      { key: 'enrichedOwnerdescription', path: 'details.notes.ownerdescription' },
+      { key: 'enrichedGmdescription', path: 'details.notes.gmdescription' },
+      { key: 'enrichedNotes', path: 'details.notes.value' },
+      { key: 'enrichedBiography', path: 'details.biography.value' },
+    ];
+    await this.prepareEnrichedFields(sheetData, propertiesToEnrich);
     return sheetData;
   }
 
-  _onItemCreate(event) {
-    event.preventDefault();
-    let header = event.currentTarget,
-      data = duplicate(header.dataset);
+  async prepareEnrichedFields(data, propertiesToEnrich) {
+    const enrichedProperties = await Promise.all(
+      propertiesToEnrich.map(async (prop) => {
+        return {
+          [prop.key]: await TextEditor.enrichHTML(getProperty(this.actor.system, prop.path), { secrets: this.actor.isOwner, async: true }),
+        };
+      }),
+    );
+    Object.assign(data, ...enrichedProperties);
+  }
 
+  static _onItemCreate(event, target) {
+    event.preventDefault();
+    let data = duplicate(target.dataset);
     if (DSA5.equipmentTypes[data.type]) {
       data.type = 'equipment';
       data = mergeObject(data, {
-        'system.equipmentType.value': event.currentTarget.attributes['item-section'].value,
+        'system.equipmentType.value': target.attributes['item-section'].value,
         'system.effect.value': '',
       });
     }
@@ -183,7 +214,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
 
     Itemdsa5.defaultIcon(data);
-    data['name'] = DSA5_Utility.categoryLocalization(data.type);
+    data.name = DSA5_Utility.categoryLocalization(data.type);
+    delete data.action;
     this.actor.createEmbeddedDocuments('Item', [data]);
   }
 
@@ -490,9 +522,10 @@ export default class ActorSheetDsa5 extends ActorSheet {
     }
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  async _onRender(context, options) {
+    await super._onRender((context, options));
 
+    const html = $(this.element);
     const posthand = (ev) => {
       this.actor.items.get(this._getItemId(ev)).postItem();
     };
@@ -655,7 +688,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         ev.currentTarget.appendChild(div);
       }
     });
-    html.find('.cards .item').mouseleave((ev) => {
+    html.find('.cards .item').on('mouseleave', (ev) => {
       let e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
@@ -708,13 +741,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
 
     if (!this.isEditable) return;
 
-    new foundry.applications.ui.ContextMenu(this._element, '.item .withContext', [], {
+    new foundry.applications.ui.ContextMenu(this.element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
-      jQuery: false
+      jQuery: false,
     });
-    new foundry.applications.ui.ContextMenu(this._element, '.combat-weapon', [], {
+    new foundry.applications.ui.ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
-      jQuery: false
+      jQuery: false,
     });
 
     html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
@@ -824,11 +857,8 @@ export default class ActorSheetDsa5 extends ActorSheet {
     html.find('.refund-points').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPointsAdvance', ev.currentTarget.dataset.attr));
     html.find('.rebuy-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr));
     html.find('.refund-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr));
-
     html.find('.onUseItem').on('mousedown', (ev) => this._onMacroUseItem(ev));
     html.find('.traditionPayCost').on('mousedown', (ev) => this._payAeSpecialAbilityCost(ev));
-
-    html.find('.item-create').on('click', (ev) => this._onItemCreate(ev));
 
     html.find('.condition-toggle').on('mousedown', async (ev) => {
       let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
@@ -884,8 +914,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
         });
       }
       const hasWeaponThrow =
-        ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) &&
-        SpecialabilityRulesDSA5.hasAbility(this.actor, 'LocalizedIDs.weaponThrow');
+        ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this.actor, 'LocalizedIDs.weaponThrow');
       const throwLabel = `${game.i18n.localize('TYPES.Item.rangeweapon')} ${game.i18n.localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${game.i18n.localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
       options.push(
         {
@@ -1300,7 +1329,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
       if (await this.actor.checkEnoughXP(apCost)) {
         await this._updateAPs(apCost, {}, { render: false });
         const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
-        if(DSA5.spellRules[createdItem.name]) DSA5.spellRules[createdItem.name](this.actor, createdItem)
+        if (DSA5.spellRules[createdItem.name]) DSA5.spellRules[createdItem.name](this.actor, createdItem);
         await APTracker.track(this.actor, { type: 'item', item: createdItem, state: 1 }, apCost);
       }
     }
@@ -1511,19 +1540,13 @@ export default class ActorSheetDsa5 extends ActorSheet {
     return await this._manageDragItems(itemData, itemData.type);
   }
 
-  async _onDropActor(event, data) {
-    if (!this.actor.isOwner) return false;
+  async _onDropActor(event, item) {
+    if (item.uuid === this.actor.uuid) return false;
 
-    const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false);
-
-    if (selfTarget) return;
-
-    return await this._manageDragItems(item, typeClass);
+    return await this._manageDragItems(item, item.type);
   }
 
-  async _onDropActiveEffect(event, data) {
-    const effect = await ActiveEffect.implementation.fromDropData(data);
-    if (!this.actor.isOwner || !effect) return false;
+  async _onDropActiveEffect(event, effect) {
     if (this.actor.uuid === effect.parent?.uuid) return false;
 
     const ef = effect.toObject();
@@ -1531,10 +1554,7 @@ export default class ActorSheetDsa5 extends ActorSheet {
     return ActiveEffect.create(ef, { parent: this.actor });
   }
 
-  async _onDropItem(event, data) {
-    if (!this.actor.isOwner) return false;
-
-    const item = await Item.implementation.fromDropData(data);
+  async _onDropItem(event, item) {
     const itemData = item.toObject();
 
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
@@ -1626,7 +1646,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
-    mergeObject(data, { items, });
+    mergeObject(data, { items });
     return data;
   }
 

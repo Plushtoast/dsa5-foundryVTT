@@ -1,5 +1,5 @@
 {{#if prepare.canSwarm}}
-{{#if (gt actor.system.swarm.count 1)}}
+{{#if (gt document.system.swarm.count 1)}}
 <div class="combat-swarm groupbox">
     <div class="row-section table-title lineheight">
         <div class="title-type col third">
@@ -34,23 +34,23 @@
                 <div class="title-type col third">
                 </div>
                 <div class="col ten center">
-                    {{ actor.system.swarm.effectiveCount }}
+                    {{ document.system.swarm.effectiveCount }}
                 </div>
                 <div class="col ten center">
-                    <input name="system.swarm.count" type="number" value="{{actor.system.swarm.count}}" data-dtype="Number" />
+                    <input name="system.swarm.count" type="number" value="{{document.system.swarm.count}}" data-dtype="Number" />
                 </div>
                 <div class="col ten center">
-                    <input name="system.swarm.gg" type="number" value="{{actor.system.swarm.gg}}" data-dtype="Number" />
+                    <input name="system.swarm.gg" type="number" value="{{document.system.swarm.gg}}" data-dtype="Number" />
                 </div>
 
                 <div class="col ten center">
-                    {{actor.system.swarm.attack}}
+                    {{document.system.swarm.attack}}
                 </div>
                 <div class="col ten center">
-                    {{actor.system.swarm.parry}}
+                    {{document.system.swarm.parry}}
                 </div>
                 <div class="col ten center">
-                    {{actor.system.swarm.damage}}
+                    {{document.system.swarm.damage}}
                 </div>
             </div>
         </div>

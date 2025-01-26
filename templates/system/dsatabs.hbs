@@ -1,6 +1,6 @@
 <div class="navWrapper">
-    <i class="fas fa-angle-left left-btn"></i>
-    <i class="fas fa-angle-right right-btn"></i>
+    <div class="left-btn"><i class="fas fa-angle-left"></i></div>
+    <div class="right-btn"><i class="fas fa-angle-right"></i></div>
     <nav class="sheet-tabs tabs" aria-roledescription="Form Tab Navigation">
         {{#each tabs as |tab|}}
         <a class="item {{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">                

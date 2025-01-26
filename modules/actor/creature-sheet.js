@@ -1,34 +1,76 @@
 import ActorSheetDsa5 from './actor-sheet.js';
 import TraitRulesDSA5 from '../system/trait-rules-dsa5.js';
 import APTracker from '../system/ap-tracker.js';
-const { mergeObject, getProperty } = foundry.utils;
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      classes: options.classes.concat(['dsa5', 'actor', 'creature-sheet']),
-    });
-    return options;
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5', 'actor', 'creature-sheet'],
+  };
+
+  static PARTS = {
+    header: {
+      template: 'systems/dsa5/templates/actors/creature/creature-header.hbs',
+    },
+    headAttributes: {
+      template: 'systems/dsa5/templates/actors/parts/attributes.html',
+    },
+    tabs: {
+      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+    },
+    main: {
+      template: 'systems/dsa5/templates/actors/creature/creature-main.html',
+      scrollable: ['.scrollable']
+    },
+    combat: {
+      template: 'systems/dsa5/templates/actors/actor-combat.html',
+      scrollable: ['.scrollable']
+    },
+    skills: {
+      template: 'systems/dsa5/templates/actors/actor-talents.html',
+      scrollable: ['.scrollable']
+    },
+    magic: {
+      template: 'systems/dsa5/templates/actors/creature/creature-magic.html',
+      scrollable: ['.scrollable']
+    },
+    religion: {
+      template: 'systems/dsa5/templates/actors/creature/creature-religion.html',
+      scrollable: ['.scrollable']
+    },
+    inventory: {
+      template: 'systems/dsa5/templates/actors/creature/creature-loot.html',
+      scrollable: ['.scrollable']
+    },
+    status: {
+      template: 'systems/dsa5/templates/actors/parts/status_effects.html',
+      scrollable: ['.scrollable']
+    },
+    notes: {
+      template: 'systems/dsa5/templates/actors/creature/creature-notes.html',
+      scrollable: ['.scrollable']
+    }
   }
 
-  get template() {
-    if (this.showLimited()) return 'systems/dsa5/templates/actors/creature-limited.html';
-
-    return 'systems/dsa5/templates/actors/creature-sheet.html';
+  static LIMITEDPARTS = {
+    all: {
+      template: 'systems/dsa5/templates/actors/creature-limited.html',
+    }
   }
 
-  async getData(options) {
-    const data = await super.getData(options);
-    data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.actor.system, 'description.value'), { secrets: this.object.isOwner, async: true });
-    data.enrichedBehaviour = await TextEditor.enrichHTML(getProperty(this.actor.system, 'behaviour.value'), { secrets: this.object.isOwner, async: true });
-    data.enrichedFlight = await TextEditor.enrichHTML(getProperty(this.actor.system, 'flight.value'), { secrets: this.object.isOwner, async: true });
-    data.enrichedSpecialrules = await TextEditor.enrichHTML(getProperty(this.actor.system, 'specialRules.value'), { secrets: this.object.isOwner, async: true });
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const propertiesToEnrich = [
+      { key: 'enrichedDescription', path: 'description.value' },
+      { key: 'enrichedBehaviour', path: 'behaviour.value' },
+      { key: 'enrichedFlight', path: 'flight.value' },
+      { key: 'enrichedSpecialrules', path: 'specialRules.value' },
+    ];
+    await this.prepareEnrichedFields(data, propertiesToEnrich);
     return data;
   }
 
   async _cleverDeleteItem(itemId) {
-    let item = this.actor.items.find((x) => x.id == itemId);
+    const item = this.actor.items.get(itemId);
     switch (item.type) {
       case 'trait':
         const xpCost = item.system.APValue.value * -1;

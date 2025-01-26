@@ -175,7 +175,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       $(ev.currentTarget).next('.domainToggle').show();
     });
 
-    html.find('[data-edit="img"]').on('mousedown', (ev) => {
+    html.find('[data-action="editImage"]').on('mousedown', (ev) => {
       if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
     });
 
@@ -511,12 +511,8 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
   static DEFAULT_OPTIONS = {
     actions: {
-      postAsGroupCheck: function () {
-        this.postAsGroupCheck();
-      },
-      buildItem: function () {
-        this.postFinishedItem();
-      },
+      postAsGroupCheck: AggregatedTestSheet.postAsGroupCheck,
+      buildItem: AggregatedTestSheet.postFinishedItem,
     },
     window: {
       controls: [
@@ -538,7 +534,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     return tabs;
   }
 
-  async postAsGroupCheck() {
+  static async postAsGroupCheck() {
     const rollOptions = ['value', 'value2', 'value3']
       .filter((x) => this.item.system.talent[x])
       .map((x) => {
@@ -566,7 +562,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     RequestRoll.showGCMessage(rollOptions[0].target, 0, data);
   }
 
-  async postFinishedItem() {
+  static async postFinishedItem() {
     if (!this.actor) return;
 
     const resultItem = this.item.getFlag('dsa5', 'embeddedItem');
@@ -1249,12 +1245,8 @@ class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {
 class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   static DEFAULT_OPTIONS = {
     actions: {
-      attackAdd: function () {
-        this.addAttackSheet();
-      },
-      attackDelete: function (event, target) {
-        this.deleteAttack(event, target);
-      },
+      attackAdd: WeaponSheetDSA5.addAttackSheet,
+      attackDelete: WeaponSheetDSA5.deleteAttack,
       rollDamaged: function () {
         EquipmentDamage.breakingTest(this.item);
       },
@@ -1289,12 +1281,12 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
     if (event.target.dataset.tab == 'details') this.changeTab('baseAttack', 'alternateAttacks');
   }
 
-  async deleteAttack(event, target) {
+  static async deleteAttack(event, target) {
     const key = target.dataset.key;
     await this.item.update({ [`flags.dsa5.alternateAttacks.-=${key}`]: null });
   }
 
-  async addAttackSheet() {
+  static async addAttackSheet() {
     const attackName = foundry.utils.randomID();
 
     await this.item.update({

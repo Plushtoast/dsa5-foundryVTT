@@ -21,15 +21,15 @@
             </span>
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.wounds.initial" type="number" value="{{actor.system.status.wounds.initial}}" data-dtype="Number" />
+            <input name="system.status.wounds.initial" type="number" value="{{document.system.status.wounds.initial}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.wounds.modifier" type="number" value="{{actor.system.status.wounds.modifier}}" data-dtype="Number" />
+            <input name="system.status.wounds.modifier" type="number" value="{{document.system.status.wounds.modifier}}" data-dtype="Number" />
 
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.wounds.max}}
+            {{document.system.status.wounds.max}}
         </div>
     </div>
     {{#if prepare.magic.hasSpells}}
@@ -38,15 +38,15 @@
             {{localize "astralenergy"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.astralenergy.initial" type="number" value="{{actor.system.status.astralenergy.initial}}" data-dtype="Number" />
+            <input name="system.status.astralenergy.initial" type="number" value="{{document.system.status.astralenergy.initial}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.astralenergy.modifier" type="number" value="{{actor.system.status.astralenergy.modifier}}" data-dtype="Number" />
+            <input name="system.status.astralenergy.modifier" type="number" value="{{document.system.status.astralenergy.modifier}}" data-dtype="Number" />
 
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.astralenergy.max}}
+            {{document.system.status.astralenergy.max}}
 
         </div>
     </div>
@@ -56,14 +56,14 @@
             {{localize "karmaenergy"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.karmaenergy.initial" type="number" value="{{actor.system.status.karmaenergy.initial}}" data-dtype="Number" />
+            <input name="system.status.karmaenergy.initial" type="number" value="{{document.system.status.karmaenergy.initial}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.karmaenergy.modifier" type="number" value="{{actor.system.status.karmaenergy.modifier}}" data-dtype="Number" />
+            <input name="system.status.karmaenergy.modifier" type="number" value="{{document.system.status.karmaenergy.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.karmaenergy.max}}
+            {{document.system.status.karmaenergy.max}}
         </div>
     </div>
     {{/if}}
@@ -72,15 +72,15 @@
             {{localize "soulpower"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.soulpower.value" type="number" value="{{actor.system.status.soulpower.value}}" data-dtype="Number" />
+            <input name="system.status.soulpower.value" type="number" value="{{document.system.status.soulpower.value}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.soulpower.modifier" type="number" value="{{actor.system.status.soulpower.modifier}}" data-dtype="Number" />
+            <input name="system.status.soulpower.modifier" type="number" value="{{document.system.status.soulpower.modifier}}" data-dtype="Number" />
 
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.soulpower.max}}
+            {{document.system.status.soulpower.max}}
 
         </div>
     </div>
@@ -89,31 +89,31 @@
             {{localize "toughness"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.toughness.value" type="number" value="{{actor.system.status.toughness.value}}" data-dtype="Number" />
+            <input name="system.status.toughness.value" type="number" value="{{document.system.status.toughness.value}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.toughness.modifier" type="number" value="{{actor.system.status.toughness.modifier}}" data-dtype="Number" />
+            <input name="system.status.toughness.modifier" type="number" value="{{document.system.status.toughness.modifier}}" data-dtype="Number" />
 
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.toughness.max}}
+            {{document.system.status.toughness.max}}
 
         </div>
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{#if actor.system.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a class="defenseToggle"><i class="fas fa-shield-alt {{#unless actor.system.config.defense}}off{{/unless}}" data-tooltip="defenseToggle"></i></a>
+            {{#if document.system.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a class="defenseToggle"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}" data-tooltip="defenseToggle"></i></a>
         </div>
         <div class="col eight lineheight center">
-            {{actor.system.status.dodge.value}}
+            {{document.system.status.dodge.value}}
         </div>
         <div class="col eight center">
-            <input name="system.status.dodge.modifier" type="number" value="{{actor.system.status.dodge.modifier}}" data-dtype="Number" />
+            <input name="system.status.dodge.modifier" type="number" value="{{document.system.status.dodge.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.dodge.max}}
+            {{document.system.status.dodge.max}}
 
         </div>
     </div>
@@ -129,7 +129,7 @@
         </div>
 
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="system.actionCount.value" value="{{actor.system.actionCount.value}}" data-dtype="String" />
+            <input class="input-text" type="text" name="system.actionCount.value" value="{{document.system.actionCount.value}}" data-dtype="String" />
 
         </div>
     </div>
@@ -145,7 +145,7 @@
         </div>
 
         <div class="col eight lineheight center">
-            <input class="input-text" type="number" name="system.conjuringDifficulty.value" value="{{actor.system.conjuringDifficulty.value}}" data-dtype="Number" />
+            <input class="input-text" type="number" name="system.conjuringDifficulty.value" value="{{document.system.conjuringDifficulty.value}}" data-dtype="Number" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -155,7 +155,7 @@
 
 
         <div class="col two lineheight center">
-            <input class="input-text" type="text" name="system.count.value" value="{{actor.system.count.value}}" data-dtype="String" />
+            <input class="input-text" type="text" name="system.count.value" value="{{document.system.count.value}}" data-dtype="String" />
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -164,7 +164,7 @@
         </div>
         <div class="col two lineheight center">
             <select name="system.status.size.value" data-dtype="String" style="width:100%">
-                {{selectOptions sizeCategories selected=actor.system.status.size.value localize=true}}
+                {{selectOptions sizeCategories selected=document.system.status.size.value localize=true}}
             </select>
         </div>
     </div>
@@ -173,14 +173,14 @@
             {{localize "speed"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.speed.initial" type="number" value="{{actor.system.status.speed.initial}}" data-dtype="Number" />
+            <input name="system.status.speed.initial" type="number" value="{{document.system.status.speed.initial}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.speed.modifier" type="number" value="{{actor.system.status.speed.modifier}}" data-dtype="Number" />
+            <input name="system.status.speed.modifier" type="number" value="{{document.system.status.speed.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.speed.max}}
+            {{document.system.status.speed.max}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -188,14 +188,14 @@
             {{localize "initiative"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.initiative.current" type="number" value="{{actor.system.status.initiative.current}}" data-dtype="Number" />
+            <input name="system.status.initiative.current" type="number" value="{{document.system.status.initiative.current}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.initiative.modifier" type="number" value="{{actor.system.status.initiative.modifier}}" data-dtype="Number" />
+            <input name="system.status.initiative.modifier" type="number" value="{{document.system.status.initiative.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
-            {{floor actor.system.status.initiative.value}}
+            {{floor document.system.status.initiative.value}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -204,7 +204,7 @@
         </div>
         <div class="col two lineheight center">
             <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
-                {{selectOptions initDies selected=actor.system.status.initiative.die localize=false}}
+                {{selectOptions initDies selected=document.system.status.initiative.die localize=false}}
             </select>
         </div>
     </div>
@@ -215,7 +215,7 @@
 
         <div class="col two lineheight center">
             <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                {{selectOptions initDies selected=actor.system.status.initiative.diemodifier localize=false}}
+                {{selectOptions initDies selected=document.system.status.initiative.diemodifier localize=false}}
             </select>
         </div>
     </div>
@@ -224,14 +224,14 @@
             {{localize "fatePoints"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.fatePoints.current" type="number" value="{{actor.system.status.fatePoints.current}}" data-dtype="Number" />
+            <input name="system.status.fatePoints.current" type="number" value="{{document.system.status.fatePoints.current}}" data-dtype="Number" />
         </div>
         <div class="col eight center">
-            <input name="system.status.fatePoints.modifier" type="number" value="{{actor.system.status.fatePoints.modifier}}" data-dtype="Number" />
+            <input name="system.status.fatePoints.modifier" type="number" value="{{document.system.status.fatePoints.modifier}}" data-dtype="Number" />
         </div>
 
         <div class="col eight lineheight center">
-            {{actor.system.status.fatePoints.max}}
+            {{document.system.status.fatePoints.max}}
         </div>
     </div>
     {{> systems/dsa5/templates/actors/parts/temperatureSmall.html}}

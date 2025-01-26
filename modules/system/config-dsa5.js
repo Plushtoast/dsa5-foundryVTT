@@ -557,6 +557,13 @@ DSA5.regenerationInterruptOptions = {
   '-2': 'regenerationInterruptOptions.big',
 };
 
+DSA5.merchantTypes = {
+  none: 'MERCHANT.typeNone',
+  merchant: 'MERCHANT.typeMerchant',
+  loot: 'MERCHANT.typeLoot',
+  epic: 'MERCHANT.typeEpic',
+};
+
 DSA5.targetMomevementOptions = {
   0: 'rangeMovementOptions.SLOW',
   '-2': 'rangeMovementOptions.FAST',

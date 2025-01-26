@@ -85,26 +85,12 @@
   font-style: normal;
 }
 
-#tinymce {
-  overflow-y: hidden;
-  overflow-x: hidden;
-}
-
-.tox-tinymce {
-  width: 100%;
-}
-
 .editor-content ul {
   margin: 0px 0px;
 }
 
 .overflowhidden {
   overflow: hidden;
-}
-
-.scrollY {
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 body {
@@ -470,7 +456,7 @@ input[type='text'].emphasize {
   padding: 0;
 }
 
-.window-app .window-content select:not([multiple]) option {
+.application .window-content select:not([multiple]) option {
   color: white;
   background: rgb(29, 28, 28);
 }
@@ -1188,15 +1174,10 @@ a.img-entity-link {
   background: rgba(0, 0, 0, 0.6);
 }
 
-.window-app {
+.application {
   &.dsajournal .editor-content p {
     margin-right: 10px;
   }
-}
-
-form.dsa5.item-sheet {
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 .qOverlay {
@@ -1236,7 +1217,7 @@ form.dsa5.item-sheet {
 .tokenQuickHot > ul > li,
 .bags,
 .hero,
-.window-app .window-content {
+.application .window-content {
   position: relative;
 }
 
@@ -1385,7 +1366,7 @@ form.dsa5.item-sheet {
   }
 }
 
-.app .window-content {
+.application .window-content {
   > {
     section,
     form {
@@ -2059,7 +2040,7 @@ input[type='search'] {
   display: inline-block;
 }
 
-.window-app.largeDialog .window-content .dialog-buttons {
+.application.largeDialog .window-content .dialog-buttons {
   flex-grow: 0;
   display: flex;
 }
@@ -3285,7 +3266,7 @@ select.noAppearance {
   }
 }
 
-.window-app {
+.application {
   &.initTracker .window-header,
   &.tokenQuickHot .window-header {
     display: none;
@@ -3378,7 +3359,7 @@ select.noAppearance {
   content: '\f067';
 }
 
-.window-app {
+.application {
   &.initTracker {
     &::after,
     .window-content {
@@ -4287,7 +4268,7 @@ input[type='checkbox'].autoCheckbox {
   margin: 0px 1px;
 }
 
-.window-app .condition-show {
+.application .condition-show {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -4393,6 +4374,13 @@ input[type='checkbox'].autoCheckbox {
     padding: 8px;
     color: #756c6c;
     display: none;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     backdrop-filter: blur(10px);
   }
 

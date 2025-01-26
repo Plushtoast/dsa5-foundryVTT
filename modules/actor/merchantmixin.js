@@ -12,16 +12,52 @@ const { mergeObject, getProperty, duplicate } = foundry.utils;
 
 export const MerchantSheetMixin = (superclass) =>
   class extends superclass {
-    static get defaultOptions() {
-      const options = super.defaultOptions;
-      mergeObject(options, {
-        classes: options.classes.concat(['merchant-sheet']),
-      });
-      return options;
+    static DEFAULT_OPTIONS = {
+      classes: ['merchant-sheet'],
     }
 
-    static get merchantTemplate() {
-      return 'systems/dsa5/templates/actors/merchant/merchant-sheet.html';
+    static PARTS = {
+      header: {
+        template: 'systems/dsa5/templates/actors/merchant/merchant-header.hbs',
+      },
+      headAttributes: {
+        template: 'systems/dsa5/templates/actors/parts/attributes.html',
+      },
+      tabs: {
+        template: 'systems/dsa5/templates/system/dsatabs.hbs',
+      },
+      main: {
+        template: 'systems/dsa5/templates/actors/actor-main.html',
+        scrollable: ['.scrollable']
+      },
+      combat: {
+        template: 'systems/dsa5/templates/actors/actor-combat.html',
+        scrollable: ['.scrollable']
+      },
+      skills: {
+        template: 'systems/dsa5/templates/actors/actor-talents.html',
+        scrollable: ['.scrollable']
+      },
+      magic: {
+        template: 'systems/dsa5/templates/actors/character/actor-magic.html',
+        scrollable: ['.scrollable']
+      },
+      religion: {
+        template: 'systems/dsa5/templates/actors/character/actor-religion.html',
+        scrollable: ['.scrollable']
+      },
+      inventory: {
+        template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
+        scrollable: ['.scrollable']
+      },
+      status: {
+        template: 'systems/dsa5/templates/actors/parts/status_effects.html',
+        scrollable: ['.scrollable']
+      },
+      notes: {
+        template: 'systems/dsa5/templates/actors/actor-notes.html',
+        scrollable: ['.scrollable']
+      }
     }
 
     get template() {
@@ -41,6 +77,18 @@ export const MerchantSheetMixin = (superclass) =>
       return this.constructor.merchantTemplate;
     }
 
+    _prepareTabs(group) {
+      const tabs = super._prepareTabs(group);
+      const merchantType = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
+      tabs.inventory.label = DSA5.merchantTypes[merchantType];
+      if(merchantType == 'loot') {
+        for(let tab of ['main', 'skills', 'combat', 'magic', 'religion', 'status', 'notes']) {
+          delete tabs[tab]
+        }
+      }
+      return tabs;
+    }
+
     merchantSheetActivated() {
       return this.showLimited() || (this.playerViewEnabled() && ['merchant', 'loot', 'epic'].includes(getProperty(this.actor.system, 'merchant.merchantType')));
     }
@@ -54,8 +102,9 @@ export const MerchantSheetMixin = (superclass) =>
       await this.actor.update({ ownership: curPermissions }, { diff: false, recursive: false, noHook: true });
     }
 
-    activateListeners(html) {
-      super.activateListeners(html);
+    async _onRender(context, options) {
+      await super._onRender(context, options);
+      const html = $(this.element);
       html.find('.allowMerchant').on('click', async (ev) => {
         const id = ev.currentTarget.dataset.userId;
         const i = $(ev.currentTarget).find('i');
@@ -346,18 +395,15 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
-    async _onDropActor(event, data) {
+    async _onDropActor(event, item) {
       const limited = this.actor.limited;
       const owner = this.actor.isOwner;
 
       if (!(limited || owner)) return false;
-
-      const { item, typeClass, selfTarget } = await itemFromDrop(data, this.id, false);
-
-      if (selfTarget) return;
+      if (item.uuid == this.actor.uuid) return false;
 
       if (owner || (limited && item.documentName == 'Actor')) {
-        return await this._manageDragItems(item, typeClass);
+        return await this._manageDragItems(item, item.type);
       }
     }
 
@@ -407,17 +453,12 @@ export const MerchantSheetMixin = (superclass) =>
       $(ev.currentTarget).text(text);
     }
 
-    async getData(options) {
-      const data = await super.getData(options);
-      data['merchantType'] = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
-      data['merchantTypes'] = {
-        none: game.i18n.localize('MERCHANT.typeNone'),
-        merchant: game.i18n.localize('MERCHANT.typeMerchant'),
-        loot: game.i18n.localize('MERCHANT.typeLoot'),
-        epic: game.i18n.localize('MERCHANT.typeEpic'),
-      };
-      data['invName'] = data['merchantTypes'][data['merchantType']];
-      data['players'] = game.users
+    async _prepareContext(_options) {
+      const data = await super._prepareContext(_options);
+      data.merchantType = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
+      data.merchantTypes = DSA5.merchantTypes;
+      data.invName = data.merchantTypes[data.merchantType];
+      data.players = game.users
         .filter((x) => !x.isGM)
         .map((x) => {
           x.allowedMerchant = this.actor.testUserPermission(x, 'LIMITED', false);
@@ -436,11 +477,11 @@ export const MerchantSheetMixin = (superclass) =>
       } else {
         this.prepareStorage(data);
         data.garadanOptions = {
-          1: game.i18n.localize('GARADAN.1'),
-          2: game.i18n.localize('GARADAN.2'),
-          3: game.i18n.localize('GARADAN.3'),
-          4: game.i18n.localize('GARADAN.4'),
-          6: game.i18n.localize('GARADAN.6'),
+          1: 'GARADAN.1',
+          2: 'GARADAN.2',
+          3: 'GARADAN.3',
+          4: 'GARADAN.4',
+          6: 'GARADAN.6',
         };
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;
@@ -599,7 +640,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
     new game.dsa5.dialogs.RandomGoodsAddition({
       window: {
         title: 'MERCHANT.randomGoods',
-      },      
+      },
       content: html,
       options,
       buttons: [
@@ -609,14 +650,14 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
           label: 'yes',
           default: true,
           callback: (event, button, dialog) => {
-            this.addRandomGoods(actor, $(button.form), ev)
+            this.addRandomGoods(actor, $(button.form), ev);
           },
         },
         {
           action: 'no',
           icon: 'fas fa-times',
           label: 'cancel',
-        }
+        },
       ],
     }).render(true);
   }

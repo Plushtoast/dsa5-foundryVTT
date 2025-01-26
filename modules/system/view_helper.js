@@ -103,8 +103,8 @@ function IconVisibility(html, menu, btnLeft, btnRight) {
   let scrollLeftValue = Math.ceil(menu.scrollLeft);
   let scrollableWidth = menu.scrollWidth - menu.clientWidth;
 
-  btnLeft.style.display = scrollLeftValue > 0 ? 'block' : 'none';
-  btnRight.style.display = scrollableWidth > scrollLeftValue ? 'block' : 'none';
+  btnLeft.style.display = scrollLeftValue > 0 ? 'flex' : 'none';
+  btnRight.style.display = scrollableWidth > scrollLeftValue ? 'flex' : 'none';
 
   columnLayout(html);
 }

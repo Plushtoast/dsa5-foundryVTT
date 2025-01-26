@@ -1,45 +1,53 @@
-{{> systems/dsa5/templates/actors/parts/characteristics-large.html}}
+<div class='tab standard-form scrollable {{tabs.main.cssClass}}' data-tab='main'
+    data-group='{{tabs.main.group}}' class='tab'>
+    {{> systems/dsa5/templates/actors/parts/characteristics-large.html}}
 
-<div class="actor-main row-section wrap reverseFlex">
-    <div class="col morph40">
-        <div class="groupbox" id="derivedAttrs">
-            <div class="derivedAttrs row-section">
-                <div class="col two">
+    <div class="actor-main row-section wrap reverseFlex">
+        <div class="col morph40">
+            <div class="groupbox" id="derivedAttrs">
+                <div class="derivedAttrs row-section">
+                    <div class="col two">
+                    </div>
+                    <div class="col eight very-small center" data-tooltip="value">
+                        {{localize "ABBR.value"}}
+                    </div>
+                    <div class="col eight very-small center" data-tooltip="Modifiers">
+                        {{localize "ABBR.modifiers"}}
+                    </div>
+                    <div class="col eight very-small center" data-tooltip="Advances">
+                        {{localize "ABBR.advances"}}
+                    </div>
+                    <div class="col eight very-small center" data-tooltip="max">
+                        {{localize "ABBR.max"}}
+                    </div>
                 </div>
-                <div class="col eight very-small center" data-tooltip="value">
-                    {{localize "ABBR.value"}}
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds"
+                            class="advance refund-points"><i data-tooltip="{{prepare.system.status.wounds.refund}}"
+                                class="fas fa-minus"></i></a>
+                        <a data-attr="wounds" class="advance advance-points"><i
+                                data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                        <span class="buttons">
+                            <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate"
+                                data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
+                        </span>
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.wounds.current}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.wounds.modifier" type="number"
+                            value="{{document.system.status.wounds.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.wounds.advances" type="number"
+                            value="{{document.system.status.wounds.advances}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.wounds.max}}
+                    </div>
                 </div>
-                <div class="col eight very-small center" data-tooltip="Modifiers">
-                    {{localize "ABBR.modifiers"}}
-                </div>
-                <div class="col eight very-small center" data-tooltip="Advances">
-                    {{localize "ABBR.advances"}}
-                </div>
-                <div class="col eight very-small center" data-tooltip="max">
-                    {{localize "ABBR.max"}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds" class="advance refund-points"><i data-tooltip="{{prepare.system.status.wounds.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="wounds" class="advance advance-points"><i data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
-                    <span class="buttons">
-                        <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate" data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
-                    </span>
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.wounds.current}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.wounds.modifier" type="number" value="{{actor.system.status.wounds.modifier}}" data-dtype="Number"/>
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.wounds.advances" type="number" value="{{actor.system.status.wounds.advances}}" data-dtype="Number"  />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.wounds.max}}
-                </div>
-            </div>
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
@@ -49,270 +57,314 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePMod" type="number" value="{{actor.system.status.regeneration.LePMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
+                        <input name="system.status.regeneration.LePMod" type="number"
+                            value="{{document.system.status.regeneration.LePMod}}" data-dtype="Number"
+                            data-tooltip="SHEET.permRegeneration" />
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePTemp" type="number" value="{{actor.system.status.regeneration.LePTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
+                        <input name="system.status.regeneration.LePTemp" type="number"
+                            value="{{document.system.status.regeneration.LePTemp}}" data-dtype="Number"
+                            data-tooltip="SHEET.tempRegeneration" />
                     </div>
                     <div class="col eight lineheight center">
-                        {{actor.system.status.regeneration.LePmax}}
+                        {{document.system.status.regeneration.LePmax}}
                     </div>
                 </div>
 
-            {{#if prepare.magic.hasSpells}}
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.astralenergy.refund}}" class="fas fa-minus"></i></a>
-                    <a data-attr="astralenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.astralenergy.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                {{#if prepare.magic.hasSpells}}
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
+                            class="advance refund-points"><i
+                                data-tooltip="{{prepare.system.status.astralenergy.refund}}"
+                                class="fas fa-minus"></i></a>
+                        <a data-attr="astralenergy" class="advance advance-points"><i
+                                data-tooltip="{{prepare.system.status.astralenergy.cost}}"
+                                class="fas fa-plus"></i></a>{{/if}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.astralenergy.current}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.astralenergy.modifier" type="number"
+                            value="{{document.system.status.astralenergy.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.astralenergy.advances" type="number"
+                            value="{{document.system.status.astralenergy.advances}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.astralenergy.max}}
+                    </div>
                 </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.astralenergy.current}}
+
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
+                    </div>
+                    <div class="col eight lineheight center">
+
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.regeneration.AsPMod" type="number"
+                            value="{{document.system.status.regeneration.AsPMod}}" data-dtype="Number"
+                            data-tooltip="SHEET.permRegeneration" />
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.regeneration.AsPTemp" type="number"
+                            value="{{document.system.status.regeneration.AsPTemp}}" data-dtype="Number"
+                            data-tooltip="SHEET.tempRegeneration" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.regeneration.AsPmax}}
+                    </div>
                 </div>
-                <div class="col eight center">
-                    <input name="system.status.astralenergy.modifier" type="number" value="{{actor.system.status.astralenergy.modifier}}" data-dtype="Number" />
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight" data-tooltip="permanentCost">
+                        {{localize "CHARAbbrev.pAsP"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
+                            class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                        <a data-attr="astralenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost"
+                                class="fas fa-plus"></i></a>{{/if}}
+                    </div>
+                    <div class="col eight lineheight center">
+
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.astralenergy.permanentLoss" type="number"
+                            value="{{document.system.status.astralenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP"
+                            data-dtype="Number" />
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.astralenergy.rebuy" type="number"
+                            value="{{document.system.status.astralenergy.rebuy}}" data-dtype="Number"
+                            data-tooltip="SHEET.rebuyPAsP" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.astralenergy.permanentLossSum}}
+                    </div>
                 </div>
-                <div class="col eight center">
-                    <input name="system.status.astralenergy.advances" type="number" value="{{actor.system.status.astralenergy.advances}}" data-dtype="Number" />
+
+                {{/if}} {{#if prepare.magic.hasPrayers}}
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy"
+                            class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
+                                class="fas fa-minus"></i></a>
+                        <a data-attr="karmaenergy" class="advance advance-points"><i
+                                data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
+                                class="fas fa-plus"></i></a>{{/if}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.karmaenergy.current}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.karmaenergy.modifier" type="number"
+                            value="{{document.system.status.karmaenergy.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.karmaenergy.advances" type="number"
+                            value="{{document.system.status.karmaenergy.advances}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.karmaenergy.max}}
+                    </div>
                 </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.astralenergy.max}}
+
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
+                    </div>
+                    <div class="col eight lineheight center">
+
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.regeneration.KaPMod" type="number"
+                            value="{{document.system.status.regeneration.KaPMod}}" data-dtype="Number"
+                            data-tooltip="SHEET.permRegeneration" />
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.regeneration.KaPTemp" type="number"
+                            value="{{document.system.status.regeneration.KaPTemp}}" data-dtype="Number"
+                            data-tooltip="SHEET.tempRegeneration" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.regeneration.KaPmax}}
+                    </div>
                 </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight" data-tooltip="permanentCost">
+                        {{localize "CHARAbbrev.pKaP"}} {{#if prepare.canAdvance}}<a data-attr="karmaenergy"
+                            class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                        <a data-attr="karmaenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost"
+                                class="fas fa-plus"></i></a>{{/if}}
+                    </div>
+                    <div class="col eight lineheight center">
+
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.karmaenergy.permanentLoss" type="number"
+                            value="{{document.system.status.karmaenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP"
+                            data-dtype="Number" />
+                    </div>
+                    <div class="col eight center inputTooltipAvailable">
+                        <input name="system.status.karmaenergy.rebuy" type="number"
+                            value="{{document.system.status.karmaenergy.rebuy}}" data-tooltip="SHEET.rebuyPAsP"
+                            data-dtype="Number" />
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.karmaenergy.permanentLossSum}}
+                    </div>
+                </div>
+
+                {{/if}}
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "soulpower"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.soulpower.value}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.soulpower.modifier" type="number"
+                            value="{{document.system.status.soulpower.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.soulpower.max}}
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "toughness"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.toughness.value}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.toughness.modifier" type="number"
+                            value="{{document.system.status.toughness.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.toughness.max}}
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "dodge"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.dodge.value}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.dodge.modifier" type="number"
+                            value="{{document.system.status.dodge.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.dodge.max}}
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "speed"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.speed.initial}}
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.speed.modifier" type="number"
+                            value="{{document.system.status.speed.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.speed.max}}
+                    </div>
+                </div>
+
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "initiative"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.initiative.modifier" type="number"
+                            value="{{document.system.status.initiative.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{floor document.system.status.initiative.value}}
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "initDie"}}
+                    </div>
+                    <div class="col two lineheight center">
+                        <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
+                            {{selectOptions initDies selected=document.system.status.initiative.die localize=false}}
+                        </select>
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "initDieMod"}}
+                    </div>
+
+                    <div class="col two lineheight center">
+                        <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
+                            {{selectOptions initDies selected=document.system.status.initiative.diemodifier
+                            localize=false}}
+                        </select>
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "sizeCategory"}}
+                    </div>
+                    <div class="col two lineheight center">
+                        <select name="system.status.size.value" data-dtype="String" style="width:100%">
+                            {{selectOptions sizeCategories selected=document.system.status.size.value localize=true}}
+                        </select>
+                    </div>
+                </div>
+                <div class="derivedAttrs row-section">
+                    <div class="col two lineheight">
+                        {{localize "fatePoints"}}
+                    </div>
+                    <div class="col eight lineheight center">
+                        <input name="system.status.fatePoints.current" type="number"
+                            value="{{document.system.status.fatePoints.current}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight center">
+                        <input name="system.status.fatePoints.modifier" type="number"
+                            value="{{document.system.status.fatePoints.modifier}}" data-dtype="Number" />
+                    </div>
+                    <div class="col eight">
+
+                    </div>
+                    <div class="col eight lineheight center">
+                        {{document.system.status.fatePoints.max}}
+                    </div>
+                </div>
+                {{> systems/dsa5/templates/actors/parts/temperature.html}}
             </div>
 
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
-                </div>
-                <div class="col eight lineheight center">
-
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.AsPMod" type="number" value="{{actor.system.status.regeneration.AsPMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.AsPTemp" type="number" value="{{actor.system.status.regeneration.AsPTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.regeneration.AsPmax}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight" data-tooltip="permanentCost">
-                    {{localize "CHARAbbrev.pAsP"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy" class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
-                    <a data-attr="astralenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost" class="fas fa-plus"></i></a>{{/if}}
-                </div>
-                <div class="col eight lineheight center">
-
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.astralenergy.permanentLoss" type="number" value="{{actor.system.status.astralenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP" data-dtype="Number" />
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.astralenergy.rebuy" type="number" value="{{actor.system.status.astralenergy.rebuy}}" data-dtype="Number" data-tooltip="SHEET.rebuyPAsP"  />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.astralenergy.permanentLossSum}}
-                </div>
-            </div>
-
-            {{/if}} {{#if prepare.magic.hasPrayers}}
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy" class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
-                        class="fas fa-minus"></i></a>
-                    <a data-attr="karmaenergy" class="advance advance-points"><i data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
-                            class="fas fa-plus"></i></a>{{/if}}
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.karmaenergy.current}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.karmaenergy.modifier" type="number" value="{{actor.system.status.karmaenergy.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.karmaenergy.advances" type="number" value="{{actor.system.status.karmaenergy.advances}}" data-dtype="Number" />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.karmaenergy.max}}
-                </div>
-            </div>
-
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
-                </div>
-                <div class="col eight lineheight center">
-
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.KaPMod" type="number" value="{{actor.system.status.regeneration.KaPMod}}" data-dtype="Number" data-tooltip="SHEET.permRegeneration" />
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.regeneration.KaPTemp" type="number" value="{{actor.system.status.regeneration.KaPTemp}}" data-dtype="Number" data-tooltip="SHEET.tempRegeneration" />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.regeneration.KaPmax}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight" data-tooltip="permanentCost">
-                    {{localize "CHARAbbrev.pKaP"}} {{#if prepare.canAdvance}}<a data-attr="karmaenergy" class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
-                    <a data-attr="karmaenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost" class="fas fa-plus"></i></a>{{/if}}
-                </div>
-                <div class="col eight lineheight center">
-
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.karmaenergy.permanentLoss" type="number" value="{{actor.system.status.karmaenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP" data-dtype="Number" />
-                </div>
-                <div class="col eight center inputTooltipAvailable">
-                    <input name="system.status.karmaenergy.rebuy" type="number" value="{{actor.system.status.karmaenergy.rebuy}}" data-tooltip="SHEET.rebuyPAsP" data-dtype="Number"  />
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.karmaenergy.permanentLossSum}}
-                </div>
-            </div>
-
-            {{/if}}
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "soulpower"}}
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.soulpower.value}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.soulpower.modifier" type="number" value="{{actor.system.status.soulpower.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.soulpower.max}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "toughness"}}
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.toughness.value}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.toughness.modifier" type="number" value="{{actor.system.status.toughness.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.toughness.max}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "dodge"}}
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.dodge.value}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.dodge.modifier" type="number" value="{{actor.system.status.dodge.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.dodge.max}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "speed"}}
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.speed.initial}}
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.speed.modifier" type="number" value="{{actor.system.status.speed.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.speed.max}}
-                </div>
-            </div>
-
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "initiative"}}
-                </div>
-                <div class="col eight lineheight center">
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.initiative.modifier" type="number" value="{{actor.system.status.initiative.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{floor actor.system.status.initiative.value}}
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "initDie"}}
-                </div>
-                <div class="col two lineheight center">
-                    <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
-                        {{selectOptions initDies selected=actor.system.status.initiative.die localize=false}}
-                    </select>
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "initDieMod"}}
-                </div>
-
-                <div class="col two lineheight center">
-                    <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                        {{selectOptions initDies selected=actor.system.status.initiative.diemodifier localize=false}}
-                    </select>
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "sizeCategory"}}
-                </div>
-                <div class="col two lineheight center">
-                    <select name="system.status.size.value" data-dtype="String" style="width:100%">
-                        {{selectOptions sizeCategories selected=actor.system.status.size.value localize=true}}
-                    </select>
-                </div>
-            </div>
-            <div class="derivedAttrs row-section">
-                <div class="col two lineheight">
-                    {{localize "fatePoints"}}
-                </div>
-                <div class="col eight lineheight center">
-                    <input name="system.status.fatePoints.current" type="number" value="{{actor.system.status.fatePoints.current}}" data-dtype="Number" />
-                </div>
-                <div class="col eight center">
-                    <input name="system.status.fatePoints.modifier" type="number" value="{{actor.system.status.fatePoints.modifier}}" data-dtype="Number" />
-                </div>
-                <div class="col eight">
-
-                </div>
-                <div class="col eight lineheight center">
-                    {{actor.system.status.fatePoints.max}}
-                </div>
-            </div>
-            {{> systems/dsa5/templates/actors/parts/temperature.html}}
+            {{> systems/dsa5/templates/actors/parts/experienceBox.html}}
         </div>
-
-        {{> systems/dsa5/templates/actors/parts/experienceBox.html}}
-    </div>
-    <div class="col morph60">
-        {{> systems/dsa5/templates/actors/parts/specialabilities.html}}
+        <div class="col morph60">
+            {{> systems/dsa5/templates/actors/parts/specialabilities.html}}
+        </div>
     </div>
 </div>

@@ -1,21 +1,25 @@
-{{> systems/dsa5/templates/actors/parts/characteristics-large.html}}
+<div class='tab standard-form scrollable {{tabs.main.cssClass}}' data-tab='main'
+    data-group='{{tabs.main.group}}' class='tab'>
+
+    {{> systems/dsa5/templates/actors/parts/characteristics-large.html}}
 
 
-<div class="row-section wrap reverseFlex">
-    <div class="col morph40">
-        {{#if prepare.canAdvance}}
+    <div class="row-section wrap reverseFlex">
+        <div class="col morph40">
+            {{#if prepare.canAdvance}}
 
-        {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html}}
-        {{> systems/dsa5/templates/actors/parts/experienceBox.html}}
+            {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-large.html}}
+            {{> systems/dsa5/templates/actors/parts/experienceBox.html}}
 
-        {{else}}
+            {{else}}
 
-        {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html}}
+            {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-small.html}}
 
-        {{/if}}
+            {{/if}}
 
-    </div>
-    <div class="col morph60">
-        {{> systems/dsa5/templates/actors/parts/specialabilities.html}}
+        </div>
+        <div class="col morph60">
+            {{> systems/dsa5/templates/actors/parts/specialabilities.html}}
+        </div>
     </div>
 </div>

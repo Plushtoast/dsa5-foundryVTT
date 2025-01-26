@@ -1,100 +1,103 @@
-{{> systems/dsa5/templates/actors/parts/spells.html}}
+<div class='tab standard-form scrollable {{tabs.magic.cssClass}}' data-tab='magic'
+    data-group='{{tabs.magic.group}}' class='tab'>
+    {{> systems/dsa5/templates/actors/parts/spells.html}}
 
-<div class="actor-tradition-artefacts groupbox">
-    <div class="row-section wrap inverseRowtable">
-        <div class="col">
-            <div class="row-section skills table-title">
-                <div class="title-type col third">{{localize "SpecCategory.staff"}}</div>
-                <div class="col third center">{{localize "Category"}}</div>
-                <div class="title-volume col third center">{{localize "volume"}}</div>
-                <div class="col ten center">
-                    <a class="selectTraditionartifact very-small" data-tooltip="SHEET.selectTraditionartifact"><i class="fas fa-plus"></i></a>
-                </div>
-            </div>
-        </div>
-        {{#each prepare.traditionArtifacts as |item i|}}
-        <div class="actor-tradition-artefact-item-wrapper col spells item" data-item-id="{{item._id}}">
-            <div class="actor-tradition-artefact-item row-section skills lineheight">
-                <div class="actor-tradition-artefact-name col third"><a class="item-edit">{{item.name}}</a></div>
-                <div class="actor-tradition-artefact-type col third center">{{item.system.artifact}}</div>
-                <div class="actor-tradition-artefact-volume col third center">{{item.volumeFinal}} / {{item.volume}}</div>
-                <div class="actor-tradition-artefact-action col ten very-small center">
-                    <a class="tradition-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
-                </div>
-            </div>
-            {{#if item.abilities}}
-            <div class="row-section expandDetails shown">
-                <div class="row-section wrap cards col">
-                {{#each item.abilities as |ab i|}}
-                <div class="item" data-item-id="{{ab._id}}">
-                    {{#if ab.AEpayable}}<a data-tooltip="SHEET.payAECost" class="traditionPayCost"><i class="fas fa-wand-magic-sparkles"></i></a>{{/if}}{{#if ab.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
-                </div>
-                {{/each}}
-                </div>
-            </div>
-            {{/if}}
-        </div>
-        {{/each}}
-    </div>
-</div>
-
-{{> systems/dsa5/templates/actors/parts/specblock.html currentCat="magical"}}
-
-<div class="row-section wrap reverseFlex">
-    <div class="col morph">
-        <div class="groupbox">
-            <div class="row-section">
-                <div class="col header-label lineheight">
-                    <b>{{localize "magictricks"}}</b>
-                </div>
-            </div>
-            <div class="row-section wrap cards">
-                {{#each prepare.magic.magictrick as |item i|}}
-                <div class="item" data-item-id="{{item._id}}">
-                    <a class="item-edit">{{item.name}}</a>
-                </div>
-                {{/each}}
-            </div>
-        </div>
-        {{> systems/dsa5/templates/actors/parts/magicalSigns.html}}
-    </div>
-    <div class="col morph">
-
-        <div class="actor-tradition groupbox">
-            <div class="actor-tradition-item row-section lineheight">
-                <div class="actor-tradition-label col fourty center">
-                    {{localize "tradition"}}
-                </div>
-                <div class="actor-tradition-value col sixty">
-                    <input type="text" name="system.tradition.magical" data-dtype="String" value="{{actor.system.tradition.magical}}"/>
-                </div>
-            </div>
-            <div class="actor-tradition-item row-section lineheight">
-                <div class="actor-tradition-label col fourty center">
-                    {{localize "guidevalue"}}
-                </div>
-                <div class="actor-tradition-value col sixty">
-                    <div class="form-group">
-                        <select name="system.guidevalue.magical" data-dtype="String">
-                            {{selectOptions prepare.guidevalues selected=actor.system.guidevalue.magical localize=true}}
-                        </select>
+    <div class="actor-tradition-artefacts groupbox">
+        <div class="row-section wrap inverseRowtable">
+            <div class="col">
+                <div class="row-section skills table-title">
+                    <div class="title-type col third">{{localize "SpecCategory.staff"}}</div>
+                    <div class="col third center">{{localize "Category"}}</div>
+                    <div class="title-volume col third center">{{localize "volume"}}</div>
+                    <div class="col ten center">
+                        <a class="selectTraditionartifact very-small" data-tooltip="SHEET.selectTraditionartifact"><i class="fas fa-plus"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="actor-tradition-item row-section lineheight">
-                <div class="actor-tradition-label col fourty center">
-                    {{localize "feature"}}
+            {{#each prepare.traditionArtifacts as |item i|}}
+            <div class="actor-tradition-artefact-item-wrapper col spells item" data-item-id="{{item._id}}">
+                <div class="actor-tradition-artefact-item row-section skills lineheight">
+                    <div class="actor-tradition-artefact-name col third"><a class="item-edit">{{item.name}}</a></div>
+                    <div class="actor-tradition-artefact-type col third center">{{item.system.artifact}}</div>
+                    <div class="actor-tradition-artefact-volume col third center">{{item.volumeFinal}} / {{item.volume}}</div>
+                    <div class="actor-tradition-artefact-action col ten very-small center">
+                        <a class="tradition-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    </div>
                 </div>
-                <div class="actor-tradition-value col sixty">
-                    <input type="text" name="system.feature.magical" data-dtype="String" value="{{actor.system.feature.magical}}"/>
+                {{#if item.abilities}}
+                <div class="row-section expandDetails shown">
+                    <div class="row-section wrap cards col">
+                    {{#each item.abilities as |ab i|}}
+                    <div class="item" data-item-id="{{ab._id}}">
+                        {{#if ab.AEpayable}}<a data-tooltip="SHEET.payAECost" class="traditionPayCost"><i class="fas fa-wand-magic-sparkles"></i></a>{{/if}}{{#if ab.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
+                    </div>
+                    {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    {{> systems/dsa5/templates/actors/parts/specblock.html currentCat="magical"}}
+
+    <div class="row-section wrap reverseFlex">
+        <div class="col morph">
+            <div class="groupbox">
+                <div class="row-section">
+                    <div class="col header-label lineheight">
+                        <b>{{localize "magictricks"}}</b>
+                    </div>
+                </div>
+                <div class="row-section wrap cards">
+                    {{#each prepare.magic.magictrick as |item i|}}
+                    <div class="item" data-item-id="{{item._id}}">
+                        <a class="item-edit">{{item.name}}</a>
+                    </div>
+                    {{/each}}
                 </div>
             </div>
-            <div class="actor-tradition-item row-section lineheight">
-                <div class="actor-tradition-label col fourty center">
-                    {{localize "energyfactor"}}
+            {{> systems/dsa5/templates/actors/parts/magicalSigns.html}}
+        </div>
+        <div class="col morph">
+
+            <div class="actor-tradition groupbox">
+                <div class="actor-tradition-item row-section lineheight">
+                    <div class="actor-tradition-label col fourty center">
+                        {{localize "tradition"}}
+                    </div>
+                    <div class="actor-tradition-value col sixty">
+                        <input type="text" name="system.tradition.magical" data-dtype="String" value="{{document.system.tradition.magical}}"/>
+                    </div>
                 </div>
-                <div class="actor-tradition-value col sixty">
-                    <input type="number" name="system.energyfactor.magical" data-dtype="number" value="{{actor.system.energyfactor.magical}}" />
+                <div class="actor-tradition-item row-section lineheight">
+                    <div class="actor-tradition-label col fourty center">
+                        {{localize "guidevalue"}}
+                    </div>
+                    <div class="actor-tradition-value col sixty">
+                        <div class="form-group">
+                            <select name="system.guidevalue.magical" data-dtype="String">
+                                {{selectOptions prepare.guidevalues selected=document.system.guidevalue.magical localize=true}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="actor-tradition-item row-section lineheight">
+                    <div class="actor-tradition-label col fourty center">
+                        {{localize "feature"}}
+                    </div>
+                    <div class="actor-tradition-value col sixty">
+                        <input type="text" name="system.feature.magical" data-dtype="String" value="{{document.system.feature.magical}}"/>
+                    </div>
+                </div>
+                <div class="actor-tradition-item row-section lineheight">
+                    <div class="actor-tradition-label col fourty center">
+                        {{localize "energyfactor"}}
+                    </div>
+                    <div class="actor-tradition-value col sixty">
+                        <input type="number" name="system.energyfactor.magical" data-dtype="number" value="{{document.system.energyfactor.magical}}" />
+                    </div>
                 </div>
             </div>
         </div>
