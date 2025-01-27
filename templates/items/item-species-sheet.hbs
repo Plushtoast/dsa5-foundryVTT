@@ -1,57 +1,21 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'APValue'}}</label>
-    <input class='input-text' type='number' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'wounds'}}- {{localize 'baseValue'}}</label>
-    <input class='input-text' type='number' name='system.baseValues.wounds.value' value='{{document.system.baseValues.wounds.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'soulpower'}}- {{localize 'baseValue'}}</label>
-    <input class='input-text' type='number' name='system.baseValues.soulpower.value' value='{{document.system.baseValues.soulpower.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'toughness'}}- {{localize 'baseValue'}}</label>
-    <input class='input-text' type='number' name='system.baseValues.toughness.value' value='{{document.system.baseValues.toughness.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'speed'}}</label>
-    <input class='input-text' type='number' name='system.baseValues.speed.value' value='{{document.system.baseValues.speed.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'attributeChange'}}</label>
-    <input class='input-text' type='text' name='system.attributeChange.value' value='{{document.system.attributeChange.value}}' data-dtype='String' />
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'notsuitableAdvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.notsuitableAdvantages.value' data-dtype='String'>{{document.system.notsuitableAdvantages.value}}</textarea>
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'notsuitableDisadvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.notsuitableDisadvantages.value' data-dtype='String'>{{document.system.notsuitableDisadvantages.value}}</textarea>
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'recommendedAdvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.recommendedAdvantages.value' data-dtype='String'>{{document.system.recommendedAdvantages.value}}</textarea>
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'recommendedDisadvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.recommendedDisadvantages.value' data-dtype='String'>{{document.system.recommendedDisadvantages.value}}</textarea>
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'requirements'}}</label>
-    <textarea class='input-text' type='text' name='system.requirements.value' data-dtype='String'>{{document.system.requirements.value}}</textarea>
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'recommendedCultures'}}</label>
-    <textarea class='input-text' type='text' name='system.recommendedCultures.value' data-dtype='String'>{{document.system.recommendedCultures.value}}</textarea>
-  </div>
+  {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  
+  <fieldset>
+    <legend>{{localize 'baseValue'}}</legend>
+    {{formGroup systemFields.baseValues.fields.wounds.fields.value value=document.system.baseValues.wounds.value localize=true}}
+    {{formGroup systemFields.baseValues.fields.soulpower.fields.value value=document.system.baseValues.soulpower.value localize=true}}
+    {{formGroup systemFields.baseValues.fields.toughness.fields.value value=document.system.baseValues.toughness.value localize=true}}
+    {{formGroup systemFields.baseValues.fields.speed.fields.value value=document.system.baseValues.speed.value localize=true}}
+  </fieldset>
+  
+  {{formGroup systemFields.attributeChange.fields.value value=document.system.attributeChange.value localize=true}}
+  {{formGroup systemFields.notsuitableAdvantages.fields.value value=document.system.notsuitableAdvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.notsuitableDisadvantages.fields.value value=document.system.notsuitableDisadvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.recommendedAdvantages.fields.value value=document.system.recommendedAdvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.recommendedDisadvantages.fields.value value=document.system.recommendedDisadvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.recommendedCultures.fields.value value=document.system.recommendedCultures.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
 
 </div>

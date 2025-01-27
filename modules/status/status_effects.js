@@ -389,7 +389,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi');
+    const regex = new RegExp(`${game.i18n.localize('TYPES.ITEM.combatskill')} `, 'gi');
     const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
     if (
       (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -434,7 +434,7 @@ class TranceEffect extends DSA5StatusEffects {
     if (item.type == 'regenerate') return 0;
     switch (Number(this.clampedCondition(actor, effect))) {
       case -2:
-        const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi');
+        const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
         const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
         if (
           (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||

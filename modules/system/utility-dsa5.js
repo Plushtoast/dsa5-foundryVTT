@@ -92,7 +92,11 @@ export default class DSA5_Utility {
   }
 
   static async allCombatSkillsList(weapontype) {
-    return ((await this.allCombatSkills()).filter((x) => x.system.weapontype.value == weapontype) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
+    const weaponId = {
+      'melee': 0,
+      'range': 1,
+    }[weapontype]
+    return ((await this.allCombatSkills()).filter((x) => x.system.weapontype.value == weaponId) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
   }
 
   static async callItemTransformationMacro(macroName, source, effect, args = {}) {

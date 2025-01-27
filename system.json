@@ -136,6 +136,272 @@
             ]
         }
     ],
+    "documentTypes": {
+        "Actor": {
+            "character": {
+                "htmlFields": [
+                    "details.notes.ownerdescription",
+                    "details.notes.gmdescription",
+                    "details.notes.value",
+                    "details.biography.value"
+                ]
+            },
+            "creature": {
+                "htmlFields": [
+                    "description.value",
+                    "behavior.value",
+                    "flight.value",
+                    "specialRules.value"
+                ]
+            },
+            "npc": {
+                "htmlFields": [
+                    "details.notes.ownerdescription",
+                    "details.notes.gmdescription",
+                    "details.notes.value",
+                    "details.biography.value"
+                ]
+            }
+        },
+        "Item": {
+            "equipment": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "armor": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "ammunition": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "rangeweapon": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "meleeweapon": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "skill": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "combatskill": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "specialability": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "advantage": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "disadvantage": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "trait": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "money": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "species": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "career": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "culture": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value",
+                    "clothing.value"
+                ]
+            },
+            "spell": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "liturgy": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "blessing": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "magictrick": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "ceremony": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "ritual": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "aggregatedTest": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value",
+                    "success",
+                    "partsuccess"
+                ]
+            },
+            "poison": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "disease": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "consumable": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value",
+                    "ingredients"
+                ]
+            },
+            "spellextension": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "application": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "effectwrapper": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "plant": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value",
+                    "effect",
+                    "recipes",
+                    "infos"
+                ]
+            },
+            "magicalsign": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "demonmark": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "patron": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "information": {
+                "htmlFields": [
+                    "qs1",
+                    "qs2",
+                    "qs3",
+                    "qs4",
+                    "qs5",
+                    "qs6",
+                    "crit",
+                    "botch",
+                    "fail"
+                ]
+            },
+            "essence": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "imprint": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "book": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            },
+            "trap": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            }
+        }
+    },
     "flags": {
         "hotReload": {
             "extensions": [

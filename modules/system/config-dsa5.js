@@ -478,7 +478,7 @@ DSA5.narrowSpaceModifiers = {
   },
 };
 
-(DSA5.exemplarTypes = {
+DSA5.exemplarTypes = {
   0: 'BOOKITEM.exemplarTypes.0',
   1: 'BOOKITEM.exemplarTypes.1',
   2: 'BOOKITEM.exemplarTypes.2',
@@ -489,11 +489,12 @@ DSA5.narrowSpaceModifiers = {
   7: 'BOOKITEM.exemplarTypes.7',
   8: 'BOOKITEM.exemplarTypes.8',
   9: 'BOOKITEM.exemplarTypes.9',
-}),
-  (DSA5.legalities = {
-    0: 'BOOKITEM.legalities.0',
-    1: 'BOOKITEM.legalities.1',
-  });
+};
+
+DSA5.legalities = {
+  0: 'BOOKITEM.legalities.0',
+  1: 'BOOKITEM.legalities.1',
+};
 
 DSA5.bookQualities = {
   0: 'BOOKITEM.qualities.0',
@@ -771,7 +772,7 @@ DSA5.addAbilityRules = {};
 DSA5.removeAbilityRules = {};
 DSA5.AbilitiesNeedingAdaption = {};
 DSA5.addTraitRules = {};
-DSA5.spellRules = {}
+DSA5.spellRules = {};
 
 DSA5.meleeRangesArray = ['short', 'medium', 'long'];
 
@@ -782,8 +783,8 @@ DSA5.meleeRanges = {
 };
 
 DSA5.weapontypes = {
-  melee: 'meleeweapon',
-  range: 'rangeweapon',
+  0: 'TYPES.Item.meleeweapon',
+  1: 'TYPES.Item.rangeweapon',
 };
 
 DSA5.moneyTypes = {

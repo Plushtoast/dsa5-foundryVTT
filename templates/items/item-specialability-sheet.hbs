@@ -1,111 +1,59 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'APValue'}}</label>
-    <input class='input-text' type='text' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='String' />
-  </div>
+  {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true}}
 
   <div class='form-group'>
-    <label class='label-text'>{{localize 'requirements'}}</label>
-    <input class='input-text' type='text' name='system.requirements.value' value='{{document.system.requirements.value}}' data-dtype='String' />
+    <label>{{localize 'Category'}}</label>
+    <div class="form-fields">
+      <select name='system.category.value'>
+        <optgroup label='{{localize "SpecCategory.general"}}'>
+          {{selectOptions categories.general selected=document.system.category.value localize=true}}
+        </optgroup>
+        <optgroup label='{{localize "SpecCategory.clerical"}}'>
+          {{selectOptions categories.clerical selected=document.system.category.value localize=true}}
+        </optgroup>
+        <optgroup label='{{localize "SpecCategory.magical"}}'>
+          {{selectOptions categories.magical selected=document.system.category.value localize=true}}
+        </optgroup>
+      </select>
+    </div>
   </div>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Category'}}</label>
-    <select name='system.category.value' data-dtype='String' style='max-width: calc(60% - 6px)'>
-      <optgroup label='{{localize "SpecCategory.general"}}'>
-        {{selectOptions categories.general selected=document.system.category.value localize=true}}
-      </optgroup>
-      <optgroup label='{{localize "SpecCategory.clerical"}}'>
-        {{selectOptions categories.clerical selected=document.system.category.value localize=true}}
-      </optgroup>
-      <optgroup label='{{localize "SpecCategory.magical"}}'>
-        {{selectOptions categories.magical selected=document.system.category.value localize=true}}
-      </optgroup>
-    </select>
-  </div>
-  <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'rule'}}</label>
-    <textarea class='input-text' type='text' name='system.rule.value' data-dtype='String'>{{document.system.rule.value}}</textarea>
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'maxlevel'}}</label>
-    <input class='input-text' type='number' name='system.maxRank.value' value='{{document.system.maxRank.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'effect'}}</label>
-    <input class='input-text' type='text' name='system.effect.value' value='{{document.system.effect.value}}' data-dtype='String' />
-  </div>
+  {{formGroup systemFields.rule.fields.value value=document.system.rule.value localize=true classes='full-height' elementType='textarea'}}
+  {{formGroup systemFields.maxRank.fields.value value=document.system.maxRank.value localize=true}} 
+  {{formGroup systemFields.effect.fields.value value=document.system.effect.value localize=true}}  
 
   {{#if (eq document.system.category.value 'pact')}}
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'distribution'}}</label>
-      <input class='input-text' type='text' name='system.distribution' value='{{document.system.distribution}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'circle'}}</label>
-      <input class='input-text' type='number' name='system.step.circle' value='{{document.system.step.circle}}' data-dtype='Number' />
-    </div>
+
+    {{formGroup systemFields.distribution value=document.system.distribution localize=true}}  
+    {{formGroup systemFields.step.fields.circle value=document.system.step.circle localize=true}}  
+
   {{else if (eq document.system.category.value 'staff')}}
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'SpecCategory.staff'}}</label>
-      <select name='system.artifact' data-dtype='String'>
-        {{selectOptions traditionArtifacts selected=document.system.artifact sort=true localize=true}}
-      </select>
-    </div>
-    <div class='form-group' data-tooltip='permanentEffectsHint'>
-      <label class='label-text'>{{localize 'permanentEffects'}}</label>
-      <input type='checkbox' name='system.permanentEffects' value='{{document.system.permanentEffects}}' data-dtype='Boolean' {{checked document.system.permanentEffects}} />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'volume'}}</label>
-      <input class='input-text' type='number' name='system.volume' value='{{document.system.volume}}' data-dtype='Number' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'AsPCost'}}</label>
-      <input class='input-text' type='text' name='system.AsPCost' value='{{document.system.AsPCost}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'feature'}}</label>
-      <input class='input-text' type='text' name='system.feature' value='{{document.system.feature}}' data-dtype='String' />
-    </div>
+
+    {{formGroup systemFields.artifact value=document.system.artifact localize=true sort=true blank='-'}}  
+    {{formGroup systemFields.permanentEffects value=document.system.permanentEffects localize=true tooltip='permanentEffectsHint'}}  
+    {{formGroup systemFields.volume value=document.system.volume localize=true}}  
+    {{formGroup systemFields.AsPCost value=document.system.AsPCost localize=true}}
+    {{formGroup systemFields.feature value=document.system.feature localize=true}}
 
   {{else if (eq document.system.category.value 'Combat')}}
-    <div class='form-group' data-tooltip='TT.effectVariant'>
-      <label class='label-text'>{{localize 'effectVariant' num='B'}}</label>
-      <input class='input-text' type='text' name='system.effect.value2' value='{{document.system.effect.value2}}' data-dtype='String' />
-    </div>
-    <div class='form-group' data-tooltip='TT.effectVariant'>
-      <label class='label-text'>{{localize 'effectVariant' num='C'}}</label>
-      <input class='input-text' type='text' name='system.effect.value3' value='{{document.system.effect.value3}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'TYPES.Item.combatskill'}}</label>
-      <input class='input-text' type='text' name='system.list.value' value='{{document.system.list.value}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'COMBATSKILLCATEGORY.subcategory'}}</label>
-      <select name='system.category.sub' data-dtype='String'>
-        {{selectOptions subCategories selected=document.system.category.sub localize=true}}
-      </select>
-    </div>
+
+    {{formGroup systemFields.effect.fields.value2 value=document.system.effect.value2 localize=true label=(localize 'effectVariant' num='B') tooltip='TT.effectVariant'}}
+    {{formGroup systemFields.effect.fields.value3 value=document.system.effect.value3 localize=true label=(localize 'effectVariant' num='C') tooltip='TT.effectVariant'}}
+    {{formGroup systemFields.list.fields.value value=document.system.list.value localize=true}}
+    {{formGroup systemFields.category.fields.sub value=document.system.category.sub localize=true}}
+
   {{else if (eq document.system.category.value 'homunculus')}}
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'AsPCost'}}</label>
-      <input class='input-text' type='text' name='system.AsPCost' value='{{document.system.AsPCost}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'feature'}}</label>
-      <input class='input-text' type='text' name='system.feature' value='{{document.system.feature}}' data-dtype='String' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'duration'}}</label>
-      <input class='input-text' type='text' name='system.duration.value' value='{{document.system.duration.value}}' data-dtype='String' />
-    </div>
+    
+    {{formGroup systemFields.AsPCost value=document.system.AsPCost localize=true}}
+    {{formGroup systemFields.feature value=document.system.feature localize=true}}
+    {{formGroup systemFields.duration.fields.value value=document.system.duration.value localize=true}} 
+
   {{/if}}
   {{#if isOwned}}
     <div class='form-group'>
-      <label class='label-text'>
+      <label>
         {{#if canAdvance}}
           <a class='refund-step'><i class='fas fa-minus'></i></a>
           {{localize 'stepValue'}}
@@ -114,7 +62,9 @@
           {{localize 'stepValue'}}
         {{/if}}
       </label>
-      <input class='input-text' type='number' name='system.step.value' value='{{document.system.step.value}}' data-dtype='Number' />
+      <div class="form-fields">
+        {{formInput systemFields.step.fields.value value=document.system.step.value}}
+      </div>
     </div>
   {{/if}}
 

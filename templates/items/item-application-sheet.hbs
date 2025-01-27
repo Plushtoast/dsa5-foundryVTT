@@ -1,8 +1,3 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'TYPES.Item.skill'}}</label>
-    <select name='system.skill' data-dtype='String'>
-      {{selectOptions (selfObj allSkills) selected=document.system.skill}}
-    </select>
-  </div>
+  {{formGroup systemFields.skill value=document.system.skill localize=true choices=(selfObj allSkills) blank='-'}}
 </div>

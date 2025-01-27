@@ -211,7 +211,7 @@ export default class Itemdsa5 extends Item {
   }
 
   static getMiracleModifiers(actor, source, type, bonusAttribute) {
-    const regex = new RegExp(`${game.i18n.localize('combatskill')} `, 'gi');
+    const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
     const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '').split(/;|,/).map((x) => x.replace(regex, '').trim());
     const result = [];
     if (happyTalents.includes(source.name)) {

@@ -1,8 +1,3 @@
 {{#if document.system.isArtifact}}
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'SpecCategory.staff'}}</label>
-    <select name='system.artifact' data-dtype='String'>
-      {{selectOptions traditionArtifacts selected=document.system.artifact sort=true localize=true}}
-    </select>
-  </div>
+  {{formInput systemFields.artifact value=document.system.artifact localize=true blank='-'}}
 {{/if}}

@@ -1,23 +1,9 @@
 <div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}" class="tab">
 
-    <div class="form-group">
-        <label class="label-text">{{localize "reach"}}</label>
-        <input class="input-text" type="text" name="system.range.value" value="{{document.system.range.value}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "duration"}}</label>
-        <input class="input-text" type="text" name="system.duration.value" value="{{document.system.duration.value}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "targetCategory"}}</label>
-        <input class="input-text" type="text" name="system.targetCategory.value" value="{{document.system.targetCategory.value}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "feature"}}</label>
-        <input class="input-text" type="text" name="system.feature.value" value="{{document.system.feature.value}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "distribution"}}</label>
-        <input class="input-text" type="text" name="system.distribution" value="{{document.system.distribution}}" data-dtype="String" />
-    </div>
+    {{formGroup systemFields.range.fields.value value=document.system.range.value localize=true}}
+    {{formGroup systemFields.duration.fields.value value=document.system.duration.value localize=true}}
+    {{formGroup systemFields.targetCategory.fields.value value=document.system.targetCategory.value localize=true}}
+    {{formGroup systemFields.feature.fields.value value=document.system.feature.value localize=true}}
+    {{formGroup systemFields.distribution value=document.system.distribution localize=true}}
+    
 </div>

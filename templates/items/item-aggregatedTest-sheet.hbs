@@ -1,57 +1,29 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab'>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'allowedTestCount'}}</label>
-    <input class='input-text' type='number' name='system.allowedTestCount.value' value='{{document.system.allowedTestCount.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'usedTestCount'}}</label>
-    <input class='input-text' type='number' name='system.usedTestCount.value' value='{{document.system.usedTestCount.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'interval'}}</label>
-    <input class='input-text' type='text' name='system.interval.value' value='{{document.system.interval.value}}' data-dtype='String' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'cummulatedQS'}}</label>
-    <input class='input-text' type='number' name='system.cummulatedQS.value' value='{{document.system.cummulatedQS.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'previousFailedTests'}}</label>
-    <input class='input-text' type='number' name='system.previousFailedTests.value' value='{{document.system.t.system.previousFailedTests.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Modifier'}}</label>
-    <input class='input-text' type='number' name='system.baseModifier' value='{{document.system.baseModifier}}' data-dtype='Number' />
-  </div>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'skill'}} 1</label>
-    <select class='select2' name='system.talent.value' data-dtype='String'>
-      {{selectOptions (selfObj allSkills) selected=document.system.talent.value blank='-'}}
-    </select>
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'skill'}} 2</label>
-    <select class='select2' name='system.talent.value2' data-dtype='String'>
-      {{selectOptions (selfObj allSkills) selected=document.system.talent.value2 blank='-'}}
-    </select>
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'skill'}} 3</label>
-    <select class='select2' name='system.talent.value3' data-dtype='String'>
-      {{selectOptions (selfObj allSkills) selected=document.system.talent.value3 blank='-'}}
-    </select>
-  </div>
+  {{formGroup systemFields.allowedTestCount.fields.value value=document.system.allowedTestCount.value localize=true}}
+  {{formGroup systemFields.usedTestCount.fields.value value=document.system.usedTestCount.value localize=true}}
+  {{formGroup systemFields.interval.fields.value value=document.system.interval.value localize=true}}
+  {{formGroup systemFields.cummulatedQS.fields.value value=document.system.cummulatedQS.value localize=true}}
+  {{formGroup systemFields.previousFailedTests.fields.value value=document.system.previousFailedTests.value localize=true}}
+  {{formGroup systemFields.baseModifier value=document.system.baseModifier localize=true}}
+  {{formGroup systemFields.talent.fields.value value=document.system.talent.value localize=true choices=(selfObj allSkills) blank='-'}}
+  {{formGroup systemFields.talent.fields.value2 value=document.system.talent.value2 localize=true choices=(selfObj allSkills) blank='-'}}
+  {{formGroup systemFields.talent.fields.value3 value=document.system.talent.value3 localize=true choices=(selfObj allSkills) blank='-'}}
+
   {{#if (or isGM (gt document.system.cummulatedQS.value 5))}}
     <div class='form-group full-height'>
-      <label class='label-text'>{{localize 'PartSuccess'}}</label>
-      {{editor enrichedpartsuccess target='system.partsuccess' button=true owner=owner editable=editable engine='prosemirror'}}
+      <label>{{localize 'PartSuccess'}}</label>
+      <div class="form-fields">
+        {{editor enrichedpartsuccess target='system.partsuccess' button=true owner=owner editable=editable engine='prosemirror'}}
+      </div>
     </div>
   {{/if}}
   {{#if (or isGM (gt document.system.cummulatedQS.value 9))}}
     <div class='form-group full-height'>
-      <label class='label-text'>{{localize 'Success'}}</label>
-      {{editor enrichedsuccess target='system.success' button=true owner=owner editable=editable engine='prosemirror'}}
+      <label>{{localize 'Success'}}</label>
+      <div class="form-fields">
+        {{editor enrichedsuccess target='system.success' button=true owner=owner editable=editable engine='prosemirror'}}
+      </div>
     </div>
   {{/if}}
 </div>

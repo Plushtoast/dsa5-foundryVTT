@@ -1,44 +1,28 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab'>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'equipmentType'}}</label>
-    <select name='system.equipmentType.value' data-dtype='String'>
-      {{selectOptions equipmentTypes selected=document.system.equipmentType.value localize=true}}
-    </select>
-  </div>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'qualityStep'}}</label>
-    <select name='system.QL' data-dtype='Number'>
-      {{selectOptions availableSteps selected=document.system.QL}}
-    </select>
-  </div>
+  {{formGroup systemFields.equipmentType.fields.value value=document.system.equipmentType.value localize=true}}
+  {{formGroup systemFields.QL value=document.system.QL localize=true choices=availableSteps}}
 
   <div class='form-group double'>
-    <label class='label-text'>{{localize 'max'}} {{localize 'charges'}}</label>
-    <input class='input-text' type='number' name='system.charges' value='{{document.system.charges}}' data-dtype='Number' /><span> / </span>
-    <input class='input-text' type='number' name='system.maxCharges' value='{{document.system.maxCharges}}' data-dtype='Number' />
+    <label>{{localize 'max'}} {{localize 'charges'}}</label>
+    <div class="form-fields">
+      {{formInput systemFields.charges value=document.system.charges}}
+      <span> / </span>
+      {{formInput systemFields.maxCharges value=document.system.maxCharges}}
+    </div>
   </div>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'priceEachQL'}}</label>
-    <input class='input-text' type='text' name='system.price.value' value='{{document.system.price.value}}' />
-  </div>
-  <div class='form-group full-height' data-tooltip='TT.oneQualityPerLine'>
-    <label class='label-text'>{{localize 'qualitySteps'}}</label>
-    <textarea class='input-text' type='text' name='system.QLList' data-dtype='String'>{{document.system.QLList}}</textarea>
-  </div>
+  {{formGroup systemFields.price.fields.value value=document.system.price.value localize=true label='priceEachQL'}}
+  {{formGroup systemFields.QLList value=document.system.QLList localize=true elementType='textarea' classes='full-height' tooltip='TT.oneQualityPerLine'}}
+  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true}}
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Difficulty'}}</label>
-    <input class='input-text' type='number' name='system.difficulty' value='{{document.system.difficulty}}' data-dtype='Number' />
-  </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'PLANT.ingredients'}}</label>
-    {{editor enrichedIngredients target='system.ingredients' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'PLANT.ingredients'}}</label>
+    <div class="form-fields">
+      {{editor enrichedIngredients target='system.ingredients' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Equipment.tools'}}</label>
-    <input class='input-text' type='text' name='system.tools' value='{{document.system.tools}}' data-dtype='String' />
-  </div>
+  
+  {{formGroup systemFields.tools value=document.system.tools localize=true}}
   {{> systems/dsa5/templates/items/item-aoe.hbs}}
 </div>

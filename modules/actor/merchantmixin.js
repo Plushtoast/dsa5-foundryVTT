@@ -4,7 +4,6 @@ import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import DSA5Payment from '../system/payment.js';
 import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
-import { itemFromDrop } from '../system/view_helper.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 

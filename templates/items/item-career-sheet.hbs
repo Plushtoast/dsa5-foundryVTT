@@ -1,109 +1,41 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'APValue'}}</label>
-    <input class='input-text' type='number' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='Number' />
-  </div>
+  {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  {{formGroup systemFields.languagePoints.fields.value value=document.system.languagePoints.value localize=true}}
+  {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.recommendedAdvantages.fields.value value=document.system.recommendedAdvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.recommendedDisadvantages.fields.value value=document.system.recommendedDisadvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.notsuitableAdvantages.fields.value value=document.system.notsuitableAdvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.notsuitableDisadvantages.fields.value value=document.system.notsuitableDisadvantages.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
+  {{formGroup systemFields.skills.fields.value value=document.system.skills.value localize=true classes='full-height' elementType='textarea' tooltip='TT.careerSkills'}}
+  {{formGroup systemFields.combatSkills.fields.value value=document.system.combatSkills.value localize=true classes='full-height' elementType='textarea' tooltip='TT.careerSkills'}}
+  {{formGroup systemFields.specialAbilities.fields.value value=document.system.specialAbilities.value localize=true classes='full-height' elementType='textarea' tooltip='TT.careerSkills'}}
+  {{formGroup systemFields.mageLevel.fields.value value=document.system.mageLevel.value localize=true}}
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'languagePoints'}}</label>
-    <input class='input-text' type='number' name='system.languagePoints.value' value='{{document.system.languagePoints.value}}' data-dtype='Number' />
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'requirements'}}</label>
-    <textarea class='input-text' type='text' name='system.requirements.value' data-dtype='String'>{{document.system.requirements.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'recommendedAdvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.recommendedAdvantages.value' data-dtype='String'>{{document.system.recommendedAdvantages.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'recommendedDisadvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.recommendedDisadvantages.value' data-dtype='String'>{{document.system.recommendedDisadvantages.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'notsuitableAdvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.notsuitableAdvantages.value' data-dtype='String'>{{document.system.notsuitableAdvantages.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.commaSeparated'>
-    <label class='label-text'>{{localize 'notsuitableDisadvantages'}}</label>
-    <textarea class='input-text' type='text' name='system.notsuitableDisadvantages.value' data-dtype='String'>{{document.system.notsuitableDisadvantages.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.careerSkills'>
-    <label class='label-text'>{{localize 'skills'}}</label>
-    <textarea class='input-text' type='text' name='system.skills.value' data-dtype='String'>{{document.system.skills.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.careerSkills'>
-    <label class='label-text'>{{localize 'combatskill'}}</label>
-    <textarea class='input-text' type='text' name='system.combatSkills.value' data-dtype='String'>{{document.system.combatSkills.value}}</textarea>
-  </div>
-
-  <div class='form-group full-height' data-tooltip='TT.careerSkills'>
-    <label class='label-text'>{{localize 'specialAbilities'}}</label>
-    <textarea class='input-text' type='text' name='system.specialAbilities.value' data-dtype='String'>{{document.system.specialAbilities.value}}</textarea>
-  </div>
-
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'mageLevel'}}</label>
-    <select name='system.mageLevel.value' data-dtype='String'>
-      {{selectOptions mageLevels selected=document.system.mageLevel.value localize=true}}
-    </select>
-  </div>
   {{#if (ne document.system.mageLevel.value 'mundane')}}
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'guidevalue'}}</label>
-      <select name='system.guidevalue.value' data-dtype='String'>
-        {{selectOptions guidevalues selected=document.system.guidevalue.value localize=true}}
-      </select>
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'energyfactor'}}</label>
-      <input class='input-text' type='number' name='system.guidevalue.factor' value='{{document.system.guidevalue.factor}}' data-dtype='Number' />
-    </div>
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'tradition'}}</label>
-      <input class='input-text' type='text' name='system.tradition.value' value='{{document.system.tradition.value}}' data-dtype='String' />
-    </div>
+    {{formGroup systemFields.guidevalue.fields.value value=document.system.guidevalue.value localize=true}}
+    {{formGroup systemFields.guidevalue.fields.factor value=document.system.guidevalue.factor localize=true}}
+    {{formGroup systemFields.tradition.fields.value value=document.system.tradition.value localize=true}}
 
     <div class='form-group'>
-      <label class='label-text'>{{#if (eq document.system.mageLevel.value 'clerical')}}{{localize 'aspect'}}{{else}}{{localize 'feature'}}{{/if}}</label>
-      <input class='input-text' type='text' name='system.feature.value' value='{{document.system.feature.value}}' data-dtype='String' />
+      <label>{{#if (eq document.system.mageLevel.value 'clerical')}}{{localize 'aspect'}}{{else}}{{localize 'feature'}}{{/if}}</label>
+      <div class="form-fields">
+        {{formInput systemFields.feature.fields.value value=document.system.feature.value}}
+      </div>
     </div>
+
     {{#if (eq document.system.mageLevel.value 'clerical')}}
-      <div class='form-group full-height'>
-        <label class='label-text'>{{localize 'happyTalents'}}</label>
-        <textarea class='input-text' type='text' name='system.happyTalents.value' data-dtype='String'>{{document.system.happyTalents.value}}</textarea>
-      </div>
-      <div class='form-group full-height'>
-        <label class='label-text'>{{localize 'liturgies'}}</label>
-        <textarea class='input-text' type='text' name='system.liturgies.value' data-dtype='String'>{{document.system.liturgies.value}}</textarea>
-      </div>
-      <div class='form-group full-height'>
-        <label class='label-text'>{{localize 'blessings'}}</label>
-        <textarea class='input-text' type='text' name='system.blessings.value' data-dtype='String'>{{document.system.blessings.value}}</textarea>
-      </div>
+      {{formGroup systemFields.happyTalents.fields.value value=document.system.happyTalents.value localize=true elementType='textarea' classes='full-height'}}
+      {{formGroup systemFields.liturgies.fields.value value=document.system.liturgies.value localize=true elementType='textarea' classes='full-height'}}
+      {{formGroup systemFields.blessings.fields.value value=document.system.blessings.value localize=true elementType='textarea' classes='full-height'}}
     {{/if}}
+
     {{#if (eq document.system.mageLevel.value 'magical')}}
-      <div class='form-group full-height'>
-        <label class='label-text'>{{localize 'spells'}}</label>
-        <textarea class='input-text' type='text' name='system.spells.value' data-dtype='String'>{{document.system.spells.value}}</textarea>
-      </div>
-      <div class='form-group full-height'>
-        <label class='label-text'>{{localize 'magictricks'}}</label>
-        <textarea class='input-text' type='text' name='system.spelltricks.value' data-dtype='String'>{{document.system.spelltricks.value}}</textarea>
-      </div>
-      <div class='form-group'>
-        <label class='label-text'>{{localize 'spelltrickCount'}}</label>
-        <input class='input-text' type='number' name='system.spelltrickCount.value' value='{{document.system.spelltrickCount.value}}' data-dtype='Number' />
-      </div>
+      {{formGroup systemFields.spells.fields.value value=document.system.spells.value localize=true elementType='textarea' classes='full-height'}}
+      {{formGroup systemFields.spelltricks.fields.value value=document.system.spelltricks.value localize=true elementType='textarea' classes='full-height'}}
+      {{formGroup systemFields.spelltrickCount.fields.value value=document.system.spelltrickCount.value localize=true}}
     {{/if}}
+
   {{/if}}
 
 </div>

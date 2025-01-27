@@ -85,6 +85,10 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     classes: ['dsa5', 'item', 'item-sheet'],
   };
 
+  get title() {
+    return this.item.name;
+  }
+
   static setupSheets() {
     Items.unregisterSheet('core', ItemSheet);
     Items.registerSheet('dsa5', ItemSheetdsa5, { makeDefault: true });
@@ -238,13 +242,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     const data = await super._prepareContext(_options);
     this.wrapperLocked = false;
 
-    switch (this.item.type) {
-      case 'money':
-        data.moneyTypes = DSA5.moneyTypes;
-        break;
-    }
     data.isOwned = this.actor;
     data.editable = this.isEditable;
+    data.systemFields = this.document.system.schema?.fields;
     if (data.isOwned) {
       data.canAdvance = this.actor.canAdvance && this._advancable();
       const customPrice = getProperty(this.item, 'flags.dsa5.customPriceTag');
@@ -428,7 +428,6 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
 class TraitSheet extends WithEffectsSheet {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.traitCategories = DSA5.traitCategories;
     data.ranges = DSA5.meleeRanges;
     return data;
   }
@@ -437,10 +436,7 @@ class TraitSheet extends WithEffectsSheet {
 class CombatSkillSheet extends LocalizerSheet {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.weapontypes = DSA5.weapontypes;
-    data.guidevalues = DSA5.combatskillsGuidevalues;
     data.hasLocalization = game.i18n.has(`Combatskilldescr.${this.item.name}`);
-    data.StFs = DSA5.StFs;
     data.localizerPrefix = 'Combatskilldescr.';
     return data;
   }
@@ -449,12 +445,8 @@ class CombatSkillSheet extends LocalizerSheet {
 class SkillSheet extends LocalizerSheet {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.characteristics = DSA5.characteristics;
-    data.skillGroups = DSA5.skillGroups;
-    data.skillBurdens = DSA5.skillBurdens;
     data.localizerPrefix = 'SKILLdescr.';
     data.hasLocalization = game.i18n.has(`SKILLdescr.${this.item.name}`);
-    data.StFs = DSA5.StFs;
     return data;
   }
 }
@@ -496,16 +488,13 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     const embeddedItem = this.item.getFlag('dsa5', 'embeddedItem');
     let renderedItem;
     if (embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.html`, { document: embeddedItem });
-    mergeObject(data, {
-      allSkills: await DSA5_Utility.allSkillsList(),
-      embeddedItem,
-      renderedItem,
-      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {
-        secrets: this.item.isOwner,
-        async: true,
-      }),
-      enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner, async: true }),
-    });
+
+    data.allSkills = await DSA5_Utility.allSkillsList();
+    data.embeddedItem = embeddedItem;
+    data.renderedItem = renderedItem;
+    data.enrichedsuccess = await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner, async: true });
+    data.enrichedpartsuccess = await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner, async: true });
+
     return data;
   }
 
@@ -551,10 +540,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     const data = {
       modifier: this.item.system.baseModifier,
       maxRolls: this.item.system.allowedTestCount.value,
-      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, {
-        secrets: this.item.isOwner,
-        async: true,
-      }),
+      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner, async: true }),
       enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner, async: true }),
       rollOptions,
     };
@@ -893,10 +879,6 @@ class Enchantable extends ItemSheetdsa5 {
     const data = await super._prepareContext(_options);
     data.enchantments = this.item.getFlag('dsa5', 'enchantments');
     data.poison = this.item.getFlag('dsa5', 'poison');
-    data.traditionArtifacts = Object.keys(DSA5.traditionArtifacts).reduce((acc, key) => {
-      acc[key] = `traditionArtifacts.${key}`;
-      return acc;
-    }, {});
     data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0);
     return data;
   }
@@ -945,7 +927,6 @@ class AmmunitionSheet extends Enchantable {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.ammunitiongroups = DSA5.ammunitiongroups;
     data.domains = this.prepareDomains();
     return data;
   }
@@ -1001,11 +982,9 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    mergeObject(data, {
-      equipmentTypes: DSA5.equipmentTypes,
-      domains: this.prepareDomains(),
-      canOnUseEffect: game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
-    });
+    data.domains = this.prepareDomains();
+    data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
+
     if (this.isBagWithContents()) {
       let weightSum = 0;
       mergeObject(data, {
@@ -1114,10 +1093,6 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     data.domains = this.prepareDomains();
-    data.armorSubcategories = Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
-      acc[key] = `ARMORSUBCATEGORIES.${key}`;
-      return acc;
-    }, {});
     data.breakPointRating = DSA5.armorSubcategories[this.item.system.subcategory];
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
     return data;
@@ -1169,24 +1144,11 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
     data.enrichedEffect = await TextEditor.enrichHTML(this.item.system.effect, { secrets: this.item.isOwner, async: true });
     data.enrichedRecipes = await TextEditor.enrichHTML(this.item.system.recipes, { secrets: this.item.isOwner, async: true });
     data.enrichedInformation = await TextEditor.enrichHTML(this.item.system.infos, { secrets: this.item.isOwner, async: true });
-
     return data;
   }
 }
 
-class PatronSheet extends NoEffectsSheet {
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.patronCategories = [0, 1, 2, 3].map((x) => {
-      return { name: `PATRON.${x}`, val: x };
-    });
-    data.priorities = {
-      0: 'PATRON.primary',
-      1: 'PATRON.secondary',
-    };
-    return data;
-  }
-}
+class PatronSheet extends NoEffectsSheet { }
 
 class ApplicationSheetDSA5 extends LocalizerWithoutEffectsSheet {
   async _prepareContext(_options) {
@@ -1203,10 +1165,6 @@ class MagicalSignSheet extends NoEffectsSheet {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.categories = {
-      1: 'TYPES.Item.magicalsign',
-      2: 'additionalsign',
-    };
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
     return data;
   }
@@ -1229,18 +1187,7 @@ class MagicalSignSheet extends NoEffectsSheet {
   }
 }
 
-class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    mergeObject(data, {
-      formats: DSA5.bookFormats,
-      qualities: DSA5.bookQualities,
-      exemplarTypes: DSA5.exemplarTypes,
-      legalities: DSA5.legalities,
-    });
-    return data;
-  }
-}
+class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {}
 
 class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   static DEFAULT_OPTIONS = {
@@ -1311,7 +1258,6 @@ class RangeweaponSheet extends WeaponSheetDSA5 {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
-    data.ammunitiongroups = DSA5.ammunitiongroups;
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)];
@@ -1371,11 +1317,7 @@ class ItemCareerDSA5 extends NoEffectsSheet {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    let chars = duplicate(DSA5.characteristics);
-    chars['-'] = '-';
-    data.mageLevels = DSA5.mageLevels;
-    data.guidevalues = chars;
-    data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, 'clothing.value'), { secrets: this.item.isOwner, async: true });
+    data.enrichedClothing = await TextEditor.enrichHTML(this.item.system.clothing.value, { secrets: this.item.isOwner, async: true });
     return data;
   }
 }
@@ -1428,17 +1370,8 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     data.calculatedPrice = Itemdsa5.getSubClass(this.item.type).consumablePrice(this.item);
-    data.availableSteps = this.item.system.QLList.split('\n')
-      .map((x, i) => i + 1)
-      .reduce((acc, x) => {
-        acc[x] = x;
-        return acc;
-      }, {});
-    data.equipmentTypes = DSA5.equipmentTypes;
-    data.targetTypes = {};
-    for (let [key, name] of Object.entries(DSA5.areaTargetTypes)) data.targetTypes[key] = game.i18n.localize(`areaTargetTypes.${name}`);
-
-    data.enrichedIngredients = await TextEditor.enrichHTML(getProperty(this.item.system, 'ingredients'), { secrets: this.item.isOwner, async: true });
+    data.availableSteps = Object.fromEntries(this.item.system.QLList.split('\n').map((_, i) => [i + 1, i + 1]));
+    data.enrichedIngredients = await TextEditor.enrichHTML(this.item.system.ingredients, { secrets: this.item.isOwner, async: true });
     return data;
   }
 
@@ -1473,19 +1406,13 @@ class ItemCultureDSA5 extends NoEffectsSheet {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.enrichedClothing = await TextEditor.enrichHTML(getProperty(this.item.system, 'clothing.value'), { secrets: this.item.isOwner, async: true });
+    data.enrichedClothing = await TextEditor.enrichHTML(this.item.system.clothing.value, { secrets: this.item.isOwner, async: true });
     return data;
   }
 }
 
 class DiseaseSheetDSA5 extends WithEffectsSheet {
   hasRollEffect = true;
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.resistances = DSA5.magicResistanceModifiers;
-    return data;
-  }
 }
 
 class MagictrickSheetDSA5 extends NoEffectsSheet {
@@ -1546,13 +1473,7 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.characteristics = mergeObject(duplicate(DSA5.characteristics), {
-      'ge/kk': game.i18n.localize('CHAR.GEKK'),
-      ['-']: '-',
-    });
     data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
-    data.ranges = DSA5.meleeRanges;
-    data.shieldSizes = DSA5.shieldSizes;
     data.isShield = RuleChaos.isShield(this.item);
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`)];
@@ -1569,13 +1490,6 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
 
 class PoisonSheetDSA5 extends ItemSheetObfuscation(EffectsEquipmentSheet) {
   hasRollEffect = true;
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.resistances = DSA5.magicResistanceModifiers;
-    data.poisonCategories = DSA5.poisonSubTypes;
-    return data;
-  }
 }
 
 class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
@@ -1611,10 +1525,6 @@ class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.traditionArtifacts = Object.keys(DSA5.traditionArtifacts).reduce((acc, key) => {
-      acc[key] = `traditionArtifacts.${key}`;
-      return acc;
-    }, {});
     data.categories = {
       general: {},
       clerical: {},
@@ -1627,7 +1537,6 @@ class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
 
       data.categories[currentKey][key] = name;
     }
-    data.subCategories = DSA5.combatSkillSubCategories;
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
     return data;
   }
@@ -1704,16 +1613,6 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.characteristics = DSA5.characteristics;
-    data.yesNoGroup = {
-      true: game.i18n.localize('yes'),
-      false: game.i18n.localize('no'),
-    };
-    data.StFs = DSA5.StFs;
-    data.resistances = DSA5.magicResistanceModifiers;
-    data.targetTypes = {};
-    for (let [key, name] of Object.entries(DSA5.areaTargetTypes)) data.targetTypes[key] = game.i18n.localize(`areaTargetTypes.${name}`);
-
     if (data.isOwned) {
       data.extensions = this.actor.items.filter((x) => {
         return x.type == 'spellextension' && x.system.source == this.item.name && this.item.type == x.system.category;
@@ -1772,18 +1671,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
   }
 }
 
-class SpellExtensionSheetDSA5 extends WithEffectsSheet {
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.categories = {
-      spell: 'TYPES.Item.spell',
-      liturgy: 'TYPES.Item.liturgy',
-      ritual: 'TYPES.Item.ritual',
-      ceremony: 'TYPES.Item.ceremony',
-    };
-    return data;
-  }
-}
+class SpellExtensionSheetDSA5 extends WithEffectsSheet { }
 
 class VantageSheetDSA5 extends WithEffectsSheet {
   _advancable() {

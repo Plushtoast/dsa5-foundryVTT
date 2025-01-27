@@ -1,70 +1,17 @@
 <div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}" class="tab">
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.otherNames"}}</label>
-        <input class="input-text" type="text" name="system.otherNames" value="{{document.system.otherNames}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.category"}}</label>
-        <input class="input-text" type="text" name="system.category" value="{{document.system.category}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.author"}}</label>
-        <input class="input-text" type="text" name="system.author" value="{{document.system.author}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.format"}}</label>
-        <select name="system.format">
-            {{selectOptions formats selected=document.system.format localize=true}}  
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.pages"}}</label>
-        <input class="input-text" type="text" name="system.pages" value="{{document.system.pages}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.releaseDate"}}</label>
-        <input class="input-text" type="text" name="system.releaseDate" value="{{document.system.releaseDate}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.exemplar"}}</label>
-        <input class="input-text" type="text" name="system.exemplar" value="{{document.system.exemplar}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.exemplarType"}}</label>
-        <select name="system.exemplarType">
-            {{selectOptions exemplarTypes selected=document.system.exemplarType localize=true}}  
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.storage"}}</label>
-        <input class="input-text" type="text" name="system.storage" value="{{document.system.storage}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.language"}}</label>
-        <input class="input-text" type="text" name="system.language" value="{{document.system.language}}" data-dtype="String" />
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.quality"}}</label>
-        <select name="system.quality">
-            {{selectOptions qualities selected=document.system.quality localize=true}}  
-        </select>
-    </div>
-    <div class="form-group full-height">
-        <label class="label-text">{{localize "BOOKITEM.rule"}}</label>
-        <textarea class="input-text" type="text" name="system.rule" data-dtype="String">{{document.system.rule}}</textarea>
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.legality"}}</label>
-        <select name="system.quality">
-            {{selectOptions legalities selected=document.system.legality localize=true}}  
-        </select>
-    </div>
-    <div class="form-group">
-        <label class="label-text">{{localize "BOOKITEM.availability"}}</label>
-        <input class="input-text" type="number" name="system.availability" value="{{document.system.availability}}" />
-    </div>
-    <div class="form-group full-height">
-        <label class="label-text">{{localize "BOOKITEM.special"}}</label>
-        <textarea class="input-text" type="text" name="system.special" data-dtype="String">{{document.system.special}}</textarea>
-    </div>
+    {{formGroup systemFields.otherNames value=document.system.otherNames localize=true}}
+    {{formGroup systemFields.category value=document.system.category localize=true}}
+    {{formGroup systemFields.author value=document.system.author localize=true}}
+    {{formGroup systemFields.format value=document.system.format localize=true}}
+    {{formGroup systemFields.pages value=document.system.pages localize=true}}
+    {{formGroup systemFields.releaseDate value=document.system.releaseDate localize=true}}
+    {{formGroup systemFields.exemplar value=document.system.exemplar localize=true}}
+    {{formGroup systemFields.exemplarType value=document.system.exemplarType localize=true}}
+    {{formGroup systemFields.storage value=document.system.storage localize=true}}
+    {{formGroup systemFields.language value=document.system.language localize=true}}
+    {{formGroup systemFields.quality value=document.system.quality localize=true}}
+    {{formGroup systemFields.rule value=document.system.rule localize=true elementType='textarea' classes='full-height'}}
+    {{formGroup systemFields.legality value=document.system.legality localize=true}}
+    {{formGroup systemFields.availability value=document.system.availability localize=true}}
+    {{formGroup systemFields.special value=document.system.special localize=true elementType='textarea' classes='full-height'}}
 </div>

@@ -1,8 +1,3 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
-  <div class='form-group' data-tooltip='MoneyType.descr'>
-    <label class='label-text'>{{localize 'COMBATSKILLCATEGORY.subcategory'}}</label>
-    <select name='system.subcategory' data-dtype='String'>
-      {{selectOptions moneyTypes selected=document.system.subcategory localize=true}}
-    </select>
-  </div>
+  {{formGroup systemFields.subcategory value=document.system.subcategory localize=true}}
 </div>

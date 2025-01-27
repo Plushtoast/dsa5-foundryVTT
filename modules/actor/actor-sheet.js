@@ -25,6 +25,17 @@ import { AppV2Mixin } from './appv2_mixin.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
+  static propertiesToEnrich = [
+    { key: 'enrichedOwnerdescription', path: 'details.notes.ownerdescription' },
+    { key: 'enrichedGmdescription', path: 'details.notes.gmdescription' },
+    { key: 'enrichedNotes', path: 'details.notes.value' },
+    { key: 'enrichedBiography', path: 'details.biography.value' },
+  ];
+
+  get title() {
+    return this.actor.name;
+  }
+
   async _render(force = false, options = {}) {
     this._saveSearchFields();
     this._saveCollapsed();
@@ -176,14 +187,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       return acc;
     }, {});
     DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
-
-    const propertiesToEnrich = [
-      { key: 'enrichedOwnerdescription', path: 'details.notes.ownerdescription' },
-      { key: 'enrichedGmdescription', path: 'details.notes.gmdescription' },
-      { key: 'enrichedNotes', path: 'details.notes.value' },
-      { key: 'enrichedBiography', path: 'details.biography.value' },
-    ];
-    await this.prepareEnrichedFields(sheetData, propertiesToEnrich);
+    await this.prepareEnrichedFields(sheetData, this.constructor.propertiesToEnrich);
     return sheetData;
   }
 

@@ -1,49 +1,60 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'skill'}}</label>
-    <select class='select2' name='system.skill' data-dtype='String'>
-      {{selectOptions (selfObj allSkills) selected=document.system.skill}}
-    </select>
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Modifier'}}</label>
-    <input class='input-text' type='number' name='system.modifier' value='{{document.system.modifier}}' data-dtype='Number' />
+
+  {{formGroup systemFields.modifier value=document.system.modifier localize=true choices=(selfObj allSkills)}}
+  {{formGroup systemFields.modifier value=document.system.modifier localize=true}}
+  <div class='form-group full-height'>
+    <label>{{localize 'CHARAbbrev.QS'}} 1</label>
+    <div class='form-fields'>
+      {{editor enrichedqs1 target='system.qs1' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 1</label>
-    {{editor enrichedqs1 target='system.qs1' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CHARAbbrev.QS'}} 2</label>
+    <div class='form-fields'>
+      {{editor enrichedqs2 target='system.qs2' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 2</label>
-    {{editor enrichedqs2 target='system.qs2' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CHARAbbrev.QS'}} 3</label>
+    <div class='form-fields'>
+      {{editor enrichedqs3 target='system.qs3' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 3</label>
-    {{editor enrichedqs3 target='system.qs3' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CHARAbbrev.QS'}} 4</label>
+    <div class='form-fields'>
+      {{editor enrichedqs4 target='system.qs4' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 4</label>
-    {{editor enrichedqs4 target='system.qs4' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CHARAbbrev.QS'}} 5</label>
+    <div class='form-fields'>
+      {{editor enrichedqs5 target='system.qs5' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 5</label>
-    {{editor enrichedqs5 target='system.qs5' button=true owner=owner editable=editable engine='prosemirror'}}
-  </div>
-  <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CHARAbbrev.QS'}} 6</label>
-    {{editor enrichedqs6 target='system.qs6' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CHARAbbrev.QS'}} 6</label>
+    <div class='form-fields'>
+      {{editor enrichedqs6 target='system.qs6' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <hr style='margin:20px 0px;' />
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'Failure'}}</label>
-    {{editor enrichedfail target='system.fail' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'Failure'}}</label>
+    <div class='form-fields'>
+      {{editor enrichedfail target='system.fail' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CriticalFailure'}}</label>
-    {{editor enrichedbotch target='system.botch' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CriticalFailure'}}</label>
+    <div class='form-fields'>
+      {{editor enrichedbotch target='system.botch' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
   <div class='form-group full-height'>
-    <label class='label-text'>{{localize 'CriticalSuccess'}}</label>
-    {{editor enrichedcrit target='system.crit' button=true owner=owner editable=editable engine='prosemirror'}}
+    <label>{{localize 'CriticalSuccess'}}</label>
+    <div class='form-fields'>
+      {{editor enrichedcrit target='system.crit' button=true owner=owner editable=editable engine='prosemirror'}}
+    </div>
   </div>
 </div>

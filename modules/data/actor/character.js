@@ -1,0 +1,25 @@
+import { DSADataModel } from '../abstract.js';
+import CharacteristicsTemplate from './templates/characteristics.js';
+import DetailsTemplate from './templates/details.js';
+import MagicTemplate from './templates/magic.js';
+import StatusTemplate from './templates/status.js';
+
+const { SchemaField, NumberField, BooleanField } = foundry.data.fields;
+
+export default class CharacterData extends DSADataModel.mixin(CharacteristicsTemplate, DetailsTemplate, StatusTemplate, MagicTemplate) {
+  static defineSchema() {
+    return this.mergeSchema(super.defineSchema(), {
+      config: new SchemaField({
+        autoBar: new BooleanField({ initial: true }),
+        autoSize: new BooleanField({ initial: true }),
+      }),
+      freeLanguagePoints: new SchemaField({
+        value: new NumberField({ initial: 0 }),
+        used: new NumberField({ initial: 0 }),
+      }),
+      sheetLocked: new SchemaField({
+        value: new BooleanField({ initial: false }),
+      }),
+    });
+  }
+}

@@ -1,23 +1,10 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'APValue'}}</label>
-    <input class='input-text' type='number' name='system.APValue.value' value='{{document.system.APValue.value}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'AsPCost'}}</label>
-    <input class='input-text' type='number' name='system.asp' value='{{document.system.asp}}' data-dtype='Number' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Category'}}</label>
-    <select name='system.category' data-dtype='Number'>
-      {{selectOptions categories selected=document.system.category localize=true}}
-    </select>
-  </div>
+
+  {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  {{formGroup systemFields.asp value=document.system.asp localize=true}}
+  {{formGroup systemFields.category value=document.system.category localize=true}}
 
   {{#if (eq document.system.category 2)}}
-    <div class='form-group'>
-      <label class='label-text'>{{localize 'feature'}}</label>
-      <input class='input-text' type='text' name='system.feature' value='{{document.system.feature}}' data-dtype='String' />
-    </div>
+    {{formGroup systemFields.feature value=document.system.feature localize=true}}
   {{/if}}
 </div>

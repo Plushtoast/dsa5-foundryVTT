@@ -818,7 +818,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         ph: demo,
       },
       {
-        name: `${game.i18n.localize('vulnerability')} - ${game.i18n.localize('combatskill')}`,
+        name: `${game.i18n.localize('vulnerability')} - ${game.i18n.localize('TYPES.Item.combatskill')}`,
         val: 'system.vulnerabilities.combatskill',
         mode: 0,
         ph: democs,

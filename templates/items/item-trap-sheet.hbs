@@ -1,23 +1,9 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}' class='tab details' data-tab='details'>
 
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'TRAP.stealth'}}</label>
-    <input class='input-text' type='number' name='system.stealth' value='{{document.system.stealth}}' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'TRAP.trigger'}}</label>
-    <input class='input-text' type='text' name='system.trigger' value='{{document.system.trigger}}' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'TRAP.tools'}}</label>
-    <input class='input-text' type='text' name='system.tools' value='{{document.system.tools}}' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'Difficulty'}}</label>
-    <input class='input-text' type='number' name='system.difficulty' value='{{document.system.difficulty}}' />
-  </div>
-  <div class='form-group'>
-    <label class='label-text'>{{localize 'TRAP.damageText'}}</label>
-    <input class='input-text' type='text' name='system.damageText' value='{{document.system.damageText}}' />
-  </div>
+  {{formGroup systemFields.stealth value=document.system.stealth localize=true}}
+  {{formGroup systemFields.trigger value=document.system.trigger localize=true}}
+  {{formGroup systemFields.tools value=document.system.tools localize=true}}
+  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true}}
+  {{formGroup systemFields.damageText value=document.system.damageText localize=true}}
+  
 </div>

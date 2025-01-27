@@ -57,17 +57,12 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
   }
 
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    const propertiesToEnrich = [
-      { key: 'enrichedDescription', path: 'description.value' },
-      { key: 'enrichedBehaviour', path: 'behaviour.value' },
-      { key: 'enrichedFlight', path: 'flight.value' },
-      { key: 'enrichedSpecialrules', path: 'specialRules.value' },
-    ];
-    await this.prepareEnrichedFields(data, propertiesToEnrich);
-    return data;
-  }
+  static propertiesToEnrich = [
+    { key: 'enrichedDescription', path: 'description.value' },
+    { key: 'enrichedBehaviour', path: 'behaviour.value' },
+    { key: 'enrichedFlight', path: 'flight.value' },
+    { key: 'enrichedSpecialrules', path: 'specialRules.value' },
+  ];
 
   async _cleverDeleteItem(itemId) {
     const item = this.actor.items.get(itemId);

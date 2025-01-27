@@ -47,6 +47,7 @@ import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/ap-tracker.js';
 import OnUseEffect from './system/onUseEffects.js';
 import TestSuite from './system/testsuite.js';
+import { itemModels, actorModels } from './data/models.js';
 
 Hooks.once('init', () => {
   console.log('Initializing DSA5 system');
@@ -111,13 +112,19 @@ Hooks.once('init', () => {
       RandomGoodsAddition,
     },
     macro: MacroDSA5,
+    dataModels: {
+      Item: itemModels,
+      Actor: actorModels
+    },
     config: DSA5,
     TestSuite,
     memory: new RollMemory()
   };
 
   CONFIG.Actor.documentClass = Actordsa5;
+  CONFIG.Actor.dataModels = actorModels;
   CONFIG.Item.documentClass = Itemdsa5;
+  CONFIG.Item.dataModels = itemModels;
   CONFIG.ChatMessage.template = 'systems/dsa5/templates/chat/chat-message.hbs';
   CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll;
   CONFIG.ui.combat = DSA5CombatTracker;

@@ -13,7 +13,7 @@
         </div>
         {{#each alternateAttacks as |item key|}}
         <div class="tab" data-tab="{{key}}" data-group="alternateAttacks" class="tab">
-            {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs item characteristics=../characteristics combatskills=../combatskills ranges=../ranges shieldSizes=../shieldSizes scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+            {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs item systemFields=../systemFields combatskills=../combatskills scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
         </div>
         {{/each}}
     </section>
