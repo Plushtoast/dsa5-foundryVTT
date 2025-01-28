@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    {{formGroup systemFields.worn.fields.wearable value=document.system.worn.wearable localize=true}}
+    {{formGroup systemFields.worn.fields.wearable value=document.system.worn.wearable localize=true rootId=rootId}}
 
     {{#if (eq document.system.equipmentType.value 'bags')}}
     {{formGroup systemFields.capacity value=document.system.capacity localize=true}}

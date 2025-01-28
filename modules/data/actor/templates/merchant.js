@@ -9,19 +9,20 @@ export default class MerchantTemplate extends DSADataModel {
     return {
       merchant: new SchemaField({
         locked: new BooleanField({ initial: false }),
-        mechantType: new StringField({ initial: 'none', required: true, choices: DSA5.merchantTypes }),
+        merchantType: new StringField({ initial: 'none', required: true, choices: DSA5.merchantTypes, label: 'creatureClass' }),
         temporary: new DSABooleanField({ initial: false }),
         playerView: new BooleanField({ initial: false }),
         sellingFactor: new NumberField({ initial: 1, step: 0.01 }),
         buyingFactor: new NumberField({ initial: 1, step: 0.01 }),
-        hidePlayer: new BooleanField({ initial: false }),
-        hideMoney: new BooleanField({ initial: false }),
+        hidePlayer: new DSABooleanField({ initial: false, label: 'MERCHANT.hidePlayer' }),
+        hideMoney: new DSABooleanField({ initial: false, label: 'MERCHANT.hideMoney' }),
         factors: new SchemaField({
           buyingFactor: new ObjectField(),
           sellingFactor: new ObjectField(),
         }),
         garadan: new NumberField({
           initial: 1,
+          label: 'Garadan',
           required: true,
           choices: {
             1: 'GARADAN.1',

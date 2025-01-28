@@ -32,7 +32,7 @@
   {{else if (eq document.system.category.value 'staff')}}
 
     {{formGroup systemFields.artifact value=document.system.artifact localize=true sort=true blank='-'}}  
-    {{formGroup systemFields.permanentEffects value=document.system.permanentEffects localize=true tooltip='permanentEffectsHint'}}  
+    {{formGroup systemFields.permanentEffects value=document.system.permanentEffects localize=true tooltip='permanentEffectsHint' rootId=rootId}}  
     {{formGroup systemFields.volume value=document.system.volume localize=true}}  
     {{formGroup systemFields.AsPCost value=document.system.AsPCost localize=true}}
     {{formGroup systemFields.feature value=document.system.feature localize=true}}

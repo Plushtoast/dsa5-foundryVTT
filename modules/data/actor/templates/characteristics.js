@@ -55,7 +55,10 @@ export default class CharacteristicsTemplate extends DSADataModel {
                     modifier: new NumberField({ initial: 0 }),
                     advances: new NumberField({ initial: 0 }),
                 }),
-            })
+            }),
+            sheetLocked: new SchemaField({
+              value: new BooleanField({ initial: false }),
+            }),
         }
     }
 }
