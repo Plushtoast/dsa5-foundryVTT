@@ -25,7 +25,7 @@ export default class DetailsTemplate extends DSADataModel {
           total: new NumberField({ initial: 0 }),
           spent: new NumberField({ initial: 0 }),
         }),
-        home: new SchemaField({
+        Home: new SchemaField({
           value: new StringField({ initial: '' }),
         }),
         family: new SchemaField({

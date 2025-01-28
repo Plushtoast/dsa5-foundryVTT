@@ -1,15 +1,17 @@
-<header class="sheet-header">
-
-    <div class="headerInput">
-        <input class="input name" name="name" style="width:90%" type="text" value="{{document.name}}"
-            placeholder="{{localize 'Name'}}" />
-        <a class="actorDrag" data-tooltip="TT.dragLink"><i class="fas fa-link"></i></a>
-        <span class="label name">{{localize "Name"}}</span>
+<header class='sheet-header'>
+  <div class='row-section'>
+    <div class='charname headerInput col sixty row-section'>
+      <div class='col eighty'>
+        {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
+        <span class='label name'>{{localize 'Name'}}</span>
+      </div>
+      <div class='col ten'>
+        <a class='actorDrag' data-tooltip='TT.dragLink'><i class='fas fa-link'></i></a>
+      </div>
     </div>
-    <div class="headerInput">
-        <input class="input creatureClass" data-dtype="String" name="system.creatureClass.value" type="text"
-            value="{{document.system.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
+    <div class="headerInput col fourty">
+        {{formInput systemFields.creatureClass.fields.value value=document.system.creatureClass.value placeholder=(localize 'creatureClass')}}
         <span class="label creatureClass ">{{localize "creatureClass"}}</span>
     </div>
-
+  </div>
 </header>

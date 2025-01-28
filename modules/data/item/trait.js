@@ -45,4 +45,12 @@ export default class TraitnData extends DSADataModel.mixin(DescriptionTemplate, 
             distribution: new StringField({ initial: '', label: 'distribution' }),
         });
     }
+
+    static _migrateData(source) {
+        super._migrateData(source);
+    
+        if(isNaN(source.AsPCost.value)) {
+          source.AsPCost.value = Number(source.AsPCost.value) || 0;
+        }
+    }
 }

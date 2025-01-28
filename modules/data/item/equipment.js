@@ -3,10 +3,11 @@ import { DSADataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
+import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class EquipmentData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, EquipmentTemplate) {
+export default class EquipmentData extends DSADataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       equipmentType: new SchemaField({

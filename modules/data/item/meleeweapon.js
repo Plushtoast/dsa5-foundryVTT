@@ -7,10 +7,11 @@ import DSA5 from '../../system/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
+import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static defineSchema() {
     const guideValues = foundry.utils.duplicate(DSA5.characteristics)
     guideValues['-'] = '-'

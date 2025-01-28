@@ -1,24 +1,24 @@
 <header class='sheet-header'>
-  <div class='charname headerInput'>
-    <input class='input name' name='name' style='width:90%' type='text' value='{{document.name}}' placeholder='{{localize "Name"}}' />
-    <a class='actorDrag' data-tooltip='TT.dragLink'><i class='fas fa-link'></i></a>
-    <span class='label name'>{{localize 'Name'}}</span>
+  <div class='row-section'>
+    <div class='charname headerInput col fourty row-section'>
+      <div class='col eighty'>
+        {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
+        <span class='label name'>{{localize 'Name'}}</span>
+      </div>
+      <div class='col ten'>
+        <a class='actorDrag' data-tooltip='TT.dragLink'><i class='fas fa-link'></i></a>
+      </div>
+    </div>
+    {{#if (ne merchantType 'loot')}}
+      <div class='headerInput'>
+        {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
+        <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
+      </div>
+      <div class='headerInput'>
+        {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
+        <span class='label-details'>{{localize 'TYPES.Item.career'}}</span>
+      </div>
+    {{/if}}
   </div>
-  {{#if (ne merchantType 'loot')}}
-    <div class='headerInput'>
-      <input
-        class='input species'
-        name='system.details.species.value'
-        type='text'
-        value='{{document.system.details.species.value}}'
-        readonly
-        placeholder='{{localize "TYPES.Item.species"}}'
-      />
-      <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
-    </div>
-    <div id='field-careerlevel' class='headerInput'>
-      <input class='input-details' name='system.details.career.value' type='text' value='{{document.system.details.career.value}}' placeholder='{{localize "career"}}' />
-      <span class='label-details'>{{localize 'TYPES.Item.career'}}</span>
-    </div>
-  {{/if}}
+  
 </header>

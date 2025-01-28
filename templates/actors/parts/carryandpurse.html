@@ -1,12 +1,8 @@
 <div class="actor-carry-box row-section wrap">
     {{#if prepare.canAdvance}}
     <div class="col morph">
-        <div class="groupbox">
-            <div class="row-section">
-                <div class="col header-label">
-                    <b>{{localize "carrycapacity"}}</b>
-                </div>
-            </div>
+        <fieldset>
+            <legend>{{localize "carrycapacity"}}</legend>
             <div class="row-section table-title">
                 <div class="col three center">
                     {{localize "carrycapacity"}}
@@ -29,7 +25,7 @@
                     {{prepare.encumbrance}}
                 </div>
             </div>
-        </div>
+        </fieldset>
     </div>
     {{/if}}
     <div class="col morph">

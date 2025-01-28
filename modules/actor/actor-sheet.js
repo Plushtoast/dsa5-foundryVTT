@@ -170,18 +170,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   async _prepareContext(_options) {
     const sheetData = await super._prepareContext(_options);
     this.wrapperLocked = false;
+    sheetData.systemFields = this.document.system.schema?.fields;
     sheetData.limited = this.actor.limited;
     sheetData.owner = this.actor.isOwner;
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
-    sheetData.sizeCategories = DSA5.sizeCategories;
     sheetData.isGM = game.user.isGM;
-    sheetData.initDies = {
-      '': '-',
-      '1d6': '1d6',
-      '2d6': '2d6',
-      '3d6': '3d6',
-      '4d6': '4d6',
-    };
     sheetData.horseSpeeds = Object.keys(Riding.speedKeys).reduce((acc, key) => {
       acc[key] = `RIDING.speeds.${key}`;
       return acc;

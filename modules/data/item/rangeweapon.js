@@ -6,10 +6,11 @@ import ArtifactTemplate from "./templates/artifact.js";
 import DSA5 from "../../system/config-dsa5.js";
 import ScopableStringField from "./fields/scopable_stringfield.js";
 import ScopableNumberField from "./fields/scopable_numberfield.js";
+import ObfuscableTemplate from "./templates/obfuscable.js";
  
  const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
  
- export default class RangeweaponData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+ export default class RangeweaponData extends DSADataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
      static defineSchema() {
          return this.mergeSchema(super.defineSchema(), {
             ammunitiongroup: new SchemaField({

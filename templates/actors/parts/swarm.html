@@ -37,10 +37,10 @@
                     {{ document.system.swarm.effectiveCount }}
                 </div>
                 <div class="col ten center">
-                    <input name="system.swarm.count" type="number" value="{{document.system.swarm.count}}" data-dtype="Number" />
+                    {{formInput systemFields.swarm.fields.count value=document.system.swarm.count}}
                 </div>
                 <div class="col ten center">
-                    <input name="system.swarm.gg" type="number" value="{{document.system.swarm.gg}}" data-dtype="Number" />
+                    {{formInput systemFields.swarm.fields.gg value=document.system.swarm.gg}}
                 </div>
 
                 <div class="col ten center">

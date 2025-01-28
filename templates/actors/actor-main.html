@@ -37,12 +37,10 @@
                         {{document.system.status.wounds.current}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.wounds.modifier" type="number"
-                            value="{{document.system.status.wounds.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.wounds.fields.modifier value=document.system.status.wounds.modifier}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.wounds.advances" type="number"
-                            value="{{document.system.status.wounds.advances}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.wounds.fields.advances value=document.system.status.wounds.advances}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.wounds.max}}
@@ -57,14 +55,10 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePMod" type="number"
-                            value="{{document.system.status.regeneration.LePMod}}" data-dtype="Number"
-                            data-tooltip="SHEET.permRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.LePMod value=document.system.status.regeneration.LePMod tooltip="SHEET.permRegeneration"}}
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.LePTemp" type="number"
-                            value="{{document.system.status.regeneration.LePTemp}}" data-dtype="Number"
-                            data-tooltip="SHEET.tempRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.LePTemp value=document.system.status.regeneration.LePTemp tooltip="SHEET.tempRegeneration"}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.regeneration.LePmax}}
@@ -86,12 +80,10 @@
                         {{document.system.status.astralenergy.current}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.astralenergy.modifier" type="number"
-                            value="{{document.system.status.astralenergy.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.astralenergy.fields.modifier value=document.system.status.astralenergy.modifier}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.astralenergy.advances" type="number"
-                            value="{{document.system.status.astralenergy.advances}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.astralenergy.fields.advances value=document.system.status.astralenergy.advances}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.astralenergy.max}}
@@ -106,14 +98,10 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.AsPMod" type="number"
-                            value="{{document.system.status.regeneration.AsPMod}}" data-dtype="Number"
-                            data-tooltip="SHEET.permRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.AsPMod value=document.system.status.regeneration.AsPMod tooltip="SHEET.permRegeneration"}}
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.AsPTemp" type="number"
-                            value="{{document.system.status.regeneration.AsPTemp}}" data-dtype="Number"
-                            data-tooltip="SHEET.tempRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.AsPTemp value=document.system.status.regeneration.AsPTemp tooltip="SHEET.tempRegeneration"}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.regeneration.AsPmax}}
@@ -130,14 +118,10 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.astralenergy.permanentLoss" type="number"
-                            value="{{document.system.status.astralenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP"
-                            data-dtype="Number" />
+                        {{formInput systemFields.status.fields.astralenergy.fields.permanentLoss value=document.system.status.astralenergy.permanentLoss tooltip="SHEET.paidPAsP"}}
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.astralenergy.rebuy" type="number"
-                            value="{{document.system.status.astralenergy.rebuy}}" data-dtype="Number"
-                            data-tooltip="SHEET.rebuyPAsP" />
+                        {{formInput systemFields.status.fields.astralenergy.fields.rebuy value=document.system.status.astralenergy.rebuy tooltip="SHEET.rebuyPAsP"}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.astralenergy.permanentLossSum}}
@@ -158,12 +142,10 @@
                         {{document.system.status.karmaenergy.current}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.karmaenergy.modifier" type="number"
-                            value="{{document.system.status.karmaenergy.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.karmaenergy.fields.modifier value=document.system.status.karmaenergy.modifier}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.karmaenergy.advances" type="number"
-                            value="{{document.system.status.karmaenergy.advances}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.karmaenergy.fields.advances value=document.system.status.karmaenergy.advances}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.karmaenergy.max}}
@@ -178,14 +160,10 @@
 
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.KaPMod" type="number"
-                            value="{{document.system.status.regeneration.KaPMod}}" data-dtype="Number"
-                            data-tooltip="SHEET.permRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.KaPMod value=document.system.status.regeneration.KaPMod tooltip="SHEET.permRegeneration"}}
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.regeneration.KaPTemp" type="number"
-                            value="{{document.system.status.regeneration.KaPTemp}}" data-dtype="Number"
-                            data-tooltip="SHEET.tempRegeneration" />
+                        {{formInput systemFields.status.fields.regeneration.fields.KaPTemp value=document.system.status.regeneration.KaPTemp tooltip="SHEET.tempRegeneration"}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.regeneration.KaPmax}}
@@ -201,15 +179,12 @@
                     <div class="col eight lineheight center">
 
                     </div>
+
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.karmaenergy.permanentLoss" type="number"
-                            value="{{document.system.status.karmaenergy.permanentLoss}}" data-tooltip="SHEET.paidPAsP"
-                            data-dtype="Number" />
+                        {{formInput systemFields.status.fields.karmaenergy.fields.permanentLoss value=document.system.status.karmaenergy.permanentLoss tooltip="SHEET.paidPAsP"}}
                     </div>
                     <div class="col eight center inputTooltipAvailable">
-                        <input name="system.status.karmaenergy.rebuy" type="number"
-                            value="{{document.system.status.karmaenergy.rebuy}}" data-tooltip="SHEET.rebuyPAsP"
-                            data-dtype="Number" />
+                        {{formInput systemFields.status.fields.karmaenergy.fields.rebuy value=document.system.status.karmaenergy.rebuy tooltip="SHEET.rebuyPAsP"}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.karmaenergy.permanentLossSum}}
@@ -225,8 +200,7 @@
                         {{document.system.status.soulpower.value}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.soulpower.modifier" type="number"
-                            value="{{document.system.status.soulpower.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.soulpower.fields.modifier value=document.system.status.soulpower.modifier}}
                     </div>
                     <div class="col eight">
 
@@ -243,8 +217,7 @@
                         {{document.system.status.toughness.value}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.toughness.modifier" type="number"
-                            value="{{document.system.status.toughness.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.toughness.fields.modifier value=document.system.status.toughness.modifier}}
                     </div>
                     <div class="col eight">
 
@@ -261,8 +234,7 @@
                         {{document.system.status.dodge.value}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.dodge.modifier" type="number"
-                            value="{{document.system.status.dodge.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.dodge.fields.modifier value=document.system.status.dodge.modifier}}
                     </div>
                     <div class="col eight">
 
@@ -279,8 +251,7 @@
                         {{document.system.status.speed.initial}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.speed.modifier" type="number"
-                            value="{{document.system.status.speed.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.speed.fields.modifier value=document.system.status.speed.modifier}}
                     </div>
                     <div class="col eight">
 
@@ -297,8 +268,7 @@
                     <div class="col eight lineheight center">
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.initiative.modifier" type="number"
-                            value="{{document.system.status.initiative.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.initiative.fields.modifier value=document.system.status.initiative.modifier}}
                     </div>
                     <div class="col eight">
 
@@ -312,9 +282,7 @@
                         {{localize "initDie"}}
                     </div>
                     <div class="col two lineheight center">
-                        <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
-                            {{selectOptions initDies selected=document.system.status.initiative.die localize=false}}
-                        </select>
+                        {{formInput systemFields.status.fields.initiative.fields.die value=document.system.status.initiative.die}}
                     </div>
                 </div>
                 <div class="derivedAttrs row-section">
@@ -323,10 +291,7 @@
                     </div>
 
                     <div class="col two lineheight center">
-                        <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                            {{selectOptions initDies selected=document.system.status.initiative.diemodifier
-                            localize=false}}
-                        </select>
+                        {{formInput systemFields.status.fields.initiative.fields.diemodifier value=document.system.status.initiative.diemodifier}}
                     </div>
                 </div>
                 <div class="derivedAttrs row-section">
@@ -334,9 +299,7 @@
                         {{localize "sizeCategory"}}
                     </div>
                     <div class="col two lineheight center">
-                        <select name="system.status.size.value" data-dtype="String" style="width:100%">
-                            {{selectOptions sizeCategories selected=document.system.status.size.value localize=true}}
-                        </select>
+                        {{formInput systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true}}
                     </div>
                 </div>
                 <div class="derivedAttrs row-section">
@@ -344,12 +307,10 @@
                         {{localize "fatePoints"}}
                     </div>
                     <div class="col eight lineheight center">
-                        <input name="system.status.fatePoints.current" type="number"
-                            value="{{document.system.status.fatePoints.current}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.fatePoints.fields.current value=document.system.status.fatePoints.current}}
                     </div>
                     <div class="col eight center">
-                        <input name="system.status.fatePoints.modifier" type="number"
-                            value="{{document.system.status.fatePoints.modifier}}" data-dtype="Number" />
+                        {{formInput systemFields.status.fields.fatePoints.fields.modifier value=document.system.status.fatePoints.modifier}}
                     </div>
                     <div class="col eight">
 

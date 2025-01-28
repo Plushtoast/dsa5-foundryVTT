@@ -25,13 +25,13 @@
             </span>
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.wounds.initial" type="number" value="{{document.system.status.wounds.initial}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.wounds.fields.initial value=document.system.status.wounds.initial}}
         </div>
         <div class="col eight center">
-            <input name="system.status.wounds.modifier" type="number" value="{{document.system.status.wounds.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.wounds.fields.modifier value=document.system.status.wounds.modifier}}
         </div>
         <div class="col eight center">
-            <input name="system.status.wounds.advances" type="number" value="{{document.system.status.wounds.advances}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.wounds.fields.advances value=document.system.status.wounds.advances}}
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.wounds.max}}
@@ -48,10 +48,10 @@
             {{document.system.status.astralenergy.current}}
         </div>
         <div class="col eight center">
-            <input name="system.status.astralenergy.modifier" type="number" value="{{document.system.status.astralenergy.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.astralenergy.fields.modifier value=document.system.status.astralenergy.modifier}}
         </div>
         <div class="col eight center">
-            <input name="system.status.astralenergy.advances" type="number" value="{{document.system.status.astralenergy.advances}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.astralenergy.fields.advances value=document.system.status.astralenergy.advances}}
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.astralenergy.max}}
@@ -71,10 +71,10 @@
             {{document.system.status.karmaenergy.current}}
         </div>
         <div class="col eight center">
-            <input name="system.status.karmaenergy.modifier" type="number" value="{{document.system.status.karmaenergy.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.karmaenergy.fields.modifier value=document.system.status.karmaenergy.modifier}}
         </div>
         <div class="col eight center">
-            <input name="system.status.karmaenergy.advances" type="number" value="{{document.system.status.karmaenergy.advances}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.karmaenergy.fields.advances value=document.system.status.karmaenergy.advances}}
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.karmaenergy.max}}
@@ -86,11 +86,10 @@
             {{localize "soulpower"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.soulpower.value" type="number" value="{{document.system.status.soulpower.value}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.soulpower.fields.value value=document.system.status.soulpower.value}}
         </div>
         <div class="col eight center">
-            <input name="system.status.soulpower.modifier" type="number" value="{{document.system.status.soulpower.modifier}}" data-dtype="Number" />
-
+            {{formInput systemFields.status.fields.soulpower.fields.modifier value=document.system.status.soulpower.modifier}}
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
@@ -103,10 +102,10 @@
             {{localize "toughness"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.toughness.value" type="number" value="{{document.system.status.toughness.value}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.toughness.fields.value value=document.system.status.toughness.value}}
         </div>
         <div class="col eight center">
-            <input name="system.status.toughness.modifier" type="number" value="{{document.system.status.toughness.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.toughness.fields.modifier value=document.system.status.toughness.modifier}}
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
@@ -121,7 +120,7 @@
             {{document.system.status.dodge.value}}
         </div>
         <div class="col eight center">
-            <input name="system.status.dodge.modifier" type="number" value="{{document.system.status.dodge.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.dodge.fields.modifier value=document.system.status.dodge.modifier}}
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
@@ -138,7 +137,7 @@
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
-            <input class="input-text" type="text" name="system.actionCount.value" value="{{document.system.actionCount.value}}" data-dtype="String" />
+            {{formInput systemFields.actionCount.fields.value value=document.system.actionCount.value}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -151,7 +150,7 @@
         </div>
         <div class="col eight"></div>
         <div class="col eight lineheight center">
-            <input class="input-text" type="number" name="system.conjuringDifficulty.value" value="{{document.system.conjuringDifficulty.value}}" data-dtype="Number" />
+            {{formInput systemFields.conjuringDifficulty.fields.value value=document.system.conjuringDifficulty.value}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -159,7 +158,7 @@
             {{localize "count"}}
         </div>
         <div class="col two lineheight center">
-            <input class="input-text" type="text" name="system.count.value" value="{{document.system.count.value}}" data-dtype="String" />
+            {{formInput systemFields.count.fields.value value=document.system.count.value}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -167,9 +166,7 @@
             {{localize "sizeCategory"}}
         </div>
         <div class="col two lineheight center">
-            <select name="system.status.size.value" data-dtype="String" style="width:100%">
-                {{selectOptions sizeCategories selected=document.system.status.size.value localize=true}}
-            </select>
+            {{formInput systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -177,10 +174,10 @@
             {{localize "speed"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.speed.initial" type="number" value="{{document.system.status.speed.initial}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.speed.fields.initial value=document.system.status.speed.initial}}
         </div>
         <div class="col eight center">
-            <input name="system.status.speed.modifier" type="number" value="{{document.system.status.speed.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.speed.fields.modifier value=document.system.status.speed.modifier}}
         </div>
         <div class="col eight">
         </div>
@@ -193,10 +190,10 @@
             {{localize "initiative"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.initiative.current" type="number" value="{{document.system.status.initiative.current}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.initiative.fields.current value=document.system.status.initiative.current}}
         </div>
         <div class="col eight center">
-            <input name="system.status.initiative.modifier" type="number" value="{{document.system.status.initiative.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.initiative.fields.modifier value=document.system.status.initiative.modifier}}
         </div>
         <div class="col eight">
         </div>
@@ -209,9 +206,7 @@
             {{localize "initDie"}}
         </div>
         <div class="col two lineheight center">
-            <select name="system.status.initiative.die" data-dtype="String" style="width:100%">
-                {{selectOptions initDies selected=document.system.status.initiative.die localize=false}}
-            </select>
+            {{formInput systemFields.status.fields.initiative.fields.die value=document.system.status.initiative.die}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -220,9 +215,7 @@
         </div>
 
         <div class="col two lineheight center">
-            <select name="system.status.initiative.diemodifier" data-dtype="String" style="width:100%">
-                {{selectOptions initDies selected=document.system.status.initiative.diemodifier localize=false}}
-            </select>
+            {{formInput systemFields.status.fields.initiative.fields.diemodifier value=document.system.status.initiative.diemodifier}}
         </div>
     </div>
     <div class="derivedAttrs row-section">
@@ -230,10 +223,10 @@
             {{localize "fatePoints"}}
         </div>
         <div class="col eight lineheight center">
-            <input name="system.status.fatePoints.current" type="number" value="{{document.system.status.fatePoints.current}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.fatePoints.fields.current value=document.system.status.fatePoints.current}}
         </div>
         <div class="col eight center">
-            <input name="system.status.fatePoints.modifier" type="number" value="{{document.system.status.fatePoints.modifier}}" data-dtype="Number" />
+            {{formInput systemFields.status.fields.fatePoints.fields.modifier value=document.system.status.fatePoints.modifier}}
         </div>
         <div class="col eight">
 

@@ -4,10 +4,11 @@ import EquipmentTemplate from "./templates/equipment.js";
 import DSA5 from "../../system/config-dsa5.js";
 import DSAStringField from "../fields/dsa_string_field.js";
 import AoeTemplate from "./templates/aoe.js";
+import ObfuscableTemplate from "./templates/obfuscable.js";
 
 const { StringField, SchemaField, NumberField } = foundry.data.fields;
 
-export default class ConsumableData extends DSADataModel.mixin(AoeTemplate, DescriptionTemplate, EquipmentTemplate) {
+export default class ConsumableData extends DSADataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
     static defineSchema() {
         return this.mergeSchema(super.defineSchema(), {
             equipmentType: new SchemaField({

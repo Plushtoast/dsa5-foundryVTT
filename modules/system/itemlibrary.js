@@ -601,7 +601,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async renderBrowseItem(uuid) {
     const document = await fromUuid(uuid)
     const template = `systems/dsa5/templates/items/browse/${document.type}.html`
-    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet.getData())})
+    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext())})
     return `<div class="uuid libItem ${document.type} col" draggable="true" data-uuid="${uuid}">${item}</div>`
   } 
 

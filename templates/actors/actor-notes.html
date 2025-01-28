@@ -1,53 +1,42 @@
-<div class='tab standard-form scrollable {{tabs.notes.cssClass}}' data-tab='notes'
-    data-group='{{tabs.notes.group}}' class='tab'>
-    <div class="actor-notes groupbox">
-        <div class="row-section header-label">
-            <div class="col lineheight">
-                <b>{{localize "personalDetails"}}</b>
-            </div>
-        </div>
+<div class='tab standard-form scrollable {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'
+    class='tab'>
+    <fieldset class="actor-notes">
+        <legend>{{localize "personalDetails"}}</legend>
         <div class="row-section">
             <section class="general col">
                 <div class="row-section wrap">
                     <div class="col morph">
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.gender.value" type="text"
-                                    value="{{document.system.details.gender.value}}" placeholder="{{localize 'Gender'}}" />
+                                {{formInput systemFields.details.fields.gender.fields.value value=document.system.details.gender.value placeholder=(localize 'Gender')}}
                                 <span class="label-details">{{localize "Gender"}}</span>
                             </div>
 
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.culture.value" type="text"
-                                    value="{{document.system.details.culture.value}}"
-                                    placeholder="{{localize 'TYPES.Item.culture'}}" />
+                                {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
                                 <span class="label-details">{{localize "TYPES.Item.culture"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.family.value" type="text"
-                                    value="{{document.system.details.family.value}}" placeholder="{{localize 'Family'}}" />
+                                {{formInput systemFields.details.fields.family.fields.value value=document.system.details.family.value placeholder=(localize 'Family')}}
                                 <span class="label-details">{{localize "Family"}}</span>
                             </div>
 
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.age.value" type="text"
-                                    value="{{document.system.details.age.value}}" placeholder="{{localize 'Age'}}" />
+                                {{formInput systemFields.details.fields.age.fields.value value=document.system.details.age.value placeholder=(localize 'Age')}}
                                 <span class="label-details">{{localize "Age"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
 
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.height.value" type="text"
-                                    value="{{document.system.details.height.value}}" placeholder="{{localize 'Height'}}" />
+                                {{formInput systemFields.details.fields.height.fields.value value=document.system.details.height.value placeholder=(localize 'Height')}}
                                 <span class="label-details">{{localize "Height"}}</span>
                             </div>
 
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.weight.value" type="text"
-                                    value="{{document.system.details.weight.value}}" placeholder="{{localize 'Weight'}}" />
+                                {{formInput systemFields.details.fields.weight.fields.value value=document.system.details.weight.value placeholder=(localize 'Weight')}}
                                 <span class="label-details">{{localize "Weight"}}</span>
                             </div>
                         </div>
@@ -55,36 +44,27 @@
                     <div class="col morph">
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.socialstate.value" type="text"
-                                    value="{{document.system.details.socialstate.value}}"
-                                    placeholder="{{localize 'Socialstate'}}" />
+                                {{formInput systemFields.details.fields.socialstate.fields.value value=document.system.details.socialstate.value placeholder=(localize 'Socialstate')}}
                                 <span class="label-details">{{localize "Socialstate"}}</span>
                             </div>
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.Home.value" type="text"
-                                    value="{{document.system.details.Home.value}}" placeholder="{{localize 'Home'}}" />
+                                {{formInput systemFields.details.fields.Home.fields.value value=document.system.details.Home.value placeholder=(localize 'Home')}}
                                 <span class="label-details">{{localize "Home"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.haircolor.value" type="text"
-                                    value="{{document.system.details.haircolor.value}}"
-                                    placeholder="{{localize 'Hair_color'}}" />
+                                {{formInput systemFields.details.fields.haircolor.fields.value value=document.system.details.haircolor.value placeholder=(localize 'Hair_color')}}
                                 <span class="label-details">{{localize "Hair_color"}}</span>
                             </div>
                             <div class="headerInput col two">
-                                <input class="input-details" name="system.details.eyecolor.value" type="text"
-                                    value="{{document.system.details.eyecolor.value}}"
-                                    placeholder="{{localize 'Eye_color'}}" />
+                                {{formInput systemFields.details.fields.eyecolor.fields.value value=document.system.details.eyecolor.value placeholder=(localize 'Eye_color')}}
                                 <span class="label-details">{{localize "Eye_color"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
                             <div class="headerInput col">
-                                <input class="input-details" name="system.details.distinguishingmark.value" type="text"
-                                    value="{{document.system.details.distinguishingmark.value}}"
-                                    placeholder="{{localize 'Distinguishing_mark'}}" />
+                                {{formInput systemFields.details.fields.distinguishingmark.fields.value value=document.system.details.distinguishingmark.value placeholder=(localize 'Distinguishing_mark')}}
                                 <span class="label-details">{{localize "Distinguishing_mark"}}</span>
                             </div>
 
@@ -95,76 +75,53 @@
 
             </section>
         </div>
-    </div>
+    </fieldset>
 
     {{> systems/dsa5/templates/actors/parts/information.html}}
     {{> systems/dsa5/templates/actors/parts/personaltrait.html}}
 
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "biography"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    <fieldset>
+        <legend>{{localize 'biography'}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedBiography target="system.details.biography.value" button=true owner=owner editable=editable
+                {{editor enrichedBiography target="system.details.biography.value" button=true owner=owner
+                editable=editable
                 engine="prosemirror"}}
             </div>
         </div>
-    </div>
-    <div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "Notes"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    </fieldset>
+    <fieldset class="keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
+        <legend>{{localize "Notes"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{editor enrichedNotes target="system.details.notes.value" button=true owner=owner editable=editable
                 engine="prosemirror"}}
             </div>
         </div>
-    </div>
+    </fieldset>
     {{#if document.isOwner}}
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "ownerNotes"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    <fieldset>
+        <legend>{{localize "ownerNotes"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner
                 editable=editable engine="prosemirror"}}
             </div>
         </div>
-    </div>
+    </fieldset>
     {{/if}} {{#if isGM}}
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "GM Notes"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    <fieldset>
+        <legend>{{localize "GM Notes"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{editor enrichedGmdescription target="system.details.notes.gmdescription" button=true owner=owner
                 editable=editable engine="prosemirror"}}
             </div>
         </div>
-    </div>
+    </fieldset>
     {{/if}}
 </div>

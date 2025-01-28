@@ -71,6 +71,7 @@ export default class DiceDSA5 {
   static async rollDices(testData, cardOptions) {
     if (!testData.roll) {
       const d3dColors = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration;
+      const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
       let roll;
       switch (testData.source.type) {
         case 'liturgy':
@@ -88,14 +89,14 @@ export default class DiceDSA5 {
           const leDie = [];
 
           if (testData.regenerateLeP) leDie.push([game.settings.get('dsa5', 'lessRegeneration') ? '1d3' : '1d6']);
-          if (testData.extra.actor.isMage && testData.regenerateAsP) leDie.push('1d6');
-          if (testData.extra.actor.isPriest && testData.regenerateKaP) leDie.push('1d6');
+          if (actor.system.isMage && testData.regenerateAsP) leDie.push('1d6');
+          if (actor.system.isPriest && testData.regenerateKaP) leDie.push('1d6');
 
           roll = await new Roll(leDie.join('+')).evaluate();
           if (testData.regenerateLeP) mergeObject(roll.dice[0].options, d3dColors('mu'));
-          if (testData.extra.actor.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('ge'));
-          if (testData.extra.actor.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('in'));
-          if (testData.extra.actor.isMage && testData.regenerateAsP && testData.extra.actor.isPriest && testData.regenerateKaP)
+          if (actor.system.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('ge'));
+          if (actor.system.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('in'));
+          if (actor.system.isMage && testData.regenerateAsP && actor.system.isPriest && testData.regenerateKaP)
             mergeObject(roll.dice[leDie.length - 2].options, d3dColors('ge'));
           break;
         case 'meleeweapon':
@@ -105,7 +106,7 @@ export default class DiceDSA5 {
         case 'trait':
           if (testData.mode == 'damage') {
             let rollFormula = await this.damageFormula(testData);
-            roll = await new Roll(rollFormula, testData.extra.actor.system).evaluate();
+            roll = await new Roll(rollFormula, actor.system).evaluate();
             for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, d3dColors('damage'));
           } else {
             roll = await new Roll('1d20').evaluate();
@@ -147,6 +148,8 @@ export default class DiceDSA5 {
 
     if (typeof testData.source.toObject === 'function') testData.source = testData.source.toObject(false);
 
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+
     mergeObject(testData, {
       testDifficulty: sceneStress,
     });
@@ -156,7 +159,7 @@ export default class DiceDSA5 {
       testModifier: dialogOptions.data.modifier || 0,
     });
 
-    let situationalModifiers = dialogOptions.data.situationalModifiers || (testData.extra.actor ? DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source) : []);
+    let situationalModifiers = dialogOptions.data.situationalModifiers || (actor ? DSA5StatusEffects.getRollModifiers(actor, testData.source) : []);
 
     if (testData.extra.options.moreModifiers != undefined) {
       situationalModifiers.push(...testData.extra.options.moreModifiers);
@@ -242,14 +245,15 @@ export default class DiceDSA5 {
     let botch = 20;
     let crit = 1;
     const statKey = { meleeweapon: 'meleeStats', rangeweapon: 'rangeStats' }[testData.source.type];
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
     if (statKey) {
-      botch = Math.min(testData.extra.actor.system[statKey].botch, testData.source.system.botch);
-      crit = Math.max(testData.extra.actor.system[statKey].crit, testData.source.system.crit);
+      botch = Math.min(actor.system[statKey].botch, testData.source.system.botch);
+      crit = Math.max(actor.system[statKey].crit, testData.source.system.crit);
     }
 
     if (RuleChaos.improvisedWeapon.test(testData.source.name)) {
-      if (!SpecialabilityRulesDSA5.hasAbility(testData.extra.actor, 'LocalizedIDs.improvisedWeaponMaster')) botch = Math.min(19, botch);
+      if (!SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.improvisedWeaponMaster')) botch = Math.min(19, botch);
 
       this._appendSituationalModifiers(testData, `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize('WEAPON.improvised')}`, 2, 'defenseMalus');
     }
@@ -271,7 +275,7 @@ export default class DiceDSA5 {
         const confirmChange = getProperty(testData.source, `system.${isCrit ? 'critConfirm' : 'botchConfirm'}`) || 0;
         let res2 = res - Math.clamp(rollConfirm.total + confirmChange, 1, 20);
 
-        if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`, false) && !(res2 >= 0)) {
+        if (AdvantageRulesDSA5.hasVantage(actor, `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`, false) && !(res2 >= 0)) {
           let a = rollConfirm.total;
           rollConfirm = await DiceDSA5.manualRolls(await DiceDSA5._rollConfirm(), 'LocalizedIDs.weaponAptitude', testData.extra.options);
           res2 = res - Math.clamp(rollConfirm.total + confirmChange, 1, 20);
@@ -340,14 +344,14 @@ export default class DiceDSA5 {
       modifiers: modifier,
       extra: {},
     };
-
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     const attrs = [];
     if (testData.regenerateLeP) attrs.push('LeP');
-    if (testData.extra.actor.system.isMage && testData.regenerateAsP) attrs.push('AsP');
-    if (testData.extra.actor.system.isPriest && testData.regenerateKaP) attrs.push('KaP');
+    if (actor.system.isMage && testData.regenerateAsP) attrs.push('AsP');
+    if (actor.system.isPriest && testData.regenerateKaP) attrs.push('KaP');
     let index = 0;
 
-    const isSick = testData.extra.actor.effects.some((x) => x.statuses.includes('sick'));
+    const isSick = actor.effects.some((x) => x.statuses.includes('sick'));
     if (isSick) {
       this._appendSituationalModifiers(testData, game.i18n.localize('CONDITION.sick'), '*0');
       for (let k of attrs) {
@@ -360,19 +364,19 @@ export default class DiceDSA5 {
         this._appendSituationalModifiers(
           testData,
           game.i18n.localize(`LocalizedIDs.regeneration${k}`),
-          AdvantageRulesDSA5.vantageStep(testData.extra.actor, `LocalizedIDs.regeneration${k}`),
+          AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`),
           k,
         );
         this._appendSituationalModifiers(
           testData,
           game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
-          AdvantageRulesDSA5.vantageStep(testData.extra.actor, `LocalizedIDs.weakRegeneration${k}`) * -1,
+          AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.weakRegeneration${k}`) * -1,
           k,
         );
         this._appendSituationalModifiers(
           testData,
           game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`),
-          SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, `LocalizedIDs.advancedRegeneration${k}`),
+          SpecialabilityRulesDSA5.abilityStep(actor, `LocalizedIDs.advancedRegeneration${k}`),
           k,
         );
         this._appendSituationalModifiers(testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize('Modifier')}`, testData[`${k}Modifier`], k);
@@ -441,19 +445,19 @@ export default class DiceDSA5 {
 
   static async damageFormula(testData) {
     let weapon;
-
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     if (testData.source.type == 'meleeweapon') {
       const skill = Actordsa5._calculateCombatSkillValues(
-        testData.extra.actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
-        testData.extra.actor.system,
+        actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
+        actor.system,
       );
-      weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], testData.extra.actor);
+      weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], actor);
     } else if (testData.source.type == 'rangeweapon') {
       const skill = Actordsa5._calculateCombatSkillValues(
-        testData.extra.actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
-        testData.extra.actor.system,
+        actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
+        actor.system,
       );
-      weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], testData.extra.actor);
+      weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], actor);
     } else {
       weapon = testData.source.system;
     }
@@ -583,8 +587,9 @@ export default class DiceDSA5 {
     const promises = [];
     const regex = /\d{1}[dDwW]\d/g;
     const modText = `${text}`;
+    const actor = testData ? DSA5_Utility.getSpeaker(testData.extra.speaker) : {};
     modText.replace(regex, function (match) {
-      promises.push(new Roll(DiceDSA5.replaceDieLocalization(match), testData.extra.actor.system).evaluate());
+      promises.push(new Roll(DiceDSA5.replaceDieLocalization(match), actor.system).evaluate());
     });
     const data = await Promise.all(promises);
     const rollString = modText.replace(regex, () => {
@@ -633,8 +638,10 @@ export default class DiceDSA5 {
       }
     }
 
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+
     let damageRoll =
-      testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, testData.extra.actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
+      testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
     let damage = damageRoll.total;
 
     let weaponroll = 0;
@@ -677,7 +684,7 @@ export default class DiceDSA5 {
         damageBonusDescription.push(game.i18n.localize('damageThreshold') + ' ' + weapon.extraDamage);
       }
 
-      let status = testData.extra.actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
+      let status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
       const statusDmg = await DiceDSA5._stringToRoll(status, testData);
       if (statusDmg != 0) {
         damage += statusDmg;
@@ -685,7 +692,7 @@ export default class DiceDSA5 {
       }
 
       const combatskill = getProperty(weapon, 'system.combatskill.value');
-      const ktwDamage = testData.extra.actor.system.skillModifiers.combat.damage.reduce((prev, x) => {
+      const ktwDamage = actor.system.skillModifiers.combat.damage.reduce((prev, x) => {
         if (x.target == combatskill) prev += Number(x.value);
         return prev;
       }, 0);
@@ -715,10 +722,11 @@ export default class DiceDSA5 {
 
     let source = testData.source;
     const combatskill = source.system.combatskill.value;
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
     let skill = Actordsa5._calculateCombatSkillValues(
-      testData.extra.actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill),
-      testData.extra.actor.system,
+      actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill),
+      actor.system,
       {
         step: await this._situationalModifiers(testData, 'step'),
         [testData.mode]: await this._situationalModifiers(testData, testData.mode),
@@ -727,12 +735,12 @@ export default class DiceDSA5 {
 
     const isMelee = source.type == 'meleeweapon';
     if (isMelee) {
-      weapon = Actordsa5._prepareMeleeWeapon(source, [skill], testData.extra.actor);
+      weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor);
       if (testData.mode == 'attack') {
         this._appendSituationalModifiers(testData, game.i18n.localize('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
       }
     } else {
-      weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], testData.extra.actor);
+      weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor);
     }
     let result = await this._rollSingleD20(
       roll,
@@ -792,6 +800,7 @@ export default class DiceDSA5 {
   static async detailedWeaponResult(result, testData, source) {
     const isAttack = testData.mode == 'attack' && !testData.extra.counterAttack;
     const isMelee = source.type == 'meleeweapon' || getProperty(source, 'system.traitType.value') == 'meleeAttack';
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     switch (result.successLevel) {
       case 3:
         if (isAttack) {
@@ -811,7 +820,7 @@ export default class DiceDSA5 {
             result.description += DSATables.defaultParryCrit();
           }
         }
-        result.description += this._weaponBotchCritEffect(source, 'self.criteffect', testData.extra.actor);
+        result.description += this._weaponBotchCritEffect(source, 'self.criteffect', actor);
         break;
       case -3:
         const isWeaponless = getProperty(source, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle') || source.type == 'trait';
@@ -820,7 +829,7 @@ export default class DiceDSA5 {
         else if (!isAttack && (await DSATables.tableEnabledFor('Defense'))) result.description += DSATables.rollCritBotchButton('Defense', isWeaponless, testData);
         else result.description += await DSATables.defaultBotch();
 
-        result.description += this._weaponBotchCritEffect(source, 'self.botcheffect', testData.extra.actor);
+        result.description += this._weaponBotchCritEffect(source, 'self.botcheffect', actor);
         break;
       case 2:
         if (isAttack) {
@@ -843,7 +852,8 @@ export default class DiceDSA5 {
 
   static async rollCombatskill(testData) {
     let roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
-    let source = Actordsa5._calculateCombatSkillValues(testData.source, testData.extra.actor.system);
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+    let source = Actordsa5._calculateCombatSkillValues(testData.source, actor.system);
     let result = await this._rollSingleD20(
       roll,
       source.system[testData.mode].value,
@@ -954,10 +964,10 @@ export default class DiceDSA5 {
     let energy;
     let globalMod;
     let feature;
-
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     if (res.successLevel < 0) {
       const traditions = ['traditionWitch', 'traditionFjarning', 'braniborian'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`));
-      const factor = testData.extra.actor.items.some((x) => x.type == 'specialability' && traditions.includes(x.name)) ? 3 : 2;
+      const factor = actor.items.some((x) => x.type == 'specialability' && traditions.includes(x.name)) ? 3 : 2;
       res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.finalcost / factor);
     }
 
@@ -975,15 +985,15 @@ export default class DiceDSA5 {
     costModifiers.push(
       {
         name: weakBody,
-        value: AdvantageRulesDSA5.vantageStep(testData.extra.actor, weakBody, false),
+        value: AdvantageRulesDSA5.vantageStep(actor, weakBody, false),
       },
       {
         name: energy,
-        value: SpecialabilityRulesDSA5.abilityStep(testData.extra.actor, energy, false) * -1,
+        value: SpecialabilityRulesDSA5.abilityStep(actor, energy, false) * -1,
       },
       {
         name: `${game.i18n.localize('statuseffects')} (${game.i18n.localize('CHARAbbrev.' + globalMod.name)})`,
-        value: testData.extra.actor.system[globalMod.val] + (await this._situationalModifiers(testData, feature)),
+        value: actor.system[globalMod.val] + (await this._situationalModifiers(testData, feature)),
       },
     );
     costModifiers = costModifiers.filter((x) => x.value != 0);
@@ -1007,6 +1017,7 @@ export default class DiceDSA5 {
     let res = await this._rollThreeD20(testData);
     const isClerical = ['ceremony', 'liturgy'].includes(testData.source.type);
     res['rollType'] = testData.source.type;
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost;
     if (res.successLevel >= 2) {
       let extraFps = (await new Roll('1d6').evaluate()).total;
@@ -1029,7 +1040,7 @@ export default class DiceDSA5 {
 
         let rollEffect = testData.damageRoll
           ? testData.damageRoll
-          : await DiceDSA5.manualRolls(await new Roll(formula, testData.extra.actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options);
+          : await DiceDSA5.manualRolls(await new Roll(formula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options);
 
         this._addRollDiceSoNice(testData, rollEffect, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration('damage'));
         res['calculatedEffectFormula'] = formula;
@@ -1043,7 +1054,7 @@ export default class DiceDSA5 {
               });
         }
         const damageBonusDescription = [];
-        const statusDmg = await DiceDSA5._stringToRoll(testData.extra.actor.system[isClerical ? 'liturgyStats' : 'spellStats'].damage, testData);
+        const statusDmg = await DiceDSA5._stringToRoll(actor.system[isClerical ? 'liturgyStats' : 'spellStats'].damage, testData);
         if (statusDmg != 0) {
           damageBonusDescription.push(game.i18n.localize('statuseffects') + ' ' + statusDmg);
         }
@@ -1059,7 +1070,7 @@ export default class DiceDSA5 {
 
     for (const creature of ['minorFairies', 'minorSpirits']) {
       const name = game.i18n.localize('CONDITION.' + creature);
-      if (AdvantageRulesDSA5.hasVantage(testData.extra.actor, name, false) && !testData.extra.actor.effects.find((x) => x.name == name)) {
+      if (AdvantageRulesDSA5.hasVantage(actor, name, false) && !actor.effects.find((x) => x.name == name)) {
         const ghostroll = await new Roll('1d20').evaluate();
         if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
           res.description += ', ' + game.i18n.format('minorghostsappear', { creature: name });
@@ -1075,6 +1086,7 @@ export default class DiceDSA5 {
     let roll = testData.roll ? (testData.roll instanceof Roll ? testData.roll : Roll.fromData(testData.roll)) : await new Roll('1d20+1d20+1d20').evaluate();
     let description = [];
     let successLevel = 0;
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
     this._appendSituationalModifiers(testData, game.i18n.localize('Difficulty'), testData.testDifficulty);
     let modifiers = await this._situationalModifiers(testData);
@@ -1084,18 +1096,18 @@ export default class DiceDSA5 {
 
     let tar = [1, 2, 3].map(
       (x) =>
-        testData.extra.actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value + modifiers + testData.advancedModifiers.chars[x - 1] + pcms[x - 1],
+        actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value + modifiers + testData.advancedModifiers.chars[x - 1] + pcms[x - 1],
     );
     let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
 
     if (testData.routine) fws = Math.round(fws / 2);
     else for (let k of res) if (k > 0) fws -= k;
 
-    let crit = testData.extra.actor.system.skillModifiers.crit;
-    let botch = testData.extra.actor.system.skillModifiers.botch;
-    if (['spell', 'ritual'].includes(testData.source.type) && AdvantageRulesDSA5.hasVantage(testData.extra.actor, 'LocalizedIDs.wildMagic')) botch = 19;
+    let crit = actor.system.skillModifiers.crit;
+    let botch = actor.system.skillModifiers.botch;
+    if (['spell', 'ritual'].includes(testData.source.type) && AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.wildMagic')) botch = 19;
 
-    if (testData.source.type == 'skill' && AdvantageRulesDSA5.hasVantage(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`, false)) {
+    if (testData.source.type == 'skill' && AdvantageRulesDSA5.hasVantage(actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`, false)) {
       let reroll = await new Roll('1d20').evaluate();
       let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0);
       let oldValue = roll.terms[indexOfMinValue * 2].total;
@@ -1113,11 +1125,11 @@ export default class DiceDSA5 {
       );
     }
     let automaticResult = 0;
-    if (testData.source.type == 'skill' && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`, false)) {
+    if (testData.source.type == 'skill' && TraitRulesDSA5.hasTrait(actor, `${game.i18n.localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`, false)) {
       description.push(game.i18n.localize('LocalizedIDs.automaticSuccess'));
       successLevel = 1;
       automaticResult = 1;
-    } else if (testData.source.type == 'skill' && TraitRulesDSA5.hasTrait(testData.extra.actor, `${game.i18n.localize('LocalizedIDs.automaticFail')} (${testData.source.name})`, false)) {
+    } else if (testData.source.type == 'skill' && TraitRulesDSA5.hasTrait(actor, `${game.i18n.localize('LocalizedIDs.automaticFail')} (${testData.source.name})`, false)) {
       description.push(game.i18n.localize('LocalizedIDs.automaticFail'));
       successLevel = -1;
     } else {
@@ -1289,9 +1301,11 @@ export default class DiceDSA5 {
       return source.effects.filter((x) => getProperty(x, 'flags.dsa5.successEffect') == search || !getProperty(x, 'flags.dsa5.successEffect')).length > 0;
     }
 
+    
     const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
     if (specAbIds.length > 0) {
-      const specAbs = testData.preData.extra.actor.items.filter((x) => specAbIds.includes(x._id));
+      const actor = DSA5_Utility.getSpeaker(testData.preData.extra.speaker);
+      const specAbs = actor.items.filter((x) => specAbIds.includes(x.id));
       for (const spec of specAbs) if (spec.effects.length > 0) return true;
     }
 
@@ -1306,7 +1320,6 @@ export default class DiceDSA5 {
     await DSATriggers.postRoll({ testData, preData });
     Hooks.call('postProcessDSARoll', chatOptions, testData, rerenderMessage, hideDamage);
     await DSA5_Utility.callAsyncHooks('postProcessDSARoll', [testData]);
-    delete preData.extra.actor;
     delete testData.actor;
     delete testData.preData;
 
@@ -1447,7 +1460,6 @@ export default class DiceDSA5 {
     let data = message.flags.data;
     let newTestData = data.preData;
 
-    newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker)?.toObject(false);
     if (newTestData.extra.options.cheat) delete newTestData.extra.options.cheat;
     let index;
 

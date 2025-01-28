@@ -51,7 +51,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     } else {
       rollTag += this.setRollButtonWarning();
     }
-    $(this.element).find('.dialog-buttons .rollButton').html(rollTag);
+    $(this.element).find('.form-footer [data-action="rollButton"]').html(rollTag);
   }
 
   async updateTargets(html, targets) {

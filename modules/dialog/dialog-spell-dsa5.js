@@ -216,7 +216,6 @@ export default class DSA5SpellDialog extends DialogShared {
       } else {
         newPosition = newPosition * (element.value > 0 ? 2 : 0.5);
       }
-      console.log(element.value, newPosition);
       mod += Number(element.value);
     });
     if (newPosition < 1) {

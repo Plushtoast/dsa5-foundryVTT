@@ -445,6 +445,14 @@ DSA5.morePackages = {
   },
 };
 
+DSA5.initDies = {
+  '': '-',
+  '1d6': '1d6',
+  '2d6': '2d6',
+  '3d6': '3d6',
+  '4d6': '4d6',
+};
+
 DSA5.narrowSpaceModifiers = {
   weaponshort: {
     attack: 0,
@@ -565,7 +573,7 @@ DSA5.merchantTypes = {
   epic: 'MERCHANT.typeEpic',
 };
 
-DSA5.targetMomevementOptions = {
+DSA5.targetMovementOptions = {
   0: 'rangeMovementOptions.SLOW',
   '-2': 'rangeMovementOptions.FAST',
   2: 'rangeMovementOptions.STATIONARY',

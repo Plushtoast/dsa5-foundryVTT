@@ -529,8 +529,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
     const attacker =
       DSA5_Utility.getSpeaker(speaker) ||
-      DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker')) ||
-      game.actors.get(getProperty(message.flags, 'data.preData.extra.actor.id'));
+      DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'))
 
     const sourceActor = attacker;
     let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));

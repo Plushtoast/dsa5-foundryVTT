@@ -1,17 +1,17 @@
 <form class="{{cssClass}} lock{{prepare.sheetLockeded}}">
     <fieldset class="noBorder" disabled>
-        <header class="sheet-header row-section" ondragstart="return false;" ondrop="return false;">
+        <header class="sheet-header row-section">
             <div class="charname headerInput col fourty">
-                <input class="input name" name="name" type="text" value="{{document.name}}" placeholder="{{localize 'Name'}}" />
+                {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
                 <span class="label name">{{localize "Name"}}</span>
             </div>
             <div class="headerInput col fourty">
-                <input class="input species" name="system.details.species.value" type="text" value="{{document.system.details.species.value}}" readonly placeholder="{{localize 'TYPES.Item.species'}}" />
+                {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
                 <span class="label species">{{localize "TYPES.Item.species"}}</span>
             </div>
         </header>
         <section id="tab-sections">
-            <nav id="dsa5-primarytabs" class="sheet-tabs tabs" ondragstart="return false;" ondrop="return false;">
+            <nav id="dsa5-primarytabs" class="sheet-tabs tabs">
                 <a class="item active" data-tab="main">{{localize "WIZARD.generalTab"}}</a>
                 <a class="item" data-tab="notes">{{localize "Notes"}}</a>
             </nav>

@@ -1,11 +1,7 @@
 {{#each (lookup prepare.sortedSpecs currentCat) as |cat|}}
 {{#if (lookup ../prepare.specAbs cat)}}
-<div class="groupbox">
-    <div class="row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize (concat "SpecCategory." cat)}}{{#if (eq cat 'language')}} {{{../prepare.languagePoints}}}{{/if}}</b>
-        </div>
-    </div>
+<fieldset>
+    <legend>{{localize (concat "SpecCategory." cat)}}{{#if (eq cat 'language')}} {{{../prepare.languagePoints}}}{{/if}}</legend>
     <div class="row-section wrap cards">
         {{#each (lookup ../prepare.specAbs cat) as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
@@ -13,6 +9,6 @@
         </div>
         {{/each}}
     </div>
-</div>
+</fieldset>
 {{/if}}
 {{/each}}

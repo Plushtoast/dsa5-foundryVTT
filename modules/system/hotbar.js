@@ -151,7 +151,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       case 'weapon':
       case 'spell':
         item = this.token.actor?.items.get(data.id);
-        const itemData = await item.sheet.getData();
+        const itemData = await item.sheet._prepareContext();
 
         if (!game.user.isGM && itemData.item.system.obfuscation?.details) {
           description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', itemData);

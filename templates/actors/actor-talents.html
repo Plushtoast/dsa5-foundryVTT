@@ -6,7 +6,7 @@
         <div class="col morph row-section">
             <div class="col eighty lineheight searchbox-input">
                 <i class="fas fa-search"></i>
-                <input type="search" data-dtype="String" class="talentSearch" placeholder="{{localize 'searchTalents'}}" />
+                <input type="search" class="talentSearch" placeholder="{{localize 'searchTalents'}}" />
             </div>
             <div class="col five center lineheight searchbox-filter">
                 <a><i class="fas fa-filter filterTalents"></i></a>
@@ -46,7 +46,7 @@
                     {{#if item.applications}}
                     <a class="item-dropdown very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
                 </div>
-                <div class="skill-value col ten"><input class="skill-advances" type="number" data-dtype="Number" value="{{item.system.talentValue.value}}" /></div>
+                <div class="skill-value col ten"><input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" /></div>
                 {{#if item.applications}}
                 <div class="col lineheight expandDetails {{item.detailed}}">
                     <ul>
@@ -91,7 +91,7 @@
                     {{#if item.applications}}
                     <a class="item-dropdown very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
                 </div>
-                <div class="col ten"><input class="skill-advances" type="number" data-dtype="Number" value="{{item.system.talentValue.value}}" /></div>
+                <div class="col ten"><input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" /></div>
                 {{#if item.applications}}
                 <div class="col lineheight expandDetails {{item.detailed}}">
                     <ul>

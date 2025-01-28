@@ -1,10 +1,6 @@
 {{#if prepare.information}}
-<div class="groupbox">
-    <div class="disadvantages row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "TYPES.Item.information"}}</b>
-        </div>
-    </div>
+<fieldset>
+    <legend>{{localize "TYPES.Item.information"}}</legend>
     <div class="row-section wrap cards">
         {{#each prepare.information as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
@@ -12,5 +8,5 @@
         </div>
         {{/each}}
     </div>
-</div>
+</fieldset>
 {{/if}}

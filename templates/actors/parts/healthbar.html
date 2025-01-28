@@ -9,7 +9,7 @@
             </div>
 
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.wounds.value" data-dtype="Number" value="{{document.system.status.wounds.value}}" /> /
+                {{formInput systemFields.status.fields.wounds.fields.value value=document.system.status.wounds.value tooltip="Current"}}
                 <span data-tooltip="max">{{document.system.status.wounds.max}}</span>
             </div>
         </div>
@@ -18,7 +18,7 @@
     <div class="col third">
         <div class="healthbar bar-karmaenergy barRight middle" data-tooltip="karmaenergy">
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.karmaenergy.value" data-dtype="Number" value="{{document.system.status.karmaenergy.value}}" /> /
+                {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}}
                 <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
             </div>
             <div class="bar KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
@@ -29,7 +29,7 @@
     <div class="col third">
         <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.astralenergy.value" data-dtype="Number" value="{{document.system.status.astralenergy.value}}" /> /
+                {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}}
                 <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
             </div>
             <div class="bar AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
@@ -41,7 +41,7 @@
     <div class="col fourty">
         <div class="healthbar bar-karmaenergy barRight" data-tooltip="karmaenergy">
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.karmaenergy.value" data-dtype="Number" value="{{document.system.status.karmaenergy.value}}" /> /
+                {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}}
                 <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
             </div>
             <div class="bar KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
@@ -56,7 +56,7 @@
     <div class="col fourty">
         <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.astralenergy.value" data-dtype="Number" value="{{document.system.status.astralenergy.value}}" /> /
+                {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}}
                 <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
             </div>
             <div class="bar AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
@@ -86,10 +86,9 @@
             </div>
 
             <div class="barLabel">
-                <input type="number" data-tooltip="Current" name="system.status.temporaryLeP.value" data-dtype="Number" value="{{document.system.status.temporaryLeP.value}}" />
-
+                {{formInput systemFields.status.fields.temporaryLeP.fields.value value=document.system.status.temporaryLeP.value tooltip="Current"}}
                 /
-                <input type="number" data-tooltip="max" name="system.status.temporaryLeP.max" data-dtype="Number" value="{{document.system.status.temporaryLeP.max}}" />
+                {{formInput systemFields.status.fields.temporaryLeP.fields.max value=document.system.status.temporaryLeP.max tooltip="Current"}}
             </div>
         </div>
     </div>

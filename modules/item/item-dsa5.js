@@ -133,7 +133,7 @@ export default class Itemdsa5 extends Item {
     const item = await renderTemplate(template, {
       document: this,
       isGM: game.user.isGM,
-      ...(await this.sheet.getData()),
+      ...(await this.sheet._prepareContext()),
       ...options,
     });
     return $(item)[0];
@@ -552,7 +552,7 @@ export default class Itemdsa5 extends Item {
       visionOptions: DSA5.rangeVision,
       mountedOptions: finalMountedOptions,
       shooterMovementOptions: DSA5.shooterMovementOptions,
-      targetMovementOptions: DSA5.targetMomevementOptions,
+      targetMovementOptions: DSA5.targetMovementOptions,
       targetSize,
       combatSpecAbs: combatskills,
     });
@@ -807,24 +807,24 @@ class MoneyItemDSA5 extends Itemdsa5 {
 class AggregatedTestItemDSA5 extends Itemdsa5 {
   static async _postItem(item) {
     let txt = '';
-    let result = game.i18n.localize('Ongoing');
+    let result = 'Ongoing';
     if (item.system.cummulatedQS.value >= 10) {
-      result = game.i18n.localize('Success');
+      result = 'Success';
       txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}${await TextEditor.enrichHTML(item.system.success, {
         secrets: this.isOwner,
         async: true,
       })}`;
     } else if (item.system.cummulatedQS.value >= 6) {
-      result = game.i18n.localize('PartSuccess');
+      result = 'PartSuccess';
       txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}`;
     } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
-      result = game.i18n.localize('Failure');
+      result = 'Failure';
     }
     const properties = [
       this._chatLineHelper('cummulatedQS', `${item.system.cummulatedQS.value} / 10`),
       this._chatLineHelper('interval', item.system.interval.value),
       this._chatLineHelper('probes', `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`),
-      this._chatLineHelper('result', result),
+      this._chatLineHelper('result', game.i18n.localize(result)),
       txt,
     ];
     const descriptionObfuscated = getProperty(item, 'system.obfuscation.description');
@@ -880,7 +880,8 @@ class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
     testData.situationalModifiers = Actordsa5._parseModifiers(html);
-    const formData = new FormDataExtended(html.find('form')[0]).object;
+    const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
+    const formData = new FormDataExtended(form).object;
     testData.calculatedSpellModifiers = {
       castingTime: html.find('.castingTime').text(),
       cost: html.find('.aspcost').text(),
@@ -1081,7 +1082,6 @@ class SpellItemDSA5 extends Itemdsa5 {
       opposable: spell.system.effectFormula.value.length > 0,
       source: spell,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
@@ -1204,7 +1204,6 @@ class CombatskillDSA5 extends Itemdsa5 {
       source: item,
       mode,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
@@ -1537,7 +1536,6 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
       source: item,
       mode,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
@@ -1762,7 +1760,6 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       source: item,
       mode,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
@@ -1863,7 +1860,6 @@ class SkillItemDSA5 extends Itemdsa5 {
       opposable: true,
       source: skill,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },
@@ -1995,7 +1991,6 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       source: item,
       mode,
       extra: {
-        actor: actor.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(actor, tokenId),
       },

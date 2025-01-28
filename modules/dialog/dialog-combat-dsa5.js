@@ -484,8 +484,8 @@ export default class DSA5CombatDialog extends DialogShared {
     const testData = { source: this.dialogData.source, extra: { options: {} } };
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     DSA5CombatDialog.isMelee(source)
-      ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, this.element, actor, {}, this.dialogData.renderData.multipleDefenseValue ?? -3, this.dialogData.mode)
-      : DSA5CombatDialog.resolveRangeDialog(testData, {}, this.element, actor, {}, this.dialogData.mode);
+      ? DSA5CombatDialog.resolveMeleeDialog(testData, {}, $(this.element), actor, {}, this.dialogData.renderData.multipleDefenseValue ?? -3, this.dialogData.mode)
+      : DSA5CombatDialog.resolveRangeDialog(testData, {}, $(this.element), actor, {}, this.dialogData.mode);
 
     this.prepareWeapon(testData);
     this.dialogData.modifier = await DiceDSA5._situationalModifiers(testData);
@@ -505,7 +505,8 @@ export default class DSA5CombatDialog extends DialogShared {
     this._resolveDefault(testData, cardOptions, html, options);
 
     //TODO move this to situational modifiers onlye
-    const data = new FormDataExtended(html.find('form')[0]).object;
+    const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
+    const data = new FormDataExtended(form).object;
     const targetIsSwarm = DSA5CombatDialog.targetIsSwarm(testData);
     const attackerIsSwarm = actor.isSwarm();
     testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize;
@@ -687,7 +688,8 @@ export default class DSA5CombatDialog extends DialogShared {
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     if (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) {
-      const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, testData.extra.actor);
+      const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+      const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, actor);
       const progress = testData.source.system.reloadTime.progress;
       if (progress < LZ) {
         buttons.push(

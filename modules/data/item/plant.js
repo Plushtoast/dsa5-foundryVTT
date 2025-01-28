@@ -1,10 +1,11 @@
 import DescriptionTemplate from './templates/description.js';
 import { DSADataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
+import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { NumberField, BooleanField, StringField, SchemaField } = foundry.data.fields;
 
-export default class PlantData extends DSADataModel.mixin(DescriptionTemplate, EquipmentTemplate) {
+export default class PlantData extends DSADataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       price: new SchemaField({

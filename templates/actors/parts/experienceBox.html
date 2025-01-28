@@ -1,9 +1,6 @@
-<div class="groupbox">
-    <div class="experience row-section">
-        <div class="col header-label lineheight">
-            <b>{{localize "Experience"}}</b>
-        </div>
-    </div>
+<fieldset>
+    <legend>{{localize "Experience"}}</legend>
+
     <div class="experience row-section">
         <div class="experience-level col center">
             {{localize document.system.details.experience.description}}
@@ -25,11 +22,10 @@
             {{document.system.details.experience.current}}
         </div>
         <div class="col three center">
-            <input name="system.details.experience.spent" type="number" value="{{document.system.details.experience.spent}}" data-dtype="Number" />
+            {{formInput systemFields.details.fields.experience.fields.spent value=document.system.details.experience.spent}}
         </div>
         <div class="col three center">
-            <input name="system.details.experience.total" type="number" value="{{document.system.details.experience.total}}" data-dtype="Number" />
+            {{formInput systemFields.details.fields.experience.fields.total value=document.system.details.experience.total}}
         </div>
-
     </div>
-</div>
+</fieldset>

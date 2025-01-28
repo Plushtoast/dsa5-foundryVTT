@@ -1,4 +1,6 @@
+import DSA5 from '../../../system/config-dsa5.js';
 import { DSADataModel } from '../../abstract.js';
+import DSANumberField from '../../fields/dsa_number_field.js';
 
 const { SchemaField, NumberField, StringField } = foundry.data.fields;
 
@@ -13,7 +15,7 @@ export default class StatusTemplate extends DSADataModel {
       status: new SchemaField({
         wounds: new SchemaField({
           initial: new NumberField({ initial: 0 }),
-          value: new NumberField({ initial: 0 }),
+          value: new DSANumberField({ initial: 0 }),
           advances: new NumberField({ initial: 0 }),
           modifier: new NumberField({ initial: 0 }),
           current: new NumberField({ initial: 8 }),
@@ -21,22 +23,26 @@ export default class StatusTemplate extends DSADataModel {
         }),
         temporaryLeP: new SchemaField({
           max: new NumberField({ initial: 0 }),
-          value: new NumberField({ initial: 0 }),
+          value: new DSANumberField({ initial: 0 }),
         }),
         astralenergy: new SchemaField({
           initial: new NumberField({ initial: 0 }),
-          value: new NumberField({ initial: 0 }),
+          value: new DSANumberField({ initial: 0 }),
           advances: new NumberField({ initial: 0 }),
           modifier: new NumberField({ initial: 0 }),
           current: new NumberField({ initial: 0 }),
+          permanentLoss: new DSANumberField({ initial: 0 }),
+          rebuy: new DSANumberField({ initial: 0 }),
           max: new NumberField({ initial: 0 }),
         }),
         karmaenergy: new SchemaField({
           initial: new NumberField({ initial: 0 }),
-          value: new NumberField({ initial: 0 }),
+          value: new DSANumberField({ initial: 0 }),
           advances: new NumberField({ initial: 0 }),
           modifier: new NumberField({ initial: 0 }),
           current: new NumberField({ initial: 0 }),
+          permanentLoss: new DSANumberField({ initial: 0 }),
+          rebuy: new DSANumberField({ initial: 0 }),
           max: new NumberField({ initial: 0 }),
         }),
         soulpower: new SchemaField({
@@ -67,19 +73,19 @@ export default class StatusTemplate extends DSADataModel {
           value: new NumberField({ initial: 0 }),
           modifier: new NumberField({ initial: 0 }),
           current: new NumberField({ initial: 0 }),
-          die: new StringField({ initial: '1d6' }),
-          diemodifier: new StringField({ initial: '' }),
+          die: new StringField({ initial: '1d6', choices: DSA5.initDies }),
+          diemodifier: new StringField({ choices: DSA5.initDies }),
         }),
         size: new SchemaField({
-          value: new StringField({ initial: 'average' }),
+          value: new StringField({ initial: 'average', choices: DSA5.sizeCategories, required: true }),
         }),
         regeneration: new SchemaField({
-          LePTemp: new NumberField({ initial: 0 }),
-          AsPTemp: new NumberField({ initial: 0 }),
-          KaPTemp: new NumberField({ initial: 0 }),
-          LePMod: new NumberField({ initial: 0 }),
-          AsPMod: new NumberField({ initial: 0 }),
-          KaPMod: new NumberField({ initial: 0 }),
+          LePTemp: new DSANumberField({ initial: 0 }),
+          AsPTemp: new DSANumberField({ initial: 0 }),
+          KaPTemp: new DSANumberField({ initial: 0 }),
+          LePMod: new DSANumberField({ initial: 0 }),
+          AsPMod: new DSANumberField({ initial: 0 }),
+          KaPMod: new DSANumberField({ initial: 0 }),
         }),
       }),
     };

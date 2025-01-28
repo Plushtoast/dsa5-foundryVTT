@@ -455,8 +455,7 @@ export const MerchantSheetMixin = (superclass) =>
     async _prepareContext(_options) {
       const data = await super._prepareContext(_options);
       data.merchantType = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
-      data.merchantTypes = DSA5.merchantTypes;
-      data.invName = data.merchantTypes[data.merchantType];
+      data.invName = DSA5.merchantTypes[data.merchantType];
       data.players = game.users
         .filter((x) => !x.isGM)
         .map((x) => {
@@ -466,22 +465,13 @@ export const MerchantSheetMixin = (superclass) =>
           return x;
         });
 
-      if (data.merchantType != 'epic') {
-        this.prepareStorage(data);
+      this.prepareStorage(data);
+      if (data.merchantType != 'epic') {        
         if (this.merchantSheetActivated()) {
           this.filterWornEquipment(data);
           this.prepareTradeFriend(data);
           if (data.prepare.inventory['misc'].items.length == 0) data.prepare.inventory['misc'].show = false;
         }
-      } else {
-        this.prepareStorage(data);
-        data.garadanOptions = {
-          1: 'GARADAN.1',
-          2: 'GARADAN.2',
-          3: 'GARADAN.3',
-          4: 'GARADAN.4',
-          6: 'GARADAN.6',
-        };
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;
 
@@ -690,10 +680,9 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
     }, new Set());
 
     const filtered = items.filter((x) => {
-      let domain = getProperty(x, 'system.effect');
-      domain = typeof domain === 'object' && domain !== null ? getProperty(domain, 'attributes') || '' : '';
+      const domain = getProperty(x, 'system.effect.attributes');
       const price = Number(getProperty(x, 'system.price.value')) || 0;
-      if (domain != '' || price > 10000) return false;
+      if (!domain || price > 10000) return false;
 
       const seeName = `${x.type}_${x.name}`;
       return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && !actorItems.has(seeName);
@@ -703,9 +692,9 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
   }
 
   static async addRandomGoods(actor, dlg, ev) {
-    let text = $(ev.currentTarget).text();
-    $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>');
+    const text = ev.currentTarget.textContent;
+    ev.currentTarget.innerHTML = ' <i class="fa fa-spin fa-spinner"></i>';
     await actor.createEmbeddedDocuments('Item', await this.generateItems(dlg, actor));
-    $(ev.currentTarget).text(text);
+    ev.currentTarget.textContent = text;
   }
 }

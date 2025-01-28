@@ -2,14 +2,12 @@
     <fieldset class="noBorder" disabled>
         <header class="sheet-header row-section">
             <div class="charname headerInput col fourty">
-                <input class="input name" name="name" type="text" value="{{document.name}}"
-                    placeholder="{{localize 'Name'}}" />
+                {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
                 <span class="label name">{{localize "Name"}}</span>
             </div>
 
             <div class="headerInput col fourty">
-                <input class="input creatureClass" data-dtype="String" name="system.creatureClass.value" type="text"
-                    value="{{document.system.creatureClass.value}}" placeholder="{{localize 'creatureClass'}}" />
+                {{formInput systemFields.creatureClass.fields.value value=document.system.creatureClass.value placeholder=(localize 'creatureClass')}}
                 <span class="label creatureClass ">{{localize "creatureClass"}}</span>
             </div>
 

@@ -2,7 +2,7 @@ import DSA5_Utility from './utility-dsa5.js';
 import { delay } from './view_helper.js';
 
 export default class TestSuite {
-  static async #renderAll(documentType, hideAgain, onlyType) {
+  static async #renderAll(documentType, hideAgain, onlyType, renderWorld) {
     const folder = await DSA5_Utility.getFolderForType(documentType, null, `${documentType} Test`);
     const items = {
       Item: game.items,
@@ -41,20 +41,46 @@ export default class TestSuite {
       }
     }
 
+    console.log(renderWorld)
+    if(renderWorld){
+      console.log(`Rendering ${documentType} in world`);
+      const items = {
+        Item: game.items,
+        Actor: game.actors,
+       }[documentType]
+
+      for (let item of items) {
+        console.log("Rendering", item.name)
+        await item.sheet.render(true);
+      }
+    }
+
+    if (hideAgain) {
+      await delay(2000);
+      const items = {
+        Item: game.items,
+        Actor: game.actors,
+       }[documentType];
+
+      for (let item of items) {        
+        item.sheet.close();
+      }
+    }
+
     console.log(`All ${documentType} are checked`);
   }
 
-  static async test(hideAgain = true) {
-    await TestSuite.renderAllItems({ hideAgain });
-    await TestSuite.renderAllActors({ hideAgain });
+  static async test(hideAgain = true, renderWorld = false) {
+    await TestSuite.renderAllItems({ hideAgain, renderWorld });
+    await TestSuite.renderAllActors({ hideAgain, renderWorld });
   }
 
-  static async renderAllItems({ hideAgain, onlyType } = { hideAgain: true, onlyType: null }) {
-    TestSuite.#renderAll('Item', hideAgain, onlyType);
+  static async renderAllItems({ hideAgain, onlyType, renderWorld } = { hideAgain: true, onlyType: null, renderWorld: false }) {
+    TestSuite.#renderAll('Item', hideAgain, onlyType, renderWorld);
   }
 
-  static async renderAllActors({ hideAgain, onlyType } = { hideAgain: true, onlyType: null }) {
-    TestSuite.#renderAll('Actor', hideAgain, onlyType);
+  static async renderAllActors({ hideAgain, onlyType, renderWorld } = { hideAgain: true, onlyType: null, renderWorld: false }) {
+    TestSuite.#renderAll('Actor', hideAgain, onlyType, renderWorld);
   }
 
   //static async checkDataModels(templateJsonPath = 'systems/dsa5/template.json') {

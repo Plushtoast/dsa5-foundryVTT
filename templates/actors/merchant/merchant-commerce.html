@@ -8,9 +8,7 @@
                         {{localize "creatureClass"}}
                     </div>
                     <div class="col sixty">
-                        <select name="system.merchant.merchantType" data-dtype="String" style="width:100%">
-                            {{selectOptions merchantTypes selected=document.system.merchant.merchantType localize=true}}
-                        </select>
+                        {{formInput systemFields.merchant.fields.merchantType value=document.system.merchant.merchantType localize=true}}
                     </div>
                 </div>
                 {{#if (eq document.system.merchant.merchantType "epic")}}
@@ -19,9 +17,7 @@
                         Garadan
                     </div>
                     <div class="col sixty">
-                        <select name="system.merchant.garadan" data-dtype="String" style="width:100%">
-                            {{selectOptions garadanOptions selected=document.system.merchant.garadan localize=true}}
-                        </select>
+                        {{formInput systemFields.merchant.fields.garadan value=document.system.merchant.garadan localize=true}}
                     </div>
                 </div>
                 {{/if}} {{#if (eq document.system.merchant.merchantType "merchant")}}
@@ -33,15 +29,13 @@
                         <i class="fas fa-piggy-bank"></i>
                     </div>
                     <div class="col five" data-tooltip="MERCHANT.sellingFactor">
-                        <input name="system.merchant.sellingFactor" type="number"
-                            value="{{document.system.merchant.sellingFactor}}" data-dtype="Number" />
+                        {{formInput systemFields.merchant.fields.sellingFactor value=document.system.merchant.sellingFactor}}
                     </div>
                     <div class="col ten center" data-tooltip="MERCHANT.buyingFactor">
                         <i class="fas fa-coins"></i>
                     </div>
                     <div class="col five" data-tooltip="MERCHANT.buyingFactor">
-                        <input name="system.merchant.buyingFactor" type="number"
-                            value="{{document.system.merchant.buyingFactor}}" data-dtype="Number" />
+                        {{formInput systemFields.merchant.fields.buyingFactor value=document.system.merchant.buyingFactor}}
                     </div>
                 </div>
                 {{#if isGM}}
@@ -51,8 +45,7 @@
                             {{localize 'MERCHANT.hidePlayer'}}
                         </div>
                         <div class="col five">
-                            <input name="system.merchant.hidePlayer" type="checkbox" value="1" {{checked
-                                document.system.merchant.hidePlayer}} />
+                            {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
                         </div>
                     </div>
                     <div class="col two row-section" data-tooltip="MERCHANT.hideMoneyHint">
@@ -60,8 +53,7 @@
                             {{localize 'MERCHANT.hideMoney'}}
                         </div>
                         <div class="col five">
-                            <input name="system.merchant.hideMoney" type="checkbox" value="1" {{checked
-                                document.system.merchant.hideMoney}} />
+                            {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
                         </div>
                     </div>
                 </div>
@@ -71,15 +63,13 @@
                         {{localize 'MERCHANT.hidePlayer'}}
                     </div>
                     <div class="col ten" data-tooltip="MERCHANT.hidePlayerHint">
-                        <input name="system.merchant.hidePlayer" type="checkbox" value="1" {{checked
-                            document.system.merchant.hidePlayer}} />
+                        {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
                     </div>
                     <div class="col fourty">
                         {{localize 'MERCHANT.locked'}}
                     </div>
                     <div class="col ten">
-                        <input name="system.merchant.locked" type="checkbox" value="1" {{checked
-                            document.system.merchant.locked}} />
+                        {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
                     </div>
                 </div>
                 <div class="row-section">
@@ -87,8 +77,7 @@
                         {{localize 'MERCHANT.emptyDestroy'}}
                     </div>
                     <div class="col ten">
-                        <input name="system.merchant.temporary" data-tooltip="MERCHANT.emptyDestroyHint" type="checkbox"
-                            value="1" {{checked document.system.merchant.temporary}} />
+                        {{formInput systemFields.merchant.fields.temporary value=document.system.merchant.temporary tooltip='MERCHANT.emptyDestroyHint'}}
                     </div>
                     <div class="col fourty">
 
@@ -158,12 +147,12 @@
                 {{#if (eq ../document.system.merchant.merchantType "merchant")}}
                 <div class="col ten center" data-tooltip="MERCHANT.sellingFactor">
                     <input name="system.merchant.factors.sellingFactor.{{player.id}}" type="number"
-                        value="{{player.sellingFactor}}" data-dtype="Number" />
+                        value="{{player.sellingFactor}}"/>
 
                 </div>
                 <div class="col ten center" data-tooltip="MERCHANT.buyingFactor">
                     <input name="system.merchant.factors.buyingFactor.{{player.id}}" type="number"
-                        value="{{player.buyingFactor}}" data-dtype="Number" />
+                        value="{{player.buyingFactor}}"/>
                 </div>
                 {{/if}}
                 <div class="col ten center">
@@ -248,8 +237,7 @@
                     </div>
                     <div class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
                         {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
-                        <input class="customPriceTag" type="number" data-dtype="Number"
-                            value="{{item.flags.dsa5.customPriceTag}}" />
+                        <input class="customPriceTag" type="number" value="{{item.flags.dsa5.customPriceTag}}" />
                     </div>
                     <div class="col eight center">
                         <a class="quantity-click" data-tooltip="TT.strgx10"

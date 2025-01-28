@@ -5,10 +5,11 @@ import EncumbranceTemplate from './templates/encumbrance.js';
 import StructureTemplate from './templates/structure.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
+import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class ArmorData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+export default class ArmorData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       region: new StringField({ initial: '', label: 'PLANT.region' }),
@@ -23,7 +24,7 @@ export default class ArmorData extends DSADataModel.mixin(DescriptionTemplate, A
       worn: new SchemaField({
         value: new BooleanField({}),
       }),
-      subcategory: new StringField({ choices: Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
+      subcategory: new NumberField({ choices: Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
         acc[key] = `ARMORSUBCATEGORIES.${key}`;
         return acc;
       }, {}), required: true, initial: 0, label: 'COMBATSKILLCATEGORY.subcategory' }),

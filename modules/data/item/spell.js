@@ -10,6 +10,7 @@ export default class SpellData extends DSADataModel.mixin(AoeTemplate, Descripti
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       feature: new StringField({ initial: '', label: 'feature' }),
+      reversalis: new StringField({ label: 'LocalizedIDs.reversalis'})
     });
   }
 }

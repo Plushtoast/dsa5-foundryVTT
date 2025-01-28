@@ -1,12 +1,12 @@
+import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5CombatDialog from './dialog-combat-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5SkillDialog from './dialog-skill-dsa5.js';
 import DSA5SpellDialog from './dialog-spell-dsa5.js';
-const { mergeObject } = foundry.utils;
 
 export default class DSA5Dialog extends DialogShared {
   static getDialogForItem(testData, renderData) {
-    const actor = testData.extra.actor;
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     const type = testData.source.type;
     switch (type) {
       case 'rangeweapon':
@@ -59,12 +59,13 @@ export default class DSA5Dialog extends DialogShared {
     const html = $(this.element)
     html.find('.dieButton').on('click', (ev) => {
       let elem = $(ev.currentTarget);
-      if (elem.attr('data-single') == 'true') {
+      if (ev.currentTarget.dataset.single == 'true') {
         elem.closest('.dialog-content').find('.dieButton').removeClass('dieSelected');
       }
       elem.toggleClass('dieSelected');
     });
   }
+
   static DEFAULT_OPTIONS = {
     window: {
         resizable: true,

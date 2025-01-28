@@ -34,11 +34,11 @@
                     {{/if}}
                 </div>
                 {{#if item.ammo}}
-                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
+                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}">
                     {{selectOptions item.ammo selected=item.system.currentAmmo.value blank="-" valueAttr="_id" labelAttr="label"}}
                 </select>
                 {{else}}
-                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}" data-dtype="String">
+                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}">
                     <option>-</option>  
                 </select>
                 {{/if}}

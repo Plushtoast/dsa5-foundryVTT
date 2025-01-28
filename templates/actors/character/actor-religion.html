@@ -6,12 +6,8 @@
 
     <div class="row-section wrap reverseFlex">
         <div class="col morph">
-            <div class="groupbox">
-                <div class="row-section">
-                    <div class="col header-label lineheight">
-                        <b>{{localize "blessings"}}</b>
-                    </div>
-                </div>
+            <fieldset>
+                <legend>{{localize "blessings"}}</legend>
                 <div class="row-section wrap cards">
                     {{#each prepare.magic.blessing as |item i|}}
                     <div class="item" data-item-id="{{item._id}}">
@@ -20,54 +16,24 @@
                     {{/each}}
                 </div>
 
-            </div>
+            </fieldset>
         </div>
         <div class="col morph">
             <div class="actor-tradition groupbox">
-                <div class="actor-tradition-item row-section lineheight">
-                    <div class="actor-tradition-label col fourty center">
-                        {{localize "tradition"}}
-                    </div>
-                    <div class="actor-tradition-value col sixty">
-                        <input type="text" name="system.tradition.clerical" data-dtype="String" value="{{document.system.tradition.clerical}}" />
-                    </div>
+                <div class="actor-tradition-item">
+                    {{formGroup systemFields.tradition.fields.clerical value=document.system.tradition.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item  row-section lineheight">
-                    <div class="actor-tradition-label col fourty center">
-                        {{localize "guidevalue"}}
-                    </div>
-                    <div class="actor-tradition-value col sixty">
-                        <div class="form-group">
-                            <select name="system.guidevalue.clerical" data-dtype="String">
-                                {{selectOptions prepare.guidevalues selected=document.system.guidevalue.clerical localize=true}}
-                            </select>
-                        </div>
-                    </div>
-
+                <div class="actor-tradition-item ">
+                    {{formGroup systemFields.guidevalue.fields.clerical value=document.system.guidevalue.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item row-section lineheight">
-                    <div class="actor-tradition-label col fourty center">
-                        {{localize "aspect"}}
-                    </div>
-                    <div class="actor-tradition-value col sixty">
-                        <input type="text" name="system.feature.clerical" data-dtype="String" value="{{document.system.feature.clerical}}" />
-                    </div>
+                <div class="actor-tradition-item">
+                    {{formGroup systemFields.feature.fields.clerical value=document.system.feature.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item row-section lineheight">
-                    <div class="actor-tradition-label col fourty center">
-                        {{localize "energyfactor"}}
-                    </div>
-                    <div class="actor-tradition-value col sixty">
-                        <input type="number" name="system.energyfactor.clerical" data-dtype="number" value="{{document.system.energyfactor.clerical}}" />
-                    </div>
+                <div class="actor-tradition-item">
+                    {{formGroup systemFields.energyfactor.fields.clerical value=document.system.energyfactor.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item row-section lineheight">
-                    <div class="actor-tradition-label col fourty center">
-                        {{localize "happyTalents"}}
-                    </div>
-                    <div class="actor-tradition-value col sixty">
-                        <textarea type="text" name="system.happyTalents.value" rows="8" data-dtype="String" value="">{{document.system.happyTalents.value}}</textarea>
-                    </div>
+                <div class="actor-tradition-item">
+                    {{formGroup systemFields.happyTalents.fields.value value=document.system.happyTalents.value rows=8 localize=true elementType='textarea'}}
                 </div>
             </div>
         </div>

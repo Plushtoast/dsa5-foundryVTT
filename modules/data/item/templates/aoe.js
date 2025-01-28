@@ -18,4 +18,12 @@ export default class AoeTemplate extends DSADataModel {
       }),
     };
   }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if(isNaN(source.target.value)) {
+      source.target.value = Number(source.target.value) || 0;
+    }
+}
 }

@@ -10,7 +10,7 @@ export default class SkillData extends DSADataModel.mixin(DescriptionTemplate, S
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
         group: new SchemaField({
-            value: new StringField({ initial: '', label: 'Group', required: true, choices: DSA5.skillGroups }),
+            value: new StringField({ initial: 'body', label: 'Group', required: true, choices: DSA5.skillGroups }),
         }),
         talentValue: new SchemaField({
             value: new NumberField({ initial: 0 }),

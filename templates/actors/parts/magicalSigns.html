@@ -1,10 +1,6 @@
 {{#if prepare.magic.magicalsign}}
-<div class="groupbox">
-  <div class="row-section">
-    <div class="col header-label lineheight">
-      <b>{{localize "TYPES.Item.magicalsign"}}</b>
-    </div>
-  </div>
+<fieldset>
+  <legend>{{localize "TYPES.Item.magicalsign"}}</legend>
   <div class="row-section wrap cards">
     {{#each prepare.magic.magicalsign as |item i|}}
     <div class="item" data-item-id="{{item._id}}">
@@ -12,5 +8,5 @@
     </div>
     {{/each}}
   </div>
-</div>
+</fieldset>
 {{/if}}

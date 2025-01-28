@@ -1,13 +1,5 @@
-<div class="actor-purse groupbox">
-    <div class="row-section">
-        <div class="col five"></div>
-        <div class="col sixty header-label">
-            <b>{{localize "purse"}}</b>
-        </div>
-        <div class="col five center">
-            {{#if prepare.moneyWeight}}<small>{{numberFormat prepare.moneyWeight decimals=2}} <i class="fas fa-anchor"></i></small>{{/if}}
-        </div>
-    </div>
+<fieldset class="actor-purse">
+    <legend>{{localize "purse"}} {{#if prepare.moneyWeight}}<small>{{numberFormat prepare.moneyWeight decimals=2}} <i class="fas fa-anchor"></i></small>{{/if}}</legend>
     {{#grouped_each 4 prepare.money.coins}}
     <div class="row-section table-title">
         {{#each this}}
@@ -19,9 +11,9 @@
     <div class="actor-purse-content row-section">
         {{#each this}}
         <div class="number-input col four center item" data-item-id="{{_id}}">
-            <input class="col-{{name}} money-change" type="number" data-dtype="Number" value="{{system.quantity.value}}" />
+            <input class="col-{{name}} money-change" type="number" value="{{system.quantity.value}}" />
         </div>
         {{/each}}
     </div>
     {{/grouped_each}}
-</div>
+</fieldset>

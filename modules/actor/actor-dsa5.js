@@ -989,7 +989,7 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareItems(sheetInfo) {
-    let actorData = this.toObject(false);
+    let actorData = this.toObject();
     let combatskills = [];
     let advantages = [];
     let disadvantages = [];
@@ -1308,7 +1308,7 @@ export default class Actordsa5 extends Actor {
           Actordsa5._prepareMeleeWeapon(
             wep,
             combatskills,
-            actorData,
+            this,
             wornweapons.filter((x) => x._id != wep._id && !RuleChaos.isYieldedTwohanded(x)),
           ),
         );
@@ -1341,9 +1341,6 @@ export default class Actordsa5 extends Actor {
         specAbs.magical.push(traditionAbility);
       }
     }
-
-    let guidevalues = duplicate(DSA5.characteristics);
-    guidevalues['-'] = '-';
 
     const brawling = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
 
@@ -1387,7 +1384,6 @@ export default class Actordsa5 extends Actor {
         : '',
       schips,
       groupschips,
-      guidevalues,
       magic,
       traits,
       combatskills,
@@ -1465,9 +1461,9 @@ export default class Actordsa5 extends Actor {
   }
 
   _itemPreparationError(item, error) {
-    console.error('Something went wrong with preparing item ' + item.name + ': ' + error);
     console.warn(error);
     console.warn(item);
+    console.trace();
     ui.notifications.error('Something went wrong with preparing item ' + item.name + ': ' + error);
   }
 
@@ -2075,7 +2071,6 @@ export default class Actordsa5 extends Actor {
                 <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
 
       let newTestData = data.preData;
-      newTestData.extra.actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker).toObject(false);
 
       this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data, schipsource);
     }
@@ -2090,7 +2085,7 @@ export default class Actordsa5 extends Actor {
     const item = await renderTemplate(template, {
       document: this,
       isGM: game.user.isGM,
-      ...(await this.sheet.getData()),
+      ...(await this.sheet._prepareContext()),
       ...options,
     });
     return $(item)[0];
@@ -2143,7 +2138,6 @@ export default class Actordsa5 extends Actor {
       },
       opposable: false,
       extra: {
-        actor: this.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(this, tokenId),
       },
@@ -2160,11 +2154,10 @@ export default class Actordsa5 extends Actor {
         modifier: options.modifier || 0,
       },
       callback: (html, options = {}) => {
-        testData.situationalModifiers = [];
-        testData.situationalModifiers.push({
+        testData.situationalModifiers = [{
           name: game.i18n.localize('fallingFloor'),
           value: html.find('[name="fallingFloor"]').val(),
-        });
+        }];
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.fallingHeight = html.find('[name="testModifier"]').val();
         mergeObject(testData.extra.options, options);
@@ -2192,15 +2185,12 @@ export default class Actordsa5 extends Actor {
       opposable: false,
       extra: {
         statusId,
-        actor: this.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(this, tokenId),
       },
     };
 
-    testData.extra.actor.isMage = this.system.isMage;
-    testData.extra.actor.isPriest = this.system.isPriest;
-    let situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
+    let situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
     let dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/regeneration-dialog.html',
@@ -2262,7 +2252,6 @@ export default class Actordsa5 extends Actor {
       opposable: false,
       extra: {
         statusId,
-        actor: this.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(this, tokenId),
       },
@@ -2273,7 +2262,7 @@ export default class Actordsa5 extends Actor {
       ...Itemdsa5.buildCombatSpecAbs(this, ['Combat'], toSearch, 'parry', testData.source),
       ...Itemdsa5.buildCombatSpecAbs(this, ['animal'], undefined, 'parry', testData.source),
     ];
-    const situationalModifiers = DSA5StatusEffects.getRollModifiers(testData.extra.actor, testData.source);
+    const situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
     const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this);
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
@@ -2323,7 +2312,6 @@ export default class Actordsa5 extends Actor {
       },
       extra: {
         characteristicId,
-        actor: this.toObject(false),
         options,
         speaker: Itemdsa5.buildSpeaker(this, tokenId),
       },
@@ -2439,17 +2427,17 @@ export default class Actordsa5 extends Actor {
     return this._parseDmg(item, actorData);
   }
 
-  static _prepareMeleeWeapon(item, combatskills, actorData, wornWeapons = null, isBaseWeapon = true) {
+  static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {
     let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     if (skill) {
       item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
       const vals = item.system.guidevalue.value.split('/').map((x) => {
-        if (!actorData.system.characteristics[x]) return 0;
+        if (!actor.system.characteristics[x]) return 0;
         return (
-          Number(actorData.system.characteristics[x].initial) +
-          Number(actorData.system.characteristics[x].modifier) +
-          Number(actorData.system.characteristics[x].advances) +
-          Number(actorData.system.characteristics[x].gearmodifier)
+          Number(actor.system.characteristics[x].initial) +
+          Number(actor.system.characteristics[x].modifier) +
+          Number(actor.system.characteristics[x].advances) +
+          Number(actor.system.characteristics[x].gearmodifier)
         );
       });
       const baseParry = Math.ceil(skill.system.talentValue.value / 2) + Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) + Number(game.settings.get('dsa5', 'higherDefense'));
@@ -2458,7 +2446,7 @@ export default class Actordsa5 extends Actor {
 
       item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
       if (!item.yieldedTwoHand) {
-        if (!wornWeapons) wornWeapons = actorData.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && x._id != item._id && !RuleChaos.isYieldedTwohanded(x));
+        if (!wornWeapons) wornWeapons = actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && x._id != item._id && !RuleChaos.isYieldedTwohanded(x));
 
         if (wornWeapons.length > 0) {
           item.parry += Math.max(...wornWeapons.map((x) => x.system.pamod.offhandMod));
@@ -2496,10 +2484,10 @@ export default class Actordsa5 extends Actor {
         }
       }
 
-      item = this._parseDmg(item, actorData.system);
+      item = this._parseDmg(item, actor.system);
       if (item.system.guidevalue.value != '-') {
-        let val = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actorData.system.characteristics[x].value)));
-        let extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
+        const val = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actor.system.characteristics[x].value)));
+        const extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
         if (extra != 0) {
           item.extraDamage = extra;
           item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));
@@ -2512,7 +2500,7 @@ export default class Actordsa5 extends Actor {
         item.subweapons = {};
         for (let key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
           const dup = this.buildSubweapon(item, key);
-          const done = this._prepareMeleeWeapon(dup, combatskills, actorData, wornWeapons, false);
+          const done = this._prepareMeleeWeapon(dup, combatskills, actor, wornWeapons, false);
           item.subweapons[key] = done;
         }
         item.system.damageToolTip = EquipmentDamage.damageTooltip(item);

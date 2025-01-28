@@ -1,83 +1,63 @@
-<div class='tab standard-form scrollable {{tabs.notes.cssClass}}' data-tab='notes'
-    data-group='{{tabs.notes.group}}' class='tab'>
+<div class='tab standard-form scrollable {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'
+    class='tab'>
     {{> systems/dsa5/templates/actors/parts/information.html}}
     {{> systems/dsa5/templates/actors/parts/personaltrait.html}}
 
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "Description"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    <fieldset>
+        <legend>{{localize "Description"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable engine="prosemirror"}}
+                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable
+                engine="prosemirror"}}
             </div>
         </div>
-    </div>
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "behaviour"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "behaviour"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedBehaviour target="system.behaviour.value" button=true owner=owner editable=editable engine="prosemirror"}}
+                {{editor enrichedBehaviour target="system.behaviour.value" button=true owner=owner editable=editable
+                engine="prosemirror"}}
             </div>
         </div>
-    </div>
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "flight"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "flight"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedFlight target="system.flight.value" button=true owner=owner editable=editable engine="prosemirror"}}
+                {{editor enrichedFlight target="system.flight.value" button=true owner=owner editable=editable
+                engine="prosemirror"}}
             </div>
         </div>
-    </div>
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "specialRules"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "specialRules"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedSpecialrules target="system.specialRules.value" button=true owner=owner editable=editable engine="prosemirror"}}
+                {{editor enrichedSpecialrules target="system.specialRules.value" button=true owner=owner
+                editable=editable engine="prosemirror"}}
             </div>
         </div>
-    </div>
+    </fieldset>
     {{#if document.isOwner}}
-    <div class="groupbox">
-        <div class="row-section header-label">
-            <div class="col ninety lineheight">
-                <b>{{localize "ownerNotes"}}</b>
-            </div>
-            <div class="col lineheight ten">
-                <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
-            </div>
-        </div>
+    <fieldset>
+        <legend>{{localize "ownerNotes"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner editable=editable engine="prosemirror"}}
+                {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner
+                editable=editable engine="prosemirror"}}
             </div>
         </div>
-    </div>
+    </fieldset>
     {{/if}}
 </div>
