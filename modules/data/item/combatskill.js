@@ -1,10 +1,10 @@
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import SkillTemplate from './templates/skill.js';
 import DSA5 from '../../system/config-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class CombatskillData extends DSADataModel.mixin(SkillTemplate) {
+export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       guidevalue: new SchemaField({
@@ -34,5 +34,14 @@ export default class CombatskillData extends DSADataModel.mixin(SkillTemplate) {
         'range': 1,
       }[source.weapontype.value];
     }
+  }
+
+  async getSheetData(data) {
+    data.hasLocalization = game.i18n.has(`Combatskilldescr.${data.document.name}`);
+    data.localizerPrefix = 'Combatskilldescr.';
+  }
+
+  static chatData(data, name) {
+    return [{key:'Description', val: `Combatskilldescr.${name}`, localizeVal: true}];
   }
 }

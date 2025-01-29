@@ -1,12 +1,12 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import APValueTemplate from './templates/apvalue.js';
 import MaxTemplate from './templates/max.js';
 import RequirementsTemplate from './templates/requirements.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class AdvantageData extends DSADataModel.mixin(DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
+export default class AdvantageData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({
@@ -16,5 +16,9 @@ export default class AdvantageData extends DSADataModel.mixin(DescriptionTemplat
         value: new StringField({ initial: '', label: 'effect' }),
       }),
     });
+  }
+
+  static chatData(data, name) {
+    return [{ key: 'effect', val: data.effect.value }];
   }
 }

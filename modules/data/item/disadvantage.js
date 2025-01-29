@@ -1,20 +1,7 @@
-import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
-import APValueTemplate from './templates/apvalue.js';
-import MaxTemplate from './templates/max.js';
-import RequirementsTemplate from './templates/requirements.js';
+import AdvantageData from './advantage.js';
 
-const { SchemaField, StringField, NumberField } = foundry.data.fields;
-
-export default class DisadvantageData extends DSADataModel.mixin(DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
+export default class DisadvantageData extends AdvantageData {
   static defineSchema() {
-    return this.mergeSchema(super.defineSchema(), {
-      step: new SchemaField({
-        value: new NumberField({ initial: 1 }),
-      }),
-      effect: new SchemaField({
-        value: new StringField({ initial: '', label: 'effect' }),
-      }),
-    });
+    return this.mergeSchema(super.defineSchema(), {});
   }
 }

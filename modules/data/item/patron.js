@@ -1,9 +1,9 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 
 const { NumberField, StringField } = foundry.data.fields;
 
-export default class PatronData extends DSADataModel.mixin(DescriptionTemplate) {
+export default class PatronData extends ItemDataModel.mixin(DescriptionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       talents: new StringField({ initial: '', label: 'skills' }),
@@ -29,5 +29,13 @@ export default class PatronData extends DSADataModel.mixin(DescriptionTemplate) 
         },
       }),
     });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'skills', val: data.talents },
+      { key: 'culture', val: data.culture },
+      { key: 'Category', val: `PATRON.${data.category}`, localizeVal: true },
+    ];
   }
 }

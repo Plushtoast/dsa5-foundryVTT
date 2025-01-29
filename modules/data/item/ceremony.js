@@ -1,12 +1,8 @@
-import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
-import SpellTemplate from './templates/spell.js';
-import BasicSpellTemplate from './templates/basicspell.js';
-import AoeTemplate from './templates/aoe.js';
+import LiturgyData from './liturgy.js';
 
 const { SchemaField, NumberField } = foundry.data.fields;
 
-export default class CeremonyData extends DSADataModel.mixin(AoeTemplate, DescriptionTemplate, SpellTemplate, BasicSpellTemplate) {
+export default class CeremonyData extends LiturgyData {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       permanentCost: new SchemaField({

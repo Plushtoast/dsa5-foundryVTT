@@ -1,6 +1,6 @@
 import { DSADataModel } from "../../abstract.js";
 
-const { SchemaField, NumberField } = foundry.data.fields;
+const { SchemaField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class CharacteristicsTemplate extends DSADataModel {
   
@@ -59,6 +59,7 @@ export default class CharacteristicsTemplate extends DSADataModel {
             sheetLocked: new SchemaField({
               value: new BooleanField({ initial: false }),
             }),
+            playerView: new BooleanField({ initial: false }),
         }
     }
 }

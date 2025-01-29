@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
 import EncumbranceTemplate from './templates/encumbrance.js';
 import StructureTemplate from './templates/structure.js';
@@ -9,7 +9,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class ArmorData extends DSADataModel.mixin(DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       region: new StringField({ initial: '', label: 'PLANT.region' }),
@@ -24,18 +24,38 @@ export default class ArmorData extends DSADataModel.mixin(DescriptionTemplate, A
       worn: new SchemaField({
         value: new BooleanField({}),
       }),
-      subcategory: new NumberField({ choices: Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
-        acc[key] = `ARMORSUBCATEGORIES.${key}`;
-        return acc;
-      }, {}), required: true, initial: 0, label: 'COMBATSKILLCATEGORY.subcategory' }),
+      subcategory: new NumberField({
+        choices: Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
+          acc[key] = `ARMORSUBCATEGORIES.${key}`;
+          return acc;
+        }, {}),
+        required: true,
+        initial: 0,
+        label: 'COMBATSKILLCATEGORY.subcategory',
+      }),
     });
   }
 
   static _migrateData(source) {
     super._migrateData(source);
 
-    if(typeof source.subcategory === 'string') {
+    if (typeof source.subcategory === 'string') {
       source.subcategory = Number(source.subcategory) || 0;
     }
+  }
+
+  async getSheetData(data) {
+    data.domains = this.prepareDomains();
+    data.breakPointRating = DSA5.armorSubcategories[data.document.system.subcategory];
+  }
+
+  static chatData(data, name) {
+    let properties = [
+      { key: 'protection', val: data.protection.value },
+      { key: 'encumbrance', val: data.encumbrance.value },
+    ];
+    if (data.effect.value != '') properties.push({ key: 'effect', val: data.effect.value });
+
+    return properties;
   }
 }

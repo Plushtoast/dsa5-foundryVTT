@@ -1,11 +1,11 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { NumberField, BooleanField, StringField, SchemaField } = foundry.data.fields;
 
-export default class PlantData extends DSADataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
+export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       price: new SchemaField({
@@ -44,5 +44,22 @@ export default class PlantData extends DSADataModel.mixin(DescriptionTemplate, E
         maraskan: new NumberField({ initial: 1, min: 0, max: 5, step: 1 }),
       }),
     });
+  }
+
+  async getSheetData(data) {
+    data.attributes = Object.keys(data.document.system.planttype).map((x) => {
+      return { name: x, checked: data.document.system.planttype[x] };
+    });
+    data.enrichedEffect = await TextEditor.enrichHTML(data.document.system.effect, { secrets: data.document.isOwner, async: true });
+    data.enrichedRecipes = await TextEditor.enrichHTML(data.document.system.recipes, { secrets: data.document.isOwner, async: true });
+    data.enrichedInformation = await TextEditor.enrichHTML(data.document.system.infos, { secrets: data.document.isOwner, async: true });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'effect', val: data.effect },
+      { key: 'PLANT.recipes', val: data.recipes },
+      { key: 'PLANT.usages', val: data.usages },
+    ];
   }
 }

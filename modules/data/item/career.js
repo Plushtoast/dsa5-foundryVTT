@@ -1,22 +1,22 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import APValueTemplate from './templates/apvalue.js';
 import RequirementsTemplate from './templates/requirements.js';
 import DSA5 from '../../system/config-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class CareerData extends DSADataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
+export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
   static defineSchema() {
     const characteristics = foundry.utils.duplicate(DSA5.characteristics);
     characteristics['-'] = '-';
 
     return this.mergeSchema(super.defineSchema(), {
       languagePoints: new SchemaField({
-        value: new NumberField({ initial: 0, label: 'languagePoints' }),
+        value: new NumberField({ initial: 0, label: 'languagePoints', min: 0 }),
       }),
       spelltrickCount: new SchemaField({
-        value: new NumberField({ initial: 0, label: 'spelltrickCount' }),
+        value: new NumberField({ initial: 0, label: 'spelltrickCount', min: 0 }),
       }),
       recommendedAdvantages: new SchemaField({
         value: new StringField({ initial: '', label: 'recommendedAdvantages' }),
@@ -71,5 +71,9 @@ export default class CareerData extends DSADataModel.mixin(DescriptionTemplate, 
         value: new StringField({ initial: '' }),
       }),
     });
+  }
+
+  async getSheetData(data) {
+    data.enrichedClothing = await TextEditor.enrichHTML(data.document.system.clothing.value, { secrets: data.document.isOwner, async: true });
   }
 }

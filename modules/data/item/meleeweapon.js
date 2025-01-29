@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
@@ -8,18 +8,20 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
+import RuleChaos from '../../system/rule_chaos.js';
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static defineSchema() {
-    const guideValues = foundry.utils.duplicate(DSA5.characteristics)
-    guideValues['-'] = '-'
-    guideValues['ge/kk'] = 'CHAR.GEKK'
+    const guideValues = foundry.utils.duplicate(DSA5.characteristics);
+    guideValues['-'] = '-';
+    guideValues['ge/kk'] = 'CHAR.GEKK';
 
     return this.mergeSchema(super.defineSchema(), {
-      crit: new ScopableNumberField({ initial: 1 }),
-      botch: new ScopableNumberField({ initial: 20 }),
+      crit: new ScopableNumberField({ initial: 1, min: 1, max: 19 }),
+      botch: new ScopableNumberField({ initial: 20, min: 2, max: 20 }),
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
@@ -37,7 +39,7 @@ export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTempl
         shieldSize: new ScopableStringField({ initial: 'medium', label: 'shieldSize', required: true, choices: DSA5.shieldSizes }),
       }),
       damageThreshold: new SchemaField({
-        value: new ScopableNumberField({ initial: 14, label: 'damageThreshold' }),
+        value: new ScopableNumberField({ initial: 14, label: 'damageThreshold', min: 0 }),
       }),
       guidevalue: new SchemaField({
         value: new ScopableStringField({ initial: '-', label: 'guidevalue', choices: guideValues, required: true }),
@@ -46,8 +48,8 @@ export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTempl
         value: new ScopableStringField({ initial: 'daggers', label: 'TYPES.Item.combatskill' }),
       }),
       worn: new SchemaField({
-        value: new BooleanField({  }),
-        offhand: new ScopableBooleanField({ label: 'offHand' }),
+        value: new BooleanField({}),
+        offHand: new ScopableBooleanField({ label: 'offHand' }),
         wrongGrip: new ScopableBooleanField(),
       }),
     });
@@ -56,8 +58,62 @@ export default class MeleeweaponData extends DSADataModel.mixin(DescriptionTempl
   static _migrateData(source) {
     super._migrateData(source);
 
-    if(!DSA5.shieldSizes[source.reach.shieldSize]) {
+    if (!DSA5.shieldSizes[source.reach.shieldSize]) {
       source.reach.shieldSize = 'medium';
     }
+  }
+
+  async getSheetData(data) {
+    data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
+    data.isShield = RuleChaos.isShield(data.document);
+    data.domains = this.prepareDomains();
+    data.breakPointRating = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    mergeObject(data, this.getGripInfo());
+    if (this.parent.actor) {
+      const combatSkill = this.parent.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
+      data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
+      data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${data.document.system.combatskill.value}`));
+    }
+  }
+
+  getGripInfo() {
+    const twoHanded = RuleChaos.regex2h.test(this.parent.name);
+    console.log(this.parent.name);
+    let wrongGripHint = '';
+    if (!twoHanded) {
+      wrongGripHint = 'wrongGrip.yieldTwo';
+    } else {
+      const localizedCT = game.i18n.localize(`LocalizedCTs.${this.combatskill.value}`);
+      switch (localizedCT) {
+        case 'Two-Handed Impact Weapons':
+        case 'Two-Handed Swords':
+          const reg = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'));
+          if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.yieldOneBastard';
+          else wrongGripHint = 'wrongGrip.yieldOneSwordBlunt';
+
+          break;
+        default:
+          wrongGripHint = 'wrongGrip.yieldOnePolearms';
+      }
+    }
+
+    return {
+      twoHanded,
+      wrongGripHint,
+      wrongGripLabel: twoHanded ? 'wrongGrip.oneHanded' : 'wrongGrip.twoHanded',
+    };
+  }
+
+  static chatData(data, name) {
+    let res = [
+      { key: 'damage', val: data.damage.value },
+      { key: 'atmod', val: data.atmod.value },
+      { key: 'pamod', val: data.pamod.value },
+      { key: 'reach', val: `Range-${data.reach.value}`, localizeVal: true },
+      { key: 'TYPES.Item.combatskill', val: data.combatskill.value },
+    ];
+    if (data.effect.value != '') res.push({ key: 'effect', key: DSA5_Utility.replaceConditions('effect', data.effect.value) });
+
+    return res;
   }
 }

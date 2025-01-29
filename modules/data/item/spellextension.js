@@ -1,13 +1,13 @@
 import APValueTemplate from './templates/apvalue.js';
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 
 const { NumberField, StringField } = foundry.data.fields;
 
-export default class SpellextensionData extends DSADataModel.mixin(DescriptionTemplate, APValueTemplate) {
+export default class SpellextensionData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
-      talentValue: new NumberField({ initial: 0, label: 'requiredFW' }),
+      talentValue: new NumberField({ initial: 0, label: 'requiredFW', min: 0 }),
       effect: new StringField({ initial: '' }), // this might be deprecated
       source: new StringField({ initial: '' }),
       category: new StringField({
@@ -22,5 +22,12 @@ export default class SpellextensionData extends DSADataModel.mixin(DescriptionTe
         },
       }),
     });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'source', val: data.source },
+      { key: 'Category', val: data.category, localizeVal: true },
+    ];
   }
 }

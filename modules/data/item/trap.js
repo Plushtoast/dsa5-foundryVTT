@@ -1,9 +1,9 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 
 const { NumberField, StringField } = foundry.data.fields;
 
-export default class TrapData extends DSADataModel.mixin(DescriptionTemplate) {
+export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
         stealth: new NumberField({ initial: 0, label: 'TRAP.stealth' }),

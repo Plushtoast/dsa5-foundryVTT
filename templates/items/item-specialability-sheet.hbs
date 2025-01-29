@@ -2,24 +2,7 @@
 
   {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
   {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true}}
-
-  <div class='form-group'>
-    <label>{{localize 'Category'}}</label>
-    <div class="form-fields">
-      <select name='system.category.value'>
-        <optgroup label='{{localize "SpecCategory.general"}}'>
-          {{selectOptions categories.general selected=document.system.category.value localize=true}}
-        </optgroup>
-        <optgroup label='{{localize "SpecCategory.clerical"}}'>
-          {{selectOptions categories.clerical selected=document.system.category.value localize=true}}
-        </optgroup>
-        <optgroup label='{{localize "SpecCategory.magical"}}'>
-          {{selectOptions categories.magical selected=document.system.category.value localize=true}}
-        </optgroup>
-      </select>
-    </div>
-  </div>
-
+  {{formGroup systemFields.category.fields.value value=document.system.category.value localize=true choices=categories sort=true valueAttr='valueAttr' labelAttr='labelAttr'}}
   {{formGroup systemFields.rule.fields.value value=document.system.rule.value localize=true classes='full-height' elementType='textarea'}}
   {{formGroup systemFields.maxRank.fields.value value=document.system.maxRank.value localize=true}} 
   {{formGroup systemFields.effect.fields.value value=document.system.effect.value localize=true}}  

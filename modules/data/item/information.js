@@ -1,21 +1,43 @@
-import { DSADataModel } from "../abstract.js";
+import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
+import { ItemDataModel } from '../abstract.js';
 
 const { StringField, NumberField } = foundry.data.fields;
 
-export default class InformationData extends DSADataModel {
-    static defineSchema() {
-        return this.mergeSchema(super.defineSchema(), {
-            qs1: new StringField({ initial: '' }),
-            qs2: new StringField({ initial: '' }),
-            qs3: new StringField({ initial: '' }),
-            qs4: new StringField({ initial: '' }),
-            qs5: new StringField({ initial: '' }),
-            qs6: new StringField({ initial: '' }),
-            skill: new StringField({ initial: '', required: true, label: 'TYPES.Item.skill' }),
-            modifier: new NumberField({ initial: 0, label: 'Modifier' }),
-            crit: new StringField({ initial: '' }),
-            botch: new StringField({ initial: '' }),
-            fail: new StringField({ initial: '' }),
-        });
-    }
+export default class InformationData extends ItemDataModel {
+  static defineSchema() {
+    return this.mergeSchema(super.defineSchema(), {
+      qs1: new StringField({ initial: '' }),
+      qs2: new StringField({ initial: '' }),
+      qs3: new StringField({ initial: '' }),
+      qs4: new StringField({ initial: '' }),
+      qs5: new StringField({ initial: '' }),
+      qs6: new StringField({ initial: '' }),
+      skill: new StringField({ initial: '', required: true, label: 'TYPES.Item.skill' }),
+      modifier: new NumberField({ initial: 0, label: 'Modifier' }),
+      crit: new StringField({ initial: '' }),
+      botch: new StringField({ initial: '' }),
+      fail: new StringField({ initial: '' }),
+    });
+  }
+
+  async enrichedProperties(propertiesToEnrich, context) {
+    const enrichedProperties = await Promise.all(
+      propertiesToEnrich.map(async (prop) => {
+        return { [`enriched${prop}`]: await TextEditor.enrichHTML(context.document.system[prop], { async: true }) };
+      }),
+    );
+    return Object.assign({}, ...enrichedProperties);
+  }
+
+  async getSheetData(data) {
+    data.allSkills = await DSA5_Utility.allSkillsList();
+    const propertiesToEnrich = ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail'];
+    foundry.utils.mergeObject(data, await this.enrichedProperties(propertiesToEnrich, data));
+  }
+
+  static async _postItem(item) {
+    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.html', { item });
+    UserMultipickDialog.getDialog(html);
+  }
 }

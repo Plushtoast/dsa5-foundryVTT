@@ -1,14 +1,15 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import DSA5 from '../../system/config-dsa5.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { NumberField, StringField, SchemaField } = foundry.data.fields;
 
-export default class DiseaseData extends DSADataModel.mixin(DescriptionTemplate) {
+export default class DiseaseData extends ItemDataModel.mixin(DescriptionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({
-        value: new NumberField({ initial: 1, label: 'stepValue' }),
+        value: new NumberField({ initial: 1, label: 'stepValue', min: 1 }),
       }),
       resistance: new SchemaField({
         value: new StringField({ initial: 'ZK', label: 'resistanceModifier', required: true, choices: DSA5.magicResistanceModifiers }),
@@ -32,5 +33,18 @@ export default class DiseaseData extends DSADataModel.mixin(DescriptionTemplate)
         value: new StringField({ initial: '', label: 'antidot' }),
       }),
     });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'stepValue', val: data.step.value },
+      { key: 'incubation', val: data.incubation.value },
+      { key: 'damage', val: DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.damage.value)) },
+      { key: 'duration', val: data.duration.value },
+      { key: 'source', val: DSA5_Utility.replaceDies(data.source.value) },
+      { key: 'treatment', val: data.treatment.value },
+      { key: 'antidot', val: data.antidot.value },
+      { key: 'resistanceModifier', val: data.resistance.value },
+    ];
   }
 }

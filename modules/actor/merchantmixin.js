@@ -422,7 +422,7 @@ export const MerchantSheetMixin = (superclass) =>
       await super._render(force, options);
     }
 
-    _togglePlayerview(ev) {
+    _togglePlayerview() {
       this.actor.update({
         'system.merchant.playerView': !getProperty(this.actor.system, 'merchant.playerView'),
       });

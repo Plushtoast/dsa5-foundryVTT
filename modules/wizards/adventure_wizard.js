@@ -21,9 +21,23 @@ export default class BookWizard extends DefaultAppv2 {
 
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet'],
+    actions: {
+      increaseFontSize: function() { increaseFontSize($(this.element).find('.chapter')) },
+      library: function() { this._showBooks() }
+    },
     window: {
       title: 'Book.Wizard',
       resizable: true,
+      controls: [{
+        action: 'increaseFontSize',
+        label: 'SHEET.increaseFontSize',
+        icon: 'fas fa-arrows-up-down'
+      },
+      {
+        action: 'library',
+        label: 'Book.home',
+        icon: 'fas fa-book'
+      }]
     },
     position: {
       width: 800,
@@ -52,25 +66,6 @@ export default class BookWizard extends DefaultAppv2 {
       div.append(button);
       html.find('.header-actions:first-child').after(div);
     });
-  }
-
-  _getHeaderButtons() {
-    const buttons = super._getHeaderButtons();
-    buttons.unshift({
-      class: 'increaseFontSize',
-      tooltip: 'SHEET.increaseFontSize',
-      icon: 'fas fa-arrows-up-down',
-      onclick: async () => increaseFontSize($(this.element).find('.chapter')),
-    });
-
-    buttons.unshift({
-      label: 'Library',
-      class: 'library',
-      tooltip: 'Book.home',
-      icon: `fas fa-book`,
-      onclick: async () => this._showBooks(),
-    });
-    return buttons;
   }
 
   _showBooks() {

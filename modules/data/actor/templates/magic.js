@@ -13,8 +13,8 @@ export default class MagicTemplate extends DSADataModel {
         clerical: new StringField({ initial: '-', label: 'guidevalue', required: true, choices: guidevalues }),
       }),
       energyfactor: new SchemaField({
-        magical: new NumberField({ initial: 1, label: 'energyfactor' }),
-        clerical: new NumberField({ initial: 1, label: 'energyfactor' }),
+        magical: new NumberField({ initial: 1, label: 'energyfactor', step: 0.1 }),
+        clerical: new NumberField({ initial: 1, label: 'energyfactor', step: 0.1 }),
       }),
       tradition: new SchemaField({
         magical: new StringField({ initial: '', label: 'tradition' }),

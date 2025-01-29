@@ -1,16 +1,29 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import SpellTemplate from './templates/spell.js';
 import BasicSpellTemplate from './templates/basicspell.js';
 import AoeTemplate from './templates/aoe.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { StringField } = foundry.data.fields;
 
-export default class SpellData extends DSADataModel.mixin(AoeTemplate, DescriptionTemplate, SpellTemplate, BasicSpellTemplate) {
+export default class SpellData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SpellTemplate, BasicSpellTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       feature: new StringField({ initial: '', label: 'feature' }),
-      reversalis: new StringField({ label: 'LocalizedIDs.reversalis'})
+      reversalis: new StringField({ label: 'LocalizedIDs.reversalis' }),
     });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'castingTime', val: data.castingTime.value },
+      { key: 'AsPCost', val: data.AsPCost.value },
+      { key: 'distribution', val: data.distribution.value },
+      { key: 'duration', val: data.duration.value },
+      { key: 'reach', val: data.range.value },
+      { key: 'targetCategory', val: data.targetCategory.value },
+      { key: 'effect', val: DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)) },
+    ];
   }
 }

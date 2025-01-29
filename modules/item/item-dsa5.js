@@ -13,8 +13,6 @@ import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/specialability-rules-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import Riding from '../system/riding.js';
-import { UserMultipickDialog } from '../dialog/addTargetDialog.js';
-import DSA5Payment from '../system/payment.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 
@@ -650,10 +648,6 @@ export default class Itemdsa5 extends Item {
     });
   }
 
-  static _chatLineHelper(key, val) {
-    return `<b>${game.i18n.localize(key)}</b>: ${val ? val : '-'}`;
-  }
-
   static setupDialog(ev, options, item, actor, tokenId) {
     return null;
   }
@@ -715,88 +709,24 @@ export default class Itemdsa5 extends Item {
     return { result, cardOptions };
   }
 
-  static chatData(data, name) {
-    return [];
-  }
-
   static getSubClass(type) {
     return game.dsa5.config.ItemSubclasses[type] || Itemdsa5;
   }
 
   async postItem() {
-    Itemdsa5.getSubClass(this.type)._postItem(this);
-  }
-
-  static async _postItem(item) {
-    let chatData = duplicate(item);
-
-    const detailsObfuscated = getProperty(chatData, 'system.obfuscation.details');
-    const descriptionObfuscated = getProperty(chatData, 'system.obfuscation.description');
-
-    mergeObject(chatData, {
-      properties: detailsObfuscated ? [] : Itemdsa5.getSubClass(item.type).chatData(duplicate(chatData.system), item.name),
-      descriptionObfuscated,
-    });
-
-    chatData.hasPrice = 'price' in chatData.system && !detailsObfuscated;
-    if (chatData.hasPrice) {
-      let price = chatData.system.price.value;
-      if (chatData.system.QL) price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData);
-
-      const prices = await DSA5Payment._moneyToString(price);
-      chatData.properties.push(`<b>${game.i18n.localize('price')}</b>: ${prices}`);
-    }
-
-    if (item.pack) chatData.itemLink = item.link;
-
-    if (chatData.img.includes('/blank.webp')) chatData.img = null;
-
-    const html = await renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData);
-    const chatOptions = DSA5_Utility.chatDataSetup(html);
-    ChatMessage.create(chatOptions);
+    this.system.constructor._postItem(this);
   }
 }
 
-class PlantItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    let res = [this._chatLineHelper('effect', data.effect), this._chatLineHelper('PLANT.recipes', data.recipes), this._chatLineHelper('PLANT.usages', data.usages)];
+class PlantItemDSA5 extends Itemdsa5 {}
 
-    return res;
-  }
-}
+class MagicalSignItemDSA5 extends Itemdsa5 {}
 
-class MagicalSignItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    let res = [this._chatLineHelper('AsPCost', data.asp)];
-    if (data.category == 2) res.push(this._chatLineHelper('feature', data.feature));
+class DemonmarkItemDSA5 extends Itemdsa5 {}
 
-    return res;
-  }
-}
+class TrapItemDSA5 extends Itemdsa5 {}
 
-class DemonmarkItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('attributes', data.attribute), this._chatLineHelper('skills', data.skills), this._chatLineHelper('domains', data.domain)];
-  }
-}
-
-class TrapItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [];
-  }
-}
-
-class PatronItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    let res = [
-      this._chatLineHelper('skills', data.talents),
-      this._chatLineHelper('culture', data.culture),
-      this._chatLineHelper('Category', game.i18n.localize(`PATRON.${data.category}`)),
-    ];
-
-    return res;
-  }
-}
+class PatronItemDSA5 extends Itemdsa5 {}
 
 class MoneyItemDSA5 extends Itemdsa5 {
   static checkEquality(item, item2) {
@@ -804,79 +734,19 @@ class MoneyItemDSA5 extends Itemdsa5 {
   }
 }
 
-class AggregatedTestItemDSA5 extends Itemdsa5 {
-  static async _postItem(item) {
-    let txt = '';
-    let result = 'Ongoing';
-    if (item.system.cummulatedQS.value >= 10) {
-      result = 'Success';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}${await TextEditor.enrichHTML(item.system.success, {
-        secrets: this.isOwner,
-        async: true,
-      })}`;
-    } else if (item.system.cummulatedQS.value >= 6) {
-      result = 'PartSuccess';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: this.isOwner, async: true })}`;
-    } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
-      result = 'Failure';
-    }
-    const properties = [
-      this._chatLineHelper('cummulatedQS', `${item.system.cummulatedQS.value} / 10`),
-      this._chatLineHelper('interval', item.system.interval.value),
-      this._chatLineHelper('probes', `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`),
-      this._chatLineHelper('result', game.i18n.localize(result)),
-      txt,
-    ];
-    const descriptionObfuscated = getProperty(item, 'system.obfuscation.description');
+class AggregatedTestItemDSA5 extends Itemdsa5 {}
 
-    const html = await renderTemplate('systems/dsa5/templates/chat/aggregatedTestResult.html', { descriptionObfuscated, item, properties });
-    const chatOptions = DSA5_Utility.chatDataSetup(html);
-    ChatMessage.create(chatOptions);
-  }
-}
-
-class AmmunitionItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('ammunitiongroup', game.i18n.localize(data.ammunitiongroup.value))];
-  }
-}
+class AmmunitionItemDSA5 extends Itemdsa5 {}
 
 class EffectWrapperItemDSA5 extends Itemdsa5 {}
 
-class ArmorItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    let properties = [this._chatLineHelper('protection', data.protection.value), this._chatLineHelper('encumbrance', data.encumbrance.value)];
-    if (data.effect.value != '') properties.push(this._chatLineHelper('effect', data.effect.value));
+class ArmorItemDSA5 extends Itemdsa5 {}
 
-    return properties;
-  }
-}
-
-class CantripItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper('targetCategory', data.targetCategory.value),
-      this._chatLineHelper('feature', data.feature.value),
-    ];
-  }
-}
+class CantripItemDSA5 extends Itemdsa5 {}
 
 class BlessingItemDSA5 extends CantripItemDSA5 {}
 
 class SpellItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('castingTime', data.castingTime.value),
-      this._chatLineHelper('AsPCost', data.AsPCost.value),
-      this._chatLineHelper('distribution', data.distribution.value),
-      this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper('reach', data.range.value),
-      this._chatLineHelper('targetCategory', data.targetCategory.value),
-      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
-    ];
-  }
-
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
     testData.situationalModifiers = Actordsa5._parseModifiers(html);
@@ -947,9 +817,12 @@ class SpellItemDSA5 extends Itemdsa5 {
           if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
-            source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
-              return x + change.value
-            }).join(',');
+            source.system.effectFormula.value = source.system.effectFormula.value
+              .split(',')
+              .map((x) => {
+                return x + change.value;
+              })
+              .join(',');
           } else {
             ef.apply(source, change);
           }
@@ -1147,19 +1020,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 }
 
-class LiturgyItemDSA5 extends SpellItemDSA5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('castingTime', data.castingTime.value),
-      this._chatLineHelper('KaPCost', data.AsPCost.value),
-      this._chatLineHelper('distribution', data.distribution.value),
-      this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper('reach', data.range.value),
-      this._chatLineHelper('targetCategory', data.targetCategory.value),
-      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
-    ];
-  }
-}
+class LiturgyItemDSA5 extends SpellItemDSA5 {}
 
 class CeremonyItemDSA5 extends LiturgyItemDSA5 {
   static getCallbackData(testData, html, actor) {
@@ -1191,10 +1052,6 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 }
 
 class CombatskillDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('Description', game.i18n.localize(`Combatskilldescr.${name}`))];
-  }
-
   static setupDialog(ev, options, item, actor, tokenId) {
     let mode = options.mode;
     let title = item.name + ' ' + game.i18n.localize(mode + 'test');
@@ -1230,14 +1087,6 @@ class CombatskillDSA5 extends Itemdsa5 {
 }
 
 class ConsumableItemDSA extends Itemdsa5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('qualityStep', data.QL),
-      this._chatLineHelper('effect', DSA5_Utility.replaceDies(data.QLList.split('\n')[data.QL - 1])),
-      this._chatLineHelper('charges', data.charges),
-    ];
-  }
-
   static consumablePrice(item) {
     let price = item.system.price.value;
     if (isNaN(price)) {
@@ -1335,33 +1184,14 @@ class ConsumableItemDSA extends Itemdsa5 {
   }
 }
 
-class InformationItemDSA5 extends Itemdsa5 {
-  static async _postItem(item) {
-    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.html', { item });
-    UserMultipickDialog.getDialog(html);
-  }
-}
+class InformationItemDSA5 extends Itemdsa5 {}
 
 class DiseaseItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('stepValue', data.step.value),
-      this._chatLineHelper('incubation', data.incubation.value),
-      this._chatLineHelper('damage', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.damage.value))),
-      this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper('source', DSA5_Utility.replaceDies(data.source.value)),
-      this._chatLineHelper('treatment', data.treatment.value),
-      this._chatLineHelper('antidot', data.antidot.value),
-      this._chatLineHelper('resistanceModifier', data.resistance.value),
-    ];
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     source = DSA5_Utility.toObjectIfPossible(source);
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
-        if (target.actor)
-          situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.ResistanttoDisease', -1, false, true));
+        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.ResistanttoDisease', -1, false, true));
       });
     }
     this.getSkZkModifier(data, source);
@@ -1422,11 +1252,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
   }
 }
 
-class EquipmentItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('equipmentType', game.i18n.localize(`Equipment.${data.equipmentType.value}`))];
-  }
-}
+class EquipmentItemDSA5 extends Itemdsa5 {}
 
 class WeaponItemDSA5 extends Itemdsa5 {
   static speciesModifier(situationalModifiers, actor, data, source) {
@@ -1489,19 +1315,6 @@ class WeaponItemDSA5 extends Itemdsa5 {
 }
 
 class MeleeweaponDSA5 extends WeaponItemDSA5 {
-  static chatData(data, name) {
-    let res = [
-      this._chatLineHelper('damage', data.damage.value),
-      this._chatLineHelper('atmod', data.atmod.value),
-      this._chatLineHelper('pamod', data.pamod.value),
-      this._chatLineHelper('reach', game.i18n.localize(`Range-${data.reach.value}`)),
-      this._chatLineHelper('TYPES.Item.combatskill', data.combatskill.value),
-    ];
-    if (data.effect.value != '') res.push(this._chatLineHelper(DSA5_Utility.replaceConditions('effect', data.effect.value)));
-
-    return res;
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.ambidextrous');
     source = DSA5_Utility.toObjectIfPossible(source);
@@ -1573,17 +1386,6 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 }
 
 class PoisonItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [
-      this._chatLineHelper('stepValue', data.step.value),
-      this._chatLineHelper('poisonType', data.poisonType.value),
-      this._chatLineHelper('start', data.start.value),
-      this._chatLineHelper('duration', data.duration.value),
-      this._chatLineHelper('resistanceModifier', data.resistance.value),
-      this._chatLineHelper('effect', DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value))),
-    ];
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     source = DSA5_Utility.toObjectIfPossible(source);
     if (game.user.targets.size) {
@@ -1646,17 +1448,6 @@ class PoisonItemDSA5 extends Itemdsa5 {
 }
 
 class RangeweaponItemDSA5 extends WeaponItemDSA5 {
-  static chatData(data, name) {
-    let res = [
-      this._chatLineHelper('damage', data.damage.value),
-      this._chatLineHelper('TYPES.Item.combatskill', data.combatskill.value),
-      this._chatLineHelper('reach', data.reach.value),
-    ];
-    if (data.effect.value != '') res.push(this._chatLineHelper(DSA5_Utility.replaceConditions('effect', data.effect.value)));
-
-    return res;
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, _source, tokenId) {
     if (data.mode == 'attack') {
       const source = DSA5_Utility.toObjectIfPossible(_source);
@@ -1696,7 +1487,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             specAbId: source.system.currentAmmo.value,
           };
           if (currentAmmo.system.armorMod) dmgMod['armorPen'] = currentAmmo.system.armorMod;
-          
+
           situationalModifiers.push(dmgMod);
         }
         if (currentAmmo.effects.length) {
@@ -1827,21 +1618,9 @@ class RitualItemDSA5 extends SpellItemDSA5 {
   }
 }
 
-class ApplicationItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    const hasLocalization = game.i18n.has(`APPLICATION.${data.skill} - ${name}`);
-    const description = hasLocalization ? game.i18n.localize(`APPLICATION.${data.skill} - ${name}`) : data.description.value;
-    return [this._chatLineHelper('Description', description)];
-  }
-}
+class ApplicationItemDSA5 extends Itemdsa5 {}
 
 class SkillItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    const hasLocalization = game.i18n.has(`SKILLdescr.${name}`);
-    const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value;
-    return [this._chatLineHelper('Description', description)];
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
@@ -1901,70 +1680,15 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 }
 
-class SpecialAbilityItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('rule', data.rule.value)];
-  }
-}
+class SpecialAbilityItemDSA5 extends Itemdsa5 {}
 
 class SpeciesItemDSA5 extends Itemdsa5 {}
 
-class SpellextensionItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('source', data.source), this._chatLineHelper('Category', game.i18n.localize(data.category))];
-  }
-}
+class SpellextensionItemDSA5 extends Itemdsa5 {}
 
-class BookItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return super.chatData(data, name);
-  }
-}
+class BookItemDSA5 extends Itemdsa5 {}
 
 class TraitItemDSA5 extends WeaponItemDSA5 {
-  static chatData(data, name) {
-    let res = [];
-    switch (data.traitType.value) {
-      case 'meleeAttack':
-        res = [this._chatLineHelper('attack', data.at.value), this._chatLineHelper('damage', data.damage.value), this._chatLineHelper('reach', data.reach.value)];
-        break;
-      case 'rangeAttack':
-        res = [
-          this._chatLineHelper('attack', data.at.value),
-          this._chatLineHelper('damage', data.damage.value),
-          this._chatLineHelper('reach', data.reach.value),
-          this._chatLineHelper('reloadTime', data.reloadTime.value),
-        ];
-        break;
-      case 'armor':
-        res = [this._chatLineHelper('protection', data.damage.value)];
-        break;
-      case 'general':
-        res = [];
-        break;
-      case 'familiar':
-        res = [
-          this._chatLineHelper('APValue', data.APValue.value),
-          this._chatLineHelper('AsPCost', data.AsPCost.value),
-          this._chatLineHelper('duration', data.duration.value),
-          this._chatLineHelper('aspect', data.aspect.value),
-        ];
-        break;
-      case 'trick':
-        res = [this._chatLineHelper('APValue', data.APValue.value)];
-        break;
-      case 'entity':
-        res = [this._chatLineHelper('distribution', data.distribution), this._chatLineHelper('CHARAbbrev.QL', data.AsPCost.value)];
-        break;
-      case 'summoning':
-        res = [this._chatLineHelper('distribution', data.distribution), this._chatLineHelper('conjuringDifficulty', data.at.value)];
-        break;
-    }
-    if (data.effect.value != '') res.push(this._chatLineHelper('effect', data.effect.value));
-
-    return res;
-  }
-
   static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
     source = DSA5_Utility.toObjectIfPossible(source);
     const traitType = source.system.traitType.value;
@@ -2033,8 +1757,4 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   }
 }
 
-class VantageItemDSA5 extends Itemdsa5 {
-  static chatData(data, name) {
-    return [this._chatLineHelper('effect', data.effect.value)];
-  }
-}
+class VantageItemDSA5 extends Itemdsa5 {}

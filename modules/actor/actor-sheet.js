@@ -71,12 +71,42 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     actions: {
       itemCreate: ActorSheetDsa5._onItemCreate,
+      playerview: function() { this._togglePlayerview() },
+      actorConfig: function() { this._configActor() },
+      library: function() { this._openLibrary() },
+      locksheet: function() { this._changeAdvanceLock() },
     },
     form: {
       submitOnChange: true,
     },
     window: {
       resizable: true,
+      controls: [
+        {
+          action: 'playerview',
+          icon: 'fas fa-toggle-on',
+          label: 'SHEET.switchLimited',
+          visible: function() { return this.actor.isOwner }
+        },
+        {
+          action: 'actorConfig',
+          label: 'SHEET.actorConfig',
+          icon: 'fas fa-link',
+          visible: function() { return this.actor.isOwner }
+        },
+        {
+          action: 'locksheet',
+          label: 'SHEET.Lock',
+          icon: 'fas fa-lock',
+          //icon: `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`,
+          visible: function() { return this.actor.system.canAdvance }
+        },
+        {
+          action: 'library',
+          label: 'SHEET.Library',
+          icon: 'fas fa-university'
+        }
+      ]
     },
   };
 
@@ -268,11 +298,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async consumeItem(item) {
+    const title = game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
-        title: game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name,
+        title,
       },
-      content: game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name,
+      content: title,
       rejectClose: false,
       modal: true,
     });
@@ -421,44 +452,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     new DialogActorConfig(this.actor, {}).render(true);
   }
 
-  _getHeaderButtons() {
-    const buttons = super._getHeaderButtons();
-    buttons.unshift({
-      class: 'library',
-      tooltip: 'SHEET.Library',
-      icon: `fas fa-university`,
-      onclick: async () => this._openLibrary(),
-    });
-    if (this.actor.isOwner) {
-      buttons.unshift({
-        class: 'actorConfig',
-        tooltip: 'SHEET.actorConfig',
-        icon: `fas fa-link`,
-        onclick: async () => this._configActor(),
-      });
-      buttons.unshift({
-        class: 'playerview',
-        icon: `fas fa-toggle-on`,
-        tooltip: 'SHEET.switchLimited',
-        onclick: async (ev) => this._togglePlayerview(ev),
-      });
-    }
-    if (this.actor.system.canAdvance) {
-      buttons.unshift({
-        class: 'locksheet',
-        tooltip: 'SHEET.Lock',
-        icon: `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`,
-        onclick: async (ev) => this._changeAdvanceLock(ev),
-      });
-    }
-    return buttons;
-  }
-
-  async _changeAdvanceLock(ev) {
-    await this.actor.update({
-      'system.sheetLocked.value': !this.actor.system.sheetLocked.value,
-    });
-    $(ev.currentTarget).find('i').toggleClass('fa-unlock fa-lock');
+  async _changeAdvanceLock() {
+    await this.actor.update({ 'system.sheetLocked.value': !this.actor.system.sheetLocked.value });
   }
 
   async _checkEnoughXP(cost) {
@@ -478,13 +473,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   playerViewEnabled() {
-    return getProperty(this.actor.system, 'playerView');
+    return this.actor.system.playerView;
   }
 
-  _togglePlayerview(ev) {
-    this.actor.update({
-      'system.playerView': !getProperty(this.actor.system, 'playerView'),
-    });
+  _togglePlayerview() {
+    this.actor.update({ 'system.playerView': !this.actor.system.playerView });
   }
 
   showLimited() {
@@ -705,7 +698,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     html.find('.filterTalents').on('click', (ev) => {
-      $(ev.currentTarget).closest('.content').find('.allTalents').toggleClass('showAll');
+      $(ev.currentTarget).closest('.scrollable').find('.allTalents').toggleClass('showAll');
       $(ev.currentTarget).toggleClass('filtered');
     });
 
@@ -902,7 +895,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (item.type == 'meleeweapon') {
       const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
       if (!['Daggers', 'Fencing Weapons'].includes(localizedCT)) {
-        const weaponYield = item.sheet.getGripInfo(this.item).wrongGripLabel;
+        const weaponYield = item.system.getGripInfo().wrongGripLabel;
 
         options.push({
           name: weaponYield,

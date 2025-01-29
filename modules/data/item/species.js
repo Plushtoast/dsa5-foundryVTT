@@ -1,12 +1,12 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import APValueTemplate from './templates/apvalue.js';
 import RequirementsTemplate from './templates/requirements.js';
-import DSAStringField from "../fields/dsa_string_field.js";
+import DSAStringField from '../fields/dsa_string_field.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class SpeciesData extends DSADataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
+export default class SpeciesData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       recommendedAdvantages: new SchemaField({
@@ -19,7 +19,7 @@ export default class SpeciesData extends DSADataModel.mixin(DescriptionTemplate,
         value: new DSAStringField({ initial: '', label: 'notsuitableAdvantages' }),
       }),
       notsuitableDisadvantages: new SchemaField({
-        value: new DSAStringField({ initial: '', label: 'notsuitableDisadvantages'}),
+        value: new DSAStringField({ initial: '', label: 'notsuitableDisadvantages' }),
       }),
       recommendedCultures: new SchemaField({
         value: new DSAStringField({ initial: '', label: 'recommendedCultures' }),
@@ -42,5 +42,9 @@ export default class SpeciesData extends DSADataModel.mixin(DescriptionTemplate,
         }),
       }),
     });
+  }
+
+  async getSheetData(data) {
+    data.hasLocalization = game.i18n.has(`Racedescr.${data.document.name}`);
   }
 }

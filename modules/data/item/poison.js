@@ -1,12 +1,13 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { NumberField, StringField, SchemaField } = foundry.data.fields;
 
-export default class PoisonData extends DSADataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
+export default class PoisonData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({
@@ -30,8 +31,19 @@ export default class PoisonData extends DSADataModel.mixin(DescriptionTemplate, 
       duration: new SchemaField({
         value: new StringField({ initial: '', label: 'duration' }),
       }),
-      sucht: new StringField({ label: 'poisonCategory.3'}),
-      ql: new StringField({ label: 'POISON.ql'}),
+      sucht: new StringField({ label: 'poisonCategory.3' }),
+      ql: new StringField({ label: 'POISON.ql' }),
     });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'stepValue', val: data.step.value },
+      { key: 'poisonType', val: data.poisonType.value },
+      { key: 'start', val: data.start.value },
+      { key: 'duration', val: data.duration.value },
+      { key: 'resistanceModifier', val: data.resistance.value },
+      { key: 'effect', val: DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)) },
+    ];
   }
 }

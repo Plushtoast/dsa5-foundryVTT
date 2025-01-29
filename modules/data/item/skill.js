@@ -1,11 +1,11 @@
 import DescriptionTemplate from './templates/description.js';
-import { DSADataModel } from '../abstract.js';
+import { ItemDataModel } from '../abstract.js';
 import SkillTemplate from './templates/skill.js';
 import DSA5 from '../../system/config-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class SkillData extends DSADataModel.mixin(DescriptionTemplate, SkillTemplate) {
+export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, SkillTemplate) {
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -13,7 +13,7 @@ export default class SkillData extends DSADataModel.mixin(DescriptionTemplate, S
             value: new StringField({ initial: 'body', label: 'Group', required: true, choices: DSA5.skillGroups }),
         }),
         talentValue: new SchemaField({
-            value: new NumberField({ initial: 0 }),
+            value: new NumberField({ initial: 0, min: 0 }),
         }),
         characteristic1: new SchemaField({
             value: new StringField({ initial: 'mu', label: 'Characteristic1', required: true, choices: DSA5.characteristics }),
@@ -37,5 +37,10 @@ export default class SkillData extends DSADataModel.mixin(DescriptionTemplate, S
     super._migrateData(source);
 
     if(!source.group.value) source.group.value = Object.keys(DSA5.skillGroups)[0];
+  }
+
+  async getSheetData(data) {
+    data.localizerPrefix = 'SKILLdescr.';
+    data.hasLocalization = game.i18n.has(`SKILLdescr.${data.document.name}`);
   }
 }

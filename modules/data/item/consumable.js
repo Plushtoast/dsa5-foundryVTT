@@ -1,26 +1,42 @@
-import DescriptionTemplate from "./templates/description.js";
-import { DSADataModel } from "../abstract.js";
-import EquipmentTemplate from "./templates/equipment.js";
-import DSA5 from "../../system/config-dsa5.js";
-import DSAStringField from "../fields/dsa_string_field.js";
-import AoeTemplate from "./templates/aoe.js";
-import ObfuscableTemplate from "./templates/obfuscable.js";
+import DescriptionTemplate from './templates/description.js';
+import { ItemDataModel } from '../abstract.js';
+import EquipmentTemplate from './templates/equipment.js';
+import DSA5 from '../../system/config-dsa5.js';
+import DSAStringField from '../fields/dsa_string_field.js';
+import AoeTemplate from './templates/aoe.js';
+import ObfuscableTemplate from './templates/obfuscable.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { StringField, SchemaField, NumberField } = foundry.data.fields;
 
-export default class ConsumableData extends DSADataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
-    static defineSchema() {
-        return this.mergeSchema(super.defineSchema(), {
-            equipmentType: new SchemaField({
-                value: new StringField({ initial: 'misc', required: true, label: 'equipmentType', choices: DSA5.equipmentTypes }),
-            }),
-            QLList: new DSAStringField({ initial: '', label: 'qualitySteps' }),
-            QL: new NumberField({ initial: 1, required: true, label: 'qualityStep' }),
-            charges: new NumberField({ initial: 1 }),
-            maxCharges: new NumberField({ initial: 1 }),
-            difficulty: new NumberField({ initial: 0, label: 'Difficulty' }),
-            ingredients: new StringField({ initial: '' }),
-            tools: new StringField({ initial: '', label: 'Equipment.tools' }),
-        });
-    }
+export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
+  static defineSchema() {
+    return this.mergeSchema(super.defineSchema(), {
+      equipmentType: new SchemaField({
+        value: new StringField({ initial: 'misc', required: true, label: 'equipmentType', choices: DSA5.equipmentTypes }),
+      }),
+      QLList: new DSAStringField({ initial: '', label: 'qualitySteps' }),
+      QL: new NumberField({ initial: 1, required: true, label: 'qualityStep' }),
+      charges: new NumberField({ initial: 1, min: 0 }),
+      maxCharges: new NumberField({ initial: 1, min: 0 }),
+      difficulty: new NumberField({ initial: 0, label: 'Difficulty' }),
+      ingredients: new StringField({ initial: '' }),
+      tools: new StringField({ initial: '', label: 'Equipment.tools' }),
+    });
+  }
+
+  async getSheetData(data) {
+    data.calculatedPrice = Itemdsa5.getSubClass(data.document.type).consumablePrice(data.document);
+    data.availableSteps = Object.fromEntries(data.document.system.QLList.split('\n').map((_, i) => [i + 1, i + 1]));
+    data.enrichedIngredients = await TextEditor.enrichHTML(data.document.system.ingredients, { secrets: data.document.isOwner, async: true });
+  }
+
+  static chatData(data, name) {
+    return [
+      { key: 'qualityStep', val: data.QL },
+      { key: 'effect', val: DSA5_Utility.replaceDies(data.QLList.split('\n')[data.QL - 1]) },
+      { key: 'charges', val: data.charges },
+    ];
+  }
 }

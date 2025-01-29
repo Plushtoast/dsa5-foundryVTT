@@ -10,7 +10,7 @@ export default class EquipmentTemplate extends DSADataModel {
                 value: new NumberField({ initial: 0 }),
             }),
             quantity: new SchemaField({
-                value: new NumberField({ initial: 1 }),
+                value: new NumberField({ initial: 1, step: 1 }),
             }),
             weight: new SchemaField({
                 value: new NumberField({ initial: 0 }),

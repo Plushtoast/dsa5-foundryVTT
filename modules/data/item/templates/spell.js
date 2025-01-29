@@ -25,7 +25,7 @@ export default class SpellTemplate extends DSADataModel {
         modified: new NumberField({ initial: 0 }),
       }),
       AsPCost: new SchemaField({
-        value: new NumberField({ initial: 0 }),
+        value: new NumberField({ initial: 0, min: 0}),
       }),
       AsPCostDetail: new SchemaField({
         value: new StringField({ initial: '' }),
@@ -56,7 +56,7 @@ export default class SpellTemplate extends DSADataModel {
         value: new StringField({ initial: '', label: 'effectFormula' }),
       }),
       talentValue: new SchemaField({
-        value: new NumberField({ initial: 0 }),
+        value: new NumberField({ initial: 0, min: 0 }),
       }),
     };
   }
