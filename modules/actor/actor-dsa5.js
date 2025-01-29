@@ -1818,7 +1818,7 @@ export default class Actordsa5 extends Actor {
             let diesToReroll = dlg
               .find('.dieSelected')
               .map(function () {
-                return Number($(this).attr('data-index'));
+                return Number(this.dataset.index);
               })
               .get();
             if (diesToReroll.length > 0) {
@@ -1887,7 +1887,7 @@ export default class Actordsa5 extends Actor {
             let diesToReroll = dlg
               .find('.dieSelected')
               .map(function () {
-                return Number($(this).attr('data-index'));
+                return Number(this.dataset.index);
               })
               .get();
             if (diesToReroll.length > 0) {
@@ -1984,7 +1984,7 @@ export default class Actordsa5 extends Actor {
               let diesToUpgrade = dlg
                 .find('.dieSelected')
                 .map(function () {
-                  return Number($(this).attr('data-index'));
+                  return Number(this.dataset.index);
                 })
                 .get();
               if (diesToUpgrade.length == 1) {

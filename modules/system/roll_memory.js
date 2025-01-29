@@ -63,8 +63,8 @@ export default class RollMemory {
       if (!object.specAbs) object.specAbs = [];
 
       object.specAbs.push({
-        id: $(this).attr('data-id'),
-        step: $(this).attr('data-step'),
+        id: this.dataset.id,
+        step: this.dataset.step,
       });
     });
 

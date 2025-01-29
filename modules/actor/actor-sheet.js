@@ -605,7 +605,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
     });
     html.on('click', '.chat-condition', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
-    html.find('.money-change, .skill-advances').focusin((ev) => {
+    html.find('.money-change, .skill-advances').on('focusin', (ev) => {
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
 

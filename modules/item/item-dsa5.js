@@ -106,19 +106,19 @@ export default class Itemdsa5 extends Item {
   static getSpecAbModifiers(html, mode) {
     let res = [];
     for (let k of html.find('.specAbs')) {
-      let step = Number($(k).attr('data-step'));
+      let step = Number(k.dataset.step);
       if (step > 0) {
-        const val = mode == 'attack' ? $(k).attr('data-atbonus') : $(k).attr('data-pabonus');
+        const val = mode == 'attack' ? k.dataset.atbonus : k.dataset.pabonus;
         const reducedVal = val.split(',').reduce((prev, cur) => {
           return prev + Number(cur);
         }, 0);
         res.push({
           name: $(k).find('a').text(),
           value: isNaN(reducedVal) ? Number(val.replace('*', '')) : Number(reducedVal) * step,
-          damageBonus: $(k).attr('data-tpbonus'),
-          dmmalus: $(k).attr('data-dmmalus') * step,
+          damageBonus: k.dataset.tpbonus,
+          dmmalus: k.dataset.dmmalus * step,
           step: step,
-          specAbId: $(k).attr('data-id'),
+          specAbId: k.dataset.id,
           type: /^\*/.test(val) ? '*' : undefined,
         });
       }
