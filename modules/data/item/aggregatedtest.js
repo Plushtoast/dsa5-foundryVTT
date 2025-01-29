@@ -28,7 +28,7 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
         value: new NumberField({ initial: 0, label: 'cummulatedQS', min: 0 }),
       }),
       baseModifier: new NumberField({ initial: 0, label: 'Modifier' }),
-      partsuccess: new HTMLField({label: 'PartSuccess' }),
+      partsuccess: new HTMLField({ label: 'PartSuccess' }),
       success: new HTMLField({ label: 'Success' }),
     });
   }
@@ -61,10 +61,10 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
       result = 'Failure';
     }
     const properties = [
-      this._chatLineHelper('cummulatedQS', `${item.system.cummulatedQS.value} / 10`),
-      this._chatLineHelper('interval', item.system.interval.value),
-      this._chatLineHelper('probes', `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}`),
-      this._chatLineHelper('result', game.i18n.localize(result)),
+      this._chatLineHelper({ key: 'cummulatedQS', val: `${item.system.cummulatedQS.value} / 10` }),
+      this._chatLineHelper({ key: 'interval', val: item.system.interval.value }),
+      this._chatLineHelper({ key: 'probes', val: `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}` }),
+      this._chatLineHelper({ key: 'result', val: result, localizeVal: true }),
       txt,
     ];
     const descriptionObfuscated = foundry.utils.getProperty(item, 'system.obfuscation.description');
