@@ -38,9 +38,9 @@
     <div class='form-group'>
       <label>
         {{#if canAdvance}}
-          <a class='refund-step'><i class='fas fa-minus'></i></a>
+          <a data-action='_refundStep'><i class='fas fa-minus'></i></a>
           {{localize 'stepValue'}}
-          <a class='advance-step'><i class='fas fa-plus'></i></a>
+          <a data-action='_advanceStep'><i class='fas fa-plus'></i></a>
         {{else}}
           {{localize 'stepValue'}}
         {{/if}}

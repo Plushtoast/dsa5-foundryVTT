@@ -55,6 +55,16 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       rolleffect: function () {
         this.setupEffect();
       },
+      conditionShow: { handler: this.showCondition, buttons: [0, 2] },
+    },
+    ownerActions: {
+      _advanceStep: this.advanceWrapper,
+      _refundStep: this.advanceWrapper,
+      'status-add': function () {
+        DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
+      },
+      conditionEdit: this.editCondition,
+      conditionToggle: this.toggleCondition,
     },
     window: {
       resizable: true,
@@ -146,24 +156,47 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     this.item.setupEffect().then((setupData) => this.item.itemTest(setupData));
   }
 
-  _getItemId(ev) {
-    return $(ev.currentTarget).parents('.item')[0].dataset.itemId;
+  _getItemId(target) {
+    return $(target).parents('.item')[0].dataset.itemId;
   }
 
   _advanceStep() {}
 
   _refundStep() {}
 
-  async advanceWrapper(ev, funct) {
+  static async advanceWrapper(event, target) {
     if (this.wrapperLocked) return;
 
+    const funct = target.dataset.action;
+
     this.wrapperLocked = true;
-    $(ev.currentTarget).find('i').addClass('fa-spin fa-spinner');
-    const res = await this[funct]();
-    if (res) return;
+    const icon = $(target).find('i');
+    icon.addClass('fa-spin fa-spinner');
+    if (await this[funct]()) return;
 
     this.wrapperLocked = false;
-    $(ev.currentTarget).find('i').removeClass('fa-spin fa-spinner');
+    icon.removeClass('fa-spin fa-spinner');
+  }
+
+  static async showCondition(ev, target) {
+    const id = target.dataset.id;
+    if (ev.button == 0) {
+      const effect = this.item.effects.get(id);
+      effect.sheet.render(true);
+    } else if (ev.button == 2) {
+      this.item.deleteEmbeddedDocuments('ActiveEffect', [id]);
+    }
+  }
+
+  static editCondition(ev, target) {
+    const effect = this.item.effects.get(ev.currentTarget.dataset.id);
+    effect.sheet.render(true);
+  }
+
+  static toggleCondition(ev, target) {
+    const condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
+    const ef = this.item.effects.get(condKey);
+    ef.update({ disabled: !ef.disabled });
   }
 
   async _onRender(context, options) {
@@ -172,8 +205,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     tabSlider(html);
 
-    html.find('.advance-step').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceStep'));
-    html.find('.refund-step').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundStep'));
     html.find('.domainsPretty').on('click', (ev) => {
       $(ev.currentTarget).hide();
       $(ev.currentTarget).next('.domainToggle').show();
@@ -183,33 +214,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
     });
 
-    html.find('.status-add').on('click', async () => {
-      DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
-    });
-
-    html.find('.condition-show').on('mousedown', (ev) => {
-      ev.preventDefault();
-      const id = ev.currentTarget.dataset.id;
-      if (ev.button == 0) {
-        const effect = this.item.effects.get(id);
-        effect.sheet.render(true);
-      } else if (ev.button == 2) {
-        this.item.deleteEmbeddedDocuments('ActiveEffect', [id]);
-      }
-    });
-
     html.find('.select2').select2();
-
-    html.find('.condition-toggle').on('mousedown', (ev) => {
-      let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
-      let ef = this.item.effects.get(condKey);
-      ef.update({ disabled: !ef.disabled });
-    });
-
-    html.find('.condition-edit').on('click', (ev) => {
-      const effect = this.item.effects.get(ev.currentTarget.dataset.id);
-      effect.sheet.render(true);
-    });
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
     DSA5StatusEffects.bindButtons(html);
@@ -245,7 +250,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     data.isOwned = this.actor;
     data.editable = this.isEditable;
     data.systemFields = this.document.system.schema?.fields;
-    
+
     if (data.isOwned) {
       data.canAdvance = this.actor.canAdvance && this._advancable();
       const customPrice = getProperty(this.item, 'flags.dsa5.customPriceTag');
@@ -430,11 +435,11 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
   };
 }
 
-class TraitSheet extends WithEffectsSheet { }
+class TraitSheet extends WithEffectsSheet {}
 
-class CombatSkillSheet extends LocalizerSheet { }
+class CombatSkillSheet extends LocalizerSheet {}
 
-class SkillSheet extends LocalizerSheet { }
+class SkillSheet extends LocalizerSheet {}
 
 class AggregatedTestSheet extends ItemSheetdsa5 {
   static TABS = {
@@ -563,6 +568,93 @@ class Enchantable extends ItemSheetdsa5 {
     },
   };
 
+  static DEFAULT_OPTIONS = {
+    actions: {},
+    ownerActions: {
+      enchTogglePermanent: this._togglePermanent,
+      enchToggleCharge: this._toggleCharge,
+      enchRoll: this._enchRoll,
+      enchDelete: this._enchDelete,
+      enchShow: this._enchShow,
+      poisonTogglePermanent: this._poisonTogglePermanent,
+      poisonDelete: this._deletePoison,
+      poisonShow: this._poisonShow,
+    },
+  };
+
+  static _togglePermanent(ev, target) {
+    let { id, enchantments } = this.enchantMentId(target);
+    for (let ench of enchantments) {
+      if (ench.id == id) {
+        ench.permanent = !ench.permanent;
+        break;
+      }
+    }
+    this.item.update({ flags: { dsa5: { enchantments } } });
+  }
+
+  static _toggleCharge(ev, target) {
+    let { id, enchantments } = this.enchantMentId(target);
+    this.toggleChargedState(id, enchantments);
+  }
+
+  static _enchRoll(ev, target) {
+    let { id, enchantments } = this.enchantMentId(target);
+    this.rollEnchantment(id, enchantments);
+  }
+
+  static _enchDelete(ev, target) {
+    let { id, enchantments } = this.enchantMentId(target);
+    this.deleteEnchantment(id, enchantments);
+  }
+
+  static async _enchShow(ev, target) {
+    let { id, enchantments } = this.enchantMentId(target);
+    let enchantment = enchantments.find((x) => x.id == id);
+    let item = await this.getSpell(enchantment);
+
+    if (item) item.sheet.render(true);
+  }
+
+  static _poisonTogglePermanent(ev, target) {
+    this.item.update({
+      flags: {
+        dsa5: {
+          poison: { permanent: !this.item.flags.dsa5.poison.permanent },
+        },
+      },
+    });
+  }
+
+  static async _poisonShow(ev, target) {
+    let item;
+    if (this.actor) item = this.actor.items.find((x) => x.type == 'poison' && x.name == this.item.flags.dsa5.poison.name);
+    if (!item) item = await this.getSpell(this.item.flags.dsa5.poison);
+
+    if (item) {
+      item.sheet.render(true);
+    }
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = $(this.element);
+
+    html.find('.ench-fw').on('change', (ev) => {
+      let { id, enchantments } = this.enchantMentId(ev.currentTarget);
+      let fw = Number(ev.currentTarget.value);
+      if (!fw) return;
+
+      for (let ench of enchantments) {
+        if (ench.id == id) {
+          ench.fw = fw;
+          break;
+        }
+      }
+      this.item.update({ flags: { dsa5: { enchantments } } });
+    });
+  }
+
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/items/item-header.hbs',
@@ -681,77 +773,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = $(this.element);
-    html.find('.ench-toggle-permanent').on('click', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      for (let ench of enchantments) {
-        if (ench.id == id) {
-          ench.permanent = !ench.permanent;
-          break;
-        }
-      }
-      this.item.update({ flags: { dsa5: { enchantments } } });
-    });
-    html.find('.ench-toggle-charge').on('click', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      this.toggleChargedState(id, enchantments);
-    });
-    html.find('.ench-roll').on('click', async (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      this.rollEnchantment(id, enchantments);
-    });
-    html.find('.ench-fw').on('change', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      let fw = Number($(ev.currentTarget).val());
-      if (!fw) return;
-
-      for (let ench of enchantments) {
-        if (ench.id == id) {
-          ench.fw = fw;
-          break;
-        }
-      }
-      this.item.update({ flags: { dsa5: { enchantments } } });
-    });
-    html.find('.ench-delete').on('click', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      this.deleteEnchantment(id, enchantments);
-    });
-    html.find('.ench-show').on('click', async (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev);
-      let enchantment = enchantments.find((x) => x.id == id);
-      let item = await this.getSpell(enchantment);
-
-      if (item) {
-        item.sheet.render(true);
-      }
-    });
-    html.find('.poison-toggle-permanent').on('click', (ev) => {
-      this.item.update({
-        flags: {
-          dsa5: {
-            poison: { permanent: !this.item.flags.dsa5.poison.permanent },
-          },
-        },
-      });
-    });
-    html.find('.poison-delete').on('click', (ev) => {
-      this.deletePoison();
-    });
-    html.find('.poison-show').on('click', async () => {
-      let item;
-      if (this.actor) item = this.actor.items.find((x) => x.type == 'poison' && x.name == this.item.flags.dsa5.poison.name);
-      if (!item) item = await this.getSpell(this.item.flags.dsa5.poison);
-
-      if (item) {
-        item.sheet.render(true);
-      }
-    });
-  }
-
-  deletePoison() {
+  static _deletePoison(ev, target) {
     this.item.update({ [`flags.dsa5.-=poison`]: null });
   }
 
@@ -797,9 +819,9 @@ class Enchantable extends ItemSheetdsa5 {
     return item;
   }
 
-  enchantMentId(ev) {
+  enchantMentId(target) {
     return {
-      id: $(ev.currentTarget).parents('.statusEffect').attr('data-id'),
+      id: $(target).parents('.statusEffect').attr('data-id'),
       enchantments: this.item.getFlag('dsa5', 'enchantments'),
     };
   }
@@ -854,7 +876,7 @@ class InformationSheet extends ItemSheetdsa5 {
       tabs: [{ id: 'details', label: 'Details' }],
       initial: 'details',
     },
-  };  
+  };
 }
 
 class AmmunitionSheet extends Enchantable {
@@ -1055,9 +1077,9 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
   };
 }
 
-class PatronSheet extends NoEffectsSheet { }
+class PatronSheet extends NoEffectsSheet {}
 
-class ApplicationSheetDSA5 extends LocalizerWithoutEffectsSheet { }
+class ApplicationSheetDSA5 extends LocalizerWithoutEffectsSheet {}
 
 class MagicalSignSheet extends NoEffectsSheet {
   hasRollEffect = true;
@@ -1084,12 +1106,14 @@ class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {}
 
 class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   static DEFAULT_OPTIONS = {
-    actions: {
-      attackAdd: WeaponSheetDSA5.addAttackSheet,
-      attackDelete: WeaponSheetDSA5.deleteAttack,
+    actions: {      
       rollDamaged: function () {
         EquipmentDamage.breakingTest(this.item);
       },
+    },
+    ownerActions: {
+      attackAdd: WeaponSheetDSA5.addAttackSheet,
+      attackDelete: WeaponSheetDSA5.deleteAttack,
     },
     window: {
       controls: [
@@ -1122,8 +1146,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   }
 
   static async deleteAttack(event, target) {
-    const key = target.dataset.key;
-    await this.item.update({ [`flags.dsa5.alternateAttacks.-=${key}`]: null });
+    await this.item.update({ [`flags.dsa5.alternateAttacks.-=${target.dataset.key}`]: null });
   }
 
   static async addAttackSheet() {
@@ -1294,7 +1317,7 @@ class MagictrickSheetDSA5 extends NoEffectsSheet {
 }
 
 class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
-  isPoisonable = true;  
+  isPoisonable = true;
 }
 
 class PoisonSheetDSA5 extends ItemSheetObfuscation(EffectsEquipmentSheet) {
@@ -1384,6 +1407,13 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     },
   };
 
+  static DEFAULT_OPTIONS = {
+    ownerActions: {
+      itemDelete: this._deleteExtension,
+      itemEdit: this._editExtension,
+    },
+  };
+
   static TABS = {
     sheet: {
       tabs: [
@@ -1412,23 +1442,14 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     return tabs;
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = $(this.element);
-    html.find('.item-edit').on('click', (ev) => {
-      ev.preventDefault();
-      let itemId = this._getItemId(ev);
-      const item = this.actor.items.get(itemId);
-      item.sheet.render(true);
-    });
-
-    html.find('.item-delete').on('click', (ev) => {
-      this._deleteItem(ev);
-    });
+  static _editExtension(ev, target) {
+    let itemId = this._getItemId(target);
+    const item = this.actor.items.get(itemId);
+    item.sheet.render(true);
   }
 
-  async _deleteItem(ev) {
-    const itemId = this._getItemId(ev);
+  static async _deleteExtension(ev, target) {
+    const itemId = this._getItemId(target);
     const item = this.actor.items.find((x) => x.id == itemId);
     const message = game.i18n.format('DIALOG.DeleteItemDetail', {
       item: item.name,
@@ -1444,7 +1465,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     });
     if (proceed) {
       this._cleverDeleteItem(itemId);
-      $(ev.currentTarget).closest('.item').remove();
+      $(target).closest('.item').remove();
     }
   }
 
@@ -1456,7 +1477,7 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
   }
 }
 
-class SpellExtensionSheetDSA5 extends WithEffectsSheet { }
+class SpellExtensionSheetDSA5 extends WithEffectsSheet {}
 
 class VantageSheetDSA5 extends WithEffectsSheet {
   _advancable() {

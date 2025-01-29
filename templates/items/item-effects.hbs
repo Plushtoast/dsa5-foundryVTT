@@ -9,7 +9,7 @@
                 {{localize "effect"}}
             </div>
             <div class="col five right">
-                <a class="status-add" data-tooltip="CONDITION.add"><i class="fa fa-plus"></i></a>
+                <a data-action="status-add" data-tooltip="CONDITION.add"><i class="fa fa-plus"></i></a>
             </div>
         </div>
         {{#each conditions as |item i|}}
@@ -18,15 +18,15 @@
                 <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
             </div>
             <div class="col seventy">
-                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item ../item}}</a>
+                <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item ../document}}</a>
             </div>
 
             <div class="col five right">
-                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
+                <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
                 {{#if item.disabled}}
-                <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a>
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a>
                 {{else}}
-                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a>
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a>
                 {{/if}}
             </div>
         </div>
@@ -37,12 +37,12 @@
                 <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
             </div>
             <div class="col seventy">
-                <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+                <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
             <div class="col five right">
-                <a class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
-                <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+                <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
             </div>
         </div>
         {{/each}}
