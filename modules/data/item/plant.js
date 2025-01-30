@@ -50,9 +50,9 @@ export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, 
     data.attributes = Object.keys(data.document.system.planttype).map((x) => {
       return { name: x, checked: data.document.system.planttype[x] };
     });
-    data.enrichedEffect = await TextEditor.enrichHTML(data.document.system.effect, { secrets: data.document.isOwner, async: true });
-    data.enrichedRecipes = await TextEditor.enrichHTML(data.document.system.recipes, { secrets: data.document.isOwner, async: true });
-    data.enrichedInformation = await TextEditor.enrichHTML(data.document.system.infos, { secrets: data.document.isOwner, async: true });
+    data.enrichedEffect = await TextEditor.enrichHTML(data.document.system.effect, { secrets: data.document.isOwner });
+    data.enrichedRecipes = await TextEditor.enrichHTML(data.document.system.recipes, { secrets: data.document.isOwner });
+    data.enrichedInformation = await TextEditor.enrichHTML(data.document.system.infos, { secrets: data.document.isOwner });
   }
 
   static chatData(data, name) {

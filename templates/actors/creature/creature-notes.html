@@ -4,7 +4,7 @@
     {{> systems/dsa5/templates/actors/parts/personaltrait.html}}
 
     <fieldset>
-        <legend>{{localize "Description"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+        <legend>{{localize "Description"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -15,7 +15,7 @@
         </div>
     </fieldset>
     <fieldset>
-        <legend>{{localize "behaviour"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+        <legend>{{localize "behaviour"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -26,7 +26,7 @@
         </div>
     </fieldset>
     <fieldset>
-        <legend>{{localize "flight"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+        <legend>{{localize "flight"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -37,7 +37,7 @@
         </div>
     </fieldset>
     <fieldset>
-        <legend>{{localize "specialRules"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+        <legend>{{localize "specialRules"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -49,7 +49,7 @@
     </fieldset>
     {{#if document.isOwner}}
     <fieldset>
-        <legend>{{localize "ownerNotes"}} <a class="ch-collapse"><i class="fas fa-angle-up"
+        <legend>{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">

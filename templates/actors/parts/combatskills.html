@@ -4,7 +4,7 @@
             <b>{{localize "TYPES.Item.combatskill"}}</b>
         </div>
         <div class="combat-skills-collapse col lineheight ten center">
-            <a class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
+            <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up" data-tooltip="SHEET.collapse"></i></a>
         </div>
     </div>
     <div class="row-section wrap">
@@ -52,9 +52,9 @@
         <div class="actor-combat-skill-item col morph">
             <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
-                    <a class="item-edit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance refund-item"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance advance-item"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
+                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
+                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col five center">
                     {{localize (concatUp "CHARAbbrev." item.system.guidevalue.value)}}
@@ -64,10 +64,10 @@
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="attack">
-                    <a data-mode="attack" class="ch-rollCombat d20 diet-mu">{{item.system.attack.value}}</a>
+                    <a data-mode="attack" data-action="chRollCombat" class="d20 diet-mu">{{item.system.attack.value}}</a>
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#if (eq item.system.weapontype.value 'melee')}} <a data-mode="parry" class="ch-rollCombat d20 diet-in">{{item.system.parry.value}}</a> {{else}}- {{/if}}
+                    {{#if (eq item.system.weapontype.value 'melee')}} <a data-mode="parry" data-action="chRollCombat" class="d20 diet-in">{{item.system.parry.value}}</a> {{else}}- {{/if}}
                 </div>
             </div>
         </div>

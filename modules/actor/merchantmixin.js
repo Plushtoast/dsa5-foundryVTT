@@ -61,7 +61,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     get template() {
       if (this.merchantSheetActivated()) {
-        switch (getProperty(this.actor.system, 'merchant.merchantType')) {
+        switch (this.actor.system.merchant.merchantType) {
           case 'merchant':
             return 'systems/dsa5/templates/actors/merchant/merchant-limited.html';
           case 'loot':
@@ -78,7 +78,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     _prepareTabs(group) {
       const tabs = super._prepareTabs(group);
-      const merchantType = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
+      const merchantType = this.actor.system.merchant.merchantType || 'none';
       tabs.inventory.label = DSA5.merchantTypes[merchantType];
       if(merchantType == 'loot') {
         for(let tab of ['main', 'skills', 'combat', 'magic', 'religion', 'status', 'notes']) {
@@ -89,7 +89,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     merchantSheetActivated() {
-      return this.showLimited() || (this.playerViewEnabled() && ['merchant', 'loot', 'epic'].includes(getProperty(this.actor.system, 'merchant.merchantType')));
+      return this.showLimited() || (this.playerViewEnabled() && ['merchant', 'loot', 'epic'].includes(this.actor.systemmerchant.merchantType));
     }
 
     async allowMerchant(ids, allow) {
@@ -208,7 +208,7 @@ export const MerchantSheetMixin = (superclass) =>
       const rule = this.filterRule(ev);
       for (let item of this.actor.items) {
         if (rule(item)) {
-          let upd = item.toObject();
+          let upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value}} };
           RuleChaos.increment(ev, upd, 'system.quantity.value', 0);
           updates.push(upd);
         }
@@ -260,7 +260,7 @@ export const MerchantSheetMixin = (superclass) =>
         const noNeedToPay = this.noNeedToPay(target, source, price);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
         if (hasPaid) {
-          if (getProperty(item, 'system.worn.value')) item.system.worn.value = false;
+          if (getProperty(item.system, 'worn.value')) item.system.worn.value = false;
 
           if (buy) {
             const res = await this.updateTargetTransaction(target, item, amount, source, price);
@@ -288,7 +288,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static isTemporaryToken(target) {
-      return getProperty(target.system, 'merchant.merchantType') == 'loot' && getProperty(target.system, 'merchant.temporary');
+      return target.system.merchant.merchantType == 'loot' && target.system.merchant.temporary;
     }
 
     static async selfDestruction(target) {
@@ -315,7 +315,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     static async transferNotification(item, source, target, buy, price, amount, noNeedToPay, res) {
       const notify = game.settings.get('dsa5', 'merchantNotification');
-      if (notify == 0 || getProperty(item, 'system.equipmentType.value') == 'service') return;
+      if (notify == 0 || getProperty(item.system, 'equipmentType.value') == 'service') return;
 
       const notif = 'MERCHANT.' + (buy ? 'buy' : 'sell') + (noNeedToPay ? 'Loot' : '') + 'Notification';
       const anchor = item.type == 'money' ? game.i18n.localize(item.name) : res.toAnchor().outerHTML;
@@ -333,7 +333,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static noNeedToPay(target, source, price) {
-      return price == 0 || getProperty(target.system, 'merchant.merchantType') == 'loot' || getProperty(source.system, 'merchant.merchantType') == 'loot';
+      return price == 0 || target.system.merchant.merchantType == 'loot' || source.system.merchant.merchantType == 'loot';
     }
 
     static async updateSourceTransaction(source, target, sourceItem, price, itemId, amount) {
@@ -415,21 +415,19 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     async _render(force = false, options = {}) {
-      if (!game.user.isGM && getProperty(this.actor.system, 'merchant.merchantType') == 'loot' && getProperty(this.actor.system, 'merchant.locked')) {
+      if (!game.user.isGM && this.actor.system.merchant.merchantType == 'loot' && this.actor.system.merchant.locked) {
         foundry.audio.AudioHelper.play({ src: 'sounds/lock.wav', loop: false }, false);
         return;
       }
       await super._render(force, options);
     }
 
-    _togglePlayerview() {
-      this.actor.update({
-        'system.merchant.playerView': !getProperty(this.actor.system, 'merchant.playerView'),
-      });
+    static _togglePlayerview(event, target) {
+      this.actor.update({ 'system.merchant.playerView': !this.actor.system.merchant.playerView });
     }
 
     playerViewEnabled() {
-      return getProperty(this.actor.system, 'merchant.playerView');
+      return this.actor.system.merchant.playerView;
     }
 
     async clearInventory(ev) {
@@ -447,14 +445,14 @@ export const MerchantSheetMixin = (superclass) =>
     async removeAllGoods(actor, ev) {
       let text = $(ev.currentTarget).text();
       $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>');
-      let ids = actor.items.filter((x) => DSA5.equipmentCategories.has(x.type) && !getProperty(x, 'worn.value')).map((x) => x.id);
+      let ids = actor.items.filter((x) => DSA5.equipmentCategories.has(x.type) && !getProperty(x.system, 'worn.value')).map((x) => x.id);
       await actor.deleteEmbeddedDocuments('Item', ids);
       $(ev.currentTarget).text(text);
     }
 
     async _prepareContext(_options) {
       const data = await super._prepareContext(_options);
-      data.merchantType = getProperty(this.actor.system, 'merchant.merchantType') || 'none';
+      data.merchantType = this.actor.system.merchant.merchantType || 'none';
       data.invName = DSA5.merchantTypes[data.merchantType];
       data.players = game.users
         .filter((x) => !x.isGM)
@@ -480,7 +478,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     filterWornEquipment(data) {
       for (const [key, value] of Object.entries(data.prepare.inventory)) {
-        value.items = value.items.filter((x) => !getProperty(x, 'system.worn.value'));
+        value.items = value.items.filter((x) => !getProperty(x.system, 'worn.value'));
       }
     }
 
@@ -490,7 +488,7 @@ export const MerchantSheetMixin = (superclass) =>
           for (const item of value.items) {
             item.defaultPrice = this.getItemPrice(item);
             item.calculatedPrice =
-              Number(parseFloat(`${item.defaultPrice * (getProperty(this.actor.system, 'merchant.sellingFactor') || 1)}`).toFixed(2)) *
+              Number(parseFloat(`${item.defaultPrice * (this.actor.system.merchant.sellingFactor || 1)}`).toFixed(2)) *
               (getProperty(this.actor.system, `merchant.factors.sellingFactor.${game.user.id}`) || 1);
             item.priceTag = ` / ${item.calculatedPrice}`;
           }
@@ -525,9 +523,9 @@ export const MerchantSheetMixin = (superclass) =>
       if (friend) {
         let tradeData = friend.prepareItems({ details: [] });
         let factor =
-          getProperty(this.actor.system, 'merchant.merchantType') == 'loot'
+          this.actor.system.merchant.merchantType == 'loot'
             ? 1
-            : (getProperty(this.actor.system, 'merchant.buyingFactor') || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1);
+            : (this.actor.system.merchant.buyingFactor || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1);
         let inventory = this.prepareSellPrices(tradeData.inventory, factor);
         if (inventory['misc'].items.length == 0) inventory['misc'].show = false;
 
@@ -680,8 +678,8 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
     }, new Set());
 
     const filtered = items.filter((x) => {
-      const domain = getProperty(x, 'system.effect.attributes');
-      const price = Number(getProperty(x, 'system.price.value')) || 0;
+      const domain = getProperty(x.system, 'effect.attributes');
+      const price = Number(getProperty(x.system, 'price.value')) || 0;
       if (!domain || price > 10000) return false;
 
       const seeName = `${x.type}_${x.name}`;

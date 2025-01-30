@@ -7,21 +7,21 @@
         {{/if}}
     </div>
     <div class="combat-item-name thirtyfive col">
-        <a class="item-edit">{{item.name}}</a>
+        <a data-action="itemEdit">{{item.name}}</a>
     </div>
 
     <div class="combat-item-skill col five center small onlyMultiColumn">
         {{localize item.system.combatskill.value}}
     </div>
     <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="attack">
-        <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
+        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
     </div>
     <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="parry">
-        <a data-mode="parry" class="ch-rollCombat d20 die-parry">{{item.parry}}</a>
+        <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a>
     </div>
 
     <div class="combat-item-damage col ten center">
-        <a data-mode="damage" class="ch-rollCombat d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.gripDamageText}}">{{item.damageAdd}}</span>
+        <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.gripDamageText}}">{{item.damageAdd}}</span>
     </div>
     <div class="combat-item-range col row-section ten center small notOnMinimum">
         <div class="col nintey center">

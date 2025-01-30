@@ -10,15 +10,15 @@
             </div>
             <div class="col ten center">
                 <div class="statusEffectMenu">
-                    <a class="status-create lineheight very-small" data-tooltip="CONDITION.add"><i class="fas fa-plus"></i></a>
+                    <a data-action="statusCreate" class="status-create lineheight very-small" data-tooltip="CONDITION.add"><i class="fas fa-plus"></i></a>
                     <ul>
                         <li class="search">
                             <input type="search" class="conditionSearch" placeholder="{{localize 'Book.search'}}" />
-                            <a class="status-add" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
+                            <a data-action="status-add" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
                         </li>
                         {{#each manualConditions as |item i|}}
                         <li>
-                            <a class="status-add" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></a>
+                            <a data-action="status-add" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></a>
                         </li>
                         {{/each}}
 
@@ -77,21 +77,21 @@
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
                 <div class="col two">
-                    <a class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
-                    {{#if item.editable}}{{#unless item.boolean}}<a class="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
+                    {{#if item.editable}}{{#unless item.boolean}}<a data-action="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
                 </div>
                 <div class="col ten center" data-tooltip="value">
                     <span>{{item.value}}</span>
                 </div>
                 <div class="actor-status-action col five right">
                     {{#if item.system.delayed}}<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>{{/if}}
-                    <a class="condition-edit" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
+                    <a data-action="conditionEdit" class="condition-edit" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
                     {{#if item.disabled}}
-                    <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
+                    <a data-action="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
                     {{else}}
-                    <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
+                    <a data-action="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
                     {{/if}}
                 </div>
             </div>
@@ -164,7 +164,7 @@
                     <img src="{{item.img}}" />
                 </div>
                 <div class="col two">
-                    <a class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
 
@@ -237,15 +237,15 @@
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
                 <div class="col two">
-                    <a class="condition-show" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="condition-show" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col five center">
-                    <a class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
+                    <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
                 </div>
                 <div class="actor-status-action col five right">
-                    <a class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
-                    <a class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                    <a class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+                    <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
+                    <a data-action="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
+                    <a data-action="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
                 </div>
             </div>
             {{/each}}
@@ -278,7 +278,7 @@
                         </div>
                     </div>
                     <div class="col third">
-                        <a class="item-edit">{{item.name}}</a>
+                        <a data-action="itemEdit">{{item.name}}</a>
                     </div>
                     <div class="col ten center">
                         {{item.system.circle}}
@@ -289,7 +289,7 @@
 
                     <div class="col ten very-small center">
                         <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                        <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                        <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
                         <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                     </div>
                 </div>
@@ -317,7 +317,7 @@
             <div class="col item" data-item-id="{{item._id}}">
                 <div class="row-section skills lineheight">
                     <div class="col third">
-                        <a class="item-edit">{{item.name}}</a>
+                        <a data-action="itemEdit">{{item.name}}</a>
                     </div>
                     <div class="col ten center">
                         {{item.system.step.value}}
@@ -329,16 +329,14 @@
                         {{item.system.duration.resolved}}
                     </div>
                     <div class="col fifteen center">
-                        <a class="roll-disease">
-                            <div class="d20 die-attack"></div>
-                        </a>
+                        <a data-action="rollDisease"><div class="d20 die-attack"></div></a>
                     </div>
                     <div class="col ten center statusEffect">
                         <a class="status-add" data-id="sick" data-tooltip="CONDITION.sick"><img src="icons/svg/biohazard.svg" /></a>
                     </div>
                     <div class="col ten very-small center">
                         <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                        <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                        <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
                         <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                     </div>
                 </div>
@@ -416,7 +414,7 @@
 
                 </div>
                 <div class="col ten">
-                    <a class="disableRegeneration" data-type="wounds">{{#if document.system.repeatingEffects.disabled.wounds}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
+                    <a data-action="disableRegeneration" data-type="wounds">{{#if document.system.repeatingEffects.disabled.wounds}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
                 </div>
             </div>
             {{/if}}
@@ -427,7 +425,7 @@
                     {{localize 'regenerate'}} {{localize 'CHARAbbrev.CR'}} ({{localize 'astralenergy'}})
                 </div>
                 <div class="col ten">
-                    <a class="disableRegeneration" data-type="astralenergy">{{#if document.system.repeatingEffects.disabled.astralenergy}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
+                    <a data-action="disableRegeneration" data-type="astralenergy">{{#if document.system.repeatingEffects.disabled.astralenergy}}<i class="far fa-circle"></i>{{else}}<i class="far fa-check-circle"></i>{{/if}}</a>
                 </div>
             </div>
             {{/if}}

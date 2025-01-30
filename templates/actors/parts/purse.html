@@ -4,7 +4,7 @@
     <div class="row-section table-title">
         {{#each this}}
         <div class="col four center item" data-item-id="{{_id}}">
-            <a class="item-edit withContext">{{localize name}}</a>
+            <a data-action="itemEdit" class="withContext">{{localize name}}</a>
         </div>
         {{/each}}
     </div>

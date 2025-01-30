@@ -70,11 +70,45 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       height: 740,
     },
     actions: {
-      itemCreate: ActorSheetDsa5._onItemCreate,
-      playerview: function() { this._togglePlayerview() },
-      actorConfig: function() { this._configActor() },
-      library: function() { this._openLibrary() },
-      locksheet: function() { this._changeAdvanceLock() },
+      itemCreate: this._onItemCreate,
+      playerview: this._togglePlayerview,
+      actorConfig: this._configActor,
+      library: this._openLibrary,
+      locksheet: this._changeAdvanceLock,
+      skillSelect: { handler: this._skillSelect, buttons: [0, 2] },
+      rollDisease: this._rollDisease,
+      conditionEdit: this._conditionEdit,
+      chCollapse: this._chCollapse,
+      statusCreate: this._statusCreate,
+      itemDropdown: this._itemDropdown,
+      itemEdit: this._itemEdit,
+      chValue: this._chValue,
+      chStatus: this._chStatus,
+      chRegenerate: this._chRegenerate,
+      chWeaponless: this._chWeaponless,
+      chFallingDamage: this._chFallingDamage,
+      chRollCombat: this._chRollCombat,
+      rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
+      showApplication: { handler: this._showApplication, buttons: [0, 2] },
+      conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
+    },
+    ownerActions: {
+      schipUpdate: this._schipUdate,
+      defenseToggle: this._defenseToggle,
+      chargeSpell: { handler: this._chargeSpell, buttons: [0, 2] },
+      loadWeapon: { handler: this._loadWeapon, buttons: [0, 2] },
+      itemSwapMag: this._itemSwapMag,
+      itemToggle: this._itemToggle,
+      traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
+      conditionToggle: this._conditionToggle,
+      traditionDelete: this._deleteTraditionArtifact,
+      selectTraditionartifact: this._selectTraditionArtifact,
+      statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
+      disableRegeneration: this._disableRegeneration,
+      conditionValue: this._conditionValue,
+      advanceWrapper: this._advanceWrapper,
+      onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
+      quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
     },
     form: {
       submitOnChange: true,
@@ -86,27 +120,33 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           action: 'playerview',
           icon: 'fas fa-toggle-on',
           label: 'SHEET.switchLimited',
-          visible: function() { return this.actor.isOwner }
+          visible: function () {
+            return this.actor.isOwner;
+          },
         },
         {
           action: 'actorConfig',
           label: 'SHEET.actorConfig',
           icon: 'fas fa-link',
-          visible: function() { return this.actor.isOwner }
+          visible: function () {
+            return this.actor.isOwner;
+          },
         },
         {
           action: 'locksheet',
           label: 'SHEET.Lock',
           icon: 'fas fa-lock',
           //icon: `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`,
-          visible: function() { return this.actor.system.canAdvance }
+          visible: function () {
+            return this.actor.system.canAdvance;
+          },
         },
         {
           action: 'library',
           label: 'SHEET.Library',
-          icon: 'fas fa-university'
-        }
-      ]
+          icon: 'fas fa-university',
+        },
+      ],
     },
   };
 
@@ -129,27 +169,27 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _saveSearchFields() {
     if (this.form === null) return;
 
-    const html = $(this.form).parent();
+    const html = $(this.form);
     this.searchFields = {
-      talentFiltered: $(html.find('.filterTalents')).hasClass('filtered'),
-      searchText: $(html.find('.talentSearch')).val(),
-      gearSearch: $(html.find('.gearSearch')).val(),
+      talentFiltered: html.find('.filterTalents').hasClass('filtered'),
+      searchText: html.find('.talentSearch').val(),
+      gearSearch: html.find('.gearSearch').val(),
     };
   }
 
   _restoreSeachFields() {
     if (this.searchFields != undefined) {
-      const html = $(this.form).parent();
+      const html = $(this.form);
       if (this.searchFields.talentFiltered) {
-        $(html.find('.filterTalents')).addClass('filtered');
-        $(html.find('.allTalents')).removeClass('showAll');
+        html.find('.filterTalents').addClass('filtered');
+        html.find('.allTalents').removeClass('showAll');
       }
-      const talentSearchInput = $(html.find('.talentSearch'));
+      const talentSearchInput = html.find('.talentSearch');
       talentSearchInput.val(this.searchFields.searchText);
       if (this.searchFields.searchText != '') {
         this._filterTalents(talentSearchInput);
       }
-      const gearSearchInput = $(html.find('.gearSearch'));
+      const gearSearchInput = html.find('.gearSearch');
       gearSearchInput.val(this.searchFields.gearSearch);
       if (this.searchFields.searchText != '') {
         this._filterGear(gearSearchInput);
@@ -158,7 +198,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _configureRenderParts(options) {
-    if(this.showLimited() && this.constructor.LIMITEDPARTS) {
+    if (this.showLimited() && this.constructor.LIMITEDPARTS) {
       return foundry.utils.deepClone(this.constructor.LIMITEDPARTS);
     }
     return super._configureRenderParts(options);
@@ -167,20 +207,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _saveCollapsed() {
     if (this.form === null) return;
 
-    const html = $(this.form).parent();
+    const html = $(this.form);
     this.collapsedBoxes = [];
     this.openDetails = [];
     let boxes = html.find('.ch-collapse i');
     for (let box of boxes) {
       this.collapsedBoxes.push($(box).attr('class'));
     }
-    for (const detail of $(html.find('.expandDetails.shown'))) {
+    for (const detail of html.find('.expandDetails.shown')) {
       this.openDetails.push($(detail).closest('.item').attr('data-item-id'));
     }
   }
 
   _setCollapsed() {
-    const html = $(this.form).parent();
+    const html = $(this.form);
     if (this.collapsedBoxes) {
       let boxes = html.find('.ch-collapse i');
       for (let i = 0; i < boxes.length; i++) {
@@ -192,8 +232,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
-    if(!this.actor.system.isMage) delete tabs.magic
-    if(!this.actor.system.isPriest) delete tabs.religion
+    if (!this.actor.system.isMage) delete tabs.magic;
+    if (!this.actor.system.isPriest) delete tabs.religion;
     return tabs;
   }
 
@@ -218,7 +258,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const enrichedProperties = await Promise.all(
       propertiesToEnrich.map(async (prop) => {
         return {
-          [prop.key]: await TextEditor.enrichHTML(getProperty(this.actor.system, prop.path), { secrets: this.actor.isOwner, async: true }),
+          [prop.key]: await TextEditor.enrichHTML(getProperty(this.actor.system, prop.path), { secrets: this.actor.isOwner }),
         };
       }),
     );
@@ -246,10 +286,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.actor.createEmbeddedDocuments('Item', [data]);
   }
 
-  _handleAggregatedProbe(ev) {
-    const itemId = this._getItemId(ev);
+  static _handleAggregatedProbe(ev, target) {
+    const itemId = this._getItemId(target);
     let aggregated = this.actor.items.get(itemId).toObject();
-    const attr = aggregated.system.talent[`value${ev.currentTarget.dataset.which}`];
+    const attr = aggregated.system.talent[`value${target.dataset.which}`];
     let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
     let infoMsg = `<h3 class="center"><b>${game.i18n.localize('TYPES.Item.aggregatedTest')}</b></h3>`;
     if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
@@ -298,7 +338,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async consumeItem(item) {
-    const title = game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name
+    const title = game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name;
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title,
@@ -444,15 +484,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return result;
   }
 
-  async _openLibrary() {
+  static async _openLibrary(ev, target) {
     game.dsa5.itemLibrary.render(true);
   }
 
-  async _configActor() {
+  static async _configActor(ev, target) {
     new DialogActorConfig(this.actor, {}).render(true);
   }
 
-  async _changeAdvanceLock() {
+  static async _changeAdvanceLock(ev, target) {
     await this.actor.update({ 'system.sheetLocked.value': !this.actor.system.sheetLocked.value });
   }
 
@@ -460,23 +500,23 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return await this.actor.checkEnoughXP(cost);
   }
 
-  async advanceWrapper(ev, funct, ...params) {
+  async advanceWrapper(trg, funct, ...params) {
     if (this.wrapperLocked) return;
 
     this.wrapperLocked = true;
-    $(ev.currentTarget).find('i').addClass('fa-spin fa-spinner');
-    const res = await this[funct](...params);
-    if (res) return;
+    const target = $(trg);
+    target.find('i').addClass('fa-spin fa-spinner');
+    if (await this[funct](...params)) return;
 
     this.wrapperLocked = false;
-    $(ev.currentTarget).find('i').removeClass('fa-spin fa-spinner');
+    target.find('i').removeClass('fa-spin fa-spinner');
   }
 
   playerViewEnabled() {
     return this.actor.system.playerView;
   }
 
-  _togglePlayerview() {
+  static _togglePlayerview(ev, target) {
     this.actor.update({ 'system.playerView': !this.actor.system.playerView });
   }
 
@@ -488,23 +528,18 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return this.token?.id;
   }
 
-  rollDisease(itemId) {
+  static async _rollDisease(ev, target) {
+    const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     const SKModifier = this.actor.system.status.soulpower.max * -1;
     const ZKModifier = this.actor.system.status.toughness.max * -1;
-    item
-      .setupEffect(undefined, {
-        rollMode: 'gmroll',
-        manualResistance: { SKModifier, ZKModifier },
-      })
-      .then(async (setupData) => {
-        const result = await item.itemTest(setupData);
-        await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
-      });
+    const setupData = await item.setupEffect(undefined, { rollMode: 'gmroll', manualResistance: { SKModifier, ZKModifier } });
+    const result = await item.itemTest(setupData);
+    await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }
 
   async swapWeaponHand(ev, item = undefined) {
-    const itemId = item?.id || this._getItemId(ev);
+    const itemId = item?.id || this._getItemId(ev.currentTarget);
     item = item || this.actor.items.get(itemId);
 
     if (!['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))) {
@@ -512,156 +547,245 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
+  static async _skillSelect(ev, target) {
+    const itemId = this._getItemId(target);
+    let skill = this.actor.items.get(itemId);
+
+    if (ev.button == 0) {
+      const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
+      this.actor.basicTest(setupData);
+    } else if (ev.button == 2) skill.sheet.render(true);
+  }
+
+  static async _conditionEdit(ev, target) {
+    const effect = target.dataset.uuid ? await fromUuid(target.dataset.uuid) : this.actor.effects.get(target.dataset.id);
+    effect.sheet.render(true);
+  }
+
+  static _chCollapse(ev, target) {
+    $(target).find('i').toggleClass('fa-angle-up fa-angle-down');
+    $(target).closest('.groupbox').find('.row-section:nth-child(2)').fadeToggle();
+  }
+
+  static _statusCreate(ev, target) {
+    let menu = $(target).closest('.statusEffectMenu').find('ul');
+    menu.fadeIn('fast', () => {
+      menu.find('input').trigger('focus');
+    });
+  }
+
+  static _itemDropdown(ev, target) {
+    $(target).closest('.item').find('.expandDetails:first').toggleClass('shown');
+  }
+
+  static _conditionShow(ev, target) {
+    const id = target.dataset.id;
+    const statusEffects = $(target).closest('.statusEffect')[0];
+    const descriptor = statusEffects.dataset.descriptor;
+    if (ev.button == 0) {
+      const origin = statusEffects.dataset.origin;
+      if (origin) {
+        fromUuid(origin).then((document) => document.sheet.render(true));
+      } else {
+        let effect;
+        let text;
+        if (descriptor) {
+          effect = CONFIG.statusEffects.find((x) => x.id == descriptor);
+          text = effect.description;
+        } else {
+          //search temporary effects
+          effect = this.actor.effects.find((x) => x.id == id);
+          if (effect) text = effect.flags.dsa5.description;
+        }
+
+        if (effect) {
+          text = `<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(text)}</div>`;
+        }
+
+        const elem = $(target).closest('.groupbox').find('.effectDescription');
+        elem.fadeOut('fast', () => {
+          elem.html($(text)).fadeIn('fast');
+        });
+      }
+    } else if (ev.button == 2 && !target.dataset.locked) {
+      this._deleteActiveEffect(id);
+    }
+  }
+
+  static _itemEdit(ev, target) {
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.get(itemId);
+    item.sheet.render(true);
+  }
+
+  static _showApplication(ev, target) {
+    if (ev.button == 2) {
+      this._deleteItem(ev);
+    } else {
+      const itemId = this._getItemId(target);
+      const item = this.actor.items.get(itemId);
+      item.sheet.render(true);
+    }
+  }
+
+  static async _chValue(ev, target) {
+    const characteristic = target.attributes['data-char'].value;
+    const setupData = await this.actor.setupCharacteristic(characteristic, {}, this.getTokenId());
+    this.actor.basicTest(setupData);
+  }
+
+  static async _chStatus(ev, target) {
+    const setupData = await this.actor.setupDodge({}, this.getTokenId());
+    this.actor.basicTest(setupData);
+  }
+
+  static async _chRegenerate(ev, target) {
+    const setupData = await this.actor.setupRegeneration('regenerate', {}, this.getTokenId());
+    this.actor.basicTest(setupData);
+  }
+
+  static async _chWeaponless(ev, target) {
+    const characteristic = target.dataset.char;
+    const setupData = await this.actor.setupWeaponless(characteristic, {}, this.getTokenId());
+    this.actor.basicTest(setupData);
+  }
+
+  static _chFallingDamage(ev, target) {
+    this.actor.setupFallingDamage({}, this.getTokenId());
+  }
+
+  static async _chRollCombat(ev, target) {
+    const dataset = this._getItemDataset(target);
+    const mode = target.dataset.mode;
+    const item = Actordsa5.buildSubweapon(this.actor.items.get(dataset.itemId), dataset.subweapon);
+    const setupData = await this.actor.setupWeapon(item, mode, {}, this.getTokenId());
+    this.actor.basicTest(setupData);
+  }
+
+  static _schipUdate(ev, target) {
+    let val = Number(target.dataset.val);
+    if (val == 1 && $(this.form).find('.fullSchip').length == 1) val = 0;
+
+    this.actor.update({ 'system.status.fatePoints.value': val });
+  }
+
+  static _defenseToggle(ev, target) {
+    this.actor.update({ 'system.config.defense': !this.actor.system.config.defense })
+  }
+
+  static async _chargeSpell(ev, target) {
+      const itemId = this._getItemId(target);
+      const item = this.actor.items.get(itemId);
+      const lz = Number(item.system.castingTime.modified);
+      let update = {}
+      if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
+      else if (ev.button == 2) {
+        update['system.castingTime.progress'] = 0;
+        update['system.castingTime.modified'] = 0;
+      }
+      await this.actor.updateEmbeddedDocuments('Item', [update]);
+    }
+
+  static async _loadWeapon(ev, target) {
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.get(itemId);
+
+    if (!getProperty(item, 'system.currentAmmo.value')) return;
+
+    const update = { _id: itemId };
+    if (ev.button == 0) {
+      const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
+      update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
+    } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
+
+    await this.actor.updateEmbeddedDocuments('Item', [update]);
+  }
+
+  static async _itemSwapMag(ev, target) {
+    await this.actor.swapMag(this._getItemId(target));
+  }
+
+  static _itemToggle(ev, target) {
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.get(itemId);
+
+    switch (item.type) {
+      case 'armor':
+      case 'rangeweapon':
+      case 'meleeweapon':
+      case 'equipment':
+        this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
+        DSA5SoundEffect.playEquipmentWearStatusChange(item);
+        break;
+    }
+  }
+
+  static async _conditionToggle(ev, target) {
+    let condKey = $(target).closest('.statusEffect').attr('data-id');
+    let ef = this.actor.effects.get(condKey);
+    await ef.update({ disabled: !ef.disabled });
+  }
+
+  static async _statusAdd(ev, target) {
+    const status = target.dataset.id;
+    if (status == 'custom') {
+      DSA5StatusEffects.createCustomEffect(this.actor);
+    } else {
+      if (ev.button == 0) {
+        await this.actor.addCondition(status, 1, false, false);
+      } else if (ev.button == 2) {
+        AddEffectDialog.modifyEffectDialog(status, async (id, options) => this.actor.addTimedCondition(id, 1, false, false, options));
+      }
+    }
+  }
+
+  static _disableRegeneration(ev, target) {
+    const type = target.dataset.type;
+    const prop = `system.repeatingEffects.disabled.${type}`;
+    this.actor.update({ [prop]: !getProperty(this.actor, prop) });
+  }
+
+  static async _conditionValue(ev, target) {
+    let condKey = $(target).closest('.statusEffect').attr('data-descriptor');
+    if (ev.button == 0) await this.actor.addCondition(condKey, 1, false, false);
+    else if (ev.button == 2) await this.actor.removeCondition(condKey, 1, false);
+  }
+
+  static _advanceWrapper(ev, target) {
+    this.advanceWrapper(target, target.dataset.fct, target.dataset.attr);
+  }
+
+  static _quantityClick(ev, target) {
+    const itemId = this._getItemId(target);
+    let item = this.actor.items.get(itemId);
+    const update = { _id: itemId, system: { quantity: { value: item.system.quantity.value}} };
+    RuleChaos.increment(ev, update, 'system.quantity.value', 0);
+    this.actor.updateEmbeddedDocuments('Item', [update]);
+  }
+
+
   async _onRender(context, options) {
     await super._onRender((context, options));
 
     const html = $(this.element);
     const posthand = (ev) => {
-      this.actor.items.get(this._getItemId(ev)).postItem();
+      this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };
-
-    html.find('.roll-disease').on('click', (ev) => this.rollDisease(this._getItemId(ev)));
 
     tabSlider(html);
 
-    html.find('.condition-edit').on('click', async (ev) => {
-      const effect = ev.currentTarget.dataset.uuid ? await fromUuid(ev.currentTarget.dataset.uuid) : this.actor.effects.get(ev.currentTarget.dataset.id);
-      effect.sheet.render(true);
-    });
-
-    html.find('.ch-collapse').on('click', (ev) => {
-      $(ev.currentTarget).find('i').toggleClass('fa-angle-up fa-angle-down');
-      $(ev.currentTarget).closest('.groupbox').find('.row-section:nth-child(2)').fadeToggle();
-    });
-
-    html.find('.status-create').on('click', (ev) => {
-      let menu = $(ev.currentTarget).closest('.statusEffectMenu').find('ul');
-      menu.fadeIn('fast', () => {
-        menu.find('input').trigger('focus');
-      });
-    });
-    html.find('.statusEffectMenu ul').mouseleave((ev) => $(ev.currentTarget).fadeOut());
-
-    html.find('.roll-aggregated').on('mousedown', (ev) => this._handleAggregatedProbe(ev));
-
-    html.find('.skill-select').on('mousedown', (ev) => {
-      const itemId = this._getItemId(ev);
-      let skill = this.actor.items.get(itemId);
-
-      if (ev.button == 0)
-        this.actor.setupSkill(skill, {}, this.getTokenId()).then((setupData) => {
-          this.actor.basicTest(setupData);
-        });
-      else if (ev.button == 2) skill.sheet.render(true);
-    });
-
-    html.find('.spell-select').on('mousedown', (ev) => {
-      const itemId = this._getItemId(ev);
-      let skill = this.actor.items.get(itemId);
-
-      if (ev.button == 0) this.actor.setupSpell(skill, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
-      else if (ev.button == 2) skill.sheet.render(true);
-    });
+    html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
 
     html.find('.item-post').on('click', (ev) => posthand(ev));
 
-    html.find('.item-dropdown').on('click', (ev) => {
-      ev.preventDefault();
-      $(ev.currentTarget).closest('.item').find('.expandDetails:first').toggleClass('shown');
-    });
-
-    html.find('.condition-show').on('mousedown', (ev) => {
-      ev.preventDefault();
-      const id = ev.currentTarget.dataset.id;
-      const descriptor = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
-      if (ev.button == 0) {
-        const origin = $(ev.currentTarget).parents('.statusEffect').attr('data-origin');
-        if (origin) {
-          fromUuid(origin).then((document) => document.sheet.render(true));
-        } else {
-          let effect;
-          let text;
-          if (descriptor) {
-            effect = CONFIG.statusEffects.find((x) => x.id == descriptor);
-            text = $(
-              `<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.description)}</div>`,
-            );
-          } else {
-            //search temporary effects
-            effect = this.actor.effects.find((x) => x.id == id);
-            if (effect) {
-              text = $(
-                `<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(effect.flags.dsa5.description)}</div>`,
-              );
-            }
-          }
-          const elem = $(ev.currentTarget).closest('.groupbox').find('.effectDescription');
-          elem.fadeOut('fast', function () {
-            elem.html(text).fadeIn('fast');
-          });
-        }
-      } else if (ev.button == 2 && !ev.currentTarget.dataset.locked) {
-        this._deleteActiveEffect(id);
-      }
-    });
     html.on('click', '.chat-condition', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
     html.find('.money-change, .skill-advances').on('focusin', (ev) => {
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
 
-    html.find('.item-edit').on('click', (ev) => {
-      ev.preventDefault();
-      const itemId = this._getItemId(ev);
-      const item = this.actor.items.get(itemId);
-      item.sheet.render(true);
-    });
-    html.find('.showApplication').on('mousedown', (ev) => {
-      ev.preventDefault();
-
-      if (ev.button == 2) {
-        this._deleteItem(ev);
-      } else {
-        const itemId = this._getItemId(ev);
-        const item = this.actor.items.get(itemId);
-        item.sheet.render(true);
-      }
-    });
-
-    html.find('.ch-value').on('click', (event) => {
-      event.preventDefault();
-      let characteristic = event.currentTarget.attributes['data-char'].value;
-      this.actor.setupCharacteristic(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
-    });
-    html.find('.ch-status').on('click', (event) => {
-      event.preventDefault();
-      this.actor.setupDodge({}, this.getTokenId()).then((setupData) => {
-        this.actor.basicTest(setupData);
-      });
-    });
-    html.find('.ch-regenerate').on('click', (event) => {
-      event.preventDefault();
-      this.actor.setupRegeneration('regenerate', {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
-    });
-    html.find('.ch-weaponless').on('click', (event) => {
-      event.preventDefault();
-      let characteristic = event.currentTarget.attributes['data-char'].value;
-      this.actor.setupWeaponless(characteristic, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
-    });
-    html.find('.ch-fallingDamage').on('click', (ev) => {
-      ev.preventDefault();
-      this.actor.setupFallingDamage({}, this.getTokenId());
-    });
-    html.find('.ch-rollCombat').on('click', (event) => {
-      event.preventDefault();
-      const dataset = this._getItemDataset(event);
-      const mode = event.currentTarget.dataset.mode;
-      const item = Actordsa5.buildSubweapon(this.actor.items.get(dataset.itemId), dataset.subweapon);
-      this.actor.setupWeapon(item, mode, {}, this.getTokenId()).then((setupData) => this.actor.basicTest(setupData));
-    });
-
     const deletehand = (ev) => this._deleteItem(ev);
 
-    html.find('.cards .item').mouseenter((ev) => {
+    html.find('.cards .item').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
         const div = document.createElement('div');
         div.classList.add('hovermenu');
@@ -678,6 +802,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         ev.currentTarget.appendChild(div);
       }
     });
+
     html.find('.cards .item').on('mouseleave', (ev) => {
       let e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
@@ -742,147 +867,36 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
 
-    html.find('.schipUpdate').on('click', (ev) => {
-      ev.preventDefault();
-      let val = Number(ev.currentTarget.getAttribute('data-val'));
-      if (val == 1 && $(this.form).find('.fullSchip').length == 1) val = 0;
-
-      this.actor.update({ 'system.status.fatePoints.value': val });
-    });
-
     html.find('.swapWeaponHand').on('click', (ev) => this.swapWeaponHand(ev));
-
-    html.find('.defenseToggle').on('click', () =>
-      this.actor.update({
-        'system.config.defense': !this.actor.system.config.defense,
-      }),
-    );
-
-    html.find('.loadWeapon').on('mousedown', async (ev) => {
-      const itemId = this._getItemId(ev);
-      const item = this.actor.items.get(itemId).toObject();
-
-      if (getProperty(item, 'system.currentAmmo.value') === '') return;
-
-      const update = { _id: itemId };
-      if (ev.button == 0) {
-        const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
-        update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
-      } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
-
-      await this.actor.updateEmbeddedDocuments('Item', [update]);
-    });
-
-    html.find('.chargeSpell').on('mousedown', async (ev) => {
-      const itemId = this._getItemId(ev);
-      const item = this.actor.items.get(itemId).toObject();
-      const lz = Number(item.system.castingTime.modified);
-      if (ev.button == 0) item.system.castingTime.progress = Math.min(item.system.castingTime.progress + 1, lz);
-      else if (ev.button == 2) {
-        item.system.castingTime.progress = 0;
-        item.system.castingTime.modified = 0;
-      }
-      await this.actor.updateEmbeddedDocuments('Item', [item]);
-    });
-
-    html.find('.item-swapMag').on('click', async (ev) => {
-      await this.actor.swapMag(this._getItemId(ev));
-    });
 
     html.find('.ammo-selector').on('change', async (ev) => {
       ev.preventDefault();
-      const itemId = this._getItemId(ev);
+      const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() }]);
     });
 
-    html.find('.item-toggle').on('click', (ev) => {
-      const itemId = this._getItemId(ev);
-      let item = this.actor.items.get(itemId).toObject();
-
-      switch (item.type) {
-        case 'armor':
-        case 'rangeweapon':
-        case 'meleeweapon':
-        case 'equipment':
-          this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
-          DSA5SoundEffect.playEquipmentWearStatusChange(item);
-          break;
-      }
-    });
-
-    html.find('.quantity-click').on('mousedown', (ev) => {
-      const itemId = this._getItemId(ev);
-      let item = this.actor.items.get(itemId).toObject();
-      RuleChaos.increment(ev, item, 'system.quantity.value', 0);
-      this.actor.updateEmbeddedDocuments('Item', [item]);
-    });
-
-    html.find('.status-add').on('mousedown', async (ev) => {
-      const status = ev.currentTarget.dataset.id;
-      if (status == 'custom') {
-        DSA5StatusEffects.createCustomEffect(this.actor);
-      } else {
-        if (ev.button == 0) {
-          await this.actor.addCondition(status, 1, false, false);
-        } else if (ev.button == 2) {
-          AddEffectDialog.modifyEffectDialog(status, async (id, options) => this.actor.addTimedCondition(id, 1, false, false, options));
-        }
-      }
-    });
-
     html.find('.money-change').on('change', async (ev) => {
-      const itemId = this._getItemId(ev);
+      const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': Number(ev.target.value) }]);
     });
     html.find('.skill-advances').on('change', async (ev) => {
-      const itemId = this._getItemId(ev);
+      const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
     });
-
-    html.find('.advance-attribute').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceAttribute', ev.currentTarget.dataset.attr));
-    html.find('.refund-attribute').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundAttributeAdvance', ev.currentTarget.dataset.attr));
-    html.find('.advance-item').on('mousedown', (ev) => this.advanceWrapper(ev, '_advanceItem', this._getItemId(ev)));
-    html.find('.refund-item').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundItemAdvance', this._getItemId(ev)));
-    html.find('.advance-points').on('mousedown', (ev) => this.advanceWrapper(ev, '_advancePoints', ev.currentTarget.dataset.attr));
-    html.find('.refund-points').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPointsAdvance', ev.currentTarget.dataset.attr));
-    html.find('.rebuy-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_rebuyPC', ev.currentTarget.dataset.attr));
-    html.find('.refund-pc').on('mousedown', (ev) => this.advanceWrapper(ev, '_refundPC', ev.currentTarget.dataset.attr));
-    html.find('.onUseItem').on('mousedown', (ev) => this._onMacroUseItem(ev));
-    html.find('.traditionPayCost').on('mousedown', (ev) => this._payAeSpecialAbilityCost(ev));
-
-    html.find('.condition-toggle').on('mousedown', async (ev) => {
-      let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
-      let ef = this.actor.effects.get(condKey);
-      await ef.update({ disabled: !ef.disabled });
-    });
-
-    html.find('.condition-value').on('mousedown', async (ev) => {
-      let condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-descriptor');
-      if (ev.button == 0) await this.actor.addCondition(condKey, 1, false, false);
-      else if (ev.button == 2) await this.actor.removeCondition(condKey, 1, false);
-    });
-
-    html.find('.item-delete').on('click', (ev) => this._deleteItem(ev));
-    html.find('.tradition-delete').on('click', (ev) => this._deleteTraditionArtifact(ev));
-    html.find('.selectTraditionartifact').on('click', () => this.selectTraditionartifact());
-
-    html.find('.disableRegeneration').on('click', (ev) => {
-      const type = ev.currentTarget.dataset.type;
-      const prop = `system.repeatingEffects.disabled.${type}`;
-      this.actor.update({ [prop]: !getProperty(this.actor, prop) });
-    });
+    
+    html.find('.item-delete').on('click', (ev) => this._deleteItem(ev))
   }
 
-  _onItemContext(ev) {
-    const item = this.actor.items.get($(ev).closest('.item').attr('data-item-id'));
+  _onItemContext(target) {
+    const item = this.actor.items.get($(target).closest('.item').attr('data-item-id'));
 
     if (!item) return;
     ui.context.menuItems = this._getItemContextOptions(item);
     Hooks.call('dsa5.getItemContextOptions', item, ui.context.menuItems);
   }
 
-  _onWeaponItemContext(ev) {
-    const item = this.actor.items.get(ev.dataset.itemId);
+  _onWeaponItemContext(target) {
+    const item = this.actor.items.get(target.dataset.itemId);
 
     if (!item || item?.type != 'meleeweapon') return;
     ui.context.menuItems = this._getWeaponItemContextOptions(item);
@@ -1051,14 +1065,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     editor.render(true);
   }
 
-  async _onMacroUseItem(ev) {
-    const item = this.actor.items.get(this._getItemId(ev));
+  static async _onMacroUseItem(ev, target) {
+    const item = this.actor.items.get(this._getItemId(target));
     const onUse = new OnUseEffect(item);
     await onUse.executeOnUseEffect();
   }
 
-  async _payAeSpecialAbilityCost(ev) {
-    const item = this.actor.items.get(this._getItemId(ev));
+ static async _payAeSpecialAbilityCost(ev, target) {
+    const item = this.actor.items.get(this._getItemId(target));
 
     const cost = Number(getProperty(item, 'system.AsPCost'));
     const paid = this.actor.applyMana(cost, 'AsP');
@@ -1084,22 +1098,22 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       gear.removeClass('filterHide');
       gear
         .filter(function () {
-          return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1;
+          return $(this).find('a[data-action="itemEdit"]').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
   }
 
-  async selectTraditionartifact() {
+  static async _selectTraditionartifact(ev, target) {
     if (!this.isEditable) return;
 
     new TraditionArtifactpicker(this.actor).render(true);
   }
 
-  _deleteTraditionArtifact(ev) {
+  static _deleteTraditionArtifact(ev, target) {
     if (!this.isEditable) return;
 
-    const item = this.actor.items.get(this._getItemId(ev));
+    const item = this.actor.items.get(this._getItemId(target));
     item.update({ 'system.isArtifact': false });
   }
 
@@ -1165,7 +1179,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   async _deleteItem(ev) {
     if (!this.isEditable) return;
 
-    const itemId = this._getItemId(ev);
+    const itemId = this._getItemId(ev.currentTarget);
     let item = this.actor.items.get(itemId);
     this._itemDeleteDialog(item);
   }
@@ -1210,12 +1224,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.deleteEmbeddedDocuments('Item', itemsToDelete);
   }
 
-  _getItemId(ev) {
-    return $(ev.currentTarget).closest('.item').attr('data-item-id');
+  _getItemId(target) {
+    return $(target).closest('.item').attr('data-item-id');
   }
 
-  _getItemDataset(ev) {
-    return $(ev.currentTarget).closest('.item')[0].dataset;
+  _getItemDataset(target) {
+    return $(target).closest('.item')[0].dataset;
   }
 
   async _addMoney(item) {
@@ -1635,8 +1649,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    const items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
-    mergeObject(data, { items });
+    data.items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
     return data;
   }
 

@@ -74,6 +74,6 @@ export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate,
   }
 
   async getSheetData(data) {
-    data.enrichedClothing = await TextEditor.enrichHTML(data.document.system.clothing.value, { secrets: data.document.isOwner, async: true });
+    data.enrichedClothing = await TextEditor.enrichHTML(data.document.system.clothing.value, { secrets: data.document.isOwner });
   }
 }

@@ -1,10 +1,10 @@
 <div class='tab standard-form scrollable {{tabs.combat.cssClass}}' data-tab='combat'
     data-group='{{tabs.combat.group}}' class='tab'>
     <div class="combat-actions">
-        <a data-mod="dodge" class="combat-action ch-status item"><i class="fas fa-reply"></i> {{localize "dodge"}} ({{document.system.status.dodge.max}})</a>
-        <a data-char="attack" class="combat-action ch-weaponless item" data-mod="attackWeaponless"><i class="fa fa-hand-fist"></i> {{localize "attackWeaponless"}} ({{prepare.brawling.attack}})</a>
-        <a data-char="parry" class="combat-action ch-weaponless item" data-mod="parryWeaponless"><i class="fa fa-shield-alt"></i> {{localize "parryWeaponless"}} ({{prepare.brawling.parry}})</a>
-        <a class="combat-action ch-fallingDamage item"><i class="fas fa-skull-crossbones"></i> {{localize "fallingDamage"}}</a>
+        <a data-mod="dodge" data-action="chStatus" class="combat-action item"><i class="fas fa-reply"></i> {{localize "dodge"}} ({{document.system.status.dodge.max}})</a>
+        <a data-char="attack" data-action="chWeaponless" class="combat-action item" data-mod="attackWeaponless"><i class="fa fa-hand-fist"></i> {{localize "attackWeaponless"}} ({{prepare.brawling.attack}})</a>
+        <a data-char="parry" data-action="chWeaponless" class="combat-action item" data-mod="parryWeaponless"><i class="fa fa-shield-alt"></i> {{localize "parryWeaponless"}} ({{prepare.brawling.parry}})</a>
+        <a data-action="chFallingDamage" class="combat-action item"><i class="fas fa-skull-crossbones"></i> {{localize "fallingDamage"}}</a>
     </div>
     <div class="groupbox melee-weapons">
         <div class="row-section table-title lineheight">
@@ -37,19 +37,19 @@
                 <div class="combat-item-image col zerofive image" style="background-image: url('{{item.img}}')">
                 </div>
                 <div class="combat-item-name thirtyfive col">
-                    <a class="item-edit">{{item.name}}</a>
+                    <a data-action="itemEdit">{{item.name}}</a>
                 </div>
                 <div class="combat-item-skill col five center small onlyMultiColumn">
                     {{localize "TYPES.Item.trait"}}
                 </div>
                 <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
-                    <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
+                    <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
                 </div>
                 <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#if item.parry}} <a data-mode="parry" class="ch-rollCombat d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
+                    {{#if item.parry}} <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
                 </div>
                 <div class="combat-item-damage col ten center">
-                    <a data-mode="damage" class="ch-rollCombat d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
+                    <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
                 </div>
                 <div class="combat-item-range col ten center small notOnMinimum">
                     {{localize (concat "Range-" item.system.reach.value)}}
@@ -94,7 +94,7 @@
                         <div class="col five image" style="background-image: url('{{item.img}}')">
                         </div>
                         <div class="col eighty">
-                            <a class="item-edit">{{item.name}}</a>
+                            <a data-action="itemEdit">{{item.name}}</a>
                         </div>
                     </div>
 
@@ -102,14 +102,14 @@
                         {{localize "TYPES.Item.trait"}}
                     </div>
                     <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
-                        <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
+                        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
                     </div>
                     <div class="col eight center">
-                        <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
+                        <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
                     </div>
                     <div class="col ten">
                         {{#if (ne item.LZ 0)}}
-                        <a class="loadWeapon" data-tooltip="{{item.title}}">
+                        <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                             <div class="progress blue">
                                 <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                                 <span class="progress-bar"></span>
@@ -122,7 +122,7 @@
                         </a> {{/if}}
                     </div>
                     <div class="col zerofive very-small center onlyMultiColumn">
-                        <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                        <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
                     </div>
                 </div>
                 <div class="row-section lineheight expandDetails {{item.detailed}}">
@@ -158,7 +158,7 @@
                         {{/if}}
                     </div>
                     <div class="combat-item-name col fourty">
-                        <a class="item-edit">{{item.name}}</a>
+                        <a data-action="itemEdit">{{item.name}}</a>
                     </div>
                     <div class="combat-item-protection col four center">
                         {{item.system.protection.value}}
@@ -175,7 +175,7 @@
                     <div class="col zerofive image" style="background-image: url('{{item.img}}')">
                     </div>
                     <div class="col fourty">
-                        <a class="item-edit">{{item.name}}</a>
+                        <a data-action="itemEdit">{{item.name}}</a>
                     </div>
                     <div class="col four center">
                         {{item.system.at.value}}

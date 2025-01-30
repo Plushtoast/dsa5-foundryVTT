@@ -202,7 +202,7 @@
                         </div>
                     </div>
                     <div class="col withContext">
-                        <a class="item-edit">{{item.name}}</a>
+                        <a data-action="itemEdit">{{item.name}}</a>
                     </div>
                     {{#if (or (eq ../../document.system.merchant.merchantType "merchant") (eq
                     ../../document.system.merchant.merchantType "loot"))}}
@@ -214,9 +214,9 @@
                     {{/if}}
                     <div class="col eight center">
                         {{#if item.toggle}} {{#if item.toggleValue}}
-                        <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a>
+                        <a data-action="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a>
                         {{else}}
-                        <a class="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}}
+                        <a data-action="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}}
                         {{/if}}
                     </div>
                     <div class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
@@ -224,18 +224,18 @@
                         <input class="customPriceTag" type="number" value="{{item.flags.dsa5.customPriceTag}}" />
                     </div>
                     <div class="col eight center">
-                        <a class="quantity-click" data-tooltip="TT.strgx10"
+                        <a data-action="quantityClick" data-tooltip="TT.strgx10"
                             data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</a>
                     </div>
                     <div class="col eight center">
                         {{item.system.preparedWeight}}
                     </div>
                     <div class="col ten very-small center">
-                        {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i
+                        {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i
                                 class="fas fa-dice-six"></i></a>{{/if}}
                         <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                        <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                        {{#if item.children}}<a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i
+                        <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                        {{#if item.children}}<a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i
                                 class="fas fa-chevron-down"></i></a>{{/if}}
                         <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
                     </div>

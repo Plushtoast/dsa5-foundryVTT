@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <a class="item-edit" data-item-id="{{item._id}}">{{item.name}}</a>
+                                <a data-action="itemEdit" data-item-id="{{item._id}}">{{item.name}}</a>
                             </div>
                             <div class="col eight center">
                                 {{item.system.quantity.value}}
@@ -99,7 +99,7 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <a class="item-edit" data-item-id="{{item._id}}">{{#if (eq item.type 'money')}}{{localize item.name}}{{else}}{{item.name}}{{/if}}</a>
+                                <a data-action="itemEdit" data-item-id="{{item._id}}">{{#if (eq item.type 'money')}}{{localize item.name}}{{else}}{{item.name}}{{/if}}</a>
                             </div>
 
                             <div class="col eight center">

@@ -24,12 +24,12 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds"
-                            class="advance refund-points"><i data-tooltip="{{prepare.system.status.wounds.refund}}"
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i data-tooltip="{{prepare.system.status.wounds.refund}}"
                                 class="fas fa-minus"></i></a>
-                        <a data-attr="wounds" class="advance advance-points"><i
+                        <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
                                 data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
                         <span class="buttons">
-                            <a data-char="regenerate" class="ch-regenerate item" data-mod="regenerate"
+                            <a data-char="regenerate" data-action="chRegenerate" class="item" data-mod="regenerate"
                                 data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
                         </span>
                     </div>
@@ -69,10 +69,10 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
-                            class="advance refund-points"><i
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i
                                 data-tooltip="{{prepare.system.status.astralenergy.refund}}"
                                 class="fas fa-minus"></i></a>
-                        <a data-attr="astralenergy" class="advance advance-points"><i
+                        <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
                                 data-tooltip="{{prepare.system.status.astralenergy.cost}}"
                                 class="fas fa-plus"></i></a>{{/if}}
                     </div>
@@ -110,8 +110,8 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight" data-tooltip="permanentCost">
                         {{localize "CHARAbbrev.pAsP"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
-                            class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
-                        <a data-attr="astralenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost"
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPC"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                        <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_rebuyPC"><i data-tooltip="rebuyCost"
                                 class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">
@@ -132,9 +132,9 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy"
-                            class="advance refund-points"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
                                 class="fas fa-minus"></i></a>
-                        <a data-attr="karmaenergy" class="advance advance-points"><i
+                        <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
                                 data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
                                 class="fas fa-plus"></i></a>{{/if}}
                     </div>
@@ -172,8 +172,8 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight" data-tooltip="permanentCost">
                         {{localize "CHARAbbrev.pKaP"}} {{#if prepare.canAdvance}}<a data-attr="karmaenergy"
-                            class="advance refund-pc"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
-                        <a data-attr="karmaenergy" class="advance rebuy-pc"><i data-tooltip="rebuyCost"
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPC"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
+                        <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_rebuyPC"><i data-tooltip="rebuyCost"
                                 class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">

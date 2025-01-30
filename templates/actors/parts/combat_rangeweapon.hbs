@@ -8,7 +8,7 @@
             {{/if}}
         </div>
         <div class="combat-item-name three col">
-            <a class="item-edit">{{item.name}}</a>
+            <a data-action="itemEdit">{{item.name}}</a>
         </div>
 
         <div class="combat-item-skill col five center small onlyMultiColumn">
@@ -16,10 +16,10 @@
         </div>
 
         <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
-            <a data-mode="attack" class="ch-rollCombat d20 die-attack">{{item.attack}}</a>
+            <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
         </div>
         <div class="combat-item-damage col ten center">
-            <a data-mode="damage" class="ch-rollCombat d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
+            <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
         </div>
 
         <div class="combat-item-range col five center max20">
@@ -43,7 +43,7 @@
                 </select>
                 {{/if}}
                 {{#if (ne item.LZ 0)}}
-                <a class="loadWeapon" data-tooltip="{{item.title}}">
+                <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                             <span class="progress-bar"></span>
@@ -58,7 +58,7 @@
             {{else}}
             <div class="no-ammo">
                 - {{#if (ne item.LZ 0)}}
-                <a class="loadWeapon" data-tooltip="{{item.title}}">
+                <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
                             <span class="progress-bar"></span>
@@ -73,8 +73,8 @@
             {{/if}}
         </div>
         <div class="col zerofive very-small center onlyMultiColumn">
-            <a class="item-dropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
-            <a class="item-swapMag" data-tooltip="SHEET.swapMag"><i class="fas fa-retweet"></i></a> {{/if}}
+            <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
+            <a data-action="item-swapMag" data-tooltip="SHEET.swapMag"><i class="fas fa-retweet"></i></a> {{/if}}
         </div>
     </div>
     <div class="row-section lineheight expandDetails {{item.detailed}}">

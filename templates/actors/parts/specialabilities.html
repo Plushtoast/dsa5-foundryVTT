@@ -3,7 +3,7 @@
     <div class="row-section wrap cards">
         {{#each prepare.advantages as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
+            <a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
         </div>
         {{/each}}
     </div>
@@ -14,7 +14,7 @@
     <div class="row-section wrap cards">
         {{#each prepare.disadvantages as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
+            <a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
         </div>
         {{/each}}
     </div>
@@ -28,7 +28,7 @@
     <div class="row-section wrap cards">
         {{#each prepare.imprint as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            <a class="item-edit">{{item.name}}</a>
+            <a data-action="itemEdit">{{item.name}}</a>
         </div>
         {{/each}}
     </div>
@@ -45,7 +45,7 @@
         {{#each prepare.traits as |trait i|}}
         {{#each trait as |item i|}}
         <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a class="item-edit">{{item.name}}{{roman item.system.step.value item.system.at.value}}</a>
+            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.at.value}}</a>
         </div>
         {{/each}}
         {{/each}}

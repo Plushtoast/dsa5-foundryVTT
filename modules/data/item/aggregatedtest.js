@@ -41,8 +41,8 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     data.allSkills = await DSA5_Utility.allSkillsList();
     data.embeddedItem = embeddedItem;
     data.renderedItem = renderedItem;
-    data.enrichedsuccess = await TextEditor.enrichHTML(data.document.system.success, { secrets: data.document.isOwner, async: true });
-    data.enrichedpartsuccess = await TextEditor.enrichHTML(data.document.system.partsuccess, { secrets: data.document.isOwner, async: true });
+    data.enrichedsuccess = await TextEditor.enrichHTML(data.document.system.success, { secrets: data.document.isOwner });
+    data.enrichedpartsuccess = await TextEditor.enrichHTML(data.document.system.partsuccess, { secrets: data.document.isOwner });
   }
 
   static async _postItem(item) {
@@ -50,13 +50,13 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     let result = 'Ongoing';
     if (item.system.cummulatedQS.value >= 10) {
       result = 'Success';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner, async: true })}${await TextEditor.enrichHTML(item.system.success, {
+      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}${await TextEditor.enrichHTML(item.system.success, {
         secrets: item.isOwner,
         async: true,
       })}`;
     } else if (item.system.cummulatedQS.value >= 6) {
       result = 'PartSuccess';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner, async: true })}`;
+      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}`;
     } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
       result = 'Failure';
     }

@@ -17,12 +17,12 @@
     <div class="actor-aggregated-test-item-wrapper col item" data-item-id="{{item._id}}">
       <div class="actor-aggregated-test-item row-section skills lineheight">
         <div class="actor-aggregated-test-name col third centerCell">
-          <a class="item-edit">{{item.name}}</a>
+          <a data-action="itemEdit">{{item.name}}</a>
         </div>
         <div class="actor-aggregated-test col third center row-section wrap centerCell">
-          {{#if item.system.talent.value}}<a class="talent-1-name col eighty roll-aggregated" data-which="">{{item.system.talent.value}}</a><a class="talent-1-roll col ten roll-aggregated" data-which=""><div class="d20 die-attack"></div></a>{{/if}}
-          {{#if item.system.talent.value2}}<a class="talent-2-name col eighty roll-aggregated" data-which="2">{{item.system.talent.value2}}</a><a class="talent-2-roll col ten roll-aggregated" data-which="2"><div class="d20 die-attack"></div></a>{{/if}}
-          {{#if item.system.talent.value3}}<a class="talent-3-name col eighty roll-aggregated" data-which="3">{{item.system.talent.value3}}</a><a class="talent-3-roll col ten roll-aggregated" data-which="3"><div class="d20 die-attack"></div></a>{{/if}}
+          {{#if item.system.talent.value}}<a class="talent-1-name col eighty" data-action="rollAggregatedProbe" data-which="">{{item.system.talent.value}}</a><a class="talent-1-roll col ten" data-action="rollAggregatedProbe" data-which=""><div class="d20 die-attack"></div></a>{{/if}}
+          {{#if item.system.talent.value2}}<a class="talent-2-name col eighty" data-action="rollAggregatedProbe" data-which="2">{{item.system.talent.value2}}</a><a class="talent-2-roll col ten" data-action="rollAggregatedProbe" data-which="2"><div class="d20 die-attack"></div></a>{{/if}}
+          {{#if item.system.talent.value3}}<a class="talent-3-name col eighty" data-action="rollAggregatedProbe" data-which="3">{{item.system.talent.value3}}</a><a class="talent-3-roll col ten" data-action="rollAggregatedProbe" data-which="3"><div class="d20 die-attack"></div></a>{{/if}}
         </div>
         <div class="actor-aggregated-test-intervall col fifteen center centerCell">
           <div class="centerMargin">{{item.system.interval.value}}</div>
@@ -35,7 +35,7 @@
         </div>
         <div class="actor-aggregated-test-action col ten very-small center centerCell">
           <div class="centerMargin"><a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-            <a class="item-edit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+            <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
             <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a></div>
         </div>
       </div>

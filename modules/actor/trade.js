@@ -55,7 +55,7 @@ export class Trade extends DefaultAppv2 {
       gear.removeClass('filterHide');
       gear
         .filter(function () {
-          return $(this).find('a.item-edit').text().toLowerCase().trim().indexOf(val) == -1;
+          return $(this).find('a[data-action="itemEdit"]').text().toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }
@@ -118,7 +118,7 @@ export class Trade extends DefaultAppv2 {
     const html = $(this.element);
     html.find('.trade').on('click', (ev) => this._offerItem(ev));
     const filterGear = (ev) => this._filterGear($(ev.currentTarget));
-    html.find('.item-edit').on('click', (ev) => this._editItem(ev, this.tradeData.sourceId));
+    html.find('[data-action="itemEdit"]').on('click', (ev) => this._editItem(ev, this.tradeData.sourceId));
     html.find('.item-external-edit').on('click', (ev) => this._editItem(ev, this.tradeData.targetId));
     html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
     let gearSearch = html.find('.gearSearch');

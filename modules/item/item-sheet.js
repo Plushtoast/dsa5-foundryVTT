@@ -268,8 +268,8 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     data.enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
     data.armorAndWeaponDamage = game.settings.get('dsa5', 'armorAndWeaponDamage');
     data.isGM = game.user.isGM;
-    data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'description.value'), { secrets: this.item.isOwner, async: true });
-    data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner, async: true });
+    data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'description.value'), { secrets: this.item.isOwner });
+    data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner });
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
 
     await this.item.system.getSheetData?.(data);
@@ -515,8 +515,8 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     const data = {
       modifier: this.item.system.baseModifier,
       maxRolls: this.item.system.allowedTestCount.value,
-      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner, async: true }),
-      enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner, async: true }),
+      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner }),
+      enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner }),
       rollOptions,
     };
 
