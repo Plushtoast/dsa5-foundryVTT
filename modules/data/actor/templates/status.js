@@ -2,7 +2,7 @@ import DSA5 from '../../../system/config-dsa5.js';
 import { DSADataModel } from '../../abstract.js';
 import DSANumberField from '../../fields/dsa_number_field.js';
 
-const { SchemaField, NumberField, StringField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField, BooleanField } = foundry.data.fields;
 
 export default class StatusTemplate extends DSADataModel {
   static defineSchema() {
@@ -87,6 +87,11 @@ export default class StatusTemplate extends DSADataModel {
           AsPMod: new DSANumberField({ initial: 0 }),
           KaPMod: new DSANumberField({ initial: 0 }),
         }),
+      }),
+      repeatingEffects: new SchemaField({
+        wounds: new BooleanField(),
+        astralenergy: new BooleanField(),
+        karmaenergy: new BooleanField(),
       }),
     };
   }
