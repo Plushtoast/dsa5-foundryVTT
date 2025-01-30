@@ -1,11 +1,12 @@
 import APValueTemplate from './templates/apvalue.js';
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import DSA5 from '../../system/config-dsa5.js';
+import RangeweaponData from './rangeweapon.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
-export default class TraitnData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
+export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       traitType: new SchemaField({
@@ -109,5 +110,34 @@ export default class TraitnData extends ItemDataModel.mixin(DescriptionTemplate,
     if (data.effect.value != '') res.push({ key: 'effect', val: data.effect.value });
 
     return res;
+  }
+
+  prepareEmbeddedItemSheet() {
+    let item = super.prepareEmbeddedItemSheet();
+    switch (item.system.traitType.value) {
+      case 'rangeAttack':
+        item = this.constructor._prepareRangeTrait(item, this.actor);
+        break;
+      case 'meleeAttack':
+        item = this.constructor._prepareMeleetrait(item, this.actor);
+        break;
+    }
+    this._setOnUseEffect(item);
+    return item;
+  }
+
+  static _prepareRangeTrait(item, actorData) {
+    item.attack = Number(item.system.at.value);
+    item.LZ = Number(item.system.reloadTime.value);
+    if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
+
+    return this._parseDmg(item, actorData);
+  }
+
+  static _prepareMeleetrait(item, actorData) {
+    item.attack = Number(item.system.at.value);
+    if (item.system.pa != 0) item.parry = item.system.pa;
+
+    return this._parseDmg(item, actorData);
   }
 }

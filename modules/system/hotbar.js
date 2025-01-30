@@ -4,6 +4,7 @@ import { tinyNotification } from '../system/view_helper.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from './riding.js';
+import CombatskillData from '../data/item/combatskill.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -283,7 +284,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (actor) {
       if (!['epic', 'loot'].includes(getProperty(actor, 'system.merchant.merchantType'))) {
         activeFilters = (this.activeFilters || []).filter((x) => x != 'gm');
-        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
         effects = await this.tokenHotbar._effectEntries(actor);
         const brawl = this.tokenHotbar._brawlEntry(combatskills);
         const isRiding = Riding.isRiding(actor);

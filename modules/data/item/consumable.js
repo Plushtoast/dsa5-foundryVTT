@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../system/config-dsa5.js';
 import DSAStringField from '../fields/dsa_string_field.js';
@@ -38,5 +38,20 @@ export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, Obf
       { key: 'effect', val: DSA5_Utility.replaceDies(data.QLList.split('\n')[data.QL - 1]) },
       { key: 'charges', val: data.charges },
     ];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    this.constructor._prepareConsumable(item);
+    return item;
+  }
+
+  static _prepareConsumable(item) {
+    if (item.system.maxCharges) {
+      item.consumable = true;
+      item.structureMax = item.system.maxCharges;
+      item.structureCurrent = item.system.charges;
+    }
+    return item;
   }
 }

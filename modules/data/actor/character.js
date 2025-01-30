@@ -1,4 +1,4 @@
-import { DSADataModel } from '../abstract.js';
+import { ActorDataModel } from '../baseactor.js';
 import CharacteristicsTemplate from './templates/characteristics.js';
 import DetailsTemplate from './templates/details.js';
 import MagicTemplate from './templates/magic.js';
@@ -7,7 +7,7 @@ import StatusTemplate from './templates/status.js';
 
 const { SchemaField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class CharacterData extends DSADataModel.mixin(CharacteristicsTemplate, MerchantTemplate, DetailsTemplate, StatusTemplate, MagicTemplate) {
+export default class CharacterData extends ActorDataModel.mixin(CharacteristicsTemplate, MerchantTemplate, DetailsTemplate, StatusTemplate, MagicTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       config: new SchemaField({

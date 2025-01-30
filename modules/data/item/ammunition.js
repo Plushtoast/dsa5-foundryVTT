@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../system/config-dsa5.js';
 
@@ -28,5 +28,19 @@ export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTempl
 
   static chatData(data, name) {
     return [{ key: 'ammunitiongroup', val: data.ammunitiongroup.value, localizeVal: true }];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    this.constructor._prepareItemStructure(item);
+    AmmunitionData.prepareMag(item);
+    return item;
+  }
+
+  static prepareMag(item) {
+    if (item.system.ammunitiongroup.value == 'mag') {
+      item.structureMax = item.system.mag.max;
+      item.structureCurrent = item.system.mag.value;
+    }
   }
 }

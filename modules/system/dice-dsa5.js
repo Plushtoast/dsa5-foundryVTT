@@ -20,6 +20,7 @@ import CreatureType from './creature-type.js';
 import { applyDamage } from '../hooks/chat_context.js';
 import DSATriggers from './triggers.js';
 import RuleChaos from './rule_chaos.js';
+import CombatskillData from '../data/item/combatskill.js';
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 
 export default class DiceDSA5 {
@@ -447,13 +448,13 @@ export default class DiceDSA5 {
     let weapon;
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
     if (testData.source.type == 'meleeweapon') {
-      const skill = Actordsa5._calculateCombatSkillValues(
+      const skill = CombatskillData._calculateCombatSkillValues(
         actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
         actor.system,
       );
       weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], actor);
     } else if (testData.source.type == 'rangeweapon') {
-      const skill = Actordsa5._calculateCombatSkillValues(
+      const skill = CombatskillData._calculateCombatSkillValues(
         actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
         actor.system,
       );
@@ -724,7 +725,7 @@ export default class DiceDSA5 {
     const combatskill = source.system.combatskill.value;
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
-    let skill = Actordsa5._calculateCombatSkillValues(
+    let skill = CombatskillData._calculateCombatSkillValues(
       actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill),
       actor.system,
       {
@@ -853,7 +854,7 @@ export default class DiceDSA5 {
   static async rollCombatskill(testData) {
     let roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
-    let source = Actordsa5._calculateCombatSkillValues(testData.source, actor.system);
+    let source = CombatskillData._calculateCombatSkillValues(testData.source, actor.system);
     let result = await this._rollSingleD20(
       roll,
       source.system[testData.mode].value,

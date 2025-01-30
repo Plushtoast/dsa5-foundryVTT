@@ -9,6 +9,8 @@ import { Trade } from '../actor/trade.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
+import { ItemDataModel } from '../data/baseitem.js';
+import CombatskillData from '../data/item/combatskill.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 
 export default class TokenHotbar2 extends DefaultAppv2 {
@@ -524,7 +526,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
       effects = await this._effectEntries(actor);
       if (game.combat) {
-        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
         const brawl = this._brawlEntry(combatskills);
 
         if (brawl) items.attacks.push(brawl);
@@ -788,7 +790,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _traitEntry(x, actorData) {
-    const preparedItem = Actordsa5._parseDmg(x.toObject(), actorData);
+    const preparedItem = ItemDataModel._parseDmg(x.toObject(), actorData);
     return {
       name: x.name,
       id: x.id,

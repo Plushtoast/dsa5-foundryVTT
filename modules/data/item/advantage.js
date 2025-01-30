@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import APValueTemplate from './templates/apvalue.js';
 import MaxTemplate from './templates/max.js';
 import RequirementsTemplate from './templates/requirements.js';
@@ -20,5 +20,11 @@ export default class AdvantageData extends ItemDataModel.mixin(DescriptionTempla
 
   static chatData(data, name) {
     return [{ key: 'effect', val: data.effect.value }];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    this._setOnUseEffect(item);
+    return item;
   }
 }

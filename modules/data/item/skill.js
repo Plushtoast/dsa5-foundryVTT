@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import SkillTemplate from './templates/skill.js';
 import DSA5 from '../../system/config-dsa5.js';
 
@@ -42,5 +42,11 @@ export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, 
   async getSheetData(data) {
     data.localizerPrefix = 'SKILLdescr.';
     data.hasLocalization = game.i18n.has(`SKILLdescr.${data.document.name}`);
+  }
+
+  prepareEmbeddedItemSheet() {
+      const item = super.prepareEmbeddedItemSheet();
+      this.constructor._perpareItemAdvancementCost(item, this.actor);
+      return item;
   }
 }

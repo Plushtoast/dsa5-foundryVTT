@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
@@ -57,5 +57,26 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
     if (data.effect.value != '') res.push({ key: 'effect', val: DSA5_Utility.replaceConditions(data.effect.value) });
 
     return res;
+  }
+
+  static buildReloadProgress(item) {
+    const progress = item.system.reloadTime.progress / item.LZ;
+    item.title = game.i18n.format('WEAPON.loading', {
+      status: `${item.system.reloadTime.progress}/${item.LZ}`,
+    });
+    item.progress = `${item.system.reloadTime.progress}/${item.LZ}`;
+    if (progress >= 1) {
+      item.title = game.i18n.localize('WEAPON.loaded');
+    }
+    this.progressTransformation(item, progress);
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    item.toggleValue = item.system.worn.value || false;
+    item.toggle = true;
+    this.constructor._prepareItemStructure(item)
+    this._setOnUseEffect(item);
+    return item;
   }
 }

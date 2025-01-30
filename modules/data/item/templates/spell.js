@@ -36,9 +36,6 @@ export default class SpellTemplate extends DSADataModel {
       distribution: new SchemaField({
         value: new StringField({ initial: '', label: 'distribution' }),
       }),
-      StF: new SchemaField({
-        value: new StringField({ initial: 'A', label: 'StF', required: true, choices: DSA5.StFs }),
-      }),
       resistanceModifier: new SchemaField({
         value: new StringField({ initial: '-', label: 'resistanceModifier', required: true, choices: DSA5.magicResistanceModifiers }),
       }),
@@ -70,5 +67,18 @@ export default class SpellTemplate extends DSADataModel {
         source[field] = source[field] === 'true';
       }
     }
+  }
+
+  static buildSpellChargeProgress(item) {
+    item.LZ = Number(item.system.castingTime.modified) || 0;
+    if (item.LZ > 1) {
+      const progress = item.system.castingTime.progress / item.LZ;
+      item.title = game.i18n.format('SPELL.loading', {
+        status: `${item.system.castingTime.progress}/${item.LZ}`,
+      });
+      item.progress = `${item.system.castingTime.progress}/${item.LZ}`;
+      this.progressTransformation(item, progress);
+    }
+    return item;
   }
 }

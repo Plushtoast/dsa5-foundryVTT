@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
@@ -108,7 +109,7 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
   }
 
   static async getTemplate(actor) {
-    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
     let items = [
       {
@@ -235,7 +236,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
   static async getTemplate(startMessage) {
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage);
     const attackActor = ReactToAttackDialog.getAttackActor(startMessage);
-    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
     let items = [
       {

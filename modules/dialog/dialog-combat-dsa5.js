@@ -9,6 +9,7 @@ import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DPS from '../system/derepositioningsystem.js';
+import CombatskillData from '../data/item/combatskill.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -342,7 +343,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (actor) {
         const combatskill = source.system.combatskill.value;
         let weapon;
-        let skill = Actordsa5._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
+        let skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
           step: this.syncSituationalModifiers(testData, 'step'),
           [this.dialogData.mode]: this.syncSituationalModifiers(testData, this.dialogData.mode),
         });

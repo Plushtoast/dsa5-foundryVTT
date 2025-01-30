@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
@@ -68,9 +68,9 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     data.isShield = RuleChaos.isShield(data.document);
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${data.document.system.combatskill.value}`)];
-    mergeObject(data, this.getGripInfo());
-    if (this.parent.actor) {
-      const combatSkill = this.parent.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
+    foundry.utils.mergeObject(data, this.getGripInfo());
+    if (this.actor) {
+      const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
       data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
       data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${data.document.system.combatskill.value}`));
     }
@@ -78,7 +78,6 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   getGripInfo() {
     const twoHanded = RuleChaos.regex2h.test(this.parent.name);
-    console.log(this.parent.name);
     let wrongGripHint = '';
     if (!twoHanded) {
       wrongGripHint = 'wrongGrip.yieldTwo';
@@ -115,5 +114,14 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     if (data.effect.value != '') res.push({ key: 'effect', key: DSA5_Utility.replaceConditions('effect', data.effect.value) });
 
     return res;
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    item.toggleValue = item.system.worn.value || false;
+    item.toggle = true;
+    this.constructor._prepareItemStructure(item);
+    this._setOnUseEffect(item);
+    return item;
   }
 }

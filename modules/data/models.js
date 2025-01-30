@@ -39,7 +39,8 @@ import CharacterData from './actor/character.js';
 import CreatureData from './actor/creature.js';
 import NPCData from './actor/npc.js';
 import DSAStringField from './fields/dsa_string_field.js';
-import { ItemDataModel } from './abstract.js';
+import { ItemDataModel } from './baseitem.js';
+import { ActorDataModel } from './baseactor.js';
 
 export const itemModels = {
     advantage: AdvantageData,
@@ -82,10 +83,11 @@ export const itemModels = {
     ItemDataModel
 }
 
-export const actorModels = {
+export const ActorDataModels = {
     character: CharacterData,
     creature: CreatureData,
     npc: NPCData,
+    ActorDataModel
 }
 
 export const fields = {

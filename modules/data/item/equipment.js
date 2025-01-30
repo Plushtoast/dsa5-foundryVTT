@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
@@ -32,5 +32,14 @@ export default class EquipmentData extends ItemDataModel.mixin(DescriptionTempla
 
   static chatData(data, name) {
     return [{ key: 'equipmentType', val: `Equipment.${data.equipmentType.value}`, localizeVal: true }];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    item.toggle = item.system.worn.wearable || false;
+    if (item.toggle) item.toggleValue = item.system.worn.value || false;
+    this.constructor._prepareItemStructure(item);
+    this._setOnUseEffect(item);
+    return item
   }
 }

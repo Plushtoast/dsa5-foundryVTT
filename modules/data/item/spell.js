@@ -1,13 +1,14 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import SpellTemplate from './templates/spell.js';
 import BasicSpellTemplate from './templates/basicspell.js';
 import AoeTemplate from './templates/aoe.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
+import SkillTemplate from './templates/skill.js';
 
 const { StringField } = foundry.data.fields;
 
-export default class SpellData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SpellTemplate, BasicSpellTemplate) {
+export default class SpellData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SkillTemplate, SpellTemplate, BasicSpellTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       feature: new StringField({ initial: '', label: 'feature' }),
@@ -25,5 +26,12 @@ export default class SpellData extends ItemDataModel.mixin(AoeTemplate, Descript
       { key: 'targetCategory', val: data.targetCategory.value },
       { key: 'effect', val: DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)) },
     ];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    this.constructor._perpareItemAdvancementCost(item, this.actor);
+    this.constructor.buildSpellChargeProgress(item);
+    return item;
   }
 }

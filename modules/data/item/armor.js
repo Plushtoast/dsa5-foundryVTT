@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import EncumbranceTemplate from './templates/encumbrance.js';
 import StructureTemplate from './templates/structure.js';
@@ -57,5 +57,14 @@ export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, 
     if (data.effect.value != '') properties.push({ key: 'effect', val: data.effect.value });
 
     return properties;
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    item.toggleValue = item.system.worn.value || false;
+    item.toggle = true;
+    this.constructor._prepareItemStructure(item);
+    this._setOnUseEffect(item);
+    return item
   }
 }

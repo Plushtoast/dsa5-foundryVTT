@@ -1,6 +1,6 @@
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 
 const { StringField, NumberField } = foundry.data.fields;
 

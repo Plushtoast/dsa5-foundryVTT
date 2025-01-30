@@ -1,6 +1,6 @@
 import APValueTemplate from "./templates/apvalue.js";
 import DescriptionTemplate from "./templates/description.js";
-import { ItemDataModel } from "../abstract.js";
+import { ItemDataModel } from "../baseitem.js";
 
 const { NumberField, StringField } = foundry.data.fields;
 

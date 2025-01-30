@@ -93,7 +93,7 @@ export default class DSA5StatusEffects {
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
     if (!target.isOwner) return 'Not owned';
-    if (target.compendium) return 'Can not add in compendium';
+    if (target.inCompendium) return 'Can not add in compendium';
     if (absolute && value < 1) return this.removeCondition(target, effect, value, auto, absolute);
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
     if (!effect) return 'No Effect Found';

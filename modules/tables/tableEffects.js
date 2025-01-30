@@ -4,6 +4,8 @@ import CreatureType from '../system/creature-type.js';
 import EquipmentDamage from '../system/equipment-damage.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import OnUseEffect from '../system/onUseEffects.js';
+import CombatskillData from '../data/item/combatskill.js';
+import TraitData from '../data/item/trait.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
 
 export default class TableEffects {
@@ -189,12 +191,15 @@ export default class TableEffects {
     if (source) {
       const obj = DSA5_Utility.toObjectIfPossible(source);
       for (let actor of finalTargets) {
-        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => Actordsa5._calculateCombatSkillValues(x.toObject(), actor.system));
+        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
         let preparedItem;
+
+        ///todo the prepare methods are now data model
+
         if (args.damage) preparedItem = { damagedie: args.damage, damageAdd: '' };
         else if (source.type == 'rangeweapon') preparedItem = Actordsa5._prepareRangeWeapon(obj, [], combatskills, actor);
         else if (source.type == 'meleeweapon') preparedItem = Actordsa5._prepareMeleeWeapon(obj, combatskills, actor);
-        else preparedItem = source.system.traitType.value == 'meleeAttack' ? Actordsa5._prepareRangeTrait(obj, actor.system) : Actordsa5._prepareMeleetrait(obj, actor.system);
+        else preparedItem = source.system.traitType.value == 'meleeAttack' ? TraitData._prepareRangeTrait(obj, actor.system) : TraitData._prepareMeleetrait(obj, actor.system);
 
         const damage = (preparedItem.damagedie + preparedItem.damageAdd).replace(/wWD/g, 'd');
         const roll = await new Roll(`(${damage})*${args.multiplier || 1}${args.modifier || ''}`).evaluate();

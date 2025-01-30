@@ -1,5 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
-import { ItemDataModel } from '../abstract.js';
+import { ItemDataModel } from '../baseitem.js';
 import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
@@ -56,5 +56,19 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
 
   static chatData(data, name) {
     return [{ key: 'rule', val: data.rule.value }];
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    this._setOnUseEffect(item);
+    this._setAEPayments(item);
+    return item;
+  }
+
+  _setAEPayments(item) {
+    if (item.OnUseEffect) return;
+
+    const cost = Number(foundry.utils.getProperty(item, 'system.AsPCost'));
+    if (cost) item.AEpayable = true;
   }
 }
