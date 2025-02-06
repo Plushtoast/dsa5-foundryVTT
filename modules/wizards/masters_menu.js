@@ -73,7 +73,7 @@ export default class MastersMenu {
       }
       btns.push({
         name: 'GM Menu',
-        title: game.i18n.localize('gmMenu'),
+        title: game.i18n.localize('dsamenu'),
         icon: 'fas fa-dsa5',
         layer: 'dsamenu',
         tools: dasMenuOptions,

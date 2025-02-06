@@ -1731,10 +1731,13 @@ export default class Actordsa5 extends Actor {
   }
 
   async applyRegeneration(LeP, AsP, KaP) {
+    const LePRolled = await new Roll(`${LeP || 0}`).evaluate();
+    const KaPRolled = await new Roll(`${KaP || 0}`).evaluate();
+    const AsPRolled = await new Roll(`${AsP || 0}`).evaluate();
     const update = {
-      'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + (LeP || 0)),
-      'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + (KaP || 0)),
-      'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + (AsP || 0)),
+      'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + LePRolled.total),
+      'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + KaPRolled.total),
+      'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + AsPRolled.total),
     };
     await this.update(update);
   }
@@ -2968,9 +2971,12 @@ export default class Actordsa5 extends Actor {
   }
 
   async addTimedCondition(effect, value = 1, absolute = false, auto = true, options = {}) {
+    //fixing this to never auto
+    auto = false;
+
     if (effect == 'bleeding' || effect.id == 'bleeding') return await RuleChaos.bleedingMessage(this);
 
-    if (typeof effect === 'string' && options.duration) {
+    if (typeof effect === 'string' && !foundry.utils.isEmpty(options)) {
       effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
       effect.flags.dsa5.description = game.i18n.localize(effect.name);
       effect.name = game.i18n.localize(effect.name);

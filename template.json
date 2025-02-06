@@ -240,8 +240,7 @@
                 "characteristics",
                 "status",
                 "details",
-                "magic",
-                "config"
+                "magic"
             ],
             "config": {
                 "autoBar": true,
@@ -256,8 +255,7 @@
             "templates": [
                 "characteristics",
                 "status",
-                "magic",
-                "config"
+                "magic"
             ],
             "config": {
                 "autoBar": true,
@@ -359,7 +357,7 @@
                     "value": "",
                     "attributes": ""
                 },
-                "parent_id": 0
+                "parent_id": ""
             },
             "encumbrance": {
                 "encumbrance": {
@@ -414,7 +412,7 @@
                     "value": 0
                 },
                 "AsPCostDetail": {
-                    "value": "0"
+                    "value": ""
                 },
                 "maintainCost": {
                     "value": ""
@@ -505,6 +503,7 @@
             },
             "usages": "0/0/0/0/0/0",
             "effect": "",
+            "infos": "",
             "recipes": "",
             "planttype": {
                 "healing": false,
@@ -531,7 +530,7 @@
                 "description",
                 "equipment"
             ],
-            "subtype": 0
+            "subcategory": 0
         },
         "effectwrapper": {
             "templates": [
@@ -744,7 +743,7 @@
             "tools": ""
         },
         "rangeweapon": {
-            "templates:": [
+            "templates": [
                 "equipment",
                 "description"
             ],
@@ -802,7 +801,7 @@
                 "shieldSize": "average"
             },
             "damageThreshold": {
-                "value": 0
+                "value": 14
             },
             "guidevalue": {
                 "value": "-"
@@ -1090,6 +1089,10 @@
             "baseModifier": 0
         },
         "skill": {
+            "templates": [
+                "description",
+                "skill"
+            ],
             "group": {
                 "value": ""
             },

@@ -100,13 +100,18 @@ export default class BookWizard extends Application {
 
     const book = this[type].find((x) => x.id == id);
     const json = await (await fetch(book.path)).json();
-    const keys = ['actors', 'journal', 'scenes'];
-    for (const key of keys) {
-      if (!json[key]) continue;
+    const moduleId = json.moduleName;
+    const module = game.modules.get(moduleId);    
+    const documentTypes = ['Actor', 'JournalEntry', 'Scene'];
+    const scope = json.options?.scope?.split("-")[1]
 
-      const pack = game.packs.get(json[key]);
+    for (const mPack of module.packs) {
+      if (!documentTypes.includes(mPack.type)) continue;
+      if (mPack.flags?.dsalang != game.i18n.lang) continue;
+      if (scope && !mPack.id.includes(scope)) continue;
+
+      const pack = game.packs.get(mPack.id);
       const visibility = toggle ? 'OBSERVER' : 'NONE';
-
       const ownership = {
         ownership: {
           PLAYER: visibility,
