@@ -28,7 +28,7 @@
         "count": "Anzahl",
         "size": "Grundgröße",
         "combine": "Schwarm kombinieren",
-        "split": "Schwarum aufteilen",
+        "split": "Schwarm aufteilen",
         "swarmSplitMessage": "Wieviele Kreaturen sollen sich vom Schwarm trennen?"
     },
     "AdvantageRuleItems": {
@@ -210,6 +210,7 @@
     "attacktest": "Angriffsprobe",
     "antidot": "Gegenmittel",
     "randomValue": "Zufallswert",
+    "dsamenu": "DSA Menü",
     "arrow": "Pfeil",
     "armor": "Rüstung",
     "application": "Anwendungsgebiet",

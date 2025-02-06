@@ -75,7 +75,7 @@ export default class MastersMenu {
       }
       btns.gmMenu = {
         name: 'gmMenu',
-        title: 'gmMenu',
+        title: 'dsamenu',
         icon: 'fas fa-dsa5',
         layer: 'dsamenu',
         tools: dasMenuOptions.reduce((a, b) => {
