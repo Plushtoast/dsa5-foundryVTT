@@ -493,10 +493,10 @@ export default class Actordsa5 extends Actor {
 
   schipshtml() {
     const schips = [];
-    for (let i = 1; i <= Number(this.system.status.fatePoints.max); i++) {
+    for (let i = 1; i <= this.system.status.fatePoints.max; i++) {
       schips.push({
         value: i,
-        cssClass: i <= Number(this.system.status.fatePoints.value) ? 'fullSchip' : 'emptySchip',
+        cssClass: i <= this.system.status.fatePoints.value ? 'fullSchip' : 'emptySchip',
       });
     }
     return schips;
@@ -630,7 +630,7 @@ export default class Actordsa5 extends Actor {
 
     for (let i of preparedItems) {
       try {
-        let parent_id = getProperty(i, 'system.parent_id');
+        let parent_id = i.system.parent_id;
         if (i.type == 'ammunition') availableAmmunition.push(i);
 
         if (parent_id && parent_id != i._id) {
