@@ -87,7 +87,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg" alt="Werkstatt des Meisters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
         <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt" target="_blank" title="Aventurische Tavernen">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-aventurian-taverns/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-aventurian-taverns/icons/journal/coverde.webp" alt="Aventurische Tavernen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <h2>Inhalte</h2>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2485/dsa5-aventurisches-pandaemonium-fuer-foundry-vtt" title="Aventurisches Pandämonium I">
@@ -117,6 +117,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4497/dsa5-aventurisches-animatorium-fuer-foundry-vtt" target="_blank" title="Aventurisches Animatorium">
+        <img src="https://www.f-shop.de/media/image/80/98/07/foundry_cover_animatorium.jpg" alt="Aventurisches Animatorium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt" target="_blank" title="Aventurisches Herbarium">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp" alt="Aventurisches Herbarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
@@ -124,7 +127,7 @@ If you want to discuss TDE for foundry or need some assistance you can also join
         <img src="https://www.f-shop.de/media/image/22/db/36/ESD036_0_0999.jpg" alt="Aventurisches Herbarium II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt" target="_blank" title="Orks - Hauer & Schwarzer Pelz">
-        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+        <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp" alt="Orks - Hauer & Schwarzer Pelz" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/detail/index/sArticle/3724" target="_blank" title="Achaz - Schuppenkleid & Lange Zunge">
         <img src="https://www.f-shop.de/media/image/d9/f7/5c/ESD037_0_0999.jpg" alt="Achaz - Schuppenkleid & Lange Zunge" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -160,8 +163,11 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt" target="_blank" title="Rabenkrieg III - Der Sturz des Adlers">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp" alt="Rabenkrieg III - Der Sturz des Adlers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4233/dsa5-rabenkrieg-4-kampagne-fuer-foundry-vt" target="_blank" title="Die Krallen der Löwin">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4233/dsa5-rabenkrieg-4-kampagne-fuer-foundry-vtt" target="_blank" title="Die Krallen der Löwin">
         <img src="https://www.f-shop.de/media/image/45/7d/f8/ESD050_0_0999.jpg" alt="Die Krallen der Löwin" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4511/dsa5-rabenkrieg-5-kampagne-fuer-foundry-vtt" target="_blank" title="Der Preis des Greifen">
+        <img src="https://www.f-shop.de/media/image/1f/e3/67/foundry_cover_rabenkrieg5.jpg" alt="Der Preis des Greifen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt" target="_blank" title="Verhandlungskunst und Friedensschwur">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp" alt="Verhandlungskunst und Friedensschwur" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -214,6 +220,12 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4186/dsa5-die-flusslande-bundle-fuer-foundry-vtt" target="_blank" title="Die Flusslande">
         <img src="https://www.f-shop.de/media/image/95/6b/29/ESD049_0_0999.jpg" alt="Die Flusslande" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4518/dsa5-aera-des-goldenen-kaisers-fuer-foundry-vtt" target="_blank" title="Ära des Goldenen Kaisers">
+        <img src="https://www.f-shop.de/media/image/14/96/70/foundry_cover_-aradesgoldenenOjvGcfsb4DGCV.jpg" alt="Ära des Goldenen Kaisers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt" target="_blank" title="Ära des Goldenen Kaisers">
+        <img src="https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg" alt="Ära des Goldenen Kaisers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
 <br>
