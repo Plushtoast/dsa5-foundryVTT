@@ -483,6 +483,8 @@
     "Modifier": "Modifier",
     "mundane": "mundane",
     "maxlevel": "Max rating",
+    "canNotMultiply": "The effect will not be multiplied with the level",
+    "notMultiplyable": "Not multiplyable",
     "mount": "Mount",
     "Magic": "Magic",
     "MagicReligion": "Magic/Religion",
@@ -1102,7 +1104,8 @@
         "Echsenhaube": "Lizard hood"
     },
     "POISON": {
-        "ql": "Quality of the tavern"
+        "ql": "Quality of the tavern",
+        "addNow": "Add to inventory now?"
     },
     "TRAP": {
         "stealth": "Stealth",
@@ -1653,7 +1656,8 @@
         "requiresGM": "This function only works with a logged in game master.",
         "ActiveEffectDataChange": "{name}: \"data.\" is no longer allowed as key. Please replace it with \"system.\".",
         "horseMustBeImported": "Mount from compendium not allowed",
-        "horseMustBeImportedText": "Only mounts imported into the world are possible. Do you want to import the mount now?"
+        "horseMustBeImportedText": "Only mounts imported into the world are possible. Do you want to import the mount now?",
+        "poisonNeedsToBeInActor": "Please note that the poison must also be present in the character in order to be applied."
     },
     "CEREMONYMODIFIER": {
         "holysite": "Sanctum of the god (+2)",

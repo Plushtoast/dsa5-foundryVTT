@@ -680,13 +680,19 @@ class Enchantable extends ItemSheetdsa5 {
   };
 
   async _onDrop(event) {
-    await this.enchant(event);
-    if (this.isPoisonable) await this.poison(event);
+    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    await this._enchant([dragData]);
+    if (this.isPoisonable) await this._poison(dragData);
   }
 
   async enchant(event) {
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
     await this._enchant([dragData]);
+  }
+
+  async poison(event) {
+    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    await this._poison(dragData);
   }
 
   async _enchant(dragDataArray) {
@@ -721,8 +727,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
-  async poison(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+  async _poison(dragData) {
     const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
     if (typeClass == 'poison') {
       const poison = {
@@ -733,6 +738,23 @@ class Enchantable extends ItemSheetdsa5 {
         actorId: dragData.actorId,
       };
       let update = { flags: { dsa5: { poison } } };
+      if (this.item.actor) {
+        if(this.item.actor.uuid != item.actor?.uuid) {
+          const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+              title: game.i18n.format('WIZARD.addItem', { item: item.name }),
+            },
+            content: `<p>${game.i18n.localize('DSAError.poisonNeedsToBeInActor')}</p><p>${game.i18n.localize('POISON.addNow')}</p>`,
+            rejectClose: false,
+            modal: true,
+          });
+          if(proceed) {
+            await this.item.actor.createEmbeddedDocuments('Item', [item.toObject()]);
+          }
+        }
+      } else {
+        ui.notifications.info('DSAError.poisonNeedsToBeInActor', { localize: true });
+      }
       await this.item.update(update);
     }
   }

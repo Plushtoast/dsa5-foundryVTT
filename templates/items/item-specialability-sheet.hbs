@@ -24,6 +24,9 @@
 
     {{formGroup systemFields.effect.fields.value2 value=document.system.effect.value2 localize=true label=(localize 'effectVariant' num='B') tooltip='TT.effectVariant'}}
     {{formGroup systemFields.effect.fields.value3 value=document.system.effect.value3 localize=true label=(localize 'effectVariant' num='C') tooltip='TT.effectVariant'}}
+    {{#if (or document.system.effect.value2 document.system.effect.value3)}}
+      {{formGroup systemFields.effect.fields.value3 value=document.system.step.canNotMultiply localize=true tooltip='canNotMultiply'}}
+    {{/if}}
     {{formGroup systemFields.list.fields.value value=document.system.list.value localize=true}}
     {{formGroup systemFields.category.fields.sub value=document.system.category.sub localize=true}}
 

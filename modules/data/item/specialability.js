@@ -20,6 +20,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
       step: new SchemaField({
         value: new NumberField({ initial: 1, min: 0 }),
         circle: new NumberField({ initial: 1, label: 'circle', min: 0 }),
+        canNotMultiply: new DSABooleanField({ label: 'notMultiplyable' }),
       }),
       category: new SchemaField({
         value: new StringField({ initial: 'general', label: 'Category', required: true, choices: DSA5.specialAbilityCategories }),
@@ -42,6 +43,14 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
         value: new StringField({ initial: '', label: 'duration' }),
       }),
     });
+  }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if (typeof source.step.canNotMultiply === 'string') {
+      source.step.canNotMultiply = source.step.canNotMultiply === 'true'
+    }
   }
 
   getSheetData(data) {

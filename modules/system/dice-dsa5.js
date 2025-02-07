@@ -929,22 +929,20 @@ export default class DiceDSA5 {
     const effectString = source.system.effect ? source.system.effect.value : undefined;
     const result = [];
     if (effectString) {
-      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/;
+      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z \(\)]+$/;
 
       for (let k of effectString.split(';')) {
         if (regex.test(k.trim())) {
           const split = k.split('|').map((x) => x.trim());
           if (split[0] == 'condition') {
             const effect = CONFIG.statusEffects.find((x) => x.id == split[1]);
-            result.push(
-              `<a class="chat-condition chatButton" data-id="${effect.id}">
-                            <img src="${effect.img}"/>${game.i18n.localize(effect.name)}
-                            </a>`,
-            );
-          } else
-            result.push(
-              `<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0])}: ${split[1]}</a>`,
-            );
+            result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a>`);
+          } else{
+            let category = `TYPES.Item.${split[0]}`;
+            if(!game.i18n.has(category)) category = split[0]
+
+            result.push(`<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(category)}: ${split[1]}</a>`);
+          }
         }
       }
     }
@@ -1412,12 +1410,11 @@ export default class DiceDSA5 {
   }
 
   static async _itemRoll(ev) {
-    let input = $(ev.currentTarget),
-      messageId = input.parents('.message').attr('data-message-id'),
+    let messageId = $(ev.currentTarget).parents('.message').attr('data-message-id'),
       message = game.messages.get(messageId),
       speaker = message.speaker,
-      category = input.attr('data-type'),
-      name = input.attr('data-name');
+      category = ev.currentTarget.dataset.type,
+      name = ev.currentTarget.dataset.name;
 
     let actor = DSA5_Utility.getSpeaker(speaker);
 
@@ -1425,7 +1422,7 @@ export default class DiceDSA5 {
       const source = actor.items.find((x) => x.name == name && x.type == category);
       if (source) {
         const item = new Itemdsa5(source.toObject());
-        const removeCharge = input.attr('data-removecharge') ? input.attr('data-removecharge') == 'true' : false;
+        const removeCharge = ev.currentTarget.dataset.removecharge == 'true';
         if (removeCharge) {
           if (item.system.quantity.value < 1) {
             ui.notifications.error('DSAError.NotEnoughCharges', {
@@ -1443,10 +1440,11 @@ export default class DiceDSA5 {
             });
         });
       } else {
+        const translatedCategory = game.i18n.has('TYPES.Item.' + category) ? game.i18n.localize('TYPES.Item.' + category) : category;
         ui.notifications.error(
           game.i18n.format('DSAError.notFound', {
-            category: category,
-            name: name,
+            category: translatedCategory,
+            name,
           }),
         );
       }
