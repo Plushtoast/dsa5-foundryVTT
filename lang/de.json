@@ -262,6 +262,8 @@
     "badEnvironment": "Schlechte Umgebung",
     "BE": "Belastung",
     "behaviour": "Kampfverhalten",
+    "canNotMultiply": "Der Effekt wird nicht mit der Stufe multipliziert",
+    "notMultiplyable": "Nicht Multiplizierbar",
     "bolt": "Bolzen",
     "bullet": "Kugel",
     "blessing": "Segnung",

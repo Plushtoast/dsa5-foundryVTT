@@ -484,6 +484,8 @@
     "Modifier": "Modifier",
     "mundane": "mundane",
     "maxlevel": "Max rating",
+    "canNotMultiply": "The effect will not be multiplied with the level",
+    "notMultiplyable": "Not multiplyable",
     "mount": "Mount",
     "Magic": "Magic",
     "maintainCost": "Maintain",

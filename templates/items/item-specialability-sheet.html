@@ -97,6 +97,12 @@
                 <label class="label-text">{{localize "effectVariant" num="C"}}</label>
                 <input class="input-text" type="text" name="system.effect.value3" value="{{system.effect.value3}}" data-dtype="String" />
             </div>
+            {{#if (or system.effect.value2 system.effect.value3)}}
+            <div class="form-group" data-tooltip="canNotMultiply">
+                <label class="label-text">{{localize "notMultiplyable"}}</label>
+                <input class="input-text" type="checkbox" name="system.step.canNotMultiply" value="true" {{checked system.step.canNotMultiply}} />
+            </div>
+            {{/if}}
             <div class="form-group">
                 <label class="label-text">{{localize "TYPES.Item.combatskill"}}</label>
                 <input class="input-text" type="text" name="system.list.value" value="{{system.list.value}}" data-dtype="String" />

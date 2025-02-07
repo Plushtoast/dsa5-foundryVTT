@@ -366,13 +366,14 @@ export default class Itemdsa5 extends Item {
 
       if (validSpecAb(vals, com)) {
         const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
+        const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
         combatskills.push({
           name: com.name,
           atbonus: vals.at || [0],
           pabonus: vals.pa || [0],
           tpbonus: vals.tp || [0],
           dmmalus: vals.dm || [0],
-          steps: com.system.step.value,
+          steps,
           category: {
             id: com.system.category.sub,
             css: `ab_${com.system.category.sub}`,
