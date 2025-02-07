@@ -1396,12 +1396,11 @@ export default class DiceDSA5 {
   }
 
   static async _itemRoll(ev) {
-    let input = $(ev.currentTarget),
-      messageId = input.parents('.message').attr('data-message-id'),
+    let messageId = $(ev.currentTarget).parents('.message').attr('data-message-id'),
       message = game.messages.get(messageId),
       speaker = message.speaker,
-      category = input.attr('data-type'),
-      name = input.attr('data-name');
+      category = ev.currentTarget.dataset.type,
+      name = ev.currentTarget.dataset.name;
 
     let actor = DSA5_Utility.getSpeaker(speaker);
 
@@ -1409,7 +1408,7 @@ export default class DiceDSA5 {
       const source = actor.items.find((x) => x.name == name && x.type == category);
       if (source) {
         const item = new Itemdsa5(source.toObject());
-        const removeCharge = input.attr('data-removecharge') ? input.attr('data-removecharge') == 'true' : false;
+        const removeCharge = ev.currentTarget.dataset.removecharge == 'true';
         if (removeCharge) {
           if (item.system.quantity.value < 1) {
             ui.notifications.error('DSAError.NotEnoughCharges', {
@@ -1427,10 +1426,11 @@ export default class DiceDSA5 {
             });
         });
       } else {
+        const translatedCategory = game.i18n.has('TYPES.Item.' + category) ? game.i18n.localize('TYPES.Item.' + category) : category;
         ui.notifications.error(
           game.i18n.format('DSAError.notFound', {
-            category: category,
-            name: name,
+            category: translatedCategory,
+            name,
           }),
         );
       }
