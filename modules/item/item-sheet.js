@@ -487,13 +487,19 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
 class Enchantable extends ItemSheetdsa5 {
   async _onDrop(event) {
-    await this.enchant(event);
-    if (this.isPoisonable) await this.poison(event);
+    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    await this._enchant([dragData]);
+    if (this.isPoisonable) await this._poison(dragData);
   }
 
   async enchant(event) {
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
     await this._enchant([dragData]);
+  }
+
+  async poison(event) {
+    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    await this._poison(dragData);
   }
 
   async _enchant(dragDataArray) {
@@ -531,8 +537,7 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
-  async poison(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+  async _poison(dragData) {
     const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
     if (typeClass == 'poison') {
       const poison = {

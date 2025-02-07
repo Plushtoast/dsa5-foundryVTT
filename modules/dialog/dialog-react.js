@@ -212,7 +212,8 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
     const attackmessage = game.messages.get(speakerMessage);
 
     const speaker = attackmessage.flags.data.preData.extra.speaker;
-    const actor = DSA5_Utility.getSpeaker(speaker);
+    let actor = DSA5_Utility.getSpeaker(speaker);
+    if(!actor) actor = OpposedDsa5.rebuildEmptyActor(attackmessage);
 
     if (!actor) {
       ui.notifications.error('DSAError.noProperActor', { localize: true });

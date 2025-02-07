@@ -13,6 +13,8 @@ export default class OpposedDsa5 {
     if (!message) return;
 
     let actor = DSA5_Utility.getSpeaker(message.speaker);
+
+    if (!actor) actor = await OpposedDsa5.rebuildEmptyActor(message);
     if (!actor) return;
 
     let testResult = message.flags.data.postData;
@@ -37,6 +39,12 @@ export default class OpposedDsa5 {
       //console.log("show dmg")
       await this.showDamage(message);
       await this.showSpellWithoutTarget(message);
+    }
+  }
+
+  static async rebuildEmptyActor(message) {
+    if(message.flags?.data?.preData?.extra?.speaker?.token == 'emptyActor'){
+      return await DSA5_Utility.emptyActor(12, message.flags?.data?.preData?.source?.name);
     }
   }
 
