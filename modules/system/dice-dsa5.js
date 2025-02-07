@@ -918,22 +918,20 @@ export default class DiceDSA5 {
     const effectString = source.system.effect ? source.system.effect.value : undefined;
     const result = [];
     if (effectString) {
-      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ]+$/;
+      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z \(\)]+$/;
 
       for (let k of effectString.split(';')) {
         if (regex.test(k.trim())) {
           const split = k.split('|').map((x) => x.trim());
           if (split[0] == 'condition') {
             const effect = CONFIG.statusEffects.find((x) => x.id == split[1]);
-            result.push(
-              `<a class="chat-condition chatButton" data-id="${effect.id}">
-                            <img src="${effect.img}"/>${game.i18n.localize(effect.name)}
-                            </a>`,
-            );
-          } else
-            result.push(
-              `<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(split[0])}: ${split[1]}</a>`,
-            );
+            result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a>`);
+          } else{
+            let category = `TYPES.Item.${split[0]}`;
+            if(!game.i18n.has(category)) category = split[0]
+
+            result.push(`<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(category)}: ${split[1]}</a>`);
+          }
         }
       }
     }
