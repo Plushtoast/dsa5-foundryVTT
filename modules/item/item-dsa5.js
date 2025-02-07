@@ -52,6 +52,7 @@ export default class Itemdsa5 extends Item {
     abilitystaff: 'systems/dsa5/icons/categories/ability_staff.webp',
     abilityceremonial: 'systems/dsa5/icons/categories/ability_ceremonial.webp',
     abilityanimal: 'systems/dsa5/icons/categories/ability_animal.webp',
+    abilitysecret: 'systems/dsa5/icons/categories/secret.webp',
     trait: 'systems/dsa5/icons/categories/trait.webp',
     Tiere: 'systems/dsa5/icons/categories/Tiere.webp',
     aggregatedTest: 'systems/dsa5/icons/categories/aggregated_test.webp',
