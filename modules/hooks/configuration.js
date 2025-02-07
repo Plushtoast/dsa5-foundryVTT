@@ -103,7 +103,7 @@ export function setupConfiguration() {
     hint: 'migrationVersion',
     scope: 'world',
     config: false,
-    default: 30,
+    default: 31,
     type: Number,
   });
 
