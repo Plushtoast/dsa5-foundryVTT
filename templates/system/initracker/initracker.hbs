@@ -1,0 +1,138 @@
+<div style="--iniTrackerSize:{{itemWidth}}px">
+    <div class="row-section">
+        <div class="controls right">
+            {{#if user.isGM}}
+            <button type="button" class="inline-control combat-control icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
+            {{/if}}
+            {{#if (and user.isGM combat.round)}}            
+            <button type="button" class="inline-control combat-control icon fa-solid fa-step-backward"
+            data-action="previousRound" data-tooltip="COMBAT.RoundPrev"
+            aria-label="{{ localize "COMBAT.RoundPrev" }}"></button>
+            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
+            data-tooltip="COMBAT.TurnPrev" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
+            {{else if control}}
+            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
+            data-tooltip="COMBAT.TurnPrev" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
+            {{/if}}
+        </div>
+        <ul class="iniTrackerList">
+            {{#each turns}}
+            <li data-tooltip="{{name}}" data-combatant-id="{{id}}" data-action="activateCombatant" class="combatant iniItem {{newRound}} {{css}}" style="background-image:url('{{img}}');">
+                <div class="combatant-advanced">
+                    {{#if defenseCount}}
+                    <i class="fas def fa-shield-alt" data-defense-count="{{defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
+                    <i class="fas fa-shield-alt reversed"></i> {{/if}} 
+                    {{#if ongoing}}
+                    <div class="ongoing" data-tooltip="{{ongoings}}">{{ongoing}}</div>
+                    {{/if}}
+                    {{#if (and isOwner (gt actionCount 1))}}
+                    <div class="actions" data-tooltip="{{actionCounts}}">{{actionCount}}</div>
+                    {{/if}}
+                </div>
+                {{#if isOwner}}
+                <div class="item-structure" style="--a: {{maxLP}}; --b: {{currentLP}}">
+                    <div class="inner"></div>
+                </div>
+                {{/if}}
+                <div class="hoverbuttons">
+                    <div class="combatant-controls flexrow">
+                        {{#if ../user.isGM}}
+                        <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
+                        data-action="toggleHidden" data-tooltip="COMBAT.ToggleVis"
+                        aria-label="{{ localize "COMBAT.ToggleVis" }}"></button>
+                    </div>
+                    <div class="combatant-controls flexrow">
+                        <button type="button" class="inline-control combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
+                        data-action="toggleDefeated" data-tooltip="COMBAT.ToggleDead"
+                        aria-label="{{ localize "COMBAT.ToggleDead" }}"></button>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="token-initiative">
+                    {{#if (and initiative isOwner)}}
+                    <a class="aggroButton specImg" data-action="aggroButton" data-tooltip="attacktest"></a> {{else if isOwner}}
+                    <button type="button" class="combatant-control roll" data-action="rollInitiative"
+                    data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
+                    style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
+                    {{/if}}
+                </div>
+            </li>{{/each}}
+        </ul>
+        {{#if waitingTurns}}
+        <ul class="waitingTackerList iniTrackerList">
+            <li class="waitTitle" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
+            {{#each waitingTurns}}
+            <li data-tooltip="{{name}}" data-combatant-id="{{id}}" class="combatant iniItem" data-action="restoreInit" style="background-image:url('{{img}}');"></li>
+            {{/each}}
+        </ul>
+        {{/if}}
+        <div class="controls">
+            {{#if user.isGM}}
+            <button type="button" class="inline-control combat-control icon fa-solid fa-trash" data-action="endCombat"
+                data-tooltip="COMBAT.Delete" aria-label="{{ localize "COMBAT.Delete" }}"></button>
+            {{#if combat.round}}
+            <button type="button" class="inline-control combat-control icon fa-solid fa-step-forward" data-action="nextRound"
+            data-tooltip="COMBAT.RoundNext" aria-label="{{ localize "COMBAT.RoundNext" }}"></button>
+            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
+            data-tooltip="COMBAT.TurnNext" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
+            {{else if control}}
+            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
+            data-tooltip="COMBAT.TurnNext" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
+            {{/if}} 
+            {{/if}}
+        </div>
+        <section class="dragHandler" data-tooltip="TT.resizer">
+            <i class="fas fa-grip-vertical"></i>
+        </section>
+    </div>
+
+    {{#if unRolled}}
+    <div class="row-section">
+        <button class="col rollMine" data-action="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
+    </div>
+    {{/if}} 
+    {{#unless combat.round}} 
+    {{#if user.isGM}}
+    <div class="row-section">
+        <button class="col combat-control" data-action="startCombat">{{localize 'COMBAT.Begin'}}</button>
+    </div>
+    {{/if}}
+    {{else}}
+    {{#if (or control user.isGM)}}
+    <div class="row-section">
+        <button class="col two combat-control {{ifThen isLastRound 'lastRound'}}" data-action="nextTurn">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        <button class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+    </div>    
+    {{/if}}
+    {{/unless}}
+
+
+    <div class="row-section">
+        <ul class="iniDetailsList initTrackerList">
+            {{#each turns}}
+            <li class="{{newRound}}">
+                <div class="flexcol">
+                    <div class="iniNumber">
+                        {{#if initiative}} 
+                        <button type="button" data-combatant-id="{{id}}" class="rolledInit" data-action="rolledInit" data-tooltip="initiative">{{initiative}}</button>
+                        {{else}} 
+                        ?
+                        {{/if}} 
+                    </div>
+                    <div class="center" data-tooltip="{{localize 'COMBAT.Round' round=round}}">
+                        <span class="turnRound">{{round}}</span>
+                    </div>
+                    <div class="actionCount center">
+                        {{#if (and isOwner (gt actionCount 1))}}{{actionCounts}}{{else}}&nbsp;{{/if}}
+                    </div>
+                    <div class="token-effects">
+                        {{#each effects as |ef|}}
+                        <img class="token-effect" src="{{ef.img}}" data-tooltip="{{ef.name}}" />
+                        {{/each}}
+                    </div>
+                </div>                
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+</div>

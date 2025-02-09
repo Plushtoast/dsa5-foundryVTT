@@ -3,15 +3,6 @@ import { DSA5CombatTracker } from '../hooks/combat_tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    mergeObject(options, {
-      
-      position: game.settings.get('dsa5', 'iniTrackerPosition'),
-    });
-    return options;
-  }
-
   static DEFAULT_OPTIONS = {
     position: {
       width: 440,
@@ -23,31 +14,36 @@ export default class DSAIniTracker extends DefaultAppv2 {
       resizable: true,
       frame: false,
     },
+    actions: {
+      convertToBrawl: this._onConvertToBrawl,
+      aggroButton: function () {
+        DSA5CombatTracker.runActAttackDialog();
+      },
+      rollMine: this.rollMyChars,
+      waitInit: this.#waitInit,
+      restoreInit: { handler: this.#restoreInit, buttons: [0, 2] },
+      panToCombatant: this.#onCombatantControl,
+      pingCombatant: this.#onCombatantControl,
+      rollInitiative: this.#onCombatantControl,
+      toggleDefeated: this.#onCombatantControl,
+      toggleHidden: this.#onCombatantControl,
+      activateCombatant: this.#onCombatantMouseDown,
+    },
     classes: ['dsa5', 'initTracker'],
   };
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/system/initracker.html'
+      template: 'systems/dsa5/templates/system/initracker/initracker.hbs',
     },
   };
 
-  setPosition({ left, top, width, height, scale } = {}) {
-    const currentPosition = super.setPosition({
-      left,
-      top,
-      width,
-      height,
-      scale,
-    });
+  static _onConvertToBrawl() {
+    game.combat?.convertToBrawl();
+  }
 
-    if (!this.element.style.width || width) {
-      const tarW = width || this.element.offsetWidth;
-      const maxW = this.element.style.maxWidth || window.innerWidth;
-      currentPosition.width = width = Math.clamp(tarW, 0, maxW);
-      this.element.style.width = width + 'px';
-      if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
-    }
+  setPosition(position) {
+    const currentPosition = super.setPosition(position);
     game.settings.set('dsa5', 'iniTrackerPosition', {
       left: currentPosition.left,
       top: currentPosition.top,
@@ -57,7 +53,6 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   static connectHooks() {
     Hooks.on('renderDSA5CombatTracker', (app, html, data, what) => {
-      console.log('renderDSA5CombatTracker', app, html, data, what);
       if (!game.settings.get('dsa5', 'enableCombatFlow')) return;
 
       if (game.combat) {
@@ -78,13 +73,17 @@ export default class DSAIniTracker extends DefaultAppv2 {
     this.render(true, { focus: false });
   }
 
-  async _prepareContext(_options) {
+  _onClickAction(event, target) {
+    ui.combat._onClickAction(event, target);
+  }
+
+  async _prepareContext(options) {
     const data = this.combatData;
-    console.log(this.combatData)
+    mergeObject(options, { position: game.settings.get('dsa5', 'iniTrackerPosition') });
     const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
     const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
 
-    const combatStarted = data.round;
+    const combatStarted = data.combat.round;
     const turnsToUse = data.turns;
 
     const waitingTurns = [];
@@ -92,7 +91,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    let unRolled = data.turns.some((x) => x.owner && !x.hasRolled && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
+    let unRolled = data.turns.some((x) => x.isOwner && !x.initiative && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
     if (turnsToUse.length) {
       const filteredTurns = [];
 
@@ -110,13 +109,13 @@ export default class DSAIniTracker extends DefaultAppv2 {
         if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
           started = true;
           startIndex = index;
-        } else if (combatant.getFlag('dsa5', 'waitInit') == data.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
+        } else if (combatant.getFlag('dsa5', 'waitInit') == data.combat.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
           waitingTurns.push(turn);
         }
 
         if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
-          turn.round = data.round + loops;
-          if (turn.owner && combatant.token?.actor) {
+          turn.round = data.combat.round + loops;
+          if (turn.isOwner && combatant.token?.actor) {
             turn.maxLP = combatant.token.actor.system.status.wounds.max;
             turn.currentLP = combatant.token.actor.system.status.wounds.value;
           }
@@ -137,10 +136,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     data.isLastRound = data.turns[1]?.newRound;
 
-    this.position.width = itemWidth * actorCount + actorCount * 3 + 80;
-    this.position.height = itemWidth + 10;
+    options.position.width = itemWidth * actorCount + actorCount * 3 + 80;
+    options.position.height = itemWidth + 10;
 
-    mergeObject(data, {
+    Object.assign(data, {
       itemWidth,
       unRolled,
       waitingTurns,
@@ -203,88 +202,66 @@ export default class DSAIniTracker extends DefaultAppv2 {
       return false;
     });
 
-    html.find('.toggleTracker').on('click', () => {
-      const tabApp = ui.combat;
-      tabApp.renderPopout(tabApp);
-    });
-
-    html.find('.combat-control').on('click', (ev) => this._onCombatControl(ev));
-    html.find('.convertToBrawl').on('click', (ev) => {
-      game.combat?.convertToBrawl();
-    });
     const turns = html.find('.iniItem');
-    turns.on('hover', this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
-    turns.on('click', this._onCombatantMouseDown.bind(this));
-
-    html.find('.waitingTackerList .iniItem').on('mousedown', (ev) => this._onRightClick(ev));
-
-    html.find('.combatant-control').on('click', (ev) => this._onCombatantControl(ev));
-
-    html.find('.combatant .aggroButton').on('click', (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      DSA5CombatTracker.runActAttackDialog();
-    });
-    html.find('.rollMine').on('click', (ev) => this.rollMyChars());
+    turns.on('pointerover', this._onCombatantHoverIn.bind(this))
+    turns.on('pointerout', this._onCombatantHoverOut.bind(this));
+    turns.on('dblclick', this._onCombatantMouseDown.bind(this));
 
     if (!game.user.isGM) return;
 
     html.find('.rolledInit').on('click', (ev) => this.editCombatant(ev));
   }
 
-  rollMyChars() {
+  static rollMyChars() {
     if (game.user.isGM) {
-      this._getCombatApp().viewed.rollNPC({});
+      ui.combat.viewed.rollNPC({});
     } else {
-      this._getCombatApp().viewed.rollAll({});
+      ui.combat.viewed.rollAll({});
     }
   }
 
-  _onRightClick(ev) {
-    if (ev.button == 2) {
-      const combatant = game.combat.combatants.get(ev.currentTarget.dataset.combatantId);
-      if (combatant.isOwner) {
-        combatant.unsetFlag('dsa5', 'waitInit');
-      }
-    }
+  _attachFrameListeners() {
+    super._attachFrameListeners();
+    if ( game.user.isGM ) ContextMenu.create(this, this.element, ".combatant", ui.combat._getEntryContextOptions(), {
+      jQuery: false,
+      fixed: true
+    });
   }
 
-  editCombatant(ev) {
-    this._getCombatApp()._onConfigureCombatant($(ev.currentTarget));
+  static #onCombatantControl(event, target) {
+    ui.combat._onCombatantControl(event, target);
   }
 
-  _onCombatantControl(ev) {
-    this._getCombatApp()._onCombatantControl(ev);
-  }
-
-  _onCombatControl(ev) {
-    if (ev.currentTarget.dataset.control == 'waitInit') {
-      this.waitInit(ev);
-    } else {
-      this._getCombatApp()._onCombatControl(ev);
-    }
-  }
-
-  async waitInit(ev) {
+  static async #waitInit(ev, target) {
     const combatant = game.combat.combatants.get(game.combat.current.combatantId);
     await combatant.setFlag('dsa5', 'waitInit', game.combat.current.round);
-    ev.currentTarget.dataset.control = 'nextTurn';
-    this._getCombatApp()._onCombatControl(ev);
+    target.dataset.action = 'nextTurn';
+    this._onClickAction(ev, target);
+  }
+
+  static #restoreInit(ev, target) {
+    const combatant = game.combat.combatants.get(target.dataset.combatantId);
+    if (ev.button == 2 && combatant.isOwner) combatant.unsetFlag('dsa5', 'waitInit');
+    else ui.combat._onCombatantMouseDown(ev, target);
   }
 
   _onCombatantHoverOut(ev) {
-    this._getCombatApp()._onCombatantHoverOut(ev);
+    ui.combat._onCombatantHoverOut(ev);
   }
 
   _onCombatantHoverIn(ev) {
-    this._getCombatApp()._onCombatantHoverIn(ev);
+    ui.combat._onCombatantHoverIn(ev);
+  }
+
+  static #onCombatantMouseDown(ev, target) {
+    ui.combat._onCombatantMouseDown(ev, target);
+  }
+
+  editCombatant(ev) {
+    ui.combat.viewed.combatants.get(ev.currentTarget.dataset.combatantId)?.sheet.render(true)
   }
 
   _onCombatantMouseDown(ev) {
-    this._getCombatApp()._onCombatantMouseDown(ev);
-  }
-
-  _getCombatApp() {
-    return game.combats.apps[0];
+    ui.combat._onCombatantMouseDown(ev, ev.target.closest("[data-combatant-id]"));
   }
 }

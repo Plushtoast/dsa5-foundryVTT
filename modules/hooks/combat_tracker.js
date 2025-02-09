@@ -58,8 +58,6 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   async _prepareTrackerContext(context, options) {
     await super._prepareTrackerContext(context, options);
 
-    console.log(context)
-
     for (let turn of context.turns || []) {
       const combatant = context.combat.turns.find((x) => x.id == turn.id);
       const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
@@ -100,8 +98,6 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         }
       }
     }
-
-    console.log(context)
   }
 
   async _prepareCombatContext(context, options) {
@@ -213,7 +209,7 @@ export class DSA5Combat extends Combat {
     }
 
     $('.bumFight').remove();
-    const brawlAnim = await renderTemplate('systems/dsa5/templates/system/bumFight/animation.html', {});
+    const brawlAnim = await renderTemplate('systems/dsa5/templates/system/bumFight/animation.hbs', {});
     $('body').append(brawlAnim);
 
     const bum = $('.bumFight');

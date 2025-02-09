@@ -127,7 +127,7 @@ export default class DPS {
     }
 
     if (maxDist.unit == game.i18n.localize('gridUnits')) {
-      const rangeMultiplier = Number(getProperty(currentAmmo, 'system.rangeMultiplier')) || 1;
+      const rangeMultiplier = currentAmmo.system.rangeMultiplier || 1;
       const rangeBands = rangeweapon.system.reach.value.split('/').map((x) => Number(x) * rangeMultiplier);
       let index = 0;
       while (index < 2 && rangeBands[index] < maxDist.distanceSum) {
@@ -158,11 +158,13 @@ Hooks.on('renderSceneConfig', (app, html, msg) => {
   const sceneFlag = getProperty(app.object, 'flags.dsa5.enableDPS');
   const dpsSelector = `<div class="form-group dpsSelector">
         <label data-tooltip="DSASETTINGS.enableDPSHint">${game.i18n.localize('DSASETTINGS.enableDPS')}</label>
-        <select name="flags.dsa5.enableDPS">
+        <div class="form-fields">
+          <select name="flags.dsa5.enableDPS">
             <option value="" ${sceneFlag == '' ? 'selected' : ''}>${game.i18n.localize('globalConfig')}</option>
             <option value="2" ${sceneFlag == '2' ? 'selected' : ''}>${game.i18n.localize('yes')}</option>
             <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${game.i18n.localize('no')}</option>
-        </select>
+          </select>
+        </div>
     </div>`;
   $(html).find('.tab[data-tab="grid"]').append(dpsSelector);
 });

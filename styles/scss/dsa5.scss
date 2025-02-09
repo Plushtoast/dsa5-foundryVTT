@@ -2998,6 +2998,7 @@ select.noAppearance {
 }
 
 .initTracker {
+  position: absolute;
   .iniItem.newRound,
   .newRound {
     border-color: #496fd7;
@@ -3102,6 +3103,10 @@ select.noAppearance {
   margin: 0;
   padding: 0;
   display: inline-block;
+
+  li:last-child {
+    margin-bottom: 0.25rem;
+  }
 }
 
 .initTracker {

@@ -483,7 +483,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     prepareStorage(data) {
-      if (data['merchantType'] == 'merchant') {
+      if (data.merchantType == 'merchant') {
         for (const [key, value] of Object.entries(data.prepare.inventory)) {
           for (const item of value.items) {
             item.defaultPrice = this.getItemPrice(item);
@@ -493,7 +493,7 @@ export const MerchantSheetMixin = (superclass) =>
             item.priceTag = ` / ${item.calculatedPrice}`;
           }
         }
-      } else if (data['merchantType'] == 'loot') {
+      } else if (data.merchantType == 'loot') {
         for (const [key, value] of Object.entries(data.prepare.inventory)) {
           for (const item of value.items) {
             item.calculatedPrice = this.getItemPrice(item);
@@ -529,7 +529,7 @@ export const MerchantSheetMixin = (superclass) =>
         let inventory = this.prepareSellPrices(tradeData.inventory, factor);
         if (inventory['misc'].items.length == 0) inventory['misc'].show = false;
 
-        if (data['merchantType'] == 'loot') {
+        if (data.merchantType == 'loot') {
           inventory['money'] = {
             items: tradeData.money.coins.map((x) => {
               x.name = game.i18n.localize(x.name);

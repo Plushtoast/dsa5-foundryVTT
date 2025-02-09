@@ -14,7 +14,7 @@ export default class DidYouKnow {
         .then(async (r) => r.json())
         .then(async (json) => {
           const msg = json.data[Math.floor(Math.random() * json.data.length)];
-          const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
+          const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.hbs', { msg, fadeOut: DidYouKnow.fadeOut });
           $('body').find('.didYouKnow').replaceWith(didYouKnow);
           DidYouKnow.onRender();
         });
@@ -34,7 +34,7 @@ export default class DidYouKnow {
       .then(async (r) => r.json())
       .then(async (json) => {
         const msg = json.data[Math.floor(Math.random() * json.data.length)];
-        const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.html', { msg, fadeOut: DidYouKnow.fadeOut });
+        const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.hbs', { msg, fadeOut: DidYouKnow.fadeOut });
         $('body').append(didYouKnow);
         this.onRender();
         setTimeout(function () {

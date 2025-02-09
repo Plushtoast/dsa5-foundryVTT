@@ -12,7 +12,7 @@ export const ItemSheetObfuscation = (superclass) =>
     }
 
     isObfuscated(section) {
-      return getProperty(this.item, `system.obfuscation.${section}`);
+      return this.item.system.obfuscation[section];
     }
 
     async _onRender(context, options) {
