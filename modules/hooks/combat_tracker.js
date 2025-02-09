@@ -6,38 +6,46 @@ import RuleChaos from '../system/rule_chaos.js';
 const { debounce, getProperty, mergeObject } = foundry.utils;
 
 export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
-
   static PARTS = {
     header: {
-      template: "templates/sidebar/tabs/combat/header.hbs"
+      template: 'systems/dsa5/templates/system/combattracker/header.hbs',
     },
     tracker: {
-      template: 'systems/dsa5/templates/system/combattracker.hbs',
+      template: 'systems/dsa5/templates/system/combattracker/combattracker.hbs',
     },
     footer: {
-      template: "templates/sidebar/tabs/combat/footer.hbs"
-    }
+      template: 'templates/sidebar/tabs/combat/footer.hbs',
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    actions: {
+      convertToBrawl: this._convertToBrawl,
+      aggroButton: this._onAggroButtonClicked,
+    },
   };
 
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);
 
-    html.find('.combatant.actor .aggroButton').on('click', (ev) => {
-      ev.preventDefault();
-      ev.stopPropagation();
-      DSA5CombatTracker.runActAttackDialog();
-    });
-
-    html.find('#combat-tracker').on(
-      'scroll.combattracker',
+    /*html.find('.combat-tracker').on(
+      'scroll',
       debounce(function (ev) {
         const log = $(ev.target);
+        console.log("jo")
         const comb = html.find('.combatant.active')[0].offsetTop;
         html.find('.aggroButton').animate({ top: comb - log.scrollTop() }, 50);
       }, 50),
-    );
-    html.find('.convertToBrawl').on('click', () => game.combat.convertToBrawl());
+    );*/
+  }
+
+  static _onAggroButtonClicked() {
+    DSA5CombatTracker.runActAttackDialog();
+  }
+
+  static _convertToBrawl() {
+    game.combat.convertToBrawl();
   }
 
   static runActAttackDialog() {
@@ -47,12 +55,13 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
 
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    console.log(data);
+  async _prepareTrackerContext(context, options) {
+    await super._prepareTrackerContext(context, options);
 
-    for (let turn of data.turns || []) {
-      const combatant = data.combat.turns.find((x) => x.id == turn.id);
+    console.log(context)
+
+    for (let turn of context.turns || []) {
+      const combatant = context.combat.turns.find((x) => x.id == turn.id);
       const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
       turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;
       turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
@@ -91,8 +100,13 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         }
       }
     }
-    data.isBrawling = game.combat?.isBrawling;
-    return data;
+
+    console.log(context)
+  }
+
+  async _prepareCombatContext(context, options) {
+    await super._prepareCombatContext(context, options);
+    context.isBrawling = game.combat?.isBrawling;
   }
 }
 
@@ -243,7 +257,7 @@ export class DSA5Combat extends Combat {
   async updateDefenseCount(speaker) {
     if (game.user.isGM) {
       const comb = this.getCombatantFromActor(speaker);
-      if (comb && !getProperty(comb.actor, 'system.config.defense')) {
+      if (comb && !comb.actor.system.config.defense) {
         await comb.setFlag('dsa5', 'defenseCount', (comb.getFlag('dsa5', 'defenseCount') || 0) + 1);
       }
     } else {
@@ -273,7 +287,7 @@ export class DSA5Combatant extends Combatant {
       token: this.token.id,
     });
     const unarm = this.combat.getFlag('dsa5', 'unarmEveryone');
-    const tokenChange = getProperty(actor, 'system.config.autoBar')
+    const tokenChange = actor.system.config.autoBar
       ? actor.getActiveTokens().map((x) => {
           return { _id: x.id, bar1: { attribute: 'status.temporaryLeP' } };
         })
@@ -322,7 +336,7 @@ export class DSA5Combatant extends Combatant {
       scene: this.sceneId,
       token: this.token.id,
     });
-    const tokenChange = getProperty(actor, 'system.config.autoBar')
+    const tokenChange = actor.system.config.autoBar
       ? actor.getActiveTokens().map((x) => {
           return { _id: x.id, bar1: { attribute: 'status.wounds' } };
         })
@@ -373,7 +387,7 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (getProperty(actor.system, 'merchant.merchantType') == 'loot') return false;
+  if (actor.system.merchant.merchantType == 'loot') return false;
 
   if (data.combat.isBrawling) {
     const conf = data.brawlingChange();
@@ -390,7 +404,7 @@ Hooks.on('deleteCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (getProperty(actor.system, 'merchant.merchantType') == 'loot') return false;
+  if (actor.system.merchant.merchantType == 'loot') return false;
 
   if (data.combat.isBrawling) {
     data.undoBrawlingChange().then(async (conf) => {
