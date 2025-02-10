@@ -3138,6 +3138,14 @@ select.noAppearance {
   .tokenHotbarInner {
     opacity: var(--tokenHotbarOpacity);
     transition: opacity 0.3s ease-in-out;
+
+    ul {
+      margin: 0;
+      padding: 0;
+      li {
+        margin: 0;
+      }
+    }    
     &:hover {
       opacity: 1;
     }
@@ -4039,9 +4047,27 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+.filterable {
+  &:hover .onebuttonright {
+    display: block;
+  }
+}
+
 .reactClick {
   margin: 2px;
 
+  &.onebuttonleft {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+    text-overflow: ellipsis;
+  }
+  &.onebuttonright {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+    display: none;
+  }
   img {
     width: 26px;
     float: left;

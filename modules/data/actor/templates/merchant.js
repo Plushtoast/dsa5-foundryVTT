@@ -29,6 +29,7 @@ export default class MerchantTemplate extends DSADataModel {
             2: 'GARADAN.2',
             3: 'GARADAN.3',
             4: 'GARADAN.4',
+            5: 'GARADAN.5',
             6: 'GARADAN.6',
           },
         }),

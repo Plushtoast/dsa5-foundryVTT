@@ -165,8 +165,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   resetPosition() {
     const hotbarPosition = $('#hotbar').first().position();
     const itemWidth = game.settings.get('dsa5', 'tokenhotbarSize');
-    this.position.left = hotbarPosition.left + 8;
-    this.position.top = hotbarPosition.top - itemWidth - 25;
+    this.setPosition({ left: hotbarPosition.left + 8, top: hotbarPosition.top - itemWidth - 25 });
   }
 
   static DEFAULT_OPTIONS = {
@@ -178,27 +177,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   static PARTS = {
     main: {
-      root: true,
       template: 'systems/dsa5/templates/status/tokenHotbar.hbs'
     },
   };
-
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    const hotbarPosition = $('#hotbar').first().position();
-    const itemWidth = game.settings.get('dsa5', 'tokenhotbarSize');
-    const position = game.settings.get('dsa5', 'tokenhotbarPosition');
-
-    mergeObject(options, {
-      itemWidth,
-      height: itemWidth + 45,
-      zIndex: 61,
-      left: hotbarPosition.left + 8,
-      top: hotbarPosition.top - itemWidth - 25,
-    });
-    mergeObject(options, position);
-    return options;
-  }
 
   async _onWheelResize(ev) {
     let newVal = game.settings.get('dsa5', 'tokenhotbarSize');
@@ -258,13 +239,14 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
 
-    html.on('mousedown', 'li', async (ev) => {
+    html.find('li').on('mousedown', async (ev) => {
       ev.stopPropagation();
       await this.executeQuickButton(ev);
       return false;
     });
 
-    html.on('mouseenter', 'li.primary', (ev) => {
+    const primaryLis = html.find('li.primary')
+    primaryLis.on('mouseenter', (ev) => {
       const cat = ev.currentTarget.dataset.category;
 
       this.category = cat;
@@ -274,7 +256,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       }, 700);
     });
 
-    html.on('mouseleave', 'li.primary', (ev) => {
+    primaryLis.on('mouseleave', (ev) => {
       const cat = ev.currentTarget.dataset.category;
       this.category = undefined;
 
@@ -497,8 +479,21 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     return `style="width:${Math.ceil(items.length / defaultCount) * 200}px"`;
   }
 
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+
+    const hotbarPosition = $('#hotbar').first().position();
+    const itemWidth = game.settings.get('dsa5', 'tokenhotbarSize');
+    const savedPosition = game.settings.get('dsa5', 'tokenhotbarPosition');
+
+    const position = mergeObject({
+      height: itemWidth + 45,
+      zIndex: 61,
+      left: hotbarPosition.left + 8,
+      top: hotbarPosition.top - itemWidth - 25,
+    }, savedPosition);
+    mergeObject(options, { position });
+
     const actor = this.actor;
     const items = {
       attacks: [],
@@ -515,7 +510,6 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     let effects = [];
     const direction = game.settings.get('dsa5', 'tokenhotbarLayout');
     const vertical = direction % 2;
-    const itemWidth = TokenHotbar2.defaultOptions.itemWidth;
 
     let gmMode = false;
     if (actor) {
@@ -685,14 +679,14 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       }, 0) + (gmMode ? 3 : 0);
 
     if (vertical) {
-      this.position.width = itemWidth;
-      this.position.height = itemWidth * count + 14;
+      options.position.width = itemWidth;
+      options.position.height = itemWidth * count + 14;
     } else {
-      this.position.width = itemWidth * count + 14;
-      this.position.height = itemWidth;
+      options.position.width = itemWidth * count + 14;
+      options.position.height = itemWidth;
     }
 
-    mergeObject(data, {
+    Object.assign(data, {
       items,
       itemWidth,
       direction,
@@ -701,6 +695,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       darkness: canvas?.scene?.environment.darknessLevel || 0,
       opacity: game.settings.get('dsa5', 'tokenhotbaropacity'),
     });
+
     return data;
   }
 
@@ -884,22 +879,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     return rend;
   }
 
-  setPosition({ left, top, width, height, scale } = {}) {
-    const currentPosition = super.setPosition({
-      left,
-      top,
-      width,
-      height,
-      scale,
-    });
-
-    if (!this.element.style.width || width) {
-      const tarW = width || this.element.offsetWidth;
-      const maxW = this.element.style.maxWidth || window.innerWidth;
-      currentPosition.width = width = Math.clamp(tarW, 0, maxW);
-      this.element.style.width = width + 'px';
-      if (width + currentPosition.left > window.innerWidth) left = currentPosition.left;
-    }
+  setPosition(position) {
+    const currentPosition = super.setPosition(position);
     game.settings.set('dsa5', 'tokenhotbarPosition', {
       left: currentPosition.left,
       top: currentPosition.top,
@@ -939,12 +920,16 @@ export class AddEffectDialog extends DefaultAppv2 {
     position: {
       width: 700
     },
+    actions: {
+      reactClick: this.#addEffect,
+      reactCustom: this.#configureEffect
+    }
   };
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/dialog/addstatusdialog.html',
-    },
+      template: 'systems/dsa5/templates/dialog/addstatusdialog.hbs',
+    }
   };
 
   async _prepareContext(_options) {
@@ -970,28 +955,8 @@ export class AddEffectDialog extends DefaultAppv2 {
     await super._onRender((context, options));
 
     const html = $(this.element);
-    html.find('.filterable .reactClick').on('mouseenter', (ev) => {
-      if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-        let div = document.createElement('div');
-        div.classList.add('hovermenu');
-        div.style.cssText = 'font-size: var(--font-size-20);';
-        let conf = document.createElement('i');
-        conf.classList.add('fas', 'fa-cogs');
-        conf.dataset.tooltip = 'ActiveEffects.custom';
-        conf.addEventListener('click', async (ev) => this.configureEffect(ev), false);
-        div.appendChild(conf);
-        ev.currentTarget.appendChild(div);
-      }
-    });
-    html.find('.filterable .reactClick').on('mouseleave', (ev) => {
-      let e = ev.relatedTarget;
-      if (e.parentNode == this || e == this) return;
-
-      ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
-    });
 
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html.find('.reactClick').on('click', (ev) => this.addEffect(ev.currentTarget.dataset.value));
 
     let filterConditions = (ev) => this._filterConditions($(ev.currentTarget), html);
 
@@ -1027,7 +992,7 @@ export class AddEffectDialog extends DefaultAppv2 {
       position: {
         width: 400,
       },
-      content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.html'),
+      content: await renderTemplate('systems/dsa5/templates/dialog/configurestatusdialog.hbs'),
       buttons: [
         {
           action: 'add',
@@ -1051,12 +1016,14 @@ export class AddEffectDialog extends DefaultAppv2 {
     }).render(true);
   }
 
-  async configureEffect(ev) {
-    ev.stopPropagation();
-    const elem = $(ev.currentTarget).closest('.reactClick');
-    const id = elem.attr('data-value');
+  static async #configureEffect(ev, target) {
+    const id = target.dataset.value;
     this.close();
     AddEffectDialog.modifyEffectDialog(id, async (id, options) => this.addEffect(id, options));
+  }
+
+  static #addEffect(ev, target) {
+    this.addEffect(target.dataset.value)
   }
 
   async addEffect(id, options = {}) {
