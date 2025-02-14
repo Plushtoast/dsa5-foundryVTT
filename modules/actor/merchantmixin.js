@@ -438,7 +438,8 @@ export const MerchantSheetMixin = (superclass) =>
           1: game.i18n.localize('GARADAN.1'),
           2: game.i18n.localize('GARADAN.2'),
           3: game.i18n.localize('GARADAN.3'),
-          4: game.i18n.localize('GARADAN.4'),
+          4: game.i18n.localize('GARADAN.4'), 
+          5: game.i18n.localize('GARADAN.5'),
           6: game.i18n.localize('GARADAN.6'),
         };
       }
