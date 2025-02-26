@@ -654,7 +654,7 @@ export default class TokenHotbar2 extends Application {
         effect.more = effects;
         effect.subwidth = this.subWidth(effects, itemWidth);
       } else if (canvas.tokens.controlled.length > 1) {
-        let sharedEffects = await game.dsa5.apps.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
+        let sharedEffects = await this._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
         for (let token of canvas.tokens.controlled) {
           const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);

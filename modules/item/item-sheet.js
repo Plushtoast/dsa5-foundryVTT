@@ -818,7 +818,7 @@ class InformationSheet extends ItemSheetdsa5 {
   }
 }
 
-class AmmunitionSheet extends Enchantable {
+class AmmunitionSheet extends ItemSheetObfuscation(Enchantable) {
   constructor(item, options) {
     super(item, options);
     this.isPoisonable = true;

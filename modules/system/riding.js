@@ -13,7 +13,7 @@ export default class Riding {
     if (!DSA5_Utility.isActiveGM()) return;
 
     const scene = token.parent;
-    if (this.isRiding(token.actor) && scene.active) {
+    if (this.isRiding(token.actor) && scene) {
       const horse = this.getHorse(token.actor);
 
       if (!horse) return;
@@ -49,7 +49,7 @@ export default class Riding {
 
     const horseId = getProperty(token, 'flags.dsa5.horseTokenId');
     const scene = token.parent;
-    if (horseId && scene.active && (data.x || data.y) && this.isRiding(token.actor)) {
+    if (horseId && scene && (data.x || data.y) && this.isRiding(token.actor)) {
       scene.updateEmbeddedDocuments('Token', [
         {
           _id: horseId,
