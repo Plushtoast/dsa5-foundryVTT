@@ -901,7 +901,7 @@ class InformationSheet extends ItemSheetdsa5 {
   };
 }
 
-class AmmunitionSheet extends Enchantable {
+class AmmunitionSheet extends ItemSheetObfuscation(Enchantable) {
   isPoisonable = true;
 }
 

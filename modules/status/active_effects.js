@@ -34,11 +34,11 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
 
     if (documents.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fn = new AsyncFunction('actor', 'item', 'qs', 'automatedAnimation', 'args', documents[0].command);
+      const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'automatedAnimation', 'args', documents[0].command);
       try {
         args.result = result;
         const context = mergeObject({ automatedAnimation, effectDummy }, this);
-        await fn.call(context, actor, item, qs, automatedAnimation, args);
+        await fn.call(context, actor, item, item, qs, automatedAnimation, args);
       } catch (err) {
         ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);

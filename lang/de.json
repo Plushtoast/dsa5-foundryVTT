@@ -1702,6 +1702,7 @@
         "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter.",
         "ActiveEffectDataChange": "{name}: \"data.\" als Key ist nicht mehr erlaubt. Bitte durch \"system.\" ersetzen.",
         "horseMustBeImported": "Reittier aus Kompendium nicht erlaubt",
+        "NoPatron": "Dem Charakter ist noch kein Patron zugeordnet.",
         "horseMustBeImportedText": "Nur in die Welt importierte Reittiere sind möglich. Möchtest du das Reittier jetzt importieren?",
         "poisonNeedsToBeInActor": "Bitte beachte, dass das Gift im Charakter auch vorhanden sein muss, um angewendet werden zu können."
     },
