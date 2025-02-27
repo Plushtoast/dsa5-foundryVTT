@@ -222,7 +222,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   _attachFrameListeners() {
     super._attachFrameListeners();
-    if ( game.user.isGM ) ContextMenu.create(this, this.element, ".combatant", ui.combat._getEntryContextOptions(), {
+    if ( game.user.isGM ) foundry.applications.ui.ContextMenu.create(this, this.element, ".combatant", ui.combat._getEntryContextOptions(), {
       jQuery: false,
       fixed: true
     });

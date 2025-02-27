@@ -3,11 +3,12 @@ import CharacteristicsTemplate from './templates/characteristics.js';
 import DetailsTemplate from './templates/details.js';
 import MagicTemplate from './templates/magic.js';
 import MerchantTemplate from './templates/merchant.js';
+import RidingTemplate from './templates/riding.js';
 import StatusTemplate from './templates/status.js';
 
 const { SchemaField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class CharacterData extends ActorDataModel.mixin(CharacteristicsTemplate, MerchantTemplate, DetailsTemplate, StatusTemplate, MagicTemplate) {
+export default class CharacterData extends ActorDataModel.mixin(RidingTemplate, CharacteristicsTemplate, MerchantTemplate, DetailsTemplate, StatusTemplate, MagicTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       config: new SchemaField({

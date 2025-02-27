@@ -6,14 +6,21 @@ export const AppV2Mixin = (superclass) =>
 
     async _onRender(context, options) {
       await super._onRender((context, options));
-      new DragDrop({ callbacks: { drop: this._canDragDrop.bind(this) } }).bind(this.element);
+
+      //todo: add drag handler dragSelector, dropSelector
+      new DragDrop({ 
+        callbacks: { drop: this._onDrop.bind(this)},
+        permissions: { drop: this._canDragDrop.bind(this) }
+      }).bind(this.element);
     }
 
     _canDragDrop(event) {
-      if (this.isEditable) this._onDrop(event);
+      return this.isEditable;
     }
 
-    async _onDrop(event) {}
+    async _onDrop(event) {
+
+    }
 
     _onClickAction(event, target) {
       const action = target.dataset.action;

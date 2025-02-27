@@ -94,7 +94,13 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _completeCurrentEntry(target) {
-    $('#chat-message').val($('#chat-message').val().split(' ')[0] + ' ' + target.text()) + ' ';
+    const chatbox = $('#chat-message')
+    const cmd = [chatbox.val().split(' ')[0], ' ']
+    
+    if(/^\/w$/.test(cmd[0])) cmd.push(`[${target.text()}] `)
+    else cmd.push(target.text())
+
+    chatbox.val(cmd.join(''));
   }
 
   _closeQuickfind(ev) {

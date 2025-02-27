@@ -14,17 +14,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (game.settings.get('dsa5', 'hotbarv3')) {
       const html = $(this.element);
       html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-      html.on('mousedown', 'li.primary', async (ev) => {
+      html.find('li.primary:not(.macro)').on('mousedown', async (ev) => {
         game.tooltip.deactivate();
-
-        if (ev.currentTarget.classList.contains('macro')) return false;
-
         ev.stopPropagation();
         await this.tokenHotbar.executeQuickButton(ev);
         return false;
-      });
-      html.find('.categoryFilter').on('click', (ev) => {
-        this.filterCategory(ev, html);
       });
       const that = this;
       const fn = function (ev) {
@@ -39,13 +33,19 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
         html.find('.longLayout').removeClass('longLayout');
       };
-      html.find('.sections').on('hover', () => {
-        $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
-      }, filterOff);
+      html.find('.sections').on(
+        'hover',
+        () => {
+          $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
+        },
+        filterOff,
+      );
 
       html.find('.primary').on('hover', (ev) => this._betterTooltip(ev));
 
       html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
+
+      if(game.settings.get('dsa5', 'hotbarv3'))  html.addClass('hotbarV3');
     }
   }
 
@@ -92,24 +92,24 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
   }
 
-  constructor(options) {
-    super(options);
-
-    if(game.settings.get('dsa5', 'hotbarv3')) {
-      this.constructor.PARTS = {
-        hotbar: {
-          root: true,
-          template: 'systems/dsa5/templates/system/hud/hotbar.html',
-          scrollable: ["#macro-list"]
-        },
-      }
-    }    
+  _configureRenderParts(options) {
+    if (game.settings.get('dsa5', 'hotbarv3')) {
+      return foundry.utils.deepClone(this.constructor.CONVERSION_PARTS);
+    }
+    return super._configureRenderParts(options);
   }
 
-  static PARTS = {    
+  static CONVERSION_PARTS = {
     hotbar: {
       root: true,
-      template: "templates/ui/hotbar.hbs"
+      template: 'systems/dsa5/templates/system/hud/hotbar.hbs',
+      scrollable: ['#macro-list'],
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    actions: {
+      categoryFilter: this.#filterCategory
     }
   }
 
@@ -197,9 +197,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     target.dataset.tooltipClass = 'dsatooltip';
   }
 
-  filterCategory(ev, html) {
-    const category = ev.currentTarget.dataset.filter;
+  static #filterCategory(ev, target) {
+    const category = target.dataset.filter;
 
+    const html = $(this.element);
     if (category) {
       html.find('.skillItems').addClass('collapsed');
       html.find(`.skillItems[data-category="${category}"]`).removeClass('collapsed');
@@ -443,15 +444,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       },
       darkness: canvas?.scene?.environment.darknessLevel || 0,
       hotBarcssClass: 'hotbarV3',
-      barWidth: `${527}px`,
       baseBarHeight: `${baseBarHeight}px`,
-      barHeight: `${(baseBarHeight + 7) * rows + 30}px`,
+      barHeight: `${(baseBarHeight + 7) * rows + 40}px`,
       filterCategories,
       selectedCategories: (actor ? this.activeFilters : this.gmFilters) || [],
       showEffects: this.showEffects,
       activeFilters,
       gmMode,
-      macros: this._getAllMacros(),
+      slots: this._getAllMacros(),
     });
   }
 
@@ -462,13 +462,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
     return macros.map((m, i) => {
       const macro = m ? game.macros.get(m) : null;
+      const key = i + 1;
       return {
-        slot: i + 1,
-        key: i + 1,
-        icon: macro?.img || null,
-        cssClass: macro ? 'active' : 'inactive',
-        tooltip: macro ? macro.name : null,
+        key,
+        slot: key,
         macro,
+        img: macro?.img ?? null,
+        cssClass: macro ? 'full' : 'open',
+        tooltip: macro?.name ?? null,
+        ariaLabel: macro?.name ?? game.i18n.localize('HOTBAR.EMPTY'),
       };
     });
   }

@@ -41,7 +41,7 @@ export default class Riding {
   }
 
   static isRiding(actor) {
-    return getProperty(actor, 'system.horse.isRiding');
+    return actor.system.horse.isRiding;
   }
 
   static updateTokenHook(token, data, options) {
@@ -111,7 +111,7 @@ export default class Riding {
 
   static async toggleIsRiding(actor) {
     await actor.update({
-      'system.horse.isRiding': !actor.system.horse?.isRiding,
+      'system.horse.isRiding': !actor.system.horse.isRiding,
     });
 
     const tokenUpdates = [];
@@ -170,14 +170,15 @@ export default class Riding {
 
   static getHorse(actor, returnEmptyHorse = false) {
     let horse;
-    if (actor.system.horse) {
-      if (actor.system.horse.token && !actor.system.horse.actorLink) horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
-      else horse = game.actors.get(actor.system.horse.actorId);
+    
+    if (actor.system.horse.token && !actor.system.horse.actorLink) 
+      horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
+    else if(actor.system.horse.actorId)
+      horse = game.actors.get(actor.system.horse.actorId);
 
-      if (!horse && returnEmptyHorse && actor.system.horse.isRiding) {
-        horse = { name: game.i18n.localize('unknown') };
-      }
-    }
+    if (!horse && returnEmptyHorse && actor.system.horse.isRiding)
+      horse = { name: game.i18n.localize('unknown') };
+    
     return horse;
   }
 
@@ -205,7 +206,7 @@ export default class Riding {
           isRiding: false,
           actorLink: false,
           actorId: '',
-          '-=token': null,
+          token: {}
         },
       },
     });
