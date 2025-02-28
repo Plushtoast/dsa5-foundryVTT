@@ -611,6 +611,9 @@
             "armor": {
                 "region": "Nostria..."
             },
+            "patron": {
+                "culture": "Ferkina..."
+            },
             "specialability": {
                 "distribution": "Animisten..."
             },
