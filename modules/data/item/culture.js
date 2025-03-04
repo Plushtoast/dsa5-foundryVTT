@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import APValueTemplate from './templates/apvalue.js';
 import DSAStringField from '../fields/dsa_string_field.js';
 
-const { StringField, SchemaField } = foundry.data.fields;
+const { StringField, SchemaField, HTMLField } = foundry.data.fields;
 
 export default class CultureData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
   static defineSchema() {
@@ -45,7 +45,7 @@ export default class CultureData extends ItemDataModel.mixin(DescriptionTemplate
         value: new DSAStringField({ initial: '', label: 'skills' }),
       }),
       clothing: new SchemaField({
-        value: new StringField({ initial: '' }),
+        value: new HTMLField({ initial: '' }),
       }),
     });
   }

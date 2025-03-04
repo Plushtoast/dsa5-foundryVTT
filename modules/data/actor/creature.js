@@ -5,7 +5,7 @@ import MerchantTemplate from './templates/merchant.js';
 import RidingTemplate from './templates/riding.js';
 import StatusTemplate from './templates/status.js';
 
-const { SchemaField, BooleanField, StringField, NumberField } = foundry.data.fields;
+const { SchemaField, BooleanField, StringField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, CharacteristicsTemplate, MerchantTemplate, StatusTemplate, MagicTemplate) {
 
@@ -21,6 +21,9 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
                 total: new NumberField({ initial: 0 }),
                 spent: new NumberField({ initial: 0 }),
             }),
+            notes: new SchemaField({
+                ownerdescription: new HTMLField({ initial: '' }),
+            }),
         }),
         actionCount: new SchemaField({
             value: new NumberField({ initial: 1 }),
@@ -32,19 +35,19 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
             value: new StringField({ initial: '' }),
         }),
         behaviour: new SchemaField({
-            value: new StringField({ initial: '' }),
+            value: new HTMLField({ initial: '' }),
         }),
         flight: new SchemaField({
-            value: new StringField({ initial: '' }),
+            value: new HTMLField({ initial: '' }),
         }),
         specialRules: new SchemaField({
-            value: new StringField({ initial: '' }),
+            value: new HTMLField({ initial: '' }),
         }),
         conjuringDifficulty: new SchemaField({
             value: new NumberField({ initial: 0 }),
         }),
         description: new SchemaField({
-            value: new StringField({ initial: '' }),
+            value: new HTMLField({ initial: '' }),
         }),
     });
   }

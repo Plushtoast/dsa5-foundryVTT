@@ -2,6 +2,7 @@ import DiceDSA5 from '../system/dice-dsa5.js';
 import DSA5Payment from '../system/payment.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
+const { getProperty, mergeObject } = foundry.utils;
 
 export class ItemDataModel extends DSADataModel {
   async getSheetData(data) {}

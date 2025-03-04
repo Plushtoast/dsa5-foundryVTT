@@ -241,6 +241,7 @@ export default class DSA5_Utility {
   }
 
   static async showArtwork({ img, name, uuid, isOwner }, hide = false) {
+    console.log('showArtwork', img, name, uuid, isOwner, hide);
     return new foundry.applications.apps.ImagePopout({
       window: { title: hide ? (isOwner ? name : '-') : name },
       shareable: true,

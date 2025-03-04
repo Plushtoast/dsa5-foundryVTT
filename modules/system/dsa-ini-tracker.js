@@ -222,10 +222,15 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   _attachFrameListeners() {
     super._attachFrameListeners();
-    if ( game.user.isGM ) foundry.applications.ui.ContextMenu.create(this, this.element, ".combatant", ui.combat._getEntryContextOptions(), {
+    if ( game.user.isGM ) foundry.applications.ui.ContextMenu.create(this, this.element, ".combatant", {
       jQuery: false,
-      fixed: true
+      fixed: true,
+      hookName: "DsaIniTrackerEntryContext"
     });
+  }
+
+  _getDsaIniTrackerEntryContextOptions() {
+    return ui.combat._getEntryContextOptions();
   }
 
   static #onCombatantControl(event, target) {

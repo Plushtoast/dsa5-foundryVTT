@@ -317,7 +317,7 @@ export class ActorDataModel extends DSADataModel {
 
       let encumbrance = this.calcEncumbrance(data);
 
-      const horse = Riding.isRiding(this) ? Riding.getHorse(this.parent) : undefined;
+      const horse = Riding.isRiding(this.parent) ? Riding.getHorse(this.parent) : undefined;
       this.calcInitiative(data, encumbrance, horse);
 
       data.status.dodge.max = Number(data.status.dodge.value) + Number(data.status.dodge.modifier) + Number(game.settings.get('dsa5', 'higherDefense')) / 2;

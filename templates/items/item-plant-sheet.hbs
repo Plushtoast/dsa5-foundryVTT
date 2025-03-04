@@ -22,13 +22,13 @@
   <div class='form-group full-height'>
     <label>{{localize 'effect'}}</label>
     <div class='form-fields'>
-      {{editor enrichedEffect target='system.effect' button=true owner=owner editable=editable engine='prosemirror'}}
+      {{formInput systemFields.effect value=document.system.effect toggled=true enriched=enrichedEffect}}
     </div>
   </div>
   <div class='form-group full-height'>
     <label>{{localize 'PLANT.recipes'}}</label>
     <div class='form-fields'>
-      {{editor enrichedRecipes target='system.recipes' button=true owner=owner editable=editable engine='prosemirror'}}
+      {{formInput systemFields.recipes value=document.system.recipes toggled=true enriched=enrichedRecipes}}
     </div>
   </div>
   <div class='form-group'>

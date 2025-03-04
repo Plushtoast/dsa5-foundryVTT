@@ -14,7 +14,7 @@
     <div class='form-group full-height'>
       <label>{{localize 'PartSuccess'}}</label>
       <div class="form-fields">
-        {{editor enrichedpartsuccess target='system.partsuccess' button=true owner=owner editable=editable engine='prosemirror'}}
+        {{formInput systemFields.partsuccess value=document.system.partsuccess toggled=true enriched=enrichedpartsuccess}}
       </div>
     </div>
   {{/if}}
@@ -22,7 +22,7 @@
     <div class='form-group full-height'>
       <label>{{localize 'Success'}}</label>
       <div class="form-fields">
-        {{editor enrichedsuccess target='system.success' button=true owner=owner editable=editable engine='prosemirror'}}
+        {{formInput systemFields.success value=document.system.success toggled=true enriched=enrichedsuccess}}
       </div>
     </div>
   {{/if}}

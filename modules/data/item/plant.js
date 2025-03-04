@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 
-const { NumberField, BooleanField, StringField, SchemaField } = foundry.data.fields;
+const { NumberField, BooleanField, StringField, SchemaField, HTMLField } = foundry.data.fields;
 
 export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
   static defineSchema() {
@@ -21,9 +21,9 @@ export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, 
         identify: new NumberField({ initial: 0, label: 'PLANT.identify' }),
       }),
       usages: new StringField({ initial: '0/0/0/0/0/0', label: 'PLANT.usages' }),
-      effect: new StringField({ initial: '', label: 'effect' }),
-      infos: new StringField({ initial: '' }),
-      recipes: new StringField({ initial: '' }),
+      effect: new HTMLField({ initial: '', label: 'effect' }),
+      infos: new HTMLField({ initial: '' }),
+      recipes: new HTMLField({ initial: '' }),
       planttype: new SchemaField({
         healing: new BooleanField({}),
         poison: new BooleanField({}),

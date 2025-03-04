@@ -85,9 +85,7 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedBiography target="system.details.biography.value" button=true owner=owner
-                editable=editable
-                engine="prosemirror"}}
+                {{formInput systemFields.details.fields.biography.fields.value value=document.system.details.biography.value toggled=true enriched=enrichedBiography}}
             </div>
         </div>
     </fieldset>
@@ -96,8 +94,7 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedNotes target="system.details.notes.value" button=true owner=owner editable=editable
-                engine="prosemirror"}}
+                {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true enriched=enrichedNotes}}
             </div>
         </div>
     </fieldset>
@@ -107,8 +104,7 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner
-                editable=editable engine="prosemirror"}}
+                {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
             </div>
         </div>
     </fieldset>
@@ -118,8 +114,7 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedGmdescription target="system.details.notes.gmdescription" button=true owner=owner
-                editable=editable engine="prosemirror"}}
+                {{formInput systemFields.details.fields.notes.fields.gmdescription value=document.system.details.notes.gmdescription toggled=true enriched=enrichedGmdescription}}
             </div>
         </div>
     </fieldset>

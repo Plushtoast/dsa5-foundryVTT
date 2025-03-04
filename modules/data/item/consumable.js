@@ -8,7 +8,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
 
-const { StringField, SchemaField, NumberField } = foundry.data.fields;
+const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
   static defineSchema() {
@@ -21,7 +21,7 @@ export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, Obf
       charges: new NumberField({ initial: 1, min: 0 }),
       maxCharges: new NumberField({ initial: 1, min: 0 }),
       difficulty: new NumberField({ initial: 0, label: 'Difficulty' }),
-      ingredients: new StringField({ initial: '' }),
+      ingredients: new HTMLField({ initial: '' }),
       tools: new StringField({ initial: '', label: 'Equipment.tools' }),
     });
   }

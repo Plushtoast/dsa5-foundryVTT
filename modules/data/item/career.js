@@ -4,7 +4,7 @@ import APValueTemplate from './templates/apvalue.js';
 import RequirementsTemplate from './templates/requirements.js';
 import DSA5 from '../../system/config-dsa5.js';
 
-const { SchemaField, StringField, NumberField } = foundry.data.fields;
+const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
   static defineSchema() {
@@ -68,7 +68,7 @@ export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate,
         value: new StringField({ initial: '', label: 'TYPES.Item.combatskill' }),
       }),
       clothing: new SchemaField({
-        value: new StringField({ initial: '' }),
+        value: new HTMLField({ initial: '' }),
       }),
     });
   }

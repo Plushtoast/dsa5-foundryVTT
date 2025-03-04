@@ -202,6 +202,8 @@ export default class DSA5Payment {
     for (const mon of coins) {
       if (mon.amount > 0) res.push(`<span class="nobr">${mon.amount} <span data-tooltip="${mon.name}" style="background-image:url('${mon.img}')" class="chatmoney"></span></span>`);
     }
+
+    if (res.length == 0) return '-';
     return res.join(', ');
   }
 

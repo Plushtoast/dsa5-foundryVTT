@@ -1,6 +1,6 @@
 import { DSADataModel } from '../../abstract.js';
 
-const { SchemaField, StringField, NumberField } = foundry.data.fields;
+const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class DetailsTemplate extends DSADataModel {
   static defineSchema() {
@@ -50,12 +50,12 @@ export default class DetailsTemplate extends DSADataModel {
           value: new StringField({ initial: '' }),
         }),
         biography: new SchemaField({
-          value: new StringField({ initial: '' }),
+          value: new HTMLField({ initial: '' }),
         }),
         notes: new SchemaField({
-          value: new StringField({ initial: '' }),
-          gmdescription: new StringField({ initial: '' }),
-          ownerdescription: new StringField({ initial: '' }),
+          value: new HTMLField({ initial: '' }),
+          gmdescription: new HTMLField({ initial: '' }),
+          ownerdescription: new HTMLField({ initial: '' }),
         }),
       }),
     };

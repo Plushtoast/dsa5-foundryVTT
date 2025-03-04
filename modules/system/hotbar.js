@@ -84,12 +84,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
   }
 
-  _contextMenu(html) {
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      HotbarV3ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
-    } else {
-      foundry.applications.ui.ContextMenu.create(this, html, '.macro', this._getEntryContextOptions());
-    }
+  async _onFirstRender(_context, _options) {
+    game.macros.apps.push(this);
+    this.element.setAttribute("aria-roledescription", game.i18n.localize("HOTBAR.LABEL"));
+    this._onResize();
+
+    // Context Menu
+    const contextOptions = this._getContextMenuOptions();
+    Hooks.callAll("getHotbarContextOptions", this, contextOptions);
+    if ( contextOptions ) new HotbarV3ContextMenu(this.element, ".slot.full", contextOptions, { jQuery: false });
   }
 
   _configureRenderParts(options) {
@@ -478,15 +481,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
 class HotbarV3ContextMenu extends foundry.applications.ui.ContextMenu {
   _setPosition(html, target) {
-    target = target.closest('.flexrow');
-    super._setPosition(html, target);
-  }
-
-  static create(app, html, selector, menuItems, { hookName = 'EntryContext', ...options } = {}) {
-    // FIXME APPV13
-    for (const cls of app.constructor._getInheritanceChain()) {
-      Hooks.call(`get${cls.name}${hookName}`, html, menuItems);
+    if (game.settings.get('dsa5', 'hotbarv3')) {
+      target = target.closest('.flexrow');
     }
-    if (menuItems) return new HotbarV3ContextMenu(html, selector, menuItems, options);
+    super._setPosition(html, target);
   }
 }

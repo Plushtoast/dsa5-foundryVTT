@@ -1,15 +1,15 @@
 import { DSADataModel } from "../../abstract.js";
 
-const { SchemaField, StringField } = foundry.data.fields;
+const { SchemaField, HTMLField } = foundry.data.fields;
 
 export default class DescriptionTemplate extends DSADataModel {
     static defineSchema() {
         return {
             description: new SchemaField({
-                value: new StringField({ initial: '' }),
+                value: new HTMLField({ initial: '' }),
             }),
             gmdescription: new SchemaField({
-                value: new StringField({ initial: '' }),
+                value: new HTMLField({ initial: '' }),
             })
         }
     }

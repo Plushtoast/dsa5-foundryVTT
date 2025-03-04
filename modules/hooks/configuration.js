@@ -282,9 +282,6 @@ export function setupConfiguration() {
       max: 140,
       step: 5,
     },
-    onChange: async (val) => {
-      if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.itemWidth = val;
-    },
   });
 
   game.settings.register('dsa5', 'iniTrackerCount', {

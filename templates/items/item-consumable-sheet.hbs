@@ -19,7 +19,7 @@
   <div class='form-group full-height'>
     <label>{{localize 'PLANT.ingredients'}}</label>
     <div class="form-fields">
-      {{editor enrichedIngredients target='system.ingredients' button=true owner=owner editable=editable engine='prosemirror'}}
+      {{formInput systemFields.ingredients value=document.system.ingredients toggled=true enriched=enrichedIngredients}}
     </div>
   </div>
   

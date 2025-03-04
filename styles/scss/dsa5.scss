@@ -840,7 +840,7 @@ input[type='text'] {
 
   .col {
     flex: 100%;
-    
+
     &.morph {
       flex: 50%;
       min-width: var(--minColumnWidth);
@@ -1249,7 +1249,7 @@ a.img-entity-link {
       margin: 0 10%;
       cursor: pointer;
     }
-    
+
     input {
       text-align: center;
       padding: 8px;
@@ -1877,7 +1877,7 @@ input[type='search'] {
   .detailFilters {
     label {
       overflow: hidden;
-      text-overflow: ellipsis;      
+      text-overflow: ellipsis;
     }
   }
   .filterCategories {
@@ -1940,8 +1940,6 @@ input[type='search'] {
       background-size: contain;
     }
   }
-
-  
 }
 .itemLibraryTooltip {
   text-align: left;
@@ -3145,7 +3143,7 @@ select.noAppearance {
       li {
         margin: 0;
       }
-    }    
+    }
     &:hover {
       opacity: 1;
     }
@@ -4550,7 +4548,7 @@ input[type='checkbox'].autoCheckbox {
     position: relative;
   }
 
-  #action-bar{
+  #action-bar {
     max-width: 600px;
     gap: 0;
     ul {
@@ -4562,7 +4560,7 @@ input[type='checkbox'].autoCheckbox {
     gap: 0;
     flex-wrap: nowrap;
   }
-  
+
   .effect div {
     color: black;
     font-size: 24px;
@@ -4776,6 +4774,24 @@ input[type='checkbox'].autoCheckbox {
   .checkbox input[type='radio']:checked + i {
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
+  }
+}
+
+#settings .fshopButton {
+  background: rgb(0, 111, 61);
+  background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
+  position: relative;
+
+  div {
+    display: inline-block;
+    background-image: url('../../lazy/patchimages/UlissesDigital.png');
+    background-size: contain;
+    width: 20px;
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
   }
 }
 

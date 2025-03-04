@@ -2,22 +2,22 @@ import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
 import { ItemDataModel } from '../baseitem.js';
 
-const { StringField, NumberField } = foundry.data.fields;
+const { StringField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class InformationData extends ItemDataModel {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
-      qs1: new StringField({ initial: '' }),
-      qs2: new StringField({ initial: '' }),
-      qs3: new StringField({ initial: '' }),
-      qs4: new StringField({ initial: '' }),
-      qs5: new StringField({ initial: '' }),
-      qs6: new StringField({ initial: '' }),
+      qs1: new HTMLField({ initial: '' }),
+      qs2: new HTMLField({ initial: '' }),
+      qs3: new HTMLField({ initial: '' }),
+      qs4: new HTMLField({ initial: '' }),
+      qs5: new HTMLField({ initial: '' }),
+      qs6: new HTMLField({ initial: '' }),
       skill: new StringField({ initial: '', required: true, label: 'TYPES.Item.skill' }),
       modifier: new NumberField({ initial: 0, label: 'Modifier' }),
-      crit: new StringField({ initial: '' }),
-      botch: new StringField({ initial: '' }),
-      fail: new StringField({ initial: '' }),
+      crit: new HTMLField({ initial: '' }),
+      botch: new HTMLField({ initial: '' }),
+      fail: new HTMLField({ initial: '' }),
     });
   }
 

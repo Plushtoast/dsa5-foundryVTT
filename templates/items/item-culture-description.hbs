@@ -7,18 +7,11 @@
 >
   <div class='row-section'>
     <div class='col sixty'>
-      {{editor enrichedDescription target='system.description.value' button=true owner=owner editable=editable engine='prosemirror'}}
-
+      {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription}}
     </div>
     <div class='col fourty'>
-      <img src='{{document.img}}' style='max-width:100%; max-height: 100%;float: left;' data-action='editImage' />{{editor
-        enrichedClothing
-        target='system.clothing.value'
-        button=true
-        owner=owner
-        editable=editable
-        engine='prosemirror'
-      }}
+      <img src='{{document.img}}' style='max-width:100%; max-height: 100%;float: left;' data-action='editImage' />
+      {{formInput systemFields.clothing.fields.value value=document.system.clothing.value toggled=true enriched=enrichedClothing}}
     </div>
   </div>
 </div>

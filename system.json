@@ -151,7 +151,8 @@
                     "description.value",
                     "behavior.value",
                     "flight.value",
-                    "specialRules.value"
+                    "specialRules.value",
+                    "details.notes.ownerdescription"
                 ]
             },
             "npc": {
@@ -245,7 +246,8 @@
             "career": {
                 "htmlFields": [
                     "description.value",
-                    "gmdescription.value"
+                    "gmdescription.value",
+                    "clothing.value"
                 ]
             },
             "culture": {

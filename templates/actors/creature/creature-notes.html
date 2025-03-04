@@ -9,8 +9,7 @@
 
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedDescription target="system.description.value" button=true owner=owner editable=editable
-                engine="prosemirror"}}
+                {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription}}
             </div>
         </div>
     </fieldset>
@@ -20,8 +19,7 @@
 
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedBehaviour target="system.behaviour.value" button=true owner=owner editable=editable
-                engine="prosemirror"}}
+                {{formInput systemFields.behaviour.fields.value value=document.system.behaviour.value toggled=true enriched=enrichedBehaviour}}
             </div>
         </div>
     </fieldset>
@@ -31,8 +29,7 @@
 
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedFlight target="system.flight.value" button=true owner=owner editable=editable
-                engine="prosemirror"}}
+                {{formInput systemFields.flight.fields.value value=document.system.flight.value toggled=true enriched=enrichedFlight}}
             </div>
         </div>
     </fieldset>
@@ -42,8 +39,7 @@
 
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedSpecialrules target="system.specialRules.value" button=true owner=owner
-                editable=editable engine="prosemirror"}}
+                {{formInput systemFields.specialRules.fields.value value=document.system.specialRules.value toggled=true enriched=enrichedSpecialrules}}
             </div>
         </div>
     </fieldset>
@@ -54,8 +50,7 @@
 
         <div class="row-section">
             <div class="col notes-box">
-                {{editor enrichedOwnerdescription target="system.details.notes.ownerdescription" button=true owner=owner
-                editable=editable engine="prosemirror"}}
+                {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
             </div>
         </div>
     </fieldset>

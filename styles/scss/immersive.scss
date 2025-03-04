@@ -361,19 +361,6 @@
         margin: 0px;
     }
 
-    #settings .fshopButton div {
-        display: inline-block;
-        background-image: url("../../lazy/patchimages/UlissesDigital.png");
-        background-size: contain;
-        width: 20px;
-        height: 19px;
-        margin: 0;
-        background-repeat: no-repeat;
-        background-position: center;
-        position: relative;
-        top: 5px;
-    }
-
     #sidebar {
         border: none;
         margin: 0px;
@@ -395,12 +382,6 @@
         .sidebar-tab.playlists-sidebar .folder a.sound-control[data-action="playlist-stop"] i,
         .sidebar-tab.playlists-sidebar .folder .folder-header a.sound-control[data-action="playlist-stop"] i {
             color: var(--color-text-hyperlink);
-        }
-
-        button.fshopButton {
-            background: rgb(0, 111, 61);
-            background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
-            position: relative;
         }
 
         &.collapsed:before {

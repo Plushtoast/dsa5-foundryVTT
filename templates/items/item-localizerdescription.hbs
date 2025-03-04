@@ -8,6 +8,6 @@
   {{#if hasLocalization}} 
     {{{localize (concat localizerPrefix document.name)}}}
   {{else}}
-    {{editor enrichedDescription target='system.description.value' button=true owner=owner editable=editable engine='prosemirror'}}
+    {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription}}
   {{/if}}
 </div>
