@@ -1,6 +1,6 @@
 import { delay } from '../system/view_helper.js';
 
-export default class DSATour extends Tour {
+export default class DSATour extends foundry.nue.Tour {
   static tours = ['systems/dsa5/modules/tours/lang/initial', 'systems/dsa5/modules/tours/lang/library', 'systems/dsa5/modules/tours/lang/actor'];
   static gmTours = ['systems/dsa5/modules/tours/lang/mastermenu'];
 
@@ -28,10 +28,6 @@ export default class DSATour extends Tour {
     } else if (this.currentStep.appTab) {
       this.app.changeTab(this.currentStep.appTab);
     }
-  }
-
-  exit() {
-    super.exit();
   }
 
   async start() {

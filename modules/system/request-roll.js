@@ -35,7 +35,7 @@ export default class RequestRoll {
 
   static async editGroupCheckRoll(messageId, result, target, type) {
     let message = await game.messages.get(messageId);
-    const data = message.flags;
+    const data = message.flags.gc;
     const isCrit = result.result.successLevel > 1;
     const critMultiplier = isCrit ? 2 : 1;
     data.botched = data.botched || result.result.successLevel < -1;
@@ -103,7 +103,7 @@ export default class RequestRoll {
       data.openRolls = data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
       const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.html', data);
-      message.update({ content, flags: data });
+      message.update({ content, flags: { gc: data } });
     } else {
       game.socket.emit('system.dsa5', {
         type: 'updateGroupCheck',
@@ -143,7 +143,7 @@ export default class RequestRoll {
     mergeObject(data, options);
     const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.html', data);
     let chatData = DSA5_Utility.chatDataSetup(content);
-    chatData.flags = data;
+    chatData.flags = { gc: data };
     ChatMessage.create(chatData);
   }
 
@@ -163,7 +163,7 @@ export default class RequestRoll {
           callback: async (event, button, dialog) => {
             const dlg = $(button.form)
             const message = game.messages.get(messageID);
-            const data = message.flags;
+            const data = message.flags.gc;
             data.rollOptions.push({
               type: 'skill',
               modifier: dlg.find('[name="modifier"]').val(),
@@ -186,7 +186,7 @@ export default class RequestRoll {
     const elem = $(ev.currentTarget);
     const index = Number(ev.currentTarget.dataset.index);
     const message = game.messages.get(elem.parents('.message').attr('data-message-id'));
-    const data = message.flags;
+    const data = message.flags.gc;
     data.results.splice(index, 1);
     RequestRoll.rerenderGC(message, data);
   }
@@ -194,7 +194,7 @@ export default class RequestRoll {
   static removeSkillFromGC(ev) {
     const elem = $(ev.currentTarget);
     const message = game.messages.get(elem.parents('.message').attr('data-message-id'));
-    const data = message.flags;
+    const data = message.flags.gc;
     data.rollOptions = data.rollOptions.filter((x) => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name));
     data.results = data.results.filter((x) => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name));
     RequestRoll.rerenderGC(message, data);
@@ -204,7 +204,7 @@ export default class RequestRoll {
     const elem = $(ev.currentTarget);
     const index = Number(ev.currentTarget.dataset.index);
     const message = game.messages.get(elem.parents('.message').attr('data-message-id'));
-    const data = message.flags;
+    const data = message.flags.gc;
     if (index) {
       data.results[index].qs = Number(elem.val());
     } else if (ev.currentTarget.dataset.name) {

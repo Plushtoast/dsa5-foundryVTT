@@ -24,8 +24,8 @@
                     data-tooltip="COMBAT.EncounterNext" aria-label="{{ localize "COMBAT.EncounterNext" }}"></button>
         </div>
         
-        <button type="button" class="inline-control combat-control icon fa-solid fa-trash" data-action="endCombat"
-                data-tooltip="COMBAT.Delete" aria-label="{{ localize "COMBAT.Delete" }}"></button>
+        <button type="button" class="inline-control icon fa-solid fa-gear" data-action="trackerSettings"
+                data-tooltip="COMBAT.Settings" aria-label="{{ localize "COMBAT.Settings" }}"></button>
         <button type="button" class="inline-control combat-control icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
         {{!-- Tabbed Display --}}
         {{else if combats.length}}
@@ -38,8 +38,8 @@
         </button>
         {{/each}}
         
-        <button type="button" class="inline-control combat-control icon fa-solid fa-trash" data-action="endCombat"
-                data-tooltip="COMBAT.Delete" aria-label="{{ localize "COMBAT.Delete" }}"></button>
+        <button type="button" class="inline-control icon fa-solid fa-gear" data-action="trackerSettings"
+                data-tooltip="COMBAT.Settings" aria-label="{{ localize "COMBAT.Settings" }}"></button>
         <button type="button" class="inline-control combat-control icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
         {{!-- No Combats --}}
         {{else}}
@@ -53,16 +53,6 @@
     {{/if}}
 
     <div class="encounter-controls {{#if hasCombat}}combat{{/if}}">
-
-        {{!-- Bulk Rolls --}}
-        {{#if user.isGM}}
-        <button type="button" class="inline-control combat-control icon fa-solid fa-users" data-action="rollAll"
-                {{#unless combat.turns.length}}disabled{{/unless}} data-tooltip="COMBAT.RollAll"
-                aria-label="{{ localize "COMBAT.RollAll" }}"></button>
-        <button type="button" class="inline-control combat-control icon fa-solid fa-users-cog" data-action="rollNPC"
-                {{#unless combat.turns.length}}disabled{{/unless}} data-tooltip="COMBAT.RollNPC"
-                aria-label="{{ localize "COMBAT.RollNPC" }}"></button>
-        {{/if}}
 
         {{!-- Combat Status --}}
         <strong class="encounter-title">
@@ -78,16 +68,8 @@
         </strong>
 
         {{!-- Combat Controls --}}
-        {{#if user.isGM}}
-        <button type="button" class="inline-control combat-control icon fa-solid fa-undo" data-action="resetAll"
-                {{#unless hasCombat}}disabled{{/unless}} data-tooltip="COMBAT.InitiativeReset"
-                aria-label="{{ localize "COMBAT.InitiativeReset" }}"></button>
-        <button type="button" class="inline-control combat-control icon fa-solid fa-{{#unless linked}}un{{/unless}}link"
-                data-action="toggleSceneLink" {{#unless hasCombat}}disabled{{/unless}} data-tooltip="{{ labels.scope }}"
-                aria-label="{{ labels.scope }}"></button>
-        {{/if}}
-        <button type="button" class="inline-control icon fa-solid fa-cog" data-action="trackerSettings"
-                data-tooltip="COMBAT.Settings" aria-label="{{ localize "COMBAT.Settings" }}"></button>
+        <button type="button" class="encounter-context-menu inline-control combat-control icon fa-solid fa-ellipsis-vertical"
+                {{#unless (and user.isGM hasCombat)}}disabled{{/unless}}></button>
 
     </div>
 

@@ -1168,7 +1168,7 @@ export default class Actordsa5 extends Actor {
   preparePostRollAction(message) {
     let data = message.flags.data;
     let cardOptions = {
-      flags: { img: message.flags.img },
+      flags: { img: { src: message.flags.img.src } },
       rollMode: data.rollMode,
       speaker: message.speaker,
       template: data.template,
@@ -2040,21 +2040,21 @@ export default class Actordsa5 extends Actor {
       title,
       template,
       flags: {
-        img: this.prototypeToken.randomImg ? this.img : this.prototypeToken.img,
+        img: { src: this.prototypeToken.randomImg ? this.img : this.prototypeToken.texture.src },
       },
     };
     if (this.token) {
       cardOptions.speaker.alias = this.token.name;
       cardOptions.speaker.token = this.token.id;
       cardOptions.speaker.scene = canvas.scene.id;
-      cardOptions.flags.img = this.token.img;
+      cardOptions.flags.img.src = this.token.document.texture.src;
     } else {
       let speaker = ChatMessage.getSpeaker();
       if (speaker.actor == this.id) {
         cardOptions.speaker.alias = speaker.alias;
         cardOptions.speaker.token = speaker.token;
         cardOptions.speaker.scene = speaker.scene;
-        cardOptions.flags.img = speaker.token ? canvas.tokens.get(speaker.token).img : cardOptions.flags.img;
+        cardOptions.flags.img.src = speaker.token ? canvas.tokens.get(speaker.token).document.texture.src : cardOptions.flags.img.src;
       }
     }
     return cardOptions;

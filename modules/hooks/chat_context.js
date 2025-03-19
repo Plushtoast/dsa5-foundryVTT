@@ -64,14 +64,14 @@ export function chatContext() {
     if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
 
     const message = game.messages.get(li[0].dataset.messageId);
-    return 'hideData' in message.flags && message.flags.hideData;
+    return !!message.flags?.hideData?.value;
   };
 
   const canHideData = function (li) {
     if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
 
     const message = game.messages.get(li[0].dataset.messageId);
-    return 'hideData' in message.flags && !message.flags.hideData;
+    return !!!message.flags?.hideData?.value;
   };
 
   const canImproveRoll = function (li, group = false) {
@@ -171,13 +171,13 @@ export function chatContext() {
     if (game.user.isGM) {
       let message = game.messages.get(li[0].dataset.messageId);
       if ('hideData' in message.flags) {
-        let newHide = !message.flags.hideData;
+        let newHide = !message.flags.hideData.value;
         let query = $(message.content);
         query.find('.hideAnchor')[newHide ? 'addClass' : 'removeClass']('hideData');
         query = $('<div></div>').append(query);
         message.update({
           content: query.html(),
-          'flags.hideData': newHide,
+          'flags.hideData.value': newHide,
         });
       }
     }

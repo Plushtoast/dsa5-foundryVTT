@@ -193,7 +193,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const html = $(this.element);
 
     const container = html.find('.dragHandler');
-    new Draggable(this, html, container[0], this.options.resizable);
+    new foundry.applications.ux.Draggable(this, html, container[0], this.options.resizable);
 
     container.on('wheel', async (ev) => {
       ev.stopPropagation();
@@ -220,13 +220,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
     }
   }
 
-  _attachFrameListeners() {
-    super._attachFrameListeners();
-    if ( game.user.isGM ) foundry.applications.ui.ContextMenu.create(this, this.element, ".combatant", {
-      jQuery: false,
-      fixed: true,
-      hookName: "DsaIniTrackerEntryContext"
-    });
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+
+    this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".combatant", {fixed: true});
   }
 
   _getDsaIniTrackerEntryContextOptions() {

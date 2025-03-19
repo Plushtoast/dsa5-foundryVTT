@@ -270,9 +270,10 @@ export class DSA5Combat extends Combat {
 
 export class DSA5Combatant extends Combatant {
   constructor(data, context) {
-    if (data.flags == undefined) data.flags = {};
-    mergeObject(data.flags, {
-      dsa5: { defenseCount: 0 },
+    mergeObject(data, {
+      flags: {
+        dsa5: { defenseCount: 0 },
+      }      
     });
     super(data, context);
   }

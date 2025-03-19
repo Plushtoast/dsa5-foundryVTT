@@ -688,7 +688,7 @@ export default class Itemdsa5 extends Item {
         scene: speaker.scene,
       },
       flags: {
-        img: speaker.token ? canvas.tokens.get(speaker.token).document.img : this.img,
+        img: { src: speaker.token ? canvas.tokens.get(speaker.token).document.texture.src : this.img },
       },
       title,
       template,

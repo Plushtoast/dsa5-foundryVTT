@@ -1329,7 +1329,7 @@ export default class DiceDSA5 {
       title: chatOptions.title,
       immuneTo,
       testData,
-      hideData: game.user.isGM,
+      hideData: { value: game.user.isGM },
       preData,
       hideDamage,
       modifierList: preData.situationalModifiers.filter((x) => x.value != 0),
@@ -1371,13 +1371,12 @@ export default class DiceDSA5 {
           rollMode: chatOptions.rollMode,
           isOpposedTest: chatOptions.isOpposedTest,
           title: chatOptions.title,
-          hideData: chatData.hideData,
+          hideData: { value: chatData.hideData.value },
           hideDamage: chatData.hideDamage,
           isDSARoll: true,
         },
       },
     });
-
     if (!rerenderMessage) {
       chatOptions.content = await renderTemplate(chatOptions.template, chatData);
       return await ChatMessage.create(chatOptions);
@@ -1387,7 +1386,7 @@ export default class DiceDSA5 {
         testData.messageId = rerenderMessage.id;
         await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source);
       }
-
+      
       const html = await renderTemplate(chatOptions.template, chatData);
       //Seems to be a foundry bug, after edit inline rolls are not converted anymore
       const actor = ChatMessage.getSpeakerActor(rerenderMessage.speaker) || game.users.get(rerenderMessage.author)?.character;
@@ -1396,10 +1395,10 @@ export default class DiceDSA5 {
         rollData,
         async: true,
       });
-      chatOptions['content'] = enriched;
+      chatOptions.content = enriched;
 
       const newMsg = await rerenderMessage.update({
-        content: chatOptions['content'],
+        content: chatOptions.content,
         flags: {
           data: chatOptions.flags.data,
         },

@@ -1,15 +1,15 @@
 <li class="chat-message message flexcol {{cssClass}}" data-message-id="{{message._id}}"
     {{#if borderColor}}style="border-color:{{borderColor}}"{{/if}}>
     <header class="message-header flexrow">
-        {{#if message.flags.img}} 
-            {{#if (isWEBM message.flags.img)}}
-            <video class="sender-image" src="{{message.flags.img}}" data-tooltip="{{message.flags.name}}" autoplay loop></video> 
+        {{#if message.flags.img.src}} 
+            {{#if (isWEBM message.flags.img.src)}}
+            <video class="sender-image" src="{{message.flags.img.src}}" autoplay loop></video> 
             {{else}}
-            <img class="sender-image" src="{{message.flags.img}}" data-tooltip="{{message.flags.name}}" /> 
+            <img class="sender-image" src="{{message.flags.img.src}}" /> 
             {{/if}}
-            <h4 class="message-sender with-image">{{alias}}</h4>
+            <h4 class="message-sender with-image" data-tooltip="{{{alias}}}">{{alias}}</h4>
         {{else}}
-            <h4 class="message-sender">{{alias}}</h4>
+            <h4 class="message-sender" data-tooltip="{{{alias}}}">{{alias}}</h4>
         {{/if}}
         <span class="message-metadata">
             <time class="message-timestamp">{{timeSince message.timestamp}}</time>

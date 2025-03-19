@@ -598,7 +598,7 @@ export default class OpposedDsa5 {
 
   static async renderOpposedResult(formattedOpposeResult, options = {}) {
     const hideConfig = game.settings.get('dsa5', 'hideOpposedDamageSelect');
-    formattedOpposeResult.hideData = [1, 2].includes(hideConfig);
+    formattedOpposeResult.hideData = { value: [1, 2].includes(hideConfig) };
     formattedOpposeResult.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     formattedOpposeResult.isBrawling = game.combat?.isBrawling;
 
@@ -608,13 +608,14 @@ export default class OpposedDsa5 {
       content,
       flags: {
         opposeData: formattedOpposeResult,
-        hideData: formattedOpposeResult.hideData,
+        hideData: { value: formattedOpposeResult.hideData.value },
       },
       whisper: hideConfig > 1 ? [] : options.whisper,
       blind: options.blind,
     };
 
-    if (options.target) chatOptions['flags.startMessageId'] = options.startMessageId;
+    // does this do anything? does not work with v13 aymore
+    // if (options.target) chatOptions['flags.startMessageId'] = options.startMessageId;
 
     await ChatMessage.create(chatOptions);
   }
