@@ -663,6 +663,9 @@
             "rangeweapon": {
                 "region": "Nostria..."
             },
+            "patron": {
+                "culture": "Ferkina..."
+            },
             "armor": {
                 "region": "Nostria..."
             },

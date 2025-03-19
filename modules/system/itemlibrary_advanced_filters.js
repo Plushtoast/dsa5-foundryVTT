@@ -364,7 +364,22 @@ Hooks.once('ready', () => {
         },
       ],
       magicalsign: [],
-      patron: [],
+      patron: [
+        {
+          label: 'TYPES.Item.culture',
+          attr: 'culture',
+          type: 'text',
+        },
+        {
+          label: 'Category',
+          attr: 'category',
+          type: 'select',
+          options: [0, 1, 2, 3].reduce((prev, x) => {
+            prev[x] = game.i18n.localize(`PATRON.${x}`);
+            return prev;
+          }, {}),
+        },
+      ],
       demonmark: [],
       essence: [],
       imprint: [{ label: 'Category', attr: 'category', type: 'text' }],
