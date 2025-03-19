@@ -660,18 +660,18 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         func = (p) => { return p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item) }) }
     }
     this.indexWorldItems(worldItems, documentName)
-    progress.update({message: game.i18n.format('Library.loading', { item: "world items" }), pct: Math.round(percentage) / 100})
+    progress.update({message: 'Library.loading', format: { item: "world items" }, pct: Math.round(percentage) / 100})
 
     const promise = packs.map(async (p) => {
         const documents = await func(p)
         count += percentage
         for(const item of documents) index.index.add(SearchDocument.toSearchableObject(item, documentName))
 
-        progress.update({message: game.i18n.format('Library.loading', { item: `${p.metadata.label} (${p.metadata.id})` }), pct: Math.round(count) / 100})
+        progress.update({message: 'Library.loading', format: { item: `${p.metadata.label} (${p.metadata.id})` }, pct: Math.round(count) / 100})
     })
 
     return Promise.all(promise).then(async() => {
-        progress.update({message: game.i18n.format('Library.loading', { item: "" }), pct: 1})
+        progress.update({message: 'Library.loading', format: { item: "" }, pct: 1})
         this.hideLoading(documentName)
     })
   }
@@ -736,7 +736,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       }
 
       const result = (await index.index.searchAsync({ tag: [subcategory] })).map(x => x.result).flat()
-      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 0.1 })
+      progress.update({message: 'Library.loading', format: { item: catName }, pct: 0.1 })
 
       const promises = [];
       let percentage = 60 / result.length;
@@ -744,9 +744,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       for (const uuid of result) {
         count += 1;
         if(uuid.startsWith('Compendium')) promises.push(fromUuid(uuid));
-        progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: Math.round(10 + count * percentage) / 100 })
+        progress.update({message: 'Library.loading', format: { item: catName }, pct: Math.round(10 + count * percentage) / 100 })
       }
-      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 0.7 })
+      progress.update({message: 'Library.loading', format: { item: catName }, pct: 0.7 })
 
       const final = await Promise.all(promises);
       percentage = 30 / final.length;
@@ -754,12 +754,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       for (let k of final) {
         count += 1;
         items.push(AdvancedSearchDocument.toSearchableObject(k, subcategory));
-        progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: Math.round(70 + count * percentage) / 100 })
+        progress.update({message: 'Library.loading', format: { item: catName }, pct: Math.round(70 + count * percentage) / 100 })
       }
 
       for(const item of items) this.detailFilter[subcategory].add(item);
       this.hideLoading(target, category);
-      progress.update({message: game.i18n.format('Library.loading', { item: catName }), pct: 1 })
+      progress.update({message: 'Library.loading', format:  { item: catName }, pct: 1 })
     }
   }
 
