@@ -3,7 +3,8 @@ import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
-const { mergeObject, getProperty } = foundry.utils;
+const { getProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogReactDSA5 extends Select2Dialog {
   static async showDialog(startMessage) {

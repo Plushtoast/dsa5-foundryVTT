@@ -6,6 +6,7 @@ import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from './riding.js';
 import CombatskillData from '../data/item/combatskill.js';
 const { getProperty, mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   async _onRender(context, options) {

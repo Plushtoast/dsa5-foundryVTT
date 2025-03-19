@@ -12,6 +12,7 @@ import { DefaultAppv2 } from '../actor/baseapp.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import CombatskillData from '../data/item/combatskill.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class TokenHotbar2 extends DefaultAppv2 {
   static attackTypes = new Set(['meleeweapon', 'rangeweapon']);

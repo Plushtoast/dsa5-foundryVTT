@@ -4,6 +4,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import RuleChaos from '../system/rule_chaos.js';
 const { debounce, getProperty, mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
   static PARTS = {

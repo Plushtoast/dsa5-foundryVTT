@@ -1,4 +1,4 @@
-const { getProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export const ItemSheetObfuscation = (superclass) =>
   class extends superclass {

@@ -67,7 +67,7 @@ export default class DSA5SkillDialog extends DialogShared {
 
   rememberFormData(ev) {
     const html = $(this.element);
-    const data = new FormDataExtended(html.find('form')[0]).object;
+    const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
     data.situationalModifiers = Actordsa5._parseModifiers(html);
     this.calculateRoutine(data);
   }

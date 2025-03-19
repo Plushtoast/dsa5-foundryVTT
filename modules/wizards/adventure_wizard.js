@@ -6,6 +6,7 @@ import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5 from '../system/config-dsa5.js';
 import { slist } from '../system/view_helper.js';
 const { mergeObject, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class BookWizard extends DefaultAppv2 {
   static wizard;

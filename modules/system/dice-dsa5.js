@@ -22,6 +22,7 @@ import DSATriggers from './triggers.js';
 import RuleChaos from './rule_chaos.js';
 import CombatskillData from '../data/item/combatskill.js';
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DiceDSA5 {
   static async rollTest(testData) {
@@ -243,21 +244,21 @@ export default class DiceDSA5 {
     const suc = res - rollTotal >= 0;
     const characteristics = [{ char: id, res: rollTotal, suc, tar: res }];
     let successLevel = suc ? 1 : -1;
-    let botch = 20;
-    let crit = 1;
+    let botch = testData.source.system.botch || 20;
+    let crit = testData.source.system.crit || 1;
     const statKey = { meleeweapon: 'meleeStats', rangeweapon: 'rangeStats' }[testData.source.type];
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
-
-    if (statKey) {
-      botch = Math.min(actor.system[statKey].botch, testData.source.system.botch);
-      crit = Math.max(actor.system[statKey].crit, testData.source.system.crit);
-    }
 
     if (RuleChaos.improvisedWeapon.test(testData.source.name)) {
       if (!SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.improvisedWeaponMaster')) botch = Math.min(19, botch);
 
       this._appendSituationalModifiers(testData, `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize('WEAPON.improvised')}`, 2, 'defenseMalus');
     }
+
+    if (statKey) {
+      botch = botch + (actor.system[statKey].botch - 20);
+      crit = crit + (actor.system[statKey].crit - 1);
+    }    
 
     if (testData.situationalModifiers.find((x) => x.name == game.i18n.localize('MODS.opportunityAttack') && x.value != 0)) {
       botch = 50;

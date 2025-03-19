@@ -6,6 +6,7 @@ import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 //todo add on use button to merchant sheet
 
@@ -27,35 +28,35 @@ export const MerchantSheetMixin = (superclass) =>
       },
       main: {
         template: 'systems/dsa5/templates/actors/actor-main.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       combat: {
         template: 'systems/dsa5/templates/actors/actor-combat.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       skills: {
         template: 'systems/dsa5/templates/actors/actor-talents.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       magic: {
         template: 'systems/dsa5/templates/actors/character/actor-magic.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       religion: {
         template: 'systems/dsa5/templates/actors/character/actor-religion.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       inventory: {
         template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       status: {
         template: 'systems/dsa5/templates/actors/parts/status_effects.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       },
       notes: {
         template: 'systems/dsa5/templates/actors/actor-notes.html',
-        scrollable: ['.scrollable']
+        scrollable: ['']
       }
     }
 

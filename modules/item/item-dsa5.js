@@ -15,6 +15,7 @@ import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import Riding from '../system/riding.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class Itemdsa5 extends Item {
   static DEFAULT_ICON = 'systems/dsa5/icons/blank.webp';
@@ -753,7 +754,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     testData.testDifficulty = 0;
     testData.situationalModifiers = Actordsa5._parseModifiers(html);
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
-    const formData = new FormDataExtended(form).object;
+    const formData = new foundry.applications.ux.FormDataExtended(form).object;
     testData.calculatedSpellModifiers = {
       castingTime: html.find('.castingTime').text(),
       cost: html.find('.aspcost').text(),

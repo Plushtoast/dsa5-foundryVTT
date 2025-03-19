@@ -1,4 +1,5 @@
 import DSA5_Utility from '../system/utility-dsa5.js';
+const { renderTemplate } = foundry.applications.handlebars;
 
 export function initImagePopoutTochat() {
   Hooks.on('getImagePopoutHeaderButtons', (app, buttons) => {

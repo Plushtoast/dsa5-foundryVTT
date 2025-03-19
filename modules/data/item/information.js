@@ -3,6 +3,7 @@ import DSA5_Utility from '../../system/utility-dsa5.js';
 import { ItemDataModel } from '../baseitem.js';
 
 const { StringField, NumberField, HTMLField } = foundry.data.fields;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class InformationData extends ItemDataModel {
   static defineSchema() {

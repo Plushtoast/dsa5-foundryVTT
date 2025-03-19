@@ -2,6 +2,7 @@ import DSA5Dialog from '../dialog/dialog-dsa5.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 import DSA5_Utility from './utility-dsa5.js';
 const { mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class RequestRoll {
   static async requestGC(category, name, messageId, modifier = 0) {

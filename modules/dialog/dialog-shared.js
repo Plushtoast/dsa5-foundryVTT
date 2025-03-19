@@ -1,6 +1,7 @@
 import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { AddTargetDialog } from './addTargetDialog.js';
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogShared extends foundry.applications.api.DialogV2 {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];

@@ -23,6 +23,7 @@ import APTracker from '../system/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './appv2_mixin.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static propertiesToEnrich = [

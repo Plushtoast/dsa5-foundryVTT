@@ -8,6 +8,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import { tabSlider } from '../system/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 //TODO magical weapon resistance
 

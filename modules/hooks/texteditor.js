@@ -1,4 +1,5 @@
 import DSA5 from '../system/config-dsa5.js';
+const { renderTemplate } = foundry.applications.handlebars;
 
 export function setEnrichers() {
   const rolls = { Rq: 'roll', Gc: 'GC', Ch: 'CH' };

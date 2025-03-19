@@ -1,4 +1,5 @@
 const { mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export class PlayerMenuSubApp {
   static template = '';

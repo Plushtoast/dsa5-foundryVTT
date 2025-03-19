@@ -3,6 +3,7 @@ import ItemRulesDSA5 from './item-rules-dsa5.js';
 import Select2Dialog from '../dialog/select2Dialog.js';
 import APTracker from './ap-tracker.js';
 const { duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
   static setupFunctions() {}

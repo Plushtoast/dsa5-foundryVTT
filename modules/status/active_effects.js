@@ -7,6 +7,7 @@ import DSATriggers from '../system/triggers.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { delay } from '../system/view_helper.js';
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 function automatedAnimation(successLevel, options = {}) {
   if (DSA5_Utility.moduleEnabled('autoanimations')) {

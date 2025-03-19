@@ -3,6 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionTemplate) {
   static defineSchema() {

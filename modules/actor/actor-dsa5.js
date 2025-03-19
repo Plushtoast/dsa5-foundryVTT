@@ -22,6 +22,7 @@ import DSAActiveEffect from '../status/dsa_active_effects.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class Actordsa5 extends Actor {
   static DEFAULT_ICON = 'icons/svg/mystery-man-black.svg';

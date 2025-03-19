@@ -23,6 +23,6 @@ const dragTileImg = (event) => {
   event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   const w = img.naturalWidth * ratio * canvas.stage.scale.x;
   const h = img.naturalHeight * ratio * canvas.stage.scale.y;
-  const preview = DragDrop.createDragImage(img, w, h);
+  const preview = foundry.applications.ux.DragDrop.createDragImage(img, w, h);
   event.dataTransfer.setDragImage(preview, w / 2, h / 2);
 };

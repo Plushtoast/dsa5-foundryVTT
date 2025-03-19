@@ -55,7 +55,7 @@ export default function () {
 }
 
 Hooks.once('init', () => {
-  loadTemplates([
+  foundry.applications.handlebars.loadTemplates([
     'systems/dsa5/templates/system/dsatabs.hbs',
     'systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs',
     'systems/dsa5/templates/actors/actor-main.html',
@@ -120,7 +120,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/specblock.html',
   ]);
   
-  Actors.unregisterSheet('core', ActorSheet);
+  foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
 
   const actorSheets = [
     { sheetClass: ActorSheetdsa5Character, types: ['character'], makeDefault: true },
@@ -132,10 +132,10 @@ Hooks.once('init', () => {
   ];
   
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
-    Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
+    foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
   });
   foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
-  Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
+  foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();
 

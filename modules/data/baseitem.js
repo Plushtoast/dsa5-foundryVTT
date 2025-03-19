@@ -3,6 +3,7 @@ import DSA5Payment from '../system/payment.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
 const { getProperty, mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export class ItemDataModel extends DSADataModel {
   async getSheetData(data) {}

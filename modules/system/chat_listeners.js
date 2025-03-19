@@ -4,6 +4,7 @@ import { showPatchViewer } from './migrator.js';
 import RuleChaos from './rule_chaos.js';
 import { showPopout } from '../hooks/imagepopouttochat.js';
 const { duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5ChatListeners {
   static chatListeners(html) {

@@ -9,6 +9,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class MastersMenu {
   static registerButtons() {
@@ -976,7 +977,7 @@ class GlobalModAddition extends FormAppv2 {
     ev.preventDefault();
     const settings = expandObject(game.settings.get('dsa5', 'masterSettings'));
 
-    const data = expandObject(new FormDataExtended($(this.element).find('form')[0]).object);
+    const data = expandObject(new foundry.applications.ux.FormDataExtended($(this.element).find('form')[0]).object);
     data.enabled = true;
 
     if (!data.name) return;

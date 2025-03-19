@@ -3,6 +3,7 @@ import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import { showPatchViewer } from '../system/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 const { duplicate, mergeObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export function setupConfiguration() {
   game.settings.register('dsa5', 'meleeBotchTableEnabled', {

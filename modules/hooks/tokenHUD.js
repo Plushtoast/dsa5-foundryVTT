@@ -1,6 +1,7 @@
 import Riding from '../system/riding.js';
 import { TokenHoverHud } from './actor.js';
 const { getProperty } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 function addThirdBarToHUD(html, actor, app) {
   if (actor.system.isPriest && actor.system.isMage) {

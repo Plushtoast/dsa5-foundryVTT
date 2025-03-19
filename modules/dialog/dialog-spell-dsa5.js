@@ -4,7 +4,8 @@ import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
-const { mergeObject, duplicate } = foundry.utils;
+const { duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5SpellDialog extends DialogShared {
   static rollChanges = ['defenseMalus'];
@@ -257,7 +258,7 @@ export default class DSA5SpellDialog extends DialogShared {
   async calculateProbability() {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     const html = $(this.element);
-    const data = new FormDataExtended(html.find('form')[0]).object;
+    const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
     data.situationalModifiers = Actordsa5._parseModifiers(html);
     const fw = this.dialogData.source.system.talentValue.value + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
     let mod =

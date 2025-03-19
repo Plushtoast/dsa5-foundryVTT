@@ -16,6 +16,7 @@ import RequestRoll from '../system/request-roll.js';
 import APTracker from '../system/ap-tracker.js';
 import { AppV2Mixin } from '../actor/appv2_mixin.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2)) {
   _processFormData(event, form, formData) {
@@ -100,8 +101,8 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   static setupSheets() {
-    Items.unregisterSheet('core', ItemSheet);
-    Items.registerSheet('dsa5', ItemSheetdsa5, { makeDefault: true });
+    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet);
+    foundry.documents.collections.Items.registerSheet('dsa5', ItemSheetdsa5, { makeDefault: true });
 
     const sheets = [
       { sheetClass: ItemSpeciesDSA5, types: ['species'] },
@@ -137,9 +138,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       { sheetClass: EffectWrapperSheet, types: ['effectwrapper'] },
     ];
     sheets.forEach(({ sheetClass, types }) => {
-      Items.registerSheet('dsa5', sheetClass, { makeDefault: true, types });
+      foundry.documents.collections.Items.registerSheet('dsa5', sheetClass, { makeDefault: true, types });
     });
-    Items.unregisterSheet('dsa5', ItemSheetdsa5, { types: sheets.map((x) => x.types).flat() });
+    foundry.documents.collections.Items.unregisterSheet('dsa5', ItemSheetdsa5, { types: sheets.map((x) => x.types).flat() });
   }
 
   get dsaItemTemplate() {
@@ -148,7 +149,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    if (!parts.details) parts.details = { template: this.dsaItemTemplate, scrollable: ['.scrollable'] };
+    if (!parts.details) parts.details = { template: this.dsaItemTemplate, scrollable: [''] };
     return parts;
   }
 
@@ -295,11 +296,11 @@ class WithEffectsSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 }
@@ -317,11 +318,11 @@ class EffectsEquipmentSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 }
@@ -339,7 +340,7 @@ class NoEffectsEquipmentSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -363,7 +364,7 @@ class NoEffectsSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -408,11 +409,11 @@ class LocalizerSheet extends WithEffectsSheet {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-localizerdescription.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 }
@@ -430,7 +431,7 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-localizerdescription.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 }
@@ -465,11 +466,11 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     production: {
       template: 'systems/dsa5/templates/items/item-production.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -667,15 +668,15 @@ class Enchantable extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     enchantment: {
       template: 'systems/dsa5/templates/items/item-enchantment.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -931,19 +932,19 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     containerContent: {
       template: 'systems/dsa5/templates/items/item-containerContent.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     enchantment: {
       template: 'systems/dsa5/templates/items/item-enchantment.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -1094,7 +1095,7 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 }
@@ -1227,7 +1228,7 @@ class ItemCareerDSA5 extends NoEffectsSheet {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-career-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -1252,11 +1253,11 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
       templates: ['systems/dsa5/templates/items/item-aoe.hbs'],
     },
   };
@@ -1302,7 +1303,7 @@ class ItemCultureDSA5 extends NoEffectsSheet {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-culture-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -1391,7 +1392,7 @@ class ItemSpeciesDSA5 extends NoEffectsSheet {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-species-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -1416,15 +1417,15 @@ class SpellSheetDSA5 extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
     },
     extensions: {
       template: 'systems/dsa5/templates/items/item-extension.hbs',
-      scrollable: ['.scrollable'],
+      scrollable: [''],
       templates: ['systems/dsa5/templates/items/item-aoe.hbs'],
     },
   };

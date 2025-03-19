@@ -23,35 +23,35 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     },
     main: {
       template: 'systems/dsa5/templates/actors/actor-main.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     skills: {
       template: 'systems/dsa5/templates/actors/actor-talents.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     magic: {
       template: 'systems/dsa5/templates/actors/character/actor-magic.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     religion: {
       template: 'systems/dsa5/templates/actors/character/actor-religion.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     inventory: {
       template: 'systems/dsa5/templates/actors/actor-equipment.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     },
     notes: {
       template: 'systems/dsa5/templates/actors/actor-notes.html',
-      scrollable: ['.scrollable']
+      scrollable: ['']
     }
   }
 

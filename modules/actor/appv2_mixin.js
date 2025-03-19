@@ -8,7 +8,7 @@ export const AppV2Mixin = (superclass) =>
       await super._onRender((context, options));
 
       //todo: add drag handler dragSelector, dropSelector
-      new DragDrop({ 
+      new foundry.applications.ux.DragDrop({ 
         callbacks: { drop: this._onDrop.bind(this)},
         permissions: { drop: this._canDragDrop.bind(this) }
       }).bind(this.element);

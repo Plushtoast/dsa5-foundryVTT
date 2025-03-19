@@ -1,3 +1,5 @@
+const { renderTemplate } = foundry.applications.handlebars;
+
 export default class DidYouKnow {
   static fadeOut = true;
 
