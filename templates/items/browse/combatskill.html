@@ -43,7 +43,11 @@
                                 {{localize "weapontype"}}
                             </div>
                             <div class="col">
-                                {{localize (concat document.system.weapontype.value 'weapon')}}
+                                {{#if (eq document.system.weapontype.value 0)}}
+                                {{localize 'TYPES.Item.rangeweapon'}}
+                                {{/else}}
+                                {{localize 'TYPES.Item.meleeweapon'}}
+                                {{/if}}
                             </div>
                         </div>
 

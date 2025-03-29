@@ -390,7 +390,7 @@ export default function () {
 
 export class TokenHoverHud {
   static show(token) {
-    if (!game.combat || canvas.hud?.token?.rendered) return;
+    if (!game.combat || canvas.hud?.token?.rendered || !token.actor) return;
 
     const weapons = token.actor.items.filter((x) => {
       if (x.type == 'meleeweapon' || x.type == 'rangeweapon') {

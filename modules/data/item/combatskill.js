@@ -55,7 +55,7 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate) 
   static _calculateCombatSkillValues(skill, actorData, { step, parry, attack } = { step: 0, parry: 0, attack: 0 }) {
     const modifiedTalentValue = skill.system.talentValue.value + step;
 
-    if (skill.system.weapontype.value == 'melee') {
+    if (skill.system.weapontype.value == 0) {
       const vals = skill.system.guidevalue.value
         .split('/')
         .map(

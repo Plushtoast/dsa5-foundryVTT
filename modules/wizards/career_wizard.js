@@ -23,7 +23,10 @@ export default class CareerWizard extends WizardDSA5 {
   }
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/wizard/add-career-wizard.hbs'},
+    main: {
+      template: 'systems/dsa5/templates/wizard/add-career-wizard.hbs',
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+    },
   };
 
   static TABS = {

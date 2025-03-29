@@ -1,6 +1,6 @@
 <div class='tab scrollable {{tabs.inventory.cssClass}}' data-tab='inventory'
     data-group='{{tabs.inventory.group}}' class='tab'>
-    {{> systems/dsa5/templates/actors/parts/gearSearch.html}} {{#each prepare.inventory as |section sid|}} {{#if section.show}}
+    {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}} {{#each prepare.inventory as |section sid|}} {{#if section.show}}
     <div class="actor-equipment groupbox">
         <div class="row-section table-title">
             <div class="col eight"></div>

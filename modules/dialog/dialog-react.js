@@ -65,7 +65,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
       name: game.i18n.localize('doNothing'),
       id: 'doNothing',
     });
-    return renderTemplate('systems/dsa5/templates/dialog/dialog-act.html', {
+    return renderTemplate('systems/dsa5/templates/dialog/dialog-act.hbs', {
       items,
       original: item,
       title: 'DIALOG.selectReaction',
@@ -87,32 +87,44 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
   }
 }
 
-export class ActAttackDialog extends foundry.applications.api.DialogV2 {
+export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static async showDialog(actor, tokenId) {
-    const dialog = new ActAttackDialog({
-      window: { title: 'attacktest' },
-      content: await this.getTemplate(actor),
-      buttons: [],
-    });
-    dialog.actor = actor;
-    dialog.tokenId = tokenId;
-    dialog.render(true);
+    new ActAttackDialog(actor, tokenId).render(true);
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
+  static DEFAULT_OPTIONS = {
+    window: { title: 'attacktest' },
+    position: {
+      width: 550
+    },
+    actions: {
+      reactClick: this._reactClick
+    }
+  };
 
-    const html = $(this.element)
-    html.find('.reactClick').on('click', (ev) => {
-      this.callbackResult(ev.currentTarget.dataset, this.actor, this.tokenId);
-      this.close();
-    });
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/dialog-reaction-attack.hbs',
+    },
+  };
+
+  constructor(actor, tokenId) {
+    super();
+    this.actor = actor;
+    this.tokenId = tokenId;
   }
 
-  static async getTemplate(actor) {
-    const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
-    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
-    let items = [
+  static _reactClick(event, target) {
+    this.callbackResult(target.dataset, this);
+    this.close();
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const wrestle = game.i18n.localize('LocalizedIDs.wrestle')
+    const combatskills = this.actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), this.actor.system));
+    const brawl = combatskills.find((x) => x.name == wrestle);
+    data.items = [
       {
         name: game.i18n.localize('attackWeaponless'),
         id: 'attackWeaponless',
@@ -124,13 +136,13 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
 
-    for (let item of actor.items) {
+    for (let item of this.actor.items) {
       if (types.includes(item.type) && item.system.worn.value == true) {
         const preparedItem =
           item.type == 'meleeweapon'
-            ? Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, actor)
-            : Actordsa5._prepareRangeWeapon(item.toObject(), [], combatskills, actor);
-        items.push({
+            ? Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, this.actor)
+            : Actordsa5._prepareRangeWeapon(item.toObject(), [], combatskills, this.actor);
+        data.items.push({
           name: item.name,
           id: item.name,
           img: item.img,
@@ -138,7 +150,7 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
           item: preparedItem,
         });
         for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
-          items.push({
+          data.items.push({
             name: value.name,
             id: item.name,
             subweapon: key,
@@ -148,7 +160,7 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
           });
         }
       } else if (item.type == 'trait' && traitTypes.includes(item.system.traitType.value)) {
-        items.push({
+        data.items.push({
           name: item.name,
           id: item.name,
           img: item.img,
@@ -156,10 +168,15 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
         });
       }
     }
-    return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', { dieClass: 'die-mu', items, title: 'DIALOG.selectAction' });
+    data.dieClass = 'die-mu'
+    data.title = 'DIALOG.selectAction'
+    return data;
   }
 
-  callbackResult(dataset, actor, tokenId) {
+  callbackResult(dataset, dialog) {
+    const actor = dialog.actor;
+    const tokenId = dialog.tokenId;
+
     if ('attackWeaponless' == dataset.value) {
       actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {
         actor.basicTest(setupData);
@@ -179,24 +196,21 @@ export class ActAttackDialog extends foundry.applications.api.DialogV2 {
       }
     }
   }
-
-  static DEFAULT_OPTIONS = {
-    position: {
-        width: 550
-    },
-  };
 }
 
-export class ReactToAttackDialog extends DialogReactDSA5 {
+export class ReactToAttackDialog extends ActAttackDialog {
   static async showDialog(startMessage) {
-    const dialog = new ReactToAttackDialog({
-      window: { title: 'Unopposed' },
-      content: await this.getTemplate(startMessage),
-      buttons: [],
-    });
-    dialog.startMessage = startMessage;
-    dialog.render(true);
+    new ReactToAttackDialog(startMessage).render(true);
   }
+
+  constructor(startMessage) {
+    super();
+    this.startMessage = startMessage;
+  }
+
+  static DEFAULT_OPTIONS = {
+    window: { title: 'Unopposed' },
+  };
 
   static getAttackActor(message) {
     if (!canvas.tokens) return {};
@@ -218,28 +232,12 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
     };
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-
-    const html = $(this.element)
-    html.find('.reactClick').on('click', (ev) => {
-      this.callbackResult(ev.currentTarget.dataset.value, this.startMessage);
-      this.close();
-    });
-  }
-
-
-  static DEFAULT_OPTIONS = {
-    position: {
-        width: 550
-    },
-  };
-
-  static async getTemplate(startMessage) {
-    const { actor, tokenId } = DialogReactDSA5.getTargetActor(startMessage);
-    const attackActor = ReactToAttackDialog.getAttackActor(startMessage);
+  async _prepareContext(_options) {
+    const { actor, tokenId } = DialogReactDSA5.getTargetActor(this.startMessage);
+    const attackActor = ReactToAttackDialog.getAttackActor(this.startMessage);
+    const wrestle = game.i18n.localize('LocalizedIDs.wrestle')
     const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
-    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
+    const brawl = combatskills.find((x) => x.name == wrestle);
     let items = [
       {
         name: game.i18n.localize('doNothing'),
@@ -285,7 +283,7 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
       }
 
       if (attackActor) {
-        const size = getProperty(attackActor.actor.system, 'status.size.value');
+        const size = attackActor.actor.system.status.size.value;
         if (size == 'big') sizeNotification = 'DIALOGDESCRIPTION.bigEnemy';
         else if (size == 'giant') sizeNotification = 'DIALOGDESCRIPTION.giantEnemy';
       }
@@ -294,20 +292,22 @@ export class ReactToAttackDialog extends DialogReactDSA5 {
         defenses = await game.combat.getDefenseCount({
           actor: actor.id,
           token: tokenId,
-          scene: canvas.scene ? canvas.scene.id : null,
+          scene: canvas.scene?.id,
         });
     }
 
-    return await renderTemplate('systems/dsa5/templates/dialog/dialog-reaction-attack.html', {
+    return {
       dieClass: 'die-in',
-      items: items,
+      items,
       defenses,
       title: 'DIALOG.selectReaction',
-      sizeNotification,
-    });
+      sizeNotification
+    };
   }
 
-  callbackResult(text, message) {
+  callbackResult(dataset, dialog) {
+    const text = dataset.value;
+    const message = dialog.startMessage;
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(message);
 
     if ('doNothing' == text) {

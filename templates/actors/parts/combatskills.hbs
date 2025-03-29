@@ -67,7 +67,7 @@
                     <a data-mode="attack" data-action="chRollCombat" class="d20 diet-mu">{{item.system.attack.value}}</a>
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#if (eq item.system.weapontype.value 'melee')}} <a data-mode="parry" data-action="chRollCombat" class="d20 diet-in">{{item.system.parry.value}}</a> {{else}}- {{/if}}
+                    {{#if (eq item.system.weapontype.value 0)}} <a data-mode="parry" data-action="chRollCombat" class="d20 diet-in">{{item.system.parry.value}}</a> {{else}}- {{/if}}
                 </div>
             </div>
         </div>

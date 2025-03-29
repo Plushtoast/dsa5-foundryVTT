@@ -9,7 +9,9 @@ export default class SpeciesWizard extends WizardDSA5 {
   }
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/wizard/add-species-wizard.hbs'},
+    main: {
+      template: 'systems/dsa5/templates/wizard/add-species-wizard.hbs',
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs']},
   };
 
   static TABS = {

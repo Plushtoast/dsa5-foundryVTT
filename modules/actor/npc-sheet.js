@@ -21,7 +21,8 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     },
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.html',
-      scrollable: ['']
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs']
     },
     skills: {
       template: 'systems/dsa5/templates/actors/actor-talents.html',
@@ -37,7 +38,8 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     },
     inventory: {
       template: 'systems/dsa5/templates/actors/actor-equipment.html',
-      scrollable: ['']
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
     },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.html',

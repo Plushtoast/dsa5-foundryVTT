@@ -3,11 +3,31 @@ import DPS from '../system/derepositioningsystem.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
-export class AddTargetDialog extends foundry.applications.api.DialogV2 {
+export class AddTargetDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    window: { title: 'DIALOG.addTarget' },
+  };
+
+  constructor(speaker) {
+    super();
+    this.speaker = speaker;
+  }
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/addTarget-dialog.hbs',
+    },
+  };
+
   static async getDialog(speaker) {
+    return new AddTargetDialog(speaker);
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
     const targets = Array.from(game.user.targets).map((x) => x.id);
-    const selectables = [];
-    const token = canvas.scene ? canvas.scene.tokens.get(speaker.token)?.object : undefined;
+    data.selectables = [];
+    const token = canvas.scene?.tokens.get(this.speaker.token)?.object;
     if (game.combat) {
       game.combat.combatants.forEach((combatant) => {
         if (!combatant.visible) return;
@@ -18,14 +38,10 @@ export class AddTargetDialog extends foundry.applications.api.DialogV2 {
           combatant.distance = DPS.rangeFinder(token, combatantToken);
           combatant.distance.distanceSum = Number(combatant.distance.distanceSum.toFixed(1));
         }
-        selectables.push(combatant);
+        data.selectables.push(combatant);
       });
     }
-    return new AddTargetDialog({
-      window: { title: 'DIALOG.addTarget' },
-      content: await renderTemplate('systems/dsa5/templates/dialog/addTarget-dialog.html', { selectables }),
-      buttons: [],
-    });
+    return data;
   }
 
   async _onRender(context, options) {
@@ -33,18 +49,19 @@ export class AddTargetDialog extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
     const combatants = html.find('.combatant');
-    combatants.dblclick((ev) => this.setTargets(ev, true));
+    combatants.on('dblclick', (ev) => this.setTargets(ev, true));
     combatants.on('click', (ev) => this.setTargets(ev));
-    combatants.on('hover', this._onCombatantHoverIn.bind(this), this._onCombatantHoverOut.bind(this));
+    combatants.on('pointerover', this._onCombatantHoverIn.bind(this)),
+    combatants.on('pointerout', this._onCombatantHoverOut.bind(this));
     combatants.on('mousedown', (ev) => this._onRightClick(ev));
   }
 
   _onCombatantHoverOut(ev) {
-    this._getCombatApp()._onCombatantHoverOut(ev);
+    ui.combat._onCombatantHoverOut(ev);
   }
 
   _onCombatantHoverIn(ev) {
-    this._getCombatApp()._onCombatantHoverIn(ev);
+    ui.combat._onCombatantHoverIn(ev);
   }
 
   _onRightClick(ev) {
@@ -57,10 +74,6 @@ export class AddTargetDialog extends foundry.applications.api.DialogV2 {
         });
       }
     }
-  }
-
-  _getCombatApp() {
-    return game.combats.apps[0];
   }
 
   async setTargets(ev, close = false) {
@@ -114,7 +127,9 @@ export class SelectUserDialog extends DefaultAppv2 {
         icon: 'fa fa-bullseye',
         button: true,
         order: 2,
-        onChange: async () => {(await SelectUserDialog.getDialog()).render(true);},
+        onChange: async () => {
+          (await SelectUserDialog.getDialog()).render(true);
+        },
       };
       btns.tokens.tools.targetUser = userSelect;
     });

@@ -18,7 +18,8 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     },
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.html',
-      scrollable: ['']
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs']
     },
     skills: {
       template: 'systems/dsa5/templates/actors/actor-talents.html',
@@ -34,7 +35,8 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     },
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
-      scrollable: ['']
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
     },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.html',

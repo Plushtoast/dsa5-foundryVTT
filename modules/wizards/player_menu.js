@@ -348,7 +348,10 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/system/playermenu.hbs'},
+    main: {
+      template: 'systems/dsa5/templates/system/playermenu.hbs',
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+    },
   };
 
   async _onDrop(event) {

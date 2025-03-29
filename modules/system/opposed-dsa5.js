@@ -117,7 +117,7 @@ export default class OpposedDsa5 {
       const attackOfOpportunity = message.flags.data.preData.attackOfOpportunity;
       let unopposedButton = attackOfOpportunity
         ? ''
-        : `<div><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`;
+        : `<div class="flexrow"><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`;
       let startMessagesList = [];
 
       game.user.targets.forEach(async (target) => {

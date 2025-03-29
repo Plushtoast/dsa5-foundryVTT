@@ -99,7 +99,10 @@ class PatchViewer extends DefaultAppv2 {
   };
 
   static PARTS = {
-    main: { template: 'systems/dsa5/templates/system/patchviewer.hbs' },
+    main: { 
+      template: 'systems/dsa5/templates/system/patchviewer.hbs',
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+    },
   };
 
   static TABS = {

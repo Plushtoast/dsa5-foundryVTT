@@ -13,7 +13,8 @@ export default class DSA5Tutorial {
 
   static firstTimeLanguage() {
     const langs = ['de', 'en'];
-    const data = {
+
+    new foundry.applications.api.DialogV2({
       window: {
         title: 'DIALOG.firstTime',
       },
@@ -21,17 +22,14 @@ export default class DSA5Tutorial {
         width: 400,
       },
       content: `<p>${game.i18n.localize('DIALOG.firstTimeWarning')}</p>`,
-      buttons: [],
-    };
-    for (const lang of langs) {
-      data.buttons.push({
-        action: lang,
-        label: game.i18n.localize(lang),
-        callback: () => DSA5Tutorial.setLanguage(lang),
-      });
-    }
-
-    new foundry.applications.api.DialogV2(data).render(true);
+      buttons: langs.map((lang) => {
+        return {
+          action: lang,
+          label: game.i18n.localize(lang),
+          callback: () => DSA5Tutorial.setLanguage(lang),
+        };
+      }),
+    }).render(true);
   }
 
   static async setLanguage(lang) {
@@ -44,6 +42,8 @@ export default class DSA5Tutorial {
   static async setupDefaultOptions() {
     const settings = game.settings.get('core', Combat.CONFIG_SETTING);
     settings.skipDefeated = true;
+    console.log(settings)
+    foundry.utils.mergeObject(settings, { turnMarker: { src: 'systems/dsa5/icons/categories/ability_fate_points.webp' } });
     await game.settings.set('core', Combat.CONFIG_SETTING, settings);
     await game.settings.set('core', 'leftClickRelease', true);
   }

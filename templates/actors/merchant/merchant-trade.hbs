@@ -27,7 +27,7 @@
             <h3 class="center">{{#if document.token.name}}{{document.token.name}}{{else}}{{document.name}}{{/if}}</h3>
         </div>
     </div>
-    {{> systems/dsa5/templates/actors/parts/gearSearch.html}}
+    {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}}
     <div style="flex:1;overflow:hidden;height:100%;" class="row-section">
         <div class="col third scrollable thinscroll">
             {{#each inventory.inventory as |section sid|}} {{#if section.show}}

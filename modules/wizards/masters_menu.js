@@ -82,7 +82,7 @@ export default class MastersMenu {
         tools: dasMenuOptions.reduce((a, b) => {
           a[b.name] = b;
           return a;
-        }, {})
+        }, {}),
       };
     });
   }
@@ -334,7 +334,7 @@ class GameMasterMenu extends DefaultAppv2 {
 
     const allHeros = html.find(selector);
     allHeros.prop('checked', $(ev.currentTarget).is(':checked'));
-    allHeros.on('change', );
+    allHeros.on('change');
   }
 
   async _deleteHero(ev) {
@@ -620,14 +620,14 @@ class GameMasterMenu extends DefaultAppv2 {
           action: 'yes',
           icon: 'fa fa-check',
           label: 'yes',
-          callback: (event, button, dialog) => callbackFunction($(button.form))
+          callback: (event, button, dialog) => callbackFunction($(button.form)),
         },
         {
           action: 'no',
           icon: 'fas fa-times',
           label: 'cancel',
         },
-      ]      
+      ],
     }).render(true);
   }
 
@@ -777,7 +777,10 @@ class GameMasterMenu extends DefaultAppv2 {
   };
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/system/mastermenu.hbs'},
+    main: { 
+      template: 'systems/dsa5/templates/system/mastermenu.hbs', 
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs'] 
+    },
   };
 
   async getTrackedHeros() {
@@ -799,13 +802,13 @@ class GameMasterMenu extends DefaultAppv2 {
   static TABS = {
     sheet: {
       tabs: [
-        {id: "main", label: "TYPES.Actor.character"},
-        {id: "randomGen", label: "MASTER.randomGen"},
-        {id: "sceneConfig", label: "MASTER.sceneConfig"}
+        { id: 'main', label: 'TYPES.Actor.character' },
+        { id: 'randomGen', label: 'MASTER.randomGen' },
+        { id: 'sceneConfig', label: 'MASTER.sceneConfig' },
       ],
-      initial: "main"
-    }
-  }
+      initial: 'main',
+    },
+  };
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
@@ -876,8 +879,10 @@ class GameMasterMenu extends DefaultAppv2 {
         },
       });
 
-      const folder = folders.find((ff) => { return ff.content.has(hero.id)});
-      if(folder) {
+      const folder = folders.find((ff) => {
+        return ff.content.has(hero.id);
+      });
+      if (folder) {
         folder.contents.push(newHero);
       } else {
         copiedHeros.push(newHero);
@@ -944,7 +949,7 @@ class GlobalModAddition extends FormAppv2 {
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/system/global-mod-addition.hbs'
+      template: 'systems/dsa5/templates/system/global-mod-addition.hbs',
     },
   };
 
@@ -985,7 +990,7 @@ class GlobalModAddition extends FormAppv2 {
     if (this.mod_id) {
       settings.globalMods[this.mod_id] = data;
     } else {
-      mergeObject(settings, { globalMods: { [randomID()]: data, }, });
+      mergeObject(settings, { globalMods: { [randomID()]: data } });
     }
     await game.settings.set('dsa5', 'masterSettings', settings);
     game.dsa5.apps.gameMasterMenu.render();

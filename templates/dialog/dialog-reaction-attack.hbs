@@ -12,8 +12,12 @@
     <p>{{localize title}}{{#if defenses}} ({{localize 'COMBATTRACKER.noDefenses'}}: {{defenses}}){{/if}}</p>
     <div class="row-section wrap">
         {{#each items as |itm i|}}
-        <div class="col two">
-            <button class="reactClick" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}"><img src="{{itm.img}}" /><span class="{{../dieClass}} d20">{{itm.value}}</span>{{itm.name}}{{#if itm.item.system.worn.offHand}}(*){{/if}}</button>
+        <div class="col two flexrow">
+            <button data-action='reactClick' class="reactClick row-section" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}">
+                <div class="col ten"><span class="{{../dieClass}} d20">{{itm.value}}</span></div>
+                <img class="col ten" src="{{itm.img}}" />
+                <div class="col eighty">{{itm.name}}{{#if itm.item.system.worn.offHand}}(*){{/if}}</div>
+            </button>
         </div>
         {{/each}}
     </div>
