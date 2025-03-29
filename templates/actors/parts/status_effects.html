@@ -14,11 +14,11 @@
                     <ul>
                         <li class="search">
                             <input type="search" class="conditionSearch" placeholder="{{localize 'Book.search'}}" />
-                            <a data-action="status-add" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
+                            <a data-action="statusAdd" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
                         </li>
                         {{#each manualConditions as |item i|}}
                         <li>
-                            <a data-action="status-add" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></a>
+                            <a data-action="statusAdd" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></a>
                         </li>
                         {{/each}}
 
@@ -89,9 +89,9 @@
                     {{#if item.system.delayed}}<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>{{/if}}
                     <a data-action="conditionEdit" class="condition-edit" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
                     {{#if item.disabled}}
-                    <a data-action="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
+                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
                     {{else}}
-                    <a data-action="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
+                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
                     {{/if}}
                 </div>
             </div>
@@ -244,8 +244,8 @@
                 </div>
                 <div class="actor-status-action col five right">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
-                    <a data-action="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                    <a data-action="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
+                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
                 </div>
             </div>
             {{/each}}
@@ -332,7 +332,7 @@
                         <a data-action="rollDisease"><div class="d20 die-attack"></div></a>
                     </div>
                     <div class="col ten center statusEffect">
-                        <a class="status-add" data-id="sick" data-tooltip="CONDITION.sick"><img src="icons/svg/biohazard.svg" /></a>
+                        <a class="statusAdd" data-id="sick" data-tooltip="CONDITION.sick"><img src="icons/svg/biohazard.svg" /></a>
                     </div>
                     <div class="col ten very-small center">
                         <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>

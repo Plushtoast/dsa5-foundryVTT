@@ -126,7 +126,7 @@
                         {{#if (and isOwner (gt actionCount 1))}}{{actionCounts}}{{else}}&nbsp;{{/if}}
                     </div>
                     <div class="token-effects">
-                        {{#each effects as |ef|}}
+                        {{#each effects.icons as |ef|}}
                         <img class="token-effect" src="{{ef.img}}" data-tooltip="{{ef.name}}" />
                         {{/each}}
                     </div>

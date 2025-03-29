@@ -61,7 +61,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     ownerActions: {
       _advanceStep: this.advanceWrapper,
       _refundStep: this.advanceWrapper,
-      'status-add': function () {
+      statusAdd: function () {
         DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
       },
       conditionEdit: this.editCondition,

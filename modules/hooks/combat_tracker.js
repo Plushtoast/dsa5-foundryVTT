@@ -56,50 +56,52 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
 
-  async _prepareTrackerContext(context, options) {
-    await super._prepareTrackerContext(context, options);
+  async _prepareTurnContext(combat, combatant, index) {
+    const turn = super._prepareTurnContext(combat, combatant, index);
+    const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
+    turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;
+    turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
+    turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
 
-    for (let turn of context.turns || []) {
-      const combatant = context.combat.turns.find((x) => x.id == turn.id);
-      const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
-      turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;
-      turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
-      turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
-
-      let remainders = [];
-      if (combatant.actor) {
-        for (const x of combatant.actor.items) {
-          if (x.type == 'rangeweapon' && x.system.worn.value && x.system.reloadTime.progress > 0) {
-            const wpn = {
-              name: x.name,
-              remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress,
-            };
-            if (wpn.remaining > 0) remainders.push(wpn);
-          } else if (['spell', 'liturgy'].includes(x.type) && x.system.castingTime.modified > 0) {
-            const wpn = {
-              name: x.name,
-              remaining: x.system.castingTime.modified - x.system.castingTime.progress,
-            };
-            if (wpn.remaining > 0) remainders.push(wpn);
-          }
-        }
-      }
-      remainders = remainders.sort((a, b) => a.remaining - b.remaining);
-
-      if (remainders.length > 0) {
-        turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
-
-        turn.ongoing = remainders[0].remaining;
-      }
-      turn.effects = [];
-      for (const e of combatant.actor?.temporaryEffects || []) {
-        if (e.statuses.has('defeated')) turn.defeated = true;
-        else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag('dsa5', 'hidePlayers')) && !e.getFlag('dsa5', 'hideOnToken')) {
-          turn.effects.push({ img: e.img, name: e.name });
+    let remainders = [];
+    if (combatant.actor) {
+      for (const x of combatant.actor.items) {
+        if (x.type == 'rangeweapon' && x.system.worn.value && x.system.reloadTime.progress > 0) {
+          const wpn = {
+            name: x.name,
+            remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress,
+          };
+          if (wpn.remaining > 0) remainders.push(wpn);
+        } else if (['spell', 'liturgy'].includes(x.type) && x.system.castingTime.modified > 0) {
+          const wpn = {
+            name: x.name,
+            remaining: x.system.castingTime.modified - x.system.castingTime.progress,
+          };
+          if (wpn.remaining > 0) remainders.push(wpn);
         }
       }
     }
-  }
+    remainders = remainders.sort((a, b) => a.remaining - b.remaining);
+
+    if (remainders.length > 0) {
+      turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
+
+      turn.ongoing = remainders[0].remaining;
+    }
+    const effects = [];
+    for (const e of combatant.actor?.temporaryEffects || []) {
+      if (e.statuses.has('defeated')) turn.defeated = true;
+      else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag('dsa5', 'hidePlayers')) && !e.getFlag('dsa5', 'hideOnToken')) {
+        effects.push({ img: e.img, name: e.name });
+      }
+    }
+    turn.effects = {
+      icons: effects,
+      tooltip: this._formatEffectsTooltip(effects)
+    }
+
+    return turn;
+  } 
 
   async _prepareCombatContext(context, options) {
     await super._prepareCombatContext(context, options);

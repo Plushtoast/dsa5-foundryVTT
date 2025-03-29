@@ -2047,7 +2047,7 @@ export default class Actordsa5 extends Actor {
       cardOptions.speaker.alias = this.token.name;
       cardOptions.speaker.token = this.token.id;
       cardOptions.speaker.scene = canvas.scene.id;
-      cardOptions.flags.img.src = this.token.document.texture.src;
+      cardOptions.flags.img.src = this.token.texture.src;
     } else {
       let speaker = ChatMessage.getSpeaker();
       if (speaker.actor == this.id) {

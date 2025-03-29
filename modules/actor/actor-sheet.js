@@ -678,7 +678,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       const itemId = this._getItemId(target);
       const item = this.actor.items.get(itemId);
       const lz = Number(item.system.castingTime.modified);
-      let update = {}
+      let update = {
+        _id: itemId
+      }
       if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
       else if (ev.button == 2) {
         update['system.castingTime.progress'] = 0;

@@ -2841,7 +2841,7 @@ select.noAppearance {
   }
 
   &.def:after {
-    content: attr(data-defenseCount);
+    content: attr(data-defense-count);
     position: absolute;
     left: 0;
     right: 0;
@@ -3048,7 +3048,7 @@ select.noAppearance {
       color: white;
       left: 0;
       right: 0;
-      top: 5px;
+      top: 0px;
       bottom: 0;
       text-align: center;
     }
@@ -3072,11 +3072,9 @@ select.noAppearance {
     .roll {
       position: relative;
       display: block;
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
       background: url('../../icons/dice/d6white.svg') no-repeat 50% 50%;
-      background-size: auto;
-      background-size: 35px;
       margin: 0 auto;
     }
 
@@ -3310,9 +3308,8 @@ select.noAppearance {
     color: white;
     background: none;
 
-    .iniNumber {
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
+    .iniNumber button{
+      width: 100%;
     }
   }
   .token-effects {

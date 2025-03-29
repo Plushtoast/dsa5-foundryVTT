@@ -201,19 +201,24 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
             template: "systems/dsa5/templates/system/itemlibrary/parts/header.hbs"
         },
         Items: {
-            template: "systems/dsa5/templates/system/itemlibrary/Items.hbs"
+            template: "systems/dsa5/templates/system/itemlibrary/Items.hbs",
+            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
         },
         Religion: {
-          template: "systems/dsa5/templates/system/itemlibrary/Religion.hbs"
+          template: "systems/dsa5/templates/system/itemlibrary/Religion.hbs",
+          templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
         },
         Character: {
-          template: "systems/dsa5/templates/system/itemlibrary/Character.hbs"
+          template: "systems/dsa5/templates/system/itemlibrary/Character.hbs",
+          templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
         },
         Actors: {
-            template: "systems/dsa5/templates/system/itemlibrary/Actors.hbs"
+            template: "systems/dsa5/templates/system/itemlibrary/Actors.hbs",
+            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
         },
         JournalEntries: {
-            template: "systems/dsa5/templates/system/itemlibrary/JournalEntries.hbs"
+            template: "systems/dsa5/templates/system/itemlibrary/JournalEntries.hbs",
+            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
         }
     }
 
