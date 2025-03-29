@@ -91,7 +91,7 @@ export default class DPS {
         let token = Array.from(game.user.targets);
         if (token.length) {
           token = token[0];
-          const darkness = canvas?.effects.getDarknessLevel(token.center, token.document.elevation) || 0;
+          const darkness = canvas?.effects.getDarknessLevel( { ...token.center, elevation: token.document.elevation } ) || 0;
 
           while (threholds[level] <= darkness) level += 1;
 

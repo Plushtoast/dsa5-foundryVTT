@@ -56,8 +56,6 @@ export default function () {
 
 Hooks.once('init', () => {
   foundry.applications.handlebars.loadTemplates([
-    'systems/dsa5/templates/system/dsatabs.hbs',
-    'systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs',
     'systems/dsa5/templates/actors/actor-main.html',
     'systems/dsa5/templates/actors/actor-talents.html',
     'systems/dsa5/templates/dialog/default-dialog.html',

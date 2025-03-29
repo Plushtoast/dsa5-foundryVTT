@@ -52,15 +52,14 @@ export default class DSA5SpellDialog extends DialogShared {
             callback: async (event, button, dialog) => {
               const dlg = $(button.form);
               const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
-              let reloadUpdate = {
-                _id: testData.source._id,
+              const reloadUpdate = {
                 'system.castingTime.progress': progress + 1,
               };
               if (modified == 0) {
                 modified = Number(dlg.find('.castingTime').text()) - 1;
                 reloadUpdate['system.castingTime.modified'] = modified;
               }
-              await actor.updateEmbeddedDocuments('Item', [reloadUpdate]);
+              const res = await actor.items.get(testData.source._id).update(reloadUpdate);
               const infoMsg = game.i18n.format('SPELL.isReloading', {
                 actor: actor.token?.name || actor.prototypeToken.name,
                 item: testData.source.name,

@@ -3,7 +3,7 @@ import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import RuleChaos from '../system/rule_chaos.js';
-const { debounce, getProperty, mergeObject } = foundry.utils;
+const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
@@ -26,21 +26,6 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     },
   };
 
-  async _onRender(context, options) {
-    await super._onRender((context, options));
-    const html = $(this.element);
-
-    /*html.find('.combat-tracker').on(
-      'scroll',
-      debounce(function (ev) {
-        const log = $(ev.target);
-        console.log("jo")
-        const comb = html.find('.combatant.active')[0].offsetTop;
-        html.find('.aggroButton').animate({ top: comb - log.scrollTop() }, 50);
-      }, 50),
-    );*/
-  }
-
   static _onAggroButtonClicked() {
     DSA5CombatTracker.runActAttackDialog();
   }
@@ -57,9 +42,9 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   }
 
   async _prepareTurnContext(combat, combatant, index) {
-    const turn = super._prepareTurnContext(combat, combatant, index);
+    const turn = await super._prepareTurnContext(combat, combatant, index);
     const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
-    turn.defenseCount = combatant.getFlag('dsa5', 'defenseCount') || 0;
+    turn.defenseCount = combatant.system.defenseCount;
     turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
     turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
 
@@ -97,11 +82,11 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     }
     turn.effects = {
       icons: effects,
-      tooltip: this._formatEffectsTooltip(effects)
-    }
+      tooltip: this._formatEffectsTooltip(effects),
+    };
 
     return turn;
-  } 
+  }
 
   async _prepareCombatContext(context, options) {
     await super._prepareCombatContext(context, options);
@@ -111,6 +96,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
 export class DSA5Combat extends Combat {
   constructor(data, context) {
+    if (!data.type) data.type = 'dsacombat';
     super(data, context);
   }
 
@@ -119,7 +105,7 @@ export class DSA5Combat extends Combat {
   }
 
   get isBrawling() {
-    return this.getFlag('dsa5', 'isBrawling');
+    return this.system.isBrawling;
   }
 
   _onCreate(data, options, userId) {
@@ -151,7 +137,7 @@ export class DSA5Combat extends Combat {
     const chatMessages = [];
 
     if (goBrawling) {
-      await this.setFlag('dsa5', 'unarmEveryone', await this.brawlingDialog());
+      await this.update({ 'system.unarmEveryone': await this.brawlingDialog() })
 
       for (let x of this.combatants) {
         if (!x.actor) return {};
@@ -191,7 +177,7 @@ export class DSA5Combat extends Combat {
 
     await Actordsa5.updateDocuments(actorUpdates);
     await game.canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
-    await this.setFlag('dsa5', 'isBrawling', goBrawling);
+    await this.update({ 'system.isBrawling': goBrawling });
 
     if (chatMessages.length) {
       await this.showBrawlingDamage(chatMessages);
@@ -226,7 +212,7 @@ export class DSA5Combat extends Combat {
   async nextRound() {
     if (game.user.isGM) {
       for (let k of this.turns) {
-        await k.setFlag('dsa5', 'defenseCount', 0);
+        await k.update({ 'system.defenseCount': 0 });
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -239,7 +225,7 @@ export class DSA5Combat extends Combat {
 
   async getDefenseCount(speaker) {
     const comb = this.getCombatantFromActor(speaker);
-    return comb ? comb.getFlag('dsa5', 'defenseCount') || 0 : 0;
+    return comb?.system.defenseCount
   }
 
   //TODO very clonky
@@ -257,7 +243,7 @@ export class DSA5Combat extends Combat {
     if (game.user.isGM) {
       const comb = this.getCombatantFromActor(speaker);
       if (comb && !comb.actor.system.config.defense) {
-        await comb.setFlag('dsa5', 'defenseCount', (comb.getFlag('dsa5', 'defenseCount') || 0) + 1);
+        await comb.update({ 'system.defenseCount': comb.system.defenseCount + 1 });        
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -272,11 +258,7 @@ export class DSA5Combat extends Combat {
 
 export class DSA5Combatant extends Combatant {
   constructor(data, context) {
-    mergeObject(data, {
-      flags: {
-        dsa5: { defenseCount: 0 },
-      }      
-    });
+    if (!data.type) data.type = 'dsacombatant';
     super(data, context);
   }
 
@@ -286,7 +268,7 @@ export class DSA5Combatant extends Combatant {
       scene: this.sceneId,
       token: this.token.id,
     });
-    const unarm = this.combat.getFlag('dsa5', 'unarmEveryone');
+    const unarm = this.combat.system.unarmEveryone;
     const tokenChange = actor.system.config.autoBar
       ? actor.getActiveTokens().map((x) => {
           return { _id: x.id, bar1: { attribute: 'status.temporaryLeP' } };

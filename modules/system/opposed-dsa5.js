@@ -480,7 +480,7 @@ export default class OpposedDsa5 {
         damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : '',
       ].join('');
 
-      const dmgString = game.combat?.isBrawling ? game.i18n.localize('BRAWLING.temporary') : game.i18n.localize('damage');
+      const dmgString = game.i18n.localize(game.combat?.isBrawling ? 'BRAWLING.temporary' : 'damage');
       const description = `<b>${dmgString}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ''}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`;
       opposeResult.damage = {
         description,

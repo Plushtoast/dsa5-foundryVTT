@@ -452,10 +452,6 @@ input[type='text'].emphasize {
   }
 }
 
-.character-sheet .window-content {
-  padding: 0;
-}
-
 .application .window-content select:not([multiple]) option {
   color: white;
   background: rgb(29, 28, 28);
@@ -1088,7 +1084,7 @@ a.img-entity-link {
 }
 
 .advance {
-  color: #333029a6;
+  color: var(--color-text-secondary);
   margin-left: 4px;
   font-size: 8px;
   line-height: 8px;
@@ -1101,9 +1097,9 @@ a.img-entity-link {
 
   .combat-action {
     display: block;
-    color: rgba(51, 48, 41, 0.65);
+    color: var(--color-text-secondary);
     padding: 1px 5px;
-    border: 1px solid rgba(51, 48, 41, 0.65);
+    border: 1px solid var(--color-text-secondary);
     border-radius: 5px;
   }
 }
@@ -1558,7 +1554,7 @@ li.folder {
 
   margin-bottom: 10px;
   font-weight: normal;
-  color: rgb(14, 12, 12);
+  color: var(--color-text-secondary);
 }
 
 input[type='search'] {
@@ -2529,9 +2525,9 @@ select.noAppearance {
   display: block;
   width: 24px;
   position: absolute;
-  left: -20px;
+  left: 0px;
   height: 24px;
-  margin-top: 12px;
+  bottom: -4px;
   border: 1px solid darkred;
   background-color: white;
   cursor: pointer;

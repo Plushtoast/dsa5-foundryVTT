@@ -47,7 +47,7 @@ import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/ap-tracker.js';
 import OnUseEffect from './system/onUseEffects.js';
 import TestSuite from './system/testsuite.js';
-import { itemModels, ActorDataModels } from './data/models.js';
+import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
 
 Hooks.once('init', () => {
   console.log('Initializing DSA5 system');
@@ -114,7 +114,9 @@ Hooks.once('init', () => {
     macro: MacroDSA5,
     dataModels: {
       Item: itemModels,
-      Actor: ActorDataModels
+      Actor: ActorDataModels,
+      Combat: CombatDataModels,
+      Combatant: CombatantDataModels
     },
     config: DSA5,
     TestSuite,
@@ -129,7 +131,9 @@ Hooks.once('init', () => {
   CONFIG.ChatMessage.documentClass = ChatMessageDSA5Roll;
   CONFIG.ui.combat = DSA5CombatTracker;
   CONFIG.ui.hotbar = DSA5Hotbar;
+  CONFIG.Combat.dataModels = CombatDataModels;
   CONFIG.Combat.documentClass = DSA5Combat;
+  CONFIG.Combatant.dataModels = CombatantDataModels;
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
 });

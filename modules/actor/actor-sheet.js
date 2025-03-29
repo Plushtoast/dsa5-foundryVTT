@@ -116,6 +116,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     window: {
       resizable: true,
+      contentClasses: ["standard-form"],
       controls: [
         {
           action: 'playerview',

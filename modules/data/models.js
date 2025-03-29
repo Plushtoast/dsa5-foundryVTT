@@ -41,6 +41,8 @@ import NPCData from './actor/npc.js';
 import DSAStringField from './fields/dsa_string_field.js';
 import { ItemDataModel } from './baseitem.js';
 import { ActorDataModel } from './baseactor.js';
+import { DSACombatDataModel } from './combat/dsacombat.js';
+import { DSACombatantDataModel } from './combatant/dsacombatant.js';
 
 export const itemModels = {
     advantage: AdvantageData,
@@ -92,4 +94,12 @@ export const ActorDataModels = {
 
 export const fields = {
     DSAStringField
+}
+
+export const CombatDataModels = {
+    dsacombat: DSACombatDataModel
+}
+
+export const CombatantDataModels = {
+    dsacombatant: DSACombatantDataModel
 }

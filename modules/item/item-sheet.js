@@ -190,12 +190,12 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   static editCondition(ev, target) {
-    const effect = this.item.effects.get(ev.currentTarget.dataset.id);
+    const effect = this.item.effects.get(target.dataset.id);
     effect.sheet.render(true);
   }
 
   static toggleCondition(ev, target) {
-    const condKey = $(ev.currentTarget).parents('.statusEffect').attr('data-id');
+    const condKey = $(target).parents('.statusEffect').attr('data-id');
     const ef = this.item.effects.get(condKey);
     ef.update({ disabled: !ef.disabled });
   }

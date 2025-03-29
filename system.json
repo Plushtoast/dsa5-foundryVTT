@@ -137,6 +137,12 @@
         }
     ],
     "documentTypes": {
+        "Combatant": {
+            "dsacombatant": {}
+        },
+        "Combat": {
+            "dsacombat": {}
+        },
         "Actor": {
             "character": {
                 "htmlFields": [
