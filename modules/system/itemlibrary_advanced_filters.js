@@ -30,7 +30,7 @@ Hooks.once('ready', () => {
 
     const specialabilies = `<div class="form-group">
             <label class="label-text">${game.i18n.localize('Category')}</label>
-            <select name="category.value" data-dtype="String">
+            <select name="category.value">
                 <option value="">${game.i18n.localize('Library.noFilter')}</option>
                 <optgroup label="${game.i18n.localize('SpecCategory.general')}">
                 ${content.join('')}

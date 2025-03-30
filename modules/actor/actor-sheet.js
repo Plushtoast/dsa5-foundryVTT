@@ -7,7 +7,7 @@ import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogActorConfig from '../dialog/dialog-actorConfig.js';
 import Actordsa5 from './actor-dsa5.js';
-import { itemFromDrop, tabSlider, tinyNotification } from '../system/view_helper.js';
+import { tabSlider, tinyNotification } from '../system/view_helper.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import RuleChaos from '../system/rule_chaos.js';
 import OnUseEffect from '../system/onUseEffects.js';
@@ -891,6 +891,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
     
     html.find('.item-delete').on('click', (ev) => this._deleteItem(ev))
+
+    //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)
+    new foundry.applications.ux.DragDrop.implementation({
+      dragSelector: ".item",
+      dropSelector: null,
+      permissions: {
+        dragstart: this._canDragStart.bind(this),
+        drop: this._canDragDrop.bind(this)
+      },
+      callbacks: {
+        dragstart: this._onDragStart.bind(this),
+        dragover: this._onDragOver.bind(this),
+        drop: this._onDrop.bind(this)
+      }
+    }).bind(this.element);
   }
 
   _onItemContext(target) {

@@ -2,7 +2,7 @@
   <div class='center'>
     {{#each attributes}}
       <label class='plantContainer {{this.name}}' data-tooltip='{{concat "PLANT." this.name}}'>
-        <input type='checkbox' name='system.planttype.{{this.name}}' value='true' data-dtype='Boolean' {{checked this.checked}} />
+        <input type='checkbox' name='system.planttype.{{this.name}}' value='true' {{checked this.checked}} />
         <span></span>
       </label>
     {{/each}}
@@ -37,56 +37,56 @@
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.highNorth'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.highNorth' value='{{document.system.availability.highNorth}}' min='0' max='5' />
+      <input type='range' name='system.availability.highNorth' value='{{document.system.availability.highNorth}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.highNorth}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.grasLands'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.grasLands' value='{{document.system.availability.grasLands}}' min='0' max='5' />
+      <input type='range' name='system.availability.grasLands' value='{{document.system.availability.grasLands}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.grasLands}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.swamps'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.swamps' value='{{document.system.availability.swamps}}' min='0' max='5' />
+      <input type='range' name='system.availability.swamps' value='{{document.system.availability.swamps}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.swamps}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.woods'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.woods' value='{{document.system.availability.woods}}' min='0' max='5' />
+      <input type='range' name='system.availability.woods' value='{{document.system.availability.woods}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.woods}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.jungle'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.jungle' value='{{document.system.availability.jungle}}' min='0' max='5' />
+      <input type='range' name='system.availability.jungle' value='{{document.system.availability.jungle}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.jungle}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.mountains'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.mountains' value='{{document.system.availability.mountains}}' min='0' max='5' />
+      <input type='range' name='system.availability.mountains' value='{{document.system.availability.mountains}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.mountains}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.desert'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.desert' value='{{document.system.availability.desert}}' min='0' max='5' />
+      <input type='range' name='system.availability.desert' value='{{document.system.availability.desert}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.desert}}</span>
     </div>
   </div>
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.maraskan'}}</label>
     <div class='form-fields'>
-      <input type='range' dtype='number' name='system.availability.maraskan' value='{{document.system.availability.maraskan}}' min='0' max='5' />
+      <input type='range' name='system.availability.maraskan' value='{{document.system.availability.maraskan}}' min='0' max='5' />
       <span class="center">{{plantify document.system.availability.maraskan}}</span>
     </div>
   </div>

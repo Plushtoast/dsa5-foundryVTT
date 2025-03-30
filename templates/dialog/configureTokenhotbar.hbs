@@ -2,7 +2,7 @@
     <div class="form-group" data-setting-id="dsa5.hotbarv3">
         <label>{{localize 'DSASETTINGS.hotbarv3'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="dsa5.hotbarv3" data-dtype="Boolean" {{checked hotbarv3}}>
+            <input type="checkbox" name="dsa5.hotbarv3" {{checked hotbarv3}}>
         </div>
         <p class="hint">{{localize 'DSASETTINGS.hotbarv3Hint'}}</p>
     </div>
@@ -11,14 +11,14 @@
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbarMaster">
         <label>{{localize 'DSASETTINGS.disableTokenhotbarMaster'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" data-dtype="Boolean" {{checked disableTokenhotbarMaster}}>
+            <input type="checkbox" name="dsa5.disableTokenhotbarMaster" {{checked disableTokenhotbarMaster}}>
         </div>
         <p class="hint">{{localize 'DSASETTINGS.disableTokenhotbarMasterHint'}}</p>
     </div>
     <div class="form-group" data-setting-id="dsa5.masterCanvasControls">
         <label>{{localize 'DSASETTINGS.masterCanvasControls'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="dsa5.masterCanvasControls" data-dtype="Boolean" {{checked masterCanvasControls}}>
+            <input type="checkbox" name="dsa5.masterCanvasControls" {{checked masterCanvasControls}}>
         </div>
         <p class="hint">{{localize 'DSASETTINGS.masterCanvasControlsHint'}}</p>
     </div>
@@ -40,7 +40,7 @@
     <div class="form-group" data-setting-id="dsa5.disableTokenhotbar">
         <label>{{localize 'DSASETTINGS.disableTokenhotbar'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="dsa5.disableTokenhotbar" data-dtype="Boolean" {{checked disableTokenhotbar}}>
+            <input type="checkbox" name="dsa5.disableTokenhotbar" {{checked disableTokenhotbar}}>
         </div>
         <p class="hint">{{localize 'DSASETTINGS.disableTokenhotbarHint'}}</p>
     </div>
@@ -71,7 +71,7 @@
     <div class="form-group" data-setting-id="dsa5.tokenhotbarLayout">
         <label>{{localize 'DSASETTINGS.tokenhotbarLayout'}}</label>
         <div class="form-fields">
-            <select name="dsa5.tokenhotbarLayout" data-dtype="Number">
+            <select name="dsa5.tokenhotbarLayout">
                 {{selectOptions layoutChoices selected=tokenhotbarLayout localize=true}}
             </select>
         </div>
