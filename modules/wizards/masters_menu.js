@@ -260,14 +260,8 @@ class GameMasterMenu extends DefaultAppv2 {
       this.lastSkill = $(ev.currentTarget).val();
     });
     html.find('.selectAll').on('change', (ev) => this._selectAll(ev, html));
-    html.find('.randomPlayer').on('mousedown', (ev) => {
-      ev.stopPropagation();
-      this._randomPlayer(html, ev);
-    });
     html.find('.heroSelector').on('click', (ev) => ev.stopPropagation());
-
     let deletehand = (ev) => this._deleteHero(ev);
-
     html.find('.hero').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
         let div = document.createElement('div');
@@ -287,7 +281,6 @@ class GameMasterMenu extends DefaultAppv2 {
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
     });
     html.find('.editFolder').on('change', async (ev) => this._editFolder(ev));
-
     html.find('.changeSetting').on('change', async (ev) => {
       await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked);
     });
@@ -472,16 +465,16 @@ class GameMasterMenu extends DefaultAppv2 {
     this.render();
   }
 
-  async _randomPlayer(html, ev) {
-    const heros = html.find('.hero');
+  static async _randomPlayer(ev, target) {
+    const heros = $(this.element).find('.hero');
     const result = await this.rollRandomPlayer(ev.button == 2);
 
-    $(ev.currentTarget).find('i').addClass('fa-spin');
+    $(target).find('i').addClass('fa-spin');
     heros.removeClass('victim');
 
     setTimeout(() => {
       $(this.element).find(`.hero[data-id="${result}"]`).addClass('victim');
-      $(ev.currentTarget).find('i').removeClass('fa-spin');
+      $(target).find('i').removeClass('fa-spin');
     }, 500);
   }
 
@@ -802,6 +795,7 @@ class GameMasterMenu extends DefaultAppv2 {
       heroschip: this._heroschip,
       groupcheck: this._groupCheck,
       expandHero: this._expandHero,
+      randomPlayer: { handler: this._randomPlayer, buttons: [0, 2] },
     }
   };
 

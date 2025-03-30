@@ -50,7 +50,7 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
   static _migrateData(source) {
     super._migrateData(source);
 
-    if (isNaN(source.AsPCost.value)) {
+    if (source.AsPCost?.value && isNaN(source.AsPCost.value)) {
       source.AsPCost.value = Number(source.AsPCost.value) || 0;
     }
   }

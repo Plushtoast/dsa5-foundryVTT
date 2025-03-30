@@ -52,6 +52,10 @@
     {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
     {{formGroup systemFields.aspect.fields.value value=document.system.aspect.value label='requirements' localize=true}}
 
+  {{else if (eq document.system.traitType.value 'training')}}
+
+    {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  
   {{else if (eq document.system.traitType.value 'entity')}}
 
     {{formGroup systemFields.distribution value=document.system.distribution localize=true}}

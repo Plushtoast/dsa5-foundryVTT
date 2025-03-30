@@ -125,7 +125,7 @@ export default class EquipmentDamage {
     const damage = roll.total > threshold ? 1 : 0;
     await this.applyDamageLevelToItem(item, damage);
     const wear = EquipmentDamage.calculateWear(item);
-    let infoMsg = await renderTemplate('systems/dsa5/templates/system/breakingtest.html', {
+    const infoMsg = await renderTemplate('systems/dsa5/templates/system/breakingtest.hbs', {
       wear,
       item,
       threshold,
