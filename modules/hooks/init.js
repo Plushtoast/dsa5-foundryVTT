@@ -89,7 +89,6 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs',
     'systems/dsa5/templates/actors/parts/horse.html',
     'systems/dsa5/templates/actors/parts/healthbar.html',
-    'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
     'systems/dsa5/templates/items/traditionArtifact.hbs',
     'systems/dsa5/templates/status/advanced_functions.hbs',
     'systems/dsa5/templates/actors/parts/information.html',

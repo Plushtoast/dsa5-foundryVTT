@@ -34,7 +34,7 @@ export default class CharacterMerchantSheetDSA5 extends MerchantSheetMixin(Actor
       scrollable: ['']
     },
     inventory: {
-      template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
+      template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
     },

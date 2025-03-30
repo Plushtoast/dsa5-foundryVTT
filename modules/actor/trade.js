@@ -14,6 +14,10 @@ export class Trade extends DefaultAppv2 {
       title: 'MERCHANT.exchange',
       resizable: true,
     },
+    actions: {
+      itemExternalEdit: this._itemExternalEdit,
+      itemEdit: this._itemEdit,
+    }
   };
 
   static PARTS = {    
@@ -113,22 +117,28 @@ export class Trade extends DefaultAppv2 {
     return super.close(options);
   }
 
+  static _itemExternalEdit(ev, target) {
+    this._editItem(target, this.tradeData.targetId);
+  }
+
+  static _itemEdit(ev, target) {
+    this._editItem(target, this.tradeData.sourceId);
+  }
+
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);
     html.find('.trade').on('click', (ev) => this._offerItem(ev));
     const filterGear = (ev) => this._filterGear($(ev.currentTarget));
-    html.find('[data-action="itemEdit"]').on('click', (ev) => this._editItem(ev, this.tradeData.sourceId));
-    html.find('.item-external-edit').on('click', (ev) => this._editItem(ev, this.tradeData.targetId));
     html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
     let gearSearch = html.find('.gearSearch');
     gearSearch.on('keyup', (event) => filterGear(event));
     gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
   }
 
-  _editItem(ev, id) {
+  _editItem(target, id) {
     const actor = DSA5_Utility.getSpeaker(id);
-    const item = actor.items.get(ev.currentTarget.dataset.itemId);
+    const item = actor.items.get(target.dataset.itemId);
     item.sheet.render(true);
   }
 

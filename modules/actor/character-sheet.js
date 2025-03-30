@@ -57,12 +57,6 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     }
   }
 
-  static LIMITEDPARTS = {
-    all: {
-      template: 'systems/dsa5/templates/actors/npc-limited.html',
-    }
-  }
-
   async _manageDragItems(item, typeClass) {
     switch (typeClass) {
       case 'aggregatedTest':

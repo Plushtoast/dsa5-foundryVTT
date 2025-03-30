@@ -52,7 +52,7 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
   }
 
   static LIMITEDPARTS = {
-    all: {
+    limited: {
       template: 'systems/dsa5/templates/actors/npc-limited.html',
     }
   }

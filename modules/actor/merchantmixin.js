@@ -12,9 +12,23 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export const MerchantSheetMixin = (superclass) =>
   class extends superclass {
+    static merchantDefaultTypes = new Set(['merchant', 'loot', 'epic']);
+
     static DEFAULT_OPTIONS = {
       classes: ['merchant-sheet'],
-    }
+      actions: {
+        allowMerchant: this._allowMerchant,
+        toggleAllAllowMerchant: this._toggleAllAllowMerchant,
+        lockTradeSection: this._lockTradeSection,
+        clearInventory: this._clearInventory,
+        randomGoods: this._randomGoods,
+        setCustomPrice: this._setCustomPrice,
+        choseTradefriend: this._choseTradefriend,
+        removeOtherTradeFriend: this._removeOtherTradeFriend,
+        toggleTradeLock: this._toggleTradeLock,
+        itemExternalEdit: this._itemExternalEdit,
+      },
+    };
 
     static PARTS = {
       header: {
@@ -28,71 +42,133 @@ export const MerchantSheetMixin = (superclass) =>
       },
       main: {
         template: 'systems/dsa5/templates/actors/actor-main.html',
-        scrollable: ['']
+        scrollable: [''],
       },
       combat: {
         template: 'systems/dsa5/templates/actors/actor-combat.html',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs']
+        templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs'],
       },
       skills: {
         template: 'systems/dsa5/templates/actors/actor-talents.html',
-        scrollable: ['']
+        scrollable: [''],
       },
       magic: {
         template: 'systems/dsa5/templates/actors/character/actor-magic.html',
-        scrollable: ['']
+        scrollable: [''],
       },
       religion: {
         template: 'systems/dsa5/templates/actors/character/actor-religion.html',
-        scrollable: ['']
+        scrollable: [''],
       },
       inventory: {
-        template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.html',
+        template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
+        templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
       },
       status: {
         template: 'systems/dsa5/templates/actors/parts/status_effects.html',
-        scrollable: ['']
+        scrollable: [''],
       },
       notes: {
         template: 'systems/dsa5/templates/actors/actor-notes.html',
-        scrollable: ['']
-      }
-    }
+        scrollable: [''],
+      },
+    };
 
-    get template() {
+    static MERCHANTPARTS = {
+      merchant: {
+        header: {
+          template: 'systems/dsa5/templates/actors/merchant/merchant_limited_header.hbs',
+        },
+        tabs: {
+          template: 'systems/dsa5/templates/system/dsatabs.hbs',
+        },
+        inventory: {
+          template: 'systems/dsa5/templates/actors/merchant/merchant-limited.hbs',
+          templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
+        },
+        notes: {
+          template: 'systems/dsa5/templates/actors/actor-notes.html',
+        },
+      },
+      loot: {
+        inventory: {
+          template: 'systems/dsa5/templates/actors/merchant/merchant-limited-loot.hbs',
+          templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
+        },
+      },
+      epic: {
+        tabs: {
+          template: 'systems/dsa5/templates/system/dsatabs.hbs',
+        },
+        inventory: {
+          template: 'systems/dsa5/templates/actors/merchant/merchant-epic.hbs',
+        },
+        notes: {
+          template: 'systems/dsa5/templates/actors/actor-notes.html',
+        },
+      },
+    };
+
+    _configureRenderParts(options) {
       if (this.merchantSheetActivated()) {
-        switch (this.actor.system.merchant.merchantType) {
-          case 'merchant':
-            return 'systems/dsa5/templates/actors/merchant/merchant-limited.html';
-          case 'loot':
-            return 'systems/dsa5/templates/actors/merchant/merchant-limited-loot.html';
-          case 'epic':
-            return 'systems/dsa5/templates/actors/merchant/merchant-epic.html';
-          default:
-            return super.template;
+        const merchantType = this.actor.system.merchant.merchantType;
+        if (this.constructor.merchantDefaultTypes.has(merchantType)) {
+          return foundry.utils.deepClone(this.constructor.MERCHANTPARTS[merchantType]);
+        } else {
+          return foundry.utils.deepClone(this.constructor.LIMITEDPARTS);
         }
       }
-
-      return this.constructor.merchantTemplate;
+      return super._configureRenderParts(options);
     }
 
     _prepareTabs(group) {
       const tabs = super._prepareTabs(group);
       const merchantType = this.actor.system.merchant.merchantType || 'none';
       tabs.inventory.label = DSA5.merchantTypes[merchantType];
-      if(merchantType == 'loot') {
-        for(let tab of ['main', 'skills', 'combat', 'magic', 'religion', 'status', 'notes']) {
-          delete tabs[tab]
+
+      if (this.merchantSheetActivated()) {
+        let toKeep;
+        switch (merchantType) {
+          case 'epic':
+          case 'merchant':
+            toKeep = new Set(['inventory', 'notes']);
+            break;
+          case 'loot':
+            toKeep = new Set(['inventory']);
+            break;
+        }
+
+        if (toKeep) {
+          let hasAnyActive;
+          for (let tab of Object.keys(tabs)) {
+            if (!toKeep.has(tab)) {
+              delete tabs[tab];
+              continue;
+            }
+            hasAnyActive = hasAnyActive || tabs[tab].active;
+          }
+
+          if (!hasAnyActive) {
+            tabs.inventory.active = true;
+            tabs.inventory.cssClass = 'active';
+          }
         }
       }
+
       return tabs;
     }
 
     merchantSheetActivated() {
-      return this.showLimited() || (this.playerViewEnabled() && ['merchant', 'loot', 'epic'].includes(this.actor.systemmerchant.merchantType));
+      return this.showLimited() || (this.playerViewEnabled() && this.constructor.merchantDefaultTypes.has(this.actor.system.merchant.merchantType));
+    }
+
+    static async _allowMerchant(ev, target) {
+      const id = target.dataset.userId;
+      const i = $(target).find('i');
+      await this.allowMerchant([id], !i.hasClass('fa-check-circle'));
+      i.toggleClass('fa-circle fa-check-circle');
     }
 
     async allowMerchant(ids, allow) {
@@ -104,32 +180,29 @@ export const MerchantSheetMixin = (superclass) =>
       await this.actor.update({ ownership: curPermissions }, { diff: false, recursive: false, noHook: true });
     }
 
+    static async _toggleAllAllowMerchant(ev, target) {
+      const ids = game.users.filter((x) => !x.isGM).map((x) => x.id);
+      const allow = target.dataset.lock == 'true';
+      await this.allowMerchant(ids, allow);
+      this.render();
+    }
+
+    static _randomGoods(ev, target) {
+      game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, target);
+    }
+
+    static _setCustomPrice(ev, target) {
+      target.classList.toggle('edit');
+    }
+
     async _onRender(context, options) {
       await super._onRender(context, options);
       const html = $(this.element);
-      html.find('.allowMerchant').on('click', async (ev) => {
-        const id = ev.currentTarget.dataset.userId;
-        const i = $(ev.currentTarget).find('i');
-        await this.allowMerchant([id], !i.hasClass('fa-check-circle'));
-        i.toggleClass('fa-circle fa-check-circle');
-      });
-      html.find('.toggleAllAllowMerchant').on('click', async (ev) => {
-        const ids = game.users.filter((x) => !x.isGM).map((x) => x.id);
-        const allow = ev.currentTarget.dataset.lock == 'true';
-        await this.allowMerchant(ids, allow);
-        this.render();
-      });
-      html.find('.lockTradeSection').on('click', (ev) => this.lockTradeSection(ev));
-      html.find('.item-tradeLock').on('click', (ev) => this.toggleTradeLock(ev));
-      html.find('.randomGoods').on('click', (ev) => game.dsa5.dialogs.RandomGoodsAddition.showDialog(this.actor, ev));
-      html.find('.clearInventory').on('click', (ev) => this.clearInventory(ev));
-      html.find('.removeOtherTradeFriend').on('click', () => this.removeOtherTradeFriend());
-      html.find('.choseTradefriend').on('click', () => this.choseTradefriend());
-      html.find('.setCustomPrice').on('click', (ev) => $(ev.currentTarget).addClass('edit'));
+
       html
         .find('.customPriceTag')
         .on('change', async (ev) => this.setCustomPrice(ev))
-        .blur((ev) => $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'));
+        .on('blur', (ev) => $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'));
 
       html.find('.buy-item').on('click', (ev) => {
         this.advanceWrapper(ev, 'buyItem', ev);
@@ -138,12 +211,6 @@ export const MerchantSheetMixin = (superclass) =>
       html.find('.sell-item').on('click', (ev) => {
         this.advanceWrapper(ev, 'sellItem', ev);
         DSA5SoundEffect.playMoneySound();
-      });
-      html.find('.item-external-edit').on('click', (ev) => {
-        ev.preventDefault();
-        let itemId = this._getItemId(ev);
-        const item = this.getTradeFriend().items.get(itemId);
-        item.sheet.render(true);
       });
       html.find('.changeAmountAllItems').on('mousedown', (ev) => this.changeAmountAllItems(ev));
 
@@ -154,8 +221,15 @@ export const MerchantSheetMixin = (superclass) =>
       return !this.merchantSheetActivated() && this.isEditable;
     }
 
-    async toggleTradeLock(ev) {
-      const itemId = this._getItemId(ev);
+    static _itemExternalEdit(ev, target) {
+      ev.preventDefault();
+      let itemId = this._getItemId(target);
+      const item = this.getTradeFriend().items.get(itemId);
+      item.sheet.render(true);
+    }
+
+    static async _toggleTradeLock(ev, target) {
+      const itemId = this._getItemId(target);
       let item = this.actor.items.get(itemId);
       this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.tradeLocked': !item.system.tradeLocked }]);
     }
@@ -163,23 +237,23 @@ export const MerchantSheetMixin = (superclass) =>
     async setCustomPrice(ev) {
       ev.stopPropagation();
       ev.preventDefault();
-      const itemId = this._getItemId(ev);
+      const itemId = this._getItemId(ev.currentTarget);
 
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'flags.dsa5.customPriceTag': Number(ev.target.value) }]);
     }
 
-    removeOtherTradeFriend() {
+    static _removeOtherTradeFriend() {
       this.otherTradeFriend = undefined;
       this.render(true);
     }
 
-    async choseTradefriend() {
+    static async _choseTradefriend(ev, target) {
       (await SelectTradefriendDialog.getDialog(this)).render(true);
     }
 
-    async lockTradeSection(ev) {
+    static async _lockTradeSection(ev, target) {
       const updates = [];
-      const rule = this.filterRule(ev);
+      const rule = this.filterRule(target);
       let newValue;
       for (let item of this.actor.items) {
         if (rule(item)) {
@@ -193,8 +267,8 @@ export const MerchantSheetMixin = (superclass) =>
       this.actor.updateEmbeddedDocuments('Item', updates);
     }
 
-    filterRule(ev) {
-      const filter = ev.currentTarget.dataset.type;
+    filterRule(target) {
+      const filter = target.dataset.type;
       if (DSA5.equipmentTypes[filter]) {
         return (item) => {
           return item.type == 'equipment' && item.system.equipmentType.value == filter;
@@ -208,10 +282,10 @@ export const MerchantSheetMixin = (superclass) =>
 
     async changeAmountAllItems(ev) {
       const updates = [];
-      const rule = this.filterRule(ev);
+      const rule = this.filterRule(ev.currentTarget);
       for (let item of this.actor.items) {
         if (rule(item)) {
-          let upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value}} };
+          let upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value } } };
           RuleChaos.increment(ev, upd, 'system.quantity.value', 0);
           updates.push(upd);
         }
@@ -222,12 +296,13 @@ export const MerchantSheetMixin = (superclass) =>
     async buyItem(ev) {
       await this.transferItem(this.actor, this.getTradeFriend(), ev, true);
     }
+
     async sellItem(ev) {
       await this.transferItem(this.getTradeFriend(), this.actor, ev, false);
     }
 
-    async transferItem(source, target, ev, buy = true) {
-      let itemId = this._getItemId(ev);
+    async transferItem(source, ev, target, buy = true) {
+      let itemId = this._getItemId(ev.currentTarget);
       let price = ev.currentTarget.dataset.price;
       let amount = ev.ctrlKey ? 10 : 1;
 
@@ -425,15 +500,7 @@ export const MerchantSheetMixin = (superclass) =>
       await super._render(force, options);
     }
 
-    static _togglePlayerview(event, target) {
-      this.actor.update({ 'system.merchant.playerView': !this.actor.system.merchant.playerView });
-    }
-
-    playerViewEnabled() {
-      return this.actor.system.merchant.playerView;
-    }
-
-    async clearInventory(ev) {
+    static async _clearInventory(ev, target) {
       const proceed = await foundry.applications.api.DialogV2.confirm({
         window: {
           title: 'MERCHANT.clearInventory',
@@ -445,12 +512,12 @@ export const MerchantSheetMixin = (superclass) =>
       if (proceed) this.removeAllGoods(this.actor, ev);
     }
 
-    async removeAllGoods(actor, ev) {
-      let text = $(ev.currentTarget).text();
-      $(ev.currentTarget).html(' <i class="fa fa-spin fa-spinner"></i>');
+    async removeAllGoods(actor, target) {
+      let text = $(target).text();
+      $(target).html(' <i class="fa fa-spin fa-spinner"></i>');
       let ids = actor.items.filter((x) => DSA5.equipmentCategories.has(x.type) && !getProperty(x.system, 'worn.value')).map((x) => x.id);
       await actor.deleteEmbeddedDocuments('Item', ids);
-      $(ev.currentTarget).text(text);
+      $(target).text(text);
     }
 
     async _prepareContext(_options) {
@@ -467,7 +534,7 @@ export const MerchantSheetMixin = (superclass) =>
         });
 
       this.prepareStorage(data);
-      if (data.merchantType != 'epic') {        
+      if (data.merchantType != 'epic') {
         if (this.merchantSheetActivated()) {
           this.filterWornEquipment(data);
           this.prepareTradeFriend(data);
@@ -580,6 +647,9 @@ class SelectTradefriendDialog extends DefaultAppv2 {
     position: {
       width: 400,
     },
+    actions: {
+      select: this.setTargetToUser,
+    },
   };
 
   static PARTS = {
@@ -600,15 +670,8 @@ class SelectTradefriendDialog extends DefaultAppv2 {
     return dialog;
   }
 
-  async _onRender(context, options) {
-    await super._onRender((context, options));
-
-    const html = $(this.element);
-    html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
-  }
-
-  setTargetToUser(ev) {
-    this.actor.setTradeFriend({ _id: ev.currentTarget.dataset.id });
+  static setTargetToUser(ev, target) {
+    this.actor.setTradeFriend({ _id: target.dataset.id });
     this.close();
   }
 }
@@ -625,7 +688,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
     };
   }
 
-  static async showDialog(actor, ev, options = {}) {
+  static async showDialog(actor, target, options = {}) {
     const html = await renderTemplate(this.template, await this.contentData(options));
     new game.dsa5.dialogs.RandomGoodsAddition({
       window: {
@@ -640,7 +703,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
           label: 'yes',
           default: true,
           callback: (event, button, dialog) => {
-            this.addRandomGoods(actor, $(button.form), ev);
+            this.addRandomGoods(actor, $(button.form), target);
           },
         },
         {
@@ -692,10 +755,10 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
     return filtered;
   }
 
-  static async addRandomGoods(actor, dlg, ev) {
-    const text = ev.currentTarget.textContent;
-    ev.currentTarget.innerHTML = ' <i class="fa fa-spin fa-spinner"></i>';
+  static async addRandomGoods(actor, dlg, target) {
+    const text = target.textContent;
+    target.innerHTML = ' <i class="fa fa-spin fa-spinner"></i>';
     await actor.createEmbeddedDocuments('Item', await this.generateItems(dlg, actor));
-    ev.currentTarget.textContent = text;
+    target.textContent = text;
   }
 }

@@ -117,10 +117,22 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     majorButtons: [
       {
         action: 'playerview',
-        icon: 'fas fa-toggle-on',
+        icon: function() {
+          return `fas fa-toggle-${this.actor.system.playerView ? 'on' : 'off'}`; 
+        },
         label: 'SHEET.switchLimited',
         visible: function () {
           return this.actor.isOwner;
+        },
+      },
+      {
+        action: 'locksheet',
+        label: 'SHEET.Lock',
+        icon:  function() {
+          return `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`; 
+        },
+        visible: function () {
+          return this.actor.system.canAdvance;
         },
       },
     ],
@@ -134,15 +146,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           icon: 'fas fa-link',
           visible: function () {
             return this.actor.isOwner;
-          },
-        },
-        {
-          action: 'locksheet',
-          label: 'SHEET.Lock',
-          icon: 'fas fa-lock',
-          //icon: `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`,
-          visible: function () {
-            return this.actor.system.canAdvance;
           },
         },
         {
@@ -202,7 +205,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _configureRenderParts(options) {
-    if (this.showLimited() && this.constructor.LIMITEDPARTS) {
+    if (this.constructor.LIMITEDPARTS && this.showLimited()) {
       return foundry.utils.deepClone(this.constructor.LIMITEDPARTS);
     }
     return super._configureRenderParts(options);
@@ -497,6 +500,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static async _changeAdvanceLock(ev, target) {
+    const element = this.element.querySelector('[data-action="locksheet"]');
+    element.classList.toggle('fa-lock');
+    element.classList.toggle('fa-unlock');
     await this.actor.update({ 'system.sheetLocked.value': !this.actor.system.sheetLocked.value });
   }
 
@@ -508,20 +514,22 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (this.wrapperLocked) return;
 
     this.wrapperLocked = true;
-    const target = $(trg);
-    target.find('i').addClass('fa-spin fa-spinner');
+    const target = $(trg).find('i');
+    target.addClass('fa-spin fa-spinner');
     if (await this[funct](...params)) return;
 
     this.wrapperLocked = false;
-    target.find('i').removeClass('fa-spin fa-spinner');
+    target.removeClass('fa-spin fa-spinner');
   }
 
   playerViewEnabled() {
     return this.actor.system.playerView;
   }
 
-  static _togglePlayerview(ev, target) {
-    this.actor.update({ 'system.playerView': !this.actor.system.playerView });
+  static async _togglePlayerview(ev, target) {
+    await this.close()
+    await this.actor.update({ 'system.playerView': !this.actor.system.playerView });
+    this.render(true)
   }
 
   showLimited() {
@@ -1581,7 +1589,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _onDropItem(event, item) {
     const itemData = item.toObject();
-
+    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 
     let container_id;

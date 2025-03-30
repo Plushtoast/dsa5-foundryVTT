@@ -3,7 +3,7 @@
   {{#if users}}
     <ul class='directory-list' style='padding-bottom:20px;'>
       {{#each users as |usr|}}
-        <li class='combatant actor directory-item row-section' data-id='{{usr.id}}'>
+        <li data-action="select" class='combatant actor directory-item row-section' data-id='{{usr.id}}'>
           <div class='combatant-advanced col five'>
             <img class='token-image' data-tooltip='{{usr.name}}' src='{{usr.img}}' />
           </div>

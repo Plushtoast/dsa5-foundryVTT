@@ -80,8 +80,8 @@
 
     {{#if (ne document.system.merchant.merchantType "none")}} {{#if isGM}}
     <div class="row-section">
-        <button type="button" class="sheetButton randomGoods">{{localize "MERCHANT.randomGoods"}}</button>
-        <button type="button" class="sheetButton clearInventory">{{localize "MERCHANT.clearInventory"}}</button>
+        <button type="button" data-action="randomGoods" class="sheetButton">{{localize "MERCHANT.randomGoods"}}</button>
+        <button type="button" data-action="clearInventory" class="sheetButton">{{localize "MERCHANT.clearInventory"}}</button>
     </div>
     {{/if}}
     <div class="groupbox">
@@ -99,8 +99,8 @@
                 </div>
                 {{/if}}
                 <div class="col ten center">
-                    <a class="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
-                    <a class="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
+                    <a data-action="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
+                    <a data-action="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
                 </div>
             </div>
             <div class="col two row-section onlyMultiColumn">
@@ -116,8 +116,8 @@
                 </div>
                 {{/if}}
                 <div class="col ten center">
-                    <a class="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
-                    <a class="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
+                    <a data-action="toggleAllAllowMerchant" data-lock="true"><i class="fas fa-unlock"></i></a>
+                    <a data-action="toggleAllAllowMerchant" data-lock="false"><i class="fas fa-lock"></i></a>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@
                 </div>
                 {{/if}}
                 <div class="col ten center">
-                    <a class="allowMerchant" data-user-id="{{player.id}}">
+                    <a data-action="allowMerchant" data-user-id="{{player.id}}">
                         {{#if player.allowedMerchant}}
                         <i class="far fa-check-circle"></i>
                         {{else}}
@@ -165,7 +165,7 @@
             {{#if (or (eq ../document.system.merchant.merchantType "merchant") (eq
             ../document.system.merchant.merchantType "loot"))}}
             <div class="col eight center">
-                <a class="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock"
+                <a data-action="lockTradeSection" data-type="{{section.dataType}}"><i class="fa fa-lock"
                         data-tooltip="MERCHANT.untradable"></i></a>
             </div>
             {{/if}}
@@ -207,9 +207,7 @@
                     {{#if (or (eq ../../document.system.merchant.merchantType "merchant") (eq
                     ../../document.system.merchant.merchantType "loot"))}}
                     <div class="col eight center" data-tooltip="MERCHANT.untradable">
-                        {{#if item.system.tradeLocked}}
-                        <a class="item-tradeLock"><i class="fas fa-lock"></i></a> {{else}}
-                        <a class="item-tradeLock"><i class="fas fa-unlock"></i></a> {{/if}}
+                        <a data-action="toggleTradeLock"><i class="fas fa-{{ifThen item.system.tradeLocked '' 'un'}}lock"></i></a>
                     </div>
                     {{/if}}
                     <div class="col eight center">
@@ -219,7 +217,7 @@
                         <a data-action="item-toggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}}
                         {{/if}}
                     </div>
-                    <div class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
+                    <div data-action="setCustomPrice" class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
                         {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
                         <input class="customPriceTag" type="number" value="{{item.flags.dsa5.customPriceTag}}" />
                     </div>

@@ -54,7 +54,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   }
 
   static LIMITEDPARTS = {
-    all: {
+    limited: {
       template: 'systems/dsa5/templates/actors/creature-limited.html',
     }
   }

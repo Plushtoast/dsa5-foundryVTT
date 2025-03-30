@@ -1,0 +1,14 @@
+<fieldset class='noBorder' disabled>
+  <header class='sheet-header row-section'>
+
+    <div class='charname headerInput col fourty'>
+      {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
+      <span class='label name'>{{localize 'Name'}}</span>
+    </div>
+    <div class='headerInput col fourty'>
+      {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
+      <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
+    </div>
+
+  </header>
+</fieldset>

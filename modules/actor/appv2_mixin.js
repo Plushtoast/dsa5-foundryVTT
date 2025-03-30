@@ -23,7 +23,8 @@ export const AppV2Mixin = (superclass) =>
         const visible = typeof btn.visible === "function" ? btn.visible.call(this) : btn.visible ?? true;
         if (!visible) continue;
 
-        const button = `<button type="button" class="header-control ${btn.icon} icon" data-action="${btn.action}"
+        const icon = typeof btn.icon === "function" ? btn.icon.call(this) : btn.icon;
+        const button = `<button type="button" class="header-control ${icon} icon" data-action="${btn.action}"
                 data-tooltip="${btn.label}"></button>`
         this.window.title.insertAdjacentHTML('beforebegin', button);
       }
