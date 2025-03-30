@@ -229,15 +229,13 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       that.filterButtons(ev);
       return false;
     };
-    html.find('.filterable').on('hover', 
-      function () {
-        $(document).on('keydown', fn);
-      },
-      function () {
-        $(document).off('keydown', fn);
-      },
-    );
-
+    const filterable = html.find('.filterable')
+    filterable.on('pointerover', () => { 
+      $(document).off('keydown.tokenHotbars2', fn).on('keydown.tokenHotbars2', fn); 
+    });
+    filterable.on('pointerout', () => { 
+      $(document).off('keydown.tokenHotbars2', fn); 
+    });
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
 
     html.find('li').on('mousedown', async (ev) => {
@@ -249,8 +247,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const primaryLis = html.find('li.primary')
     primaryLis.on('mouseenter', (ev) => {
       const cat = ev.currentTarget.dataset.category;
-
       this.category = cat;
+
       setTimeout(() => {
         html.find('.secondary').removeClass('shown');
         if (cat == this.category) html.find(`.secondary[data-category="${cat}"]`).addClass('shown');

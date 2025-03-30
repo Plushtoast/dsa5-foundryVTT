@@ -35,7 +35,7 @@
                 </div>               
             </div>
             
-            <div class="sections flexrow" style="--filter-count:{{filterCategories.length}}">
+            <div class="sections flexrow">
                 {{#if token.groups.attacks}}
                 <ul class="wrap skillItems thinscroll {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}" data-category="attacks">
                     {{#each token.groups.attacks as |item i|}}

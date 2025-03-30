@@ -13,12 +13,14 @@
                     <a data-action="statusCreate" class="status-create lineheight very-small" data-tooltip="CONDITION.add"><i class="fas fa-plus"></i></a>
                     <ul>
                         <li class="search">
-                            <input type="search" class="conditionSearch" placeholder="{{localize 'Book.search'}}" />
-                            <a data-action="statusAdd" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></a>
+                            <div class="flexrow">
+                                <input type="search" class="conditionSearch" placeholder="{{localize 'Book.search'}}" />
+                                <button type="button" data-action="statusAdd" data-id="custom" data-tooltip="CONDITION.custom"><i class="fas fa-plus"></i></button>
+                            </div>                            
                         </li>
                         {{#each manualConditions as |item i|}}
                         <li>
-                            <a data-action="statusAdd" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></a>
+                            <button type="button" data-action="statusAdd" data-id="{{item.id}}" data-tooltip="{{item.name}}"><img src="{{item.img}}" /></button>
                         </li>
                         {{/each}}
 

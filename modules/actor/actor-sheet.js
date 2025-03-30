@@ -1160,12 +1160,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   _filterConditions(tar) {
     if (tar.val() != undefined) {
-      let val = tar.val().toLowerCase().trim();
-      let conditions = $(this.form).find('.statusEffectMenu li:not(.search)');
+      const val = tar.val().toLowerCase().trim();
+      const conditions = $(this.form).find('.statusEffectMenu li:not(.search)');
       conditions.removeClass('filterHide');
       conditions
         .filter(function () {
-          return game.i18n.localize($(this).find('a').attr('data-tooltip')).toLowerCase().trim().indexOf(val) == -1;
+          return game.i18n.localize($(this).find('button').attr('data-tooltip')).toLowerCase().trim().indexOf(val) == -1;
         })
         .addClass('filterHide');
     }

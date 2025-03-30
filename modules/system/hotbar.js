@@ -12,42 +12,40 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   async _onRender(context, options) {
     await super._onRender((context, options));
     this.addContextColor();
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      const html = $(this.element);
-      html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-      html.find('li.primary:not(.macro)').on('mousedown', async (ev) => {
-        game.tooltip.deactivate();
-        ev.stopPropagation();
-        await this.tokenHotbar.executeQuickButton(ev);
-        return false;
-      });
-      const that = this;
-      const fn = function (ev) {
-        if (!html.find('.sections').is(':hover')) return;
 
-        that.filterSections(ev, html);
-        return false;
-      };
-      const filterOff = function () {
-        $(document).off('keydown.sectionFilter', fn);
-        that.searching = '';
-        html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
-        html.find('.longLayout').removeClass('longLayout');
-      };
-      html.find('.sections').on(
-        'hover',
-        () => {
-          $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
-        },
-        filterOff,
-      );
+    if (!game.settings.get('dsa5', 'hotbarv3')) return;
 
-      html.find('.primary').on('hover', (ev) => this._betterTooltip(ev));
+    const html = $(this.element);
+    html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
+    html.find('li.primary:not(.macro)').on('mousedown', async (ev) => {
+      game.tooltip.deactivate();
+      ev.stopPropagation();
+      await this.tokenHotbar.executeQuickButton(ev);
+      return false;
+    });
+    const that = this;
+    const fn = function (ev) {
+      if (!html.find('.sections').is(':hover')) return;
 
-      html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
+      that.filterSections(ev, html);
+      return false;
+    };
+    const filterOff = function () {
+      if (html.find('.sections').is(':hover')) return;
 
-      if(game.settings.get('dsa5', 'hotbarv3'))  html.addClass('hotbarV3');
-    }
+      $(document).off('keydown.sectionFilter', fn);
+      that.searching = '';
+      html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
+      html.find('.longLayout').removeClass('longLayout');
+    };
+    html.find('.sections').on('pointerover', () => {
+      $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
+    });
+    
+    html.find('.sections').on('pointerout', filterOff);
+    html.find('.primary').on('pointerover', (ev) => this._betterTooltip(ev));
+    html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
+    html.addClass('hotbarV3');
   }
 
   async updateDSA5Hotbar() {
@@ -87,13 +85,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   async _onFirstRender(_context, _options) {
     game.macros.apps.push(this);
-    this.element.setAttribute("aria-roledescription", game.i18n.localize("HOTBAR.LABEL"));
+    this.element.setAttribute('aria-roledescription', game.i18n.localize('HOTBAR.LABEL'));
     this._onResize();
 
     // Context Menu
     const contextOptions = this._getContextMenuOptions();
-    Hooks.callAll("getHotbarContextOptions", this, contextOptions);
-    if ( contextOptions ) new HotbarV3ContextMenu(this.element, ".slot.full", contextOptions, { jQuery: false });
+    Hooks.callAll('getHotbarContextOptions', this, contextOptions);
+    if (contextOptions) new HotbarV3ContextMenu(this.element, '.slot.full', contextOptions, { jQuery: false });
   }
 
   _configureRenderParts(options) {
@@ -113,9 +111,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   static DEFAULT_OPTIONS = {
     actions: {
-      categoryFilter: this.#filterCategory
-    }
-  }
+      categoryFilter: this.#filterCategory,
+    },
+  };
 
   async _betterTooltip(ev) {
     const target = ev.currentTarget;
