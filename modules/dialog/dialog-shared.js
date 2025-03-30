@@ -56,7 +56,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async updateTargets(html, targets) {
-    const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.html', { targets });
+    const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.hbs', { targets });
     html.find('.targets').html(template);
     this.updateRollButton(targets);
   }

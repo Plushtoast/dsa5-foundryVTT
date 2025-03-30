@@ -1,0 +1,105 @@
+<div class='chat-card'>
+  <div>
+    <b>{{localize 'HELP.groupcheck'}}</b>
+    <div class='chat-buttons'>
+      <a class='edit-toggle chat-button-gm' data-tooltip='{{localize "CHATNOTIFICATION.editRoll"}}'><i class='fas fa-edit'></i></a>
+    </div>
+  </div>
+  {{#if (eq openRolls 0)}}
+
+    {{target}}
+    -
+    {{localize 'Aggregated.noMoreAllowed'}}
+
+  {{else}}
+
+    {{name}}{{localize 'CHATNOTIFICATION.requestGroupCheck'}}
+    <div class='row-section'>
+      <div class='col sixty'>
+        <b>{{localize 'skill'}}</b>
+      </div>
+
+      <div class='col fifteen center' data-tooltip='Modifier'>
+        <b>{{localize 'ABBR.modifiers'}}</b>
+      </div>
+      <div class='col zerofive'>
+        <a class='addSkillToGC chat-button-gm'><i class='fas fa-plus'></i></a>
+      </div>
+    </div>
+    {{#each rollOptions as |optn|}}
+      <div class='row-section lineheight'>
+        <div class='col sixty'>
+          <button class='request-gc' data-type='{{optn.type}}' data-modifier='{{optn.calculatedModifier}}' data-name='{{optn.target}}'><i
+              class='fas fa-dice'
+            ></i>{{optn.target}}</button>
+        </div>
+
+        <div class='col fifteen center'>
+          <span class='display-toggle'>{{optn.calculatedModifier}}</span>
+          <input
+            type='number'
+            value='{{optn.modifier}}'
+            data-name='{{optn.target}}'
+            data-type='{{optn.type}}'
+            style='display:none; width:10%'
+            class='display-toggle editGC'
+            data-field='modifier'
+          />
+        </div>
+        <div class='col zerofive'>
+          <a><i data-type='{{optn.type}}' data-name='{{optn.target}}' class='removeSkillFromGC chat-button-gm fas fa-trash'></i></a>
+        </div>
+      </div>
+
+    {{/each}}
+  {{/if}}
+
+  <ul>
+    {{#each results as |item i|}}
+      <li>
+        <div class='row-section'>
+          <div class='col sixty'>
+            <b>{{item.actor}}</b>:
+          </div>
+          <div class='col ten'>
+            <span class='display-toggle'>{{item.qs}}</span>
+            <input type='number' value='{{item.qs}}' data-index={{i}} style='display:none; width:10%' class='display-toggle editGC' />
+          </div>
+          <div class='col ten'>
+            <i class='fas fa-info' data-tooltip='{{item.qs}} {{localize "CHARAbbrev.QS"}} {{item.target}}'></i>
+          </div>
+          <div class='col ten'>
+            <a><i data-index='{{i}}' class='removeGC chat-button-gm fas fa-trash'></i></a>
+          </div>
+        </div>
+      </li>
+
+    {{/each}}
+  </ul>
+
+  <div>
+    <b>{{localize 'failedTests'}}</b>:
+    <span class='display-toggle'>{{failed}}</span>
+    <input type='number' value='{{failed}}' style='display:none; width:10%' class='display-toggle editGC' data-field='failed' />
+  </div>
+  <div>
+    <b>{{localize 'probes'}}</b>:
+    {{doneRolls}}
+    /
+    <span class='display-toggle'>{{maxRolls}}</span>
+    <input type='number' value='{{maxRolls}}' style='display:none; width:10%' class='display-toggle editGC' data-field='maxRolls' />
+  </div>
+  <div>
+    <b>{{localize 'cummulatedQS'}}</b>:
+    {{qs}}
+    /
+    <span class='display-toggle'>{{targetQs}}</span>
+    <input type='number' value='{{targetQs}}' style='display:none; width:10%' class='display-toggle editGC' data-field='targetQs' />
+  </div>
+  {{#if (gt qs 5)}}
+    {{{enrichedpartsuccess}}}
+  {{/if}}
+  {{#if (gt qs 9)}}
+    {{{enrichedsuccess}}}
+  {{/if}}
+</div>

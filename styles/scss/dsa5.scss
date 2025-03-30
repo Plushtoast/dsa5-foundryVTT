@@ -1123,9 +1123,9 @@ a.img-entity-link {
   .fas,
   .fa {
     border-radius: 100%;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--color-text-secondary);
     padding: 2px;
-    color: #333029a6;
+    color: var(--color-text-secondary);
   }
 }
 
@@ -1573,7 +1573,7 @@ input[type='search'] {
   background: rgba(0, 0, 0, 0.05);
   padding: 1px 3px;
   margin: 0;
-  color: #191813;
+  color: var(--color-text-secondary);
   font-family: inherit;
   font-size: inherit;
   text-align: inherit;

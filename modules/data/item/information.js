@@ -38,7 +38,7 @@ export default class InformationData extends ItemDataModel {
   }
 
   static async _postItem(item) {
-    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.html', { item });
+    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.hbs', { item });
     UserMultipickDialog.getDialog(html);
   }
 }

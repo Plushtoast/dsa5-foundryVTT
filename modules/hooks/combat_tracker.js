@@ -185,7 +185,7 @@ export class DSA5Combat extends Combat {
   }
 
   async showBrawlingDamage(messages) {
-    const template = await renderTemplate('systems/dsa5/templates/chat/brawling-damage.html', { messages });
+    const template = await renderTemplate('systems/dsa5/templates/chat/brawling-damage.hbs', { messages });
     ChatMessage.create(DSA5_Utility.chatDataSetup(template));
   }
 

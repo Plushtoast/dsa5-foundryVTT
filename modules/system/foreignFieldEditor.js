@@ -14,7 +14,7 @@ export default class ForeignFieldEditor extends FormAppv2 {
   }
 
   static PARTS = {
-    main: {template: 'systems/dsa5/templates/dialog/foreignfieldeditor.html'},
+    main: {template: 'systems/dsa5/templates/dialog/foreignfieldeditor.hbs'},
   };
 
   static DEFAULT_OPTIONS = {

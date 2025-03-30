@@ -103,7 +103,7 @@ export class SelectUserDialog extends DefaultAppv2 {
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/dialog/selectForUserDialog.html',
+      template: 'systems/dsa5/templates/dialog/selectForUserDialog.hbs',
     },
   };
 
@@ -160,7 +160,7 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
       window: {
         title: 'SHEET.PostItem',
       },
-      content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.html', { users }),
+      content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.hbs', { users }),
       buttons: [
         {
           action: 'done',

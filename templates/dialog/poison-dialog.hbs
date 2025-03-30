@@ -1,0 +1,16 @@
+<form class="skill-test">
+    {{> systems/dsa5/templates/dialog/default-dialog.hbs}} {{#if hasSKModifier}}
+    <div class="form-group">
+        <label>{{localize "skModifier"}}</label>
+        <input type="number" name="skModifier" value="{{SKModifier}}" />
+    </div>
+    {{/if}} 
+    {{#if hasZKModifier}}
+    <div class="form-group" data-tooltip="TT.zkModifer">
+        <label>{{localize "zkModifier"}}</label>
+        <input type="number" name="zkModifier" value="{{ZKModifier}}" />
+    </div>
+    {{/if}}
+
+    <div class="roll-dialog-tag">poison</div>
+</form>

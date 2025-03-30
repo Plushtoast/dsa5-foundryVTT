@@ -79,14 +79,14 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
       let template;
       let callback;
       if (DSA5.vantagesNeedingAdaption[item.name].items == 'text') {
-        template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-string-dialog.html', { original: item });
+        template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-string-dialog.hbs', { original: item });
         callback = function (dlg) {
           const adoption = { name: dlg.entryselection.value };
           AdvantageRulesDSA5._vantageReturnFunction(actor, item, typeClass, adoption);
         };
       } else {
         let items = actor.items.filter((x) => DSA5.vantagesNeedingAdaption[item.name].items.includes(x.type));
-        template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.html', { items: items, original: item });
+        template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.hbs', { items: items, original: item });
         callback = function (dlg) {
           const value = dlg.entryselection.value;
           const adoption = items.find((x) => x.name == value);

@@ -1183,7 +1183,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const message = game.i18n.format('DIALOG.DeleteItemDetail', {
       item: item.name,
     });
-    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.html', { message });
+    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title: 'DIALOG.deleteConfirmation',

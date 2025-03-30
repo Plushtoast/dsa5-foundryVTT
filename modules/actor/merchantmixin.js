@@ -584,7 +584,7 @@ class SelectTradefriendDialog extends DefaultAppv2 {
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/dialog/selectTradeFriend.html',
+      template: 'systems/dsa5/templates/dialog/selectTradeFriend.hbs',
     },
   };
 
@@ -615,7 +615,7 @@ class SelectTradefriendDialog extends DefaultAppv2 {
 
 export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
   static get template() {
-    return 'systems/dsa5/templates/dialog/randomGoods-dialog.html';
+    return 'systems/dsa5/templates/dialog/randomGoods-dialog.hbs';
   }
 
   static async contentData(options = {}) {

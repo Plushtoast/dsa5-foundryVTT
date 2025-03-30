@@ -1,0 +1,60 @@
+<div class="dsa5 chat-card" data-actor-id="{{actorId}}" data-hide={{hideData.value}}>
+    {{> systems/dsa5/templates/chat/roll/test-card.hbs}}
+     {{#if (gt testData.successLevel 0)}}
+
+    <div class="card-content chatModifiers">
+        <b>{{localize "effect"}}</b>: ...
+        <a class="expand-mods"><i class="fas fa-plus"></i></a>
+        <div>
+            {{{replaceConditions (diceThingsUp preData.source.system.effect.value)}}}
+        </div>
+    </div>
+    <div class="card-content">
+        <b>{{localize "castingTime"}}</b>: {{preData.calculatedSpellModifiers.castingTime}}
+    </div>
+    <div class="card-content">
+        <b>{{localize "duration"}}</b>: {{preData.source.system.duration.value}}
+    </div>
+    <div class="card-content">
+        <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
+    </div>
+    {{/if}}
+    <div class="card-content" data-tooltip="{{preData.calculatedSpellModifiers.description}}">
+        <b>{{localize "cost"}}</b>: {{preData.calculatedSpellModifiers.finalcost}} <span class="costCheck"></span>
+    </div>
+    {{#unless (or (eq preData.calculatedSpellModifiers.maintainCost '') (eq preData.calculatedSpellModifiers.maintainCost '0') (eq preData.calculatedSpellModifiers.maintainCost 0))}}
+    <div class="card-content">
+        <b>{{localize "maintainCost"}}</b>: {{preData.calculatedSpellModifiers.maintainCost}}
+    </div>
+    {{/unless}} {{#if preData.extensions }}
+    <div class="card-content">
+        <b>{{localize 'extensions'}}</b>: {{#each preData.extensions as |item|}}
+        <a class="content-link" draggable="true" data-link="" data-uuid="{{item.uuid}}" data-type="Item"></i>{{item.name}}</a>
+        {{/each}}
+    </div>
+    {{/if}} 
+    {{#if immuneTo}}
+    <div class="card-content chat-button-gm maskfield">
+        {{#each immuneTo as |immunity|}}
+        <b>{{localize "DSAError.immuneTo" name=immunity.target condition=immunity.condition }}</b>
+        {{/each}}
+    </div>
+    {{/if}}
+    {{#if (or hasAreaTemplate applyEffect)}}
+    <div class="row-section" style="margin-top:10px">
+        {{#if applyEffect}}
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="self" data-tooltip="TT.applyEffectCaster">{{localize 'ActiveEffects.applySelf'}}</button>
+        </div>
+        <div class="col two center">
+            <button class="applyEffect selfButton" data-target="target" data-tooltip="TT.applyEffectTargets">{{localize 'ActiveEffects.applyTarget'}}</button>
+        </div>
+        {{/if}}
+        {{#if hasAreaTemplate}}
+        <div class="col two center">
+            <button class="placeTemplate selfButton" data-tooltip="TT.placeTemplate">{{localize 'AoE'}}</button>
+        </div>
+        {{/if}}
+    </div>
+    {{/if}}
+</div>

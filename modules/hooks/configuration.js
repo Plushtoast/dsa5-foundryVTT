@@ -843,7 +843,7 @@ class ChangelogForm extends FormAppv2 {
 
 class ExportForm extends FormAppv2 {
   async render() {
-    const content = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.html', {});
+    const content = await renderTemplate('systems/dsa5/templates/dialog/exportConfiguration-dialog.hbs', {});
     new foundry.applications.api.DialogV2({
       window: {
         title: 'Export configuration',

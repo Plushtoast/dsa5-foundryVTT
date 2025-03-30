@@ -885,7 +885,7 @@ export default class DiceDSA5 {
           }
         }
 
-        const content = await renderTemplate('systems/dsa5/templates/dialog/manualroll-dialog.html', {
+        const content = await renderTemplate('systems/dsa5/templates/dialog/manualroll-dialog.hbs', {
           dice,
           description,
         });

@@ -137,7 +137,7 @@ export const connectHook = () => {
 export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
   static async create(title, name, count, callback, min = 1, max = undefined) {
     max = max || count;
-    const content = await renderTemplate('systems/dsa5/templates/dialog/dropToGround.html', { name, min, max, count });
+    const content = await renderTemplate('systems/dsa5/templates/dialog/dropToGround.hbs', { name, min, max, count });
 
     new RangeSelectDialog({
       window: {

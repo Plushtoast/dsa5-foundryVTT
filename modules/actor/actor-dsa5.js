@@ -1287,7 +1287,7 @@ export default class Actordsa5 extends Actor {
     cardOptions.fatePointDamageRerollUsed = true;
     this.resetTargetAndMessage(data, cardOptions);
 
-    const html = await renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.html', {
+    const html = await renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.hbs', {
       testData: newTestData,
       postData: data.postData,
       singleDie: data.postData.characteristics.length == 1,
@@ -1384,7 +1384,7 @@ export default class Actordsa5 extends Actor {
 
     let rollType = message.flags.data.preData.source.type;
     if (['spell', 'liturgy', 'ceremony', 'ritual', 'skill'].includes(rollType)) {
-      const html = await renderTemplate('systems/dsa5/templates/dialog/fateImprove-dialog.html', {
+      const html = await renderTemplate('systems/dsa5/templates/dialog/fateImprove-dialog.hbs', {
         testData: newTestData,
         postData: data.postData,
       });
@@ -1537,7 +1537,7 @@ export default class Actordsa5 extends Actor {
     const fallingDamage = await actor.basicTest(setupData, {
       suppressMessage: true,
     });
-    const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.html', fallingDamage);
+    const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', fallingDamage);
 
     if (!result.result.other) result.result.other = [];
 
@@ -1564,7 +1564,7 @@ export default class Actordsa5 extends Actor {
     const situationalModifiers = [];
     const dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/fallingdamage-dialog.html',
+      template: 'systems/dsa5/templates/dialog/fallingdamage-dialog.hbs',
       data: {
         rollMode: options.rollMode,
         situationalModifiers,
@@ -1585,7 +1585,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.html', title, tokenId);
+    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1613,7 +1613,7 @@ export default class Actordsa5 extends Actor {
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/regeneration-dialog.html',
+      template: 'systems/dsa5/templates/dialog/regeneration-dialog.hbs',
       data: {
         rollMode: options.rollMode,
         regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
@@ -1653,7 +1653,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/regeneration-card.html', title, tokenId);
+    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/regeneration-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1700,7 +1700,7 @@ export default class Actordsa5 extends Actor {
     };
     const dialogOptions = {
       title: `${game.i18n.localize(statusId)} ${game.i18n.localize('Test')}`,
-      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, this, options, multipleDefenseValue, 'parry');
@@ -1710,7 +1710,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.html', dialogOptions.title, tokenId);
+    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.hbs', dialogOptions.title, tokenId);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1739,7 +1739,7 @@ export default class Actordsa5 extends Actor {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/characteristic-dialog.html',
+      template: 'systems/dsa5/templates/dialog/characteristic-dialog.hbs',
       data: {
         rollMode: options.rollMode,
         difficultyLabels: DSA5.attributeDifficultyLabels,
@@ -1754,7 +1754,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.html', title, tokenId);
+    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2293,7 +2293,7 @@ export default class Actordsa5 extends Actor {
       return;
     }
 
-    const template = await renderTemplate('systems/dsa5/templates/chat/roll/resist-pain.html', { actor: this });
+    const template = await renderTemplate('systems/dsa5/templates/chat/roll/resist-pain.hbs', { actor: this });
     await ChatMessage.create(DSA5_Utility.chatDataSetup(template));
   }
 

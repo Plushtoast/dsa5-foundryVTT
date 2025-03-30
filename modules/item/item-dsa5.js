@@ -997,7 +997,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     let dialogOptions = {
       title,
-      template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.html`,
+      template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.hbs`,
       data,
       callback: async (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
@@ -1007,7 +1007,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/spell-card.html', title, tokenId);
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/spell-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1071,7 +1071,7 @@ class CombatskillDSA5 extends Itemdsa5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/combatskill-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-dialog.hbs',
       data: {
         rollMode: options.rollMode,
       },
@@ -1083,7 +1083,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1120,7 +1120,7 @@ class ConsumableItemDSA extends Itemdsa5 {
     const newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value;
 
     const effect = DSA5_Utility.replaceDies(item.system.QLList.split('\n')[item.system.QL - 1], false);
-    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.html', {
+    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
       item,
       effect,
       hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
@@ -1229,7 +1229,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/poison-dialog.html',
+      template: 'systems/dsa5/templates/dialog/poison-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
@@ -1249,7 +1249,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId);
+    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1372,7 +1372,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     const dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode);
@@ -1382,7 +1382,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
       },
     };
 
-    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1423,7 +1423,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/poison-dialog.html',
+      template: 'systems/dsa5/templates/dialog/poison-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
@@ -1444,7 +1444,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.html`, title, tokenId);
+    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1572,7 +1572,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
@@ -1581,7 +1581,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1660,7 +1660,7 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/skill-dialog.html',
+      template: 'systems/dsa5/templates/dialog/skill-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
@@ -1677,7 +1677,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/skill-card.html', title, tokenId);
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/skill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1740,7 +1740,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     let dialogOptions = {
       title,
-      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.html',
+      template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
         if (traitType == 'meleeAttack') {
@@ -1754,7 +1754,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.html', title, tokenId);
+    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }

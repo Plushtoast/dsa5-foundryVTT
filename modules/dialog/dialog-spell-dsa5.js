@@ -158,7 +158,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const changeCast = html.find('.canChangeCastingTime');
     if (source.system.canChangeCastingTime.value == 'true') {
       if (changeCast.is(':empty')) {
-        changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.html', { rollModifiers: this.dialogData.renderData.rollModifiers }));
+        changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.hbs', { rollModifiers: this.dialogData.renderData.rollModifiers }));
         this.setPosition({ height: 'auto' });
       }
     } else {

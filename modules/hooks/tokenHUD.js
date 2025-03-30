@@ -66,7 +66,7 @@ function swarmHud(tooltip) {
 
 async function splitSwarm(actor, token) {
   const maxSplitsize = Number(actor.system.swarm.count) - 1;
-  const content = await renderTemplate('systems/dsa5/templates/dialog/swarm-split-dialog.html', { actor, maxSplitsize });
+  const content = await renderTemplate('systems/dsa5/templates/dialog/swarm-split-dialog.hbs', { actor, maxSplitsize });
 
   new SwarmDialog({
     window: {

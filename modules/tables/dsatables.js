@@ -20,7 +20,7 @@ export default class DSATables {
       const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].text));
       const title = `${game.i18n.localize('TABLENAMES.' + dataset.table)}`;
 
-      const content = await renderTemplate(`systems/dsa5/templates/tables/tableCard.html`, { result, title, hasEffect });
+      const content = await renderTemplate('systems/dsa5/templates/tables/tableCard.hbs', { result, title, hasEffect });
 
       const effects = await this.buildEffects(tableResult, hasEffect);
 

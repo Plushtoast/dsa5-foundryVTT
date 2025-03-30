@@ -602,7 +602,7 @@ export default class OpposedDsa5 {
     formattedOpposeResult.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     formattedOpposeResult.isBrawling = game.combat?.isBrawling;
 
-    const content = await renderTemplate('systems/dsa5/templates/chat/roll/opposed-result.html', formattedOpposeResult);
+    const content = await renderTemplate('systems/dsa5/templates/chat/roll/opposed-result.hbs', formattedOpposeResult);
     const chatOptions = {
       user: game.user.id,
       content,

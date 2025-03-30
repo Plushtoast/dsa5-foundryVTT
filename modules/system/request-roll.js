@@ -102,7 +102,7 @@ export default class RequestRoll {
       }
       data.openRolls = data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
-      const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.html', data);
+      const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
       message.update({ content, flags: { gc: data } });
     } else {
       game.socket.emit('system.dsa5', {
@@ -141,7 +141,7 @@ export default class RequestRoll {
       rollOptions: [{ type, modifier, calculatedModifier: modifier, target }],
     };
     mergeObject(data, options);
-    const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.html', data);
+    const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
     let chatData = DSA5_Utility.chatDataSetup(content);
     chatData.flags = { gc: data };
     ChatMessage.create(chatData);
@@ -149,7 +149,7 @@ export default class RequestRoll {
 
   static async addSkillToGC(ev) {
     const messageID = $(ev.currentTarget).parents('.message').attr('data-message-id');
-    const content = await renderTemplate('systems/dsa5/templates/dialog/addgroupcheckskill.html', {
+    const content = await renderTemplate('systems/dsa5/templates/dialog/addgroupcheckskill.hbs', {
       skills: DSA5ChatAutoCompletion.skills.filter((x) => x.type == 'skill').sort((x, y) => x.name.localeCompare(y.name)),
     });
     let data = {

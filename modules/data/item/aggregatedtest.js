@@ -70,7 +70,7 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     ];
     const descriptionObfuscated = foundry.utils.getProperty(item, 'system.obfuscation.description');
 
-    const html = await renderTemplate('systems/dsa5/templates/chat/aggregatedTestResult.html', { descriptionObfuscated, item, properties });
+    const html = await renderTemplate('systems/dsa5/templates/chat/aggregatedTestResult.hbs', { descriptionObfuscated, item, properties });
     const chatOptions = DSA5_Utility.chatDataSetup(html);
     ChatMessage.create(chatOptions);
   }

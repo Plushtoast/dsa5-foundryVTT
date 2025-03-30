@@ -63,7 +63,7 @@ export class ItemDataModel extends DSADataModel {
 
     if (chatData.img.includes('/blank.webp')) chatData.img = null;
 
-    const html = await renderTemplate('systems/dsa5/templates/chat/post-item.html', chatData);
+    const html = await renderTemplate('systems/dsa5/templates/chat/post-item.hbs', chatData);
     const chatOptions = DSA5_Utility.chatDataSetup(html);
     ChatMessage.create(chatOptions);
   }
