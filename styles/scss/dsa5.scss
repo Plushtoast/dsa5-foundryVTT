@@ -1083,6 +1083,15 @@ a.img-entity-link {
   }
 }
 
+.button_a {
+  padding: 0;
+  border: none;
+
+  &.schip.tiny{
+    flex: 0 0 15px;
+  }
+}
+
 .advance {
   color: var(--color-text-secondary);
   margin-left: 4px;

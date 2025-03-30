@@ -1,0 +1,16 @@
+<div class='tab scrollable {{tabs.randomGen.cssClass}}' data-tab='randomGen' data-group='{{tabs.randomGen.group}}' class='tab randomGen'>
+  {{#unless randomCreation}}
+    <div class='row-section'>
+      <div class='col center'>
+        {{localize 'MASTER.gmMenuPlaceholder'}}
+      </div>
+    </div>
+  {{/unless}}
+  {{#each randomCreation as |item ch|}}
+    <div class='row-section tableOdd wrap'>
+      <div class='col'>
+        {{{item}}}
+      </div>
+    </div>
+  {{/each}}
+</div>

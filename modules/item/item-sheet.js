@@ -67,6 +67,24 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       conditionEdit: this.editCondition,
       conditionToggle: this.toggleCondition,
     },
+    majorButtons: [
+      {
+        icon: 'fas fa-dice-six',
+        label: 'SHEET.onUseEffect',
+        action: 'headerOnUseEffect',
+        visible: function () {
+          return this.actor && OnUseEffect.getOnUseEffect(this.item);
+        },
+      },
+      {
+        label: 'SHEET.RollEffect',
+        icon: 'fas fa-dice-d20',
+        action: 'rolleffect',
+        visible: function () {
+          return this.hasRollEffect;
+        },
+      },
+    ],
     window: {
       resizable: true,
       controls: [
@@ -75,22 +93,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
           label: 'SHEET.PostItem',
           action: 'showItemHead',
         },
-        {
-          icon: 'fas fa-dice-six',
-          label: 'SHEET.onUseEffect',
-          action: 'headerOnUseEffect',
-          visible: function () {
-            return this.actor && OnUseEffect.getOnUseEffect(this.item);
-          },
-        },
-        {
-          label: 'SHEET.RollEffect',
-          icon: 'fas fa-dice-d20',
-          action: 'rolleffect',
-          visible: function () {
-            return this.hasRollEffect;
-          },
-        },
+        
       ],
     },
     classes: ['dsa5', 'item', 'item-sheet'],
@@ -479,18 +482,16 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
       postAsGroupCheck: AggregatedTestSheet.postAsGroupCheck,
       buildItem: AggregatedTestSheet.postFinishedItem,
     },
-    window: {
-      controls: [
-        {
-          label: 'SHEET.postAsGroupCheck',
-          icon: 'fas fa-dice-d20',
-          action: 'postAsGroupCheck',
-          visible: function () {
-            return !this.item.isOwned;
-          },
+    majorButtons: [
+      {
+        label: 'SHEET.postAsGroupCheck',
+        icon: 'fas fa-dice-d20',
+        action: 'postAsGroupCheck',
+        visible: function () {
+          return !this.item.isOwned;
         },
-      ],
-    },
+      },
+    ],
   };
 
   _prepareTabs(group) {
@@ -740,7 +741,7 @@ class Enchantable extends ItemSheetdsa5 {
       };
       let update = { flags: { dsa5: { poison } } };
       if (this.item.actor) {
-        if(this.item.actor.uuid != item.actor?.uuid) {
+        if (this.item.actor.uuid != item.actor?.uuid) {
           const proceed = await foundry.applications.api.DialogV2.confirm({
             window: {
               title: game.i18n.format('WIZARD.addItem', { item: item.name }),
@@ -749,7 +750,7 @@ class Enchantable extends ItemSheetdsa5 {
             rejectClose: false,
             modal: true,
           });
-          if(proceed) {
+          if (proceed) {
             await this.item.actor.createEmbeddedDocuments('Item', [item.toObject()]);
           }
         }
@@ -1067,18 +1068,16 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
         EquipmentDamage.breakingTest(this.item);
       },
     },
-    window: {
-      controls: [
-        {
-          label: 'WEAR.checkShort',
-          icon: 'fas fa-dice-d20',
-          action: 'rollDamaged',
-          visible: function () {
-            return this.actor && game.settings.get('dsa5', 'armorAndWeaponDamage') && this.item.system.structure.max > 0;
-          },
+    majorButtons: [
+      {
+        label: 'WEAR.checkShort',
+        icon: 'fas fa-dice-d20',
+        action: 'rollDamaged',
+        visible: function () {
+          return this.actor && game.settings.get('dsa5', 'armorAndWeaponDamage') && this.item.system.structure.max > 0;
         },
-      ],
-    },
+      },
+    ],
   };
 }
 
@@ -1129,7 +1128,7 @@ class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {}
 
 class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   static DEFAULT_OPTIONS = {
-    actions: {      
+    actions: {
       rollDamaged: function () {
         EquipmentDamage.breakingTest(this.item);
       },
@@ -1138,18 +1137,16 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
       attackAdd: WeaponSheetDSA5.addAttackSheet,
       attackDelete: WeaponSheetDSA5.deleteAttack,
     },
-    window: {
-      controls: [
-        {
-          label: 'WEAR.checkShort',
-          icon: 'fas fa-dice-d20',
-          action: 'rollDamaged',
-          visible: function () {
-            return this.actor && game.settings.get('dsa5', 'armorAndWeaponDamage') && this.item.system.structure.max > 0;
-          },
+    majorButtons: [
+      {
+        label: 'WEAR.checkShort',
+        icon: 'fas fa-dice-d20',
+        action: 'rollDamaged',
+        visible: function () {
+          return this.actor && game.settings.get('dsa5', 'armorAndWeaponDamage') && this.item.system.structure.max > 0;
         },
-      ],
-    },
+      },
+    ],
   };
 
   tabGroups = {
@@ -1271,18 +1268,16 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
         this.setupEffect();
       },
     },
-    window: {
-      controls: [
-        {
-          label: 'SHEET.ConsumeItem',
-          icon: 'fas fa-dice-d20',
-          action: 'consumeItem',
-          visible: function () {
-            return this.actor;
-          },
+    majorButtons: [
+      {
+        label: 'SHEET.ConsumeItem',
+        icon: 'fas fa-dice-d20',
+        action: 'consumeItem',
+        visible: function () {
+          return this.actor;
         },
-      ],
-    },
+      },
+    ],
   };
 
   setupEffect() {

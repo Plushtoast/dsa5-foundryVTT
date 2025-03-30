@@ -2,24 +2,32 @@ export const AppV2Mixin = (superclass) =>
   class extends superclass {
     static DEFAULT_OPTIONS = {
       ownerActions: {},
+      majorButtons: []
     };
 
     async _onRender(context, options) {
       await super._onRender((context, options));
 
       //todo: add drag handler dragSelector, dropSelector
-      new foundry.applications.ux.DragDrop({ 
+      /*new foundry.applications.ux.DragDrop({ 
         callbacks: { drop: this._onDrop.bind(this)},
         permissions: { drop: this._canDragDrop.bind(this) }
-      }).bind(this.element);
+      }).bind(this.element);*/
     }
 
-    _canDragDrop(event) {
-      return this.isEditable;
-    }
+    async _renderFrame(options) {
+      const frame = await super._renderFrame(options);
+      if ( !this.hasFrame ) return frame;
 
-    async _onDrop(event) {
+      for(const btn of this.options.majorButtons) {
+        const visible = typeof btn.visible === "function" ? btn.visible.call(this) : btn.visible ?? true;
+        if (!visible) continue;
 
+        const button = `<button type="button" class="header-control ${btn.icon} icon" data-action="${btn.action}"
+                data-tooltip="${btn.label}"></button>`
+        this.window.title.insertAdjacentHTML('beforebegin', button);
+      }
+      return frame;
     }
 
     _onClickAction(event, target) {

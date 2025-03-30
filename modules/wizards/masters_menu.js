@@ -163,6 +163,83 @@ class GameMasterMenu extends DefaultAppv2 {
     return final;
   }
 
+  static async _heroschip(ev, target) {
+    console.log("wuuz")
+    ev.stopPropagation();
+    ev.preventDefault();
+    let val = Number(target.dataset.val);
+    if (val == 1 && $(target).closest('.hero').find('.fullSchip').length == 1) val = 0;
+
+    game.actors.get(this.getID(target)).update({ 'system.status.fatePoints.value': val });
+  }
+
+  static async _groupCheck(ev, target) {
+    ev.stopPropagation();
+    this.doGroupCheck();
+  }
+
+  static async _changeGroupSchipCount(ev, target) {
+    await this.changeGroupSchipCount(Number(target.dataset.value));
+  }
+
+  static async _requestRoll(ev, target) {
+    ev.stopPropagation();
+    this.rollRequest();
+  }
+
+  static _expAll(ev, target) {
+    this.getExp(this.selectedIDs());
+  }
+
+  static _getExp(ev, target) {
+    ev.stopPropagation();
+    this.getExp([this.getID(target)]);
+  }
+
+  static _getPaidAll(ev, target) {
+    this.doPayment(this.selectedIDs(), false);
+  }
+
+  static _payAll(ev, target) {
+    this.doPayment(this.selectedIDs(), true);
+  }
+
+  static _getPaid(ev, target) {
+    ev.stopPropagation();
+    this.doPayment([this.getID(target)], false);
+  }
+
+  static async _actorItem(ev, target) {
+    ev.stopPropagation();
+    const id = target.dataset.uuid;
+    const document = await fromUuid(id);
+    document.sheet.render(true);
+  }
+
+  static _pay(ev, target) {
+    ev.stopPropagation();
+    this.doPayment([this.getID(target)], true);
+  }
+
+  static _rollAll(ev, target) {
+    this.rollAbility(this.selectedIDs());
+  }
+
+  static _rollChar(ev, target) {
+    ev.stopPropagation();
+    this.rollAbility([this.getID(target)]);
+  }
+
+  static _expandHero(ev, target) {
+    ev.stopPropagation(ev);
+    $(target).find('.expandDetails').fadeToggle();
+  }
+
+  static _heroLink(ev, target) {
+    ev.stopPropagation();
+    game.actors.get(this.getID(target)).sheet.render(true);
+  }
+
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);
@@ -170,81 +247,28 @@ class GameMasterMenu extends DefaultAppv2 {
 
     tabSlider(html);
 
-    html.find('.heroLink').on('click', (ev) => {
-      ev.stopPropagation();
-      game.actors.get(this.getID(ev)).sheet.render(true);
-    });
-    html.find('.addGlobalMod').on('click', () => this.addGlobalMod());
     html.find('.globalModEnable').on('change', (ev) => this.toggleGlobalMod(ev));
-    html.find('.removeGlobalMod').on('click', (ev) => this.removeGlobalMod(ev));
-    html.find('.editGlobalMod').on('click', (ev) => this.editGlobalMod(ev));
+
     html.find('.heroSelector').on('change', (ev) => {
       ev.stopPropagation();
       const selected = this.getSelectedActors();
-      selected[this.getID(ev)] = $(ev.currentTarget).is(':checked');
+      selected[this.getID(ev.currentTarget)] = $(ev.currentTarget).is(':checked');
       game.settings.set('dsa5', 'selectedActors', selected);
     });
     html.find('.skillSelektor').on('change', (ev) => {
       ev.stopPropagation();
       this.lastSkill = $(ev.currentTarget).val();
     });
-    html.find('.rollChar').on('click', (ev) => {
-      ev.stopPropagation();
-      this.rollAbility([this.getID(ev)]);
-    });
-    html.find('.rollAll').on('click', (ev) => {
-      ev.stopPropagation();
-      this.rollAbility(this.selectedIDs());
-    });
-    html.find('.pay').on('click', (ev) => {
-      ev.stopPropagation();
-      this.doPayment([this.getID(ev)], true);
-    });
-    html.find('.actorItem').on('click', async (ev) => {
-      ev.stopPropagation();
-      const id = ev.currentTarget.dataset.uuid;
-      const document = await fromUuid(id);
-      document.sheet.render(true);
-    });
-    html.find('.getPaid').on('click', (ev) => {
-      ev.stopPropagation();
-      this.doPayment([this.getID(ev)], false);
-    });
-    html.find('.resetSightThresholds').on('click', () => this.resetSightThresholds());
-    html.find('.payAll').on('click', (ev) => {
-      ev.stopPropagation();
-      this.doPayment(this.selectedIDs(ev), true);
-    });
-    html.find('.getPaidAll').on('click', (ev) => {
-      ev.stopPropagation();
-      this.doPayment(this.selectedIDs(ev), false);
-    });
     html.find('.selectAll').on('change', (ev) => this._selectAll(ev, html));
-    html.find('.exp').on('click', (ev) => {
-      ev.stopPropagation();
-      this.getExp([this.getID(ev)]);
-    });
-    html.find('.expAll').on('click', (ev) => {
-      ev.stopPropagation();
-      this.getExp(this.selectedIDs());
-    });
     html.find('.randomPlayer').on('mousedown', (ev) => {
       ev.stopPropagation();
       this._randomPlayer(html, ev);
     });
-    html.find('.requestRoll').on('click', (ev) => {
-      ev.stopPropagation();
-      this.rollRequest();
-    });
     html.find('.heroSelector').on('click', (ev) => ev.stopPropagation());
-    html.find('.hero').on('click', (ev) => {
-      ev.stopPropagation(ev);
-      $(ev.currentTarget).find('.expandDetails').fadeToggle();
-    });
 
     let deletehand = (ev) => this._deleteHero(ev);
 
-    html.find('.hero').mouseenter((ev) => {
+    html.find('.hero').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
         let div = document.createElement('div');
         div.classList.add('hovermenu');
@@ -256,33 +280,14 @@ class GameMasterMenu extends DefaultAppv2 {
         ev.currentTarget.appendChild(div);
       }
     });
-    html.find('.hero').mouseleave((ev) => {
+    html.find('.hero').on('mouseleave', (ev) => {
       let e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
     });
-
-    html.find('.addGroupSchip').on('click', async (ev) => {
-      await this.changeGroupSchipCount(Number(ev.currentTarget.dataset.value));
-    });
-    html.find('.groupschip').on('click', (ev) => {
-      this.changeGroupSchip(ev);
-    });
-    html.find('.addFolder').on('click', async (ev) => this.editFolder(ev));
     html.find('.editFolder').on('change', async (ev) => this._editFolder(ev));
-    html.find('.heroschip').on('click', (ev) => {
-      ev.stopPropagation();
-      ev.preventDefault();
-      let val = Number(ev.currentTarget.getAttribute('data-val'));
-      if (val == 1 && $(ev.currentTarget).closest('.hero').find('.fullSchip').length == 1) val = 0;
 
-      game.actors.get(this.getID(ev)).update({ 'system.status.fatePoints.value': val });
-    });
-    html.find('.groupCheck').on('click', (ev) => {
-      ev.stopPropagation();
-      this.doGroupCheck();
-    });
     html.find('.changeSetting').on('change', async (ev) => {
       await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked);
     });
@@ -376,7 +381,7 @@ class GameMasterMenu extends DefaultAppv2 {
     await game.settings.set('dsa5', 'sightOptions', optns.join('|'));
   }
 
-  async resetSightThresholds() {
+  static async _resetSightThresholds() {
     await game.settings.set('dsa5', 'sightOptions', game.settings.settings.get('dsa5.sightOptions').default);
     this.render(true);
   }
@@ -395,9 +400,9 @@ class GameMasterMenu extends DefaultAppv2 {
     await game.settings.set('dsa5', 'groupschips', schipSetting.join('/'));
   }
 
-  async changeGroupSchip(ev) {
-    let val = Number(ev.currentTarget.getAttribute('data-val'));
-    if (val == 1 && $(ev.currentTarget).closest('.col').find('.fullSchip').length == 1) val = 0;
+  static async _changeGroupSchip(ev, target) {
+    let val = Number(target.getAttribute('data-val'));
+    if (val == 1 && $(target).closest('.col').find('.fullSchip').length == 1) val = 0;
 
     const schipSetting = this.getGroupSchipSetting();
     schipSetting[0] = val;
@@ -417,8 +422,8 @@ class GameMasterMenu extends DefaultAppv2 {
     await this.render(true);
   }
 
-  async _deleteFolder(ev) {
-    const id = ev.currentTarget.dataset.id;
+  async _deleteFolder(target) {
+    const id = target.dataset.id;
     const settings = expandObject(game.settings.get('dsa5', 'masterSettings'));
     settings.folders = settings.folders.filter((x) => x.id != id);
 
@@ -434,23 +439,23 @@ class GameMasterMenu extends DefaultAppv2 {
     await game.settings.set('dsa5', 'masterSettings', settings);
   }
 
-  async editFolder(ev) {
-    switch (ev.currentTarget.dataset.action) {
+  static async _createFolder(ev, target) {
+    switch (target.dataset.mode) {
       case 'create':
         this._createFolder();
         break;
       case 'delete':
-        this._deleteFolder(ev);
+        this._deleteFolder(target);
         break;
     }
   }
 
-  async addGlobalMod() {
+  static _addGlobalMod() {
     new GlobalModAddition().render(true);
   }
 
-  async editGlobalMod(ev) {
-    const id = ev.currentTarget.dataset.key;
+  static async _editGlobalMod(ev, target) {
+    const id = target.dataset.key;
     new GlobalModAddition(id).render(true);
   }
 
@@ -460,9 +465,9 @@ class GameMasterMenu extends DefaultAppv2 {
     await game.settings.set('dsa5', 'masterSettings', settings);
   }
 
-  async removeGlobalMod(ev) {
+  static async _removeGlobalMod(ev, target) {
     const settings = game.settings.get('dsa5', 'masterSettings');
-    delete settings.globalMods[ev.currentTarget.dataset.key];
+    delete settings.globalMods[target.dataset.key];
     await game.settings.set('dsa5', 'masterSettings', settings);
     this.render();
   }
@@ -512,7 +517,7 @@ class GameMasterMenu extends DefaultAppv2 {
 
   async doPayment(ids, pay, amount = 0) {
     const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.html', {
+    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
       selected: ids,
       amount,
       tracked,
@@ -539,7 +544,7 @@ class GameMasterMenu extends DefaultAppv2 {
 
   async getExp(ids, amount = 0) {
     const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.html', {
+    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
       selected: ids,
       tracked,
       amount,
@@ -682,7 +687,7 @@ class GameMasterMenu extends DefaultAppv2 {
     const [skill, type] = this.lastSkill.split('|');
     if (type != 'skill') return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', {
+    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
       amount,
       text: game.i18n.localize(game.i18n.format('MASTER.doGroupCheck', { skill })),
     });
@@ -702,7 +707,7 @@ class GameMasterMenu extends DefaultAppv2 {
     const skillRollCategories = ['attribute', 'skill', 'regeneration'];
     if (!skillRollCategories.includes(type)) return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.html', {
+    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
       amount,
       text: game.i18n.localize(game.i18n.format('MASTER.doRequestRoll', { skill })),
     });
@@ -760,8 +765,8 @@ class GameMasterMenu extends DefaultAppv2 {
     }
   }
 
-  getID(ev) {
-    return $(ev.currentTarget).closest('.hero').attr('data-id');
+  getID(target) {
+    return $(target).closest('.hero').attr('data-id');
   }
 
   static DEFAULT_OPTIONS = {
@@ -769,17 +774,53 @@ class GameMasterMenu extends DefaultAppv2 {
     window: {
       title: 'gmMenu',
       resizable: true,
+      contentClasses: ['masterMenu'],
     },
     position: {
       width: 480,
       height: 740,
     },
+    actions: {
+      heroLink: this._heroLink,
+      addGlobalMod: this._addGlobalMod,
+      removeGlobalMod: this._removeGlobalMod,
+      editGlobalMod: this._editGlobalMod,
+      rollChar: this._rollChar,
+      rollAll: this._rollAll,
+      pay: this._pay,
+      actorItem: this._actorItem,
+      getPaid: this._getPaid,
+      resetSightThresholds: this._resetSightThresholds,
+      payAll: this._payAll,
+      getPaidAll: this._getPaidAll,
+      exp: this._getExp,
+      expAll: this._expAll,
+      requestRoll: this._requestRoll,
+      addGroupSchip: this._changeGroupSchipCount,
+      groupschip: this._changeGroupSchip,
+      addFolder: this._createFolder,
+      heroschip: this._heroschip,
+      groupcheck: this._groupCheck,
+      expandHero: this._expandHero,
+    }
   };
 
   static PARTS = {
-    main: { 
-      template: 'systems/dsa5/templates/system/mastermenu.hbs', 
-      templates: ['systems/dsa5/templates/system/dsatabs.hbs'] 
+    tabs: {
+      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+    },
+    generators: {
+      template: 'systems/dsa5/templates/system/mastermenu/generators.hbs',
+      scrollable: [''],
+    },
+    settings: {
+      template: 'systems/dsa5/templates/system/mastermenu/settings.hbs',
+      scrollable: [''],
+    },
+    main: {
+      template: 'systems/dsa5/templates/system/mastermenu/main.hbs',
+      templates: ['systems/dsa5/templates/system/mastermenu/master_heros.hbs'],
+      scrollable: [''],
     },
   };
 
@@ -844,7 +885,7 @@ class GameMasterMenu extends DefaultAppv2 {
       const disadvantages = [];
       const advantages = [];
       const purse = [];
-      for (let x of newHero.items) {
+      for (let x of hero.items) {
         switch (x.type) {
           case 'disadvantage':
             disadvantages.push({ name: x.name, uuid: x.uuid });
@@ -945,20 +986,16 @@ class GlobalModAddition extends FormAppv2 {
     position: {
       width: 400,
     },
+    actions: {
+      addGlobalMod: this._addGlobalMod,
+    },
   };
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/system/global-mod-addition.hbs',
+      template: 'systems/dsa5/templates/system/mastermenu/global-mod-addition.hbs',
     },
   };
-
-  async _onRender(context, options) {
-    await super._onRender((context, options));
-    const html = $(this.element);
-
-    html.find('.addGlobalMod').on('click', (ev) => this.addGlobalMod(ev));
-  }
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
@@ -978,11 +1015,11 @@ class GlobalModAddition extends FormAppv2 {
     return data;
   }
 
-  async addGlobalMod(ev) {
+  static async _addGlobalMod(ev, target) {
     ev.preventDefault();
     const settings = expandObject(game.settings.get('dsa5', 'masterSettings'));
 
-    const data = expandObject(new foundry.applications.ux.FormDataExtended($(this.element).find('form')[0]).object);
+    const data = expandObject(new foundry.applications.ux.FormDataExtended(this.element).object);
     data.enabled = true;
 
     if (!data.name) return;

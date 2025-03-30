@@ -114,18 +114,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     form: {
       submitOnChange: true,
     },
+    majorButtons: [
+      {
+        action: 'playerview',
+        icon: 'fas fa-toggle-on',
+        label: 'SHEET.switchLimited',
+        visible: function () {
+          return this.actor.isOwner;
+        },
+      },
+    ],
     window: {
       resizable: true,
       contentClasses: ["standard-form"],
-      controls: [
-        {
-          action: 'playerview',
-          icon: 'fas fa-toggle-on',
-          label: 'SHEET.switchLimited',
-          visible: function () {
-            return this.actor.isOwner;
-          },
-        },
+      controls: [        
         {
           action: 'actorConfig',
           label: 'SHEET.actorConfig',
