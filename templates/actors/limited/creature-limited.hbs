@@ -1,0 +1,23 @@
+<form class='{{cssClass}} lock{{prepare.sheetLocked}}'>
+  <fieldset class='noBorder' disabled>
+    <header class='sheet-header row-section'>
+      <div class='charname headerInput col fourty'>
+        {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
+        <span class='label name'>{{localize 'Name'}}</span>
+      </div>
+
+      <div class='headerInput col fourty'>
+        {{formInput systemFields.creatureClass.fields.value value=document.system.creatureClass.value placeholder=(localize 'creatureClass')}}
+        <span class='label creatureClass'>{{localize 'creatureClass'}}</span>
+      </div>
+
+    </header>
+    <section class='content'>
+      <div class='row-section'>
+        <div class='col center'>
+          <img class='centerMargin' src='{{document.img}}' style='min-height: 200px;max-width:50%;border:none;' />
+        </div>
+      </div>
+    </section>
+  </fieldset>
+</form>

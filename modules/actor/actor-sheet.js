@@ -241,6 +241,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const tabs = super._prepareTabs(group);
     if (!this.actor.system.isMage) delete tabs.magic;
     if (!this.actor.system.isPriest) delete tabs.religion;
+
+    if(this.constructor.LIMITEDPARTS && this.showLimited()) {
+      for(let key of Object.keys(tabs)) {
+        if(!['main', 'notes'].includes(key)) {
+          delete tabs[key];
+        }
+      }
+    }
+
     return tabs;
   }
 

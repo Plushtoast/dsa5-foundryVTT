@@ -126,7 +126,7 @@ export const MerchantSheetMixin = (superclass) =>
     _prepareTabs(group) {
       const tabs = super._prepareTabs(group);
       const merchantType = this.actor.system.merchant.merchantType || 'none';
-      tabs.inventory.label = DSA5.merchantTypes[merchantType];
+      if (tabs.inventory) tabs.inventory.label = DSA5.merchantTypes[merchantType];
 
       if (this.merchantSheetActivated()) {
         let toKeep;
