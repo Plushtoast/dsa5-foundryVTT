@@ -879,6 +879,10 @@ class ConfigureTokenHotbar extends FormAppv2 {
     position: {
       width: 600,
     },
+    actions: {
+      resetTokenHotbar: this.resetTokenHotbar,
+      masterFunction: this._onMasterFunctionClicked,
+    }
   };
 
   static PARTS = {
@@ -890,7 +894,6 @@ class ConfigureTokenHotbar extends FormAppv2 {
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);
-    html.find('.resetTokenhotbar').on('click', (ev) => this.resetTokenHotbar(ev));
     html.find('select, input').on('change', async (ev) => {
       const name = ev.currentTarget.name.split('.');
       let val = ev.currentTarget.dataset.dtype == 'Number' ? Number(ev.currentTarget.value) : ev.currentTarget.value;
@@ -899,14 +902,13 @@ class ConfigureTokenHotbar extends FormAppv2 {
       await game.settings.set(name[0], name[1], val);
       this.render();
     });
-    html.find('.bags .slot').on('click', (ev) => this._onMasterFunctionClicked(ev));
   }
 
-  async _onMasterFunctionClicked(ev) {
-    const id = ev.currentTarget.dataset.id;
+  async _onMasterFunctionClicked(ev, target) {
+    const id = target.dataset.id;
     const setting = game.settings.get('dsa5', 'enableMasterTokenFunctions');
     setting[id] = !setting[id];
-    $(ev.currentTarget).toggleClass('deactivated', setting[id]);
+    $(target).toggleClass('deactivated', setting[id]);
     game.dsa5.apps.tokenHotbar.gmItems.find((x) => x.id == id).disabled = setting[id];
     await game.settings.set('dsa5', 'enableMasterTokenFunctions', setting);
   }
@@ -928,9 +930,7 @@ class ConfigureTokenHotbar extends FormAppv2 {
     return data;
   }
 
-  async resetTokenHotbar(ev) {
-    ev.preventDefault();
-    ev.stopPropagation();
+  static async resetTokenHotbar(event, target) {
     await game.settings.set('dsa5', 'tokenhotbarPosition', {});
     await game.settings.set('dsa5', 'tokenhotbarLayout', 0);
     await game.settings.set('dsa5', 'tokenhotbarSize', 35);

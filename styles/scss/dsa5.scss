@@ -2631,6 +2631,8 @@ select.noAppearance {
 }
 
 .adventureWizard {
+  flex: 1;
+  
   .fa-toggle-on,
   .fa-check {
     color: green;

@@ -5,10 +5,11 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5 from '../system/config-dsa5.js';
 import { slist } from '../system/view_helper.js';
+import { DragMixin } from '../actor/drag_mixin.js';
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
-export default class BookWizard extends DefaultAppv2 {
+export default class BookWizard extends DragMixin(DefaultAppv2) {
   static wizard;
 
   constructor(app) {
@@ -20,26 +21,124 @@ export default class BookWizard extends DefaultAppv2 {
     this.fulltextsearch = true;
   }
 
+  static _toggleVisibility(ev, target) {
+    const id = target.dataset.itemid;
+    const type = target.dataset.type;
+    const toggle = $(target).find('i').hasClass('fa-toggle-off');
+    this.toggleBookVisibility(id, type, toggle);
+  }
+
+  static _showMapNote(ev, target) {
+    game.journal.get(target.dataset.entryId).panToNote();
+  }
+
+  static _loadBook(ev, target) {
+    this.loadBook(target.textContent, $(this.element), target.dataset.type);
+  }
+
+  static _pinJournal(ev, target) {
+    const parent = $(target).closest('h1');
+    const id = parent.attr('data-uuid');
+    const name = parent.text();
+    this.pinJournal(id, name);
+  }
+
+  static _showJournal(ev, target) {
+    this.popJournal($(target).closest('h1').attr('data-uuid'));
+  }
+
+  static _tocCollapser(ev, target) {
+    $(target).find('i').toggleClass('fa-chevron-right fa-chevron-left');
+    $(this.element).find('.tocCollapsing').toggleClass('expanded');
+  }
+
+  static _fulltextsearch(ev, target) {
+    this.fulltextsearch = !this.fulltextsearch;
+    target.classList.toggle('on');
+    this.filterToc(this.element.querySelector('.filterJournals').value);
+  }
+
+  static async _openPin(ev, target) {
+    const uuid = target.dataset.uuid;
+
+    if (ev.button == 0) this.showJournal(await fromUuid(uuid));
+    else if (ev.button == 2) this.unpinJournal(uuid);
+  }
+
+  static _getChapter(ev, target) {
+    this.selectedType = $(target).closest('.tocList').attr('data-type');
+    this.selectedChapter = target.dataset.id;
+    this.content = undefined;
+    this.pageTocs = undefined;
+    this.loadPage($(this.element));
+  }
+
+  static async _subChapter(ev, target) {
+    const name = target.textContent;
+    const jid = target.dataset.jid;
+    const html = $(this.element);
+    if (jid) {
+      if (this.selectedSubChapter == jid) {
+        html.find('h1.journalHeader')[0].scrollIntoView({
+          behavior: 'smooth',
+        });
+      } else {
+        await this.loadJournalById(jid);
+      }
+    } else {
+      html.find('.subChapter').removeClass('selected');
+      html.find(`[data-id="${name}"]`).addClass('selected');
+      await this.loadJournal(name);
+    }
+
+    this._saveScrollPositions(html);
+    html.find('.tocList').html(await this.getToc());
+    this._restoreScrollPositions(html);
+
+    if (this.searchString) this.filterToc(this.searchString);
+  }
+
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet'],
     actions: {
-      increaseFontSize: function() { increaseFontSize($(this.element).find('.chapter')) },
-      library: function() { this._showBooks() }
+      increaseFontSize: function () {
+        increaseFontSize($(this.element).find('.chapter'));
+      },
+      library: function () {
+        this._showBooks();
+      },
+      toggleVisibility: this._toggleVisibility,
+      showMapNote: this._showMapNote,
+      loadBook: this._loadBook,
+      importBook: this._importBook,
+      activateScene: this._showSzene,
+      pinJournal: this._pinJournal,
+      showJournal: this._showJournal,
+      tocCollapser: this._tocCollapser,
+      fulltextsearch: this._fulltextsearch,
+      openPin: { handler: this._openPin, buttons: [0, 2] },
+      movePage: this._movePage,
+      getChapter: this._getChapter,
+      subChapter: this._subChapter,
     },
     window: {
       title: 'Book.Wizard',
       resizable: true,
-      controls: [{
-        action: 'increaseFontSize',
-        label: 'SHEET.increaseFontSize',
-        icon: 'fas fa-arrows-up-down'
-      },
+      controls: [
+        {
+          action: 'increaseFontSize',
+          label: 'SHEET.increaseFontSize',
+          icon: 'fas fa-arrows-up-down',
+        },
+      ],
+    },
+    majorButtons: [
       {
         action: 'library',
         label: 'Book.home',
-        icon: 'fas fa-book'
-      }]
-    },
+        icon: 'fas fa-book',
+      },
+    ],
     position: {
       width: 800,
       height: 880,
@@ -84,7 +183,7 @@ export default class BookWizard extends DefaultAppv2 {
     this.currentType = undefined;
     this.pageTocs = undefined;
     this.selectedSubChapter = undefined;
-    this.loadPage(this.element);
+    this.loadPage($(this.element));
   }
 
   async toggleBookVisibility(id, type, toggle) {
@@ -95,11 +194,11 @@ export default class BookWizard extends DefaultAppv2 {
     const book = this[type].find((x) => x.id == id);
     const json = await (await fetch(book.path)).json();
     const moduleId = json.moduleName;
-    const module = game.modules.get(moduleId);    
+    const module = game.modules.get(moduleId);
     const documentTypes = ['Actor', 'JournalEntry', 'Scene'];
-    const scope = json.options?.scope?.split("-")[1]
+    const scope = json.options?.scope?.split('-')[1];
 
-    for (const mPack of module.packs) {
+    for (const mPack of module?.packs | []) {
       if (!documentTypes.includes(mPack.type)) continue;
       if (mPack.flags?.dsalang != game.i18n.lang) continue;
       if (scope && !mPack.id.includes(scope)) continue;
@@ -124,17 +223,6 @@ export default class BookWizard extends DefaultAppv2 {
     await super._onRender((context, options));
     const html = $(this.element);
 
-    html.on('click', '.toggleVisibility', async (ev) => {
-      const id = ev.currentTarget.dataset.itemid;
-      const type = ev.currentTarget.dataset.type;
-      const toggle = $(ev.currentTarget).find('i').hasClass('fa-toggle-off');
-      this.toggleBookVisibility(id, type, toggle);
-    });
-
-    html.on('click', '.showMapNote', (ev) => {
-      game.journal.get(ev.currentTarget.dataset.entryId).panToNote();
-    });
-
     html.on('search keyup', '.filterJournals', (ev) => {
       this.filterToc(ev.currentTarget.value);
     });
@@ -148,73 +236,7 @@ export default class BookWizard extends DefaultAppv2 {
       item.sheet.render(true);
     });
 
-    html.on('click', '.movePage', async (ev) => this.movePage(ev));
-
-    html.on('click', '.loadBook', (ev) => {
-      this.loadBook($(ev.currentTarget).text(), html, ev.currentTarget.dataset.type);
-    });
-    html.on('click', '.getChapter', (ev) => {
-      this.selectedType = $(ev.currentTarget).closest('.toc').attr('data-type');
-      this.selectedChapter = ev.currentTarget.dataset.id;
-      this.content = undefined;
-      this.pageTocs = undefined;
-      this.loadPage(html);
-    });
-    html.on('click', '.subChapter', async (ev) => {
-      const name = $(ev.currentTarget).text();
-      const jid = ev.currentTarget.dataset.jid;
-      if (jid) {
-        if (this.selectedSubChapter == jid) {
-          html.find('h1.journalHeader')[0].scrollIntoView({
-            behavior: 'smooth',
-          });
-        } else {
-          await this.loadJournalById(jid);
-        }
-      } else {
-        html.find('.subChapter').removeClass('selected');
-        html.find(`[data-id="${name}"]`).addClass('selected');
-        await this.loadJournal(name);
-      }
-
-      this._saveScrollPositions(html);
-      html.find('.toc').html(await this.getToc());
-      this._restoreScrollPositions(html);
-
-      if (this.searchString) this.filterToc(this.searchString);
-    });
-
     DSA5ChatAutoCompletion.bindRollCommands(html);
-
-    html.find('.tocCollapser').on('click', (ev) => {
-      $(ev.currentTarget).find('i').toggleClass('fa-chevron-right fa-chevron-left');
-      html.find('.tocCollapsing').toggleClass('expanded');
-    });
-    html.on('mousedown', '.openPin', async (ev) => {
-      const uuid = ev.currentTarget.dataset.uuid;
-
-      if (ev.button == 0) this.showJournal(await fromUuid(uuid));
-      else if (ev.button == 2) this.unpinJournal(uuid);
-    });
-
-    html.on('click', '.showJournal', (ev) => {
-      this.popJournal($(ev.currentTarget).closest('h1').attr('data-uuid'));
-    });
-    html.on('click', '.pinJournal', (ev) => {
-      const parent = $(ev.currentTarget).closest('h1');
-      const id = parent.attr('data-uuid');
-      const name = parent.text();
-      this.pinJournal(id, name);
-    });
-    html.on('click', '.activateScene', (ev) => {
-      this.showSzene(ev.currentTarget.dataset.id, ev.currentTarget.dataset.mode);
-    });
-    html.on('click', '.fulltextsearch', (ev) => {
-      this.fulltextsearch = !this.fulltextsearch;
-      $(ev.currentTarget).toggleClass('on');
-
-      this.filterToc(html.find('.filterJournals').val());
-    });
 
     html.on('mousedown', '.chapter img', (ev) => {
       let name = this.book.id;
@@ -228,12 +250,12 @@ export default class BookWizard extends DefaultAppv2 {
 
     DSA5StatusEffects.bindButtons(html);
 
-    html.on('click', '.importBook', async () => this.importBook());
-
     bindImgToCanvasDragStart(html);
 
     slist(html, '.breadcrumbs', this.resaveBreadCrumbs);
-  }
+
+    //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)    
+  }  
 
   async getPagy(chapter, journalId) {
     const journals = this.journals.filter((x) => x.flags.dsa5.parent == chapter).sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
@@ -241,8 +263,8 @@ export default class BookWizard extends DefaultAppv2 {
     return { journals, targetindex };
   }
 
-  async movePage(ev) {
-    const dir = ev.currentTarget.dataset.action;
+  static async _movePage(ev, target) {
+    const dir = target.dataset.direction;
     let { journals, targetindex } = await this.getPagy(this.selectedChapter, this.selectedSubChapter);
     let flattenedChapters = [];
 
@@ -282,7 +304,7 @@ export default class BookWizard extends DefaultAppv2 {
 
     const toc = await this.getToc();
     this._saveScrollPositions(this.element);
-    $(this.element).find('.toc').html(toc);
+    $(this.element).find('.tocList').html(toc);
     this._restoreScrollPositions(this.element);
   }
 
@@ -351,7 +373,7 @@ export default class BookWizard extends DefaultAppv2 {
         html.find('.tocContent').html(`<ul>${result.join('\n')}</ul>`);
       } else {
         const content = await this.getToc();
-        html.find('.toc').html(content).find('.filterJournals').trigger('focus');
+        html.find('.tocList').html(content).find('.filterJournals').trigger('focus');
       }
     }
 
@@ -389,7 +411,7 @@ export default class BookWizard extends DefaultAppv2 {
 
     const minLevel = Math.min(...headings.map((node) => node.level));
 
-    return await renderTemplate('templates/journal/journal-page-toc.html', {
+    return await renderTemplate('templates/journal/journal-page-toc.hbs', {
       headings: headings.reduce((arr, { text, level, slug, element }) => {
         if (element) element.dataset.anchor = slug;
         if (level < minLevel + 2) {
@@ -433,7 +455,7 @@ export default class BookWizard extends DefaultAppv2 {
       async: true,
     });
 
-    return `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a class="pinJournal"><i class="fas fa-thumbtack"></i></a><a class="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`;
+    return `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a data-action="pinJournal"><i class="fas fa-thumbtack"></i></a><a data-action="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`;
   }
 
   async showJournal(journal) {
@@ -462,16 +484,17 @@ export default class BookWizard extends DefaultAppv2 {
   findSceneNote(entryId) {
     if (entryId) {
       const importedJournalEntry = game.journal.find((x) => x.getFlag('dsa5', 'initId') == entryId);
-      if (importedJournalEntry && importedJournalEntry.sceneNote) return `<a class="showMapNote" data-entry-id="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
+      if (importedJournalEntry && importedJournalEntry.sceneNote)
+        return `<a data-action="showMapNote" data-entry-id="${importedJournalEntry.id}"><i class="fas fa-map-pin"></i></a>`;
     }
     return '';
   }
 
-  async importBook() {
-    if (!game.user.isGM) return;    
+  static async _importBook(ev, target) {
+    if (!game.user.isGM) return;
 
     const mod = this.bookData.moduleName;
-    const options = this.bookData.options
+    const options = this.bookData.options;
 
     new game.dsa5.apps.DSA5Initializer(
       'DSA5 Module Initialization',
@@ -567,7 +590,9 @@ export default class BookWizard extends DefaultAppv2 {
     entry.sheet.render(true);
   }
 
-  async showSzene(name, mode = 'activate') {
+  static async _showSzene(ev, target) {
+    const name = target.dataset.id;
+    const mode = target.dataset.mode;
     let scene = game.scenes.contents.find((x) => x.name == name);
     if (!scene)
       return ui.notifications.error('DSAError.sceneNotInitialized', {
@@ -602,15 +627,15 @@ export default class BookWizard extends DefaultAppv2 {
           let modules = this.bookData.modules;
           for (let k of modules) k.enabled = this.moduleEnabled(k.id);
 
-          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_preparation.html', { modules, info });
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_preparation.hbs', { modules, info });
         } else if (this.selectedChapter == 'foundryUsage') {
-          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_foundry.html');
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_foundry.hbs');
         }
 
         let chapter = this.bookData.chapters.find((x) => x.name == this.selectedType).content.find((x) => x.id == this.selectedChapter);
         const subChapters = this.getSubChapters();
         if (chapter.scenes || chapter.actors || subChapters.length == 0) {
-          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.html', {
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.hbs', {
             chapter,
             subChapters: this.getSubChapters(),
             actors: await this.prefillActors(chapter),
@@ -620,9 +645,9 @@ export default class BookWizard extends DefaultAppv2 {
           return await this.loadJournalById(subChapters[0].id);
         }
       }
-      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.html', { book: this.book, bookData: this.bookData });
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.hbs', { book: this.book, bookData: this.bookData });
     } else {
-      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.html', {
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.hbs', {
         rshs: this.filterBooks(this.rshs),
         rules: this.filterBooks(this.books),
         adventures: this.filterBooks(this.adventures),
@@ -680,7 +705,7 @@ export default class BookWizard extends DefaultAppv2 {
           chapter.subChapters = this.getSubChapters();
         }
       }
-      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.html', {
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_toc.hbs', {
         chapters,
         searchString: this.searchString,
         book: this.book,
@@ -697,7 +722,7 @@ export default class BookWizard extends DefaultAppv2 {
     const selectors = ['.scrollable'];
     this._scrollPositions = selectors.reduce((pos, sel) => {
       const el = html.find(sel);
-      pos[sel] = Array.from(el).map(el => el.scrollTop);
+      pos[sel] = Array.from(el).map((el) => el.scrollTop);
       return pos;
     }, {});
   }
@@ -706,9 +731,9 @@ export default class BookWizard extends DefaultAppv2 {
   _restoreScrollPositions(html) {
     const selectors = ['.scrollable'];
     const positions = this._scrollPositions || {};
-    for ( const sel of selectors ) {
+    for (const sel of selectors) {
       const el = html.find(sel);
-      el.each((i, el) => el.scrollTop = positions[sel]?.[i] || 0);
+      el.each((i, el) => (el.scrollTop = positions[sel]?.[i] || 0));
     }
   }
 
@@ -717,7 +742,7 @@ export default class BookWizard extends DefaultAppv2 {
     const toc = await this.getToc();
 
     this._saveScrollPositions(html);
-    html.find('.toc').html(toc);
+    html.find('.tocList').html(toc);
     const chapter = html.find('.chapter');
     chapter.html(template);
     this.markFindings(chapter);
@@ -779,7 +804,7 @@ export default class BookWizard extends DefaultAppv2 {
 
   renderBreadcrumbs() {
     const breadcrumbs = this.readBreadCrumbs();
-    const btns = Object.entries(breadcrumbs).map((x) => `<div data-tooltip="${x[1]}" data-uuid="${x[0]}" class="openPin item">${x[1]}</div>`);
+    const btns = Object.entries(breadcrumbs).map((x) => `<div data-tooltip="${x[1]}" data-uuid="${x[0]}" data-action="openPin" class="item">${x[1]}</div>`);
 
     if (btns.length > 0) return `<div id="breadcrumbs" class="breadcrumbs wrap row-section">${btns.join('')}</div>`;
 

@@ -2,7 +2,7 @@
     <div style="flex:none">
         {{#if book.id}}
         <h2 class="center" style="margin-top:0px;">
-            <a class="loadBook">{{book.id}}</a>
+            <a data-action="loadBook">{{book.id}}</a>
         </h2>
         <div class="row-section lineheight" style="margin-bottom:10px">
             <div class="col ten">
@@ -12,25 +12,25 @@
                 <input type="search" class="filterJournals" placeholder="{{localize 'Book.search'}}" value="{{searchString}}"/>
             </div>
             <div class="col ten libButton center">
-                <a class="fulltextsearch {{fulltextsearch}}" data-tooltip="Book.fulltextsearch"><i class="fas fa-toggle-off"></i></a>
+                <a data-action="fulltextsearch" class="{{fulltextsearch}}" data-tooltip="Book.fulltextsearch"><i class="fas fa-toggle-off"></i></a>
             </div>
         </div>
         {{/if}}
     </div>
-    <div class="pages-list">
+    <div class="toc">
         <div class="scrollable">
 
             <div class="tocContent">
 
                 {{#each chapters as |category i|}}
                 <b>{{category.name}}</b>
-                <ul class="toc" data-type="{{category.name}}">
+                <ul class="tocList" data-type="{{category.name}}">
                     {{#each category.content as |item i|}}
-                    <li><a data-id="{{item.id}}" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
+                    <li><a data-id="{{item.id}}" data-action="getChapter" class="{{item.cssClass}} getChapter">{{item.name}}</a>{{#if item.subChapters}}
                         <ul>
                             {{#each item.subChapters as |item i|}}
                             <li class="fas fa-caret-right">
-                                <a data-jid="{{item.id}}" class="subChapter {{item.cssClass}}">{{item.name}}</a>
+                                <a data-jid="{{item.id}}" data-action="subChapter" class="subChapter {{item.cssClass}}">{{item.name}}</a>
                                 
                                 {{#if item.selected}}
                                 {{{../../../pageTocs}}}
@@ -47,10 +47,10 @@
         </div>
     </div>
     <div class="action-buttons flexrow" style="flex:none">
-        <button class="movePage" type="button" data-action="previous" data-tooltip="Previous Page">
+        <button data-action="movePage" type="button" data-direction="previous" data-tooltip="Previous Page">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <button class="movePage" type="button" data-action="next" data-tooltip="Next Page">
+        <button data-action="movePage" type="button" data-direction="next" data-tooltip="Next Page">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
     </div>

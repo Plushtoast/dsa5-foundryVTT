@@ -5,6 +5,9 @@ export default class DialogActorConfig extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     actions: {
       updateElements: DialogActorConfig.updateWrapper
+    },
+    position: {
+      width: 320
     }
   };
 
@@ -15,7 +18,7 @@ export default class DialogActorConfig extends DefaultAppv2 {
   };
 
   get title() {
-    return `${game.i18n.localize('SHEET.actorConfig')} - ${this.actor.name}`;
+    return `${game.i18n.localize('Migrakel.Migration')} - ${this.actor.name}`;
   }
 
   constructor(actor, options) {

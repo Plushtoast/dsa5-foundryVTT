@@ -6,19 +6,32 @@ export default function () {
   Hooks.on('renderSettings', (app, html, data) => {
     const jHtml = $(html);
     const documentation = jHtml.find('.documentation');
-    const button1 = $(`<button id="reportADSABug"><i class="fas fa-bug"></i> ${game.i18n.localize('DSA5Error')}</button>`);
-    button1.on('click', () => {
-      window.open('https://github.com/Plushtoast/dsa5-foundryVTT/issues', '_blank');
+    const buttons = [
+      {
+        icon: '<i class="fas fa-bug"></i>',
+        label: game.i18n.localize('DSA5Error'),
+        link: 'https://github.com/Plushtoast/dsa5-foundryVTT/issues',
+        attrs: { id: 'reportADSABug' },
+      },
+      {
+        icon: '<i class="fas fa-info-circle"></i>',
+        label: game.i18n.localize('DSA5Wiki'),
+        link: `https://github.com/Plushtoast/dsa5-foundryVTT/wiki${game.i18n.lang == 'de' ? '/de-Home' : ''}`,
+      },
+      {
+        icon: '<div></div>',
+        label: 'F-Shop',
+        link: game.i18n.localize('fshopLink'),
+        attrs: { class: 'fshopButton' }
+      }
+    ]
+
+    buttons.forEach(({ icon, label, link, attrs }) => {
+      const joined_attrs = Object.entries(attrs || {}).map(([key, value]) => `${key}="${value}"`).join(' ');
+      const button = $(`<button ${joined_attrs}>${icon} ${label}</button>`);
+      button.on('click', () => window.open(link, '_blank'));
+      documentation.append(button);
     });
-    const button2 = $(`<button><i class="fas fa-info-circle"></i> ${game.i18n.localize('DSA5Wiki')}</button>`);
-    button2.on('click', () => {
-      window.open('https://github.com/Plushtoast/dsa5-foundryVTT/wiki', '_blank');
-    });
-    const button3 = $(`<button class="fshopButton"><div></div> F-Shop</button>`);
-    button3.on('click', () => {
-      window.open(game.i18n.localize('fshopLink'), '_blank');
-    });
-    documentation.append(button1, button2, button3);
 
     const systemName = game.system.title.split('/')[game.i18n.lang == 'de' ? 0 : 1];
     jHtml.find('.system .label').text(systemName);

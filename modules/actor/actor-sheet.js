@@ -65,6 +65,23 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
+  static LIMITEDPARTS = {
+    header: {
+      template: 'systems/dsa5/templates/actors/limited/npc-limited-header.hbs',
+    },
+    tabs: {
+      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+    },
+    main: {
+      template: 'systems/dsa5/templates/actors/limited/npc-limited.hbs',
+      scrollable: ['']
+    },
+    notes: {
+      template: 'systems/dsa5/templates/actors/actor-notes.html',
+      scrollable: ['']
+    }
+  }
+
   static DEFAULT_OPTIONS = {
     position: {
       width: 770,
@@ -142,7 +159,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       controls: [        
         {
           action: 'actorConfig',
-          label: 'SHEET.actorConfig',
+          label: 'Migrakel.Migration',
           icon: 'fas fa-link',
           visible: function () {
             return this.actor.isOwner;
