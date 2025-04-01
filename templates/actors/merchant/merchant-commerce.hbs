@@ -74,7 +74,7 @@
             </fieldset>
         </div>
         <div class="col morph">
-            {{> systems/dsa5/templates/actors/parts/purse.html}}
+            {{> systems/dsa5/templates/actors/parts/purse.hbs}}
         </div>
     </div>
 
@@ -240,7 +240,7 @@
                 </div>
                 <div class="row-section lineheight expandDetails {{item.detailed}}">
                     <div class="col">
-                        {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.html this}}
+                        {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.hbs this}}
                         {{/if}}
                     </div>
                 </div>

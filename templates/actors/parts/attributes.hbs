@@ -1,0 +1,32 @@
+<div class="general">
+    <img class="charimg profile" src="{{document.img}}" data-tooltip="{{document.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-action='editImage'>
+
+
+    <div class="row-section" style="width: 100%;margin-bottom: 20px">
+        {{#if (ne merchantType 'loot')}}
+        <div class="col">
+            <div class="row-section wrap charBtns">
+                <div class="col morph row-section" style="min-width:150px">
+                    {{#each document.system.characteristics as |ch c|}}
+                    <div class="col eight center row-section wrap" data-tooltip="{{attrName c}}">
+                        <div class="col">
+                            {{attrAbbr c}}
+                        </div>
+                        <div data-action="chValue" class="col" data-char="{{c}}">
+                            <a class="d20 die-{{c}}">{{ch.value}}</a>
+                        </div>
+                    </div>
+                    {{#if (eq c "ch")}}
+                </div>
+                <div class="col morph row-section" style="min-width:150px">
+                    {{/if}}
+                    {{/each}}
+                </div>
+            </div>
+            {{> systems/dsa5/templates/actors/parts/healthbar.hbs}}
+            {{> systems/dsa5/templates/actors/parts/schipspart.hbs}}
+        </div>
+        {{/if}}
+    </div>
+
+</div>

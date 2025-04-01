@@ -15,6 +15,7 @@ import Itemdsa5 from './item-dsa5.js';
 import RequestRoll from '../system/request-roll.js';
 import APTracker from '../system/ap-tracker.js';
 import { AppV2Mixin } from '../actor/appv2_mixin.js';
+import { DragMixin } from '../actor/drag_mixin.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -445,7 +446,7 @@ class CombatSkillSheet extends LocalizerSheet {}
 
 class SkillSheet extends LocalizerSheet {}
 
-class AggregatedTestSheet extends ItemSheetdsa5 {
+class AggregatedTestSheet extends DragMixin(ItemSheetdsa5) {
   static TABS = {
     sheet: {
       tabs: [
@@ -557,7 +558,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   }
 }
 
-class Enchantable extends ItemSheetdsa5 {
+class Enchantable extends DragMixin(ItemSheetdsa5) {
   static TABS = {
     sheet: {
       tabs: [

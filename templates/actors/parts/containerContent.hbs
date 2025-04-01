@@ -1,0 +1,54 @@
+<ul>
+    <li class="main-row">
+        <div class="row-section wrap rowtable inventory">
+            {{#each children as |item i|}}
+            <div class="actor-equipment-item-wrapper col item" data-item-id="{{item._id}}" data-category="{{item.system.equipmentType.value}}">
+                <div class="actor-equipment-item row-section">
+                    <div class="equipment-item-image col eight image {{item.enchantClass}}">
+                        <div class="image" style="background-image: url('{{item.img}}')">
+                            {{#if item.structureMax}}
+                            <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                                <div class="inner"></div>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="equipment-item-name col withContext">
+                        <a data-action="itemEdit">{{item.name}}</a>
+                    </div>
+                    <div class="col eight"></div>
+                    {{#if (eq item.system.equipmentType.value 'bags')}}
+                    <div class="equipment-item-bagweight col five center">
+                        {{item.system.bagweight}}
+                    </div>
+                    {{/if}}
+                    <div class="equipment-item-status col eight center">
+                        {{#if item.toggle}} {{#if item.toggleValue}}
+                        <a data-action="itemToggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a> {{else}}
+                        <a data-action="itemToggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
+                    </div>
+
+                    <div class="equipment-item-quantity col eight center">
+                        <a data-action="quantityClick" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</a>
+                    </div>
+                    <div class="equipment-item-weight col eight center">
+                        {{item.system.preparedWeight}}
+                    </div>
+                    <div class="equipment-item-action col ten very-small center">
+                        <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
+                        <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
+                        {{#if item.children}} <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
+                        <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                <div class="row-section lineheight expandDetails {{item.detailed}}">
+                    <div class="col">
+                        {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.hbs item}} {{/if}}
+                    </div>
+                </div>
+
+            </div>
+            {{/each}}
+        </div>
+    </li>
+</ul>

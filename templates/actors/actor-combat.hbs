@@ -1,0 +1,199 @@
+<div class='tab scrollable {{tabs.combat.cssClass}}' data-tab='combat'
+    data-group='{{tabs.combat.group}}' class='tab'>
+    <div class="combat-actions">
+        <a data-mod="dodge" data-action="chStatus" class="combat-action item"><i class="fas fa-reply"></i> {{localize "dodge"}} ({{document.system.status.dodge.max}})</a>
+        <a data-char="attack" data-action="chWeaponless" class="combat-action item" data-mod="attackWeaponless"><i class="fa fa-hand-fist"></i> {{localize "attackWeaponless"}} ({{prepare.brawling.attack}})</a>
+        <a data-char="parry" data-action="chWeaponless" class="combat-action item" data-mod="parryWeaponless"><i class="fa fa-shield-alt"></i> {{localize "parryWeaponless"}} ({{prepare.brawling.parry}})</a>
+        <a data-action="chFallingDamage" class="combat-action item"><i class="fas fa-skull-crossbones"></i> {{localize "fallingDamage"}}</a>
+    </div>
+    <div class="groupbox melee-weapons">
+        <div class="row-section table-title lineheight">
+            <div class="title-type col fourty">
+                {{localize "closeCombatAttacks"}}
+            </div>
+            <div class="col five center small onlyMultiColumn">
+                {{localize "Group"}}
+            </div>
+            <div class="col ten center small" data-tooltip="CHAR.ATTACK">
+                {{localize "CHARAbbrev.AT"}}
+            </div>
+            <div class="col ten center small" data-tooltip="CHAR.PARRY">
+                {{localize "CHARAbbrev.PA"}}
+            </div>
+
+            <div class="col ten center small" data-tooltip="damage">
+                {{localize "CHARAbbrev.damage"}}
+            </div>
+            <div class="col ten center small notOnMinimum">
+                <span class="onlyMultiColumn">{{localize "reach"}}</span><span class="onlySingleColumn"><i data-tooltip="reach" class="fas fa-ruler"></i></span>
+            </div>
+        </div>
+        <div class="row-section wrap rowtable inventory">
+            {{#each prepare.wornMeleeWeapons as |item i|}}
+                {{> systems/dsa5/templates/actors/parts/combat_weapon.hbs item=item}}
+            {{/each}} 
+            {{#each prepare.traits.meleeAttack as |item i|}}
+            <div class="combat-weapon col item row-section" data-item-id="{{item._id}}">
+                <div class="combat-item-image col zerofive image" style="background-image: url('{{item.img}}')">
+                </div>
+                <div class="combat-item-name thirtyfive col">
+                    <a data-action="itemEdit">{{item.name}}</a>
+                </div>
+                <div class="combat-item-skill col five center small onlyMultiColumn">
+                    {{localize "TYPES.Item.trait"}}
+                </div>
+                <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                    <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+                </div>
+                <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-mod="parry">
+                    {{#if item.parry}} <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
+                </div>
+                <div class="combat-item-damage col ten center">
+                    <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
+                </div>
+                <div class="combat-item-range col ten center small notOnMinimum">
+                    {{localize (concat "Range-" item.system.reach.value)}}
+                </div>
+
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="range-weapons groupbox">
+        <div class="row-section table-title lineheight">
+            <div class="title-type col thirtyfive">
+                <b>{{localize "rangeweapons"}}</b>
+            </div>
+            <div class="col five center small onlyMultiColumn">
+                {{localize "Group"}}
+            </div>
+
+            <div class="col ten center small" data-tooltip="CHAR.ATTACK">
+                {{localize "CHARAbbrev.AT"}}
+            </div>
+            <div class="col ten center small" data-tooltip="damage">
+                {{localize "CHARAbbrev.damage"}}
+            </div>
+
+            <div class="col five center small max20">
+                {{localize "TYPES.Item.ammunition"}}
+            </div>
+            <div class="col zerofive center onlyMultiColumn">
+
+            </div>
+        </div>
+        <div class="row-section wrap rowtable inventory">
+            {{#each prepare.wornRangedWeapons as |item i|}}
+                {{> systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs item=item}}
+            {{/each}} 
+            {{#each prepare.traits.rangeAttack as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <div class="row-section">
+                    <div class="col thirtyfive row-section">
+                        <div class="col five image" style="background-image: url('{{item.img}}')">
+                        </div>
+                        <div class="col eighty">
+                            <a data-action="itemEdit">{{item.name}}</a>
+                        </div>
+                    </div>
+
+                    <div class="col five center small onlyMultiColumn">
+                        {{localize "TYPES.Item.trait"}}
+                    </div>
+                    <div class="col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+                        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+                    </div>
+                    <div class="col eight center">
+                        <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
+                    </div>
+                    <div class="col ten">
+                        {{#if (ne item.LZ 0)}}
+                        <a data-action="loadWeapon" data-tooltip="{{item.title}}">
+                            <div class="progress-dsa5 blue">
+                                <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                <span class="progress-bar"></span>
+                                </span>
+                                <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                <span class="progress-bar"></span>
+                                </span>
+                                <div class="progress-value">{{item.progress}}</div>
+                            </div>
+                        </a> {{/if}}
+                    </div>
+                    <div class="col zerofive very-small center onlyMultiColumn">
+                        <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
+                    </div>
+                </div>
+                <div class="row-section lineheight expandDetails {{item.detailed}}">
+                    <div class="col">
+                        <ul>
+                            <li><b>{{localize "reach"}}</b>: {{item.system.reach.value}}</li>
+                            <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.system.reloadTime.progress}})</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="combat-armors groupbox wornArmorItems">
+        <div class="row-section table-title lineheight">
+            <div class="title-type col two">
+                {{localize "Equipment.armor"}}
+            </div>
+            <div class="protection-complete col four center small">{{localize "protection"}} ({{prepare.armorSum}}{{#if prepare.spellArmor}}<span data-tooltip="spellArmor">, {{prepare.spellArmor}}</span>{{/if}}){{#if prepare.liturgyArmor}}<span data-tooltip="liturgyArmor">, {{prepare.liturgyArmor}}</span>{{/if}}</div>
+            <div class="col four center small">{{localize "encumbrance"}}</div>
+        </div>
+        <div class="row-section wrap rowtable inventory">
+            {{#each prepare.wornArmor as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <div class="combat-armor row-section">
+                    <div class="combat-item-image col zerofive image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')">
+                        {{#if item.structureMax}}
+                        <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+                            <div class="inner"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="combat-item-name col fourty">
+                        <a data-action="itemEdit">{{item.name}}</a>
+                    </div>
+                    <div class="combat-item-protection col four center">
+                        {{item.system.protection.value}}
+                    </div>
+                    <div class="combat-item-encumbrance col four center">
+                        {{item.system.calculatedEncumbrance}}
+                    </div>
+                </div>
+
+            </div>
+            {{/each}} {{#each prepare.traits.armor as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <div class="combat-armor row-section">
+                    <div class="col zerofive image" style="background-image: url('{{item.img}}')">
+                    </div>
+                    <div class="col fourty">
+                        <a data-action="itemEdit">{{item.name}}</a>
+                    </div>
+                    <div class="col four center">
+                        {{item.system.at.value}}
+                    </div>
+                    <div class="col four center">
+                        -
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    {{> systems/dsa5/templates/actors/parts/horse.hbs}}
+
+    {{> systems/dsa5/templates/actors/parts/swarm.hbs}}
+
+    {{> systems/dsa5/templates/actors/parts/specblock.hbs currentCat="combat"}}
+
+    {{> systems/dsa5/templates/actors/parts/combatskills.hbs}}
+</div>

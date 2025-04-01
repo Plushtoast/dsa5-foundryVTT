@@ -461,7 +461,7 @@ export default class PlayerMenu extends DefaultAppv2 {
         }
       }
 
-      const conjurationSheet = await renderTemplate('systems/dsa5/templates/system/conjuration/summoning.html', {
+      const conjurationSheet = await renderTemplate('systems/dsa5/templates/system/conjuration/summoning.hbs', {
         actor: this.actor,
         conjuration: this.conjuration || {
           name: game.i18n.localize('CONJURATION.dragConjuration'),
@@ -564,7 +564,7 @@ class ConjurationRequest extends DSA5Dialog {
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/system/conjuration/request.html',
+      template: 'systems/dsa5/templates/system/conjuration/request.hbs',
     },
   };
 
@@ -653,7 +653,7 @@ class ConjurationRequest extends DSA5Dialog {
 
     await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max, });
 
-    const chatmsg = await renderTemplate('systems/dsa5/templates/system/conjuration/chat.html', {
+    const chatmsg = await renderTemplate('systems/dsa5/templates/system/conjuration/chat.hbs', {
       actor: this.actor,
       modifiers: this.creationData.modifiers,
       summoner: this.summoner,

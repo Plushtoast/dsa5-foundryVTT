@@ -35,30 +35,33 @@ export const MerchantSheetMixin = (superclass) =>
         template: 'systems/dsa5/templates/actors/merchant/merchant-header.hbs',
       },
       headAttributes: {
-        template: 'systems/dsa5/templates/actors/parts/attributes.html',
+        template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
       },
       tabs: {
         template: 'systems/dsa5/templates/system/dsatabs.hbs',
       },
       main: {
-        template: 'systems/dsa5/templates/actors/actor-main.html',
+        template: 'systems/dsa5/templates/actors/actor-main.hbs',
         scrollable: [''],
       },
       combat: {
-        template: 'systems/dsa5/templates/actors/actor-combat.html',
+        template: 'systems/dsa5/templates/actors/actor-combat.hbs',
         scrollable: [''],
         templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs'],
       },
       skills: {
-        template: 'systems/dsa5/templates/actors/actor-talents.html',
+        template: 'systems/dsa5/templates/actors/actor-talents.hbs',
+        templates: ['systems/dsa5/templates/actors/character/actor-aggregatedtests.hbs'],
         scrollable: [''],
       },
       magic: {
-        template: 'systems/dsa5/templates/actors/character/actor-magic.html',
+        template: 'systems/dsa5/templates/actors/character/actor-magic.hbs',
+        templates: ['systems/dsa5/templates/actors/parts/spells.hbs', 'systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/magicalSigns.hbs'],
         scrollable: [''],
       },
       religion: {
-        template: 'systems/dsa5/templates/actors/character/actor-religion.html',
+        template: 'systems/dsa5/templates/actors/character/actor-religion.hbs',
+        templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
         scrollable: [''],
       },
       inventory: {
@@ -67,11 +70,11 @@ export const MerchantSheetMixin = (superclass) =>
         templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
       },
       status: {
-        template: 'systems/dsa5/templates/actors/parts/status_effects.html',
+        template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
         scrollable: [''],
       },
       notes: {
-        template: 'systems/dsa5/templates/actors/actor-notes.html',
+        template: 'systems/dsa5/templates/actors/actor-notes.hbs',
         scrollable: [''],
       },
     };
@@ -89,7 +92,7 @@ export const MerchantSheetMixin = (superclass) =>
           templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
         },
         notes: {
-          template: 'systems/dsa5/templates/actors/actor-notes.html',
+          template: 'systems/dsa5/templates/actors/actor-notes.hbs',
         },
       },
       loot: {
@@ -106,7 +109,7 @@ export const MerchantSheetMixin = (superclass) =>
           template: 'systems/dsa5/templates/actors/merchant/merchant-epic.hbs',
         },
         notes: {
-          template: 'systems/dsa5/templates/actors/actor-notes.html',
+          template: 'systems/dsa5/templates/actors/actor-notes.hbs',
         },
       },
     };

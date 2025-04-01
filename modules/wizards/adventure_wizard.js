@@ -6,6 +6,7 @@ import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5 from '../system/config-dsa5.js';
 import { slist } from '../system/view_helper.js';
 import { DragMixin } from '../actor/drag_mixin.js';
+import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -98,12 +99,14 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     if (this.searchString) this.filterToc(this.searchString);
   }
 
+  static _increaseFontSize(ev, target) {
+    increaseFontSize($(this.element).find('.chapter'));
+  }
+
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'largeDialog', 'noscrollWizard', 'bookWizardsheet'],
     actions: {
-      increaseFontSize: function () {
-        increaseFontSize($(this.element).find('.chapter'));
-      },
+      increaseFontSize: this._increaseFontSize,
       library: function () {
         this._showBooks();
       },
@@ -140,8 +143,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       },
     ],
     position: {
-      width: 800,
-      height: 880,
+      width: 960,
+      height: 860,
     },
   };
 
@@ -228,6 +231,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     });
 
     html.on('click', '.heading-link', (ev) => this._onClickPageLink(ev));
+    
 
     html.on('click', '.show-item', async (ev) => {
       //TODO maybe try to open imported character
@@ -303,9 +307,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     }
 
     const toc = await this.getToc();
-    this._saveScrollPositions(this.element);
-    $(this.element).find('.tocList').html(toc);
-    this._restoreScrollPositions(this.element);
+    const html = $(this.element);
+    this._saveScrollPositions(html);
+    html.find('.tocList').html(toc);
+    this._restoreScrollPositions(html);
   }
 
   async loadJournal(name) {
@@ -351,24 +356,30 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         let result = [];
         if (this.fulltextsearch) {
           if (!this.journalIndex) {
-            this.journalIndex = new FlexSearch({
-              encode: 'simple',
-              tokenize: 'reverse',
-              cache: true,
-              doc: {
-                id: 'id',
-                field: ['name', 'data'],
-              },
-            });
-            await this.journalIndex.add(this.journals.map((x) => new JournalSearch(x)));
+
+            this.journalIndex = new FlexSearch.Document({
+                tokenize: "full",
+                cache: true,
+                document: {
+                    id: "id",
+                    store: true,
+                    index: ['name', 'data']
+                }
+            })
+            for(const journal of this.journals) {
+              await this.journalIndex.add(new JournalSearch(journal).toObject());
+            }
           }
-          result = await this.journalIndex.search(val);
+          const query = {
+            index: ['name', 'data']
+          }
+          result = (await this.journalIndex.searchAsync(val, query)).map(x => x.result).flat().map(x => this.journalIndex.get(x))
         } else {
           result = this.journals.filter((x) => {
             return x.name.toLowerCase().trim().indexOf(val) != -1;
           });
         }
-        result = result.map((x) => `<li class="fas fa-caret-right"><a data-jid="${x.id}" class="subChapter">${x.name}</a></li>`);
+        result = result.map((x) => `<li><button type="button" data-jid="${x.id}" data-action="subChapter" class="subChapter"><i class="fas fa-caret-right"></i>${x.name}</button></li>`);
 
         html.find('.tocContent').html(`<ul>${result.join('\n')}</ul>`);
       } else {
@@ -385,42 +396,53 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   async showSearchResults(pageContent) {
     if (this.searchString) {
-      await TextEditor._replaceTextContent(TextEditor._getTextNodes(pageContent), new RegExp(this.searchString, 'ig'), (match, options) => {
-        return $(`<span class="searchMatch">${match[0]}</span>`)[0];
-      });
+      const html = document.createElement("div");
+      html.innerHTML = $(pageContent).html();
+      await TextEditor._applyCustomEnrichers({
+        pattern: new RegExp(this.searchString, 'ig'),
+        enricher: (match, options) => {
+          return $(`<span class="searchMatch">${match[0]}</span>`)[0];
+        }
+      }, BookWizard.#getTextNodes(html), {});
+      return html.innerHTML;
+    } else {
+      return $(pageContent).html();
     }
+  }
+
+  static #getTextNodes(parent) {
+    const text = [];
+    const walk = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
+    while ( walk.nextNode() ) text.push(walk.currentNode);
+    return text;
   }
 
   _onClickPageLink(ev) {
     const anchor = ev.currentTarget.closest('[data-anchor]')?.dataset.anchor;
     if (anchor) {
-      const element = this.element[0].querySelector(`.chapter [data-anchor="${anchor}"]`);
+      const element = this.element.querySelector(`.chapter [data-anchor="${anchor}"]`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
         return;
       }
     }
-    const page = this.element[0].querySelector(`.journalHeader`);
+    const page = this.element.querySelector(`.journalHeader`);
     page?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  async _renderHeadings(toc, shiftFirst = false) {
-    const headings = Object.values(toc);
-
+  async _renderHeadings(toc, shiftFirst = false) {    
+    let headings = Object.values(toc);
     if (shiftFirst) headings.shift();
 
-    const minLevel = Math.min(...headings.map((node) => node.level));
+    headings.sort((a, b) => a.order - b.order);
 
-    return await renderTemplate('templates/journal/journal-page-toc.hbs', {
-      headings: headings.reduce((arr, { text, level, slug, element }) => {
-        if (element) element.dataset.anchor = slug;
-        if (level < minLevel + 2) {
-          arr.push({ text, slug, level: level - minLevel + 2 });
-        }
-        return arr;
-      }, []),
-    });
-    //tocNode.querySelectorAll(".heading-link").forEach(el => el.addEventListener("click", this._onClickPageLink.bind(this)));
+    const minLevel = Math.min(...headings.map(node => node.level));
+    headings = headings.reduce((arr, { text, level, slug, element }) => {
+      if ( element ) element.dataset.anchor = slug;
+      if ( level < minLevel + 2 ) arr.push({ text, slug, level: level - minLevel + 2 });
+      return arr;
+    }, []);
+    return await foundry.applications.handlebars.renderTemplate("templates/journal/toc.hbs", { headings });
   }
 
   async renderContent(journal) {
@@ -429,20 +451,31 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     const pageTocs = [];
     for (let page of journal.pages) {
       const sheet = journal.sheet.getPageSheet(page.id);
-      const data = await sheet._prepareContext();
-      const view = (await sheet._renderInner(data)).get();
+      let view
+      let pageContent
+      if (sheet.isV2) {
+        const oldShow = sheet.page?.title?.show;
+        if(oldShow != undefined) sheet.page.title.show = true;
+        await sheet.render(true);        
+        view = sheet.element
+        pageContent = view
+        if(oldShow != undefined) sheet.page.title.show = oldShow;
+      } else {
+        const data = await sheet.getData();
+        view = (await sheet._renderInner(data)).get();
+        pageContent = view[view.length - 1];
+      }
+      
       const pageName = page.name.replace(/ Text$/gi, '');
       const equalName = journal.name == pageName;
 
       const pageToc = JournalEntryPage.implementation.buildTOC(view);
       pageTocs.push(await this._renderHeadings(pageToc, equalName));
 
-      let pageContent = view[view.length - 1];
-      await this.showSearchResults(pageContent);
-      pageContent = $(pageContent).html();
+      pageContent = await this.showSearchResults(pageContent);
 
       if (page.type == 'video') pageContent = `<div class="video-container">${pageContent}</div>`;
-      if (!equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
+      if (!sheet.isV2 && !equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
 
       content += pageContent;
     }
@@ -702,6 +735,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         }
         if (chapter) {
           chapter.cssClass = 'selected';
+          chapter.selected = true;
           chapter.subChapters = this.getSubChapters();
         }
       }
@@ -788,7 +822,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       return false;
     }
     if (data.type == 'JournalEntry') {
-      this.pinJournal(data.pack ? `Compendium.${data.pack}.${data.id}` : `JournalEntry.${data.id}`);
+      this.pinJournal(data.uuid);
     }
   }
 
@@ -828,6 +862,15 @@ class JournalSearch {
       id: item.id,
     };
   }
+
+  toObject() {
+    return {
+      name: this.name,
+      data: this.data,
+      id: this.id,
+    };
+  }
+
   get name() {
     return this.document.name;
   }

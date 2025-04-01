@@ -1,0 +1,73 @@
+{{#if prepare.canSwarm}}
+  {{#if (gt document.system.swarm.count 1)}}
+    <div class='combat-swarm groupbox'>
+      <div class='row-section table-title lineheight'>
+        <div class='title-type col third'>
+          <b>{{localize 'swarm.name'}}</b>
+        </div>
+
+        <div class='col ten center small'>
+          {{localize 'Current'}}
+        </div>
+
+        <div class='col ten center small'>
+          {{localize 'swarm.count'}}
+        </div>
+        <div class='col ten center small'>
+          {{localize 'swarm.size'}}
+        </div>
+
+        <div class='col ten center small'>
+          {{localize 'CHARAbbrev.AT'}}
+        </div>
+        <div class='col ten center small'>
+          {{localize 'CHARAbbrev.PA'}}
+        </div>
+        <div class='col ten center small'>
+          {{localize 'CHARAbbrev.damage'}}
+        </div>
+      </div>
+
+      <div class='row-section wrap rowtable inventory'>
+        <div class='col item'>
+          <div class='combat-swarm-item row-section'>
+            <div class='title-type col third'>
+            </div>
+            <div class='col ten center'>
+              {{document.system.swarm.effectiveCount}}
+            </div>
+            <div class='col ten center'>
+              {{formInput systemFields.swarm.fields.count value=document.system.swarm.count}}
+            </div>
+            <div class='col ten center'>
+              {{formInput systemFields.swarm.fields.gg value=document.system.swarm.gg}}
+            </div>
+
+            <div class='col ten center'>
+              {{document.system.swarm.attack}}
+            </div>
+            <div class='col ten center'>
+              {{document.system.swarm.parry}}
+            </div>
+            <div class='col ten center'>
+              {{document.system.swarm.damage}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  {{else}}
+    <div class='combat-swarm groupbox' style='min-height: auto'>
+      <div class='row-section table-title lineheight'>
+        <div class='title-type col ninety'>
+          <b>{{localize 'swarm.name'}}</b>
+        </div>
+
+        <div class='col ten center small'>
+          <input type='checkbox' name='system.swarm.count' value='2' />
+        </div>
+      </div>
+    </div>
+  {{/if}}
+{{/if}}

@@ -1092,6 +1092,11 @@ a.img-entity-link {
   }
 }
 
+.button_30px{
+  flex: 0 0 30px;
+  padding: 6px;
+}
+
 .advance {
   color: var(--color-text-secondary);
   margin-left: 4px;
@@ -1993,7 +1998,7 @@ input[type='search'] {
   list-style-type: none;
 }
 
-.sheet.journal-entry.dsajournal .pages-list .directory-item .page-heading .page-heading {
+.sheet.journal-entry.dsajournal .toc .directory-item .page-heading .page-heading {
   margin-left: 10px;
 }
 
@@ -2342,23 +2347,25 @@ a {
 }
 
 .bookWizardsheet {
-  .sheet.journal-entry .pages-list {
-    .heading-link {
-      line-height: inherit;
-      font-size: unset;
-    }
+  .window-content {
+    padding: 0;
+  }
+  .sheet.journal-entry .toc {    
     .headings {
       display: block;
-      font-family: var(--normalFont);
-      margin: 6px 0 0 3px;
-      --level-indent: 8px;
+      margin: 0 0 0 18px;      
 
       li {
-        line-height: inherit;
-        height: auto;
-
+        border-radius: 4px;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
         &:last-child {
           margin-bottom: 0.1rem;
+        }
+
+        &:hover {
+          background: #c9593f;
         }
       }
     }
@@ -2643,14 +2650,22 @@ select.noAppearance {
     color: darkred;
   }
 
-  .toc {
+  .tocList {
+    list-style-type: none;
+    padding-left: 4px;
+
     ul {
       list-style-type: none;
       padding-left: 0px;
     }
 
-    list-style-type: none;
-    padding-left: 4px;
+    .headings {
+      margin: 0 0 0 14px;
+    }
+    .heading-link {
+      text-indent: 0;
+      font-family: var(--normalFont);
+    }
   }
 }
 
@@ -2691,17 +2706,21 @@ select.noAppearance {
 }
 
 .subChapter {
-  font-weight: normal;
-  font-family: var(--normalFont);
-}
-
-.toc ul li {
-  display: block;
-  padding: 4px;
-
-  &:before {
+  i:before {
     color: darkred;
     margin-right: 5px;
+  } 
+}
+
+.tocList ul li {
+  display: block;
+  padding: 4px;
+  margin: 0;
+
+  button {
+    border-color: transparent;
+    width: 100%;
+    justify-content: left;
   }
 }
 
@@ -2729,12 +2748,16 @@ select.noAppearance {
     }
   }
 
-  .toc {
+  .tocList {
     &::-webkit-scrollbar {
       width: 6px;
     }
 
     scrollbar-width: 6px;
+  }
+
+  .action-buttons {
+    gap: 8px;
   }
 
   .picto {
@@ -3766,6 +3789,7 @@ select.noAppearance {
 
 .searchMatch {
   background-color: yellow;
+  color: black;
 }
 
 .searchLines {

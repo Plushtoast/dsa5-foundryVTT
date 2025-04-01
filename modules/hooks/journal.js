@@ -5,17 +5,8 @@ import { tinyNotification } from '../system/view_helper.js';
 import { bindImgToCanvasDragStart } from './imgTileDrop.js';
 
 export default function () {
-  Hooks.on('renderJournalSheet', (obj, html, data) => {
-    html.find('.close').attr('data-tooltip', 'SHEET.Close');
-    html.find('.entry-image').attr('data-tooltip', 'SHEET.imageView');
-    html.find('.entry-text').attr('data-tooltip', 'SHEET.textView');
-    html.find('.share-image').attr('data-tooltip', 'SHEET.showToPlayers');
-    html.find('.import').attr('data-tooltip', 'SHEET.import');
-    html.find('.panMapNote').attr('data-tooltip', 'SHEET.panMapNote');
-    html.find('.increaseFontSize').attr('data-tooltip', 'SHEET.increaseFontSize');
-  });
-
-  Hooks.on('renderJournalPageSheet', (obj, html, data) => {
+  Hooks.on('renderJournalEntryPageSheet', (obj, html, data, options) => {
+    html = $(html);
     DSA5ChatAutoCompletion.bindRollCommands(html);
     DSA5StatusEffects.bindButtons(html);
     html.find('img').on('mousedown', (ev) => {
@@ -29,20 +20,22 @@ export default function () {
     bindImgToCanvasDragStart(html);
   });
 
-  Hooks.on('getJournalSheetHeaderButtons', (sheet, buttons) => {
+  Hooks.on('getHeaderControlsJournalEntrySheet', (sheet, buttons) => { 
     buttons.unshift({
-      class: 'increaseFontSize',
+      label: 'SHEET.increaseFontSize',
       icon: 'fas fa-arrows-up-down',
-      onclick: async () => increaseFontSize($(sheet._element).find('.journal-page-content')),
+      onClick: async () => {
+        increaseFontSize($(sheet.element).find('.journal-entry-pages'))
+      },
     });
 
     if (!sheet.document.sceneNote && !sheet.document.pages.some((x) => x.sceneNote)) return;
 
     buttons.unshift({
-      class: 'panMapNote',
+      label: 'SHEET.panMapNote',
       icon: 'fas fa-map-pin',
-      onclick: async () => {
-        const currentPage = sheet._getCurrentPage();
+      onClick: async () => {
+        const currentPage = sheet.pageIndex;
         const pages = Array.from(sheet.document.pages);
 
         let doc;
@@ -59,17 +52,7 @@ export default function () {
 }
 
 export async function increaseFontSize(element) {
-  const index = game.settings.get('dsa5', 'journalFontSizeIndex');
-  let newIndex = index + 1;
-  if (newIndex == DSA5.journalFontSizes.length + 1) {
-    newIndex = 0;
-    await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);
-    element.css('fontSize', '');
-    tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
-  } else {
-    await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);
-    setOuterFontSize(element);
-  }
+  new FontPicker(element).render(true);
 }
 
 function setOuterFontSize(element) {
@@ -77,4 +60,48 @@ function setOuterFontSize(element) {
   const size = DSA5.journalFontSizes[index - 1] || 14;
   tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size }));
   element.css('fontSize', `${size}px`);
+}
+
+class FontPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: 'SHEET.increaseFontSize',
+      icon: 'fas fa-arrows-up-down',
+    },
+    actions: {
+      changeSize: this._changeSize,
+    }
+  }
+
+  constructor(element) {
+    super()
+    this.connected_element = element;
+  }
+
+  static PARTS = {
+    size: {
+      template: 'systems/dsa5/templates/dialog/fontSize.hbs',
+    }
+  }
+
+  static async _changeSize(ev, target) {
+    const newSize = target.dataset.size;
+    
+    if (newSize == "-1") {
+      await game.settings.set('dsa5', 'journalFontSizeIndex', 0);
+      this.connected_element.css('fontSize', '');
+      tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
+    } else {
+      const newIndex = DSA5.journalFontSizes.findIndex((x) => x == newSize);
+      await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);
+      setOuterFontSize(this.connected_element);
+    }
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options)
+    data.fonts = DSA5.journalFontSizes
+    data.currentSize = game.settings.get('dsa5', 'journalFontSizeIndex')
+    return data
+  }
 }

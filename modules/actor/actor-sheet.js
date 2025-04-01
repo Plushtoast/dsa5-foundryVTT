@@ -77,7 +77,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       scrollable: ['']
     },
     notes: {
-      template: 'systems/dsa5/templates/actors/actor-notes.html',
+      template: 'systems/dsa5/templates/actors/actor-notes.hbs',
       scrollable: ['']
     }
   }
@@ -1398,7 +1398,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item = duplicate(item);
     let res = this.actor.items.find((i) => Itemdsa5.areEquals(item, i));
     if (!res) {
-      if (this._tabs[0].active == 'combat' && item.system.worn) item.system.worn.value = true;
+      if (this.tabGroups.sheet == 'combat' && item.system.worn) item.system.worn.value = true;
 
       return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
     } else {

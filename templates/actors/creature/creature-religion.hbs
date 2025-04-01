@@ -1,0 +1,28 @@
+<div class='tab scrollable {{tabs.religion.cssClass}}' data-tab='religion'
+    data-group='{{tabs.religion.group}}' class='tab'>
+
+    {{> systems/dsa5/templates/actors/parts/liturgies.hbs}}
+
+    {{> systems/dsa5/templates/actors/parts/specblock.hbs currentCat="clerical"}}
+
+    <div class="row-section">
+
+        <div class="col ">
+            <div class="groupbox">
+                <div class="row-section">
+                    <div class="col header-label lineheight">
+                        <b>{{localize "blessings"}}</b>
+                    </div>
+                </div>
+                <div class="row-section wrap cards">
+                    {{#each prepare.magic.blessing as |item i|}}
+                    <div class="item" data-item-id="{{item._id}}">
+                        <a data-action="itemEdit">{{item.name}}</a>
+                    </div>
+                    {{/each}}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

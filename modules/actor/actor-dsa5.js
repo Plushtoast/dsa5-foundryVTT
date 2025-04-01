@@ -690,6 +690,7 @@ export default class Actordsa5 extends Actor {
             break;
           case 'meleeweapon':
             inventory.meleeweapons.show = true;
+            inventory.meleeweapons.items.push(i);
             if (i.toggleValue) wornweapons.push(i);
             break;
           case 'rangeweapon':
@@ -944,7 +945,7 @@ export default class Actordsa5 extends Actor {
     if (Number(this.system.details.experience.total) - Number(this.system.details.experience.spent) >= cost) {
       return true;
     } else if (Number(this.system.details.experience.total) == 0) {
-      const content = await renderTemplate('systems/dsa5/templates/dialog/parts/expChoices.html', { entries: DSA5.startXP });
+      const content = await renderTemplate('systems/dsa5/templates/dialog/parts/expChoices.hbs', { entries: DSA5.startXP });
       let newXp = 0;
       let result = false;
 
@@ -1219,7 +1220,7 @@ export default class Actordsa5 extends Actor {
             ${game.i18n.format('CHATFATE.isTalented', {
               character: '<b>' + this.name + '</b>',
             })}<br>`;
-    const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.html', {
+    const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.hbs', {
       testData: newTestData,
       postData: data.postData,
     });
@@ -1499,7 +1500,7 @@ export default class Actordsa5 extends Actor {
   }
 
   async _buildEmbedHTML(config, options = {}) {
-    const template = `systems/dsa5/templates/items/browse/${this.type}.html`;
+    const template = `systems/dsa5/templates/items/browse/${this.type}.hbs`;
     const item = await renderTemplate(template, {
       document: this,
       isGM: game.user.isGM,

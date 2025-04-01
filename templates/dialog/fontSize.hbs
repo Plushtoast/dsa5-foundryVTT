@@ -1,0 +1,6 @@
+<div class="flexrow">
+    <button type="button" data-action="changeSize" data-size="-1">-</button>
+    {{#each fonts as |font|}}
+        <button type="button" data-action="changeSize" data-size="{{font}}">{{font}}</button>
+    {{/each}}
+</div>

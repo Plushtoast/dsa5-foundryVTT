@@ -24,6 +24,7 @@ export function setEnrichers() {
   const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/;
   const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
   const replaceRegex2 = /[\[\]]/g;
+  const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
     Pay: game.i18n.localize('PAYMENT.payButton'),
     GetPaid: game.i18n.localize('PAYMENT.getPaidButton'),
@@ -81,7 +82,7 @@ export function setEnrichers() {
     {
       pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
       enricher: async (match, options) => {
-        let uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1);
+        let uuid = match[0].match(innerRegex)[0].slice(1);
         const item = await fromUuid(uuid);
 
         if (!item || item.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
@@ -95,7 +96,7 @@ export function setEnrichers() {
     {
       pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]({[a-zA-Z=]+})?/g,
       enricher: async (match, options) => {
-        const uuid = match[0].match(/(?:\[)(.*?)(?=\])/)[0].slice(1);
+        const uuid = match[0].match(innerRegex)[0].slice(1);
         let document;
 
         try {
@@ -138,6 +139,34 @@ export function setEnrichers() {
       },
     },
   );
+
+  const basePrimer = TextEditor._primeCompendiums
+  TextEditor._primeCompendiums = async function (text) {
+    const rgx = /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]/g;
+    const packs = new Map();
+    for ( const t of text ) {
+      for ( const [match] of t.textContent.matchAll(rgx) ) {
+        const uuid = match.match(innerRegex)[0].slice(1).split('.');
+
+        const name = uuid.pop();
+        const pack = uuid.join('.');
+
+        const collection = game.packs.get(pack);
+        if ( !collection ) continue;
+
+        const documentId = collection.index.find(x => x.name == name)?._id;
+
+        if(!documentId) continue;
+
+        if ( !packs.has(collection) ) packs.set(collection, []);
+        packs.get(collection).push(documentId);
+      }
+    }
+    for ( const [pack, ids] of packs.entries() ) {
+      await pack.getDocuments({ _id__in: ids });
+    }
+    basePrimer.call(this, text)
+  }
 }
 
 export function conditionsMatcher(match) {

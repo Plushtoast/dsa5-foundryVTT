@@ -1,0 +1,9 @@
+{{#if (eq document.flags.core.sheetClass "dsa5.MerchantSheetDSA5")}}
+    {{#if (or (eq document.system.merchant.merchantType 'none') (not document.system.merchant.merchantType))}}
+        {{> systems/dsa5/templates/items/browse/actor.hbs}}
+    {{else}}
+        {{> systems/dsa5/templates/items/browse/garadan.hbs}}
+    {{/if}}
+{{else}}
+    {{> systems/dsa5/templates/items/browse/actor.hbs}}
+{{/if}}

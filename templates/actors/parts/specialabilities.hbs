@@ -1,0 +1,54 @@
+<fieldset>
+    <legend>{{localize "advantages"}}</legend>
+    <div class="row-section wrap cards">
+        {{#each prepare.advantages as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            <a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
+        </div>
+        {{/each}}
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>{{localize "disadvantages"}}</legend>
+    <div class="row-section wrap cards">
+        {{#each prepare.disadvantages as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            <a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.max.value}}</a>
+        </div>
+        {{/each}}
+    </div>
+</fieldset>
+
+{{> systems/dsa5/templates/actors/parts/specblock.hbs currentCat="general"}}
+
+{{#if prepare.imprint}}
+<fieldset>
+    <legend>{{localize "TYPES.Item.imprint"}}</legend>
+    <div class="row-section wrap cards">
+        {{#each prepare.imprint as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            <a data-action="itemEdit">{{item.name}}</a>
+        </div>
+        {{/each}}
+    </div>
+</fieldset>
+{{/if}}
+
+{{#if (or (eq document.type "creature") prepare.hasTrait)}}
+<fieldset>
+    <legend> 
+        <b>{{localize "traits"}}</b>
+        <a data-action="itemCreate" class="item-create very-small" data-tooltip="SHEET.addItem" item-section="trait" data-type="trait"><i class="fas fa-plus"></i></a>
+    </legend>
+    <div class="row-section wrap cards">
+        {{#each prepare.traits as |trait i|}}
+        {{#each trait as |item i|}}
+        <div class="item" data-item-id="{{item._id}}">
+            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.at.value}}</a>
+        </div>
+        {{/each}}
+        {{/each}}
+    </div>
+</fieldset>
+{{/if}}

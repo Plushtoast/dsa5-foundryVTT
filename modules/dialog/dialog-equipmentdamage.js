@@ -10,7 +10,7 @@ export default class EquipmentDamageDialog extends DefaultAppv2 {
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/dialog/dialog-reaction-attack.html',
+      template: 'systems/dsa5/templates/dialog/dialog-reaction-attack.hbs',
     },
   };
 

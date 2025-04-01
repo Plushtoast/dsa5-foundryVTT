@@ -1,0 +1,12 @@
+{{#if prepare.essence}}
+  <fieldset>
+    <legend>{{localize 'TYPES.Item.essence'}}</legend>
+    <div class='row-section wrap cards'>
+      {{#each prepare.essence as |item i|}}
+        <div class='item' data-item-id='{{item._id}}'>
+          <a data-action='itemEdit'>{{item.name}}</a>
+        </div>
+      {{/each}}
+    </div>
+  </fieldset>
+{{/if}}

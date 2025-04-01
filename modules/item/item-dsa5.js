@@ -129,7 +129,7 @@ export default class Itemdsa5 extends Item {
   }
 
   async _buildEmbedHTML(config, options = {}) {
-    const template = `systems/dsa5/templates/items/browse/${this.type}.html`;
+    const template = `systems/dsa5/templates/items/browse/${this.type}.hbs`;
     const item = await renderTemplate(template, {
       document: this,
       isGM: game.user.isGM,

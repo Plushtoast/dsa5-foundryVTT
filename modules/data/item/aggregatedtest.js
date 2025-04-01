@@ -37,7 +37,7 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
   async getSheetData(data) {
     const embeddedItem = data.document.getFlag('dsa5', 'embeddedItem');
     let renderedItem;
-    if (embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.html`, { document: embeddedItem });
+    if (embeddedItem) renderedItem = await renderTemplate(`systems/dsa5/templates/items/browse/${embeddedItem.type}.hbs`, { document: embeddedItem });
 
     data.allSkills = await DSA5_Utility.allSkillsList();
     data.embeddedItem = embeddedItem;

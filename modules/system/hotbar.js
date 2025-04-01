@@ -160,7 +160,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', itemData);
         } else {
           description = $(
-            await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.html`, {
+            await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.hbs`, {
               isGM: game.user.isGM,
               ...itemData,
               document: item,

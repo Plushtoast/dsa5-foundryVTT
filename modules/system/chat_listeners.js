@@ -13,7 +13,7 @@ export default class DSA5ChatListeners {
       const book = ev.currentTarget.dataset.book;
       const bookType = ev.currentTarget.dataset.type || 'books';
       await game.dsa5.apps.journalBrowser.render(false);
-      await game.dsa5.apps.journalBrowser.loadBook(book, $(game.dsa5.apps.journalBrowser._element), bookType);
+      await game.dsa5.apps.journalBrowser.loadBook(book, $(game.dsa5.apps.journalBrowser.element), bookType);
       await game.dsa5.apps.journalBrowser.render(true);
     });
 

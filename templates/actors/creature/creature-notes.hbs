@@ -1,0 +1,58 @@
+<div class='tab scrollable {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'
+    class='tab'>
+    {{> systems/dsa5/templates/actors/parts/information.hbs}}
+    {{> systems/dsa5/templates/actors/parts/personaltrait.hbs}}
+
+    <fieldset>
+        <legend>{{localize "Description"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
+        <div class="row-section">
+            <div class="col notes-box">
+                {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription}}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "behaviour"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
+        <div class="row-section">
+            <div class="col notes-box">
+                {{formInput systemFields.behaviour.fields.value value=document.system.behaviour.value toggled=true enriched=enrichedBehaviour}}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "flight"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
+        <div class="row-section">
+            <div class="col notes-box">
+                {{formInput systemFields.flight.fields.value value=document.system.flight.value toggled=true enriched=enrichedFlight}}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>{{localize "specialRules"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
+        <div class="row-section">
+            <div class="col notes-box">
+                {{formInput systemFields.specialRules.fields.value value=document.system.specialRules.value toggled=true enriched=enrichedSpecialrules}}
+            </div>
+        </div>
+    </fieldset>
+    {{#if document.isOwner}}
+    <fieldset>
+        <legend>{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+                    data-tooltip="SHEET.collapse"></i></a></legend>
+
+        <div class="row-section">
+            <div class="col notes-box">
+                {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
+            </div>
+        </div>
+    </fieldset>
+    {{/if}}
+</div>

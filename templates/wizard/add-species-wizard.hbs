@@ -5,7 +5,7 @@
         {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
         <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}" class="tab description">
-            {{> systems/dsa5/templates/items/browse/species.html document=species hasLocalization=hasLocalization}}
+            {{> systems/dsa5/templates/items/browse/species.hbs document=species hasLocalization=hasLocalization}}
         </div>
 
         {{#if vantagesToChose}}

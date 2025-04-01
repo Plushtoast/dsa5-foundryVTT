@@ -12,43 +12,46 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       template: 'systems/dsa5/templates/actors/creature/creature-header.hbs',
     },
     headAttributes: {
-      template: 'systems/dsa5/templates/actors/parts/attributes.html',
+      template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
     },
     tabs: {
       template: 'systems/dsa5/templates/system/dsatabs.hbs',
     },
     main: {
-      template: 'systems/dsa5/templates/actors/creature/creature-main.html',
+      template: 'systems/dsa5/templates/actors/creature/creature-main.hbs',
       scrollable: ['']
     },
     combat: {
-      template: 'systems/dsa5/templates/actors/actor-combat.html',
+      template: 'systems/dsa5/templates/actors/actor-combat.hbs',
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs']
     },
     skills: {
-      template: 'systems/dsa5/templates/actors/actor-talents.html',
+      template: 'systems/dsa5/templates/actors/actor-talents.hbs',
+      templates: ['systems/dsa5/templates/actors/character/actor-aggregatedtests.hbs'],
       scrollable: ['']
     },
     magic: {
-      template: 'systems/dsa5/templates/actors/creature/creature-magic.html',
+      template: 'systems/dsa5/templates/actors/creature/creature-magic.hbs',
+      templates: ['systems/dsa5/templates/actors/parts/spells.hbs', 'systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/magicalSigns.hbs'],
       scrollable: ['']
     },
     religion: {
-      template: 'systems/dsa5/templates/actors/creature/creature-religion.html',
+      template: 'systems/dsa5/templates/actors/creature/creature-religion.hbs',
+      templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
       scrollable: ['']
     },
     inventory: {
-      template: 'systems/dsa5/templates/actors/creature/creature-loot.html',
+      template: 'systems/dsa5/templates/actors/creature/creature-loot.hbs',
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
     },
     status: {
-      template: 'systems/dsa5/templates/actors/parts/status_effects.html',
+      template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
       scrollable: ['']
     },
     notes: {
-      template: 'systems/dsa5/templates/actors/creature/creature-notes.html',
+      template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
       scrollable: ['']
     }
   }
