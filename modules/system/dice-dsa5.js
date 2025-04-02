@@ -1308,6 +1308,9 @@ export default class DiceDSA5 {
     delete testData.actor;
     delete testData.preData;
 
+    if(preData.roll instanceof Roll) preData.roll = preData.roll.toJSON();
+    if(preData.damageRoll instanceof Roll) preData.damageRoll = preData.damageRoll.toJSON();   
+
     const hasAreaTemplate = testData.successLevel > 0 && preData.source.system.target && preData.source.system.target.type in game.dsa5.config.areaTargetTypes;
 
     let chatData = {
