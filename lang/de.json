@@ -447,6 +447,7 @@
     "Players": "Spieler",
     "poisonType": "Art",
     "plant": "Pflanze",
+    "derivedStats": "Abgeleitete Werte",
     "speciesModifier": "Körperbau ({species})",
     "PartSuccess": "Teilerfolg",
     "place": "Ort",

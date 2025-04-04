@@ -155,7 +155,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     ],
     window: {
       resizable: true,
-      contentClasses: ["standard-form"],
       controls: [        
         {
           action: 'actorConfig',
@@ -813,6 +812,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     };
 
     tabSlider(html);
+
+    const autoSizings = html.find('.autosizing input')
+    for(let el of autoSizings){
+      const chars = el.value.length || el.placeholder.length
+      el.setAttribute('style', `width: ${chars}ch;`);      
+    }
+    autoSizings.on('keyup', (ev) => {
+      const input = ev.currentTarget;
+      const chars = input.value.length || input.placeholder.length
+      input.setAttribute('style', `width: ${chars}ch;`);
+    });
 
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
 
