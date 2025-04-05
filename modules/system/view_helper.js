@@ -141,16 +141,20 @@ function columnLayout(html) {
   const width60 = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth60').replace('px', ''));
   const borderWidth = +6;
 
-  if (width >= minWidth * 2 + borderWidth) {
-    html.removeClass('singleColumnLayout');
-  } else {
-    html.addClass('singleColumnLayout');
-  }
-  if (width <= width60) {
-    html.addClass('minimumColumnLayout');
-  } else {
-    html.removeClass('minimumColumnLayout');
-  }
+  html.toggleClass('singleColumnLayout', width < minWidth * 2 + borderWidth);
+  html.toggleClass('minimumColumnLayout', width <= width60);
+}
+
+export function resizeListener(html) {
+  //observer html for widtht ch
+  const observer = new ResizeObserver((entries) => {
+    for (let entry of entries) {
+      if (entry.contentRect.width > 0) {
+        columnLayout(html);
+      }
+    }
+  });
+  observer.observe(html[0]);
 }
 
 export function tabSlider(html) {

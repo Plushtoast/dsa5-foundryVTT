@@ -695,6 +695,12 @@
         }
     }
 
+    .cards {
+        .item {
+            box-shadow: 0 0 12px #6e3b018f inset;
+        }
+    }
+
     #sidebar button,
     .initTracker button,
     .masterMenu button,

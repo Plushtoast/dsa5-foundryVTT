@@ -151,7 +151,7 @@ export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
           label: 'yes',
           default: true,
           callback: (event, button, dialog) => {
-            callback(button.form.elements.count.valueAsNumber);
+            callback(button.form.elements.count.value);
           },
         },
         {

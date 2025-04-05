@@ -34,11 +34,11 @@
                     <div class="equipment-item-weight col eight center">
                         {{item.system.preparedWeight}}
                     </div>
-                    <div class="equipment-item-action col ten very-small center">
-                        <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                        <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                        {{#if item.children}} <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
-                        <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    <div class="equipment-item-action col ten very-small center flexrow">
+                        {{#if item.children}} 
+                        <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                        {{/if}}
+                        <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                     </div>
                 </div>
                 <div class="row-section lineheight expandDetails {{item.detailed}}">

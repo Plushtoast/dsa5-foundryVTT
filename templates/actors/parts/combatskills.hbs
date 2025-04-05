@@ -50,7 +50,7 @@
         </div>
         {{#each prepare.combatskills as |item i|}}
         <div class="actor-combat-skill-item col morph">
-            <div class="row-section item skills lineheight" data-item-id="{{item._id}}">
+            <div class="row-section col item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
                     <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
                     <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>

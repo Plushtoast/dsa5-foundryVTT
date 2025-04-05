@@ -19,11 +19,9 @@
             </fieldset>
         </div>
         <div class="col morph">
-            <div class="actor-tradition groupbox">
-                <div class="actor-tradition-item">
-                    {{formGroup systemFields.tradition.fields.clerical value=document.system.tradition.clerical
-                    localize=true}}
-                </div>
+            <fieldset class="actor-tradition">
+                <legend class="autosizing">{{formInput systemFields.tradition.fields.clerical value=document.system.tradition.clerical placeholder=(localize 'tradition')}}</legend>
+
                 <div class="actor-tradition-item ">
                     {{formGroup systemFields.guidevalue.fields.clerical value=document.system.guidevalue.clerical
                     localize=true}}
@@ -40,7 +38,7 @@
                     {{formGroup systemFields.happyTalents.fields.value value=document.system.happyTalents.value rows=8
                     localize=true elementType='textarea'}}
                 </div>
-            </div>
+            </fieldset>
         </div>
 
     </div>

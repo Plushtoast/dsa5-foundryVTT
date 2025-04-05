@@ -1,25 +1,22 @@
-<header class='sheet-header'>
-  <div class='row-section'>
-    <div class='charname headerInput col fourty row-section'>
+<div class='sheet-header'>
+  
+    <div class='charname headerInput row-section'>
+      <div class='col ten'></div>
       <div class='col eighty'>
-        {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
-        <span class='label name'>{{localize 'Name'}}</span>
+        <h3 class="headerName">{{formInput fields.name value=document.name placeholder=(localize 'Name')}}</h3>
       </div>
       <div class='col ten'>
         <a class='actorDrag' data-tooltip='TT.dragLink'><i class='fas fa-link'></i></a>
       </div>
     </div>
-    <div class='headerInput col five'>
+    <div class="headerbadgeflex headerInput flexAlignCenter autosizing">
       {{#if prepare.canBuild}}
-        <button class='startCharacterBuilder' data-tooltip='CHARGEN.chargenTT'><i class='fas fa-user-edit'></i> {{localize 'CHARGEN.chargen'}}</button>
+        <button type="button" class='icon fas fa-user-edit startCharacterBuilder' data-tooltip='CHARGEN.chargenTT'>{{localize 'CHARGEN.chargen'}}</button>
       {{else}}
-        {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
-        <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
+        {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}        
       {{/if}}
-    </div>
-    <div class='headerInput col third'>
+
+      {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
       {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
-      <span class='label-details'>{{localize 'TYPES.Item.career'}}</span>
     </div>
-  </div>
 </header>

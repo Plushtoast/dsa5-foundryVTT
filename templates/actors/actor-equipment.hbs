@@ -2,7 +2,7 @@
     data-group='{{tabs.inventory.group}}' class='tab'>
     {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}} {{#each prepare.inventory as |section sid|}} {{#if section.show}}
     <div class="actor-equipment groupbox">
-        <div class="row-section table-title">
+        <div class="row-section table-title lineheight">
             <div class="col eight"></div>
             <div class="title-type col">
                 <b>{{localize (concat "Equipment." @key)}}</b>
@@ -22,8 +22,8 @@
             <div class="col eight center">
                 <i class="fa fa-anchor" data-tooltip="Weight"></i>
             </div>
-            <div class="col ten center">
-                <a data-action="itemCreate" class="item-create very-small" data-tooltip="SHEET.addItem" item-section="{{sid}}" data-type="{{section.dataType}}"><i class="fas fa-plus"></i></a>
+            <div class="col ten center flexAlignCenter flexrow">
+                <button type="button" data-action="itemCreate" class="icon fas fa-plus noBorder dsadesignbutton very-small" data-tooltip="SHEET.addItem" item-section="{{sid}}" data-type="{{section.dataType}}"></button>
             </div>
         </div>
         <div class="row-section wrap rowtable inventory">
@@ -68,12 +68,14 @@
                         <div class="equipment-item-weight col eight center">
                             {{item.system.preparedWeight}}
                         </div>
-                        <div class="equipment-item-action col ten very-small center">
-                            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}
-                            <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                            <a data-action="itemEdit" data-tooltip="SHEET.EditItem"><i class="fas fa-edit"></i></a>
-                            {{#if item.children}}<a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>{{/if}}
-                            <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                        <div class="equipment-item-action col ten very-small center flexrow">
+                            {{#if item.OnUseEffect}}
+                            <button type="button" data-tooltip="SHEET.onUseEffect" class="icon fas fa-dice-six onUseItem very-small noBorder dsadesignbutton" data-action="onUseItem"></button>
+                            {{/if}}
+                            {{#if item.children}}
+                            <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                            {{/if}}
+                            <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                         </div>
                     </div>
                     <div class="row-section lineheight expandDetails {{item.detailed}}">

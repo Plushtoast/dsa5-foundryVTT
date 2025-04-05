@@ -4,11 +4,10 @@
 
     <div class="actor-main row-section wrap reverseFlex">
         <div class="col morph40">
-            <fieldset>
+            <fieldset class="gap5px">
                 <legend>{{localize "derivedStats"}}</legend>
                 <div class="derivedAttrs row-section">
-                    <div class="col two">
-                    </div>
+                    <div class="col two"></div>
                     <div class="col eight very-small center" data-tooltip="value">
                         {{localize "ABBR.value"}}
                     </div>
@@ -29,10 +28,7 @@
                                 class="fas fa-minus"></i></a>
                         <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
                                 data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
-                        <span class="buttons">
-                            <a data-char="regenerate" data-action="chRegenerate" class="item" data-mod="regenerate"
-                                data-tooltip="regenerate">&nbsp;<i class="fas fa-moon"></i></a>
-                        </span>
+                        
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.wounds.current}}
@@ -325,7 +321,7 @@
 
             {{> systems/dsa5/templates/actors/parts/experienceBox.hbs}}
         </div>
-        <div class="col morph60">
+        <div class="col morph60 gap10px flexcol">
             {{> systems/dsa5/templates/actors/parts/specialabilities.hbs}}
         </div>
     </div>

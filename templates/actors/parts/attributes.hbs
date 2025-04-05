@@ -1,32 +1,25 @@
-<div class="general">
-    <img class="charimg profile" src="{{document.img}}" data-tooltip="{{document.name}}" {{#if (eq merchantType 'loot')}}style="margin-left: calc(50% - 57px)" {{/if}} data-action='editImage'>
-
-
-    <div class="row-section" style="width: 100%;margin-bottom: 20px">
-        {{#if (ne merchantType 'loot')}}
-        <div class="col">
-            <div class="row-section wrap charBtns">
-                <div class="col morph row-section" style="min-width:150px">
-                    {{#each document.system.characteristics as |ch c|}}
-                    <div class="col eight center row-section wrap" data-tooltip="{{attrName c}}">
-                        <div class="col">
-                            {{attrAbbr c}}
-                        </div>
-                        <div data-action="chValue" class="col" data-char="{{c}}">
-                            <a class="d20 die-{{c}}">{{ch.value}}</a>
-                        </div>
+<div class="flexrow" style="width: 100%;margin-bottom: 20px">
+    {{#if (ne merchantType 'loot')}}
+    <div class="col flexcol">
+        <div class="flexrow flexgrow-0 charBtns">
+            <div class="col flexrow gap5px flexAlignCenter" style="min-width:190px">
+                {{#each document.system.characteristics as |ch c|}}
+                <div class="center flexrow attribibcard" data-char="{{c}}" data-action="chValue" data-tooltip="{{attrName c}}">
+                    <div>
+                        <div class="d20 die-{{c}}">{{ch.value}}</div>
                     </div>
-                    {{#if (eq c "ch")}}
+                    <div>
+                        {{attrAbbr c}}
+                    </div>
+                    
                 </div>
-                <div class="col morph row-section" style="min-width:150px">
-                    {{/if}}
-                    {{/each}}
-                </div>
+                {{#if (eq c "ch")}}
+                <div class="breaker"></div>
+                {{/if}}
+                {{/each}}
             </div>
-            {{> systems/dsa5/templates/actors/parts/healthbar.hbs}}
-            {{> systems/dsa5/templates/actors/parts/schipspart.hbs}}
         </div>
-        {{/if}}
+        {{> systems/dsa5/templates/actors/parts/schipspart.hbs}}
     </div>
-
+    {{/if}}
 </div>

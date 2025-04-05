@@ -7,7 +7,7 @@ import DSA5ChatListeners from '../system/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogActorConfig from '../dialog/dialog-actorConfig.js';
 import Actordsa5 from './actor-dsa5.js';
-import { tabSlider, tinyNotification } from '../system/view_helper.js';
+import { resizeListener, tabSlider, tinyNotification } from '../system/view_helper.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import RuleChaos from '../system/rule_chaos.js';
 import OnUseEffect from '../system/onUseEffects.js';
@@ -87,6 +87,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       width: 770,
       height: 740,
     },
+    classes: ['dsa5', 'actor', 'vertical-tabs'],
     actions: {
       itemCreate: this._onItemCreate,
       playerview: this._togglePlayerview,
@@ -101,7 +102,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemDropdown: this._itemDropdown,
       itemEdit: this._itemEdit,
       chValue: this._chValue,
+      itemContextMenu: this._itemContextMenu,
       chStatus: this._chStatus,
+      filterTalents: this._filterTalents,
       chRegenerate: this._chRegenerate,
       chWeaponless: this._chWeaponless,
       chFallingDamage: this._chFallingDamage,
@@ -155,6 +158,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     ],
     window: {
       resizable: true,
+      contentClasses: ['standard-form'],
       controls: [        
         {
           action: 'actorConfig',
@@ -176,14 +180,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'skills', label: 'skills' },
-        { id: 'combat', label: 'Combat' },
-        { id: 'magic', label: 'Magic' },
-        { id: 'religion', label: 'Religion' },
-        { id: 'main', label: 'attributes' },
-        { id: 'inventory', label: 'TYPES.Item.equipment' },
-        { id: 'status', label: 'status' },
-        { id: 'notes', label: 'Notes' },
+        { id: 'skills', label: 'skills', icon: 'fas fa-equals' },
+        { id: 'combat', label: 'Combat', icon: 'fas fa-swords' },
+        { id: 'magic', label: 'Magic', icon: 'fas fa-wand-magic' },
+        { id: 'religion', label: 'Religion', icon: 'fas fa-ankh' },
+        { id: 'main', label: 'attributes', icon: 'fas fa-user' },
+        { id: 'inventory', label: 'TYPES.Item.equipment', icon: 'fas fa-suitcase' },
+        { id: 'status', label: 'status', icon: 'fas fa-temperature-full'  },
+        { id: 'notes', label: 'Notes', icon: 'fas fa-book-open' },
       ],
       initial: 'skills',
     },
@@ -269,6 +273,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return tabs;
   }
 
+  static _itemContextMenu(event, target) {    
+    event.preventDefault();
+    event.stopPropagation();
+    console.log("context")
+    const { clientX, clientY } = event;
+    console.log(clientX, clientY)
+    target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
+      view: window, bubbles: true, cancelable: true, clientX, clientY
+    }));
+  }
+
   async _prepareContext(_options) {
     const sheetData = await super._prepareContext(_options);
     this.wrapperLocked = false;
@@ -299,6 +314,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _onItemCreate(event, target) {
     event.preventDefault();
+    console.log("woot")
     let data = duplicate(target.dataset);
     if (DSA5.equipmentTypes[data.type]) {
       data.type = 'equipment';
@@ -315,6 +331,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     Itemdsa5.defaultIcon(data);
     data.name = DSA5_Utility.categoryLocalization(data.type);
     delete data.action;
+    delete data.section;
+    delete data.tooltip;
     this.actor.createEmbeddedDocuments('Item', [data]);
   }
 
@@ -605,7 +623,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _statusCreate(ev, target) {
-    let menu = $(target).closest('.statusEffectMenu').find('ul');
+    let menu = $(target).siblings('.statusEffectMenu').find('ul');
     menu.fadeIn('fast', () => {
       menu.find('input').trigger('focus');
     });
@@ -802,6 +820,38 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.actor.updateEmbeddedDocuments('Item', [update]);
   }
 
+  static _filterTalents(ev, target) {
+    $(target).closest('.scrollable').find('.allTalents').toggleClass('showAll');
+    $(target).toggleClass('filtered');
+  }
+
+  verticalTabs(ev) {
+    console.log("veritcalled")
+    const dataset = ev.currentTarget.dataset;
+    this.changeTab(dataset.tab, dataset.group)
+    ev.currentTarget.closest('nav').querySelectorAll('button').forEach((el) => {
+      el.classList.remove('active');
+    });
+    ev.currentTarget.classList.add('active');
+  }
+
+  static _postItem(ev, target) {
+    this.actor.items.get(this._getItemId(target)).postItem();
+  }
+
+  async _onFirstRender(context, options) {
+    const html = $(this.element);
+    resizeListener(html.find('.window-content'))
+
+    new foundry.applications.ui.ContextMenu(this.element, '.item .withContext', [], {
+      onOpen: this._onItemContext.bind(this),
+      jQuery: false,
+    });
+    new foundry.applications.ui.ContextMenu(this.element, '.combat-weapon', [], {
+      onOpen: this._onWeaponItemContext.bind(this),
+      jQuery: false,
+    });
+  }
 
   async _onRender(context, options) {
     await super._onRender((context, options));
@@ -811,24 +861,34 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };
 
-    tabSlider(html);
+    const tabs = html.find('.window-content nav.right.tabs')
+    //move tabs to header
+
+    if (tabs.length > 0) {
+      const header = html.find('header');
+      const headerTabs = html.find('> nav.right.tabs');
+      if (headerTabs.length > 0) {
+        headerTabs.remove();
+      }
+      const dupped = tabs.clone();
+      header.before(dupped);
+      dupped.find('button').on('click', (ev) => this.verticalTabs(ev));
+    }
 
     const autoSizings = html.find('.autosizing input')
     for(let el of autoSizings){
-      const chars = el.value.length || el.placeholder.length
+      const chars = (el.value.length || el.placeholder.length) + 1;
       el.setAttribute('style', `width: ${chars}ch;`);      
     }
-    autoSizings.on('keyup', (ev) => {
+    autoSizings.on('keydown', (ev) => {
       const input = ev.currentTarget;
-      const chars = input.value.length || input.placeholder.length
+      const chars = (input.value.length || input.placeholder.length) + 1;
       input.setAttribute('style', `width: ${chars}ch;`);
     });
 
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
 
-    html.find('.item-post').on('click', (ev) => posthand(ev));
-
-    html.on('click', '.chat-condition', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
+    html.find('.chat-condition').on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
     html.find('.money-change, .skill-advances').on('focusin', (ev) => {
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
@@ -872,11 +932,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       });
     });
 
-    html.find('.filterTalents').on('click', (ev) => {
-      $(ev.currentTarget).closest('.scrollable').find('.allTalents').toggleClass('showAll');
-      $(ev.currentTarget).toggleClass('filtered');
-    });
-
     html.find('.charimg').on('mousedown', (ev) => {
       if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true);
     });
@@ -906,15 +961,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!this.isEditable) return;
 
-    new foundry.applications.ui.ContextMenu(this.element, '.item .withContext', [], {
-      onOpen: this._onItemContext.bind(this),
-      jQuery: false,
-    });
-    new foundry.applications.ui.ContextMenu(this.element, '.combat-weapon', [], {
-      onOpen: this._onWeaponItemContext.bind(this),
-      jQuery: false,
-    });
-
     html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
 
     html.find('.swapWeaponHand').on('click', (ev) => this.swapWeaponHand(ev));
@@ -932,9 +978,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.skill-advances').on('change', async (ev) => {
       const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
-    });
-    
-    html.find('.item-delete').on('click', (ev) => this._deleteItem(ev))
+    });    
 
     //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)
     new foundry.applications.ux.DragDrop.implementation({

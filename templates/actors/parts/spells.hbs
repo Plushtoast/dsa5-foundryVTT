@@ -1,7 +1,7 @@
 <div class="actor-spells groupbox">
     <div class="row-section wrap inverseRowtable">
         <div class="col">
-            <div class="row-section skills table-title">
+            <div class="row-section skills table-title lineheight">
                 <div class="title-type col four">
                     {{localize "spells"}}
                 </div>
@@ -13,8 +13,8 @@
                     <span class="onlyMultiColumn">{{localize "CHARAbbrev.castingTime"}}</span><span class="onlySingleColumn"><i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass"></i></span>
                 </div>
                 <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
-                <div class="col ten center">
-                    <a data-action="itemCreate" class="item-create very-small" data-tooltip="SHEET.addItem" item-section="spell" data-type="spell"><i class="fas fa-plus"></i></a>
+                <div class="col ten center flexAlignCenter flexrow">
+                    <button type="button" data-action="itemCreate" class="icon fas fa-plus noBorder dsadesignbutton very-small" data-tooltip="SHEET.addItem" item-section="spell" data-type="spell"></button>
                 </div>
             </div>
         </div>
@@ -62,10 +62,9 @@
                     {{item.system.range.value}}
                 </div>
 
-                <div class="actor-spell-action col ten very-small center">
-                    <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                    <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                <div class="actor-spell-action col ten very-small center flexrow">
+                    <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                    <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">
@@ -84,7 +83,7 @@
 <div class="actor-spells groupbox">
     <div class="row-section wrap inverseRowtable">
         <div class="col">
-            <div class="row-section skills table-title">
+            <div class="row-section skills table-title lineheight">
                 <div class="title-type col four">
                     {{localize "rituals"}}
                 </div>
@@ -96,9 +95,8 @@
                     <span class="onlyMultiColumn">{{localize "CHARAbbrev.castingTime"}}</span><span class="onlySingleColumn"><i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass"></i></span>
                 </div>
                 <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
-                <div class="col ten center">
-                    <a data-action="itemCreate" class="item-create very-small" data-tooltip="SHEET.addItem" item-section="ritual" data-type="ritual"><i class="fas fa-plus"></i></a>
-
+                <div class="col ten center flexAlignCenter flexrow">
+                    <button type="button" data-action="itemCreate" class="icon fas fa-plus noBorder dsadesignbutton very-small" data-tooltip="SHEET.addItem" item-section="ritual" data-type="ritual"></button>
                 </div>
             </div>
         </div>
@@ -134,10 +132,9 @@
                     {{item.system.range.value}}
                 </div>
 
-                <div class="actor-spell-action col ten very-small center">
-                    <a class="item-post" data-tooltip="SHEET.PostItem"><i class="fas fa-comment"></i></a>
-                    <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a>
-                    <a class="item-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                <div class="actor-spell-action col ten center flexrow">
+                    <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                    <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                 </div>
             </div>
             <div class="row-section lineheight expandDetails {{item.detailed}}">

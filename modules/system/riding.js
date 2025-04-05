@@ -4,10 +4,10 @@ const { mergeObject, getProperty, hasProperty } = foundry.utils;
 
 export default class Riding {
   static preRenderedUnmountHud =
-    '<div class="control-icon" data-action="ride"><i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36"></i></div>';
-  static preRenderedMountHud = '<div class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></div>';
+    '<button type="button" class="control-icon" data-action="ride"><i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36"></i></button>';
+  static preRenderedMountHud = '<button type="button" class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></button>';
   static preRenderedSpeedHud =
-    '<div class="control-icon" data-action="rideIncrease"><i class="fas fa-caret-up" data-tooltip="RIDING.increase" width="36" height="36"></i></div><div class="control-icon" data-action="rideDecrease"><i class="fas fa-caret-down" data-tooltip="RIDING.decrease" width="36" height="36"></i></div>';
+    '<button type="button" class="control-icon" data-action="rideIncrease" data-tooltip="RIDING.increase"><i class="fas fa-caret-up" width="36" height="36"></i></button><button type="button" class="control-icon" data-tooltip="RIDING.decrease" data-action="rideDecrease"><i class="fas fa-caret-down" width="36" height="36"></i></button>';
 
   static async createTokenHook(token, options, id) {
     if (!DSA5_Utility.isActiveGM()) return;

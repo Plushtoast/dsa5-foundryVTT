@@ -4,18 +4,16 @@ import APTracker from '../system/ap-tracker.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
-    classes: ['dsa5', 'actor', 'creature-sheet'],
+    classes: ['creature-sheet'],
   };
 
   static PARTS = {
     header: {
-      template: 'systems/dsa5/templates/actors/creature/creature-header.hbs',
-    },
-    headAttributes: {
-      template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
+      template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
+      templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
     },
     tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs'      
     },
     main: {
       template: 'systems/dsa5/templates/actors/creature/creature-main.hbs',

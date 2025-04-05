@@ -6,6 +6,8 @@
 
     <div class="row-section wrap reverseFlex">
         <div class="col morph40">
+            <fieldset class="gap5px">
+                <legend>{{localize 'derivedStats'}}</legend>
             {{#if prepare.canAdvance}}
 
             {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-large.hbs}}
@@ -16,9 +18,9 @@
             {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-small.hbs}}
 
             {{/if}}
-
+            </fieldset>
         </div>
-        <div class="col morph60">
+        <div class="col morph60 gap10px flexcol">
             {{> systems/dsa5/templates/actors/parts/specialabilities.hbs}}
         </div>
     </div>

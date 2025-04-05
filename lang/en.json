@@ -1241,6 +1241,7 @@
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
+        "onlySkilled": "Only show learned skills",
         "foreignSpell": "Unfamiliar tradition spells can not be modified",
         "assignCharacter": "Characters can be assigned using a right-<i class=\"fas fa-computer-mouse\"></i> on the player list in the bottom left corner.",
         "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",

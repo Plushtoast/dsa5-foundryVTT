@@ -3,7 +3,7 @@
     <fieldset class="actor-notes">
         <legend>{{localize "personalDetails"}}</legend>
         <div class="row-section">
-            <section class="general col">
+            <section class="col">
                 <div class="row-section wrap">
                     <div class="col morph">
                         <div class="col row-section">
@@ -13,43 +13,34 @@
                             </div>
 
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
-                                <span class="label-details">{{localize "TYPES.Item.culture"}}</span>
-                            </div>
-                        </div>
-                        <div class="col row-section">
-                            <div class="headerInput col two">
                                 {{formInput systemFields.details.fields.family.fields.value value=document.system.details.family.value placeholder=(localize 'Family')}}
                                 <span class="label-details">{{localize "Family"}}</span>
                             </div>
-
-                            <div class="headerInput col two">
+                        </div>
+                        <div class="col row-section">
+                            <div class="headerInput col third">
                                 {{formInput systemFields.details.fields.age.fields.value value=document.system.details.age.value placeholder=(localize 'Age')}}
                                 <span class="label-details">{{localize "Age"}}</span>
                             </div>
-                        </div>
-                        <div class="col row-section">
-
-                            <div class="headerInput col two">
+                             <div class="headerInput col third">
                                 {{formInput systemFields.details.fields.height.fields.value value=document.system.details.height.value placeholder=(localize 'Height')}}
                                 <span class="label-details">{{localize "Height"}}</span>
                             </div>
-
-                            <div class="headerInput col two">
+                            <div class="headerInput col third">
                                 {{formInput systemFields.details.fields.weight.fields.value value=document.system.details.weight.value placeholder=(localize 'Weight')}}
                                 <span class="label-details">{{localize "Weight"}}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col morph">
-                        <div class="col row-section">
-                            <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.socialstate.fields.value value=document.system.details.socialstate.value placeholder=(localize 'Socialstate')}}
-                                <span class="label-details">{{localize "Socialstate"}}</span>
-                            </div>
+                        <div class="col row-section">                            
                             <div class="headerInput col two">
                                 {{formInput systemFields.details.fields.Home.fields.value value=document.system.details.Home.value placeholder=(localize 'Home')}}
                                 <span class="label-details">{{localize "Home"}}</span>
+                            </div>
+                            <div class="headerInput col two">
+                                {{formInput systemFields.details.fields.socialstate.fields.value value=document.system.details.socialstate.value placeholder=(localize 'Socialstate')}}
+                                <span class="label-details">{{localize "Socialstate"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
@@ -62,13 +53,14 @@
                                 <span class="label-details">{{localize "Eye_color"}}</span>
                             </div>
                         </div>
-                        <div class="col row-section">
-                            <div class="headerInput col">
-                                {{formInput systemFields.details.fields.distinguishingmark.fields.value value=document.system.details.distinguishingmark.value placeholder=(localize 'Distinguishing_mark')}}
-                                <span class="label-details">{{localize "Distinguishing_mark"}}</span>
-                            </div>
-
+                        
+                    </div>
+                    <div class="col row-section">
+                        <div class="headerInput col">
+                            {{formInput systemFields.details.fields.distinguishingmark.fields.value value=document.system.details.distinguishingmark.value placeholder=(localize 'Distinguishing_mark')}}
+                            <span class="label-details">{{localize "Distinguishing_mark"}}</span>
                         </div>
+
                     </div>
 
                 </div>

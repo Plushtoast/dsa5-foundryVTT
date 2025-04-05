@@ -5,12 +5,12 @@
     <div class="actor-tradition-artefacts groupbox">
         <div class="row-section wrap inverseRowtable">
             <div class="col">
-                <div class="row-section skills table-title">
+                <div class="row-section skills table-title lineheight">
                     <div class="title-type col third">{{localize "SpecCategory.staff"}}</div>
                     <div class="col third center">{{localize "Category"}}</div>
                     <div class="title-volume col third center">{{localize "volume"}}</div>
-                    <div class="col ten center">
-                        <a data-action="selectTraditionartifact" class="very-small" data-tooltip="SHEET.selectTraditionartifact"><i class="fas fa-plus"></i></a>
+                    <div class='col ten center flexAlignCenter flexrow'>
+                        <button type="button" data-action='selectTraditionartifact' class='icon fas fa-plus noBorder dsadesignbutton very-small' data-tooltip='SHEET.selectTraditionartifact'></button>
                     </div>
                 </div>
             </div>
@@ -58,10 +58,8 @@
         </div>
         <div class="col morph">
 
-            <div class="actor-tradition groupbox">
-                <div class="actor-tradition-item">
-                    {{formGroup systemFields.tradition.fields.magical value=document.system.tradition.magical localize=true}}
-                </div>
+            <fieldset class="actor-tradition">
+                <legend class="autosizing">{{formInput systemFields.tradition.fields.magical value=document.system.tradition.magical placeholder=(localize 'tradition')}}</legend>
                 <div class="actor-tradition-item">
                     {{formGroup systemFields.guidevalue.fields.magical value=document.system.guidevalue.magical localize=true}}
                 </div>
@@ -71,7 +69,7 @@
                 <div class="actor-tradition-item">
                     {{formGroup systemFields.energyfactor.fields.magical value=document.system.energyfactor.magical localize=true}}
                 </div>
-            </div>
+            </fieldset>
         </div>
     </div>
 </div>

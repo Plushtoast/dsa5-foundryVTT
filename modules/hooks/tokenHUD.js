@@ -61,7 +61,7 @@ class SwarmDialog extends foundry.applications.api.DialogV2 {
 }
 
 function swarmHud(tooltip) {
-  return `<div class="control-icon" data-action="swarm"><i class="fas fa-locust" data-tooltip="${tooltip}" width="36" height="36"></div>`;
+  return `<button type="button" class="control-icon" data-action="swarm" data-tooltip="${tooltip}"><i class="fas fa-locust" width="36" height="36"></button>`;
 }
 
 async function splitSwarm(actor, token) {
@@ -80,7 +80,7 @@ async function splitSwarm(actor, token) {
         label: 'ok',
         default: true,
         callback: async (event, button, dialog) => {
-          const split = button.form.elements.newswarmsplit.valueAsNumber;
+          const split = button.form.elements.newswarmsplit.value;
           const newtokenData = token.toObject();
           delete newtokenData._id;
 

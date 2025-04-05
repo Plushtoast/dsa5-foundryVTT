@@ -8,18 +8,16 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     position: {
       width: 784,
     },
-    classes: ['dsa5', 'actor', 'character-sheet'],
+    classes: ['character-sheet'],
   };
 
   static PARTS = {
     header: {
-      template: 'systems/dsa5/templates/actors/parts/actor-header.hbs',
-    },
-    headAttributes: {
-      template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
+      template: 'systems/dsa5/templates/actors/actorv2/header.hbs',
+      templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/actor-header.hbs'],
     },
     tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs'      
     },
     main: {
       template: 'systems/dsa5/templates/actors/actor-main.hbs',

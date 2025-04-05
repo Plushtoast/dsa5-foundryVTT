@@ -1,0 +1,62 @@
+<div class='avatar-container {{ifThen prepare.magic.hasSpells 'enSpell' ''}} {{ifThen prepare.magic.hasPrayers 'enPrayer' ''}} {{ifThen document.system.status.temporaryLeP.max 'enTemp' ''}}'>
+  <div class='circular-bar kap-bar' data-tooltip='karmaenergy' style='--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}};'></div>
+  <div class='circular-bar asp-bar' data-tooltip='astralenergy' style='--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}};'></div>
+  <div
+    class='circular-bar temphealth-bar'
+    data-tooltip='BRAWLING.temporary'
+    style='--a: {{document.system.status.temporaryLeP.value}}; --b: {{document.system.status.temporaryLeP.max}};'
+  ></div>
+  <div class='circular-bar health-bar' data-tooltip='wounds' style='--a: {{document.system.status.wounds.value}}; --b: {{document.system.status.wounds.max}};'></div>
+
+  <div class="blurContainer" style="--img-url: url('{{document.img}}')">
+    <img src='{{document.img}}' alt='Avatar' class='avatar-image' data-action='editImage' />
+  </div>
+  
+  <div class='avatar-input'>
+    <div class='flexrow'>
+      <div>
+        <div class='input-stat wounds'>
+          {{formInput systemFields.status.fields.wounds.fields.value value=document.system.status.wounds.value tooltip='Current'}}
+          <span data-tooltip='max'> / {{document.system.status.wounds.max}}</span>
+        </div>
+      </div>
+
+      <button type='button' data-char='regenerate' data-action='chRegenerate' class='fas fa-moon icon item flexgrow-0' data-mod='regenerate' data-tooltip='regenerate'></button>
+
+      <div class='right'>
+        <div class='input-stat asp'>
+          {{#if prepare.magic.hasSpells}}
+          {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip='Current'}}
+          <span data-tooltip='max'>/ {{document.system.status.astralenergy.max}}</span>
+          {{/if}}
+        </div>
+        
+        <div class='input-stat kap kap1'>
+          {{#if (and prepare.magic.hasPrayers (not prepare.magic.hasSpells))}}
+          {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip='Current'}}
+          <span data-tooltip='max'>/ {{document.system.status.karmaenergy.max}}</span>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='avatar-input upper'>
+    <div class='flexrow'>
+      <div>
+        <div class='input-stat templep'>
+          {{formInput systemFields.status.fields.temporaryLeP.fields.value value=document.system.status.temporaryLeP.value tooltip='Current'}}
+          <span data-tooltip='max'>/ {{document.system.status.temporaryLeP.max}}</span>
+        </div>
+      </div>
+
+      <div class='right'>
+        <div class='input-stat kap kap2'>
+          {{#if (and prepare.magic.hasPrayers prepare.magic.hasSpells)}}      
+          {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip='Current'}}
+          <span data-tooltip='max'>/ {{document.system.status.karmaenergy.max}}</span>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
