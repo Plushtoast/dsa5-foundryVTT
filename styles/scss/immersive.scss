@@ -40,6 +40,14 @@
         background: none;
     }
 
+    .patchviewer {
+        h1 {
+            a {
+                color: black;
+            }
+        }
+    }
+
     .chat-message .message-header {
         padding: 10px 5px;
         background-image: url('../../icons/backgrounds/kapitelstart.webp');
@@ -82,6 +90,9 @@
     }
 
     .window-app {
+        background: none;
+        box-shadow: none;
+
         &.actor .window-content {
             box-shadow: 0 0 20px #000;
         }
@@ -162,9 +173,6 @@
             bottom: 2px;
             content: '';
         }
-
-        background: none;
-        box-shadow: none;
 
         &:not(.monarch) .window-header,
         &:after {
@@ -655,6 +663,10 @@
         }
 
         h3 {
+            border: none;
+            position: relative;
+            overflow: visible;
+
             &:before {
                 background-image: url('../../icons/backgrounds/dsahead.webp'), url('../../icons/backgrounds/dsamid.webp');
                 background-size: 100% 30px, 100% calc(100% - 30px);
@@ -669,9 +681,7 @@
                 background-position: center 0px, center 30px;
             }
 
-            border: none;
-            position: relative;
-            overflow: visible;
+
         }
 
         #player-list {

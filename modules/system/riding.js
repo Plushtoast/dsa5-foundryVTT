@@ -55,6 +55,7 @@ export default class Riding {
           _id: horseId,
           x: data.x ?? token.x,
           y: data.y ?? token.y,
+          rotation: data.rotation ?? token.rotation,
         },
       ]);
     }

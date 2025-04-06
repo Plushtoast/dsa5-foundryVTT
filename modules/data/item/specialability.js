@@ -48,7 +48,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
   static _migrateData(source) {
     super._migrateData(source);
 
-    if (typeof source.step.canNotMultiply === 'string') {
+    if (typeof source.step?.canNotMultiply === 'string') {
       source.step.canNotMultiply = source.step.canNotMultiply === 'true'
     }
   }

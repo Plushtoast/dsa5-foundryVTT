@@ -36,7 +36,7 @@ export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, 
   static _migrateData(source) {
     super._migrateData(source);
 
-    if(!source.group.value) source.group.value = Object.keys(DSA5.skillGroups)[0];
+    if(!source.group?.value) source.group.value = Object.keys(DSA5.skillGroups)[0];
   }
 
   async getSheetData(data) {

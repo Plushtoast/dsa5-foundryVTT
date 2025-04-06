@@ -58,7 +58,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
   static _migrateData(source) {
     super._migrateData(source);
 
-    if (source.reach.shieldSize && !DSA5.shieldSizes[source.reach.shieldSize]) {
+    if (source.reach?.shieldSize && !DSA5.shieldSizes[source.reach.shieldSize]) {
       source.reach.shieldSize = 'medium';
     }
   }

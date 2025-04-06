@@ -123,6 +123,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
       conditionToggle: this._conditionToggle,
       traditionDelete: this._deleteTraditionArtifact,
+      swapWeaponHand: this._swapWeaponHand,
       selectTraditionartifact: this._selectTraditionArtifact,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
@@ -194,9 +195,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   };
 
   _saveSearchFields() {
-    if (this.form === null) return;
+    if (this.element === null) return;
 
-    const html = $(this.form);
+    const html = $(this.element);
     this.searchFields = {
       talentFiltered: html.find('.filterTalents').hasClass('filtered'),
       searchText: html.find('.talentSearch').val(),
@@ -206,7 +207,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   _restoreSeachFields() {
     if (this.searchFields != undefined) {
-      const html = $(this.form);
+      const html = $(this.element);
       if (this.searchFields.talentFiltered) {
         html.find('.filterTalents').addClass('filtered');
         html.find('.allTalents').removeClass('showAll');
@@ -232,9 +233,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _saveCollapsed() {
-    if (this.form === null) return;
+    if (this.element === null) return;
 
-    const html = $(this.form);
+    const html = $(this.element);
     this.collapsedBoxes = [];
     this.openDetails = [];
     let boxes = html.find('.ch-collapse i');
@@ -247,7 +248,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _setCollapsed() {
-    const html = $(this.form);
+    const html = $(this.element);
     if (this.collapsedBoxes) {
       let boxes = html.find('.ch-collapse i');
       for (let i = 0; i < boxes.length; i++) {
@@ -593,12 +594,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }
 
-  async swapWeaponHand(ev, item = undefined) {
-    const itemId = item?.id || this._getItemId(ev.currentTarget);
+  static _swapWeaponHand(ev, target) {
+    this.swapWeaponHand(target);
+  }
+
+  async swapWeaponHand(target, item = undefined) {
+    const itemId = item?.id || this._getItemId(target);
     item = item || this.actor.items.get(itemId);
 
     if (!['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))) {
-      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.wrongGrip': !item.system.worn.wrongGrip }]);
+      await this.actor.items.get(itemId).update({ 'system.worn.wrongGrip': !item.system.worn.wrongGrip });      
     }
   }
 
@@ -719,7 +724,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _schipUdate(ev, target) {
     let val = Number(target.dataset.val);
-    if (val == 1 && $(this.form).find('.fullSchip').length == 1) val = 0;
+    if (val == 1 && $(this.element).find('.fullSchip.ownSchips').length == 1) val = 0;
+
+    console.log(val, $(this.element).find('.fullSchip.ownSchips').length)
 
     this.actor.update({ 'system.status.fatePoints.value': val });
   }
@@ -826,7 +833,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   verticalTabs(ev) {
-    console.log("veritcalled")
     const dataset = ev.currentTarget.dataset;
     this.changeTab(dataset.tab, dataset.group)
     ev.currentTarget.closest('nav').querySelectorAll('button').forEach((el) => {
@@ -840,6 +846,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
     const html = $(this.element);
     resizeListener(html.find('.window-content'))
 
@@ -962,8 +969,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!this.isEditable) return;
 
     html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
-
-    html.find('.swapWeaponHand').on('click', (ev) => this.swapWeaponHand(ev));
 
     html.find('.ammo-selector').on('change', async (ev) => {
       ev.preventDefault();
@@ -1230,7 +1235,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _filterTalents(tar) {
     if (tar.val() != undefined) {
       let val = tar.val().toLowerCase().trim();
-      let talents = $(this.form).parent().find('.allTalents');
+      let talents = $(this.element).parent().find('.allTalents');
       talents.find('.item, .table-header, .table-title').removeClass('filterHide');
       talents
         .addClass('showAll')
@@ -1249,7 +1254,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _filterConditions(tar) {
     if (tar.val() != undefined) {
       const val = tar.val().toLowerCase().trim();
-      const conditions = $(this.form).find('.statusEffectMenu li:not(.search)');
+      const conditions = $(this.element).find('.statusEffectMenu li:not(.search)');
       conditions.removeClass('filterHide');
       conditions
         .filter(function () {

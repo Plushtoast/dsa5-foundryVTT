@@ -6,11 +6,13 @@
             <div class="col morph lineheight searchbox-spacer">
             </div>
             <div class="col morph row-section">
-                <div class="col eighty lineheight searchbox-input">
+                <div class="col ten center lineheight">
                     <i class="fas fa-search"></i>
+                </div>
+                <div class="col eighty lineheight searchbox-input">
                     <input type="search" class="talentSearch" placeholder="{{localize 'searchTalents'}}" />
                 </div>
-                <div class="col five flexrow flexAlignCenter lineheight searchbox-filter" data-tooltip="TT.onlySkilled">
+                <div class="col ten flexrow flexAlignCenter lineheight searchbox-filter" data-tooltip="TT.onlySkilled">
                     <button type="button" class="dsadesignbutton noBorder" data-action="filterTalents"><i class="fas fa-filter filterTalents"></i></button>
                 </div>
             </div>
@@ -29,8 +31,8 @@
                     <div class="col sixty">
                         {{localize "skill"}}
                     </div>
-                    <div class="headline-test col third">{{localize "probe"}}</div>
-                    <div class="col ten" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                    <div class="headline-test col third center">{{localize "probe"}}</div>
+                    <div class="col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 </div>
                 {{#each this as |item i|}}
                 <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
@@ -39,7 +41,7 @@
                         <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                         <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a> {{/if}}
                     </div>
-                    <div class="skill-props col third">
+                    <div class="skill-props col third center">
                         <a class="skill-select" data-action="skillSelect">
                             <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                             <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
@@ -74,8 +76,8 @@
                         <div class="col sixty">
                             {{localize "skill"}}
                         </div>
-                        <div class="headline-test col third">{{localize "probe"}}</div>
-                        <div class="col ten" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                        <div class="headline-test col third center">{{localize "probe"}}</div>
+                        <div class="col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                     </div>
                     {{#each this as |item i|}}
                     <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
@@ -84,7 +86,7 @@
                             <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
                             <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
                         </div>
-                        <div class="col third">
+                        <div class="col third center">
                             <a class="skill-select" data-action="skillSelect">
                                 <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                                 <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>

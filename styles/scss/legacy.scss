@@ -17,6 +17,13 @@
 
     .maskfield {
         position:relative;
+        padding: 10px 20px 30px 20px;
+        color: white;
+        border-image: url('../../icons/backgrounds/maskfield.webp');
+        border-image-width: 15px;
+        border-image-slice: 20 20 fill;
+        border-image-repeat: round;
+        
         &:after {
           content: '';
           pointer-events: none;
@@ -31,12 +38,7 @@
           background-size: 150px 50px;
           background-position: bottom center;
         }    
-        padding: 10px 20px 30px 20px;
-        color: white;
-        border-image: url('../../icons/backgrounds/maskfield.webp');
-        border-image-width: 15px;
-        border-image-slice: 20 20 fill;
-        border-image-repeat: round;
+        
     
         .editor .mce-content-body{
           color: white

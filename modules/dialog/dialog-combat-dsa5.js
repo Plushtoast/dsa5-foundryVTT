@@ -65,7 +65,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static DEFAULT_OPTIONS = {
     position: {
-        width: 700
+        width: 740
     },
     window: {
         resizable: true,
@@ -125,7 +125,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const html = $(this.element)
     let specAbs = html.find('.specAbs');
-    specAbs.mouseenter((ev) => {
+    specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
       this.setCombatSpecTooltip(el);
       if (el.getElementsByClassName('hovermenu').length == 0) {
@@ -139,7 +139,7 @@ export default class DSA5CombatDialog extends DialogShared {
         el.appendChild(div);
       }
     });
-    specAbs.mouseleave((ev) => {
+    specAbs.on('mouseleave', (ev) => {
       let e = ev.toElement || ev.relatedTarget;
       if (e.parentNode == this || e == this) return;
 

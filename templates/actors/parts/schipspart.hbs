@@ -1,33 +1,28 @@
 {{#if (and prepare.schips.length prepare.groupschips.length)}}
-  <div class='row-schips row-section'>
-    
-    <div class='col two center' data-tooltip='fatePoints'>
-      {{localize 'CHARAbbrev.fatePoints'}}
-      {{#each prepare.schips as |item i|}}
-        <a data-action='schipUpdate' class='schip {{item.cssClass}}' data-val='{{item.value}}'></a>
-      {{/each}}
+  <div class='row-schips center flexrow flexAlignCenter lineheight'>
+    <div class='flexgrow-0'>
+      <label>{{localize 'CHARAbbrev.fatePoints'}}</label>
     </div>
-    <div class='col two center' data-tooltip='CHARAbbrev.groupFatePoints'>
-      {{localize 'CHARAbbrev.gfatePoints'}}
-      {{#each prepare.groupschips as |item i|}}
-        <a class='schip {{item.cssClass}}' data-val='{{item.value}}'></a>
-      {{/each}}
-    </div>
+    {{#each prepare.schips as |item i|}}
+      <button type="button" data-action='schipUpdate' data-tooltip='fatePoints' class='ownSchips noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.value}}'></button>
+    {{/each}}
+    <div class='flexgrow-0 margin-left-20'>
+      <label>{{localize 'CHARAbbrev.gfatePoints'}}</label>
+    </div>      
+    {{#each prepare.groupschips as |item i|}}
+      <button type="button" data-tooltip='CHARAbbrev.groupFatePoints' class='noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.value}}'></button>
+    {{/each}}
   </div>
 {{else if prepare.schips.length}}
-  <div class='row-schips row-section'>
-    <div class='col center' data-tooltip='fatePoints'>
-      {{#each prepare.schips as |item i|}}
-        <a data-action='schipUpdate' class='schip {{item.cssClass}}' data-val='{{item.value}}'></a>
-      {{/each}}
-    </div>
+  <div class='row-schips flexrow flexAlignCenter lineheight' data-tooltip='fatePoints'>
+    {{#each prepare.schips as |item i|}}
+      <button type="button" data-action='schipUpdate' class='ownSchips noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.value}}'></button>
+    {{/each}}
   </div>
 {{else if prepare.groupschips.length}}
-  <div class='row-schips row-section'>
-    <div class='col center' data-tooltip='CHARAbbrev.groupFatePoints'>
-      {{#each prepare.groupschips as |item i|}}
-        <a class='schip {{item.cssClass}}' data-val='{{item.value}}'></a>
-      {{/each}}
-    </div>
+  <div class='row-schips flexrow flexAlignCenter lineheight' data-tooltip='CHARAbbrev.groupFatePoints'>
+    {{#each prepare.groupschips as |item i|}}
+      <button type="button" class='noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.value}}'></button>
+    {{/each}}
   </div>
 {{/if}}

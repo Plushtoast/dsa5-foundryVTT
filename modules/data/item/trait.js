@@ -53,6 +53,9 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
     if (source.AsPCost?.value && isNaN(source.AsPCost.value)) {
       source.AsPCost.value = Number(source.AsPCost.value) || 0;
     }
+    if (source.reloadTime?.value && isNaN(source.reloadTime.value)) {
+      source.reloadTime.value = Number(source.reloadTime.value) || 1;
+    }
   }
 
   async getSheetData(data) {

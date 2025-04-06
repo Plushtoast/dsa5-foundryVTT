@@ -7,7 +7,7 @@
     "Attribute-hard": "Very Difficult (-4)",
     "Attribute-vhard": "Extremely Difficult (-6)",
     "char": "Attribute",
-    "derivedStats": "Derived stats",
+    "derivedStats": "Base values",
     "leftClick": "Left-<i class=\"fas fa-computer-mouse\"></i>",
     "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",
     "CHAR": {
@@ -1278,6 +1278,8 @@
         "groupcheck": "Group Check",
         "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
     },
+    "TYPES.Combat.dsacombat": "Combat (TDE)",
+    "TYPES.Combatant.dsacombatant": "Combatant (TDE)",
     "TYPES.Item.book": "Book",
     "TYPES.Item.trap": "Trap",
     "TYPES.Item.advantage": "Advantage",

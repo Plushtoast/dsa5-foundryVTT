@@ -72,9 +72,11 @@
             </div>
             {{/if}}
         </div>
-        <div class="col zerofive very-small center onlyMultiColumn">
-            <a data-action="itemDropdown" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{#if item.ammoMax}}
-            <a data-action="item-swapMag" data-tooltip="SHEET.swapMag"><i class="fas fa-retweet"></i></a> {{/if}}
+        <div class="col zerofive very-small center onlyMultiColumn flexrow very-small">
+            <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button> 
+            {{#if item.ammoMax}}
+            <button type="button" data-action="item-swapMag" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button> 
+            {{/if}}
         </div>
     </div>
     <div class="row-section lineheight expandDetails {{item.detailed}}">

@@ -42,6 +42,14 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
     });
   }
 
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if (source.reloadTime?.value && isNaN(source.reloadTime.value)) {
+      source.reloadTime.value = Number(source.reloadTime.value) || 1;
+    }
+  }
+
   async getSheetData(data) {
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();

@@ -63,8 +63,9 @@ export default class SpellTemplate extends DSADataModel {
 
     const boolFields = ['canChangeCastingTime.value', 'canChangeCost.value', 'canChangeRange.value', 'variableBaseCost'];
     for (const field of boolFields) {
-      if (typeof source[field] === 'string') {
-        source[field] = source[field] === 'true';
+      const prop = foundry.utils.getProperty(source, field)
+      if (typeof prop === 'string') {
+        foundry.utils.setProperty(source, field, prop === 'true');
       }
     }
   }

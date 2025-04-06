@@ -1,9 +1,9 @@
-<fieldset class='actor-purse'>
+<fieldset class='actor-purse gap0px'>
   <legend>{{localize 'purse'}} {{#if prepare.moneyWeight}}<small>{{numberFormat prepare.moneyWeight decimals=2}} <i class='fas fa-anchor'></i></small>{{/if}}</legend>
   {{#grouped_each 4 prepare.money.coins}}
     <div class='row-section table-title'>
       {{#each this}}
-        <div class='col four center item' data-item-id='{{_id}}'>
+        <div class='col four center item lineheight' data-item-id='{{_id}}'>
           <a data-action='itemEdit' class='withContext'>{{localize name}}</a>
         </div>
       {{/each}}

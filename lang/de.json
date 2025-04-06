@@ -447,7 +447,7 @@
     "Players": "Spieler",
     "poisonType": "Art",
     "plant": "Pflanze",
-    "derivedStats": "Abgeleitete Werte",
+    "derivedStats": "Basiswerte",
     "speciesModifier": "Körperbau ({species})",
     "PartSuccess": "Teilerfolg",
     "place": "Ort",
@@ -1328,6 +1328,8 @@
             "0": "nie"
         }
     },
+    "TYPES.Combat.dsacombat": "Kampf (DSA)",
+    "TYPES.Combatant.dsacombatant": "Kämpfer (DSA)",
     "TYPES.Item.book": "Buch",
     "TYPES.Item.trap": "Falle",
     "TYPES.Item.advantage": "Vorteil",

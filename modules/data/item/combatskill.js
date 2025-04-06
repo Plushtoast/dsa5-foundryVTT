@@ -29,7 +29,7 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate) 
   static _migrateData(source) {
     super._migrateData(source);
 
-    if (typeof source.weapontype.value === 'string') {
+    if (typeof source.weapontype?.value === 'string') {
       source.weapontype.value = {
         melee: 0,
         range: 1,
