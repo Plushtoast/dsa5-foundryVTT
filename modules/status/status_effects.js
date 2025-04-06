@@ -313,7 +313,7 @@ export default class DSA5StatusEffects {
 
         if (value != 0) {
           result.push({
-            name: ef.name,
+            name: game.i18n.localize(ef.name),
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor),
             source,
