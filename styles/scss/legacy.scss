@@ -1,4 +1,5 @@
 .dsa5-legacy {
+    .application,
     .window-app {
         &.dsajournal .window-content {
             background-image: url('../../icons/backgrounds/journalentry.webp');
@@ -23,7 +24,7 @@
         border-image-width: 15px;
         border-image-slice: 20 20 fill;
         border-image-repeat: round;
-        
+
         &:after {
           content: '';
           pointer-events: none;
@@ -68,6 +69,7 @@
         text-align: left;
     }
 
+    .application,
     .window-app {
         &.bookWizardsheet .window-content {
             background: url('../../icons/backgrounds/sheet2.webp') no-repeat;

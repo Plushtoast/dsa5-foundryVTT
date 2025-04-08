@@ -89,9 +89,11 @@
         color: white;
     }
 
+    .application,
     .window-app {
         background: none;
         box-shadow: none;
+        border: none;
 
         &.actor .window-content {
             box-shadow: 0 0 20px #000;

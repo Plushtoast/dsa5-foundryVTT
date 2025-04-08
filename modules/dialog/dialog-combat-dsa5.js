@@ -109,13 +109,24 @@ export default class DSA5CombatDialog extends DialogShared {
       tp: dataset.tpbonus,
       dm: dataset.dmmalus,
     };
+    const icons = {
+      pa: 'fas fa-shield-alt',
+      at: 'fas fa-swords',
+      tp: 'fas fa-heart',
+      dm: 'fas fa-balance-scale',
+    }
 
     const label = [];
-    if (dataset.step > 1) label.push(`${dataset.step} x  `);
+    if (dataset.step > 1) label.push(`<li class="flexrow center"><div>${dataset.step} <i class="fas fa-xmark"></i></div></li>`);
 
-    for (let key of Object.keys(keys)) if (keys[key] != 0) label.push(`${game.i18n.localize(`LocalizedAbilityModifiers.${key}`).toUpperCase()}: ${keys[key]}`);
+    for (let key of Object.keys(keys)) {
+      if (keys[key] == 0) continue;
+        
+      const icon = `<i class="${icons[key]}"></i>`;
+      label.push(`${icon} ${game.i18n.localize(`LocalizedAbilityModifiers.${key}`).toUpperCase()}: ${keys[key]}`);
+    }
 
-    const tooltip = label.join(' ');
+    const tooltip = `<ul class="effects-tooltip plain"><li>${label.join('</li><li>')}</li></ul>`;
     $('#tooltip').html(tooltip);
     el.dataset.tooltip = tooltip;
   }

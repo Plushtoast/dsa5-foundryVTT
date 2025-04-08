@@ -894,9 +894,12 @@ class ConfigureTokenHotbar extends FormAppv2 {
   async _onRender(context, options) {
     await super._onRender((context, options));
     const html = $(this.element);
-    html.find('select, input').on('change', async (ev) => {
+    html.find('select, input, range-picker').on('change', async (ev) => {
+      if(!ev.currentTarget.name) return;
+
+
       const name = ev.currentTarget.name.split('.');
-      let val = ev.currentTarget.dataset.dtype == 'Number' ? Number(ev.currentTarget.value) : ev.currentTarget.value;
+      let val = ev.currentTarget.value;
       if (ev.currentTarget.type == 'checkbox') val = ev.currentTarget.checked;
 
       await game.settings.set(name[0], name[1], val);
@@ -904,11 +907,12 @@ class ConfigureTokenHotbar extends FormAppv2 {
     });
   }
 
-  async _onMasterFunctionClicked(ev, target) {
+  static async _onMasterFunctionClicked(ev, target) {
     const id = target.dataset.id;
     const setting = game.settings.get('dsa5', 'enableMasterTokenFunctions');
     setting[id] = !setting[id];
     $(target).toggleClass('deactivated', setting[id]);
+    console.log(setting[id]);
     game.dsa5.apps.tokenHotbar.gmItems.find((x) => x.id == id).disabled = setting[id];
     await game.settings.set('dsa5', 'enableMasterTokenFunctions', setting);
   }

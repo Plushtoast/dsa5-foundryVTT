@@ -12,7 +12,7 @@
 
       </div>
       <div class='col five' data-tooltip='MASTER.globalModsHint'>
-        <button type="button" data-action='addGlobalMod'><i class='fas fa-plus'></i></button>
+        <button type="button" class="icon fas fa-plus" data-action='addGlobalMod'></button>
       </div>
     </div>
     <div class='col morph'>
@@ -29,8 +29,8 @@
               {{item.value}}
             </div>
             <div class='col five flexrow'>
-              <button type="button" data-action='editGlobalMod' data-key='{{i}}' data-tooltip='SHEET.EditItem'><i class='fas fa-edit'></i></button>
-              <button type="button" data-action='removeGlobalMod' data-key='{{i}}' data-tooltip='SHEET.DeleteItem'><i class='fas fa-trash'></i></button>
+              <button type="button" class='icon fas fa-edit' data-action='editGlobalMod' data-key='{{i}}' data-tooltip='SHEET.EditItem'></button>
+              <button type="button" class='icon fas fa-trash' data-action='removeGlobalMod' data-key='{{i}}' data-tooltip='SHEET.DeleteItem'></button>
             </div>
           </div>
           <div class='row-section wrap'>
@@ -78,26 +78,22 @@
       />
       <p class='hint'>{{localize 'MASTER.lightSightCompensationEnabledTooltip'}}</p>
     </div>
-    <div class='form-group'>
-      <label>{{localize 'MASTER.threshold'}}</label>
-      <div class='form-fields'>
-        <button type='button' data-action='resetSightThresholds' data-tooltip='MERCHANT.clearInventory'><i class='fas fa-undo'></i></button>
-      </div>
-      <p class='hint'>{{localize 'MASTER.sightautomationTooltip'}}</p>
-    </div>
-    {{#each sceneConfig.visions as |item i|}}
-      <div class='row-section lineheight'>
-        <div class='col fourty table-title'>
+    <fieldset>
+      <legend>{{localize 'MASTER.threshold'}} <a class='icon fas fa-undo' data-action='resetSightThresholds' data-tooltip='MERCHANT.clearInventory'></a></legend>
+
+      {{#each sceneConfig.visions as |item i|}}
+        <div class='form-group'>
           <label>{{item.label}}</label>
+          <div class='form-fields'>
+            <input type='range' min='0' max='1.05' step='0.05' class='changeSightTreshold' name='changeSightTreshold' data-index={{i}} value='{{item.value}}' />
+            <span class='range-value'>{{item.value}}</span>
+          </div>
         </div>
-        <div class='col two'>
-          <input type='range' min='0' max='1.05' step='0.05' class='changeSightTreshold' name='changeSightTreshold' data-index={{i}} value='{{item.value}}' />
-        </div>
-        <div class='col ten center'>
-          <span class='range-value'>{{item.value}}</span>
-        </div>
-      </div>
-    {{/each}}
+      {{/each}}
+      
+      <p class='hint'>{{localize 'MASTER.sightautomationTooltip'}}</p>
+    </fieldset>
+    
     {{{lightButton}}}
   </fieldset>
   <fieldset>

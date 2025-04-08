@@ -183,11 +183,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       tabs: [
         { id: 'skills', label: 'skills', icon: 'fas fa-equals' },
         { id: 'combat', label: 'Combat', icon: 'fas fa-swords' },
-        { id: 'magic', label: 'Magic', icon: 'fas fa-wand-magic' },
+        { id: 'magic', label: 'Magic', icon: 'fas fa-hat-wizard' },
         { id: 'religion', label: 'Religion', icon: 'fas fa-ankh' },
         { id: 'main', label: 'attributes', icon: 'fas fa-user' },
         { id: 'inventory', label: 'TYPES.Item.equipment', icon: 'fas fa-suitcase' },
-        { id: 'status', label: 'status', icon: 'fas fa-temperature-full'  },
+        { id: 'status', label: 'status', icon: 'fas fa-info'  },
         { id: 'notes', label: 'Notes', icon: 'fas fa-book-open' },
       ],
       initial: 'skills',
@@ -725,8 +725,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static _schipUdate(ev, target) {
     let val = Number(target.dataset.val);
     if (val == 1 && $(this.element).find('.fullSchip.ownSchips').length == 1) val = 0;
-
-    console.log(val, $(this.element).find('.fullSchip.ownSchips').length)
 
     this.actor.update({ 'system.status.fatePoints.value': val });
   }

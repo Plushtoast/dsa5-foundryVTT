@@ -5,7 +5,7 @@ const { mergeObject } = foundry.utils;
 
 export default class SpeciesWizard extends WizardDSA5 {
   get title() {
-    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.species')} ${this.culture.name}`, })
+    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.species')} ${this.species.name}`, })
   }
 
   static PARTS = {
