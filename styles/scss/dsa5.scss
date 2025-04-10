@@ -3,6 +3,7 @@
 :root {
   --border-color: #736953a6;
   --bg-color: #e1d3c6;
+  --bg-contrast-color: #333333;
   --button-color: #532902e7;
   --sheet-bg: #2e2c2a15;
   --sheet-border: #968678;
@@ -673,6 +674,10 @@ select[multiple] option {
 
 .flexgrow-0 {
   flex-grow: 0;
+}
+
+.flex-start {
+  align-self: flex-start;
 }
 
 .chat-buttons {
@@ -2501,7 +2506,6 @@ input[type='search'] {
 .chatButton,
 .roll-button {
   border: 1px solid var(--border-color);
-  padding: 2px;
   border-radius: 3px;
   box-shadow: 0 0 12px #6e3b018f inset;
   display: inline-block;
@@ -2865,6 +2869,7 @@ input[type='checkbox'].smallBox {
   word-break: break-all;
   box-shadow: none;
   background: var(--bg-color);
+  color: var(--bg-contrast-color);
   display: inline;
 }
 
@@ -3128,6 +3133,10 @@ select.noAppearance {
 .scrollable {
   overflow-y: auto;
   max-height: 100%;
+}
+
+.height100 {
+  height: 100%;
 }
 
 .adventureWizard {
@@ -4124,6 +4133,9 @@ select.noAppearance {
   }
 }
 
+.innerscrollable {
+  flex: 1 1 auto;
+}
 .noscrollWizard .content {
   overflow-y: hidden;
 }

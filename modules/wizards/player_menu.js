@@ -224,11 +224,37 @@ export default class PlayerMenu extends DefaultAppv2 {
     html.find('.moreModifiers').on('change', (ev) => {
       const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find((x) => x.name == ev.currentTarget.dataset.name);
       mod.selected = $(ev.currentTarget).val();
-    });
+    });    
+
+    new foundry.applications.ux.DragDrop.implementation({
+      dropSelector: '.window-content',
+      permissions: {
+        drop: this._canDragDrop.bind(this)
+      },
+      callbacks: {
+        drop: this._onDrop.bind(this)
+      }
+    }).bind(this.element);
 
     for (let app of this.subApps) {
       app._onRender(html);
     }
+  }
+
+  _canDragDrop() {
+    return true;
+  }
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    
+    const subApp = this.subApps.find((x) => x.tabName == partId);
+    if (subApp) {
+      const data = await subApp._getData(context);
+      mergeObject(context, data);
+    }
+
+    return context;
   }
 
   async openRules(ev) {
@@ -327,13 +353,13 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   static DEFAULT_OPTIONS = {
-    classes: ['dsa5', 'largeDialog', 'playerMenu', 'sheet'],
+    classes: ['dsa5', 'largeDialog', 'playerMenu', 'sheet', 'standard-form'],
     window: {
       title: 'PLAYER.title',
       resizable: true,
     },
     position: {
-      width: 500,
+      width: 570,
       height: 740,
     },
   };
@@ -348,11 +374,25 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   static PARTS = {
-    main: {
-      template: 'systems/dsa5/templates/system/playermenu.hbs',
-      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+    header: {
+      template: 'systems/dsa5/templates/system/playermenu/header.hbs',
+    },
+    tabs: {
+      template: 'systems/dsa5/templates/system/dsatabs.hbs'
+    },
+    elementals: {
+      template: 'systems/dsa5/templates/system/playermenu/summoning.hbs',
+      scrollable: ['']
     },
   };
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    for(let app of this.subApps) {
+      parts[app.tabName] = app.part;
+    }
+    return parts;
+  }
 
   async _onDrop(event) {
     let data;
@@ -370,7 +410,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       return false;
     }
     if (data.documentName == 'Actor') {
-      const actor = game.actors.get(data.id);
+      const actor = data;
 
       if (actor.type == 'creature' || $(event.target).closest('.summoningArea').length > 0) {
         this.conjuration = actor;
@@ -492,33 +532,22 @@ export default class PlayerMenu extends DefaultAppv2 {
       conjurationTypes: this.conjurationData.conjurationTypes,
       canCalculate: DSA5_Utility.moduleEnabled('dsa5-core') && this.actor?.type == 'character',
     });
-    await this.prepareSubApps(data);
     return data;
   }
 
-  prepareTabs() {
-    const tabs = super.prepareTabs();
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
     for (let app of this.subApps) {
-      app.addTab(tabs, this.tabGroups.sheet); 
+      app.addTab(tabs, this.tabGroups.sheet, group); 
     }
     return tabs
   }
-
-  async prepareSubApps(data) {
-    data.subApps = [];
-    for (let app of this.subApps) {
-      const subData = await app.prepareApp(data)
-      subData.cssClass = this.tabGroups.sheet == subData.name ? "active" : "";
-      data.subApps.push();
-    }
-  }
 }
 
-class ConjurationRequest extends DSA5Dialog {
+class ConjurationRequest extends DefaultAppv2 {
   constructor(conjuration, summoner, creationData) {
     super({
-      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },
-      buttons: [],
+      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },      
     });
     this.conjuration = conjuration;
     this.summoner = summoner;
@@ -557,9 +586,9 @@ class ConjurationRequest extends DSA5Dialog {
       resizable: true,
     },
     position: {
-      width: 470,
+      width: 500,
     },
-    classes: ['dsa5', 'largeDialog']
+    classes: ['dsa5', 'largeDialog', 'standard-form']
   };
 
   static PARTS = {
@@ -587,7 +616,7 @@ class ConjurationRequest extends DSA5Dialog {
         changes: modifier.changes,
         duration: {},
         icon: 'icons/svg/aura.svg',
-        label: game.i18n.localize(modifier.name),
+        name: game.i18n.localize(modifier.name),
         flags: {
           dsa5: {
             description: `${game.i18n.localize('PLAYER.conjuration')} ${game.i18n.localize('extensions')}`,
@@ -701,3 +730,5 @@ class ConjurationRequest extends DSA5Dialog {
     });
   }
 }
+
+

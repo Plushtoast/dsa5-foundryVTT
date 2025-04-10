@@ -94,7 +94,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
           label: 'SHEET.PostItem',
           action: 'showItemHead',
         },
-        
       ],
     },
     classes: ['dsa5', 'item', 'item-sheet'],
@@ -175,7 +174,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     const funct = target.dataset.action;
 
     this.wrapperLocked = true;
-    const icon = $(target).find('i');
+    const icon = target.tagName == 'i' ? $(target) : $(target).find('i');
     icon.addClass('fa-spin fa-spinner');
     if (await this[funct]()) return;
 
@@ -308,6 +307,77 @@ class WithEffectsSheet extends ItemSheetdsa5 {
     },
   };
 }
+
+const AdvancableSkill = (superclass) =>
+  class extends superclass {
+    _advancable() {
+      return this.actor;
+    }
+
+    get advanceMin() {
+      return 0;
+    }
+
+    get advanceCategory() {
+      return this.item.system.StF.value;
+    }
+
+    async _refundStep() {
+      const value = this.item.system.talentValue.value;
+      if (value > this.advanceMin) {
+        const cost = DSA5_Utility._calculateAdvCost(value, this.advanceCategory, 0) * -1;
+        await this.item.update({ 'system.talentValue.value': value - 1 });
+        await this.actor._updateAPs(cost);
+        await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value - 1 }, cost);
+        return true;
+      }
+    }
+
+    async _advanceStep() {
+      const value = this.item.system.talentValue.value;
+      const cost = DSA5_Utility._calculateAdvCost(value, this.advanceCategory);
+      if ((await this.actor.checkEnoughXP(cost)) && this._checkMaximumItemAdvancement(value + 1)?.result) {
+        await this.item.update({ 'system.talentValue.value': value + 1 });
+        await this.actor._updateAPs(cost);
+        await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value + 1 }, cost);
+        return true;
+      }
+    }
+
+    get advanceSkill() {
+      return 'LocalizedIDs.exceptionalSkill';
+    }
+
+    _maxAllowedAdvancement(maxBonus) {
+      return this.maxByAttr(maxBonus);
+    }
+
+    _checkMaximumItemAdvancement(newValue) {
+      const maxBonus = AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize(this.advanceSkill)} (${this.item.name})`, false);
+      const max = this._maxAllowedAdvancement(maxBonus);
+      const result = newValue <= max;
+      if (!result)
+        ui.notifications.error('DSAError.AdvanceMaximumReached', {
+          localize: true,
+        });
+
+      return { result, max, maxBonus };
+    }
+
+    maxByAttr(advantageBonus) {
+      return (
+        Math.max(
+          ...[
+            this.actor.system.characteristics[this.item.system.characteristic1.value].value,
+            this.actor.system.characteristics[this.item.system.characteristic2.value].value,
+            this.actor.system.characteristics[this.item.system.characteristic3.value].value,
+          ],
+        ) +
+        2 +
+        advantageBonus
+      );
+    }
+  };
 
 class EffectsEquipmentSheet extends ItemSheetdsa5 {
   static PARTS = {
@@ -442,9 +512,25 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
 
 class TraitSheet extends WithEffectsSheet {}
 
-class CombatSkillSheet extends LocalizerSheet {}
+class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
+  get advanceSkill() {
+    return 'LocalizedIDs.exceptionalCombatTechnique';
+  }
 
-class SkillSheet extends LocalizerSheet {}
+  _maxAllowedAdvancement(maxBonus) {
+    return Math.max(...this.item.system.guidevalue.value.split('/').map((x) => this.actor.system.characteristics[x].value)) + 2 + maxBonus;
+  }
+
+  get advanceMin() {
+    return 6;
+  }
+
+  get advanceCategory() {
+    return this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : this.item.system.StF.value;
+  }
+}
+
+class SkillSheet extends AdvancableSkill(LocalizerSheet) {}
 
 class AggregatedTestSheet extends DragMixin(ItemSheetdsa5) {
   static TABS = {
@@ -1400,7 +1486,37 @@ class ItemSpeciesDSA5 extends NoEffectsSheet {
   };
 }
 
-class SpellSheetDSA5 extends ItemSheetdsa5 {
+class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
+  _maxAllowedAdvancement(maxBonus) {
+    let focusValue = 0;
+    switch (this.item.type) {
+      case 'spell':
+      case 'ritual':
+        for (const feature of this.item.system.feature
+          .replace(/\(a-z äöü-\)/gi, '')
+          .split(',')
+          .map((x) => x.trim())) {
+          if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
+            focusValue = this.maxByAttr(maxBonus);
+            break;
+          }
+        }
+        break;
+      case 'liturgy':
+      case 'ceremony':
+        const aspect = new RegExp(`^${game.i18n.localize('LocalizedIDs.aspectKnowledge')}`);
+        if (
+          this.actor.items
+            .filter((x) => x.type == 'specialability' && aspect.test(x.name))
+            .some((x) => this.item.system.distribution.value.includes(x.name.split('(')[1].split(')')[0]))
+        ) {
+          focusValue = this.maxByAttr(maxBonus);
+        }
+        break;
+    }
+    return Math.max(14 + maxBonus, focusValue);
+  }
+
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/items/item-header.hbs',

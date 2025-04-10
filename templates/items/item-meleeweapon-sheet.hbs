@@ -1,4 +1,4 @@
-<div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}" class="tab">
+<div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}">
     
     {{#if hasAlternateAttacks}}
     <nav class="sheet-tabs tabs">
@@ -12,7 +12,7 @@
             {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs}}
         </div>
         {{#each alternateAttacks as |item key|}}
-        <div class="tab" data-tab="{{key}}" data-group="alternateAttacks" class="tab">
+        <div class="tab" data-tab="{{key}}" data-group="alternateAttacks">
             {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs item systemFields=../systemFields combatskills=../combatskills scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
         </div>
         {{/each}}

@@ -111,7 +111,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
       { key: 'reach', val: `Range-${data.reach.value}`, localizeVal: true },
       { key: 'TYPES.Item.combatskill', val: data.combatskill.value },
     ];
-    if (data.effect.value != '') res.push({ key: 'effect', key: DSA5_Utility.replaceConditions('effect', data.effect.value) });
+    if (data.effect.value != '') res.push({ key: 'effect', val: DSA5_Utility.replaceConditions(data.effect.value) });
 
     return res;
   }

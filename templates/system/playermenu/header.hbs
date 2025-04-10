@@ -1,0 +1,22 @@
+<div class="row-section">
+    <div class="col third center">
+      <img style="width:70px;height:70px" class="profile" src="{{actor.img}}" data-tooltip="{{actor.name}}">
+    </div>
+    <div class="col seventy">
+      <div class="row-section">
+        <div class="col fourty table-title">
+          <h3><b>{{localize "Name"}}:</b></h3>
+        </div>
+
+        <div class="col two">
+          <h3><a class="openChar">{{actor.name}}</a></h3>
+        </div>
+        <div class="col ten center flexrow">
+          {{#if canCalculate}}
+          <button type="button" class="icon showCC fas fa-calculator" data-tooltip="HELP.charApp"></button>
+          {{/if}}
+        </div>
+      </div>
+
+    </div>
+  </div>

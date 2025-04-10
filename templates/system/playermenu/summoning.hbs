@@ -1,0 +1,58 @@
+<div class="tab scrollable {{tabs.elementals.cssClass}}" data-tab="elementals" data-group="{{tabs.elementals.group}}" class="tab elementals">
+    <div class="row-section lineheight">
+    <div class="col fourty table-title">
+        <label>{{localize "Category"}}</label>
+    </div>
+    <div class="col two">
+        <select name="conjurationType" class="conjurationData" data-refresh="true">
+        {{selectOptions conjurationTypes selected=conjurationData.conjurationType}}
+        </select>
+    </div>
+    <div class="col ten center flexrow">
+        <button type="button" class="icon fas fa-book-open ruleLink"></button>
+    </div>
+    </div>
+    {{#if actor.system}}
+    <div class="row-section skills table-title lineheight" style="margin-top:10px;">
+    <div class="col two">{{localize 'spell'}}</div>
+    <div class="col third center">{{localize "probe"}}</div>
+    <div class="col ten center" data-tooltip="CONJURATION.powerfulCreature"><i class="fas fa-hand-fist"></i></div>
+    <div class="col ten center">{{localize "CHARAbbrev.FW"}}</div>
+    </div>
+    {{#each conjurationskills as |item i|}}
+
+    <div class="row-section wrap skills item lineheight tableOdd" data-item-id="{{item._id}}">
+    <div class="col two">
+        <a class="item-edit talentName">{{item.name}}</a>
+    </div>
+    <div class="col third center">
+        <a class="skill-select">
+        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
+            item.system.characteristic1.value)}}</span>
+        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
+            item.system.characteristic2.value)}}</span>
+        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
+            item.system.characteristic3.value)}}</span>
+        </a>
+    </div>
+    <div class="col ten center">
+        {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}
+    </div>
+    <div class="col ten center">
+        {{item.system.talentValue.value}}
+    </div>
+
+    </div>
+
+    {{/each}}
+
+    {{{conjurationSheet}}}
+
+    {{else}}
+    <div class="row-section" style="margin-top:40px;">
+    <div class="col center">
+        {{localize "CONJURATION.dragActor"}}
+    </div>
+    </div>
+    {{/if}}
+</div>

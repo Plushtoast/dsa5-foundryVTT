@@ -3,8 +3,8 @@
 
   <div class='row-section'>
     <div class='col two'>
-      <div class='groupbox lineheight' style='padding:4px;'>
-        <b>{{localize 'probe'}}</b><br />
+      <fieldset class="gap0px">
+        <legend>{{localize 'probe'}}</legend>
         <div class='row-section'>
           <div class='col sixty table-title'>
             <label class=''>{{localize 'CHARAbbrev.QS'}}:</label>
@@ -29,9 +29,9 @@
             {{services}}
           </div>
         </div>
-      </div>
-      <div class='groupbox lineheight' style='padding:4px;'>
-        <b>{{localize 'PLAYER.conjuration'}}</b><br />
+      </fieldset>
+      <fieldset class="gap0px">
+        <legend>{{localize 'PLAYER.conjuration'}}</legend>
         <div class='row-section'>
           <div class='col center'>
             <img style='width:70px;height:70px' class='profile' src='{{conjuration.img}}' data-tooltip='{{actor.name}}' />
@@ -61,11 +61,11 @@
             {{conjuration.system.conjuringDifficulty.value}}
           </div>
         </div>
-      </div>
+      </fieldset>
     </div>
     <div class='col two'>
-      <div class='groupbox' style='padding:4px;'>
-        <b class='lineheight'>{{localize 'extensions'}}</b><br />
+      <fieldset class="gap0px">
+        <legend>{{localize 'extensions'}}</legend>
 
         {{#each conjurationModifiers as |item i|}}
           <div class='row-section wrap tableOdd' data-id='{{item.id}}'>
@@ -77,10 +77,10 @@
             </div>
           </div>
         {{/each}}
-      </div>
+      </fieldset>
 
-      <div class='groupbox' style='padding:4px;'>
-        <b class='lineheight'>{{localize 'entityAbility'}}</b><br />
+      <fieldset class="gap0px">
+        <legend>{{localize 'entityAbility'}}</legend>
         {{#each entityModifiers as |item i|}}
           <div class='row-section col wrap tableOdd' data-id='{{item.uuid}}'>
             <div class='col eighty lineheight'>
@@ -94,9 +94,9 @@
             </div>
           </div>
         {{/each}}
-      </div>
-      <div class='groupbox' style='padding:4px;'>
-        <b class='lineheight'>{{localize 'summoningPackage'}}</b><br />
+      </fieldset>
+      <fieldset class="gap0px">
+        <legend>{{localize 'summoningPackage'}}</legend>
         {{#each packageModifiers as |item i|}}
           <div class='row-section col wrap tableOdd' data-id='{{item.uuid}}'>
             <div class='col eighty lineheight'>
@@ -110,12 +110,12 @@
             </div>
           </div>
         {{/each}}
-      </div>
+      </fieldset>
     </div>
   </div>
   {{#if confirmed}}
 
-    <div class='center bags'>
+    <div class='center bags' style="margin-top:20px;">
       <div
         class='slot newNPC'
         draggable='true'
@@ -127,7 +127,7 @@
     </div>
 
   {{else}}
-    <div style='height:60px;'>
+    <div style='height:60px;' class="flexrow">
       <button class='createActor'>{{localize 'PLAYER.finalize'}}</button>
     </div>
   {{/if}}

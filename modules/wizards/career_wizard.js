@@ -175,7 +175,7 @@ export default class CareerWizard extends WizardDSA5 {
       religionToChose: liturgyChoices.length,
       anyAttributeRequirements: attributeRequirements.length,
       generalToChose: missingSpecialabilities.length || attributeRequirements.length || specAbChoices.length,
-      enrichedClothing: await TextEditor.enrichHTML(this.career.system-clothing.value, { secrets: false }),
+      enrichedClothing: await TextEditor.enrichHTML(this.career.system.clothing.value, { secrets: false }),
       enrichedDescription: await TextEditor.enrichHTML(this.career.system.description.value, { secrets: false }),
     });
     this.filterTabs(data);

@@ -2152,67 +2152,6 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  _checkMaximumItemAdvancement(item, newValue) {
-    let max = 0;
-    const maxBonus = AdvantageRulesDSA5.vantageStep(
-      this,
-      `${game.i18n.localize(`LocalizedIDs.${item.type == 'combatskill' ? 'exceptionalCombatTechnique' : 'exceptionalSkill'}`)} (${item.name})`,
-      false,
-    );
-    switch (item.type) {
-      case 'combatskill':
-        max = Math.max(...item.system.guidevalue.value.split('/').map((x) => this.system.characteristics[x].value)) + 2 + maxBonus;
-        break;
-      case 'spell':
-      case 'ritual':
-        let focusValue = 0;
-        for (const feature of item.system.feature
-          .replace(/\(a-z äöü-\)/gi, '')
-          .split(',')
-          .map((x) => x.trim())) {
-          if (SpecialabilityRulesDSA5.hasAbility(this, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
-            focusValue = this.maxByAttr(item, maxBonus);
-            break;
-          }
-        }
-        max = Math.max(14 + maxBonus, focusValue);
-        break;
-      case 'liturgy':
-      case 'ceremony':
-        const aspect = new RegExp(`^${game.i18n.localize('LocalizedIDs.aspectKnowledge')}`);
-        let aspectValue = 0;
-        if (this.items.filter((x) => x.type == 'specialability' && aspect.test(x.name)).some((x) => item.system.distribution.value.includes(x.name.split('(')[1].split(')')[0]))) {
-          aspectValue = this.maxByAttr(item, maxBonus);
-        }
-        max = Math.max(14 + maxBonus, aspectValue);
-        break;
-      case 'skill':
-        max = this.maxByAttr(item, maxBonus);
-        break;
-    }
-    const result = newValue <= max;
-    if (!result)
-      ui.notifications.error('DSAError.AdvanceMaximumReached', {
-        localize: true,
-      });
-
-    return { result, max, maxBonus };
-  }
-
-  maxByAttr(item, advantageBonus) {
-    return (
-      Math.max(
-        ...[
-          this.system.characteristics[item.system.characteristic1.value].value,
-          this.system.characteristics[item.system.characteristic2.value].value,
-          this.system.characteristics[item.system.characteristic3.value].value,
-        ],
-      ) +
-      2 +
-      advantageBonus
-    );
-  }
-
   async basicTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     let result = await DiceDSA5.rollTest(testData);

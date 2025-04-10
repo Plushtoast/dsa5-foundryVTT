@@ -115,6 +115,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
+      deleteItem: this._deleteItemAction,
       defenseToggle: this._defenseToggle,
       chargeSpell: { handler: this._chargeSpell, buttons: [0, 2] },
       loadWeapon: { handler: this._loadWeapon, buttons: [0, 2] },
@@ -153,7 +154,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           return `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`; 
         },
         visible: function () {
-          return this.actor.system.canAdvance;
+          return this.canLockSheet;
         },
       },
     ],
@@ -203,6 +204,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       searchText: html.find('.talentSearch').val(),
       gearSearch: html.find('.gearSearch').val(),
     };
+  }
+
+  get canLockSheet() {
+    return this.actor.system.canAdvance
   }
 
   _restoreSeachFields() {
@@ -481,29 +486,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _advanceItem(itemId) {
     const item = this.actor.items.get(itemId);
-    const value = Number(item.system.talentValue.value);
-    const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : item.system.StF.value;
-    const cost = DSA5_Utility._calculateAdvCost(value, category);
-    if ((await this._checkEnoughXP(cost)) && this.actor._checkMaximumItemAdvancement(item, value + 1)?.result) {
-      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': value + 1 }]);
-      await this._updateAPs(cost);
-      await APTracker.track(this.actor, { type: 'item', item, previous: value, next: value + 1 }, cost);
-      return true;
-    }
+    return await item.sheet._advanceStep();    
   }
 
   async _refundItemAdvance(itemId) {
     const item = this.actor.items.get(itemId);
-    const minValue = item.type == 'combatskill' ? 6 : 0;
-    const value = Number(item.system.talentValue.value);
-    if (value > minValue) {
-      const category = this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : item.system.StF.value;
-      const cost = DSA5_Utility._calculateAdvCost(value, category, 0) * -1;
-      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': value - 1 }]);
-      await this._updateAPs(cost);
-      await APTracker.track(this.actor, { type: 'item', item, previous: value, next: value - 1 }, cost);
-      return true;
-    }
+    return await item.sheet._refundStep();
   }
 
   _checkMaximumPointAdvancement(attr, newValue) {
@@ -558,7 +546,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (this.wrapperLocked) return;
 
     this.wrapperLocked = true;
-    const target = $(trg).find('i');
+    const target = trg.tagName == 'i' ? $(trg) : $(trg).find('i');
     target.addClass('fa-spin fa-spinner');
     if (await this[funct](...params)) return;
 
@@ -680,7 +668,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _showApplication(ev, target) {
     if (ev.button == 2) {
-      this._deleteItem(ev);
+      this._deleteItem(ev.currentTarget);
     } else {
       const itemId = this._getItemId(target);
       const item = this.actor.items.get(itemId);
@@ -898,7 +886,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
     });
 
-    const deletehand = (ev) => this._deleteItem(ev);
+    const deletehand = (ev) => this._deleteItem(ev.currentTarget);
 
     html.find('.cards .item').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
@@ -1288,10 +1276,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  async _deleteItem(ev) {
+  static _deleteItemAction(ev, target) {
+    this._deleteItem(target)
+  }
+
+  async _deleteItem(target) {
     if (!this.isEditable) return;
 
-    const itemId = this._getItemId(ev.currentTarget);
+    const itemId = this._getItemId(target);
     let item = this.actor.items.get(itemId);
     this._itemDeleteDialog(item);
   }

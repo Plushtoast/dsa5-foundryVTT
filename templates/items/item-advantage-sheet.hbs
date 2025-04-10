@@ -7,7 +7,7 @@
 
   {{#if isOwned}}
     <div class='form-group'>
-      <label>{{#if canAdvance}}<a data-action='_refundStep'><i class='fas fa-minus'></i></a> {{/if}}{{localize 'stepValue'}}{{#if canAdvance}}<a data-action='_advanceStep'><i class='fas fa-plus'></i></a>{{/if}}</label>
+      <label>{{#if canAdvance}}<a data-action='_refundStep'><i class='fas fa-minus'></i></a> {{/if}}{{localize 'stepValue'}}{{#if canAdvance}} <a data-action='_advanceStep'><i class='fas fa-plus'></i></a>{{/if}}</label>
       <div class="form-fields">
           {{formInput systemFields.step.fields.value value=document.system.step.value}}
       </div>      

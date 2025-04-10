@@ -391,7 +391,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async getRandomItems(category, limit) {
     const filteredItems = (await this.indexes.Item.index.searchAsync({ tag: category })).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x))
-    return (await Promise.all(this.shuffle(filteredItems).slice(0, limit + 5).map(uuid => fromUuid(uuid)))).filter((x) => {
+    return (await Promise.all(this.shuffle(filteredItems).slice(0, limit + 5).map(x => fromUuid(x.uuid)))).filter((x) => {
       const enchantments = x.getFlag('dsa5', 'enchantments');
       return !enchantments || !enchantments.find((x) => x.talisman);
     }).slice(0, limit)
@@ -439,8 +439,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async getCategoryItems(category, asItemData = false, asItem = false) {
     await this.buildItemIndex();
     const res = (await this.indexes.Item.index.searchAsync({ tag: [category] })).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x));
-    if (asItemData) return (await Promise.all(res.map((x) => fromUuid(x)))).map((x) => x.toObject());
-    else if (asItem) return await Promise.all(res.map((x) => fromUuid(x)));
+    if (asItemData) return (await Promise.all(res.map((x) => fromUuid(x.uuid)))).map((x) => x.toObject());
+    else if (asItem) return await Promise.all(res.map((x) => fromUuid(x.uuid)));
 
     return res;
   }

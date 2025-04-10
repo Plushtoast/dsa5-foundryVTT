@@ -491,8 +491,8 @@ export function setupConfiguration() {
   });
 
   game.settings.registerMenu('dsa5', 'configureTokenbar', {
-    name: game.i18n.localize('DSASETTINGS.configureTokenbar'),
-    label: game.i18n.localize('DSASETTINGS.configureTokenbar'),
+    name: 'DSASETTINGS.configureTokenbar',
+    label: 'DSASETTINGS.configureTokenbar',
     hint: 'DSASETTINGS.configureTokenbarHint',
     type: ConfigureTokenHotbar,
     restricted: false,

@@ -25,12 +25,6 @@ export default class LiturgyData extends ItemDataModel.mixin(AoeTemplate, Descri
     ];
   }
 
-  static chatData(data, name) {
-    const hasLocalization = game.i18n.has(`SKILLdescr.${name}`);
-    const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value;
-    return [{ key: 'Description', val: description }];
-  }
-
   prepareEmbeddedItemSheet() {
       const item = super.prepareEmbeddedItemSheet();
       this.constructor._perpareItemAdvancementCost(item, this.actor);

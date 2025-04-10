@@ -261,7 +261,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   _showInputValidation(choice, parent, app) {
     ui.notifications.error('DSAError.MissingChoices', { localize: true });
     const tabElem = choice.closest('.tab')[0].dataset;
-    app.changeTab(tabElem.tab, group.group);
+    app.changeTab(tabElem.tab, tabElem.group);
     WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem.tab}']`));
     WizardDSA5.flashElem(choice.closest('div'));
   }

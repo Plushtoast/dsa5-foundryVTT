@@ -17,11 +17,19 @@ export class PlayerMenuSubApp {
     return this.constructor.name;
   }
 
-  addTab(tabs, activeTab) {
+  get part() {
+    return {
+      template: this.constructor.template,
+      scrollable: ['']
+    }
+  }
+
+  addTab(tabs, activeTab, group) {
     const active = activeTab === this.tabName;
     tabs[this.tabName] = {
       id: this.tabName,
       label: this.name,
+      group,
       icon: this.icon,
       active,
       cssClass: active ? "active" : ""
@@ -29,20 +37,6 @@ export class PlayerMenuSubApp {
   }
 
   async _onRender(html) {}
-
-  async _renderData(data) {
-    const renderData = await this._getData(data);
-    mergeObject(renderData, data);
-    const template = await renderTemplate(this.constructor.template, renderData);
-    return template;
-  }
-
-  async prepareApp(data) {
-    return {
-      name: this.name,
-      view: await this._renderData(data),
-    };
-  }
 
   async render() {
     await game.dsa5.apps.playerMenu.render(true);
