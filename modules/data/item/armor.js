@@ -54,7 +54,7 @@ export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, 
       { key: 'protection', val: data.protection.value },
       { key: 'encumbrance', val: data.encumbrance.value },
     ];
-    if (data.effect.value != '') properties.push({ key: 'effect', val: data.effect.value });
+    if (data.effect.value) properties.push({ key: 'effect', val: data.effect.value });
 
     return properties;
   }

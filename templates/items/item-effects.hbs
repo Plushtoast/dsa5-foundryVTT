@@ -1,15 +1,15 @@
 <div class="tab standard-form scrollable {{tabs.effects.cssClass}}" data-tab="effects" data-group="{{tabs.effects.group}}">
     <div class="row-section wrap">
 
-        <div class="col row-section skills table-title">
+        <div class="col row-section skills table-title lineheight">
             <div class="col ten">
 
             </div>
             <div class="col seventy">
                 {{localize "effect"}}
             </div>
-            <div class="col five right">
-                <a data-action="statusAdd" data-tooltip="CONDITION.add"><i class="fa fa-plus"></i></a>
+            <div class="col five right flexrow">
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="statusAdd" data-tooltip="CONDITION.add"></button>
             </div>
         </div>
         {{#each conditions as |item i|}}

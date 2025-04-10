@@ -62,7 +62,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       { key: 'TYPES.Item.combatskill', val: data.combatskill.value },
       { key: 'reach', val: data.reach.value },
     ];
-    if (data.effect.value != '') res.push({ key: 'effect', val: DSA5_Utility.replaceConditions(data.effect.value) });
+    if (data.effect.value) res.push({ key: 'effect', val: DSA5_Utility.replaceConditions(data.effect.value) });
 
     return res;
   }

@@ -110,7 +110,7 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
         ];
         break;
     }
-    if (data.effect.value != '') res.push({ key: 'effect', val: data.effect.value });
+    if (data.effect.value) res.push({ key: 'effect', val: data.effect.value });
 
     return res;
   }
