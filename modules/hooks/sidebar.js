@@ -62,7 +62,7 @@ export default function () {
     if (game.user.isGM) return;
 
     const jHtml = $(html);
-    for (let act of app.documents.filter((x) => x.isMerchant() && x.system.merchant.hidePlayer)) {
+    for (let act of app.options.collection.filter((x) => x.isMerchant() && x.system.merchant.hidePlayer)) {
       jHtml.find(`[data-entry-id="${act.id}"]`).remove();
     }
   });

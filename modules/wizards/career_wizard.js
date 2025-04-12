@@ -43,9 +43,8 @@ export default class CareerWizard extends WizardDSA5 {
     }
   }
 
-  async _onRender(context, options) {
-    await super._onRender((context, options));
-    const html = $(this.element);
+  wizardListeners(html) {
+    super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       if ($(ev.currentTarget).hasClass('exclusiveTricks')) {

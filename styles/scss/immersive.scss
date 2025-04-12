@@ -24,12 +24,6 @@
         }
     }
 
-    .table-title,
-    .label-text {
-        background: rgb(188, 136, 111);
-        background: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    }
-
     #sidebar-tabs {
         border-bottom: 1px solid black;
         box-shadow: 0 0 10px black;
@@ -202,7 +196,17 @@
         .window-header {
             background-image: url('../../icons/backgrounds/blackhat.webp');
             top: 7px;
+            background-color: transparent;
             border: none;
+
+            button {
+                background: #0000009e;
+
+                &:hover {
+                    background: var(--button-hover-background-color);
+                    color: var(--button-hover-text-color);
+                }
+            }
         }
 
         &:not(.monarch):after {
@@ -219,8 +223,12 @@
             background-image: url('../../icons/backgrounds/masterborder.webp');
         }
 
-        &.creature-sheet .window-resizable-handle {
+        &.creature-sheet .window-resize-handle {
             bottom: 18px;
+        }
+
+        &.character-sheet .window-resize-handle {
+            bottom: 10px;
         }
 
         .window-header {
@@ -260,16 +268,33 @@
             color: white;
         }
 
+        .window-resize-handle,
         .window-resizable-handle {
             z-index: 2;
-            bottom: 11px;
+            bottom: 25px;
             right: 25px;
+            height: 24px;
+            width: 24px;
+            background: #0000009e;
+            border-radius: 4px;
+            &:before{
+                content: "\f066";
+                position: absolute;
+                left:0;
+                right: 0;
+                top: 0;
+                line-height: 24px;
+                color: white;
+                width: 24px;
+                text-align: center;
+                font-size: var(--font-size-14);
+                font-family: var(--font-awesome);
+            }
         }
 
         .window-header .window-title {
             text-align: center;
             margin-left: 15%;
-            margin-top: 5px;
             color: white;
             font-family: var(--boldFont);
             font-weight: bold;
@@ -454,6 +479,7 @@
     .dsa5.item {
         .item-header {
             background-image: url('../../icons/backgrounds/kapitelstart.webp');
+            background-position: 0 -5px;
         }
 
         &.minimized .window-header .window-title {

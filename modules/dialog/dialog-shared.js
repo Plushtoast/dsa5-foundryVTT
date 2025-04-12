@@ -68,7 +68,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     game.user.targets.forEach((x) => {
       if (id != x.id) newIds.push(x.id);
     });
-    game.user.updateTokenTargets(newIds);
+    game.user._onUpdateTokenTargets(newIds);
   }
 
   calculateProbability(actor, item, mod, fw) {
@@ -110,7 +110,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     

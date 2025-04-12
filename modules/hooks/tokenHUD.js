@@ -51,7 +51,7 @@ function swarmButtons(app, html, data) {
 
 class SwarmDialog extends foundry.applications.api.DialogV2 {
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     html.find('input[type="range"]').on('change', (ev) => {
@@ -153,7 +153,7 @@ export default function () {
     }
     html.find('.control-icon[data-action="target"]').on('mousedown', (ev) => {
       if (ev.button == 2) {
-        game.user.updateTokenTargets([]);
+        game.user._onUpdateTokenTargets([]);
         $(ev.currentTarget).trigger('click');
         ev.preventDefault();
       }

@@ -45,7 +45,7 @@ export class AddTargetDialog extends foundry.applications.api.HandlebarsApplicat
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     const combatants = html.find('.combatant');
@@ -136,7 +136,7 @@ export class SelectUserDialog extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
@@ -146,7 +146,7 @@ export class SelectUserDialog extends DefaultAppv2 {
     const targetIds = Array.from(game.user.targets).map((x) => x.id);
     const userId = ev.currentTarget.dataset.userId;
     const user = game.users.get(userId);
-    user.updateTokenTargets(targetIds);
+    user._onUpdateTokenTargets(targetIds);
     game.socket.emit('userActivity', userId, { targets: targetIds });
     this.close();
   }
@@ -194,7 +194,7 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     html.find('[name="sel_all"]').on('change', (ev) => {

@@ -181,7 +181,7 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
 
     tabSlider(html);
@@ -216,10 +216,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     });
     html.find('.showEntity').on('click', (ev) => {
       ev.stopPropagation();
-      const fun = async () => {
-        (await fromUuid(ev.currentTarget.dataset.uuid)).sheet.render(true);
-      };
-      fun();
+      fromUuid(ev.currentTarget.dataset.uuid).then(itm => itm.sheet.render(true));
     });
     html.find('.moreModifiers').on('change', (ev) => {
       const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find((x) => x.name == ev.currentTarget.dataset.name);
@@ -251,7 +248,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     const subApp = this.subApps.find((x) => x.tabName == partId);
     if (subApp) {
       const data = await subApp._getData(context);
-      mergeObject(context, data);
+      Object.assign(context, data);
     }
 
     return context;
@@ -695,7 +692,7 @@ class ConjurationRequest extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
 
@@ -708,11 +705,9 @@ class ConjurationRequest extends DefaultAppv2 {
       if (ev.button == 2) {
         game.actors.get(id).delete();
         $(ev.currentTarget).remove();
+      } else {
+        game.actors.get(id).sheet.render(true);
       }
-    });
-    html.on('click', '.newNPC', async (ev) => {
-      const id = ev.currentTarget.dataset.id;
-      game.actors.get(id).sheet.render(true);
     });
 
     html.on('dragstart', '.newNPC', (event) => {
@@ -723,10 +718,7 @@ class ConjurationRequest extends DefaultAppv2 {
     });
     html.find('.showEntity').on('click', (ev) => {
       ev.stopPropagation();
-      const fun = async () => {
-        (await fromUuid(ev.currentTarget.dataset.uuid)).sheet.render(true);
-      };
-      fun();
+      fromUuid(ev.currentTarget.dataset.uuid).then(itm => itm.sheet.render(true));
     });
   }
 }

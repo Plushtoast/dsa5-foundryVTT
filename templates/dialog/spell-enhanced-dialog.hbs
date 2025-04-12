@@ -1,36 +1,46 @@
-<form class="skill-test">
-    <div class="row-section wrap">
+<form>
+    <div class="row-section wrap skill-test">
         <div class="col sixty">
 
             {{> systems/dsa5/templates/dialog/enhanced-default-dialog.hbs}}
 
             <div class="form-group">
-                <label style="line-height: normal;">{{localize "maintainedSpells"}}</label>
-                <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
+                <label>{{localize "maintainedSpells"}}</label>
+                <div class="form-fields">
+                    <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
+                </div>
             </div>
             {{#if hasSKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "skModifier"}}</label>
-                <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="skModifier" value="{{SKModifier}}" />
+                <div class="form-fields">
+                    <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="skModifier" value="{{SKModifier}}" />
+                </div>
             </div>
             {{/if}} {{#if hasZKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "zkModifier"}}</label>
-                <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="zkModifier" value="{{ZKModifier}}" />
+                <div class="form-fields">
+                    <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="zkModifier" value="{{ZKModifier}}" />
+                </div>
             </div>
             {{/if}} {{#if isRitual}}
 
             <div class="form-group ritual">
                 <label>{{localize "place"}}</label>
-                <select name="placeModifier">
-                    {{selectOptions locationModifiers selected=0 localize=true}}  
-                </select>
+                <div class="form-fields">
+                    <select name="placeModifier">
+                        {{selectOptions locationModifiers selected=0 localize=true}}  
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "time"}}</label>
-                <select name="timeModifier">
-                    {{selectOptions timeModifiers selected=0 localize=true}}  
-                </select>
+                <div class="form-fields">
+                    <select name="timeModifier">
+                        {{selectOptions timeModifiers selected=0 localize=true}}  
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "RITUALMODIFIER.rightClothes"}}</label>
@@ -40,7 +50,8 @@
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
             </div>
-            {{/if}} {{#if isForeign}}
+            {{/if}} 
+            {{#if isForeign}}
             <div class="center">
                 <b>{{localize 'TT.foreignSpell'}}</b>
             </div>

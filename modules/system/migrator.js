@@ -57,8 +57,8 @@ export async function showPatchViewer() {
   patchViewer.render(true);
 }
 
-function betaWarning(version) {
-  const msg = `This is the beta version for DSA/TDE for Foundry v${version}. Foundry v${version} is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official TDE/DSA Github. Thank you.`;
+function betaWarning(version, version_specific = '') {
+  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. Foundry v${version} is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 
@@ -71,7 +71,8 @@ export default function migrateWorld() {
     const NEEDS_MIGRATION_VERSION = 32;
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
-    betaWarning(13)
+    const v13 = `<p>The currently advised foundry vtt version for DSA/TDE is v12. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`
+    betaWarning(13, v13)
 
     if (!needsMigration) return;
 
@@ -117,7 +118,7 @@ class PatchViewer extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
 
     tabSlider(html);

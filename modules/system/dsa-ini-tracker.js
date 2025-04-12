@@ -189,7 +189,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
 
     const container = html.find('.dragHandler');

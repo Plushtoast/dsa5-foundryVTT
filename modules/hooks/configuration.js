@@ -892,7 +892,7 @@ class ConfigureTokenHotbar extends FormAppv2 {
   };
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('select, input, range-picker').on('change', async (ev) => {
       if(!ev.currentTarget.name) return;

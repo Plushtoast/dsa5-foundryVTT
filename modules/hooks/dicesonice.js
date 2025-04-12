@@ -172,7 +172,7 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('[name="entryselection"]').on('change', async (ev) => {
       await game.settings.set('dsa5', `dice3d_${ev.currentTarget.dataset.attr}`, ev.currentTarget.value);

@@ -13,6 +13,7 @@
   --minColumnWidth40: 264px;
   --minColumnWidth60: 396px;
   --dsadesign1: #937b48;
+  --table-title-bg: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
   --oddColor: rgba(0, 0, 0, 0.1);
 }
 
@@ -332,13 +333,13 @@ table.infoTable {
     input {
       text-align: center;
       border-radius: 4px;
-      background-color: var(--background);
+      background-color: var(--oddColor);
       padding: 0 2px;
       width: auto;
       text-align: center;
       font-family: "Fira Code", "Roboto Mono", "Consolas", "Menlo", "Monaco", "Courier New", monospace;
       border: 1px solid var(--dsadesign1);
-      color: var(--input-text-color);
+      color: var(--dsadesign1);
 
 
       &:hover {
@@ -636,7 +637,7 @@ select[multiple] option {
 }
 
 .table-title {
-  background: var(--background);
+  background: var(--table-title-bg);
 }
 
 .skill-section {
@@ -1332,6 +1333,7 @@ a.img-entity-link {
   }
 }
 
+.openJournalBrowser,
 .dsalist li {
   width: 100%;
 }

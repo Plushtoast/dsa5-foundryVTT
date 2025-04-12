@@ -807,10 +807,13 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       .filter((x) => x.metadata.type == 'Item')
       .reduce((prev, cur) => {
         if (!prev[cur.metadata.packageName]) {
-          const name = game.i18n.has(`${cur.metadata.packageName}.name`)
-            ? game.i18n.localize(`${cur.metadata.packageName}.name`)
-            : game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, '') || game.system.title;
-          prev[cur.metadata.packageName] = name;
+          if(game.i18n.has(`${cur.metadata.packageName}.name`))
+            prev[cur.metadata.packageName] = game.i18n.localize(`${cur.metadata.packageName}.name`)
+          else if (cur.metadata.packageName == 'dsa5') {
+            prev[cur.metadata.packageName] = game.system.title            
+          } else {
+            prev[cur.metadata.packageName] = game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, '') || cur.metadata.label;
+          }
         }
         return prev;
       }, {});
@@ -957,7 +960,7 @@ class LibraryModulsFilter extends DefaultAppv2 {
   
   static PARTS = {
     modules: {
-        template: "systems/dsa5/templates/system/librarymodulesfilter.hbs"
+        template: "systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs"
     }
   }
 

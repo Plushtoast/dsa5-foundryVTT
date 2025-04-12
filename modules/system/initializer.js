@@ -162,7 +162,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     if (json.initialScene) {
       const initialScene = this.scenes[json.initialScene];
       if (initialScene) {
-        await game.settings.set('core', NotesLayer.TOGGLE_SETTING, true);
+        await game.settings.set('core', foundry.canvas.layers.NotesLayer.TOGGLE_SETTING, true);
         await initialScene.activate();
         await initialScene.update({ navigation: true });
       }
@@ -332,6 +332,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     }
     if (json.macro) {
       Hooks.once('renderCompendium', (app, html, data) => {
+        html = $(html);
         const compendiumUi = html.find(`[data-pack="${json.macro}"] header`);
         compendiumUi.append($(`<p>${game.i18n.localize('Book.macroHint')}</p>`));
       });

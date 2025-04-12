@@ -5,7 +5,8 @@ const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
 
 export default class DSA5StatusEffects {
   static bindButtons(html) {
-    html.find('.chat-condition').each(function (i, cond) {
+    const conditions = html.find('.chat-condition');
+    conditions.each(function (i, cond) {
       cond.setAttribute('draggable', true);
       cond.addEventListener('dragstart', (ev) => {
         const dataTransfer = {
@@ -19,7 +20,7 @@ export default class DSA5StatusEffects {
         ev.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
       });
     });
-    html.on('click', '.chat-condition', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
+    conditions.on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
   }
 
   static async createCustomEffect(owner, description = '', name) {

@@ -267,8 +267,12 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
+    this.wizardListeners(html);
+  }
+
+  wizardListeners(html) {
     tabSlider(html);
     html.find('button.ok').on('click', () => {
       if (!this.updating) {

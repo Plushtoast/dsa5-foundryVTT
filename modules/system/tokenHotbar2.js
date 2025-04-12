@@ -210,7 +210,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     const container = html.find('.dragHandler');
     if (container[0]) new foundry.applications.ux.Draggable(this, html, container[0], this.options.resizable);
@@ -951,7 +951,7 @@ export class AddEffectDialog extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
 

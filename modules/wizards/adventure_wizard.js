@@ -223,7 +223,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
 
     html.on('search keyup', '.filterJournals', (ev) => {

@@ -73,6 +73,14 @@ export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate,
     });
   }
 
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if (source.guidevalue?.value) {
+      source.guidevalue.value = source.guidevalue.value.toLowerCase();
+    }
+  }
+
   async getSheetData(data) {
     data.enrichedClothing = await TextEditor.enrichHTML(data.document.system.clothing.value, { secrets: data.document.isOwner });
   }

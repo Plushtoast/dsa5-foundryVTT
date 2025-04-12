@@ -138,6 +138,12 @@ export function connectSocket() {
       case 'updateHits':
       case 'hideResistButton':
         break;
+      case 'requestShapeshift':
+        game.dsa5.config.hooks.shapeshift.constructor.onRequestShapeshift(data.payload);
+        break
+      case 'requestRestoreShape':
+        game.dsa5.config.hooks.shapeshift.constructor.onRestoreShape(data.payload);
+        break
       case 'reduceGroupSchip':
         Actordsa5.reduceGroupSchip();
         break;

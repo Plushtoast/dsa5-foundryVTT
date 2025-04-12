@@ -24,14 +24,13 @@ export default class SpeciesWizard extends WizardDSA5 {
       initial: 'description',
     }
   }
-    
-  async _onRender(context, options) {
-    await super._onRender((context, options));
-    const html = $(this.element);
 
+  wizardListeners(html) {
+    super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
+      
       parent.find('.optional:checked').each(function () {
         apCost += Number($(this).attr('data-cost'));
       });

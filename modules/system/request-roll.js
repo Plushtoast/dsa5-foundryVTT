@@ -9,7 +9,7 @@ export default class RequestRoll {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
 
-    game.user.updateTokenTargets([]);
+    game.user._onUpdateTokenTargets([]);
     let options = {
       modifier,
       postFunction: {
@@ -61,7 +61,7 @@ export default class RequestRoll {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
 
     if (actor) {
-      game.user.updateTokenTargets([]);
+      game.user._onUpdateTokenTargets([]);
       options.modifier = modifier;
 
       switch (category) {

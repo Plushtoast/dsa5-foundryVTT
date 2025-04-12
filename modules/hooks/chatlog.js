@@ -11,6 +11,7 @@ const { getProperty } = foundry.utils;
 export default function () {
   Hooks.on('renderChatLog', (log, html, data) => {
     html = $(html);
+    console.log('rendering chat log');
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
@@ -59,6 +60,7 @@ export default function () {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });
     }
+    
     DSA5StatusEffects.bindButtons(html);
 
     html.find('.embeddedItemDrag').each(function (i, cond) {

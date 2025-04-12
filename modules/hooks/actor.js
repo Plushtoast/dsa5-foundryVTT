@@ -92,12 +92,12 @@ export default function () {
   });
 
   Hooks.on('preDeleteActiveEffect', (effect, options, userid) => {
-    if (!DSA5_Utility.isActiveGM() || options.noHook) return;
-
+    const shouldSkip = !DSA5_Utility.isActiveGM() || options.noHook
+    
     const actor = effect.parent;
 
     if (actor && actor.documentName == 'Actor') {
-      if (DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false) return false;
+      if (!shouldSkip && DSAActiveEffectConfig.onDelayedEffect(actor, effect) === false) return false;
 
       if (Hooks.call('deleteActorActiveEffect', actor, effect) === false) return false;
     }

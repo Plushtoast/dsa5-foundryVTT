@@ -242,7 +242,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('select.select2').select2();
 
@@ -298,7 +298,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       elem.activateListeners(html);
     }
     slist(html, '.heros', this.updateHeroOrder.bind(this), '.hero');
-    html.on('dragstart', '.hero', (event) => {
+    html.find('.hero').on('dragstart', (event) => {
       event.stopPropagation();
       const a = event.currentTarget;
       let dragData = { type: 'Actor', uuid: a.dataset.uuid };
@@ -308,7 +308,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     html.find('.dragEveryone').each(function (i, cond) {
       cond.setAttribute('draggable', true);
     });
-    html.on('dragstart', '.dragEveryone', (ev) => this._dragEveryone(ev));
+    html.find('.dragEveryone').on('dragstart', (ev) => this._dragEveryone(ev));
 
     if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.activateButtonListener(html);
   }

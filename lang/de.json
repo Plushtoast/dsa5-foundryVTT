@@ -116,8 +116,8 @@
         "damage": "TP",
         "damageSP": "SP",
         "reloadTime": "Lad.",
-        "castingTime": "Aktions- dauer",
-        "duration": "Wirkungs- dauer",
+        "castingTime": "Aktions<wbr>dauer",
+        "duration": "Wirkungs<wbr>dauer",
         "defenseMalus": "VM",
         "AsPCost": "AsP",
         "KaPCost": "KaP",
@@ -1722,10 +1722,13 @@
         "takeSpells": "Zauber/Rituale übernehmen",
         "takeLiturgies": "Liturgien/Zeremonien übernehmen",
         "keepVision": "Sichteinstellung übernehmen",
-        "takeSkills": "Talente übernehmen",
+        "takeSkills": "Kampftalente übernehmen",
         "keepItems": "Ausrüstung behalten",
         "keepToken": "Token behalten",
-        "calculateLeP": "Anteilige LeP"
+        "options": "Optionen",
+        "calculateLeP": "Anteilige LeP",
+        "userRequest": "{name} möchte {source} in {target} verwandeln. Bitte bestätigen.",
+        "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet."
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",

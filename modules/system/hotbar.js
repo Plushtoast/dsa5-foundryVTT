@@ -10,7 +10,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     this.addContextColor();
 
     if (!game.settings.get('dsa5', 'hotbarv3')) return;

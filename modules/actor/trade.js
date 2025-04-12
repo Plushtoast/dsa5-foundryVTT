@@ -126,7 +126,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('.trade').on('click', (ev) => this._offerItem(ev));
     const filterGear = (ev) => this._filterGear($(ev.currentTarget));
@@ -371,7 +371,7 @@ export class TradeOptions extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('.startTrade').on('dblclick', (ev) => this._startTrade(ev));
   }

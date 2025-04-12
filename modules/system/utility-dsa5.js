@@ -148,8 +148,8 @@ export default class DSA5_Utility {
     };
   }
 
-  static categoryLocalization(a) {
-    return game.i18n.localize(`TYPES.Item.${a}`);
+  static categoryLocalization(a, docName = 'Item') {
+    return game.i18n.localize(`TYPES.${docName}.${a}`);
   }
 
   static attributeLocalization(a) {

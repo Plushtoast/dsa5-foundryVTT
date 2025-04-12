@@ -80,8 +80,8 @@
         "TPM": "PCM",
         "CR": "CR",
         "reloadTime": "Rel.",
-        "castingTime": "Action- duration",
-        "duration": "Effect- Duration",
+        "castingTime": "Action<wbr>duration",
+        "duration": "Effect<wbr>Duration",
         "fatePoints": "FtP",
         "gfatePoints": "GFtP",
         "groupFatePoints": "Group&nbsp;FtP",
@@ -1604,10 +1604,13 @@
         "takeLiturgies": "Keep Liturgies/Ceremonies",
         "done": "The shapeshift has been finished.",
         "keepVision": "Keep vision",
-        "takeSkills": "Keep skills",
+        "options": "Options",
+        "takeSkills": "Keep combat techniques",
         "keepItems": "Keep equipment",
         "keepToken": "Keep token",
-        "calculateLeP": "Proportional LP"
+        "calculateLeP": "Proportional LP",
+        "userRequest": "{name} wants to shapeshift {source} into {target}. Please confirm.",
+        "requestToGm": "Request to confirm shapeshift sent to GM."
     },
     "DSAError": {
         "customEffect": "For manual effects only one token can be selected",

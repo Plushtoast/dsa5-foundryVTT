@@ -571,7 +571,8 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static resolveRangeDialog(testData, cardOptions, html, actor, options) {
     this._resolveDefault(testData, cardOptions, html, options);
-    const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
+    const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
+    const data = new foundry.applications.ux.FormDataExtended(form).object;
     const zigzag = Number(data.quickChange) || 0;
     const sizeMod = Number(data.size) || 0;
     const rangeMod = html.find('[name="distance"] option:selected')[0].dataset;

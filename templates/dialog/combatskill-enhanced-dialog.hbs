@@ -1,5 +1,5 @@
-<form class="skill-test">
-    <div class="row-section wrap">
+<div>
+    <div class="row-section wrap skill-test">
         <div class="col sixty">
             {{> systems/dsa5/templates/dialog/default-combat-dialog.hbs}} {{#if melee}}
             <div class="form-group" >
@@ -20,7 +20,9 @@
             {{#if showDefense}}
             <div class="form-group">
                 <label>{{defenseCountString}}</label>
-                <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="defenseCount" value="{{defenseCount}}" />
+                <div class="form-fields">
+                    <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="defenseCount" value="{{defenseCount}}" />
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "MODS.attackFromBehind"}} (<span class="attackFromBehind">{{rollModifiers.attackFromBehind.mod}}</span>)</label>
@@ -34,11 +36,14 @@
             </div>
             <div class="form-group" data-tooltip="DIALOG.assassinateDescr">
                 <label>{{localize "DIALOG.assassinate"}}</label>
-                <select name="assassinate">
-                    <option value="-">-</option>
-                    <option value="assassinate">{{localize "DIALOG.assassinate"}}</option>
-                    <option value="stun">{{localize "DIALOG.stun"}}</option>
-                </select>
+                <div class="form-fields">
+                    
+                    <select name="assassinate">
+                        <option value="-">-</option>
+                        <option value="assassinate">{{localize "DIALOG.assassinate"}}</option>
+                        <option value="stun">{{localize "DIALOG.stun"}}</option>
+                    </select>
+                </div>
             </div>
             {{/if}} 
             {{#if (or showDefense showAttack)}}
@@ -50,59 +55,75 @@
             {{#if weaponSizes}}
             <div class="form-group">
                 <label>{{localize "opposingWeaponSize"}}</label>
-                <select name="weaponsize">
-                    {{selectOptions weaponSizes selected=targetWeaponSize localize=true}}
-                </select>
+                <div class="form-fields">
+                    <select name="weaponsize">
+                        {{selectOptions weaponSizes selected=targetWeaponSize localize=true}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "sizeCategory"}}</label>
-                <select name="size">
-                    {{selectOptions meleeSizeOptions selected=targetSize localize=true}}
-                </select>
+                <div class="form-fields">
+                    <select name="size">
+                        {{selectOptions meleeSizeOptions selected=targetSize localize=true}}
+                    </select>
+                </div>
             </div>
             {{/if}} 
             {{#if rangeOptions}}
             <div class="form-group">
                 <label>{{localize "distance"}}</label>
-                <select name="distance">
-                    {{#each rollModifiers.RangeMod as |item key|}}
-                    <option value="{{key}}" data-damage="{{item.damage}}" data-attack="{{item.attack}}" {{#if (eq key ../rangeDistance)}}selected{{/if}}>{{localize (concat 'MODS.RangeMod.' key) fk=item.attack tp=item.damage}}</option>
-                    {{/each}}
-                </select>
+                <div class="form-fields">
+                    <select name="distance">
+                        {{#each rollModifiers.RangeMod as |item key|}}
+                        <option value="{{key}}" data-damage="{{item.damage}}" data-attack="{{item.attack}}" {{#if (eq key ../rangeDistance)}}selected{{/if}}>{{localize (concat 'MODS.RangeMod.' key) fk=item.attack tp=item.damage}}</option>
+                        {{/each}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "sizeCategory"}}</label>
-                <select name="size">
-                    {{#each rollModifiers.RangeSize as |item key|}}
-                    <option value="{{item.mod}}" {{#if (eq key ../targetSize)}}selected{{/if}}>{{localize (concat 'MODS.RangeSize.' key) f=item.mod}}</option>
-                    {{/each}}
-                </select>
+                <div class="form-fields">
+                    <select name="size">
+                        {{#each rollModifiers.RangeSize as |item key|}}
+                        <option value="{{item.mod}}" {{#if (eq key ../targetSize)}}selected{{/if}}>{{localize (concat 'MODS.RangeSize.' key) f=item.mod}}</option>
+                        {{/each}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "MODS.aim"}}</label>
-                <select name="aim">
-                    {{#each rollModifiers.aimOptions as |item key|}}
-                    <option value="{{item.mod}}">{{localize (concat 'MODS.aimOptions.' key) f=item.mod}}</option>
-                    {{/each}}
-                </select>
+                <div class="form-fields">
+                    <select name="aim">
+                        {{#each rollModifiers.aimOptions as |item key|}}
+                        <option value="{{item.mod}}">{{localize (concat 'MODS.aimOptions.' key) f=item.mod}}</option>
+                        {{/each}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "MODS.targetMovement"}}</label>
-                <select name="targetMovement">
-                    {{selectOptions targetMovementOptions selected=rollModifiers.targetMovement.mod localize=true}}
-                </select>
+                <div class="form-fields">
+                    <select name="targetMovement">
+                        {{selectOptions targetMovementOptions selected=rollModifiers.targetMovement.mod localize=true}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "shooter"}}</label>
-                <select name="shooterMovement">
-                    {{selectOptions shooterMovementOptions selected="0" localize=true}}
-                </select>
+                <div class="form-fields">
+                    <select name="shooterMovement">
+                        {{selectOptions shooterMovementOptions selected="0" localize=true}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "mount"}}</label>
-                <select name="mountedOptions">
-                    {{selectOptions mountedOptions selected="0" inverted=true}}
-                </select>
+                <div class="form-fields">
+                    <select name="mountedOptions">
+                        {{selectOptions mountedOptions selected="0" inverted=true}}
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label>{{localize "MODS.combatTurmoil"}} (<span class="combatTurmoilLabel">{{rollModifiers.combatTurmoil.mod}}</span>)</label>
@@ -141,4 +162,4 @@
         </div>
     </div>
     <div class="roll-dialog-tag">combatskill</div>
-</form>
+</div>

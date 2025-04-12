@@ -930,6 +930,19 @@ DSA5.attributeDifficultyLabels = {
   vhard: 'Attribute-vhard',
 };
 
+DSA5.hitboxes = {
+  0: "HITBOX.humanoid.medium",
+  1: "HITBOX.humanoid.small",
+  2: "HITBOX.humanoid.large",
+  3: "HITBOX.nonhumanoid.small",
+  4: "HITBOX.nonhumanoid.medium",
+  5: "HITBOX.nonhumanoid.large",
+  6: "HITBOX.creature.large",
+  7: "HITBOX.creature.giant",
+  8: "HITBOX.creature.kraken",
+  9: "HITBOX.creature.amorph",
+}
+
 DSA5.skillGroups = {
   body: 'SKILL.body',
   social: 'SKILL.social',

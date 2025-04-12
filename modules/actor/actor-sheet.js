@@ -115,6 +115,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
+      startCharacterBuilder: this._startCharacterBuilder,
       deleteItem: this._deleteItemAction,
       defenseToggle: this._defenseToggle,
       chargeSpell: { handler: this._chargeSpell, buttons: [0, 2] },
@@ -139,8 +140,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     majorButtons: [
       {
         action: 'playerview',
-        icon: function() {
-          return `fas fa-toggle-${this.actor.system.playerView ? 'on' : 'off'}`; 
+        icon: function () {
+          return `fas fa-toggle-${this.actor.system.playerView ? 'on' : 'off'}`;
         },
         label: 'SHEET.switchLimited',
         visible: function () {
@@ -150,8 +151,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       {
         action: 'locksheet',
         label: 'SHEET.Lock',
-        icon:  function() {
-          return `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`; 
+        icon: function () {
+          return `fas fa-${this.actor.system.sheetLocked.value ? '' : 'un'}lock`;
         },
         visible: function () {
           return this.canLockSheet;
@@ -161,7 +162,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     window: {
       resizable: true,
       contentClasses: ['standard-form'],
-      controls: [        
+      controls: [
         {
           action: 'actorConfig',
           label: 'Migrakel.Migration',
@@ -188,7 +189,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         { id: 'religion', label: 'Religion', icon: 'fas fa-ankh' },
         { id: 'main', label: 'attributes', icon: 'fas fa-user' },
         { id: 'inventory', label: 'TYPES.Item.equipment', icon: 'fas fa-suitcase' },
-        { id: 'status', label: 'status', icon: 'fas fa-info'  },
+        { id: 'status', label: 'status', icon: 'fas fa-info' },
         { id: 'notes', label: 'Notes', icon: 'fas fa-book-open' },
       ],
       initial: 'skills',
@@ -268,9 +269,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!this.actor.system.isMage) delete tabs.magic;
     if (!this.actor.system.isPriest) delete tabs.religion;
 
-    if(this.constructor.LIMITEDPARTS && this.showLimited()) {
-      for(let key of Object.keys(tabs)) {
-        if(!['main', 'notes'].includes(key)) {
+    if (this.constructor.LIMITEDPARTS && this.showLimited()) {
+      for (let key of Object.keys(tabs)) {
+        if (!['main', 'notes'].includes(key)) {
           delete tabs[key];
         }
       }
@@ -279,7 +280,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return tabs;
   }
 
-  static _itemContextMenu(event, target) {    
+  static _itemContextMenu(event, target) {
     event.preventDefault();
     event.stopPropagation();
     console.log("context")
@@ -486,7 +487,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _advanceItem(itemId) {
     const item = this.actor.items.get(itemId);
-    return await item.sheet._advanceStep();    
+    return await item.sheet._advanceStep();
   }
 
   async _refundItemAdvance(itemId) {
@@ -591,7 +592,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item = item || this.actor.items.get(itemId);
 
     if (!['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))) {
-      await this.actor.items.get(itemId).update({ 'system.worn.wrongGrip': !item.system.worn.wrongGrip });      
+      await this.actor.items.get(itemId).update({ 'system.worn.wrongGrip': !item.system.worn.wrongGrip });
     }
   }
 
@@ -722,19 +723,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static async _chargeSpell(ev, target) {
-      const itemId = this._getItemId(target);
-      const item = this.actor.items.get(itemId);
-      const lz = Number(item.system.castingTime.modified);
-      let update = {
-        _id: itemId
-      }
-      if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
-      else if (ev.button == 2) {
-        update['system.castingTime.progress'] = 0;
-        update['system.castingTime.modified'] = 0;
-      }
-      await this.actor.updateEmbeddedDocuments('Item', [update]);
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.get(itemId);
+    const lz = Number(item.system.castingTime.modified);
+    let update = {
+      _id: itemId
     }
+    if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
+    else if (ev.button == 2) {
+      update['system.castingTime.progress'] = 0;
+      update['system.castingTime.modified'] = 0;
+    }
+    await this.actor.updateEmbeddedDocuments('Item', [update]);
+  }
 
   static async _loadWeapon(ev, target) {
     const itemId = this._getItemId(target);
@@ -808,7 +809,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static _quantityClick(ev, target) {
     const itemId = this._getItemId(target);
     let item = this.actor.items.get(itemId);
-    const update = { _id: itemId, system: { quantity: { value: item.system.quantity.value}} };
+    const update = { _id: itemId, system: { quantity: { value: item.system.quantity.value } } };
     RuleChaos.increment(ev, update, 'system.quantity.value', 0);
     this.actor.updateEmbeddedDocuments('Item', [update]);
   }
@@ -846,8 +847,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
   }
 
+  static _startCharacterBuilder(ev, target) {
+    this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder');
+  }
+
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     const posthand = (ev) => {
@@ -869,9 +874,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
 
     const autoSizings = html.find('.autosizing input')
-    for(let el of autoSizings){
+    for (let el of autoSizings) {
       const chars = (el.value.length || el.placeholder.length) + 1;
-      el.setAttribute('style', `width: ${chars}ch;`);      
+      el.setAttribute('style', `width: ${chars}ch;`);
     }
     autoSizings.on('keydown', (ev) => {
       const input = ev.currentTarget;
@@ -954,8 +959,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!this.isEditable) return;
 
-    html.find('.startCharacterBuilder').on('click', () => this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder'));
-
     html.find('.ammo-selector').on('change', async (ev) => {
       ev.preventDefault();
       const itemId = this._getItemId(ev.currentTarget);
@@ -969,7 +972,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.skill-advances').on('change', async (ev) => {
       const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
-    });    
+    });
 
     //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)
     new foundry.applications.ux.DragDrop.implementation({
@@ -1171,7 +1174,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await onUse.executeOnUseEffect();
   }
 
- static async _payAeSpecialAbilityCost(ev, target) {
+  static async _payAeSpecialAbilityCost(ev, target) {
     const item = this.actor.items.get(this._getItemId(target));
 
     const cost = Number(getProperty(item, 'system.AsPCost'));
@@ -1575,6 +1578,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       case 'demonmark':
         await this._addDemonMarkOrPatron(item);
         break;
+      case 'npc':
+        ui.notifications.error(
+          game.i18n.format('DSAError.canNotBeAdded', {
+            item: item.name,
+            category: DSA5_Utility.categoryLocalization(item.type, 'Actor'),
+          }),
+        );
+        break
       default:
         ui.notifications.error(
           game.i18n.format('DSAError.canNotBeAdded', {
@@ -1758,7 +1769,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
     const html = $(this.element);
     html.find('.slot').on('click', async (ev) => {
       const item = this.actor.items.get(ev.currentTarget.dataset.itemId);

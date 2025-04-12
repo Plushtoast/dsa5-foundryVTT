@@ -11,7 +11,7 @@ export default class StatusTemplate extends DSADataModel {
         count: new NumberField({ initial: 1 }),
         gg: new NumberField({ initial: 1 }),
       }),
-      hitbox: new NumberField({ initial: 0 }),
+      hitbox: new NumberField({ initial: 0, choices:  DSA5.hitboxes }),
       status: new SchemaField({
         wounds: new SchemaField({
           initial: new NumberField({ initial: 0 }),

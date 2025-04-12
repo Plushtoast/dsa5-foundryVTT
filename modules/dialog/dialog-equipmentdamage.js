@@ -29,7 +29,7 @@ export default class EquipmentDamageDialog extends DefaultAppv2 {
   }
 
   async _onRender(context, options) {
-    await super._onRender((context, options));
+    await super._onRender(context, options);
 
     const html = $(this.element);
     html.find('.reactClick').on('click', (ev) => {
