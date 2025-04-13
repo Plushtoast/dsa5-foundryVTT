@@ -4,12 +4,12 @@
 
         {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
-        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}" class="tab description">
+        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}">
             {{> systems/dsa5/templates/items/browse/culture.hbs document=culture}}
         </div>
 
         {{#if vantagesToChose}}
-        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}" class="tab vantagesToChose">
+        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
             <p>{{localize 'WIZARD.vantageDescriptionCulture'}}</p>
             {{#if advantagesToChose}}
             <h2>{{localize 'recommendedAdvantages'}}</h2>
@@ -37,7 +37,7 @@
             {{/if}}
         </div>
         {{/if}}
-        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}" class="tab generalToChose">
+        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
             <h2>{{localize 'LocalizedIDs.localKnowledge'}}</h2>
             <p>{{localize 'WIZARD.localKnowledgeDescr'}}</p>
             <div class="row-section">

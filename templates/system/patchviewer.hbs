@@ -12,21 +12,21 @@
     
     <section class="content">
         <section >
-        <div class="tab {{tabs.newcontent.cssClass}}" data-tab="newcontent" data-group="{{tabs.newcontent.group}}" class="tab newcontent">
+        <div class="tab {{tabs.newcontent.cssClass}}" data-tab="newcontent" data-group="{{tabs.newcontent.group}}">
             <div class="newssection">
                 {{{news}}} {{#each prevNews as |item i|}}
                 <hr style="margin-top:100px" /> {{{item}}} {{/each}}
             </div>
             <button class="showMore">More..</button>
         </div>
-        <div class="tab {{tabs.changelog.cssClass}}" data-tab="changelog" data-group="{{tabs.changelog.group}}" class="tab changelog">
+        <div class="tab {{tabs.changelog.cssClass}}" data-tab="changelog" data-group="{{tabs.changelog.group}}">
             <div class="changelogsection">
                 {{{changelog}}} {{#each prevChangeLogs as |item i|}}
                 <hr style="margin-top:100px" /> {{{item}}} {{/each}}
             </div>
             <button class="showMore">More..</button>
         </div>
-        <div class="tab {{tabs.content.cssClass}}" data-tab="content" data-group="{{tabs.content.group}}" class="tab content">
+        <div class="tab {{tabs.content.cssClass}}" data-tab="content" data-group="{{tabs.content.group}}">
             {{{modules}}}
         </div>
     </section>

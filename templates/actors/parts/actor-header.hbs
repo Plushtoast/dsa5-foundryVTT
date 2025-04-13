@@ -11,7 +11,7 @@
     </div>
     <div class="headerbadgeflex headerInput flexAlignCenter autosizing">
       {{#if prepare.canBuild}}
-        <button type="button" data-action="startCharacterBuilder" class='icon fas fa-user-edit' data-tooltip='CHARGEN.chargenTT'>{{localize 'CHARGEN.chargen'}}</button>
+        <button type="button" data-action="startCharacterBuilder" data-tooltip='CHARGEN.chargenTT'><i class="fas fa-user-edit"></i> {{localize 'CHARGEN.chargen'}}</button>
       {{else}}
         {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}        
       {{/if}}

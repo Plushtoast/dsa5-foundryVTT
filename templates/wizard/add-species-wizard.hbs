@@ -4,12 +4,12 @@
 
         {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
-        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}" class="tab description">
+        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}">
             {{> systems/dsa5/templates/items/browse/species.hbs document=species hasLocalization=hasLocalization}}
         </div>
 
         {{#if vantagesToChose}}
-        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}" class="tab vantagesToChose">
+        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
 
             <p>{{localize 'WIZARD.vantageDescriptionSpecies'}}</p>
             {{#if missingVantagesToChose}}
@@ -52,7 +52,7 @@
             {{/each}} {{/if}}
         </div>
         {{/if}} {{#if generalToChose}}
-        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}" class="tab generalToChose">
+        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
             {{#if anyAttributeRequirements}}
             <h2>{{localize 'WIZARD.attributesToChose'}}</h2>
             <p>{{localize 'WIZARD.attributesToChoseHint'}}</p>
@@ -77,7 +77,7 @@
         <button class="dialog-button ok default" data-button="ok">
             <i class="fas fa-check"></i> {{localize 'ok'}}
         </button>
-            <button class="dialog-button cancel default" data-button="cancel">
+        <button class="dialog-button cancel default" data-button="cancel">
             <i class="fas fa-close"></i> {{localize 'cancel'}}
         </button>
     </div>

@@ -4,12 +4,12 @@
 
         {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
-        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}" class="tab description">
+        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}">
             {{> systems/dsa5/templates/items/browse/career.hbs document=career}}
         </div>
 
         {{#if vantagesToChose}}
-        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}" class="tab vantagesToChose">
+        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
             <p>{{localize 'WIZARD.vantageDescription'}}</p>
             {{#if missingVantagesToChose}}
             <h2>{{localize 'WIZARD.missingVantages'}}</h2>
@@ -50,7 +50,7 @@
         </div>
         {{/if}} 
         {{#if generalToChose}}
-        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}" class="tab generalToChose">
+        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
             {{#if anyAttributeRequirements}}
             <h2>{{localize 'WIZARD.attributeRequirements'}}</h2>
             <div class="row-section wrap">
@@ -93,7 +93,7 @@
         </div>
         {{/if}} 
         {{#if combatToChose}}
-        <div class="tab {{tabs.combatToChose.cssClass}}" data-tab="combatToChose" data-group="{{tabs.combatToChose.group}}" class="tab combatToChose">
+        <div class="tab {{tabs.combatToChose.cssClass}}" data-tab="combatToChose" data-group="{{tabs.combatToChose.group}}">
             <h2>{{localize 'TYPES.Item.combatskill'}}</h2>
             {{#each combatskillchoices as |item i|}}
             <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}. </p>
@@ -110,7 +110,7 @@
         </div>
         {{/if}} 
         {{#if magicToChose}}
-        <div class="tab {{tabs.magicToChose.cssClass}}" data-tab="magicToChose" data-group="{{tabs.magicToChose.group}}" class="tab magicToChose">
+        <div class="tab {{tabs.magicToChose.cssClass}}" data-tab="magicToChose" data-group="{{tabs.magicToChose.group}}">
             <h2>{{localize 'magictricks'}}</h2>
             <p class="maxTricks" data-spelltricklimit="{{career.system.spelltrickCount.value}}">{{localize 'WIZARD.chose'}} {{career.system.spelltrickCount.value}}.</p>
             <div class="row-section wrap">
@@ -140,7 +140,7 @@
         </div>
         {{/if}} 
         {{#if religionToChose}}
-        <div class="tab {{tabs.religionToChose.cssClass}}" data-tab="religionToChose" data-group="{{tabs.religionToChose.group}}" class="tab religionToChose">
+        <div class="tab {{tabs.religionToChose.cssClass}}" data-tab="religionToChose" data-group="{{tabs.religionToChose.group}}">
             {{#if liturgyChoices}} 
             <h2>{{localize 'TYPES.Item.spell'}}</h2>
             {{#each liturgyChoices as |item i|}}
