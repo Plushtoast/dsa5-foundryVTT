@@ -1654,7 +1654,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       this._chatLineHelper('TYPES.Item.combatskill', data.combatskill.value),
       this._chatLineHelper('reach', data.reach.value),
     ];
-    if (data.effect.value != '') res.push(this._chatLineHelper(DSA5_Utility.replaceConditions('effect', data.effect.value)));
+    if (data.effect.value != '') res.push(this._chatLineHelper('effect', DSA5_Utility.replaceConditions(data.effect.value)));
 
     return res;
   }
