@@ -2,7 +2,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import DSA5Payment from '../system/payment.js';
 import RuleChaos from '../system/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
-import { slist, tabSlider } from '../system/view_helper.js';
+import { delay, slist, tabSlider } from '../system/view_helper.js';
 import PlayerMenu from './player_menu.js';
 import RequestRoll from '../system/request-roll.js';
 import DialogShared from '../dialog/dialog-shared.js';
@@ -124,7 +124,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
           this.render();
         }
       });
-      Hooks.on('updateScene', async (document, data, options, userId) => {
+      Hooks.on('updateScene', (document, data, options, userId) => {
         const properties = ['environment.darknessLevel'];
         if (
           game.canvas.id == document.id &&
@@ -132,7 +132,25 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
             return a || hasProperty(data, b);
           }, false)
         ) {
-          if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onDarknessChange();
+          if (game.dsa5.apps.LightDialog) {
+            if(options.animateDarkness) {
+              const interval = 50;
+              const duration = options.animateDarkness;
+              const limit = duration / interval;
+              let count = 0;
+
+              const intervalId = setInterval(() => {
+                game.dsa5.apps.LightDialog.onDarknessChange()
+
+                count++;
+                if (count >= limit) {
+                  clearInterval(intervalId);
+                }
+              }, interval);
+            } else {
+             game.dsa5.apps.LightDialog.onDarknessChange();
+            }
+          }         
 
           if (!this.rendered) return;
 
@@ -364,7 +382,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async updateDarkness(ev) {
-    if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Number(ev.currentTarget.value) }, { animateDarkness: 3000 });
+    if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Number(ev.currentTarget.value) }, { animateDarkness: 2000 });
   }
 
   async updateSightThreshold(ev) {
