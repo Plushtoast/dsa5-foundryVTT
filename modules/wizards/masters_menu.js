@@ -183,7 +183,6 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _heroschip(ev, target) {
-    console.log("wuuz")
     ev.stopPropagation();
     ev.preventDefault();
     let val = Number(target.dataset.val);
@@ -825,6 +824,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     generators: {
       template: 'systems/dsa5/templates/system/mastermenu/generators.hbs',
       scrollable: [''],
+      templates: ['systems/dsa5/templates/wizard/breedcard.hbs']
     },
     settings: {
       template: 'systems/dsa5/templates/system/mastermenu/settings.hbs',

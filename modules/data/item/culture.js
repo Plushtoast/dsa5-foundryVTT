@@ -4,6 +4,7 @@ import APValueTemplate from './templates/apvalue.js';
 import DSAStringField from '../fields/dsa_string_field.js';
 
 const { StringField, SchemaField, HTMLField } = foundry.data.fields;
+const { TextEditor } = foundry.applications.ux;
 
 export default class CultureData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
   static defineSchema() {

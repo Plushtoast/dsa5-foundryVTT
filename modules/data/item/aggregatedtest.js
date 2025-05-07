@@ -4,6 +4,7 @@ import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionTemplate) {
   static defineSchema() {

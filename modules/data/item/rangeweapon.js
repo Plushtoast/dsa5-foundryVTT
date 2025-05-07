@@ -30,7 +30,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
       }),
       reloadTime: new SchemaField({
-        value: new ScopableNumberField({ initial: 1, label: 'reloadTime', min: 0 }),
+        value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
       }),
       reach: new SchemaField({
@@ -40,14 +40,6 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
         value: new BooleanField({ initial: false }),
       }),
     });
-  }
-
-  static _migrateData(source) {
-    super._migrateData(source);
-
-    if (source.reloadTime?.value && isNaN(source.reloadTime.value)) {
-      source.reloadTime.value = Number(source.reloadTime.value) || 1;
-    }
   }
 
   async getSheetData(data) {

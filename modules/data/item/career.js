@@ -5,6 +5,7 @@ import RequirementsTemplate from './templates/requirements.js';
 import DSA5 from '../../system/config-dsa5.js';
 
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
+const { TextEditor } = foundry.applications.ux;
 
 export default class CareerData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, RequirementsTemplate) {
   static defineSchema() {

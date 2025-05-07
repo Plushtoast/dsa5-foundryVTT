@@ -9,6 +9,7 @@ import { DragMixin } from '../actor/drag_mixin.js';
 import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class BookWizard extends DragMixin(DefaultAppv2) {
   static wizard;

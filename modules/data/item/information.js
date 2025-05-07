@@ -4,6 +4,7 @@ import { ItemDataModel } from '../baseitem.js';
 
 const { StringField, NumberField, HTMLField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class InformationData extends ItemDataModel {
   static defineSchema() {

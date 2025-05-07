@@ -24,6 +24,7 @@ import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './appv2_mixin.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static propertiesToEnrich = [
@@ -283,9 +284,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static _itemContextMenu(event, target) {
     event.preventDefault();
     event.stopPropagation();
-    console.log("context")
     const { clientX, clientY } = event;
-    console.log(clientX, clientY)
     target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
       view: window, bubbles: true, cancelable: true, clientX, clientY
     }));
@@ -321,7 +320,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _onItemCreate(event, target) {
     event.preventDefault();
-    console.log("woot")
     let data = duplicate(target.dataset);
     if (DSA5.equipmentTypes[data.type]) {
       data.type = 'equipment';
@@ -837,11 +835,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const html = $(this.element);
     resizeListener(html.find('.window-content'))
 
-    new foundry.applications.ui.ContextMenu(this.element, '.item .withContext', [], {
+    new foundry.applications.ux.ContextMenu(this.element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
       jQuery: false,
     });
-    new foundry.applications.ui.ContextMenu(this.element, '.combat-weapon', [], {
+    new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
       jQuery: false,
     });
@@ -974,7 +972,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
     });
 
-    //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)
+    //todo we could remove this if every .item is replaced with .draggable (parent class has draggable attachment listener)
     new foundry.applications.ux.DragDrop.implementation({
       dragSelector: ".item",
       dropSelector: null,

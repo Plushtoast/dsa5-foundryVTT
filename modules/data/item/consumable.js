@@ -9,6 +9,7 @@ import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
 
 const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
+const { TextEditor } = foundry.applications.ux;
 
 export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
   static defineSchema() {

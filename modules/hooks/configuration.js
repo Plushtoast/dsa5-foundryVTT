@@ -353,10 +353,12 @@ export function setupConfiguration() {
     default: '',
     type: new foundry.data.fields.StringField({ choices: moneyChoices }),
     onChange: async (val) => {
+      const pack = game.packs.get(val);
+      if (!pack) return;
+
       ui.notifications.info(
-        game.packs
-          .get(val)
-          .index.filter((x) => x.type == 'money')
+        pack.index
+          .filter((x) => x.type == 'money')
           .map((x) => x.name)
           .join(', '),
       );
@@ -882,12 +884,12 @@ class ConfigureTokenHotbar extends FormAppv2 {
     actions: {
       resetTokenHotbar: this.resetTokenHotbar,
       masterFunction: this._onMasterFunctionClicked,
-    }
+    },
   };
 
   static PARTS = {
     main: {
-      template: 'systems/dsa5/templates/dialog/configureTokenhotbar.hbs'
+      template: 'systems/dsa5/templates/dialog/configureTokenhotbar.hbs',
     },
   };
 
@@ -895,8 +897,7 @@ class ConfigureTokenHotbar extends FormAppv2 {
     await super._onRender(context, options);
     const html = $(this.element);
     html.find('select, input, range-picker').on('change', async (ev) => {
-      if(!ev.currentTarget.name) return;
-
+      if (!ev.currentTarget.name) return;
 
       const name = ev.currentTarget.name.split('.');
       let val = ev.currentTarget.value;
@@ -912,7 +913,6 @@ class ConfigureTokenHotbar extends FormAppv2 {
     const setting = game.settings.get('dsa5', 'enableMasterTokenFunctions');
     setting[id] = !setting[id];
     $(target).toggleClass('deactivated', setting[id]);
-    console.log(setting[id]);
     game.dsa5.apps.tokenHotbar.gmItems.find((x) => x.id == id).disabled = setting[id];
     await game.settings.set('dsa5', 'enableMasterTokenFunctions', setting);
   }

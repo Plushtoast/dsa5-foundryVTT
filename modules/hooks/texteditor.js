@@ -1,5 +1,6 @@
 import DSA5 from '../system/config-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export function setEnrichers() {
   const rolls = { Rq: 'roll', Gc: 'GC', Ch: 'CH' };

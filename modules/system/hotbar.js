@@ -478,7 +478,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 }
 
-class HotbarV3ContextMenu extends foundry.applications.ui.ContextMenu {
+class HotbarV3ContextMenu extends foundry.applications.ux.ContextMenu {
   _setPosition(html, target) {
     if (game.settings.get('dsa5', 'hotbarv3')) {
       target = target.closest('.flexrow');

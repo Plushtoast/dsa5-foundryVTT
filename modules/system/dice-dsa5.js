@@ -23,6 +23,7 @@ import RuleChaos from './rule_chaos.js';
 import CombatskillData from '../data/item/combatskill.js';
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class DiceDSA5 {
   static async rollTest(testData) {

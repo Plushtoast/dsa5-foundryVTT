@@ -3,6 +3,7 @@ import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 import DSA5_Utility from './utility-dsa5.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class RequestRoll {
   static async requestGC(category, name, messageId, modifier = 0) {

@@ -4,6 +4,7 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 import WizardDSA5 from './dsa5_wizard.js';
 import APTracker from '../system/ap-tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
+const { TextEditor } = foundry.applications.ux;
 
 export default class CareerWizard extends WizardDSA5 {
   constructor(app) {

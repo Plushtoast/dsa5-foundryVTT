@@ -35,6 +35,5 @@ export const DragMixin = (superclass) =>
     }
 
     async _onDrop(event) {
-      console.log(jo)
     }
   };

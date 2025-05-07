@@ -11,19 +11,11 @@ export default class AoeTemplate extends DSADataModel {
     }, {});
     return {
       target: new SchemaField({
-        value: new NumberField({ initial: 0 }),
+        value: new StringField({ initial: '0' }),
         type: new StringField({ initial: '', choices: targetTypes, blank: true }),
         width: new NumberField({ initial: 0, placeholder: 'gridUnits', label: 'aoewidth' }),
         angle: new NumberField({ initial: 45, label: 'aoeangle' }),
       }),
     };
   }
-
-  static _migrateData(source) {
-    super._migrateData(source);
-
-    if(source.target && isNaN(source.target.value)) {
-      source.target.value = Number(source.target.value) || 0;
-    }
-}
 }

@@ -4,6 +4,7 @@ import EquipmentTemplate from './templates/equipment.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { NumberField, BooleanField, StringField, SchemaField, HTMLField } = foundry.data.fields;
+const { TextEditor } = foundry.applications.ux;
 
 export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
   static defineSchema() {

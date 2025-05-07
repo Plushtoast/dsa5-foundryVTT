@@ -1,6 +1,7 @@
 import WizardDSA5 from './dsa5_wizard.js';
 import APTracker from '../system/ap-tracker.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
+const { TextEditor } = foundry.applications.ux;
 
 export default class CultureWizard extends WizardDSA5 {
   get title() {

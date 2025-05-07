@@ -18,6 +18,7 @@ import { AppV2Mixin } from '../actor/appv2_mixin.js';
 import { DragMixin } from '../actor/drag_mixin.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2)) {
   _processFormData(event, form, formData) {

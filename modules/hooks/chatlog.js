@@ -11,7 +11,6 @@ const { getProperty } = foundry.utils;
 export default function () {
   Hooks.on('renderChatLog', (log, html, data) => {
     html = $(html);
-    console.log('rendering chat log');
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);

@@ -24,11 +24,11 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
         value: new StringField({ initial: '1d6', label: 'damage' }),
       }),
       reloadTime: new SchemaField({
-        value: new NumberField({ initial: 1, label: 'reloadTime' }),
+        value: new StringField({ initial: '', label: 'reloadTime' }),
         progress: new NumberField({ initial: 0 }),
       }),
       AsPCost: new SchemaField({
-        value: new NumberField({ initial: 0 }),
+        value: new StringField({ initial: '' }),
       }),
       duration: new SchemaField({
         value: new StringField({ initial: '', label: 'duration' }),
@@ -45,17 +45,6 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
       }),
       distribution: new StringField({ initial: '', label: 'distribution' }),
     });
-  }
-
-  static _migrateData(source) {
-    super._migrateData(source);
-
-    if (source.AsPCost?.value && isNaN(source.AsPCost.value)) {
-      source.AsPCost.value = Number(source.AsPCost.value) || 0;
-    }
-    if (source.reloadTime?.value && isNaN(source.reloadTime.value)) {
-      source.reloadTime.value = Number(source.reloadTime.value) || 1;
-    }
   }
 
   async getSheetData(data) {
