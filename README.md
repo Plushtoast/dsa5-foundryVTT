@@ -150,6 +150,12 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/detail/index/sArticle/4457" target="_blank" title="Aventurische Bibliothek">
         <img src="https://www.f-shop.de/media/image/50/34/01/ESD052_0_0999.jpg" alt="Aventurische Bibliothek" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4640/dsa5-geschoepfe-der-anderswelt-fuer-foundry-vtt" target="_blank" title="Geschöpfe der Anderswelt">
+        <img src="https://www.f-shop.de/media/image/39/e3/50/a4_cover_anderswelt_vtt.jpg" alt="Geschöpfe der Anderswelt" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/4659" target="_blank" title="Verborgen in der Tiefe">
+        <img src="https://www.f-shop.de/media/image/80/7a/72/a4_cover_verbogenindtiefe_vtt.jpg" alt="Verborgen in der Tiefe" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <h2>Abenteuer</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">
         <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp" alt="Einführungsabenteuer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -224,8 +230,8 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4518/dsa5-aera-des-goldenen-kaisers-fuer-foundry-vtt" target="_blank" title="Ära des Goldenen Kaisers">
         <img src="https://www.f-shop.de/media/image/14/96/70/foundry_cover_-aradesgoldenenOjvGcfsb4DGCV.jpg" alt="Ära des Goldenen Kaisers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
-    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt" target="_blank" title="Ära des Goldenen Kaisers">
-        <img src="https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg" alt="Ära des Goldenen Kaisers" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt" target="_blank" title="Gestade des Gottwals">
+        <img src="https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg" alt="Gestade des Gottwals" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
 <br>

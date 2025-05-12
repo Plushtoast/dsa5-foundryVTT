@@ -47,6 +47,7 @@ import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/ap-tracker.js';
 import OnUseEffect from './system/onUseEffects.js';
 import TestSuite from './system/testsuite.js';
+import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
 
 Hooks.once('init', () => {
@@ -139,3 +140,4 @@ Hooks.once('init', () => {
 });
 
 initHooks();
+connectTokenRing();

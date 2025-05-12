@@ -50,8 +50,6 @@ export default class DSA5ChatAutoCompletion {
   async chatListeners(html) {
     let target = this;
 
-    const cmMessage = html.find('#chat-message');
-
     html.on('keyup', '#chat-message', async function (ev) {
       target._parseInput(ev);
     });
@@ -59,13 +57,6 @@ export default class DSA5ChatAutoCompletion {
     html.on('click', '.quick-item', async function (ev) {
       target._quickSelect($(ev.currentTarget));
     });
-
-    html.on('keydown', '#chat-message', function (ev) {
-      target._navigateQuickFind(ev);
-    });
-    //const handlers = jQuery._data(cmMessage[0]).events['keydown'];
-    //handlers.unshift(handlers.pop());
-    //TODO foundry13 breaking
   }
 
   _parseInput(ev) {
@@ -105,7 +96,7 @@ export default class DSA5ChatAutoCompletion {
 
   _closeQuickfind(ev) {
     this.filtering = false;
-    $(ev.currentTarget).closest('#chat-form').find('.quickfind').remove();
+    $(ev.currentTarget).closest('.chat-form').find('.quickfind').remove();
   }
 
   _filterW(search, ev) {
@@ -238,7 +229,7 @@ export default class DSA5ChatAutoCompletion {
     );
 
     html.find(`.quick-item:first`).addClass('focus');
-    const par = $(ev.currentTarget).closest('#chat-form');
+    const par = $(ev.currentTarget).closest('.chat-form');
     let quick = par.find('.quickfind');
     if (quick.length) {
       quick.replaceWith(html);
@@ -249,7 +240,7 @@ export default class DSA5ChatAutoCompletion {
 
   _navigateQuickFind(ev) {
     if (this.filtering) {
-      let target = $(ev.currentTarget).closest('#chat-form').find('.focus');
+      let target = $(ev.currentTarget).closest('.chat-form').find('.focus');
       switch (ev.which) {
         case 38: // Up
           if (target.prev('.quick-item').length) target.removeClass('focus').prev('.quick-item').addClass('focus');
@@ -344,7 +335,7 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _resetChatAutoCompletion(target) {
-    const par = target.closest('#chat-form');
+    const par = target.closest('.chat-form');
     par.find('#chat-message').val('');
     par.find('.quickfind').remove();
   }

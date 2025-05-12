@@ -6,7 +6,7 @@ export function initImagePopoutTochat() {
     buttons.unshift({
       class: 'posttochat',
       icon: `fas fa-comment`,
-      onclick: async () => postImage(app),
+      onClick: async () => postImage(app),
     });
   });
 }

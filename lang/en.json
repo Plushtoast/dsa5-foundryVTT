@@ -1083,6 +1083,10 @@
         "naked": "Naked",
         "legacy": "Immersive (TDE5)"
     },
+    "DSA5_TOKENRING": {
+        "blank": "TDE5 Tokenring (transparent background)",
+        "normal": "TDE5 Tokenring"
+    },
     "traditionArtifacts": {
         "Animistenwaffe": "Animist weapon",
         "Bannschwert": "Spell-Sword",
@@ -1615,6 +1619,7 @@
     "DSAError": {
         "customEffect": "For manual effects only one token can be selected",
         "noTokenSelected": "No token selected",
+        "elementNotFound": "The element \"{element}\" could not be found.",
         "NoPatron": "The character has no patron assigned yet.",
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
         "APUpdateError": "Unable to adapt AP value. Please configure manually.",

@@ -119,7 +119,9 @@ export default class RequestRoll {
 
   static showRQMessage(target, modifier = 0, customLabel = undefined) {
     const mod = modifier < 0 ? ` ${modifier}` : modifier > 0 ? ` +${modifier}` : '';
-    const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target).type;
+    const skill = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)
+    if(!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: target }, localize: true });;
+    const type = skill.type;
     const msg = game.i18n.format('CHATNOTIFICATION.requestRoll', {
       user: game.user.name,
       item: `<a class="roll-button request-roll" data-type="${type}" data-tooltip="TT.requestRoll" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>`,

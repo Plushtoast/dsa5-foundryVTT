@@ -15,6 +15,7 @@
   --dsadesign1: #937b48;
   --table-title-bg: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
   --oddColor: rgba(0, 0, 0, 0.1);
+  --copiedBG: rgba(11, 10, 19, 0.9);
 }
 
 @font-face {
@@ -1342,7 +1343,7 @@ a.img-entity-link {
 .dsalist li,
 #chat-form,
 .browser-item,
-.effect-change .key,
+.changes .key,
 .inputTooltipAvailable,
 .journalHeader,
 .tokenQuickHot>ul>li,
@@ -1739,7 +1740,6 @@ input[type='search'] {
       content: "";
       position: absolute;
       inset: 0;
-      background-image: var(--img-url);
       background-size: cover;
       background-position: center;
       filter: blur(var(--blur-amount));
@@ -1916,7 +1916,7 @@ input[type='search'] {
 
     button {
       border-radius: 50%;
-      background: var(--background);
+      background: var(--copiedBG);
 
       &:hover {
         background-color: var(--dsadesign1);
@@ -1953,7 +1953,7 @@ input[type='search'] {
     button {
       width: 34px;
       border-left: 6px transparent solid;
-      background: var(--background);
+      background: var(--copiedBG);
       transition: background-color 0.2s ease-in-out;
 
       &:hover {
@@ -2686,7 +2686,7 @@ a {
 
     input {
       border: 1px solid #7cd000;
-    }    
+    }
   }
 }
 
@@ -2988,7 +2988,7 @@ select.noAppearance {
   }
 }
 
-.effect-change {
+.changes {
   .key input {
     width: 90%;
   }
@@ -3001,6 +3001,7 @@ select.noAppearance {
     &+.select2 {
       width: 8%;
       background: #efe4e4;
+      color: black;
       position: absolute;
 
       .select2-selection__rendered {
@@ -3161,7 +3162,7 @@ select.noAppearance {
 
     &::-webkit-scrollbar {
       width: 6px;
-    }    
+    }
   }
 
   .action-buttons {
@@ -4114,7 +4115,7 @@ select.noAppearance {
 .patchviewer {
   h1 {
     margin: 0;
-    
+
     a {
       display: block;
       float: left;
@@ -4138,6 +4139,7 @@ select.noAppearance {
 .innerscrollable {
   flex: 1 1 auto;
 }
+
 .noscrollWizard .content {
   overflow-y: hidden;
 }
@@ -4810,7 +4812,7 @@ input[type='checkbox'].autoCheckbox {
   position: relative;
 }
 
-.effect-change input::placeholder {
+.changes input::placeholder {
   color: #a9a7a0;
 }
 
@@ -4818,14 +4820,6 @@ input[type='checkbox'].autoCheckbox {
 
 .select2-results__option[role='group']:hover {
   background-color: transparent;
-}
-
-.theme-dark {
-  .application {
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-      color: white;
-    }
-  }
 }
 
 .postChatSection {
@@ -5314,6 +5308,13 @@ input[type='checkbox'].autoCheckbox {
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
+  }
+}
+
+.select2-container {
+  .select2-dropdown {
+    background: #efe4e4;
+    color: black;
   }
 }
 

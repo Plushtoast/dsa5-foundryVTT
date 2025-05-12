@@ -34,7 +34,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     }
 
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'automatedAnimation', 'args', documents[0].command);
       try {
         args.result = result;
@@ -92,26 +92,29 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   static DEFAULT_OPTIONS = {
     window: {
       resizable: true,
+    },
+    position: {
+      width: 600
     }
   };
 
   static PARTS = {
-    header: {template: "templates/sheets/active-effect-config/header.hbs"},
-    tags: {template: "templates/generic/tab-navigation.hbs"},
-    details: {template: "templates/sheets/active-effect-config/details.hbs"},
-    duration: {template: "templates/sheets/active-effect-config/duration.hbs"},
-    changes: {template: "templates/sheets/active-effect-config/changes.hbs"},
-    advanced: {template: "systems/dsa5/templates/status/advanced_effect.hbs"},
-    footer: {template: "templates/generic/form-footer.hbs"}
+    header: super.PARTS.header,
+    tabs: super.PARTS.tabs,
+    details: super.PARTS.details,
+    duration: super.PARTS.duration,
+    changes: super.PARTS.changes,
+    advanced: { template: "systems/dsa5/templates/status/advanced_effect.hbs" },
+    footer: super.PARTS.footer,
   };
 
   static TABS = {
     sheet: {
       tabs: [
-        {id: "details", icon: "fa-solid fa-book" },
-        {id: "duration", icon: "fa-solid fa-clock" },
-        {id: "changes", icon: "fa-solid fa-cogs" },
-        {id: "advanced", icon: "fa-solid fa-shield-alt", label: "advanced"},
+        { id: "details", icon: "fa-solid fa-book" },
+        { id: "duration", icon: "fa-solid fa-clock" },
+        { id: "changes", icon: "fa-solid fa-cogs" },
+        { id: "advanced", icon: "fa-solid fa-shield-alt", label: "advanced" },
       ],
       initial: "details",
       labelPrefix: "EFFECT.TABS"
@@ -172,7 +175,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
-          const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+          const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
           await fn.call(this, effect, actor);
         } catch (err) {
@@ -192,9 +195,9 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
   async _preparePartContext(partId, context) {
     const partContext = await super._preparePartContext(partId, context);
-    if ( partId in partContext.tabs ) partContext.tab = partContext.tabs[partId];
+    if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
     const document = this.document;
-    switch ( partId ) {
+    switch (partId) {
       case "advanced":
         let index = 0;
 
@@ -209,19 +212,19 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           hasTriggerEffects: ['specialability'].includes(itemType),
           hasSuccessEffects: ['poison', 'disease'].includes(itemType),
         };
-    
+
         let advancedFunctions = [];
-    
+
         if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
           advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 });
         }
-    
+
         if (effectConfigs.hasSpellEffects) {
           for (let x of ['systemEffect', 'macro', 'creature']) {
             advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) });
           }
         }
-    
+
         if (effectConfigs.hasDamageTransformation) {
           advancedFunctions.push(
             { name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION },
@@ -233,21 +236,21 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL, },
             { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED, },
           );
-        }    
+        }
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
           obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
           return obj;
         }, {});
-    
+
         const applySuccessConditions = {
           1: 'ActiveEffects.onSuccess',
           2: 'ActiveEffects.onFailure',
         };
-    
+
         const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
-        
-    
-        mergeObject(partContext,{
+
+
+        mergeObject(partContext, {
           advancedFunctions,
           effectConfigs,
           macroIndexes: DSAActiveEffectConfig.macroIndexes,
@@ -260,18 +263,18 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           applySuccessConditions,
           config: this.getConfig(),
           isWeapon,
-          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce( (obj, e) => {
-              obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
-              return obj;
+          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce((obj, e) => {
+            obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
+            return obj;
           }, { 2: game.i18n.localize('all') })
         })
-        break;        
+        break;
     }
     return partContext;
   }
 
   getConfig() {
-    return { 
+    return {
       systemEffects: this.getStatusEffects(),
       canEditMacros: game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
     }
@@ -302,14 +305,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
 
     const dropDown = this.dropDownMenu();
-    html.find('.changes-list .effect-change .key').append(dropDown);
+    html.find('.changes ol .key').append(dropDown);
     html
       .find('.selMenu')
       .select2({ width: 'element' })
       .on('change', (ev) => {
         const elem = $(ev.currentTarget);
         elem.siblings('input').val(elem.val());
-        const parent = elem.closest('.effect-change');
+        const parent = elem.closest('li');
         const data = elem.find('option:selected');
         parent.find('.mode select').val(data.attr('data-mode'));
         parent.find('.value input').attr('placeholder', data.attr('data-ph'));
@@ -339,7 +342,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
-              const syncFunction = Object.getPrototypeOf(function () {}).constructor;
+              const syncFunction = Object.getPrototypeOf(function () { }).constructor;
               const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', getProperty(ef, 'flags.dsa5.args3'));
               fn.call(this, ef, callMacro, actor, msg, source, options);
             } catch (err) {
@@ -449,7 +452,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                     });
                   } else {
                     try {
-                      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+                      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'actor', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
                       await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
                     } catch (err) {

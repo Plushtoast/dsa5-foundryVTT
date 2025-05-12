@@ -1253,6 +1253,10 @@
         "skillgm": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
         "requestRoll": "<small>Probe mit aktuellem Held<br/>Links-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> Blind</small>"
     },
+    "DSA5_TOKENRING": {
+        "blank": "DSA5 Tokenring (transparenter Hintergrund)",
+        "normal": "DSA5 Tokenring"
+    },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
         "default": "Weiterführende Hilfe und Informationen gibt es hier: <div class=\"flexcol\"><a class=\"button\" href=\"https://youtube.com/c/VTTom\" target=\"_blank\">VTTom's YouTube Kanal</a><button class=\"openBookInJournalBrowser\" data-type=\"manuals\" data-book=\"Game Manual (Foundry VTT)\">Game Manual</button><a class=\"button\" href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki & FAQ</a><a class=\"button\" href=\"https://discord.gg/foundryvtt\" target=\"_blank\">Foundry Discord (ulisses-dsa)</a><a class=\"button\" href=\"https://discord.com/invite/SnqCgcvPzR\" target=\"_blank\">Ulisses Discord</a></div>",
@@ -1689,6 +1693,7 @@
         "staleData": "Verwaiste Vergleichsprobendaten gefunden. Bitte stelle sicher Vergleichsproben immer abzuschließen. Verwaiste Daten gelöscht.",
         "sceneNotInitialized": "Szene nicht gefunden. Schon initialisiert?",
         "immuneTo": "{name} ist immun gegen \"{condition}\".",
+        "elementNotFound": "Das Element \"{element}\" konnte nicht gefunden werden.",
         "conditionInvalidToCreature": "{name} kann normalerweise nicht durch {condition} beeinträchtigt werden.",
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",

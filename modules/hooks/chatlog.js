@@ -9,16 +9,21 @@ import DialogReactDSA5 from '../dialog/dialog-react.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
+  
   Hooks.on('renderChatLog', (log, html, data) => {
     html = $(html);
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
-    const autoComplete = new DSA5ChatAutoCompletion();
-    Hooks.call('startDSA5ChatAutoCompletion', autoComplete);
-    autoComplete.chatListeners(html);
+    game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
+    Hooks.call('startDSA5ChatAutoCompletion', game.dsa5.autoComplete);
+    game.dsa5.autoComplete.chatListeners(html);
     DSA5ChatListeners.chatListeners(html);
   });
+
+  Hooks.on('chatInput', (event, inputOptions) => {
+    return game.dsa5.autoComplete._navigateQuickFind(event)
+  })
 
   Hooks.on('renderChatMessageHTML', (app, html, msg) => {
     html = $(html);
