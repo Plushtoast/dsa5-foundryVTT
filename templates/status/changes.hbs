@@ -1,0 +1,31 @@
+<section class="tab changes{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    <header class="row-section">
+        <div class="col fourty">{{localize "EFFECT.ChangeKey"}}</div>
+        <div class="col five center">{{localize "EFFECT.ChangeMode"}}</div>
+        <div class="col third center">{{localize "EFFECT.ChangeValue"}}</div>
+        <div class="col ten center">{{localize "EFFECT.ChangePriority"}}</div>
+        <div class="col ten center"><a data-action="addChange"><i class="fa-regular fa-square-plus"></i></a></div>
+    </header>
+    <div class="ol">
+        {{#each source.changes as |change i|}}
+        {{#with ../fields.changes.element.fields as |changeFields|}}
+        <div class="row-section" data-index="{{i}}">
+            <div class="col fourty key">
+                {{formInput changeFields.key name=(concat "changes." i ".key") value=change.key}}
+            </div>
+            <div class="col five center mode">
+                {{formInput changeFields.mode name=(concat "changes." i ".mode") value=change.mode choices=@root.modes}}
+            </div>
+            <div class="col third center value">
+                {{formInput changeFields.value name=(concat "changes." i ".value") value=change.value}}
+            </div>
+            <div class="col ten center priority">
+                {{formInput changeFields.priority name=(concat "changes." i ".priority") value=change.priority
+                    placeholder=(lookup ../../priorities change.mode)}}
+            </div>
+            <div class="col ten flexrow center controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+        </div>
+        {{/with}}
+        {{/each}}
+    </div>
+</section>

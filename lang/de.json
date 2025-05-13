@@ -21,6 +21,11 @@
             "-4": "Schritt",
             "-5000": "Trab",
             "-8": "Galopp"
+        },
+        "mountOptions": {
+            "0": "-",
+            "1": "Aufgesattelt",
+            "2": "Fahrend"
         }
     },
     "swarm": {

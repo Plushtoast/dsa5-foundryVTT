@@ -1,4 +1,5 @@
 import actor from '../hooks/actor.js';
+import CreatureType from './creature-type.js';
 import DSA5_Utility from './utility-dsa5.js';
 const { mergeObject, getProperty, hasProperty } = foundry.utils;
 
@@ -41,7 +42,15 @@ export default class Riding {
   }
 
   static isRiding(actor) {
-    return actor.system.horse.isRiding;
+    return actor.system.horse.isRiding > 0;
+  }
+
+  static isDriving(actor) {
+    return actor.system.horse.isRiding > 1;
+  }
+
+  static probablyDriving(horse) {
+    return CreatureType.detectCreatureType(horse).length == 0 ? 2 : 1;
   }
 
   static updateTokenHook(token, data, options) {
@@ -99,7 +108,7 @@ export default class Riding {
   }
 
   static onRender(html, actor) {
-    html.find('.riding-toggle').on('click', () => this.toggleIsRiding(actor));
+    html.find('.riding-toggle select').on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
     html.find('.showHorse').on('click', () => this.getHorse(actor).sheet.render(true));
     html.find('.horse-delete').on('click', () => this.clearMount(actor));
     html.find('.horse-loyalty').on('click', () => this.rollLoyalty(actor));
@@ -110,13 +119,13 @@ export default class Riding {
     });
   }
 
-  static async toggleIsRiding(actor) {
+  static async toggleIsRiding(value) {
     await actor.update({
-      'system.horse.isRiding': !actor.system.horse.isRiding,
+      'system.horse.isRiding': value,
     });
 
     const tokenUpdates = [];
-    if (!actor.system.horse.isRiding) {
+    if (value == 0) {
       for (let token of actor.getActiveTokens()) {
         tokenUpdates.push({
           _id: token.document.id,
@@ -204,7 +213,7 @@ export default class Riding {
     await actor.update({
       system: {
         horse: {
-          isRiding: false,
+          isRiding: 0,
           actorLink: false,
           actorId: '',
           token: {}
@@ -251,7 +260,7 @@ export default class Riding {
     const actorUpdate = {
       system: {
         horse: {
-          isRiding: true,
+          isRiding: this.probablyDriving(horse),
           actorLink: horse.prototypeToken.actorLink,
           actorId: horse.id,
         },
@@ -311,7 +320,7 @@ export default class Riding {
     const actorUpdate = {
       system: {
         horse: {
-          isRiding: true,
+          isRiding: this.probablyDriving(horse.actor),
           actorLink: horse.actorLink,
           actorId: horse.actor.id,
         },

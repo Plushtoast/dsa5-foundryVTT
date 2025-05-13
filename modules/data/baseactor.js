@@ -348,7 +348,7 @@ export class ActorDataModel extends DSADataModel {
         data.status.speed.max = horse.system.status.speed.max;
         if (!data.status.speed.max) {
           const horseData = horse.system;
-          horse.calcSpeed(horseData, horse.hasCondition('fixated'));
+          horse.system.calcSpeed(horseData, horse.hasCondition('fixated'));
         }
         data.status.speed.max = horse.system.status.speed.max;
       } else {
@@ -480,7 +480,7 @@ export class ActorDataModel extends DSADataModel {
       data.status.initiative.value = horse.system.status.initiative.value;
       if (!data.status.initiative.value) {
         const horseData = horse.system;
-        horse.calcInitiative(horseData, horse.calcEncumbrance(horseData));
+        horse.system.calcInitiative(horseData, horse.system.calcEncumbrance(horseData));
         data.status.initiative.value = horseData.status.initiative.value;
       }
     } else {

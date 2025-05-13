@@ -2112,6 +2112,11 @@
             "-4": "Walk",
             "-5000": "Trot",
             "-8": "Gallop"
+        },
+        "mountOptions": {
+            "0": "-",
+            "1": "Riding",
+            "2": "Driving"
         }
     },
     "DIALOGDESCRIPTION": {

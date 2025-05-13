@@ -529,13 +529,16 @@ export default class Itemdsa5 extends Item {
     rangeOptions.delete(AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.senseOfRange') ? 'long' : 'rangesense');
     if (!SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.extremeShot')) rangeOptions.delete('extreme');
 
-    const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.drivingArcher');
-    const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.mountedArcher');
     let mountedOptions;
-    if (mountedArcher && Riding.isRiding(actor)) {
-      mountedOptions = duplicate(DSA5.mountedRangeOptionsSpecAb);
-    } else if (drivingArcher) {
-      mountedOptions = duplicate(DSA5.drivingArcherOptions);
+    const isRiding = Riding.isRiding(actor);
+    const isDriving = Riding.isDriving(actor);
+
+    if (isDriving) {
+      const drivingArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.drivingArcher');
+      mountedOptions = drivingArcher ? duplicate(DSA5.drivingArcherOptionsSpecAb) : duplicate(DSA5.drivingArcherOptions);
+    } else if (isRiding) {
+      const mountedArcher = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.mountedArcher');
+      mountedOptions = mountedArcher ? duplicate(DSA5.mountedRangeOptionsSpecAb) : duplicate(DSA5.mountedRangeOptions);
     } else {
       mountedOptions = duplicate(DSA5.mountedRangeOptions);
     }

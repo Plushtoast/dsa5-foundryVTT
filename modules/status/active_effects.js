@@ -103,7 +103,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     tabs: super.PARTS.tabs,
     details: super.PARTS.details,
     duration: super.PARTS.duration,
-    changes: super.PARTS.changes,
+    changes: { template: "systems/dsa5/templates/status/changes.hbs", scrollable: [''] },
     advanced: { template: "systems/dsa5/templates/status/advanced_effect.hbs" },
     footer: super.PARTS.footer,
   };
@@ -305,14 +305,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
 
     const dropDown = this.dropDownMenu();
-    html.find('.changes ol .key').append(dropDown);
+    html.find('.changes .ol .key').append(dropDown);
     html
       .find('.selMenu')
       .select2({ width: 'element' })
       .on('change', (ev) => {
         const elem = $(ev.currentTarget);
         elem.siblings('input').val(elem.val());
-        const parent = elem.closest('li');
+        const parent = elem.closest('.row-section');
         const data = elem.find('option:selected');
         parent.find('.mode select').val(data.attr('data-mode'));
         parent.find('.value input').attr('placeholder', data.attr('data-ph'));

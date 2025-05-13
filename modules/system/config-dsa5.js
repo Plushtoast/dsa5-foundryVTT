@@ -605,6 +605,14 @@ DSA5.drivingArcherOptions = {
   STATIONARY: '0',
   SCHRITT: '-2',
   GALOPP: '-4',
+  TROT: '-5000',
+};
+
+DSA5.drivingArcherOptionsSpecAb = {
+  STATIONARY: '0',
+  SCHRITT: '0',
+  GALOPP: '-2',
+  TROT: '-4',
 };
 
 DSA5.masterTokens = [];
