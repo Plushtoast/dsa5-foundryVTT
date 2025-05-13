@@ -1,24 +1,25 @@
 .theme-dark {
-    --oddColor: rgba(255, 255, 255, 0.05);
-    --select2bg: #302831;
+  --oddColor: rgba(255, 255, 255, 0.05);
+  --select2bg: #302831;
+  --copiedBG: rgba(11, 10, 19, 0.9);
 
-    .changes .selMenu {
-        &+.select2 {
-            background: var(--select2bg);
-            color: white;
-        }
+  .changes .selMenu {
+    & + .select2 {
+      background: var(--select2bg);
+      color: white;
     }
+  }
 
-    .select2-container {
-        .select2-dropdown {
-            background: var(--select2bg);
-            color: white;
-        }
+  .select2-container {
+    .select2-dropdown {
+      background: var(--select2bg);
+      color: white;
     }
+  }
 
-    .application {
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: white;
-        }
+  .application {
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: white;
     }
+  }
 }

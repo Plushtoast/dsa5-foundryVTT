@@ -15,7 +15,7 @@
   --dsadesign1: #937b48;
   --table-title-bg: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
   --oddColor: rgba(0, 0, 0, 0.1);
-  --copiedBG: rgba(11, 10, 19, 0.9);
+  --copiedBG: rgba(255, 255, 255, 0.6);
 }
 
 @font-face {
@@ -134,7 +134,6 @@ h7 {
 }
 
 .dsa5 {
-
   h1,
   h2,
   h3,
@@ -169,7 +168,7 @@ h7 {
   background-image: url('../../icons/schwierig.webp');
 }
 
-.tabs>[data-tab]>.obfuscateSection {
+.tabs > [data-tab] > .obfuscateSection {
   pointer-events: all;
 }
 
@@ -275,7 +274,6 @@ table.infoTable {
   }
 }
 
-
 .dsa5.actor {
   input {
     text-align: center;
@@ -338,10 +336,9 @@ table.infoTable {
       padding: 0 2px;
       width: auto;
       text-align: center;
-      font-family: "Fira Code", "Roboto Mono", "Consolas", "Menlo", "Monaco", "Courier New", monospace;
+      font-family: 'Fira Code', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
       border: 1px solid var(--dsadesign1);
       color: var(--dsadesign1);
-
 
       &:hover {
         background-color: var(--dsadesign1);
@@ -349,7 +346,6 @@ table.infoTable {
       }
     }
   }
-
 }
 
 .dsadesignbutton {
@@ -399,13 +395,11 @@ table.infoTable {
   }
 }
 
-
 .item form .form-group input[type='checkbox'] {
   flex: 3;
 }
 
 .form-group.full-height {
-
   .editor,
   .tox {
     min-height: 100px;
@@ -433,7 +427,6 @@ form {
     }
 
     &.full-height {
-
       label,
       input {
         align-self: stretch;
@@ -557,7 +550,7 @@ select[multiple] option {
   }
 }
 
-[name="situationalModifiers"] {
+[name='situationalModifiers'] {
   height: auto;
 }
 
@@ -832,8 +825,6 @@ select[multiple] option {
   float: left;
 }
 
-
-
 .chatmoney {
   width: 15px;
   height: 15px;
@@ -888,7 +879,7 @@ input[type='text'] {
 .cards {
   padding: 3px;
 
-  >div {
+  > div {
     margin: 1px;
     flex-grow: 1;
     position: relative;
@@ -910,7 +901,7 @@ input[type='text'] {
       width: 28px;
       box-shadow: none;
 
-      +a {
+      + a {
         width: calc(100% - 28px);
       }
     }
@@ -1176,7 +1167,6 @@ a.img-entity-link {
 
 .row-section {
   .twoColors {
-
     &:nth-child(4n-1),
     &:nth-child(4n) {
       background-color: var(--oddColor);
@@ -1194,9 +1184,8 @@ a.img-entity-link {
 }
 
 .row-section {
-
-  &.inverseRowtable>.col:nth-child(odd),
-  &.rowtable>.col:nth-child(even) {
+  &.inverseRowtable > .col:nth-child(odd),
+  &.rowtable > .col:nth-child(even) {
     background-color: var(--oddColor);
   }
 }
@@ -1243,7 +1232,6 @@ a.img-entity-link {
 }
 
 .buttons a {
-
   .fas,
   .fa {
     border-radius: 100%;
@@ -1346,7 +1334,7 @@ a.img-entity-link {
 .changes .key,
 .inputTooltipAvailable,
 .journalHeader,
-.tokenQuickHot>ul>li,
+.tokenQuickHot > ul > li,
 .bags,
 .hero,
 .application .window-content {
@@ -1398,7 +1386,6 @@ a.img-entity-link {
   }
 
   .col {
-
     label,
     input {
       border: 1px solid var(--border-color);
@@ -1474,7 +1461,6 @@ a.img-entity-link {
 }
 
 #combat li.combatant {
-
   .token-initiative .initiative,
   .token-name {
     text-shadow: none;
@@ -1502,7 +1488,6 @@ a.img-entity-link {
 
 .application .window-content {
   > {
-
     section,
     form {
       padding: 12px;
@@ -1548,7 +1533,6 @@ a.img-entity-link {
 }
 
 .attacker {
-
   video,
   img {
     margin: 5px 25%;
@@ -1633,7 +1617,6 @@ li.folder {
 }
 
 .setCustomPrice {
-
   &.edit .priceTag,
   .customPriceTag {
     display: none;
@@ -1656,7 +1639,6 @@ li.folder {
 }
 
 [data-hide-damage='true'] {
-
   .damageSecret,
   .die-damage {
     display: none;
@@ -1670,7 +1652,6 @@ li.folder {
 }
 
 .chatModifiers {
-
   ul,
   div {
     display: none;
@@ -1737,7 +1718,7 @@ input[type='search'] {
     position: relative;
 
     &:before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       background-size: cover;
@@ -1814,7 +1795,7 @@ input[type='search'] {
     }
 
     span {
-      font-size: x-small
+      font-size: x-small;
     }
   }
 
@@ -1948,7 +1929,6 @@ input[type='search'] {
     top: 80px;
     z-index: -1;
     border: none;
-
 
     button {
       width: 34px;
@@ -2654,7 +2634,6 @@ h2 {
 }
 
 a {
-
   &.documentName-link,
   &.inline-roll {
     background: var(--bg-color);
@@ -2704,7 +2683,7 @@ a {
   color: #888;
   position: relative;
 
-  &>div {
+  & > div {
     padding: 3px;
   }
 
@@ -2956,7 +2935,6 @@ select.noAppearance {
 
 #combat-popout {
   &.combat-sidebar li.combatant {
-
     .token-initiative .initiative,
     .token-name {
       text-shadow: none;
@@ -2998,7 +2976,7 @@ select.noAppearance {
       position: absolute;
       background: #efe4e4;*/
 
-    &+.select2 {
+    & + .select2 {
       width: 8%;
       background: #efe4e4;
       color: black;
@@ -3145,7 +3123,7 @@ select.noAppearance {
 .adventureWizard {
   max-height: 100%;
 
-  >div {
+  > div {
     max-height: 100%;
   }
 
@@ -3181,7 +3159,7 @@ select.noAppearance {
     border-bottom: 1px solid #b5b3a4;
     border-top: 1px solid #b5b3a4;
 
-    >div {
+    > div {
       flex: 1;
       max-width: 150px;
       min-width: 150px;
@@ -3393,7 +3371,7 @@ select.noAppearance {
     margin-bottom: 2px;
   }
 
-  .effect>div {
+  .effect > div {
     background-color: rgba(0, 0, 0, 0.3);
   }
 }
@@ -3731,7 +3709,6 @@ select.noAppearance {
 }
 
 .application {
-
   &.initTracker .window-header,
   &.tokenQuickHot .window-header {
     display: none;
@@ -3819,7 +3796,7 @@ select.noAppearance {
   }
 }
 
-.tokenHotbarInner>ul>li.effect>div:before {
+.tokenHotbarInner > ul > li.effect > div:before {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   content: '\f067';
@@ -3827,7 +3804,6 @@ select.noAppearance {
 
 .application {
   &.initTracker {
-
     &::after,
     .window-content {
       background: none;
@@ -3838,7 +3814,6 @@ select.noAppearance {
   }
 
   &.tokenQuickHot {
-
     &::after,
     .window-content {
       background: none;
@@ -4047,7 +4022,7 @@ select.noAppearance {
   position: relative;
   float: right;
 
-  >span {
+  > span {
     width: 50%;
     height: 100%;
     overflow: hidden;
@@ -4358,7 +4333,6 @@ input[type='checkbox'].autoCheckbox {
 }
 
 .image {
-
   &.rar:after,
   &.common:after {
     content: '';
@@ -4760,8 +4734,8 @@ input[type='checkbox'].autoCheckbox {
     background-image: url('../../icons/categories/plantsupernatural.webp');
   }
 
-  &:hover input~span,
-  input:checked~span {
+  &:hover input ~ span,
+  input:checked ~ span {
     opacity: 1;
   }
 }
@@ -5090,7 +5064,6 @@ input[type='checkbox'].autoCheckbox {
   }
 
   .longLayout {
-
     #macro-list,
     .skillItems {
       li {
@@ -5190,7 +5163,7 @@ input[type='checkbox'].autoCheckbox {
       }
     }
 
-    &>li {
+    & > li {
       flex: 0 0 var(--base-bar-height);
       height: var(--base-bar-height);
 
@@ -5271,7 +5244,7 @@ input[type='checkbox'].autoCheckbox {
     text-align: center;
   }
 
-  .checkbox>i {
+  .checkbox > i {
     cursor: pointer;
     display: inline-block;
     padding: 0px 10px;
@@ -5287,7 +5260,7 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 
-  .checkbox input[type='radio']:checked+i {
+  .checkbox input[type='radio']:checked + i {
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
   }
