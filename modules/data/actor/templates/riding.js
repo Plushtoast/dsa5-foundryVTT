@@ -9,9 +9,9 @@ export default class RidingTemplate extends DSADataModel {
         actorLink: new BooleanField(),
         token: new ObjectField(),
         isRiding: new NumberField({ initial: 0, choices: {
-          0: 'RIDING.mountOptions.0',
-          1: 'RIDING.mountOptions.1',
-          2: 'RIDING.mountOptions.2',
+          0: '<div data-tooltip="RIDING.mountOptions.0" style="width:100%" class="fas fa-person-hiking"></div>',
+          1: '<div data-tooltip="RIDING.mountOptions.1" style="width:100%" class="fas fa-horse"></div>',
+          2: '<div data-tooltip="RIDING.mountOptions.2" style="width:100%" class="fas fa-car"></div>',
         } }),
       }),
     };

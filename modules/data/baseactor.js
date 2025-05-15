@@ -144,6 +144,8 @@ export class ActorDataModel extends DSADataModel {
         defenseMalus: 0,
         botch: 20,
         crit: 1,
+        critPA: 1,
+        critAT: 1,
       },
       rangeStats: {
         attack: 0,

@@ -136,7 +136,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     data.isLastRound = data.turns[1]?.newRound;
 
-    options.position.width = itemWidth * actorCount + actorCount * 3 + 80;
+    options.position.width = itemWidth * actorCount + actorCount * 3 + 70;
     options.position.height = itemWidth + 10;
 
     Object.assign(data, {

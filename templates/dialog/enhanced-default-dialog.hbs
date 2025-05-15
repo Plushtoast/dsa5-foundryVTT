@@ -61,3 +61,13 @@
     </div>
 </div>
 {{/if}}
+{{#if visionOptions}}
+<div class='form-group'>
+  <label>{{localize 'sight'}}</label>
+  <div class="form-fields">
+    <select name='vision'>
+      {{selectOptions visionOptions selected='0' localize=true}}
+    </select>
+  </div>
+</div>
+{{/if}}

@@ -1193,6 +1193,13 @@
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
     },
+    "SkillVisionDisruption": {
+        "step0": "Clear sight",
+        "step1": "Slight impairment [-1]",
+        "step2": "Shape [-2]",
+        "step3": "Barely shape [-3]",
+        "step4": "Invisible [-4]"
+    },
     "meleeVisionDisruption": {
         "0": "Clear Sight",
         "1": "Slight impairment [-1]",
@@ -2114,7 +2121,7 @@
             "-8": "Gallop"
         },
         "mountOptions": {
-            "0": "-",
+            "0": "Walking",
             "1": "Riding",
             "2": "Driving"
         }

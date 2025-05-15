@@ -22,12 +22,8 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds"
-                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i data-tooltip="{{prepare.system.status.wounds.refund}}"
-                                class="fas fa-minus"></i></a>
-                        <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
-                                data-tooltip="{{prepare.system.status.wounds.cost}}" class="fas fa-plus"></i></a>{{/if}}
-                        
+                        {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
+                        <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.wounds.current}}
@@ -65,12 +61,8 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
-                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i
-                                data-tooltip="{{prepare.system.status.astralenergy.refund}}"
-                                class="fas fa-minus"></i></a>
-                        <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
-                                data-tooltip="{{prepare.system.status.astralenergy.cost}}"
-                                class="fas fa-plus"></i></a>{{/if}}
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
+                        <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.astralenergy.current}}
@@ -128,11 +120,8 @@
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
                         {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy"
-                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i data-tooltip="{{prepare.system.status.karmaenergy.refund}}"
-                                class="fas fa-minus"></i></a>
-                        <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i
-                                data-tooltip="{{prepare.system.status.karmaenergy.cost}}"
-                                class="fas fa-plus"></i></a>{{/if}}
+                            class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
+                        <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.karmaenergy.current}}

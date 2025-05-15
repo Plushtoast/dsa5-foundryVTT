@@ -4,6 +4,7 @@ import DialogShared from './dialog-shared.js';
 import DSA5 from '../system/config-dsa5.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
+import DPS from '../system/derepositioningsystem.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
@@ -41,6 +42,12 @@ export default class DSA5SkillDialog extends DialogShared {
       
       });
     return buttons;
+  }
+
+  async prepareFormRecall(html) {
+      await super.prepareFormRecall(html);
+      const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+      DPS.lightLevel(actor, html);
   }
 
   async _onRender(context, options) {

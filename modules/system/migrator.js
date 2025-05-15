@@ -14,10 +14,11 @@ async function setupDefaulTokenConfig() {
     defaultToken.base.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
     defaultToken.base.lockRotation = true;
     defaultToken.base.bar1 = { attribute: 'status.wounds' };
-    defaultToken.character.sight.enabled = true
+    defaultToken.character.sight.enabled = true;
     await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);
     await game.settings.set('core', 'leftClickRelease', true);
     await game.settings.set('dsa5', 'defaultConfigFinished', true);
+    await this.migrateTo33();
   }
 }
 
@@ -29,6 +30,9 @@ async function migrateDSA(currentVersion, migrationVersion) {
   }
   if (currentVersion < 27) {
     await migrateTo26();
+  }
+  if (currentVersion < 33) {
+    await migrateTo33();
   }
 
   await game.settings.set('dsa5', 'migrationVersion', migrationVersion);
@@ -50,6 +54,17 @@ async function migrateTo26() {
   game.settings.set('dsa5', 'disableTokenhotbar', true);
 }
 
+async function migrateTo33() {
+  await game.settings.set('core', 'dynamicTokenRing', 'dsa5token');
+  const combatTrackerConfig = game.settings.get('core', 'combatTrackerConfig');
+  foundry.utils.mergeObject(combatTrackerConfig, {
+    turnMarker: {
+      src: 'systems/dsa5/icons/backgrounds/turnMarker.webp',
+    },
+  });
+  await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
+}
+
 export async function showPatchViewer() {
   const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
   const json = await notes.json();
@@ -68,11 +83,11 @@ export default function migrateWorld() {
 
     await setupDefaulTokenConfig();
     const currentVersion = game.settings.get('dsa5', 'migrationVersion');
-    const NEEDS_MIGRATION_VERSION = 32;
+    const NEEDS_MIGRATION_VERSION = 33;
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
-    const v13 = `<p>The currently advised foundry vtt version for DSA/TDE is v12. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`
-    betaWarning(13, v13)
+    const v13 = `<p>The currently advised foundry vtt version for DSA/TDE is v12. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
+    betaWarning(13, v13);
 
     if (!needsMigration) return;
 
@@ -100,22 +115,22 @@ class PatchViewer extends DefaultAppv2 {
   };
 
   static PARTS = {
-    main: { 
+    main: {
       template: 'systems/dsa5/templates/system/patchviewer.hbs',
-      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs'],
     },
   };
 
   static TABS = {
-    sheet:  {
+    sheet: {
       tabs: [
-        {id: "newcontent", label: "News"},
-        {id: "changelog", label: "Changelog"},
-        {id: "content", label: "modules"}
+        { id: 'newcontent', label: 'News' },
+        { id: 'changelog', label: 'Changelog' },
+        { id: 'content', label: 'modules' },
       ],
-      initial: "newcontent"
-    }
-  }
+      initial: 'newcontent',
+    },
+  };
 
   async _onRender(context, options) {
     await super._onRender(context, options);
@@ -149,7 +164,7 @@ class PatchViewer extends DefaultAppv2 {
   }
 
   async _prepareContext(_options) {
-    const data  = await super._prepareContext(_options);
+    const data = await super._prepareContext(_options);
     let version = this.json['notes'][this.json['notes'].length - 1];
     const patchName = this.json['default'].replace(/VERSION/g, version.version);
     let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;

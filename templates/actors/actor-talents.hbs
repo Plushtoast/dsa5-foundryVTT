@@ -38,8 +38,8 @@
                 <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
                     <div class="skill-name col sixty withContext">
                         <a data-action="itemEdit" class="talentName">{{item.name}}</a> {{#if ../../prepare.canAdvance}}
-                        <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                        <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a> {{/if}}
+                        <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
+                        <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a> {{/if}}
                     </div>
                     <div class="skill-props col third center">
                         <a class="skill-select" data-action="skillSelect">
@@ -83,8 +83,8 @@
                     <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
                         <div class="col sixty withContext">
                             <a data-action="itemEdit" class="talentName">{{item.name}}</a> {{#if ../../prepare.canAdvance}}
-                            <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                            <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                            <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
+                            <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a>{{/if}}
                         </div>
                         <div class="col third center">
                             <a class="skill-select" data-action="skillSelect">

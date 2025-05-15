@@ -26,9 +26,8 @@ export default class LiturgyData extends ItemDataModel.mixin(AoeTemplate, Descri
   }
 
   prepareEmbeddedItemSheet() {
-      const item = super.prepareEmbeddedItemSheet();
-      this.constructor._perpareItemAdvancementCost(item, this.actor);
-      this.constructor.buildSpellChargeProgress(item);
-      return item;
+    const item = super.prepareEmbeddedItemSheet();
+    this.constructor.buildSpellChargeProgress(item);
+    return item;
   }
 }

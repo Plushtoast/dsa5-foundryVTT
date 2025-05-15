@@ -3721,11 +3721,6 @@ select.noAppearance {
 }
 
 .initTracker {
-  .controls {
-    display: inline-block;
-    width: 29px;
-  }
-
   &:hover .iniDetailsList {
     display: block;
   }
@@ -3768,11 +3763,6 @@ select.noAppearance {
     top: 25%;
     opacity: 0;
     transform: opacity 0.3s;
-  }
-
-  .combat-control {
-    min-width: 20px;
-    display: inline-block;
   }
 
   li:hover .hoverbuttons {

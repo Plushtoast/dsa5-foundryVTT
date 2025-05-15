@@ -13,15 +13,4 @@ export default class SkillTemplate extends DSADataModel {
             })
         }
     }
-
-    static _perpareItemAdvancementCost(item, actor) {
-        const category = actor.system.isPet || actor.system.isFamiliar ? 'C' : item.system.StF.value;
-        item.cost = game.i18n.format('advancementCost', {
-            cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category),
-        });
-        item.refund = game.i18n.format('refundCost', {
-            cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category, 0),
-        });
-        return item;
-    }
 }

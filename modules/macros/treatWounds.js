@@ -11,7 +11,7 @@ const dict = {
   },
 }[game.i18n.lang == 'de' ? 'de' : 'en'];
 
-class TreatWounds extends Application {
+class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   constructor(actor, source, qs) {
     super();
     this.macroData = {
@@ -21,25 +21,30 @@ class TreatWounds extends Application {
       item,
     };
   }
-  static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.template = 'systems/dsa5/templates/macros/treatWounds.html';
-    options.width = 500;
-    options.height = 'auto';
-    options.title = item.name;
-    options.classes = ['treat-wounds'];
-    options.resizable = false;
-    return options;
-  }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    html.find('.treatWounds').on('click', this._onTreatWounds.bind(this));
-    html.find('.treatPain').on('click', this._onTreatPain.bind(this));
-    html.find('.content-link').on('click', (ev) => this.openUuid(ev));
-  }
+  static DEFAULT_OPTIONS = {
+    window: {
+      title: item.name,
+      resizable: true,
+    },
+    position: {
+      width: 500,
+    },
+    classes: ['treat-wounds'],
+    actions: {
+      contentLink: this.openUuid,
+      treatWounds: this._onTreatWounds,
+      treatPain: this._onTreatPain
+    }
+  };
 
-  async openUuid(ev) {
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/macros/treatWounds.hbs',
+    },
+  };
+
+  static async openUuid(ev, target) {
     const uuid = ev.currentTarget.dataset.uuid;
     const item = game.items.get(uuid);
     if (item) {
@@ -53,7 +58,7 @@ class TreatWounds extends Application {
     html.find('.targets').html(this.buildAnchors(targets));
   }
 
-  async _onTreatPain(event) {
+  static async _onTreatPain(event, target) {
     for (let actor of this.targets) {
       if (!actor) continue;
 
@@ -79,15 +84,18 @@ class TreatWounds extends Application {
     this.close();
   }
 
-  async _onTreatWounds(event) {
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const html = $(this.element);
+    html.find('.content-link').on('click', (ev) => this.openUuid(ev));
+  }
+
+  static async _onTreatWounds(event, target) {
     for (let actor of this.targets) {
       if (!actor) continue;
 
       await actor.update({
-        'system.status.regeneration.LePTemp': Math.max(
-          this.macroData.qs,
-          actor.system.status.regeneration.LePTemp,
-        ),
+        'system.status.regeneration.LePTemp': Math.max(this.macroData.qs, actor.system.status.regeneration.LePTemp),
       });
     }
     this.close();
@@ -101,8 +109,8 @@ class TreatWounds extends Application {
     return res.join(', ');
   }
 
-  async getData() {
-    const data = super.getData();
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
     this.targets = [actor];
     data.macroData = this.macroData;
     data.source = this.buildAnchors([args.sourceActor]);

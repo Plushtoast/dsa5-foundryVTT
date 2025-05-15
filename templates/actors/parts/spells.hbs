@@ -27,8 +27,8 @@
                 </div>
                 <div class="actor-spell-name col four withContext">
                     <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
+                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="actor-spell-test col five center">
                     <a data-action="skillSelect">

@@ -849,6 +849,48 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder');
   }
 
+  _onHoverCost(ev) {
+    const target = ev.currentTarget;
+    if(ev.currentTarget.dataset.tooltip) return;
+
+    const isAnimal = this.actor.system.isFamiliar || this.actor.system.isPet;
+    const fct = {
+      _advanceAttribute: (isAnimal) => {
+          const category = isAnimal ? 'C' : 'E';
+          const ch = this.actor.system.characteristics[target.dataset.attr];
+          return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category), key: 'advancementCost' }
+      },
+      _refundAttributeAdvance: (isAnimal) => {
+          const category = isAnimal ? 'C' : 'E';
+          const ch = this.actor.system.characteristics[target.dataset.attr];
+          return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category, 0), key: 'refundCost' }
+      },
+      _refundPointsAdvance: (isAnimal) => {
+          const category = isAnimal ? 'C' : 'D';
+          return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category, 0), key: 'refundCost' }
+      },
+      _advancePoints: (isAnimal) => {
+          const category = isAnimal ? 'C' : 'D';
+          return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category), key: 'advancementCost' }
+      },
+      _refundItemAdvance: (isAnimal) => {
+          const item = this.actor.items.get(target.dataset.attr);
+          const category = isAnimal ? 'C' : item.system.StF.value;
+          return { cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category, 0), key: 'refundCost' }
+      },
+      _advanceItem: (isAnimal) => {
+          const item = this.actor.items.get(target.dataset.attr);
+          const category = isAnimal ? 'C' : item.system.StF.value;
+          return { cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category), key: 'advancementCost' }
+      },
+    }[target.dataset.fct]
+    if (!fct) return;
+
+    const cost = fct(isAnimal);
+    ev.currentTarget.dataset.tooltip = game.i18n.format(cost.key, cost);
+    game.tooltip.activate(ev.currentTarget)
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -883,7 +925,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
-
+    html.find('[data-action="advanceWrapper"]').on('mouseenter', this._onHoverCost.bind(this));
     html.find('.chat-condition').on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
     html.find('.money-change, .skill-advances').on('focusin', (ev) => {
       this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');

@@ -717,6 +717,31 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         ph: '1',
       },
       {
+        name: `${closeCombat} - ${game.i18n.localize('CriticalSuccess')}`,
+        val: 'system.meleeStats.crit',
+        mode: 2,
+        ph: '1',
+      },
+       {
+        name: `${closeCombat} - ${game.i18n.localize('CriticalSuccess')} (${game.i18n.localize('CHARAbbrev.PA')})`,
+        val: 'system.meleeStats.critPA',
+        mode: 2,
+        ph: '1',
+      },
+       {
+        name: `${closeCombat} - ${game.i18n.localize('CriticalSuccess')} (${game.i18n.localize('CHARAbbrev.AT')})`,
+        val: 'system.meleeStats.critAT',
+        mode: 2,
+        ph: '1',
+      },
+       {
+        name: `${rangeCombat} - ${game.i18n.localize('CriticalSuccess')}`,
+        val: 'system.rangeStats.crit',
+        mode: 2,
+        ph: '1',
+      },
+
+      {
         name: `${miracle} - ${game.i18n.localize('CHARAbbrev.AT')}`,
         val: 'system.miracle.attack',
         mode: 2,

@@ -30,7 +30,6 @@ export default class SpellData extends ItemDataModel.mixin(AoeTemplate, Descript
 
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
-    this.constructor._perpareItemAdvancementCost(item, this.actor);
     this.constructor.buildSpellChargeProgress(item);
     return item;
   }

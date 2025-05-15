@@ -347,38 +347,8 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareSheet(sheetInfo) {
-    let preparedData = { system: { characteristics: {} } };
+    const preparedData = { system: { characteristics: {} } };
     mergeObject(preparedData, this.prepareItems(sheetInfo));
-    if (preparedData.canAdvance) {
-      const attrs = ['wounds', 'astralenergy', 'karmaenergy'];
-      const isAnimal = this.system.isFamiliar || this.system.isPet;
-      let category = isAnimal ? 'C' : 'D';
-      for (const k of attrs) {
-        mergeObject(preparedData.system, {
-          status: {
-            [k]: {
-              cost: game.i18n.format('advancementCost', {
-                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, category),
-              }),
-              refund: game.i18n.format('refundCost', {
-                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, category, 0),
-              }),
-            },
-          },
-        });
-      }
-      category = isAnimal ? 'C' : 'E';
-      for (let [key, ch] of Object.entries(this.system.characteristics)) {
-        preparedData.system.characteristics[key] = {
-          cost: game.i18n.format('advancementCost', {
-            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category),
-          }),
-          refund: game.i18n.format('refundCost', {
-            cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category, 0),
-          }),
-        };
-      }
-    }
     return preparedData;
   }
 

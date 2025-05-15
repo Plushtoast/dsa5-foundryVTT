@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import DPS from '../system/derepositioningsystem.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
 import RuleChaos from '../system/rule_chaos.js';
 import DSA5_Utility from '../system/utility-dsa5.js';
@@ -34,6 +35,8 @@ export default class DSA5SpellDialog extends DialogShared {
 
   async prepareFormRecall(html) {
     await super.prepareFormRecall(html);
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    DPS.lightLevel(actor, html);
     html.find('.spellModifier').trigger('change');
   }
 

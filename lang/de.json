@@ -23,7 +23,7 @@
             "-8": "Galopp"
         },
         "mountOptions": {
-            "0": "-",
+            "0": "Abgesattelt",
             "1": "Aufgesattelt",
             "2": "Fahrend"
         }
@@ -1204,6 +1204,13 @@
         "step2": "Silhouette [-4]",
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
+    },
+    "SkillVisionDisruption": {
+        "step0": "Klare Sicht",
+        "step1": "Leichte Störung [-1]",
+        "step2": "Silhouette [-2]",
+        "step3": "Schemen [-3]",
+        "step4": "Unsichtbar [-4]"
     },
     "meleeVisionDisruption": {
         "0": "Klare Sicht",

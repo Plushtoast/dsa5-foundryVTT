@@ -88,11 +88,6 @@ export default class StatusTemplate extends DSADataModel {
           KaPMod: new DSANumberField({ initial: 0 }),
         }),
       }),
-      repeatingEffects: new SchemaField({
-        wounds: new BooleanField(),
-        astralenergy: new BooleanField(),
-        karmaenergy: new BooleanField(),
-      }),
     };
   }
 }

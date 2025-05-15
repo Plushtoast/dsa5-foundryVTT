@@ -65,10 +65,10 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static DEFAULT_OPTIONS = {
     position: {
-        width: 740
+      width: 740,
     },
     window: {
-        resizable: true,
+      resizable: true,
     },
   };
 
@@ -114,14 +114,14 @@ export default class DSA5CombatDialog extends DialogShared {
       at: 'fas fa-swords',
       tp: 'fas fa-heart',
       dm: 'fas fa-balance-scale',
-    }
+    };
 
     const label = [];
     if (dataset.step > 1) label.push(`<li class="flexrow center"><div>${dataset.step} <i class="fas fa-xmark"></i></div></li>`);
 
     for (let key of Object.keys(keys)) {
       if (keys[key] == 0) continue;
-        
+
       const icon = `<i class="${icons[key]}"></i>`;
       label.push(`${icon} ${game.i18n.localize(`LocalizedAbilityModifiers.${key}`).toUpperCase()}: ${keys[key]}`);
     }
@@ -134,7 +134,7 @@ export default class DSA5CombatDialog extends DialogShared {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    const html = $(this.element)
+    const html = $(this.element);
     let specAbs = html.find('.specAbs');
     specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
@@ -409,6 +409,48 @@ export default class DSA5CombatDialog extends DialogShared {
     await this.calculateModifier();
   }
 
+  static assassinationModifiersRanged(testData, formData) {
+    const mode = formData.assassinate;
+    if (!mode || mode == '-') return [];
+
+    const aimingMod = Math.min(Number(formData.aim) || 0, 4);
+    const sizeMod = Number(formData.size) || 0;
+    const modeTranslated = game.i18n.localize(`DIALOG.${mode}`);
+    const result = [
+      {
+        name: modeTranslated,
+        value: -8 - sizeMod + 4 - aimingMod,
+      },
+    ];
+    const dices = DSA5CombatDialog.countDices(testData) - 1;
+    const tpMod = dices * -2;
+    const multiplier = Math.max(1, 4 - dices);
+    result.push(
+      {
+        name: modeTranslated + ' (' + game.i18n.localize('CHARAbbrev.damage') + ')',
+        damageBonus: tpMod,
+        value: 0,
+        step: 1,
+      },
+      {
+        name: modeTranslated + ' (*)',
+        damageBonus: `*${multiplier}`,
+        value: 0,
+        step: 1,
+      },
+    );
+    return result;
+  }
+
+  static countDices(testData) {
+    return Math.max(
+      1,
+      new Roll(testData.source.system.damage.value.replace(/[DWw]/g, 'd')).terms.reduce((prev, cur) => {
+        return prev + (cur.faces ? cur.number : 0);
+      }, 0),
+    );
+  }
+
   static assassinationModifiers(testData, formData) {
     const mode = formData.assassinate;
     if (!mode || mode == '-') return [];
@@ -429,14 +471,7 @@ export default class DSA5CombatDialog extends DialogShared {
         weaponsize = Math.min(weaponsize, 1);
       }
 
-      const dices =
-        Math.max(
-          1,
-          new Roll(testData.source.system.damage.value.replace(/[DWw]/g, 'd')).terms.reduce((prev, cur) => {
-            return prev + (cur.faces ? cur.number : 0);
-          }, 0),
-        ) - 1;
-
+      const dices = DSA5CombatDialog.countDices(testData) - 1;
       const tpMod = [2, 0, -2, -4][weaponsize] - dices * 2;
       const multiplier = Math.max(1, 5 - weaponsize - dices);
 
@@ -621,6 +656,7 @@ export default class DSA5CombatDialog extends DialogShared {
         damageBonus: rangeMod.damage,
       },
       ...Itemdsa5.getSpecAbModifiers(html, 'attack'),
+      ...this.assassinationModifiersRanged(testData, data),
     );
 
     const sharpshooter = actor.items.find((x) => x.type == 'specialability' && x.name == game.i18n.localize('LocalizedIDs.sharpshooter'));
@@ -705,27 +741,25 @@ export default class DSA5CombatDialog extends DialogShared {
       const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, actor);
       const progress = testData.source.system.reloadTime.progress;
       if (progress < LZ) {
-        buttons.push(
-          {
-            action: 'reloadButton',
-            label: `${game.i18n.localize('WEAPON.reload')} (${progress}/${LZ})`,
-            callback: async () => {
-              const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
-              await actor.updateEmbeddedDocuments('Item', [
-                {
-                  _id: testData.source._id,
-                  'system.reloadTime.progress': progress + 1,
-                },
-              ]);
-              const infoMsg = game.i18n.format('WEAPON.isReloading', {
-                actor: actor.token?.name || actor.prototypeToken.name,
-                item: testData.source.name,
-                status: `${progress + 1}/${LZ}`,
-              });
-              await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-            },
-          }
-        );
+        buttons.push({
+          action: 'reloadButton',
+          label: `${game.i18n.localize('WEAPON.reload')} (${progress}/${LZ})`,
+          callback: async () => {
+            const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
+            await actor.updateEmbeddedDocuments('Item', [
+              {
+                _id: testData.source._id,
+                'system.reloadTime.progress': progress + 1,
+              },
+            ]);
+            const infoMsg = game.i18n.format('WEAPON.isReloading', {
+              actor: actor.token?.name || actor.prototypeToken.name,
+              item: testData.source.name,
+              status: `${progress + 1}/${LZ}`,
+            });
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+          },
+        });
       }
     }
     return buttons;

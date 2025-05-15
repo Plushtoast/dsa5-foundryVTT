@@ -53,8 +53,8 @@
             <div class="row-section col item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
                     <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
+                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a>{{/if}}
                 </div>
                 <div class="col five center">
                     {{localize (concatUp "CHARAbbrev." item.system.guidevalue.value)}}

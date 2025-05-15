@@ -6,7 +6,8 @@ const { mergeObject, getProperty, hasProperty } = foundry.utils;
 export default class Riding {
   static preRenderedUnmountHud =
     '<button type="button" class="control-icon" data-action="ride"><i class="fas fa-horse" style="transform: rotate(180deg)" data-tooltip="RIDING.unmount" width="36" height="36"></i></button>';
-  static preRenderedMountHud = '<button type="button" class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></button>';
+  static preRenderedMountHud =
+    '<button type="button" class="control-icon" data-action="ride"><i class="fas fa-horse" data-tooltip="RIDING.mount" width="36" height="36"></i></button>';
   static preRenderedSpeedHud =
     '<button type="button" class="control-icon" data-action="rideIncrease" data-tooltip="RIDING.increase"><i class="fas fa-caret-up" width="36" height="36"></i></button><button type="button" class="control-icon" data-tooltip="RIDING.decrease" data-action="rideDecrease"><i class="fas fa-caret-down" width="36" height="36"></i></button>';
 
@@ -108,7 +109,13 @@ export default class Riding {
   }
 
   static onRender(html, actor) {
-    html.find('.riding-toggle select').on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
+    const ridingToggle = html.find('.riding-toggle select');
+    ridingToggle.select2({
+      escapeMarkup: function (m) {
+        return m;
+      },
+    });
+    ridingToggle.on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
     html.find('.showHorse').on('click', () => this.getHorse(actor).sheet.render(true));
     html.find('.horse-delete').on('click', () => this.clearMount(actor));
     html.find('.horse-loyalty').on('click', () => this.rollLoyalty(actor));
@@ -180,15 +187,12 @@ export default class Riding {
 
   static getHorse(actor, returnEmptyHorse = false) {
     let horse;
-    
-    if (actor.system.horse.token && !actor.system.horse.actorLink) 
-      horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
-    else if(actor.system.horse.actorId)
-      horse = game.actors.get(actor.system.horse.actorId);
 
-    if (!horse && returnEmptyHorse && actor.system.horse.isRiding)
-      horse = { name: game.i18n.localize('unknown') };
-    
+    if (actor.system.horse.token && !actor.system.horse.actorLink) horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
+    else if (actor.system.horse.actorId) horse = game.actors.get(actor.system.horse.actorId);
+
+    if (!horse && returnEmptyHorse && actor.system.horse.isRiding) horse = { name: game.i18n.localize('unknown') };
+
     return horse;
   }
 
@@ -216,7 +220,7 @@ export default class Riding {
           isRiding: 0,
           actorLink: false,
           actorId: '',
-          token: {}
+          token: {},
         },
       },
     });

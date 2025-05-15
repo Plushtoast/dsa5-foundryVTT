@@ -56,7 +56,7 @@ export default function () {
 
       // Overlay effect
       if (effect === this.effects.overlay) {
-        const { width, height } = this.getSize();
+        const { width, height } = this.document.getSize();
         const size = Math.min(width * 0.6, height * 0.6);
         effect.width = effect.height = size;
         effect.position = this.getCenterPoint({ x: 0, y: 0 });

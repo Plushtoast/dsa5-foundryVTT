@@ -48,10 +48,4 @@ export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, 
     const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value;
     return [{ key: 'Description', val: description }];
   }
-
-  prepareEmbeddedItemSheet() {
-    const item = super.prepareEmbeddedItemSheet();
-    this.constructor._perpareItemAdvancementCost(item, this.actor);
-    return item;
-  }
 }

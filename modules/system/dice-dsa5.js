@@ -99,8 +99,7 @@ export default class DiceDSA5 {
           if (testData.regenerateLeP) mergeObject(roll.dice[0].options, d3dColors('mu'));
           if (actor.system.isMage && testData.regenerateAsP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('ge'));
           if (actor.system.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 1].options, d3dColors('in'));
-          if (actor.system.isMage && testData.regenerateAsP && actor.system.isPriest && testData.regenerateKaP)
-            mergeObject(roll.dice[leDie.length - 2].options, d3dColors('ge'));
+          if (actor.system.isMage && testData.regenerateAsP && actor.system.isPriest && testData.regenerateKaP) mergeObject(roll.dice[leDie.length - 2].options, d3dColors('ge'));
           break;
         case 'meleeweapon':
         case 'rangeweapon':
@@ -247,7 +246,6 @@ export default class DiceDSA5 {
     let successLevel = suc ? 1 : -1;
     let botch = testData.source.system.botch || 20;
     let crit = testData.source.system.crit || 1;
-    const statKey = { meleeweapon: 'meleeStats', rangeweapon: 'rangeStats' }[testData.source.type];
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
     if (RuleChaos.improvisedWeapon.test(testData.source.name)) {
@@ -255,11 +253,16 @@ export default class DiceDSA5 {
 
       this._appendSituationalModifiers(testData, `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize('WEAPON.improvised')}`, 2, 'defenseMalus');
     }
-
+    
+    const statKey = { meleeweapon: 'meleeStats', rangeweapon: 'rangeStats' }[testData.source.type];
     if (statKey) {
-      botch = botch + (actor.system[statKey].botch - 20);
-      crit = crit + (actor.system[statKey].crit - 1);
-    }    
+      botch += actor.system[statKey].botch - 20;
+      crit += actor.system[statKey].crit - 1;
+      if (testData.source.type == 'meleeweapon') {
+        if (testData.mode == 'attack') crit += actor.system[statKey].critAT - 1;
+        else if (testData.mode == 'parry') crit += actor.system[statKey].critPA - 1;
+      }
+    }
 
     if (testData.situationalModifiers.find((x) => x.name == game.i18n.localize('MODS.opportunityAttack') && x.value != 0)) {
       botch = 50;
@@ -364,12 +367,7 @@ export default class DiceDSA5 {
       }
     } else {
       for (let k of attrs) {
-        this._appendSituationalModifiers(
-          testData,
-          game.i18n.localize(`LocalizedIDs.regeneration${k}`),
-          AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`),
-          k,
-        );
+        this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`), k);
         this._appendSituationalModifiers(
           testData,
           game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
@@ -643,8 +641,7 @@ export default class DiceDSA5 {
 
     const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
 
-    let damageRoll =
-      testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
+    let damageRoll = testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
     let damage = damageRoll.total;
 
     let weaponroll = 0;
@@ -897,13 +894,13 @@ export default class DiceDSA5 {
             buttons: [
               {
                 action: 'ok',
-                icon: "fa fa-check",
+                icon: 'fa fa-check',
                 label: 'yes',
                 callback: (event, button, dlg) => resolve([true, $(button.form)]),
               },
               {
                 action: 'cancel',
-                icon: "fas fa-times",
+                icon: 'fas fa-times',
                 label: 'cancel',
                 callback: () => resolve([false, 0]),
               },
@@ -939,11 +936,13 @@ export default class DiceDSA5 {
           if (split[0] == 'condition') {
             const effect = CONFIG.statusEffects.find((x) => x.id == split[1]);
             result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a>`);
-          } else{
+          } else {
             let category = `TYPES.Item.${split[0]}`;
-            if(!game.i18n.has(category)) category = split[0]
+            if (!game.i18n.has(category)) category = split[0];
 
-            result.push(`<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(category)}: ${split[1]}</a>`);
+            result.push(
+              `<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(category)}: ${split[1]}</a>`,
+            );
           }
         }
       }
@@ -1096,8 +1095,7 @@ export default class DiceDSA5 {
     const pcms = this._situationalPartCheckModifiers(testData, 'TPM');
 
     let tar = [1, 2, 3].map(
-      (x) =>
-        actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value + modifiers + testData.advancedModifiers.chars[x - 1] + pcms[x - 1],
+      (x) => actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value + modifiers + testData.advancedModifiers.chars[x - 1] + pcms[x - 1],
     );
     let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
 
@@ -1302,7 +1300,6 @@ export default class DiceDSA5 {
       return source.effects.filter((x) => getProperty(x, 'flags.dsa5.successEffect') == search || !getProperty(x, 'flags.dsa5.successEffect')).length > 0;
     }
 
-    
     const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
     if (specAbIds.length > 0) {
       const actor = DSA5_Utility.getSpeaker(testData.preData.extra.speaker);
@@ -1324,8 +1321,8 @@ export default class DiceDSA5 {
     delete testData.actor;
     delete testData.preData;
 
-    if(preData.roll instanceof Roll) preData.roll = preData.roll.toJSON();
-    if(preData.damageRoll instanceof Roll) preData.damageRoll = preData.damageRoll.toJSON();   
+    if (preData.roll instanceof Roll) preData.roll = preData.roll.toJSON();
+    if (preData.damageRoll instanceof Roll) preData.damageRoll = preData.damageRoll.toJSON();
 
     const hasAreaTemplate = testData.successLevel > 0 && preData.source.system.target && preData.source.system.target.type in game.dsa5.config.areaTargetTypes;
 
@@ -1390,7 +1387,7 @@ export default class DiceDSA5 {
         testData.messageId = rerenderMessage.id;
         await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source);
       }
-      
+
       const html = await renderTemplate(chatOptions.template, chatData);
       //Seems to be a foundry bug, after edit inline rolls are not converted anymore
       const actor = ChatMessage.getSpeakerActor(rerenderMessage.speaker) || game.users.get(rerenderMessage.author)?.character;

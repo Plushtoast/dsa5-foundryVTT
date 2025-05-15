@@ -765,6 +765,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       maintainCost: html.find('.maintainCost').text(),
     };
     testData.situationalModifiers.push(
+      Itemdsa5.parseValueType(game.i18n.localize('sight'), formData.vision || 0),
       {
         name: game.i18n.localize('removeGesture'),
         value: Number(formData.removeGesture) || 0,
@@ -949,6 +950,9 @@ class SpellItemDSA5 extends Itemdsa5 {
     for (const thing of actor.system.skillModifiers.global) situationalModifiers.push({ name: thing.source, value: thing.value });
 
     this.getSkZkModifier(data, source);
+    Object.assign(data, {
+      visionOptions: DSA5.skillVision,
+    });
   }
 
   static setupDialog(ev, options, spell, actor, tokenId) {
@@ -1637,6 +1641,9 @@ class SkillItemDSA5 extends Itemdsa5 {
     for (const thing of actor.system.skillModifiers.global) {
       situationalModifiers.push({ name: thing.source, value: thing.value });
     }
+    Object.assign(data, {
+      visionOptions: DSA5.skillVision,
+    });
   }
 
   static setupDialog(ev, options, skill, actor, tokenId) {
@@ -1667,8 +1674,13 @@ class SkillItemDSA5 extends Itemdsa5 {
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
+        const formData = new foundry.applications.ux.FormDataExtended(form).object;
         testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
         testData.situationalModifiers = Actordsa5._parseModifiers(html);
+        testData.situationalModifiers.push(
+          Itemdsa5.parseValueType(game.i18n.localize('sight'), formData.vision || 0),
+        );
         testData.advancedModifiers = {
           chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
           fws: Number(html.find(`[name="fw"]`).val()),
