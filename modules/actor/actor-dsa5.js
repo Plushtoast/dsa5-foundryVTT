@@ -803,10 +803,10 @@ export default class Actordsa5 extends Actor {
           status: {
             [k]: {
               cost: game.i18n.format('advancementCost', {
-                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, 'D'),
+                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, category),
               }),
               refund: game.i18n.format('refundCost', {
-                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, 'D', 0),
+                cost: DSA5_Utility._calculateAdvCost(this.system.status[k].advances, category, 0),
               }),
             },
           },
