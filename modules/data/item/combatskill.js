@@ -85,4 +85,12 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate) 
     });
     return skill;
   }
+
+  get advanceCategory() {
+    return this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : this.StF.value;
+  }
+
+  get advanceMin() {
+    return 6;
+  } 
 }

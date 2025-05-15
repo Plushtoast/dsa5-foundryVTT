@@ -13,4 +13,16 @@ export default class SkillTemplate extends DSADataModel {
             })
         }
     }
+
+    advanceCost() {
+        return DSA5_Utility._calculateAdvCost(this.talentValue.value, this.advanceCategory)
+    }
+
+    refundCost() {
+        return DSA5_Utility._calculateAdvCost(this.talentValue.value, this.advanceCategory, 0)
+    }
+
+    get advanceCategory() {
+        return this.actor.system.isPet ? 'C' : this.StF.value;
+    }
 }

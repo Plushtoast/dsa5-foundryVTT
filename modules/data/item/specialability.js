@@ -5,6 +5,7 @@ import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
+import SpecialabilityRulesDSA5 from '../../system/specialability-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
@@ -49,7 +50,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     super._migrateData(source);
 
     if (typeof source.step?.canNotMultiply === 'string') {
-      source.step.canNotMultiply = source.step.canNotMultiply === 'true'
+      source.step.canNotMultiply = source.step.canNotMultiply === 'true';
     }
   }
 
@@ -79,5 +80,13 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
 
     const cost = Number(foundry.utils.getProperty(item, 'system.AsPCost'));
     if (cost) item.AEpayable = true;
+  }
+
+  advanceCost() {
+    return SpecialabilityRulesDSA5.stepXPCost(this, this.step.value)
+  }
+
+  refundCost() {
+    return SpecialabilityRulesDSA5.stepXPCost(this, this.step.value - 1)
   }
 }

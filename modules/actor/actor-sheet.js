@@ -875,13 +875,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       },
       _refundItemAdvance: (isAnimal) => {
           const item = this.actor.items.get(target.dataset.attr);
-          const category = isAnimal ? 'C' : item.system.StF.value;
-          return { cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category, 0), key: 'refundCost' }
+          return { cost: item.system.refundCost(), key: 'refundCost' }
       },
       _advanceItem: (isAnimal) => {
           const item = this.actor.items.get(target.dataset.attr);
-          const category = isAnimal ? 'C' : item.system.StF.value;
-          return { cost: DSA5_Utility._calculateAdvCost(item.system.talentValue.value, category), key: 'advancementCost' }
+          return { cost: item.system.advanceCost(), key: 'advancementCost' }
       },
     }[target.dataset.fct]
     if (!fct) return;

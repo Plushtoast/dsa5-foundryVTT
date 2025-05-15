@@ -29,8 +29,8 @@ export default class ItemRulesDSA5 {
     return modifier;
   }
 
-  static async stepXPCost(item, step) {
-    let xpCost = item.system.APValue.value;
+  static stepXPCost(systemData, step) {
+    let xpCost = systemData.APValue.value;
     if (/;/.test(xpCost)) {
       const steps = xpCost.split(';').map((x) => Number(x.trim()));
       xpCost = steps[step];

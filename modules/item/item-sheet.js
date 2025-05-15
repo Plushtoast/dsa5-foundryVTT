@@ -315,18 +315,10 @@ const AdvancableSkill = (superclass) =>
       return this.actor;
     }
 
-    get advanceMin() {
-      return 0;
-    }
-
-    get advanceCategory() {
-      return this.item.system.StF.value;
-    }
-
     async _refundStep() {
       const value = this.item.system.talentValue.value;
-      if (value > this.advanceMin) {
-        const cost = DSA5_Utility._calculateAdvCost(value, this.advanceCategory, 0) * -1;
+      if (value > (this.item.system.advanceMin || 0)) {
+        const cost = item.system.refundCost() * -1;
         await this.item.update({ 'system.talentValue.value': value - 1 });
         await this.actor._updateAPs(cost);
         await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value - 1 }, cost);
@@ -336,7 +328,7 @@ const AdvancableSkill = (superclass) =>
 
     async _advanceStep() {
       const value = this.item.system.talentValue.value;
-      const cost = DSA5_Utility._calculateAdvCost(value, this.advanceCategory);
+      const cost = item.system.advanceCost();
       if ((await this.actor.checkEnoughXP(cost)) && this._checkMaximumItemAdvancement(value + 1)?.result) {
         await this.item.update({ 'system.talentValue.value': value + 1 });
         await this.actor._updateAPs(cost);
@@ -520,15 +512,7 @@ class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
 
   _maxAllowedAdvancement(maxBonus) {
     return Math.max(...this.item.system.guidevalue.value.split('/').map((x) => this.actor.system.characteristics[x].value)) + 2 + maxBonus;
-  }
-
-  get advanceMin() {
-    return 6;
-  }
-
-  get advanceCategory() {
-    return this.actor.system.isPet || this.actor.system.isFamiliar ? 'C' : this.item.system.StF.value;
-  }
+  }  
 }
 
 class SkillSheet extends AdvancableSkill(LocalizerSheet) {}
@@ -1434,7 +1418,7 @@ class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
   async _refundStep() {
     const value = this.item.system.step.value;
     if (value > 1) {
-      let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, value - 1);
+      let xpCost = this.item.system.refundCost();
       xpCost = await SpecialabilityRulesDSA5.refundFreelanguage(this.item, this.actor, xpCost, false);
       await this.actor._updateAPs(xpCost * -1, {}, { render: false });
       await this.item.update({ 'system.step.value': value - 1 });
@@ -1446,7 +1430,7 @@ class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
   async _advanceStep() {
     const value = this.item.system.step.value;
     if (value < this.item.system.maxRank.value) {
-      let xpCost = await SpecialabilityRulesDSA5.stepXPCost(this.item, value);
+      let xpCost = this.item.system.advanceCost();
       xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(this.item, this.actor, xpCost, false);
       if (await this.actor.checkEnoughXP(xpCost)) {
         await this.actor._updateAPs(xpCost, {}, { render: false });
@@ -1623,7 +1607,7 @@ class VantageSheetDSA5 extends WithEffectsSheet {
   async _refundStep() {
     const value = this.item.system.step.value;
     if (value > 1) {
-      let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, value - 1);
+      let xpCost = this.item.system.refundCost();
       xpCost = await AdvantageRulesDSA5.reduceSingularVantages(this.actor, this.item, xpCost);
       await this.actor._updateAPs(xpCost * -1, {}, { render: false });
       await this.item.update({ 'system.step.value': value - 1 });
@@ -1635,7 +1619,7 @@ class VantageSheetDSA5 extends WithEffectsSheet {
   async _advanceStep() {
     const value = this.item.system.step.value;
     if (value < this.item.system.max.value) {
-      let xpCost = await AdvantageRulesDSA5.stepXPCost(this.item, value);
+      let xpCost = this.item.system.advanceCost();
       const dup = duplicate(this.item);
       dup.system.step.value += 1;
       xpCost = await AdvantageRulesDSA5.addSingularVantages(this.actor, dup, xpCost);
