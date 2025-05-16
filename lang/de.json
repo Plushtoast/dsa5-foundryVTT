@@ -428,6 +428,7 @@
     "Magic": "Magie",
     "MagicReligion": "Magie/Religion",
     "maintainCost": "Aufrechterhalten",
+    "dropWithContents": "Tasche mit Inhalt ablegen?",
     "maintainedSpells": "Aufrechterhaltene Zauber/Liturgien (je -1)",
     "manual": "Händisch",
     "mageLevel": "Magieart",

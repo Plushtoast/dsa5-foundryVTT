@@ -228,12 +228,12 @@
                     </div>
                     <div class="col ten very-small center flexrow">
                         {{#if item.OnUseEffect}}
-                        <button type="button" data-tooltip="SHEET.onUseEffect" class="icon fas fa-dice-six onUseItem very-small noBorder dsadesignbutton" data-action="onUseItem"></button>
+                        <button type="button" data-tooltip="SHEET.onUseEffect" class="icon fas fa-dice-six autoFlex onUseItem very-small noBorder dsadesignbutton" data-action="onUseItem"></button>
                         {{/if}}
                         {{#if item.children}}
-                        <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                        <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down autoFlex very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
                         {{/if}}
-                        <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
+                        <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical autoFlex very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                     </div>
                 </div>
                 <div class="row-section lineheight expandDetails {{item.detailed}}">

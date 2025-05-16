@@ -24,6 +24,23 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
 
     if (getProperty(newItem, 'system.worn.value')) newItem.system.worn.value = false;
 
+    let bagItems = [];
+    if (item.system.isBagWithContents && sourceActor) {
+      bagItems = fetchBagItems(item, sourceActor);
+      
+      if(bagItems.length > 0) {
+        const proceed = await foundry.applications.api.DialogV2.confirm({
+          window: { title: 'DSASETTINGS.enableItemDropToCanvas' },
+          content: `<p>${game.i18n.localize('dropWithContents')}</p>`,
+          rejectClose: false,
+          modal: true
+        });
+        if(proceed) {
+          items.push(...bagItems.map((i) => i.toObject()));
+        }
+      }
+    }
+
     const actor = {
       type: 'npc',
       name: item.name,
@@ -68,6 +85,9 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
       } else {
         await sourceActor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.quantity.value': newCount }]);
       }
+      if (bagItems.length > 0) {
+        await sourceActor.deleteEmbeddedDocuments('Item', bagItems.map((i) => i.id));        
+      }
     } else {
       await canvas.scene.createEmbeddedDocuments('Token', [td]);
     }
@@ -84,6 +104,20 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
     });
   }
 };
+
+function fetchBagItems(item, sourceActor) {
+  const bagItems = [];
+  for (let i of sourceActor.items) {
+    if (i.system.parent_id == item.id) {
+      bagItems.push(i);
+      if (i.system.isBagWithContents) {
+        const bagItems2 = fetchBagItems(i, sourceActor);
+        bagItems.push(...bagItems2);
+      }
+    }
+  }
+  return bagItems;
+}
 
 const handleItemDrop = async (canvas, data) => {
   const item = await Item.implementation.fromDropData(data);

@@ -838,10 +838,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     new foundry.applications.ux.ContextMenu(this.element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
       jQuery: false,
+      fixed: true
     });
     new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
       jQuery: false,
+      fixed: true
     });
   }
 

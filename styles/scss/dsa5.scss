@@ -360,6 +360,11 @@ table.infoTable {
     outline: none;
     box-shadow: none;
   }
+
+  &.autoFlex {
+    flex: 1;
+  }
+
 }
 
 .gap5px {

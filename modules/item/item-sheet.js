@@ -20,8 +20,8 @@ const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
-export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2)) {
-  _processFormData(event, form, formData) {
+export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
+  _processFormData(event, form, formData) { 
     const data = formData.object;
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
     Object.keys(overrides).forEach((v) => delete data[v]);
@@ -246,6 +246,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
         }
       }
     }
+    
   }
 
   async _prepareContext(_options) {
@@ -284,6 +285,11 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
   _advancable() {
     return false;
+  }
+
+  async _onDrop(event) {
+    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    console.log(dragData);
   }
 }
 
@@ -1105,7 +1111,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
   }
 
   isBagWithContents() {
-    return this.actor && this.item.system.equipmentType.value == 'bags';
+    return this.item.system.isBagWithContents;
   }
 
   async _onDrop(event) {
