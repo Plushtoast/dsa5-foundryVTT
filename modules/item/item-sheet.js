@@ -1119,16 +1119,15 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
   async _onDrop(event) {
     if (this.isBagWithContents()) {
       const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-      const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined);
-      const selfItem = this.item.id == item.id;
-      const ownItem = this.item.parent.id == dragData.actorId;
+      const { item, typeClass, selfTarget } = await itemFromDrop(dragData, this.item.parent.uuid);
+      const selfItem = this.item.id == item._id;
 
       if (DSA5.equipmentCategories.has(typeClass) && !selfItem) {
         item.system.parent_id = this.item.id;
         if (item.system.worn && item.system.worn.value) item.system.worn.value = false;
 
-        if (ownItem) {
-          await this.actor.updateEmbeddedDocuments('Item', [item]);
+        if (selfTarget) {
+          await this.item.actor.updateEmbeddedDocuments('Item', [item]);
         } else {
           await this.actor.sheet._addLoot(item);
         }
