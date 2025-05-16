@@ -625,6 +625,7 @@ class AggregatedTestSheet extends DragMixin(ItemSheetdsa5) {
   async _onDrop(event) {
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
     await this.dropCreation(dragData);
+    await super._onDrop(event);
   }
 
   async dropCreation(dragData) {
@@ -763,6 +764,7 @@ class Enchantable extends DragMixin(ItemSheetdsa5) {
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
     await this._enchant([dragData]);
     if (this.isPoisonable) await this._poison(dragData);
+    await super._onDrop(event);
   }
 
   async enchant(event) {
