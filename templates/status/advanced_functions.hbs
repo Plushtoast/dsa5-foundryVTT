@@ -1,4 +1,4 @@
-{{#if (eq document.flags.dsa5.advancedFunction '1')}}
+{{#if (or (eq document.flags.dsa5.advancedFunction '1') (eq document.flags.dsa5.advancedFunction 1))}}
   <div class='form-group'>
     <label>{{localize 'effect'}}</label>
     <div class='form-fields'>
@@ -33,7 +33,7 @@
 
   </div>
 {{/if}}
-{{#if (eq document.flags.dsa5.advancedFunction '3')}}
+{{#if (or (eq document.flags.dsa5.advancedFunction '3') (eq document.flags.dsa5.advancedFunction 3))}}
   <div class='form-group'>
     <label>{{localize 'ActiveEffects.creature'}}</label>
     <div class='form-fields'>
@@ -42,7 +42,7 @@
 
   </div>
 {{/if}}
-{{#if (eq document.flags.dsa5.advancedFunction '4')}}
+{{#if (or (eq document.flags.dsa5.advancedFunction '4') (eq document.flags.dsa5.advancedFunction 4))}}
   <div class='form-group full-height'>
     <label>{{localize 'ActiveEffects.advancedFunctions.armorPostprocess'}}</label>
     <div class='form-fields'>
@@ -60,7 +60,7 @@
     </div>
   </div>
 {{/if}}
-{{#if (eq document.flags.dsa5.advancedFunction '5')}}
+{{#if (or (eq document.flags.dsa5.advancedFunction '5') (eq document.flags.dsa5.advancedFunction 5))}}
   <div class='form-group full-height'>
     <label>{{localize 'ActiveEffects.advancedFunctions.damagePostprocess'}}</label>
     <div class='form-fields'>

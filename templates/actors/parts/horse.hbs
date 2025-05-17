@@ -7,13 +7,13 @@
     <div class='col fifteen center small'>
       {{localize 'RIDING.mode'}}
     </div>
-    <div class='col five center small'>
+    <div class='col ten center small'>
       <i class='fas fa-horse' data-tooltip='RIDING.mount'></i>
     </div>
     <div class='col zerofive center small'>
       <i class='fas fa-gauge' data-tooltip='speed'></i>
     </div>
-    <div class='col zerofive center small'>
+    <div class='col ten center small'>
       <i class='fas fa-brain' data-tooltip='initiative'></i>
     </div>
     <div class='col ten center small'>
@@ -37,17 +37,19 @@
               {{selectOptions horseSpeeds selected=prepare.horseActor.horseSpeed localize=true}}
             </select>
           </div>
-          <div class='combat-item-status col five center riding-toggle'>
+          <div class='combat-item-status col ten flexrow center riding-toggle'>
             {{formInput systemFields.horse.fields.isRiding value=document.system.horse.isRiding}}
           </div>
           <div class='combat-item-speed-max col zerofive center' data-tooltip='speed'>
             {{prepare.horseActor.system.status.speed.max}}
           </div>
-          <div class='combat-item-ini col zerofive center' data-tooltip='initiative'>
+          <div class='combat-item-ini col ten center' data-tooltip='initiative'>
             {{prepare.horseActor.system.status.initiative.value}}
           </div>
-          <div class='combat-item-action col ten center flexrow very-small'>
+          <div class='combat-item-action col zerofive center flexrow very-small'>
             <button type="button" class='horse-loyalty icon fas fa-dice very-small noBorder dsadesignbutton' data-tooltip='LocalizedIDs.loyalty'></button>
+          </div>
+          <div class='combat-item-action col zerofive center flexrow very-small'>
             <button type="button" class='horse-delete icon fas fa-trash very-small noBorder dsadesignbutton' data-tooltip='SHEET.DeleteItem'></button>
           </div>
         </div>

@@ -69,7 +69,8 @@ export default class OpposedDsa5 {
       img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker)?.img,
     };
     attacker.testResult.source = attackMessage.flags.data.preData.source;
-    if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
+
+    OpposedDsa5.combine_effects(attacker, attackMessage.flags.data.preData);
 
     let defender = {
       speaker: message.speaker,
@@ -620,6 +621,25 @@ export default class OpposedDsa5 {
     await ChatMessage.create(chatOptions);
   }
 
+  static combine_effects(attacker, testData) {
+    if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
+
+    const triggerIds = testData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
+    if(!triggerIds.length) return;
+
+    const actor = DSA5_Utility.getSpeaker(attacker.speaker);
+    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])
+    for(const id of triggerIds) {
+       const specAb = actor.items.get(id);
+        if(specAb) {
+          const triggerEffects = specAb.effects.filter(x => allowedTriggers.has(Number(getProperty(x, 'flags.dsa5.advancedFunction'))));
+          for(const effect of triggerEffects) {
+            attacker.testResult.source.effects.push(effect.toObject());
+          }
+        }
+    }
+  }
+
   static async resolveUndefended(startMessage, additionalInfo = '') {
     let unopposeData = startMessage.flags.unopposeData;
 
@@ -630,7 +650,8 @@ export default class OpposedDsa5 {
       messageId: unopposeData.attackMessageId,
     };
     attacker.testResult.source = attackMessage.flags.data.preData.source;
-    if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
+
+    OpposedDsa5.combine_effects(attacker, attackMessage.flags.data.preData);
 
     let target = canvas.tokens.get(unopposeData.targetSpeaker.token);
     let defender = {

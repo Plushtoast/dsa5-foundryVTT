@@ -187,7 +187,7 @@ export default class Actordsa5 extends Actor {
       .map((x) => x.system.artifact);
     const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
 
-    this.dsatriggers = { 6: {}, 7: {} };
+    this.dsatriggers = { [DSATriggers.EVENTS.POST_ROLL]: {}, [DSATriggers.EVENTS.POST_OPPOSED]: {} };
 
     for (let item of this.items) {
       for (const e of item.effects) {

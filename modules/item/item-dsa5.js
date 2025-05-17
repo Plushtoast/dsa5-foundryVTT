@@ -368,7 +368,7 @@ export default class Itemdsa5 extends Item {
       if (validSpecAb(vals, com)) {
         const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
         const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
-        combatskills.push({
+        const data = {
           name: com.name,
           atbonus: vals.at || [0],
           pabonus: vals.pa || [0],
@@ -383,7 +383,8 @@ export default class Itemdsa5 extends Item {
           id: com.id,
           actor: actor.id,
           variantCount,
-        });
+        }
+        combatskills.push(data);
       }
     }
     return combatskills;
@@ -724,15 +725,15 @@ export default class Itemdsa5 extends Item {
   }
 }
 
-class PlantItemDSA5 extends Itemdsa5 {}
+class PlantItemDSA5 extends Itemdsa5 { }
 
-class MagicalSignItemDSA5 extends Itemdsa5 {}
+class MagicalSignItemDSA5 extends Itemdsa5 { }
 
-class DemonmarkItemDSA5 extends Itemdsa5 {}
+class DemonmarkItemDSA5 extends Itemdsa5 { }
 
-class TrapItemDSA5 extends Itemdsa5 {}
+class TrapItemDSA5 extends Itemdsa5 { }
 
-class PatronItemDSA5 extends Itemdsa5 {}
+class PatronItemDSA5 extends Itemdsa5 { }
 
 class MoneyItemDSA5 extends Itemdsa5 {
   static checkEquality(item, item2) {
@@ -740,17 +741,17 @@ class MoneyItemDSA5 extends Itemdsa5 {
   }
 }
 
-class AggregatedTestItemDSA5 extends Itemdsa5 {}
+class AggregatedTestItemDSA5 extends Itemdsa5 { }
 
-class AmmunitionItemDSA5 extends Itemdsa5 {}
+class AmmunitionItemDSA5 extends Itemdsa5 { }
 
-class EffectWrapperItemDSA5 extends Itemdsa5 {}
+class EffectWrapperItemDSA5 extends Itemdsa5 { }
 
-class ArmorItemDSA5 extends Itemdsa5 {}
+class ArmorItemDSA5 extends Itemdsa5 { }
 
-class CantripItemDSA5 extends Itemdsa5 {}
+class CantripItemDSA5 extends Itemdsa5 { }
 
-class BlessingItemDSA5 extends CantripItemDSA5 {}
+class BlessingItemDSA5 extends CantripItemDSA5 { }
 
 class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
@@ -1030,7 +1031,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 }
 
-class LiturgyItemDSA5 extends SpellItemDSA5 {}
+class LiturgyItemDSA5 extends SpellItemDSA5 { }
 
 class CeremonyItemDSA5 extends LiturgyItemDSA5 {
   static getCallbackData(testData, html, actor) {
@@ -1194,7 +1195,7 @@ class ConsumableItemDSA extends Itemdsa5 {
   }
 }
 
-class InformationItemDSA5 extends Itemdsa5 {}
+class InformationItemDSA5 extends Itemdsa5 { }
 
 class DiseaseItemDSA5 extends Itemdsa5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
@@ -1262,7 +1263,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
   }
 }
 
-class EquipmentItemDSA5 extends Itemdsa5 {}
+class EquipmentItemDSA5 extends Itemdsa5 { }
 
 class WeaponItemDSA5 extends Itemdsa5 {
   static speciesModifier(situationalModifiers, actor, data, source) {
@@ -1496,7 +1497,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             selected: true,
             specAbId: source.system.currentAmmo.value,
           };
-          if (currentAmmo.system.armorMod) dmgMod['armorPen'] = currentAmmo.system.armorMod;
+          if (currentAmmo.system.armorMod) dmgMod.armorPen = currentAmmo.system.armorMod;
 
           situationalModifiers.push(dmgMod);
         }
@@ -1628,7 +1629,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
   }
 }
 
-class ApplicationItemDSA5 extends Itemdsa5 {}
+class ApplicationItemDSA5 extends Itemdsa5 { }
 
 class SkillItemDSA5 extends Itemdsa5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
@@ -1698,13 +1699,13 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 }
 
-class SpecialAbilityItemDSA5 extends Itemdsa5 {}
+class SpecialAbilityItemDSA5 extends Itemdsa5 { }
 
-class SpeciesItemDSA5 extends Itemdsa5 {}
+class SpeciesItemDSA5 extends Itemdsa5 { }
 
-class SpellextensionItemDSA5 extends Itemdsa5 {}
+class SpellextensionItemDSA5 extends Itemdsa5 { }
 
-class BookItemDSA5 extends Itemdsa5 {}
+class BookItemDSA5 extends Itemdsa5 { }
 
 class TraitItemDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
@@ -1775,4 +1776,4 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   }
 }
 
-class VantageItemDSA5 extends Itemdsa5 {}
+class VantageItemDSA5 extends Itemdsa5 { }

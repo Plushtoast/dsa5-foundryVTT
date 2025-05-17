@@ -254,8 +254,8 @@ export default class DSA5CombatDialog extends DialogShared {
         if (situationalModifiers.length > 0) {
           if (htmlMods.length == 0) {
             const modBox = `<div class="modifiers form-group">
-            <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
-            <select name="situationalModifiers" multiple />
+              <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
+              <select name="situationalModifiers" multiple />
             </div>`;
             html.find('[name=rollMode]').parent().after(modBox);
             this.position.height += 86;
@@ -263,14 +263,14 @@ export default class DSA5CombatDialog extends DialogShared {
           }
           let mods = '';
           for (const mod of situationalModifiers) {
-            mods += `<option value="${mod.value}"
-                                        data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
-                                        ${mod.type ? ' data-type=' + mod.type : ''}
-                                        ${mod.specAbId ? ' data-spec-ab-id=' + mod.specAbId : ''}
-                                        ${mod.armorPen ? ' data-armor-pen=' + mod.armorPen : ''}
-                                        ${mod.selected ? ' selected' : ''}>
-                                    ${mod.name} [${mod.value}]
-                                </option>`;
+            mods += `<option value="${mod.value}" 
+                        data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
+                        ${mod.type ? ' data-type=' + mod.type : ''}
+                        ${mod.specAbId ? ' data-spec-ab-id=' + mod.specAbId : ''}
+                        ${mod.armorPen ? ' data-armor-pen=' + mod.armorPen : ''}
+                        ${mod.selected ? ' selected' : ''}>
+                        ${mod.name} [${mod.value}]
+                    </option>`;
           }
           html.find('.modifiers select').html(mods);
         } else if (htmlMods.length > 0) {
@@ -541,7 +541,7 @@ export default class DSA5CombatDialog extends DialogShared {
               hideOnToken: false,
               hidePlayers: false,
               customDuration: '',
-              advancedFunction: '1',
+              advancedFunction: 1,
               args0: 'unconscious',
               args1: '',
             },

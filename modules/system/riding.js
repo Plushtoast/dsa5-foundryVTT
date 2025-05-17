@@ -109,13 +109,12 @@ export default class Riding {
   }
 
   static onRender(html, actor) {
-    const ridingToggle = html.find('.riding-toggle select');
-    ridingToggle.select2({
+    html.find('.combat-horse select').select2({
       escapeMarkup: function (m) {
         return m;
       },
     });
-    ridingToggle.on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
+    html.find('.riding-toggle select').on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
     html.find('.showHorse').on('click', () => this.getHorse(actor).sheet.render(true));
     html.find('.horse-delete').on('click', () => this.clearMount(actor));
     html.find('.horse-loyalty').on('click', () => this.rollLoyalty(actor));

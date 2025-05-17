@@ -201,14 +201,16 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       case "advanced":
         let index = 0;
 
-        const itemType = getProperty(document, 'parent.type');
-        const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(getProperty(document, 'parent.system.traitType.value')));
+        const itemType = document.parent.type;
+        const item = document.parent;
+        const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value));
+        const isCombatSpecAb = (['specialability'].includes(itemType) && item.system.category.value == 'Combat')
+        const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType)
         const effectConfigs = {
-          hasSpellEffects:
-            isWeapon ||
-            ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType) ||
-            (['specialability'].includes(itemType) && getProperty(document, 'parent.system.category.value') == 'Combat'),
-          hasDamageTransformation: ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType),
+          hasSpellEffects: isWeapon || isCombatSpecAb ||
+            ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
+          hasDamageTransformation: hasVantages || (isCombatSpecAb && item.system.category.sub != 4),
+          hasArmorTransformation: hasVantages,
           hasTriggerEffects: ['specialability'].includes(itemType),
           hasSuccessEffects: ['poison', 'disease'].includes(itemType),
         };
@@ -227,8 +229,13 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
         if (effectConfigs.hasDamageTransformation) {
           advancedFunctions.push(
-            { name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION },
             { name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION },
+          );
+        }
+
+        if (effectConfigs.hasArmorTransformation) {
+          advancedFunctions.push(
+            { name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION },
           );
         }
         if (effectConfigs.hasTriggerEffects) {
@@ -286,7 +293,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const html = $(this.element);
     html.find('.advancedSelector').on('change', (ev) => {
       let effect = this.document;
-      effect.flags.dsa5.advancedFunction = $(ev.currentTarget).val();
+      effect.flags.dsa5.advancedFunction = Number($(ev.currentTarget).val());
 
       renderTemplate('systems/dsa5/templates/status/advanced_functions.hbs', {
         document: this.document,
@@ -722,19 +729,19 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         mode: 2,
         ph: '1',
       },
-       {
+      {
         name: `${closeCombat} - ${game.i18n.localize('CriticalSuccess')} (${game.i18n.localize('CHARAbbrev.PA')})`,
         val: 'system.meleeStats.critPA',
         mode: 2,
         ph: '1',
       },
-       {
+      {
         name: `${closeCombat} - ${game.i18n.localize('CriticalSuccess')} (${game.i18n.localize('CHARAbbrev.AT')})`,
         val: 'system.meleeStats.critAT',
         mode: 2,
         ph: '1',
       },
-       {
+      {
         name: `${rangeCombat} - ${game.i18n.localize('CriticalSuccess')}`,
         val: 'system.rangeStats.crit',
         mode: 2,

@@ -32,9 +32,17 @@ export default class DialogActorConfig extends DefaultAppv2 {
 
     const fnct = target.dataset.target;
     this.lock = true;
-    $(target).prepend('<i class="fas fa-spinner fa-spin"></i>');
+    
+    const spinner = document.createElement('i');
+    spinner.className = 'fas fa-spinner fa-spin';
+    target.prepend(spinner);
+    
     await Migrakel[fnct](this.actor);
-    $(target).find('i').remove();
+    
+    if (spinner.parentNode) {
+      spinner.parentNode.removeChild(spinner);
+    }
+    
     this.lock = false;
   }
 }
