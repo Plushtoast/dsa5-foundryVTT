@@ -366,7 +366,8 @@ export default class DSA5CombatDialog extends DialogShared {
       this.dialogData.renderData.rollModifiers.shooterMovement.mod = Object.keys(DSA5.shooterMovementOptions)[move]
 
       if (targets.length > 0) {
-        const targetMove = [1, 0, 2][game.user.targets.first().movementType()];
+        const targetMovementType = game.user.targets.first().movementType()
+        const targetMove = [1, 0, 2][targetMovementType];
         if (html) {
           const targetMoveOptions = html.find('[name="targetMovement"] option');
           if (targetMoveOptions.length) targetMoveOptions[targetMove].selected = true;

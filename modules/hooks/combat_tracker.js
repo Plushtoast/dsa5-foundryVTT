@@ -96,6 +96,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
 export class DSA5Combat extends Combat {
   constructor(data, context) {
+    if (!data) data = {};
     if (!data.type) data.type = 'dsacombat';
     super(data, context);
   }

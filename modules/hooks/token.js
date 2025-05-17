@@ -1,5 +1,6 @@
 import { DSAAura } from '../system/aura.js';
 import DPS from '../system/derepositioningsystem.js';
+import Riding from '../system/riding.js';
 import tokenHUD from './tokenHUD.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;
@@ -109,12 +110,20 @@ export class DSAToken extends Token {
     super._onClickLeft2(event);
   };
 
+  static MOVEMENTTYPES = Object.freeze({
+    STANDING: 0,
+    WALKING: 1,
+    RUNNING: 2,
+  })
+
   movementType() {
+    if (Riding.isRiding(this.actor)) return DSAToken.MOVEMENTTYPES.STANDING;
+
     const lastMovement = this.measureMovementPath(this.document.movementHistory).distance;
     //const actorSpeed = this.actor?.system.status?.speed.max || 0;
 
-    if(lastMovement <= 0) return 0; //stehend
-    if (lastMovement <= 4) return 1; //gehend
-    return 2; //rennend
-  }  
+    if (lastMovement <= 0) return DSAToken.MOVEMENTTYPES.STANDING;
+    if (lastMovement <= 4) return DSAToken.MOVEMENTTYPES.WALKING;
+    return DSAToken.MOVEMENTTYPES.RUNNING;
+  }
 }

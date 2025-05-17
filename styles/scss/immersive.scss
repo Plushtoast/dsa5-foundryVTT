@@ -59,6 +59,7 @@
     color: #191815;
   }
 
+  #chat-notifications .chat-message,
   .sidebar-popout .chat-message,
   #sidebar .chat-message {
     padding: 8px 15px 15px 15px;
@@ -198,6 +199,7 @@
     }
 
     &.monarch {
+
       .window-header,
       &:after {
         background-image: none;
@@ -243,6 +245,7 @@
     }
 
     .window-header {
+
       .aa-item-settings,
       [id^='popout_'] {
         width: 15px;
@@ -251,7 +254,7 @@
       }
     }
 
-    &:not(.monarch) .window-header > a {
+    &:not(.monarch) .window-header>a {
       width: 15px;
       height: 15px;
       margin-top: 10px;
@@ -287,6 +290,7 @@
       width: 24px;
       background: #0000009e;
       border-radius: 4px;
+
       &:before {
         content: '\f066';
         position: absolute;
@@ -337,6 +341,7 @@
     }
 
     &.initTracker {
+
       &::after,
       .window-content {
         background: none;
@@ -347,6 +352,7 @@
     }
 
     &.tokenQuickHot {
+
       &::after,
       .window-content {
         background: none;
@@ -362,6 +368,7 @@
     }
 
     &.dsa5Decent {
+
       .window-content,
       .window-header {
         background: rgba(0, 0, 0, 0.5);
@@ -522,6 +529,7 @@
   }
 
   #chat {
+
     a.content-link,
     .chat-condition,
     a.inline-roll {
@@ -605,7 +613,7 @@
 
       #macro-list,
       .skillItems {
-        & > li {
+        &>li {
           box-shadow: inset 0px 0px 25px #403014;
           background-image: url('../../icons/backgrounds/macrobg.webp');
 
@@ -702,64 +710,44 @@
   }
 
   #players {
-    background: none;
-    border: none;
-    box-shadow: none;
+    --color-text-emphatic: #d3cccc;
 
-    &:before {
-      background-image: url('../../icons/backgrounds/dsabot.webp');
-      background-size: 100% 15px;
-      background-repeat: no-repeat;
-      content: '';
-      position: absolute;
-      left: -2px;
-      right: -2px;
-      bottom: -5px;
-      top: -20px;
-      z-index: -1;
-      background-position: center calc(100%);
+    #players-inactive {
+      margin-bottom: 24px;
     }
 
-    h3 {
-      border: none;
+    #players-active {
       position: relative;
-      overflow: visible;
+      border: none;
+      box-shadow: none;
+      background: url('../../icons/backgrounds/dsamid.webp');
+      background-size: 100% 50px;
+      background-repeat: repeat-y;
 
-      &:before {
-        background-image: url('../../icons/backgrounds/dsahead.webp'), url('../../icons/backgrounds/dsamid.webp');
-        background-size:
-          100% 30px,
-          100% calc(100% - 30px);
+      &:after {
+        background-image: url('../../icons/backgrounds/dsabot.webp');
+        background-size: 100% 15px;
         background-repeat: no-repeat;
         content: '';
         position: absolute;
-        left: -5px;
-        right: -5px;
-        bottom: 0px;
-        top: -20px;
+        left: 0px;
+        right: 0px;
+        bottom: -13px;
+        top: calc(100% - 2px);
         z-index: -1;
-        background-position:
-          center 0px,
-          center 30px;
+        background-position: center calc(100%);
       }
-    }
-
-    #player-list {
-      border: none;
-      position: relative;
-      overflow: visible;
 
       &:before {
-        background-image: url('../../icons/backgrounds/dsamid.webp');
-        background-size: 100% 50px;
-        background-repeat: repeat-y;
+        background-image: url('../../icons/backgrounds/dsahead.webp');
+        background-size: 100% 30px;
+        background-repeat: no-repeat;
         content: '';
         position: absolute;
-        left: -2px;
-        right: -2px;
-        bottom: 5px;
-        top: -3px;
-        z-index: -1;
+        left: 0px;
+        right: 0px;
+        bottom: calc(100% - 5px);
+        top: -25px;
         background-position: center 0px;
       }
     }
@@ -871,6 +859,7 @@
 }
 
 body.theme-dark.dsa5-immersive {
+
   .application,
   .window-app {
     --input-text-color: #2b2a25;
