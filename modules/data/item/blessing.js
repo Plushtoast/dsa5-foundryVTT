@@ -12,4 +12,12 @@ export default class BlessingData extends ItemDataModel.mixin(DescriptionTemplat
         }),
     });
   }
+
+  static chatData(data, name) {
+    return [
+      { key: 'duration', val: data.duration.value },
+      { key: 'targetCategory', val: data.targetCategory.value },
+      { key: 'feature', val: data.feature.value },
+    ];
+  }
 }

@@ -283,16 +283,16 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
 
   _advancable() {
     return false;
-  } 
+  }
 
-  async _handleDrop(dragData) { 
-    if(!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
+  async _handleDrop(dragData) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
 
     if (dragData.type == 'Macro') {
       const item = await fromUuid(dragData.uuid);
-      if(!item) return;
-      if(!item.pack) return ui.notifications.info('DSAError.onlyCompendiumSpells', { format: { element: '"Macro"' }, localize: true });
-      
+      if (!item) return;
+      if (!item.pack) return ui.notifications.info('DSAError.onlyCompendiumSpells', { format: { element: '"Macro"' }, localize: true });
+
       const code = `this.callMacro("${item.pack}", "${item.name}")`
       await this.item.update({ 'flags.dsa5.onUseEffect': code });
     } else if (dragData.type == 'DSALight') {
@@ -1194,9 +1194,9 @@ class MagicalSignSheet extends NoEffectsSheet {
       });
 
     const actor = this.actor;
-    const sign = game.dsa5.config.ItemSubclasses.magicalsign;
+    const sign = this.item.system.chatDataToString();
     const skill = actor.items.find((x) => x.type == 'skill' && x.name == game.i18n.localize('LocalizedIDs.artisticAbility'));
-    const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign.chatData(this.item.system, '').join('</br>')} <span class="costCheck"></span></p>`;
+    const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign}<span class="costCheck"></span></p>`;
     const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${game.i18n.localize('TYPES.Item.magicalsign')})` }, undefined);
     const res = await actor.basicTest(setupData, { suppressMessage: true });
     res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true };
@@ -1283,11 +1283,12 @@ class BlessingSheetDSA5 extends NoEffectsSheet {
         localize: true,
       });
 
-    const cantrip = game.dsa5.config.ItemSubclasses.magictrick;
+    const cantrip = this.item.system.chatDataToString();
     await this.actor.update({
       'system.status.karmaenergy.value': (this.actor.system.status.karmaenergy.value -= 1),
     });
-    let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, '').join('</br>')}</p>`;
+    let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p>
+    <p>${this.item.system.description.value}</p><p>${cantrip}</p>`;
     await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
   }
 }
@@ -1405,11 +1406,11 @@ class MagictrickSheetDSA5 extends NoEffectsSheet {
         localize: true,
       });
 
-    const cantrip = game.dsa5.config.ItemSubclasses.magictrick;
+    const cantrip = this.item.system.chatDataToString();
     await this.actor.update({
       'system.status.astralenergy.value': (this.actor.system.status.astralenergy.value -= 1),
     });
-    const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip.chatData(this.item.system, '').join('</br>')}</p>`;
+    const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip}</p>`;
     await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
   }
 }

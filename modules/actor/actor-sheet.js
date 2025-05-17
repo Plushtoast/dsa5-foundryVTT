@@ -1372,11 +1372,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getItemId(target) {
-    return $(target).closest('.item').attr('data-item-id');
+    return target.closest('[data-item-id]').getAttribute('data-item-id');
   }
 
   _getItemDataset(target) {
-    return $(target).closest('.item')[0].dataset;
+    return target.closest('.item').dataset;
   }
 
   async _addMoney(item) {

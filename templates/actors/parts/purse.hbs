@@ -10,7 +10,8 @@
     </div>
     <div class='actor-purse-content row-section'>
       {{#each this}}
-        <div class='number-input col four center item' data-item-id='{{_id}}'>
+        <div class='number-input col four center item position-relative' data-item-id='{{_id}}'>
+          <i class="" style="background-image: url('{{img}}')"></i>
           <input class='col-{{name}} money-change' type='number' value='{{system.quantity.value}}' />
         </div>
       {{/each}}

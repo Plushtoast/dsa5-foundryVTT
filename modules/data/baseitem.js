@@ -145,4 +145,12 @@ export class ItemDataModel extends DSADataModel {
 
     return item;
   }
+
+  chatDataToString(name = '') {
+    const detailsObfuscated = getProperty(this, "obfuscation.details");
+    const chatDataString = detailsObfuscated ? [] : this.constructor.chatData(this, name)
+      .map((x) => this.constructor._chatLineHelper(x))
+      .join('<br>');
+    return chatDataString;
+  }
 }

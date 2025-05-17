@@ -628,12 +628,14 @@ export default class OpposedDsa5 {
     if(!triggerIds.length) return;
 
     const actor = DSA5_Utility.getSpeaker(attacker.speaker);
-    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])
+    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])    
+    const existingIds = new Set(attacker.testResult.source.effects.map(x => x._id));
     for(const id of triggerIds) {
        const specAb = actor.items.get(id);
         if(specAb) {
           const triggerEffects = specAb.effects.filter(x => allowedTriggers.has(Number(getProperty(x, 'flags.dsa5.advancedFunction'))));
           for(const effect of triggerEffects) {
+            if(existingIds.has(effect._id)) continue;
             attacker.testResult.source.effects.push(effect.toObject());
           }
         }
