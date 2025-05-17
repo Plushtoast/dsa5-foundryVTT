@@ -1709,7 +1709,7 @@
         "elementNotFound": "Das Element \"{element}\" konnte nicht gefunden werden.",
         "conditionInvalidToCreature": "{name} kann normalerweise nicht durch {condition} beeinträchtigt werden.",
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
-        "onlyCompendiumSpells": "Nur Zauber aus Kompendien können verwendet werden",
+        "onlyCompendiumSpells": "Nur {element} aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",

@@ -10,7 +10,7 @@ export const DragMixin = (superclass) =>
 
     async _onRender(context, options) {
       await super._onRender(context, options);
-      
+
       new foundry.applications.ux.DragDrop.implementation({
         dragSelector: ".item",
         dropSelector: ".window-content",
@@ -26,14 +26,9 @@ export const DragMixin = (superclass) =>
       }).bind(this.element);
     }
 
-    async _onDragStart(event) {
+    async _onDragStart(event) { }
 
-    }
+    _onDragOver(event) { }
 
-    _onDragOver(event) {
-      
-    }
-
-    async _onDrop(event) {
-    }
+    async _onDrop(event) { }
   };

@@ -27,6 +27,7 @@ export default class DSA5CombatDialog extends DialogShared {
     quickChange: { mod: -4 },
     narrowSpace: { mod: 0 },
     targetMovement: { mod: 0 },
+    shooterMovement: { mod: 0 },
     RangeMod: {
       short: {
         damage: 1,
@@ -344,6 +345,37 @@ export default class DSA5CombatDialog extends DialogShared {
     return result;
   }
 
+  updateTargets(html, targets) {
+    super.updateTargets(html, targets);
+    this.setMovement(html, targets);
+  }
+
+  setMovement(html, targets) {
+    if (!DPS.isEnabled) return;
+    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return;
+    if (!this.dialogData.source.type == 'rangeweapon') return;
+
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    const token = actor.getActiveTokens()[0] || actor.token;
+    if (token) {
+      const move = token.movementType();
+      if (html) {
+        const moveOptions = html.find('[name="shooterMovement"] option');
+        if (moveOptions.length) moveOptions[move].selected = true;
+      }
+      this.dialogData.renderData.rollModifiers.shooterMovement.mod = Object.keys(DSA5.shooterMovementOptions)[move]
+
+      if (targets.length > 0) {
+        const targetMove = [1, 0, 2][game.user.targets.first().movementType()];
+        if (html) {
+          const targetMoveOptions = html.find('[name="targetMovement"] option');
+          if (targetMoveOptions.length) targetMoveOptions[targetMove].selected = true;
+        }
+        this.dialogData.renderData.rollModifiers.targetMovement.mod = Object.keys(DSA5.targetMovementOptions)[targetMove];
+      }
+    }
+  }
+
   prepareWeapon(testData = undefined) {
     testData = testData || this.dialogData.renderData;
     const source = this.dialogData.source;
@@ -364,6 +396,7 @@ export default class DSA5CombatDialog extends DialogShared {
             break;
           case 'rangeweapon':
             weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor);
+            this.setMovement($(this.element), this.readTargets());
             break;
         }
         if (this.dialogData.mode == 'attack' || this.dialogData.counterAttack) {

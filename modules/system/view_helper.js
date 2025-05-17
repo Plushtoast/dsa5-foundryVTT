@@ -28,9 +28,11 @@ export async function itemFromDrop(dragData, actorId, toObject = true) {
   if (dragData.type == 'Actor') {
     item = await Actor.implementation.fromDropData(dragData);
     selfTarget = actorId === item.id;
-  } else {
+  } else if (dragData.type == 'Item') {
     item = await Item.implementation.fromDropData(dragData);
     selfTarget = actorId === item.parent?.uuid;
+  } else {
+    item = await fromUuid(dragData.uuid);
   }
   let typeClass = item?.type;
 

@@ -7,11 +7,9 @@ import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import EquipmentDamage from '../system/equipment-damage.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
 import OnUseEffect from '../system/onUseEffects.js';
-import RuleChaos from '../system/rule_chaos.js';
 import { ItemSheetObfuscation } from './obfuscatemixin.js';
 import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
-import Itemdsa5 from './item-dsa5.js';
 import RequestRoll from '../system/request-roll.js';
 import APTracker from '../system/ap-tracker.js';
 import { AppV2Mixin } from '../actor/appv2_mixin.js';
@@ -21,7 +19,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
 export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
-  _processFormData(event, form, formData) { 
+  _processFormData(event, form, formData) {
     const data = formData.object;
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
     Object.keys(overrides).forEach((v) => delete data[v]);
@@ -165,9 +163,9 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
     return $(target).parents('.item')[0].dataset.itemId;
   }
 
-  _advanceStep() {}
+  _advanceStep() { }
 
-  _refundStep() {}
+  _refundStep() { }
 
   static async advanceWrapper(event, target) {
     if (this.wrapperLocked) return;
@@ -246,7 +244,7 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
         }
       }
     }
-    
+
   }
 
   async _prepareContext(_options) {
@@ -285,11 +283,27 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
 
   _advancable() {
     return false;
+  } 
+
+  async _handleDrop(dragData) { 
+    if(!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
+
+    if (dragData.type == 'Macro') {
+      const item = await fromUuid(dragData.uuid);
+      if(!item) return;
+      if(!item.pack) return ui.notifications.info('DSAError.onlyCompendiumSpells', { format: { element: '"Macro"' }, localize: true });
+      
+      const code = `this.callMacro("${item.pack}", "${item.name}")`
+      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+    } else if (dragData.type == 'DSALight') {
+      const code = `game.dsa5.apps.LightDialog.applyVisionOrLight(true, "${dragData.key}", actor.getActiveTokens(), item.name)`
+      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+    }
   }
 
   async _onDrop(event) {
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-    console.log(dragData);
+    this._handleDrop(dragData);
   }
 }
 
@@ -509,7 +523,7 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
   };
 }
 
-class TraitSheet extends WithEffectsSheet {}
+class TraitSheet extends WithEffectsSheet { }
 
 class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
   get advanceSkill() {
@@ -518,12 +532,12 @@ class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
 
   _maxAllowedAdvancement(maxBonus) {
     return Math.max(...this.item.system.guidevalue.value.split('/').map((x) => this.actor.system.characteristics[x].value)) + 2 + maxBonus;
-  }  
+  }
 }
 
-class SkillSheet extends AdvancableSkill(LocalizerSheet) {}
+class SkillSheet extends AdvancableSkill(LocalizerSheet) { }
 
-class AggregatedTestSheet extends DragMixin(ItemSheetdsa5) {
+class AggregatedTestSheet extends ItemSheetdsa5 {
   static TABS = {
     sheet: {
       tabs: [
@@ -622,21 +636,20 @@ class AggregatedTestSheet extends DragMixin(ItemSheetdsa5) {
     await ChatMessage.create(chatData);
   }
 
-  async _onDrop(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+  async _handleDrop(dragData) {
     await this.dropCreation(dragData);
-    await super._onDrop(event);
+    await super._handleDrop(dragData);
   }
 
   async dropCreation(dragData) {
-    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
+    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined);
     if (!DSA5.equipmentCategories.has(typeClass)) return;
 
-    this.item.setFlag('dsa5', 'embeddedItem', item.toObject());
+    this.item.setFlag('dsa5', 'embeddedItem', item);
   }
 }
 
-class Enchantable extends DragMixin(ItemSheetdsa5) {
+class Enchantable extends ItemSheetdsa5 {
   static TABS = {
     sheet: {
       tabs: [
@@ -760,21 +773,10 @@ class Enchantable extends DragMixin(ItemSheetdsa5) {
     },
   };
 
-  async _onDrop(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+  async _handleDrop(dragData) {
     await this._enchant([dragData]);
     if (this.isPoisonable) await this._poison(dragData);
-    await super._onDrop(event);
-  }
-
-  async enchant(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-    await this._enchant([dragData]);
-  }
-
-  async poison(event) {
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-    await this._poison(dragData);
+    await super._handleDrop(dragData);
   }
 
   async _enchant(dragDataArray) {
@@ -787,7 +789,7 @@ class Enchantable extends DragMixin(ItemSheetdsa5) {
     for (let dragData of dragDataArray) {
       const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
       if (['spell', 'liturgy', 'ceremony', 'ritual'].includes(typeClass)) {
-        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { localize: true });
+        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: game.i18n.localize('TYPES.Item.spell') }, localize: true });
 
         const enchantment = {
           name: item.name,
@@ -1116,9 +1118,8 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     return this.item.system.isBagWithContents;
   }
 
-  async _onDrop(event) {
+  async _handleDrop(dragData) {
     if (this.isBagWithContents()) {
-      const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
       const { item, typeClass, selfTarget } = await itemFromDrop(dragData, this.item.parent.uuid);
       const selfItem = this.item.id == item._id;
 
@@ -1136,7 +1137,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
       }
     }
 
-    await super._onDrop(event);
+    await super._handleDrop(dragData);
   }
 }
 
@@ -1178,9 +1179,9 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
   };
 }
 
-class PatronSheet extends NoEffectsSheet {}
+class PatronSheet extends NoEffectsSheet { }
 
-class ApplicationSheetDSA5 extends LocalizerWithoutEffectsSheet {}
+class ApplicationSheetDSA5 extends LocalizerWithoutEffectsSheet { }
 
 class MagicalSignSheet extends NoEffectsSheet {
   hasRollEffect = true;
@@ -1203,7 +1204,7 @@ class MagicalSignSheet extends NoEffectsSheet {
   }
 }
 
-class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) {}
+class ItemBookDSA5 extends ItemSheetObfuscation(Enchantable) { }
 
 class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   static DEFAULT_OPTIONS = {
@@ -1604,7 +1605,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   }
 }
 
-class SpellExtensionSheetDSA5 extends WithEffectsSheet {}
+class SpellExtensionSheetDSA5 extends WithEffectsSheet { }
 
 class VantageSheetDSA5 extends WithEffectsSheet {
   _advancable() {

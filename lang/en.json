@@ -1667,7 +1667,7 @@
         "staleData": "Stale opposing test data found. Please make sure to finish opposing tests. Stale data deleted.",
         "sceneNotInitialized": "Scene not found. Already initialized?",
         "tooManyEnchants": "An item can only contain 7 enchantments",
-        "onlyCompendiumSpells": "Only spells from compendiums can be used",
+        "onlyCompendiumSpells": "Only {element} from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",

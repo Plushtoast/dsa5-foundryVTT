@@ -49,6 +49,7 @@ import OnUseEffect from './system/onUseEffects.js';
 import TestSuite from './system/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
+import { DSAToken } from './hooks/token.js';
 
 Hooks.once('init', () => {
   console.log('Initializing DSA5 system');
@@ -137,6 +138,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.dataModels = CombatantDataModels;
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
+  CONFIG.Token.objectClass = DSAToken;
 });
 
 initHooks();

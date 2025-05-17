@@ -48,13 +48,11 @@
         {{/each}}
     </div>
     {{#if canOnUseEffect}}
-
     <div class="form-group full-height" style="margin-top:40px;">
         <label>{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
         <div class="form-fields">
-            <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onUseEffect" placeholder="{{localize 'ActiveEffects.placeholder.onUseEffect'}}">{{flags.dsa5.onUseEffect}}</textarea>
+            <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onUseEffect" placeholder="{{localize 'ActiveEffects.placeholder.onUseEffect'}}">{{{document.flags.dsa5.onUseEffect}}}</textarea>
         </div>        
     </div>
-
     {{/if}}
 </div>

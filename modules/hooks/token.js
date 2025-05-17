@@ -4,8 +4,8 @@ import tokenHUD from './tokenHUD.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;
 
-export default function () {
-  Token.prototype._drawEffects = async function () {
+export class DSAToken extends Token {
+  async _drawEffects() {
     this.effects.renderable = false;
     this.effects.removeChildren().forEach((c) => c.destroy());
     this.effects.bg = this.effects.addChild(new PIXI.Graphics());
@@ -45,7 +45,7 @@ export default function () {
     this.renderFlags.set({ refreshEffects: true });
   };
 
-  Token.prototype._refreshEffects = function () {
+  _refreshEffects() {
     let i = 0;
     const w = Math.round(canvas.dimensions.size / 10) * 2;
     const rows = Math.floor(this.document.height * 5);
@@ -85,7 +85,7 @@ export default function () {
     }
   };
 
-  Token.prototype._drawEffect = async function (src, tint, value) {
+  async _drawEffect(src, tint, value) {
     if (!src) return;
     const tex = await foundry.canvas.loadTexture(src, { fallback: 'icons/svg/hazard.svg' });
     const icon = new PIXI.Sprite(tex);
@@ -94,25 +94,27 @@ export default function () {
     return this.effects.addChild(icon);
   };
 
-  Token.prototype.drawAuras = async function (force = false) {
+  async drawAuras(force = false) {
     await DSAAura.drawAuras(this, force);
   };
 
-  const defaulTokenLeftClick2 = Token.prototype._onClickLeft2;
-  const isMerchant = (actor) => {
-    if (!actor) return false;
-
-    return ['merchant', 'loot'].includes(getProperty(actor.system, 'merchant.merchantType'));
-  };
-
-  Token.prototype._onClickLeft2 = function (event) {
-    const distanceAccessible = game.user.isGM || !DPS.isEnabled || !isMerchant(this.actor) || DPS.inDistance(this);
+  _onClickLeft2(event) {
+    const distanceAccessible = game.user.isGM || !DPS.isEnabled || !this.actor?.isMerchant() || DPS.inDistance(this);
 
     if (!distanceAccessible)
       return ui.notifications.warn('DSAError.notInRangeToLoot', {
         localize: true,
       });
 
-    defaulTokenLeftClick2.call(this, event);
+    super._onClickLeft2(event);
   };
+
+  movementType() {
+    const lastMovement = this.measureMovementPath(this.document.movementHistory).distance;
+    //const actorSpeed = this.actor?.system.status?.speed.max || 0;
+
+    if(lastMovement <= 0) return 0; //stehend
+    if (lastMovement <= 4) return 1; //gehend
+    return 2; //rennend
+  }  
 }
