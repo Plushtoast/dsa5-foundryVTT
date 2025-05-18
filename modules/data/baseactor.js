@@ -176,212 +176,257 @@ export class ActorDataModel extends DSADataModel {
   }
 
   prepareDerivedData() {
-    //let startTime = performance.now()
     const data = this;
+    
     try {
       this._getItemModifiers();
+      this._updateCharacteristics(data);
+      this._calculateWeightAndContainer(data);
+      this._identifyCharacterType(data);
+      this._calculateBasicAttributes(data);
+      this._calculateEnergyPoints(data);
+      this._calculateDefenseValues(data);
+      this._applyConditionsAndMovement(data);
+    } catch (error) {
+      console.error(`Error preparing actor data for ${this.parent.name}:`, error);
+      ui.notifications.error(game.i18n.format('DSAError.PreparationError', { name: this.parent.name }) + error.message);
+    }
+  }
 
-      for (let ch of Object.values(data.characteristics)) {
-        ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
-      }
+  _updateCharacteristics(data) {
+    for (const ch of Object.values(data.characteristics)) {
+      ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;
+    }
+  }
 
-      data.totalWeight = 0;
+  _calculateWeightAndContainer(data) {
+    data.totalWeight = 0;
+    this.moneyWeight = 0;
+    const wornArmor = [];
 
-      const wornArmor = [];
+    const containers = new Map();
+    const bags = this.parent.items.filter(x => x.type === 'equipment' && x.system.equipmentType.value === 'bags');
+    for (const container of bags) {
+      containers.set(container.id, []);
+    }
 
-      const containers = new Map();
-      const bags = this.parent.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags');
-      for (let container of bags) {
-        containers.set(container.id, []);
-      }
-
-      this.moneyWeight = 0;
-      for (const i of this.parent.items) {
-        if (ActorDataModel.moneyHasWeight && i.type == 'money') {
-          i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-          data.totalWeight += Number(i.system.preparedWeight);
-          this.moneyWeight += Number(i.system.preparedWeight);
-        } else if (DSA5.equipmentCategories.has(i.type)) {
-          let parent_id = i.system.parent_id;
-          if (parent_id && parent_id != i._id) {
-            if (containers.has(parent_id)) {
-              containers.get(parent_id).push(i);
-              continue;
-            }
-          }
-          if (i.type == 'armor') {
-            i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-            data.totalWeight += parseFloat((i.system.weight.value * (i.system.worn.value ? Math.max(0, i.system.quantity.value - 1) : i.system.quantity.value)).toFixed(3));
-            if (i.system.worn.value) wornArmor.push(i);
-          } else {
-            i.system.preparedWeight = parseFloat((i.system.weight.value * i.system.quantity.value).toFixed(3));
-            data.totalWeight += Number(i.system.preparedWeight);
-          }
+    for (const item of this.parent.items) {
+      if (ActorDataModel.moneyHasWeight && item.type === 'money') {
+        item.system.preparedWeight = parseFloat((item.system.weight.value * item.system.quantity.value).toFixed(3));
+        data.totalWeight += Number(item.system.preparedWeight);
+        this.moneyWeight += Number(item.system.preparedWeight);
+      } else if (DSA5.equipmentCategories.has(item.type)) {
+        const parentId = item.system.parent_id;
+        if (parentId && parentId !== item._id && containers.has(parentId)) {
+          containers.get(parentId).push(item);
+          continue;
+        }
+        
+        item.system.preparedWeight = parseFloat((item.system.weight.value * item.system.quantity.value).toFixed(3));
+        
+        if (item.type === 'armor') {
+          data.totalWeight += parseFloat((item.system.weight.value * 
+            (item.system.worn.value ? Math.max(0, item.system.quantity.value - 1) : item.system.quantity.value)).toFixed(3));
+          if (item.system.worn.value) wornArmor.push(item);
         } else {
-          switch (i.type) {
-            case 'trait':
-              if (i.name == ActorDataModel.familiarString) data.isFamiliar = true;
-              else if (i.name == ActorDataModel.petString) data.isPet = true;
-              break;
-            case 'spell':
-            case 'ritual':
-            case 'magictrick':
-              data.isMage = true;
-              break;
-            case 'liturgy':
-            case 'ceremony':
-            case 'blessing':
-              data.isPriest = true;
-              break;
-            case 'specialability':
-              if (DSA5.sortedSpecs.magical.has(i.system.category.value)) data.isMage = true;
-              else if (DSA5.sortedSpecs.clerical.has(i.system.category.value)) data.isPriest = true;
-              break;
-          }
+          data.totalWeight += Number(item.system.preparedWeight);
         }
       }
-
-      data.isMage ||= data.isFamiliar;
-
-      for (let bag of bags) {
-        let parent_id = bag.system.parent_id;
-        if (!parent_id || !containers.has(parent_id)) data.totalWeight += this._calcBagweight(bag, containers, true);
-      }
-
-      data.canAdvance = this.parent.isOwner && (this.parent.type == 'character' || data.isFamiliar || data.isPet);
-      this.parent.canAdvance = data.canAdvance;
-
-      data.carrycapacity = data.characteristics.kk.value * 2 + data.carryModifier;
-
-      if (data.canAdvance) {
-        data.details.experience.current = data.details.experience.total - data.details.experience.spent;
-        data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
-      }
-      if (this.parent.type == 'character' || this.parent.type == 'npc') {
-        data.status.wounds.current = data.status.wounds.initial + data.characteristics.ko.value * 2;
-        data.status.soulpower.value =
-          (data.status.soulpower.initial || 0) + Math.round((data.characteristics.mu.value + data.characteristics.kl.value + data.characteristics.in.value) / 6);
-        data.status.toughness.value =
-          (data.status.toughness.initial || 0) + Math.round((data.characteristics.ko.value + data.characteristics.ko.value + data.characteristics.kk.value) / 6);
-        data.status.wounds.min = -1 * data.characteristics.ko.value;
-      }
-
-      data.status.fatePoints.max = Number(data.status.fatePoints.current) + Number(data.status.fatePoints.modifier) + data.status.fatePoints.gearmodifier;
-
-      if (this.parent.type == 'creature') {
-        data.status.wounds.current = data.status.wounds.initial;
-        data.status.astralenergy.current = data.status.astralenergy.initial;
-        data.status.karmaenergy.current = data.status.karmaenergy.initial;
-      }
-
-      data.status.wounds.max = Math.round(
-        (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * data.status.wounds.multiplier + data.status.wounds.gearmodifier,
-      );
-
-      data.status.regeneration.LePmax = data.status.regeneration.LePTemp + data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
-      data.status.regeneration.KaPmax = data.status.regeneration.KaPTemp + data.status.regeneration.KaPMod + data.status.regeneration.KaPgearmodifier;
-      data.status.regeneration.AsPmax = data.status.regeneration.AsPTemp + data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
-
-      let guide = data.guidevalue;
-
-      data.status.astralenergy.rebuy ||= 0;
-      data.status.karmaenergy.rebuy ||= 0;
-      data.status.astralenergy.permanentLoss ||= 0;
-      data.status.karmaenergy.permanentLoss ||= 0;
-
-      data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss - data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear;
-      data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss - data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear;
-
-      if (data.isFamiliar || (guide && this.parenttype != 'creature')) {
-        data.status.astralenergy.current = data.status.astralenergy.initial;
-        data.status.karmaenergy.current = data.status.karmaenergy.initial;
-
-        if (data.characteristics[guide.magical]) data.status.astralenergy.current += Math.round(data.characteristics[guide.magical].value * data.energyfactor.magical);
-
-        if (data.characteristics[guide.clerical]) data.status.karmaenergy.current += Math.round(data.characteristics[guide.clerical].value * data.energyfactor.clerical);
-      }
-
-      data.status.astralenergy.max =
-        data.status.astralenergy.current +
-        data.status.astralenergy.modifier +
-        data.status.astralenergy.advances +
-        data.status.astralenergy.gearmodifier -
-        data.status.astralenergy.permanentLossSum;
-      data.status.karmaenergy.max =
-        data.status.karmaenergy.current +
-        data.status.karmaenergy.modifier +
-        data.status.karmaenergy.advances +
-        data.status.karmaenergy.gearmodifier -
-        data.status.karmaenergy.permanentLossSum;
-
-      data.status.soulpower.max = data.status.soulpower.value + data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
-      data.status.toughness.max = data.status.toughness.value + data.status.toughness.modifier + data.status.toughness.gearmodifier;
-      data.status.dodge.value = Math.round(data.characteristics.ge.value / 2) + data.status.dodge.gearmodifier;
-
-      let encumbrance = this.calcEncumbrance(data);
-
-      const horse = Riding.isRiding(this.parent) ? Riding.getHorse(this.parent) : undefined;
-      this.calcInitiative(data, encumbrance, horse);
-
-      data.status.dodge.max = Number(data.status.dodge.value) + Number(data.status.dodge.modifier) + Number(game.settings.get('dsa5', 'higherDefense')) / 2;
-
-      //Actordsa5.postUpdateConditions(this)
-      data.armorEncumbrance = this.getArmorEncumbrance(this.parent, wornArmor);
-
-      this.prepareSwarm(data);
-      this.effectivePain(data);
-
-      const fixated = this.parent.statuses.has('fixated');
-      this.calcSpeed(data, fixated, horse);
-
-      if (fixated) {
-        data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
-      }
-    } catch (error) {
-      console.error(`Something went wrong with preparing actor data ${this.parent.name}: ` + error + error.stack);
-      ui.notifications.error(game.i18n.format('DSAError.PreparationError', { name: this.parent.name }) + error + error.stack);
     }
-    //let endTime = performance.now()
 
-    //console.log(`Call to prepareData took ${endTime - startTime} milliseconds`)
+    for (const bag of bags) {
+      const parentId = bag.system.parent_id;
+      if (!parentId || !containers.has(parentId)) {
+        data.totalWeight += this._calcBagweight(bag, containers, true);
+      }
+    }
+
+    data.armorEncumbrance = this.getArmorEncumbrance(this.parent, wornArmor);
+    data.carrycapacity = data.characteristics.kk.value * 2 + data.carryModifier;
+  }
+
+  _identifyCharacterType(data) {
+    data.isMage = false;
+    data.isPriest = false;
+    data.isFamiliar = false;
+    data.isPet = false;
+
+    for (const item of this.parent.items) {
+      switch (item.type) {
+        case 'trait':
+          if (item.name === ActorDataModel.familiarString) data.isFamiliar = true;
+          else if (item.name === ActorDataModel.petString) data.isPet = true;
+          break;
+        case 'spell':
+        case 'ritual':
+        case 'magictrick':
+          data.isMage = true;
+          break;
+        case 'liturgy':
+        case 'ceremony':
+        case 'blessing':
+          data.isPriest = true;
+          break;
+        case 'specialability':
+          if (DSA5.sortedSpecs.magical.has(item.system.category.value)) data.isMage = true;
+          else if (DSA5.sortedSpecs.clerical.has(item.system.category.value)) data.isPriest = true;
+          break;
+      }
+    }
+
+    data.isMage ||= data.isFamiliar;
+    data.canAdvance = this.parent.isOwner && (this.parent.type === 'character' || data.isFamiliar || data.isPet);
+    this.parent.canAdvance = data.canAdvance;
+    
+    if (data.canAdvance) {
+      data.details.experience.current = data.details.experience.total - data.details.experience.spent;
+      data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
+    }
+  }
+
+  _calculateBasicAttributes(data) {
+    if (this.parent.type === 'character' || this.parent.type === 'npc') {
+      data.status.wounds.current = data.status.wounds.initial + data.characteristics.ko.value * 2;
+      data.status.soulpower.value = (data.status.soulpower.initial || 0) + 
+        Math.round((data.characteristics.mu.value + data.characteristics.kl.value + data.characteristics.in.value) / 6);
+      data.status.toughness.value = (data.status.toughness.initial || 0) + 
+        Math.round((data.characteristics.ko.value + data.characteristics.ko.value + data.characteristics.kk.value) / 6);
+      data.status.wounds.min = -1 * data.characteristics.ko.value;
+    } else if (this.parent.type === 'creature') {
+      data.status.wounds.current = data.status.wounds.initial;
+      data.status.astralenergy.current = data.status.astralenergy.initial;
+      data.status.karmaenergy.current = data.status.karmaenergy.initial;
+    }
+
+    data.status.wounds.max = Math.round(
+      (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * 
+      data.status.wounds.multiplier + data.status.wounds.gearmodifier
+    );
+
+    data.status.fatePoints.max = Number(data.status.fatePoints.current) + 
+      Number(data.status.fatePoints.modifier) + data.status.fatePoints.gearmodifier;
+    
+    data.status.regeneration.LePmax = data.status.regeneration.LePTemp + 
+      data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
+    data.status.regeneration.KaPmax = data.status.regeneration.KaPTemp + 
+      data.status.regeneration.KaPMod + data.status.regeneration.KaPgearmodifier;
+    data.status.regeneration.AsPmax = data.status.regeneration.AsPTemp + 
+      data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
+  }
+
+  _calculateEnergyPoints(data) {
+    data.status.astralenergy.rebuy ||= 0;
+    data.status.karmaenergy.rebuy ||= 0;
+    data.status.astralenergy.permanentLoss ||= 0;
+    data.status.karmaenergy.permanentLoss ||= 0;
+
+    data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss - 
+      data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear;
+    data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss - 
+      data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear;
+
+    const guide = data.guidevalue;
+    
+    if (data.isFamiliar || (guide && this.parenttype !== 'creature')) {
+      data.status.astralenergy.current = data.status.astralenergy.initial;
+      data.status.karmaenergy.current = data.status.karmaenergy.initial;
+
+      if (data.characteristics[guide.magical]) {
+        data.status.astralenergy.current += Math.round(
+          data.characteristics[guide.magical].value * data.energyfactor.magical
+        );
+      }
+
+      if (data.characteristics[guide.clerical]) {
+        data.status.karmaenergy.current += Math.round(
+          data.characteristics[guide.clerical].value * data.energyfactor.clerical
+        );
+      }
+    }
+
+    data.status.astralenergy.max = data.status.astralenergy.current + 
+      data.status.astralenergy.modifier + data.status.astralenergy.advances + 
+      data.status.astralenergy.gearmodifier - data.status.astralenergy.permanentLossSum;
+      
+    data.status.karmaenergy.max = data.status.karmaenergy.current + 
+      data.status.karmaenergy.modifier + data.status.karmaenergy.advances + 
+      data.status.karmaenergy.gearmodifier - data.status.karmaenergy.permanentLossSum;
+      
+    data.status.soulpower.max = data.status.soulpower.value + 
+      data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
+      
+    data.status.toughness.max = data.status.toughness.value + 
+      data.status.toughness.modifier + data.status.toughness.gearmodifier;
+  }
+
+  _calculateDefenseValues(data) {
+    data.status.dodge.value = Math.round(data.characteristics.ge.value / 2) + data.status.dodge.gearmodifier;
+    data.status.dodge.max = Number(data.status.dodge.value) + Number(data.status.dodge.modifier) + 
+      Number(game.settings.get('dsa5', 'higherDefense')) / 2;
+  }
+
+  _applyConditionsAndMovement(data) {
+    const encumbrance = this.calcEncumbrance(data);
+    const horse = Riding.isRiding(this.parent) ? Riding.getHorse(this.parent) : undefined;
+    const fixated = this.parent.statuses.has('fixated');
+    
+    this.calcInitiative(data, encumbrance, horse);
+
+    this.prepareSwarm(data);
+    this.effectivePain(data);
+    this.calcSpeed(data, fixated, horse);
+    
+    if (fixated) {
+      data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
+    }
   }
 
   calcSpeed(data, fixated, horse) {
-      if (horse) {
-        data.status.speed.max = horse.system.status.speed.max;
-        if (!data.status.speed.max) {
-          const horseData = horse.system;
-          horse.system.calcSpeed(horseData, horse.hasCondition('fixated'));
-        }
-        data.status.speed.max = horse.system.status.speed.max;
-      } else {
-        data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
-        data.status.speed.max = Math.round(Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier);
-  
-        if (!this.parent.hasCondition('bloodrush')) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition?.inpain || 0));
-  
-        const paralysis = this.parent.hasCondition('paralysed');
-        if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
-        if (fixated) {
-          data.status.speed.max = 0;
-        } else if (this.parent.hasCondition('rooted') || this.parent.hasCondition('incapacitated')) data.status.speed.max = 0;
-        else if (this.parent.hasCondition('prone')) data.status.speed.max = Math.min(1, data.status.speed.max);
-  
-        Riding.updateRiderSpeed(this.parent, data.status.speed.max);
+    if (horse) {
+      data.status.speed.max = horse.system.status.speed.max;
+      if (!data.status.speed.max) {
+        const horseData = horse.system;
+        horse.system.calcSpeed(horseData, horse.hasCondition('fixated'));
       }
+      data.status.speed.max = horse.system.status.speed.max;
+    } else {
+      data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
+      data.status.speed.max = Math.round(Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier);
+
+      if (!this.parent.hasCondition('bloodrush')) data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition?.inpain || 0));
+
+      const paralysis = this.parent.hasCondition('paralysed');
+      if (paralysis) data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
+      if (fixated) {
+        data.status.speed.max = 0;
+      } else if (this.parent.hasCondition('rooted') || this.parent.hasCondition('incapacitated')) data.status.speed.max = 0;
+      else if (this.parent.hasCondition('prone')) data.status.speed.max = Math.min(1, data.status.speed.max);
+
+      Riding.updateRiderSpeed(this.parent, data.status.speed.max);
     }
+  }
 
   _getItemModifiers() {
     const wornArmor = [];
     const itemModifiers = {};
-    for (let i of this.parent.items.filter(
-      (x) => (['meleeweapon', 'rangeweapon', 'armor', 'equipment'].includes(x.type) && x.system.worn.value) || ['advantage', 'specialability', 'disadvantage'].includes(x.type),
-    )) {
-      this._buildGearAndAbilityModifiers(itemModifiers, i);
 
-      if (i.type == 'armor') wornArmor.push(i);
+    const relevantItems = this.parent.items.filter(item => {
+      if (['meleeweapon', 'rangeweapon', 'armor', 'equipment'].includes(item.type)) {
+        if (item.system.worn.value) {
+          if (item.type === 'armor') wornArmor.push(item);
+          return true;
+        }
+        return false;
+      }
+      return ['advantage', 'specialability', 'disadvantage'].includes(item.type);
+    });
+
+    relevantItems.forEach(item => this._buildGearAndAbilityModifiers(itemModifiers, item));
+
+    if (wornArmor.length > 0) {
+      this._getArmorCompensation(this.parent, wornArmor, itemModifiers);
     }
-    this._getArmorCompensation(this.parent, wornArmor, itemModifiers);
+
     this._applyModiferTransformations(itemModifiers);
   }
 
@@ -505,20 +550,21 @@ export class ActorDataModel extends DSADataModel {
   }
 
   prepareSwarm(data) {
-    const count = Number(data.swarm.count) || 1;
-
+    const count = Math.max(1, Number(data.swarm.count) || 1);
     if (count < 2) return;
 
     data.swarm.maxwounds = data.status.wounds.max;
     data.status.wounds.max *= count;
 
-    const effectiveCount = Math.min(Math.ceil(data.status.wounds.value / data.swarm.maxwounds), count);
-    const gg = Number(data.swarm.gg) || 1;
-
-    data.swarm.attack += Math.min(10, Math.floor(effectiveCount / gg));
-    data.swarm.parry += -1;
+    const effectiveCount = Math.min(
+      Math.ceil(Math.max(0, data.status.wounds.value) / data.swarm.maxwounds), 
+      count
+    );
+    const groupSize = Math.max(1, Number(data.swarm.gg) || 1);
     data.swarm.effectiveCount = effectiveCount;
-    data.swarm.damage = Math.min(5, Math.floor(effectiveCount / gg));
+    data.swarm.attack = Math.min(10, Math.floor(effectiveCount / groupSize));
+    data.swarm.parry = -1;
+    data.swarm.damage = Math.min(5, Math.floor(effectiveCount / groupSize));
   }
 
   effectivePain(data) {
