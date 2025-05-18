@@ -359,10 +359,11 @@ export default class Actordsa5 extends Actor {
   static armorOpposedTransformation(actor, wornArmor, options) {
     if (options.origin) {
       let combatskill = getProperty(options.origin, 'system.combatskill.value');
+      const armorZones = ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value']
 
       wornArmor = wornArmor.map((armor) => {
         const optnCopy = mergeObject(duplicate(options), {
-          armor: duplicate(armor),
+          armor: armor.system.itemWithOverrides(),
         });
 
         if (combatskill) {
@@ -379,7 +380,7 @@ export default class Actordsa5 extends Actor {
 
                 if (adaption) {
                   const number = Number(adaption.match(/[-+]?\d+/)[0]) || 0;
-                  for (let key of ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value']) {
+                  for (let key of armorZones) {
                     if (optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = Math.max(0, optnCopy.armor.system.protection[key] + number);
                   }
                 } else {
@@ -389,7 +390,7 @@ export default class Actordsa5 extends Actor {
                     const randomArmorVals = adaption.split(' ')[1].split('|');
                     const randomArmor = randomArmorVals[Math.floor(Math.random() * randomArmorVals.length)];
 
-                    for (let key of ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value']) {
+                    for (let key of armorZones) {
                       if (optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = randomArmor;
                     }
                   }
@@ -412,6 +413,7 @@ export default class Actordsa5 extends Actor {
       actor.items.filter((x) => x.type == 'armor' && x.system.worn.value == true),
       options,
     );
+    console.log(actor, wornArmor);
     const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b, b.system.protection.value), 0);
     const animalArmor = actor.items.reduce((a, b) => a + (b.type == 'trait' && b.system.traitType.value == 'armor' ? Number(b.system.at.value) : 0), 0);
 

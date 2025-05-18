@@ -202,6 +202,18 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
     ef.update({ disabled: !ef.disabled });
   }
 
+  #lockOverrides(html) {
+    const overrides = foundry.utils.flattenObject(this.item.overrides || {});
+    Object.keys(overrides).forEach((v) => {
+      const elem = html.find(`[name="${v}"]`);
+      if (elem.length) {
+        elem.prop('disabled', true);
+        const icon = `<i class="fas fa-lock dsalocked" data-tooltip="TT.attributeLocked"></i>`;
+        elem.after(icon);
+      }
+    });
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = $(this.element);
@@ -221,6 +233,8 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
     DSA5StatusEffects.bindButtons(html);
+
+    this.#lockOverrides(html);
 
     const toObserve = html.find('header.item-header h1');
     if (toObserve.length) {

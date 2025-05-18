@@ -1247,6 +1247,7 @@
     "TT": {
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",
+        "attributeLocked": "Dieses Attribut ist durch Active Effects modifiziert und kann nicht bearbeitet werden.",
         "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
         "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)",
         "applyEffectCaster": "Effekt auf Wirkenden übertragen",

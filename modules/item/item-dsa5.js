@@ -354,7 +354,7 @@ export default class Itemdsa5 extends Item {
       acc[key] = game.i18n.localize(`LocalizedAbilityModifiers.${key}`);
       return acc;
     }, {});
-    const combatskills = [];
+    const combatData = [];
     const validSpecAb = isDefense ? (vals, com) => vals.pa != 0 : (vals, com) => vals.at != 0 || vals.tp != 0 || vals.dm != 0 || com.effects.size > 0;
 
     for (let com of combatSpecAbs) {
@@ -384,10 +384,10 @@ export default class Itemdsa5 extends Item {
           actor: actor.id,
           variantCount,
         }
-        combatskills.push(data);
+        combatData.push(data);
       }
     }
-    return combatskills;
+    return combatData;
   }
 
   static buildCombatSpecAbs(actor, categories, toSearch, mode, source) {
@@ -510,7 +510,7 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo = undefined) {
+  static prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecAbs, currentAmmo = undefined) {
     situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.restrictedSenseSight', -2));
     this.getCombatSkillModifier(actor, source, situationalModifiers);
 
@@ -559,7 +559,7 @@ export default class Itemdsa5 extends Item {
       shooterMovementOptions: DSA5.shooterMovementOptions,
       targetMovementOptions: DSA5.targetMovementOptions,
       targetSize,
-      combatSpecAbs: combatskills,
+      combatSpecAbs,
     });
   }
 
@@ -595,7 +595,7 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  static prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
+  static prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled) {
     let targetWeaponSize = 'short';
 
     game.user.targets.forEach((target) => {
@@ -631,7 +631,7 @@ export default class Itemdsa5 extends Item {
       melee: true,
       showAttack: true,
       targetWeaponSize,
-      combatSpecAbs: combatskills,
+      combatSpecAbs,
       meleeSizeOptions: DSA5.meleeSizeCategories,
       targetSize,
       constricted: actor.hasCondition('constricted'),
@@ -640,7 +640,7 @@ export default class Itemdsa5 extends Item {
     });
   }
 
-  static prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled) {
+  static prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled) {
     const isRangeDefense = Itemdsa5.getDefenseMalus(situationalModifiers, actor);
     this.swarmModifiers(actor, 'parry', situationalModifiers);
     mergeObject(data, {
@@ -650,7 +650,7 @@ export default class Itemdsa5 extends Item {
       wrongHandDisabled: wrongHandDisabled && getProperty(source, 'system.worn.offHand'),
       offHand: !wrongHandDisabled && getProperty(source, 'system.worn.offHand') && !RuleChaos.isShield(source),
       melee: true,
-      combatSpecAbs: combatskills,
+      combatSpecAbs,
       constricted: actor.hasCondition('constricted'),
     });
   }
@@ -1330,13 +1330,13 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
     const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.ambidextrous');
     source = DSA5_Utility.toObjectIfPossible(source);
     const toSearch = [source.system.combatskill.value];
-    const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
+    const combatSpecAbs = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
 
     if (data.mode == 'attack') {
-      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled);
+      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'parry') {
-      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, wrongHandDisabled);
+      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);
 
@@ -1464,7 +1464,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       const source = DSA5_Utility.toObjectIfPossible(_source);
 
       const toSearch = [source.system.combatskill.value];
-      const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
+      const combatSpecAbs = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
       let currentAmmo = actor.items.get(source.system.currentAmmo.value);
 
       if (currentAmmo) {
@@ -1478,7 +1478,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (poison) mergeObject(_source.flags, { dsa5: { poison } });
       }
 
-      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills, currentAmmo);
+      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecAbs, currentAmmo);
 
       if (currentAmmo) {
         if (currentAmmo.system.atmod) {
@@ -1711,16 +1711,16 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
     source = DSA5_Utility.toObjectIfPossible(source);
     const traitType = source.system.traitType.value;
-    const combatskills = Itemdsa5.buildCombatSpecAbs(actor, ['Combat', 'animal'], undefined, data.mode, source);
+    const combatSpecialabilities = Itemdsa5.buildCombatSpecAbs(actor, ['Combat', 'animal'], undefined, data.mode, source);
 
     if (data.mode == 'attack' && traitType == 'meleeAttack') {
-      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatskills, false);
+      this.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecialabilities, false);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'attack' && traitType == 'rangeAttack') {
-      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatskills);
+      this.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecialabilities);
       this.weaponModifiers(situationalModifiers, source, 'damage');
     } else if (data.mode == 'parry') {
-      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatskills, false);
+      this.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecialabilities, false);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);
     this.attackStatEffect(situationalModifiers, actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats'][data.mode]);

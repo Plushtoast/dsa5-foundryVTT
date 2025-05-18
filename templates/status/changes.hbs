@@ -23,7 +23,7 @@
                 {{formInput changeFields.priority name=(concat "changes." i ".priority") value=change.priority
                     placeholder=(lookup ../../priorities change.mode)}}
             </div>
-            <div class="col ten flexrow center controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+            <div class="col ten flexrow center controls"><a data-action="deleteChangeOwn"><i class="fa-solid fa-trash"></i></a></div>
         </div>
         {{/with}}
         {{/each}}

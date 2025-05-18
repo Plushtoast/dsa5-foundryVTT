@@ -68,8 +68,15 @@ export class ItemDataModel extends DSADataModel {
     ChatMessage.create(chatOptions);
   }
 
+  itemWithOverrides() {
+    const object = this.parent.toObject();
+    const overrides = foundry.utils.flattenObject(this.parent.overrides || {});
+    foundry.utils.mergeObject(object, overrides);
+    return object;
+  }
+
   prepareEmbeddedItemSheet() {
-    return this.parent.toObject();
+    return this.itemWithOverrides();
   }
 
   static _prepareItemStructure(item) {

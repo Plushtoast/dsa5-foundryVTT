@@ -10,18 +10,19 @@ export default class DSAActiveEffect extends ActiveEffect {
       const modifiedItems = this._getModifiedItems(actor, change);
 
       for (let item of modifiedItems.items) {
-        const overrides = foundry.utils.flattenObject(item.overrides || {});
-        overrides[modifiedItems.key] = Number.isNumeric(item.value) ? Number(modifiedItems.value) : modifiedItems.value;
+        if (!item.overrides) item.overrides = {};
+        const overrides = foundry.utils.flattenObject(item.overrides);
         const newChange = {
           ...change,
           key: modifiedItems.key,
           value: modifiedItems.value,
         };
-        super.apply(item, newChange);
+        const result = super.apply(item, newChange);
+        Object.assign(overrides, result);
         item.overrides = foundry.utils.expandObject(overrides);
       }
     } else {
-      if (change.key.startsWith('data.')) {
+      if (DSAActiveEffect.deprecatedDataRegex.test(change.key)) {
         const msg = game.i18n.format('DSAError.ActiveEffectDataChange', {
           name: actor.name,
         });
@@ -87,20 +88,24 @@ export default class DSAActiveEffect extends ActiveEffect {
 
   async _preUpdate(changed, options, user) {
     await super._preUpdate(changed, options, user);
-    this._clearModifiedItems();
+    //this._clearModifiedItems();
   }
 
-  _clearModifiedItems() {
-    if (!(this.parent instanceof CONFIG.Actor.documentClass)) return;
+  /*_clearModifiedItems() {
+    console.log(this.parent?.constructor.name, this.parent, this.changes);
+    let actor = this.parent;
+    if(actor instanceof CONFIG.Item.documentClass) actor = actor?.parent;
+    if (!(actor instanceof CONFIG.Actor.documentClass)) return;
 
     for (let change of this.changes) {
       if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
-        const itemsToClear = this._getModifiedItems(this.parent, change);
+        const itemsToClear = this._getModifiedItems(actor, change);
 
         for (const item of itemsToClear.items) {
           const overrides = foundry.utils.flattenObject(item.overrides || {});
 
           const key = itemsToClear.key;
+          console.log(item, key, overrides);
           delete overrides[key];
           const source = getProperty(item._source, key);
           setProperty(item, key, source);
@@ -110,11 +115,11 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
       }
     }
-  }
+  }*/
 
   async _preDelete(options, user) {
     super._preDelete(options, user);
-    this._clearModifiedItems();
+    //this._clearModifiedItems();
   }
 }
 

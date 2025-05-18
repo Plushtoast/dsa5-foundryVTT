@@ -1255,6 +1255,7 @@
         "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
         "oneQualityPerLine": "Describe one quality level each line",
+        "attributeLocked": "This attribute is modified by Active Effects and cannot be edited.",
         "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)",
         "applyEffectCaster": "Apply effect to caster",
         "applyEffectTargets": "Apply effect to targets",
