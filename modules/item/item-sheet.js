@@ -537,8 +537,6 @@ class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
   };
 }
 
-class TraitSheet extends WithEffectsSheet { }
-
 class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
   get advanceSkill() {
     return 'LocalizedIDs.exceptionalCombatTechnique';
@@ -787,8 +785,12 @@ class Enchantable extends ItemSheetdsa5 {
     },
   };
 
+  get isEnchantable() {
+    return true;
+  }
+
   async _handleDrop(dragData) {
-    await this._enchant([dragData]);
+    if (this.isEnchantable) await this._enchant([dragData]);
     if (this.isPoisonable) await this._poison(dragData);
     await super._handleDrop(dragData);
   }
@@ -975,6 +977,27 @@ class Enchantable extends ItemSheetdsa5 {
     data.poison = this.item.getFlag('dsa5', 'poison');
     data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0);
     return data;
+  }
+}
+
+class TraitSheet extends Enchantable {
+  static PARTS = {
+    header: super.PARTS.header,
+    stat: {
+      template: 'systems/dsa5/templates/items/item-stat.hbs',
+    },
+    tabs: super.PARTS.tabs,
+    description: super.PARTS.description,
+    enchantment: super.PARTS.enchantment,
+    effects: super.PARTS.effects,
+  };
+
+  get isEnchantable() {
+    return false;
+  }
+
+  get isPoisonable() {
+    return ['meleeAttack', 'rangeAttack'].includes(this.item.system.traitType.value);
   }
 }
 

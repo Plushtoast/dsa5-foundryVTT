@@ -413,7 +413,6 @@ export default class Actordsa5 extends Actor {
       actor.items.filter((x) => x.type == 'armor' && x.system.worn.value == true),
       options,
     );
-    console.log(actor, wornArmor);
     const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b, b.system.protection.value), 0);
     const animalArmor = actor.items.reduce((a, b) => a + (b.type == 'trait' && b.system.traitType.value == 'armor' ? Number(b.system.at.value) : 0), 0);
 
@@ -1190,8 +1189,8 @@ export default class Actordsa5 extends Actor {
 
     infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
             ${game.i18n.format('CHATFATE.isTalented', {
-              character: '<b>' + this.name + '</b>',
-            })}<br>`;
+      character: '<b>' + this.name + '</b>',
+    })}<br>`;
     const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.hbs', {
       testData: newTestData,
       postData: data.postData,
@@ -1457,8 +1456,8 @@ export default class Actordsa5 extends Actor {
       }
       let infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
                 ${game.i18n.format('CHATFATE.' + type, {
-                  character: '<b>' + this.name + '</b>',
-                })}<br>
+        character: '<b>' + this.name + '</b>',
+      })}<br>
                 <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
 
       let newTestData = data.preData;
@@ -1765,7 +1764,7 @@ export default class Actordsa5 extends Actor {
     let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     if (skill) {
       item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
-      const vals = item.system.guidevalue.value.split('/').map((x) => {
+      const guideValue = Math.max(...item.system.guidevalue.value.split('/').map((x) => {
         if (!actor.system.characteristics[x]) return 0;
         return (
           Number(actor.system.characteristics[x].initial) +
@@ -1773,9 +1772,9 @@ export default class Actordsa5 extends Actor {
           Number(actor.system.characteristics[x].advances) +
           Number(actor.system.characteristics[x].gearmodifier)
         );
-      });
-      const baseParry = Math.ceil(skill.system.talentValue.value / 2) + Math.max(0, Math.floor((Math.max(...vals) - 8) / 3)) + Number(game.settings.get('dsa5', 'higherDefense'));
+      }));
 
+      const baseParry = Math.ceil(skill.system.talentValue.value / 2) + Math.max(0, Math.floor((guideValue - 8) / 3)) + Number(game.settings.get('dsa5', 'higherDefense'));
       item.parry = baseParry + Number(item.system.pamod.value) + (RuleChaos.isShield(item) ? Number(item.system.pamod.value) : 0);
 
       item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
@@ -1820,8 +1819,15 @@ export default class Actordsa5 extends Actor {
 
       item = ItemDataModel._parseDmg(item, actor.system);
       if (item.system.guidevalue.value != '-') {
-        const val = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actor.system.characteristics[x].value)));
-        const extra = Math.max(val - Number(item.system.damageThreshold.value), 0) + gripDamageMod;
+        const guideValue = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actor.system.characteristics[x].value)));
+        let damageThreshold = item.system.damageThreshold.value
+        damageThreshold = actor.system.skillModifiers.combat.damageThreshold.reduce((acc, va) => {
+          if (va.target == item.system.combatskill.value) {
+            acc += Number(va.value);
+          }
+          return acc;
+        }, damageThreshold);
+        const extra = Math.max(guideValue - Number(damageThreshold), 0) + gripDamageMod;
         if (extra != 0) {
           item.extraDamage = extra;
           item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));

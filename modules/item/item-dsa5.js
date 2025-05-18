@@ -982,6 +982,9 @@ class SpellItemDSA5 extends Itemdsa5 {
       },
     };
 
+    const actorModMod = getProperty(actor, `system.${sheet}Stats.spellextension`) || 0;
+    const maxMods = Math.max(0, Math.floor(Number(spell.system.talentValue.value) / 4) + actorModMod)
+
     let data = {
       rollMode: options.rollMode,
       spellCost: spell.system.AsPCost.value,
@@ -993,7 +996,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       canChangeCastingTime: spell.system.canChangeCastingTime.value == 'true',
       hasSKModifier: spell.system.resistanceModifier.value == 'SK',
       hasZKModifier: spell.system.resistanceModifier.value == 'ZK',
-      maxMods: Math.floor(Number(spell.system.talentValue.value) / 4),
+      maxMods,
       extensions: this.prepareExtensions(actor, spell),
       variableBaseCost: spell.system.variableBaseCost == 'true',
       characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),

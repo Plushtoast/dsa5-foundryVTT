@@ -4,8 +4,12 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
-export const dropToGround = async (sourceActor, item, data, amount) => {
+export const dropToGround = async (sourceActor, item, data, formOptions) => {
+  const amount = formOptions.count.value;
+  const isBag = formOptions.isBag?.value;
+
   if (game.user.isGM) {
+    console.log(isBag, amount, formOptions);
     let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems();
     let folder = await DSA5_Utility.getFolderForType('Actor', null, 'Dropped Items');
     const userIds = game.users.filter((x) => !x.isGM).map((x) => x.id);
@@ -25,20 +29,9 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
     if (getProperty(newItem, 'system.worn.value')) newItem.system.worn.value = false;
 
     let bagItems = [];
-    if (item.system.isBagWithContents && sourceActor) {
-      bagItems = fetchBagItems(item, sourceActor);
-      
-      if(bagItems.length > 0) {
-        const proceed = await foundry.applications.api.DialogV2.confirm({
-          window: { title: 'DSASETTINGS.enableItemDropToCanvas' },
-          content: `<p>${game.i18n.localize('dropWithContents')}</p>`,
-          rejectClose: false,
-          modal: true
-        });
-        if(proceed) {
-          items.push(...bagItems.map((i) => i.toObject()));
-        }
-      }
+    if (isBag) {
+      bagItems = fetchBagItems(item, sourceActor).map((i) => i.toObject());
+      items.push(...bagItems);
     }
 
     const actor = {
@@ -86,7 +79,8 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
         await sourceActor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.quantity.value': newCount }]);
       }
       if (bagItems.length > 0) {
-        await sourceActor.deleteEmbeddedDocuments('Item', bagItems.map((i) => i.id));        
+        console.log(bagItems)
+        await sourceActor.deleteEmbeddedDocuments('Item', bagItems.map((i) => i._id));
       }
     } else {
       await canvas.scene.createEmbeddedDocuments('Token', [td]);
@@ -97,6 +91,7 @@ export const dropToGround = async (sourceActor, item, data, amount) => {
       sourceActorId: sourceActor?.id,
       data,
       amount,
+      isBag
     };
     game.socket.emit('system.dsa5', {
       type: 'itemDrop',
@@ -125,11 +120,17 @@ const handleItemDrop = async (canvas, data) => {
 
   if (!DSA5.equipmentCategories.has(item.type)) return;
 
-  const callback = async (count) => {
-    dropToGround(sourceActor, item, data, count);
+  const callback = async (formOptions) => {
+    dropToGround(sourceActor, item, data, formOptions);
   };
 
-  RangeSelectDialog.create('DSASETTINGS.enableItemDropToCanvas', game.i18n.format('MERCHANT.dropGround', { name: item.name }), item.system.quantity.value, callback);
+  const isBag = item.system.isBagWithContents && sourceActor;
+
+  RangeSelectDialog.create('DSASETTINGS.enableItemDropToCanvas', callback, {
+    name: game.i18n.format('MERCHANT.dropGround', { name: item.name }),
+    count: item.system.quantity.value,
+    isBag
+  });
 };
 
 const handleGroupDrop = async (canvas, data) => {
@@ -169,9 +170,14 @@ export const connectHook = () => {
 };
 
 export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
-  static async create(title, name, count, callback, min = 1, max = undefined) {
-    max = max || count;
-    const content = await renderTemplate('systems/dsa5/templates/dialog/dropToGround.hbs', { name, min, max, count });
+  static async content(data) {
+    return await renderTemplate('systems/dsa5/templates/dialog/dropToGround.hbs', data);
+  }
+
+  static async create(title, callback, data) {
+    if (!data.min) data.min = 1;
+    if (!data.max) data.max = data.count;
+    const content = await this.content(data)
 
     new RangeSelectDialog({
       window: {
@@ -185,7 +191,7 @@ export class RangeSelectDialog extends foundry.applications.api.DialogV2 {
           label: 'yes',
           default: true,
           callback: (event, button, dialog) => {
-            callback(button.form.elements.count.value);
+            callback(button.form.elements);
           },
         },
         {

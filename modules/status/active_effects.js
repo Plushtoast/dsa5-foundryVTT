@@ -96,9 +96,6 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     position: {
       width: 600
     },
-    actions: {
-      deleteChangeOwn: this._deleteChangeOwn,
-    }
   };
 
   static PARTS = {
@@ -134,15 +131,6 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       duration,
       'flags.dsa5.-=onDelayed': null,
     });
-  }
-
-  static _deleteChangeOwn(event, target) {
-    const submitData = this._processFormData(null, this.form, new FormDataExtended(this.form));
-    const changes = Object.values(submitData.changes);
-    const row = event.target.closest("[data-index]");
-    const index = Number(row.dataset.index) || 0;
-    changes.splice(index, 1);
-    return this.submit({updateData: {changes}});
   }
 
   static onDelayedEffect(actor, effect) {
@@ -988,6 +976,12 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       {
         name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize('damage')}`,
         val: `system.skillModifiers.combat.damage`,
+        mode: 0,
+        ph: csdemo,
+      },
+      {
+        name: `${game.i18n.localize('TYPES.Item.combatskill')} - ${game.i18n.localize('damageThreshold')}`,
+        val: `system.skillModifiers.combat.damageThreshold`,
         mode: 0,
         ph: csdemo,
       },

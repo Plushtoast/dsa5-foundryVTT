@@ -1,12 +1,13 @@
 <p>{{name}}</p>
-<div class='row-section'>
-  <div class='col third'>
-    <b>{{localize 'count'}}</b>
-  </div>
-  <div class='col two'>
-    <input type='range' name='count' value='{{count}}' min='{{min}}' max='{{max}}' step='1' />
-  </div>
-  <div class='col five center'>
-    <span class='range-value'>{{count}}</span>
+<div class="form-group">
+  <label>{{localize 'count'}}</label>
+  <div class="form-fields">
+    <range-picker name="count" value='{{count}}' min='{{min}}' max='{{max}}' step='1'></range-picker>
   </div>
 </div>
+{{#if isBag}}
+<div class="form-group">
+  <label>{{localize 'dropWithContents'}}</label>
+  <input type="checkbox" name="isBag">
+</div>
+{{/if}}

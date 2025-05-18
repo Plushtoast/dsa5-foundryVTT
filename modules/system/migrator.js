@@ -60,6 +60,7 @@ async function migrateTo33() {
   foundry.utils.mergeObject(combatTrackerConfig, {
     turnMarker: {
       src: 'systems/dsa5/icons/backgrounds/turnMarker.webp',
+      animation: 'spin'
     },
   });
   await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);

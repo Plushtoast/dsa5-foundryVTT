@@ -121,11 +121,13 @@ export default class DSAActiveEffect extends ActiveEffect {
     super._preDelete(options, user);
     //this._clearModifiedItems();
   }
+
+  static customAttributeEffect = /^system\.(vulnerabilities|resistances)/;
 }
 
 const applyCustomEffect = (elem, change) => {
   let current = getProperty(elem, change.key) || null;
-  if (current == null && /^system\.(vulnerabilities|resistances)/.test(change.key)) {
+  if (current == null && DSAActiveEffect.customAttributeEffect.test(change.key)) {
     current = [];
     setProperty(elem, change.key, current);
   }

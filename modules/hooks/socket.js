@@ -129,7 +129,7 @@ export function connectSocket() {
         {
           let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
-            dropToGround(sourceActor, item, data.payload.data, data.payload.amount);
+            dropToGround(sourceActor, item, data.payload.data, { amount: { value: data.payload.amount }, isBag: { value: data.payload.dropBag }});
           });
         }
         break;

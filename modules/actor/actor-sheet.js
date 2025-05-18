@@ -853,35 +853,35 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   _onHoverCost(ev) {
     const target = ev.currentTarget;
-    if(ev.currentTarget.dataset.tooltip) return;
+    if (ev.currentTarget.dataset.tooltip) return;
 
     const isAnimal = this.actor.system.isFamiliar || this.actor.system.isPet;
     const fct = {
       _advanceAttribute: (isAnimal) => {
-          const category = isAnimal ? 'C' : 'E';
-          const ch = this.actor.system.characteristics[target.dataset.attr];
-          return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category), key: 'advancementCost' }
+        const category = isAnimal ? 'C' : 'E';
+        const ch = this.actor.system.characteristics[target.dataset.attr];
+        return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category), key: 'advancementCost' }
       },
       _refundAttributeAdvance: (isAnimal) => {
-          const category = isAnimal ? 'C' : 'E';
-          const ch = this.actor.system.characteristics[target.dataset.attr];
-          return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category, 0), key: 'refundCost' }
+        const category = isAnimal ? 'C' : 'E';
+        const ch = this.actor.system.characteristics[target.dataset.attr];
+        return { cost: DSA5_Utility._calculateAdvCost(ch.initial + ch.advances, category, 0), key: 'refundCost' }
       },
       _refundPointsAdvance: (isAnimal) => {
-          const category = isAnimal ? 'C' : 'D';
-          return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category, 0), key: 'refundCost' }
+        const category = isAnimal ? 'C' : 'D';
+        return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category, 0), key: 'refundCost' }
       },
       _advancePoints: (isAnimal) => {
-          const category = isAnimal ? 'C' : 'D';
-          return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category), key: 'advancementCost' }
+        const category = isAnimal ? 'C' : 'D';
+        return { cost: DSA5_Utility._calculateAdvCost(this.actor.system.status[target.dataset.attr].advances, category), key: 'advancementCost' }
       },
       _refundItemAdvance: (isAnimal) => {
-          const item = this.actor.items.get(target.dataset.attr);
-          return { cost: item.system.refundCost(), key: 'refundCost' }
+        const item = this.actor.items.get(target.dataset.attr);
+        return { cost: item.system.refundCost(), key: 'refundCost' }
       },
       _advanceItem: (isAnimal) => {
-          const item = this.actor.items.get(target.dataset.attr);
-          return { cost: item.system.advanceCost(), key: 'advancementCost' }
+        const item = this.actor.items.get(target.dataset.attr);
+        return { cost: item.system.advanceCost(), key: 'advancementCost' }
       },
     }[target.dataset.fct]
     if (!fct) return;
@@ -1163,7 +1163,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _splitItem(item) {
-    const callback = async (count) => {
+    const callback = async (formOptions) => {
+      const count = Number(formOptions.count.value);
       const itemData = item.toObject();
       itemData.system.quantity.value = count;
       await this.actor.createEmbeddedDocuments('Item', [itemData], {
@@ -1179,11 +1180,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     RangeSelectDialog.create(
       'SHEET.SplitItem',
-      game.i18n.format('MERCHANT.splitItem', { name: item.name }),
-      item.system.quantity.value - 1,
       callback,
-      1,
-      item.system.quantity.value - 1,
+      {
+        name: game.i18n.format('MERCHANT.splitItem', { name: item.name }),
+        count: item.system.quantity.value - 1,
+        max: item.system.quantity.value - 1,
+      }
     );
   }
 

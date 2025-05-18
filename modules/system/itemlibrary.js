@@ -11,20 +11,20 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 class SearchDocument {
   static cachedKeys = {
-      Item: {},
-      Actor: {},
+    Item: {},
+    Actor: {},
   }
 
   static getSearchFields(documentName, type) {
-      const cached = this.cachedKeys[documentName][type]
+    const cached = this.cachedKeys[documentName][type]
 
-      if(!cached) {
-          const fields = ["name", "img", "type"]
-          const descriptionKey = game.dsa5.itemLibrary.fullTextSearch ? this.getDescriptionKey(documentName, type) : undefined
-          this.cachedKeys[documentName][type] = { fields, descriptionKey }
-      }
+    if (!cached) {
+      const fields = ["name", "img", "type"]
+      const descriptionKey = game.dsa5.itemLibrary.fullTextSearch ? this.getDescriptionKey(documentName, type) : undefined
+      this.cachedKeys[documentName][type] = { fields, descriptionKey }
+    }
 
-      return this.cachedKeys[documentName][type]
+    return this.cachedKeys[documentName][type]
   }
 
   static getDescriptionKey(documentName, type) {
@@ -44,29 +44,32 @@ class SearchDocument {
       compendium: item.pack,
       img: 'systems/dsa5/icons/categories/DSA-Auge.webp',
       type: 'JournalEntry',
-      description: item.pages.map(x => x.text?.content).join(" ")      
+      description: item.pages.map(x => x.text?.content).join(" ")
     }
   }
 
   static toSearchableObject(item, documentName) {
-      if(documentName == "JournalEntry") return this.toJournalSearchableObject(item)
+    if (documentName === "JournalEntry") return this.toJournalSearchableObject(item);
 
-      const { descriptionKey, fields } = this.getSearchFields(documentName, item.type)
-      const object = {}
+    const { descriptionKey, fields } = this.getSearchFields(documentName, item.type);
+    const object = {
+      uuid: item.uuid,
+      compendium: item.pack || ''
+    };
 
-      object.uuid = item.uuid
-      object.compendium = item.pack || ''
-      if (DSA5.equipmentCategories.has(item.type)) {
-        object.price = item.system.price?.value || 0
-      }
+    if (DSA5.equipmentCategories.has(item.type)) {
+      object.price = foundry.utils.getProperty(item, "system.price.value") || 0;
+    }
 
-      if(descriptionKey)
-          object.description = foundry.utils.getProperty(item, descriptionKey) ?? ""
+    if (descriptionKey) {
+      object.description = foundry.utils.getProperty(item, descriptionKey) || "";
+    }
 
-      for (const field of fields)
-          object[field] = foundry.utils.getProperty(item, field) ?? ""
+    for (const field of fields) {
+      object[field] = foundry.utils.getProperty(item, field) || "";
+    }
 
-      return object
+    return object;
   }
 }
 
@@ -88,13 +91,13 @@ class AdvancedSearchDocument extends SearchDocument {
 class DSASystemConfiguration {
   static hasDescription = {
     "Item": {
-        default: "system.description.value"
+      default: "system.description.value"
     },
     "Actor": {
-        default: "system.description.value"
+      default: "system.description.value"
     },
     "JournalEntry": {
-        default: "description"
+      default: "description"
     }
   }
 
@@ -102,9 +105,9 @@ class DSASystemConfiguration {
   static documentNames = ["Item", "Actor", "JournalEntry"]
 
   static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper"]
-  
+
   static initialize() {
-      
+
   }
 
   static documentNameFromGroup(documentGroup) {
@@ -112,124 +115,124 @@ class DSASystemConfiguration {
   }
 
   static categoryByType(documentName, type) {
-    switch(documentName) {
-        case "Item":
-          if(DSA5.equipmentCategories.has(type) || ["trap", "money", "disease"].includes(type)) return "Items"
-          if(DSA5.magicCategories.has(type)) return "Religion"
-          return "Character"
-        case "Actor":
-          return "Actors"
-        default:
-          return documentName;
+    switch (documentName) {
+      case "Item":
+        if (DSA5.equipmentCategories.has(type) || ["trap", "money", "disease"].includes(type)) return "Items"
+        if (DSA5.magicCategories.has(type)) return "Religion"
+        return "Character"
+      case "Actor":
+        return "Actors"
+      default:
+        return documentName;
     }
   }
 
   static getDescription(item) {
-      const descriptionKey = this.getDescriptionKey(item)
-      return descriptionKey ? foundry.utils.getProperty(item, descriptionKey) : ""
+    const descriptionKey = this.getDescriptionKey(item)
+    return descriptionKey ? foundry.utils.getProperty(item, descriptionKey) : ""
   }
 
   static getDescriptionKey(item) {
-      return foundry.utils.getProperty(this.hasDescription, `${item.documentName}.${item.type}`) || foundry.utils.getProperty(this.hasDescription, `${item.documentName}.default`)
+    return foundry.utils.getProperty(this.hasDescription, `${item.documentName}.${item.type}`) || foundry.utils.getProperty(this.hasDescription, `${item.documentName}.default`)
   }
 
   static async renderTooltip(item, fullTextSearch) {
-      const description = this.getDescription(item, fullTextSearch)
-      const langKey = `TYPES.${item.documentName}.${item.type}`
-      const type = game.i18n.has(langKey) ? game.i18n.localize(langKey) : item.type
-      return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
+    const description = this.getDescription(item, fullTextSearch)
+    const langKey = `TYPES.${item.documentName}.${item.type}`
+    const type = game.i18n.has(langKey) ? game.i18n.localize(langKey) : item.type
+    return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
   }
 
   static getSearchFields(documentName, type, fullTextSearch) {
-      const fields = { index: ["name"] }
+    const fields = { index: ["name"] }
 
-      if(fullTextSearch) {
-          const descriptionKey = this.getDescriptionKey({ documentName, type })
+    if (fullTextSearch) {
+      const descriptionKey = this.getDescriptionKey({ documentName, type })
 
-          if(descriptionKey) fields.index.push("description")
-      }
-      return fields
+      if (descriptionKey) fields.index.push("description")
+    }
+    return fields
   }
 }
 
 export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-    pageSize = 60
+  pageSize = 60
 
-    static TABS = {
-        sheet: {
-          tabs: [
-            { id: "Items", icon: "fa-solid fa-suitcase", label: "TYPES.Item.equipment" },
-            { id: "Character", icon: "fa-solid fa-user", label: "TYPES.Actor.character" },
-            { id: "Religion", icon: "fa-solid fa-hat-wizard", label: 'MagicReligion' },
-            { id: "JournalEntries", icon: "fa-solid fa-book-open", label: "DOCUMENT.JournalEntries" },
-            { id: "Actors", icon: "fa-solid fa-dragon", label: "zoo" }
-          ],
-          initial: "Items"
-        } 
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: "Items", icon: "fa-solid fa-suitcase", label: "TYPES.Item.equipment" },
+        { id: "Character", icon: "fa-solid fa-user", label: "TYPES.Actor.character" },
+        { id: "Religion", icon: "fa-solid fa-hat-wizard", label: 'MagicReligion' },
+        { id: "JournalEntries", icon: "fa-solid fa-book-open", label: "DOCUMENT.JournalEntries" },
+        { id: "Actors", icon: "fa-solid fa-dragon", label: "zoo" }
+      ],
+      initial: "Items"
     }
+  }
 
-    static DEFAULT_OPTIONS = {
-        id: "DSA5ItemLibrary",
-        tag: "aside",
-        position: {
-            height: 800,
-            width: 800
-        },
-        window: {
-            title: "ItemLibrary",
-            icon: "fa-regular fa-book",
-            minimizable: true,
-            resizable: true,
-            controls: [
-                {
-                    action: "showCompendiumFilter",
-                    icon: "fas fa-filter",
-                    label: "DSASETTINGS.libraryModulsFilter",
-                    visible: true,
-                }
-            ],
-        },
-        actions: {},
-        classes: ["dsa5", "sheet", "itemlibrary"]
-    };
-
-    static PARTS = {
-        tabs: {
-            template: "systems/dsa5/templates/system/dsatabs.hbs"
-        },
-        header: {
-            template: "systems/dsa5/templates/system/itemlibrary/parts/header.hbs"
-        },
-        Items: {
-            template: "systems/dsa5/templates/system/itemlibrary/Items.hbs",
-            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
-        },
-        Religion: {
-          template: "systems/dsa5/templates/system/itemlibrary/Religion.hbs",
-          templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
-        },
-        Character: {
-          template: "systems/dsa5/templates/system/itemlibrary/Character.hbs",
-          templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
-        },
-        Actors: {
-            template: "systems/dsa5/templates/system/itemlibrary/Actors.hbs",
-            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
-        },
-        JournalEntries: {
-            template: "systems/dsa5/templates/system/itemlibrary/JournalEntries.hbs",
-            templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
+  static DEFAULT_OPTIONS = {
+    id: "DSA5ItemLibrary",
+    tag: "aside",
+    position: {
+      height: 800,
+      width: 800
+    },
+    window: {
+      title: "ItemLibrary",
+      icon: "fa-regular fa-book",
+      minimizable: true,
+      resizable: true,
+      controls: [
+        {
+          action: "showCompendiumFilter",
+          icon: "fas fa-filter",
+          label: "DSASETTINGS.libraryModulsFilter",
+          visible: true,
         }
+      ],
+    },
+    actions: {},
+    classes: ["dsa5", "sheet", "itemlibrary"]
+  };
+
+  static PARTS = {
+    tabs: {
+      template: "systems/dsa5/templates/system/dsatabs.hbs"
+    },
+    header: {
+      template: "systems/dsa5/templates/system/itemlibrary/parts/header.hbs"
+    },
+    Items: {
+      template: "systems/dsa5/templates/system/itemlibrary/Items.hbs",
+      templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
+    },
+    Religion: {
+      template: "systems/dsa5/templates/system/itemlibrary/Religion.hbs",
+      templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
+    },
+    Character: {
+      template: "systems/dsa5/templates/system/itemlibrary/Character.hbs",
+      templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
+    },
+    Actors: {
+      template: "systems/dsa5/templates/system/itemlibrary/Actors.hbs",
+      templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
+    },
+    JournalEntries: {
+      template: "systems/dsa5/templates/system/itemlibrary/JournalEntries.hbs",
+      templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
     }
+  }
 
 
   constructor(app) {
-      super(app)
+    super(app)
 
-      this.loadSystemSpecificConfig().then(() => {
-        this.prepareDataModels()
-        this.prepareIndexes()
-      })
+    this.loadSystemSpecificConfig().then(() => {
+      this.prepareDataModels()
+      this.prepareIndexes()
+    })
   }
 
   async loadSystemSpecificConfig() {
@@ -243,24 +246,24 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.detailFilter = {}
 
     for (let className of this.systemConfiguration.documentNames) {
-        const fields = this.systemConfiguration.getSearchFields(className, undefined, this.fullTextSearch).index
+      const fields = this.systemConfiguration.getSearchFields(className, undefined, this.fullTextSearch).index
 
-        this.indexes[className] = {
-            search: "",
-            index: new FlexSearch.Document({
-                tokenize: "full",
-                cache: true,
-                document: {
-                    id: "uuid",
-                    store: true,
-                    tag: "type",
-                    index: fields
-                }
-            }),
-            build: false,
-            worldBuild: false,
-            next: undefined
-        }
+      this.indexes[className] = {
+        search: "",
+        index: new FlexSearch.Document({
+          tokenize: "full",
+          cache: true,
+          document: {
+            id: "uuid",
+            store: true,
+            tag: "type",
+            index: fields
+          }
+        }),
+        build: false,
+        worldBuild: false,
+        next: undefined
+      }
     }
   }
 
@@ -276,29 +279,29 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.prepareSettings(data)
     return data
   }
- 
+
   prepareSettings(data) {
     data.settings = {
-        advanced: {
-            icon: "fa-brain",
-            val: this.advancedFiltering
-        },
-        indexWorldItems: {
-            icon: "fa-globe",
-            val: game.settings.get('dsa5', 'indexWorldItems')
-        },
-        fullTextSearch: {
-            icon: "fa-align-center",
-            val: game.settings.get('dsa5', 'indexDescription')
-        },
-        browseEnabled: {
-            icon: "fa-maximize",
-            val: this.browseEnabled
-        },
-        filterDuplicateItems: {
-            icon: "fa-filter",
-            val: game.settings.get('dsa5', 'filterDuplicateItems')
-        }
+      advanced: {
+        icon: "fa-brain",
+        val: this.advancedFiltering
+      },
+      indexWorldItems: {
+        icon: "fa-globe",
+        val: game.settings.get('dsa5', 'indexWorldItems')
+      },
+      fullTextSearch: {
+        icon: "fa-align-center",
+        val: game.settings.get('dsa5', 'indexDescription')
+      },
+      browseEnabled: {
+        icon: "fa-maximize",
+        val: this.browseEnabled
+      },
+      filterDuplicateItems: {
+        icon: "fa-filter",
+        val: game.settings.get('dsa5', 'filterDuplicateItems')
+      }
     }
   }
 
@@ -306,33 +309,33 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const key = ev.currentTarget.dataset.key
     let val
     const html = $(this.element)
-    switch(key) {
-        case "advanced":
-            val = !this.advancedFiltering
-            this.advancedFiltering = val
-            if (this.advancedFiltering) {
-              html.find('.advancedSearch').fadeIn();
-              this.setAdvancedFilters();
-            } else {
-              html.find('.advancedSearch').fadeOut();
-            }
-            break
-        case "indexWorldItems":
-            val = !game.settings.get('dsa5', 'indexWorldItems')
-            await game.settings.set('dsa5', 'indexWorldItems', val)
-            break
-        case "fullTextSearch":
-            val = !game.settings.get('dsa5', 'indexDescription')
-            await game.settings.set('dsa5', 'indexDescription', val)
-            break
-        case "browseEnabled":
-            val = !this.browseEnabled
-            this.browseEnabled = val
-            break
-        case "filterDuplicateItems":
-            val = !game.settings.get('dsa5', 'filterDuplicateItems')
-            await game.settings.set('dsa5', 'filterDuplicateItems', val)
-            break
+    switch (key) {
+      case "advanced":
+        val = !this.advancedFiltering
+        this.advancedFiltering = val
+        if (this.advancedFiltering) {
+          html.find('.advancedSearch').fadeIn();
+          this.setAdvancedFilters();
+        } else {
+          html.find('.advancedSearch').fadeOut();
+        }
+        break
+      case "indexWorldItems":
+        val = !game.settings.get('dsa5', 'indexWorldItems')
+        await game.settings.set('dsa5', 'indexWorldItems', val)
+        break
+      case "fullTextSearch":
+        val = !game.settings.get('dsa5', 'indexDescription')
+        await game.settings.set('dsa5', 'indexDescription', val)
+        break
+      case "browseEnabled":
+        val = !this.browseEnabled
+        this.browseEnabled = val
+        break
+      case "filterDuplicateItems":
+        val = !game.settings.get('dsa5', 'filterDuplicateItems')
+        await game.settings.set('dsa5', 'filterDuplicateItems', val)
+        break
     }
 
     $(ev.currentTarget).toggleClass('on', val)
@@ -342,21 +345,21 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.models = {}
 
     for (const documentName of this.systemConfiguration.documentNames) {
-        const modelData = Object.keys(game.model[documentName]).filter(x => !this.systemConfiguration.skipCategories.includes(x))
-        
-        for (const key of modelData) {
-            const category = this.systemConfiguration.categoryByType(documentName, key)      
-            if (!this.models[category]) this.models[category] = []
-            const langKey = `TYPES.${documentName}.${key}`
-            this.models[category].push({
-                label: game.i18n.has(langKey) ? game.i18n.localize(langKey) : key,
-                selected: false,
-                key
-            })
-        }
+      const modelData = Object.keys(game.model[documentName]).filter(x => !this.systemConfiguration.skipCategories.includes(x))
+
+      for (const key of modelData) {
+        const category = this.systemConfiguration.categoryByType(documentName, key)
+        if (!this.models[category]) this.models[category] = []
+        const langKey = `TYPES.${documentName}.${key}`
+        this.models[category].push({
+          label: game.i18n.has(langKey) ? game.i18n.localize(langKey) : key,
+          selected: false,
+          key
+        })
+      }
     }
     for (let key of Object.keys(this.models)) {
-        this.models[key].sort((a, b) => a.label.localeCompare(b.label))
+      this.models[key].sort((a, b) => a.label.localeCompare(b.label))
     }
   }
 
@@ -369,11 +372,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async buildActorIndex() {
-      await this._createIndex("Actor", game.actors)
+    await this._createIndex("Actor", game.actors)
   }
 
   async buildJournalEntryIndex() {
-      await this._createIndex("JournalEntry", game.journal)
+    await this._createIndex("JournalEntry", game.journal)
   }
 
 
@@ -390,7 +393,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async getRandomItems(category, limit) {
-    const filteredItems = (await this.indexes.Item.index.searchAsync({ tag: category })).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x))
+    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: category }).map(x => this.indexes.Item.index.get(x))
     return (await Promise.all(this.shuffle(filteredItems).slice(0, limit + 5).map(x => fromUuid(x.uuid)))).filter((x) => {
       const enchantments = x.getFlag('dsa5', 'enchantments');
       return !enchantments || !enchantments.find((x) => x.talisman);
@@ -401,12 +404,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     let currentIndex = array.length, temporaryValue, randomIndex;
 
     while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
 
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
     }
 
     return array;
@@ -419,7 +422,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       index: ["name"],
       tag: [category],
     };
-    let result = (await this.indexes.Item.index.searchAsync(search, query)).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x));
+    let result = await this.flattenedResults(this.indexes.Item, search, query).map(x => this.indexes.Item.index.get(x));
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
     result = result.sort((a, b) => {
@@ -438,7 +441,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async getCategoryItems(category, asItemData = false, asItem = false) {
     await this.buildItemIndex();
-    const res = (await this.indexes.Item.index.searchAsync({ tag: [category] })).map(x => x.result).flat().map(x => this.indexes.Item.index.get(x));
+    const res = await this.flattenedResults(this.indexes.Item, '', { tag: [category] }).map(x => this.indexes.Item.index.get(x));
     if (asItemData) return (await Promise.all(res.map((x) => fromUuid(x.uuid)))).map((x) => x.toObject());
     else if (asItem) return await Promise.all(res.map((x) => fromUuid(x.uuid)));
 
@@ -527,7 +530,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   filterDuplications(filteredItems) {
-    if (game.settings.get('dsa5', 'filterDuplicateItems')) 
+    if (game.settings.get('dsa5', 'filterDuplicateItems'))
       filteredItems = [...new Map(filteredItems.map((item) => [`${item.name}_${item.type}`, item])).values()];
 
     return filteredItems;
@@ -547,14 +550,20 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const collectTags = this.models[category]?.filter(x => x.selected).map(x => x.key) || []
     let startIndex = Number(page) || 0
 
-    if(collectTags.length == 0) {
-      filteredItems = (await index.index.searchAsync(search, { ...fields })).map(x => x.result).flat()
+    if (collectTags.length == 0) {
+      filteredItems = await this.flattenedResults(index, search, { ...fields })
     }
     else {
-      filteredItems = (await (search == "" ? index.index.searchAsync({ tag: collectTags }) : index.index.searchAsync(search, { ...fields, tag: collectTags }))).map(x => x.result).flat()
+      if (search == "") {
+        filteredItems = await this.flattenedResults(index, '', { tag: collectTags })
+      } else {
+        filteredItems = await this.flattenedResults(index, search, { ...fields, tag: collectTags })
+      }
     }
 
+    filteredItems = Array.from(new Set(filteredItems))
     filteredItems = filteredItems.slice(startIndex, Math.min(startIndex + this.pageSize, filteredItems.length))
+
 
     if (filteredItems.length == this.pageSize) startIndex += this.pageSize
 
@@ -569,18 +578,18 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   changeTab(tab, group, options) {
     super.changeTab(tab, group, options)
 
-    switch(tab) {
-        case "Character":
-        case "Religion":
-        case "Items":
-            this.buildItemIndex()
-            break
-        case "Actors":
-            this.buildActorIndex()
-            break
-        case "JournalEntries":
-            this.buildJournalEntryIndex()
-            break
+    switch (tab) {
+      case "Character":
+      case "Religion":
+      case "Items":
+        this.buildItemIndex()
+        break
+      case "Actors":
+        this.buildActorIndex()
+        break
+      case "JournalEntries":
+        this.buildJournalEntryIndex()
+        break
     }
   }
 
@@ -589,16 +598,16 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async getItemTemplate(filteredItems, itemType) {
-    if (this.browseEnabled && ['Items','Actors','Character','Religion'].includes(itemType)) {
-        return filteredItems.map(x => {
-            return `<li class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></li>`
-        }).join("")
+    if (this.browseEnabled && ['Items', 'Actors', 'Character', 'Religion'].includes(itemType)) {
+      return filteredItems.map(x => {
+        return `<li class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></li>`
+      }).join("")
     } else {
-        const template = 'systems/dsa5/templates/system/itemlibrary/parts/libraryItem.hbs'
-        return await renderTemplate(template, { items: filteredItems })
+      const template = 'systems/dsa5/templates/system/itemlibrary/parts/libraryItem.hbs'
+      return await renderTemplate(template, { items: filteredItems })
     }
   }
-  
+
   getObserver(itemType) {
     const observer = this.findIndex(itemType).observer ||= new IntersectionObserver(this.intersectionObserved.bind(this), { root: $(this.element).find('.window-content')[0] });
     return observer
@@ -607,19 +616,19 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async renderBrowseItem(uuid) {
     const document = await fromUuid(uuid)
     const template = `systems/dsa5/templates/items/browse/${document.type}.hbs`
-    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext())})
+    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext()) })
     return `<div class="uuid libItem ${document.type} col" draggable="true" data-uuid="${uuid}">${item}</div>`
-  } 
+  }
 
   intersectionObserved(entries, observer) {
     for (let entry of entries) {
-        if (entry.isIntersecting) {
-            const uuid = entry.target.dataset.uuid
-            this.renderBrowseItem(uuid).then(html => {
-                entry.target.outerHTML = html
-            })
-            observer.unobserve(entry.target)
-        }
+      if (entry.isIntersecting) {
+        const uuid = entry.target.dataset.uuid
+        this.renderBrowseItem(uuid).then(html => {
+          entry.target.outerHTML = html
+        })
+        observer.unobserve(entry.target)
+      }
     }
   }
 
@@ -632,9 +641,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     const items = resultField.find('.loader')
     if (items.length > 0) {
-        const observer = this.getObserver(category)
-        
-        for (let item of items) observer.observe(item)
+      const observer = this.getObserver(category)
+
+      for (let item of items) observer.observe(item)
     }
   }
 
@@ -650,7 +659,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     index.build = true
     const filteredCompendiums = game.settings.get("dsa5", "libraryModulsFilter")
-    const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true})
+    const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true })
     this.showLoading(documentName)
     const packs = game.packs.filter(p => p.documentName == documentName && (game.user.isGM || p.visible) && !filteredCompendiums[p.metadata.packageName])
     const percentage = 100 / (packs.length + 1)
@@ -658,26 +667,26 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const actorFields = ["name", "img", "type"]
     let func
     if (documentName == "Actor") {
-        func = (p) => { return p.getIndex({ actorFields }) }
+      func = (p) => { return p.getIndex({ actorFields }) }
     } else if (documentName == "JournalEntry") {
-        func = (p) => { return p.getDocuments() }
+      func = (p) => { return p.getDocuments() }
     } else {
-        func = (p) => { return p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item) }) }
+      func = (p) => { return p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item) }) }
     }
     this.indexWorldItems(worldItems, documentName)
-    progress.update({message: 'Library.loading', format: { item: "world items" }, pct: Math.round(percentage) / 100})
+    progress.update({ message: 'Library.loading', format: { item: "world items" }, pct: Math.round(percentage) / 100 })
 
     const promise = packs.map(async (p) => {
-        const documents = await func(p)
-        count += percentage
-        for(const item of documents) index.index.add(SearchDocument.toSearchableObject(item, documentName))
+      const documents = await func(p)
+      count += percentage
+      for (const item of documents) index.index.add(SearchDocument.toSearchableObject(item, documentName))
 
-        progress.update({message: 'Library.loading', format: { item: `${p.metadata.label} (${p.metadata.id})` }, pct: Math.round(count) / 100})
+      progress.update({ message: 'Library.loading', format: { item: `${p.metadata.label} (${p.metadata.id})` }, pct: Math.round(count) / 100 })
     })
 
-    return Promise.all(promise).then(async() => {
-        progress.update({message: 'Library.loading', format: { item: "" }, pct: 1})
-        this.hideLoading(documentName)
+    return Promise.all(promise).then(async () => {
+      progress.update({ message: 'Library.loading', format: { item: "" }, pct: 1 })
+      this.hideLoading(documentName)
     })
   }
 
@@ -692,9 +701,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async indexWorldItems(worldItems, documentName) {
     if (game.settings.get('dsa5', 'indexWorldItems')) {
-        for(const item of worldItems.filter(x => x.visible)){
-          this.findIndex(documentName).index.add(SearchDocument.toSearchableObject(item, documentName))
-        }            
+      for (const item of worldItems.filter(x => x.visible)) {
+        this.findIndex(documentName).index.add(SearchDocument.toSearchableObject(item, documentName))
+      }
     }
     this.findIndex(documentName).worldBuild = true
   }
@@ -714,11 +723,26 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return { index: this.indexes[itemType], itemType };
   }
 
+  async flattenedResults(index, search, args) {
+    const searchPromise = search
+      ? index.index.searchAsync(search, args)
+      : index.index.searchAsync(args);
+
+    const results = await searchPromise;
+    const uniqueResults = new Set();
+    for (const result of results) {
+      for (const item of result.result) {
+        uniqueResults.add(item);
+      }
+    }
+    return Array.from(uniqueResults);
+  }
+
   async createDetailIndex(category, subcategory) {
     if (!this.detailFilter[subcategory]) {
       const { index, itemType } = this.selectIndex(category);
       const catName = game.i18n.localize(`TYPES.${itemType}.${subcategory}`);
-      const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true})
+      const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true })
       const fields = this.subcategoryFields(subcategory);
       const target = $(this.element).find(`*[data-tab="${category}"]`);
       target.find('.searchResult ul').html('');
@@ -727,12 +751,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         tokenize: "full",
         cache: true,
         document: {
-            id: "uuid",
-            store: true,
-            tag: "type",
-            index: fields
+          id: "uuid",
+          store: true,
+          tag: "type",
+          index: fields
         }
-      });      
+      });
       const worldStuff = itemType == 'Item' ? game.items : game.actors;
       const items = [];
 
@@ -740,18 +764,18 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         items.push(...worldStuff.filter((x) => x.visible && x.type == subcategory).map((x) => AdvancedSearchDocument.toSearchableObject(x, subcategory)));
       }
 
-      const result = (await index.index.searchAsync({ tag: [subcategory] })).map(x => x.result).flat()
-      progress.update({message: 'Library.loading', format: { item: catName }, pct: 0.1 })
+      const result = await this.flattenedResults(index, '', { tag: [subcategory] });
+      progress.update({ message: 'Library.loading', format: { item: catName }, pct: 0.1 })
 
       const promises = [];
       let percentage = 60 / result.length;
       let count = 0;
       for (const uuid of result) {
         count += 1;
-        if(uuid.startsWith('Compendium')) promises.push(fromUuid(uuid));
-        progress.update({message: 'Library.loading', format: { item: catName }, pct: Math.round(10 + count * percentage) / 100 })
+        if (uuid.startsWith('Compendium')) promises.push(fromUuid(uuid));
+        progress.update({ message: 'Library.loading', format: { item: catName }, pct: Math.round(10 + count * percentage) / 100 })
       }
-      progress.update({message: 'Library.loading', format: { item: catName }, pct: 0.7 })
+      progress.update({ message: 'Library.loading', format: { item: catName }, pct: 0.7 })
 
       const final = await Promise.all(promises);
       percentage = 30 / final.length;
@@ -759,19 +783,19 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       for (let k of final) {
         count += 1;
         items.push(AdvancedSearchDocument.toSearchableObject(k, subcategory));
-        progress.update({message: 'Library.loading', format: { item: catName }, pct: Math.round(70 + count * percentage) / 100 })
+        progress.update({ message: 'Library.loading', format: { item: catName }, pct: Math.round(70 + count * percentage) / 100 })
       }
 
-      for(const item of items) this.detailFilter[subcategory].add(item);
+      for (const item of items) this.detailFilter[subcategory].add(item);
       this.hideLoading(target, category);
-      progress.update({message: 'Library.loading', format:  { item: catName }, pct: 1 })
+      progress.update({ message: 'Library.loading', format: { item: catName }, pct: 1 })
     }
   }
 
   async buildDetailFilter(category, subcategory, savedSettings = undefined) {
     if (category != 'none') {
       const fields = duplicate(ADVANCEDFILTERS[subcategory] || []);
-      let moduleSelected = false;   
+      let moduleSelected = false;
       if (savedSettings) {
         for (let field of fields) {
           switch (field.type) {
@@ -807,10 +831,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       .filter((x) => x.metadata.type == 'Item')
       .reduce((prev, cur) => {
         if (!prev[cur.metadata.packageName]) {
-          if(game.i18n.has(`${cur.metadata.packageName}.name`))
+          if (game.i18n.has(`${cur.metadata.packageName}.name`))
             prev[cur.metadata.packageName] = game.i18n.localize(`${cur.metadata.packageName}.name`)
           else if (cur.metadata.packageName == 'dsa5') {
-            prev[cur.metadata.packageName] = game.system.title            
+            prev[cur.metadata.packageName] = game.system.title
           } else {
             prev[cur.metadata.packageName] = game.modules.get(cur.metadata.packageName)?.title.replace(/The Dark Eye 5th Ed. - /i, '') || cur.metadata.label;
           }
@@ -819,7 +843,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       }, {});
   }
 
-  itemDragStart (ev) {
+  itemDragStart(ev) {
     ev.stopPropagation()
     $(this.element).animate({ opacity: 0.2 }, 100);
     const uuid = ev.target.dataset.uuid
@@ -827,7 +851,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const { type } = foundry.utils.parseUuid(uuid);
     ev.dataTransfer.setData("text/plain", JSON.stringify({ type, uuid, dragSource: "itemlibrary", pay }));
     ev.target.addEventListener("dragend", () => {
-        window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: "" })))
+      window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: "" })))
     }, { once: true });
   }
 
@@ -835,21 +859,21 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     await super._onRender(context, options);
 
     const html = $(this.element)
-    tabSlider(html);     
+    tabSlider(html);
     const source = this
     html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
     html.on("mousedown", ".searchResult .browser-item", ev => this._onItemNameClick(ev))
     html.on("mouseenter", ".searchResult .browser-item", ev => this._onItemHover(ev))
-    html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))       
+    html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))
     this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
     html.find('.scrollable').on('scroll.infinit', ev => foundry.utils.debounce(this._infiniteScroll(ev, source), 100));
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
       this.filterItems(category);
-    }); 
+    });
 
     html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
 
@@ -859,9 +883,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async _onItemHover(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)
-    let tooltip = await item.toEmbed({ classes: 'itemLibraryTooltip'}, { skipHeader: true })
+    let tooltip = await item.toEmbed({ classes: 'itemLibraryTooltip' }, { skipHeader: true })
 
-    if(!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item)
+    if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item)
 
     $('#tooltip').html(tooltip)
   }
@@ -874,10 +898,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const category = $(this.element).find('.tab.active')[0].dataset.tab;
     const documentName = this.systemConfiguration.documentNameFromGroup(category)
     if (pct && source.indexes[documentName].next) {
-        source.filterItems.call(source, category, source.indexes[documentName].next )
+      source.filterItems.call(source, category, source.indexes[documentName].next)
     }
   }
-  
+
   async _onItemNameClick(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)
@@ -903,7 +927,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (this.advancedFiltering) {
       await this.setAdvancedFilters(category, type);
       ev.currentTarget.checked = isChecked;
-      
+
       if (isChecked) {
         const templ = await this.buildDetailFilter(category, type)
         $(this.element).find('.tab.active .advancedSearch .advancedSearchContent').html(templ);
@@ -918,15 +942,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (target.classList.contains("disabled")) return
 
     switch (target.dataset.action) {
-        case "showCompendiumFilter":
-            new LibraryModulsFilter().render(true)
-            break
+      case "showCompendiumFilter":
+        new LibraryModulsFilter().render(true)
+        break
     }
   }
 
   _onDragOver(ev) {
-    if(ev.dataTransfer?.types.includes("dragSource"))
-        $(this.element).css({ pointerEvents: "none" });
+    if (ev.dataTransfer?.types.includes("dragSource"))
+      $(this.element).css({ pointerEvents: "none" });
   }
 
   showLoading(documentName) {
@@ -945,22 +969,22 @@ class LibraryModulsFilter extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     id: "LibraryModulsFilter",
     position: {
-        width: 600
+      width: 600
     },
     window: {
-        title: "DSASETTINGS.libraryModulsFilter",
-        icon: "fa-regular fa-globe",
-        minimizable: true,
-        resizable: true,
+      title: "DSASETTINGS.libraryModulsFilter",
+      icon: "fa-regular fa-globe",
+      minimizable: true,
+      resizable: true,
     },
     actions: {},
 
     classes: ["dsa5"]
   };
-  
+
   static PARTS = {
     modules: {
-        template: "systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs"
+      template: "systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs"
     }
   }
 

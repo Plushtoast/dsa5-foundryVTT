@@ -42,7 +42,7 @@ export default class DSA5Tutorial {
   static async setupDefaultOptions() {
     const settings = game.settings.get('core', Combat.CONFIG_SETTING);
     settings.skipDefeated = true;
-    foundry.utils.mergeObject(settings, { turnMarker: { src: 'systems/dsa5/icons/categories/ability_fate_points.webp' } });
+    foundry.utils.mergeObject(settings, { turnMarker: { src: 'systems/dsa5/icons/backgrounds/turnMarker.webp', animation: 'spin' } });
     await game.settings.set('core', Combat.CONFIG_SETTING, settings);
     await game.settings.set('core', 'leftClickRelease', true);
   }
