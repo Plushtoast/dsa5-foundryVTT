@@ -140,29 +140,29 @@ export default class Actordsa5 extends Actor {
     const overrides = {};
     this.statuses ??= new Set();
     this.auras = [];
-    
+
     const specialStatuses = new Map();
     for (const statusId of Object.values(CONFIG.specialStatusEffects)) {
       specialStatuses.set(statusId, this.statuses.has(statusId));
     }
     this.statuses.clear();
 
-    this.dsatriggers = { 
-      [DSATriggers.EVENTS.POST_ROLL]: {}, 
-      [DSATriggers.EVENTS.POST_OPPOSED]: {} 
+    this.dsatriggers = {
+      [DSATriggers.EVENTS.POST_ROLL]: {},
+      [DSATriggers.EVENTS.POST_OPPOSED]: {}
     };
 
     const appliedArtifacts = this.items
-      .filter(x => 
+      .filter(x =>
         ['rangeweapon', 'meleeweapon', 'equipment', 'armor'].includes(x.type) &&
         x.system.isArtifact &&
         (x.system.worn.value || (x.type == 'equipment' && !x.system.worn.wearable))
       )
       .map(x => x.system.artifact);
-    
-    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');    
-    const changes = this.collectActorEffectChanges();    
-    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);    
+
+    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
+    const changes = this.collectActorEffectChanges();
+    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);
     changes.sort((a, b) => a.priority - b.priority);
     for (let change of changes) {
       if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
@@ -171,7 +171,7 @@ export default class Actordsa5 extends Actor {
     }
 
     this.overrides = expandObject(overrides);
-    
+
     let tokens;
     for (const [statusId, wasActive] of specialStatuses) {
       const isActive = this.statuses.has(statusId);
@@ -185,7 +185,7 @@ export default class Actordsa5 extends Actor {
 
   collectActorEffectChanges() {
     const changes = [];
-    
+
     for (const e of this.effects) {
       if (e.disabled || e.system.delayed) continue;
 
@@ -195,7 +195,7 @@ export default class Actordsa5 extends Actor {
       }
 
       const multiply = Number(e.getFlag('dsa5', 'value')) || 1;
-      
+
       for (let i = 0; i < multiply; i++) {
         changes.push(
           ...e.changes.map(c => {
@@ -206,12 +206,12 @@ export default class Actordsa5 extends Actor {
           })
         );
       }
-      
+
       for (const statusId of e.statuses) {
         this.statuses.add(statusId);
       }
     }
-    
+
     return changes;
   }
 
@@ -222,7 +222,7 @@ export default class Actordsa5 extends Actor {
 
         let apply = true;
         let multiply = 1;
-        
+
         apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
         multiply = this.getEffectMultiplier(item);
 
@@ -250,7 +250,7 @@ export default class Actordsa5 extends Actor {
             })
           );
         }
-        
+
         for (const statusId of e.statuses) {
           this.statuses.add(statusId);
         }
@@ -264,17 +264,17 @@ export default class Actordsa5 extends Actor {
       case 'rangeweapon':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
         return item.system.worn.value && effect.getFlag('dsa5', 'applyToOwner');
-        
+
       case 'armor':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
         return item.system.worn.value;
-        
+
       case 'equipment':
         return !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value);
-        
+
       case 'trait':
         return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.getFlag('dsa5', 'applyToOwner');
-        
+
       case 'ammunition':
       case 'plant':
       case 'consumable':
@@ -288,7 +288,7 @@ export default class Actordsa5 extends Actor {
       case 'skill':
       case 'spellextension':
         return false;
-        
+
       case 'specialability':
         switch (item.system.category.value) {
           case 'Combat':
@@ -298,7 +298,7 @@ export default class Actordsa5 extends Actor {
           default:
             return true;
         }
-        
+
       default:
         return true;
     }
@@ -500,24 +500,24 @@ export default class Actordsa5 extends Actor {
   }
 
   prepareItems(sheetInfo) {
-    let combatskills = [];
-    let advantages = [];
-    let disadvantages = [];
-    let aggregatedtests = [];
-    let diseases = [];
-    let demonmarks = [];
-    let wornweapons = [];
-    let information = [];
+    const combatskills = [];
+    const advantages = [];
+    const disadvantages = [];
+    const aggregatedtests = [];
+    const diseases = [];
+    const demonmarks = [];
+    const wornweapons = [];
+    const information = [];
     const essence = [];
     const imprint = [];
-
-    const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map((x) => [x, []]));
-    const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map((x) => [x, []]));
-
-    let armor = [];
-    let rangeweapons = [];
-    let meleeweapons = [];
+    const armor = [];
+    const rangeweapons = [];
+    const meleeweapons = [];
     const traditionArtifacts = [];
+    const availableAmmunition = [];
+
+    const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]));
+    const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]));
 
     const magic = {
       hasSpells: this.system.isMage,
@@ -542,51 +542,18 @@ export default class Actordsa5 extends Actor {
     const schips = this.schipshtml();
 
     const inventory = {
-      meleeweapons: {
-        items: [],
-        show: false,
-        dataType: 'meleeweapon',
-      },
-      rangeweapons: {
-        items: [],
-        show: false,
-        dataType: 'rangeweapon',
-      },
-      armor: {
-        items: [],
-        show: false,
-        dataType: 'armor',
-      },
-      ammunition: {
-        items: [],
-        show: false,
-        dataType: 'ammunition',
-      },
-      plant: {
-        items: [],
-        show: false,
-        dataType: 'plant',
-      },
-      poison: {
-        items: [],
-        show: false,
-        dataType: 'poison',
-      },
-      book: {
-        items: [],
-        show: false,
-        dataType: 'book',
-      },
+      meleeweapons: { items: [], show: false, dataType: 'meleeweapon' },
+      rangeweapons: { items: [], show: false, dataType: 'rangeweapon' },
+      armor: { items: [], show: false, dataType: 'armor' },
+      ammunition: { items: [], show: false, dataType: 'ammunition' },
+      plant: { items: [], show: false, dataType: 'plant' },
+      poison: { items: [], show: false, dataType: 'poison' },
+      book: { items: [], show: false, dataType: 'book' },
     };
 
-    for (let t in DSA5.equipmentTypes) {
-      inventory[t] = {
-        items: [],
-        show: false,
-        dataType: t,
-      };
+    for (const t in DSA5.equipmentTypes) {
+      inventory[t] = { items: [], show: false, dataType: t };
     }
-
     inventory['misc'].show = true;
 
     const money = {
@@ -595,12 +562,9 @@ export default class Actordsa5 extends Actor {
       show: true,
     };
 
-    //we can later make equipment sortable
-    //actorData.items = actorData.items.sort((a, b) => (a.sort || 0) - (b.sort || 0))
-
     let totalArmor = this.system.totalArmor || 0;
 
-    let skills = {
+    const skills = {
       body: [],
       social: [],
       knowledge: [],
@@ -608,34 +572,33 @@ export default class Actordsa5 extends Actor {
       nature: [],
     };
 
-    let containers = new Map();
-    for (let container of this.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
+    const containers = new Map();
+    for (const container of this.items.filter(x => x.type === 'equipment' && x.system.equipmentType.value === 'bags')) {
       containers.set(container.id, []);
     }
 
-    let applications = new Map();
-    let availableAmmunition = [];
+    const applications = new Map();
+
     let hasTrait = false;
-    const hasAnyItem = this.items.some((x) => !['skill', 'combatskill', 'money'].includes(x.type));
+    const hasAnyItem = this.items.some(x => !['skill', 'combatskill', 'money'].includes(x.type));
     const horse = Riding.getHorse(this, true);
 
     const preparedItems = this.items
-      .map((x) => x.system.prepareEmbeddedItemSheet())
-      .sort((a, b) => {
-        return a.name.localeCompare(b.name);
-      });
+      .map(x => x.system.prepareEmbeddedItemSheet())
+      .sort((a, b) => a.name.localeCompare(b.name));
 
-    for (let i of preparedItems) {
+    for (const i of preparedItems) {
       try {
-        let parent_id = i.system.parent_id;
-        if (i.type == 'ammunition') availableAmmunition.push(i);
+        const parent_id = i.system.parent_id;
+        if (i.type === 'ammunition') availableAmmunition.push(i);
 
-        if (parent_id && parent_id != i._id) {
+        if (parent_id && parent_id !== i._id) {
           if (containers.has(parent_id)) {
             containers.get(parent_id).push(i);
             continue;
           }
         }
+
         if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = 'shown';
 
         if (i.system.isArtifact) {
@@ -655,18 +618,15 @@ export default class Actordsa5 extends Actor {
             aggregatedtests.push(i);
             break;
           case 'spellextension':
-            if (extensions[i.system.category][i.system.source]) {
-              extensions[i.system.category][i.system.source].push(i.name);
-            } else {
-              extensions[i.system.category][i.system.source] = [i.name];
+            if (!extensions[i.system.category][i.system.source]) {
+              extensions[i.system.category][i.system.source] = [];
             }
+            extensions[i.system.category][i.system.source].push(i.name);
             break;
           case 'ritual':
           case 'spell':
           case 'liturgy':
           case 'ceremony':
-            magic[i.type].push(i);
-            break;
           case 'magicalsign':
           case 'magictrick':
           case 'blessing':
@@ -674,7 +634,7 @@ export default class Actordsa5 extends Actor {
             break;
           case 'trait':
             traits[i.system.traitType.value].push(i);
-            if (i.type == 'armor') totalArmor += Number(i.system.at.value);
+            if (i.type === 'armor') totalArmor += Number(i.system.at.value);
             hasTrait = true;
             break;
           case 'combatskill':
@@ -698,7 +658,7 @@ export default class Actordsa5 extends Actor {
             inventory.armor.show = true;
 
             if (i.system.worn.value) {
-              for (let property in i.system.protection) {
+              for (const property in i.system.protection) {
                 const value = i.system.protection[property];
                 i.system.protection[property] = EquipmentDamage.armorWearModifier(i, value);
               }
@@ -713,9 +673,6 @@ export default class Actordsa5 extends Actor {
             inventory[i.type].show = true;
             break;
           case 'consumable':
-            inventory[i.system.equipmentType.value].items.push(i);
-            inventory[i.system.equipmentType.value].show = true;
-            break;
           case 'equipment':
             inventory[i.system.equipmentType.value].items.push(i);
             inventory[i.system.equipmentType.value].show = true;
@@ -749,73 +706,72 @@ export default class Actordsa5 extends Actor {
             imprint.push(i);
             break;
           case 'application':
-            if (applications.has(i.system.skill)) applications.get(i.system.skill).push(i);
-            else applications.set(i.system.skill, [i]);
+            if (!applications.has(i.system.skill)) {
+              applications.set(i.system.skill, []);
+            }
+            applications.get(i.system.skill).push(i);
             break;
         }
       } catch (error) {
-        //  console.trace();
         this._itemPreparationError(i, error);
       }
     }
 
-    for (let elem of inventory.bags.items) {
+    for (const elem of inventory.bags.items) {
       this._setBagContent(elem, containers);
     }
 
-    for (let [category, value] of Object.entries(extensions)) {
-      for (let [spell, exts] of Object.entries(value)) {
-        const findspell = magic[category].find((x) => x.name == spell);
-        if (findspell) findspell.extensions = exts.join(', ');
-        else
+    for (const [category, value] of Object.entries(extensions)) {
+      for (const [spell, exts] of Object.entries(value)) {
+        const findspell = magic[category].find(x => x.name === spell);
+        if (findspell) {
+          findspell.extensions = exts.join(', ');
+        } else {
           ui.notifications.warn(
             game.i18n.format('DSAError.noSpellForExtension', {
               name: spell,
               category: DSA5_Utility.categoryLocalization(category),
               extension: exts.join(','),
-            }),
+            })
           );
+        }
       }
     }
 
-    for (let wep of inventory.rangeweapons.items) {
+    for (const wep of inventory.rangeweapons.items) {
       try {
-        if (wep.system.worn.value) rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+        if (wep.system.worn.value) {
+          rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+        }
       } catch (error) {
         this._itemPreparationError(wep, error);
       }
     }
 
-    for (let wep of wornweapons) {
+    for (const wep of wornweapons) {
       try {
-        meleeweapons.push(
-          Actordsa5._prepareMeleeWeapon(
-            wep,
-            combatskills,
-            this,
-            wornweapons.filter((x) => x._id != wep._id && !RuleChaos.isYieldedTwohanded(x)),
-          ),
-        );
+        const otherWeapons = wornweapons.filter(x => x._id !== wep._id && !RuleChaos.isYieldedTwohanded(x));
+        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, otherWeapons));
       } catch (error) {
         this._itemPreparationError(wep, error);
       }
     }
 
-    for (let value of Object.values(skills)) {
-      for (let skill of value) {
+    for (const category of Object.values(skills)) {
+      for (const skill of category) {
         skill.applications = applications.get(skill.name) || [];
       }
     }
 
-    money.coins = money.coins.sort((a, b) => (a.system.price.value > b.system.price.value ? -1 : 1));
+    money.coins = money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
 
     specAbs.magical.push(...specAbs.pact);
     specAbs.clerical.push(...specAbs.ceremonial);
 
-    for (let traditionAbility of specAbs.staff) {
-      const artifact = traditionArtifacts.find((x) => x.system.artifact == traditionAbility.system.artifact);
+    for (const traditionAbility of specAbs.staff) {
+      const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
       if (artifact) {
-        if (artifact.abilities == undefined) artifact.abilities = [];
+        if (artifact.abilities === undefined) artifact.abilities = [];
 
         artifact.abilities.push(traditionAbility);
         const vol = Number(traditionAbility.system.volume) || 0;
@@ -827,7 +783,7 @@ export default class Actordsa5 extends Actor {
     }
 
     const wrestle = game.i18n.localize('LocalizedIDs.wrestle');
-    const brawling = combatskills.find((x) => x.name == wrestle);
+    const brawling = combatskills.find(x => x.name === wrestle);
 
     return {
       totalWeight: parseFloat(this.system.totalWeight?.toFixed(3)),
