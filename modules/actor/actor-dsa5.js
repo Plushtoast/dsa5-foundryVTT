@@ -138,117 +138,98 @@ export default class Actordsa5 extends Actor {
 
   applyActiveEffects() {
     const overrides = {};
-
     this.statuses ??= new Set();
-    // Identify which special statuses had been active
+    this.auras = [];
+    
     const specialStatuses = new Map();
     for (const statusId of Object.values(CONFIG.specialStatusEffects)) {
       specialStatuses.set(statusId, this.statuses.has(statusId));
     }
     this.statuses.clear();
 
+    this.dsatriggers = { 
+      [DSATriggers.EVENTS.POST_ROLL]: {}, 
+      [DSATriggers.EVENTS.POST_OPPOSED]: {} 
+    };
+
+    const appliedArtifacts = this.items
+      .filter(x => 
+        ['rangeweapon', 'meleeweapon', 'equipment', 'armor'].includes(x.type) &&
+        x.system.isArtifact &&
+        (x.system.worn.value || (x.type == 'equipment' && !x.system.worn.wearable))
+      )
+      .map(x => x.system.artifact);
+    
+    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');    
+    const changes = this.collectActorEffectChanges();    
+    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);    
+    changes.sort((a, b) => a.priority - b.priority);
+    for (let change of changes) {
+      if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
+      const result = change.effect.apply(this, change);
+      Object.assign(overrides, result);
+    }
+
+    this.overrides = expandObject(overrides);
+    
+    let tokens;
+    for (const [statusId, wasActive] of specialStatuses) {
+      const isActive = this.statuses.has(statusId);
+      if (isActive === wasActive) continue;
+      tokens ??= this.getActiveTokens();
+      for (const token of tokens) {
+        token._onApplyStatusEffect(statusId, isActive);
+      }
+    }
+  }
+
+  collectActorEffectChanges() {
     const changes = [];
-    let multiply = 1;
+    
     for (const e of this.effects) {
-      if (e.disabled) continue;
-      if (e.system.delayed) continue;
+      if (e.disabled || e.system.delayed) continue;
 
       if (getProperty(e, 'flags.dsa5.isAura')) {
         this.auras.push(e.uuid);
         continue;
       }
 
-      multiply = 1;
-      const flag = e.getFlag('dsa5', 'value');
-      if (flag) {
-        multiply = Number(flag);
-      }
+      const multiply = Number(e.getFlag('dsa5', 'value')) || 1;
+      
       for (let i = 0; i < multiply; i++) {
         changes.push(
-          ...e.changes.map((c) => {
+          ...e.changes.map(c => {
             c = foundry.utils.duplicate(c);
             c.effect = e;
-            c.priority = c.priority ? c.priority : c.mode * 10;
+            c.priority = c.priority || c.mode * 10;
             return c;
-          }),
+          })
         );
       }
-      for (const statusId of e.statuses) this.statuses.add(statusId);
+      
+      for (const statusId of e.statuses) {
+        this.statuses.add(statusId);
+      }
     }
-    let apply = true;
+    
+    return changes;
+  }
 
-    const appliedArtifacts = this.items
-      .filter(
-        (x) =>
-          ['rangeweapon', 'meleeweapon', 'equipment', 'armor'].includes(x.type) &&
-          x.system.isArtifact &&
-          (x.system.worn.value || (x.type == 'equipment' && !x.system.worn.wearable)),
-      )
-      .map((x) => x.system.artifact);
-    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
-
-    this.dsatriggers = { [DSATriggers.EVENTS.POST_ROLL]: {}, [DSATriggers.EVENTS.POST_OPPOSED]: {} };
-
+  collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages) {
     for (let item of this.items) {
       for (const e of item.effects) {
         if (e.disabled || !e.transfer || e.system.delayed) continue;
 
-        apply = true;
-        multiply = 1;
-        switch (item.type) {
-          case 'meleeweapon':
-          case 'rangeweapon':
-            if (disableWeaponAdvantages && e.system.equipmentAdvantage) continue;
-
-            apply = item.system.worn.value && e.getFlag('dsa5', 'applyToOwner');
-            break;
-          case 'armor':
-            if (disableWeaponAdvantages && e.system.equipmentAdvantage) continue;
-
-            apply = item.system.worn.value;
-            break;
-          case 'equipment':
-            apply = !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value);
-            break;
-          case 'trait':
-            apply = !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || e.getFlag('dsa5', 'applyToOwner');
-            multiply = Number(getProperty(item.system, 'step.value')) || 1;
-            break;
-          case 'ammunition':
-          case 'plant':
-          case 'consumable':
-          case 'combatskill':
-          case 'magicalsign':
-          case 'poison':
-          case 'spell':
-          case 'liturgy':
-          case 'ceremony':
-          case 'ritual':
-          case 'skill':
-          case 'spellextension':
-            apply = false;
-            break;
-          case 'specialability':
-            switch (item.system.category.value) {
-              case 'Combat':
-                apply = [2, 3].includes(Number(item.system.category.sub));
-                break;
-              case 'staff':
-                apply = item.system.permanentEffects || appliedArtifacts.includes(item.system.artifact);
-                break;
-              default:
-                apply = true;
-            }
-            multiply = Number(item.system.step.value) || 1;
-            break;
-          case 'advantage':
-          case 'disadvantage':
-            multiply = Number(item.system.step.value) || 1;
-            break;
-        }
+        let apply = true;
+        let multiply = 1;
+        
+        apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
+        multiply = this.getEffectMultiplier(item);
 
         const advancedFunction = getProperty(e, 'flags.dsa5.advancedFunction');
-        if (Object.prototype.hasOwnProperty.call(this.dsatriggers, advancedFunction)) this.dsatriggers[advancedFunction][item.id] = e.id;
+        if (Object.prototype.hasOwnProperty.call(this.dsatriggers, advancedFunction)) {
+          this.dsatriggers[advancedFunction][item.id] = e.id;
+        }
 
         e.notApplicable = !apply;
 
@@ -261,33 +242,77 @@ export default class Actordsa5 extends Actor {
 
         for (let i = 0; i < multiply; i++) {
           changes.push(
-            ...e.changes.map((c) => {
+            ...e.changes.map(c => {
               c = foundry.utils.duplicate(c);
               c.effect = e;
-              c.priority = c.priority ? c.priority : c.mode * 10;
+              c.priority = c.priority || c.mode * 10;
               return c;
-            }),
+            })
           );
         }
-        for (const statusId of e.statuses) this.statuses.add(statusId);
+        
+        for (const statusId of e.statuses) {
+          this.statuses.add(statusId);
+        }
       }
     }
-    changes.sort((a, b) => a.priority - b.priority);
+  }
 
-    for (let change of changes) {
-      if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
-
-      const result = change.effect.apply(this, change);
-      Object.assign(overrides, result);
+  shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts) {
+    switch (item.type) {
+      case 'meleeweapon':
+      case 'rangeweapon':
+        if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
+        return item.system.worn.value && effect.getFlag('dsa5', 'applyToOwner');
+        
+      case 'armor':
+        if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
+        return item.system.worn.value;
+        
+      case 'equipment':
+        return !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value);
+        
+      case 'trait':
+        return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.getFlag('dsa5', 'applyToOwner');
+        
+      case 'ammunition':
+      case 'plant':
+      case 'consumable':
+      case 'combatskill':
+      case 'magicalsign':
+      case 'poison':
+      case 'spell':
+      case 'liturgy':
+      case 'ceremony':
+      case 'ritual':
+      case 'skill':
+      case 'spellextension':
+        return false;
+        
+      case 'specialability':
+        switch (item.system.category.value) {
+          case 'Combat':
+            return [2, 3].includes(Number(item.system.category.sub));
+          case 'staff':
+            return item.system.permanentEffects || appliedArtifacts.includes(item.system.artifact);
+          default:
+            return true;
+        }
+        
+      default:
+        return true;
     }
+  }
 
-    this.overrides = expandObject(overrides);
-    let tokens;
-    for (const [statusId, wasActive] of specialStatuses) {
-      const isActive = this.statuses.has(statusId);
-      if (isActive === wasActive) continue;
-      tokens ??= this.getActiveTokens();
-      for (const token of tokens) token._onApplyStatusEffect(statusId, isActive);
+  getEffectMultiplier(item) {
+    switch (item.type) {
+      case 'trait':
+      case 'specialability':
+      case 'advantage':
+      case 'disadvantage':
+        return Number(item.system.step?.value) || 1;
+      default:
+        return 1;
     }
   }
 
