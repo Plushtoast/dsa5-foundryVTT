@@ -26,9 +26,12 @@ export const DragMixin = (superclass) =>
       }).bind(this.element);
     }
 
-    async _onDragStart(event) { }
+    async _onDragStart(event) {
+    }
 
-    _onDragOver(event) { }
+    _onDragOver(event) {
+    }
 
-    async _onDrop(event) { }
+    async _onDrop(event) {
+    }
   };

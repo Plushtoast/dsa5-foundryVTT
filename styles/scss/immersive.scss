@@ -102,22 +102,33 @@
     --color-text-emphatic: #000000;
     --color-text-secondary: #333230;
 
-    &.actor .window-content {
-      box-shadow: 0 0 20px #000;
-    }
+    //todo check if this is needed
+    //&.actor .window-content {
+    //      box-shadow: 0 0 20px #000;
+    // }
 
     &.image-popout .window-content {
       background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
+      mask-image: url('../../icons/backgrounds/sheet2.webp');
+      -webkit-mask-image: url('../../icons/backgrounds/sheet2.webp');
+      mask-position: center;
+      mask-repeat: repeat-y;
+      mask-size: 100% 1400px;
       background-position: center;
       background-repeat: repeat-y;
-      background-size: 101% 1400px;
+      background-size: 100% 1400px;
     }
 
     .window-content {
       background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
       background-position: center;
       background-repeat: repeat-y;
-      background-size: 101% 1400px;
+      background-size: 100% 1400px;
+      mask-image: url('../../icons/backgrounds/sheet2.webp');
+      -webkit-mask-image: url('../../icons/backgrounds/sheet2.webp');
+      mask-position: center;
+      mask-repeat: repeat-y;
+      mask-size: 100% 1400px;
     }
 
     &.dsajournal .window-content,

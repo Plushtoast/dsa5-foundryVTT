@@ -240,7 +240,7 @@ export default class Riding {
   }
 
   static async setHorse(rider, horse, riderToken) {
-    if (horse.compendium) {
+    if (horse.inCompendium) {
       const confirmed = await foundry.applications.api.DialogV2.confirm({
         window: {
           title: 'DSAError.horseMustBeImported',

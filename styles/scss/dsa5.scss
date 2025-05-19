@@ -1622,6 +1622,40 @@ li.folder {
   font-size: 10px;
 }
 
+.dsaDraggedOver {
+  &:before {
+    content: "\e4bd";
+    font-family: 'Font Awesome 6 Pro';
+    inset: 0;
+    text-align: center;
+    font-size: 8em;
+    position: absolute;
+    line-height: 100%;
+    box-shadow: inset 0 0 50px #6d6d6d;
+    animation: drop-bounce 2s ease-out infinite;
+    mask-image: inherit;
+    -webkit-mask-image: inherit;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+
+}
+
+@keyframes drop-bounce {
+  0% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
 .expandDetails {
   &.shown {
     display: block;

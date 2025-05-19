@@ -18,7 +18,7 @@ const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
-export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
+export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
   _processFormData(event, form, formData) {
     const data = formData.object;
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
@@ -316,6 +316,7 @@ export default class ItemSheetdsa5 extends DragMixin(AppV2Mixin(foundry.applicat
   }
 
   async _onDrop(event) {
+    super._onDrop(event);
     const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
     this._handleDrop(dragData);
   }

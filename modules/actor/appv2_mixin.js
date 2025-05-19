@@ -39,7 +39,7 @@ export const AppV2Mixin = (superclass) =>
     }
 
     async _onDrop(event) {
-      this.element.find('.window-content')?.removeClass('cibolaDraggedOver');
+      this.element.querySelector('.window-content')?.classList.remove('dsaDraggedOver');
       super._onDrop(event);
     }
 
@@ -47,10 +47,20 @@ export const AppV2Mixin = (superclass) =>
       super._onDragOver(event);
 
       const hovered = event.target.closest('.window-content');
+
       if (hovered) {
-        hovered.classList.add('cibolaDraggedOver');
+        const padding = 30;
+        const rect = hovered.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const isInBorder = x < padding || x > rect.width - padding || y < padding || y > rect.height - padding;
+        if (isInBorder) {
+          hovered.classList.remove('dsaDraggedOver');
+        } else {
+          hovered.classList.add('dsaDraggedOver');
+        }
       } else {
-        this.element.find('.window-content')?.classList.remove('cibolaDraggedOver');
+        this.element.querySelector('.window-content')?.classList.remove('dsaDraggedOver');
       }
     }
   };
