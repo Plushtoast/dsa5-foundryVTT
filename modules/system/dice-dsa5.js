@@ -253,7 +253,7 @@ export default class DiceDSA5 {
 
       this._appendSituationalModifiers(testData, `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize('WEAPON.improvised')}`, 2, 'defenseMalus');
     }
-    
+
     const statKey = { meleeweapon: 'meleeStats', rangeweapon: 'rangeStats' }[testData.source.type];
     if (statKey) {
       botch += actor.system[statKey].botch - 20;
@@ -648,11 +648,14 @@ export default class DiceDSA5 {
     for (let k of damageRoll.terms) {
       if (k instanceof foundry.dice.terms.Die || k.class == 'Die') {
         for (let l of k.results) {
-          weaponroll += Number(l.result);
+          const discarded = !!l.discarded;
+          if (!discarded) weaponroll += Number(l.result);
+
           result.characteristics.push({
-            char: 'damage',
+            char: discarded ? 'discarded' : 'damage',
             res: l.result,
             die: 'd' + k.faces,
+            discarded,
           });
         }
       }
@@ -950,9 +953,8 @@ export default class DiceDSA5 {
     const poison = getProperty(source, 'flags.dsa5.poison');
     if (poison) {
       result.push(
-        `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${
-          poison.name
-        }" data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize('TYPES.Item.poison')}: ${poison.name}</a>`,
+        `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${poison.name}"
+        data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize('TYPES.Item.poison')}: ${poison.name}</a>`,
       );
     }
     return result.join(', ');
@@ -1001,9 +1003,9 @@ export default class DiceDSA5 {
     res.preData.calculatedSpellModifiers.finalcost = Math.max(
       1,
       Number(res.preData.calculatedSpellModifiers.finalcost) +
-        costModifiers.reduce((b, a) => {
-          return b + a.value;
-        }, 0),
+      costModifiers.reduce((b, a) => {
+        return b + a.value;
+      }, 0),
     );
     if (res.successLevel > 0 && res.preData.calculatedSpellModifiers.maintainCost != 0) {
       const mtCost = res.preData.calculatedSpellModifiers.maintainCost.split(' ');

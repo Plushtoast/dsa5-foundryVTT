@@ -166,6 +166,9 @@ export class ActorDataModel extends DSADataModel {
           guidevalue: {
             value: 'ge/kk',
           },
+          damage: {
+            value: '1d6',
+          }
         },
       },
     });

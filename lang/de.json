@@ -67,6 +67,7 @@
         "GEKK": "Gewandheit / Körperkraft",
         "DAMAGE": "Trefferpunkte",
         "DODGE": "Ausweichen",
+        "DISCARDED": "Verworfen",
         "modifyable": "mod.",
         "AsPCost": "AsP Kosten",
         "KaPCost": "KaP Kosten",

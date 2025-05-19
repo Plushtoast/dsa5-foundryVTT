@@ -420,7 +420,7 @@ table.infoTable {
   flex: 0;
 }
 
-.changes .ol{
+.changes .ol {
   padding: 0;
   margin: 0;
 }
@@ -795,12 +795,17 @@ select[multiple] option {
     background-image: url('../../icons/dice/d6green.svg');
   }
 
+  &.die-discarded,
   &.die-effect,
   &.die-damage {
     /*background-image: url(../../../icons/dice/d6black.svg');*/
     background-image: url('../../icons/dice/d6white.svg');
     background-position: center 2.5px;
     color: white;
+  }
+
+  &.die-discarded {
+    opacity: 0.35;
   }
 }
 
@@ -829,6 +834,7 @@ select[multiple] option {
   text-align: center;
   background-position: calc(50% + 1px);
   background-repeat: no-repeat;
+  filter: drop-shadow(0 0 2px black);
 }
 
 .skills .d20 {
@@ -1675,7 +1681,7 @@ li.folder {
 }
 
 [data-hide-damage='true'] {
-
+  .die-discarded,
   .damageSecret,
   .die-damage {
     display: none;
