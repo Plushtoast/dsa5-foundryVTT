@@ -9,7 +9,7 @@ import DialogReactDSA5 from '../dialog/dialog-react.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
-  
+
   Hooks.on('renderChatLog', (log, html, data) => {
     html = $(html);
     OpposedDsa5.chatListeners(html);
@@ -22,7 +22,7 @@ export default function () {
   });
 
   Hooks.on('chatInput', (event, inputOptions) => {
-    return game.dsa5.autoComplete._navigateQuickFind(event)
+    return game.dsa5.autoComplete._navigateQuickFind(event);
   })
 
   Hooks.on('renderChatMessageHTML', (app, html, msg) => {
@@ -64,7 +64,7 @@ export default function () {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });
     }
-    
+
     DSA5StatusEffects.bindButtons(html);
 
     html.find('.embeddedItemDrag').each(function (i, cond) {

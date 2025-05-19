@@ -7,6 +7,13 @@ import DSA5Payment from './payment.js';
 export default class DSA5ChatAutoCompletion {
   static skills = [];
   static cmds = ['sk', 'at', 'pa', 'sp', 'li', 'rq', 'gc', 'w', 'ch'];
+  static KEY = {
+    UP: 38,
+    DOWN: 40,
+    ENTER: 13,
+    TAB: 9,
+    ESC: 27
+  };
 
   constructor() {
     if (DSA5ChatAutoCompletion.skills.length == 0) {
@@ -48,36 +55,55 @@ export default class DSA5ChatAutoCompletion {
   }
 
   async chatListeners(html) {
-    let target = this;
+    /*html.on('keyup', '#chat-message', (ev) => {
+      this._parseInput(ev);
+    });*/
 
-    html.on('keyup', '#chat-message', async function (ev) {
-      target._parseInput(ev);
+    document.querySelector('.chat-input').addEventListener('keyup', (ev) => {
+      this._parseInput(ev);
     });
 
-    html.on('click', '.quick-item', async function (ev) {
-      target._quickSelect($(ev.currentTarget));
+    html.on('click', '.quick-item', (ev) => {
+      this._quickSelect($(ev.currentTarget));
+    });
+
+    //TODO: Fix this
+    /*$(document.querySelector('#chat-notifications')).on('click', '.quick-item', (ev) => {
+      this._quickSelect($(ev.currentTarget));
+    });*/
+
+    $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {
+      this._closeQuickfind(ev);
     });
   }
 
   _parseInput(ev) {
-    let val = ev.target.value;
-    if (this.regex.test(val)) {
-      if ([38, 40, 13, 9].includes(ev.which)) return false;
-      else if (ev.which == 27) {
-        this._closeQuickfind(ev);
-        return false;
-      }
+    const val = ev.target.value;
 
-      const cmd = this._getCmd(val);
-      const search = val
-        .substring(1 + cmd.length)
-        .toLowerCase()
-        .trim();
-      this[`_filter${cmd}`](search, ev);
-      this.filtering = true;
-    } else {
-      this._closeQuickfind(ev);
+    if (this.filtering && [DSA5ChatAutoCompletion.KEY.UP, DSA5ChatAutoCompletion.KEY.DOWN, DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(ev.which)) {
+      return this._navigateQuickFind(ev);
     }
+
+    if (ev.which === DSA5ChatAutoCompletion.KEY.ESC) {
+      this._closeQuickfind(ev);
+      return false;
+    }
+
+    if (!this.regex.test(val)) {
+      this._closeQuickfind(ev);
+      return true;
+    }
+
+    const cmd = this._getCmd(val);
+    const search = val.substring(1 + cmd.length).toLowerCase().trim();
+
+    const filterMethod = `_filter${cmd}`;
+    if (typeof this[filterMethod] === 'function') {
+      this[filterMethod](search, ev);
+      this.filtering = true;
+    }
+
+    return true;
   }
 
   _getCmd(val) {
@@ -85,18 +111,27 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _completeCurrentEntry(target) {
-    const chatbox = $('#chat-message')
+    const container = this.#getContainer(target);
+    const chatbox = container.find('.chat-input');
     const cmd = [chatbox.val().split(' ')[0], ' ']
-    
-    if(/^\/w$/.test(cmd[0])) cmd.push(`[${target.text()}] `)
+
+    if (/^\/w$/.test(cmd[0])) cmd.push(`[${target.text()}] `)
     else cmd.push(target.text())
 
     chatbox.val(cmd.join(''));
   }
 
+  #getContainer(target) {
+    let element = target.closest('.chat-form')
+    if (!element || !element.length) {
+      element = document.querySelector('#chat-notifications')
+    }
+    return $(element);
+  }
+
   _closeQuickfind(ev) {
     this.filtering = false;
-    $(ev.currentTarget).closest('.chat-form').find('.quickfind').remove();
+    this.#getContainer(ev.currentTarget).find('.quickfind').remove();
   }
 
   _filterW(search, ev) {
@@ -229,7 +264,7 @@ export default class DSA5ChatAutoCompletion {
     );
 
     html.find(`.quick-item:first`).addClass('focus');
-    const par = $(ev.currentTarget).closest('.chat-form');
+    const par = this.#getContainer(ev.currentTarget);
     let quick = par.find('.quickfind');
     if (quick.length) {
       quick.replaceWith(html);
@@ -239,31 +274,47 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _navigateQuickFind(ev) {
-    if (this.filtering) {
-      let target = $(ev.currentTarget).closest('.chat-form').find('.focus');
-      switch (ev.which) {
-        case 38: // Up
-          if (target.prev('.quick-item').length) target.removeClass('focus').prev('.quick-item').addClass('focus');
-          return false;
-        case 40: // Down
-          if (target.next('.quick-item').length) target.removeClass('focus').next('.quick-item').addClass('focus');
-          return false;
-        case 13: // Enter
-          if (target.attr('data-category') == 'W') {
-            break;
-          } else {
-            ev.stopPropagation();
-            ev.preventDefault();
-            this._quickSelect(target);
-            return false;
-          }
-        case 9:
+    if (!this.filtering) return true;
+
+    const container = this.#getContainer(ev.currentTarget);
+    const target = container.find('.focus');
+
+    if (!target.length) return true;
+
+    switch (ev.which) {
+      case DSA5ChatAutoCompletion.KEY.UP:
+        if (target.prev('.quick-item').length) {
+          target.removeClass('focus');
+          target.prev('.quick-item').addClass('focus');
+        }
+        ev.preventDefault();
+        return false;
+
+      case DSA5ChatAutoCompletion.KEY.DOWN:
+        if (target.next('.quick-item').length) {
+          target.removeClass('focus');
+          target.next('.quick-item').addClass('focus');
+        }
+        ev.preventDefault();
+        return false;
+
+      case DSA5ChatAutoCompletion.KEY.ENTER:
+        if (target.attr('data-category') !== 'W') {
           ev.stopPropagation();
           ev.preventDefault();
-          this._completeCurrentEntry(target);
+          this._quickSelect(target);
           return false;
-      }
+        }
+        break;
+
+      case DSA5ChatAutoCompletion.KEY.TAB:
+        ev.stopPropagation();
+        ev.preventDefault();
+        this._completeCurrentEntry(target);
+        this._closeQuickfind(ev);
+        return false;
     }
+
     return true;
   }
 
@@ -304,7 +355,7 @@ export default class DSA5ChatAutoCompletion {
     }
   }
 
-  _quickW(target, actor, tokenId) {}
+  _quickW(target, actor, tokenId) { }
 
   _quickCH(target) {
     DSA5ChatListeners.check3D20(target);
@@ -335,29 +386,25 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _resetChatAutoCompletion(target) {
-    const par = target.closest('.chat-form');
-    par.find('#chat-message').val('');
+    const par = this.#getContainer(target);
+    par.find('.chat-input').val('');
     par.find('.quickfind').remove();
   }
 
+  #getNumberFromChat(target) {
+    const par = this.#getContainer(target);
+    const val = par.find('.chat-input').val();
+    return Number(val.match(/(-|\+)?\d+/g)) || 0;
+  }
+
   _quickGC(target) {
-    const modifier =
-      Number(
-        $('#chat-message')
-          .val()
-          .match(/(-|\+)?\d+/g),
-      ) || 0;
+    const modifier = this.#getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
     RequestRoll.showGCMessage(target.text(), modifier);
   }
 
   _quickRQ(target) {
-    const modifier =
-      Number(
-        $('#chat-message')
-          .val()
-          .match(/(-|\+)?\d+/g),
-      ) || 0;
+    const modifier = this.#getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
     RequestRoll.showRQMessage(target.text(), modifier);
   }
