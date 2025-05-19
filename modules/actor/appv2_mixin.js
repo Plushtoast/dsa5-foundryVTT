@@ -37,4 +37,20 @@ export const AppV2Mixin = (superclass) =>
         super._onClickAction(event, target);
       }
     }
+
+    async _onDrop(event) {
+      this.element.find('.window-content')?.removeClass('cibolaDraggedOver');
+      super._onDrop(event);
+    }
+
+    _onDragOver(event) {
+      super._onDragOver(event);
+
+      const hovered = event.target.closest('.window-content');
+      if (hovered) {
+        hovered.classList.add('cibolaDraggedOver');
+      } else {
+        this.element.find('.window-content')?.classList.remove('cibolaDraggedOver');
+      }
+    }
   };

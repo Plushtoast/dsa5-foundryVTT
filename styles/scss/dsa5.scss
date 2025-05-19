@@ -764,19 +764,6 @@ select[multiple] option {
   line-height: 35px;
 }
 
-.skills .d20:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.35;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 .d6 {
   &.die-AsP {
     background-position: center 2.5px;
@@ -844,6 +831,20 @@ select[multiple] option {
   font-size: 10px;
   position: relative;
   display: inline-block;
+  filter: none;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.35;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 }
 
 .rollButton .d20,
@@ -1681,6 +1682,7 @@ li.folder {
 }
 
 [data-hide-damage='true'] {
+
   .die-discarded,
   .damageSecret,
   .die-damage {
