@@ -232,7 +232,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     });
 
     html.on('click', '.heading-link', (ev) => this._onClickPageLink(ev));
-    
+
 
     html.on('click', '.show-item', async (ev) => {
       //TODO maybe try to open imported character
@@ -258,9 +258,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     bindImgToCanvasDragStart(html);
 
     slist(html, '.breadcrumbs', this.resaveBreadCrumbs);
-
-    //todo we could remove this if every .item is replaced with .draggable (parent has draggable attachment listener)    
-  }  
+  }
 
   async getPagy(chapter, journalId) {
     const journals = this.journals.filter((x) => x.flags.dsa5.parent == chapter).sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
@@ -359,15 +357,15 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
           if (!this.journalIndex) {
 
             this.journalIndex = new FlexSearch.Document({
-                tokenize: "full",
-                cache: true,
-                document: {
-                    id: "id",
-                    store: true,
-                    index: ['name', 'data']
-                }
+              tokenize: "full",
+              cache: true,
+              document: {
+                id: "id",
+                store: true,
+                index: ['name', 'data']
+              }
             })
-            for(const journal of this.journals) {
+            for (const journal of this.journals) {
               await this.journalIndex.add(new JournalSearch(journal).toObject());
             }
           }
@@ -414,7 +412,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static #getTextNodes(parent) {
     const text = [];
     const walk = document.createTreeWalker(parent, NodeFilter.SHOW_TEXT);
-    while ( walk.nextNode() ) text.push(walk.currentNode);
+    while (walk.nextNode()) text.push(walk.currentNode);
     return text;
   }
 
@@ -431,7 +429,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     page?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  async _renderHeadings(toc, shiftFirst = false) {    
+  async _renderHeadings(toc, shiftFirst = false) {
     let headings = Object.values(toc);
     if (shiftFirst) headings.shift();
 
@@ -439,8 +437,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     const minLevel = Math.min(...headings.map(node => node.level));
     headings = headings.reduce((arr, { text, level, slug, element }) => {
-      if ( element ) element.dataset.anchor = slug;
-      if ( level < minLevel + 2 ) arr.push({ text, slug, level: level - minLevel + 2 });
+      if (element) element.dataset.anchor = slug;
+      if (level < minLevel + 2) arr.push({ text, slug, level: level - minLevel + 2 });
       return arr;
     }, []);
     return await foundry.applications.handlebars.renderTemplate("templates/journal/toc.hbs", { headings });
@@ -456,17 +454,17 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       let pageContent
       if (sheet.isV2) {
         const oldShow = sheet.page?.title?.show;
-        if(oldShow != undefined) sheet.page.title.show = true;
-        await sheet.render(true);        
+        if (oldShow != undefined) sheet.page.title.show = true;
+        await sheet.render(true);
         view = sheet.element
         pageContent = view
-        if(oldShow != undefined) sheet.page.title.show = oldShow;
+        if (oldShow != undefined) sheet.page.title.show = oldShow;
       } else {
         const data = await sheet.getData();
         view = (await sheet._renderInner(data)).get();
         pageContent = view[view.length - 1];
       }
-      
+
       const pageName = page.name.replace(/ Text$/gi, '');
       const equalName = journal.name == pageName;
 
@@ -699,10 +697,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     return game.user.isGM
       ? books
       : books
-          .filter((x) => x.visible == undefined || x.visible)
-          .sort((a, b) => {
-            return a.id.localeCompare(b.id);
-          });
+        .filter((x) => x.visible == undefined || x.visible)
+        .sort((a, b) => {
+          return a.id.localeCompare(b.id);
+        });
   }
 
   getSubChapters() {

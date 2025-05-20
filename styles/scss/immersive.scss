@@ -568,21 +568,27 @@
     &:before {
       background-image: url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbarpart.webp'), url('../../icons/backgrounds/hotbar4.webp');
       background-size:
-        30px 48px,
-        66px 48px,
+        30px 56px,
+        60px 56px,
         100% 100%;
       background-repeat: no-repeat;
       content: '';
       position: absolute;
-      left: 0px;
-      right: -32px;
-      bottom: -10px;
+      left: -11px;
+      right: -11px;
+      bottom: -12px;
       top: -10px;
       z-index: -1;
       background-position:
-        8px 11px,
-        calc(100% - 8px) 11px,
+        11px 12px,
+        calc(100% - 11px) 12px,
         center;
+    }
+
+    .sm {
+      &:before {
+
+      }
     }
 
     &.hotbarV3 {
@@ -622,6 +628,7 @@
         box-shadow: inset 0px 0px 25px #403014;
       }
 
+      .action-bar,
       #macro-list,
       .skillItems {
         &>li {
@@ -639,6 +646,7 @@
       }
     }
 
+    .slot,
     .macro {
       background: none;
       border: 1px solid rgba(0, 0, 0, 0.5);
@@ -662,7 +670,7 @@
       margin: 0;
     }
 
-    .bar-controls {
+    .hotbar-controls {
       margin: 0;
       background: none;
 

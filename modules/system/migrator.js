@@ -73,8 +73,9 @@ export async function showPatchViewer() {
   patchViewer.render(true);
 }
 
-function betaWarning(version, version_specific = '') {
-  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. Foundry v${version} is still in development and so is TDE/DSA. You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
+function betaWarning(version, version_specific = '', indef = false) {
+  const indefMsg = indef ? `Foundry v${version} is still in development and so is TDE/DSA.` : "TDE/DSA is still in development.";
+  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 

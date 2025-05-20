@@ -9,7 +9,8 @@
     "char": "Attribute",
     "derivedStats": "Base values",
     "leftClick": "Left-<i class=\"fas fa-computer-mouse\"></i>",
-    "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",
+    "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",    
+    "dropWithContents": "Drop bag with contents?",
     "CHAR": {
         "MU": "Courage",
         "KL": "Sagacity",

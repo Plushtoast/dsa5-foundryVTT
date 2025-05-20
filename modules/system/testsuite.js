@@ -2,7 +2,7 @@ import DSA5_Utility from './utility-dsa5.js';
 import { delay } from './view_helper.js';
 
 export default class TestSuite {
-  static async #renderAll(documentType, hideAgain, onlyType, renderWorld) {
+  static async #renderAll(documentType, hideAgain, onlyType, renderWorld, renderEmbedded = false) {
     const folder = await DSA5_Utility.getFolderForType(documentType, null, `${documentType} Test`);
     const items = {
       Item: game.items,
@@ -25,7 +25,7 @@ export default class TestSuite {
       if (onlyType && type != onlyType) continue;
 
       const item = await cls.create({ name: type, type, folder: folder.id });
-      await item.sheet.render(true);
+      await item.sheet.render({ force: true, animate: false});
     }
 
     await delay(2000);
@@ -37,7 +37,7 @@ export default class TestSuite {
        }[documentType].filter((x) => x.folder?.id == folder.id);
 
       for (let item of items) {
-        item.sheet.close();
+        item.sheet.close({animate: false});
       }
     }
 
@@ -50,8 +50,17 @@ export default class TestSuite {
        }[documentType]
 
       for (let item of items) {
-        console.log("Rendering", item.name)
-        await item.sheet.render(true);
+        console.log("Rendering", item.name, item.uuid)
+        await item.sheet.render({ force: true, animate: false});
+        
+
+        if (renderEmbedded && documentType == 'Actor') {
+          for(let emb of item.items) {
+            console.log("Rendering embedded", emb.name, item.name, emb.uuid)
+            await emb.sheet.render({ force: true, animate: false});
+            await emb.sheet.close({animate: false});
+          }
+        }
       }
     }
 
@@ -63,24 +72,24 @@ export default class TestSuite {
        }[documentType];
 
       for (let item of items) {        
-        item.sheet.close();
+        item.sheet.close({animate: false});
       }
     }
 
     console.log(`All ${documentType} are checked`);
   }
 
-  static async test(hideAgain = true, renderWorld = false) {
+  static async test(hideAgain = true, renderWorld = false, renderEmbedded = false) {
     await TestSuite.renderAllItems({ hideAgain, renderWorld });
-    await TestSuite.renderAllActors({ hideAgain, renderWorld });
+    await TestSuite.renderAllActors({ hideAgain, renderWorld, renderEmbedded});
   }
 
   static async renderAllItems({ hideAgain, onlyType, renderWorld } = { hideAgain: true, onlyType: null, renderWorld: false }) {
     TestSuite.#renderAll('Item', hideAgain, onlyType, renderWorld);
   }
 
-  static async renderAllActors({ hideAgain, onlyType, renderWorld } = { hideAgain: true, onlyType: null, renderWorld: false }) {
-    TestSuite.#renderAll('Actor', hideAgain, onlyType, renderWorld);
+  static async renderAllActors({ hideAgain, onlyType, renderWorld, renderEmbedded } = { hideAgain: true, onlyType: null, renderWorld: false, renderEmbedded: false }) {
+    TestSuite.#renderAll('Actor', hideAgain, onlyType, renderWorld, renderEmbedded);
   }
 
   //static async checkDataModels(templateJsonPath = 'systems/dsa5/template.json') {

@@ -2,10 +2,11 @@ import { ItemDataModel } from '../baseitem.js';
 import SkillTemplate from './templates/skill.js';
 import DSA5 from '../../system/config-dsa5.js';
 import DSA5_Utility from '../../system/utility-dsa5.js';
+import DescriptionTemplate from './templates/description.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate) {
+export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate, DescriptionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       guidevalue: new SchemaField({

@@ -431,19 +431,27 @@ export default class Actordsa5 extends Actor {
     return wornArmor;
   }
 
-  //TODO get rid of the multiple loops
   static armorValue(actor, options = {}) {
-    const wornArmor = this.armorOpposedTransformation(
-      actor,
-      actor.items.filter((x) => x.type == 'armor' && x.system.worn.value == true),
-      options,
+    let wornArmorItems = [];
+    let animalArmorTraitsValue = 0;
+    
+    for (const item of actor.items) {
+      if (item.type === 'armor' && item.system.worn.value === true) {
+        wornArmorItems.push(item);
+      } else if (item.type === 'trait' && item.system.traitType.value === 'armor') {
+        animalArmorTraitsValue += Number(item.system.at.value || 0);
+      }
+    }
+    
+    const transformedArmorItems = this.armorOpposedTransformation(actor, wornArmorItems, options);    
+    const armorProtection = transformedArmorItems.reduce(
+      (sum, armorItem) => sum + EquipmentDamage.armorWearModifier(armorItem, armorItem.system.protection.value), 
+      0
     );
-    const protection = wornArmor.reduce((a, b) => a + EquipmentDamage.armorWearModifier(b, b.system.protection.value), 0);
-    const animalArmor = actor.items.reduce((a, b) => a + (b.type == 'trait' && b.system.traitType.value == 'armor' ? Number(b.system.at.value) : 0), 0);
 
     return {
-      wornArmor,
-      armor: protection + animalArmor + (actor.system.totalArmor || 0),
+      wornArmor: transformedArmorItems,
+      armor: armorProtection + animalArmorTraitsValue + (actor.system.totalArmor || 0),
     };
   }
 

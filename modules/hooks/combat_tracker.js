@@ -229,15 +229,16 @@ export class DSA5Combat extends Combat {
     return comb?.system.defenseCount
   }
 
-  //TODO very clonky
   getCombatantFromActor(speaker) {
-    let id;
+    if (!speaker) return undefined;
+    
     if (speaker.token) {
-      id = Array.from(this.combatants).find((x) => x.tokenId == speaker.token);
-    } else {
-      id = Array.from(this.combatants).find((x) => x.actorId == speaker.actor);
+      return this.combatants.find(combatant => combatant.tokenId === speaker.token);
+    } else if (speaker.actor) {
+      return this.combatants.find(combatant => combatant.actorId === speaker.actor);
     }
-    return id ? this.combatants.get(id.id) : undefined;
+    
+    return undefined;
   }
 
   async updateDefenseCount(speaker) {

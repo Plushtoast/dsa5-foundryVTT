@@ -2811,23 +2811,26 @@ a {
     padding: 0;
   }
 
-  .sheet.journal-entry .toc {
-    .headings {
-      display: block;
-      margin: 0 0 0 18px;
+  .sheet.journal-entry {
+    background: none;
+    .toc {
+      .headings {
+        display: block;
+        margin: 0 0 0 18px;
 
-      li {
-        border-radius: 4px;
-        border: 1px solid transparent;
-        display: flex;
-        align-items: center;
+        li {
+          border-radius: 4px;
+          border: 1px solid transparent;
+          display: flex;
+          align-items: center;
 
-        &:last-child {
-          margin-bottom: 0.1rem;
-        }
+          &:last-child {
+            margin-bottom: 0.1rem;
+          }
 
-        &:hover {
-          background: #c9593f;
+          &:hover {
+            background: #c9593f;
+          }
         }
       }
     }
