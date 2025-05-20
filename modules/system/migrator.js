@@ -60,7 +60,7 @@ async function migrateTo33() {
   foundry.utils.mergeObject(combatTrackerConfig, {
     turnMarker: {
       src: 'systems/dsa5/icons/backgrounds/turnMarker.webp',
-      animation: 'spin'
+      animation: 'spin',
     },
   });
   await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
@@ -74,9 +74,34 @@ export async function showPatchViewer() {
 }
 
 function betaWarning(version, version_specific = '', indef = false) {
-  const indefMsg = indef ? `Foundry v${version} is still in development and so is TDE/DSA.` : "TDE/DSA is still in development.";
+  const indefMsg = indef ? `Foundry v${version} is still in development and so is TDE/DSA.` : 'TDE/DSA is still in development.';
   const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+}
+
+async function checkBetaSettings() {
+  const uiConfig = game.settings.get('core', 'uiConfig');
+  const dsaSkin = game.settings.get('dsa5', 'globalStyle');
+
+  const setDefaults = dsaSkin != 'dsa5-immersive' || uiConfig.colorScheme.interface != 'light' || uiConfig.colorScheme.applications != 'light';
+  if (!setDefaults) return;
+
+  const proceed = await foundry.applications.api.DialogV2.confirm({
+    content: "<p>The current beta only supports the <b>DSA5 Immersive</b> skin in light mode. Do you want to set the default skin now?</p>",
+    rejectClose: false,
+    modal: true
+  });
+  if (!proceed) return;
+
+  await game.settings.set('dsa5', 'globalStyle', 'dsa5-immersive');
+  await game.settings.set('core', 'uiConfig', {
+    ...uiConfig,
+    colorScheme: {
+      ...uiConfig.colorScheme,
+      interface: 'light',
+      applications: 'light',
+    },
+  });
 }
 
 export default function migrateWorld() {
@@ -90,6 +115,8 @@ export default function migrateWorld() {
 
     const v13 = `<p>The currently advised foundry vtt version for DSA/TDE is v12. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
     betaWarning(13, v13);
+
+    checkBetaSettings();
 
     if (!needsMigration) return;
 
