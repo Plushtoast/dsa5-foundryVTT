@@ -52,8 +52,6 @@ import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } fr
 import { DSAToken } from './hooks/token.js';
 
 Hooks.once('init', () => {
-  console.log('Initializing DSA5 system');
-
   CONFIG.statusEffects = DSA5.statusEffects;
   game.dsa5 = {
     apps: {
@@ -139,6 +137,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
   CONFIG.Token.objectClass = DSAToken;
+  //CONFIG.debug.hooks = true  
 });
 
 initHooks();

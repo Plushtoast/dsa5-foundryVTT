@@ -9,7 +9,6 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
   const isBag = formOptions.isBag?.value;
 
   if (game.user.isGM) {
-    console.log(isBag, amount, formOptions);
     let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems();
     let folder = await DSA5_Utility.getFolderForType('Actor', null, 'Dropped Items');
     const userIds = game.users.filter((x) => !x.isGM).map((x) => x.id);
@@ -79,7 +78,6 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
         await sourceActor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.quantity.value': newCount }]);
       }
       if (bagItems.length > 0) {
-        console.log(bagItems)
         await sourceActor.deleteEmbeddedDocuments('Item', bagItems.map((i) => i._id));
       }
     } else {

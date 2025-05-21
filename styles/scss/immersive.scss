@@ -614,8 +614,11 @@
           0px 30px;
       }
 
-      .sm {
-        height: inherit;
+      &.sm {
+        height: unset;
+        #action-bar {
+          height: inherit;
+        }        
       }
 
       &.md {
@@ -830,11 +833,11 @@
   }
 
   #sidebar .button:not(.icon),
-  #sidebar button:not(.fshopButton):not(.icon),
-  .initTracker button,
-  .masterMenu button,
+  #sidebar button:not(.fshopButton):not(.icon):not(.inline-control),
+  .initTracker button:not(.icon):not(.inline-control),
+  .masterMenu button:not(.icon):not(.inline-control),
   .sheetButton,
-  .sidebar-popout button:not(.icon),
+  .sidebar-popout button:not(.icon):not(.inline-control),
   .sidebar-popout .dice-tray button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;

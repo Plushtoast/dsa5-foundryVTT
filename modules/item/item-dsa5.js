@@ -178,11 +178,13 @@ export default class Itemdsa5 extends Item {
   }
 
   static buildSpeaker(actor, tokenId) {
-    return {
+    const speaker = {
       token: tokenId,
       actor: actor?.id,
       scene: canvas.scene?.id,
     };
+    if (speaker.token == 'emptyActor') speaker.emptyActor = actor.emptyActor;
+    return speaker
   }
 
   static parseValueType(name, val) {

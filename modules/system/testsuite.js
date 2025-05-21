@@ -41,7 +41,6 @@ export default class TestSuite {
       }
     }
 
-    console.log(renderWorld)
     if(renderWorld){
       console.log(`Rendering ${documentType} in world`);
       const items = {

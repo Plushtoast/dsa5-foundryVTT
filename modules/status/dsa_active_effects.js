@@ -92,7 +92,6 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   /*_clearModifiedItems() {
-    console.log(this.parent?.constructor.name, this.parent, this.changes);
     let actor = this.parent;
     if(actor instanceof CONFIG.Item.documentClass) actor = actor?.parent;
     if (!(actor instanceof CONFIG.Actor.documentClass)) return;
@@ -105,7 +104,6 @@ export default class DSAActiveEffect extends ActiveEffect {
           const overrides = foundry.utils.flattenObject(item.overrides || {});
 
           const key = itemsToClear.key;
-          console.log(item, key, overrides);
           delete overrides[key];
           const source = getProperty(item._source, key);
           setProperty(item, key, source);

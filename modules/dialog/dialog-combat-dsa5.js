@@ -353,7 +353,7 @@ export default class DSA5CombatDialog extends DialogShared {
   setMovement(html, targets) {
     if (!DPS.isEnabled) return;
     if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return;
-    if (!this.dialogData.source.type == 'rangeweapon') return;
+    if (this.dialogData.source.type != 'rangeweapon') return;
 
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     const token = actor.getActiveTokens()[0] || actor.token;

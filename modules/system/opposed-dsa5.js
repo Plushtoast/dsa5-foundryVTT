@@ -45,7 +45,7 @@ export default class OpposedDsa5 {
 
   static async rebuildEmptyActor(message) {
     if(message.flags?.data?.preData?.extra?.speaker?.token == 'emptyActor'){
-      return await DSA5_Utility.emptyActor(12, message.flags?.data?.preData?.source?.name);
+      return DSA5_Utility.emptyActor(12, message.flags?.data?.preData?.source?.name);
     }
   }
 

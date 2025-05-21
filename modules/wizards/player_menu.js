@@ -350,10 +350,11 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   static DEFAULT_OPTIONS = {
-    classes: ['dsa5', 'largeDialog', 'playerMenu', 'sheet', 'standard-form'],
+    classes: ['dsa5', 'largeDialog', 'playerMenu', 'sheet'],
     window: {
       title: 'PLAYER.title',
       resizable: true,
+      contentClasses: ['standard-form'],
     },
     position: {
       width: 570,
@@ -581,11 +582,12 @@ class ConjurationRequest extends DefaultAppv2 {
     window: {
       title: 'DIALOG.setTargetToUser',
       resizable: true,
+      contentClasses: ['standard-form'],
     },
     position: {
       width: 500,
     },
-    classes: ['dsa5', 'largeDialog', 'standard-form']
+    classes: ['dsa5', 'largeDialog']
   };
 
   static PARTS = {

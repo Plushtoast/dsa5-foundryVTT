@@ -89,7 +89,7 @@ export class Trade extends DefaultAppv2 {
 
     mergeObject(data, {
       tradeData: this.tradeData,
-      actor: DSA5_Utility.getSpeaker(this.tradeData.targetId),
+      document: DSA5_Utility.getSpeaker(this.tradeData.targetId),
       tradeFriend,
       inventory,
     });

@@ -97,7 +97,7 @@ export default class DSA5ChatListeners {
       };
     }
 
-    const actor = await DSA5_Utility.emptyActor(attrs);
+    const actor = DSA5_Utility.emptyActor(attrs);
 
     if (json.attrs) {
       const attrs = json.attrs.split(',');

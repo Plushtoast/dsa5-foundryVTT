@@ -134,7 +134,6 @@ h7 {
 }
 
 .dsa5 {
-
   h1,
   h2,
   h3,
@@ -169,7 +168,7 @@ h7 {
   background-image: url('../../icons/schwierig.webp');
 }
 
-.tabs>[data-tab]>.obfuscateSection {
+.tabs > [data-tab] > .obfuscateSection {
   pointer-events: all;
 }
 
@@ -365,7 +364,6 @@ table.infoTable {
   &.autoFlex {
     flex: 1;
   }
-
 }
 
 .gap5px {
@@ -426,7 +424,6 @@ table.infoTable {
 }
 
 .form-group.full-height {
-
   .editor,
   .tox {
     min-height: 100px;
@@ -454,7 +451,6 @@ form {
     }
 
     &.full-height {
-
       label,
       input {
         align-self: stretch;
@@ -914,7 +910,7 @@ input[type='text'] {
 .cards {
   padding: 3px;
 
-  >div {
+  > div {
     margin: 1px;
     flex-grow: 1;
     position: relative;
@@ -936,7 +932,7 @@ input[type='text'] {
       width: 28px;
       box-shadow: none;
 
-      +a {
+      + a {
         width: calc(100% - 28px);
       }
     }
@@ -1202,7 +1198,6 @@ a.img-entity-link {
 
 .row-section {
   .twoColors {
-
     &:nth-child(4n-1),
     &:nth-child(4n) {
       background-color: var(--oddColor);
@@ -1220,9 +1215,8 @@ a.img-entity-link {
 }
 
 .row-section {
-
-  &.inverseRowtable>.col:nth-child(odd),
-  &.rowtable>.col:nth-child(even) {
+  &.inverseRowtable > .col:nth-child(odd),
+  &.rowtable > .col:nth-child(even) {
     background-color: var(--oddColor);
   }
 }
@@ -1269,7 +1263,6 @@ a.img-entity-link {
 }
 
 .buttons a {
-
   .fas,
   .fa {
     border-radius: 100%;
@@ -1372,7 +1365,7 @@ a.img-entity-link {
 .changes .key,
 .inputTooltipAvailable,
 .journalHeader,
-.tokenQuickHot>ul>li,
+.tokenQuickHot > ul > li,
 .bags,
 .hero,
 .application .window-content {
@@ -1424,7 +1417,6 @@ a.img-entity-link {
   }
 
   .col {
-
     label,
     input {
       border: 1px solid var(--border-color);
@@ -1500,7 +1492,6 @@ a.img-entity-link {
 }
 
 #combat li.combatant {
-
   .token-initiative .initiative,
   .token-name {
     text-shadow: none;
@@ -1528,7 +1519,6 @@ a.img-entity-link {
 
 .application .window-content {
   > {
-
     section,
     form {
       padding: 12px;
@@ -1574,7 +1564,6 @@ a.img-entity-link {
 }
 
 .attacker {
-
   video,
   img {
     margin: 5px 25%;
@@ -1624,7 +1613,7 @@ li.folder {
 
 .dsaDraggedOver {
   &:before {
-    content: "\e4bd";
+    content: '\e4bd';
     font-family: 'Font Awesome 6 Pro';
     inset: 0;
     text-align: center;
@@ -1639,7 +1628,6 @@ li.folder {
     justify-content: center;
     display: flex;
   }
-
 }
 
 @keyframes drop-bounce {
@@ -1693,7 +1681,6 @@ li.folder {
 }
 
 .setCustomPrice {
-
   &.edit .priceTag,
   .customPriceTag {
     display: none;
@@ -1716,7 +1703,6 @@ li.folder {
 }
 
 [data-hide-damage='true'] {
-
   .die-discarded,
   .damageSecret,
   .die-damage {
@@ -1731,7 +1717,6 @@ li.folder {
 }
 
 .chatModifiers {
-
   ul,
   div {
     display: none;
@@ -2720,7 +2705,6 @@ h2 {
 }
 
 a {
-
   &.documentName-link,
   &.inline-roll {
     background: var(--bg-color);
@@ -2770,7 +2754,7 @@ a {
   color: #888;
   position: relative;
 
-  &>div {
+  & > div {
     padding: 3px;
   }
 
@@ -3025,7 +3009,6 @@ select.noAppearance {
 
 #combat-popout {
   &.combat-sidebar li.combatant {
-
     .token-initiative .initiative,
     .token-name {
       text-shadow: none;
@@ -3067,7 +3050,7 @@ select.noAppearance {
       position: absolute;
       background: #efe4e4;*/
 
-    &+.select2 {
+    & + .select2 {
       width: 8%;
       background: #efe4e4;
       color: black;
@@ -3185,15 +3168,28 @@ select.noAppearance {
   }
 }
 
-.tocList ul li {
-  display: block;
-  padding: 4px;
-  margin: 0;
+.tocList {
+  ul,ol {
+    padding: 0;
+  }
+  
+  ul li {
+    display: block;
+    padding: 4px;
+    margin: 0;
 
-  button {
-    border-color: transparent;
-    width: 100%;
-    justify-content: left;
+    li {
+      a {
+        padding: 4px;
+        width: 100%;
+      }
+    }
+
+    button {
+      border-color: transparent;
+      width: 100%;
+      justify-content: left;
+    }
   }
 }
 
@@ -3214,7 +3210,7 @@ select.noAppearance {
 .adventureWizard {
   max-height: 100%;
 
-  >div {
+  > div {
     max-height: 100%;
   }
 
@@ -3250,7 +3246,7 @@ select.noAppearance {
     border-bottom: 1px solid #b5b3a4;
     border-top: 1px solid #b5b3a4;
 
-    >div {
+    > div {
       flex: 1;
       max-width: 150px;
       min-width: 150px;
@@ -3462,7 +3458,7 @@ select.noAppearance {
     margin-bottom: 2px;
   }
 
-  .effect>div {
+  .effect > div {
     background-color: rgba(0, 0, 0, 0.3);
   }
 }
@@ -3800,7 +3796,6 @@ select.noAppearance {
 }
 
 .application {
-
   &.initTracker .window-header,
   &.tokenQuickHot .window-header {
     display: none;
@@ -3878,7 +3873,7 @@ select.noAppearance {
   }
 }
 
-.tokenHotbarInner>ul>li.effect>div:before {
+.tokenHotbarInner > ul > li.effect > div:before {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   content: '\f067';
@@ -3886,7 +3881,6 @@ select.noAppearance {
 
 .application {
   &.initTracker {
-
     &::after,
     .window-content {
       background: none;
@@ -3897,7 +3891,6 @@ select.noAppearance {
   }
 
   &.tokenQuickHot {
-
     &::after,
     .window-content {
       background: none;
@@ -3942,6 +3935,12 @@ select.noAppearance {
   color: #853c26;
   font-weight: bold;
   font-size: 1.1em;
+}
+
+.dsajournal {
+  .page-heading {
+    color: var(--color-dark-1);
+  }
 }
 
 .itemInfo {
@@ -4106,7 +4105,7 @@ select.noAppearance {
   position: relative;
   float: right;
 
-  >span {
+  > span {
     width: 50%;
     height: 100%;
     overflow: hidden;
@@ -4417,7 +4416,6 @@ input[type='checkbox'].autoCheckbox {
 }
 
 .image {
-
   &.rar:after,
   &.common:after {
     content: '';
@@ -4819,8 +4817,8 @@ input[type='checkbox'].autoCheckbox {
     background-image: url('../../icons/categories/plantsupernatural.webp');
   }
 
-  &:hover input~span,
-  input:checked~span {
+  &:hover input ~ span,
+  input:checked ~ span {
     opacity: 1;
   }
 }
@@ -5149,7 +5147,6 @@ input[type='checkbox'].autoCheckbox {
   }
 
   .longLayout {
-
     #macro-list,
     .skillItems {
       li {
@@ -5249,7 +5246,7 @@ input[type='checkbox'].autoCheckbox {
       }
     }
 
-    &>li {
+    & > li {
       flex: 0 0 var(--base-bar-height);
       height: var(--base-bar-height);
 
@@ -5330,7 +5327,7 @@ input[type='checkbox'].autoCheckbox {
     text-align: center;
   }
 
-  .checkbox>i {
+  .checkbox > i {
     cursor: pointer;
     display: inline-block;
     padding: 0px 10px;
@@ -5346,7 +5343,7 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 
-  .checkbox input[type='radio']:checked+i {
+  .checkbox input[type='radio']:checked + i {
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
   }

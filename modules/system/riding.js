@@ -58,16 +58,18 @@ export default class Riding {
     if (!DSA5_Utility.isActiveGM()) return;
 
     const horseId = getProperty(token, 'flags.dsa5.horseTokenId');
+    if (!horseId) return;
+
     const scene = token.parent;
-    if (horseId && scene && (data.x || data.y) && this.isRiding(token.actor)) {
-      scene.updateEmbeddedDocuments('Token', [
-        {
-          _id: horseId,
+    const horse = this.getHorse(token.actor);
+    if (scene && (data.x || data.y) && horse) {
+      const waypoint = {
           x: data.x ?? token.x,
           y: data.y ?? token.y,
           rotation: data.rotation ?? token.rotation,
-        },
-      ]);
+          elevation: data.elevation ? data.elevation - 1 : token.elevation - 1,
+        }
+      horse.token.move(waypoint);
     }
   }
 
