@@ -1118,7 +1118,6 @@ export default class DiceDSA5 {
       let oldValue = roll.terms[indexOfMinValue * 2].total;
       fws += Math.max(res[indexOfMinValue], 0);
       fws -= Math.max(0, reroll.total - tar[indexOfMinValue]);
-      //DSA5_Utility.editRollAtIndex(roll, indexOfMinValue, reroll.total)
       roll.editRollAtIndex([{ index: indexOfMinValue, val: reroll.total }]);
       this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options);
       description.push(

@@ -75,6 +75,10 @@
   form.dsa5.item-sheet {
     padding-left: 10px;
     padding-right: 10px;
+
+    [data-tab="details"] { 
+      gap: 3px;
+    }
   }
 
   .app.sidebar-popout .window-content {
@@ -407,15 +411,22 @@
     background-size: 101% 1400px;
   }
 
-  .character-sheet form {
+  .character-sheet .standard-form {
     border-color: black;
     border-style: double;
     border-width: 10px;
     border-image: url('../../icons/backgrounds/actor.webp') 27 28 28 28;
+    mask-image: none;
+    background-size: 104% 1400px;
     padding: 4px;
     margin: 0px;
   }
-
+  .form-group {
+    & > label {
+      background: rgb(188, 136, 111);
+      background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+    }
+  }
   #sidebar {
     border: none;
     margin: 0px;
@@ -618,19 +629,19 @@
         height: unset;
         #action-bar {
           height: inherit;
-        }        
+        }
       }
 
       &.md {
         &:before {
           background-size:
-          34px 91px,
-          34px 91px,
-          calc(100% - 25px) calc(100% - 30px);
-        background-position:
-          8px 50px,
-          calc(100% - 33px) 50px,
-          0px 30px;
+            34px 91px,
+            34px 91px,
+            calc(100% - 25px) calc(100% - 30px);
+          background-position:
+            8px 50px,
+            calc(100% - 33px) 50px,
+            0px 30px;
         }
       }
 
@@ -858,6 +869,9 @@
   }
 
   .dsajournal {
+    .window-content {
+      --color-light-1: var(--color-dark-1);
+    }
     &.sheet.journal-entry .journal-entry-content {
       background: none;
       border: none;

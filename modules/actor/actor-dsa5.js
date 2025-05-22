@@ -1285,7 +1285,6 @@ export default class Actordsa5 extends Actor {
               const isPhex = actor.items.some((x) => x.type == 'specialability' && x.name == phexTradition);
 
               newTestData.roll = Roll.fromData(newTestData.roll);
-
               const changes = [];
               for (let k of diesToReroll) {
                 const characteristic = newTestData.source.system[`characteristic${k + 1}`];

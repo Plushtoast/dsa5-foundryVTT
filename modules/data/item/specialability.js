@@ -20,7 +20,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
       }),
       step: new SchemaField({
         value: new NumberField({ initial: 1, min: 0 }),
-        circle: new NumberField({ initial: 1, label: 'circle', min: 0 }),
+        circle: new StringField({ initial: '1', label: 'circle', min: 0 }),
         canNotMultiply: new DSABooleanField({ label: 'notMultiplyable' }),
       }),
       category: new SchemaField({
