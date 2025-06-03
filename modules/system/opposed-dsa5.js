@@ -79,6 +79,8 @@ export default class OpposedDsa5 {
       img: actor.msg,
     };
 
+    defender.testResult.source = message.flags.data.preData.source;
+
     let listOfDefenders = attackMessage.flags.data.defenderMessage ? Array.from(attackMessage.flags.data.defenderMessage) : [];
     listOfDefenders.push(message.id);
 

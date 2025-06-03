@@ -76,8 +76,15 @@
     padding-left: 10px;
     padding-right: 10px;
 
-    [data-tab="details"] { 
+    [data-tab='details'] {
       gap: 3px;
+    }
+
+    .form-group {
+      & > label {
+        background: rgb(188, 136, 111);
+        background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+      }
     }
   }
 
@@ -111,28 +118,17 @@
     //      box-shadow: 0 0 20px #000;
     // }
 
+    .window-content,
     &.image-popout .window-content {
       background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
-      mask-image: url('../../icons/backgrounds/sheet2.webp');
-      -webkit-mask-image: url('../../icons/backgrounds/sheet2.webp');
-      mask-position: center;
-      mask-repeat: repeat-y;
-      mask-size: 100% 1400px;
       background-position: center;
       background-repeat: repeat-y;
       background-size: 100% 1400px;
-    }
-
-    .window-content {
-      background: url('../../icons/backgrounds/sheet2.webp') no-repeat;
-      background-position: center;
-      background-repeat: repeat-y;
-      background-size: 100% 1400px;
-      mask-image: url('../../icons/backgrounds/sheet2.webp');
+      /*mask-image: url('../../icons/backgrounds/sheet2.webp');
       -webkit-mask-image: url('../../icons/backgrounds/sheet2.webp');
       mask-position: center;
       mask-repeat: repeat-y;
-      mask-size: 100% 1400px;
+      mask-size: 100% 1400px;*/
     }
 
     &.dsajournal .window-content,
@@ -421,12 +417,7 @@
     padding: 4px;
     margin: 0px;
   }
-  .form-group {
-    & > label {
-      background: rgb(188, 136, 111);
-      background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
-    }
-  }
+
   #sidebar {
     border: none;
     margin: 0px;
@@ -736,6 +727,8 @@
     }
 
     .hotbar-controls {
+      align-items: flex-end;
+      align-self: flex-end;
       margin: 0;
       background: none;
 
@@ -745,10 +738,6 @@
 
       /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
       box-shadow: none;
-
-      &:first-child {
-        margin-left: 5px;
-      }
     }
   }
 

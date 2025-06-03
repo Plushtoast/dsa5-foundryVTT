@@ -34,7 +34,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     }
 
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'automatedAnimation', 'args', documents[0].command);
       try {
         args.result = result;
@@ -94,7 +94,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       resizable: true,
     },
     position: {
-      width: 600
+      width: 600,
     },
   };
 
@@ -103,22 +103,22 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     tabs: super.PARTS.tabs,
     details: super.PARTS.details,
     duration: super.PARTS.duration,
-    changes: { template: "systems/dsa5/templates/status/changes.hbs", scrollable: [''] },
-    advanced: { template: "systems/dsa5/templates/status/advanced_effect.hbs" },
+    changes: { template: 'systems/dsa5/templates/status/changes.hbs', scrollable: [''] },
+    advanced: { template: 'systems/dsa5/templates/status/advanced_effect.hbs' },
     footer: super.PARTS.footer,
   };
 
   static TABS = {
     sheet: {
       tabs: [
-        { id: "details", icon: "fa-solid fa-book" },
-        { id: "duration", icon: "fa-solid fa-clock" },
-        { id: "changes", icon: "fa-solid fa-cogs" },
-        { id: "advanced", icon: "fa-solid fa-shield-alt", label: "advanced" },
+        { id: 'details', icon: 'fa-solid fa-book' },
+        { id: 'duration', icon: 'fa-solid fa-clock' },
+        { id: 'changes', icon: 'fa-solid fa-cogs' },
+        { id: 'advanced', icon: 'fa-solid fa-shield-alt', label: 'advanced' },
       ],
-      initial: "details",
-      labelPrefix: "EFFECT.TABS"
-    }
+      initial: 'details',
+      labelPrefix: 'EFFECT.TABS',
+    },
   };
 
   static async callMacro(packName, name, actor, item, qs, args = {}) {
@@ -175,7 +175,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
-          const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+          const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
           await fn.call(this, effect, actor);
         } catch (err) {
@@ -198,17 +198,16 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
     const document = this.document;
     switch (partId) {
-      case "advanced":
+      case 'advanced':
         let index = 0;
 
         const itemType = document.parent.type;
         const item = document.parent;
         const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value));
-        const isCombatSpecAb = (['specialability'].includes(itemType) && item.system.category.value == 'Combat')
-        const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType)
+        const isCombatSpecAb = ['specialability'].includes(itemType) && item.system.category.value == 'Combat';
+        const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType);
         const effectConfigs = {
-          hasSpellEffects: isWeapon || isCombatSpecAb ||
-            ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
+          hasSpellEffects: isWeapon || isCombatSpecAb || ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
           hasDamageTransformation: hasVantages || (isCombatSpecAb && item.system.category.sub != 4),
           hasArmorTransformation: hasVantages,
           hasTriggerEffects: ['specialability'].includes(itemType),
@@ -228,20 +227,16 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         }
 
         if (effectConfigs.hasDamageTransformation) {
-          advancedFunctions.push(
-            { name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION },
-          );
+          advancedFunctions.push({ name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION });
         }
 
         if (effectConfigs.hasArmorTransformation) {
-          advancedFunctions.push(
-            { name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION },
-          );
+          advancedFunctions.push({ name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION });
         }
         if (effectConfigs.hasTriggerEffects) {
           advancedFunctions.push(
-            { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL, },
-            { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED, },
+            { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL },
+            { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED },
           );
         }
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
@@ -256,7 +251,6 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
         const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
 
-
         mergeObject(partContext, {
           advancedFunctions,
           effectConfigs,
@@ -270,11 +264,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           applySuccessConditions,
           config: this.getConfig(),
           isWeapon,
-          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce((obj, e) => {
-            obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
-            return obj;
-          }, { 2: game.i18n.localize('all') })
-        })
+          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
+            (obj, e) => {
+              obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
+              return obj;
+            },
+            { 2: game.i18n.localize('all') },
+          ),
+        });
         break;
     }
     return partContext;
@@ -284,7 +281,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     return {
       systemEffects: this.getStatusEffects(),
       canEditMacros: game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'),
-    }
+    };
   }
 
   async _onRender(context, options) {
@@ -349,7 +346,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
-              const syncFunction = Object.getPrototypeOf(function () { }).constructor;
+              const syncFunction = Object.getPrototypeOf(function () {}).constructor;
               const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', getProperty(ef, 'flags.dsa5.args3'));
               fn.call(this, ef, callMacro, actor, msg, source, options);
             } catch (err) {
@@ -459,7 +456,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                     });
                   } else {
                     try {
-                      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+                      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'actor', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
                       await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
                     } catch (err) {
@@ -517,10 +514,16 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         //this.automatedAnimation(res.result.successLevel);
 
         if (availableQs < 1) {
-          await this.applyEffect(data.message, data.mode, [target], {
-            effectIds: [data.effect],
-            skipResistRolls: true,
-          });
+          if (data.systemEffect) {
+            const level = / \d$/.test(data.SystemEffect) ? Number(data.SystemEffect.slice(-1)) : 1;
+            const actualEffect = data.systemEffect.replace(/ \d$/, '');
+            await actor.addCondition(actualEffect, level);
+          } else {
+            await this.applyEffect(data.message, data.mode, [target], {
+              effectIds: [data.effect],
+              skipResistRolls: true,
+            });
+          }
         }
       });
     } else {
@@ -538,9 +541,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
     if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 1 : 2;
 
-    const attacker =
-      DSA5_Utility.getSpeaker(speaker) ||
-      DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'))
+    const attacker = DSA5_Utility.getSpeaker(speaker) || DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'));
 
     const sourceActor = attacker;
     let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));

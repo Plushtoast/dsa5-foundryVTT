@@ -93,17 +93,18 @@ export default class Actordsa5 extends Actor {
   }
 
   woundPain(data, attr = 'wounds') {
-    let pain = 0;
-    if (data.status[attr].max > 0) {
-      const hasDefaultPain = this.type != 'creature' || data.status[attr].max >= 20;
-      if (hasDefaultPain) {
-        pain = Math.floor((1 - data.status[attr].value / data.status[attr].max) * 4);
-        if (data.status[attr].value <= 5) pain = 4;
-      } else {
-        pain = Math.floor(5 - (5 * data.status[attr].value) / data.status[attr].max);
-      }
+    const attrData = data.status[attr];
+    
+    if (!attrData.max) return 0;
+    
+    const hasDefaultPain = this.type != 'creature' || attrData.max >= 20;
+    
+    if (hasDefaultPain) {
+      if (attrData.value <= 5) return 4;
+      return Math.floor((1 - attrData.value / attrData.max) * 4);
     }
-    return Math.clamp(pain, 0, 4);
+    
+    return Math.clamp(Math.floor(5 - (5 * attrData.value) / attrData.max), 0, 4);
   }
 
   get creatureType() {
@@ -382,61 +383,79 @@ export default class Actordsa5 extends Actor {
   }
 
   static armorOpposedTransformation(actor, wornArmor, options) {
-    if (options.origin) {
-      let combatskill = getProperty(options.origin, 'system.combatskill.value');
-      const armorZones = ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value']
-
-      wornArmor = wornArmor.map((armor) => {
-        const optnCopy = mergeObject(duplicate(options), {
-          armor: armor.system.itemWithOverrides(),
-        });
-
-        if (combatskill) {
-          combatskill += ' ';
-          for (let ef of optnCopy.armor.effects) {
-            if (!DSAActiveEffect.realyRealyEnabled(ef)) continue;
-
-            for (let change of ef.changes) {
-              if (change.key == 'self.armorVulnerability') {
-                const adaptions = change.value.split(/[,;]/);
-                let adaption;
-                if (options.defenderTest.attackFromBehind) adaption = adaptions.find((x) => x.trim().startsWith('attackFromBehind '));
-                if (!adaption) adaption = adaptions.find((x) => x.trim().startsWith(combatskill));
-
-                if (adaption) {
-                  const number = Number(adaption.match(/[-+]?\d+/)[0]) || 0;
-                  for (let key of armorZones) {
-                    if (optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = Math.max(0, optnCopy.armor.system.protection[key] + number);
-                  }
-                } else {
-                  adaption = adaptions.find((x) => x.trim().startsWith('randomArmor '));
-                  if (adaption) {
-                    //random value
-                    const randomArmorVals = adaption.split(' ')[1].split('|');
-                    const randomArmor = randomArmorVals[Math.floor(Math.random() * randomArmorVals.length)];
-
-                    for (let key of armorZones) {
-                      if (optnCopy.armor.system.protection[key]) optnCopy.armor.system.protection[key] = randomArmor;
-                    }
-                  }
+    if (!options.origin) return wornArmor;
+    
+    const combatskill = getProperty(options.origin, 'system.combatskill.value');
+    const armorZones = ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value'];
+    
+    return wornArmor.map(armor => {
+      const armorCopy = mergeObject(duplicate(options), {
+        armor: armor.system.itemWithOverrides(),
+      });
+      
+      if (!combatskill) return DSAActiveEffectConfig.applyRollTransformation(
+        actor, armorCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION
+      ).options.armor;
+      
+      const combatSkillWithSpace = combatskill + ' ';
+      
+      for (const effect of armorCopy.armor.effects) {
+        if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
+        
+        for (const change of effect.changes) {
+          if (change.key !== 'self.armorVulnerability') continue;
+          
+          const adaptions = change.value.split(/[,;]/);
+          let appliedAdaption = null;
+          
+          if (options.defenderTest?.attackFromBehind) {
+            appliedAdaption = adaptions.find(x => x.trim().startsWith('attackFromBehind '));
+          }
+          
+          if (!appliedAdaption) {
+            appliedAdaption = adaptions.find(x => x.trim().startsWith(combatSkillWithSpace));
+          }
+          
+          if (appliedAdaption) {
+            const modifierValue = Number(appliedAdaption.match(/[-+]?\d+/)?.[0] || 0);
+            
+            for (const zone of armorZones) {
+              if (armorCopy.armor.system.protection[zone]) {
+                armorCopy.armor.system.protection[zone] = Math.max(0, 
+                  armorCopy.armor.system.protection[zone] + modifierValue);
+              }
+            }
+          } else {
+            const randomArmorAdaption = adaptions.find(x => x.trim().startsWith('randomArmor '));
+            
+            if (randomArmorAdaption) {
+              const randomArmorValues = randomArmorAdaption.split(' ')[1].split('|');
+              const selectedRandomValue = randomArmorValues[
+                Math.floor(Math.random() * randomArmorValues.length)
+              ];
+              
+              for (const zone of armorZones) {
+                if (armorCopy.armor.system.protection[zone]) {
+                  armorCopy.armor.system.protection[zone] = selectedRandomValue;
                 }
               }
             }
           }
         }
-
-        return DSAActiveEffectConfig.applyRollTransformation(actor, optnCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION).options.armor;
-      });
-    }
-    return wornArmor;
+      }
+      
+      return DSAActiveEffectConfig.applyRollTransformation(
+        actor, armorCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION
+      ).options.armor;
+    });
   }
 
   static armorValue(actor, options = {}) {
-    let wornArmorItems = [];
+    const wornArmorItems = [];
     let animalArmorTraitsValue = 0;
     
     for (const item of actor.items) {
-      if (item.type === 'armor' && item.system.worn.value === true) {
+      if (item.type === 'armor' && item.system.worn.value) {
         wornArmorItems.push(item);
       } else if (item.type === 'trait' && item.system.traitType.value === 'armor') {
         animalArmorTraitsValue += Number(item.system.at.value || 0);
@@ -451,7 +470,7 @@ export default class Actordsa5 extends Actor {
 
     return {
       wornArmor: transformedArmorItems,
-      armor: armorProtection + animalArmorTraitsValue + (actor.system.totalArmor || 0),
+      armor: armorProtection + animalArmorTraitsValue + (actor.system.totalArmor || 0)
     };
   }
 
@@ -483,15 +502,20 @@ export default class Actordsa5 extends Actor {
 
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
     const current = foundry.utils.getProperty(this.system, attribute);
-
-    let updates;
+    
+    const updates = {};
+    
     if (isBar) {
-      if (isDelta) value = Math.clamp(current.min || 0, Number(current.value) + value, current.max);
-      updates = { [`system.${attribute}.value`]: value };
+      if (isDelta) {
+        const min = current.min ?? 0;
+        const max = current.max ?? Number.MAX_SAFE_INTEGER;
+        value = Math.clamp(min, Number(current.value) + value, max);
+      }
+      updates[`system.${attribute}.value`] = value;
     } else {
-      if (isDelta) value = Number(current) + value;
-      updates = { [`system.${attribute}`]: value };
+      updates[`system.${attribute}`] = isDelta ? Number(current) + value : value;
     }
+    
     const allowed = Hooks.call('modifyTokenAttribute', { attribute, value, isDelta, isBar }, updates);
     return allowed !== false ? this.update(updates) : this;
   }
@@ -581,15 +605,13 @@ export default class Actordsa5 extends Actor {
     };
 
     const containers = new Map();
-    for (const container of this.items.filter(x => x.type === 'equipment' && x.system.equipmentType.value === 'bags')) {
-      containers.set(container.id, []);
-    }
-
     const applications = new Map();
-
     let hasTrait = false;
     const hasAnyItem = this.items.some(x => !['skill', 'combatskill', 'money'].includes(x.type));
     const horse = Riding.getHorse(this, true);
+
+    this.items.filter(x => x.type === 'equipment' && x.system.equipmentType.value === 'bags')
+      .forEach(container => containers.set(container.id, []));
 
     const preparedItems = this.items
       .map(x => x.system.prepareEmbeddedItemSheet())
@@ -714,10 +736,7 @@ export default class Actordsa5 extends Actor {
             imprint.push(i);
             break;
           case 'application':
-            if (!applications.has(i.system.skill)) {
-              applications.set(i.system.skill, []);
-            }
-            applications.get(i.system.skill).push(i);
+            applications.set(i.system.skill, [...(applications.get(i.system.skill) || []), i]);
             break;
         }
       } catch (error) {
@@ -756,10 +775,11 @@ export default class Actordsa5 extends Actor {
       }
     }
 
+    const otherWeapons = wornweapons.filter(x => !RuleChaos.isYieldedTwohanded(x));
     for (const wep of wornweapons) {
       try {
-        const otherWeapons = wornweapons.filter(x => x._id !== wep._id && !RuleChaos.isYieldedTwohanded(x));
-        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, otherWeapons));
+        const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
+        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, weaponsExcludingSelf));
       } catch (error) {
         this._itemPreparationError(wep, error);
       }
@@ -779,7 +799,7 @@ export default class Actordsa5 extends Actor {
     for (const traditionAbility of specAbs.staff) {
       const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
       if (artifact) {
-        if (artifact.abilities === undefined) artifact.abilities = [];
+        if (!artifact.abilities) artifact.abilities = [];
 
         artifact.abilities.push(traditionAbility);
         const vol = Number(traditionAbility.system.volume) || 0;
@@ -957,10 +977,11 @@ export default class Actordsa5 extends Actor {
     const throwingWeapons = game.i18n.localize('LocalizedIDs.Throwing Weapons');
     const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
 
-    const hasWeaponThrow =
-      ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
-    const name = item.name + ' (' + throwingWeapons + ')';
-    const range = new Itemdsa5({
+    const validWeaponTypes = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
+    const hasWeaponThrow = validWeaponTypes.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
+    
+    const name = `${item.name} (${throwingWeapons})`;
+    const rangeWeapon = new Itemdsa5({
       name,
       type: 'rangeweapon',
       system: {
@@ -968,18 +989,25 @@ export default class Actordsa5 extends Actor {
         reach: { value: DSA5.meleeAsRangeReach[localizedCT] },
         effect: { attributes: item.system.effect.attributes },
         damage: { value: item.system.damage.value },
-        quantity: { value: 1 },
-      },
+        quantity: { value: 1 }
+      }
     });
 
     const options = {
-      situationalModifiers: [{ name, value: hasWeaponThrow ? -4 : -8, selected: true }],
+      situationalModifiers: [{ 
+        name, 
+        value: hasWeaponThrow ? -4 : -8, 
+        selected: true 
+      }]
     };
 
-    this.setupWeapon(range, 'attack', options, tokenId).then(async (setupData) => {
+    this.setupWeapon(rangeWeapon, 'attack', options, tokenId).then(async (setupData) => {
       if (!hasWeaponThrow) {
         setupData.testData.source.dmgMultipliers ||= [];
-        DSA5_Utility.pushOnlyIfUnique(setupData.testData.source.dmgMultipliers, { name: 'LocalizedIDs.Throwing Weapons', val: '0.5' });
+        DSA5_Utility.pushOnlyIfUnique(
+          setupData.testData.source.dmgMultipliers, 
+          { name: 'LocalizedIDs.Throwing Weapons', val: '0.5' }
+        );
       }
       await this.basicTest(setupData);
     });
@@ -1749,99 +1777,117 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {
-    let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
-    if (skill) {
-      item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
-      const guideValue = Math.max(...item.system.guidevalue.value.split('/').map((x) => {
-        if (!actor.system.characteristics[x]) return 0;
-        return (
-          Number(actor.system.characteristics[x].initial) +
-          Number(actor.system.characteristics[x].modifier) +
-          Number(actor.system.characteristics[x].advances) +
-          Number(actor.system.characteristics[x].gearmodifier)
-        );
-      }));
-
-      const baseParry = Math.ceil(skill.system.talentValue.value / 2) + Math.max(0, Math.floor((guideValue - 8) / 3)) + Number(game.settings.get('dsa5', 'higherDefense'));
-      item.parry = baseParry + Number(item.system.pamod.value) + (RuleChaos.isShield(item) ? Number(item.system.pamod.value) : 0);
-
-      item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
-      if (!item.yieldedTwoHand) {
-        if (!wornWeapons) wornWeapons = actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && x._id != item._id && !RuleChaos.isYieldedTwohanded(x));
-
-        if (wornWeapons.length > 0) {
-          item.parry += Math.max(...wornWeapons.map((x) => x.system.pamod.offhandMod));
-          item.attack += Math.max(...wornWeapons.map((x) => x.system.atmod.offhandMod));
-        }
-      }
-
-      let gripDamageMod = 0;
-      if (item.system.worn.wrongGrip) {
-        if (item.yieldedTwoHand) {
-          item.parry -= 1;
-          gripDamageMod = 1;
-        } else {
-          item.system.reach.value = 'medium';
-
-          const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
-          switch (localizedCT) {
-            case 'Two-Handed Impact Weapons':
-            case 'Two-Handed Swords':
-              item.parry -= 3;
-              const reg = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'));
-              if (reg.test(item.name)) {
-                gripDamageMod = -2;
-              } else {
-                const oneHanded = game.i18n.localize('wrongGrip.oneHanded');
-                item.gripDamageText = ` (${oneHanded} * 0.5)`;
-                item.dmgMultipliers ||= [];
-                DSA5_Utility.pushOnlyIfUnique(item.dmgMultipliers, { name: oneHanded, val: '0.5' });
-              }
-              break;
-            default:
-              item.parry -= 1;
-              gripDamageMod = -1;
-          }
-        }
-      }
-
-      item = ItemDataModel._parseDmg(item, actor.system);
-      if (item.system.guidevalue.value != '-') {
-        const guideValue = Math.max(...item.system.guidevalue.value.split('/').map((x) => Number(actor.system.characteristics[x].value)));
-        let damageThreshold = item.system.damageThreshold.value
-        damageThreshold = actor.system.skillModifiers.combat.damageThreshold.reduce((acc, va) => {
-          if (va.target == item.system.combatskill.value) {
-            acc += Number(va.value);
-          }
-          return acc;
-        }, damageThreshold);
-        const extra = Math.max(guideValue - Number(damageThreshold), 0) + gripDamageMod;
-        if (extra != 0) {
-          item.extraDamage = extra;
-          item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));
-          item.damageAdd = (item.damageAdd > 0 ? '+' : '') + item.damageAdd;
-        }
-      }
-      EquipmentDamage.weaponWearModifier(item);
-
+    const skill = combatskills.find(i => i.name === item.system.combatskill.value);
+    
+    if (!skill) {
       if (isBaseWeapon) {
-        item.subweapons = {};
-        for (let key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
-          const dup = this.buildSubweapon(item, key);
-          const done = this._prepareMeleeWeapon(dup, combatskills, actor, wornWeapons, false);
-          item.subweapons[key] = done;
-        }
-        item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
-      }
-    } else {
-      if (isBaseWeapon)
         ui.notifications.error(
           game.i18n.format('DSAError.unknownCombatSkill', {
             skill: item.system.combatskill.value,
             item: item.name,
-          }),
+          })
         );
+      }
+      return item;
     }
+    
+    item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
+    
+    const guideValueArray = item.system.guidevalue.value.split('/').map(x => {
+      if (!actor.system.characteristics[x]) return 0;
+      
+      return Number(actor.system.characteristics[x].initial) +
+             Number(actor.system.characteristics[x].modifier) +
+             Number(actor.system.characteristics[x].advances) +
+             Number(actor.system.characteristics[x].gearmodifier);
+    });
+    
+    const guideValue = Math.max(...guideValueArray);
+    const baseParry = Math.ceil(skill.system.talentValue.value / 2) + 
+                      Math.max(0, Math.floor((guideValue - 8) / 3)) + 
+                      Number(game.settings.get('dsa5', 'higherDefense'));
+    
+    const isShield = RuleChaos.isShield(item);
+    item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
+    item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
+    
+    if (!item.yieldedTwoHand) {
+      const actualWornWeapons = wornWeapons || 
+        actor.items.filter(x => x.type === 'meleeweapon' && 
+                               x.system.worn.value && 
+                               x._id !== item._id && 
+                               !RuleChaos.isYieldedTwohanded(x));
+      
+      if (actualWornWeapons.length > 0) {
+        item.parry += Math.max(...actualWornWeapons.map(x => x.system.pamod.offhandMod));
+        item.attack += Math.max(...actualWornWeapons.map(x => x.system.atmod.offhandMod));
+      }
+    }
+    
+    let gripDamageMod = 0;
+    
+    if (item.system.worn.wrongGrip) {
+      if (item.yieldedTwoHand) {
+        item.parry -= 1;
+        gripDamageMod = 1;
+      } else {
+        item.system.reach.value = 'medium';
+        const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
+        
+        if (['Two-Handed Impact Weapons', 'Two-Handed Swords'].includes(localizedCT)) {
+          item.parry -= 3;
+          const bastardRegex = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'));
+          
+          if (bastardRegex.test(item.name)) {
+            gripDamageMod = -2;
+          } else {
+            const oneHanded = game.i18n.localize('wrongGrip.oneHanded');
+            item.gripDamageText = ` (${oneHanded} * 0.5)`;
+            item.dmgMultipliers ||= [];
+            DSA5_Utility.pushOnlyIfUnique(item.dmgMultipliers, { name: oneHanded, val: '0.5' });
+          }
+        } else {
+          item.parry -= 1;
+          gripDamageMod = -1;
+        }
+      }
+    }
+    
+    item = ItemDataModel._parseDmg(item, actor.system);
+    
+    if (item.system.guidevalue.value !== '-') {
+      const currentGuideValue = Math.max(
+        ...item.system.guidevalue.value.split('/').map(x => Number(actor.system.characteristics[x].value))
+      );
+      
+      let damageThreshold = item.system.damageThreshold.value;
+      damageThreshold = actor.system.skillModifiers.combat.damageThreshold.reduce((acc, mod) => {
+        return mod.target === item.system.combatskill.value ? acc + Number(mod.value) : acc;
+      }, damageThreshold);
+      
+      const extra = Math.max(currentGuideValue - Number(damageThreshold), 0) + gripDamageMod;
+      
+      if (extra !== 0) {
+        item.extraDamage = extra;
+        item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));
+        item.damageAdd = (item.damageAdd > 0 ? '+' : '') + item.damageAdd;
+      }
+    }
+    
+    EquipmentDamage.weaponWearModifier(item);
+    
+    if (isBaseWeapon) {
+      item.subweapons = {};
+      const alternateAttacks = getProperty(item, 'flags.dsa5.alternateAttacks') || {};
+      
+      for (const key of Object.keys(alternateAttacks)) {
+        const duplicatedItem = this.buildSubweapon(item, key);
+        item.subweapons[key] = this._prepareMeleeWeapon(duplicatedItem, combatskills, actor, wornWeapons, false);
+      }
+      
+      item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
+    }
+    
     return item;
   }
 
@@ -2160,24 +2206,37 @@ export default class Actordsa5 extends Actor {
   }
 
   async addTimedCondition(effect, value = 1, absolute = false, auto = true, options = {}) {
-    //fixing this to never auto
+    // Always override auto to false for timed conditions
     auto = false;
 
-    if (effect == 'bleeding' || effect.id == 'bleeding') return await RuleChaos.bleedingMessage(this);
+    if (effect === 'bleeding' || (effect.id && effect.id === 'bleeding')) {
+      return await RuleChaos.bleedingMessage(this);
+    }
 
     if (typeof effect === 'string' && !foundry.utils.isEmpty(options)) {
-      effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-      effect.flags.dsa5.description = game.i18n.localize(effect.name);
+      const statusEffect = CONFIG.statusEffects.find((e) => e.id === effect);
+      
+      if (!statusEffect) {
+        console.warn(`Status effect with ID "${effect}" not found.`);
+        return null;
+      }
+      
+      effect = duplicate(statusEffect);
+      
       effect.name = game.i18n.localize(effect.name);
-
+      effect.flags.dsa5.description = game.i18n.localize(effect.name);
+      
       if (effect.changes) {
         effect.changes = effect.changes.map((change) => {
-          if (/^system\.condition\./.test(change.key)) change.value = value;
+          if (/^system\.condition\./.test(change.key)) {
+            change.value = value;
+          }
           return change;
         });
       }
+      
       effect.statuses = [effect.id];
-
+      
       delete effect.description;
       delete effect.flags.dsa5.value;
       delete effect.flags.dsa5.max;

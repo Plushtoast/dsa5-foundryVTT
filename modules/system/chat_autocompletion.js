@@ -2,7 +2,6 @@ import DSA5ChatListeners from './chat_listeners.js';
 import RequestRoll from './request-roll.js';
 import DSA5_Utility from './utility-dsa5.js';
 import { UserMultipickDialog } from '../dialog/addTargetDialog.js';
-import DSA5Payment from './payment.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -16,75 +15,72 @@ export default class DSA5ChatAutoCompletion {
   };
 
   constructor() {
-    if (DSA5ChatAutoCompletion.skills.length == 0) {
-      DSA5_Utility.allSkills().then((res) => {
-        DSA5ChatAutoCompletion.skills = res
-          .map((x) => {
-            return { name: x.name, type: 'skill' };
-          })
-          .concat(
-            Object.values(game.dsa5.config.characteristics)
-              .map((x) => {
-                return { name: game.i18n.localize(x), type: 'attribute' };
-              })
-              .concat([
-                {
-                  name: game.i18n.localize('regenerate'),
-                  type: 'regeneration',
-                },
-                {
-                  name: game.i18n.localize('fallingDamage'),
-                  type: 'fallingDamage',
-                },
-              ]),
-          );
-      });
-    }
-
     this.filtering = false;
     this.combatConstants = {
       dodge: game.i18n.localize('dodge'),
       parryWeaponless: game.i18n.localize('parryWeaponless'),
       attackWeaponless: game.i18n.localize('attackWeaponless'),
     };
+    
+    this.initializeSkills();
+  }
+
+  async initializeSkills() {
+    if (DSA5ChatAutoCompletion.skills.length === 0) {
+      try {
+        const skillItems = await DSA5_Utility.allSkills();
+        
+        const skillOptions = skillItems.map(x => ({ 
+          name: x.name, 
+          type: 'skill' 
+        }));
+        
+        const attributeOptions = Object.values(game.dsa5.config.characteristics)
+          .map(x => ({ 
+            name: game.i18n.localize(x), 
+            type: 'attribute' 
+          }));
+        
+        const specialOptions = [
+          { name: game.i18n.localize('regenerate'), type: 'regeneration' },
+          { name: game.i18n.localize('fallingDamage'), type: 'fallingDamage' }
+        ];
+        
+        DSA5ChatAutoCompletion.skills = [
+          ...skillOptions,
+          ...attributeOptions,
+          ...specialOptions
+        ];
+      } catch (error) {
+        console.error("Failed to initialize DSA5ChatAutoCompletion skills:", error);
+      }
+    }
   }
 
   get regex() {
-    ///^\/(sk |at |pa |sp |li |rq |gc |w |ch)/
     return new RegExp(`^/(${DSA5ChatAutoCompletion.cmds.join(' |')})`);
   }
 
   async chatListeners(html) {
-    /*html.on('keyup', '#chat-message', (ev) => {
-      this._parseInput(ev);
-    });*/
+    const chatInput = document.querySelector('.chat-input');
+    chatInput.addEventListener('keyup', this._parseInput.bind(this));
 
-    document.querySelector('.chat-input').addEventListener('keyup', (ev) => {
-      this._parseInput(ev);
-    });
-
-    html.on('click', '.quick-item', (ev) => {
-      this._quickSelect($(ev.currentTarget));
-    });
-
-    //TODO: Fix this
-    /*$(document.querySelector('#chat-notifications')).on('click', '.quick-item', (ev) => {
-      this._quickSelect($(ev.currentTarget));
-    });*/
-
-    $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {
+    $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {      
+      if ($(ev.relatedTarget).closest('.quick-item').length || $(ev.relatedTarget).hasClass('quick-item')) return;
       this._closeQuickfind(ev);
     });
   }
 
   _parseInput(ev) {
     const val = ev.target.value;
+    const keyCode = ev.which;
 
-    if (this.filtering && [DSA5ChatAutoCompletion.KEY.UP, DSA5ChatAutoCompletion.KEY.DOWN, DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(ev.which)) {
+    if (this.filtering && [DSA5ChatAutoCompletion.KEY.UP, DSA5ChatAutoCompletion.KEY.DOWN, 
+                          DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(keyCode)) {
       return this._navigateQuickFind(ev);
     }
 
-    if (ev.which === DSA5ChatAutoCompletion.KEY.ESC) {
+    if (keyCode === DSA5ChatAutoCompletion.KEY.ESC) {
       this._closeQuickfind(ev);
       return false;
     }
@@ -111,134 +107,146 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _completeCurrentEntry(target) {
-    const container = this.#getContainer(target);
+    const container = this.getContainer(target);
     const chatbox = container.find('.chat-input');
-    const cmd = [chatbox.val().split(' ')[0], ' ']
+    const cmdText = chatbox.val().split(' ')[0];
 
-    if (/^\/w$/.test(cmd[0])) cmd.push(`[${target.text()}] `)
-    else cmd.push(target.text())
+    let newVal = cmdText + ' ';
+    if (/^\/w$/i.test(cmdText)) {
+      newVal += `[${target.text()}] `;
+    } else {
+      newVal += target.text();
+    }
 
-    chatbox.val(cmd.join(''));
+    chatbox.val(newVal);
   }
 
-  #getContainer(target) {
-    let element = target.closest('.chat-form')
+  getContainer(target) {
+    let element = target.closest('.chat-form');
     if (!element || !element.length) {
-      element = document.querySelector('#chat-notifications')
+      element = document.querySelector('#chat-notifications');
     }
     return $(element);
   }
 
   _closeQuickfind(ev) {
     this.filtering = false;
-    this.#getContainer(ev.currentTarget).find('.quickfind').remove();
+    this.getContainer(ev.currentTarget).find('.quickfind').remove();
   }
 
   _filterW(search, ev) {
-    let result = game.users.contents
-      .filter((x) => x.active && x.name.toLowerCase().trim().indexOf(search) != -1)
-      .map((x) => {
-        return { name: x.name, type: 'user' };
-      });
-    this._checkEmpty(result);
-    this._setList(result, 'W', ev);
+    const result = game.users.contents
+      .filter(user => user.active && user.name.toLowerCase().includes(search))
+      .map(user => ({ name: user.name, type: 'user' }));
+    
+    this._setFilteredList(result, 'W', ev);
   }
 
   _filterAT(search, ev) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-    if (actor) {
-      let types = ['meleeweapon', 'rangeweapon'];
-      let traitTypes = ['meleeAttack', 'rangeAttack'];
-      let result = actor.items
-        .filter((x) => {
-          return (
-            ((types.includes(x.type) && x.system.worn.value == true) || (x.type == 'trait' && traitTypes.includes(x.system.traitType.value))) &&
-            x.name.toLowerCase().trim().indexOf(search) != -1
-          );
-        })
-        .slice(0, 5)
-        .map((x) => {
-          return { name: x.name, type: 'item' };
-        })
-        .concat([{ name: this.combatConstants.attackWeaponless, type: 'item' }].filter((x) => x.name.toLowerCase().trim().indexOf(search) != -1));
-      this._checkEmpty(result);
-      this._setList(result, 'AT', ev);
-    }
+    const { actor } = DSA5ChatAutoCompletion._getActor();
+    if (!actor) return;
+
+    const types = ['meleeweapon', 'rangeweapon'];
+    const traitTypes = ['meleeAttack', 'rangeAttack'];
+    
+    const itemResults = actor.items
+      .filter(item => {
+        return (
+          ((types.includes(item.type) && item.system.worn.value) || 
+           (item.type === 'trait' && traitTypes.includes(item.system.traitType.value))) &&
+          item.name.toLowerCase().includes(search)
+        );
+      })
+      .slice(0, 5)
+      .map(item => ({ name: item.name, type: 'item' }));
+    
+    const specialAttacks = [
+      { name: this.combatConstants.attackWeaponless, type: 'item' }
+    ].filter(x => x.name.toLowerCase().includes(search));
+    
+    const result = [...itemResults, ...specialAttacks];
+    this._setFilteredList(result, 'AT', ev);
   }
 
   _filterPA(search, ev) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-    if (actor) {
-      let types = ['meleeweapon'];
-      let result = actor.items
-        .filter((x) => {
-          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1 && x.system.worn.value == true;
-        })
-        .slice(0, 5)
-        .map((x) => {
-          return { name: x.name, type: 'item' };
-        })
-        .concat(
-          [
-            { name: this.combatConstants.dodge, type: 'item' },
-            { name: this.combatConstants.parryWeaponless, type: 'item' },
-          ].filter((x) => x.name.toLowerCase().trim().indexOf(search) != -1),
-        );
-      this._checkEmpty(result);
-      this._setList(result, 'PA', ev);
-    }
+    const { actor } = DSA5ChatAutoCompletion._getActor();
+    if (!actor) return;
+
+    const wornMeleeWeapons = actor.items
+      .filter(item => 
+        item.type === 'meleeweapon' && 
+        item.system.worn.value && 
+        item.name.toLowerCase().includes(search)
+      )
+      .slice(0, 5)
+      .map(item => ({ name: item.name, type: 'item' }));
+    
+    const specialDefenses = [
+      { name: this.combatConstants.dodge, type: 'item' },
+      { name: this.combatConstants.parryWeaponless, type: 'item' },
+    ].filter(x => x.name.toLowerCase().includes(search));
+    
+    const result = [...wornMeleeWeapons, ...specialDefenses];
+    this._setFilteredList(result, 'PA', ev);
   }
 
   _filterSP(search, ev) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-    if (actor) {
-      let types = ['spell', 'ritual'];
-      let result = actor.items
-        .filter((x) => {
-          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1;
-        })
-        .slice(0, 5)
-        .map((x) => {
-          return { name: x.name, type: 'item' };
-        });
-      this._checkEmpty(result);
-      this._setList(result, 'SP', ev);
-    }
+    const { actor } = DSA5ChatAutoCompletion._getActor();
+    if (!actor) return;
+
+    const result = actor.items
+      .filter(item => 
+        ['spell', 'ritual'].includes(item.type) && 
+        item.name.toLowerCase().includes(search)
+      )
+      .slice(0, 5)
+      .map(item => ({ name: item.name, type: 'item' }));
+    
+    this._setFilteredList(result, 'SP', ev);
   }
 
-  _checkEmpty(result) {
-    if (!result.length)
+  _filterLI(search, ev) {
+    const { actor } = DSA5ChatAutoCompletion._getActor();
+    if (!actor) return;
+
+    const result = actor.items
+      .filter(item => 
+        ['liturgy', 'ceremony'].includes(item.type) && 
+        item.name.toLowerCase().includes(search)
+      )
+      .slice(0, 5)
+      .map(item => ({ name: item.name, type: 'item' }));
+    
+    this._setFilteredList(result, 'LI', ev);
+  }
+
+  _setFilteredList(result, cmd, ev) {
+    if (!result.length) {
       result.push({
         name: game.i18n.localize('DSAError.noMatch'),
         type: 'none',
       });
-  }
-
-  _filterLI(search, ev) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-    if (actor) {
-      let types = ['liturgy', 'ceremony'];
-      let result = actor.items
-        .filter((x) => {
-          return types.includes(x.type) && x.name.toLowerCase().trim().indexOf(search) != -1;
-        })
-        .slice(0, 5)
-        .map((x) => {
-          return { name: x.name, type: 'item' };
-        });
-      this._checkEmpty(result);
-      this._setList(result, 'LI', ev);
     }
+    this._setList(result, cmd, ev);
   }
 
-  _getSkills(search, type = undefined) {
+  _getSkills(search, type) {
     search = search.replace(/(-|\+)?\d+/g, '').trim();
-    let result = DSA5ChatAutoCompletion.skills
-      .filter((x) => {
-        return x.name.toLowerCase().trim().indexOf(search) != -1 && (type == undefined || type == x.type);
-      })
+    
+    const result = DSA5ChatAutoCompletion.skills
+      .filter(skill => 
+        skill.name.toLowerCase().includes(search) && 
+        (type === undefined || type === skill.type)
+      )
       .slice(0, 5);
-    this._checkEmpty(result);
+    
+    if (!result.length) {
+      result.push({
+        name: game.i18n.localize('DSAError.noMatch'),
+        type: 'none',
+      });
+    }
+    
     return result;
   }
 
@@ -260,23 +268,28 @@ export default class DSA5ChatAutoCompletion {
 
   _setList(result, cmd, ev) {
     const html = $(
-      `<div class="quickfind dsalist"><ul>${result.map((x) => `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join('')}</ul></div>`,
+      `<div class="quickfind dsalist"><ul>${
+        result.map(x => `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join('')
+      }</ul></div>`
     );
 
     html.find(`.quick-item:first`).addClass('focus');
-    const par = this.#getContainer(ev.currentTarget);
-    let quick = par.find('.quickfind');
-    if (quick.length) {
-      quick.replaceWith(html);
+    html.find('.quick-item').on('click', ev => this._quickSelect($(ev.currentTarget)));
+    
+    const container = this.getContainer(ev.currentTarget);
+    const existing = container.find('.quickfind');
+    
+    if (existing.length) {
+      existing.replaceWith(html);
     } else {
-      par.append(html);
+      container.append(html);
     }
   }
 
   _navigateQuickFind(ev) {
     if (!this.filtering) return true;
 
-    const container = this.#getContainer(ev.currentTarget);
+    const container = this.getContainer(ev.currentTarget);
     const target = container.find('.focus');
 
     if (!target.length) return true;
@@ -320,14 +333,22 @@ export default class DSA5ChatAutoCompletion {
 
   static _getActor() {
     const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
+    let actor = null;
+    
+    //todo sth odd here
+    if (speaker.token) {
+      actor = game.actors.tokens[speaker.token];
+    }
+    
+    if (!actor) {
+      actor = game.actors.get(speaker.actor);
+    }
 
     if (!actor) {
       ui.notifications.error('DSAError.noProperActor', { localize: true });
       return {};
     }
+    
     return {
       actor,
       tokenId: speaker.token,
@@ -335,7 +356,8 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickSelect(target) {
-    let cmd = target.attr('data-category');
+    const cmd = target.attr('data-category');
+    
     switch (cmd) {
       case 'NM':
       case 'GC':
@@ -355,143 +377,146 @@ export default class DSA5ChatAutoCompletion {
     }
   }
 
-  _quickW(target, actor, tokenId) { }
-
   _quickCH(target) {
     DSA5ChatListeners.check3D20(target);
     this._resetChatAutoCompletion(target);
   }
 
   _quickSK(target, actor, tokenId) {
-    switch (target.attr('data-type')) {
+    const type = target.attr('data-type');
+    const text = target.text();
+    
+    switch (type) {
       case 'skill':
-        let skill = actor.items.find((i) => i.name == target.text() && i.type == 'skill');
-        if (skill)
-          actor.setupSkill(skill, {}, tokenId).then((setupData) => {
-            actor.basicTest(setupData);
-          });
+        const skill = actor.items.find(i => i.name === text && i.type === 'skill');
+        if (skill) {
+          actor.setupSkill(skill, {}, tokenId)
+            .then(setupData => actor.basicTest(setupData));
+        }
         break;
       case 'attribute':
-        let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == target.text());
-        actor.setupCharacteristic(characteristic, {}, tokenId).then((setupData) => {
-          actor.basicTest(setupData);
-        });
+        const characteristic = Object.keys(game.dsa5.config.characteristics)
+          .find(key => game.i18n.localize(game.dsa5.config.characteristics[key]) === text);
+        actor.setupCharacteristic(characteristic, {}, tokenId)
+          .then(setupData => actor.basicTest(setupData));
         break;
       case 'regeneration':
-        actor.setupRegeneration('regenerate', {}, tokenId).then((setupData) => {
-          actor.basicTest(setupData);
-        });
+        actor.setupRegeneration('regenerate', {}, tokenId)
+          .then(setupData => actor.basicTest(setupData));
         break;
     }
   }
 
   _resetChatAutoCompletion(target) {
-    const par = this.#getContainer(target);
-    par.find('.chat-input').val('');
-    par.find('.quickfind').remove();
+    const container = this.getContainer(target);
+    container.find('.chat-input').val('');
+    container.find('.quickfind').remove();
   }
 
-  #getNumberFromChat(target) {
-    const par = this.#getContainer(target);
-    const val = par.find('.chat-input').val();
+  getNumberFromChat(target) {
+    const container = this.getContainer(target);
+    const val = container.find('.chat-input').val();
     return Number(val.match(/(-|\+)?\d+/g)) || 0;
   }
 
   _quickGC(target) {
-    const modifier = this.#getNumberFromChat(target);
+    const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
     RequestRoll.showGCMessage(target.text(), modifier);
   }
 
   _quickRQ(target) {
-    const modifier = this.#getNumberFromChat(target);
+    const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
     RequestRoll.showRQMessage(target.text(), modifier);
   }
 
   _quickPA(target, actor, tokenId) {
-    let text = target.text();
+    const text = target.text();
 
-    if (this.combatConstants.dodge == text) {
-      actor.setupDodge({}, tokenId).then((setupData) => {
-        actor.basicTest(setupData);
-      });
-    } else if (this.combatConstants.parryWeaponless == text) {
-      actor.setupWeaponless('parry', {}, tokenId).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+    if (this.combatConstants.dodge === text) {
+      actor.setupDodge({}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
+    } else if (this.combatConstants.parryWeaponless === text) {
+      actor.setupWeaponless('parry', {}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
     } else {
-      let types = ['meleeweapon'];
-      let result = actor.items.find((x) => {
-        return types.includes(x.type) && x.name == target.text();
-      });
-      if (result) {
-        actor.setupWeapon(result, 'parry', {}, tokenId).then((setupData) => {
-          actor.basicTest(setupData);
-        });
+      const weapon = actor.items.find(item => 
+        item.type === 'meleeweapon' && item.name === text
+      );
+      
+      if (weapon) {
+        actor.setupWeapon(weapon, 'parry', {}, tokenId)
+          .then(setupData => actor.basicTest(setupData));
       }
     }
   }
 
   _quickAT(target, actor, tokenId) {
-    let text = target.text();
-    if (this.combatConstants.attackWeaponless == text) {
-      actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {
-        actor.basicTest(setupData);
-      });
-    } else {
-      const types = ['meleeweapon', 'rangeweapon'];
-      const traitTypes = ['meleeAttack', 'rangeAttack'];
-      let result = actor.items.find((x) => {
-        return types.includes(x.type) && x.name == target.text();
-      });
-      if (!result)
-        result = actor.items.find((x) => {
-          return x.type == 'trait' && x.name == target.text() && traitTypes.includes(x.system.traitType.value);
-        });
+    const text = target.text();
+    
+    if (this.combatConstants.attackWeaponless === text) {
+      actor.setupWeaponless('attack', {}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
+      return;
+    }
+    
+    const types = ['meleeweapon', 'rangeweapon'];
+    const traitTypes = ['meleeAttack', 'rangeAttack'];
+    
+    let item = actor.items.find(i => types.includes(i.type) && i.name === text);
+    
+    if (!item) {
+      item = actor.items.find(i => 
+        i.type === 'trait' && 
+        i.name === text && 
+        traitTypes.includes(i.system.traitType.value)
+      );
+    }
 
-      if (result) {
-        actor.setupWeapon(result, 'attack', {}, tokenId).then((setupData) => {
-          actor.basicTest(setupData);
-        });
-      }
+    if (item) {
+      actor.setupWeapon(item, 'attack', {}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
     }
   }
+
   _quickSP(target, actor, tokenId) {
     const types = ['ritual', 'spell'];
-    const result = actor.items.find((x) => {
-      return types.includes(x.type) && x.name == target.text();
-    });
-    if (result) {
-      actor.setupSpell(result, {}, tokenId).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+    const spell = actor.items.find(item => 
+      types.includes(item.type) && item.name === target.text()
+    );
+    
+    if (spell) {
+      actor.setupSpell(spell, {}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
     }
   }
+
   _quickLI(target, actor, tokenId) {
     const types = ['liturgy', 'ceremony'];
-    const result = actor.items.find((x) => {
-      return types.includes(x.type) && x.name == target.text();
-    });
-    if (result) {
-      actor.setupSpell(result, {}, tokenId).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+    const liturgy = actor.items.find(item => 
+      types.includes(item.type) && item.name === target.text()
+    );
+    
+    if (liturgy) {
+      actor.setupSpell(liturgy, {}, tokenId)
+        .then(setupData => actor.basicTest(setupData));
     }
   }
 
   static async infoItemAsync(uuid) {
     const item = await fromUuid(uuid);
-    item.postItem();
+    if (item) item.postItem();
   }
 
   static bindRollCommands(html) {
     html.on('click', '.request-roll', (ev) => {
-      const dataset = ev.currentTarget.dataset;
-      RequestRoll.showRQMessage(dataset.name, Number(dataset.modifier) || 0, dataset.label);
+      const { name, modifier, label } = ev.currentTarget.dataset;
+      RequestRoll.showRQMessage(name, Number(modifier) || 0, label);
       ev.stopPropagation();
       return false;
     });
+
     html.on('click', '.postInfo', (ev) => {
       const item = fromUuidSync(ev.currentTarget.dataset.uuid);
       if (item) {
@@ -501,63 +526,65 @@ export default class DSA5ChatAutoCompletion {
           this.infoItemAsync(ev.currentTarget.dataset.uuid);
         }
       }
-
       ev.stopPropagation();
       return false;
     });
+
     html.on('click', '.postContentChat', async (ev) => {
       const content = $(ev.currentTarget).closest('.postChatSection').find('.postChatContent').html();
       UserMultipickDialog.getDialog(content);
     });
+
     html.on('click', '.request-GC', (ev) => {
       RequestRoll.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0);
       ev.stopPropagation();
       return false;
     });
+
     html.on('click', '.request-CH', (ev) => {
-      DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { modifier: Number(ev.currentTarget.dataset.modifier) || 0 });
+      DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { 
+        modifier: Number(ev.currentTarget.dataset.modifier) || 0 
+      });
       ev.stopPropagation();
       return false;
     });
+
     html.on('click', '.request-Pay', (ev) => {
       if (!game.user.isGM) return;
-
       const master = game.dsa5.apps.gameMasterMenu;
       master.doPayment(master.selectedIDs(), true, ev.currentTarget.dataset.modifier);
     });
+
     html.on('click', '.request-GetPaid', (ev) => {
       if (!game.user.isGM) return;
-
       const master = game.dsa5.apps.gameMasterMenu;
       master.doPayment(master.selectedIDs(), false, ev.currentTarget.dataset.modifier);
     });
+
     html.on('click', '.request-AP', (ev) => {
       if (!game.user.isGM) return;
-
       const master = game.dsa5.apps.gameMasterMenu;
       master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier);
     });
+
     const itemDragStart = (event) => {
       event.stopPropagation();
-      const type = event.currentTarget.dataset.type;
-      const uuid = event.currentTarget.dataset.uuid;
+      const { type, uuid } = event.currentTarget.dataset;
       if (!uuid || !type) return;
 
       event.originalEvent.dataTransfer.setData(
         'text/plain',
-        JSON.stringify({
-          type,
-          uuid,
-        }),
+        JSON.stringify({ type, uuid })
       );
     };
-    const showItem = html.find('.show-item');
-    showItem.on('click', async (ev) => {
-      let itemId = ev.currentTarget.dataset.uuid;
-      const item = await fromUuid(itemId);
+
+    const showItems = html.find('.show-item');
+    showItems.on('click', async (ev) => {
+      const item = await fromUuid(ev.currentTarget.dataset.uuid);
       item.sheet.render(true);
     });
-    showItem.attr('draggable', true).on('dragstart', (event) => itemDragStart(event));
+    
+    showItems.attr('draggable', true).on('dragstart', itemDragStart);
 
     html.on('click', '.actorEmbeddedAbility', async (ev) => {
       const actor = await fromUuid(ev.currentTarget.dataset.actor);

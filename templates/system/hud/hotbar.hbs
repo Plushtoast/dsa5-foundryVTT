@@ -76,23 +76,30 @@
                 </ul>
             </div>
         </menu>
-        <div id="hotbar-controls-right" class="hotbar-controls flexcol" data-tooltip-direction="RIGHT">            
-            {{#each token.groups.functions as |item i|}}
-            <button type="button" class="{{item.cssClass}} primary {{item.iconClass}} function" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-            </button>
-            {{/each}}
+        <div id="hotbar-controls-right" class="hotbar-controls flexcol" data-tooltip-direction="RIGHT">
+            
             {{#if gmMode}}
             <div class="itdarkness flexcol" data-category="darkness" data-tooltip="MASTER.threshold" data-subfunction="darkness">
-                
-                <i class="fas fa-moon" style="margin-top:2px"></i>
-                <div class="rangeContainer">
+                <div class="flex0">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div class="rangeContainer flex1">
                     <input type="range" min="0" max="1" step="0.05" class="updateDarkness" name="updateDarkness" value="{{darkness}}">
                 </div>
-                
-                <i class="fas fa-sun" style="margin-top:55px;"></i>
+                <div class="flex0">
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
+            {{else}}
+            <div class="itdarkness flexcol">
+            {{#each token.groups.functions as |item i|}}
+                <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function" data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                </button>
+            {{/each}}
             </div>
             {{/if}}
         </div>
     </div>
     
 </div>
+

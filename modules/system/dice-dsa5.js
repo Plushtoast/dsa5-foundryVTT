@@ -180,7 +180,7 @@ export default class DiceDSA5 {
     mergeObject(dialogOptions.data, {
       hasSituationalModifiers: situationalModifiers.length > 0,
       situationalModifiers,
-      attributesList: ['mu', 'kl', 'in', 'ch', 'ff', 'ge', 'ko', 'kk'].reduce((acc, att) => {
+      attributesList: Object.keys(DSA5.characteristics).reduce((acc, att) => {
         acc[att] = game.i18n.localize(`CHARAbbrev.${att.toUpperCase()}`);
         return acc;
       }, {}),

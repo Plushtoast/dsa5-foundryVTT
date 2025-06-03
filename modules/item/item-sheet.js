@@ -353,7 +353,7 @@ const AdvancableSkill = (superclass) =>
     async _refundStep() {
       const value = this.item.system.talentValue.value;
       if (value > (this.item.system.advanceMin || 0)) {
-        const cost = item.system.refundCost() * -1;
+        const cost = this.item.system.refundCost() * -1;
         await this.item.update({ 'system.talentValue.value': value - 1 });
         await this.actor._updateAPs(cost);
         await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value - 1 }, cost);
@@ -363,7 +363,7 @@ const AdvancableSkill = (superclass) =>
 
     async _advanceStep() {
       const value = this.item.system.talentValue.value;
-      const cost = item.system.advanceCost();
+      const cost = this.item.system.advanceCost();
       if ((await this.actor.checkEnoughXP(cost)) && this._checkMaximumItemAdvancement(value + 1)?.result) {
         await this.item.update({ 'system.talentValue.value': value + 1 });
         await this.actor._updateAPs(cost);
