@@ -1,11 +1,38 @@
 :root {
-    --app-height: 100vh;
- }
+  --app-height: 100vh;
+}
 
 body {
-    height: var(--app-height);
+  height: var(--app-height);
 }
 
 hr {
-    min-height: 2px;
+  min-height: 2px;
 }
+
+/*foundry13*/
+
+prose-mirror,
+.prosemirror {
+  position: relative;
+
+  &:hover {
+    button.toggle {
+        opacity: 1;
+    }
+  }
+  button.toggle {
+    opacity: 0;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 32px;
+    width: 32px;
+  }
+
+  .editor-content {
+    position: unset;
+  }
+}
+
+/* Fixes for Foundry 13 */

@@ -83,17 +83,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
   }
 
-  async _onFirstRender(_context, _options) {
-    game.macros.apps.push(this);
-    this.element.setAttribute('aria-roledescription', game.i18n.localize('HOTBAR.LABEL'));
-    this._onResize();
-
-    // Context Menu
-    const contextOptions = this._getContextMenuOptions();
-    Hooks.callAll('getHotbarContextOptions', this, contextOptions);
-    if (contextOptions) new HotbarV3ContextMenu(this.element, '.slot.full', contextOptions, { jQuery: false });
-  }
-
   _configureRenderParts(options) {
     if (game.settings.get('dsa5', 'hotbarv3')) {
       return foundry.utils.deepClone(this.constructor.CONVERSION_PARTS);
@@ -475,14 +464,5 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         ariaLabel: macro?.name ?? game.i18n.localize('HOTBAR.EMPTY'),
       };
     });
-  }
-}
-
-class HotbarV3ContextMenu extends foundry.applications.ux.ContextMenu {
-  _setPosition(html, target) {
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      target = target.closest('.flexrow');
-    }
-    super._setPosition(html, target);
   }
 }

@@ -17,15 +17,9 @@
 {{#if (hasElem macroIndexes document.flags.dsa5.advancedFunction)}}
   <div class='form-group full-height'>
     <label>{{localize 'ActiveEffects.advancedFunctions.macro'}}</label>
-    <div class='form-fields'>
+    <div class='form-fields height100'>
       {{#if config.canEditMacros}}
-        <textarea
-          class='input-text'
-          rows='10'
-          type='text'
-          name='flags.dsa5.args3'
-          placeholder='{{localize "ActiveEffects.placeholder.macros"}}'
-        >{{document.flags.dsa5.args3}}</textarea>
+        <code-mirror language="javascript" indent="2" name="flags.dsa5.args3" data-tooltip="ActiveEffects.placeholder.macros">{{~document.flags.dsa5.args3~}}</code-mirror>
       {{else}}
         <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
       {{/if}}
@@ -45,15 +39,9 @@
 {{#if (or (eq document.flags.dsa5.advancedFunction '4') (eq document.flags.dsa5.advancedFunction 4))}}
   <div class='form-group full-height'>
     <label>{{localize 'ActiveEffects.advancedFunctions.armorPostprocess'}}</label>
-    <div class='form-fields'>
+    <div class='form-fields height100'>
       {{#if config.canEditMacros}}
-        <textarea
-          class='input-text'
-          rows='10'
-          type='text'
-          name='flags.dsa5.args3'
-          placeholder='{{localize "ActiveEffects.placeholder.armorPostprocess"}}'
-        >{{document.flags.dsa5.args3}}</textarea>
+        <code-mirror language="javascript" indent="2" name="flags.dsa5.args3" data-tooltip="ActiveEffects.placeholder.armorPostprocess">{{~document.flags.dsa5.args3~}}</code-mirror>
       {{else}}
         <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
       {{/if}}
@@ -63,15 +51,9 @@
 {{#if (or (eq document.flags.dsa5.advancedFunction '5') (eq document.flags.dsa5.advancedFunction 5))}}
   <div class='form-group full-height'>
     <label>{{localize 'ActiveEffects.advancedFunctions.damagePostprocess'}}</label>
-    <div class='form-fields'>
+    <div class='form-fields height100'>
       {{#if config.canEditMacros}}
-        <textarea
-          class='input-text'
-          rows='10'
-          type='text'
-          name='flags.dsa5.args3'
-          placeholder='{{localize "ActiveEffects.placeholder.armorPostprocess"}}'
-        >{{document.flags.dsa5.args3}}</textarea>
+        <code-mirror language="javascript" indent="2" name="flags.dsa5.args3" data-tooltip="ActiveEffects.placeholder.armorPostprocess">{{~document.flags.dsa5.args3~}}</code-mirror>
       {{else}}
         <p class='input-text'>{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.args3}}{{else}} - {{/if}}</p>
       {{/if}}

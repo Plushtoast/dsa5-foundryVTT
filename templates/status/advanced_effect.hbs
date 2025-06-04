@@ -124,9 +124,9 @@
     {{/if}}
     <div class="form-group full-height">
         <label>{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label>
-        <div class="form-fields">
+        <div class="form-fields height100">
             {{#if config.canEditMacros}}
-                <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onRemove" placeholder="{{localize 'ActiveEffects.placeholder.onRemove'}}">{{document.flags.dsa5.onRemove}}</textarea> 
+                <code-mirror language="javascript" indent="2" name="flags.dsa5.onRemove" data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.flags.dsa5.onRemove~}}</code-mirror>
             {{else}}
                 <p class="input-text">{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.onRemove}}{{else}} - {{/if}}</p>
             {{/if}}

@@ -33,6 +33,11 @@
   .vertical-tabs {
     .tabs.right {
       left: calc(100% - 23px);
+
+      button {
+        background: url('../../icons/backgrounds/macrobg.webp');
+        background-size: cover;
+      }
     }
   }
 
@@ -784,6 +789,7 @@
 
   #players {
     --color-text-emphatic: #d3cccc;
+    --text-color: #bababa;
 
     #players-inactive {
       margin-bottom: 24px;

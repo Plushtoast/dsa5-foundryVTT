@@ -403,7 +403,7 @@ table.infoTable {
   flex: 3;
 }
 
-.actor-purse i {
+.actor-purse-content i {
   display: inline-block;
   position: absolute;
   inset: -2px auto auto 4px;
@@ -1382,7 +1382,7 @@ a.img-entity-link {
 }
 
 .form-group.full-height .editor.prosemirror,
-.editor.prosemirror {
+.editor.prosemirror.active {
   min-height: 300px;
 }
 
@@ -3169,6 +3169,11 @@ select.noAppearance {
   }
 }
 
+.scrollable.removeMargin {
+  margin-right: 0;
+  padding-right: 0;
+}
+
 .tocList {
   ul,ol {
     padding: 0;
@@ -4547,6 +4552,9 @@ input[type='checkbox'].autoCheckbox {
 
 .margin-left-20 {
   margin-left: 20px;
+}
+.margin-top {
+  margin-top: 1rem;
 }
 
 .journal-picto:before {

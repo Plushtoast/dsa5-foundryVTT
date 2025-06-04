@@ -1,16 +1,16 @@
 <div class="actor-spells groupbox">
     <div class="row-section wrap inverseRowtable">
         <div class="col">
-            <div class="row-section skills table-title">
+            <div class="row-section skills table-title lineheight">
                 <div class="title-type col four">
                     {{localize "liturgies"}}
                 </div>
                 <div class="col zerofive"></div>
                 <div class="title-test col five center">{{localize "probe"}}</div>
-                <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="title-fw col zerofive center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
-                    <span class="onlyMultiColumn">{{{localize "CHARAbbrev.castingTime"}}}</span><span class="onlySingleColumn"><i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass"></i></span>
+                    <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
                 </div>
                 <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
                 <div class="col ten center flexAlignCenter flexrow">
@@ -37,7 +37,7 @@
                         <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
-                <div class="actor-spell-fw col ten center">
+                <div class="actor-spell-fw col zerofive center">
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="actor-spell-cost col ten center">
@@ -84,16 +84,16 @@
 
     <div class="row-section wrap inverseRowtable">
         <div class="col">
-            <div class="row-section skills table-title">
+            <div class="row-section skills table-title lineheight">
                 <div class="title-type col four">
                     {{localize "ceremonies"}}
                 </div>
                 <div class="col zerofive"></div>
                 <div class="title-test col five center">{{localize "probe"}}</div>
-                <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="title-fw col zerofive center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="KaPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
-                    <span class="onlyMultiColumn">{{{localize "CHARAbbrev.castingTime"}}}</span><span class="onlySingleColumn"><i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass"></i></span>
+                    <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
                 </div>
                 <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
 
@@ -121,7 +121,7 @@
                         <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
-                <div class="actor-spell-fw col ten center">
+                <div class="actor-spell-fw col zerofive center">
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
                 </div>
                 <div class="actor-spell-cost col ten center">

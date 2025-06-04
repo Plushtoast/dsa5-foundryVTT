@@ -8,29 +8,29 @@
       <div class='col ten center lineheight'>
         {{localize 'Book.active'}}
       </div>
-      <div class='col ten center'>
+      <div class='col five center'>
 
       </div>
-      <div class='col five' data-tooltip='MASTER.globalModsHint'>
-        <button type="button" class="icon fas fa-plus" data-action='addGlobalMod'></button>
+      <div class='col ten flexrow' data-tooltip='MASTER.globalModsHint'>
+        <button type="button" class="dsadesignbutton noBorder icon fas fa-plus" data-action='addGlobalMod'></button>
       </div>
     </div>
     <div class='col morph'>
       {{#each masterSettings.globalMods as |item i|}}
         <div class='tableOdd skills'>
           <div class='row-section lineheight'>
-            <div class='col sixty'>
+            <div class='col sixty flexrow flexAlignCenter'>
               <a data-action='editGlobalMod' data-key='{{i}}' data-tooltip='SHEET.EditItem'>{{item.name}}</a>
             </div>
-            <div class='col ten center'>
+            <div class='col ten center flexrow flexAlignCenter'>
               <input type='checkbox' class='globalModEnable' data-key='{{i}}' {{checked item.enabled}} />
             </div>
-            <div class='col ten center'>
+            <div class='col ten center flexrow flexAlignCenter'>
               {{item.value}}
             </div>
-            <div class='col five flexrow'>
-              <button type="button" class='icon fas fa-edit' data-action='editGlobalMod' data-key='{{i}}' data-tooltip='SHEET.EditItem'></button>
-              <button type="button" class='icon fas fa-trash' data-action='removeGlobalMod' data-key='{{i}}' data-tooltip='SHEET.DeleteItem'></button>
+            <div class='col five flexrow flexAlignCenter'>
+              <button type="button" class='dsadesignbutton noBorder icon fas fa-edit' data-action='editGlobalMod' data-key='{{i}}' data-tooltip='SHEET.EditItem'></button>
+              <button type="button" class='dsadesignbutton noBorder icon fas fa-trash' data-action='removeGlobalMod' data-key='{{i}}' data-tooltip='SHEET.DeleteItem'></button>
             </div>
           </div>
           <div class='row-section wrap'>

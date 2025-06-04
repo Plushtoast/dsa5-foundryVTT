@@ -1,14 +1,14 @@
 <div class="tab standard-form scrollable {{tabs.effects.cssClass}}" data-tab="effects" data-group="{{tabs.effects.group}}">
-    <div class="row-section wrap">
+    <div class="row-section wrap margin-top">
 
         <div class="col row-section skills table-title lineheight">
             <div class="col ten">
 
             </div>
-            <div class="col seventy">
+            <div class="col eighty">
                 {{localize "effect"}}
             </div>
-            <div class="col five right flexrow">
+            <div class="col ten flexrow">
                 <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="statusAdd" data-tooltip="CONDITION.add"></button>
             </div>
         </div>
@@ -50,8 +50,8 @@
     {{#if canOnUseEffect}}
     <div class="form-group full-height" style="margin-top:40px;">
         <label>{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
-        <div class="form-fields">
-            <textarea class="input-text" rows="10" type="text" name="flags.dsa5.onUseEffect" placeholder="{{localize 'ActiveEffects.placeholder.onUseEffect'}}">{{{document.flags.dsa5.onUseEffect}}}</textarea>
+        <div class="form-fields height100">
+            <code-mirror language="javascript" indent="2" name="flags.dsa5.onUseEffect" data-tooltip="ActiveEffects.placeholder.onUseEffect">{{~document.flags.dsa5.onUseEffect~}}</code-mirror>
         </div>        
     </div>
     {{/if}}
