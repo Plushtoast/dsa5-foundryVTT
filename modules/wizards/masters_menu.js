@@ -150,11 +150,16 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
             } else {
              game.dsa5.apps.LightDialog.onDarknessChange();
             }
-          }         
+          }
+
+          const hotbarDarkness = ui.hotbar.element.querySelector('[name="updateDarkness"]');
+          if (hotbarDarkness) {
+            hotbarDarkness.value = data.environment.darknessLevel;
+          }
 
           if (!this.rendered) return;
 
-          this.render();
+          this.element.querySelector('.updateDarkness').value = data.environment.darknessLevel;          
         }
       });
       Hooks.on('canvasInit', () => {

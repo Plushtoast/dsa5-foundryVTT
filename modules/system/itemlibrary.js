@@ -157,6 +157,7 @@ class DSASystemConfiguration {
 
 export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   pageSize = 60
+  filterLimit = 10000
 
   static TABS = {
     sheet: {
@@ -393,7 +394,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async getRandomItems(category, limit) {
-    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: category });
+    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: category, limit: this.filterLimit });
 
     const shuffledItems = this.shuffle(filteredItems)
       .slice(0, limit + 5)
@@ -450,7 +451,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async getCategoryItems(category, asItemData = false, asItem = false) {
     await this.buildItemIndex();
-    const indexResults = await this.flattenedResults(this.indexes.Item, '', { tag: [category] });
+    const indexResults = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
     const items = indexResults.map(x => this.indexes.Item.index.get(x));
 
     if (!asItemData && !asItem) return items;
@@ -566,7 +567,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const collectTags = this.models[category]?.filter(x => x.selected).map(x => x.key) || [];
     const startIndex = Number(page) || 0;
 
-    const searchParams = { ...fields };
+    const searchParams = { ...fields, limit: (page || 0) + this.pageSize + 1 };
     if (collectTags.length > 0) {
       searchParams.tag = collectTags;
     }
@@ -582,7 +583,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       Math.min(startIndex + this.pageSize, searchResults.length)
     );
 
-    index.next = paginatedResults.length === this.pageSize ? startIndex + this.pageSize : undefined;
+    index.next = startIndex + this.pageSize < searchResults.length ?
+      startIndex + this.pageSize :
+      undefined;
 
     const filteredItems = this.filterDuplications(
       paginatedResults.map(x => index.index.get(x))
@@ -804,7 +807,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     }
 
     progress.update({ message: 'Library.loading', format: { item: catName }, pct: 0.1 });
-    const uuids = await this.flattenedResults(index, '', { tag: [subcategory] });
+    const uuids = await this.flattenedResults(index, '', { tag: [subcategory], limit: this.filterLimit });
 
     const BATCH_SIZE = 25;
     const compendiumUuids = uuids.filter(uuid => uuid.startsWith('Compendium'));
@@ -956,11 +959,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
     const category = $(this.element).find('.tab.active')[0].dataset.tab;
     const documentName = this.systemConfiguration.documentNameFromGroup(category)
+
     if (pct && source.indexes[documentName].next) {
       source.filterItems.call(source, category, source.indexes[documentName].next)
     }
   }
-
   async _onItemNameClick(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)

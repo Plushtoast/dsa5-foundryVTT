@@ -28,8 +28,8 @@ Hooks.once('ready', () => {
       content.push(`<option value="${cat}">${game.i18n.localize(value)}</option>`);
     }
 
-    const specialabilies = `<div class="form-group">
-            <label class="label-text">${game.i18n.localize('Category')}</label>
+    const specialabilies = `<div class="flexcol">
+            <label>${game.i18n.localize('Category')}</label>
             <select name="category.value">
                 <option value="">${game.i18n.localize('Library.noFilter')}</option>
                 <optgroup label="${game.i18n.localize('SpecCategory.general')}">

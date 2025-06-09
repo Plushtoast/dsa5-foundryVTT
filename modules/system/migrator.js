@@ -18,7 +18,7 @@ async function setupDefaulTokenConfig() {
     await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);
     await game.settings.set('core', 'leftClickRelease', true);
     await game.settings.set('dsa5', 'defaultConfigFinished', true);
-    await this.migrateTo33();
+    await migrateTo33();
   }
 }
 

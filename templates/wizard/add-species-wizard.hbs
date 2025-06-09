@@ -16,10 +16,10 @@
             <h2>{{localize 'WIZARD.missingVantages'}}</h2>
             <div class="row-section wrap">
                 {{#each missingVantages as |item i|}}
-                <div class="col two row-section lineheight">
-                    <input type="checkbox" id="missingvantage_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
+                <div class="col two flexrow">
+                    <input type="checkbox" id="missingvantage_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
                     <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step (or item.system.max.value item.system.maxRank.value)}} ({{item.apCost}} AP)</label>
-                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
@@ -29,10 +29,10 @@
             {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
             <div class="row-section wrap">
                 {{#each group.res as |item i|}}
-                <div class="col two row-section lineheight">
-                    <input type="checkbox" id="advantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                <div class="col two flexrow">
+                    <input type="checkbox" id="advantage_{{i}}_{{j}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                     <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
-                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
@@ -42,10 +42,10 @@
             {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
             <div class="row-section wrap">
                 {{#each group.res as |item i|}}
-                <div class="col two row-section lineheight">
-                    <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                <div class="col two flexrow">
+                    <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                     <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
-                    <a class="show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"><i class="fas fa-info"></i></a>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
@@ -60,8 +60,8 @@
                 <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}.</p>
                 <div class="row-section wrap">
                     {{#each item.choices as |choice j|}}
-                    <div class="col two row-section lineheight">
-                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}"/>
+                    <div class="col two flexrow">
+                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="flex0 exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}"/>
                         <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
                     </div>
                     {{/each}}
@@ -73,7 +73,7 @@
         {{/if}}
 
     </section>
-    <div class="dialog-buttons">
+    <div class="dialog-buttons flexrow">
         <button class="dialog-button ok default" data-button="ok">
             <i class="fas fa-check"></i> {{localize 'ok'}}
         </button>

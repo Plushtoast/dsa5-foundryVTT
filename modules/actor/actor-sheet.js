@@ -910,7 +910,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
       const dupped = tabs.clone();
       header.before(dupped);
-      dupped.find('button').on('click', (ev) => this.verticalTabs(ev));
+      const buttons = dupped.find('button');
+      buttons.on('click', (ev) => this.verticalTabs(ev));
+      buttons.removeAttr('disabled');
     }
 
     const autoSizings = html.find('.autosizing input')
@@ -1717,6 +1719,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _onDropItem(event, item) {
     const itemData = item.toObject();
+    console.log(event, event.dataTransfer.getData('text/plain'), itemData);
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 

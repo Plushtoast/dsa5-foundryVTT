@@ -11,27 +11,30 @@ hr {
 }
 
 /*foundry13*/
-
-prose-mirror,
-.prosemirror {
-  position: relative;
-
-  &:hover {
-    button.toggle {
+.dsa5 {
+  prose-mirror,
+  .prosemirror {
+    position: relative;
+    border-radius: 4px;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      button.toggle {
         opacity: 1;
+      }
     }
-  }
-  button.toggle {
-    opacity: 0;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    height: 32px;
-    width: 32px;
-  }
+    
+    button.toggle {
+      opacity: 0;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      height: 32px;
+      width: 32px;
+    }
 
-  .editor-content {
-    position: unset;
+    .editor-content {
+      position: unset;
+    }
   }
 }
 

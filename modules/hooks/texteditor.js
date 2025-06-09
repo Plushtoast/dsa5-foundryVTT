@@ -1,3 +1,4 @@
+import { UserMultipickDialog } from '../dialog/addTargetDialog.js';
 import DSA5 from '../system/config-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -135,39 +136,47 @@ export function setEnrichers() {
       enricher: async (match, options) => {
         const content = match[1];
         return $(
-          `<div class="row-section wrap maskfield postChatSection"><div class="col ninety"></div><div class="col ten center postContentChat" data-tooltip="SHEET.PostItem"><em class="far fa-comment-dots"></em></div><div class="col postChatContent">${content}</div></div>`,
+          `<div class="row-section wrap maskfield postChatSection">
+              <div class="col ninety"></div>
+              <div class="col ten center postContentChat" data-tooltip="SHEET.PostItem"><i class="far fa-comment-dots"></i></div>
+              <div class="col postChatContent">${content}</div>
+          </div>`,
         )[0];
       },
+      /*id: 'postChat',
+      onRender: (html) => {
+        console.log(html)
+      }*/
     },
   );
 
-  const basePrimer = TextEditor._primeCompendiums
+  const basePrimer = TextEditor._primeCompendiums;
   TextEditor._primeCompendiums = async function (text) {
     const rgx = /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]/g;
     const packs = new Map();
-    for ( const t of text ) {
-      for ( const [match] of t.textContent.matchAll(rgx) ) {
+    for (const t of text) {
+      for (const [match] of t.textContent.matchAll(rgx)) {
         const uuid = match.match(innerRegex)[0].slice(1).split('.');
 
         const name = uuid.pop();
         const pack = uuid.join('.');
 
         const collection = game.packs.get(pack);
-        if ( !collection ) continue;
+        if (!collection) continue;
 
-        const documentId = collection.index.find(x => x.name == name)?._id;
+        const documentId = collection.index.find((x) => x.name == name)?._id;
 
-        if(!documentId) continue;
+        if (!documentId) continue;
 
-        if ( !packs.has(collection) ) packs.set(collection, []);
+        if (!packs.has(collection)) packs.set(collection, []);
         packs.get(collection).push(documentId);
       }
     }
-    for ( const [pack, ids] of packs.entries() ) {
+    for (const [pack, ids] of packs.entries()) {
       await pack.getDocuments({ _id__in: ids });
     }
-    basePrimer.call(this, text)
-  }
+    basePrimer.call(this, text);
+  };
 }
 
 export function conditionsMatcher(match) {

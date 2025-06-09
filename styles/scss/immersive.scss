@@ -425,8 +425,6 @@
 
   #sidebar {
     border: none;
-    margin: 0px;
-    height: 100vh;
 
     .sidebar-tab .folder.collapsed .folder-header a i {
       color: rgb(216, 212, 212);
@@ -462,45 +460,33 @@
             margin-left: 10px;
         }*/
 
-    /*.sidebar-tab {
-            color: #555;
-
-            a {
-
-                &.inactive i {
-                    color: rgb(172, 172, 172);
-                }
-            }
-
-            .jump-to-bottom {
-                color: white;
-
-                i {
-                    color: white;
-                }
-            }
-        }*/
-
-    .global-control {
+    /*.global-control {
       margin-left: 10px;
 
       .playlist-header {
         color: white;
       }
+    }*/
+    #sidebar-content {
+      position:relative;
+      &:before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -5px;
+        right: 0;
+        content: '';
+        background-image: url('../../icons/backgrounds/menu.webp');
+        background-repeat: repeat-y;
+        background-size: 100%;
+        z-index: -1;
+      }
     }
 
-    /*&:before {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: -13px;
-            right: 0;
-            content: '';
-            background-image: url('../../icons/backgrounds/menu.webp');
-            background-repeat: repeat-y;
-            background-size: 100%;
-            z-index: -1;
-        }*/
+    .sidebar-tab {
+      position: relative;
+      background: none;
+    }
   }
 
   .dsa5.item {
@@ -629,6 +615,9 @@
       }
 
       &.md {
+        &.offset {
+          height: unset;
+        }
         &:before {
           background-size:
             34px 91px,
@@ -854,12 +843,18 @@
     }
 
     &:hover {
-      box-shadow: inset 0 0 3px white;
+      box-shadow: inset 0 0 3px #970027;
+      border-color: white;
+      background-image: linear-gradient(to right top, #e82626, #d41a29, #bf0f28, #aa0628, #970027);
     }
 
     &.lastRound {
-      background-color: #02234d;
-      background-image: none;
+      background-image: linear-gradient(to right top, #02234d, #022a5b, #023168, #02366e, #023b74);
+
+      &:hover {
+        box-shadow: inset 0 0 3px #023b74;
+        background-image: linear-gradient(to right top, #0a3369, #0a3b7c, #0a4390, #0a4ca3, #0a54b7);
+      }
     }
   }
 
@@ -937,6 +932,10 @@
     .marker {
       background-color: black;
     }
+  }
+
+  textarea:read-only {
+    color: var(--input-text-color);
   }
 }
 

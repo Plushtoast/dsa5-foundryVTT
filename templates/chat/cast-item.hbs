@@ -1,9 +1,10 @@
 <div class='dsa5 post-item'>
   <h3><b>{{name}}</b></h3>
   {{#if img}}
-    <div class='center'>
-      <img src='{{img}}' data-tooltip='{{name}}' />
-    </div>{{/if}}
+    <div class='flexrow flexAlignCenter'>
+      <img class='popoutImage flex0' src='{{img}}' data-tooltip='{{name}}' />
+    </div>
+  {{/if}}
 
   <div class='card-content'>{{{replaceConditions data.description.value}}}</div>
 

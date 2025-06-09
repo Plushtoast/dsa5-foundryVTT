@@ -2530,7 +2530,6 @@ input[type='search'] {
     border-radius: 100%;
     width: 20px;
     height: 20px;
-    line-height: 18px;
     color: rgb(90, 90, 90);
     text-align: center;
   }
@@ -5367,6 +5366,12 @@ input[type='checkbox'].autoCheckbox {
   background: rgb(0, 111, 61);
   background: linear-gradient(90deg, rgba(0, 38, 13, 1) 0%, rgba(0, 111, 61, 1) 100%);
   position: relative;
+  color: white;
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(0, 55, 20, 1) 0%, rgba(0, 145, 80, 1) 100%);
+    box-shadow: 0 0 8px rgba(0, 145, 80, 0.5);
+  }
 
   div {
     display: inline-block;
