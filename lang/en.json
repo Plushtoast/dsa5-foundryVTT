@@ -1823,6 +1823,8 @@
         "3": "Always show"
     },
     "DSASETTINGS": {
+        "enablePauseIcon": "Pause Symbol",
+        "enablePauseIconHint": "Show a pause icon fitting the current month.",
         "libraryModulsFilter": "Filter modules permanent",
         "libraryModulsFilterHint": "Configure all modules that should not be displayed in the library. For example, you can hide modules that are not relevant to your game or speed up the loading of the library.</p><p>Changes will only take effect after a reload.",
         "moneyHasWeight": "Money has weight",

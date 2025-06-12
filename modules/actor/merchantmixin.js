@@ -585,10 +585,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     getItemPrice(item) {
-      return (
-        Number(getProperty(item, 'flags.dsa5.customPriceTag')) ||
-        (item.type == 'consumable' ? Itemdsa5.getSubClass(item.type).consumablePrice(item) : Number(item.system.price.value))
-      );
+      return DSA5_Utility.itemPrice(item);
     }
 
     prepareTradeFriend(data) {

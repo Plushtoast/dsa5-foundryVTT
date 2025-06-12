@@ -97,7 +97,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   static findTradeApp(id) {
-    for (const app of Object.values(foundry.applications.instances)) {
+    for (const [id, app] of Array.from(foundry.applications.instances)) {
       if (app instanceof this && app?.tradeData?.id === id) {
         return app;
       }

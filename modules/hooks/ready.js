@@ -51,6 +51,8 @@ export default function () {
 
     registerGameManual();
 
+    if (game.settings.get('dsa5', 'calendar') !== 'none') game.dsa5.apps.CalendarWidget.render(true);
+
     Hooks.call('DSA5ready', game.dsa5);
   });
 }

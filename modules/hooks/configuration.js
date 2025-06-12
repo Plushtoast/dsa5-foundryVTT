@@ -2,6 +2,7 @@ import DSA5 from '../system/config-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import { showPatchViewer } from '../system/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
+import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -221,6 +222,15 @@ export function setupConfiguration() {
     type: Boolean,
   });
 
+  game.settings.register('dsa5', 'enablePauseIcon', {
+    name: 'DSASETTINGS.enablePauseIcon',
+    hint: 'DSASETTINGS.enablePauseIconHint',
+    scope: 'client',
+    config: true,
+    default: true,
+    type: Boolean,
+  });
+
   game.settings.register('dsa5', 'enableWeaponAdvantages', {
     name: 'DSASETTINGS.enableWeaponAdvantages',
     hint: 'DSASETTINGS.enableWeaponAdvantagesHint',
@@ -335,6 +345,16 @@ export function setupConfiguration() {
     onChange: async (val) => {
       game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
     },
+  });
+
+  game.settings.register('dsa5', 'calendar', {
+    name: 'DSASETTINGS.calendar',
+    hint: 'DSASETTINGS.calendarHint',
+    scope: 'world',
+    config: true,
+    default: 'default',
+    requiresReload: true,
+    type: new foundry.data.fields.StringField({ choices: DSAWorldCalendar.collectCalendars(), required: true }),
   });
 
   const moneyChoices = () => {

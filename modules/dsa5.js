@@ -50,6 +50,8 @@ import TestSuite from './system/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
 import { DSAToken } from './hooks/token.js';
+import * as DSAPause from './hooks/pause.js';
+import { CalendarWidget } from './system/calendar/calendar.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -79,7 +81,8 @@ Hooks.once('init', () => {
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,
-      OnUseEffect
+      OnUseEffect,
+      CalendarWidget: new CalendarWidget(),
     },
     entities: {
       Actordsa5,

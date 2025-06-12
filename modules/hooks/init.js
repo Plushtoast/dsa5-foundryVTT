@@ -33,6 +33,7 @@ import DSA5 from '../system/config-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/itemlibrary.js';
+import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 const { mergeObject } = foundry.utils;
 
 export default function () {
@@ -102,7 +103,7 @@ Hooks.once('init', () => {
     { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
     { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
   ];
-  
+
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
     foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
   });
@@ -112,8 +113,10 @@ Hooks.once('init', () => {
   ItemSheetdsa5.setupSheets();
 
   Hooks.call('registerDSAstyle', DSA5.styles);
-
+  
+  DSAWorldCalendar.prepare();
   setupConfiguration();
+  DSAWorldCalendar.init();
   DPS.initDoorMinDistance();
   mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons);
 
@@ -134,7 +137,6 @@ Hooks.once('setup', () => {
   }
 
   BookWizard.initHook();
-
   initKeybindings.default();
   MastersMenu.registerButtons();
   SelectUserDialog.registerButtons();

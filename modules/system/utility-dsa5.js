@@ -1,7 +1,8 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import { conditionsMatcher } from '../hooks/texteditor.js';
+import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5 from './config-dsa5.js';
-const { mergeObject, duplicate } = foundry.utils;
+const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5_Utility {
   static async skillByName(name) {
@@ -189,7 +190,7 @@ export default class DSA5_Utility {
 
   static getSpeaker(speaker) {
     let actor = ChatMessage.getSpeakerActor(speaker);
-    if (speaker.emptyActor) return this.emptyActor(12, "Alrik", speaker.emptyActor);
+    if (speaker.emptyActor) return this.emptyActor(12, 'Alrik', speaker.emptyActor);
 
     if (!actor && canvas.tokens) {
       let token = canvas.tokens.get(speaker.token);
@@ -205,6 +206,13 @@ export default class DSA5_Utility {
     }
 
     return actor;
+  }
+
+  static itemPrice(item) {
+    return (
+      Number(getProperty(item, 'flags.dsa5.customPriceTag')) ||
+      (item.type == 'consumable' ? Itemdsa5.getSubClass(item.type).consumablePrice(item) : Number(item.system.price.value))
+    );
   }
 
   static fateAvailable(actor, group) {
@@ -337,23 +345,26 @@ export default class DSA5_Utility {
       attrs = [attrs, attrs, attrs, attrs, attrs, attrs, attrs, attrs];
     }
 
-    const createData = mergeObject({
-      name,
-      type: 'npc',
-      system: {
-        status: { wounds: { value: 50 }, fatePoints: {} },
-        characteristics: {
-          mu: { initial: attrs[0] },
-          kl: { initial: attrs[1] },
-          in: { initial: attrs[2] },
-          ch: { initial: attrs[3] },
-          ff: { initial: attrs[4] },
-          ge: { initial: attrs[5] },
-          ko: { initial: attrs[6] },
-          kk: { initial: attrs[7] },
+    const createData = mergeObject(
+      {
+        name,
+        type: 'npc',
+        system: {
+          status: { wounds: { value: 50 }, fatePoints: {} },
+          characteristics: {
+            mu: { initial: attrs[0] },
+            kl: { initial: attrs[1] },
+            in: { initial: attrs[2] },
+            ch: { initial: attrs[3] },
+            ff: { initial: attrs[4] },
+            ge: { initial: attrs[5] },
+            ko: { initial: attrs[6] },
+            kk: { initial: attrs[7] },
+          },
         },
       },
-    }, data);
+      data,
+    );
 
     const actor = new Actordsa5(duplicate(createData), { noHook: true });
     actor.prepareData();

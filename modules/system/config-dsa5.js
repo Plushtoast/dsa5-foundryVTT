@@ -989,7 +989,4 @@ DSA5.noteIcons = {
   Trail: 'systems/dsa5/icons/thirdparty/trail.svg',
 };
 
-CONFIG.time.roundTime = 5;
-CONFIG.time.turnTime = 0;
-
 export default DSA5;

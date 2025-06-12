@@ -95,6 +95,7 @@ export default function () {
       return DSA5_Utility.categoryLocalization(a);
     },
     joinStr: (a, b) => b.join(a),
+    itemPrice: (a) => DSA5_Utility.itemPrice(a),
     attrName: (a) => DSA5_Utility.attributeLocalization(a),
     attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
     diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
