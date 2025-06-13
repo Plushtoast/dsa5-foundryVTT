@@ -26,8 +26,8 @@
                     <small>{{document.pack}}</small>
                 </div>  
             </div>
-            <div class="col ten"></div>
-            <div class="row-section col sixty">
+            <div class="col browseSpacer ten"></div>
+            <div class="row-section col sixty browseElement">
                 <div class="col groupbox">
                         <div class="row-section wrap">
                             <div class="col table-title noBorder row-section">
@@ -41,12 +41,14 @@
                             <div class="col">
                                 {{document.system.APValue.value}}
                             </div>
+                            {{#if document.system.requirements.value}}
                             <div class="col table-title noBorder">
                                 {{localize "requirements"}}
                             </div>
                             <div class="col">
                                 {{document.system.requirements.value}}
                             </div>
+                            {{/if}}
                             {{#if (ne "0" document.system.maxRank.value)}}
                             <div class="col table-title noBorder">
                                 {{localize "maxlevel"}}
@@ -60,7 +62,7 @@
                                 {{localize "Category"}}
                             </div>
                             <div class="col">
-                                {{localize document.system.category.value}}
+                                {{localize (concat 'SpecCategory.' document.system.category.value)}}
                             </div>
                             {{#if document.system.effect.value}}
                             <div class="col table-title noBorder">
@@ -137,7 +139,7 @@
                                 {{localize "COMBATSKILLCATEGORY.subcategory"}}
                             </div>
                             <div class="col">
-                                {{localize document.system.category.sub}}
+                                {{specAbSubCat document.system.category.sub}}
                             </div>
                             {{/if}}
 

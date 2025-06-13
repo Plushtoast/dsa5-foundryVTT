@@ -3,26 +3,27 @@
     <div class="row-section">
         {{#unless skipHeader}}
         <div class="col sixty">
-            <img src="{{document.img}}" style="width:60%;border:none;float:right" >
+            <img src="{{document.img}}" style="width:60%;border:none;float:right">
             {{{enrichedDescription}}}
             {{{enrichedClothing}}}
         </div>
         <div class="col zerofive"></div>
         <div class="col fourty">
-        {{else}}
-        <div class="col">
-        {{/unless}}
-            <div class="row-section">
-                <div class="col groupbox">
+            {{else}}
+            <div class="col">
+                {{/unless}}
+                <div class="row-section">
+                    <div class="col groupbox">
                         <div class="row-section wrap">
                             <div class="col table-title noBorder row-section">
                                 <div class="col ninety">
                                     {{localize "APValue"}}
                                 </div>
                                 <div class="col ten center">
-                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                                    {{#if document.uuid}}<a class="show-item" data-type="Item"
+                                        data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
                                 </div>
-                                
+
                             </div>
                             <div class="col">
                                 {{document.system.APValue.value}}
@@ -38,7 +39,8 @@
                                 {{localize "requirements"}}
                             </div>
                             <div class="col">
-                                {{{clickableAbilities document.system.requirements.value 'advantage disadvantage specialability'}}}
+                                {{{clickableAbilities document.system.requirements.value 'advantage disadvantage
+                                specialability'}}}
                             </div>
                             {{/if}}
                             {{#if document.system.recommendedAdvantages.value}}
@@ -91,7 +93,7 @@
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.specialAbilities.value 'specialability'}}}
-                            </div> 
+                            </div>
                             {{/if}}
                             {{#if (ne document.system.mageLevel.value "mundane")}}
                             <div class="col table-title noBorder">
@@ -99,32 +101,32 @@
                             </div>
                             <div class="col">
                                 {{attrName document.system.guidevalue.value}}
-                            </div> 
+                            </div>
                             <div class="col table-title noBorder">
                                 {{localize "tradition"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.tradition.value 'specialability'}}}
-                            </div> 
+                            </div>
                             {{#if (eq document.system.mageLevel.value 'clerical')}}
                             <div class="col table-title noBorder">
                                 {{localize "happyTalents"}}
                             </div>
                             <div class="col">
                                 {{document.system.happyTalents.value}}
-                            </div> 
+                            </div>
                             <div class="col table-title noBorder">
                                 {{localize "liturgies"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.liturgies.value 'liturgy ceremony'}}}
-                            </div> 
+                            </div>
                             <div class="col table-title noBorder">
                                 {{localize "blessings"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.blessings.value 'blessing'}}}
-                            </div> 
+                            </div>
                             {{/if}}
                             {{#if (eq document.system.mageLevel.value 'magical')}}
                             <div class="col table-title noBorder">
@@ -132,30 +134,30 @@
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.spells.value 'spell ritual'}}}
-                            </div> 
+                            </div>
                             <div class="col table-title noBorder">
                                 {{localize "magictricks"}}
                             </div>
                             <div class="col">
                                 {{{clickableAbilities document.system.spelltricks.value 'magictrick'}}}
-                            </div> 
+                            </div>
                             <div class="col table-title noBorder">
                                 {{localize "spelltrickCount"}}
                             </div>
                             <div class="col">
                                 {{document.system.spelltrickCount.value}}
-                            </div> 
+                            </div>
                             {{/if}}
                             {{/if}}
-                            
-                            
-    
-                            
+
+
+
+
                         </div>
 
+                    </div>
                 </div>
+
             </div>
-            
         </div>
     </div>
-</div>

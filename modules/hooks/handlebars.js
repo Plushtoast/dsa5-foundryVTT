@@ -96,6 +96,9 @@ export default function () {
     },
     joinStr: (a, b) => b.join(a),
     itemPrice: (a) => DSA5_Utility.itemPrice(a),
+    specAbSubCat: (a) => {
+      return game.i18n.localize(`COMBATSKILLCATEGORY.${a}`);
+    },
     attrName: (a) => DSA5_Utility.attributeLocalization(a),
     attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
     diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),

@@ -945,11 +945,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async _onItemHover(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)
-    let tooltip = await item.toEmbed({ classes: 'itemLibraryTooltip' }, { skipHeader: true })
+    let tooltip = await item.toEmbed({ }, { skipHeader: true })
 
     if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item)
 
-    $('#tooltip').html(tooltip)
+    $('#tooltip').addClass('itemLibraryTooltip').html(tooltip)
   }
 
   _infiniteScroll(ev, source) {

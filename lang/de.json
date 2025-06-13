@@ -600,7 +600,7 @@
     },
     "Library": {
         "searchPlaceholder": "Durchsuche die Bibliothek",
-        "searchCategoryDescription": "Bitte Filterkategorie(n) auswählen",
+        "searchCategoryDescription": "Filterkategorien",
         "search": "Suche",
         "buildingIndex": "Index wird erzeugt",
         "advanced": "Erweiterte Suche",
@@ -1479,10 +1479,10 @@
         "applyToOwner": "Effekt auf Träger übertragen",
         "applyToOwnerHint": "Waffen übertragen ihren Effekt standardmäßig auf das Ziel eines Angriffs. Setze den Haken um den Effekt statt dessen auf den Träger anzuwenden.",
         "placeholder": {
-            "macros": "Macros können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\ntestData - All Daten für die aktuelle Probe\nsource - Die Quelle des Macros",
-            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:\nactor - Der anvisierte Akteur\noptions.armor - Die Rüstungs des Ziels\noptions.attackItem - Die Quelle des Macros",
-            "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.\nVariablen:\nactor - Der Akteur",
-            "onUseEffect": "Macro für die Benutzung des Items.\nVariablen:\nactor - Der Akteur\nitem - Der Gegenstand",
+            "macros": "Macros können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>testData - All Daten für die aktuelle Probe<br>source - Die Quelle des Macros",
+            "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>options.armor - Die Rüstungs des Ziels<br>options.attackItem - Die Quelle des Macros",
+            "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.<br>Variablen:<br>actor - Der Akteur",
+            "onUseEffect": "Macro für die Benutzung des Items.<br>Variablen:<br>actor - Der Akteur<br>item - Der Gegenstand",
             "effectname": "z.B. um Ursache anzugeben"
         },
         "advancedFunctions": {

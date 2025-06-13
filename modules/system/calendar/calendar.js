@@ -11,7 +11,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     Hooks.call('registerCalendars', DSAWorldCalendar.availableCalendars);
   }
 
-  static init() {    
+  static init() {
     const selectedCalendar = DSAWorldCalendar.selectedCalendar();
     if (selectedCalendar) {
       CONFIG.time.worldCalendarConfig = selectedCalendar.config;
@@ -27,7 +27,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     for (const calendar of DSAWorldCalendar.availableCalendars) {
       transformed[calendar.key] = game.i18n.localize(calendar.name);
     }
-      
+
     console.warn(transformed, DSAWorldCalendar.availableCalendars);
     return transformed;
   }
@@ -72,14 +72,15 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const mm = game.i18n.localize(`${translationPrefix}.${month.name}`);
     const dd = components.dayOfMonth + 1;
     let h = components.hour;
+    
     if (h > 11) h -= 12;
 
-    let hourIndex = h > 5 ? h + 1 : h;
-
+    const hourIndex = h > 5 ? h + 1 : h;
+    const hourPart = components.hour > 11 ? "2." : "1. ";
     const hourName = game.i18n.localize(`${translationPrefix}.${CONFIG.time.worldCalendarConfig.months.values[hourIndex].name}`);
     const hourSuffix = game.i18n.localize('CALENDAR.DSA.hourSuffix');
 
-    return `${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
+    return `${hourPart}${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
 
   static formatSeason(calendar, components, _options) {
@@ -98,7 +99,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     });
     let res = `${seasonName}, ${moon}<br/>${dayOfWeek} - ${h}:${m}:${s}`;
     if (holiday) {
-      res += `<br/>${game.i18n.localize(`${this.translationPrefix}.holiday.${holiday.name}`)}`;
+      res += `<br/>${game.i18n.localize(`${translationPrefix}.holiday.${holiday.name}`)}`;
     }
     return `<div class="center">${res}</div>`;
   }
@@ -154,6 +155,16 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 }
 
 export class CalendarWidget extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static timeGradients = [
+    { from: 0, to: 4, gradient: 'linear-gradient(to top, #0d1b2a, #1b263b)', textColor: '#e0e6ed' }, // Night - light text
+    { from: 5, to: 6, gradient: 'linear-gradient(to top, #2c3e50, #f39c12)', textColor: '#fffbe6' }, // Dawn - light text
+    { from: 7, to: 10, gradient: 'linear-gradient(to top, #87ceeb, #f1f2b5)', textColor: '#1a1a1a' }, // Morning - dark text
+    { from: 11, to: 15, gradient: 'linear-gradient(to top, #87cefa, #ffffff)', textColor: '#111111' }, // Midday - dark text
+    { from: 16, to: 18, gradient: 'linear-gradient(to top, #f1f2b5, #ff9966)', textColor: '#222' }, // Afternoon - dark text
+    { from: 19, to: 20, gradient: 'linear-gradient(to top, #654ea3, #eaafc8)', textColor: '#fefefe' }, // Sunset - light text
+    { from: 21, to: 23, gradient: 'linear-gradient(to top, #0f2027, #2c5364)', textColor: '#f0f8ff' }  // Night again - light text
+  ];
+
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-widget',
     window: {
@@ -179,11 +190,13 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    data.components = components;
     data.dateString = game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
     data.dateTooltip = game.time.calendar.format(game.time.worldTime, 'formatSeason');
     data.isGM = game.user.isGM;
-    data.dayProgress = Math.round((data.components.hour * 3600 + data.components.minute * 60 + data.components.second) / (24 * 3600) * 100);
+    data.dayTimeBackground = CalendarWidget.timeGradients.find(g => components.hour >= g.from && components.hour <= g.to);
+    data.dayProgress = Math.round((components.hour * 3600 + components.minute * 60 + components.second) / (24 * 3600) * 100);
     return data;
   }
 
@@ -239,9 +252,10 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     const data = await super._prepareContext(_options);
     data.isGM = game.user.isGM;
     data.components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const translationPrefix = game.time.calendar.translationPrefix;
     data.monthOptions = game.time.calendar.months.values.map((month, index) => {
       return {
-        name: month.name,
+        name: `${translationPrefix}.${month.name}`,
         value: index,
         selected: index === data.components.month,
       };
@@ -260,7 +274,6 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     }
 
     const currentDateValue = data.components.month * 100 + data.components.day;
-    const translationPrefix = game.time.calendar.translationPrefix;
     data.holidays = CONFIG.time.worldCalendarConfig.holidays.values
       .map((h) => ({
         ...h,

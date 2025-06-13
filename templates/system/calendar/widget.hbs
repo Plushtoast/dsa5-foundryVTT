@@ -4,7 +4,7 @@
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-backward' data-tooltip='CALENDAR.DSA.fastBackward' data-action='fastBackward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-left' data-tooltip='CALENDAR.DSA.backward' data-action='backward'></button>
     {{/if}}
-    <button type='button' data-tooltip='{{dateTooltip}}' class='dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto' data-action='edit'>{{dateString}}</button>
+    <button type='button' data-tooltip='{{dateTooltip}}' class='dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto;background:{{dayTimeBackground.gradient}};color:{{dayTimeBackground.textColor}}' data-action='edit'>{{dateString}}</button>
     {{#if isGM}}
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-right' data-tooltip='CALENDAR.DSA.forward' data-action='forward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-forward' data-tooltip='CALENDAR.DSA.fastForward' data-action='fastForward'></button>
