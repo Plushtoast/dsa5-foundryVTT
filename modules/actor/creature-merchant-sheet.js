@@ -8,7 +8,9 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/actor-header.hbs'],
     },
     tabs: {
-      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs'      
+      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+      id: "tabs",
+      classes: ["tabs", "right"],    
     },
     main: {
       template: 'systems/dsa5/templates/actors/creature/creature-main.hbs',

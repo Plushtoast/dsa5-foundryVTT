@@ -1675,6 +1675,7 @@
         "Elf": "Elf"
     },
     "DSAError": {
+        "invalidSkinCombination": "Die aktuelle DSA Version unterstützt nur das <b>DSA5 Immersive</b> Skin im light-mode. Verwende jede andere Kombination auf eigene Gefahr (und melde Probleme auf Github). Möchtest du jetzt das Standard-Skin setzen?",
         "customEffect": "Für manuelle Effekte darf nur ein Token markiert sein",
         "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
@@ -1943,8 +1944,10 @@
             "YearSuffix": "BF",
             "hourSuffix": "stunde",
             "defaultName": "Der Zwölfgöttliche Kalender",
-            "backward": "Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min<br/>Links-<i class=\"fas fa-computer-mouse\"></i> 1 h",
-            "forward": "Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min<br/>Links-<i class=\"fas fa-computer-mouse\"></i> 1 h",
+            "smallBackward": "Links-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+            "smallForward": "Links-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+            "backward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 6h",
+            "forward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 6h",
             "fastBackward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 Tag<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 Woche",
             "fastForward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 Tag<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 Woche",
             "ToteMada": "Tote Mada",

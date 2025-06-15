@@ -71,7 +71,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       template: 'systems/dsa5/templates/actors/limited/npc-limited-header.hbs',
     },
     tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+      id: "tabs",
+      classes: ["tabs", "right"],
     },
     main: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited.hbs',
@@ -270,6 +272,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!this.actor.system.isMage) delete tabs.magic;
     if (!this.actor.system.isPriest) delete tabs.religion;
 
+    this.cleanTabs(tabs);
+    return tabs;
+  }
+
+  cleanTabs(tabs) {
     if (this.constructor.LIMITEDPARTS && this.showLimited()) {
       for (let key of Object.keys(tabs)) {
         if (!['main', 'notes'].includes(key)) {
@@ -277,8 +284,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         }
       }
     }
-
-    return tabs;
   }
 
   static _itemContextMenu(event, target) {
@@ -845,6 +850,24 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       jQuery: false,
       fixed: true
     });
+    
+    let mainContent = this.element.querySelector(".main-content");
+    if (!mainContent) {
+      mainContent = document.createElement("div");
+      mainContent.classList.add("main-content");
+      mainContent.dataset.containerId = "main";
+      const tabs = this.element.querySelector(".tabs");
+      if(!tabs) this.element.querySelector('.window-content').append(mainContent);
+      else tabs.after(mainContent);
+    }
+    if ( mainContent ) {
+      const sheetBody = document.createElement("div");
+      sheetBody.classList.add("sheet-body");
+      mainContent.after(sheetBody);
+      sheetBody.replaceChildren(mainContent);
+      const tabs = html.find('.window-content .tab')
+      mainContent.append(...tabs);
+    }
   }
 
   static _startCharacterBuilder(ev, target) {
@@ -899,21 +922,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };
 
-    const tabs = html.find('.window-content nav.right.tabs')
-    //move tabs to header
-
-    if (tabs.length > 0) {
-      const header = html.find('header');
-      const headerTabs = html.find('> nav.right.tabs');
-      if (headerTabs.length > 0) {
-        headerTabs.remove();
-      }
-      const dupped = tabs.clone();
-      header.before(dupped);
-      const buttons = dupped.find('button');
-      buttons.on('click', (ev) => this.verticalTabs(ev));
-      buttons.removeAttr('disabled');
-    }
+    html.find('.tabs button').prop('disabled', false);
 
     const autoSizings = html.find('.autosizing input')
     for (let el of autoSizings) {
@@ -924,6 +933,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       const input = ev.currentTarget;
       const chars = (input.value.length || input.placeholder.length) + 1;
       input.setAttribute('style', `width: ${chars}ch;`);
+    });
+
+    html.find('[data-action="editImage"]').on('mousedown', (ev) => {
+      if (ev.button == 2) DSA5_Utility.showArtwork(this.actor);
     });
 
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
@@ -1719,7 +1732,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _onDropItem(event, item) {
     const itemData = item.toObject();
-    console.log(event, event.dataTransfer.getData('text/plain'), itemData);
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 

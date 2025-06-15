@@ -2,10 +2,11 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export function initImagePopoutTochat() {
-  Hooks.on('getImagePopoutHeaderButtons', (app, buttons) => {
+  Hooks.on('getHeaderControlsImagePopout', (app, buttons) => {
     buttons.unshift({
-      class: 'posttochat',
-      icon: `fas fa-comment`,
+      action: 'posttochat',
+      icon: 'fas fa-comment',
+      label: 'SHEET.PostItem',
       onClick: async () => postImage(app),
     });
   });

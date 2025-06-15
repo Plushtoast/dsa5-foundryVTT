@@ -31,8 +31,13 @@
     }*/
 
   .vertical-tabs {
+    &.creature-sheet {
+      .tabs.right {
+        left: calc(100% - 10px);
+      }
+    }
     .tabs.right {
-      left: calc(100% - 23px);
+      //left: calc(100% - 23px);
 
       button {
         background: url('../../icons/backgrounds/macrobg.webp');
@@ -122,6 +127,10 @@
     //&.actor .window-content {
     //      box-shadow: 0 0 20px #000;
     // }
+
+    &.image-popout {
+      backdrop-filter: unset;
+    }
 
     .window-content,
     &.image-popout .window-content {
@@ -549,6 +558,10 @@
     padding: 1px;
     border: 2px solid rgb(0, 0, 0);
     border-radius: 5px;
+
+    h1 {
+      color: black;
+    }
   }
 
   #hotbar {
@@ -779,6 +792,7 @@
   #players {
     --color-text-emphatic: #d3cccc;
     --text-color: #bababa;
+    --player-name-color: #bababa;
 
     #players-inactive {
       margin-bottom: 24px;

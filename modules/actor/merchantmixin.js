@@ -38,7 +38,9 @@ export const MerchantSheetMixin = (superclass) =>
         template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
       },
       tabs: {
-        template: 'systems/dsa5/templates/system/dsatabs.hbs',
+        template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+        id: "tabs",
+        classes: ["tabs", "right"],
       },
       main: {
         template: 'systems/dsa5/templates/actors/actor-main.hbs',
@@ -85,7 +87,9 @@ export const MerchantSheetMixin = (superclass) =>
           template: 'systems/dsa5/templates/actors/merchant/merchant_limited_header.hbs',
         },
         tabs: {
-          template: 'systems/dsa5/templates/system/dsatabs.hbs',
+          template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+          id: "tabs",
+          classes: ["tabs", "right"],
         },
         inventory: {
           template: 'systems/dsa5/templates/actors/merchant/merchant-limited.hbs',
@@ -126,13 +130,10 @@ export const MerchantSheetMixin = (superclass) =>
       return super._configureRenderParts(options);
     }
 
-    _prepareTabs(group) {
-      const tabs = super._prepareTabs(group);
-      const merchantType = this.actor.system.merchant.merchantType || 'none';
-      if (tabs.inventory) tabs.inventory.label = DSA5.merchantTypes[merchantType];
-
+    cleanTabs(tabs) {
       if (this.merchantSheetActivated()) {
         let toKeep;
+        const merchantType = this.actor.system.merchant.merchantType || 'none';
         switch (merchantType) {
           case 'epic':
           case 'merchant':
@@ -152,14 +153,24 @@ export const MerchantSheetMixin = (superclass) =>
             }
             hasAnyActive = hasAnyActive || tabs[tab].active;
           }
-
           if (!hasAnyActive) {
             tabs.inventory.active = true;
             tabs.inventory.cssClass = 'active';
           }
         }
+      } else {
+        super.cleanTabs(tabs);
       }
+    }
 
+    _toggleDisabled(disabled) {
+      console.warn('Merchant sheet does not support disabled state');
+    }
+
+    _prepareTabs(group) {
+      const tabs = super._prepareTabs(group);
+      const merchantType = this.actor.system.merchant.merchantType || 'none';
+      if (tabs.inventory) tabs.inventory.label = DSA5.merchantTypes[merchantType];
       return tabs;
     }
 

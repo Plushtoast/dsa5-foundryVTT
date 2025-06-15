@@ -697,8 +697,10 @@
             "YearSuffix": "BF",
             "hourSuffix": "hour",
             "defaultName": "The Calendar of the Twelvegods",
-            "backward": "Right-<i class=\"fas fa-computer-mouse\"></i> 1 min<br/>Left-<i class=\"fas fa-computer-mouse\"></i> 1 h",
-            "forward": "Right-<i class=\"fas fa-computer-mouse\"></i> 1 min<br/>Left-<i class=\"fas fa-computer-mouse\"></i> 1 h",
+            "smallBackward": "Left-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+            "smallForward": "Left-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 6 h",
+            "backward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+            "forward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 6 h",
             "fastBackward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 day<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 week",
             "fastForward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 day<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 week",
             "ToteMada": "Dead and Reborn Mada",
@@ -1725,6 +1727,7 @@
         "requestToGm": "Request to confirm shapeshift sent to GM."
     },
     "DSAError": {
+        "invalidSkinCombination": "The current TDE version only supports the <b>DSA5 Immersive</b> skin in light mode. Use any other combination at your own risk (and report issues on Github). Do you want to set the default skin now?",
         "customEffect": "For manual effects only one token can be selected",
         "noTokenSelected": "No token selected",
         "elementNotFound": "The element \"{element}\" could not be found.",

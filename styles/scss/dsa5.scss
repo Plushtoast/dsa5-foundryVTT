@@ -1359,6 +1359,7 @@ a.img-entity-link {
   }
 }
 
+.width100,
 .openJournalBrowser,
 .dsalist li {
   width: 100%;
@@ -1995,22 +1996,45 @@ input[type='search'] {
 .vertical-tabs {
   overflow: unset;
 
-  .window-content .tabs.right {
-    display: none;
+  .sheet-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden auto;
+    scrollbar-gutter: stable;
+
+    .main-content {     
+      
+      padding: 0;
+      display: flex;
+      position: absolute;
+      width: 100%;
+      min-height: 100%;
+    }
+  }
+
+  .window-content {
+    overflow: visible;
+    flex-direction: column;
+    gap: 0;
+
   }
 
   .tabs.right {
+    contain: content;
     gap: 2px;
     flex-direction: column;
     position: absolute;
-    left: calc(100% - 2px);
+    left: calc(100% + 7px);
     top: 80px;
     z-index: -1;
     border: none;
 
     button {
-      width: 34px;
-      border-left: 6px transparent solid;
+      width: 38px;
+      font-size: large;
+      border-left: 8px transparent solid;
       background: var(--copiedBG);
       transition: background-color 0.2s ease-in-out;
 
@@ -3744,6 +3768,7 @@ select.noAppearance {
 
     .skillgm,
     .skill {
+      color: black;
       &.body {
         background: rgb(79, 109, 101);
         box-shadow: none;
@@ -5637,6 +5662,8 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 }
+
+
 
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('immersive.scss');

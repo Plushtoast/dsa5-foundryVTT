@@ -16,24 +16,24 @@
                     <label>{{localize "MERCHANT.Factor"}}</label>
                     <div class="form-fields">
                         <div class="row-section" data-tooltip="MERCHANT.sellingFactor">
-                            <label class="col ten"><i class="fas fa-piggy-bank"></i></span></label>
+                            <label class="col ten flexrow"><i class="fas fa-piggy-bank"></i></span></label>
                             {{formInput systemFields.merchant.fields.sellingFactor value=document.system.merchant.sellingFactor}}
                         </div>
                         <div class="row-section" data-tooltip="MERCHANT.buyingFactor">
-                            <label class="col ten"><i class="fas fa-coins"></i></label>
+                            <label class="col ten flexrow"><i class="fas fa-coins"></i></label>
                             {{formInput systemFields.merchant.fields.buyingFactor value=document.system.merchant.buyingFactor}}
                         </div>
                     </div>
                 </div>
                 {{#if isGM}}
                 <div class="row-section">
-                    <div class="col two form-group" data-tooltip="MERCHANT.hidePlayerHint">
+                    <div class="col two flexrow" data-tooltip="MERCHANT.hidePlayerHint">
                         <label class="col eighty center">{{localize 'MERCHANT.hidePlayer'}}</label>
-                        <div class="form-fields col ten">
+                        <div class="col ten">
                             {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
                         </div>
                     </div>
-                    <div class="col two form-group" data-tooltip="MERCHANT.hideMoneyHint">                        
+                    <div class="col two flexrow" data-tooltip="MERCHANT.hideMoneyHint">                        
                         <label class="col eighty center">{{localize 'MERCHANT.hideMoney'}}</label>
                         <div class="form-fields col ten">
                             {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
@@ -123,7 +123,7 @@
         </div>
         <div class="row-section wrap">
             {{#each players as |player i|}}
-            <div class="col morph row-section">
+            <div class="col morph row-section flexrow">
                 <div class="col seventy">
                     {{player.name}}
                 </div>
@@ -150,6 +150,11 @@
             </div>
 
             {{/each}}
+            {{#if (oddLength players)}}
+            <div class="col morph row-section">
+                
+            </div>
+            {{/if}}
         </div>
 
     </div>

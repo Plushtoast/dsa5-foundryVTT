@@ -87,7 +87,7 @@ async function checkBetaSettings() {
   if (!setDefaults) return;
 
   const proceed = await foundry.applications.api.DialogV2.confirm({
-    content: "<p>The current beta only supports the <b>DSA5 Immersive</b> skin in light mode. Do you want to set the default skin now?</p>",
+    content: `<p>${game.i18n.localize('DSAError.invalidSkinCombination')}</p>`,
     rejectClose: false,
     modal: true
   });

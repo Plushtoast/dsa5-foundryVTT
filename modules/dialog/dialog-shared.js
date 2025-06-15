@@ -113,7 +113,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     await super._onRender(context, options);
 
     const html = $(this.element);
-    
+
     await this.prepareFormRecall($(this.element));
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
     html.find('.modifiers option').on('mousedown', (ev) => {

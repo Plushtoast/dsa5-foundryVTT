@@ -178,6 +178,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
       forward: { handler: this.forward, buttons: [0, 2] },
       fastBackward: { handler: this.fastBackward, buttons: [0, 2] },
       fastForward: { handler: this.fastForward, buttons: [0, 2] },
+      smallBackward: { handler: this.smallBackward, buttons: [0, 2] },
+      smallForward: { handler: this.smallForward, buttons: [0, 2] },
     },
   };
 
@@ -203,16 +205,28 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
   static editCalendar(ev, target) {
     new DSACalendarPicker().render(true);
   }
+  
+  static smallBackward(ev, target) {
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const seconds = ev.button != 2 ? -1800 : -60;
+    game.time.advance(seconds + components.second);
+  }
+
+  static smallForward(ev, target) {
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const seconds = ev.button != 2 ? 1800 : 60;;
+    game.time.advance(seconds - components.second);
+  }
 
   static backward(ev, target) {
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
-    const seconds = ev.button != 2 ? -3600 : -60;
+    const seconds = ev.button != 2 ? -3600 : -6 * 3600;
     game.time.advance(seconds + components.second);
   }
 
   static forward(ev, target) {
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
-    const seconds = ev.button != 2 ? 3600 : 60;
+    const seconds = ev.button != 2 ? 3600 : 6 * 3600;;
     game.time.advance(seconds - components.second);
   }
 
