@@ -17,7 +17,7 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" data-tooltip="KTW">
+                <div class="col fifteen center" data-tooltip="KTW">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
@@ -37,7 +37,7 @@
                     {{{localize "guidevalue_small"}}}
                 </div>
 
-                <div class="col eight center" data-tooltip="KTW">
+                <div class="col fifteen center" data-tooltip="KTW">
                     {{localize "CHARAbbrev.KTW"}}
                 </div>
                 <div class="col eight center">
@@ -52,16 +52,20 @@
         <div class="actor-combat-skill-item col morph">
             <div class="row-section col item skills lineheight" data-item-id="{{item._id}}">
                 <div class="col fourty">
-                    <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
-                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a>{{/if}}
+                    <a data-action="itemEdit">{{item.name}}</a>
                 </div>
                 <div class="col five center">
                     {{localize (concatUp "CHARAbbrev." item.system.guidevalue.value)}}
                 </div>
 
-                <div class="col eight center">
+                <div class="col fifteen center flexrow advanceOntop">
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
+                    {{/if}}
                 </div>
                 <div class="col eight center item" data-item-id="{{item._id}}" data-mod="attack">
                     <a data-mode="attack" data-action="chRollCombat" class="d20 diet-mu">{{item.system.attack.value}}</a>

@@ -39,7 +39,7 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs']
+      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',

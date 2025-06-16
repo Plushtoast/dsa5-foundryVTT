@@ -219,6 +219,7 @@
     "dsamenu": "DSA Menü",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Gewicht</b></div>Traglast: {carrycapacity}<br>Aktuell: {totalWeight}<br/>Belastung: {encumbrance}{moneyWeight}",
     "application": "Anwendungsgebiet",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
     "rebuyCost": "Zurückkaufen für 2 AP",

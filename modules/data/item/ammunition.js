@@ -33,6 +33,7 @@ export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTempl
 
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
+    item.system.preparedWeight = this.parent.system.preparedWeight;
     this.constructor._prepareItemStructure(item);
     AmmunitionData.prepareMag(item);
     return item;

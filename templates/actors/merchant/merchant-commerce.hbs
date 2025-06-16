@@ -1,83 +1,78 @@
 <div class='tab scrollable {{tabs.inventory.cssClass}}' data-tab='inventory' data-group='{{tabs.inventory.group}}'>
-    <div class="row-section wrap reverseFlex">
-        <div class="col morph">
-            <fieldset>
-                <legend>{{localize 'SHEET.actorConfig'}}</legend>
-                
-                {{formGroup systemFields.merchant.fields.merchantType value=document.system.merchant.merchantType localize=true}}
+        
+    <fieldset>
+        <legend>{{localize 'SHEET.actorConfig'}}</legend>
+        
+        {{formGroup systemFields.merchant.fields.merchantType value=document.system.merchant.merchantType localize=true}}
 
-                {{#if (eq document.system.merchant.merchantType "epic")}}
-                
-                {{formGroup systemFields.merchant.fields.garadan value=document.system.merchant.garadan localize=true}}
+        {{#if (eq document.system.merchant.merchantType "epic")}}
+        
+        {{formGroup systemFields.merchant.fields.garadan value=document.system.merchant.garadan localize=true}}
 
-                {{/if}} 
-                {{#if (eq document.system.merchant.merchantType "merchant")}}
-                <div class="form-group">
-                    <label>{{localize "MERCHANT.Factor"}}</label>
-                    <div class="form-fields">
-                        <div class="row-section" data-tooltip="MERCHANT.sellingFactor">
-                            <label class="col ten flexrow"><i class="fas fa-piggy-bank"></i></span></label>
-                            {{formInput systemFields.merchant.fields.sellingFactor value=document.system.merchant.sellingFactor}}
-                        </div>
-                        <div class="row-section" data-tooltip="MERCHANT.buyingFactor">
-                            <label class="col ten flexrow"><i class="fas fa-coins"></i></label>
-                            {{formInput systemFields.merchant.fields.buyingFactor value=document.system.merchant.buyingFactor}}
-                        </div>
+        {{/if}} 
+        {{#if (eq document.system.merchant.merchantType "merchant")}}
+        <div class="form-group">
+            <label>{{localize "MERCHANT.Factor"}}</label>
+            <div class="form-fields">
+                <div class="row-section" data-tooltip="MERCHANT.sellingFactor">
+                    <label class="col ten flexrow"><i class="fas fa-piggy-bank"></i></span></label>
+                    {{formInput systemFields.merchant.fields.sellingFactor value=document.system.merchant.sellingFactor}}
+                </div>
+                <div class="row-section" data-tooltip="MERCHANT.buyingFactor">
+                    <label class="col ten flexrow"><i class="fas fa-coins"></i></label>
+                    {{formInput systemFields.merchant.fields.buyingFactor value=document.system.merchant.buyingFactor}}
+                </div>
+            </div>
+        </div>
+        {{#if isGM}}
+        <div class="row-section">
+            <div class="col two flexrow" data-tooltip="MERCHANT.hidePlayerHint">
+                <label class="col eighty center">{{localize 'MERCHANT.hidePlayer'}}</label>
+                <div class="col ten">
+                    {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
+                </div>
+            </div>
+            <div class="col two flexrow" data-tooltip="MERCHANT.hideMoneyHint">                        
+                <label class="col eighty center">{{localize 'MERCHANT.hideMoney'}}</label>
+                <div class="form-fields col ten">
+                    {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
+                </div>
+            </div>
+        </div>
+        {{/if}} {{/if}} 
+        {{#if (eq document.system.merchant.merchantType "loot")}} 
+            {{#if isGM}}
+            <div class="row-section">
+                <div class="col two form-group" data-tooltip="MERCHANT.hidePlayerHint">
+                    <label class="col eighty center">{{localize 'MERCHANT.hidePlayer'}}</label>
+                    <div class="form-fields col ten">
+                        {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
                     </div>
                 </div>
-                {{#if isGM}}
-                <div class="row-section">
-                    <div class="col two flexrow" data-tooltip="MERCHANT.hidePlayerHint">
-                        <label class="col eighty center">{{localize 'MERCHANT.hidePlayer'}}</label>
-                        <div class="col ten">
-                            {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
-                        </div>
-                    </div>
-                    <div class="col two flexrow" data-tooltip="MERCHANT.hideMoneyHint">                        
-                        <label class="col eighty center">{{localize 'MERCHANT.hideMoney'}}</label>
-                        <div class="form-fields col ten">
-                            {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
-                        </div>
+                <div class="col two form-group">
+                    <label class="col eighty center">{{localize 'MERCHANT.locked'}}</label>
+                    <div class="form-fields col ten">
+                        {{formInput systemFields.merchant.fields.locked value=document.system.merchant.locked}}
                     </div>
                 </div>
-                {{/if}} {{/if}} 
-                {{#if (eq document.system.merchant.merchantType "loot")}} 
-                    {{#if isGM}}
-                    <div class="row-section">
-                        <div class="col two form-group" data-tooltip="MERCHANT.hidePlayerHint">
-                            <label class="col eighty center">{{localize 'MERCHANT.hidePlayer'}}</label>
-                            <div class="form-fields col ten">
-                                {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
-                            </div>
-                        </div>
-                        <div class="col two form-group">
-                            <label class="col eighty center">{{localize 'MERCHANT.locked'}}</label>
-                            <div class="form-fields col ten">
-                                {{formInput systemFields.merchant.fields.locked value=document.system.merchant.locked}}
-                            </div>
-                        </div>
+            </div>
+            <div class="row-section">
+                <div class="col two form-group" data-tooltip="MERCHANT.emptyDestroyHint">
+                    <label class="col eighty center">{{localize 'MERCHANT.emptyDestroy'}}</label>
+                    <div class="form-fields col ten">
+                        {{formInput systemFields.merchant.fields.temporary value=document.system.merchant.temporary}}
                     </div>
-                    <div class="row-section">
-                        <div class="col two form-group" data-tooltip="MERCHANT.emptyDestroyHint">
-                            <label class="col eighty center">{{localize 'MERCHANT.emptyDestroy'}}</label>
-                            <div class="form-fields col ten">
-                                {{formInput systemFields.merchant.fields.temporary value=document.system.merchant.temporary}}
-                            </div>
-                        </div>
-                        <div class="col two">
+                </div>
+                <div class="col two">
 
-                        </div>
-                    </div>
-                    {{/if}} 
-                {{/if}}
-            </fieldset>
-        </div>
-        <div class="col morph">
-            {{> systems/dsa5/templates/actors/parts/purse.hbs}}
-        </div>
-    </div>
+                </div>
+            </div>
+            {{/if}} 
+        {{/if}}
+    </fieldset>
 
-    {{#if (ne document.system.merchant.merchantType "none")}} {{#if isGM}}
+    {{#if (ne document.system.merchant.merchantType "none")}} 
+    {{#if isGM}}
     <div class="row-section">
         <button type="button" data-action="randomGoods" class="sheetButton">{{localize "MERCHANT.randomGoods"}}</button>
         <button type="button" data-action="clearInventory" class="sheetButton">{{localize "MERCHANT.clearInventory"}}</button>
@@ -158,7 +153,9 @@
         </div>
 
     </div>
-    {{/if}} {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}} {{#each prepare.inventory as |section sid|}} {{#if
+    {{/if}} 
+    {{> systems/dsa5/templates/actors/parts/gearSearchV2.hbs}} 
+    {{#each prepare.inventory as |section sid|}} {{#if
     section.show}}
     <div class="groupbox">
         <div class="row-section table-title">

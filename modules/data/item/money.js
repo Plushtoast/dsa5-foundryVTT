@@ -10,4 +10,10 @@ export default class MoneyData extends ItemDataModel.mixin(DescriptionTemplate, 
             subcategory: new DSANumberField({ initial: 0, required: true, label: 'COMBATSKILLCATEGORY.subcategory', choices: DSA5.moneyTypes }),
         });
     }
+
+    prepareEmbeddedItemSheet() {
+        const item = super.prepareEmbeddedItemSheet();
+        item.system.preparedWeight = this.parent.system.preparedWeight;
+        return item;
+    }
 }

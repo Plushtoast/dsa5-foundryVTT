@@ -69,7 +69,7 @@ export const MerchantSheetMixin = (superclass) =>
       inventory: {
         template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
+        templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs'],
       },
       status: {
         template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
@@ -107,7 +107,9 @@ export const MerchantSheetMixin = (superclass) =>
       },
       epic: {
         tabs: {
-          template: 'systems/dsa5/templates/system/dsatabs.hbs',
+          template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+          id: "tabs",
+          classes: ["tabs", "right"],
         },
         inventory: {
           template: 'systems/dsa5/templates/actors/merchant/merchant-epic.hbs',

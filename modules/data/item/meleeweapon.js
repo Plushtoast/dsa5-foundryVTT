@@ -121,6 +121,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     item.toggleValue = item.system.worn.value || false;
     item.toggle = true;
     this.constructor._prepareItemStructure(item);
+    item.system.preparedWeight = this.parent.system.preparedWeight;
     this._setOnUseEffect(item);
     return item;
   }

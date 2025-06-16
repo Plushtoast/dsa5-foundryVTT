@@ -431,6 +431,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   async _renderHeadings(toc, shiftFirst = false) {
     let headings = Object.values(toc);
+
     if (shiftFirst) headings.shift();
 
     headings.sort((a, b) => a.order - b.order);
@@ -452,21 +453,22 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       const sheet = journal.sheet.getPageSheet(page.id);
       let view
       let pageContent
+      const pageName = page.name.replace(/ Text$/gi, '');
+      const equalName = journal.name == pageName;
+
       if (sheet.isV2) {
         const oldShow = sheet.page?.title?.show;
-        if (oldShow != undefined) sheet.page.title.show = true;
+        if (oldShow != undefined) sheet.page.title.show = !equalName;
         await sheet.render(true);
         view = sheet.element
         pageContent = view
+
         if (oldShow != undefined) sheet.page.title.show = oldShow;
       } else {
         const data = await sheet.getData();
         view = (await sheet._renderInner(data)).get();
         pageContent = view[view.length - 1];
       }
-
-      const pageName = page.name.replace(/ Text$/gi, '');
-      const equalName = journal.name == pageName;
 
       const pageToc = JournalEntryPage.implementation.buildTOC(view);
       pageTocs.push(await this._renderHeadings(pageToc, equalName));

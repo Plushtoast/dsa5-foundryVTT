@@ -280,6 +280,23 @@ table.infoTable {
     text-align: center;
   }
 
+  .advanceOntop {
+
+    a {
+      margin-right: 1px;
+
+      &:nth-of-type(2) {
+        margin-right: 0;
+        margin-left: 1px;
+      }
+    }
+  }
+
+  .tab {
+    width: 100%;
+    --scroll-margin: 0;
+  }
+
   legend input {
     background: transparent;
     line-height: unset;
@@ -379,6 +396,10 @@ table.infoTable {
   gap: 10px;
 }
 
+.gap2px {
+  gap: 2px;
+}
+
 .gap0px {
   gap: 0px;
 }
@@ -404,15 +425,28 @@ table.infoTable {
   flex: 3;
 }
 
-.actor-purse-content i {
-  display: inline-block;
-  position: absolute;
-  inset: -2px auto auto 4px;
-  top: 25%;
-  filter: drop-shadow(0 0 1px black);
-  width: 1em;
-  height: 1em;
-  background: transparent no-repeat center / contain;
+.actor-purse-content {
+  gap: 2px;
+
+  .item {
+    flex: 0 0 50px;
+
+    input {
+      text-align: end;
+    }
+  }
+
+  i {
+    display: inline-block;
+    position: absolute;
+    inset: -2px auto auto -3px;
+    top: 25%;
+    cursor: var(--cursor-pointer);
+    filter: drop-shadow(0 0 1px black);
+    width: 1em;
+    height: 1em;
+    background: transparent no-repeat center / contain;
+  }
 }
 
 .dsalocked {
@@ -1747,7 +1781,7 @@ a.img-entity-link {
   font-weight: normal;
   color: var(--color-text-secondary);
 
-  input {
+  input[type="search"] {
     display: inline-block;
     width: calc(100% - 20px);
   }
@@ -3201,6 +3235,7 @@ select.noAppearance {
   .tocList {
     list-style-type: none;
     padding-left: 4px;
+    --scroll-margin: 0;
 
     ul {
       list-style-type: none;
@@ -3316,7 +3351,8 @@ select.noAppearance {
   }
 
   .chapter {
-    padding: 8px;
+    padding: 10px;
+    margin-right: 8px;
 
     * {
       user-select: text;
@@ -3384,6 +3420,7 @@ select.noAppearance {
 .journalHeader .jrnIcons {
   color: rgb(92, 92, 92);
   float: right;
+  font-size: large;
 
   a {
     display: inline-block;
@@ -4722,7 +4759,7 @@ input[type='checkbox'].autoCheckbox {
 .didYouKnow,
 .tinyNotifications li {
   background-color: rgba(0, 0, 0, 0.548);
-  color: white;
+  --color-text-primary: #fff;
   border-radius: 10px;
   padding: 10px;
 }
@@ -5538,7 +5575,7 @@ input[type='checkbox'].autoCheckbox {
         cursor: var(--cursor-grab);
 
         &:after {
-          position:absolute;
+          position: absolute;
           content: '';
           inset: 0;
           background: rgb(202, 6, 6);

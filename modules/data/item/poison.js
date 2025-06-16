@@ -46,4 +46,10 @@ export default class PoisonData extends ItemDataModel.mixin(DescriptionTemplate,
       { key: 'effect', val: DSA5_Utility.replaceConditions(DSA5_Utility.replaceDies(data.effect.value)) },
     ];
   }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();   
+    item.system.preparedWeight = this.parent.system.preparedWeight;
+    return item;
+  }
 }

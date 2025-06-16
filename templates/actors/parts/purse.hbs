@@ -1,20 +1,8 @@
-<fieldset class='actor-purse gap0px'>
-  <legend>{{localize 'purse'}} {{#if prepare.moneyWeight}}<small>{{numberFormat prepare.moneyWeight decimals=2}} <i class='fas fa-anchor'></i></small>{{/if}}</legend>
-  {{#grouped_each 4 prepare.money.coins}}
-    <div class='row-section table-title'>
-      {{#each this}}
-        <div class='col four center item lineheight' data-item-id='{{_id}}'>
-          <a data-action='itemEdit' class='withContext'>{{localize name}}</a>
-        </div>
-      {{/each}}
+<div class="flexrow actor-purse-content wrap flexAlignCenter">
+  {{#each prepare.money.coins}}
+    <div class='number-input item position-relative' data-item-id='{{_id}}' data-tooltip="{{localize name}}">
+      <i class="withContext" data-action='itemEdit' style="background-image: url('{{img}}')"></i>
+      <input class='withContext money-change' type='number' value='{{system.quantity.value}}' />
     </div>
-    <div class='actor-purse-content row-section'>
-      {{#each this}}
-        <div class='number-input col four center item position-relative' data-item-id='{{_id}}'>
-          <i class="" style="background-image: url('{{img}}')"></i>
-          <input class='col-{{name}} money-change' type='number' value='{{system.quantity.value}}' />
-        </div>
-      {{/each}}
-    </div>
-  {{/grouped_each}}
-</fieldset>
+  {{/each}}
+</div>

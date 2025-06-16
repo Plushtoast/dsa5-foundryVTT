@@ -638,6 +638,7 @@
     "weaponModifier": "Weapon Modifier",
     "worn": "Worn",
     "wearable": "Wearable",
+    "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Weight</b></div>Carrying capacity: {carrycapacity}<br>Current: {totalWeight}<br/>Encumbrance: {encumbrance}{moneyWeight}",
     "volume": "Volume",
     "writing": "Writing",
     "yes": "Yes",
@@ -749,8 +750,11 @@
                 "sunset": "Sunset",
                 "night": "Night",
                 "label": "Daytimes",
+                "moonLight": "Moonlight",
                 "lightByDayTime": "Light by daytime",
-                "moonAddsLight": "Moonlight adds to darkness"
+                "lightByDayTimeHint": "The darkness value is automatically adjusted based on the time of day. The time of day is considered if light by daytime is activated.",
+                "moonAddsLight": "Moonlight adds to darkness",
+                "moonAddsLightHint": "Moonlight adds to darkness. The brightness of the moon is considered if light by daytime is activated."
             }
         }
     },

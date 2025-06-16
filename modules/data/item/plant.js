@@ -63,4 +63,10 @@ export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, 
       { key: 'PLANT.usages', val: data.usages },
     ];
   }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();   
+    item.system.preparedWeight = this.parent.system.preparedWeight;
+    return item;
+  }
 }

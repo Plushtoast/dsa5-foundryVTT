@@ -42,7 +42,7 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     inventory: {
       template: 'systems/dsa5/templates/actors/actor-equipment.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
+      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs'],
     },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',

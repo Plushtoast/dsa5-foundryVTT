@@ -1,34 +1,16 @@
-<div class="actor-carry-box row-section wrap">
+<div class="actor-carry-box flexrow wrap gap5px">
     {{#if prepare.canAdvance}}
-    <div class="col morph">
-        <fieldset class="gap0px">
-            <legend>{{localize "carrycapacity"}}</legend>
-            <div class="row-section table-title lineheight">
-                <div class="col three center">
-                    {{localize "carrycapacity"}}
-                </div>
-                <div class="col three center">
-                    {{localize "Current"}}
-                </div>
-                <div class="col three center">
-                    {{localize "encumbrance"}}
-                </div>
-            </div>
-            <div class="actor-carry row-section">
-                <div class="col three center lineheight">
-                    {{prepare.carrycapacity}}
-                </div>
-                <div class="col three center lineheight">
-                    {{prepare.totalWeight}}
-                </div>
-                <div class="col three center lineheight">
-                    {{prepare.encumbrance}}
-                </div>
-            </div>
-        </fieldset>
+    <div class="flex0 flexrow">
+        <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
+            <span><i class="fas fa-weight-hanging"></i></span>
+            <span>{{prepare.totalWeight}}</span>
+            <span>/</span>
+            <b>{{prepare.carrycapacity}}</b>
+            <span>({{prepare.encumbrance}})</span>
+        </div>        
     </div>
     {{/if}}
-    <div class="col morph">
+    <div>
         {{> systems/dsa5/templates/actors/parts/purse.hbs}}
     </div>
 </div>

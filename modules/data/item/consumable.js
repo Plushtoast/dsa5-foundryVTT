@@ -43,9 +43,13 @@ export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, Obf
 
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
+    item.system.preparedWeight = this.parent.system.preparedWeight;
     this.constructor._prepareConsumable(item);
     return item;
   }
+
+    
+    
 
   static _prepareConsumable(item) {
     if (item.system.maxCharges) {

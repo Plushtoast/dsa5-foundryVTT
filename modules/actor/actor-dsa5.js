@@ -813,8 +813,15 @@ export default class Actordsa5 extends Actor {
     const wrestle = game.i18n.localize('LocalizedIDs.wrestle');
     const brawling = combatskills.find(x => x.name === wrestle);
 
+    //todo check if these still need to be returned
+    const totalWeight = parseFloat(this.system.totalWeight?.toFixed(3))
+    const carrycapacity = this.system.carrycapacity;
+    const encumbrance = this.system.condition?.encumbered || 0;
+    let moneyWeight = this.system.moneyWeight || 0;
+    moneyWeight = moneyWeight > 0 ? `<br>${game.i18n.localize('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
+
     return {
-      totalWeight: parseFloat(this.system.totalWeight?.toFixed(3)),
+      totalWeight,
       traditionArtifacts,
       armorSum: totalArmor,
       sortedSpecs: DSA5.sortedSpecs,
@@ -825,13 +832,18 @@ export default class Actordsa5 extends Actor {
         attack: brawling?.system.attack.value || 0,
         parry: brawling?.system.parry.value || 0,
       },
-      encumbrance: this.system.condition?.encumbered || 0,
-      carrycapacity: this.system.carrycapacity,
+      encumbrance,
+      carrycapacity,
+      encumbranceTooltip: game.i18n.format('encumbranceTooltip', { 
+        totalWeight, 
+        carrycapacity, 
+        encumbrance, 
+        moneyWeight 
+      }),
       isSwarm: this.isSwarm(),
       canSwarm: !this.prototypeToken.actorLink,
       wornRangedWeapons: rangeweapons,
       wornMeleeWeapons: meleeweapons,
-      moneyWeight: this.system.moneyWeight,
       horseActor: horse,
       advantages,
       hasAnyItem,

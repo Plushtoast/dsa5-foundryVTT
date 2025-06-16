@@ -6,8 +6,8 @@
                     {{localize "spells"}}
                 </div>
                 <div class="col zerofive"></div>
-                <div class="title-test col five center">{{localize "probe"}}</div>
-                <div class="title-fw col zerofive center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="title-test col fifteen center">{{localize "probe"}}</div>
+                <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
                     <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
@@ -26,19 +26,23 @@
                     {{#if item.extensions}}<i class="overlayicon fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
                 <div class="actor-spell-name col four withContext">
-                    <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i class="fas fa-minus"></i></a>
-                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i class="fas fa-plus"></i></a>{{/if}}
+                    <a data-action="itemEdit">{{item.name}}</a>
                 </div>
-                <div class="actor-spell-test col five center">
+                <div class="actor-spell-test col fifteen center">
                     <a data-action="skillSelect">
                         <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
-                <div class="actor-spell-fw col zerofive center">
+                <div class="actor-spell-fw col ten center flexrow advanceOntop">
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
+                    {{/if}}
                 </div>
                 <div class="actor-spell-cost col ten center">
                     {{item.system.AsPCost.value}}
@@ -88,8 +92,8 @@
                     {{localize "rituals"}}
                 </div>
                 <div class="col zerofive"></div>
-                <div class="title-test col five center">{{localize "probe"}}</div>
-                <div class="title-fw col zerofive center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="title-test col fifteen center">{{localize "probe"}}</div>
+                <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
                 <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
                 <div class="col ten center">
                     <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
@@ -108,19 +112,23 @@
                     {{#if item.extensions}}<i class="overlayicon fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
                 <div class="actor-spell-name col four withContext">
-                    <a data-action="itemEdit">{{item.name}}</a> {{#if ../prepare.canAdvance}}
-                    <a class="advance" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"><i data-tooltip="{{item.refund}}" class="fas fa-minus"></i></a>
-                    <a class="advance" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"><i data-tooltip="{{item.cost}}" class="fas fa-plus"></i></a>{{/if}}
+                    <a data-action="itemEdit">{{item.name}}</a>
                 </div>
-                <div class="actor-spell-test col five center">
+                <div class="actor-spell-test col fifteen center">
                     <a data-action="skillSelect">
                         <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
                         <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
                     </a>
                 </div>
-                <div class="actor-spell-fw col zerofive center">
+                <div class="actor-spell-fw col ten center flexrow advanceOntop">
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
                     <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../prepare.canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
+                    {{/if}}
                 </div>
                 <div class="actor-spell-cost col ten center">
                     {{item.system.AsPCost.value}}

@@ -38,10 +38,12 @@ export default class EquipmentData extends ItemDataModel.mixin(DescriptionTempla
     const item = super.prepareEmbeddedItemSheet();
     item.toggle = item.system.worn.wearable || false;
     if (item.toggle) item.toggleValue = item.system.worn.value || false;
+    item.system.preparedWeight = this.parent.system.preparedWeight;
     this.constructor._prepareItemStructure(item);
     this._setOnUseEffect(item);
     return item
   }
+
 
   get isBagWithContents() {
     return this.actor && this.equipmentType.value == 'bags';
