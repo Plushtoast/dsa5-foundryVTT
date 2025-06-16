@@ -1609,14 +1609,6 @@ a.img-entity-link {
   }
 }
 
-#combat li.combatant.active {
-  background: var(--oddColor);
-}
-
-li.folder {
-  margin-left: 8px;
-}
-
 .chatModifiers .expand-mods {
   float: right;
   font-size: 10px;
@@ -2004,8 +1996,8 @@ input[type='search'] {
     overflow: hidden auto;
     scrollbar-gutter: stable;
 
-    .main-content {     
-      
+    .main-content {
+
       padding: 0;
       display: flex;
       position: absolute;
@@ -3769,6 +3761,7 @@ select.noAppearance {
     .skillgm,
     .skill {
       color: black;
+
       &.body {
         background: rgb(79, 109, 101);
         box-shadow: none;
@@ -5528,18 +5521,30 @@ input[type='checkbox'].autoCheckbox {
 
     .dayProgress {
       position: relative;
+      box-sizing: border-box;
+      --control-size: 24px;
+      --button-size: 24px;
+      font-size: 16px;
+      padding: 2px;
+      border-radius: 5px;
+      cursor: var(--cursor-pointer);
 
-      &:after {
-        content: '';
+      .slideIndicator {
         position: absolute;
         top: 0;
-        left: 0;
-        width: 4px;
+        width: 12px;
         bottom: 0;
-        background: goldenrod;
-        clip-path: polygon(0% 0%, 100% 0%, 60% 50%, 100% 100%, 0% 100%, 40% 50%);
-        left: var(--p);
-        opacity: 0.75;
+        left: calc(var(--p, 0) - 6px);
+        cursor: var(--cursor-grab);
+
+        &:after {
+          position:absolute;
+          content: '';
+          inset: 0;
+          background: rgb(202, 6, 6);
+          clip-path: polygon(0% 0%, 100% 0%, 50% 20%, 50% 80%, 100% 100%, 0% 100%, 50% 80%, 50% 20%);
+        }
+
       }
     }
 

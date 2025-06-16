@@ -1,3 +1,4 @@
+import { tabSlider } from '../view_helper.js';
 import { DSAKalender } from './default.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
@@ -21,14 +22,30 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     CONFIG.time.turnTime = 0;
   }
 
+  static async autoDayLight() {
+    const selectedCalendar = DSAWorldCalendar.selectedCalendar();
+    if(!selectedCalendar) return;
+
+    const settings = game.settings.get('dsa5', 'calendarSettings');
+    if(!settings.lightByDayTime) return;
+
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const currentGradient = CalendarWidget.dayTimeBackground(components);
+
+    let lightLevel = settings.dayDarknessAdjust[currentGradient.key] || 0;
+
+    if(settings.moonAddsLight && currentGradient.key == 'night') {
+      lightLevel -= settings.moon.darknessAdjust * components.moon.phase.lightAdjust;
+    }
+
+    if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Math.clamp(lightLevel, 0, 1) }, { animateDarkness: 1000 });
+  }
+
   static collectCalendars() {
     const transformed = {};
-    console.warn(transformed, DSAWorldCalendar.availableCalendars);
     for (const calendar of DSAWorldCalendar.availableCalendars) {
       transformed[calendar.key] = game.i18n.localize(calendar.name);
     }
-
-    console.warn(transformed, DSAWorldCalendar.availableCalendars);
     return transformed;
   }
 
@@ -46,7 +63,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       translationPrefix: new fields.StringField({ required: true, initial: '' }),
       moon: new fields.SchemaField(
         {
-          cycle: new fields.NumberField({ required: true, initial: 28 }),
+          cycle: new fields.NumberField({ required: true, initial: 28 }),          
           anchor: new fields.SchemaField({
             year: new fields.NumberField({ required: true, initial: 1040 }),
             month: new fields.NumberField({ required: true, initial: 3 }),
@@ -56,6 +73,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
             new fields.SchemaField({
               name: new fields.StringField({ required: true, blank: false }),
               dayStart: new fields.NumberField({ required: true, initial: 0 }),
+              lightAdjust: new fields.NumberField({ required: true, initial: 0.1 }),
             }),
           ),
         },
@@ -72,7 +90,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const mm = game.i18n.localize(`${translationPrefix}.${month.name}`);
     const dd = components.dayOfMonth + 1;
     let h = components.hour;
-    
+
     if (h > 11) h -= 12;
 
     const hourIndex = h > 5 ? h + 1 : h;
@@ -156,13 +174,13 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
 export class CalendarWidget extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static timeGradients = [
-    { from: 0, to: 4, gradient: 'linear-gradient(to top, #0d1b2a, #1b263b)', textColor: '#e0e6ed' }, // Night - light text
-    { from: 5, to: 6, gradient: 'linear-gradient(to top, #2c3e50, #f39c12)', textColor: '#fffbe6' }, // Dawn - light text
-    { from: 7, to: 10, gradient: 'linear-gradient(to top, #87ceeb, #f1f2b5)', textColor: '#1a1a1a' }, // Morning - dark text
-    { from: 11, to: 15, gradient: 'linear-gradient(to top, #87cefa, #ffffff)', textColor: '#111111' }, // Midday - dark text
-    { from: 16, to: 18, gradient: 'linear-gradient(to top, #f1f2b5, #ff9966)', textColor: '#222' }, // Afternoon - dark text
-    { from: 19, to: 20, gradient: 'linear-gradient(to top, #654ea3, #eaafc8)', textColor: '#fefefe' }, // Sunset - light text
-    { from: 21, to: 23, gradient: 'linear-gradient(to top, #0f2027, #2c5364)', textColor: '#f0f8ff' }  // Night again - light text
+    { from: 'dayStart', to: 'dawn', gradient: 'linear-gradient(to top, #0d1b2a, #1b263b)', textColor: '#e0e6ed', key: 'night' }, // Night - light text
+    { from: 'dawn', to: 'morning', gradient: 'linear-gradient(to top, #2c3e50, #f39c12)', textColor: '#fffbe6', key: 'dawn' }, // Dawn - light text
+    { from: 'morning', to: 'noon', gradient: 'linear-gradient(to top, #87ceeb, #f1f2b5)', textColor: '#1a1a1a', key: 'morning' }, // Morning - dark text
+    { from: 'noon', to: 'afternoon', gradient: 'linear-gradient(to top, #87cefa, #ffffff)', textColor: '#111111', key: 'noon' }, // Midday - dark text
+    { from: 'afternoon', to: 'sunset', gradient: 'linear-gradient(to top, #f1f2b5, #ff9966)', textColor: '#222', key: 'afternoon' }, // Afternoon - dark text
+    { from: 'sunset', to: 'night', gradient: 'linear-gradient(to top, #654ea3, #eaafc8)', textColor: '#fefefe', key: 'sunset' }, // Sunset - light text
+    { from: 'night', to: 'dayEnd', gradient: 'linear-gradient(to top, #0f2027, #2c5364)', textColor: '#f0f8ff', key: 'night' }  // Night again - light text
   ];
 
   static DEFAULT_OPTIONS = {
@@ -190,6 +208,21 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     },
   };
 
+  static dayTimeBackground(components) {
+    const maxHoursPerDay = game.time.calendar.days.hoursPerDay;
+    const calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+    const timeGradientsConfig = foundry.utils.mergeObject({
+      'dayStart': 0,
+      'dayEnd': maxHoursPerDay,
+    }, calendarConfig)
+
+    return CalendarWidget.timeGradients.find(g => {
+      const from = timeGradientsConfig[g.from] || 0;
+      const to = timeGradientsConfig[g.to] || maxHoursPerDay;
+      return components.hour >= from && components.hour < to
+    }) || CalendarWidget.timeGradients[0];
+  }
+
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
@@ -197,15 +230,20 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     data.dateString = game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
     data.dateTooltip = game.time.calendar.format(game.time.worldTime, 'formatSeason');
     data.isGM = game.user.isGM;
-    data.dayTimeBackground = CalendarWidget.timeGradients.find(g => components.hour >= g.from && components.hour <= g.to);
+    data.dayTimeBackground = this.constructor.dayTimeBackground(components);
     data.dayProgress = Math.round((components.hour * 3600 + components.minute * 60 + components.second) / (24 * 3600) * 100);
     return data;
   }
 
   static editCalendar(ev, target) {
+    if (this.wasDragging) {
+      this.wasDragging = false;
+      return;
+    }
+
     new DSACalendarPicker().render(true);
   }
-  
+
   static smallBackward(ev, target) {
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
     const seconds = ev.button != 2 ? -1800 : -60;
@@ -241,25 +279,112 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     const seconds = ev.button != 2 ? 3600 * 24 : 3600 * 24 * 7;
     game.time.advance(seconds - components.second - components.minute * 60);
   }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    if (!game.user.isGM) return;
+
+    const indicator = this.element.querySelector('.slideIndicator');
+    const container = this.element.querySelector('.dayProgress');
+
+    indicator.addEventListener('mousedown', (e) => {
+      this.isDragging = true;
+      this.wasDragging = false;
+      this.offsetX = e.clientX - indicator.offsetLeft;
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    this.element.addEventListener('mousemove', (e) => {
+      if (!this.isDragging) return;
+
+      this.wasDragging = true;
+      let newLeft = e.clientX - this.offsetX;
+      const containerRect = container.getBoundingClientRect();
+      const maxLeft = containerRect.width - indicator.offsetWidth;
+
+      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+      const percentage = newLeft / maxLeft * 100.0;
+      indicator.style.setProperty('--p', `${percentage}%`);
+      this.currentPercentage = percentage;
+
+      const secondsInDay = 24 * 3600 * this.currentPercentage / 100.0;
+      const hour = Math.floor(secondsInDay / 3600) || 0;
+      const minute = Math.floor((secondsInDay % 3600) / 60) || 0;
+      const second = Math.floor(secondsInDay % 60) || 0;
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+      const dayTimeBackground = this.constructor.dayTimeBackground({ hour, minute, second });
+      container.style.width = containerRect.width + 'px';
+      container.style.background = dayTimeBackground.gradient;
+      container.style.color = dayTimeBackground.textColor;      
+      container.querySelector('.timeIndicator').textContent = timeString;
+    });
+
+    this.element.addEventListener('mouseup', (ev) => {
+      if (!this.isDragging) return;
+
+      this.isDragging = false;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      const components = game.time.calendar.timeToComponents(game.time.worldTime);
+      const secondsInDay = 24 * 3600 * this.currentPercentage / 100.0;
+      const passedTime = Math.floor(secondsInDay - (components.hour * 3600 + components.minute * 60 + components.second));
+      game.time.advance(passedTime);
+    });
+  }
 }
 
 class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-picker',
+    tag: 'form',
     window: {
       resizable: true,
     },
     classes: ['dsaCalendarPicker'],
+    position: {
+      width: 480,
+      height: 520
+    }
   };
 
   static PARTS = {
     main: {
       template: 'systems/dsa5/templates/system/calendar/picker.hbs',
     },
+    tabs: {
+      template: 'systems/dsa5/templates/system/dsatabs.hbs',
+    },
+    config: {
+      template: 'systems/dsa5/templates/system/calendar/config.hbs',
+      scrollable: ['']
+    },
+    holidays: {
+      template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
+    },
   };
 
   get title() {
     return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
+  }
+
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'holidays', label: 'CALENDAR.DSA.holidays' },
+        { id: 'config', label: 'CALENDAR.DSA.config' },
+      ],
+      initial: 'holidays',
+    }
+  }
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (!game.user.isGM) delete parts.config;
+    return parts;
   }
 
   async _prepareContext(_options) {
@@ -282,20 +407,18 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
         selected: i === data.components.dayOfMonth - 1,
       };
     });
-    //sort holidays by next occurrence
+
     function getSortableDate(h) {
       return h.month * 100 + h.dayStart;
     }
 
-    const currentDateValue = data.components.month * 100 + data.components.day;
+    const currentDateValue = data.components.month * 100 + data.components.dayOfMonth;
     data.holidays = CONFIG.time.worldCalendarConfig.holidays.values
       .map((h) => ({
         ...h,
         sortValue: getSortableDate(h) >= currentDateValue ? getSortableDate(h) : getSortableDate(h) + 1300, // offset past-year holidays to wrap around
-      }))
-      .sort((a, b) => a.sortValue - b.sortValue)
-      .map(({ sortValue, ...h }) => h)
-      .map((h) => {
+      })).sort((a, b) => a.sortValue - b.sortValue)
+      .map(({ sortValue, ...h }) => {
         const start = h.dayStart + 1;
         const end = h.dayEnd;
         const day = start + '.' + (end ? `-${end + 1}` : '');
@@ -306,6 +429,11 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
           name: game.i18n.localize(`${translationPrefix}.holiday.${h.name}`),
         };
       });
+
+    data.calenderSetting = game.settings.settings.get('dsa5.calendar');
+    data.selectedCalendar = game.settings.get('dsa5', 'calendar');
+    data.maxHoursPerDay = game.time.calendar.days.hoursPerDay;
+    data.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
     return data;
   }
 
@@ -313,6 +441,7 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     await super._onRender(context, options);
     const html = $(this.element);
 
+    tabSlider(html);
     html.find('.dateChange').on('change', async (ev) => {
       const form = ev.target.form;
       const components = new foundry.applications.ux.FormDataExtended(form).object;
@@ -325,9 +454,28 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
       await game.time.set(newTime);
       this.render(true);
     });
+
+    html.find('.settingChange').on('change', async (ev) => this._onSettingChange(ev));
+    html.find('[name="dsa5.calendar"').on('change', async (ev) => this._onChangeCalendar(ev));
+  }
+
+  async _onChangeCalendar(ev) {
+    game.settings.set('dsa5', 'calendar', ev.target.value);
+    foundry.applications.settings.SettingsConfig.reloadConfirm({ world: true })
+  }
+
+  async _onSettingChange(ev) {
+    const value = ev.target.value;
+    const setting = ev.target.name;
+
+    const settings = game.settings.get('dsa5', 'calendarSettings');
+    foundry.utils.setProperty(settings, setting, value);
+    await game.settings.set('dsa5', 'calendarSettings', settings);
+    game.dsa5.apps.CalendarWidget.render(true);
   }
 }
 
 Hooks.on('updateWorldTime', (worldTime, delta, options, userId) => {
   game.dsa5.apps.CalendarWidget.render(true);
+  DSAWorldCalendar.autoDayLight();
 });

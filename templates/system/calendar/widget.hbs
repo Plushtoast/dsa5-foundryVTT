@@ -5,7 +5,10 @@
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-left' data-tooltip='CALENDAR.DSA.backward' data-action='backward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-left' data-tooltip='CALENDAR.DSA.smallBackward' data-action='smallBackward'></button>
     {{/if}}
-    <button type='button' data-tooltip='{{dateTooltip}}' class='dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto;background:{{dayTimeBackground.gradient}};color:{{dayTimeBackground.textColor}}' data-action='edit'>{{dateString}}</button>
+    <div data-tooltip='{{dateTooltip}}' class='center button dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto;background:{{dayTimeBackground.gradient}};color:{{dayTimeBackground.textColor}}' data-action='edit'>
+      <span class="timeIndicator">{{dateString}}</span>
+      <div class="slideIndicator"></div>
+    </div>
     {{#if isGM}}
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-right' data-tooltip='CALENDAR.DSA.smallForward' data-action='smallForward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-right' data-tooltip='CALENDAR.DSA.forward' data-action='forward'></button>

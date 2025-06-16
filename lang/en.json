@@ -739,6 +739,18 @@
                 "Tag des Feuers": "Day of Fire",
                 "Tag der Waffenschmiede": "TDay of Weaponsmiths",
                 "Fest der Freuden": "Festival of Pleasures"
+            },
+            "config": "Configuration",
+            "dayTimes": {
+                "dawn": "Dawn",
+                "morning": "Morning",
+                "noon": "Noon",
+                "afternoon": "Afternoon",
+                "sunset": "Sunset",
+                "night": "Night",
+                "label": "Daytimes",
+                "lightByDayTime": "Light by daytime",
+                "moonAddsLight": "Moonlight adds to darkness"
             }
         }
     },

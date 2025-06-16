@@ -357,6 +357,34 @@ export function setupConfiguration() {
     type: new foundry.data.fields.StringField({ choices: DSAWorldCalendar.collectCalendars(), required: true }),
   });
 
+  game.settings.register('dsa5', 'calendarSettings', {
+    name: 'DSASETTINGS.calendarSettings',
+    scope: 'world',
+    config: false,
+    default: {
+      "dawn": 5,
+      "morning": 7,
+      "noon": 11,
+      "afternoon": 16,
+      "sunset": 19,
+      "night": 21,
+      "lightByDayTime": false,
+      "moonAddsLight": false,
+      "moon": {
+        "darknessAdjust": 0.15,
+      },
+      "dayDarknessAdjust": {
+        "dawn": 0.55,
+        "morning": 0.2,
+        "noon": 0,
+        "afternoon": 0,
+        "sunset": 0.55,
+        "night": 0.95,
+      }
+    },
+    type: Object,
+  });
+
   const moneyChoices = () => {
     const moneyChoices = {};
     for (let pack of game.packs) {

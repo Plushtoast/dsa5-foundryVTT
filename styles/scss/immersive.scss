@@ -434,6 +434,7 @@
 
   #sidebar {
     border: none;
+    --sidebar-entry-hover-bg: rgba(0,0,0,0.15);
 
     .sidebar-tab .folder.collapsed .folder-header a i {
       color: rgb(216, 212, 212);
@@ -455,6 +456,11 @@
 
     &.collapsed:before {
       content: none;
+    }
+
+    .combat-tracker {
+      --entry-hover-bg: rgba(0,0,0,0.15);
+      --entry-active-bg: rgba(0,0,0,0.25);
     }
 
     /*.directory-list .documentName,
@@ -839,6 +845,11 @@
     .item {
       box-shadow: 0 0 12px #6e3b018f inset;
     }
+  }
+
+
+  .initTracker .inline-control {
+    color: unset;
   }
 
   #sidebar .button:not(.icon),

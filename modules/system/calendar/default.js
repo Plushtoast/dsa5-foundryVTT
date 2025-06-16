@@ -54,14 +54,14 @@ export const DSAKalender = {
   },
   moon: {
     values: [
-      { name: 'ToteMada', dayStart: 0 },
-      { name: 'AuffuellenderKelch', dayStart: 1 },
-      { name: 'Kelch', dayStart: 7 },
-      { name: 'ZunehmendesRad', dayStart: 8 },
-      { name: 'Rad', dayStart: 14 },
-      { name: 'AbnehmendesRad', dayStart: 15 },
-      { name: 'Helm', dayStart: 21 },
-      { name: 'AbnehmenderHelm', dayStart: 22 }
+      { name: 'ToteMada', dayStart: 0, lightAdjust: 0 },
+      { name: 'AuffuellenderKelch', dayStart: 1, lightAdjust: 0.25 },
+      { name: 'Kelch', dayStart: 7, lightAdjust: 0.5 },
+      { name: 'ZunehmendesRad', dayStart: 8, lightAdjust: 0.75 },
+      { name: 'Rad', dayStart: 14, lightAdjust: 1 },
+      { name: 'AbnehmendesRad', dayStart: 15, lightAdjust: 0.75 },
+      { name: 'Helm', dayStart: 21, lightAdjust: 0.5 },
+      { name: 'AbnehmenderHelm', dayStart: 22, lightAdjust: 0.25 },
     ]
   },
   holidays: {

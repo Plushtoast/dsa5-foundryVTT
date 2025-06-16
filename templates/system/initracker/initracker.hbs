@@ -2,7 +2,7 @@
     <div class="row-section">
         <div class="controls right">
             {{#if user.isGM}}
-            <button type="button" class="inline-control combat-control icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
+            <button type="button" class="inline-control combat-control fas icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
             {{/if}}
             {{#if (and user.isGM combat.round)}}            
             <button type="button" class="inline-control combat-control icon fa-solid fa-step-backward"
@@ -114,7 +114,7 @@
                 <div class="flexcol">
                     <div class="iniNumber">
                         {{#if initiative}} 
-                        <button type="button" data-combatant-id="{{id}}" class="rolledInit" data-action="rolledInit" data-tooltip="initiative">{{initiative}}</button>
+                        <button type="button" data-combatant-id="{{id}}" class="inline-control rolledInit" data-action="rolledInit" data-tooltip="initiative">{{initiative}}</button>
                         {{else}} 
                         ?
                         {{/if}} 

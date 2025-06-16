@@ -1,59 +1,49 @@
-<div class="scrollable">
-  <form>
-    <fieldset {{#unless isGM}}disabled{{/unless}}>
+<div>
+  <fieldset {{#unless isGM}}disabled{{/unless}}>
 
-      <div class='row-section'>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.day'}}
-        </div>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.month'}}
-        </div>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.year'}}
-        </div>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.hour'}}
-        </div>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.minute'}}
-        </div>
-        <div class='flexrow col'>
-          {{localize 'CALENDAR.DSA.second'}}
-        </div>
+    <div class='row-section'>
+      <div class='flexrow col five'>
+        {{localize 'CALENDAR.DSA.day'}}
       </div>
-      <div class='row-section'>
-        <div class='flexrow col'>
-          <select name='day' class='dateChange' data-dtype='Number'>
-            {{selectOptions dayOptions selected=components.dayOfMonth localize=true labelAttr='name' valueAttr='value'}}
-          </select>
-        </div>
-        <div class='flexrow col'>
-          <select name='month' class='dateChange' data-dtype='Number'>
-            {{selectOptions monthOptions selected=components.month localize=true labelAttr='name' valueAttr='value'}}
-          </select>
-        </div>
-        <div class='flexrow col'>
-          <input type='number' class='dateChange' name='year' value='{{components.year}}' />
-        </div>
-        <div class='flexrow col'>
-          <input type='number' class='dateChange' name='hour' value='{{components.hour}}' min='0' max='23' step='1' />
-        </div>
-        <div class='flexrow col'>
-          <input type='number' class='dateChange' name='minute' value='{{components.minute}}' min='0' max='59' step='1' />
-        </div>
-        <div class='flexrow col'>
-          <input type='number' class='dateChange' name='second' value='{{components.second}}' min='0' max='59' step='1' />
-        </div>
+      <div class='flexrow col third'>
+        {{localize 'CALENDAR.DSA.month'}}
       </div>
-    </fieldset>
-    <fieldset>
-        <legend>{{localize 'CALENDAR.DSA.holidays'}}</legend>
-        <ul class="dsalist">
-        {{#each holidays}}
-            <li><b>{{day}} {{month}}</b>: {{name}}</li>
-        {{/each}}
-        </ul>
-    </fieldset>
-  </form>
+      <div class='flexrow col five'>
+        {{localize 'CALENDAR.DSA.year'}}
+      </div>
+      <div class='flexrow col five'>
+        {{localize 'CALENDAR.DSA.hour'}}
+      </div>
+      <div class='flexrow col five'>
+        {{localize 'CALENDAR.DSA.minute'}}
+      </div>
+      <div class='flexrow col five'>
+        {{localize 'CALENDAR.DSA.second'}}
+      </div>
+    </div>
+    <div class='row-section'>
+      <div class='flexrow col five'>
+        <select name='day' class='dateChange' data-dtype='Number'>
+          {{selectOptions dayOptions selected=components.dayOfMonth localize=true labelAttr='name' valueAttr='value'}}
+        </select>
+      </div>
+      <div class='flexrow col third'>
+        <select name='month' class='dateChange' data-dtype='Number'>
+          {{selectOptions monthOptions selected=components.month localize=true labelAttr='name' valueAttr='value'}}
+        </select>
+      </div>
+      <div class='flexrow col five'>
+        <input type='number' class='dateChange' name='year' value='{{components.year}}' />
+      </div>
+      <div class='flexrow col five'>
+        <input type='number' class='dateChange' name='hour' value='{{components.hour}}' min='0' max='23' step='1' />
+      </div>
+      <div class='flexrow col five'>
+        <input type='number' class='dateChange' name='minute' value='{{components.minute}}' min='0' max='59' step='1' />
+      </div>
+      <div class='flexrow col five'>
+        <input type='number' class='dateChange' name='second' value='{{components.second}}' min='0' max='59' step='1' />
+      </div>
+    </div>
+  </fieldset>
 </div>
