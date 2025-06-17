@@ -1,315 +1,313 @@
 export class CalendarCanvas {
     constructor(parentElement) {
         this.element = parentElement;
+        this.canvas = null;
+        this.ctx = null;
+        this.centerX = 0;
+        this.centerY = 0;
+        this.hoveredSection = null;
+        
+        // Constants
+        this.RADIUS = {
+            OUTER: 300,      // Month ring
+            DAYS: 270,       // Day dots
+            WEEKDAYS: 140,   // Weekday labels
+            OUTER_FRAME: 315 // Outer frame (OUTER + 15)
+        };
+        
+        this.COLORS = {
+            BACKGROUND_INNER: "#1a1a1a",
+            BACKGROUND_OUTER: "#000000",
+            BORDER_OUTER: "#888",
+            BORDER_INNER: "#555",
+            TEXT_NORMAL: "#e0c080",
+            TEXT_HIGHLIGHT: "#ffcc00",
+            DOT_NORMAL: "#fff6d0",
+            HIGHLIGHT_BG: "rgba(255, 204, 0, 0.3)"
+        };
     }
 
     async render() {
+        this._setupCanvas();
         this._drawCalendar();
+        this._setupEventListeners();
+    }
+
+    _setupCanvas() {
+        this.canvas = this.element.querySelector('.circular-calendar');
+        this.ctx = this.canvas.getContext('2d');
+        this.centerX = this.canvas.width / 2;
+        this.centerY = this.canvas.height / 2;
     }
 
     async _drawCalendar() {
-        const components = game.time.calendar.timeToComponents(game.time.worldTime);
-        const canvas = this.element.querySelector('.circular-calendar');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const width = canvas.width;
-        const height = canvas.height;
-        const centerX = width / 2;
-        const centerY = height / 2;
-
-        const radiusOuter = 300;   // Month ring
-        const radiusDays = 270;    // Day dots
-        const radiusWeekdays = 140; // Weekday labels
-        const outerFrame = radiusOuter + 15;
-
-        let months = game.time.calendar.months.values.map((m) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${m.name}`))
-        let weekdays = game.time.calendar.days.values.map((d) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${d.name}`));
-
-        const currentMonth = components.month;
-        const currentDay = components.dayOfMonth;
-        const currentWeekday = components.dayOfWeek;
-        const daysInMonth = game.time.calendar.months.values[currentMonth].days
-
-        // circle the months until the first month is the current month
-        months = months.slice(currentMonth).concat(months.slice(0, currentMonth));
-        weekdays = weekdays.slice(currentWeekday).concat(weekdays.slice(0, currentWeekday));
-
-        const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
-
-        const loadImage = () => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const size = radiusOuter * 2;
-                    const offset = size / 2;
-                    ctx.drawImage(img, centerX - offset, centerY - offset, size, size);
-                    resolve();
-                };
-                img.src = backgroundImage;
-            });
+        const calendar = game.time.calendar;
+        const components = calendar.timeToComponents(game.time.worldTime);
+        
+        // Clear canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Get calendar data
+        this.calendarData = {
+            months: calendar.months.values.map(m => game.i18n.localize(`${calendar.translationPrefix}.${m.name}`)),
+            weekdays: calendar.days.values.map(d => game.i18n.localize(`${calendar.translationPrefix}.${d.name}`)),
+            currentMonth: components.month,
+            currentDay: components.dayOfMonth,
+            currentWeekday: components.dayOfWeek,
+            daysInMonth: calendar.months.values[components.month].days
         };
+        
+        // Rotate arrays to start with current
+        this.calendarData.months = this._rotateArray(this.calendarData.months, this.calendarData.currentMonth);
+        this.calendarData.weekdays = this._rotateArray(this.calendarData.weekdays, this.calendarData.currentWeekday);
+        
+        // Draw elements
+        await this._drawBackground();
+        this._drawBorders();
+        this._drawNorthMarker();
+        this._drawMonths();
+        this._drawDays();
+        this._drawWeekdays();
+    }
+    
+    _rotateArray(array, startIndex) {
+        return array.slice(startIndex).concat(array.slice(0, startIndex));
+    }
 
-        const bgGradient = ctx.createRadialGradient(centerX, centerY, 50, centerX, centerY, outerFrame);
-        bgGradient.addColorStop(0, "#1a1a1a");
-        bgGradient.addColorStop(1, "#000000");
+    async _drawBackground() {
+        // Create gradient background
+        const bgGradient = this.ctx.createRadialGradient(
+            this.centerX, this.centerY, 50, 
+            this.centerX, this.centerY, this.RADIUS.OUTER_FRAME
+        );
+        bgGradient.addColorStop(0, this.COLORS.BACKGROUND_INNER);
+        bgGradient.addColorStop(1, this.COLORS.BACKGROUND_OUTER);
 
-        // Fill the full circle area
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, outerFrame, 0, 2 * Math.PI, false);
-        ctx.fillStyle = bgGradient;
-        ctx.fill();
+        // Fill background
+        this.ctx.beginPath();
+        this.ctx.arc(this.centerX, this.centerY, this.RADIUS.OUTER_FRAME, 0, 2 * Math.PI);
+        this.ctx.fillStyle = bgGradient;
+        this.ctx.fill();
 
-        await loadImage();
+        // Load and draw background image
+        await this._loadBackgroundImage();
+    }
 
-        function drawBorder(radius, color = "#444", width = 1) {
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = width;
-            ctx.stroke();
-        }
-
-        drawBorder(outerFrame, "#888", 2);
-        drawBorder(radiusOuter - 15, "#555", 1);
-        drawBorder(radiusDays, "#555", 1);
-        drawBorder(radiusWeekdays + 15, "#555", 1);
-        drawBorder(radiusWeekdays - 15, "#555", 1);
-
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY - outerFrame - 2);
-        ctx.lineTo(centerX - 8, centerY - outerFrame + 6);
-        ctx.lineTo(centerX + 8, centerY - outerFrame + 6);
-        ctx.closePath();
-        ctx.fillStyle = "#ffcc00";
-        ctx.fill();
-
-        ctx.font = "16px Garamond";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        // Draw months along the full circle
-        months.forEach((month, i) => {
-            const angle = (2 * Math.PI * i) / months.length;
-            const x = centerX + Math.cos(angle - Math.PI / 2) * radiusOuter;
-            const y = centerY + Math.sin(angle - Math.PI / 2) * radiusOuter;
-
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle);
-            ctx.fillStyle = "#e0c080";
-            ctx.fillText(month, 0, 0);
-            ctx.restore();
+    async _loadBackgroundImage() {
+        const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
+        
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                const size = this.RADIUS.OUTER * 2;
+                const offset = size / 2;
+                this.ctx.drawImage(
+                    img, 
+                    this.centerX - offset, 
+                    this.centerY - offset, 
+                    size, 
+                    size
+                );
+                resolve();
+            };
+            img.src = backgroundImage;
         });
+    }
 
-        // Draw days in full circle
+    _drawBorders() {
+        this._drawCircle(this.RADIUS.OUTER_FRAME, this.COLORS.BORDER_OUTER, 2);
+        this._drawCircle(this.RADIUS.OUTER - 15, this.COLORS.BORDER_INNER);
+        this._drawCircle(this.RADIUS.DAYS, this.COLORS.BORDER_INNER);
+        this._drawCircle(this.RADIUS.WEEKDAYS + 15, this.COLORS.BORDER_INNER);
+        this._drawCircle(this.RADIUS.WEEKDAYS - 15, this.COLORS.BORDER_INNER);
+    }
+
+    _drawCircle(radius, color, lineWidth = 1) {
+        this.ctx.beginPath();
+        this.ctx.arc(this.centerX, this.centerY, radius, 0, 2 * Math.PI);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.stroke();
+    }
+
+    _drawNorthMarker() {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.centerX, this.centerY - this.RADIUS.OUTER_FRAME - 2);
+        this.ctx.lineTo(this.centerX - 8, this.centerY - this.RADIUS.OUTER_FRAME + 6);
+        this.ctx.lineTo(this.centerX + 8, this.centerY - this.RADIUS.OUTER_FRAME + 6);
+        this.ctx.closePath();
+        this.ctx.fillStyle = this.COLORS.TEXT_HIGHLIGHT;
+        this.ctx.fill();
+    }
+
+    _drawMonths() {
+        this.ctx.font = "16px Garamond";
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
+
+        this.calendarData.months.forEach((month, i) => {
+            const angle = (2 * Math.PI * i) / this.calendarData.months.length;
+            const x = this.centerX + Math.cos(angle - Math.PI / 2) * this.RADIUS.OUTER;
+            const y = this.centerY + Math.sin(angle - Math.PI / 2) * this.RADIUS.OUTER;
+
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate(angle);
+            
+            const isHighlighted = this.hoveredSection && 
+                                 this.hoveredSection.type === 'month' && 
+                                 this.hoveredSection.index === i;
+                                 
+            this.ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            this.ctx.fillText(month, 0, 0);
+            this.ctx.restore();
+        });
+    }
+
+    _drawDays() {
+        const { daysInMonth, currentDay } = this.calendarData;
+        
+        // Draw day dots
         for (let d = 0; d < daysInMonth; d++) {
             const angle = (2 * Math.PI * d) / daysInMonth;
-            const x = centerX + Math.cos(angle - Math.PI / 2) * radiusDays;
-            const y = centerY + Math.sin(angle - Math.PI / 2) * radiusDays;
+            const x = this.centerX + Math.cos(angle - Math.PI / 2) * this.RADIUS.DAYS;
+            const y = this.centerY + Math.sin(angle - Math.PI / 2) * this.RADIUS.DAYS;
 
-            ctx.beginPath();
-            ctx.arc(x, y, 3, 0, 2 * Math.PI);
-            ctx.fillStyle = "#fff6d0";
-            ctx.fill();
+            const isHighlighted = this.hoveredSection && 
+                                 this.hoveredSection.type === 'day' && 
+                                 this.hoveredSection.index === d;
+
+            this.ctx.beginPath();
+            this.ctx.arc(x, y, 3, 0, 2 * Math.PI);
+            this.ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.DOT_NORMAL;
+            this.ctx.fill();
         }
 
         // Highlight current day
         const angleToday = (2 * Math.PI * currentDay) / daysInMonth;
-        const xToday = centerX + Math.cos(angleToday - Math.PI / 2) * radiusDays;
-        const yToday = centerY + Math.sin(angleToday - Math.PI / 2) * radiusDays;
+        const xToday = this.centerX + Math.cos(angleToday - Math.PI / 2) * this.RADIUS.DAYS;
+        const yToday = this.centerY + Math.sin(angleToday - Math.PI / 2) * this.RADIUS.DAYS;
 
-        ctx.beginPath();
-        ctx.arc(xToday, yToday, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = "#ffcc00";
-        ctx.fill();
+        this.ctx.beginPath();
+        this.ctx.arc(xToday, yToday, 5, 0, 2 * Math.PI);
+        this.ctx.fillStyle = this.COLORS.TEXT_HIGHLIGHT;
+        this.ctx.fill();
+    }
 
-        ctx.font = "12px Garamond";
-
-        // Draw weekdays in full circle
+    _drawWeekdays() {
+        const { weekdays } = this.calendarData;
+        
+        this.ctx.font = "12px Garamond";
+        
         weekdays.forEach((day, i) => {
             const angle = (2 * Math.PI * i) / weekdays.length;
-            const x = centerX + Math.cos(angle - Math.PI / 2) * radiusWeekdays;
-            const y = centerY + Math.sin(angle - Math.PI / 2) * radiusWeekdays;
+            const x = this.centerX + Math.cos(angle - Math.PI / 2) * this.RADIUS.WEEKDAYS;
+            const y = this.centerY + Math.sin(angle - Math.PI / 2) * this.RADIUS.WEEKDAYS;
 
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle);
-            ctx.fillStyle = (i === currentWeekday) ? "#ffcc00" : "#e0c080";
-            ctx.fillText(day, 0, 0);
-            ctx.restore();
+            this.ctx.save();
+            this.ctx.translate(x, y);
+            this.ctx.rotate(angle);
+            this.ctx.fillStyle = (i === 0) ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            this.ctx.fillText(day, 0, 0);
+            this.ctx.restore();
         });
-
-        // Add hover effect
-        let hoveredSection = null;
-
-        canvas.addEventListener('mousemove', (event) => {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-
-            // Calculate distance from center and angle
-            const dx = mouseX - centerX;
-            const dy = mouseY - centerY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            let angle = Math.atan2(dy, dx) + Math.PI / 2;
-            if (angle < 0) angle += 2 * Math.PI;
-
-            const previousHovered = hoveredSection;
-            hoveredSection = null;
-
-            // Check if mouse is in month ring
-            if (distance >= radiusOuter - 10 && distance <= radiusOuter + 10) {
-                const monthIndex = Math.floor((angle / (2 * Math.PI)) * months.length) % months.length;
-                hoveredSection = { type: 'month', index: monthIndex };
-            }
-            // Check if mouse is in days ring
-            else if (distance >= radiusDays - 10 && distance <= radiusDays + 10) {
-                const dayIndex = Math.floor((angle / (2 * Math.PI)) * daysInMonth) % daysInMonth;
-                hoveredSection = { type: 'day', index: dayIndex };
-            }
-
-            // Redraw if needed
-            if (JSON.stringify(previousHovered) !== JSON.stringify(hoveredSection)) {
-                redrawWithHighlight();
-            }
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            hoveredSection = null;
-            redrawWithHighlight();
-        });
-
-        function redrawWithHighlight() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Redraw background
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, outerFrame, 0, 2 * Math.PI, false);
-            ctx.fillStyle = bgGradient;
-            ctx.fill();
-
-            // Redraw background image
-            const img = new Image();
-            img.onload = () => {
-                const size = radiusOuter * 2;
-                const offset = size / 2;
-                ctx.drawImage(img, centerX - offset, centerY - offset, size, size);
-
-                // Redraw borders
-                drawBorder(outerFrame, "#888", 2);
-                drawBorder(radiusOuter - 15, "#555", 1);
-                drawBorder(radiusDays, "#555", 1);
-                drawBorder(radiusWeekdays + 15, "#555", 1);
-                drawBorder(radiusWeekdays - 15, "#555", 1);
-
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY - outerFrame - 2);
-                ctx.lineTo(centerX - 8, centerY - outerFrame + 6);
-                ctx.lineTo(centerX + 8, centerY - outerFrame + 6);
-                ctx.closePath();
-                ctx.fillStyle = "#ffcc00";
-                ctx.fill();
-
-                // Draw highlighted section if any
-                if (hoveredSection) {
-                    if (hoveredSection.type === 'month') {
-                        const i = hoveredSection.index;
-                        const angleStart = (2 * Math.PI * i) / months.length;
-                        const angleEnd = (2 * Math.PI * (i + 1)) / months.length;
-
-                        ctx.beginPath();
-                        ctx.moveTo(centerX, centerY);
-                        ctx.arc(centerX, centerY, radiusOuter + 10, angleStart - Math.PI / 2, angleEnd - Math.PI / 2);
-                        ctx.lineTo(centerX, centerY);
-                        ctx.fillStyle = "rgba(255, 204, 0, 0.3)";
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.moveTo(centerX, centerY);
-                        ctx.arc(centerX, centerY, radiusOuter - 10, angleEnd - Math.PI / 2, angleStart - Math.PI / 2, true);
-                        ctx.lineTo(centerX, centerY);
-                        ctx.fillStyle = "rgba(255, 204, 0, 0.3)";
-                        ctx.fill();
-                    } else if (hoveredSection.type === 'day') {
-                        const i = hoveredSection.index;
-                        const angleStart = (2 * Math.PI * i) / daysInMonth;
-                        const angleEnd = (2 * Math.PI * (i + 1)) / daysInMonth;
-
-                        ctx.beginPath();
-                        ctx.moveTo(centerX, centerY);
-                        ctx.arc(centerX, centerY, radiusDays + 10, angleStart - Math.PI / 2, angleEnd - Math.PI / 2);
-                        ctx.lineTo(centerX, centerY);
-                        ctx.fillStyle = "rgba(255, 204, 0, 0.3)";
-                        ctx.fill();
-
-                        ctx.beginPath();
-                        ctx.moveTo(centerX, centerY);
-                        ctx.arc(centerX, centerY, radiusDays - 10, angleEnd - Math.PI / 2, angleStart - Math.PI / 2, true);
-                        ctx.lineTo(centerX, centerY);
-                        ctx.fillStyle = "rgba(255, 204, 0, 0.3)";
-                        ctx.fill();
-                    }
-                }
-
-                // Redraw months
-                ctx.font = "16px Garamond";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-
-                months.forEach((month, i) => {
-                    const angle = (2 * Math.PI * i) / months.length;
-                    const x = centerX + Math.cos(angle - Math.PI / 2) * radiusOuter;
-                    const y = centerY + Math.sin(angle - Math.PI / 2) * radiusOuter;
-
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(angle);
-                    ctx.fillStyle = (hoveredSection && hoveredSection.type === 'month' && hoveredSection.index === i)
-                        ? "#ffcc00" : "#e0c080";
-                    ctx.fillText(month, 0, 0);
-                    ctx.restore();
-                });
-
-                // Redraw days
-                for (let d = 0; d < daysInMonth; d++) {
-                    const angle = (2 * Math.PI * d) / daysInMonth;
-                    const x = centerX + Math.cos(angle - Math.PI / 2) * radiusDays;
-                    const y = centerY + Math.sin(angle - Math.PI / 2) * radiusDays;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, 2 * Math.PI);
-                    ctx.fillStyle = (hoveredSection && hoveredSection.type === 'day' && hoveredSection.index === d)
-                        ? "#ffcc00" : "#fff6d0";
-                    ctx.fill();
-                }
-
-                // Highlight current day
-                const angleToday = (2 * Math.PI * currentDay) / daysInMonth;
-                const xToday = centerX + Math.cos(angleToday - Math.PI / 2) * radiusDays;
-                const yToday = centerY + Math.sin(angleToday - Math.PI / 2) * radiusDays;
-
-                ctx.beginPath();
-                ctx.arc(xToday, yToday, 5, 0, 2 * Math.PI);
-                ctx.fillStyle = "#ffcc00";
-                ctx.fill();
-
-                ctx.font = "12px Garamond";
-
-                // Redraw weekdays
-                weekdays.forEach((day, i) => {
-                    const angle = (2 * Math.PI * i) / weekdays.length;
-                    const x = centerX + Math.cos(angle - Math.PI / 2) * radiusWeekdays;
-                    const y = centerY + Math.sin(angle - Math.PI / 2) * radiusWeekdays;
-
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(angle);
-                    ctx.fillStyle = (i === currentWeekday) ? "#ffcc00" : "#e0c080";
-                    ctx.fillText(day, 0, 0);
-                    ctx.restore();
-                });
-            };
-            img.src = backgroundImage;
+    }
+    
+    _drawHighlightedSection() {
+        if (!this.hoveredSection) return;
+        
+        const { type, index } = this.hoveredSection;
+        let angleStart, angleEnd, radius;
+        
+        if (type === 'month') {
+            angleStart = (2 * Math.PI * index) / this.calendarData.months.length;
+            angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.months.length;
+            radius = this.RADIUS.OUTER;
+        } else if (type === 'day') {
+            angleStart = (2 * Math.PI * index) / this.calendarData.daysInMonth;
+            angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.daysInMonth;
+            radius = this.RADIUS.DAYS;
+        } else {
+            return;
         }
+        
+        // Draw outer highlight
+        this._drawSector(radius + 10, angleStart, angleEnd);
+        
+        // Draw inner highlight (complementary)
+        this._drawSector(radius - 10, angleEnd, angleStart, true);
+    }
+    
+    _drawSector(radius, startAngle, endAngle, counterClockwise = false) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.centerX, this.centerY);
+        this.ctx.arc(
+            this.centerX, this.centerY, radius, 
+            startAngle - Math.PI / 2, endAngle - Math.PI / 2, 
+            counterClockwise
+        );
+        this.ctx.lineTo(this.centerX, this.centerY);
+        this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
+        this.ctx.fill();
+    }
+
+    _setupEventListeners() {
+        this.canvas.addEventListener('mousemove', this._handleMouseMove.bind(this));
+        this.canvas.addEventListener('mouseleave', this._handleMouseLeave.bind(this));
+        this.canvas.addEventListener('click', this._handleClick.bind(this));
+    }
+
+    _handleMouseMove(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // Calculate distance from center and angle
+        const dx = mouseX - this.centerX;
+        const dy = mouseY - this.centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        let angle = Math.atan2(dy, dx) + Math.PI / 2;
+        if (angle < 0) angle += 2 * Math.PI;
+
+        const previousHovered = this.hoveredSection;
+        this.hoveredSection = null;
+
+        // Check if mouse is in month ring
+        if (distance >= this.RADIUS.OUTER - 10 && distance <= this.RADIUS.OUTER + 10) {
+            const monthIndex = Math.floor((angle / (2 * Math.PI)) * this.calendarData.months.length) % this.calendarData.months.length;
+            this.hoveredSection = { type: 'month', index: monthIndex };
+        }
+        // Check if mouse is in days ring
+        else if (distance >= this.RADIUS.DAYS - 10 && distance <= this.RADIUS.DAYS + 10) {
+            const dayIndex = Math.floor((angle / (2 * Math.PI)) * this.calendarData.daysInMonth) % this.calendarData.daysInMonth;
+            this.hoveredSection = { type: 'day', index: dayIndex };
+        }
+
+        // Redraw if needed
+        if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
+            this._redraw();
+        }
+    }
+
+    _handleMouseLeave() {
+        this.hoveredSection = null;
+        this._redraw();
+    }
+    
+    _handleClick(event) {
+        // You can implement click behavior here if needed
+        // For example, selecting a month or day
+    }
+
+    async _redraw() {
+        // Clear and redraw the canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        await this._drawBackground();
+        this._drawHighlightedSection();
+        this._drawBorders();
+        this._drawNorthMarker();
+        this._drawMonths();
+        this._drawDays();
+        this._drawWeekdays();
     }
 }
