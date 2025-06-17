@@ -394,6 +394,7 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     const data = await super._prepareContext(_options);
     data.isGM = game.user.isGM;
     data.calendar = game.time.calendar;
+    data.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
     data.components = data.calendar.timeToComponents(game.time.worldTime);
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
     const translationPrefix = data.calendar.translationPrefix;
@@ -418,7 +419,7 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     }
 
     const currentDateValue = data.components.month * 100 + data.components.dayOfMonth;
-    data.holidays = CONFIG.time.worldCalendarConfig.holidays.values
+    data.holidays = data.worldCalendarConfig.holidays.values
       .map((h) => ({
         ...h,
         sortValue: getSortableDate(h) >= currentDateValue ? getSortableDate(h) : getSortableDate(h) + 1300, // offset past-year holidays to wrap around
@@ -450,8 +451,9 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     html.find('.dateChange').on('change', async (ev) => {
       const form = ev.target.form;
       const components = new foundry.applications.ux.FormDataExtended(form).object;
-
-      components.day = Math.min(components.day, game.time.calendar.months.values[components.month].days - 1);
+      const currentComponents = game.time.calendar.timeToComponents(game.time.worldTime);
+      components.month = currentComponents.month;
+      components.day = Math.min(currentComponents.day, game.time.calendar.months.values[components.month].days - 1);
       for (let m = 0; m < components.month; m++) {
         components.day += game.time.calendar.months.values[m].days;
       }
@@ -466,8 +468,55 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
   }
 
   _drawCalendar() {
-    const renderer = new CalendarCanvas(this.element)
-    renderer.render();
+    if (!this.calendarRenderer) this.calendarRenderer = new CalendarCanvas(this.element, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
+    this.calendarRenderer.render();
+  }
+
+  async _onCalendarCanvasHover(hoverBait) {
+    console.log("Calendar hover bait", hoverBait);
+    let content = '';
+    if (hoverBait) {
+      content = hoverBait
+    }
+
+    this.element.querySelector('.tooltipBox').innerHTML = content;
+  }
+
+  async _onCalendarCanvasCallback(clickBait) {
+    if (!game.user.isGM) return;
+
+    let { year, month, day, hour, minute, second, dayOfWeek, dayOfMonth } = game.time.calendar.timeToComponents(game.time.worldTime);
+
+    switch (clickBait.type) {
+      case "month":
+        if (month === clickBait.originalIndex) return;
+
+        day = Math.min(day, game.time.calendar.months.values[clickBait.originalIndex].days - 1);
+        for (let m = 0; m < clickBait.originalIndex; m++) {
+          day += game.time.calendar.months.values[m].days;
+        }
+        break;
+      case "day":
+        if (clickBait.isCurrentDay) return;
+
+        day = clickBait.index;
+        for (let m = 0; m < month; m++) {
+          day += game.time.calendar.months.values[m].days;
+        }
+        break;
+      case "weekday":
+        if (dayOfWeek === clickBait.originalIndex) return;
+
+        const dayDelta = clickBait.originalIndex - dayOfWeek;
+        day += dayDelta;
+
+        break;
+
+    }
+    const time = game.time.calendar.componentsToTime({ year, month, day, hour, minute, second });
+    await game.time.set(time);
+    this.render(true);
+
   }
 
   async _onChangeCalendar(ev) {

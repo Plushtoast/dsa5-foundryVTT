@@ -1,5 +1,5 @@
 export class CalendarCanvas {
-    constructor(parentElement, callback) {
+    constructor(parentElement, callback, hoverCallback) {
         this.element = parentElement;
         this.canvas = null;
         this.ctx = null;
@@ -7,6 +7,7 @@ export class CalendarCanvas {
         this.centerY = 0;
         this.hoveredSection = null;
         this.callback = callback;
+        this.hoverCallback = hoverCallback;
 
         // Constants
         this.RADIUS = {
@@ -83,11 +84,11 @@ export class CalendarCanvas {
         const monthCount = this.calendarData.months.length;
         const dayCount = this.calendarData.daysInMonth;
         const weekdayCount = this.calendarData.weekdays.length;
-        
+
         this.precalculated.monthAngleOffset = Math.PI / monthCount;
         this.precalculated.dayAngleOffset = Math.PI / dayCount;
         this.precalculated.weekdayAngleOffset = Math.PI / weekdayCount;
-        
+
         // Precalculate positions for months
         this.precalculated.monthAngles = [];
         for (let i = 0; i < monthCount; i++) {
@@ -100,7 +101,7 @@ export class CalendarCanvas {
                 endAngle: (2 * Math.PI * (i + 1)) / monthCount
             });
         }
-        
+
         // Precalculate positions for days
         this.precalculated.dayAngles = [];
         for (let i = 0; i < dayCount; i++) {
@@ -111,7 +112,7 @@ export class CalendarCanvas {
                 y: this.centerY + Math.sin(angle) * this.RADIUS.DAYS
             });
         }
-        
+
         // Precalculate positions for weekdays
         this.precalculated.weekdayAngles = [];
         for (let i = 0; i < weekdayCount; i++) {
@@ -218,7 +219,7 @@ export class CalendarCanvas {
 
         this.calendarData.months.forEach((month, i) => {
             const { x, y, angle } = this.precalculated.monthAngles[i];
-            
+
             this.ctx.save();
             this.ctx.translate(x, y);
             this.ctx.rotate(angle + Math.PI / 2);
@@ -269,7 +270,7 @@ export class CalendarCanvas {
     _drawWeekdays() {
         const { weekdays } = this.calendarData;
 
-        this.ctx.font = "12px Garamond";
+        this.ctx.font = "14px Garamond";
 
         weekdays.forEach((day, i) => {
             const { x, y, angle } = this.precalculated.weekdayAngles[i];
@@ -291,25 +292,25 @@ export class CalendarCanvas {
         if (!this.hoveredSection) return;
 
         const { type, index } = this.hoveredSection;
-        
+
         if (type === 'month') {
             const { startAngle, endAngle } = this.precalculated.monthAngles[index];
-            
+
             // Draw arc between the inner and outer radius of the month section
             this._drawArcSegment(
-                this.RADIUS.OUTER - 15, 
-                this.RADIUS.OUTER_FRAME, 
-                startAngle - this.precalculated.monthAngleOffset, 
+                this.RADIUS.OUTER - 15,
+                this.RADIUS.OUTER_FRAME,
+                startAngle - this.precalculated.monthAngleOffset,
                 endAngle - this.precalculated.monthAngleOffset
             );
         } else if (type === 'weekday') {
             const { startAngle, endAngle } = this.precalculated.weekdayAngles[index];
-            
+
             // Draw arc between the inner and outer radius of the weekday section
             this._drawArcSegment(
-                this.RADIUS.WEEKDAYS - 15, 
-                this.RADIUS.WEEKDAYS + 15, 
-                startAngle - this.precalculated.weekdayAngleOffset, 
+                this.RADIUS.WEEKDAYS - 15,
+                this.RADIUS.WEEKDAYS + 15,
+                startAngle - this.precalculated.weekdayAngleOffset,
                 endAngle - this.precalculated.weekdayAngleOffset
             );
         }
@@ -319,7 +320,7 @@ export class CalendarCanvas {
         // Adjust angles to canvas coordinate system
         const startAngleAdjusted = startAngle - Math.PI / 2;
         const endAngleAdjusted = endAngle - Math.PI / 2;
-        
+
         this.ctx.beginPath();
         // Draw outer arc
         this.ctx.arc(this.centerX, this.centerY, outerRadius, startAngleAdjusted, endAngleAdjusted);
@@ -332,7 +333,7 @@ export class CalendarCanvas {
         this.ctx.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
         // Close the path
         this.ctx.closePath();
-        
+
         this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
         this.ctx.fill();
     }
@@ -380,6 +381,7 @@ export class CalendarCanvas {
         // Redraw if needed
         if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
             this._drawCalendar();
+            this.hoverCallback(this.hoveredSection ? this._collectSliceData() : null);
         }
     }
 
@@ -388,9 +390,31 @@ export class CalendarCanvas {
         this._drawCalendar();
     }
 
-    _handleClick(event) {
-        if (this.hoveredSection && this.callback) {
-            this.callback(this.hoveredSection);
+    _collectSliceData() {
+        const { type, index } = this.hoveredSection;
+        let clickData = {
+            type,
+            index
+        };
+
+        if (type === 'month') {
+            clickData.name = this.calendarData.months[index];
+            const originalIndex = (this.calendarData.currentMonth + index) % this.calendarData.months.length;
+            clickData.originalIndex = originalIndex;
+        } else if (type === 'day') {
+            clickData.day = index + 1; // 1-based day
+            clickData.isCurrentDay = index === this.calendarData.currentDay;
+        } else if (type === 'weekday') {
+            clickData.name = this.calendarData.weekdays[index];
+            const originalIndex = (this.calendarData.currentWeekday + index) % this.calendarData.weekdays.length;
+            clickData.originalIndex = originalIndex;
         }
+        return clickData;
+    }
+
+    _handleClick(event) {
+        if (!this.hoveredSection) return;
+        
+        this.callback(this._collectSliceData());
     }
 }

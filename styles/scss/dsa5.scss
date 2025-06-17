@@ -5580,6 +5580,14 @@ input[type='checkbox'].autoCheckbox {
 
   }
 
+  .scrollable {
+    --scroll-margin: 0;
+  }
+
+  .tab {
+    max-height: calc(100% - 180px);
+  }
+
   .fullScreenHeader {
     margin: 30px;
 
@@ -5587,6 +5595,38 @@ input[type='checkbox'].autoCheckbox {
       --button-size: 40px;
       font-size: var(--font-size-24);
       --button-text-color: #fff;
+    }
+  }
+}
+
+.dsaCalendarPicker {
+  .tooltipBox {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    width: 200px;
+    transform: translateY(-50%);
+  }
+
+  .calendarDateChange {
+    margin-bottom: 0;
+
+    h3 {
+      margin-bottom: 4px;
+    }
+
+    input {
+      
+      width: 80px;
+
+      &.hourInput {
+        max-width: 40px;
+        text-align: center;
+      }
+
+      &:not(:hover){
+        border-color: transparent;
+      }
     }
   }
 }
