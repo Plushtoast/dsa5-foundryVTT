@@ -360,17 +360,20 @@ export class CalendarCanvas {
 
         // Check if mouse is in month ring
         if (distance >= this.RADIUS.OUTER - 10 && distance <= this.RADIUS.OUTER + 10) {
-            const monthIndex = Math.floor((angle / (2 * Math.PI)) * this.calendarData.months.length) % this.calendarData.months.length;
+            const adjustedAngle = angle + this.precalculated.monthAngleOffset;
+            const monthIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.months.length) % this.calendarData.months.length;
             this.hoveredSection = { type: 'month', index: monthIndex };
         }
         // Check if mouse is in days ring
         else if (Math.abs(distance - this.RADIUS.DAYS) <= 10) {
-            const dayIndex = Math.floor((angle / (2 * Math.PI)) * this.calendarData.daysInMonth) % this.calendarData.daysInMonth;
+            const adjustedAngle = angle + this.precalculated.dayAngleOffset;
+            const dayIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.daysInMonth) % this.calendarData.daysInMonth;
             this.hoveredSection = { type: 'day', index: dayIndex };
         }
         // Check if mouse is in weekdays ring
         else if (Math.abs(distance - this.RADIUS.WEEKDAYS) <= 15) {
-            const weekdayIndex = Math.floor((angle / (2 * Math.PI)) * this.calendarData.weekdays.length) % this.calendarData.weekdays.length;
+            const adjustedAngle = angle + this.precalculated.weekdayAngleOffset;
+            const weekdayIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.weekdays.length) % this.calendarData.weekdays.length;
             this.hoveredSection = { type: 'weekday', index: weekdayIndex };
         }
 
