@@ -51,7 +51,7 @@ import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
 import { DSAToken } from './hooks/token.js';
 import * as DSAPause from './hooks/pause.js';
-import { CalendarWidget } from './system/calendar/calendar.js';
+import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 
 Hooks.once('init', () => {
