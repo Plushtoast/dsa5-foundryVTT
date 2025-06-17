@@ -19,7 +19,7 @@ export class CalendarCanvas {
             { start: "#c9e1f2", end: "#7da9cc" }, // Winter
             { start: "#c6e8c8", end: "#74ba7b" },  // Spring
             { start: "#f8e9c0", end: "#e6c366" }, // Summer (repeated for easier indexing)
-            { start: "#393939", end: "#121212" }, // Namenlose Tage (dark/mysterious)
+            { start: "#ffb3b3", end: "#aa0000" }, // Namenlose Tage (dark red)
         ]
 
         // Constants
@@ -47,6 +47,7 @@ export class CalendarCanvas {
             monthAngles: [],
             dayAngles: [],
             weekdayAngles: [],
+            seasonAngles: [],
             monthAngleOffset: 0,
             dayAngleOffset: 0,
             weekdayAngleOffset: 0,
@@ -82,24 +83,35 @@ export class CalendarCanvas {
 
     async _prepareData() {
         const calendar = game.time.calendar;
-
         const daysPerYear = calendar.days.daysPerYear;
-        const seasons = []
+        const seasons = [];
+        
+        // Calculate season angles first (without rotation)
+        let cumulativeAngle = 0;
+        
         for (let i = 0; i < calendar.seasons.values.length; i++) {
             const season = calendar.seasons.values[i];
-            const nextSeason = calendar.seasons.values[i + 1]
+            const nextSeason = calendar.seasons.values[i + 1];
             let days = 0;
+            
             if (nextSeason) {
                 days = calendar.months.values[season.monthStart].days - season.dayStart;
                 for (let j = season.monthStart + 1; j < nextSeason.monthStart; j++) {
                     days += calendar.months.values[j].days;
                 }
-                days += nextSeason.dayStart - 1 
+                days += nextSeason.dayStart - 1;
             } else {
                 days = calendar.months.values[season.monthStart].days;
             }
+            
+            const angle = days / daysPerYear * 2 * Math.PI;
+            const startAngle = cumulativeAngle;
+            cumulativeAngle += angle;
+            
             seasons.push({
-                angle: days / daysPerYear * 2 * Math.PI,
+                angle,
+                startAngle,
+                endAngle: cumulativeAngle,
                 gradient: this.seasonGradients[i],
             });
         }
@@ -116,6 +128,20 @@ export class CalendarCanvas {
             daysInMonth: calendar.months.values[components.month].days,
             seasons
         };
+
+        // Calculate the rotation offset for seasons based on current month
+        // Find the start angle of the current month in the year
+        let currentMonthStartAngle = 0;
+        for (let i = 0; i < components.month; i++) {
+            currentMonthStartAngle += (calendar.months.values[i].days / daysPerYear) * 2 * Math.PI;
+        }
+        
+        // Rotate all season angles by this offset
+        this.calendarData.seasons = this.calendarData.seasons.map(season => ({
+            ...season,
+            startAngle: (season.startAngle - currentMonthStartAngle + 2 * Math.PI) % (2 * Math.PI),
+            endAngle: (season.endAngle - currentMonthStartAngle + 2 * Math.PI) % (2 * Math.PI),
+        }));
 
         // Rotate arrays to start with current
         this.calendarData.months = this._rotateArray(this.calendarData.months, this.calendarData.currentMonth);
@@ -177,6 +203,14 @@ export class CalendarCanvas {
                 endAngle: (2 * Math.PI * (i + 1)) / weekdayCount
             });
         }
+
+        // 15 days rotation offset for month ring
+        const seasonAngleOffset = 15 / 365 * 2 * Math.PI; // Convert days to radians
+        this.precalculated.seasonAngles = this.calendarData.seasons.map(season => ({
+            startAngle: season.startAngle - Math.PI / 2 - seasonAngleOffset, // Adjust to canvas coordinates
+            endAngle: season.endAngle - Math.PI / 2 - seasonAngleOffset,
+            gradient: season.gradient
+        }));
     }
 
     async _loadBackgroundImage() {
@@ -257,21 +291,12 @@ export class CalendarCanvas {
         const seasons = this.calendarData.seasons;
 
         // For each season, draw a gradient-filled arc in the month ring
-        for (let i = 0; i < seasons.length; i++) {
-            const season = seasons[i];
-            const startAngle = i === 0 ? 0 : seasons.slice(0, i).reduce((sum, s) => sum + s.angle, 0);
-            const endAngle = startAngle + season.angle;
-            
-            // Convert angles from percentage of year to radians (adjusted for canvas)
-            const startAngleRad = startAngle;
-            const endAngleRad = endAngle;
-            
-            // Draw the seasonal arc segment with its gradient
+        for (const season of this.precalculated.seasonAngles) {
             this._drawArcSegment(
-                this.RADIUS.OUTER - 15,  // Inner radius of month ring
-                this.RADIUS.OUTER_FRAME,       // Outer radius of month ring
-                startAngleRad,
-                endAngleRad,
+                this.RADIUS.OUTER - 15,
+                this.RADIUS.OUTER_FRAME,
+                season.startAngle + Math.PI / 2, // Convert back to original angle system
+                season.endAngle + Math.PI / 2,
                 season.gradient
             );
         }
@@ -419,13 +444,19 @@ export class CalendarCanvas {
         const startAngleAdjusted = startAngle - Math.PI / 2;
         const endAngleAdjusted = endAngle - Math.PI / 2;
 
+        // Cache calculations to avoid repeating in the method
+        const startCos = Math.cos(startAngleAdjusted);
+        const startSin = Math.sin(startAngleAdjusted);
+        const endCos = Math.cos(endAngleAdjusted);
+        const endSin = Math.sin(endAngleAdjusted);
+
         this.ctx.beginPath();
         // Draw outer arc
         this.ctx.arc(this.centerX, this.centerY, outerRadius, startAngleAdjusted, endAngleAdjusted);
         // Draw line to inner radius
         this.ctx.lineTo(
-            this.centerX + innerRadius * Math.cos(endAngleAdjusted),
-            this.centerY + innerRadius * Math.sin(endAngleAdjusted)
+            this.centerX + innerRadius * endCos,
+            this.centerY + innerRadius * endSin
         );
         // Draw inner arc (counter-clockwise)
         this.ctx.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
