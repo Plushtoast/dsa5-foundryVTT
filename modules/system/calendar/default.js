@@ -46,12 +46,11 @@ export const DSAKalender = {
   seasons: {
     values: [
       { name: 'Summer', monthStart: 0, dayStart: 0 },
-      { name: 'Fall', monthStart: 3, dayStart: 21 },
+      { name: 'Fall', monthStart: 2, dayStart: 21 },
       { name: 'Winter', monthStart: 5, dayStart: 20 },
       { name: 'Spring', monthStart: 8, dayStart: 19 },
       { name: 'Summer', monthStart: 11, dayStart: 20 },
-      { name: 'NamenloseTage', monthStart: 12, dayStart: 0 },
-      { name: 'Summer', monthStart: 13, dayStart: 0 },
+      { name: 'NamenloseTage', monthStart: 12, dayStart: 0 }
     ],
   },
   moon: {
