@@ -131,10 +131,13 @@ export class CalendarCanvas {
     }
 
     _drawNorthMarker() {
+        const markerHeight = 10;
+        const markerWidth = 16;
+
         this.ctx.beginPath();
-        this.ctx.moveTo(this.centerX, this.centerY - this.RADIUS.OUTER_FRAME - 2);
-        this.ctx.lineTo(this.centerX - 8, this.centerY - this.RADIUS.OUTER_FRAME + 6);
-        this.ctx.lineTo(this.centerX + 8, this.centerY - this.RADIUS.OUTER_FRAME + 6);
+        this.ctx.moveTo(this.centerX, this.centerY - this.RADIUS.OUTER_FRAME - markerHeight);
+        this.ctx.lineTo(this.centerX - markerWidth / 2, this.centerY - this.RADIUS.OUTER_FRAME);
+        this.ctx.lineTo(this.centerX + markerWidth / 2, this.centerY - this.RADIUS.OUTER_FRAME);
         this.ctx.closePath();
         this.ctx.fillStyle = this.COLORS.TEXT_HIGHLIGHT;
         this.ctx.fill();
@@ -229,20 +232,25 @@ export class CalendarCanvas {
         if (!this.hoveredSection) return;
 
         const { type, index } = this.hoveredSection;
+        console.log(type, index)
         let angleStart, angleEnd, radius;
 
         if (type === 'month') {
             angleStart = (2 * Math.PI * index) / this.calendarData.months.length;
             angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.months.length;
+            const angleOffset = (angleEnd - angleStart) / 2;
+
             radius = this.RADIUS.OUTER;
-            this._drawSector(radius + 10, angleStart, angleEnd);
-            this._drawSector(radius - 10, angleEnd, angleStart, true);
+            this._drawSector(radius + 10, angleStart - angleOffset, angleEnd - angleOffset);
+            this._drawSector(radius - 10, angleEnd - angleOffset, angleStart - angleOffset, true);
         } else if (type === 'weekday') {
             angleStart = (2 * Math.PI * index) / this.calendarData.weekdays.length;
             angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.weekdays.length;
+            const angleOffset = (angleEnd - angleStart) / 2;
+
             radius = this.RADIUS.WEEKDAYS;
-            this._drawSector(radius + 10, angleStart, angleEnd);
-            this._drawSector(radius - 10, angleEnd, angleStart, true);
+            this._drawSector(radius + 10, angleStart - angleOffset, angleEnd - angleOffset);
+            this._drawSector(radius - 10, angleEnd - angleOffset, angleStart - angleOffset, true);
         }
         // Day highlighting is now handled in _drawDays
     }
