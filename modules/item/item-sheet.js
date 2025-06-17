@@ -39,7 +39,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
 
   static DEFAULT_OPTIONS = {
     position: {
-      width: 471,
+      width: 500,
       height: 500,
     },
     form: {

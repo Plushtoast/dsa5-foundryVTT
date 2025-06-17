@@ -38,32 +38,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return this.actor.name;
   }
 
-  async _render(force = false, options = {}) {
+  async render(options={}, _options={}) {
     this._saveSearchFields();
     this._saveCollapsed();
-    await super._render(force, options);
+    const result = await super.render(options, _options);
     this._setCollapsed();
     this._restoreSeachFields();
 
-    let elem = $(this.element);
-
-    const tooltips = {
-      '.close': 'SHEET.Close',
-      '.configure-sheet': 'SHEET.Configure',
-      '.configure-token': 'SHEET.Token',
-      '.import': 'SHEET.Import',
-    };
-    for (let key of Object.keys(tooltips)) {
-      elem.find(key).attr('data-tooltip', tooltips[key]);
-    }
-
     if (this.currentFocus) {
-      elem
+      $(this.element)
         .find('[data-item-id="' + this.currentFocus + '"] input')
         .trigger('focus')
         .trigger('select');
       this.currentFocus = null;
     }
+    return result;
   }
 
   static LIMITEDPARTS = {
@@ -943,7 +932,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('[data-action="advanceWrapper"]').on('mouseenter', this._onHoverCost.bind(this));
     html.find('.chat-condition').on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
     html.find('.money-change, .skill-advances').on('focusin', (ev) => {
-      this.currentFocus = $(ev.currentTarget).closest('[data-item-id]').attr('data-item-id');
+      this.currentFocus = ev.currentTarget.closest('[data-item-id]').dataset.itemId;
     });
 
     const deletehand = (ev) => this._deleteItem(ev.currentTarget);

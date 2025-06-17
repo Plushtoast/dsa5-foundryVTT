@@ -183,7 +183,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     if (!tooltip) return;
 
-    $('#tooltip').addClass('dsatooltip').html(tooltip);
+    game.tooltip.activate(target, {
+      html: tooltip,
+      cssClass: 'dsatooltip'
+    });
     target.dataset.tooltip = tooltip;
     target.dataset.tooltipClass = 'dsatooltip';
   }

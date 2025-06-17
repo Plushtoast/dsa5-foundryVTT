@@ -1,7 +1,9 @@
-<div class='tab scrollable {{tabs.holidays.cssClass}}' data-tab='holidays' data-group='{{tabs.holidays.group}}'>
-    <ul class="dsalist">
-        {{#each holidays}}
-        <li><b>{{day}} {{month}}</b>: {{name}}</li>
-        {{/each}}
-    </ul>
+<div class='tab scrollable {{tabs.events.cssClass}}' data-tab='events' data-group='{{tabs.events.group}}'>
+    <div class="fullSceenMaxWidth">
+        <ul class="dsalist">
+            {{#each holidays}}
+            <li><b>{{day}} {{month}}</b>: {{name}}</li>
+            {{/each}}
+        </ul>
+    </div>
 </div>

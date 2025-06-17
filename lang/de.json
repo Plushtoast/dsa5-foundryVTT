@@ -2002,7 +2002,9 @@
                 "moonAddsLight": "Mondlicht beeinflusst Dunkelheit",
                 "moonAddsLightHint": "Mondlicht beeinflusst den automatischen Dunkelheitswert bei Nacht. Es wird die Helligkeit des Mondes berücksichtigt, sofern Licht nach Tageszeit aktiviert ist."
             },
-            "config": "Einstellungen"
+            "config": "Einstellungen",
+            "events": "Ereignisse",
+            "calendar": "Kalender"
         }
     },
     "DSASETTINGS": {

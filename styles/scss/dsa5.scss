@@ -2458,6 +2458,7 @@ input[type='search'] {
   box-shadow: 0 0 0 3px #2d2215 inset;
   font-family: 'Georgia', serif;
   position: relative;
+  overflow: hidden;
 
   .groupbox {
     border: none;
@@ -2467,21 +2468,30 @@ input[type='search'] {
     background: none;
     color: #e0c080;
     font-weight: bold;
-    text-shadow: 0 0 2px #3a2f1b;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000,
+      0px 0px 3px #fff;
   }
 
   .col.browseElement {
     flex: 0 0 100%;
-    text-shadow: 0 0 2px white;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000,
+      0px 0px 3px #fff;
   }
 
   img {
     position: absolute;
     inset: 0;
-    width: 100%;
     height: 100%;
     object-fit: contain;
-    object-position: top;
+    object-position: top right;
     margin: 0;
     border: none;
     box-shadow: none;
@@ -2508,25 +2518,29 @@ input[type='search'] {
     }
   }
 
-  h1 {
-    font-size: 20px;
+  h1,
+  h2,
+  h3 {
     text-align: center;
     font-weight: bold;
-    text-shadow: 0 0 2px black;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000,
+      0px 0px 3px #fff;
+  }
+
+  h1 {
+    font-size: 20px;
   }
 
   h2 {
     font-size: 16px;
-    text-align: center;
-    font-weight: bold;
-    text-shadow: 0 0 2px black;
   }
 
   h3 {
     font-size: 14px;
-    text-align: center;
-    font-weight: bold;
-    text-shadow: 0 0 2px black;
   }
 
   .show-item,
@@ -4890,6 +4904,11 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+.flexAlignEnd {
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .flexAlignCenter {
   justify-content: center;
   align-items: center;
@@ -5531,6 +5550,44 @@ input[type='checkbox'].autoCheckbox {
   .select2-dropdown {
     background: #efe4e4;
     color: black;
+  }
+}
+
+.fullScreenApp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  z-index: 5000;
+  --color-text-primary: #fff;
+  --color-text-secondary: #fff;
+  --color-text-emphatic: #b9b9b9;
+
+  .fullSceenMaxWidth,
+  fieldset {
+
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+
+  select,
+  input {
+    --input-text-color: white;
+
+  }
+
+  .fullScreenHeader {
+    margin: 30px;
+
+    button {
+      --button-size: 40px;
+      font-size: var(--font-size-24);
+      --button-text-color: #fff;
+    }
   }
 }
 

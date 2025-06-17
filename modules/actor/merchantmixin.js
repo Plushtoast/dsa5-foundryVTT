@@ -508,12 +508,12 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
-    async _render(force = false, options = {}) {
+    async render(options={}, _options={}) {
       if (!game.user.isGM && this.actor.system.merchant.merchantType == 'loot' && this.actor.system.merchant.locked) {
         foundry.audio.AudioHelper.play({ src: 'sounds/lock.wav', loop: false }, false);
         return;
       }
-      await super._render(force, options);
+      return super.render(options, _options);
     }
 
     static async _clearInventory(ev, target) {

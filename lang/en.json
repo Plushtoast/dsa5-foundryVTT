@@ -742,6 +742,8 @@
                 "Fest der Freuden": "Festival of Pleasures"
             },
             "config": "Configuration",
+            "events": "Events",
+            "calendar": "Calendar",
             "dayTimes": {
                 "dawn": "Dawn",
                 "morning": "Morning",

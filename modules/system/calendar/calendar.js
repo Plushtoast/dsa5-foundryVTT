@@ -24,17 +24,17 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
   static async autoDayLight() {
     const selectedCalendar = DSAWorldCalendar.selectedCalendar();
-    if(!selectedCalendar) return;
+    if (!selectedCalendar) return;
 
     const settings = game.settings.get('dsa5', 'calendarSettings');
-    if(!settings.lightByDayTime) return;
+    if (!settings.lightByDayTime) return;
 
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
     const currentGradient = CalendarWidget.dayTimeBackground(components);
 
     let lightLevel = settings.dayDarknessAdjust[currentGradient.key] || 0;
 
-    if(settings.moonAddsLight && currentGradient.key == 'night') {
+    if (settings.moonAddsLight && currentGradient.key == 'night') {
       lightLevel -= settings.moon.darknessAdjust * components.moon.phase.lightAdjust;
     }
 
@@ -63,7 +63,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       translationPrefix: new fields.StringField({ required: true, initial: '' }),
       moon: new fields.SchemaField(
         {
-          cycle: new fields.NumberField({ required: true, initial: 28 }),          
+          cycle: new fields.NumberField({ required: true, initial: 28 }),
           anchor: new fields.SchemaField({
             year: new fields.NumberField({ required: true, initial: 1040 }),
             month: new fields.NumberField({ required: true, initial: 3 }),
@@ -317,7 +317,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
       const dayTimeBackground = this.constructor.dayTimeBackground({ hour, minute, second });
       container.style.width = containerRect.width + 'px';
       container.style.background = dayTimeBackground.gradient;
-      container.style.color = dayTimeBackground.textColor;      
+      container.style.color = dayTimeBackground.textColor;
       container.querySelector('.timeIndicator').textContent = timeString;
     });
 
@@ -342,18 +342,15 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     id: 'dsa-calendar-picker',
     tag: 'form',
     window: {
-      resizable: true,
+      frame: false,
+      positioned: false,
     },
-    classes: ['dsaCalendarPicker'],
-    position: {
-      width: 480,
-      height: 520
-    }
+    classes: ['dsaCalendarPicker', 'fullScreenApp'],
   };
 
   static PARTS = {
-    main: {
-      template: 'systems/dsa5/templates/system/calendar/picker.hbs',
+    fullscreen: {
+      template: 'systems/dsa5/templates/system/fullscreenHeader.hbs',
     },
     tabs: {
       template: 'systems/dsa5/templates/system/dsatabs.hbs',
@@ -362,8 +359,12 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
       template: 'systems/dsa5/templates/system/calendar/config.hbs',
       scrollable: ['']
     },
-    holidays: {
+    events: {
       template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
+    },
+    calendar: {
+      template: 'systems/dsa5/templates/system/calendar/calendar.hbs',
+      templates: ['systems/dsa5/templates/system/calendar/picker.hbs']
     },
   };
 
@@ -374,10 +375,11 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'holidays', label: 'CALENDAR.DSA.holidays' },
+        { id: 'calendar', label: 'CALENDAR.DSA.calendar' },
+        { id: 'events', label: 'CALENDAR.DSA.holidays' },
         { id: 'config', label: 'CALENDAR.DSA.config' },
       ],
-      initial: 'holidays',
+      initial: 'calendar',
     }
   }
 
@@ -390,16 +392,18 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     data.isGM = game.user.isGM;
-    data.components = game.time.calendar.timeToComponents(game.time.worldTime);
-    const translationPrefix = game.time.calendar.translationPrefix;
-    data.monthOptions = game.time.calendar.months.values.map((month, index) => {
+    data.calendar = game.time.calendar;
+    data.components = data.calendar.timeToComponents(game.time.worldTime);
+    data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
+    const translationPrefix = data.calendar.translationPrefix;
+    data.monthOptions = data.calendar.months.values.map((month, index) => {
       return {
         name: `${translationPrefix}.${month.name}`,
         value: index,
         selected: index === data.components.month,
       };
     });
-    const currentMonth = game.time.calendar.months.values[data.components.month];
+    const currentMonth = data.calendar.months.values[data.components.month];
     data.dayOptions = Array.from({ length: currentMonth.days }, (_, i) => {
       return {
         name: (i + 1).toString(),
@@ -424,7 +428,7 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
         const day = start + '.' + (end ? `-${end + 1}` : '');
 
         return {
-          month: game.i18n.localize(`${translationPrefix}.${game.time.calendar.months.values[h.month].name}`),
+          month: game.i18n.localize(`${translationPrefix}.${data.calendar.months.values[h.month].name}`),
           day,
           name: game.i18n.localize(`${translationPrefix}.holiday.${h.name}`),
         };
@@ -432,7 +436,7 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
 
     data.calenderSetting = game.settings.settings.get('dsa5.calendar');
     data.selectedCalendar = game.settings.get('dsa5', 'calendar');
-    data.maxHoursPerDay = game.time.calendar.days.hoursPerDay;
+    data.maxHoursPerDay = data.calendar.days.hoursPerDay;
     data.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
     return data;
   }
@@ -457,6 +461,132 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
 
     html.find('.settingChange').on('change', async (ev) => this._onSettingChange(ev));
     html.find('[name="dsa5.calendar"').on('change', async (ev) => this._onChangeCalendar(ev));
+    this._drawCalendar();
+  }
+
+  async _drawCalendar() {
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const canvas = document.querySelector('.circular-calendar');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const radiusOuter = 300;   // Month ring
+    const radiusDays = 270;    // Day dots
+    const radiusWeekdays = 140; // Weekday labels
+    const outerFrame = radiusOuter + 15;
+
+    let months = game.time.calendar.months.values.map((m) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${m.name}`))
+    let weekdays = game.time.calendar.days.values.map((d) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${d.name}`));
+
+    const currentMonth = components.month;
+    const currentDay = components.dayOfMonth;
+    const currentWeekday = components.dayOfWeek;
+    const daysInMonth = game.time.calendar.months.values[currentMonth].days
+
+    // circle the months until the first month is the current month
+    months = months.slice(currentMonth).concat(months.slice(0, currentMonth));
+    weekdays = weekdays.slice(currentWeekday).concat(weekdays.slice(0, currentWeekday));
+
+    const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
+
+    const loadImage = () => {
+      return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const size = radiusOuter * 2;
+        const offset = size / 2;
+        ctx.drawImage(img, centerX - offset, centerY - offset, size, size);
+        resolve();
+      };
+      img.src = backgroundImage;
+      });
+    };
+
+    const bgGradient = ctx.createRadialGradient(centerX, centerY, 50, centerX, centerY, outerFrame);
+    bgGradient.addColorStop(0, "#1a1a1a");
+    bgGradient.addColorStop(1, "#000000");
+    
+    // Fill the full circle area
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, outerFrame, 0, 2 * Math.PI, false);
+    ctx.fillStyle = bgGradient;
+    ctx.fill();
+      
+    await loadImage();
+
+    function drawBorder(radius, color = "#444", width = 1) {
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+    }
+
+    drawBorder(outerFrame, "#888", 2);
+    drawBorder(radiusOuter - 15, "#555", 1);
+    drawBorder(radiusDays, "#555", 1);
+    drawBorder(radiusWeekdays + 15, "#555", 1);    
+    drawBorder(radiusWeekdays - 15, "#555", 1);
+
+    ctx.font = "16px Garamond";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Draw months along the full circle
+    months.forEach((month, i) => {
+      const angle = (2 * Math.PI * i) / months.length;
+      const x = centerX + Math.cos(angle - Math.PI/2) * radiusOuter;
+      const y = centerY + Math.sin(angle - Math.PI/2) * radiusOuter;
+      
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = "#e0c080";
+      ctx.fillText(month, 0, 0);
+      ctx.restore();
+    });
+
+    // Draw days in full circle
+    for (let d = 0; d < daysInMonth; d++) {
+      const angle = (2 * Math.PI * d) / daysInMonth;
+      const x = centerX + Math.cos(angle - Math.PI/2) * radiusDays;
+      const y = centerY + Math.sin(angle - Math.PI/2) * radiusDays;
+
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, 2 * Math.PI);
+      ctx.fillStyle = "#fff6d0";
+      ctx.fill();
+    }
+
+    // Highlight current day
+    const angleToday = (2 * Math.PI * currentDay) / daysInMonth;
+    const xToday = centerX + Math.cos(angleToday - Math.PI/2) * radiusDays;
+    const yToday = centerY + Math.sin(angleToday - Math.PI/2) * radiusDays;
+
+    ctx.beginPath();
+    ctx.arc(xToday, yToday, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = "#ffcc00";
+    ctx.fill();
+
+    ctx.font = "12px Garamond";
+    
+    // Draw weekdays in full circle
+    weekdays.forEach((day, i) => {
+      const angle = (2 * Math.PI * i) / weekdays.length;
+      const x = centerX + Math.cos(angle - Math.PI/2) * radiusWeekdays;
+      const y = centerY + Math.sin(angle - Math.PI/2) * radiusWeekdays;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = (i === currentWeekday) ? "#ffcc00" : "#e0c080";
+      ctx.fillText(day, 0, 0);
+      ctx.restore();
+    });
   }
 
   async _onChangeCalendar(ev) {

@@ -128,7 +128,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     const tooltip = `<ul class="effects-tooltip plain"><li>${label.join('</li><li>')}</li></ul>`;
-    $('#tooltip').html(tooltip);
+    game.tooltip.activate(el, { html: tooltip, })
     el.dataset.tooltip = tooltip;
   }
 
