@@ -19,15 +19,16 @@ export class CalendarCanvas {
             { start: "#c9e1f2", end: "#7da9cc" }, // Winter
             { start: "#c6e8c8", end: "#74ba7b" },  // Spring
             { start: "#f8e9c0", end: "#e6c366" }, // Summer (repeated for easier indexing)
-            { start: "#ffb3b3", end: "#aa0000" }, // Namenlose Tage (dark red)
+            { start: "#393939", end: "#121212" }, // Namenlose Tage (dark/mysterious)
         ]
 
         // Constants
         this.RADIUS = {
             OUTER: 300,      // Month ring
-            DAYS: 270,       // Day dots
+            DAYS: 260,       // Day dots
             WEEKDAYS: 140,   // Weekday labels
-            OUTER_FRAME: 315 // Outer frame (OUTER + 15)
+            OUTER_FRAME: 315, // Outer frame (OUTER + 15)
+            SEASONS: 280 // Season arcs (between month and outer frame)
         };
 
         this.COLORS = {
@@ -36,7 +37,6 @@ export class CalendarCanvas {
             BORDER_OUTER: "#888",
             BORDER_INNER: "#555",
             TEXT_NORMAL: "#e0c080",
-            TEXT_MONTH: "#000000",
             TEXT_HIGHLIGHT: "#ffcc00",
             DOT_NORMAL: "#fff6d0",
             HIGHLIGHT_BG: "rgba(255, 204, 0, 0.3)"
@@ -288,13 +288,11 @@ export class CalendarCanvas {
     }
 
     _drawMonthSeasons() {
-        const seasons = this.calendarData.seasons;
-
         // For each season, draw a gradient-filled arc in the month ring
         for (const season of this.precalculated.seasonAngles) {
             this._drawArcSegment(
-                this.RADIUS.OUTER - 15,
-                this.RADIUS.OUTER_FRAME,
+                this.RADIUS.SEASONS - 6,
+                this.RADIUS.SEASONS + 6,
                 season.startAngle + Math.PI / 2, // Convert back to original angle system
                 season.endAngle + Math.PI / 2,
                 season.gradient
@@ -347,7 +345,7 @@ export class CalendarCanvas {
                 this.hoveredSection.type === 'month' &&
                 this.hoveredSection.index === i;
 
-            this.ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_MONTH;
+            this.ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
             this.ctx.fillText(month, 0, 0);
             this.ctx.restore();
         });
