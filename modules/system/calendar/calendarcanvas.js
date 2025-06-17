@@ -1,5 +1,5 @@
 export class CalendarCanvas {
-    constructor(parentElement) {
+    constructor(parentElement, callback) {
         this.element = parentElement;
         this.canvas = null;
         this.ctx = null;
@@ -232,38 +232,53 @@ export class CalendarCanvas {
         if (!this.hoveredSection) return;
 
         const { type, index } = this.hoveredSection;
-        console.log(type, index)
-        let angleStart, angleEnd, radius;
-
+        
         if (type === 'month') {
-            angleStart = (2 * Math.PI * index) / this.calendarData.months.length;
-            angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.months.length;
+            const angleStart = (2 * Math.PI * index) / this.calendarData.months.length;
+            const angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.months.length;
             const angleOffset = (angleEnd - angleStart) / 2;
-
-            radius = this.RADIUS.OUTER;
-            this._drawSector(radius + 10, angleStart - angleOffset, angleEnd - angleOffset);
-            this._drawSector(radius - 10, angleEnd - angleOffset, angleStart - angleOffset, true);
+            
+            // Draw arc between the inner and outer radius of the month section
+            this._drawArcSegment(
+                this.RADIUS.OUTER - 15, 
+                this.RADIUS.OUTER_FRAME, 
+                angleStart - angleOffset, 
+                angleEnd - angleOffset
+            );
         } else if (type === 'weekday') {
-            angleStart = (2 * Math.PI * index) / this.calendarData.weekdays.length;
-            angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.weekdays.length;
+            const angleStart = (2 * Math.PI * index) / this.calendarData.weekdays.length;
+            const angleEnd = (2 * Math.PI * (index + 1)) / this.calendarData.weekdays.length;
             const angleOffset = (angleEnd - angleStart) / 2;
-
-            radius = this.RADIUS.WEEKDAYS;
-            this._drawSector(radius + 10, angleStart - angleOffset, angleEnd - angleOffset);
-            this._drawSector(radius - 10, angleEnd - angleOffset, angleStart - angleOffset, true);
+            
+            // Draw arc between the inner and outer radius of the weekday section
+            this._drawArcSegment(
+                this.RADIUS.WEEKDAYS - 15, 
+                this.RADIUS.WEEKDAYS + 15, 
+                angleStart - angleOffset, 
+                angleEnd - angleOffset
+            );
         }
         // Day highlighting is now handled in _drawDays
     }
 
-    _drawSector(radius, startAngle, endAngle, counterClockwise = false) {
+    _drawArcSegment(innerRadius, outerRadius, startAngle, endAngle) {
+        // Adjust angles to canvas coordinate system
+        const startAngleAdjusted = startAngle - Math.PI / 2;
+        const endAngleAdjusted = endAngle - Math.PI / 2;
+        
         this.ctx.beginPath();
-        this.ctx.moveTo(this.centerX, this.centerY);
-        this.ctx.arc(
-            this.centerX, this.centerY, radius,
-            startAngle - Math.PI / 2, endAngle - Math.PI / 2,
-            counterClockwise
+        // Draw outer arc
+        this.ctx.arc(this.centerX, this.centerY, outerRadius, startAngleAdjusted, endAngleAdjusted);
+        // Draw line to inner radius
+        this.ctx.lineTo(
+            this.centerX + innerRadius * Math.cos(endAngleAdjusted),
+            this.centerY + innerRadius * Math.sin(endAngleAdjusted)
         );
-        this.ctx.lineTo(this.centerX, this.centerY);
+        // Draw inner arc (counter-clockwise)
+        this.ctx.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
+        // Close the path
+        this.ctx.closePath();
+        
         this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
         this.ctx.fill();
     }
