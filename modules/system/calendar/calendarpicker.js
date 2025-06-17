@@ -116,7 +116,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _drawCalendar() {
-    if (!this.calendarRenderer) this.calendarRenderer = new CalendarCanvas(this.element, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
+    if (this.calendarRenderer) {
+      this.calendarRenderer.element = this.element;
+    }
+    else {
+      this.calendarRenderer = new CalendarCanvas(this.element, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
+    }
     this.calendarRenderer.render();
   }
 

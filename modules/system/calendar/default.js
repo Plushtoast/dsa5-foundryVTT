@@ -8,7 +8,7 @@ export const DSAKalender = {
     firstWeekday: 0,
     leapYear: {
       leapStart: 1000000,
-      leapInterval: 4,
+      leapInterval: 1000000,
     },
   },
   months: {
