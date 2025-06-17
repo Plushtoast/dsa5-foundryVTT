@@ -8,6 +8,9 @@ export class CalendarCanvas {
         this.hoveredSection = null;
         this.callback = callback;
         this.hoverCallback = hoverCallback;
+        this.animationFrameId = null;
+        this.needsRedraw = false;
+        this.isDestroyed = false;
 
         // Constants
         this.RADIUS = {
@@ -47,6 +50,16 @@ export class CalendarCanvas {
         await this._loadBackgroundImage();
         this._drawCalendar();
         this._setupEventListeners();
+    }
+
+    destroy() {
+        this.isDestroyed = true;
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        this.canvas.removeEventListener('mousemove', this._boundMouseMove);
+        this.canvas.removeEventListener('mouseleave', this._boundMouseLeave);
+        this.canvas.removeEventListener('click', this._boundClick);
     }
 
     _setupCanvas() {
@@ -357,9 +370,14 @@ export class CalendarCanvas {
     }
 
     _setupEventListeners() {
-        this.canvas.addEventListener('mousemove', this._handleMouseMove.bind(this));
-        this.canvas.addEventListener('mouseleave', this._handleMouseLeave.bind(this));
-        this.canvas.addEventListener('click', this._handleClick.bind(this));
+        // Store bound methods for easier removal
+        this._boundMouseMove = this._handleMouseMove.bind(this);
+        this._boundMouseLeave = this._handleMouseLeave.bind(this);
+        this._boundClick = this._handleClick.bind(this);
+        
+        this.canvas.addEventListener('mousemove', this._boundMouseMove);
+        this.canvas.addEventListener('mouseleave', this._boundMouseLeave);
+        this.canvas.addEventListener('click', this._boundClick);
     }
 
     _handleMouseMove(event) {
@@ -398,14 +416,40 @@ export class CalendarCanvas {
 
         // Redraw if needed
         if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
-            this._drawCalendar();
-            this.hoverCallback(this.hoveredSection ? this._collectSliceData() : null);
+            this.needsRedraw = true;
+            this._scheduleRedraw();
+            
+            if (this.hoveredSection) {
+                this.hoverCallback(this._collectSliceData());
+            } else {
+                this.hoverCallback(null);
+            }
         }
     }
 
     _handleMouseLeave() {
         this.hoveredSection = null;
-        this._drawCalendar();
+        this.needsRedraw = true;
+        this._scheduleRedraw();
+        this.hoverCallback(null);
+    }
+
+    _scheduleRedraw() {
+        // Only schedule a new frame if one isn't already pending
+        if (!this.animationFrameId) {
+            this.animationFrameId = requestAnimationFrame(() => this._animationFrame());
+        }
+    }
+
+    _animationFrame() {
+        this.animationFrameId = null;
+        
+        if (this.isDestroyed) return;
+        
+        if (this.needsRedraw) {
+            this._drawCalendar();
+            this.needsRedraw = false;
+        }
     }
 
     _collectSliceData() {
