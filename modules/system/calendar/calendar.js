@@ -1,5 +1,3 @@
-import { tabSlider } from '../view_helper.js';
-import { CalendarCanvas } from './calendarcanvas.js';
 import { DSAKalender } from './default.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
@@ -13,6 +11,10 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     Hooks.call('registerCalendars', DSAWorldCalendar.availableCalendars);
   }
 
+  static monthImage(index) {
+    return `systems/dsa5/icons/months/${DSAWorldCalendar.months[index]}.webp`;
+  }
+
   static init() {
     const selectedCalendar = DSAWorldCalendar.selectedCalendar();
     if (selectedCalendar) {
@@ -21,6 +23,11 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     }
     CONFIG.time.roundTime = 5;
     CONFIG.time.turnTime = 0;
+  }
+
+  translate(key, basicKey = false) {
+    const translationPrefix = basicKey ? 'CALENDAR.DSA' : this.translationPrefix;
+    return game.i18n.localize(translationPrefix + '.' + key);
   }
 
   static async autoDayLight() {
@@ -85,10 +92,9 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
   // game.time.calendar.formatPraiosGefaellig(game.time.worldTime, "formatTimestamp")
   static formatPraiosGefaellig(calendar, components, _options) {
-    const translationPrefix = calendar.translationPrefix;
-    const yyyy = components.year + ' ' + game.i18n.localize(`${translationPrefix}.${CONFIG.time.worldCalendarConfig.years.yearSuffix}`);
+    const yyyy = components.year + ' ' + calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
     const month = calendar.months.values[components.month];
-    const mm = game.i18n.localize(`${translationPrefix}.${month.name}`);
+    const mm = calendar.translate(month.name);
     const dd = components.dayOfMonth + 1;
     let h = components.hour;
 
@@ -96,29 +102,42 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
     const hourIndex = h > 5 ? h + 1 : h;
     const hourPart = components.hour > 11 ? "2." : "1. ";
-    const hourName = game.i18n.localize(`${translationPrefix}.${CONFIG.time.worldCalendarConfig.months.values[hourIndex].name}`);
+    const hourName = calendar.translate(CONFIG.time.worldCalendarConfig.months.values[hourIndex].name);
     const hourSuffix = game.i18n.localize('CALENDAR.DSA.hourSuffix');
 
     return `${hourPart}${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
 
-  static formatSeason(calendar, components, _options) {
-    const translationPrefix = calendar.translationPrefix;
+  static seasonParts(calendar, components, _options) {
     const season = calendar.seasons.values[components.season];
-    const seasonName = game.i18n.localize(`${translationPrefix}.${season.name}`);
+    const seasonName = calendar.translate(season.name);
     const h = components.hour.paddedString(2);
     const m = components.minute.paddedString(2);
     const s = components.second.paddedString(2);
-    const moon = game.i18n.localize(`${translationPrefix}.${components.moon.phase.name}`);
-    const dayOfWeek = game.i18n.localize(`${translationPrefix}.${calendar.days.values[components.dayOfWeek].name}`);
+    const moon = calendar.translate(components.moon.phase.name);
+    const dayOfWeek = calendar.translate(calendar.days.values[components.dayOfWeek].name);
     const holiday = CONFIG.time.worldCalendarConfig.holidays.values.find((h) => {
       const start = h.dayStart;
       const end = h.dayEnd || h.dayStart + 1;
       return h.month === components.month && start <= components.dayOfMonth && components.dayOfMonth < end;
     });
+    
+    return {
+      seasonName,
+      moon,
+      dayOfWeek,
+      h,
+      m,
+      s,
+      holiday
+    }
+  }
+
+  static formatSeason(calendar, components, _options) {
+    const { seasonName, moon, dayOfWeek, h, m, s, holiday } = DSAWorldCalendar.seasonParts(calendar, components, _options);
     let res = `${seasonName}, ${moon}<br/>${dayOfWeek} - ${h}:${m}:${s}`;
     if (holiday) {
-      res += `<br/>${game.i18n.localize(`${translationPrefix}.holiday.${holiday.name}`)}`;
+      res += `<br/>${calendar.translate(`holiday.${holiday.name}`)}`;
     }
     return `<div class="center">${res}</div>`;
   }
@@ -242,7 +261,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
       return;
     }
 
-    new DSACalendarPicker().render(true);
+    game.dsa5.apps.CalendarPicker.render(true);
   }
 
   static smallBackward(ev, target) {
@@ -338,204 +357,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
   }
 }
 
-class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-  static DEFAULT_OPTIONS = {
-    id: 'dsa-calendar-picker',
-    tag: 'form',
-    window: {
-      frame: false,
-      positioned: false,
-    },
-    classes: ['dsaCalendarPicker', 'fullScreenApp'],
-  };
-
-  static PARTS = {
-    fullscreen: {
-      template: 'systems/dsa5/templates/system/fullscreenHeader.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
-    config: {
-      template: 'systems/dsa5/templates/system/calendar/config.hbs',
-      scrollable: ['']
-    },
-    events: {
-      template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
-    },
-    calendar: {
-      template: 'systems/dsa5/templates/system/calendar/calendar.hbs',
-      templates: ['systems/dsa5/templates/system/calendar/picker.hbs']
-    },
-  };
-
-  get title() {
-    return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
-  }
-
-  static TABS = {
-    sheet: {
-      tabs: [
-        { id: 'calendar', label: 'CALENDAR.DSA.calendar' },
-        { id: 'events', label: 'CALENDAR.DSA.holidays' },
-        { id: 'config', label: 'CALENDAR.DSA.config' },
-      ],
-      initial: 'calendar',
-    }
-  }
-
-  _configureRenderParts(options) {
-    const parts = super._configureRenderParts(options);
-    if (!game.user.isGM) delete parts.config;
-    return parts;
-  }
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.isGM = game.user.isGM;
-    data.calendar = game.time.calendar;
-    data.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
-    data.components = data.calendar.timeToComponents(game.time.worldTime);
-    data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
-    const translationPrefix = data.calendar.translationPrefix;
-    data.monthOptions = data.calendar.months.values.map((month, index) => {
-      return {
-        name: `${translationPrefix}.${month.name}`,
-        value: index,
-        selected: index === data.components.month,
-      };
-    });
-    const currentMonth = data.calendar.months.values[data.components.month];
-    data.dayOptions = Array.from({ length: currentMonth.days }, (_, i) => {
-      return {
-        name: (i + 1).toString(),
-        value: i,
-        selected: i === data.components.dayOfMonth - 1,
-      };
-    });
-
-    function getSortableDate(h) {
-      return h.month * 100 + h.dayStart;
-    }
-
-    const currentDateValue = data.components.month * 100 + data.components.dayOfMonth;
-    data.holidays = data.worldCalendarConfig.holidays.values
-      .map((h) => ({
-        ...h,
-        sortValue: getSortableDate(h) >= currentDateValue ? getSortableDate(h) : getSortableDate(h) + 1300, // offset past-year holidays to wrap around
-      })).sort((a, b) => a.sortValue - b.sortValue)
-      .map(({ sortValue, ...h }) => {
-        const start = h.dayStart + 1;
-        const end = h.dayEnd;
-        const day = start + '.' + (end ? `-${end + 1}` : '');
-
-        return {
-          month: game.i18n.localize(`${translationPrefix}.${data.calendar.months.values[h.month].name}`),
-          day,
-          name: game.i18n.localize(`${translationPrefix}.holiday.${h.name}`),
-        };
-      });
-
-    data.calenderSetting = game.settings.settings.get('dsa5.calendar');
-    data.selectedCalendar = game.settings.get('dsa5', 'calendar');
-    data.maxHoursPerDay = data.calendar.days.hoursPerDay;
-    data.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
-    return data;
-  }
-
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = $(this.element);
-
-    tabSlider(html);
-    html.find('.dateChange').on('change', async (ev) => {
-      const form = ev.target.form;
-      const components = new foundry.applications.ux.FormDataExtended(form).object;
-      const currentComponents = game.time.calendar.timeToComponents(game.time.worldTime);
-      components.month = currentComponents.month;
-      components.day = Math.min(currentComponents.day, game.time.calendar.months.values[components.month].days - 1);
-      for (let m = 0; m < components.month; m++) {
-        components.day += game.time.calendar.months.values[m].days;
-      }
-      const newTime = game.time.calendar.componentsToTime(components);
-      await game.time.set(newTime);
-      this.render(true);
-    });
-
-    html.find('.settingChange').on('change', async (ev) => this._onSettingChange(ev));
-    html.find('[name="dsa5.calendar"').on('change', async (ev) => this._onChangeCalendar(ev));
-    this._drawCalendar();
-  }
-
-  _drawCalendar() {
-    if (!this.calendarRenderer) this.calendarRenderer = new CalendarCanvas(this.element, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
-    this.calendarRenderer.render();
-  }
-
-  async _onCalendarCanvasHover(hoverBait) {
-    console.log("Calendar hover bait", hoverBait);
-    let content = '';
-    if (hoverBait) {
-      content = hoverBait
-    }
-
-    this.element.querySelector('.tooltipBox').innerHTML = content;
-  }
-
-  async _onCalendarCanvasCallback(clickBait) {
-    if (!game.user.isGM) return;
-
-    let { year, month, day, hour, minute, second, dayOfWeek, dayOfMonth } = game.time.calendar.timeToComponents(game.time.worldTime);
-
-    switch (clickBait.type) {
-      case "month":
-        if (month === clickBait.originalIndex) return;
-
-        day = Math.min(day, game.time.calendar.months.values[clickBait.originalIndex].days - 1);
-        for (let m = 0; m < clickBait.originalIndex; m++) {
-          day += game.time.calendar.months.values[m].days;
-        }
-        break;
-      case "day":
-        if (clickBait.isCurrentDay) return;
-
-        day = clickBait.index;
-        for (let m = 0; m < month; m++) {
-          day += game.time.calendar.months.values[m].days;
-        }
-        break;
-      case "weekday":
-        if (dayOfWeek === clickBait.originalIndex) return;
-
-        const dayDelta = clickBait.originalIndex - dayOfWeek;
-        day += dayDelta;
-
-        break;
-
-    }
-    const time = game.time.calendar.componentsToTime({ year, month, day, hour, minute, second });
-    await game.time.set(time);
-    this.render(true);
-
-  }
-
-  async _onChangeCalendar(ev) {
-    game.settings.set('dsa5', 'calendar', ev.target.value);
-    foundry.applications.settings.SettingsConfig.reloadConfirm({ world: true })
-  }
-
-  async _onSettingChange(ev) {
-    const value = ev.target.value;
-    const setting = ev.target.name;
-
-    const settings = game.settings.get('dsa5', 'calendarSettings');
-    foundry.utils.setProperty(settings, setting, value);
-    await game.settings.set('dsa5', 'calendarSettings', settings);
-    game.dsa5.apps.CalendarWidget.render(true);
-  }
-}
-
 Hooks.on('updateWorldTime', (worldTime, delta, options, userId) => {
   game.dsa5.apps.CalendarWidget.render(true);
+  game.dsa5.apps.CalendarPicker?.render(true);
   DSAWorldCalendar.autoDayLight();
 });

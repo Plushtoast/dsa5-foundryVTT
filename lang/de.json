@@ -1966,6 +1966,7 @@
             "minute": "Minute",
             "second": "Sekunde",
             "holidays": "Feiertage",
+            "weekday": "Wochentag",
             "holiday": {
                 "Sommersonnenwende": "Sommersonnenwende",
                 "Greifenfest": "Greifenfest",

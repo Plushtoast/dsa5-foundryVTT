@@ -5602,10 +5602,14 @@ input[type='checkbox'].autoCheckbox {
 .dsaCalendarPicker {
   .tooltipBox {
     position: absolute;
-    left: 20px;
+    left: calc(50vw - 550px);
     top: 50%;
     width: 200px;
     transform: translateY(-50%);
+
+    img {
+      position: relative;
+    }
   }
 
   .calendarDateChange {

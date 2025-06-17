@@ -169,10 +169,24 @@ export class CalendarCanvas {
         this.ctx.fillStyle = bgGradient;
         this.ctx.fill();
 
-        // Draw background image
+        // Draw background image with mask
         if (this.precalculated.backgroundImage) {
             const size = this.RADIUS.OUTER * 2;
             const offset = size / 2;
+            
+            // Save the current canvas state
+            this.ctx.save();
+            
+            // Create clipping region (everything except the weekday ring)
+            this.ctx.beginPath();
+            // Outer circle
+            this.ctx.arc(this.centerX, this.centerY, this.RADIUS.OUTER_FRAME, 0, 2 * Math.PI);
+            // Cut out the weekday ring
+            this.ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15, 0, 2 * Math.PI, true);
+            this.ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15, 0, 2 * Math.PI);
+            this.ctx.clip();
+            
+            // Draw background image inside the clipped region
             this.ctx.drawImage(
                 this.precalculated.backgroundImage,
                 this.centerX - offset,
@@ -180,7 +194,11 @@ export class CalendarCanvas {
                 size,
                 size
             );
+            
+            // Restore canvas state
+            this.ctx.restore();
         }
+
     }
 
     _drawBorders() {
@@ -414,7 +432,7 @@ export class CalendarCanvas {
 
     _handleClick(event) {
         if (!this.hoveredSection) return;
-        
+
         this.callback(this._collectSliceData());
     }
 }

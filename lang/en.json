@@ -716,6 +716,7 @@
             "month": "Month",
             "year": "Year",
             "hour": "Hour",
+            "weekday": "Weekday",
             "minute": "Minute",
             "second": "Second",
             "holidays": "holidays",

@@ -3,18 +3,8 @@
 
 
 
-    <!--div class='flexrow col five'>
-        <select name='day' class='dateChange' data-dtype='Number'>
-          {{selectOptions dayOptions selected=components.dayOfMonth localize=true labelAttr='name' valueAttr='value'}}
-        </select>
-      </div>
-      <div class='flexrow col third'>
-        <select name='month' class='dateChange' data-dtype='Number'>
-          {{selectOptions monthOptions selected=components.month localize=true labelAttr='name' valueAttr='value'}}
-        </select>
-      </div-->
     <div class="flexrow">
-      <h3 class="flexrow"><input data-tooltip="CALENDAR.DSA.year" type='number' class='flexgrow-0 dateChange'
+      <h3 class="flexrow">{{components.dayOfMonth}}. {{currentMonth}} <input data-tooltip="CALENDAR.DSA.year" type='number' class='flexgrow-0 dateChange'
           name='year' value='{{components.year}}' /><span>{{localize (concat calendar.translationPrefix '.'
           worldCalendarConfig.years.yearSuffix)}}</span></h3>
 

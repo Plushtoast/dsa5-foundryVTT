@@ -52,6 +52,7 @@ import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } fr
 import { DSAToken } from './hooks/token.js';
 import * as DSAPause from './hooks/pause.js';
 import { CalendarWidget } from './system/calendar/calendar.js';
+import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -82,6 +83,7 @@ Hooks.once('init', () => {
       Trade,
       DSAActiveEffectConfig,
       OnUseEffect,
+      CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
     },
     entities: {
