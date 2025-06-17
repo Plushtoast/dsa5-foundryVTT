@@ -33,10 +33,10 @@ export const DSAKalender = {
       { name: 'Monday', abbreviation: 'MondayAbbr', ordinal: 1 },
       { name: 'Tuesday', abbreviation: 'TuesdayAbbr', ordinal: 2 },
       { name: 'Wednesday', abbreviation: 'WednesdayAbbr', ordinal: 3 },
-      { name: 'Thursday', abbreviation: 'ThursdayAbbr', ordinal: 4 },
+      { name: 'Thursday', abbreviation: 'ThursdayAbbr', ordinal: 4, isRestDay: true },
       { name: 'Friday', abbreviation: 'FridayAbbr', ordinal: 5 },
-      { name: 'Saturday', abbreviation: 'SaturdayAbbr', ordinal: 6, isRestDay: true },
-      { name: 'Sunday', abbreviation: 'SundayAbbr', ordinal: 7, isRestDay: true }
+      { name: 'Saturday', abbreviation: 'SaturdayAbbr', ordinal: 6 },
+      { name: 'Sunday', abbreviation: 'SundayAbbr', ordinal: 7 }
     ],
     daysPerYear: 365,
     hoursPerDay: 24,

@@ -2001,7 +2001,7 @@
                 "lightByDayTime": "Licht nach Tageszeit",
                 "lightByDayTimeHint": "Der Dunkelheitswert wird automatisch an hand der Uhrzeit angepasst. Es wird die Tageszeit berücksichtigt, sofern Licht nach Tageszeit aktiviert ist.",
                 "moonAddsLight": "Mondlicht beeinflusst Dunkelheit",
-                "moonAddsLightHint": "Mondlicht beeinflusst den automatischen Dunkelheitswert bei Nacht. Es wird die Helligkeit des Mondes berücksichtigt, sofern Licht nach Tageszeit aktiviert ist."
+                "moonAddsLightHint": "Mondlicht beeinflusst den automatischen Dunkelheitswert bei Nacht. Es wird die Helligkeit des Mondes mit der Mondphase multipliziert und von der Dunkelheit abgezogen, sofern Licht nach Tageszeit aktiviert ist."
             },
             "config": "Einstellungen",
             "events": "Ereignisse",

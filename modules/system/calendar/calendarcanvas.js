@@ -12,6 +12,14 @@ export class CalendarCanvas {
         this.needsRedraw = false;
         this.isDestroyed = false;
 
+        this.seasonBackgroundColors = [
+            "#f0e6d2", // Summer
+            "#d2e6f0", // Fall
+            "#f0d2d2", // Winter
+            "#d2f0d2",  // Spring
+            "#f0e6d2", // Summer
+        ]
+
         // Constants
         this.RADIUS = {
             OUTER: 300,      // Month ring
@@ -186,10 +194,10 @@ export class CalendarCanvas {
         if (this.precalculated.backgroundImage) {
             const size = this.RADIUS.OUTER * 2;
             const offset = size / 2;
-            
+
             // Save the current canvas state
             this.ctx.save();
-            
+
             // Create clipping region (everything except the weekday ring)
             this.ctx.beginPath();
             // Outer circle
@@ -198,7 +206,7 @@ export class CalendarCanvas {
             this.ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15, 0, 2 * Math.PI, true);
             this.ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15, 0, 2 * Math.PI);
             this.ctx.clip();
-            
+
             // Draw background image inside the clipped region
             this.ctx.drawImage(
                 this.precalculated.backgroundImage,
@@ -207,7 +215,7 @@ export class CalendarCanvas {
                 size,
                 size
             );
-            
+
             // Restore canvas state
             this.ctx.restore();
         }
@@ -374,7 +382,7 @@ export class CalendarCanvas {
         this._boundMouseMove = this._handleMouseMove.bind(this);
         this._boundMouseLeave = this._handleMouseLeave.bind(this);
         this._boundClick = this._handleClick.bind(this);
-        
+
         this.canvas.addEventListener('mousemove', this._boundMouseMove);
         this.canvas.addEventListener('mouseleave', this._boundMouseLeave);
         this.canvas.addEventListener('click', this._boundClick);
@@ -418,7 +426,7 @@ export class CalendarCanvas {
         if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
             this.needsRedraw = true;
             this._scheduleRedraw();
-            
+
             if (this.hoveredSection) {
                 this.hoverCallback(this._collectSliceData());
             } else {
@@ -443,9 +451,9 @@ export class CalendarCanvas {
 
     _animationFrame() {
         this.animationFrameId = null;
-        
+
         if (this.isDestroyed) return;
-        
+
         if (this.needsRedraw) {
             this._drawCalendar();
             this.needsRedraw = false;
