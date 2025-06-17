@@ -12,12 +12,15 @@ export class CalendarCanvas {
         this.needsRedraw = false;
         this.isDestroyed = false;
 
-        this.seasonBackgroundColors = [
-            "#f0e6d2", // Summer
-            "#d2e6f0", // Fall
-            "#f0d2d2", // Winter
-            "#d2f0d2",  // Spring
-            "#f0e6d2", // Summer
+        // Seasonal gradients
+        this.seasonGradients = [
+            { start: "#f8e9c0", end: "#e6c366" }, // Summer
+            { start: "#e6c8a6", end: "#c4784b" }, // Fall
+            { start: "#c9e1f2", end: "#7da9cc" }, // Winter
+            { start: "#c6e8c8", end: "#74ba7b" },  // Spring
+            { start: "#f8e9c0", end: "#e6c366" }, // Summer (repeated for easier indexing)
+            { start: "#393939", end: "#121212" }, // Namenlose Tage (dark/mysterious)
+            { start: "#f8e9c0", end: "#e6c366" }  // Summer (repeated for easier indexing)
         ]
 
         // Constants
@@ -88,7 +91,12 @@ export class CalendarCanvas {
             currentMonth: components.month,
             currentDay: components.dayOfMonth,
             currentWeekday: components.dayOfWeek,
-            daysInMonth: calendar.months.values[components.month].days
+            daysInMonth: calendar.months.values[components.month].days,
+            seasons: calendar.seasons.values.map(s => ({
+                monthStart: s.monthStart,
+                dayStart: s.dayStart,
+                name: calendar.translate(s.name)
+            }))
         };
 
         // Rotate arrays to start with current
@@ -114,12 +122,21 @@ export class CalendarCanvas {
         this.precalculated.monthAngles = [];
         for (let i = 0; i < monthCount; i++) {
             const angle = (2 * Math.PI * i) / monthCount - Math.PI / 2;
+
+            // Calculate original month index (accounting for rotation)
+            const originalMonthIndex = (this.calendarData.currentMonth + i) % monthCount;
+
+            // Determine season for this month
+            const season = this._getSeasonForMonth(originalMonthIndex);
+
             this.precalculated.monthAngles.push({
                 angle,
                 x: this.centerX + Math.cos(angle) * this.RADIUS.OUTER,
                 y: this.centerY + Math.sin(angle) * this.RADIUS.OUTER,
                 startAngle: (2 * Math.PI * i) / monthCount,
-                endAngle: (2 * Math.PI * (i + 1)) / monthCount
+                endAngle: (2 * Math.PI * (i + 1)) / monthCount,
+                season,
+                originalIndex: originalMonthIndex
             });
         }
 
@@ -148,6 +165,19 @@ export class CalendarCanvas {
         }
     }
 
+    _getSeasonForMonth(monthIndex) {
+        // Find which season contains this month
+        let season;
+        for (season = 0; season < this.calendarData.seasons.length; season++) {
+            const monthStart = this.calendarData.seasons[season].monthStart
+            const nextSeason = season == this.calendarData.seasons.length - 1 ? 14 : this.calendarData.seasons[season + 1].monthStart;
+            if (monthStart <= monthIndex && nextSeason > monthIndex) {
+                return season;
+            }
+        }
+        return 0; // Default to first season if not found
+    }
+
     async _loadBackgroundImage() {
         const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
 
@@ -165,8 +195,9 @@ export class CalendarCanvas {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw elements
+        // Draw elements in correct order
         this._drawBackground();
+        this._drawMonthSeasons(); // New method to draw seasonal backgrounds
         this._drawHighlightedSection();
         this._drawBorders();
         this._drawNorthMarker();
@@ -219,7 +250,24 @@ export class CalendarCanvas {
             // Restore canvas state
             this.ctx.restore();
         }
+    }
 
+    _drawMonthSeasons() {
+        // Draw seasonal backgrounds for each month slice
+        this.precalculated.monthAngles.forEach((monthData) => {
+            console.log(monthData);
+            const { startAngle, endAngle, season } = monthData;
+            const gradient = this.seasonGradients[season];
+
+            // Draw the month slice with seasonal gradient
+            this._drawArcSegment(
+                this.RADIUS.OUTER - 15, // Inner radius
+                this.RADIUS.OUTER_FRAME, // Outer radius
+                startAngle - this.precalculated.monthAngleOffset,
+                endAngle - this.precalculated.monthAngleOffset,
+                gradient // Pass gradient colors
+            );
+        });
     }
 
     _drawBorders() {
@@ -335,12 +383,14 @@ export class CalendarCanvas {
         if (type === 'month') {
             const { startAngle, endAngle } = this.precalculated.monthAngles[index];
 
-            // Draw arc between the inner and outer radius of the month section
+            // Draw highlighted arc with increased opacity
             this._drawArcSegment(
                 this.RADIUS.OUTER - 15,
                 this.RADIUS.OUTER_FRAME,
                 startAngle - this.precalculated.monthAngleOffset,
-                endAngle - this.precalculated.monthAngleOffset
+                endAngle - this.precalculated.monthAngleOffset,
+                null,
+                true
             );
         } else if (type === 'weekday') {
             const { startAngle, endAngle } = this.precalculated.weekdayAngles[index];
@@ -350,12 +400,14 @@ export class CalendarCanvas {
                 this.RADIUS.WEEKDAYS - 15,
                 this.RADIUS.WEEKDAYS + 15,
                 startAngle - this.precalculated.weekdayAngleOffset,
-                endAngle - this.precalculated.weekdayAngleOffset
+                endAngle - this.precalculated.weekdayAngleOffset,
+                null,
+                true
             );
         }
     }
 
-    _drawArcSegment(innerRadius, outerRadius, startAngle, endAngle) {
+    _drawArcSegment(innerRadius, outerRadius, startAngle, endAngle, gradient = null, isHighlight = false) {
         // Adjust angles to canvas coordinate system
         const startAngleAdjusted = startAngle - Math.PI / 2;
         const endAngleAdjusted = endAngle - Math.PI / 2;
@@ -373,8 +425,34 @@ export class CalendarCanvas {
         // Close the path
         this.ctx.closePath();
 
-        this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
+        if (gradient) {
+            // Create and apply the radial gradient for the seasonal color
+            const arcCenterAngle = (startAngleAdjusted + endAngleAdjusted) / 2;
+            const arcCenterX = this.centerX + (innerRadius + (outerRadius - innerRadius) / 2) * Math.cos(arcCenterAngle);
+            const arcCenterY = this.centerY + (innerRadius + (outerRadius - innerRadius) / 2) * Math.sin(arcCenterAngle);
+
+            const gradientRadius = (outerRadius - innerRadius) * 0.75;
+
+            const gradientFill = this.ctx.createRadialGradient(
+                arcCenterX, arcCenterY, 0,
+                arcCenterX, arcCenterY, gradientRadius
+            );
+
+            gradientFill.addColorStop(0, gradient.start);
+            gradientFill.addColorStop(1, gradient.end);
+
+            this.ctx.fillStyle = gradientFill;
+            this.ctx.globalAlpha = 0.7; // Semi-transparent
+        } else if (isHighlight) {
+            this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
+            this.ctx.globalAlpha = 0.6; // Higher opacity for highlight
+        } else {
+            this.ctx.fillStyle = "rgba(255, 255, 255, 0.1)"; // Default fill
+            this.ctx.globalAlpha = 0.3;
+        }
+
         this.ctx.fill();
+        this.ctx.globalAlpha = 1.0; // Reset opacity
     }
 
     _setupEventListeners() {
@@ -469,8 +547,9 @@ export class CalendarCanvas {
 
         if (type === 'month') {
             clickData.name = this.calendarData.months[index];
-            const originalIndex = (this.calendarData.currentMonth + index) % this.calendarData.months.length;
+            const originalIndex = this.precalculated.monthAngles[index].originalIndex;
             clickData.originalIndex = originalIndex;
+            clickData.season = this.precalculated.monthAngles[index].season;
         } else if (type === 'day') {
             clickData.day = index + 1; // 1-based day
             clickData.isCurrentDay = index === this.calendarData.currentDay;

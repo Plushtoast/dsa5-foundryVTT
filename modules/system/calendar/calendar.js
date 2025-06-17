@@ -2,7 +2,7 @@ import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
-  static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Namenloser', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja'];
+  static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde',  'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
   
   static availableCalendars = [
     { key: 'none', name: '-' },
@@ -105,7 +105,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     let h = components.hour;
     if (h > 11) h -= 12;
 
-    const hourIndex = h > 5 ? h + 1 : h;
+    const hourIndex = h;
     const hourPart = components.hour > 11 ? "2." : "1.";
     const hourName = calendar.translate(CONFIG.time.worldCalendarConfig.months.values[hourIndex].name);
     const hourSuffix = game.i18n.localize('CALENDAR.DSA.hourSuffix');

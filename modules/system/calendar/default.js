@@ -19,13 +19,13 @@ export const DSAKalender = {
       { name: 'October', abbreviation: 'OctoberAbbr', ordinal: 4, days: 30 },
       { name: 'November', abbreviation: 'NovemberAbbr', ordinal: 5, days: 30 },
       { name: 'December', abbreviation: 'DecemberAbbr', ordinal: 6, days: 30 },
-      { name: 'NamenloseTage', abbreviation: 'NamenloseTageAbbr', ordinal: 7, days: 5 },
-      { name: 'January', abbreviation: 'JanuaryAbbr', ordinal: 8, days: 30 },
-      { name: 'February', abbreviation: 'FebruaryAbbr', ordinal: 9, days: 30 },
-      { name: 'March', abbreviation: 'MarchAbbr', ordinal: 10, days: 30 },
-      { name: 'April', abbreviation: 'AprilAbbr', ordinal: 11, days: 30 },
-      { name: 'May', abbreviation: 'MayAbbr', ordinal: 12, days: 30 },
-      { name: 'June', abbreviation: 'JuneAbbr', ordinal: 13, days: 30 }
+      { name: 'January', abbreviation: 'JanuaryAbbr', ordinal: 7, days: 30 },
+      { name: 'February', abbreviation: 'FebruaryAbbr', ordinal: 8, days: 30 },
+      { name: 'March', abbreviation: 'MarchAbbr', ordinal: 9, days: 30 },
+      { name: 'April', abbreviation: 'AprilAbbr', ordinal: 10, days: 30 },
+      { name: 'May', abbreviation: 'MayAbbr', ordinal: 11, days: 30 },
+      { name: 'June', abbreviation: 'JuneAbbr', ordinal: 12, days: 30 },
+      { name: 'NamenloseTage', abbreviation: 'NamenloseTageAbbr', ordinal: 13, days: 5 }
     ],
   },
   days: {
@@ -46,10 +46,12 @@ export const DSAKalender = {
   seasons: {
     values: [
       { name: 'Summer', monthStart: 0, dayStart: 0 },
-      { name: 'Fall', monthStart: 2, dayStart: 21 },
+      { name: 'Fall', monthStart: 3, dayStart: 21 },
       { name: 'Winter', monthStart: 5, dayStart: 20 },
       { name: 'Spring', monthStart: 8, dayStart: 19 },
-      { name: 'Summer', monthStart: 11, dayStart: 20 }
+      { name: 'Summer', monthStart: 11, dayStart: 20 },
+      { name: 'NamenloseTage', monthStart: 12, dayStart: 0 },
+      { name: 'Summer', monthStart: 13, dayStart: 0 },
     ],
   },
   moon: {
