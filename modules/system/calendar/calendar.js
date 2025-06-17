@@ -1,4 +1,5 @@
 import { tabSlider } from '../view_helper.js';
+import { CalendarCanvas } from './calendarcanvas.js';
 import { DSAKalender } from './default.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
@@ -464,129 +465,9 @@ class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMi
     this._drawCalendar();
   }
 
-  async _drawCalendar() {
-    const components = game.time.calendar.timeToComponents(game.time.worldTime);
-    const canvas = document.querySelector('.circular-calendar');
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    const centerY = height / 2;
-
-    const radiusOuter = 300;   // Month ring
-    const radiusDays = 270;    // Day dots
-    const radiusWeekdays = 140; // Weekday labels
-    const outerFrame = radiusOuter + 15;
-
-    let months = game.time.calendar.months.values.map((m) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${m.name}`))
-    let weekdays = game.time.calendar.days.values.map((d) => game.i18n.localize(`${game.time.calendar.translationPrefix}.${d.name}`));
-
-    const currentMonth = components.month;
-    const currentDay = components.dayOfMonth;
-    const currentWeekday = components.dayOfWeek;
-    const daysInMonth = game.time.calendar.months.values[currentMonth].days
-
-    // circle the months until the first month is the current month
-    months = months.slice(currentMonth).concat(months.slice(0, currentMonth));
-    weekdays = weekdays.slice(currentWeekday).concat(weekdays.slice(0, currentWeekday));
-
-    const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
-
-    const loadImage = () => {
-      return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const size = radiusOuter * 2;
-        const offset = size / 2;
-        ctx.drawImage(img, centerX - offset, centerY - offset, size, size);
-        resolve();
-      };
-      img.src = backgroundImage;
-      });
-    };
-
-    const bgGradient = ctx.createRadialGradient(centerX, centerY, 50, centerX, centerY, outerFrame);
-    bgGradient.addColorStop(0, "#1a1a1a");
-    bgGradient.addColorStop(1, "#000000");
-    
-    // Fill the full circle area
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, outerFrame, 0, 2 * Math.PI, false);
-    ctx.fillStyle = bgGradient;
-    ctx.fill();
-      
-    await loadImage();
-
-    function drawBorder(radius, color = "#444", width = 1) {
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = width;
-      ctx.stroke();
-    }
-
-    drawBorder(outerFrame, "#888", 2);
-    drawBorder(radiusOuter - 15, "#555", 1);
-    drawBorder(radiusDays, "#555", 1);
-    drawBorder(radiusWeekdays + 15, "#555", 1);    
-    drawBorder(radiusWeekdays - 15, "#555", 1);
-
-    ctx.font = "16px Garamond";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    // Draw months along the full circle
-    months.forEach((month, i) => {
-      const angle = (2 * Math.PI * i) / months.length;
-      const x = centerX + Math.cos(angle - Math.PI/2) * radiusOuter;
-      const y = centerY + Math.sin(angle - Math.PI/2) * radiusOuter;
-      
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.fillStyle = "#e0c080";
-      ctx.fillText(month, 0, 0);
-      ctx.restore();
-    });
-
-    // Draw days in full circle
-    for (let d = 0; d < daysInMonth; d++) {
-      const angle = (2 * Math.PI * d) / daysInMonth;
-      const x = centerX + Math.cos(angle - Math.PI/2) * radiusDays;
-      const y = centerY + Math.sin(angle - Math.PI/2) * radiusDays;
-
-      ctx.beginPath();
-      ctx.arc(x, y, 3, 0, 2 * Math.PI);
-      ctx.fillStyle = "#fff6d0";
-      ctx.fill();
-    }
-
-    // Highlight current day
-    const angleToday = (2 * Math.PI * currentDay) / daysInMonth;
-    const xToday = centerX + Math.cos(angleToday - Math.PI/2) * radiusDays;
-    const yToday = centerY + Math.sin(angleToday - Math.PI/2) * radiusDays;
-
-    ctx.beginPath();
-    ctx.arc(xToday, yToday, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = "#ffcc00";
-    ctx.fill();
-
-    ctx.font = "12px Garamond";
-    
-    // Draw weekdays in full circle
-    weekdays.forEach((day, i) => {
-      const angle = (2 * Math.PI * i) / weekdays.length;
-      const x = centerX + Math.cos(angle - Math.PI/2) * radiusWeekdays;
-      const y = centerY + Math.sin(angle - Math.PI/2) * radiusWeekdays;
-
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(angle);
-      ctx.fillStyle = (i === currentWeekday) ? "#ffcc00" : "#e0c080";
-      ctx.fillText(day, 0, 0);
-      ctx.restore();
-    });
+  _drawCalendar() {
+    const renderer = new CalendarCanvas(this.element)
+    renderer.render();
   }
 
   async _onChangeCalendar(ev) {
