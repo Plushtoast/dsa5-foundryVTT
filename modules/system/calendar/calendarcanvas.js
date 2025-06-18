@@ -64,7 +64,8 @@ export class CalendarCanvas {
             TEXT_NORMAL: 0xe0c080,
             TEXT_HIGHLIGHT: 0xffcc00,
             DOT_NORMAL: 0xfff6d0,
-            HIGHLIGHT_BG: 0xffcc00
+            HIGHLIGHT_BG: 0xffcc00,
+            HIGHLIGHT_MOON: 0xffffff,
         });
 
         this.SEASON_GRADIENTS = Object.freeze([
@@ -94,13 +95,13 @@ export class CalendarCanvas {
 
         this.MOON_POSITIONS = Object.freeze([
             { x: 0, y: 1 },                         // New Moon (bottom)
-            { x: -Math.cos(Math.PI/4), y: Math.sin(Math.PI/4) },  // Waxing Crescent
+            { x: -Math.cos(Math.PI / 4), y: Math.sin(Math.PI / 4) },  // Waxing Crescent
             { x: -1, y: 0 },                        // First Quarter (left)
-            { x: -Math.cos(Math.PI/4), y: -Math.sin(Math.PI/4) }, // Waxing Gibbous
+            { x: -Math.cos(Math.PI / 4), y: -Math.sin(Math.PI / 4) }, // Waxing Gibbous
             { x: 0, y: -1 },                        // Full Moon (top)
-            { x: Math.cos(Math.PI/4), y: -Math.sin(Math.PI/4) },  // Waning Gibbous
+            { x: Math.cos(Math.PI / 4), y: -Math.sin(Math.PI / 4) },  // Waning Gibbous
             { x: 1, y: 0 },                         // Last Quarter (right)
-            { x: Math.cos(Math.PI/4), y: Math.sin(Math.PI/4) }    // Waning Crescent
+            { x: Math.cos(Math.PI / 4), y: Math.sin(Math.PI / 4) }    // Waning Crescent
         ]);
 
         this.FONT_STYLE = Object.freeze({
@@ -134,7 +135,8 @@ export class CalendarCanvas {
             hitRegions: {
                 month: { min: this.RADIUS.OUTER - 10, max: this.RADIUS.OUTER + 10 },
                 day: { center: this.RADIUS.DAYS, tolerance: 10 },
-                weekday: { center: this.RADIUS.WEEKDAYS, tolerance: 15 }
+                weekday: { center: this.RADIUS.WEEKDAYS, tolerance: 15 },
+                moon: { centerX: 0, centerY: 0, radius: 20 }
             }
         };
     }
@@ -301,12 +303,11 @@ export class CalendarCanvas {
         }
 
         const TWO_PI = 2 * Math.PI;
-        
-        // Use map for immutability and performance
+
         return seasons.map(season => {
             const startAngle = (season.startAngle - currentMonthStartAngle + TWO_PI) % TWO_PI;
             const endAngle = (season.endAngle - currentMonthStartAngle + TWO_PI) % TWO_PI;
-            
+
             return {
                 ...season,
                 startAngle,
@@ -342,10 +343,9 @@ export class CalendarCanvas {
     }
 
     _precalculateHitDetection() {
-        // Create lookup maps for faster hit detection using TypedArrays for better performance
-        const SEGMENTS = 360; // One segment per degree for precision
+        const SEGMENTS = 360;
         const TWO_PI = 2 * Math.PI;
-        
+
         // Use typed arrays for better performance
         this.hitDetectionLookup = {
             month: new Int16Array(SEGMENTS),
@@ -360,7 +360,7 @@ export class CalendarCanvas {
             const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.month;
             this.hitDetectionLookup.month[i] = Math.floor(angle / monthStep) % monthCount;
         }
-        
+
         // Generate day hit detection
         const dayCount = this.calendarData.daysInMonth;
         const dayStep = TWO_PI / dayCount;
@@ -368,7 +368,7 @@ export class CalendarCanvas {
             const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.day;
             this.hitDetectionLookup.day[i] = Math.floor(angle / dayStep) % dayCount;
         }
-        
+
         // Generate weekday hit detection
         const weekdayCount = this.calendarData.weekdays.length;
         const weekdayStep = TWO_PI / weekdayCount;
@@ -381,7 +381,7 @@ export class CalendarCanvas {
     _calculateMoonAngles(moonCount) {
         const angles = new Array(moonCount);
         const angleStep = 2 * Math.PI / moonCount;
-        const moonOffset = Math.PI / 2; // Offset to align with the top
+        const moonOffset = Math.PI / 2;
 
         for (let i = 0; i < moonCount; i++) {
             const angle = angleStep * i - moonOffset;
@@ -456,7 +456,7 @@ export class CalendarCanvas {
     _calculateSeasonAngles() {
         const seasonAngleOffset = 15 / 365 * 2 * Math.PI;
         const HALF_PI = Math.PI / 2;
-        
+
         return this.calendarData.seasons.map(season => ({
             startAngle: season.startAngle - HALF_PI - seasonAngleOffset,
             endAngle: season.endAngle - HALF_PI - seasonAngleOffset,
@@ -472,8 +472,7 @@ export class CalendarCanvas {
         try {
             const toLoad = ["systems/dsa5/icons/textures/calendar.json"];
             await foundry.canvas.TextureLoader.loader.load(toLoad);
-            
-            // Optimize by just iterating once through all textures
+
             for (const path of toLoad) {
                 const spritesheet = foundry.canvas.getTexture(path);
                 if (spritesheet && spritesheet.textures) {
@@ -482,7 +481,6 @@ export class CalendarCanvas {
             }
         } catch (error) {
             console.warn('Failed to load textures:', error);
-            // Continue without textures
         }
     }
 
@@ -491,23 +489,22 @@ export class CalendarCanvas {
 
         // Create container hierarchy with appropriate z-index
         const containerOrder = [
-            'background', 
-            'seasons', 
-            'monthSprites', 
-            'months', 
-            'days', 
-            'weekdays', 
-            'moonPhase', 
+            'background',
+            'seasons',
+            'monthSprites',
+            'months',
+            'days',
+            'weekdays',
+            'moonPhase',
             'highlights'
         ];
-        
-        // Create all containers at once
+
         const containers = {};
         for (const key of containerOrder) {
             containers[key] = new PIXI.Container();
             this.stage.addChild(containers[key]);
         }
-        
+
         this.containers = containers;
     }
 
@@ -531,7 +528,6 @@ export class CalendarCanvas {
 
         // Add background image if available
         if (this.spritesheet) {
-            // Create background sprite
             const bgSprite = new PIXI.Sprite(this.spritesheet.bg_goetterkreis);
             bgSprite.anchor.set(0.5);
             bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
@@ -610,7 +606,7 @@ export class CalendarCanvas {
 
         // Cache gradient textures for reuse
         const gradientKey = `${gradient.start}_${gradient.end}_${outerRadius}_${innerRadius}`;
-        
+
         let gradientTexture = this.textureCache.get(gradientKey);
         if (!gradientTexture) {
             gradientTexture = this._createRingGradientTexture(outerRadius, innerRadius, [
@@ -639,7 +635,6 @@ export class CalendarCanvas {
         canvas.width = canvas.height = canvasSize;
         const ctx = canvas.getContext('2d');
 
-        // Create a radial gradient that starts at innerRadius and ends at radius
         const gradient = ctx.createRadialGradient(
             radius, radius, innerRadius,  // Inner circle (center, radius a)
             radius, radius, radius        // Outer circle (center, radius b)
@@ -658,7 +653,6 @@ export class CalendarCanvas {
     _drawBorders() {
         const borders = new PIXI.Graphics();
 
-        // Draw circular borders in a single pass
         const borderConfigs = [
             { radius: this.RADIUS.OUTER_FRAME, color: this.COLORS.BORDER_OUTER, width: 2 },
             { radius: this.RADIUS.DAYS, color: this.COLORS.BORDER_INNER, width: 1 },
@@ -703,7 +697,7 @@ export class CalendarCanvas {
             alpha: true,
             scale: true
         });
-        
+
         this.containers.months.addChild(monthTextsContainer);
         this.containers.monthSprites.addChild(spriteContainer);
 
@@ -735,7 +729,7 @@ export class CalendarCanvas {
                 );
                 monthSprite.width = monthSprite.height = 60;
                 monthSprite.rotation = angle + Math.PI / 2;
-                
+
                 spriteContainer.addChild(monthSprite);
             }
 
@@ -747,7 +741,6 @@ export class CalendarCanvas {
         const { weekdays } = this.calendarData;
         this.containers.weekdays.removeChildren();
 
-        // Use ParticleContainer for better performance with static text
         const weekdayTextsContainer = new PIXI.Container();
         this.containers.weekdays.addChild(weekdayTextsContainer);
 
@@ -780,37 +773,42 @@ export class CalendarCanvas {
         let moonX = this.centerX;
         let moonY = this.centerY;
         const actualMoon = currentMoon % 8;
+        const PI_4 = Math.PI / 4;
+
         switch (actualMoon) {
             case 0: // New Moon
                 moonY += distanceFromCenter;
                 break;
             case 1: // Waxing Crescent
-                moonX -= distanceFromCenter * Math.cos(Math.PI / 4);
-                moonY += distanceFromCenter * Math.sin(Math.PI / 4);
+                moonX -= distanceFromCenter * Math.cos(PI_4);
+                moonY += distanceFromCenter * Math.sin(PI_4);
                 break;
             case 2: // First Quarter
                 moonX -= distanceFromCenter;
                 break;
             case 3: // Waxing Gibbous
-                moonX -= distanceFromCenter * Math.cos(Math.PI / 4);
-                moonY -= distanceFromCenter * Math.sin(Math.PI / 4);
+                moonX -= distanceFromCenter * Math.cos(PI_4);
+                moonY -= distanceFromCenter * Math.sin(PI_4);
                 break;
             case 4: // Full Moon
                 moonY -= distanceFromCenter;
                 break;
             case 5: // Waning Gibbous
-                moonX += distanceFromCenter * Math.cos(Math.PI / 4);
-                moonY -= distanceFromCenter * Math.sin(Math.PI / 4);
+                moonX += distanceFromCenter * Math.cos(PI_4);
+                moonY -= distanceFromCenter * Math.sin(PI_4);
                 break;
             case 6: // Last Quarter
                 moonX += distanceFromCenter;
                 break;
             case 7: // Waning Crescent
-                moonX += distanceFromCenter * Math.cos(Math.PI / 4);
-                moonY += distanceFromCenter * Math.sin(Math.PI / 4);
-                break;
+                moonX += distanceFromCenter * Math.cos(PI_4);
+                moonY += distanceFromCenter * Math.sin(PI_4);
+                break;               
 
         }
+
+        this.precalculated.hitRegions.moon.centerX = moonX;
+        this.precalculated.hitRegions.moon.centerY = moonY;
 
         // Create container for the moon
         const moonContainer = new PIXI.Container();
@@ -836,7 +834,7 @@ export class CalendarCanvas {
 
         // Add glow effect
         const moonGlow = new PIXI.Graphics();
-        moonGlow.beginFill(0x8aa8c5, 0.5);
+        moonGlow.beginFill(0, 0.5);
         moonGlow.drawCircle(0, 0, moonSize / 2 + 4);
         moonGlow.endFill();
         moonGlow.filters = [blurFilter];
@@ -844,47 +842,54 @@ export class CalendarCanvas {
         // Add the glow first (behind the moon)
         moonContainer.addChild(moonGlow);
 
+        const moonBorder = new PIXI.Graphics();
+        moonBorder.lineStyle(1, this.COLORS.BORDER_INNER);
+        moonBorder.drawCircle(0, 0, moonSize / 2);
+        moonBorder.endFill();
+
         // Create shadow overlay based on phase
         const shadowOverlay = new PIXI.Graphics();
         shadowOverlay.beginFill(0x394f57);
 
-       switch (actualMoon) {
+        const radius = moonSize / 2;
+        const moonPart = moonSize * 0.2;
+
+        switch (actualMoon) {
             case 0: // New Moon (completely dark)
-                shadowOverlay.drawCircle(0, 0, moonSize / 2);
+                shadowOverlay.drawCircle(0, 0, radius);
                 break;
             case 1: // Waxing Crescent
-                shadowOverlay.drawCircle(0, -moonSize * 0.2, moonSize / 2);
-                //shadowOverlay.arc(x, y, radius, startAngle, endAngle, clockwise)
+                shadowOverlay.drawCircle(0, -moonPart, radius);
                 shadowOverlay.closePath();
                 shadowOverlay.mask = shadowMask;
                 break;
             case 2: // First Quarter
-                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI, 0, false);
-                shadowOverlay.lineTo(-moonSize / 2, 0);
-                shadowOverlay.lineTo(moonSize / 2, 0);
+                shadowOverlay.arc(0, 0, radius, -Math.PI, 0, false);
+                shadowOverlay.lineTo(-radius, 0);
+                shadowOverlay.lineTo(radius, 0);
                 shadowOverlay.closePath();
                 break;
             case 3: // Waxing Gibbous
-                shadowOverlay.arc(0, moonSize * 0.2, moonSize / 2, -Math.PI, 0, false);
-                shadowOverlay.arc(0, 0, moonSize / 2, 0, -Math.PI, true);
+                shadowOverlay.arc(0, moonPart, radius, -Math.PI, 0, false);
+                shadowOverlay.arc(0, 0, radius, 0, -Math.PI, true);
                 shadowOverlay.closePath();
                 break;
             case 4: // Full Moon (no shadow)
                 // No shadow for full moon
                 break;
             case 5: // Waning Gibbous
-                shadowOverlay.arc(0, 0, moonSize / 2, 0, Math.PI, false);
-                shadowOverlay.arc(0, -moonSize * 0.2, moonSize / 2, Math.PI, 0, true);
+                shadowOverlay.arc(0, 0, radius, 0, Math.PI, false);
+                shadowOverlay.arc(0, -moonPart, radius, Math.PI, 0, true);
                 shadowOverlay.closePath();
                 break;
             case 6: // Last Quarter
-                shadowOverlay.arc(0, 0, moonSize / 2, 0, Math.PI, false);
-                shadowOverlay.lineTo(moonSize / 2, 0);
-                shadowOverlay.lineTo(-moonSize / 2, 0);
+                shadowOverlay.arc(0, 0, radius, 0, Math.PI, false);
+                shadowOverlay.lineTo(radius, 0);
+                shadowOverlay.lineTo(-radius, 0);
                 shadowOverlay.closePath();
                 break;
             case 7: // Waning Crescent
-                shadowOverlay.drawCircle(0, moonSize * 0.2, moonSize / 2);
+                shadowOverlay.drawCircle(0, moonPart, radius);
                 shadowOverlay.closePath();
                 shadowOverlay.mask = shadowMask;
                 break;
@@ -895,6 +900,7 @@ export class CalendarCanvas {
         moonContainer.addChild(shadowMask);
         moonContainer.addChild(baseMoon);
         moonContainer.addChild(shadowOverlay);
+        moonContainer.addChild(moonBorder);
 
         // Add moon container to the main container
         this.containers.moonPhase.addChild(moonContainer);
@@ -907,40 +913,40 @@ export class CalendarCanvas {
 
         const dotsGraphics = new PIXI.Graphics();
         const highlightedDotsGraphics = new PIXI.Graphics();
-        
+
         // Draw regular dots
         dotsGraphics.beginFill(this.COLORS.DOT_NORMAL);
-        
+
         // Draw highlighted dot
         highlightedDotsGraphics.beginFill(this.COLORS.TEXT_HIGHLIGHT);
-        
+
         const dayAngles = this.precalculated.dayAngles;
         for (let i = 0; i < dayAngles.length; i++) {
             const { x, y } = dayAngles[i];
             const isCurrentDay = i === currentDay;
-            
+
             if (isCurrentDay) {
                 highlightedDotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 5);
             } else {
                 dotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 3);
             }
         }
-        
+
         dotsGraphics.endFill();
         highlightedDotsGraphics.endFill();
-        
+
         dotsGraphics.position.set(this.centerX, this.centerY);
         highlightedDotsGraphics.position.set(this.centerX, this.centerY);
-        
+
         daysContainer.addChild(dotsGraphics);
         daysContainer.addChild(highlightedDotsGraphics);
-        
+
         const interactiveLayer = new PIXI.Sprite(PIXI.Texture.WHITE);
         interactiveLayer.width = this.app.screen.width;
         interactiveLayer.height = this.app.screen.height;
         interactiveLayer.alpha = 0.001; // Almost invisible
         interactiveLayer.interactive = true;
-        
+
         daysContainer.addChild(interactiveLayer);
         this.containers.days.addChild(daysContainer);
     }
@@ -969,8 +975,8 @@ export class CalendarCanvas {
         this.hoveredSection = this._detectHoveredSection(distance, angle);
 
         // Update highlights if changed
-        if (!previousHovered || !this.hoveredSection || 
-            previousHovered.type !== this.hoveredSection.type || 
+        if (!previousHovered || !this.hoveredSection ||
+            previousHovered.type !== this.hoveredSection.type ||
             previousHovered.index !== this.hoveredSection.index) {
             this._updateHighlights();
             this.hoverCallback(this.hoveredSection ? this._collectSliceData() : null);
@@ -991,6 +997,17 @@ export class CalendarCanvas {
     _detectHoveredSection(distance, angle) {
         const { hitRegions } = this.precalculated;
         const angleDegrees = Math.floor((angle * 180 / Math.PI) % 360);
+
+        const moonRegion = hitRegions.moon;
+        const mouseX = this.centerX + Math.cos(angle - Math.PI / 2) * distance;
+        const mouseY = this.centerY + Math.sin(angle - Math.PI / 2) * distance;
+        const dx = mouseX - moonRegion.centerX;
+        const dy = mouseY - moonRegion.centerY;
+        const distanceToMoon = Math.sqrt(dx * dx + dy * dy);
+
+        if (distanceToMoon <= moonRegion.radius) {
+            return { type: 'moon', index: this.calendarData.currentMoon };
+        }
 
         // Fast hit detection using precalculated lookup tables
         if (distance >= hitRegions.month.min && distance <= hitRegions.month.max) {
@@ -1051,6 +1068,11 @@ export class CalendarCanvas {
             const { x, y } = this.precalculated.dayAngles[index];
             highlight.drawCircle(x, y, 8);
         }
+        else if (type === 'moon') {
+            highlight.beginFill(this.COLORS.HIGHLIGHT_MOON, 0.1);
+            const { centerX, centerY, radius } = this.precalculated.hitRegions.moon;
+            highlight.drawCircle(centerX, centerY, radius + 1);
+        }
 
         this.containers.highlights.addChild(highlight);
     }
@@ -1062,7 +1084,7 @@ export class CalendarCanvas {
         for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
             let isHighlighted = false;
-            
+
             if (type === 'month') {
                 const isCurrentMonth = text.originalIndex === this.calendarData.currentMonth;
                 isHighlighted = (i === index || isCurrentMonth);
@@ -1070,7 +1092,7 @@ export class CalendarCanvas {
                 const isCurrentElement = i === 0; // First element is current for rotated arrays
                 isHighlighted = (i === index || isCurrentElement);
             }
-            
+
             text.style.fill = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
         }
     }
@@ -1099,6 +1121,10 @@ export class CalendarCanvas {
             case 'weekday':
                 clickData.name = this.calendarData.weekdays[index];
                 clickData.originalIndex = (this.calendarData.currentWeekday + index) % this.calendarData.weekdays.length;
+                break;
+            case 'moon':
+                clickData.phase = index;
+                clickData.name = this.calendarData.moons[index % 8];
                 break;
         }
 
