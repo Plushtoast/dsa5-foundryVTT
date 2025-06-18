@@ -62,6 +62,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.components = data.calendar.timeToComponents(game.time.worldTime);
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
     data.currentMonth = data.calendar.translate(data.calendar.months.values[data.components.month].name);
+    data.currentDay = data.components.dayOfMonth + 1;
 
     function getSortableDate(h) {
       return h.month * 100 + h.dayStart;
@@ -116,11 +117,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _drawCalendar() {
+    const appContainer = this.element.querySelector('.circular-calendar');
+    //const appContainer = this.element;
     if (this.calendarRenderer) {
-      this.calendarRenderer.element = this.element;
+      this.calendarRenderer.element = appContainer;
     }
     else {
-      this.calendarRenderer = new CalendarCanvas(this.element, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
+      this.calendarRenderer = new CalendarCanvas(appContainer, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
     }
     this.calendarRenderer.render();
   }

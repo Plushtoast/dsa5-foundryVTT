@@ -1,22 +1,27 @@
+
 export class CalendarCanvas {
+
     constructor(parentElement, callback, hoverCallback) {
         this.element = parentElement;
         this.callback = callback;
         this.hoverCallback = hoverCallback;
 
-        // Canvas properties
-        this.canvas = null;
-        this.ctx = null;
-        this.offscreenCanvas = null;
-        this.offscreenCtx = null;
-        this.centerX = 0;
-        this.centerY = 0;
+        // PixiJS components
+        this.app = null;
+        this.stage = null;
+        this.containers = {
+            background: null,
+            seasons: null,
+            months: null,
+            days: null,
+            weekdays: null,
+            highlights: null
+        };
 
         // State
         this.hoveredSection = null;
         this.isDestroyed = false;
-        this.needsRedraw = false;
-        this.animationFrameId = null;
+        this.backgroundTexture = null;
 
         // Event handlers (bound once)
         this.throttledMouseMove = this._throttle(this._handleMouseMove.bind(this), 16);
@@ -41,29 +46,39 @@ export class CalendarCanvas {
         });
 
         this.COLORS = Object.freeze({
-            BACKGROUND_INNER: "#1a1a1a",
-            BACKGROUND_OUTER: "#000000",
-            BORDER_OUTER: "#888",
-            BORDER_INNER: "#555",
-            TEXT_NORMAL: "#e0c080",
-            TEXT_HIGHLIGHT: "#ffcc00",
-            DOT_NORMAL: "#fff6d0",
-            HIGHLIGHT_BG: "rgba(255, 204, 0, 0.3)"
+            BACKGROUND_INNER: 0x1a1a1a,
+            BACKGROUND_OUTER: 0x000000,
+            BORDER_OUTER: 0x888888,
+            BORDER_INNER: 0x555555,
+            TEXT_NORMAL: 0xe0c080,
+            TEXT_HIGHLIGHT: 0xffcc00,
+            DOT_NORMAL: 0xfff6d0,
+            HIGHLIGHT_BG: 0xffcc00
         });
 
         this.SEASON_GRADIENTS = Object.freeze([
-            { start: "#f8e9c0", end: "#e6c366" }, // Summer
-            { start: "#e6c8a6", end: "#c4784b" }, // Fall
-            { start: "#c9e1f2", end: "#7da9cc" }, // Winter
-            { start: "#c6e8c8", end: "#74ba7b" }, // Spring
-            { start: "#f8e9c0", end: "#e6c366" }, // Summer (repeated)
-            { start: "#393939", end: "#121212" }  // Namenlose Tage
+            { start: [0.97, 0.91, 0.75], end: [0.90, 0.76, 0.40] }, // Summer
+            { start: [0.90, 0.78, 0.65], end: [0.77, 0.47, 0.29] }, // Fall
+            { start: [0.79, 0.88, 0.95], end: [0.49, 0.66, 0.80] }, // Winter
+            { start: [0.78, 0.91, 0.78], end: [0.45, 0.73, 0.48] }, // Spring
+            { start: [0.97, 0.91, 0.75], end: [0.90, 0.76, 0.40] }, // Summer (repeated)
+            { start: [0.22, 0.22, 0.22], end: [0.07, 0.07, 0.07] }  // Namenlose Tage
         ]);
 
-        this.FONTS = Object.freeze({
-            MONTHS: "16px Garamond",
-            WEEKDAYS: "14px Garamond"
-        });
+        this.FONT_STYLE = {
+            MONTHS: {
+                fontFamily: 'Garamond',
+                fontSize: 16,
+                fill: this.COLORS.TEXT_NORMAL,
+                align: 'center'
+            },
+            WEEKDAYS: {
+                fontFamily: 'Garamond',
+                fontSize: 14,
+                fill: this.COLORS.TEXT_NORMAL,
+                align: 'center'
+            }
+        };
     }
 
     _initializePrecalculated() {
@@ -77,7 +92,6 @@ export class CalendarCanvas {
                 day: 0,
                 weekday: 0
             },
-            backgroundImage: null,
             hitRegions: {
                 month: { min: this.RADIUS.OUTER - 10, max: this.RADIUS.OUTER + 10 },
                 day: { center: this.RADIUS.DAYS, tolerance: 10 },
@@ -99,12 +113,12 @@ export class CalendarCanvas {
 
     async render() {
         try {
-            this._setupCanvas();
+            this._setupPixiApp();
             await this._prepareData();
             this._precalculateValues();
-            await this._loadBackgroundImage();
+            await this._loadTextures();
+            this._createContainers();
             this._renderStaticElements();
-            this._drawCalendar();
             this._setupEventListeners();
         } catch (error) {
             console.error('Error rendering calendar:', error);
@@ -114,47 +128,39 @@ export class CalendarCanvas {
 
     destroy() {
         this.isDestroyed = true;
-
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
-        }
-
         this._removeEventListeners();
-        this._cleanupCanvases();
+
+        if (this.app) {
+            this.app.destroy(true, {
+                children: true,
+                texture: true,
+                baseTexture: true
+            });
+            this.app = null;
+        }
+    }
+
+    _setupPixiApp() {
+        this.app = new PIXI.Application({
+            width: this.element.clientWidth,
+            height: this.element.clientHeight,
+            backgroundColor: this.COLORS.BACKGROUND_OUTER,
+            antialias: true,
+            resolution: window.devicePixelRatio || 1
+        });
+
+        this.element.appendChild(this.app.view);
+        this.stage = this.app.stage;
+        this.centerX = this.app.screen.width / 2;
+        this.centerY = this.app.screen.height / 2;
     }
 
     _removeEventListeners() {
-        if (this.canvas) {
-            this.canvas.removeEventListener('mousemove', this.throttledMouseMove);
-            this.canvas.removeEventListener('mouseleave', this._boundMouseLeave);
-            this.canvas.removeEventListener('click', this._boundClick);
+        if (this.app && this.app.view) {
+            this.app.view.removeEventListener('mousemove', this.throttledMouseMove);
+            this.app.view.removeEventListener('mouseleave', this._boundMouseLeave);
+            this.app.view.removeEventListener('click', this._boundClick);
         }
-    }
-
-    _cleanupCanvases() {
-        this.offscreenCanvas = null;
-        this.offscreenCtx = null;
-        this.canvas = null;
-        this.ctx = null;
-    }
-
-    _setupCanvas() {
-        this.canvas = this.element.querySelector('.circular-calendar');
-        if (!this.canvas) {
-            throw new Error('Canvas element not found');
-        }
-
-        this.ctx = this.canvas.getContext('2d', { alpha: false });
-        this.centerX = this.canvas.width / 2;
-        this.centerY = this.canvas.height / 2;
-
-        this._setupOffscreenCanvas();
-    }
-
-    _setupOffscreenCanvas() {
-        this.offscreenCanvas = new OffscreenCanvas(this.canvas.width, this.canvas.height);
-        this.offscreenCtx = this.offscreenCanvas.getContext('2d', { alpha: false });
     }
 
     async _prepareData() {
@@ -162,7 +168,7 @@ export class CalendarCanvas {
         const components = calendar.timeToComponents(game.time.worldTime);
         const daysPerYear = calendar.days.daysPerYear;
 
-        // Calculate seasons with improved logic
+        // Calculate seasons
         const seasons = this._calculateSeasons(calendar, daysPerYear);
 
         this.calendarData = {
@@ -328,339 +334,258 @@ export class CalendarCanvas {
         }));
     }
 
-    async _loadBackgroundImage() {
-        if (this.precalculated.backgroundImage) return;
-
-        const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
-
+    async _loadTextures() {
         return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-                this.precalculated.backgroundImage = img;
+            const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
+            PIXI.Assets.load(backgroundImage).then(texture => {
+                this.backgroundTexture = texture;
                 resolve();
-            };
-            img.onerror = () => {
+            }).catch(() => {
                 console.warn('Failed to load background image:', backgroundImage);
                 resolve(); // Continue without background
-            };
-            img.src = backgroundImage;
+            });
         });
     }
 
+    _createContainers() {
+        // Create container hierarchy
+        this.containers.background = new PIXI.Container();
+        this.containers.seasons = new PIXI.Container();
+        this.containers.months = new PIXI.Container();
+        this.containers.days = new PIXI.Container();
+        this.containers.weekdays = new PIXI.Container();
+        this.containers.highlights = new PIXI.Container();
+
+        // Add containers to stage in correct order
+        this.stage.addChild(this.containers.background);
+        this.stage.addChild(this.containers.seasons);
+        this.stage.addChild(this.containers.months);
+        this.stage.addChild(this.containers.days);
+        this.stage.addChild(this.containers.weekdays);
+        this.stage.addChild(this.containers.highlights);
+    }
+
     _renderStaticElements() {
-        const ctx = this.offscreenCtx;
-
-        this._drawBackground(ctx);
-        this._drawMonthSeasons(ctx);
-        this._drawBorders(ctx);
-        this._drawNorthMarker(ctx);
-        this._drawMonths(ctx, false);
-        this._drawWeekdays(ctx, false);
-    }
-
-    _drawCalendar() {
-        // Clear and draw static background
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.drawImage(this.offscreenCanvas, 0, 0);
-
-        // Draw dynamic elements
-        this._drawHighlightedSection();
+        this._drawBackground();
+        this._drawSeasons();
+        this._drawBorders();
+        this._drawNorthMarker();
+        this._drawMonths();
+        this._drawWeekdays();
         this._drawDays();
-
-        // Redraw highlighted text elements
-        this._drawHighlightedText();
     }
 
-    _drawHighlightedText() {
-        if (!this.hoveredSection) return;
+    _drawBackground() {
+        const background = new PIXI.Graphics();
 
-        const { type } = this.hoveredSection;
+        this.containers.background.addChild(background);
 
-        if (type === 'month') {
-            this._drawMonths(this.ctx, true);
-        } else if (type === 'weekday') {
-            this._drawWeekdays(this.ctx, true);
+        // Add background image if available
+        if (this.backgroundTexture) {
+
+            // Then add the background texture in the ring area
+            const bgSprite = new PIXI.Sprite(this.backgroundTexture);
+            bgSprite.anchor.set(0.5);
+            bgSprite.position.set(this.centerX, this.centerY);
+            bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
+
+            // Create a blend mask for the background image
+            const blendMask = new PIXI.Graphics();
+
+            blendMask.beginFill(0x000000);
+            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
+            blendMask.endFill();
+
+            blendMask.beginHole();
+            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15);
+            blendMask.endHole();
+
+
+            this.containers.background.addChild(bgSprite);
+            this.containers.background.addChild(blendMask);
         }
     }
 
-    _drawBackground(ctx = this.ctx) {
-        // Create gradient background
-        const bgGradient = ctx.createRadialGradient(
-            this.centerX, this.centerY, 50,
-            this.centerX, this.centerY, this.RADIUS.OUTER_FRAME
-        );
-        bgGradient.addColorStop(0, this.COLORS.BACKGROUND_INNER);
-        bgGradient.addColorStop(1, this.COLORS.BACKGROUND_OUTER);
-
-        // Fill background
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.RADIUS.OUTER_FRAME, 0, 2 * Math.PI);
-        ctx.fillStyle = bgGradient;
-        ctx.fill();
-
-        this._drawBackgroundImage(ctx);
+    _lerp(a, b, t) {
+        return a + (b - a) * t;
     }
 
-    _drawBackgroundImage(ctx) {
-        if (!this.precalculated.backgroundImage) return;
+    _drawSeasons() {
+        const seasons = new PIXI.Graphics();
 
-        const size = this.RADIUS.OUTER * 2;
-        const offset = size / 2;
-
-        ctx.save();
-
-        // Create clipping region
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.RADIUS.OUTER_FRAME, 0, 2 * Math.PI);
-        ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15, 0, 2 * Math.PI, true);
-        ctx.arc(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15, 0, 2 * Math.PI);
-        ctx.clip();
-
-        ctx.drawImage(
-            this.precalculated.backgroundImage,
-            this.centerX - offset,
-            this.centerY - offset,
-            size,
-            size
-        );
-
-        ctx.restore();
-    }
-
-    _drawMonthSeasons(ctx = this.ctx) {
         for (const season of this.precalculated.seasonAngles) {
             this._drawArcSegment(
+                seasons,
                 this.RADIUS.SEASONS - 6,
                 this.RADIUS.SEASONS + 6,
                 season.startAngle + Math.PI / 2,
                 season.endAngle + Math.PI / 2,
                 season.gradient,
-                false,
-                ctx
+                0.7
             );
         }
+
+        this.containers.seasons.addChild(seasons);
     }
 
-    _drawBorders(ctx = this.ctx) {
-        const borders = [
+    _drawArcSegment(graphics, innerRadius, outerRadius, startAngle, endAngle, gradient = null, alpha = 0.3) {
+        const startAngleAdjusted = startAngle - Math.PI / 2;
+        const endAngleAdjusted = endAngle - Math.PI / 2;
+
+        // If no gradient is provided, use a solid color
+
+        graphics.beginFill(0xFFFFFF, alpha);
+        graphics.moveTo(
+            this.centerX + outerRadius * Math.cos(startAngleAdjusted),
+            this.centerY + outerRadius * Math.sin(startAngleAdjusted)
+        );
+        graphics.arc(this.centerX, this.centerY, outerRadius, startAngleAdjusted, endAngleAdjusted);
+        graphics.lineTo(
+            this.centerX + innerRadius * Math.cos(endAngleAdjusted),
+            this.centerY + innerRadius * Math.sin(endAngleAdjusted)
+        );
+        graphics.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
+        graphics.closePath();
+        graphics.endFill();       
+    }
+
+    createGradientTexture(radius, colorStops) {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = radius * 2;
+        const ctx = canvas.getContext('2d');
+
+        const gradient = ctx.createRadialGradient(radius, radius, 0, radius, radius, radius);
+        colorStops.forEach(stop => {
+            gradient.addColorStop(stop.offset, stop.color);
+        });
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        return PIXI.Texture.from(canvas);
+    }
+
+    _drawBorders() {
+        const borders = new PIXI.Graphics();
+
+        // Draw circular borders
+        const borderConfigs = [
             { radius: this.RADIUS.OUTER_FRAME, color: this.COLORS.BORDER_OUTER, width: 2 },
             { radius: this.RADIUS.DAYS, color: this.COLORS.BORDER_INNER, width: 1 },
             { radius: this.RADIUS.WEEKDAYS + 15, color: this.COLORS.BORDER_INNER, width: 1 },
             { radius: this.RADIUS.WEEKDAYS - 15, color: this.COLORS.BORDER_INNER, width: 1 }
         ];
 
-        borders.forEach(border => {
-            this._drawCircle(border.radius, border.color, border.width, ctx);
-        });
+        for (const config of borderConfigs) {
+            borders.lineStyle(config.width, config.color);
+            borders.drawCircle(this.centerX, this.centerY, config.radius);
+        }
+
+        this.containers.background.addChild(borders);
     }
 
-    _drawCircle(radius, color, lineWidth = 1, ctx = this.ctx) {
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, radius, 0, 2 * Math.PI);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = lineWidth;
-        ctx.stroke();
-    }
-
-    _drawNorthMarker(ctx = this.ctx) {
+    _drawNorthMarker() {
+        const marker = new PIXI.Graphics();
         const markerHeight = 10;
         const markerWidth = 16;
         const topY = this.centerY - this.RADIUS.OUTER_FRAME;
 
-        ctx.beginPath();
-        ctx.moveTo(this.centerX, topY - markerHeight);
-        ctx.lineTo(this.centerX - markerWidth / 2, topY);
-        ctx.lineTo(this.centerX + markerWidth / 2, topY);
-        ctx.closePath();
-        ctx.fillStyle = this.COLORS.TEXT_HIGHLIGHT;
-        ctx.fill();
+        marker.beginFill(this.COLORS.TEXT_HIGHLIGHT);
+        marker.moveTo(this.centerX, topY - markerHeight);
+        marker.lineTo(this.centerX - markerWidth / 2, topY);
+        marker.lineTo(this.centerX + markerWidth / 2, topY);
+        marker.endFill();
+
+        this.containers.background.addChild(marker);
     }
 
-    _drawMonths(ctx = this.ctx, onlyHighlighted = false) {
-        ctx.font = this.FONTS.MONTHS;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+    _drawMonths() {
+        const { months } = this.calendarData;
 
-        this.calendarData.months.forEach((month, i) => {
-            const isHighlighted = this._isElementHighlighted('month', i);
+        months.forEach((month, i) => {
+            const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
 
-            if (onlyHighlighted && !isHighlighted) return;
+            const style = { ...this.FONT_STYLE.MONTHS };
+            style.fill = originalIndex === this.calendarData.currentMonth ?
+                this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
 
-            const { x, y, angle } = this.precalculated.monthAngles[i];
+            const text = new PIXI.Text(month, style);
+            text.anchor.set(0.5);
+            text.position.set(x, y);
+            text.rotation = angle + Math.PI / 2;
+            text.resolution = 2; // Higher resolution for sharper text
 
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle + Math.PI / 2);
-            ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
-            ctx.fillText(month, 0, 0);
-            ctx.restore();
+            // Store original index for interaction
+            text.originalIndex = originalIndex;
+
+            this.containers.months.addChild(text);
+        });
+    }
+
+    _drawWeekdays() {
+        const { weekdays } = this.calendarData;
+
+        weekdays.forEach((day, i) => {
+            const { x, y, angle } = this.precalculated.weekdayAngles[i];
+            const isCurrentWeekday = i === 0;
+
+            const style = { ...this.FONT_STYLE.WEEKDAYS };
+            style.fill = isCurrentWeekday ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+
+            const text = new PIXI.Text(day, style);
+            text.anchor.set(0.5);
+            text.position.set(x, y);
+            text.rotation = angle + Math.PI / 2;
+            text.resolution = 2;
+
+            this.containers.weekdays.addChild(text);
         });
     }
 
     _drawDays() {
+        const daysContainer = new PIXI.Container();
         const { currentDay } = this.calendarData;
 
-        // Draw regular day dots
+        // Draw all day dots
         this.precalculated.dayAngles.forEach((pos, i) => {
             const { x, y } = pos;
-            const isHighlighted = this._isElementHighlighted('day', i);
+            const isCurrentDay = i === currentDay;
 
-            if (isHighlighted) {
-                this._drawDayHighlight(x, y);
+            const dot = new PIXI.Graphics();
+
+            // Draw larger highlight for current day
+            if (isCurrentDay) {
+                dot.beginFill(this.COLORS.TEXT_HIGHLIGHT);
+                dot.drawCircle(0, 0, 5);
+                dot.endFill();
+            } else {
+                dot.beginFill(this.COLORS.DOT_NORMAL);
+                dot.drawCircle(0, 0, 3);
+                dot.endFill();
             }
 
-            this._drawDayDot(x, y, isHighlighted);
+            dot.position.set(x, y);
+            dot.interactive = true;
+            dot.dayIndex = i;
+
+            daysContainer.addChild(dot);
         });
 
-        // Draw current day highlight
-        const { x: xToday, y: yToday } = this.precalculated.dayAngles[currentDay];
-        this._drawCurrentDay(xToday, yToday);
-    }
-
-    _drawDayHighlight(x, y) {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, 8, 0, 2 * Math.PI);
-        this.ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
-        this.ctx.fill();
-    }
-
-    _drawDayDot(x, y, isHighlighted) {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, 3, 0, 2 * Math.PI);
-        this.ctx.fillStyle = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.DOT_NORMAL;
-        this.ctx.fill();
-    }
-
-    _drawCurrentDay(x, y) {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, 5, 0, 2 * Math.PI);
-        this.ctx.fillStyle = this.COLORS.TEXT_HIGHLIGHT;
-        this.ctx.fill();
-    }
-
-    _drawWeekdays(ctx = this.ctx, onlyHighlighted = false) {
-        const { weekdays } = this.calendarData;
-
-        ctx.font = this.FONTS.WEEKDAYS;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        weekdays.forEach((day, i) => {
-            const isHighlighted = this._isElementHighlighted('weekday', i);
-
-            if (onlyHighlighted && !isHighlighted) return;
-
-            const { x, y, angle } = this.precalculated.weekdayAngles[i];
-            const isCurrentWeekday = i === 0;
-
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle + Math.PI / 2);
-            ctx.fillStyle = (isCurrentWeekday || isHighlighted) ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
-            ctx.fillText(day, 0, 0);
-            ctx.restore();
-        });
-    }
-
-    _isElementHighlighted(type, index) {
-        return this.hoveredSection?.type === type && this.hoveredSection?.index === index;
-    }
-
-    _drawHighlightedSection() {
-        if (!this.hoveredSection) return;
-
-        const { type, index } = this.hoveredSection;
-
-        if (type === 'month') {
-            this._drawMonthHighlight(index);
-        } else if (type === 'weekday') {
-            this._drawWeekdayHighlight(index);
-        }
-    }
-
-    _drawMonthHighlight(index) {
-        const { startAngle, endAngle } = this.precalculated.monthAngles[index];
-        const { month: offset } = this.precalculated.angleOffsets;
-
-        this._drawArcSegment(
-            this.RADIUS.OUTER - 15,
-            this.RADIUS.OUTER_FRAME,
-            startAngle - offset,
-            endAngle - offset,
-            null,
-            true
-        );
-    }
-
-    _drawWeekdayHighlight(index) {
-        const { startAngle, endAngle } = this.precalculated.weekdayAngles[index];
-        const { weekday: offset } = this.precalculated.angleOffsets;
-
-        this._drawArcSegment(
-            this.RADIUS.WEEKDAYS - 15,
-            this.RADIUS.WEEKDAYS + 15,
-            startAngle - offset,
-            endAngle - offset,
-            null,
-            true
-        );
-    }
-
-    _drawArcSegment(innerRadius, outerRadius, startAngle, endAngle, gradient = null, isHighlight = false, ctx = this.ctx) {
-        const startAngleAdjusted = startAngle - Math.PI / 2;
-        const endAngleAdjusted = endAngle - Math.PI / 2;
-
-        const startCos = Math.cos(startAngleAdjusted);
-        const startSin = Math.sin(startAngleAdjusted);
-        const endCos = Math.cos(endAngleAdjusted);
-        const endSin = Math.sin(endAngleAdjusted);
-
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, outerRadius, startAngleAdjusted, endAngleAdjusted);
-        ctx.lineTo(
-            this.centerX + innerRadius * endCos,
-            this.centerY + innerRadius * endSin
-        );
-        ctx.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
-        ctx.closePath();
-
-        this._applyArcFill(ctx, gradient, isHighlight, innerRadius, outerRadius, startAngleAdjusted, endAngleAdjusted);
-
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-    }
-
-    _applyArcFill(ctx, gradient, isHighlight, innerRadius, outerRadius, startAngle, endAngle) {
-        if (gradient) {
-            const arcCenterAngle = (startAngle + endAngle) / 2;
-            const midRadius = innerRadius + (outerRadius - innerRadius) / 2;
-            const arcCenterX = this.centerX + midRadius * Math.cos(arcCenterAngle);
-            const arcCenterY = this.centerY + midRadius * Math.sin(arcCenterAngle);
-            const gradientRadius = (outerRadius - innerRadius) * 0.75;
-
-            const gradientFill = ctx.createRadialGradient(
-                arcCenterX, arcCenterY, 0,
-                arcCenterX, arcCenterY, gradientRadius
-            );
-
-            gradientFill.addColorStop(0, gradient.start);
-            gradientFill.addColorStop(1, gradient.end);
-
-            ctx.fillStyle = gradientFill;
-            ctx.globalAlpha = 0.7;
-        } else if (isHighlight) {
-            ctx.fillStyle = this.COLORS.HIGHLIGHT_BG;
-            ctx.globalAlpha = 0.6;
-        } else {
-            ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-            ctx.globalAlpha = 0.3;
-        }
+        this.containers.days.addChild(daysContainer);
     }
 
     _setupEventListeners() {
-        this.canvas.addEventListener('mousemove', this.throttledMouseMove);
-        this.canvas.addEventListener('mouseleave', this._boundMouseLeave);
-        this.canvas.addEventListener('click', this._boundClick);
+        this.app.view.addEventListener('mousemove', this.throttledMouseMove);
+        this.app.view.addEventListener('mouseleave', this._boundMouseLeave);
+        this.app.view.addEventListener('click', this._boundClick);
+    }
+
+    _getMousePosition(event) {
+        const rect = this.app.view.getBoundingClientRect();
+        return {
+            mouseX: event.clientX - rect.left,
+            mouseY: event.clientY - rect.top
+        };
     }
 
     _handleMouseMove(event) {
@@ -670,15 +595,13 @@ export class CalendarCanvas {
         const previousHovered = this.hoveredSection;
         this.hoveredSection = this._detectHoveredSection(distance, angle);
 
-        this._handleHoverChange(previousHovered);
-    }
+        // Update highlights if changed
+        if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
+            this._updateHighlights();
 
-    _getMousePosition(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        return {
-            mouseX: event.clientX - rect.left,
-            mouseY: event.clientY - rect.top
-        };
+            const data = this.hoveredSection ? this._collectSliceData() : null;
+            this.hoverCallback(data);
+        }
     }
 
     _calculateMouseMetrics(mouseX, mouseY) {
@@ -731,40 +654,73 @@ export class CalendarCanvas {
         return { type: 'weekday', index: weekdayIndex };
     }
 
-    _handleHoverChange(previousHovered) {
-        const hasChanged = JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection);
+    _updateHighlights() {
+        // Clear previous highlights
+        this.containers.highlights.removeChildren();
 
-        if (hasChanged) {
-            this.needsRedraw = true;
-            this._scheduleRedraw();
+        if (!this.hoveredSection) return;
 
-            const data = this.hoveredSection ? this._collectSliceData() : null;
-            this.hoverCallback(data);
+        const { type, index } = this.hoveredSection;
+        const highlight = new PIXI.Graphics();
+
+        highlight.beginFill(this.COLORS.HIGHLIGHT_BG, 0.6);
+
+        if (type === 'month') {
+            const { startAngle, endAngle } = this.precalculated.monthAngles[index];
+            const { month: offset } = this.precalculated.angleOffsets;
+
+            this._drawArcSegment(
+                highlight,
+                this.RADIUS.OUTER - 15,
+                this.RADIUS.OUTER_FRAME,
+                startAngle - offset,
+                endAngle - offset
+            );
+
+            this._updateTextHighlight('month', index);
         }
+        else if (type === 'weekday') {
+            const { startAngle, endAngle } = this.precalculated.weekdayAngles[index];
+            const { weekday: offset } = this.precalculated.angleOffsets;
+
+            this._drawArcSegment(
+                highlight,
+                this.RADIUS.WEEKDAYS - 15,
+                this.RADIUS.WEEKDAYS + 15,
+                startAngle - offset,
+                endAngle - offset
+            );
+
+            this._updateTextHighlight('weekday', index);
+        }
+        else if (type === 'day') {
+            const { x, y } = this.precalculated.dayAngles[index];
+            highlight.drawCircle(x, y, 8);
+        }
+
+        this.containers.highlights.addChild(highlight);
+    }
+
+    _updateTextHighlight(type, index) {
+        const container = this.containers[type + 's'];
+
+        container.children.forEach((text, i) => {
+            if (type === 'month') {
+                const isCurrentMonth = text.originalIndex === this.calendarData.currentMonth;
+                text.style.fill = (i === index || isCurrentMonth) ?
+                    this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            } else {
+                const isCurrentElement = i === 0; // First element is current for rotated arrays
+                text.style.fill = (i === index || isCurrentElement) ?
+                    this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            }
+        });
     }
 
     _handleMouseLeave() {
         this.hoveredSection = null;
-        this.needsRedraw = true;
-        this._scheduleRedraw();
+        this._updateHighlights();
         this.hoverCallback(null);
-    }
-
-    _scheduleRedraw() {
-        if (!this.animationFrameId) {
-            this.animationFrameId = requestAnimationFrame(() => this._animationFrame());
-        }
-    }
-
-    _animationFrame() {
-        this.animationFrameId = null;
-
-        if (this.isDestroyed) return;
-
-        if (this.needsRedraw) {
-            this._drawCalendar();
-            this.needsRedraw = false;
-        }
     }
 
     _collectSliceData() {
