@@ -713,6 +713,8 @@
             "Helm": "Spire",
             "AbnehmenderHelm": "Waning Spire",
             "day": "Day",
+            "moonphase": "Moon phase",            
+            "season": "Season",
             "month": "Month",
             "year": "Year",
             "hour": "Hour",

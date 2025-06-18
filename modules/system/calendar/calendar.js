@@ -2,8 +2,8 @@ import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
-  static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde',  'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
-  
+  static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
+
   static availableCalendars = [
     { key: 'none', name: '-' },
     { key: 'default', name: 'CALENDAR.DSA.defaultName', config: DSAKalender },
@@ -50,7 +50,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
     if (canvas.scene) {
       canvas.scene.update(
-        { 'environment.darknessLevel': Math.clamp(lightLevel, 0, 1) }, 
+        { 'environment.darknessLevel': Math.clamp(lightLevel, 0, 1) },
         { animateDarkness: 1000 }
       );
     }
@@ -59,7 +59,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
   static collectCalendars() {
     return Object.fromEntries(
       this.availableCalendars.map(calendar => [
-        calendar.key, 
+        calendar.key,
         game.i18n.localize(calendar.name)
       ])
     );
@@ -101,7 +101,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const month = calendar.months.values[components.month];
     const mm = calendar.translate(month.name);
     const dd = components.dayOfMonth + 1;
-    
+
     let h = components.hour;
     if (h > 11) h -= 12;
 
@@ -113,14 +113,16 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     return `${hourPart} ${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
 
-  static seasonParts(calendar, components, _options) {
-    const season = calendar.seasons.values[components.season];
-    
-    const holidayMatch = CONFIG.time.worldCalendarConfig.holidays.values.find(h => 
-      h.month === components.month && 
-      h.dayStart <= components.dayOfMonth && 
+  findHolidays(components) {
+    return CONFIG.time.worldCalendarConfig.holidays.values.filter(h =>
+      h.month === components.month &&
+      h.dayStart <= components.dayOfMonth &&
       components.dayOfMonth < (h.dayEnd || h.dayStart + 1)
     );
+  }
+
+  static seasonParts(calendar, components, _options) {
+    const season = calendar.seasons.values[components.season];
     
     return {
       seasonName: calendar.translate(season.name),
@@ -129,57 +131,57 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       h: components.hour.toString().padStart(2, '0'),
       m: components.minute.toString().padStart(2, '0'),
       s: components.second.toString().padStart(2, '0'),
-      holiday: holidayMatch
+      holiday: calendar.findHolidays(components) || null,
     };
   }
 
   static formatSeason(calendar, components, options) {
     const { seasonName, moon, dayOfWeek, h, m, s, holiday } = calendar.constructor.seasonParts(calendar, components, options);
-    
+
     let result = `${seasonName}, ${moon}<br/>${dayOfWeek} - ${h}:${m}:${s}`;
-    
+
     if (holiday) {
-      result += `<br/>${calendar.translate(`holiday.${holiday.name}`)}`;
+      result += holiday.map(h => `<br/>${calendar.translate(`holiday.${h.name}`)}`);
     }
-    
+
     return `<div class="center">${result}</div>`;
   }
 
   timeToComponents(time = 0) {
     const components = super.timeToComponents(time);
-    
+
     // Calculate moon phase
     components.moon = null;
-    
+
     if (this.moon) {
       const { year, month, dayOfMonth } = components;
       const { anchor, cycle, values } = this.moon;
-      
+
       // Calculate total days since anchor date
       const yearDiff = year - anchor.year;
       let totalDays = yearDiff * this.days.daysPerYear;
-      
+
       // Add days from current year's elapsed months
       for (let m = 0; m < month; m++) {
         totalDays += this.months.values[m].days;
       }
-      
+
       // Add days in current month
       totalDays += dayOfMonth - (anchor.dayOfMonth - 1);
-      
+
       // Adjust if within same year
       if (yearDiff === 0 && month >= anchor.month) {
         for (let m = 0; m < anchor.month; m++) {
           totalDays -= this.months.values[m].days;
         }
       }
-      
+
       const dayInCycle = Math.abs(Math.floor(totalDays % cycle));
-      
+
       // Find current moon phase
       let phaseIndex = 0;
       let currentPhase = values[0];
-      
+
       for (let i = 0; i < values.length; i++) {
         if (dayInCycle >= values[i].dayStart) {
           currentPhase = values[i];
@@ -188,7 +190,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
           break;
         }
       }
-      
+
       components.moon = {
         phase: currentPhase,
         previousMoon: phaseIndex > 0 ? phaseIndex - 1 : values.length - 1,
@@ -198,7 +200,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
         phaseIndex,
       };
     }
-    
+
     return components;
   }
 }

@@ -1960,6 +1960,7 @@
             "Helm": "Helm",
             "AbnehmenderHelm": "Abnehmender Helm",
             "day": "Tag",
+            "moonphase": "Mondphase",
             "month": "Monat",
             "year": "Jahr",
             "hour": "Stunde",
@@ -1967,6 +1968,7 @@
             "second": "Sekunde",
             "holidays": "Feiertage",
             "weekday": "Wochentag",
+            "season": "Jahreszeit",
             "holiday": {
                 "Sommersonnenwende": "Sommersonnenwende",
                 "Greifenfest": "Greifenfest",
