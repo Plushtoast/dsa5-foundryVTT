@@ -466,7 +466,7 @@ export class CalendarCanvas {
             bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
             bgSprite.position.set(this.centerX, this.centerY + 8);
 
-            
+
 
             const godring = new PIXI.Sprite(this.spritesheet.rad_goetterkreis);
             godring.anchor.set(0.5);
@@ -477,7 +477,7 @@ export class CalendarCanvas {
             godringMask.beginFill(0x000000);
             godringMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
             godringMask.endFill();
-            
+
             godring.mask = godringMask;
 
             // Create a blend mask for the background image
@@ -643,7 +643,7 @@ export class CalendarCanvas {
             );
             monthSprite.width = monthSprite.height = 60; // Adjust size as needed
             monthSprite.rotation = angle + Math.PI / 2;
-            
+
             this.containers.monthSprites.addChild(monthSprite);
             this.containers.months.addChild(text);
         });
@@ -674,7 +674,7 @@ export class CalendarCanvas {
 
     _drawMoonPhase() {
         this.containers.moonPhase.removeChildren();
-        
+
         const { currentMoon } = this.calendarData;
         const moonSize = 30; // Size of the moon
         const distanceFromCenter = this.RADIUS.WEEKDAYS - 25 - moonSize / 2; // Position the moon inside the outer circle
@@ -686,7 +686,7 @@ export class CalendarCanvas {
 
         //calculate moon position based on phase on a circle around the center with new moon at the bottom
 
-        switch(actualMoon) {
+        switch (actualMoon) {
             case 0: // New Moon
                 moonY += distanceFromCenter;
                 break;
@@ -715,84 +715,91 @@ export class CalendarCanvas {
                 moonX += distanceFromCenter * Math.cos(Math.PI / 4);
                 moonY += distanceFromCenter * Math.sin(Math.PI / 4);
                 break;
-            
+
         }
-        
+
         // Create container for the moon
         const moonContainer = new PIXI.Container();
         moonContainer.position.set(moonX, moonY);
-        
+
         // Draw base moon (full circle with glow)
         const baseMoon = new PIXI.Graphics();
         baseMoon.beginFill(0xfffdeb);
         baseMoon.drawCircle(0, 0, moonSize / 2);
         baseMoon.endFill();
-        
+
+        const shadowMask = new PIXI.Graphics();
+        shadowMask.beginFill(0x000000);
+        shadowMask.drawCircle(0, 0, moonSize / 2);
+        shadowMask.endFill();
+
         // Add glow effect
         // Create a glow effect by adding a blurred duplicate behind the moon
         const moonGlow = new PIXI.Graphics();
-        moonGlow.beginFill(0xfffdeb, 0.7);
+        moonGlow.beginFill(0x8aa8c5, 0.5);
         moonGlow.drawCircle(0, 0, moonSize / 2 + 4);
         moonGlow.endFill();
-        
+
         // Apply blur filter for the glow effect
         const blurFilter = new PIXI.filters.BlurFilter(4);
         moonGlow.filters = [blurFilter];
-        
+
         // Add the glow first (behind the moon)
         moonContainer.addChild(moonGlow);
-        
+
         // Create shadow overlay based on phase
         const shadowOverlay = new PIXI.Graphics();
         shadowOverlay.beginFill(0x394f57);
-        
+
         // Handle different moon phases (0-7, similar to the CSS phases 1-8)
         switch (actualMoon) {
             case 0: // New Moon (completely dark)
                 shadowOverlay.drawCircle(0, 0, moonSize / 2);
                 break;
             case 1: // Waxing Crescent
-                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
-                shadowOverlay.arc(-moonSize * 0.2, 0, moonSize / 2, Math.PI/2, -Math.PI/2, true);
+                shadowOverlay.drawCircle(0, -moonSize * 0.2, moonSize / 2);
+                //shadowOverlay.arc(x, y, radius, startAngle, endAngle, clockwise)
                 shadowOverlay.closePath();
+                shadowOverlay.mask = shadowMask;
                 break;
             case 2: // First Quarter
-                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
-                shadowOverlay.lineTo(0, moonSize / 2);
-                shadowOverlay.lineTo(0, -moonSize / 2);
+                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI, 0, false);
+                shadowOverlay.lineTo(-moonSize / 2, 0);
+                shadowOverlay.lineTo(moonSize / 2, 0);
                 shadowOverlay.closePath();
                 break;
             case 3: // Waxing Gibbous
-                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
-                shadowOverlay.arc(moonSize * 0.2, 0, moonSize / 2, Math.PI/2, -Math.PI/2, true);
+                shadowOverlay.arc(0, moonSize * 0.2, moonSize / 2, -Math.PI, 0, false);
+                shadowOverlay.arc(0, 0, moonSize / 2, 0, -Math.PI, true);
                 shadowOverlay.closePath();
                 break;
             case 4: // Full Moon (no shadow)
                 // No shadow for full moon
                 break;
             case 5: // Waning Gibbous
-                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
-                shadowOverlay.arc(-moonSize * 0.2, 0, moonSize / 2, -Math.PI/2, Math.PI/2, true);
+                shadowOverlay.arc(0, 0, moonSize / 2, 0, Math.PI, false);
+                shadowOverlay.arc(0, -moonSize * 0.2, moonSize / 2, Math.PI, 0, true);
                 shadowOverlay.closePath();
                 break;
             case 6: // Last Quarter
-                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
-                shadowOverlay.lineTo(0, -moonSize / 2);
-                shadowOverlay.lineTo(0, moonSize / 2);
+                shadowOverlay.arc(0, 0, moonSize / 2, 0, Math.PI, false);
+                shadowOverlay.lineTo(moonSize / 2, 0);
+                shadowOverlay.lineTo(-moonSize / 2, 0);
                 shadowOverlay.closePath();
                 break;
             case 7: // Waning Crescent
-                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
-                shadowOverlay.arc(moonSize * 0.2, 0, moonSize / 2, -Math.PI/2, Math.PI/2, true);
+                shadowOverlay.drawCircle(0, moonSize * 0.2, moonSize / 2);
                 shadowOverlay.closePath();
+                shadowOverlay.mask = shadowMask;
                 break;
         }
         shadowOverlay.endFill();
-        
+
         // Add moon components to container
+        moonContainer.addChild(shadowMask);
         moonContainer.addChild(baseMoon);
         moonContainer.addChild(shadowOverlay);
-        
+
         // Add moon container to the main container
         this.containers.moonPhase.addChild(moonContainer);
     }
