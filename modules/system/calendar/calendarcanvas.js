@@ -23,6 +23,7 @@ export class CalendarCanvas {
             monthSprites: null,
             days: null,
             weekdays: null,
+            moonPhase: null,
             highlights: null
         };
 
@@ -112,6 +113,7 @@ export class CalendarCanvas {
             dayAngles: [],
             weekdayAngles: [],
             seasonAngles: [],
+            moonAngles: [],
             angleOffsets: {
                 month: 0,
                 day: 0,
@@ -218,13 +220,16 @@ export class CalendarCanvas {
             currentMonth: components.month,
             currentDay: components.dayOfMonth,
             currentWeekday: components.dayOfWeek,
+            currentMoon: components.moon.phaseIndex || 0,
             daysInMonth: calendar.months.values[components.month].days,
-            seasons: this._adjustSeasonsForRotation(seasons, components, calendar, daysPerYear)
+            seasons: this._adjustSeasonsForRotation(seasons, components, calendar, daysPerYear),
+            moons: this._getLocalizedArray(calendar.moon.values, calendar.translationPrefix),
         };
 
         // Rotate arrays to start with current elements
         this.calendarData.months = this._rotateArray(this.calendarData.months, this.calendarData.currentMonth);
         this.calendarData.weekdays = this._rotateArray(this.calendarData.weekdays, this.calendarData.currentWeekday);
+        this.calendarData.moons = this._rotateArray(this.calendarData.moons, components.moon?.phase?.index || 0);
     }
 
     _getLocalizedArray(values, translationPrefix) {
@@ -304,6 +309,24 @@ export class CalendarCanvas {
         this.precalculated.dayAngles = this._calculateDayAngles(daysInMonth);
         this.precalculated.weekdayAngles = this._calculateWeekdayAngles(weekdays.length);
         this.precalculated.seasonAngles = this._calculateSeasonAngles();
+        this.precalculated.moonAngles = this._calculateMoonAngles(this.calendarData.moons.length);
+    }
+
+    _calculateMoonAngles(moonCount) {
+        const angles = [];
+        const angleStep = 2 * Math.PI / moonCount;
+        const moonOffset = Math.PI / 2; // Offset to align with the top
+
+        for (let i = 0; i < moonCount; i++) {
+            const angle = angleStep * i - moonOffset;
+            angles.push({
+                angle,
+                x: this.centerX + Math.cos(angle) * this.RADIUS.OUTER,
+                y: this.centerY + Math.sin(angle) * this.RADIUS.OUTER
+            });
+        }
+
+        return angles;
     }
 
     _calculateMonthAngles(monthCount) {
@@ -425,6 +448,7 @@ export class CalendarCanvas {
 
         this._drawSeasons();
         this._drawMonths();
+        this._drawMoonPhase();
         this._drawWeekdays();
         this._drawDays();
     }
@@ -646,6 +670,131 @@ export class CalendarCanvas {
 
             this.containers.weekdays.addChild(text);
         });
+    }
+
+    _drawMoonPhase() {
+        this.containers.moonPhase.removeChildren();
+        
+        const { currentMoon } = this.calendarData;
+        const moonSize = 30; // Size of the moon
+        const distanceFromCenter = this.RADIUS.WEEKDAYS - 25 - moonSize / 2; // Position the moon inside the outer circle
+        let moonX = this.centerX;
+        let moonY = this.centerY;
+
+        console.log(currentMoon)
+        const actualMoon = currentMoon % 8;
+
+        //calculate moon position based on phase on a circle around the center with new moon at the bottom
+
+        switch(actualMoon) {
+            case 0: // New Moon
+                moonY += distanceFromCenter;
+                break;
+            case 1: // Waxing Crescent
+                moonX -= distanceFromCenter * Math.cos(Math.PI / 4);
+                moonY += distanceFromCenter * Math.sin(Math.PI / 4);
+                break;
+            case 2: // First Quarter
+                moonX -= distanceFromCenter;
+                break;
+            case 3: // Waxing Gibbous
+                moonX -= distanceFromCenter * Math.cos(Math.PI / 4);
+                moonY -= distanceFromCenter * Math.sin(Math.PI / 4);
+                break;
+            case 4: // Full Moon
+                moonY -= distanceFromCenter;
+                break;
+            case 5: // Waning Gibbous
+                moonX += distanceFromCenter * Math.cos(Math.PI / 4);
+                moonY -= distanceFromCenter * Math.sin(Math.PI / 4);
+                break;
+            case 6: // Last Quarter
+                moonX += distanceFromCenter;
+                break;
+            case 7: // Waning Crescent
+                moonX += distanceFromCenter * Math.cos(Math.PI / 4);
+                moonY += distanceFromCenter * Math.sin(Math.PI / 4);
+                break;
+            
+        }
+        
+        // Create container for the moon
+        const moonContainer = new PIXI.Container();
+        moonContainer.position.set(moonX, moonY);
+        
+        // Draw base moon (full circle with glow)
+        const baseMoon = new PIXI.Graphics();
+        baseMoon.beginFill(0xfffdeb);
+        baseMoon.drawCircle(0, 0, moonSize / 2);
+        baseMoon.endFill();
+        
+        // Add glow effect
+        // Create a glow effect by adding a blurred duplicate behind the moon
+        const moonGlow = new PIXI.Graphics();
+        moonGlow.beginFill(0xfffdeb, 0.7);
+        moonGlow.drawCircle(0, 0, moonSize / 2 + 4);
+        moonGlow.endFill();
+        
+        // Apply blur filter for the glow effect
+        const blurFilter = new PIXI.filters.BlurFilter(4);
+        moonGlow.filters = [blurFilter];
+        
+        // Add the glow first (behind the moon)
+        moonContainer.addChild(moonGlow);
+        
+        // Create shadow overlay based on phase
+        const shadowOverlay = new PIXI.Graphics();
+        shadowOverlay.beginFill(0x394f57);
+        
+        // Handle different moon phases (0-7, similar to the CSS phases 1-8)
+        switch (actualMoon) {
+            case 0: // New Moon (completely dark)
+                shadowOverlay.drawCircle(0, 0, moonSize / 2);
+                break;
+            case 1: // Waxing Crescent
+                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
+                shadowOverlay.arc(-moonSize * 0.2, 0, moonSize / 2, Math.PI/2, -Math.PI/2, true);
+                shadowOverlay.closePath();
+                break;
+            case 2: // First Quarter
+                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
+                shadowOverlay.lineTo(0, moonSize / 2);
+                shadowOverlay.lineTo(0, -moonSize / 2);
+                shadowOverlay.closePath();
+                break;
+            case 3: // Waxing Gibbous
+                shadowOverlay.arc(0, 0, moonSize / 2, -Math.PI/2, Math.PI/2, false);
+                shadowOverlay.arc(moonSize * 0.2, 0, moonSize / 2, Math.PI/2, -Math.PI/2, true);
+                shadowOverlay.closePath();
+                break;
+            case 4: // Full Moon (no shadow)
+                // No shadow for full moon
+                break;
+            case 5: // Waning Gibbous
+                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
+                shadowOverlay.arc(-moonSize * 0.2, 0, moonSize / 2, -Math.PI/2, Math.PI/2, true);
+                shadowOverlay.closePath();
+                break;
+            case 6: // Last Quarter
+                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
+                shadowOverlay.lineTo(0, -moonSize / 2);
+                shadowOverlay.lineTo(0, moonSize / 2);
+                shadowOverlay.closePath();
+                break;
+            case 7: // Waning Crescent
+                shadowOverlay.arc(0, 0, moonSize / 2, Math.PI/2, -Math.PI/2, false);
+                shadowOverlay.arc(moonSize * 0.2, 0, moonSize / 2, -Math.PI/2, Math.PI/2, true);
+                shadowOverlay.closePath();
+                break;
+        }
+        shadowOverlay.endFill();
+        
+        // Add moon components to container
+        moonContainer.addChild(baseMoon);
+        moonContainer.addChild(shadowOverlay);
+        
+        // Add moon container to the main container
+        this.containers.moonPhase.addChild(moonContainer);
     }
 
     _drawDays() {

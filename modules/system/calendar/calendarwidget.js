@@ -83,7 +83,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         game.dsa5.apps.CalendarPicker.render(true);
     }
 
-    static timeAdvance(seconds, adjustRemainder = false) {
+    timeAdvance(seconds, adjustRemainder = false) {
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const adjustment = adjustRemainder ? components.second + (components.minute * 60) : components.second;
         game.time.advance(seconds + (adjustRemainder ? adjustment : -adjustment));
@@ -100,22 +100,22 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     }
 
     static backward(ev, target) {
-        const seconds = ev.button != 2 ? -this.SECONDS_PER_HOUR : -6 * this.SECONDS_PER_HOUR;
+        const seconds = ev.button != 2 ? -this.constructor.SECONDS_PER_HOUR : -6 * this.constructor.SECONDS_PER_HOUR;
         this.timeAdvance(seconds);
     }
 
     static forward(ev, target) {
-        const seconds = ev.button != 2 ? this.SECONDS_PER_HOUR : 6 * this.SECONDS_PER_HOUR;
+        const seconds = ev.button != 2 ? this.constructor.SECONDS_PER_HOUR : 6 * this.constructor.SECONDS_PER_HOUR;
         this.timeAdvance(seconds);
     }
 
     static fastBackward(ev, target) {
-        const seconds = ev.button != 2 ? -this.SECONDS_PER_DAY : -this.SECONDS_PER_DAY * 7;
+        const seconds = ev.button != 2 ? -this.constructor.SECONDS_PER_DAY : -this.constructor.SECONDS_PER_DAY * 7;
         this.timeAdvance(seconds, true);
     }
 
     static fastForward(ev, target) {
-        const seconds = ev.button != 2 ? this.SECONDS_PER_DAY : this.SECONDS_PER_DAY * 7;
+        const seconds = ev.button != 2 ? this.constructor.SECONDS_PER_DAY : this.constructor.SECONDS_PER_DAY * 7;
         this.timeAdvance(seconds, true);
     }
 

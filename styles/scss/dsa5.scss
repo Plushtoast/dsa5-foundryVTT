@@ -5754,20 +5754,20 @@ input[type='checkbox'].autoCheckbox {
           z-index: 2;
         }
 
-        &.phase1 {
+        &.phase0 {
           &:after {
             z-index: -1;
           }
         }
 
-        &.phase2 {
+        &.phase1 {
           &:before {
             z-index: 3;
             right: calc(var(--icon-size) * 0.2);
           }
         }
 
-        &.phase3 {
+        &.phase2 {
           &:before {
             z-index: 3;
             right: calc(var(--icon-size) * 0.5);
@@ -5775,19 +5775,19 @@ input[type='checkbox'].autoCheckbox {
           }
         }
 
-        &.phase4 {
+        &.phase3 {
           &:after {
             left: calc(var(--icon-size) * 0.2);
           }
         }
 
-        &.phase6 {
+        &.phase5 {
           &:after {
             left: calc(var(--icon-size) * -0.2);
           }
         }
 
-        &.phase7 {
+        &.phase6 {
           &:before {
             z-index: 3;
             left: calc(var(--icon-size) * 0.5);
@@ -5795,7 +5795,7 @@ input[type='checkbox'].autoCheckbox {
           }
         }
 
-        &.phase8 {
+        &.phase7 {
           &:before {
             z-index: 3;
             right: calc(var(--icon-size) * -0.2);
