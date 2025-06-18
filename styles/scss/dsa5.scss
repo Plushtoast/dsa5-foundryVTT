@@ -5610,13 +5610,45 @@ input[type='checkbox'].autoCheckbox {
     img {
       position: relative;
     }
+
+    &.offsetTooltip {
+      top: 200px;
+      left: calc(50vw - 630px);
+    }
   }
 
   .calendar-details {
     position: absolute;
-    left: calc(50vw + 360px);
-    top: 33%;
-    width: calc(50vw - 380px);
+    left: calc(50vw + 300px);
+    top: 230px;
+    opacity: 0;
+    width: calc(50vw - 360px);
+    max-width: 400px;
+    padding: 30px;
+    transition: opacity 0.35s ease-in-out;
+
+    &.showThis {
+      opacity: 1;
+    }
+  }
+
+  .calendar-img {
+    position: absolute;
+    opacity: 0;
+    right: calc(50vw + 320px);
+    top: 260px;
+    width: calc(50vw - 360px);
+    height: 600px;
+    max-width: 400px;
+    background-image: var(--img);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: opacity 0.35s ease-in-out;
+
+    &.showThis {
+      opacity: 1;
+    }
   }
 
   .calendarDateChange {
@@ -5629,7 +5661,7 @@ input[type='checkbox'].autoCheckbox {
     }
 
     input {
-      
+
       width: 80px;
 
       &.hourInput {
@@ -5637,7 +5669,7 @@ input[type='checkbox'].autoCheckbox {
         text-align: center;
       }
 
-      &:not(:hover){
+      &:not(:hover) {
         border-color: transparent;
       }
     }

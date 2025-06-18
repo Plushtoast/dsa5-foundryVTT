@@ -3,7 +3,6 @@ import DSA5_Utility from '../system/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 
 export const applyDamage = async (li, mode, factor = 1) => {
-  console.log(li)
   const message = game.messages.get(li.dataset.messageId);
   const cardData = message.flags.opposeData;
   const defenderSpeaker = cardData?.speakerDefend;

@@ -119,7 +119,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async refreshCalendar() {
     if (this.rendered) {
       const components = game.time.calendar.timeToComponents(game.time.worldTime);
-      const refreshedTimePart = await renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', {
+      const refreshedTimePart = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', {
         components,
         calendar: game.time.calendar,
         currentMonth: game.time.calendar.translate(game.time.calendar.months.values[components.month].name),
@@ -151,80 +151,151 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _onCalendarCanvasHover(hoverBait) {
-    let content = '';
-    let converted;
-    let convertedComponents;
-    let moon;
-    let monthDetails;
-    let holiday;
-    if (hoverBait) {
-      const components = game.time.calendar.timeToComponents(game.time.worldTime);
-      switch (hoverBait.type) {
-        case "day":
-          components.day += hoverBait.index - components.dayOfMonth;
-          converted = game.time.calendar.componentsToTime(components);
-          convertedComponents = game.time.calendar.timeToComponents(converted);
-          moon = game.time.calendar.translate(convertedComponents.moon.phase.name);
-          const month = game.time.calendar.translate(game.time.calendar.months.values[components.month].name);
-          const weekday = game.time.calendar.translate(game.time.calendar.days.values[convertedComponents.dayOfWeek].name);
-          holiday = (game.time.calendar.findHolidays(convertedComponents) || []).map(h => game.time.calendar.translate(`holiday.${h.name}`)).join('<br/>');
-          content = `<div>
-            <b>${hoverBait.day}. ${month}</b><br/>
-            <b>${game.time.calendar.translate('weekday', true)}</b>: ${weekday}<br/>
-            <b>${game.time.calendar.translate("moonphase", true)}</b>: ${moon}
-            ${holiday ? `<br/><b>${game.time.calendar.translate('holidays', true)}</b>: ${holiday}` : ''}
-          </div>`
-          break;
-        case "weekday":
-          components.day += hoverBait.originalIndex - components.dayOfWeek;
-          converted = game.time.calendar.componentsToTime(components);
-          convertedComponents = game.time.calendar.timeToComponents(converted);
-          moon = game.time.calendar.translate(convertedComponents.moon.phase.name);
-          const dayOfMonth = convertedComponents.dayOfMonth + 1;
-          const monthName = game.time.calendar.translate(game.time.calendar.months.values[convertedComponents.month].name);
-          holiday = (game.time.calendar.findHolidays(convertedComponents) || []).map(h => game.time.calendar.translate(`holiday.${h.name}`)).join('<br/>');
-          content = `<div>
-            <b>${dayOfMonth}. ${monthName}</b><br/>
-            <b>${game.time.calendar.translate('weekday', true)}</b>: ${game.time.calendar.translate(game.time.calendar.days.values[hoverBait.originalIndex].name)}<br/>
-            <b>${game.time.calendar.translate("moonphase", true)}</b>: ${moon}
-            ${holiday ? `<br/><b>${game.time.calendar.translate('holidays', true)}</b>: ${holiday}` : ''}
-          </div>`;
-          break;
-        case "month":
-          const monthImage = DSAWorldCalendar.monthImage(hoverBait.originalIndex);
-          let day = 0;
-          for (let m = 0; m < hoverBait.originalIndex; m++) {
-            day += game.time.calendar.months.values[m].days;
-          }
-          components.day = day;
-          converted = game.time.calendar.componentsToTime(components);
-          convertedComponents = game.time.calendar.timeToComponents(converted);
-          const monthData = game.time.calendar.months.values[hoverBait.originalIndex];
-          const season = game.time.calendar.seasons.values[convertedComponents.season];
-          content = `<div>
-                <img src="${monthImage}" style="width: 100px; height: 100px; object-fit: cover; object-position: center;" />    
-            </div>
-            <div>
-                <b>${game.time.calendar.translate('month', true)}</b>: ${game.time.calendar.translate(monthData.name)}<br/>
-                <b>${game.time.calendar.translate('season', true)}</b>: ${game.time.calendar.translate(season.name)}
-            </div>
-            `;
-          monthDetails = game.time.calendar.translate(`monthDetails.${monthData.name}`);
-          console.log(monthDetails);
-          break;
-        case "moon":
-          content = `<div><b>${game.time.calendar.translate('moonphase', true)}</b>: ${hoverBait.name}</div>`;
-          break;
-      }
+    if (!hoverBait) {
+      this._clearTooltips();
+      return;
     }
 
-    const tooltip = this.element.querySelector('.tooltipBox')
-    const calendarDetails = this.element.querySelector('.calendar-details');
-    tooltip.innerHTML = content;
-    tooltip.classList.toggle('dsahidden', !content);
-    calendarDetails.innerHTML = monthDetails || '';
-    calendarDetails.classList.toggle('dsahidden', !monthDetails);
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const calendar = game.time.calendar;
+    let tooltipContent = '';
+    let detailsContent = '';
+    let img = '';
 
+    switch (hoverBait.type) {
+      case "day":
+        tooltipContent = this._buildDayTooltip(hoverBait, components);
+        break;
+      case "weekday":
+        tooltipContent = this._buildWeekdayTooltip(hoverBait, components);
+        break;
+      case "month":
+        const result = this._buildMonthTooltip(hoverBait);
+        tooltipContent = result.tooltipContent;
+        detailsContent = result.detailsContent;
+        img = result.img;
+        break;
+      case "moon":
+        tooltipContent = `<div><b>${calendar.translate('moonphase', true)}</b>: ${hoverBait.name}</div>`;
+        break;
+    }
+
+    this._updateTooltips(tooltipContent, detailsContent, img);
+  }
+
+  _buildDayTooltip(hoverBait, components) {
+    const calendar = game.time.calendar;
+    const modifiedComponents = foundry.utils.deepClone(components);
+    modifiedComponents.day += hoverBait.index - components.dayOfMonth;
+    
+    const converted = calendar.componentsToTime(modifiedComponents);
+    const convertedComponents = calendar.timeToComponents(converted);
+    
+    const moon = calendar.translate(convertedComponents.moon.phase.name);
+    const month = calendar.translate(calendar.months.values[components.month].name);
+    const weekday = calendar.translate(calendar.days.values[convertedComponents.dayOfWeek].name);
+    const holidays = this._getHolidaysFormatted(convertedComponents);
+
+    return `<div>
+      <b>${hoverBait.day}. ${month}</b><br/>
+      <b>${calendar.translate('weekday', true)}</b>: ${weekday}<br/>
+      <b>${calendar.translate("moonphase", true)}</b>: ${moon}
+      ${holidays ? `<br/><b>${calendar.translate('holidays', true)}</b>: ${holidays}` : ''}
+    </div>`;
+  }
+
+  _buildWeekdayTooltip(hoverBait, components) {
+    const calendar = game.time.calendar;
+    const modifiedComponents = foundry.utils.deepClone(components);
+    modifiedComponents.day += hoverBait.originalIndex - components.dayOfWeek;
+    
+    const converted = calendar.componentsToTime(modifiedComponents);
+    const convertedComponents = calendar.timeToComponents(converted);
+    
+    const moon = calendar.translate(convertedComponents.moon.phase.name);
+    const dayOfMonth = convertedComponents.dayOfMonth + 1;
+    const monthName = calendar.translate(calendar.months.values[convertedComponents.month].name);
+    const weekdayName = calendar.translate(calendar.days.values[hoverBait.originalIndex].name);
+    const holidays = this._getHolidaysFormatted(convertedComponents);
+
+    return `<div>
+      <b>${dayOfMonth}. ${monthName}</b><br/>
+      <b>${calendar.translate('weekday', true)}</b>: ${weekdayName}<br/>
+      <b>${calendar.translate("moonphase", true)}</b>: ${moon}
+      ${holidays ? `<br/><b>${calendar.translate('holidays', true)}</b>: ${holidays}` : ''}
+    </div>`;
+  }
+
+  _buildMonthTooltip(hoverBait) {
+    const calendar = game.time.calendar;
+    const monthIndex = hoverBait.originalIndex;
+    const monthImage = DSAWorldCalendar.monthImage(monthIndex);
+    let img;
+    
+    // Calculate day offset for this month
+    let dayOffset = 0;
+    for (let m = 0; m < monthIndex; m++) {
+      dayOffset += calendar.months.values[m].days;
+    }
+    
+    const modifiedComponents = {
+      ...calendar.timeToComponents(game.time.worldTime),
+      day: dayOffset
+    };
+    
+    const converted = calendar.componentsToTime(modifiedComponents);
+    const convertedComponents = calendar.timeToComponents(converted);
+    
+    const monthData = calendar.months.values[monthIndex];
+    const season = calendar.seasons.values[convertedComponents.season];
+    const monthName = calendar.translate(monthData.name);
+    
+    const tooltipContent = `<div>
+      <img src="${monthImage}" style="width: 100px; height: 100px; object-fit: cover; object-position: center;" />    
+    </div>
+    <div>
+      <b>${calendar.translate('month', true)}</b>: ${monthName}<br/>
+      <b>${calendar.translate('season', true)}</b>: ${calendar.translate(season.name)}
+    </div>`;
+    
+    const detailsContent = calendar.translate(`monthDetails.${monthData.name}`);
+    const baseMonthName = calendar.translate(monthData.name, true);
+
+    const mappedName = {
+      "Namenlose Tage": "Namenlos",
+      "Nameless Days": "Namenlos"
+    }[baseMonthName] || baseMonthName;
+
+    if (game.modules.get('dsa5-godsofaventuria')) {
+      img = `../../../../modules/dsa5-godsofaventuria/icons/journal/${mappedName}.webp`;
+    }
+    
+    return { tooltipContent, detailsContent, img };
+  }
+
+  _getHolidaysFormatted(components) {
+    const holidays = game.time.calendar.findHolidays(components) || [];
+    return holidays.map(h => game.time.calendar.translate(`holiday.${h.name}`)).join('<br/>');
+  }
+
+  _updateTooltips(tooltipContent, detailsContent, img) {
+    const tooltip = this.element.querySelector('.tooltipBox');
+    const calendarDetails = this.element.querySelector('.calendar-details');
+    const calendarImage = this.element.querySelector('.calendar-img');
+    
+    tooltip.innerHTML = tooltipContent;
+    tooltip.classList.toggle('dsahidden', !tooltipContent);
+    tooltip.classList.toggle('offsetTooltip', detailsContent);
+    
+    calendarDetails.innerHTML = detailsContent || '';
+    calendarDetails.classList.toggle('showThis', detailsContent);
+
+    calendarImage.style.setProperty('--img', img ? `url(${img})` : 'none');
+    calendarImage.classList.toggle('showThis', img);
+  }
+
+  _clearTooltips() {
+    this._updateTooltips('', '', '');
   }
 
   async _onCalendarCanvasCallback(clickBait) {

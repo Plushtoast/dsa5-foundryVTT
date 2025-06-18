@@ -9,7 +9,7 @@
     "char": "Attribute",
     "derivedStats": "Base values",
     "leftClick": "Left-<i class=\"fas fa-computer-mouse\"></i>",
-    "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",    
+    "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",
     "dropWithContents": "Drop bag with contents?",
     "CHAR": {
         "MU": "Courage",
@@ -24,7 +24,7 @@
         "ATTACK": "Attack",
         "PARRY": "Parry",
         "GE/KK": "Agility / Strength",
-        "GEKK": "Agility / Strength",        
+        "GEKK": "Agility / Strength",
         "DISCARDED": "Discarded",
         "DAMAGE": "Damage",
         "DODGE": "Dodge",
@@ -110,7 +110,7 @@
         "armor": {
             "1": "Armor advantage",
             "2": "Armor disadvantage"
-        },  
+        },
         "rangeweapon": {
             "1": "Weapon advantage",
             "2": "Weapon disadvantage"
@@ -225,7 +225,7 @@
         "buyingFactor": "Buy factor",
         "sellingFactor": "Sell factor",
         "typeMerchant": "Merchant",
-        "startExchange": "Chose a trading partner for an exchange (double-<i class=\"fas fa-computer-mouse\"></i>).",        
+        "startExchange": "Chose a trading partner for an exchange (double-<i class=\"fas fa-computer-mouse\"></i>).",
         "hideMoney": "Hide money",
         "hideMoneyHint": "Hide the purse of the merchant for the players.",
         "typeEpic": "Garadan",
@@ -692,7 +692,7 @@
             "NamenloseTage": "Nameless Days",
             "NamenloseTageAbbr": "Nam",
             "Spring": "Spring",
-            "Summer": "Sommer",
+            "Summer": "Summer",
             "Fall": "Fall",
             "Winter": "Winter",
             "YearSuffix": "BF",
@@ -713,7 +713,7 @@
             "Helm": "Spire",
             "AbnehmenderHelm": "Waning Spire",
             "day": "Day",
-            "moonphase": "Moon phase",            
+            "moonphase": "Moon phase",
             "season": "Season",
             "month": "Month",
             "year": "Year",
@@ -760,7 +760,21 @@
                 "lightByDayTimeHint": "The darkness value is automatically adjusted based on the time of day. The time of day is considered if light by daytime is activated.",
                 "moonAddsLight": "Moonlight adds to darkness",
                 "moonAddsLightHint": "Moonlight influences the automatic darkness value at night. The brightness of the moon is multiplied by the moon phase and subtracted from the darkness, if light by daytime is activated."
-                
+            },
+            "monthDetails": {
+                "July": "<div><h3>Praios</h3><blockquote><p>“We were sent out to bring order to the world. Everyone needs to know their place in the grand scheme of the world, according to the abilities which the good gods granted them.”</p></blockquote><p><strong>Aspects:</strong> Order, Rule, Truth, Justice<br><strong>Symbols/Emblems:</strong> Sun, Light<br><strong>Holy Animal:</strong> Griffon</p><p>Praios is worshipped as the king of gods and also as the god of kings. He is usually depicted as a man with a griffon’s head, and griffons are also regarded as his emissaries. In the creed of the Twelvegods he is supreme, and as god of order, law, and truth, he is particularly important for many nobles. As the sun (sometimes called the Eye of Praios) he follows his daily path, and the radiant light of his all-seeing eye disperses all shadows. Lying and disobedience are anathema to him, and many of his most determined Blessed Ones reject magic as a disturbance to order. However, moderate religious leaders accept white magic if it is used for good and in accordance with the order of the world. Praios is venerated by those who administer justice and those who hope for justice. Many believers also pray to him as protector against evil and dark magic. His magnificent main temple is the City of Light in Gareth, and the supreme representative of the Church of Praios is called the Herald of Light.</p></div>",
+                "August": "<div><h3>Rondra</h3><blockquote><p>“We must protect those who cannot fight for themselves. With Rondra’s courage we face even superior forces to defend creation and good people everywhere.”</p></blockquote><p><strong>Aspects:</strong> Combat, Bravery, Protection of the Defenseless, Honorable Duels<br><strong>Symbols/Emblems:</strong> Sword, Lightning and Thunder, Storm<br><strong>Holy Animal:</strong> Lioness (Lynx, in the north)</p><p>Rondra is the goddess of honorable combat. She commands thunder and lightning and is sometimes also worshiped as the goddess of war. Her symbolic animal is the lioness, and she is often depicted as a warrior in shining armor, her sword lifted to the skies. Rondra teaches honest and open combat, and regards attacks against those who are weaker as serious breaches of conduct. Rigorous advocates of her doctrine reject the use of ruses and ranged weapons in war. She finds her greatest worship among knights, warriors, and traveling swords. The most sacred temple of the goddess can be found in Perricum. The head of the Church, called the Sword of Swords, resides in Threelions in Beilunkia so she can lead the drive to liberate the last few occupied provinces. Her Blessed Ones usually wear chainmail and red-and-white tabards, and often carry swords (typically, the flanged, two-handed Rondra’s Crest). It is their duty in battle to stand in the front line, which is why they are considered especially courageous.</p></div>",
+                "September": "<div><h3>Efferd</h3><blockquote><p>“Water cannot be formed or forced. It is eternal and gives life and prosperity to all beings.”</p></blockquote><p><strong>Aspects:</strong> Water, Sea, Wind, Seafaring<br><strong>Symbols/Emblems:</strong> Trident, Waves, Surges<br><strong>Holy Animal:</strong> Dolphin</p><p>Efferd is the god of the sea, waters, and wind. His sacred animals are dolphins, but he rules all creatures of the sea, and his retinue includes mermen, mermaids, and water nymphs. It is said he is one of the oldest gods. As the lord of waves and surges, he is regarded as moody and unpredictable. The Lord of Winds is worshiped by fisher folk, boaters, and seafarers who hope for his mercy. In times of severe drought, he is revered as lord of live-giving water.</p><p>His priests are also known for their moodiness. Efferd sometimes grants a bountiful catch and at other times sends storms raging across the seas. Many of his servants dislike fire in any form, so Efferd’s temples are often illuminated by the bluish glow of Gwen-Petryl stones.</p></div>",
+                "October": "<div><h3>Travia</h3><blockquote><p>“Only where hospitality and faithfulness reign, can people live together in peace and harmony and without fear.”</p></blockquote><p><strong>Aspects:</strong> Faithfulness, Hospitality, Homeland, Charity<br><strong>Symbols/Emblems:</strong> Hearth fire<br><strong>Holy Animal:</strong> Wild goose</p><p>Travia is the motherly lady of family, hospitality, and hearth fires. Nobody wants to be homeless or without family, so the Divine Mother is held in high regards across Aventuria. Many oaths are given in her name, such as the marital Travia Bond (or Covenant of Travia) made between husband and wife. Faithfulness in marriage is particularly important to Travia, which sometimes leads to conflicts with the ideals of the fun-loving Rahja. Innkeepers worship Travia, as does anyone who cherishes family happiness and the unity of family. The goddess is also regarded as patron of the culinary arts and of charity, which play major roles in communal life. Thus the Church of Travia operates food kitchens for orphans and the poor.</p><p>The sacred animal of the Church is the wild Brant goose, and families of geese can often be seen in the temples, waddling along behind orange-robed priests. The leadership of the Church is always held by a married couple called the Holy Couple, which resides in Rommilys.</p></div>",
+                "November": "<div><h3>Boron</h3><blockquote><p>“Everything ends. Mortality is our grace and our redemption.”</p></blockquote><p><strong>Aspects:</strong> Sleep, Death, Dream, Oblivion<br><strong>Symbols/Emblems:</strong> Boron’s Wheel (a broken half-wheel with 5 spokes), Beam and Scales, Raven Wings<br><strong>Holy Animal:</strong> Raven</p><p>The Inevitable is lord over the Realms of the Dead. Most Aventurians fear him more than they love him, and many of his temples are filled with dignified silence. Boron is the god of death and mortality, but he also represents sleep and the grace of oblivion. Many of his Blessed Ones are well-versed oneiromancers and healers of the soul, or else serve as silent guardians at Boron yards (cemeteries; also known as Boron’s Acres) and deliver a final blessing for the deceased. They are often regarded as sinister and unapproachable in their black robes, and many of them shave their heads out of humility, or take a vow of silence.</p><p>The Church of Boron is split into two sects. The head of the Punin rite is called Raven, after the holy animal of Boron, and leads the main temple in Punin. In the Al’Anfan rite, Boron is worshiped as supreme god even above Praios, which leads to conflicts with the other churches of the Twelvegods. In the south, one gives oneself to the divine intoxication of oblivion, and suicide is regarded as the highest form of sacrifice to the silent god. Al’Anfa hosts the main temple of this sect, which is under the leadership of a Patriarch.</p></div>",
+                "December": "<div><h3>Hesinde</h3><blockquote><p>“Your mind may be imperfect, but you may learn and grow, for<br>the gods have granted you gifts to make it perfect.”</p></blockquote><p><strong>Aspects:</strong> Knowledge, Wisdom, Erudition, Magic, Change<br><strong>Symbols/Emblems:</strong> Ouroboros (a snake biting its own tail)<br><strong>Holy Animal:</strong> Serpent</p><p>Hesinde is the goddess of knowledge, wisdom, and the sciences, but is also worshiped as Mistress of Magic. People teach and conduct research in her name, yet the Church of Hesinde debates which knowledge may be passed on and which should be made available to only a select few. Since the arts are often associated with Hesinde, the church is patron to many artists. Her followers include scholars and mages, and the temples of the goddess often house sizeable libraries or map collections, and assiduously collect knowledge. The Blessed Ones of Hesinde dress in green and gold and always carry small notebooks, called books of the snake, for recording their findings. Hesinde’s holy animals are wise serpents, which are often found in her temples, whether as living specimens, images, or as elaborate ornaments coiled around the necks of her Blessed Ones. The most important temple of the goddess stands in Kuslik, and is home to the highest priestess of the Church, the Magister of Magisters.</p></div>",
+                "January": "<div><h3>Firun</h3><blockquote><p>“Life is not simple. It is a constant struggle for better quarry, food,<br>a safe bivouac in the wilds, and protection from the cold. The<br>timid can never retain the upper hand in this struggle.”</p></blockquote><p><strong>Aspects:</strong> Winter, Ice, Hunt, Hardship<br><strong>Symbols/Emblems:</strong> Bow and Arrow, Ice Crystal<br><strong>Holy Animal:</strong> Firun’s Bear (polar bear)</p><p>Firun, also called the Old Man of the Mountain by his worshippers, is the god of ice, winter, and the hunt. By many he is considered an even more merciless god of the dead than Boron, and only those who can resist his element are worthy of his grace. His followers consist largely of rangers and hunters, whose lives are often shaped by the forces of nature and the hardships of the wilderness. Even in warmer climes, people often pray to Firun when a winter is particularly grim. He counts many nobles among his followers as well, because of their enthusiasm for hunting. His sacred animal is the polar bear, and his Blessed Ones usually wear practical clothes fashioned from leather and furs. One rarely encounters his priests in the few temples and shrines devoted to Firun, because they prefer to be out traveling in the wilds. The official main temple of the Church of Firun is located in Trallop. The First, as the highest-ranking priest is called, travels constantly, and might walk as a human or as a polar bear.</p></div>",
+                "February": "<div><h3>Tsa</h3><blockquote><p>“Life is colorful. It changes constantly. Do not cling to the past.<br>Rather, embrace the new beginning. Shape what is to come, mold<br>your future as you would like it to be.”</p></blockquote><p><strong>Aspects:</strong> Life, Creation, Renewal, Serenity<br><strong>Symbols/Emblem:</strong> Rainbow<br><strong>Holy Animal:</strong> Lizard</p><p>Tsa is sometimes called the Young Goddess. She is the lady of change, renewal, birth, and beginnings. Monotony and being set in one’s ways are anathema to her. She loves all that is new. Accordingly, her priests are often cheerful, freedom-loving, creative, and open to change and new ideas. Tsa loves all living beings equally and is considered to be extraordinarily gentle. Thus many of her Blessed Ones eat no meat or are pacifists. Few faiths in Aventuria have as many different, ever-changing sects as the Church of Tsa, and her Blessed Ones often come into conflict with other Churches or authorities due to unusual or revolutionary ways of thinking. Few humans worship Tsa above the other Twelvegods, but her name is often invoked during childbirth and at the beginning of new ventures. Her priests wear clothes that display all colors of the rainbow. The church has neither a main temple nor a supreme representative, and her Blessed Ones rarely remain with the same temple for long.</p></div>",
+                "March": "<div><h3>Phex</h3><blockquote><p>“Know your options and use them, and Phex will grant you his favor.”</p></blockquote><p><strong>Aspects:</strong> Luck, Trade, Cunning, Thievery, Self-Reliance<br><strong>Symbols/Emblems:</strong> Fog, Night, Stars<br><strong>Holy Animal:</strong> Fox (in the Lands of the Tulamydes, the Mongoose or Bat, or in rare cases, the Magpie)</p><p>The Cunning One is the god of merchants, thieves, and secrets. As Lord of Stars he sets especially deserving stars as sparkling gems into the night sky. The blessing of Phex is often invoked in trade and gambling, and before setting out on risky ventures. In the Lands of the Tulamydes Phex is also considered to be the night hunter, a champion against lizard beings. As Lord of Magic he borrows many aspects from other deities.</p><p>Several cities have two temples to Phex: a public one, in which people can conduct business and make sworn statements, and a hidden one, in which thieves, fences, and other secretive people can meet, worship, and practice their skills.</p><p>Finding a secret temple or identifying a disguised priest can be challenging, as many of them are masters of lying and concealment. The location of the main temple of Phex is a mystery, as is the real identity of his supreme Blessed One, the Moon.</p></div>",
+                "April": "<div><h3>Peraine</h3><blockquote><p>“There is much to do before you can reap the fruits of your labor. This applies to all areas of life, and only those who sow and care for their crops can eventually reap.”</p></blockquote><p><strong>Aspects:</strong> Fertility, Agriculture, Healing<br><strong>Symbols/Emblems:</strong> Bundle of Ears of Maize<br><strong>Holy Animal:</strong> Stork (or, in the South, the Ibis)</p><p>Peraine is the goddess of fertility, agriculture, and the healing arts. Her name is invoked by all those who trust in her healing powers or hope for a bountiful harvest. This gives her a large following, because farmers make up the majority of the Aventurian population. Although her Church does not aspire to political power, nobles dare not act against her will for long, as they risk angering her numerous followers.</p><p>The helpful priests of Peraine wear simple green clothing which is sometimes embroidered with patterns of maize ears. They serve mainly in rural areas, where they tend small temples or shrines, bless fields, and look after the sick and injured. The Church maintains infirmaries, hospitals, and large temples only in cities. However, many priests often travel to help where they are needed the most.</p><p>The supreme Blessed One of Peraine, the Servant of Life, has chosen Ilsur, in Tobrien, as his seat and therefore the site of the main temple.</p></div>",
+                "May": "<div><h3>Ingerimm</h3><blockquote><p>“Even the young can learn what one can make the world’s natural gifts, but only a master can give these things permanence. No one wants to swing a sword that breaks after the first blow.”</p></blockquote><p><strong>Aspects:</strong> Ore, Fire, Crafts, Permanence<br><strong>Symbols/Emblems:</strong> Hammer and Anvil, Flames<br><strong>Holy Animal:</strong> -</p><p>The god of forges and crafting, Ingerimm, has many similarities to the dwarven god Angrosh (see page 188), and he is often depicted as short and stocky, as if he were a dwarf himself. He is the only god of the twelve who has no holy animal. Instead he is always depicted with a smith’s hammer. His followers include crafters, such as smiths, builders, tailors, and bakers. In the cities where he is worshipped, he is also considered the patron of guilds.</p><p>Priests of Ingerimm wear leather aprons and carry lanterns whose flames must never be allowed to go out. They are regarded as tireless and very willing to undertake hard work. Few give much thought to sermons, but instead serve their god in a practical manner. The main temple of Ingerimm is in Angbar. It has been led since time immemorial by the Keeper of the Flame.</p></div>",
+                "June": "<div><h3>Rahja</h3><blockquote><p>“Without beauty and joy, life would be senseless. The world is beautiful, as the gods have decreed it, so let us celebrate!”</p></blockquote><p><strong>Aspects:</strong> Joy, Love, Intoxication, Lust, Beauty<br><strong>Symbols/Emblems:</strong> Grapevine, Rose<br><strong>Holy Animal:</strong> Mare</p><p>Rahja, the Serene, is goddess of ecstasy and love-making. She loves intoxication and dance and is considered the patron of lovers, wine, and feasts. Her worshipers include lovers, artists, and revelers of all ages. The austere priests of Travia often look upon the actions of Blessed Ones of Rahja with great suspicion, and usually view them as too frivolous. They might not be entirely wrong, yet the scantily clad priestesses of Rahja act quite responsibly, even if they impose fewer restrictions on their faithful than other Churches.</p><p>Mares are regarded as the embodiment of grace and love of life, and therefore fall under the protection of the goddess. Rahja is most strongly worshiped in the vineyards of Almada and the Horasian Empire. A more mystical interpretation of the faith prevails in the Lands of the Tulamydes, where the states of intoxication and divine ecstasy are celebrated in honor of Rahja the Passionate. The main temple of the goddess, seat of the Beloved of the Goddess, is in Belhanka.</p></div>",
+                "NamenloseTage": "<div><h3>The Nameless One</h3><blockquote><p>“The world and all the gods shall tremble with fear when he rises!<br>Their eyes will burst in their sockets when He shows them His face.”<br>—excerpt from the First Doxology of the Nameless One, circa 307 b.FB, author unknown</p></blockquote><p><strong>Aspects:</strong> Power, Dominion, Hatred, Destruction, Lies<br><strong>Symbols/Emblems:</strong> Golden mask, rat fungus, Starless Void<br><strong>Holy Animal:</strong> Rat (Spider, among the Tulamydes)</p><p>The greatest enemy of the Twelvegods is the Nameless One, whom it is said brought demons from beyond the Seventh Sphere into the world because he was denied sole rulership of Creation. The gods punished his treason by erasing his name syllable by syllable from memory and chaining him within the Star Breach, the hole he himself had smashed out of the Wall of Stars to give demons access to this world.</p><p>This empty spot in the starry sky is at its zenith during the five so-called Nameless Days, the days between the years. These ominous and cursed days belong to the Nameless One, for they represent the time he tore a hole between Rahja’s passion and Praios’ law at the spot where the Circle of the Twelvegods (the constellations) was most vulnerable.</p><p>Mystics say the Nameless One is no friend of chaos, and that he would rather destroy Creation than serve others. He is the very essence of power, dominion, selfishness, revenge, temptation, lies, treachery, malice, hatred, destruction, and even self-mutilation.</p></div>"
             }
         }
     },
@@ -1133,11 +1147,11 @@
         "value": "Value",
         "modifiers": "Mod.",
         "advances": "Advance",
-        "max": "Max", 
+        "max": "Max",
         "AoE": "Size in yard, Template"
     },
     "temperature": {
-        "heatProtection": "Heat Protection", 
+        "heatProtection": "Heat Protection",
         "coldProtection": "Cold Protection"
     },
     "areaTargetTypes": {
@@ -1476,7 +1490,7 @@
         "size": "Basic size",
         "combine": "Combine with other swarms",
         "split": "Split swarm",
-        "swarmSplitMessage": "How many creatures should split from the swarm?"        
+        "swarmSplitMessage": "How many creatures should split from the swarm?"
     },
     "NarrowSpaceModifiers": {
         "weapon": {
@@ -1532,7 +1546,7 @@
         "seconds": "(second(s)?)",
         "hours": "(hour(s)?)",
         "days": "day(s)?",
-        "weeks":"week(s)?",
+        "weeks": "week(s)?",
         "months": "month(s)?",
         "years": "year(s)?"
     },
@@ -1593,7 +1607,7 @@
     },
     "LocalizedIDs": {
         "reversalis": "Reversalis",
-        "immuneToCrit": "Immune to critical hits",        
+        "immuneToCrit": "Immune to critical hits",
         "aspectKnowledge": "Aspect Knowledge",
         "sharpshooter": "Sharpshooter",
         "professionSecret": "Trade Secret",
@@ -1696,11 +1710,11 @@
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
         "counterAttack": "Counterattack",
-        "servantEarth": "tbd", 
-        "servantFlame": "tbd", 
-        "servantCold": "tbd", 
-        "servantWave": "tbd", 
-        "servantCloud": "tbd", 
+        "servantEarth": "tbd",
+        "servantFlame": "tbd",
+        "servantCold": "tbd",
+        "servantWave": "tbd",
+        "servantCloud": "tbd",
         "servantOre": "tbd",
         "immuneTo": "Immunity to",
         "enemySense": "Enemy Sense"
@@ -1953,7 +1967,7 @@
         "notifyOnFadingEffects": "End of effect (notification)",
         "notifyOnFadingEffectsHint": "The game master receives a chat notification, if an effect on an actor is removed.",
         "hotbarv3": "DSA Hotbar Conversion",
-        "hotbarv3Hint": "The hotbar is completely replaced by a TDE variant. Abilities and other elements are directly dependent on the selected token. (Recommendation: Deactivate the token hotbar additionally)",        
+        "hotbarv3Hint": "The hotbar is completely replaced by a TDE variant. Abilities and other elements are directly dependent on the selected token. (Recommendation: Deactivate the token hotbar additionally)",
         "enableMasterTokenFunctions": "Enable Master Token Functions",
         "enableMasterTokenFunctionsHint": "Chose the game muster functions you want to be shown in the token hotbar",
         "meleeBotchTableEnabled": "Close Combat-Botch Table",
@@ -2219,8 +2233,7 @@
         "magicalStyle": "Magic Style Special Abilities",
         "homunculus": "Homunculs abilities",
         "extMagical": "Advanced Magical Special Abilities",
-        "vampire": "Vampiric gifts",       
-        
+        "vampire": "Vampiric gifts",
         "lykanthrop": "Lykanthropic gifts",
         "generalStyle": "Talent Style Special Abilities",
         "extGeneral": "Advanced Talent Special Abilities",

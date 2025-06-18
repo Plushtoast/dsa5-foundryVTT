@@ -149,12 +149,20 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
   timeToComponents(time = 0) {
     const components = super.timeToComponents(time);
+    
+    const { year, month, dayOfMonth } = components;
+    let season;
+    for ( season=this.seasons.values.length - 1; season>=0; season-- ) {
+      const s = this.seasons.values[season];      
+      if(s.monthStart == month && s.dayStart <= dayOfMonth) break;
+      if ( s.monthStart < month ) break;
+    }
+    components.season = season;
 
     // Calculate moon phase
     components.moon = null;
 
-    if (this.moon) {
-      const { year, month, dayOfMonth } = components;
+    if (this.moon) {      
       const { anchor, cycle, values } = this.moon;
 
       // Calculate total days since anchor date
