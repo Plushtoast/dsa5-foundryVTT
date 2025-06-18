@@ -221,9 +221,10 @@ export class CalendarCanvas {
 
         for (let i = 0; i < calendar.seasons.values.length; i++) {
             const season = calendar.seasons.values[i];
-            const nextSeason = calendar.seasons.values[i + 1];
+            const nextSeason = calendar.seasons.values[i + 1];            
 
             const days = this._calculateSeasonDays(season, nextSeason, calendar);
+
             const angle = days / daysPerYear * 2 * Math.PI;
             const startAngle = cumulativeAngle;
 
@@ -251,7 +252,7 @@ export class CalendarCanvas {
             days += calendar.months.values[j].days;
         }
 
-        return days + nextSeason.dayStart - 1;
+        return days + nextSeason.dayStart;
     }
 
     _adjustSeasonsForRotation(seasons, components, calendar, daysPerYear) {
