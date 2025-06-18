@@ -32,6 +32,7 @@ export class CalendarCanvas {
         this.isDestroyed = false;
         this.spritesheet = null;
         this.initialized = false;
+        this.textureCache = new Map(); // Cache for generated textures
 
         // Event handlers (bound once)
         this.throttledMouseMove = this._throttle(this._handleMouseMove.bind(this), 16);
@@ -91,6 +92,17 @@ export class CalendarCanvas {
             12: 'namenlos'
         });
 
+        this.MOON_POSITIONS = Object.freeze([
+            { x: 0, y: 1 },                         // New Moon (bottom)
+            { x: -Math.cos(Math.PI/4), y: Math.sin(Math.PI/4) },  // Waxing Crescent
+            { x: -1, y: 0 },                        // First Quarter (left)
+            { x: -Math.cos(Math.PI/4), y: -Math.sin(Math.PI/4) }, // Waxing Gibbous
+            { x: 0, y: -1 },                        // Full Moon (top)
+            { x: Math.cos(Math.PI/4), y: -Math.sin(Math.PI/4) },  // Waning Gibbous
+            { x: 1, y: 0 },                         // Last Quarter (right)
+            { x: Math.cos(Math.PI/4), y: Math.sin(Math.PI/4) }    // Waning Crescent
+        ]);
+
         this.FONT_STYLE = Object.freeze({
             MONTHS: {
                 fontFamily: 'Garamond',
@@ -132,12 +144,12 @@ export class CalendarCanvas {
      * @private
      */
     _throttle(func, limit) {
-        let inThrottle;
+        let lastCall = 0;
         return (...args) => {
-            if (!inThrottle) {
+            const now = Date.now();
+            if (now - lastCall >= limit) {
+                lastCall = now;
                 func.apply(this, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
             }
         };
     }
@@ -171,6 +183,10 @@ export class CalendarCanvas {
 
         this._removeEventListeners();
 
+        // Clear texture cache
+        this.textureCache.forEach(texture => texture.destroy(true));
+        this.textureCache.clear();
+
         if (this.app) {
             this.app.destroy(true, {
                 children: true,
@@ -183,15 +199,18 @@ export class CalendarCanvas {
         if (this.app) return;
 
         const dpr = window.devicePixelRatio || 1;
-        this.app = new PIXI.Application({
+        const options = {
             width: this.element.clientWidth,
             height: this.element.clientHeight,
             backgroundColor: this.COLORS.BACKGROUND_OUTER,
             antialias: true,
             resolution: dpr,
-            autoDensity: true
-        });
+            autoDensity: true,
+            powerPreference: "high-performance",
+            autoStart: true
+        };
 
+        this.app = new PIXI.Application(options);
         this.element.appendChild(this.app.view);
         this.stage = this.app.stage;
         this.centerX = this.app.screen.width / 2;
@@ -237,7 +256,7 @@ export class CalendarCanvas {
     }
 
     _calculateSeasons(calendar, daysPerYear) {
-        const seasons = [];
+        const seasons = new Array(calendar.seasons.values.length);
         let cumulativeAngle = 0;
 
         for (let i = 0; i < calendar.seasons.values.length; i++) {
@@ -245,18 +264,16 @@ export class CalendarCanvas {
             const nextSeason = calendar.seasons.values[i + 1];
 
             const days = this._calculateSeasonDays(season, nextSeason, calendar);
-
             const angle = days / daysPerYear * 2 * Math.PI;
             const startAngle = cumulativeAngle;
-
             cumulativeAngle += angle;
 
-            seasons.push({
+            seasons[i] = {
                 angle,
                 startAngle,
                 endAngle: cumulativeAngle,
                 gradient: this.SEASON_GRADIENTS[i]
-            });
+            };
         }
 
         return seasons;
@@ -277,20 +294,29 @@ export class CalendarCanvas {
     }
 
     _adjustSeasonsForRotation(seasons, components, calendar, daysPerYear) {
+        // Pre-calculate current month start angle once
         let currentMonthStartAngle = 0;
-
         for (let i = 0; i < components.month; i++) {
             currentMonthStartAngle += (calendar.months.values[i].days / daysPerYear) * 2 * Math.PI;
         }
 
-        return seasons.map(season => ({
-            ...season,
-            startAngle: (season.startAngle - currentMonthStartAngle + 2 * Math.PI) % (2 * Math.PI),
-            endAngle: (season.endAngle - currentMonthStartAngle + 2 * Math.PI) % (2 * Math.PI)
-        }));
+        const TWO_PI = 2 * Math.PI;
+        
+        // Use map for immutability and performance
+        return seasons.map(season => {
+            const startAngle = (season.startAngle - currentMonthStartAngle + TWO_PI) % TWO_PI;
+            const endAngle = (season.endAngle - currentMonthStartAngle + TWO_PI) % TWO_PI;
+            
+            return {
+                ...season,
+                startAngle,
+                endAngle
+            };
+        });
     }
 
     _rotateArray(array, startIndex) {
+        if (startIndex === 0) return array;
         return [...array.slice(startIndex), ...array.slice(0, startIndex)];
     }
 
@@ -304,86 +330,124 @@ export class CalendarCanvas {
             weekday: Math.PI / weekdays.length
         };
 
-        // Precalculate all positions
+        // Precalculate all positions at once
         this.precalculated.monthAngles = this._calculateMonthAngles(months.length);
         this.precalculated.dayAngles = this._calculateDayAngles(daysInMonth);
         this.precalculated.weekdayAngles = this._calculateWeekdayAngles(weekdays.length);
         this.precalculated.seasonAngles = this._calculateSeasonAngles();
         this.precalculated.moonAngles = this._calculateMoonAngles(this.calendarData.moons.length);
+
+        // Precalculate hit detection lookup tables
+        this._precalculateHitDetection();
+    }
+
+    _precalculateHitDetection() {
+        // Create lookup maps for faster hit detection using TypedArrays for better performance
+        const SEGMENTS = 360; // One segment per degree for precision
+        const TWO_PI = 2 * Math.PI;
+        
+        // Use typed arrays for better performance
+        this.hitDetectionLookup = {
+            month: new Int16Array(SEGMENTS),
+            day: new Int16Array(SEGMENTS),
+            weekday: new Int16Array(SEGMENTS)
+        };
+        const angleOffsets = this.precalculated.angleOffsets;
+        // Generate month hit detection
+        const monthCount = this.calendarData.months.length;
+        const monthStep = TWO_PI / monthCount;
+        for (let i = 0; i < SEGMENTS; i++) {
+            const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.month;
+            this.hitDetectionLookup.month[i] = Math.floor(angle / monthStep) % monthCount;
+        }
+        
+        // Generate day hit detection
+        const dayCount = this.calendarData.daysInMonth;
+        const dayStep = TWO_PI / dayCount;
+        for (let i = 0; i < SEGMENTS; i++) {
+            const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.day;
+            this.hitDetectionLookup.day[i] = Math.floor(angle / dayStep) % dayCount;
+        }
+        
+        // Generate weekday hit detection
+        const weekdayCount = this.calendarData.weekdays.length;
+        const weekdayStep = TWO_PI / weekdayCount;
+        for (let i = 0; i < SEGMENTS; i++) {
+            const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.weekday;
+            this.hitDetectionLookup.weekday[i] = Math.floor(angle / weekdayStep) % weekdayCount;
+        }
     }
 
     _calculateMoonAngles(moonCount) {
-        const angles = [];
+        const angles = new Array(moonCount);
         const angleStep = 2 * Math.PI / moonCount;
         const moonOffset = Math.PI / 2; // Offset to align with the top
 
         for (let i = 0; i < moonCount; i++) {
             const angle = angleStep * i - moonOffset;
-            angles.push({
+            angles[i] = {
                 angle,
                 x: this.centerX + Math.cos(angle) * this.RADIUS.OUTER,
                 y: this.centerY + Math.sin(angle) * this.RADIUS.OUTER
-            });
+            };
         }
 
         return angles;
     }
 
     _calculateMonthAngles(monthCount) {
-        const angles = [];
+        const angles = new Array(monthCount);
         const angleStep = 2 * Math.PI / monthCount;
+        const currentMonth = this.calendarData.currentMonth;
 
         for (let i = 0; i < monthCount; i++) {
             const angle = angleStep * i - Math.PI / 2;
             const startAngle = angleStep * i;
             const endAngle = angleStep * (i + 1);
-            const originalIndex = (this.calendarData.currentMonth + i) % monthCount;
+            const originalIndex = (currentMonth + i) % monthCount;
 
-            angles.push({
+            angles[i] = {
                 angle,
                 x: this.centerX + Math.cos(angle) * this.RADIUS.OUTER,
                 y: this.centerY + Math.sin(angle) * this.RADIUS.OUTER,
                 startAngle,
                 endAngle,
                 originalIndex
-            });
+            };
         }
 
         return angles;
     }
 
     _calculateDayAngles(dayCount) {
-        const angles = [];
+        const angles = new Array(dayCount);
         const angleStep = 2 * Math.PI / dayCount;
 
         for (let i = 0; i < dayCount; i++) {
             const angle = angleStep * i - Math.PI / 2;
-            angles.push({
+            angles[i] = {
                 angle,
                 x: this.centerX + Math.cos(angle) * this.RADIUS.DAYS,
                 y: this.centerY + Math.sin(angle) * this.RADIUS.DAYS
-            });
+            };
         }
 
         return angles;
     }
 
     _calculateWeekdayAngles(weekdayCount) {
-        const angles = [];
+        const angles = new Array(weekdayCount);
         const angleStep = 2 * Math.PI / weekdayCount;
 
         for (let i = 0; i < weekdayCount; i++) {
             const angle = angleStep * i - Math.PI / 2;
-            const startAngle = angleStep * i;
-            const endAngle = angleStep * (i + 1);
-
-            angles.push({
+            angles[i] = {
                 angle,
                 x: this.centerX + Math.cos(angle) * this.RADIUS.WEEKDAYS,
                 y: this.centerY + Math.sin(angle) * this.RADIUS.WEEKDAYS,
-                startAngle,
-                endAngle
-            });
+                startAngle: angleStep * i,
+                endAngle: angleStep * (i + 1)
+            };
         }
 
         return angles;
@@ -391,10 +455,11 @@ export class CalendarCanvas {
 
     _calculateSeasonAngles() {
         const seasonAngleOffset = 15 / 365 * 2 * Math.PI;
-
+        const HALF_PI = Math.PI / 2;
+        
         return this.calendarData.seasons.map(season => ({
-            startAngle: season.startAngle - Math.PI / 2 - seasonAngleOffset,
-            endAngle: season.endAngle - Math.PI / 2 - seasonAngleOffset,
+            startAngle: season.startAngle - HALF_PI - seasonAngleOffset,
+            endAngle: season.endAngle - HALF_PI - seasonAngleOffset,
             gradient: season.gradient
         }));
     }
@@ -402,41 +467,48 @@ export class CalendarCanvas {
     async _loadTextures() {
         if (this.spritesheet) return;
 
-        this.spritesheet = {}
+        this.spritesheet = {};
 
         try {
             const toLoad = ["systems/dsa5/icons/textures/calendar.json"];
             await foundry.canvas.TextureLoader.loader.load(toLoad);
+            
+            // Optimize by just iterating once through all textures
             for (const path of toLoad) {
                 const spritesheet = foundry.canvas.getTexture(path);
-                const spritesheets = [spritesheet];
-                for (const sheet of spritesheets) {
-                    for (const [asset, texture] of Object.entries(sheet.textures)) {
-                        this.spritesheet[asset] = texture;
-                    }
+                if (spritesheet && spritesheet.textures) {
+                    Object.assign(this.spritesheet, spritesheet.textures);
                 }
             }
         } catch (error) {
-            console.warn('Failed to load background image:', error);
-            // Continue without background
+            console.warn('Failed to load textures:', error);
+            // Continue without textures
         }
     }
 
     _createContainers() {
         if (this.containers.background) return;
 
-        // Create container hierarchy
-        const containerKeys = Object.keys(this.containers);
-        containerKeys.forEach(key => {
-            this.containers[key] = new PIXI.Container();
-            // Add non-background containers to stage in correct order
-            if (key !== 'background') {
-                this.stage.addChild(this.containers[key]);
-            }
-        });
-
-        // Add background first
-        this.stage.addChildAt(this.containers.background, 0);
+        // Create container hierarchy with appropriate z-index
+        const containerOrder = [
+            'background', 
+            'seasons', 
+            'monthSprites', 
+            'months', 
+            'days', 
+            'weekdays', 
+            'moonPhase', 
+            'highlights'
+        ];
+        
+        // Create all containers at once
+        const containers = {};
+        for (const key of containerOrder) {
+            containers[key] = new PIXI.Container();
+            this.stage.addChild(containers[key]);
+        }
+        
+        this.containers = containers;
     }
 
     _renderStaticElements() {
@@ -460,13 +532,10 @@ export class CalendarCanvas {
         // Add background image if available
         if (this.spritesheet) {
             // Create background sprite
-            console.log(this.spritesheet.bg_goetterkreis, this.spritesheet.rad_goetterkreis);
             const bgSprite = new PIXI.Sprite(this.spritesheet.bg_goetterkreis);
             bgSprite.anchor.set(0.5);
             bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
             bgSprite.position.set(this.centerX, this.centerY + 8);
-
-
 
             const godring = new PIXI.Sprite(this.spritesheet.rad_goetterkreis);
             godring.anchor.set(0.5);
@@ -498,6 +567,7 @@ export class CalendarCanvas {
 
     _drawSeasons() {
         this.containers.seasons.removeChildren();
+        const HALF_PI = Math.PI / 2;
 
         for (const season of this.precalculated.seasonAngles) {
             const seasons = new PIXI.Graphics();
@@ -505,8 +575,8 @@ export class CalendarCanvas {
                 seasons,
                 this.RADIUS.SEASONS - 6,
                 this.RADIUS.SEASONS + 6,
-                season.startAngle + Math.PI / 2,
-                season.endAngle + Math.PI / 2,
+                season.startAngle + HALF_PI,
+                season.endAngle + HALF_PI,
                 season.gradient,
                 1
             );
@@ -538,10 +608,17 @@ export class CalendarCanvas {
 
         if (!gradient) return;
 
-        const gradientTexture = this._createRingGradientTexture(outerRadius, innerRadius, [
-            { offset: 0, color: `#${gradient.start}` },
-            { offset: 1, color: `#${gradient.end}` }
-        ]);
+        // Cache gradient textures for reuse
+        const gradientKey = `${gradient.start}_${gradient.end}_${outerRadius}_${innerRadius}`;
+        
+        let gradientTexture = this.textureCache.get(gradientKey);
+        if (!gradientTexture) {
+            gradientTexture = this._createRingGradientTexture(outerRadius, innerRadius, [
+                { offset: 0, color: `#${gradient.start}` },
+                { offset: 1, color: `#${gradient.end}` }
+            ]);
+            this.textureCache.set(gradientKey, gradientTexture);
+        }
 
         const gradientSprite = new PIXI.Sprite(gradientTexture);
         gradientSprite.anchor.set(0.5);
@@ -581,7 +658,7 @@ export class CalendarCanvas {
     _drawBorders() {
         const borders = new PIXI.Graphics();
 
-        // Draw circular borders
+        // Draw circular borders in a single pass
         const borderConfigs = [
             { radius: this.RADIUS.OUTER_FRAME, color: this.COLORS.BORDER_OUTER, width: 2 },
             { radius: this.RADIUS.DAYS, color: this.COLORS.BORDER_INNER, width: 1 },
@@ -617,7 +694,21 @@ export class CalendarCanvas {
         this.containers.months.removeChildren();
         this.containers.monthSprites.removeChildren();
 
-        months.forEach((month, i) => {
+        // Use a Container for batch rendering
+        const monthTextsContainer = new PIXI.Container();
+        const spriteContainer = new PIXI.ParticleContainer(months.length, {
+            position: true,
+            rotation: true,
+            uvs: true,
+            alpha: true,
+            scale: true
+        });
+        
+        this.containers.months.addChild(monthTextsContainer);
+        this.containers.monthSprites.addChild(spriteContainer);
+
+        // Create all month texts and sprites in a single pass
+        for (let i = 0; i < months.length; i++) {
             const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
 
             const isCurrentMonth = originalIndex === this.calendarData.currentMonth;
@@ -626,34 +717,42 @@ export class CalendarCanvas {
                 fill: isCurrentMonth ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
             };
 
-            const text = new PIXI.Text(month, style);
+            const text = new PIXI.Text(months[i], style);
             text.anchor.set(0.5);
             text.position.set(x, y);
             text.rotation = angle + Math.PI / 2;
             text.resolution = 2; // Higher resolution for sharper text
             text.originalIndex = originalIndex;
 
-            const monthSprite = new PIXI.Sprite(this.spritesheet[this.textureMatcher[originalIndex]]);
-            monthSprite.anchor.set(0.5);
-            // 100px inwards from the edge
-            const radiusOffset = this.RADIUS.OUTER - 100; // Adjust as needed
-            monthSprite.position.set(
-                this.centerX + Math.cos(angle) * radiusOffset,
-                this.centerY + Math.sin(angle) * radiusOffset
-            );
-            monthSprite.width = monthSprite.height = 60; // Adjust size as needed
-            monthSprite.rotation = angle + Math.PI / 2;
+            // Create sprite if texture exists
+            if (this.spritesheet && this.textureMatcher[originalIndex]) {
+                const monthSprite = new PIXI.Sprite(this.spritesheet[this.textureMatcher[originalIndex]]);
+                monthSprite.anchor.set(0.5);
+                const radiusOffset = this.RADIUS.OUTER - 100;
+                monthSprite.position.set(
+                    this.centerX + Math.cos(angle) * radiusOffset,
+                    this.centerY + Math.sin(angle) * radiusOffset
+                );
+                monthSprite.width = monthSprite.height = 60;
+                monthSprite.rotation = angle + Math.PI / 2;
+                
+                spriteContainer.addChild(monthSprite);
+            }
 
-            this.containers.monthSprites.addChild(monthSprite);
-            this.containers.months.addChild(text);
-        });
+            monthTextsContainer.addChild(text);
+        }
     }
 
     _drawWeekdays() {
         const { weekdays } = this.calendarData;
         this.containers.weekdays.removeChildren();
 
-        weekdays.forEach((day, i) => {
+        // Use ParticleContainer for better performance with static text
+        const weekdayTextsContainer = new PIXI.Container();
+        this.containers.weekdays.addChild(weekdayTextsContainer);
+
+        // Create all weekday texts in a single batch
+        for (let i = 0; i < weekdays.length; i++) {
             const { x, y, angle } = this.precalculated.weekdayAngles[i];
             const isCurrentWeekday = i === 0;
 
@@ -662,14 +761,14 @@ export class CalendarCanvas {
                 fill: isCurrentWeekday ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
             };
 
-            const text = new PIXI.Text(day, style);
+            const text = new PIXI.Text(weekdays[i], style);
             text.anchor.set(0.5);
             text.position.set(x, y);
             text.rotation = angle + Math.PI / 2;
             text.resolution = 2;
 
-            this.containers.weekdays.addChild(text);
-        });
+            weekdayTextsContainer.addChild(text);
+        }
     }
 
     _drawMoonPhase() {
@@ -677,15 +776,10 @@ export class CalendarCanvas {
 
         const { currentMoon } = this.calendarData;
         const moonSize = 30; // Size of the moon
-        const distanceFromCenter = this.RADIUS.WEEKDAYS - 25 - moonSize / 2; // Position the moon inside the outer circle
+        const distanceFromCenter = this.RADIUS.WEEKDAYS - 25 - moonSize / 2;
         let moonX = this.centerX;
         let moonY = this.centerY;
-
-        console.log(currentMoon)
         const actualMoon = currentMoon % 8;
-
-        //calculate moon position based on phase on a circle around the center with new moon at the bottom
-
         switch (actualMoon) {
             case 0: // New Moon
                 moonY += distanceFromCenter;
@@ -733,15 +827,18 @@ export class CalendarCanvas {
         shadowMask.drawCircle(0, 0, moonSize / 2);
         shadowMask.endFill();
 
+        // Create a glow effect using a cached filter for better performance
+        let blurFilter = this.textureCache.get('moonGlowFilter');
+        if (!blurFilter) {
+            blurFilter = new PIXI.BlurFilter(4);
+            this.textureCache.set('moonGlowFilter', blurFilter);
+        }
+
         // Add glow effect
-        // Create a glow effect by adding a blurred duplicate behind the moon
         const moonGlow = new PIXI.Graphics();
         moonGlow.beginFill(0x8aa8c5, 0.5);
         moonGlow.drawCircle(0, 0, moonSize / 2 + 4);
         moonGlow.endFill();
-
-        // Apply blur filter for the glow effect
-        const blurFilter = new PIXI.filters.BlurFilter(4);
         moonGlow.filters = [blurFilter];
 
         // Add the glow first (behind the moon)
@@ -751,8 +848,7 @@ export class CalendarCanvas {
         const shadowOverlay = new PIXI.Graphics();
         shadowOverlay.beginFill(0x394f57);
 
-        // Handle different moon phases (0-7, similar to the CSS phases 1-8)
-        switch (actualMoon) {
+       switch (actualMoon) {
             case 0: // New Moon (completely dark)
                 shadowOverlay.drawCircle(0, 0, moonSize / 2);
                 break;
@@ -809,22 +905,43 @@ export class CalendarCanvas {
         const { currentDay } = this.calendarData;
         this.containers.days.removeChildren();
 
-        // Draw all day dots
-        this.precalculated.dayAngles.forEach((pos, i) => {
-            const { x, y } = pos;
+        const dotsGraphics = new PIXI.Graphics();
+        const highlightedDotsGraphics = new PIXI.Graphics();
+        
+        // Draw regular dots
+        dotsGraphics.beginFill(this.COLORS.DOT_NORMAL);
+        
+        // Draw highlighted dot
+        highlightedDotsGraphics.beginFill(this.COLORS.TEXT_HIGHLIGHT);
+        
+        const dayAngles = this.precalculated.dayAngles;
+        for (let i = 0; i < dayAngles.length; i++) {
+            const { x, y } = dayAngles[i];
             const isCurrentDay = i === currentDay;
-
-            const dot = new PIXI.Graphics();
-            dot.beginFill(isCurrentDay ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.DOT_NORMAL);
-            dot.drawCircle(0, 0, isCurrentDay ? 5 : 3);
-            dot.endFill();
-            dot.position.set(x, y);
-            dot.interactive = true;
-            dot.dayIndex = i;
-
-            daysContainer.addChild(dot);
-        });
-
+            
+            if (isCurrentDay) {
+                highlightedDotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 5);
+            } else {
+                dotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 3);
+            }
+        }
+        
+        dotsGraphics.endFill();
+        highlightedDotsGraphics.endFill();
+        
+        dotsGraphics.position.set(this.centerX, this.centerY);
+        highlightedDotsGraphics.position.set(this.centerX, this.centerY);
+        
+        daysContainer.addChild(dotsGraphics);
+        daysContainer.addChild(highlightedDotsGraphics);
+        
+        const interactiveLayer = new PIXI.Sprite(PIXI.Texture.WHITE);
+        interactiveLayer.width = this.app.screen.width;
+        interactiveLayer.height = this.app.screen.height;
+        interactiveLayer.alpha = 0.001; // Almost invisible
+        interactiveLayer.interactive = true;
+        
+        daysContainer.addChild(interactiveLayer);
         this.containers.days.addChild(daysContainer);
     }
 
@@ -852,7 +969,9 @@ export class CalendarCanvas {
         this.hoveredSection = this._detectHoveredSection(distance, angle);
 
         // Update highlights if changed
-        if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
+        if (!previousHovered || !this.hoveredSection || 
+            previousHovered.type !== this.hoveredSection.type || 
+            previousHovered.index !== this.hoveredSection.index) {
             this._updateHighlights();
             this.hoverCallback(this.hoveredSection ? this._collectSliceData() : null);
         }
@@ -871,41 +990,22 @@ export class CalendarCanvas {
 
     _detectHoveredSection(distance, angle) {
         const { hitRegions } = this.precalculated;
+        const angleDegrees = Math.floor((angle * 180 / Math.PI) % 360);
 
+        // Fast hit detection using precalculated lookup tables
         if (distance >= hitRegions.month.min && distance <= hitRegions.month.max) {
-            return this._getMonthSection(angle);
+            return { type: 'month', index: this.hitDetectionLookup.month[angleDegrees] };
         }
 
         if (Math.abs(distance - hitRegions.day.center) <= hitRegions.day.tolerance) {
-            return this._getDaySection(angle);
+            return { type: 'day', index: this.hitDetectionLookup.day[angleDegrees] };
         }
 
         if (Math.abs(distance - hitRegions.weekday.center) <= hitRegions.weekday.tolerance) {
-            return this._getWeekdaySection(angle);
+            return { type: 'weekday', index: this.hitDetectionLookup.weekday[angleDegrees] };
         }
 
         return null;
-    }
-
-    _getMonthSection(angle) {
-        const { month } = this.precalculated.angleOffsets;
-        const adjustedAngle = angle + month;
-        const monthIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.months.length) % this.calendarData.months.length;
-        return { type: 'month', index: monthIndex };
-    }
-
-    _getDaySection(angle) {
-        const { day } = this.precalculated.angleOffsets;
-        const adjustedAngle = angle + day;
-        const dayIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.daysInMonth) % this.calendarData.daysInMonth;
-        return { type: 'day', index: dayIndex };
-    }
-
-    _getWeekdaySection(angle) {
-        const { weekday } = this.precalculated.angleOffsets;
-        const adjustedAngle = angle + weekday;
-        const weekdayIndex = Math.floor((adjustedAngle / (2 * Math.PI)) * this.calendarData.weekdays.length) % this.calendarData.weekdays.length;
-        return { type: 'weekday', index: weekdayIndex };
     }
 
     _updateHighlights() {
@@ -957,18 +1057,22 @@ export class CalendarCanvas {
 
     _updateTextHighlight(type, index) {
         const container = this.containers[type + 's'];
+        const texts = container.children[0].children; // Get texts from the batch container
 
-        container.children.forEach((text, i) => {
+        for (let i = 0; i < texts.length; i++) {
+            const text = texts[i];
+            let isHighlighted = false;
+            
             if (type === 'month') {
                 const isCurrentMonth = text.originalIndex === this.calendarData.currentMonth;
-                text.style.fill = (i === index || isCurrentMonth) ?
-                    this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+                isHighlighted = (i === index || isCurrentMonth);
             } else {
                 const isCurrentElement = i === 0; // First element is current for rotated arrays
-                text.style.fill = (i === index || isCurrentElement) ?
-                    this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+                isHighlighted = (i === index || isCurrentElement);
             }
-        });
+            
+            text.style.fill = isHighlighted ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+        }
     }
 
     _handleMouseLeave() {
