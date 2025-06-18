@@ -118,9 +118,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   refreshCalendar() {
     if(this.rendered) {
-      console.log('Refreshing calendar');
       this._drawCalendar();
     }
+  }
+
+  _onClose(options) {
+    this.calendarRenderer?.destroy();
+    this.calendarRenderer = null;
   }
 
   _drawCalendar() {

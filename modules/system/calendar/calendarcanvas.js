@@ -1,6 +1,13 @@
-
+/**
+ * Calendar visualization using PixiJS
+ * @class
+ */
 export class CalendarCanvas {
-
+    /**
+     * @param {HTMLElement} parentElement - Element to attach the canvas to
+     * @param {Function} callback - Called when user clicks on a calendar element
+     * @param {Function} hoverCallback - Called when user hovers over calendar elements
+     */
     constructor(parentElement, callback, hoverCallback) {
         this.element = parentElement;
         this.callback = callback;
@@ -22,6 +29,7 @@ export class CalendarCanvas {
         this.hoveredSection = null;
         this.isDestroyed = false;
         this.backgroundTexture = null;
+        this.initialized = false;
 
         // Event handlers (bound once)
         this.throttledMouseMove = this._throttle(this._handleMouseMove.bind(this), 16);
@@ -65,7 +73,7 @@ export class CalendarCanvas {
             { start: "383838", end: "121212" }  // Namenlose Tage
         ]);
 
-        this.FONT_STYLE = {
+        this.FONT_STYLE = Object.freeze({
             MONTHS: {
                 fontFamily: 'Garamond',
                 fontSize: 16,
@@ -78,7 +86,7 @@ export class CalendarCanvas {
                 fill: this.COLORS.TEXT_NORMAL,
                 align: 'center'
             }
-        };
+        });
     }
 
     _initializePrecalculated() {
@@ -100,6 +108,10 @@ export class CalendarCanvas {
         };
     }
 
+    /**
+     * Throttle function execution
+     * @private
+     */
     _throttle(func, limit) {
         let inThrottle;
         return (...args) => {
@@ -111,6 +123,10 @@ export class CalendarCanvas {
         };
     }
 
+    /**
+     * Render the calendar
+     * @async
+     */
     async render() {
         try {
             this._setupPixiApp();
@@ -127,8 +143,12 @@ export class CalendarCanvas {
         }
     }
 
+    /**
+     * Clean up resources
+     */
     destroy() {
         this.isDestroyed = true;
+        this.initialized = false;
         this._removeEventListeners();
 
         if (this.app) {
@@ -144,12 +164,14 @@ export class CalendarCanvas {
     _setupPixiApp() {
         if (this.app) return;
 
+        const dpr = window.devicePixelRatio || 1;
         this.app = new PIXI.Application({
             width: this.element.clientWidth,
             height: this.element.clientHeight,
             backgroundColor: this.COLORS.BACKGROUND_OUTER,
             antialias: true,
-            resolution: window.devicePixelRatio || 1
+            resolution: dpr,
+            autoDensity: true
         });
 
         this.element.appendChild(this.app.view);
@@ -159,11 +181,11 @@ export class CalendarCanvas {
     }
 
     _removeEventListeners() {
-        if (this.app && this.app.view) {
-            this.app.view.removeEventListener('mousemove', this.throttledMouseMove);
-            this.app.view.removeEventListener('mouseleave', this._boundMouseLeave);
-            this.app.view.removeEventListener('click', this._boundClick);
-        }
+        if (!this.app?.view) return;
+        
+        this.app.view.removeEventListener('mousemove', this.throttledMouseMove);
+        this.app.view.removeEventListener('mouseleave', this._boundMouseLeave);
+        this.app.view.removeEventListener('click', this._boundClick);
     }
 
     async _prepareData() {
@@ -338,37 +360,32 @@ export class CalendarCanvas {
     }
 
     async _loadTextures() {
-        if (this.backgroundTexture) return Promise.resolve();
+        if (this.backgroundTexture) return;
 
-        return new Promise((resolve) => {
+        try {
             const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
-            PIXI.Assets.load(backgroundImage).then(texture => {
-                this.backgroundTexture = texture;
-                resolve();
-            }).catch(() => {
-                console.warn('Failed to load background image:', backgroundImage);
-                resolve(); // Continue without background
-            });
-        });
+            this.backgroundTexture = await PIXI.Assets.load(backgroundImage);
+        } catch (error) {
+            console.warn('Failed to load background image:', error);
+            // Continue without background
+        }
     }
 
     _createContainers() {
         if (this.containers.background) return; 
+        
         // Create container hierarchy
-        this.containers.background = new PIXI.Container();
-        this.containers.seasons = new PIXI.Container();
-        this.containers.months = new PIXI.Container();
-        this.containers.days = new PIXI.Container();
-        this.containers.weekdays = new PIXI.Container();
-        this.containers.highlights = new PIXI.Container();
-
-        // Add containers to stage in correct order
-        this.stage.addChild(this.containers.background);
-        this.stage.addChild(this.containers.seasons);
-        this.stage.addChild(this.containers.months);
-        this.stage.addChild(this.containers.days);
-        this.stage.addChild(this.containers.weekdays);
-        this.stage.addChild(this.containers.highlights);
+        const containerKeys = Object.keys(this.containers);
+        containerKeys.forEach(key => {
+            this.containers[key] = new PIXI.Container();
+            // Add non-background containers to stage in correct order
+            if (key !== 'background') {
+                this.stage.addChild(this.containers[key]);
+            }
+        });
+        
+        // Add background first
+        this.stage.addChildAt(this.containers.background, 0);
     }
 
     _renderStaticElements() {
@@ -386,13 +403,11 @@ export class CalendarCanvas {
 
     _drawBackground() {
         const background = new PIXI.Graphics();
-
         this.containers.background.addChild(background);
 
         // Add background image if available
         if (this.backgroundTexture) {
-
-            // Then add the background texture in the ring area
+            // Create background sprite
             const bgSprite = new PIXI.Sprite(this.backgroundTexture);
             bgSprite.anchor.set(0.5);
             bgSprite.position.set(this.centerX, this.centerY);
@@ -400,23 +415,16 @@ export class CalendarCanvas {
 
             // Create a blend mask for the background image
             const blendMask = new PIXI.Graphics();
-
             blendMask.beginFill(0x000000);
             blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
             blendMask.endFill();
-
             blendMask.beginHole();
             blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15);
             blendMask.endHole();
 
-
             this.containers.background.addChild(bgSprite);
             this.containers.background.addChild(blendMask);
         }
-    }
-
-    _lerp(a, b, t) {
-        return a + (b - a) * t;
     }
 
     _drawSeasons() {
@@ -437,11 +445,13 @@ export class CalendarCanvas {
         }
     }
 
+    /**
+     * Draw an arc segment with optional gradient
+     * @private
+     */
     _drawArcSegment(graphics, innerRadius, outerRadius, startAngle, endAngle, gradient = null, alpha = 0.3) {
         const startAngleAdjusted = startAngle - Math.PI / 2;
         const endAngleAdjusted = endAngle - Math.PI / 2;
-
-        // If no gradient is provided, use a solid color
 
         graphics.beginFill(0xFFFFFF, alpha);
         graphics.moveTo(
@@ -459,7 +469,7 @@ export class CalendarCanvas {
 
         if (!gradient) return;
         
-        const gradientTexture = this.createRingGradientTexture(outerRadius, innerRadius, [
+        const gradientTexture = this._createRingGradientTexture(outerRadius, innerRadius, [
             { offset: 0, color: `#${gradient.start}` },
             { offset: 1, color: `#${gradient.end}` }
         ]);
@@ -473,7 +483,11 @@ export class CalendarCanvas {
         this.containers.seasons.addChild(gradientSprite);
     }
 
-    createRingGradientTexture(radius, innerRadius, colorStops) {
+    /**
+     * Create a ring-shaped gradient texture
+     * @private
+     */
+    _createRingGradientTexture(radius, innerRadius, colorStops) {
         const canvasSize = radius * 2;
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = canvasSize;
@@ -535,18 +549,18 @@ export class CalendarCanvas {
 
         months.forEach((month, i) => {
             const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
-
-            const style = { ...this.FONT_STYLE.MONTHS };
-            style.fill = originalIndex === this.calendarData.currentMonth ?
-                this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            
+            const isCurrentMonth = originalIndex === this.calendarData.currentMonth;
+            const style = { 
+                ...this.FONT_STYLE.MONTHS,
+                fill: isCurrentMonth ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
+            };
 
             const text = new PIXI.Text(month, style);
             text.anchor.set(0.5);
             text.position.set(x, y);
             text.rotation = angle + Math.PI / 2;
             text.resolution = 2; // Higher resolution for sharper text
-
-            // Store original index for interaction
             text.originalIndex = originalIndex;
 
             this.containers.months.addChild(text);
@@ -561,8 +575,10 @@ export class CalendarCanvas {
             const { x, y, angle } = this.precalculated.weekdayAngles[i];
             const isCurrentWeekday = i === 0;
 
-            const style = { ...this.FONT_STYLE.WEEKDAYS };
-            style.fill = isCurrentWeekday ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL;
+            const style = { 
+                ...this.FONT_STYLE.WEEKDAYS,
+                fill: isCurrentWeekday ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
+            };
 
             const text = new PIXI.Text(day, style);
             text.anchor.set(0.5);
@@ -585,18 +601,9 @@ export class CalendarCanvas {
             const isCurrentDay = i === currentDay;
 
             const dot = new PIXI.Graphics();
-
-            // Draw larger highlight for current day
-            if (isCurrentDay) {
-                dot.beginFill(this.COLORS.TEXT_HIGHLIGHT);
-                dot.drawCircle(0, 0, 5);
-                dot.endFill();
-            } else {
-                dot.beginFill(this.COLORS.DOT_NORMAL);
-                dot.drawCircle(0, 0, 3);
-                dot.endFill();
-            }
-
+            dot.beginFill(isCurrentDay ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.DOT_NORMAL);
+            dot.drawCircle(0, 0, isCurrentDay ? 5 : 3);
+            dot.endFill();
             dot.position.set(x, y);
             dot.interactive = true;
             dot.dayIndex = i;
@@ -633,9 +640,7 @@ export class CalendarCanvas {
         // Update highlights if changed
         if (JSON.stringify(previousHovered) !== JSON.stringify(this.hoveredSection)) {
             this._updateHighlights();
-
-            const data = this.hoveredSection ? this._collectSliceData() : null;
-            this.hoverCallback(data);
+            this.hoverCallback(this.hoveredSection ? this._collectSliceData() : null);
         }
     }
 
@@ -759,6 +764,8 @@ export class CalendarCanvas {
     }
 
     _collectSliceData() {
+        if (!this.hoveredSection) return null;
+        
         const { type, index } = this.hoveredSection;
         const clickData = { type, index };
 
