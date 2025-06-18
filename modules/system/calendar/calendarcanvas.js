@@ -57,12 +57,12 @@ export class CalendarCanvas {
         });
 
         this.SEASON_GRADIENTS = Object.freeze([
-            { start: [0.97, 0.91, 0.75], end: [0.90, 0.76, 0.40] }, // Summer
-            { start: [0.90, 0.78, 0.65], end: [0.77, 0.47, 0.29] }, // Fall
-            { start: [0.79, 0.88, 0.95], end: [0.49, 0.66, 0.80] }, // Winter
-            { start: [0.78, 0.91, 0.78], end: [0.45, 0.73, 0.48] }, // Spring
-            { start: [0.97, 0.91, 0.75], end: [0.90, 0.76, 0.40] }, // Summer (repeated)
-            { start: [0.22, 0.22, 0.22], end: [0.07, 0.07, 0.07] }  // Namenlose Tage
+            { start: "F7E8BF", end: "E5C266" }, // Summer
+            { start: "E6C7A6", end: "C4784A" }, // Fall
+            { start: "CAE0F2", end: "7DA8CC" }, // Winter
+            { start: "C7E8C7", end: "73BA7A" }, // Spring
+            { start: "F7E8BF", end: "E5C266" }, // Summer (repeated)
+            { start: "383838", end: "121212" }  // Namenlose Tage
         ]);
 
         this.FONT_STYLE = {
@@ -120,6 +120,7 @@ export class CalendarCanvas {
             this._createContainers();
             this._renderStaticElements();
             this._setupEventListeners();
+            this.initialized = true;
         } catch (error) {
             console.error('Error rendering calendar:', error);
             throw error;
@@ -141,6 +142,8 @@ export class CalendarCanvas {
     }
 
     _setupPixiApp() {
+        if (this.app) return;
+
         this.app = new PIXI.Application({
             width: this.element.clientWidth,
             height: this.element.clientHeight,
@@ -335,6 +338,8 @@ export class CalendarCanvas {
     }
 
     async _loadTextures() {
+        if (this.backgroundTexture) return Promise.resolve();
+
         return new Promise((resolve) => {
             const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
             PIXI.Assets.load(backgroundImage).then(texture => {
@@ -348,6 +353,7 @@ export class CalendarCanvas {
     }
 
     _createContainers() {
+        if (this.containers.background) return; 
         // Create container hierarchy
         this.containers.background = new PIXI.Container();
         this.containers.seasons = new PIXI.Container();
@@ -366,10 +372,13 @@ export class CalendarCanvas {
     }
 
     _renderStaticElements() {
-        this._drawBackground();
+        if (!this.initialized) {
+            this._drawBackground();
+            this._drawBorders();
+            this._drawNorthMarker();
+        }
+        
         this._drawSeasons();
-        this._drawBorders();
-        this._drawNorthMarker();
         this._drawMonths();
         this._drawWeekdays();
         this._drawDays();
@@ -411,9 +420,10 @@ export class CalendarCanvas {
     }
 
     _drawSeasons() {
-        const seasons = new PIXI.Graphics();
+        this.containers.seasons.removeChildren();
 
         for (const season of this.precalculated.seasonAngles) {
+            const seasons = new PIXI.Graphics();
             this._drawArcSegment(
                 seasons,
                 this.RADIUS.SEASONS - 6,
@@ -421,11 +431,10 @@ export class CalendarCanvas {
                 season.startAngle + Math.PI / 2,
                 season.endAngle + Math.PI / 2,
                 season.gradient,
-                0.7
+                1
             );
+            this.containers.seasons.addChild(seasons);
         }
-
-        this.containers.seasons.addChild(seasons);
     }
 
     _drawArcSegment(graphics, innerRadius, outerRadius, startAngle, endAngle, gradient = null, alpha = 0.3) {
@@ -446,21 +455,42 @@ export class CalendarCanvas {
         );
         graphics.arc(this.centerX, this.centerY, innerRadius, endAngleAdjusted, startAngleAdjusted, true);
         graphics.closePath();
-        graphics.endFill();       
+        graphics.endFill();
+
+        if (!gradient) return;
+        
+        const gradientTexture = this.createRingGradientTexture(outerRadius, innerRadius, [
+            { offset: 0, color: `#${gradient.start}` },
+            { offset: 1, color: `#${gradient.end}` }
+        ]);
+
+        const gradientSprite = new PIXI.Sprite(gradientTexture);
+        gradientSprite.anchor.set(0.5);
+        gradientSprite.position.set(this.centerX, this.centerY);
+        gradientSprite.width = gradientSprite.height = outerRadius * 2;
+        gradientSprite.alpha = alpha;
+        gradientSprite.mask = graphics; // Use the drawn arc as a mask
+        this.containers.seasons.addChild(gradientSprite);
     }
 
-    createGradientTexture(radius, colorStops) {
+    createRingGradientTexture(radius, innerRadius, colorStops) {
+        const canvasSize = radius * 2;
         const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = radius * 2;
+        canvas.width = canvas.height = canvasSize;
         const ctx = canvas.getContext('2d');
 
-        const gradient = ctx.createRadialGradient(radius, radius, 0, radius, radius, radius);
+        // Create a radial gradient that starts at innerRadius and ends at radius
+        const gradient = ctx.createRadialGradient(
+            radius, radius, innerRadius,  // Inner circle (center, radius a)
+            radius, radius, radius        // Outer circle (center, radius b)
+        );
+
         colorStops.forEach(stop => {
             gradient.addColorStop(stop.offset, stop.color);
         });
 
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvasSize, canvasSize);
 
         return PIXI.Texture.from(canvas);
     }
@@ -501,6 +531,7 @@ export class CalendarCanvas {
 
     _drawMonths() {
         const { months } = this.calendarData;
+        this.containers.months.removeChildren();
 
         months.forEach((month, i) => {
             const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
@@ -524,6 +555,7 @@ export class CalendarCanvas {
 
     _drawWeekdays() {
         const { weekdays } = this.calendarData;
+        this.containers.weekdays.removeChildren();
 
         weekdays.forEach((day, i) => {
             const { x, y, angle } = this.precalculated.weekdayAngles[i];
@@ -545,6 +577,7 @@ export class CalendarCanvas {
     _drawDays() {
         const daysContainer = new PIXI.Container();
         const { currentDay } = this.calendarData;
+        this.containers.days.removeChildren();
 
         // Draw all day dots
         this.precalculated.dayAngles.forEach((pos, i) => {
@@ -575,6 +608,8 @@ export class CalendarCanvas {
     }
 
     _setupEventListeners() {
+        if (this.initialized) return;
+
         this.app.view.addEventListener('mousemove', this.throttledMouseMove);
         this.app.view.addEventListener('mouseleave', this._boundMouseLeave);
         this.app.view.addEventListener('click', this._boundClick);

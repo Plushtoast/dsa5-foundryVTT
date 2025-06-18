@@ -116,6 +116,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._drawCalendar();
   }
 
+  refreshCalendar() {
+    if(this.rendered) {
+      console.log('Refreshing calendar');
+      this._drawCalendar();
+    }
+  }
+
   _drawCalendar() {
     const appContainer = this.element.querySelector('.circular-calendar');
     //const appContainer = this.element;
@@ -129,7 +136,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _onCalendarCanvasHover(hoverBait) {
-    console.log("Calendar hover bait", hoverBait);
     let content = '';
     if (hoverBait) {
       const components = game.time.calendar.timeToComponents(game.time.worldTime);
