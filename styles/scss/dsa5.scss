@@ -5603,8 +5603,8 @@ input[type='checkbox'].autoCheckbox {
   .tooltipBox {
     position: absolute;
     left: calc(50vw - 550px);
-    top: 50%;
-    width: 200px;
+    top: 33%;
+    width: 250px;
     transform: translateY(-50%);
 
     img {
@@ -5612,8 +5612,17 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 
+  .calendar-details {
+    position: absolute;
+    left: calc(50vw + 360px);
+    top: 33%;
+    width: calc(50vw - 380px);
+  }
+
   .calendarDateChange {
     margin-bottom: 0;
+    position: relative;
+    z-index: 500000;
 
     h3 {
       margin-bottom: 4px;
@@ -5633,6 +5642,10 @@ input[type='checkbox'].autoCheckbox {
       }
     }
   }
+}
+
+.circular-calendar-container {
+  margin-top: -30px;
 }
 
 .dsaCalendarWidget {

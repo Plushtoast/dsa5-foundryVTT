@@ -117,7 +117,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async refreshCalendar() {
-    if(this.rendered) {
+    if (this.rendered) {
       const components = game.time.calendar.timeToComponents(game.time.worldTime);
       const refreshedTimePart = await renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', {
         components,
@@ -155,11 +155,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     let converted;
     let convertedComponents;
     let moon;
+    let monthDetails;
     let holiday;
     if (hoverBait) {
       const components = game.time.calendar.timeToComponents(game.time.worldTime);
       switch (hoverBait.type) {
-        case "day": 
+        case "day":
           components.day += hoverBait.index - components.dayOfMonth;
           converted = game.time.calendar.componentsToTime(components);
           convertedComponents = game.time.calendar.timeToComponents(converted);
@@ -198,15 +199,18 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
           components.day = day;
           converted = game.time.calendar.componentsToTime(components);
           convertedComponents = game.time.calendar.timeToComponents(converted);
+          const monthData = game.time.calendar.months.values[hoverBait.originalIndex];
           const season = game.time.calendar.seasons.values[convertedComponents.season];
           content = `<div>
                 <img src="${monthImage}" style="width: 100px; height: 100px; object-fit: cover; object-position: center;" />    
             </div>
             <div>
-                <b>${game.time.calendar.translate('month', true)}</b>: ${game.time.calendar.translate(game.time.calendar.months.values[hoverBait.originalIndex].name)}<br/>
+                <b>${game.time.calendar.translate('month', true)}</b>: ${game.time.calendar.translate(monthData.name)}<br/>
                 <b>${game.time.calendar.translate('season', true)}</b>: ${game.time.calendar.translate(season.name)}
             </div>
             `;
+          monthDetails = game.time.calendar.translate(`monthDetails.${monthData.name}`);
+          console.log(monthDetails);
           break;
         case "moon":
           content = `<div><b>${game.time.calendar.translate('moonphase', true)}</b>: ${hoverBait.name}</div>`;
@@ -215,9 +219,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
 
     const tooltip = this.element.querySelector('.tooltipBox')
-
+    const calendarDetails = this.element.querySelector('.calendar-details');
     tooltip.innerHTML = content;
     tooltip.classList.toggle('dsahidden', !content);
+    calendarDetails.innerHTML = monthDetails || '';
+    calendarDetails.classList.toggle('dsahidden', !monthDetails);
+
   }
 
   async _onCalendarCanvasCallback(clickBait) {

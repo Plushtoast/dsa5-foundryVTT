@@ -2005,6 +2005,21 @@
                 "moonAddsLight": "Mondlicht beeinflusst Dunkelheit",
                 "moonAddsLightHint": "Mondlicht beeinflusst den automatischen Dunkelheitswert bei Nacht. Es wird die Helligkeit des Mondes mit der Mondphase multipliziert und von der Dunkelheit abgezogen, sofern Licht nach Tageszeit aktiviert ist."
             },
+            "monthDetails": {
+                "July": "",
+                "August": "",
+                "September": "",
+                "October": "",
+                "November": "",
+                "December": "",
+                "January": "<div>\n  <blockquote>\n    <p>»Das Leben ist nicht einfach. Es ist ein ständiges Ringen, um<br>\n    die bessere Jagdbeute, etwas zu Essen, ein sicheres Nachtlager<br>\n    in der Wildnis und um Schutz vor der Kälte. Niemand, der zag-<br>\n    haft ist, kann in diesem Ringen die Oberhand behalten.«</p>\n  </blockquote>\n  <p><strong>Aspekte:</strong> Winter, Eis, Jagd, Entbehrung<br>\n  <strong>Symbole/Wahrzeichen:</strong> Pfeil und Bogen, Eiskristall<br>\n  <strong>Heiliges Tier:</strong> Firunsbär (Eisbär)</p>\n\n  <p>Firun, von seinen Gläubigen auch gern der Alte vom Berg\n  genannt, ist der Gott des Eises und des Winters, aber auch\n  der Jagd. Er gilt vielen als noch gnadenloser als der Toten-\n  gott Boron und nur, wer seinem Element widersteht, gilt\n  als seiner Gnade würdig. Seine Anhängerschaft besteht\n  zum großen Teil aus Waldläufern und Jägern, deren Le-\n  ben häufig von Naturgewalten und den Entbehrungen der\n  Wildnis geprägt ist. Gerade in kälteren Gefilden wird Firun\n  aber auch von anderen um Gnade gebeten, wenn der Win-\n  ter einmal besonders grimm ist. Auch im jagdbegeisterten\n  Adel der großen Reiche hat Firun seine Anhänger. Sein\n  heiliges Tier ist der Eisbär, seine Geweihten tragen meist\n  praktische Kleidung aus Leder und Fellen. In den spärlich\n  gesäten Tempeln und Schreinen des Gottes trifft man seine\n  Priester jedoch nur selten an, da sie weit häufiger in der\n  Wildnis unterwegs sind. Der offizielle Haupttempel des Fi-\n  runkultes befindet sich in Trallop. Der Weiße Mann, der\n  ranghöchste Priester, ist ständig auf Reisen und man weiß\n  nie, ob in menschlicher Gestalt oder in der eines Eisbären.</p>\n</div>",
+                "February": "",
+                "March": "",
+                "April": "",
+                "May": "",
+                "June": "",
+                "NamenloseTage": ""
+            },
             "config": "Einstellungen",
             "events": "Ereignisse",
             "calendar": "Kalender"
