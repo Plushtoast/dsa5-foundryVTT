@@ -20,6 +20,7 @@ export class CalendarCanvas {
             background: null,
             seasons: null,
             months: null,
+            monthSprites: null,
             days: null,
             weekdays: null,
             highlights: null
@@ -28,7 +29,7 @@ export class CalendarCanvas {
         // State
         this.hoveredSection = null;
         this.isDestroyed = false;
-        this.backgroundTexture = null;
+        this.spritesheet = null;
         this.initialized = false;
 
         // Event handlers (bound once)
@@ -72,6 +73,22 @@ export class CalendarCanvas {
             { start: "F7E8BF", end: "E5C266" }, // Summer (repeated)
             { start: "383838", end: "121212" }  // Namenlose Tage
         ]);
+
+        this.textureMatcher = Object.freeze({
+            0: 'praios',
+            1: 'rondra',
+            2: 'efferd',
+            3: 'travia',
+            4: 'boron',
+            5: 'hesinde',
+            6: 'firun',
+            7: 'tsa',
+            8: 'phex',
+            9: 'peraine',
+            10: 'ingerimm',
+            11: 'rahja',
+            12: 'namenlos'
+        });
 
         this.FONT_STYLE = Object.freeze({
             MONTHS: {
@@ -149,13 +166,12 @@ export class CalendarCanvas {
     destroy() {
         this.isDestroyed = true;
         this.initialized = false;
+
         this._removeEventListeners();
 
         if (this.app) {
             this.app.destroy(true, {
                 children: true,
-                texture: true,
-                baseTexture: true
             });
             this.app = null;
         }
@@ -182,7 +198,7 @@ export class CalendarCanvas {
 
     _removeEventListeners() {
         if (!this.app?.view) return;
-        
+
         this.app.view.removeEventListener('mousemove', this.throttledMouseMove);
         this.app.view.removeEventListener('mouseleave', this._boundMouseLeave);
         this.app.view.removeEventListener('click', this._boundClick);
@@ -221,7 +237,7 @@ export class CalendarCanvas {
 
         for (let i = 0; i < calendar.seasons.values.length; i++) {
             const season = calendar.seasons.values[i];
-            const nextSeason = calendar.seasons.values[i + 1];            
+            const nextSeason = calendar.seasons.values[i + 1];
 
             const days = this._calculateSeasonDays(season, nextSeason, calendar);
 
@@ -361,11 +377,22 @@ export class CalendarCanvas {
     }
 
     async _loadTextures() {
-        if (this.backgroundTexture) return;
+        if (this.spritesheet) return;
+
+        this.spritesheet = {}
 
         try {
-            const backgroundImage = "systems/dsa5/icons/backgrounds/turnMarker.webp";
-            this.backgroundTexture = await PIXI.Assets.load(backgroundImage);
+            const toLoad = ["systems/dsa5/icons/textures/calendar.json"];
+            await foundry.canvas.TextureLoader.loader.load(toLoad);
+            for (const path of toLoad) {
+                const spritesheet = foundry.canvas.getTexture(path);
+                const spritesheets = [spritesheet];
+                for (const sheet of spritesheets) {
+                    for (const [asset, texture] of Object.entries(sheet.textures)) {
+                        this.spritesheet[asset] = texture;
+                    }
+                }
+            }
         } catch (error) {
             console.warn('Failed to load background image:', error);
             // Continue without background
@@ -373,8 +400,8 @@ export class CalendarCanvas {
     }
 
     _createContainers() {
-        if (this.containers.background) return; 
-        
+        if (this.containers.background) return;
+
         // Create container hierarchy
         const containerKeys = Object.keys(this.containers);
         containerKeys.forEach(key => {
@@ -384,7 +411,7 @@ export class CalendarCanvas {
                 this.stage.addChild(this.containers[key]);
             }
         });
-        
+
         // Add background first
         this.stage.addChildAt(this.containers.background, 0);
     }
@@ -395,7 +422,7 @@ export class CalendarCanvas {
             this._drawBorders();
             this._drawNorthMarker();
         }
-        
+
         this._drawSeasons();
         this._drawMonths();
         this._drawWeekdays();
@@ -407,12 +434,27 @@ export class CalendarCanvas {
         this.containers.background.addChild(background);
 
         // Add background image if available
-        if (this.backgroundTexture) {
+        if (this.spritesheet) {
             // Create background sprite
-            const bgSprite = new PIXI.Sprite(this.backgroundTexture);
+            console.log(this.spritesheet.bg_goetterkreis, this.spritesheet.rad_goetterkreis);
+            const bgSprite = new PIXI.Sprite(this.spritesheet.bg_goetterkreis);
             bgSprite.anchor.set(0.5);
-            bgSprite.position.set(this.centerX, this.centerY);
             bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
+            bgSprite.position.set(this.centerX, this.centerY + 8);
+
+            
+
+            const godring = new PIXI.Sprite(this.spritesheet.rad_goetterkreis);
+            godring.anchor.set(0.5);
+            godring.width = godring.height = this.RADIUS.WEEKDAYS * 4.2;
+            godring.position.set(this.centerX + 1, this.centerY + 9);
+
+            const godringMask = new PIXI.Graphics();
+            godringMask.beginFill(0x000000);
+            godringMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
+            godringMask.endFill();
+            
+            godring.mask = godringMask;
 
             // Create a blend mask for the background image
             const blendMask = new PIXI.Graphics();
@@ -423,7 +465,9 @@ export class CalendarCanvas {
             blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15);
             blendMask.endHole();
 
+            this.containers.background.addChild(godringMask);
             this.containers.background.addChild(bgSprite);
+            this.containers.background.addChild(godring);
             this.containers.background.addChild(blendMask);
         }
     }
@@ -469,7 +513,7 @@ export class CalendarCanvas {
         graphics.endFill();
 
         if (!gradient) return;
-        
+
         const gradientTexture = this._createRingGradientTexture(outerRadius, innerRadius, [
             { offset: 0, color: `#${gradient.start}` },
             { offset: 1, color: `#${gradient.end}` }
@@ -547,12 +591,13 @@ export class CalendarCanvas {
     _drawMonths() {
         const { months } = this.calendarData;
         this.containers.months.removeChildren();
+        this.containers.monthSprites.removeChildren();
 
         months.forEach((month, i) => {
             const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
-            
+
             const isCurrentMonth = originalIndex === this.calendarData.currentMonth;
-            const style = { 
+            const style = {
                 ...this.FONT_STYLE.MONTHS,
                 fill: isCurrentMonth ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
             };
@@ -564,6 +609,18 @@ export class CalendarCanvas {
             text.resolution = 2; // Higher resolution for sharper text
             text.originalIndex = originalIndex;
 
+            const monthSprite = new PIXI.Sprite(this.spritesheet[this.textureMatcher[originalIndex]]);
+            monthSprite.anchor.set(0.5);
+            // 100px inwards from the edge
+            const radiusOffset = this.RADIUS.OUTER - 100; // Adjust as needed
+            monthSprite.position.set(
+                this.centerX + Math.cos(angle) * radiusOffset,
+                this.centerY + Math.sin(angle) * radiusOffset
+            );
+            monthSprite.width = monthSprite.height = 60; // Adjust size as needed
+            monthSprite.rotation = angle + Math.PI / 2;
+            
+            this.containers.monthSprites.addChild(monthSprite);
             this.containers.months.addChild(text);
         });
     }
@@ -576,7 +633,7 @@ export class CalendarCanvas {
             const { x, y, angle } = this.precalculated.weekdayAngles[i];
             const isCurrentWeekday = i === 0;
 
-            const style = { 
+            const style = {
                 ...this.FONT_STYLE.WEEKDAYS,
                 fill: isCurrentWeekday ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
             };
@@ -766,7 +823,7 @@ export class CalendarCanvas {
 
     _collectSliceData() {
         if (!this.hoveredSection) return null;
-        
+
         const { type, index } = this.hoveredSection;
         const clickData = { type, index };
 

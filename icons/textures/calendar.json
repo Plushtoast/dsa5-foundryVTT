@@ -1,0 +1,351 @@
+{
+  "frames": {
+    "bg_goetterkreis": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 1150,
+        "h": 1150
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 1150,
+        "h": 1150
+      },
+      "sourceSize": {
+        "w": 1150,
+        "h": 1150
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "rad_goetterkreis": {
+      "frame": {
+        "x": 0,
+        "y": 1150,
+        "w": 622,
+        "h": 637
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 256,
+        "y": 238,
+        "w": 622,
+        "h": 637
+      },
+      "sourceSize": {
+        "w": 1150,
+        "h": 1150
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "praios": {
+      "frame": {
+        "x": 0,
+        "y": 1787,
+        "w": 213,
+        "h": 120
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 213,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 213,
+        "h": 120
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "hesinde": {
+      "frame": {
+        "x": 0,
+        "y": 2000,
+        "w": 170,
+        "h": 91
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 170,
+        "h": 91
+      },
+      "sourceSize": {
+        "w": 170,
+        "h": 91
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "peraine": {
+      "frame": {
+        "x": 0,
+        "y": 2170,
+        "w": 111,
+        "h": 143
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 111,
+        "h": 143
+      },
+      "sourceSize": {
+        "w": 111,
+        "h": 143
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "firun": {
+      "frame": {
+        "x": 91,
+        "y": 2000,
+        "w": 138,
+        "h": 132
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 138,
+        "h": 132
+      },
+      "sourceSize": {
+        "w": 138,
+        "h": 132
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "efferd": {
+      "frame": {
+        "x": 120,
+        "y": 1787,
+        "w": 119,
+        "h": 132
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 119,
+        "h": 132
+      },
+      "sourceSize": {
+        "w": 119,
+        "h": 132
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "rahja": {
+      "frame": {
+        "x": 0,
+        "y": 2313,
+        "w": 118,
+        "h": 132
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 118,
+        "h": 132
+      },
+      "sourceSize": {
+        "w": 118,
+        "h": 132
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "phex": {
+      "frame": {
+        "x": 111,
+        "y": 2138,
+        "w": 131,
+        "h": 131
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 131,
+        "h": 131
+      },
+      "sourceSize": {
+        "w": 131,
+        "h": 131
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "travia": {
+      "frame": {
+        "x": 223,
+        "y": 1919,
+        "w": 97,
+        "h": 129
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 97,
+        "h": 129
+      },
+      "sourceSize": {
+        "w": 97,
+        "h": 129
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "boron": {
+      "frame": {
+        "x": 242,
+        "y": 1787,
+        "w": 128,
+        "h": 118
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 128,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 118
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "tsa": {
+      "frame": {
+        "x": 360,
+        "y": 1787,
+        "w": 126,
+        "h": 126
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 126,
+        "h": 126
+      },
+      "sourceSize": {
+        "w": 126,
+        "h": 126
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "ingerimm": {
+      "frame": {
+        "x": 486,
+        "y": 1787,
+        "w": 125,
+        "h": 117
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 125,
+        "h": 117
+      },
+      "sourceSize": {
+        "w": 125,
+        "h": 117
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "rondra": {
+      "frame": {
+        "x": 603,
+        "y": 1787,
+        "w": 120,
+        "h": 119
+      },
+      "rotated": true,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 120,
+        "h": 119
+      },
+      "sourceSize": {
+        "w": 120,
+        "h": 119
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "calendar.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1150,
+      "h": 2445
+    },
+    "scale": 1
+  }
+}
