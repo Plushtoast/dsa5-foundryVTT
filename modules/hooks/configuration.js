@@ -281,6 +281,20 @@ export function setupConfiguration() {
     type: Boolean,
   });
 
+  game.settings.register('dsa5', 'attackFromBehindAngle', {
+    name: 'DSASETTINGS.attackFromBehindAngle',
+    hint: 'DSASETTINGS.attackFromBehindAngleHint',
+    scope: 'world',
+    config: false,
+    default: 120,
+    type: Number,
+    range: {
+      min: 0,
+      max: 360,
+      step: 5,
+    },
+  });
+
   game.settings.register('dsa5', 'iniTrackerSize', {
     name: 'DSASETTINGS.iniTrackerSize',
     hint: 'DSASETTINGS.iniTrackerSizeHint',

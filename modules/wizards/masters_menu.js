@@ -886,6 +886,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       sceneAutomationEnabled: game.settings.get('dsa5', 'sightAutomationEnabled'),
       enableDPS: game.settings.get('dsa5', 'enableDPS'),
       lightSightCompensationEnabled: game.settings.get('dsa5', 'lightSightCompensationEnabled'),
+      attackFromBehindAngle: game.settings.get('dsa5', 'attackFromBehindAngle'),
       visions,
       darkness: canvas.scene?.environment.darknessLevel || 0,
     };

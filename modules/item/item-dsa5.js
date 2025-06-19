@@ -310,36 +310,44 @@ export default class Itemdsa5 extends Item {
 
   static getDefenseMalus(situationalModifiers, actor) {
     let isRangeDefense = false;
-    if (actor.flags.oppose) {
-      let message = game.messages.get(actor.flags.oppose.messageId);
-      const preData = message.flags.data.preData;
-      isRangeDefense = !(getProperty(preData, 'source.type') == 'meleeweapon' || getProperty(preData, 'source.system.traitType.value') == 'meleeAttack');
+    const opposeFlags = actor.flags?.oppose;
+    if (!opposeFlags) return isRangeDefense;
 
-      const regex = / \[(-)?\d{1,}\]/;
-      for (let mal of preData.situationalModifiers) {
-        if (mal.dmmalus != undefined && mal.dmmalus != 0) {
-          situationalModifiers.push({
-            name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex, '')}`,
-            value: mal.dmmalus,
-            selected: true,
-          });
-        } else if (mal.type == 'defenseMalus' && mal.value != 0) {
-          situationalModifiers.push({
-            name: mal.name.replace(regex, ''),
-            value: mal.value,
-            selected: true,
-          });
-        }
-      }
-      if (message.flags.data.postData.halfDefense) {
+    const message = game.messages.get(opposeFlags.messageId);
+    if (!message?.flags?.data) return isRangeDefense;
+
+    const preData = message.flags.data.preData;
+    const postData = message.flags.data.postData || {};
+    const sourceType = getProperty(preData, 'source.type');
+    const traitType = getProperty(preData, 'source.system.traitType.value');
+    isRangeDefense = !(sourceType === 'meleeweapon' || traitType === 'meleeAttack');
+
+    const regex = / \[(-)?\d{1,}\]/;
+    for (const mal of preData.situationalModifiers || []) {
+      if (mal.dmmalus !== undefined && mal.dmmalus !== 0) {
         situationalModifiers.push({
-          name: `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`,
-          value: 0.5,
-          type: '*',
+          name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex, '')}`,
+          value: mal.dmmalus,
+          selected: true,
+        });
+      } else if (mal.type === 'defenseMalus' && mal.value !== 0) {
+        situationalModifiers.push({
+          name: mal.name.replace(regex, ''),
+          value: mal.value,
           selected: true,
         });
       }
     }
+
+    if (postData.halfDefense) {
+      situationalModifiers.push({
+        name: `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`,
+        value: 0.5,
+        type: '*',
+        selected: true,
+      });
+    }
+
     return isRangeDefense;
   }
 
@@ -350,27 +358,26 @@ export default class Itemdsa5 extends Item {
   }
 
   static specAbsDataset(combatSpecAbs, actor, mode, path = 'effect.value') {
-    const isDefense = mode == 'parry';
+    const isDefense = mode === 'parry';
     const keys = isDefense ? ['pa'] : ['at', 'tp', 'dm'];
-    const translatedKeys = keys.reduce((acc, key) => {
-      acc[key] = game.i18n.localize(`LocalizedAbilityModifiers.${key}`);
-      return acc;
-    }, {});
-    const combatData = [];
-    const validSpecAb = isDefense ? (vals, com) => vals.pa != 0 : (vals, com) => vals.at != 0 || vals.tp != 0 || vals.dm != 0 || com.effects.size > 0;
+    const translatedKeys = Object.fromEntries(
+      keys.map(key => [key, game.i18n.localize(`LocalizedAbilityModifiers.${key}`)])
+    );
+    const validSpecAb = isDefense
+      ? vals => vals.pa.some(v => v !== 0)
+      : vals => vals.at.some(v => v !== 0) || vals.tp.some(v => v !== 0) || vals.dm.some(v => v !== 0);
 
-    for (let com of combatSpecAbs) {
+    return combatSpecAbs.reduce((acc, com) => {
       const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor);
-      const variantCount = ['', '2', '3'].filter((x) => getProperty(com, `system.effect.value${x}`)).length;
-      const vals = keys.reduce((acc, key) => {
-        acc[key] = effects[translatedKeys[key]] || [0];
-        return acc;
-      }, {});
+      const variantCount = ['', '2', '3'].filter(x => getProperty(com, `system.effect.value${x}`)).length;
+      const vals = Object.fromEntries(
+        keys.map(key => [key, effects[translatedKeys[key]] || [0]])
+      );
 
-      if (validSpecAb(vals, com)) {
+      if (validSpecAb(vals) || (!isDefense && com.effects.size > 0)) {
         const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
         const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
-        const data = {
+        acc.push({
           name: com.name,
           atbonus: vals.at || [0],
           pabonus: vals.pa || [0],
@@ -385,69 +392,62 @@ export default class Itemdsa5 extends Item {
           id: com.id,
           actor: actor.id,
           variantCount,
-        }
-        combatData.push(data);
+        });
       }
-    }
-    return combatData;
+      return acc;
+    }, []);
   }
 
   static buildCombatSpecAbs(actor, categories, toSearch, mode, source) {
     let searchFilter = () => true;
     if (toSearch) {
-      toSearch.push(game.i18n.localize('LocalizedIDs.all'));
-      toSearch = toSearch.map((x) => x.toLowerCase());
-      searchFilter = (x, toSearch) => {
-        return x.system.list.value
-          .split(/;|,/)
-          .map((x) => x.trim().toLowerCase())
-          .some((y) => toSearch.includes(y.replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, '')));
-      };
+      toSearch = [...toSearch, game.i18n.localize('LocalizedIDs.all')].map(x => x.toLowerCase());
+      searchFilter = (x, toSearch) => x.system.list.value
+        .split(/;|,/)
+        .map(y => y.trim().toLowerCase().replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ''))
+        .some(y => toSearch.includes(y));
     }
 
-    const brawlingFilter = game.combat?.isBrawling ? () => true : (x) => Number(x.system.category.sub) != 5;
-    const allowedNames = new Set([]);
-    const forbiddenNames = new Set([]);
+    const brawlingFilter = game.combat?.isBrawling ? () => true : x => Number(x.system.category.sub) != 5;
+    const allowedNames = new Set();
+    const forbiddenNames = new Set();
     const effectChanges = {};
-    for (let effect of source.effects || []) {
+
+    for (const effect of source.effects || []) {
       if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
+      for (const change of effect.changes) {
+        if (!change.key.startsWith('self.maneuver.')) continue;
 
-      for (let change of effect.changes) {
-        if (change.key.startsWith('self.maneuver.')) {
-          const parsed = DSA5_Utility.parseAbilityString(change.value);
-          if (/-$/.test(parsed.name)) forbiddenNames.add(parsed.name.replace(/-$/, '').trim());
-          else if (/\+$/.test(parsed.name)) allowedNames.add(parsed.name.replace(/\+$/, '').trim());
-          else {
-            const changeMode = change.key.split('.')[2];
-            if (!effectChanges[parsed.name]) effectChanges[parsed.name] = {};
-            if (!effectChanges[parsed.name][changeMode]) effectChanges[parsed.name][changeMode] = 0;
-
-            effectChanges[parsed.name][changeMode] += parsed.step;
-          }
+        const parsed = DSA5_Utility.parseAbilityString(change.value);
+        if (/-$/.test(parsed.name)) forbiddenNames.add(parsed.name.slice(0, -1).trim());
+        else if (/\+$/.test(parsed.name)) allowedNames.add(parsed.name.slice(0, -1).trim());
+        else {
+          const changeMode = change.key.split('.')[2];
+          effectChanges[parsed.name] ??= {};
+          effectChanges[parsed.name][changeMode] ??= 0;
+          effectChanges[parsed.name][changeMode] += parsed.step;
         }
       }
     }
 
-    const combatSpecAbs = actor.items.filter((x) => {
-      return (
-        x.type == 'specialability' &&
-        categories.includes(x.system.category.value) &&
-        x.system.effect.value != '' &&
-        (searchFilter(x, toSearch) || allowedNames.has(x.name)) &&
-        brawlingFilter(x) &&
-        !forbiddenNames.has(x.name)
-      );
-    });
+    const combatSpecAbs = actor.items.filter(x =>
+      x.type == 'specialability' &&
+      categories.includes(x.system.category.value) &&
+      x.system.effect.value &&
+      (searchFilter(x, toSearch) || allowedNames.has(x.name)) &&
+      brawlingFilter(x) &&
+      !forbiddenNames.has(x.name)
+    );
 
     const result = this.specAbsDataset(combatSpecAbs, actor, mode);
-    for (let specAb of result) {
-      if (effectChanges[specAb.name]) {
-        for (let key of Object.keys(effectChanges[specAb.name])) {
-          specAb[key].push(effectChanges[specAb.name][key]);
+    for (const specAb of result) {
+      const changes = effectChanges[specAb.name];
+      if (changes) {
+        for (const key in changes) {
+          specAb[key].push(changes[key]);
         }
       }
     }
-
     return result;
   }
 

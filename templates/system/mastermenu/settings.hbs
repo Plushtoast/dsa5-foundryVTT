@@ -104,6 +104,13 @@
       </div>
       <p class='hint'>{{localize 'DSASETTINGS.enableDPSHint'}}</p>
     </div>
+    <div class='form-group'>
+      <label>{{localize 'DSASETTINGS.attackFromBehindAngle'}}</label>
+      <div class='form-fields'>
+        <range-picker name="attackFromBehindAngle" value='{{sceneConfig.attackFromBehindAngle}}' min="0" max="360" step="5"></range-picker>
+      </div>
+      <p class='hint'>{{localize 'DSASETTINGS.attackFromBehindAngleHint'}}</p>
+    </div>
 
   </fieldset>
 

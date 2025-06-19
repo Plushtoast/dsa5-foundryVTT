@@ -1692,9 +1692,6 @@ export default class Actordsa5 extends Actor {
       showDefense: true,
       situationalModifiers,
       isRangeAttack,
-      defenseCountString: game.i18n.format('defenseCount', {
-        malus: multipleDefenseValue,
-      }),
       multipleDefenseValue,
       isDodge: true,
     };

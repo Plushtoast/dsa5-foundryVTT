@@ -1,7 +1,8 @@
 <div>
     <div class="row-section wrap skill-test">
         <div class="col sixty">
-            {{> systems/dsa5/templates/dialog/default-combat-dialog.hbs}} {{#if melee}}
+            {{> systems/dsa5/templates/dialog/default-combat-dialog.hbs}} 
+            {{#if melee}}
             <div class="form-group" >
                 <label data-tooltip="DIALOGDESCRIPTION.narrowSpace">{{localize "MODS.narrowSpace"}} (<span class="narrowSpaceLabel">{{rollModifiers.narrowSpace.mod}}</span>)</label>
                 <input type="checkbox" id="narrowSpace" name="narrowSpace" value="{{rollModifiers.narrowSpace.mod}}" {{checked constricted}}>
@@ -19,10 +20,8 @@
             {{/if}}
             {{#if showDefense}}
             <div class="form-group">
-                <label>{{defenseCountString}}</label>
-                <div class="form-fields">
-                    <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="defenseCount" value="{{defenseCount}}" />
-                </div>
+                <label class="col seventy">{{localize 'defenseCount' malus=multipleDefenseValue}}</label>                
+                <input class="col five center quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="defenseCount" value="{{defenseCount}}" />                
             </div>
             <div class="form-group">
                 <label>{{localize "MODS.attackFromBehind"}} (<span class="attackFromBehind">{{rollModifiers.attackFromBehind.mod}}</span>)</label>

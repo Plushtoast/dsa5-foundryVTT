@@ -5,10 +5,8 @@
             {{> systems/dsa5/templates/dialog/enhanced-default-dialog.hbs}}
 
             <div class="form-group">
-                <label>{{localize "maintainedSpells"}}</label>
-                <div class="form-fields">
-                    <input class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
-                </div>
+                <label class="col seventy">{{localize "maintainedSpells"}}</label>
+                <input class="col five quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
             </div>
             {{#if hasSKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">

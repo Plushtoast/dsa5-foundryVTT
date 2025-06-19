@@ -377,12 +377,49 @@ export default class DSA5CombatDialog extends DialogShared {
     }
   }
 
+  setParryModifier(actor, jhtml) {
+    if (!DPS.isEnabled || !actor) return;
+
+    const attackFromBehindAngle = game.settings.get('dsa5', 'attackFromBehindAngle');
+
+    if(!attackFromBehindAngle) return;
+
+    const opposeFlags = actor.flags.oppose;
+    if (opposeFlags) {
+      const message = game.messages.get(opposeFlags.messageId);
+      const preData = message.flags.data.preData;
+      const attackActor = DSA5_Utility.getSpeaker(preData.extra.speaker);
+
+      if (!attackActor) return;
+
+      const attackerToken = attackActor.getActiveTokens()[0]?.document
+      const defenderToken = actor.getActiveTokens()[0]?.document
+
+      if (!attackerToken || !defenderToken) return;
+
+      const { rotation: defenderRotation } = defenderToken;
+      const ray = new foundry.canvas.geometry.Ray(defenderToken, attackerToken);
+      const deg = (Math.abs(ray.angle * (180 / Math.PI) - 90) + defenderRotation) % 360;
+      const behindStart = 180 - attackFromBehindAngle / 2;
+      const behindEnd = 180 + attackFromBehindAngle / 2;
+
+      jhtml.find('[name="attackFromBehind"]').prop('checked', deg >= behindStart && deg <= behindEnd);      
+    }
+  }
+
   prepareWeapon(testData = undefined) {
     testData = testData || this.dialogData.renderData;
     const source = this.dialogData.source;
+    let actor;
+    
+    if (this.dialogData.mode == 'parry' || source.type == 'dodge') {
+      if(!actor) actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+
+      this.setParryModifier(actor, $(this.element));
+    }
 
     if (['meleeweapon', 'rangeweapon'].includes(source.type)) {
-      const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+      if(!actor) actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
 
       if (actor) {
         const combatskill = source.system.combatskill.value;
@@ -400,6 +437,7 @@ export default class DSA5CombatDialog extends DialogShared {
             this.setMovement($(this.element), this.readTargets());
             break;
         }
+
         if (this.dialogData.mode == 'attack' || this.dialogData.counterAttack) {
           this.dialogData.rollValue = weapon.attack;
         } else if (this.dialogData.mode == 'parry') {
