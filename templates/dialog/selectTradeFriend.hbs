@@ -3,11 +3,11 @@
   {{#if users}}
     <ul class='directory-list' style='padding-bottom:20px;'>
       {{#each users as |usr|}}
-        <li data-action="select" class='combatant actor directory-item row-section' data-id='{{usr.id}}'>
+        <li data-action="select" class='combatant actor directory-item row-section' style="overflow:hidden" data-id='{{usr.id}}'>
           <div class='combatant-advanced col five'>
-            <img class='token-image' data-tooltip='{{usr.name}}' src='{{usr.img}}' />
+            <img class='token-image' data-tooltip='{{usr.name}}' src='{{usr.img}}' style="height:100%" />
           </div>
-          <div class='token-name flexcol col eighty'>
+          <div class='token-name flexrow flexAlignCenter col eighty'>
             <h4>{{usr.name}}</h4>
           </div>
         </li>

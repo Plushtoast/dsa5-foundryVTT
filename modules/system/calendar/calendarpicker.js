@@ -339,7 +339,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _onSettingChange(ev) {
-    const value = ev.target.value;
+    const isCheckbox = ev.target.type === 'checkbox';
+    const value =  isCheckbox ? ev.target.checked : ev.target.value;
     const setting = ev.target.name;
 
     const settings = game.settings.get('dsa5', 'calendarSettings');

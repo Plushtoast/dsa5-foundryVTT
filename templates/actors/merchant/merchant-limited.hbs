@@ -112,7 +112,7 @@
                                     {{item.system.quantity.value}}
                                 </div>
                                 <div class="col eight center">
-                                    <a class="sell-item" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.sell"><i class="fas fa-piggy-bank"></i></a>
+                                    <a data-action="tradeWrapper" data-fct="sellItem" class="button icon dsadesignbutton noBorder fas fa-piggy-bank" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.sell"></a>
                                 </div>
                             </div>
                         </div>
@@ -159,7 +159,7 @@
                                     {{item.system.quantity.value}}
                                 </div>
                                 <div class="col eight center">
-                                    <a class="buy-item" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.buy"><i class="fas fa-shopping-cart"></i></a>
+                                    <a class="fas button fa-shopping-cart icon noBorder dsadesignbutton" data-action="tradeWrapper" data-fct="buyItem" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.buy"></a>
                                 </div>
                             </div>
                         </div>

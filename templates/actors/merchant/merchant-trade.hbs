@@ -2,7 +2,10 @@
 <div class="content row-section columnFlex" style="max-height: 100%;margin:1rem;">
 
     <div class="row-section">
-        <div class="col sixty row-section">
+        <div class="col third row-section">
+
+        </div>
+        <div class="col third row-section">
             <div class="col ten"></div>
             <div class="col fourty flexrow flexAlignCenter">
                 <img src="{{tradeFriend.img}}" style="object-fit: contain;height: 50px;max-width:40%;border:none;" />
@@ -20,7 +23,10 @@
 
     </div>
     <div class="row-section">
-        <div class="col sixty center">
+        <div class="col third row-section">
+
+        </div>
+        <div class="col third center">
             <h3 class="center">&zwnj;{{tradeFriend.name}}</h3>
         </div>
         <div class="col third center">
@@ -29,7 +35,7 @@
     </div>
     {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}}
     <div style="flex:1;overflow:hidden;height:100%;" class="row-section">
-        <div class="col third scrollable thinscroll">
+        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
             {{#each inventory.inventory as |section sid|}} {{#if section.show}}
             <div class="groupbox">
                 <div class="row-section table-title">
@@ -70,7 +76,7 @@
             {{/if}} {{/each}}
         </div>
 
-        <div class="col third scrollable thinscroll">
+        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
 
             <div class="groupbox">
                 <div class="row-section lineheight center">
@@ -115,7 +121,7 @@
             </div>
 
         </div>
-        <div class="col third scrollable thinscroll">
+        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
 
             <div class="groupbox">
                 <div class="row-section lineheight center">

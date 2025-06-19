@@ -21,6 +21,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         classes: ['dsaCalendarWidget', 'faded-ui'],
         actions: {
             edit: this.editCalendar,
+            toggleAutoLight: this.toggleAutoLight,
             backward: { handler: this.backward, buttons: [0, 2] },
             forward: { handler: this.forward, buttons: [0, 2] },
             fastBackward: { handler: this.fastBackward, buttons: [0, 2] },
@@ -60,6 +61,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         data.components = components;
         data.dateString = game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
         data.dateTooltip = game.time.calendar.format(game.time.worldTime, 'formatSeason');
+        data.autoLightEnabled = game.settings.get('dsa5', 'calendarSettings').lightByDayTime;
         data.isGM = game.user.isGM;
         data.dayTimeBackground = this.constructor.dayTimeBackground(components);
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
@@ -125,6 +127,15 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (!game.user.isGM) return;
 
         this._setupDragHandlers();
+    }
+
+    static async toggleAutoLight(ev, target) {
+        const calendarSettings = game.settings.get('dsa5', 'calendarSettings');
+        calendarSettings.lightByDayTime = !calendarSettings.lightByDayTime;
+        
+        await game.settings.set('dsa5', 'calendarSettings', calendarSettings);
+        target.classList.toggle('fa-toggle-on', calendarSettings.lightByDayTime);
+        target.classList.toggle('fa-toggle-off', !calendarSettings.lightByDayTime);
     }
     
     _setupDragHandlers() {

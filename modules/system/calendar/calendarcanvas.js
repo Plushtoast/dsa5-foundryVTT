@@ -244,7 +244,7 @@ export class CalendarCanvas {
             currentMoon: components.moon.phaseIndex || 0,
             daysInMonth: calendar.months.values[components.month].days,
             seasons: this._adjustSeasonsForRotation(seasons, components, calendar, daysPerYear),
-            moons: this._getLocalizedArray(calendar.moon.values, calendar.translationPrefix),
+            moons: calendar.moon.values.map(moon => moon.name),
         };
 
         // Rotate arrays to start with current elements

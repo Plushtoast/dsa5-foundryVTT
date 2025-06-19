@@ -1,6 +1,6 @@
-<div class='tab scrollable {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
-    <fieldset class="actor-notes">
-        <legend>{{localize "personalDetails"}}</legend>
+<div class='tab scrollable gap0px {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "personalDetails"}}</legend>
         <div class="row-section">
             <section class="col">
                 <div class="row-section wrap">
@@ -66,48 +66,48 @@
 
             </section>
         </div>
-    </fieldset>
+    </div>
 
     {{> systems/dsa5/templates/actors/parts/information.hbs}}
     {{> systems/dsa5/templates/actors/parts/personaltrait.hbs}}
 
-    <fieldset>
-        <legend>{{localize 'biography'}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize 'biography'}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{formInput systemFields.details.fields.biography.fields.value value=document.system.details.biography.value toggled=true enriched=enrichedBiography}}
             </div>
         </div>
-    </fieldset>
-    <fieldset class="keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
-        <legend>{{localize "Notes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    </div>
+    <div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
+        <legend class="table-title lineheight">{{localize "Notes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true enriched=enrichedNotes}}
             </div>
         </div>
-    </fieldset>
+    </div>
     {{#if document.isOwner}}
-    <fieldset>
-        <legend>{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+   <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
             </div>
         </div>
-    </fieldset>
+   </div>
     {{/if}} {{#if isGM}}
-    <fieldset>
-        <legend>{{localize "GM Notes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "GM Notes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
                 {{formInput systemFields.details.fields.notes.fields.gmdescription value=document.system.details.notes.gmdescription toggled=true enriched=enrichedGmdescription}}
             </div>
         </div>
-    </fieldset>
+    </div>
     {{/if}}
 </div>

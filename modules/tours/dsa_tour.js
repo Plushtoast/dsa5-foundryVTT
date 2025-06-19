@@ -21,12 +21,13 @@ export default class DSATour extends foundry.nue.Tour {
 
   async _preStep() {
     if (this.currentStep.changeTab) {
-      ui.sidebar.changeTab(this.currentStep.changeTab, 'sheet');
-    } else if (this.currentStep.activateLayer && canvas.activeLayer.options.name != this.currentStep.activateLayer) {
-      await canvas[this.currentStep.activateLayer].activate();
+      ui.sidebar.changeTab(this.currentStep.changeTab, 'primary');
+    } else if (this.currentStep.activateLayer && ui.controls.control.name != this.currentStep.activateLayer) {
+      await ui.controls.activate({control: this.currentStep.activateLayer})
       await delay(100);
     } else if (this.currentStep.appTab) {
-      this.app.changeTab(this.currentStep.appTab);
+      const tabGroup = Object.keys(this.app.tabGroups)[0]
+      this.app.changeTab(this.currentStep.appTab, tabGroup);
     }
   }
 
@@ -40,7 +41,17 @@ export default class DSATour extends foundry.nue.Tour {
       await this.app.render(true, { focus: true });
       while (!this.app.rendered) await delay(50);
     }
-    if (this.app || this.config.preCommand) while (!$(this.steps[this.stepIndex + 1].selector + ':visible').length) await delay(50);
+    let tries = 100;
+    if (this.app || this.config.preCommand) {
+      while (!$(this.steps[this.stepIndex + 1].selector + ':visible').length) {
+        await delay(50);
+        tries--;
+        if (tries <= 0) {
+          console.warn(`DSATour: Step ${this.stepIndex + 1} not visible, aborting tour.`);
+          return;
+        }
+      }
+    }
 
     const res = await super.start();
     $('#tooltip').show();

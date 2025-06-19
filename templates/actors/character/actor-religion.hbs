@@ -5,8 +5,8 @@
 
     <div class="row-section wrap reverseFlex">
         <div class="col morph">
-            <fieldset>
-                <legend>{{localize "blessings"}}</legend>
+            <div class="groupbox">
+                <legend class="table-title lineheight">{{localize "blessings"}}</legend>
                 <div class="row-section wrap cards">
                     {{#each prepare.magic.blessing as |item i|}}
                     <div class="item" data-item-id="{{item._id}}">
@@ -15,11 +15,11 @@
                     {{/each}}
                 </div>
 
-            </fieldset>
+            </div>
         </div>
         <div class="col morph">
-            <fieldset class="actor-tradition">
-                <legend class="autosizing">{{formInput systemFields.tradition.fields.clerical value=document.system.tradition.clerical placeholder=(localize 'tradition')}}</legend>
+            <div class="groupbox actor-tradition">
+                <legend class="table-title lineheight autosizing">{{formInput systemFields.tradition.fields.clerical value=document.system.tradition.clerical placeholder=(localize 'tradition')}}</legend>
 
                 <div class="actor-tradition-item ">
                     {{formGroup systemFields.guidevalue.fields.clerical value=document.system.guidevalue.clerical
@@ -37,7 +37,7 @@
                     {{formGroup systemFields.happyTalents.fields.value value=document.system.happyTalents.value rows=8
                     localize=true elementType='textarea'}}
                 </div>
-            </fieldset>
+            </div>
         </div>
 
     </div>

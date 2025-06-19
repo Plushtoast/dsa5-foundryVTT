@@ -1643,6 +1643,10 @@ a.img-entity-link {
   }
 }
 
+.dragSortMarker {
+  border-top: 5px solid darkred;
+}
+
 .chatModifiers .expand-mods {
   float: right;
   font-size: 10px;
@@ -3652,7 +3656,10 @@ select.noAppearance {
   position: absolute;
   top: calc(var(--iniTrackerSize) * -0.5);
   left: 30px;
-  z-index: -1;
+}
+
+.temporaryInitiative {
+  color: var(--color-text-secondary);
 }
 
 .initTracker {
@@ -5625,7 +5632,7 @@ input[type='checkbox'].autoCheckbox {
     width: calc(50vw - 360px);
     max-width: 400px;
     padding: 30px;
-    transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
 
     &.showThis {
       opacity: 1;
@@ -5644,7 +5651,7 @@ input[type='checkbox'].autoCheckbox {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
-    transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
 
     &.showThis {
       opacity: 1;

@@ -68,7 +68,7 @@
                                     {{item.system.quantity.value}}
                                 </div>
                                 <div class="col eight center">
-                                    <a class="sell-item" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.exchange"><i class="fas fa-exchange-alt"></i></a>
+                                    <a data-action="tradeWrapper" data-fct="sellItem" class="button icon dsadesignbutton noBorder fas fa-exchange-alt" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.exchange"></a>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                                     {{item.system.quantity.value}}
                                 </div>
                                 <div class="col eight center">
-                                    <a class="buy-item" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.exchange"><i class="fas fa-exchange-alt"></i></a>
+                                    <a class="button icon fas fas fa-exchange-alt noBorder dsadesignbutton" data-action="tradeWrapper" data-fct="buyItem" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.exchange"></a>
                                 </div>
                             </div>
                         </div>

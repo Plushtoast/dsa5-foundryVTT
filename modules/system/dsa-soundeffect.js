@@ -148,6 +148,8 @@ export default class DSA5SoundEffect {
 
   static async playMoneySound(soundToEveryone = false) {
     const soundOptions = DSA5SoundEffect.soundPaths.money;
+    if( soundOptions.length === 0) return;
+
     const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
     await this.playSoundPath(soundPath, soundToEveryone);
   }
@@ -155,10 +157,10 @@ export default class DSA5SoundEffect {
   static async playEquipmentWearStatusChange(item, soundToEveryone = false) {
     let soundOptions = DSA5SoundEffect.soundPaths[item.type] || DSA5SoundEffect.soundPaths.default;
 
-    if (soundOptions.length > 0) {
-      const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
-      await this.playSoundPath(soundPath, soundToEveryone, 0.5);
-    }
+    if( soundOptions.length === 0) return;
+      
+    const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
+    await this.playSoundPath(soundPath, soundToEveryone, 0.5);    
   }
 
   static async playSoundPath(soundPath, soundToEveryone = false, volume = 0.8) {

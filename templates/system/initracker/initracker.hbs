@@ -62,7 +62,7 @@
         <ul class="waitingTackerList iniTrackerList">
             <li class="waitTitle" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns}}
-            <li data-tooltip="{{name}}" data-combatant-id="{{id}}" class="combatant iniItem" data-action="restoreInit" style="background-image:url('{{img}}');"></li>
+            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem" data-action="restoreInit" style="background-image:url('{{img}}');"></li>
             {{/each}}
         </ul>
         {{/if}}
@@ -88,20 +88,20 @@
 
     {{#if unRolled}}
     <div class="row-section">
-        <button class="col rollMine" data-action="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
+        <button type="button" class="col rollMine" data-action="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
     </div>
     {{/if}} 
     {{#unless combat.round}} 
     {{#if user.isGM}}
     <div class="row-section">
-        <button class="col combat-control" data-action="startCombat">{{localize 'COMBAT.Begin'}}</button>
+        <button type="button" class="col combat-control" data-action="startCombat">{{localize 'COMBAT.Begin'}}</button>
     </div>
     {{/if}}
     {{else}}
     {{#if (or control user.isGM)}}
     <div class="row-section">
-        <button class="col two combat-control {{ifThen isLastRound 'lastRound'}}" data-action="nextTurn">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
-        <button class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+        <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
     </div>    
     {{/if}}
     {{/unless}}

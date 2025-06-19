@@ -6,8 +6,8 @@
     <div class="row-section">
 
         <div class="col ">
-            <fieldset>
-                <legend>{{localize "magictricks"}}</legend>
+            <div class="groupbox">
+                <legend class="table-title lineheight">{{localize "magictricks"}}</legend>
                 <div class="row-section wrap cards">
                     {{#each prepare.magic.magictrick as |item i|}}
                     <div class="item" data-item-id="{{item._id}}">
@@ -16,7 +16,7 @@
                     {{/each}}
                 </div>
 
-            </fieldset>
+            </div>
             {{> systems/dsa5/templates/actors/parts/magicalSigns.hbs}}
         </div>
     </div>

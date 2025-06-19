@@ -66,6 +66,10 @@
             {{#if @root.hasDecimals}}
             <span>{{ initiative }}</span>
 
+            {{#if (gt roundInitiative 0)}}
+            <span class="temporaryInitiative" data-tooltip="temporaryInitiative">{{ numberFormat roundInitiative decimals=2 }}</span>
+            {{/if}}
+
             {{!-- Simple Initiative --}}
             {{else}}
             <input type="text" inputmode="numeric" pattern="^[+=\-]?\d*" value="{{ initiative }}"

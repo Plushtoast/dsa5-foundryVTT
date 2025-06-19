@@ -28,8 +28,14 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
   }
 
   translate(key, basicKey = false) {
-    const translationPrefix = basicKey ? 'CALENDAR.DSA' : this.translationPrefix;
-    return game.i18n.localize(`${translationPrefix}.${key}`);
+    let translationKey = `CALENDAR.DSA.${key}`;
+    if (!basicKey) {
+      const customKey = `${this.translationPrefix}.${key}`;
+      if (game.i18n.has(customKey)) {
+        translationKey = customKey;
+      }
+    }
+    return game.i18n.localize(translationKey);
   }
 
   static async autoDayLight() {

@@ -27,6 +27,7 @@ export const MerchantSheetMixin = (superclass) =>
         removeOtherTradeFriend: this._removeOtherTradeFriend,
         toggleTradeLock: this._toggleTradeLock,
         itemExternalEdit: this._itemExternalEdit,
+        tradeWrapper: this._tradeWrapper,
       },
     };
 
@@ -182,9 +183,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     static async _allowMerchant(ev, target) {
       const id = target.dataset.userId;
-      const i = $(target).find('i');
-      await this.allowMerchant([id], !i.hasClass('fa-check-circle'));
-      i.toggleClass('fa-circle fa-check-circle');
+      await this.allowMerchant([id], !target.classList.contains('fa-check-circle'));
     }
 
     async allowMerchant(ids, allow) {
@@ -220,14 +219,6 @@ export const MerchantSheetMixin = (superclass) =>
         .on('change', async (ev) => this.setCustomPrice(ev))
         .on('blur', (ev) => $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'));
 
-      html.find('.buy-item').on('click', (ev) => {
-        this.advanceWrapper(ev, 'buyItem', ev);
-        DSA5SoundEffect.playMoneySound();
-      });
-      html.find('.sell-item').on('click', (ev) => {
-        this.advanceWrapper(ev, 'sellItem', ev);
-        DSA5SoundEffect.playMoneySound();
-      });
       html.find('.changeAmountAllItems').on('mousedown', (ev) => this.changeAmountAllItems(ev));
 
       html.find('.gearSearch').prop('disabled', false);
@@ -309,18 +300,25 @@ export const MerchantSheetMixin = (superclass) =>
       this.actor.updateEmbeddedDocuments('Item', updates);
     }
 
-    async buyItem(ev) {
-      await this.transferItem(this.actor, this.getTradeFriend(), ev, true);
+    async buyItem(dataset) {
+      DSA5SoundEffect.playMoneySound();
+      await this.transferItem(this.actor, this.getTradeFriend(), dataset, true);
     }
 
-    async sellItem(ev) {
-      await this.transferItem(this.getTradeFriend(), this.actor, ev, false);
+    async sellItem(dataset) {
+      DSA5SoundEffect.playMoneySound();
+      await this.transferItem(this.getTradeFriend(), this.actor, dataset, false);
     }
 
-    async transferItem(source, ev, target, buy = true) {
-      let itemId = this._getItemId(ev.currentTarget);
-      let price = ev.currentTarget.dataset.price;
-      let amount = ev.ctrlKey ? 10 : 1;
+    static _tradeWrapper(ev, target) {
+      const dataset = { ...target.dataset };
+      dataset.itemId = this._getItemId(target);
+      dataset.amount = ev.ctrlKey ? 10 : 1;
+      this.advanceWrapper(target, target.dataset.fct, dataset);
+    }
+
+    async transferItem(source, target, dataset, buy = true) {
+      const { itemId, price, amount } = dataset;
 
       if (game.user.isGM) {
         await this.constructor.finishTransaction(source, target, price, itemId, buy, amount);
@@ -508,7 +506,7 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
-    async render(options={}, _options={}) {
+    async render(options = {}, _options = {}) {
       if (!game.user.isGM && this.actor.system.merchant.merchantType == 'loot' && this.actor.system.merchant.locked) {
         foundry.audio.AudioHelper.play({ src: 'sounds/lock.wav', loop: false }, false);
         return;

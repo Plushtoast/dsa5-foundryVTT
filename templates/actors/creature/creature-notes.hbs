@@ -1,9 +1,9 @@
-<div class='tab scrollable {{tabs.notes.cssClass}} width100' data-tab='notes' data-group='{{tabs.notes.group}}'>
+<div class='tab scrollable gap0px {{tabs.notes.cssClass}} width100' data-tab='notes' data-group='{{tabs.notes.group}}'>
     {{> systems/dsa5/templates/actors/parts/information.hbs}}
     {{> systems/dsa5/templates/actors/parts/personaltrait.hbs}}
 
-    <fieldset>
-        <legend>{{localize "Description"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "Description"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -11,9 +11,9 @@
                 {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription}}
             </div>
         </div>
-    </fieldset>
-    <fieldset>
-        <legend>{{localize "behaviour"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    </div>
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "behaviour"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -21,9 +21,9 @@
                 {{formInput systemFields.behaviour.fields.value value=document.system.behaviour.value toggled=true enriched=enrichedBehaviour}}
             </div>
         </div>
-    </fieldset>
-    <fieldset>
-        <legend>{{localize "flight"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    </div>
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "flight"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -31,9 +31,9 @@
                 {{formInput systemFields.flight.fields.value value=document.system.flight.value toggled=true enriched=enrichedFlight}}
             </div>
         </div>
-    </fieldset>
-    <fieldset>
-        <legend>{{localize "specialRules"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    </div>
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "specialRules"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -41,10 +41,10 @@
                 {{formInput systemFields.specialRules.fields.value value=document.system.specialRules.value toggled=true enriched=enrichedSpecialrules}}
             </div>
         </div>
-    </fieldset>
+    </div>
     {{#if document.isOwner}}
-    <fieldset>
-        <legend>{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
 
         <div class="row-section">
@@ -52,6 +52,6 @@
                 {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
             </div>
         </div>
-    </fieldset>
+    </div>
     {{/if}}
 </div>

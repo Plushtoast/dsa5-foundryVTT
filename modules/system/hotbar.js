@@ -17,7 +17,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     const html = $(this.element);
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html.find('li.primary:not(.macro)').on('mousedown', async (ev) => {
+    html.find('.primary:not(.macro)').on('mousedown', async (ev) => {
       game.tooltip.deactivate();
       ev.stopPropagation();
       await this.tokenHotbar.executeQuickButton(ev);

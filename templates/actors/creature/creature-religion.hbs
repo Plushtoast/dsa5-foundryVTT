@@ -7,8 +7,8 @@
     <div class="row-section">
 
         <div class="col ">
-            <fieldset>
-                <legend>{{localize "blessings"}}</legend>
+            <div class="groupbox">
+                <legend class="table-title lineheight">{{localize "blessings"}}</legend>
                 <div class="row-section wrap cards">
                     {{#each prepare.magic.blessing as |item i|}}
                     <div class="item" data-item-id="{{item._id}}">
@@ -17,7 +17,7 @@
                     {{/each}}
                 </div>
 
-            </fieldset>
+            </div>
         </div>
     </div>
 </div>

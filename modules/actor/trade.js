@@ -23,6 +23,7 @@ export class Trade extends DefaultAppv2 {
   static PARTS = {    
     main: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-trade.hbs',
+      templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
       scrollable: [".scrollable"]
     }
   }

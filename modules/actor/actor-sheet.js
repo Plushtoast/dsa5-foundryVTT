@@ -539,7 +539,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (this.wrapperLocked) return;
 
     this.wrapperLocked = true;
-    const target = trg.tagName == 'i' ? $(trg) : $(trg).find('i');
+    const target = trg.classList.contains('fas') ? $(trg) : $(trg).find('i');
     target.addClass('fa-spin fa-spinner');
     if (await this[funct](...params)) return;
 

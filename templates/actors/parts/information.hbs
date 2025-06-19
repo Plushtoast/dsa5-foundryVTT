@@ -1,12 +1,12 @@
 {{#if prepare.information}}
-  <fieldset>
-    <legend>{{localize 'TYPES.Item.information'}}</legend>
-    <div class='row-section wrap cards'>
-      {{#each prepare.information as |item i|}}
-        <div class='item' data-item-id='{{item._id}}'>
-          <a data-action='itemEdit'>{{item.name}}</a>
-        </div>
-      {{/each}}
+<div class="groupbox">
+  <legend class="table-title lineheight">{{localize 'TYPES.Item.information'}}</legend>
+  <div class='row-section wrap cards'>
+    {{#each prepare.information as |item i|}}
+    <div class='item' data-item-id='{{item._id}}'>
+      <a data-action='itemEdit'>{{item.name}}</a>
     </div>
-  </fieldset>
+    {{/each}}
+  </div>
+</div>
 {{/if}}

@@ -41,7 +41,7 @@
     },
     {
       "id": "step-4",
-      "selector": ".masterMenu .randomPlayer",
+      "selector": ".masterMenu [data-action=\"randomPlayer\"]",
       "title": "Random victim",
       "restricted": true,
       "appTab": "main",
@@ -57,7 +57,7 @@
     },
     {
       "id": "step-5",
-      "selector": ".masterMenu .heroschip",
+      "selector": ".masterMenu [data-action=\"heroschip\"]",
       "title": "Player fate points",
       "restricted": true,
       "appTab": "main",

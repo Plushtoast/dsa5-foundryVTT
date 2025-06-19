@@ -20,8 +20,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
         DSA5CombatTracker.runActAttackDialog();
       },
       rollMine: this.rollMyChars,
-      waitInit: this.#waitInit,
-      restoreInit: { handler: this.#restoreInit, buttons: [0, 2] },
+      waitInit: this.waitInit,
+      restoreInit: { handler: this.restoreInit, buttons: [0, 2] },
       panToCombatant: this.#onCombatantControl,
       pingCombatant: this.#onCombatantControl,
       rollInitiative: this.#onCombatantControl,
@@ -234,16 +234,24 @@ export default class DSAIniTracker extends DefaultAppv2 {
     ui.combat._onCombatantControl(event, target);
   }
 
-  static async #waitInit(ev, target) {
+  static async waitInit(ev, target) {
     const combatant = game.combat.combatants.get(game.combat.current.combatantId);
     await combatant.setFlag('dsa5', 'waitInit', game.combat.current.round);
     target.dataset.action = 'nextTurn';
     this._onClickAction(ev, target);
   }
 
-  static #restoreInit(ev, target) {
+  static async restoreInit(ev, target) {
     const combatant = game.combat.combatants.get(target.dataset.combatantId);
-    if (ev.button == 2 && combatant.isOwner) combatant.unsetFlag('dsa5', 'waitInit');
+    if (ev.button == 2 && combatant.isOwner) {
+      const currentTurn = game.combat.combatants.get(game.combat.current.combatantId);
+      const roundInitiative = currentTurn.properInitiative;
+      await combatant.unsetFlag('dsa5', 'waitInit');
+      await combatant.update({
+        "system.roundInitiative": roundInitiative + 0.00001,
+      });
+      await game.combat.update({ turn: game.combat.turn - 1})
+    }
     else ui.combat._onCombatantMouseDown(ev, target);
   }
 

@@ -47,6 +47,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     turn.defenseCount = combatant.system.defenseCount;
     turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
     turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
+    turn.roundInitiative = combatant.system.roundInitiative;
 
     let remainders = [];
     if (combatant.actor) {
@@ -91,6 +92,85 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   async _prepareCombatContext(context, options) {
     await super._prepareCombatContext(context, options);
     context.isBrawling = game.combat?.isBrawling;
+  }
+
+  _canSortInitiative(event) {
+    return game.user.isGM;
+  }
+
+  _dragStartInitiativeSort(event) {
+    const dataTransfer = {
+      type: 'CombatantSort',
+      data: {
+        combatantId: event.currentTarget.dataset.combatantId,
+      },
+    };
+    event.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
+  }
+
+  _dragOverInitiativeSort(event) {
+    event.preventDefault();
+    const fieldset = event.target.closest('.combatant');
+
+    if (fieldset) {
+      if (this.lastFieldset !== fieldset) {
+        if (this.lastFieldset) {
+          this.lastFieldset.classList.remove('dragSortMarker');
+        }
+        fieldset.classList.add('dragSortMarker');
+        this.lastFieldset = fieldset;
+      }
+    } else if (this.lastFieldset) {
+      this.lastFieldset.classList.remove('dragSortMarker');
+      this.lastFieldset = null;
+    }
+  }
+
+  async _dropInitiativeSort(event) {
+    event.preventDefault();
+    if (this.lastFieldset) {
+      this.lastFieldset.classList.remove('dragSortMarker');
+      this.lastFieldset = null;
+    }
+
+    const hoverTarget = event.target.closest('.combatant');
+    if (!hoverTarget) return;
+
+    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+
+    if (data.type !== 'CombatantSort') return;
+
+    const combatantId = data.data.combatantId;
+    const targetId = hoverTarget.dataset.combatantId;
+
+    if (targetId === combatantId) return;
+
+    const combatant = game.combat.combatants.get(combatantId);
+    const targetCombatant = game.combat.combatants.get(targetId);
+
+    const roundInitiative = targetCombatant.properInitiative;
+    await combatant.update({
+      "system.roundInitiative": roundInitiative + 0.00001,
+    });
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    new foundry.applications.ux.DragDrop.implementation({
+      dragSelector: ".combatant",
+      dropSelector: ".combat-tracker",
+      permissions: {
+        dragstart: this._canSortInitiative.bind(this),
+        drop: this._canSortInitiative.bind(this)
+      },
+      callbacks: {
+        dragstart: this._dragStartInitiativeSort.bind(this),
+        dragover: this._dragOverInitiativeSort.bind(this),
+        drop: this._dropInitiativeSort.bind(this)
+      }
+    }).bind(this.element);
+    return super._onRender(context, options);
   }
 }
 
@@ -138,7 +218,10 @@ export class DSA5Combat extends Combat {
     const chatMessages = [];
 
     if (goBrawling) {
-      await this.update({ 'system.unarmEveryone': await this.brawlingDialog() })
+      const unarmEveryone = await this.brawlingDialog();
+      if (unarmEveryone === null) return;
+
+      await this.update({ 'system.unarmEveryone': unarmEveryone })
 
       for (let x of this.combatants) {
         if (!x.actor) return {};
@@ -210,10 +293,10 @@ export class DSA5Combat extends Combat {
     }, timeout);
   }
 
-  async nextRound() {
+  async clearRoundState() {
     if (game.user.isGM) {
       for (let k of this.turns) {
-        await k.update({ 'system.defenseCount': 0 });
+        await k.update({ 'system.defenseCount': 0, "system.roundInitiative": -1 });
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -221,6 +304,25 @@ export class DSA5Combat extends Combat {
         payload: {},
       });
     }
+  }
+
+  _sortCombatants(a, b) {
+    let ia = Number.isNumeric(a.initiative) ? a.initiative : -Infinity;
+    let ib = Number.isNumeric(b.initiative) ? b.initiative : -Infinity;
+
+    if (a.system.roundInitiative >= 0) ia = a.system.roundInitiative;
+    if (b.system.roundInitiative >= 0) ib = b.system.roundInitiative
+
+    return (ib - ia) || (a.id > b.id ? 1 : -1);
+  }
+
+  async previousRound() {
+    await this.clearRoundState();
+    return await super.previousRound();
+  }
+
+  async nextRound() {
+    await this.clearRoundState();
     return await super.nextRound();
   }
 
@@ -231,13 +333,13 @@ export class DSA5Combat extends Combat {
 
   getCombatantFromActor(speaker) {
     if (!speaker) return undefined;
-    
+
     if (speaker.token) {
       return this.combatants.find(combatant => combatant.tokenId === speaker.token);
     } else if (speaker.actor) {
       return this.combatants.find(combatant => combatant.actorId === speaker.actor);
     }
-    
+
     return undefined;
   }
 
@@ -245,7 +347,7 @@ export class DSA5Combat extends Combat {
     if (game.user.isGM) {
       const comb = this.getCombatantFromActor(speaker);
       if (comb && !comb.actor.system.config.defense) {
-        await comb.update({ 'system.defenseCount': comb.system.defenseCount + 1 });        
+        await comb.update({ 'system.defenseCount': comb.system.defenseCount + 1 });
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -273,8 +375,8 @@ export class DSA5Combatant extends Combatant {
     const unarm = this.combat.system.unarmEveryone;
     const tokenChange = actor.system.config.autoBar
       ? actor.getActiveTokens().map((x) => {
-          return { _id: x.id, bar1: { attribute: 'status.temporaryLeP' } };
-        })
+        return { _id: x.id, bar1: { attribute: 'status.temporaryLeP' } };
+      })
       : [];
     const actorChange = {
       _id: actor.id,
@@ -314,6 +416,10 @@ export class DSA5Combatant extends Combatant {
     return this.brawlingTable;
   }
 
+  get properInitiative() {
+    return this.system.roundInitiative >= 0 ? this.system.roundInitiative : this.initiative;
+  }
+
   async undoBrawlingChange() {
     const actor = DSA5_Utility.getSpeaker({
       actor: this.actor.id,
@@ -322,8 +428,8 @@ export class DSA5Combatant extends Combatant {
     });
     const tokenChange = actor.system.config.autoBar
       ? actor.getActiveTokens().map((x) => {
-          return { _id: x.id, bar1: { attribute: 'status.wounds' } };
-        })
+        return { _id: x.id, bar1: { attribute: 'status.wounds' } };
+      })
       : [];
     const lostLP = Math.max(0, actor.system.status.temporaryLeP.max - actor.system.status.temporaryLeP.value);
     let brawlDamage = 0;
