@@ -1,9 +1,9 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import Riding from '../system/riding.js';
+import Riding from '../system/automation/riding.js';
 import { DSADataModel } from './abstract.js';
-import EquipmentDamage from '../system/equipment-damage.js';
+import EquipmentDamage from '../system/automation/equipment-damage.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 
 export class ActorDataModel extends DSADataModel {

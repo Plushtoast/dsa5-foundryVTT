@@ -1,4 +1,4 @@
-import EquipmentDamage from '../system/equipment-damage.js';
+import EquipmentDamage from '../system/automation/equipment-damage.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 
 export default class EquipmentDamageDialog extends DefaultAppv2 {

@@ -1,14 +1,14 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
-import DiceDSA5 from '../system/dice-dsa5.js';
-import Riding from '../system/riding.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import Riding from '../system/automation/riding.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5StatusEffects from '../status/status_effects.js';
-import DPS from '../system/derepositioningsystem.js';
+import DPS from '../system/automation/derepositioningsystem.js';
 import CombatskillData from '../data/item/combatskill.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 

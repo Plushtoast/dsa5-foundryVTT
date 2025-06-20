@@ -2,7 +2,7 @@ import DSA5 from '../system/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import WizardDSA5 from './dsa5_wizard.js';
-import APTracker from '../system/ap-tracker.js';
+import APTracker from '../system/orwell/ap-tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
 

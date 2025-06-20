@@ -1,9 +1,9 @@
-import Itemdsa5 from '../item/item-dsa5.js';
-import RuleChaos from './rules/rule_chaos.js';
-import { tinyNotification } from '../system/helpers/view_helper.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import RuleChaos from '../rules/rule_chaos.js';
+import { tinyNotification } from '../helpers/view_helper.js';
 import TokenHotbar2 from './tokenHotbar2.js';
-import Riding from './riding.js';
-import CombatskillData from '../data/item/combatskill.js';
+import Riding from '../automation/riding.js';
+import CombatskillData from '../../data/item/combatskill.js';
 const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

@@ -1,5 +1,5 @@
-import DiceDSA5 from '../system/dice-dsa5.js';
-import DSA5Payment from '../system/payment.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import DSA5Payment from '../system/helpers/payment.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
 

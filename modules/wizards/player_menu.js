@@ -1,9 +1,9 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import DSA5Dialog from '../dialog/dialog-dsa5.js';
-import OpposedDsa5 from '../system/opposed-dsa5.js';
+import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
-import TraitRulesDSA5 from '../system/trait-rules-dsa5.js';
+import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';

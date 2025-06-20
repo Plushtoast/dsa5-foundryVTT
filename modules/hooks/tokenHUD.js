@@ -1,4 +1,4 @@
-import Riding from '../system/riding.js';
+import Riding from '../system/automation/riding.js';
 import { TokenHoverHud } from './actor.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;

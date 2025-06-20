@@ -9,10 +9,10 @@ import * as sideBar from './sidebar.js';
 import { setupConfiguration } from './configuration.js';
 import * as journals from './journal.js';
 import * as tokenHUD from './tokenHUD.js';
-import * as migrateWorld from '../system/migrator.js';
+import * as migrateWorld from '../system/maintenance/migrator.js';
 import * as initScene from './scene.js';
 import * as initKeybindings from './keybindings.js';
-import * as rollExtensions from './../system/dsarolls.js';
+import * as rollExtensions from '../system/rolls/dsarolls.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -26,13 +26,13 @@ import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.j
 import DSAActiveEffectConfig from '../status/active_effects.js';
 import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
 import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
-import DPS from '../system/derepositioningsystem.js';
+import DPS from '../system/automation/derepositioningsystem.js';
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
 import DSA5 from '../system/config-dsa5.js';
-import DSA5SoundEffect from '../system/dsa-soundeffect.js';
+import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
-import DSA5ItemLibrary from '../system/itemlibrary.js';
+import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 const { mergeObject } = foundry.utils;
 

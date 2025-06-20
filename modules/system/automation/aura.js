@@ -1,7 +1,7 @@
 import DPS from './derepositioningsystem.js';
 import { MeasuredTemplateDSA } from './measuretemplate.js';
 import OnUseEffect from './onUseEffects.js';
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
 
 export class DSAAura {

@@ -1,4 +1,4 @@
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 
 export class MeasuredTemplateDSA extends foundry.canvas.placeables.MeasuredTemplate {
   #initialLayer;

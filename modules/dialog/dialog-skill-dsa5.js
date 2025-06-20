@@ -3,8 +3,8 @@ import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5 from '../system/config-dsa5.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
-import DiceDSA5 from '../system/dice-dsa5.js';
-import DPS from '../system/derepositioningsystem.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import DPS from '../system/automation/derepositioningsystem.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {

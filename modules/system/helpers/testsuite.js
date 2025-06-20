@@ -1,5 +1,5 @@
-import DSA5_Utility from './helpers/utility-dsa5.js';
-import { delay } from './helpers/view_helper.js';
+import DSA5_Utility from './utility-dsa5.js';
+import { delay } from './view_helper.js';
 
 export default class TestSuite {
   static async #renderAll(documentType, hideAgain, onlyType, renderWorld, renderEmbedded = false) {

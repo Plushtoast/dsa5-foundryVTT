@@ -1,5 +1,5 @@
 import DSA5SoundEffect from './dsa-soundeffect.js';
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5_Utility from './utility-dsa5.js';
 
 export default class DSA5Payment {
   static async payMoney(actor, moneyString, silent = false, render = true) {

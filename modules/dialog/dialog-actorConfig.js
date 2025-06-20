@@ -1,5 +1,5 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
-import Migrakel from '../system/migrakel.js';
+import Migrakel from '../system/maintenance/migrakel.js';
 
 export default class DialogActorConfig extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {

@@ -1,11 +1,11 @@
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DiceDSA5 from './dice-dsa5.js';
-import { ReactToAttackDialog, ReactToSkillDialog } from '../dialog/dialog-react.js';
-import Actordsa5 from '../actor/actor-dsa5.js';
-import EquipmentDamage from './equipment-damage.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
-import Itemdsa5 from '../item/item-dsa5.js';
-import DSATriggers from './triggers.js';
+import { ReactToAttackDialog, ReactToSkillDialog } from '../../dialog/dialog-react.js';
+import Actordsa5 from '../../actor/actor-dsa5.js';
+import EquipmentDamage from '../automation/equipment-damage.js';
+import DSAActiveEffectConfig from '../../status/active_effects.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import DSATriggers from '../automation/triggers.js';
 const { mergeObject, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

@@ -1,6 +1,6 @@
-import { DSAAura } from '../system/aura.js';
-import DPS from '../system/derepositioningsystem.js';
-import Riding from '../system/riding.js';
+import { DSAAura } from '../system/automation/aura.js';
+import DPS from '../system/automation/derepositioningsystem.js';
+import Riding from '../system/automation/riding.js';
 import tokenHUD from './tokenHUD.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;

@@ -1,4 +1,4 @@
-import DPS from './derepositioningsystem.js';
+import DPS from '../automation/derepositioningsystem.js';
 const { setProperty, getProperty } = foundry.utils;
 
 export default class RollMemory {

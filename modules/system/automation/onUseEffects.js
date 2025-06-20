@@ -1,6 +1,6 @@
-import DSA5_Utility from './helpers/utility-dsa5.js';
-import RuleChaos from './rules/rule_chaos.js';
-import DSA5SoundEffect from './dsa-soundeffect.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
+import RuleChaos from '../rules/rule_chaos.js';
+import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 const { duplicate } = foundry.utils;
 
 export default class OnUseEffect {

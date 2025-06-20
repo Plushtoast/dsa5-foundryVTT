@@ -1,5 +1,5 @@
-import DSA5 from './config-dsa5.js';
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5 from '../config-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { mergeObject } = foundry.utils;
 
 let ADVANCEDFILTERS = {};

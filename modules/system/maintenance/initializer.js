@@ -1,5 +1,5 @@
-import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 
 export default class DSA5Initializer extends foundry.applications.api.DialogV2 {

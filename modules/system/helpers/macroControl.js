@@ -1,5 +1,5 @@
-import DSA5ChatListeners from './chat_listeners.js';
-import RequestRoll from './request-roll.js';
+import DSA5ChatListeners from '../sidebar/chat_listeners.js';
+import RequestRoll from '../rolls/request-roll.js';
 
 export default class MacroDSA5 {
   static weaponLessMacro(char) {

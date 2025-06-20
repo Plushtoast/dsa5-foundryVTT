@@ -1,10 +1,10 @@
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
-import { clickableAbility, tabSlider } from './helpers/view_helper.js';
-import { DefaultAppv2 } from '../actor/baseapp.js';
+import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
+import { DefaultAppv2 } from '../../actor/baseapp.js';
 const { duplicate, mergeObject } = foundry.utils;
-import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
-import DSA5 from './config-dsa5.js';
+import FlexSearch from "../../../libs/flexsearch.bundle.module.min.js"
+import DSA5 from '../config-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 //todo check if items on index have permission

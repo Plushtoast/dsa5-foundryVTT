@@ -1,6 +1,6 @@
 import ActorSheetDsa5 from './actor-sheet.js';
-import TraitRulesDSA5 from '../system/trait-rules-dsa5.js';
-import APTracker from '../system/ap-tracker.js';
+import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
+import APTracker from '../system/orwell/ap-tracker.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {

@@ -1,9 +1,9 @@
-import OpposedDsa5 from '../system/opposed-dsa5.js';
-import DiceDSA5 from '../system/dice-dsa5.js';
-import DSA5Payment from '../system/payment.js';
+import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import DSA5Payment from '../system/helpers/payment.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
-import DSA5ChatListeners from '../system/chat_listeners.js';
+import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
+import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
 const { getProperty } = foundry.utils;

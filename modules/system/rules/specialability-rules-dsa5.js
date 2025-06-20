@@ -1,7 +1,7 @@
 import DSA5 from '../config-dsa5.js';
 import ItemRulesDSA5 from './item-rules-dsa5.js';
 import Select2Dialog from '../../dialog/select2Dialog.js';
-import APTracker from '../ap-tracker.js';
+import APTracker from '../orwell/ap-tracker.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

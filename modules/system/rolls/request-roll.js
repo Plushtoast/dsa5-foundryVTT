@@ -1,6 +1,6 @@
-import DSA5Dialog from '../dialog/dialog-dsa5.js';
-import DSA5ChatAutoCompletion from './chat_autocompletion.js';
-import DSA5_Utility from './helpers/utility-dsa5.js';
+import DSA5Dialog from '../../dialog/dialog-dsa5.js';
+import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
