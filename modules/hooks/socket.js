@@ -11,6 +11,7 @@ import { Trade } from '../actor/trade.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/orwell/ap-tracker.js';
+import MoneyTracker from '../system/orwell/money-tracker.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -26,8 +27,12 @@ export function connectSocket() {
         for (let app of Object.values(ui.windows)) {
           if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
         }
-        for(let app of Object.values(foundry.applications.instances)) {
-          if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
+        for (let sheet of data.payload.sheets) {
+          if (!sheet.sheetId) continue;
+          let app = foundry.applications.instances.get(sheet.sheetId);
+          if (app && app.rendered) {
+            app.render(true);
+          }
         }
         break;
       default:
@@ -70,8 +75,11 @@ export function connectSocket() {
       case 'updateGroupCheck':
         RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
-      case 'apTracker':
+      case 'apTrackerId':
         APTracker.receiveSocketEvent(data);
+        break;
+      case 'moneyTrackerId':
+        MoneyTracker.receiveSocketEvent(data);
         break;
       case 'updateAttackMessage':
         game.messages.get(data.payload.messageId).update({
@@ -129,7 +137,7 @@ export function connectSocket() {
         {
           let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
-            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag }});
+            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
           });
         }
         break;

@@ -641,6 +641,15 @@ export function setupConfiguration() {
     type: Boolean,
   });
 
+  game.settings.register('dsa5', 'enableMoneyTracking', {
+    name: 'DSASETTINGS.enableMoneyTracking',
+    hint: 'DSASETTINGS.enableMoneyTrackingHint',
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
+
   game.settings.register('dsa5', 'sightAutomationEnabled', {
     name: 'sightAutomationEnabled',
     scope: 'world',

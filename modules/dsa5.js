@@ -47,6 +47,7 @@ import DialogReactDSA5 from './dialog/dialog-react.js';
 import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effects.js';
 import APTracker from './system/orwell/ap-tracker.js';
+import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
@@ -78,6 +79,7 @@ Hooks.once('init', () => {
       OpposeDSA,
       EquipmentDamage,
       APTracker,
+      MoneyTracker,
       DidYouKnow,
       MeasuredTemplateDSA,
       Riding,

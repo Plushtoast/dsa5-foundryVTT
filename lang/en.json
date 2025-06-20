@@ -1853,6 +1853,7 @@
         "paySum": "{amount} has to be paid.",
         "getPaidSum": "{amount} has been paid.",
         "wage": "Receive payment",
+        "wagePaid": "Payment received",
         "payButton": "Pay",
         "getPaidButton": "Receive",
         "noActor": "Your character could not be found",
@@ -2084,13 +2085,17 @@
         "applyDamageInChatHint": "Show buttons in addition to the options in the context menu to apply damage on chat cards.",
         "enableAPTracking": "Track adventure points",
         "enableAPTrackingHint": "Create journals for player characters, which list received and spent adventure points. The journals must either have write access for the player or a game master must be logged in.",
+        "enableMoneyTracking": "Track money",
+        "enableMoneyTrackingHint": "Create journals for player characters, which list received and spent money. The journals must either have write access for the player or a game master must be logged in.",
         "masterCanvasControls": "Activate Canvas Controls",
         "masterCanvasControlsHint": "Add master functions to the Canvas Controls (left side of the GUI).",
         "enableWeaponAdvantages": "Equipment advantages/disadvantages",
         "enableWeaponAdvantagesHint": "Activate the optional rules for weapon and armor advantages and disadvantages. If weapons contain the corresponding rules, they are automatically applied."
     },
     "TRACKER": {
-        "adventurePoints": "Adventure Points History"
+        "adventurePoints": "Adventure Points History",
+        "money": "Financial Overview",
+        "sheetChange": "Character Sheet Change"
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

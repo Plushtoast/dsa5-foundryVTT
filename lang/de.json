@@ -1834,6 +1834,7 @@
         "paySum": "{amount} sind zu bezahlen.",
         "getPaidSum": "{amount} wird ausbezahlt.",
         "wage": "Bezahlung erhalten",
+        "wagePaid": "Rechnung bezahlt",
         "payButton": "Bezahlen",
         "getPaidButton": "Auszahlen",
         "noActor": "Dein Charakter wurde nicht gefunden",
@@ -2156,13 +2157,17 @@
         "applyDamageInChatHint": "Zeige Buttons zusätzlich zu den Optionen im Kontextmenu zum Anwenden von Schaden bei Chatkarten.",
         "enableAPTracking": "Abenteuerpunkte tracken",
         "enableAPTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und verbrauchte Abenteuerpunkte auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein.",
+        "enableMoneyTracking": "Finanzen tracken",
+        "enableMoneyTrackingHint": "Für Spielercharaktere werden Journals angelegt, welche erhaltene und ausgegebene Geldmengen auflisten. Die Journals müssen entweder Schreibzugriff für den Spieler haben oder ein Spielleiter muss eingelogt sein.",
         "masterCanvasControls": "Canvas Controls aktivieren",
         "masterCanvasControlsHint": "Fügt Meisterfunktionen zu den Canvas Controls (linke Seite des GUI hinzu).",
         "enableWeaponAdvantages": "Ausrüstungsvor-/nachteile",
         "enableWeaponAdvantagesHint": "Aktiviere die optionalen Regeln für Waffen- und Rüstungsvor- und nachteile. Sofern Waffen die entsprechenden Regeln enthalten, werden diese automatisch angewendet."
     },
     "TRACKER": {
-        "adventurePoints": "Abenteuerpunkte Historie"
+        "adventurePoints": "Abenteuerpunkte Historie",
+        "money": "Finanzübersicht",
+        "sheetChange": "Charakterblattänderung"
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

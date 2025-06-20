@@ -4,6 +4,7 @@ import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5Payment from '../system/helpers/payment.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MoneyTracker from '../system/orwell/money-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -348,7 +349,9 @@ export const MerchantSheetMixin = (superclass) =>
       const item = source.items.get(itemId).toObject();
       if (Number(item.system.quantity.value) > 0) {
         amount = Math.min(Number(item.system.quantity.value), amount);
-        price = `${Number(price) * amount}`;
+        let totalPrice = Number(price) * amount
+        price = `${totalPrice}`;
+        
         const noNeedToPay = this.noNeedToPay(target, source, price);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
         if (hasPaid) {
@@ -359,21 +362,27 @@ export const MerchantSheetMixin = (superclass) =>
             await this.updateSourceTransaction(source, target, item, price, itemId, amount);
             await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res);
             await this.selfDestruction(source);
+
+            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
+            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
           } else {
             await this.updateSourceTransaction(source, target, item, price, itemId, amount);
             const res = await this.updateTargetTransaction(target, item, amount, source, price);
             await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res);
+
+            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
+            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice * -1);
           }
         }
       }
-      source.sheet.render();
-      target.sheet.render();
+      if(source.sheet.rendered) source.sheet.render(true);
+      if(target.sheet.rendered) target.sheet.render(true);
       game.socket.emit('system.dsa5', {
         type: 'refreshSheets',
         payload: {
           sheets: [
-            { id: source.id, type: 'ActorSheet' },
-            { id: target.id, type: 'ActorSheet' },
+            { id: source.id, type: 'ActorSheet', sheetId: source.sheet.id },
+            { id: target.id, type: 'ActorSheet', sheetId: target.sheet.id },
           ],
         },
       });

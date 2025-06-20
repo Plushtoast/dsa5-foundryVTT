@@ -22,6 +22,7 @@ import { TradeOptions } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './appv2_mixin.js';
+import MoneyTracker from '../system/orwell/money-tracker.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -38,7 +39,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return this.actor.name;
   }
 
-  async render(options={}, _options={}) {
+  async render(options = {}, _options = {}) {
     this._saveSearchFields();
     this._saveCollapsed();
     const result = await super.render(options, _options);
@@ -839,17 +840,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       jQuery: false,
       fixed: true
     });
-    
+
     let mainContent = this.element.querySelector(".main-content");
     if (!mainContent) {
       mainContent = document.createElement("div");
       mainContent.classList.add("main-content");
       mainContent.dataset.containerId = "main";
       const tabs = this.element.querySelector(".tabs");
-      if(!tabs) this.element.querySelector('.window-content').append(mainContent);
+      if (!tabs) this.element.querySelector('.window-content').append(mainContent);
       else tabs.after(mainContent);
     }
-    if ( mainContent ) {
+    if (mainContent) {
       const sheetBody = document.createElement("div");
       sheetBody.classList.add("sheet-body");
       mainContent.after(sheetBody);
@@ -1009,10 +1010,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() }]);
     });
 
-    html.find('.money-change').on('change', async (ev) => {
-      const itemId = this._getItemId(ev.currentTarget);
-      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': Number(ev.target.value) }]);
-    });
+    html.find('.money-change').on('change', this._onMoneyChange.bind(this));
     html.find('.skill-advances').on('change', async (ev) => {
       const itemId = this._getItemId(ev.currentTarget);
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.talentValue.value': Number(ev.target.value) }]);
@@ -1032,6 +1030,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         drop: this._onDrop.bind(this)
       }
     }).bind(this.element);
+  }
+
+  async _onMoneyChange(ev) {
+    const itemId = this._getItemId(ev.currentTarget);
+    const value = Number(ev.target.value);
+    const item = this.actor.items.get(itemId);
+    const cost = (value - item.system.quantity.value) * 1.0 * item.system.price.value
+    await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': value }]);
+    await MoneyTracker.track(this.actor, { type: 'sheetChange' }, cost);
   }
 
   _onItemContext(target) {

@@ -1,10 +1,11 @@
+import MoneyTracker from '../orwell/money-tracker.js';
 import DSA5SoundEffect from './dsa-soundeffect.js';
 import DSA5_Utility from './utility-dsa5.js';
 
 export default class DSA5Payment {
   static async payMoney(actor, moneyString, silent = false, render = true) {
     const canPay = await DSA5Payment.canPay(actor, moneyString, silent);
-    if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render);
+    if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, silent);
 
     if (!silent && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
 
@@ -41,7 +42,7 @@ export default class DSA5Payment {
 
     if (money) {
       let actorsMoney = this._actorsMoney(actor);
-      await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render);
+      await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
       let msg = `<p>${game.i18n.format('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
       if (!silent) {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
@@ -55,7 +56,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.wage')}</b></p><p>${game.i18n.format('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize('PAYMENT.getPaidButton')}</button>`;
+      let msg = `<p><b>${game.i18n.localize('PAYMENT.wage')}</b></p><p>${game.i18n.format('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize('PAYMENT.getPaidButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -65,7 +66,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.bill')}</b></p>${game.i18n.format('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize('PAYMENT.payButton')}</button>`;
+      let msg = `<p><b>${game.i18n.localize('PAYMENT.bill')}</b></p>${game.i18n.format('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize('PAYMENT.payButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -179,10 +180,12 @@ export default class DSA5Payment {
     await DSA5Payment._updateMoney(actor, DSA5Payment._actorsMoney(actor).money, money.sum);
   }
 
-  static async _updateMoney(actor, money, newSum, render = true) {
+  static async _updateMoney(actor, money, newSum, render = true, silent = false) {
     const coins = await DSA5Payment._moneyToCoins(newSum, money);
     const update = [];
+    let oldSum = 0;
     for (let m of money) {
+      oldSum += m.system.quantity.value * m.system.price.value;
       const coin = coins.find((x) => x.name == m.name);
       if (coin == undefined) continue;
 
@@ -193,6 +196,7 @@ export default class DSA5Payment {
     }
 
     await actor.updateEmbeddedDocuments('Item', update, { render });
+    if (!silent) await MoneyTracker.track(actor, { type: 'payment', previous: oldSum, next: newSum }, newSum - oldSum);
   }
 
   static async _moneyToString(money) {
