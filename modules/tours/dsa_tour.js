@@ -1,4 +1,4 @@
-import { delay } from '../system/view_helper.js';
+import { delay } from '../system/helpers/view_helper.js';
 
 export default class DSATour extends foundry.nue.Tour {
   static tours = ['systems/dsa5/modules/tours/lang/initial', 'systems/dsa5/modules/tours/lang/library', 'systems/dsa5/modules/tours/lang/actor'];

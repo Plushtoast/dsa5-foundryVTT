@@ -1,7 +1,7 @@
 import DSA5 from './config-dsa5.js';
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 import OnUseEffect from './onUseEffects.js';
-import RuleChaos from './rule_chaos.js';
+import RuleChaos from './rules/rule_chaos.js';
 import DSA5SoundEffect from './dsa-soundeffect.js';
 
 export default class DSATriggers {

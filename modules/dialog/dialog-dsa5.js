@@ -1,4 +1,4 @@
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5CombatDialog from './dialog-combat-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5SkillDialog from './dialog-skill-dsa5.js';

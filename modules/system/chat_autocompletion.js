@@ -1,6 +1,6 @@
 import DSA5ChatListeners from './chat_listeners.js';
 import RequestRoll from './request-roll.js';
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../dialog/addTargetDialog.js';
 
 export default class DSA5ChatAutoCompletion {

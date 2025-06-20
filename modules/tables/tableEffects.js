@@ -2,7 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import DSAActiveEffectConfig from '../status/active_effects.js';
 import CreatureType from '../system/creature-type.js';
 import EquipmentDamage from '../system/equipment-damage.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import OnUseEffect from '../system/onUseEffects.js';
 import CombatskillData from '../data/item/combatskill.js';
 import TraitData from '../data/item/trait.js';

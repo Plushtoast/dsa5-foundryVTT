@@ -1,6 +1,6 @@
 import DSA5 from './config-dsa5.js';
-import ItemRulesDSA5 from './item-rules-dsa5.js';
-import DSA5_Utility from './utility-dsa5.js';
+import ItemRulesDSA5 from './rules/item-rules-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 
 export default class TraitRulesDSA5 extends ItemRulesDSA5 {
   static async traitAdded(actor, item) {

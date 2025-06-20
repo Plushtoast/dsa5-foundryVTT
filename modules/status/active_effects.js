@@ -4,8 +4,8 @@ import DSA5 from '../system/config-dsa5.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
 import OnUseEffect from '../system/onUseEffects.js';
 import DSATriggers from '../system/triggers.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
-import { delay } from '../system/view_helper.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { delay } from '../system/helpers/view_helper.js';
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

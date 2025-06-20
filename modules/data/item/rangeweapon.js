@@ -7,7 +7,7 @@ import DSA5 from '../../system/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
-import DSA5_Utility from '../../system/utility-dsa5.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 

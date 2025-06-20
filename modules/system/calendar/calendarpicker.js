@@ -1,6 +1,6 @@
 import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
-import { tabSlider } from '../../system/view_helper.js';
+import { tabSlider } from '../../system/helpers/view_helper.js';
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {

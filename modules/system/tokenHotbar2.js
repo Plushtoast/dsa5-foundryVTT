@@ -1,9 +1,9 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import OnUseEffect from './onUseEffects.js';
 import Riding from './riding.js';
-import RuleChaos from './rule_chaos.js';
-import DSA5_Utility from './utility-dsa5.js';
-import { tinyNotification } from './view_helper.js';
+import RuleChaos from './rules/rule_chaos.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
+import { tinyNotification } from './helpers/view_helper.js';
 import DSA5Payment from './payment.js';
 import { Trade } from '../actor/trade.js';
 import Itemdsa5 from '../item/item-dsa5.js';

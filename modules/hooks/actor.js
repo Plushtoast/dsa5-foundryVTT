@@ -1,8 +1,8 @@
 import DSAActiveEffectConfig from '../status/active_effects.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Riding from '../system/riding.js';
-import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
-import RuleChaos from '../system/rule_chaos.js';
+import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
+import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/aura.js';
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 

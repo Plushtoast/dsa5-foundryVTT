@@ -1,7 +1,6 @@
 import Itemdsa5 from '../item/item-dsa5.js';
-import RuleChaos from './rule_chaos.js';
-import { tinyNotification } from '../system/view_helper.js';
-import Actordsa5 from '../actor/actor-dsa5.js';
+import RuleChaos from './rules/rule_chaos.js';
+import { tinyNotification } from '../system/helpers/view_helper.js';
 import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from './riding.js';
 import CombatskillData from '../data/item/combatskill.js';

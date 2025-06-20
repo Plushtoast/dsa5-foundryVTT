@@ -1,4 +1,4 @@
-import AdvantageRulesDSA5 from './advantage-rules-dsa5.js';
+import AdvantageRulesDSA5 from './rules/advantage-rules-dsa5.js';
 const { getProperty } = foundry.utils;
 
 export default class DPS {

@@ -6,7 +6,7 @@ import DSAStringField from '../fields/dsa_string_field.js';
 import AoeTemplate from './templates/aoe.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
-import DSA5_Utility from '../../system/utility-dsa5.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 
 const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;

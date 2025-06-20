@@ -1,10 +1,10 @@
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
-import SpecialabilityRulesDSA5 from '../system/specialability-rules-dsa5.js';
+import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import Riding from '../system/riding.js';
 import { DSADataModel } from './abstract.js';
 import EquipmentDamage from '../system/equipment-damage.js';
-import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
+import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 
 export class ActorDataModel extends DSADataModel {
   // Cache static properties with getters for lazy initialization

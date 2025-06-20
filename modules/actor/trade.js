@@ -1,6 +1,6 @@
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/dsa-soundeffect.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, randomID } = foundry.utils;
 

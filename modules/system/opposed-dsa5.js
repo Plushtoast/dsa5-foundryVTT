@@ -1,4 +1,4 @@
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 import DiceDSA5 from './dice-dsa5.js';
 import { ReactToAttackDialog, ReactToSkillDialog } from '../dialog/dialog-react.js';
 import Actordsa5 from '../actor/actor-dsa5.js';

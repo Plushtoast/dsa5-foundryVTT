@@ -1,11 +1,11 @@
 import DSA5Tutorial from '../system/tutorial.js';
 import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { setEnrichers } from './texteditor.js';
 import { connectHook } from './itemDrop.js';
-import DidYouKnow from '../system/didyouknow.js';
+import DidYouKnow from '../system/helpers/didyouknow.js';
 import TokenHotbar2 from '../system/tokenHotbar2.js';
-import DSAIniTracker from '../system/dsa-ini-tracker.js';
+import DSAIniTracker from '../combat/dsa-ini-tracker.js';
 import DSATour from '../tours/dsa_tour.js';
 import { initImagePopoutTochat } from './imagepopouttochat.js';
 import { connectSocket } from './socket.js';

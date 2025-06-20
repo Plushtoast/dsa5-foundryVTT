@@ -8,8 +8,8 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
-import DSA5_Utility from '../../system/utility-dsa5.js';
-import RuleChaos from '../../system/rule_chaos.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import RuleChaos from '../../system/rules/rule_chaos.js';
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 

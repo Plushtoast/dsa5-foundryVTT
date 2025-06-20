@@ -1,5 +1,5 @@
-import DSA5_Utility from './utility-dsa5.js';
-import RuleChaos from './rule_chaos.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
+import RuleChaos from './rules/rule_chaos.js';
 import DSA5SoundEffect from './dsa-soundeffect.js';
 const { duplicate } = foundry.utils;
 

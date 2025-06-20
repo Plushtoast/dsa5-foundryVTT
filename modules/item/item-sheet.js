@@ -1,14 +1,14 @@
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
-import SpecialabilityRulesDSA5 from '../system/specialability-rules-dsa5.js';
-import { itemFromDrop, svgAutoFit, tabSlider } from '../system/view_helper.js';
+import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
+import { itemFromDrop, svgAutoFit, tabSlider } from '../system/helpers/view_helper.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import EquipmentDamage from '../system/equipment-damage.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
 import OnUseEffect from '../system/onUseEffects.js';
 import { ItemSheetObfuscation } from './obfuscatemixin.js';
-import AdvantageRulesDSA5 from '../system/advantage-rules-dsa5.js';
+import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/opposed-dsa5.js';
 import RequestRoll from '../system/request-roll.js';
 import APTracker from '../system/ap-tracker.js';

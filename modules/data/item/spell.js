@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import SpellTemplate from './templates/spell.js';
 import BasicSpellTemplate from './templates/basicspell.js';
 import AoeTemplate from './templates/aoe.js';
-import DSA5_Utility from '../../system/utility-dsa5.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import SkillTemplate from './templates/skill.js';
 
 const { StringField } = foundry.data.fields;

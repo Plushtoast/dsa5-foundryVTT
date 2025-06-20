@@ -1,6 +1,6 @@
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
-import { clickableAbility, tabSlider } from './view_helper.js';
+import { clickableAbility, tabSlider } from './helpers/view_helper.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 const { duplicate, mergeObject } = foundry.utils;
 import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"

@@ -1,8 +1,8 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DPS from '../system/derepositioningsystem.js';
 import DiceDSA5 from '../system/dice-dsa5.js';
-import RuleChaos from '../system/rule_chaos.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import RuleChaos from '../system/rules/rule_chaos.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 const { duplicate } = foundry.utils;

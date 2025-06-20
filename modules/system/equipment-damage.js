@@ -2,7 +2,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import DSA5 from './config-dsa5.js';
 import CreatureType from './creature-type.js';
 import DiceDSA5 from './dice-dsa5.js';
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

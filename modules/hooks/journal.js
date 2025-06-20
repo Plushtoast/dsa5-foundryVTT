@@ -1,7 +1,7 @@
 import DSA5StatusEffects from '../status/status_effects.js';
 import DSA5ChatAutoCompletion from '../system/chat_autocompletion.js';
 import DSA5 from '../system/config-dsa5.js';
-import { tinyNotification } from '../system/view_helper.js';
+import { tinyNotification } from '../system/helpers/view_helper.js';
 import { bindImgToCanvasDragStart } from './imgTileDrop.js';
 
 export default function () {

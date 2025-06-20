@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import APValueTemplate from './templates/apvalue.js';
 import MaxTemplate from './templates/max.js';
 import RequirementsTemplate from './templates/requirements.js';
-import AdvantageRulesDSA5 from '../../system/advantage-rules-dsa5.js';
+import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 

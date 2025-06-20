@@ -1,6 +1,6 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
-import DSA5_Utility from './utility-dsa5.js';
-import { tabSlider } from './view_helper.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
+import { tabSlider } from './helpers/view_helper.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

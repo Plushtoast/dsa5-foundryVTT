@@ -1,7 +1,7 @@
-import Actordsa5 from '../actor/actor-dsa5.js';
-import { conditionsMatcher } from '../hooks/texteditor.js';
-import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5 from './config-dsa5.js';
+import Actordsa5 from '../../actor/actor-dsa5.js';
+import { conditionsMatcher } from '../../hooks/texteditor.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import DSA5 from '../config-dsa5.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5_Utility {

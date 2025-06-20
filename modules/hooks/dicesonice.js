@@ -1,4 +1,4 @@
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 

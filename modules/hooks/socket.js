@@ -8,8 +8,8 @@ import { dropToGround } from './itemDrop.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5 from '../system/config-dsa5.js';
 import { Trade } from '../actor/trade.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
-import { DSA5Combat } from './combat_tracker.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/ap-tracker.js';
 
 export function connectSocket() {

@@ -1,6 +1,6 @@
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
-import { DSA5CombatTracker } from './combat_tracker.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 
 export default function () {
   game.keybindings.register('dsa5', 'masterMenu', {

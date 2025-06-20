@@ -1,6 +1,6 @@
 import actor from '../hooks/actor.js';
 import CreatureType from './creature-type.js';
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5_Utility from './helpers/utility-dsa5.js';
 const { mergeObject, getProperty, hasProperty } = foundry.utils;
 
 export default class Riding {

@@ -5,7 +5,7 @@ import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import DSA5 from '../../system/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
-import SpecialabilityRulesDSA5 from '../../system/specialability-rules-dsa5.js';
+import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 

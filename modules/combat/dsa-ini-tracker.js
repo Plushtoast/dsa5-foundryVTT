@@ -1,5 +1,5 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
-import { DSA5CombatTracker } from '../hooks/combat_tracker.js';
+import { DSA5CombatTracker } from './combat_tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {

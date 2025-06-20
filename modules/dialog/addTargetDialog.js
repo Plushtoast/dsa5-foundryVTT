@@ -1,6 +1,6 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import DPS from '../system/derepositioningsystem.js';
-import DSA5_Utility from '../system/utility-dsa5.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class AddTargetDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {

@@ -1,5 +1,5 @@
 const { getProperty } = foundry.utils;
-import { FormAppv2 } from '../actor/formapp.js';
+import { FormAppv2 } from '../../actor/formapp.js';
 
 export default class ForeignFieldEditor extends FormAppv2 {
   constructor(actorId, field, name) {
