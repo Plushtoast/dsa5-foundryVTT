@@ -40,11 +40,7 @@
                         <a data-action="itemEdit" class="talentName">{{item.name}}</a> 
                     </div>
                     <div class="skill-props col third center">
-                        <a class="skill-select" data-action="skillSelect">
-                            <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
-                            <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
-                            <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
-                        </a>
+                        {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                         {{#if item.applications}}
                         <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
                     </div>
@@ -91,11 +87,7 @@
                             <a data-action="itemEdit" class="talentName">{{item.name}}</a>
                         </div>
                         <div class="col third center">
-                            <a class="skill-select" data-action="skillSelect">
-                                <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
-                                <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
-                                <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
-                            </a>
+                            {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                             {{#if item.applications}}
                             <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
                         </div>

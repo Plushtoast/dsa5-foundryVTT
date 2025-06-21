@@ -258,7 +258,7 @@ h7 {
 }
 
 .sheet-header {
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .actor .sheet-header .content-link {
@@ -279,6 +279,83 @@ table.infoTable {
   input {
     text-align: center;
   }
+
+  .attributesHeader {
+    transition: height 0.5s ease;
+    overflow: hidden;
+    height: 59px;
+  }
+
+  .singleColumnLayout {
+    .attributesHeader {
+      height: 120px;
+    }
+  }
+
+  .smallHeader {
+    .attributesHeader {
+      height: 0;
+    }
+
+    .avatar-container img {
+      height: 80px;
+    }
+
+    .row-schips {
+      .stackedSchips {
+        .schip {
+          --button-size: 20px;
+          margin-left: -14px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+  }
+
+  .row-schips {
+    margin-top: -10px;
+
+    button {
+      --button-size: 25px;
+    }
+
+    &.stackedSchips,
+    .stackedSchips {
+      position: relative;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      .schip {
+        transition: transform 0.3s ease;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+        margin-left: -12px;
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:hover {
+          z-index: 999;
+          background-color: transparent;
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  /*.sheet-header {
+    position: relative;
+    z-index: 1;
+    mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent);
+    margin-bottom: -10px;
+  }*/
 
   .advanceOntop {
 
@@ -317,6 +394,7 @@ table.infoTable {
       background-color: transparent;
       border-radius: 0px;
       height: auto;
+      text-align: left;
     }
 
     span {
@@ -328,7 +406,7 @@ table.infoTable {
   }
 
   .headerName {
-    margin-bottom: 6px;
+    margin-bottom: 0;
 
     input {
       background: none;
@@ -341,8 +419,6 @@ table.infoTable {
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
     --input-height: 1.2rem;
 
     button,
@@ -352,6 +428,9 @@ table.infoTable {
       border-radius: 4px;
       background-color: var(--oddColor);
       padding: 0 2px;
+      max-width: 400px;
+      text-overflow: ellipsis;
+      overflow: hidden;
       width: auto;
       text-align: center;
       font-family: 'Fira Code', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
@@ -699,9 +778,6 @@ select[multiple] option {
   display: flex;
 }
 
-.skill-select {
-  display: inline-block;
-}
 
 .skill-section .flexcolumn {
   flex: 50%;
@@ -1811,215 +1887,13 @@ input[type='search'] {
 }
 
 .avatar-container {
-  position: relative;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  border: 12px solid var(--dsadesign1);
+  min-width: 180px;
 
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  display: inline-block;
-
-  .blurContainer {
-    --blur-amount: 10px;
-    overflow: hidden;
-    border-radius: 50%;
-    position: relative;
-
-    &:before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      filter: blur(var(--blur-amount));
-      transform: scale(1.5);
-      z-index: -1;
-    }
-  }
-
-  .avatar-image {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    border-radius: 50%;
-    display: block;
-    object-fit: cover;
-  }
-
-  .circular-bar {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    border-radius: 50%;
-    border-style: solid;
-    box-sizing: border-box;
-    display: none;
-    border-width: 8px;
-    transform-origin: center;
-
-    mask-image: linear-gradient(180deg, white 40%, black 100%);
-    -webkit-mask-image: linear-gradient(180deg, white 40%, black 100%);
-  }
-
-  .input-stat {
-    position: relative;
-    display: none;
-    padding-left: 3px;
-    padding-right: 3px;
-
-    &:before {
-      content: '';
-      position: absolute;
-      opacity: 0.5;
-      border-radius: 5px;
-      z-index: -1;
-      border: 2px solid var(--dsadesign1);
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-    }
-
-    &.asp:before {
-      background: rgb(14, 144, 207);
-    }
-
-    &.wounds {
-      display: inline-block;
-
-      &:before {
-        background: rgb(207, 14, 14);
-      }
-    }
-
-    &.kap:before {
-      background: rgb(147, 207, 14);
-    }
-
-    &.templep:before {
-      background: rgb(252, 143, 42);
-    }
-
-    span {
-      font-size: x-small;
-    }
-  }
-
-  &.enTemp {
-    .templep {
-      display: inline-block;
-    }
-
-    .temphealth-bar {
-      display: block;
-    }
-
-    .health-bar {
-      clip-path: inset(calc(50% + 50% * (1 - var(--a, 1) / var(--b, 1))) var(--offsetRight) 0 0);
-    }
-  }
-
-  &.enSpell {
-    .asp {
-      display: inline-block;
-    }
-
-    .asp-bar {
-      display: block;
-    }
-
-    .health-bar {
-      --offsetRight: 50%;
-    }
-
-    .temphealth-bar {
-      --offsetRight: 50%;
-    }
-  }
-
-  &.enPrayer {
-    .kap1 {
-      display: inline-block;
-    }
-
-    .kap-bar {
-      display: block;
-    }
-
-    .health-bar {
-      --offsetRight: 50%;
-    }
-
-    .temphealth-bar {
-      --offsetRight: 50%;
-    }
-
-    &.enSpell {
-      .kap1 {
-        display: none;
-      }
-
-      .kap2 {
-        display: inline-block;
-      }
-    }
-  }
-
-  .asp-bar {
-    clip-path: inset(calc(100% - 100% * var(--a, 1) / var(--b, 1)) 0 0 50%);
-    border-color: rgb(14, 144, 207);
-  }
-
-  .kap-bar {
-    clip-path: inset(calc(100% - 100% * var(--a, 1) / var(--b, 1)) 0 0 50%);
-    border-color: rgb(147, 207, 14);
-    display: none;
-  }
-
-  .health-bar {
-    --offsetRight: 0;
-    clip-path: inset(calc(100% - (100% * var(--a, 1) / var(--b, 1))) var(--offsetRight) 0 0);
-    border-color: rgb(207, 14, 14);
-    display: block;
-  }
-
-  .temphealth-bar {
-    --offsetRight: 0;
-    border-color: rgb(252, 143, 42);
-    clip-path: inset(calc(50% - 50% * var(--a, 1) / var(--b, 1)) var(--offsetRight) 50% 0);
-    display: none;
-  }
-
-  .avatar-input {
-    position: absolute;
-    left: -12px;
-    right: -12px;
-    bottom: -24px;
-
-    &.upper {
-      bottom: unset;
-      top: -24px;
-    }
-
-    button {
-      border-radius: 50%;
-      background: var(--copiedBG);
-
-      &:hover {
-        background-color: var(--dsadesign1);
-      }
-    }
-
-    input {
-      background: transparent;
-      padding: 0px;
-      margin: 0;
-      display: inline-block;
-      width: 4ch;
-    }
+  img {
+    transition: all 0.5s ease-in-out; 
+    margin: 0 auto;
+    height: 150px;
+    object-fit: contain;
   }
 }
 
@@ -2083,26 +1957,44 @@ input[type='search'] {
 
 .healthbar {
   height: 24px;
-  border: 2px solid var(--dsadesign1);
+  border: 2px solid var(--border-color);
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
   background: #4e46468a;
+  margin-bottom: 4px;
+}
+
+.regenContainer {
+  button {
+    --button-size: 24px;
+    border: 2px solid var(--border-color);
+    margin-bottom: 4px;
+    border-radius: 0;
+    border-left: 0;
+  }
 }
 
 .barLeft {
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   border-right-width: 0px;
+  margin-left: 20px;
+}
+
+.decolorizeFilter {
+  filter: contrast(0.9) brightness(0.95);
 }
 
 .barRight {
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-left: 0;
+  margin-right: 20px;
 
   &.middle {
     border-radius: 0px;
-    border-right: none;
+    margin-right: 0;
   }
 
   .bar {
@@ -2132,15 +2024,8 @@ input[type='search'] {
   transition: width 0.1s ease-in-out;
 }
 
-.soloBar {
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-right-width: 1px;
-}
-
 .barLabel {
-  height: 22px;
-  padding: 1px;
+  height: 100%;
   text-align: center;
   box-sizing: border-box;
   color: white;
@@ -2149,8 +2034,8 @@ input[type='search'] {
   text-shadow: 0px 0px 3px black;
 
   input {
-    height: 22px;
-    line-height: 22px;
+    height: 100%;
+    line-height: 100%;
     width: 30px;
     display: inline-block;
     border: none;

@@ -29,11 +29,7 @@
                     <a data-action="itemEdit">{{item.name}}</a>
                 </div>
                 <div class="actor-spell-test col fifteen center">
-                    <a data-action="skillSelect">
-                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
-                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
-                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
-                    </a>
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                 </div>
                 <div class="actor-spell-fw col ten center flexrow advanceOntop">
                     {{#if ../prepare.canAdvance}}
@@ -115,11 +111,7 @@
                     <a data-action="itemEdit">{{item.name}}</a>
                 </div>
                 <div class="actor-spell-test col fifteen center">
-                    <a data-action="skillSelect">
-                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
-                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
-                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
-                    </a>
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                 </div>
                 <div class="actor-spell-fw col ten center flexrow advanceOntop">
                     {{#if ../prepare.canAdvance}}

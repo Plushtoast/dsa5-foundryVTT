@@ -23,6 +23,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
+import { SpeedSelector } from './speedselector.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -102,6 +103,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       chWeaponless: this._chWeaponless,
       chFallingDamage: this._chFallingDamage,
       chRollCombat: this._chRollCombat,
+      collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
       showApplication: { handler: this._showApplication, buttons: [0, 2] },
       conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
@@ -124,6 +126,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       disableRegeneration: this._disableRegeneration,
       conditionValue: this._conditionValue,
       advanceWrapper: this._advanceWrapper,
+      addSpeedCategory: this._addSpeedCategory,
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
     },
@@ -860,6 +863,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
+  static _collapseHeader(ev, target) {
+    const header = this.element.querySelector('[data-application-part="header"]');
+    header.classList.toggle('smallHeader');
+  }
+
   static _startCharacterBuilder(ev, target) {
     this.actor.setFlag('core', 'sheetClass', 'dsa5.DSACharBuilder');
   }
@@ -1047,6 +1055,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!item) return;
     ui.context.menuItems = this._getItemContextOptions(item);
     Hooks.call('dsa5.getItemContextOptions', item, ui.context.menuItems);
+  }
+
+  static _addSpeedCategory(ev, target) {
+    new SpeedSelector(this.actor).render(true);
   }
 
   _onWeaponItemContext(target) {

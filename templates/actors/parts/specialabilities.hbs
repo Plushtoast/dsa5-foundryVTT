@@ -37,10 +37,10 @@
 
 {{#if (or (eq document.type "creature") prepare.hasTrait)}}
 <div class="groupbox">
-    <legend class="table-title lineheight">
+    <legend class="table-title lineheight flexrow">
         <b>{{localize "traits"}}</b>
-        <a data-action="itemCreate" class="very-small" data-tooltip="SHEET.addItem" item-section="trait"
-            data-type="trait"><i class="fas fa-plus"></i></a>
+        <button type="button" data-action="itemCreate" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="SHEET.addItem" item-section="trait"
+            data-type="trait"></button>
     </legend>
     <div class="row-section wrap cards">
         {{#each prepare.traits as |trait i|}}

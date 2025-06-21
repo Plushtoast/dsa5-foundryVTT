@@ -123,6 +123,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     });
     html.on('click', '.rollTarget', (ev) => this.removeTarget(ev));
     html.on('click', '.addTarget', (ev) => this.addTarget(ev));
+    html.find('.window-content form').addClass('scrollable');
   }
 
   async addTarget(ev) {

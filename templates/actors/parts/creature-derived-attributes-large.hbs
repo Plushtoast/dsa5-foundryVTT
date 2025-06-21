@@ -110,7 +110,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{#if document.system.config.defense}} {{localize "defense"}} {{else}} {{localize "dodge"}}{{/if}} <a data-action="defenseToggle" class="defenseToggle"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}" data-tooltip="defenseToggle"></i></a>
+            <span>{{localize (ifThen document.system.config.defense "defense" "dodge")}}</span> <button type="button" data-action="defenseToggle" class="defenseToggle icon dsadesignbutton noBorder"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}"></i></button>
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.dodge.value}}
@@ -167,7 +167,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "speed"}}
+            <span>{{localize "speed"}}</span> <button type="button" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="TT.addSpeedCategory" data-action="addSpeedCategory"></button>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.speed.fields.initial value=document.system.status.speed.initial}}
@@ -181,6 +181,40 @@
             {{document.system.status.speed.max}}
         </div>
     </div>
+    {{#if document.system.status.speed.air}}
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight flexrow">
+            <span>&nbsp;&nbsp;&nbsp;{{localize "SPEEDSELECTOR.air"}}</span>
+        </div>
+        <div class="col eight lineheight center">
+            {{formInput systemFields.status.fields.speed.fields.air value=document.system.status.speed.air}}
+        </div>
+        <div class="col eight center">
+        </div>
+        <div class="col eight">
+        </div>
+        <div class="col eight lineheight center">
+            {{document.system.status.speed.air}}
+        </div>
+    </div>
+    {{/if}}
+    {{#if document.system.status.speed.water}}
+    <div class="derivedAttrs row-section">
+        <div class="col two lineheight flexrow">
+            <span>&nbsp;&nbsp;&nbsp;{{localize "SPEEDSELECTOR.water"}}</span>
+        </div>
+        <div class="col eight lineheight center">
+            {{formInput systemFields.status.fields.speed.fields.water value=document.system.status.speed.water}}
+        </div>
+        <div class="col eight center">
+        </div>
+        <div class="col eight">
+        </div>
+        <div class="col eight lineheight center">
+            {{document.system.status.speed.water}}
+        </div>
+    </div>
+    {{/if}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "initiative"}}

@@ -26,14 +26,7 @@
         <a class="item-edit talentName">{{item.name}}</a>
     </div>
     <div class="col third center">
-        <a class="skill-select">
-        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev."
-            item.system.characteristic1.value)}}</span>
-        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev."
-            item.system.characteristic2.value)}}</span>
-        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev."
-            item.system.characteristic3.value)}}</span>
-        </a>
+       {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
     </div>
     <div class="col ten center">
         {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}

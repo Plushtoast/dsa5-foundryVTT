@@ -1,0 +1,11 @@
+<div>
+    <form class="flexcol">
+        {{formGroup fields.initial value=values.initial localize=true}}
+        {{formGroup fields.air value=values.air localize=true}}
+        {{formGroup fields.water value=values.water localize=true}}
+    </form>
+
+    <div class="flexrow">
+        <button type="button" data-action="saveThis"><i class="fas fa-check"></i> {{localize 'ok'}}</button>
+    </div>
+</div>

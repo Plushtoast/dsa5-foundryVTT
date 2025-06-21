@@ -69,6 +69,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/creature-derived-attributes-large.hbs',
     'systems/dsa5/templates/actors/parts/status_effects.hbs',
     'systems/dsa5/templates/actors/parts/purse.hbs',
+    'systems/dsa5/templates/actors/parts/skillselect.hbs',
     'systems/dsa5/templates/actors/parts/combat_weapon.hbs',
     'systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs',
     'systems/dsa5/templates/actors/parts/horse.hbs',

@@ -1,71 +1,65 @@
 <div class="row-section" style="margin-top:10px;">
-    <div class="col ten center lineheight col-wounds" data-tooltip="wounds">
-        {{localize 'CHARAbbrev.LeP'}}
-    </div>
-    <div class="col {{#if prepare.magic.hasPrayers}}{{#if prepare.magic.hasSpells}}third{{else}}fourty{{/if}}{{else}}fourty{{/if}}">
-        <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}}{{#if prepare.magic.hasPrayers}}{{else if prepare.magic.hasSpells}}{{else}} soloBar{{/if}}" style="--swarm: {{document.system.swarm.count}};" data-tooltip="wounds">
+   <div class="col flexrow regenContainer {{ifThen (and prepare.magic.hasPrayers prepare.magic.hasSpells) 'third' 'fourty'}}">
+        <div class="healthbar bar-wounds barLeft {{ifThen prepare.isSwarm  'swarmcount' ''}} {{ifThen (or prepare.magic.hasPrayers prepare.magic.hasSpells) '' 'soloBar'}}" style="--swarm: {{document.system.swarm.count}};" data-tooltip="wounds">
 
-            <div class="bar LeP" style="--a: {{document.system.status.wounds.value}}; --b: {{document.system.status.wounds.max}};">
+            <div class="bar decolorizeFilter LeP" style="--a: {{document.system.status.wounds.value}}; --b: {{document.system.status.wounds.max}};">
             </div>
 
             <div class="barLabel">
-                {{formInput systemFields.status.fields.wounds.fields.value value=document.system.status.wounds.value tooltip="Current"}}
+                {{formInput systemFields.status.fields.wounds.fields.value value=document.system.status.wounds.value tooltip="Current"}} / 
                 <span data-tooltip="max">{{document.system.status.wounds.max}}</span>
             </div>
         </div>
+        <button type='button' data-char='regenerate' data-action='chRegenerate' class='fas fa-moon icon item' data-mod='regenerate' data-tooltip='regenerate'></button>
     </div>
-    {{#if prepare.magic.hasPrayers}} {{#if prepare.magic.hasSpells}}
-    <div class="col third">
-        <div class="healthbar bar-karmaenergy barRight middle" data-tooltip="karmaenergy">
-            <div class="barLabel">
-                {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}}
-                <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
-            </div>
-            <div class="bar KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
+    {{#if prepare.magic.hasPrayers}} 
+        {{#if prepare.magic.hasSpells}}
+        <div class="col third">
+            <div class="healthbar bar-karmaenergy barRight middle" data-tooltip="karmaenergy">
+                <div class="barLabel">
+                    {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}} / 
+                    <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
+                </div>
+                <div class="bar decolorizeFilter KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
 
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col third">
+        <div class="col third">
+            <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
+                <div class="barLabel">
+                    {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
+                    <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
+                </div>
+                <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
+
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div class="col fourty">
+            <div class="healthbar bar-karmaenergy barRight" data-tooltip="karmaenergy">
+                <div class="barLabel">
+                    {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}} / 
+                    <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
+                </div>
+                <div class="bar decolorizeFilter KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
+
+                </div>
+            </div>
+        </div>
+        {{/if}} 
+    {{else if prepare.magic.hasSpells}}
+    <div class="col fourty">
         <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
             <div class="barLabel">
-                {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}}
+                {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
                 <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
             </div>
-            <div class="bar AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
+            <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
 
             </div>
         </div>
-    </div>
-    {{else}}
-    <div class="col fourty">
-        <div class="healthbar bar-karmaenergy barRight" data-tooltip="karmaenergy">
-            <div class="barLabel">
-                {{formInput systemFields.status.fields.karmaenergy.fields.value value=document.system.status.karmaenergy.value tooltip="Current"}}
-                <span data-tooltip="max">{{document.system.status.karmaenergy.max}}</span>
-            </div>
-            <div class="bar KaP" style="--a: {{document.system.status.karmaenergy.value}}; --b: {{document.system.status.karmaenergy.max}}">
-
-            </div>
-        </div>
-    </div>
-    <div class="col ten center lineheight col-karmaenergy" data-tooltip="karmaenergy">
-        {{localize 'CHARAbbrev.KaP'}}
-    </div>
-    {{/if}} {{else if prepare.magic.hasSpells}}
-    <div class="col fourty">
-        <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
-            <div class="barLabel">
-                {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}}
-                <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
-            </div>
-            <div class="bar AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
-
-            </div>
-        </div>
-    </div>
-    <div class="col ten center lineheight col-astralenergy" data-tooltip="astralenergy">
-        {{localize 'CHARAbbrev.AsP'}}
     </div>
     {{else}}
     <div class="col-bar-spacer col two">
@@ -76,19 +70,16 @@
 </div>
 {{#if document.system.status.temporaryLeP.max}}
 <div class="row-section">
-    <div class="col ten center lineheight col-wounds" data-tooltip="BRAWLING.temporary">
-        {{localize 'BRAWLING.pp'}}
-    </div>
     <div class="col fourty">
         <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}} soloBar" style="--swarm: {{document.system.swarm.count}};" data-tooltip="BRAWLING.temporary">
 
-            <div class="bar tempLeP" style="--a: {{document.system.status.temporaryLeP.value}}; --b: {{document.system.status.temporaryLeP.max}};">
+            <div class="bar decolorizeFilter tempLeP" style="--a: {{document.system.status.temporaryLeP.value}}; --b: {{document.system.status.temporaryLeP.max}};">
             </div>
 
             <div class="barLabel">
-                {{formInput systemFields.status.fields.temporaryLeP.fields.value value=document.system.status.temporaryLeP.value tooltip="Current"}}
+                {{formInput systemFields.status.fields.temporaryLeP.fields.value value=document.system.status.temporaryLeP.value tooltip="Current"}} / 
                 /
-                {{formInput systemFields.status.fields.temporaryLeP.fields.max value=document.system.status.temporaryLeP.max tooltip="Current"}}
+                {{formInput systemFields.status.fields.temporaryLeP.fields.max value=document.system.status.temporaryLeP.max tooltip="max"}}
             </div>
         </div>
     </div>

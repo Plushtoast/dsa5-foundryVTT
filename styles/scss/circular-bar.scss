@@ -1,0 +1,212 @@
+.avatar-container {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 12px solid var(--dsadesign1);
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+
+  .blurContainer {
+    --blur-amount: 10px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: blur(var(--blur-amount));
+      transform: scale(1.5);
+      z-index: -1;
+    }
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .circular-bar {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border-radius: 50%;
+    border-style: solid;
+    box-sizing: border-box;
+    display: none;
+    border-width: 8px;
+    transform-origin: center;
+
+    mask-image: linear-gradient(180deg, white 40%, black 100%);
+    -webkit-mask-image: linear-gradient(180deg, white 40%, black 100%);
+  }
+
+  .input-stat {
+    position: relative;
+    display: none;
+    padding-left: 3px;
+    padding-right: 3px;
+
+    &:before {
+      content: '';
+      position: absolute;
+      opacity: 0.5;
+      border-radius: 5px;
+      z-index: -1;
+      border: 2px solid var(--dsadesign1);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    &.asp:before {
+      background: rgb(14, 144, 207);
+    }
+
+    &.wounds {
+      display: inline-block;
+
+      &:before {
+        background: rgb(207, 14, 14);
+      }
+    }
+
+    &.kap:before {
+      background: rgb(147, 207, 14);
+    }
+
+    &.templep:before {
+      background: rgb(252, 143, 42);
+    }
+
+    span {
+      font-size: x-small;
+    }
+  }
+
+  &.enTemp {
+    .templep {
+      display: inline-block;
+    }
+
+    .temphealth-bar {
+      display: block;
+    }
+
+    .health-bar {
+      clip-path: inset(calc(50% + 50% * (1 - var(--a, 1) / var(--b, 1))) var(--offsetRight) 0 0);
+    }
+  }
+
+  &.enSpell {
+    .asp {
+      display: inline-block;
+    }
+
+    .asp-bar {
+      display: block;
+    }
+
+    .health-bar {
+      --offsetRight: 50%;
+    }
+
+    .temphealth-bar {
+      --offsetRight: 50%;
+    }
+  }
+
+  &.enPrayer {
+    .kap1 {
+      display: inline-block;
+    }
+
+    .kap-bar {
+      display: block;
+    }
+
+    .health-bar {
+      --offsetRight: 50%;
+    }
+
+    .temphealth-bar {
+      --offsetRight: 50%;
+    }
+
+    &.enSpell {
+      .kap1 {
+        display: none;
+      }
+
+      .kap2 {
+        display: inline-block;
+      }
+    }
+  }
+
+  .asp-bar {
+    clip-path: inset(calc(100% - 100% * var(--a, 1) / var(--b, 1)) 0 0 50%);
+    border-color: rgb(14, 144, 207);
+  }
+
+  .kap-bar {
+    clip-path: inset(calc(100% - 100% * var(--a, 1) / var(--b, 1)) 0 0 50%);
+    border-color: rgb(147, 207, 14);
+    display: none;
+  }
+
+  .health-bar {
+    --offsetRight: 0;
+    clip-path: inset(calc(100% - (100% * var(--a, 1) / var(--b, 1))) var(--offsetRight) 0 0);
+    border-color: rgb(207, 14, 14);
+    display: block;
+  }
+
+  .temphealth-bar {
+    --offsetRight: 0;
+    border-color: rgb(252, 143, 42);
+    clip-path: inset(calc(50% - 50% * var(--a, 1) / var(--b, 1)) var(--offsetRight) 50% 0);
+    display: none;
+  }
+
+  .avatar-input {
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    bottom: -24px;
+
+    &.upper {
+      bottom: unset;
+      top: -24px;
+    }
+
+    button {
+      border-radius: 50%;
+      background: var(--copiedBG);
+
+      &:hover {
+        background-color: var(--dsadesign1);
+      }
+    }
+
+    input {
+      background: transparent;
+      padding: 0px;
+      margin: 0;
+      display: inline-block;
+      width: 4ch;
+    }
+  }
+}

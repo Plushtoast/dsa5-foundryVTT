@@ -65,7 +65,9 @@ export default class StatusTemplate extends DSADataModel {
           current: new NumberField({ initial: 3 }),
         }),
         speed: new SchemaField({
-          initial: new NumberField({ initial: 0 }),
+          air: new NumberField({ initial: 0, label: 'SPEEDSELECTOR.air' }),
+          water: new NumberField({ initial: 0, label: 'SPEEDSELECTOR.water' }),
+          initial: new NumberField({ initial: 0, label: 'SPEEDSELECTOR.land' }),
           modifier: new NumberField({ initial: 0 }),
           value: new NumberField({ initial: 0 }),
         }),

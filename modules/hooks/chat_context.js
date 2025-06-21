@@ -40,7 +40,7 @@ export function chatContext() {
     let cardData = game.messages.get(messageId).flags.opposeData;
     const isOwner = cardData ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner : false;
     return (
-      ((game.user.isGM || isOwner) && li.querySelector('.opposed-card') !== null) || 
+      ((game.user.isGM || isOwner) && li.querySelector('.opposed-card') !== null) ||
       li.querySelector('.dice-roll') !== null
     ) && (getProperty(cardData, prop) || 0) > 0;
   };
@@ -171,6 +171,7 @@ export function chatContext() {
     }
     return false;
   };
+
   const showHideData = function (li) {
     if (game.user.isGM) {
       let message = game.messages.get(li.dataset.messageId);

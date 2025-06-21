@@ -140,13 +140,13 @@ export default class PlayerMenu extends DefaultAppv2 {
     this.subApps.push(app);
   }
 
-  async rollConjuration(ev) {
+  static async rollConjuration(ev, target) {
     if (!this.conjuration)
       return ui.notifications.warn('CONJURATION.dragConjuration', {
         localize: true,
       });
 
-    const itemId = $(ev.currentTarget).closest('.item').attr('data-item-id');
+    const itemId = $(target).closest('.item').attr('data-item-id');
     const skill = this.actor.items.get(itemId);
     const moreModifiers = [
       {
@@ -192,7 +192,6 @@ export default class PlayerMenu extends DefaultAppv2 {
 
       if (elem.attr('data-refresh')) this.render();
     });
-    html.find('.skill-select').on('click', (ev) => this.rollConjuration(ev));
     html.find('.initLibrary').on('click', async (ev) => {
       $(ev.currentTarget).html('<i class="fas fa-spin fa-spinner"></i>');
       await game.dsa5.itemLibrary.buildEquipmentIndex();
@@ -360,6 +359,9 @@ export default class PlayerMenu extends DefaultAppv2 {
       width: 570,
       height: 740,
     },
+    actions: {
+      skillSelect: this.rollConjuration
+    }
   };
 
   static TABS = {

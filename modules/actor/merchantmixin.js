@@ -351,7 +351,7 @@ export const MerchantSheetMixin = (superclass) =>
         amount = Math.min(Number(item.system.quantity.value), amount);
         let totalPrice = Number(price) * amount
         price = `${totalPrice}`;
-        
+
         const noNeedToPay = this.noNeedToPay(target, source, price);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
         if (hasPaid) {
@@ -375,8 +375,8 @@ export const MerchantSheetMixin = (superclass) =>
           }
         }
       }
-      if(source.sheet.rendered) source.sheet.render(true);
-      if(target.sheet.rendered) target.sheet.render(true);
+      if (source.sheet.rendered) source.sheet.render(true);
+      if (target.sheet.rendered) target.sheet.render(true);
       game.socket.emit('system.dsa5', {
         type: 'refreshSheets',
         payload: {
@@ -757,21 +757,25 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
   }
 
   static filterSeen(items, actor) {
-    const seen = {};
+    const seen = new Set();
     const actorItems = (actor?.items || []).reduce((acc, x) => {
       acc.add(`${x.type}_${x.name}`);
       return acc;
     }, new Set());
 
+    const regex = new RegExp(`${game.i18n.localize('magical')}|${game.i18n.localize('blessed')}`, 'i');
     const filtered = items.filter((x) => {
       const domain = getProperty(x.system, 'effect.attributes');
       const price = Number(getProperty(x.system, 'price.value')) || 0;
-      if (!domain || price > 10000) return false;
+      if (regex.test(domain) || price > 10000) return false;
 
       const seeName = `${x.type}_${x.name}`;
-      return (seen.hasOwnProperty(seeName) ? false : (seen[seeName] = true)) && !actorItems.has(seeName);
-    });
 
+      if (seen.has(seeName) || actorItems.has(seeName)) return false;
+
+      seen.add(seeName);
+      return true;
+    });
     return filtered;
   }
 

@@ -1248,6 +1248,8 @@
         "duplicatus": "Doppelgänger getroffen"
     },
     "TT": {
+        "collapseHeader": "Kopfzeile einklappen",
+        "addSpeedCategory": "Geschwindigkeitskategorie hinzufügen",
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",
         "attributeLocked": "Dieses Attribut ist durch Active Effects modifiziert und kann nicht bearbeitet werden.",
@@ -1273,6 +1275,12 @@
     "DSA5_TOKENRING": {
         "blank": "DSA5 Tokenring (transparenter Hintergrund)",
         "normal": "DSA5 Tokenring"
+    },
+    "SPEEDSELECTOR": {
+        "title": "Geschwindigkeitseinstellung",
+        "air": "Zu Luft",
+        "water": "Zu Wasser",
+        "land": "Zu Land"
     },
     "HELP": {
         "showHelp": "Hilfe anzeigen",
@@ -1676,7 +1684,7 @@
         "Elf": "Elf"
     },
     "DSAError": {
-        "invalidSkinCombination": "Die aktuelle DSA Version unterstützt nur das <b>DSA5 Immersive</b> Skin im light-mode. Verwende jede andere Kombination auf eigene Gefahr (und melde Probleme auf Github). Möchtest du jetzt das Standard-Skin setzen?",
+        "invalidSkinCombination": "Die aktuelle DSA Version unterstützt nur das <b>DSA5 Immersive</b> Skin im light-mode.<br/>Verwende jede andere Kombination auf eigene Gefahr (und melde Probleme auf Github).<br/>Möchtest du jetzt das Standard-Skin setzen?",
         "customEffect": "Für manuelle Effekte darf nur ein Token markiert sein",
         "noTokenSelected": "Kein Token markiert",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",

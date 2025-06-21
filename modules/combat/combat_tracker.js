@@ -158,7 +158,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         roundInitiative: roundInitiative + 0.00001,
       };
     }
-    
+
     await combatant.update(update);
   }
 
@@ -233,7 +233,9 @@ Hooks.on('preDeleteCombat', (combat, options, user) => {
 });
 
 Hooks.on('updateCombatant', (combatant, change, user) => {
-  if (!game.user.isGM) return;
+  if (!DSA5_Utility.isActiveGM()) return;
+  
+  RepeatingEffectsHelper.updateCombatHook(combat, change)
 
   if (change.initiative) {
     const baseRoll = combatant.getFlag('dsa5', 'baseRoll');
@@ -248,7 +250,7 @@ Hooks.on('updateCombatant', (combatant, change, user) => {
 });
 
 class RepeatingEffectsHelper {
-  static async updateCombatHook(combat, updateData, x, y) {
+  static async updateCombatHook(combat, updateData) {
     if (!updateData.round && !updateData.turn) return;
 
     if (combat.round != 0 && combat.turns && combat.active) {
@@ -336,5 +338,3 @@ class RepeatingEffectsHelper {
     }
   }
 }
-
-Hooks.on('updateCombat', RepeatingEffectsHelper.updateCombatHook);

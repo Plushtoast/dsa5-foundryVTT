@@ -94,16 +94,16 @@ export default class Actordsa5 extends Actor {
 
   woundPain(data, attr = 'wounds') {
     const attrData = data.status[attr];
-    
+
     if (!attrData.max) return 0;
-    
+
     const hasDefaultPain = this.type != 'creature' || attrData.max >= 20;
-    
+
     if (hasDefaultPain) {
       if (attrData.value <= 5) return 4;
       return Math.floor((1 - attrData.value / attrData.max) * 4);
     }
-    
+
     return Math.clamp(Math.floor(5 - (5 * attrData.value) / attrData.max), 0, 4);
   }
 
@@ -384,56 +384,56 @@ export default class Actordsa5 extends Actor {
 
   static armorOpposedTransformation(actor, wornArmor, options) {
     if (!options.origin) return wornArmor;
-    
+
     const combatskill = getProperty(options.origin, 'system.combatskill.value');
     const armorZones = ['head', 'rightleg', 'leftleg', 'rightarm', 'leftarm', 'value'];
-    
+
     return wornArmor.map(armor => {
       const armorCopy = mergeObject(duplicate(options), {
         armor: armor.system.itemWithOverrides(),
       });
-      
+
       if (!combatskill) return DSAActiveEffectConfig.applyRollTransformation(
         actor, armorCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION
       ).options.armor;
-      
+
       const combatSkillWithSpace = combatskill + ' ';
-      
+
       for (const effect of armorCopy.armor.effects) {
         if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
-        
+
         for (const change of effect.changes) {
           if (change.key !== 'self.armorVulnerability') continue;
-          
+
           const adaptions = change.value.split(/[,;]/);
           let appliedAdaption = null;
-          
+
           if (options.defenderTest?.attackFromBehind) {
             appliedAdaption = adaptions.find(x => x.trim().startsWith('attackFromBehind '));
           }
-          
+
           if (!appliedAdaption) {
             appliedAdaption = adaptions.find(x => x.trim().startsWith(combatSkillWithSpace));
           }
-          
+
           if (appliedAdaption) {
             const modifierValue = Number(appliedAdaption.match(/[-+]?\d+/)?.[0] || 0);
-            
+
             for (const zone of armorZones) {
               if (armorCopy.armor.system.protection[zone]) {
-                armorCopy.armor.system.protection[zone] = Math.max(0, 
+                armorCopy.armor.system.protection[zone] = Math.max(0,
                   armorCopy.armor.system.protection[zone] + modifierValue);
               }
             }
           } else {
             const randomArmorAdaption = adaptions.find(x => x.trim().startsWith('randomArmor '));
-            
+
             if (randomArmorAdaption) {
               const randomArmorValues = randomArmorAdaption.split(' ')[1].split('|');
               const selectedRandomValue = randomArmorValues[
                 Math.floor(Math.random() * randomArmorValues.length)
               ];
-              
+
               for (const zone of armorZones) {
                 if (armorCopy.armor.system.protection[zone]) {
                   armorCopy.armor.system.protection[zone] = selectedRandomValue;
@@ -443,7 +443,7 @@ export default class Actordsa5 extends Actor {
           }
         }
       }
-      
+
       return DSAActiveEffectConfig.applyRollTransformation(
         actor, armorCopy, DSATriggers.EVENTS.ARMOR_TRANSFORMATION
       ).options.armor;
@@ -453,7 +453,7 @@ export default class Actordsa5 extends Actor {
   static armorValue(actor, options = {}) {
     const wornArmorItems = [];
     let animalArmorTraitsValue = 0;
-    
+
     for (const item of actor.items) {
       if (item.type === 'armor' && item.system.worn.value) {
         wornArmorItems.push(item);
@@ -461,10 +461,10 @@ export default class Actordsa5 extends Actor {
         animalArmorTraitsValue += Number(item.system.at.value || 0);
       }
     }
-    
-    const transformedArmorItems = this.armorOpposedTransformation(actor, wornArmorItems, options);    
+
+    const transformedArmorItems = this.armorOpposedTransformation(actor, wornArmorItems, options);
     const armorProtection = transformedArmorItems.reduce(
-      (sum, armorItem) => sum + EquipmentDamage.armorWearModifier(armorItem, armorItem.system.protection.value), 
+      (sum, armorItem) => sum + EquipmentDamage.armorWearModifier(armorItem, armorItem.system.protection.value),
       0
     );
 
@@ -502,9 +502,9 @@ export default class Actordsa5 extends Actor {
 
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
     const current = foundry.utils.getProperty(this.system, attribute);
-    
+
     const updates = {};
-    
+
     if (isBar) {
       if (isDelta) {
         const min = current.min ?? 0;
@@ -515,7 +515,7 @@ export default class Actordsa5 extends Actor {
     } else {
       updates[`system.${attribute}`] = isDelta ? Number(current) + value : value;
     }
-    
+
     const allowed = Hooks.call('modifyTokenAttribute', { attribute, value, isDelta, isBar }, updates);
     return allowed !== false ? this.update(updates) : this;
   }
@@ -834,11 +834,11 @@ export default class Actordsa5 extends Actor {
       },
       encumbrance,
       carrycapacity,
-      encumbranceTooltip: game.i18n.format('encumbranceTooltip', { 
-        totalWeight, 
-        carrycapacity, 
-        encumbrance, 
-        moneyWeight 
+      encumbranceTooltip: game.i18n.format('encumbranceTooltip', {
+        totalWeight,
+        carrycapacity,
+        encumbrance,
+        moneyWeight
       }),
       isSwarm: this.isSwarm(),
       canSwarm: !this.prototypeToken.actorLink,
@@ -991,7 +991,7 @@ export default class Actordsa5 extends Actor {
 
     const validWeaponTypes = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
     const hasWeaponThrow = validWeaponTypes.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
-    
+
     const name = `${item.name} (${throwingWeapons})`;
     const rangeWeapon = new Itemdsa5({
       name,
@@ -1006,10 +1006,10 @@ export default class Actordsa5 extends Actor {
     });
 
     const options = {
-      situationalModifiers: [{ 
-        name, 
-        value: hasWeaponThrow ? -4 : -8, 
-        selected: true 
+      situationalModifiers: [{
+        name,
+        value: hasWeaponThrow ? -4 : -8,
+        selected: true
       }]
     };
 
@@ -1017,7 +1017,7 @@ export default class Actordsa5 extends Actor {
       if (!hasWeaponThrow) {
         setupData.testData.source.dmgMultipliers ||= [];
         DSA5_Utility.pushOnlyIfUnique(
-          setupData.testData.source.dmgMultipliers, 
+          setupData.testData.source.dmgMultipliers,
           { name: 'LocalizedIDs.Throwing Weapons', val: '0.5' }
         );
       }
@@ -1483,9 +1483,7 @@ export default class Actordsa5 extends Actor {
         schipText = 'GroupPointsRemaining';
       }
       let infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
-                ${game.i18n.format('CHATFATE.' + type, {
-        character: '<b>' + this.name + '</b>',
-      })}<br>
+                ${game.i18n.format('CHATFATE.' + type, { character: '<b>' + this.name + '</b>'})}<br>
                 <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
 
       let newTestData = data.preData;
@@ -1787,7 +1785,7 @@ export default class Actordsa5 extends Actor {
 
   static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {
     const skill = combatskills.find(i => i.name === item.system.combatskill.value);
-    
+
     if (!skill) {
       if (isBaseWeapon) {
         ui.notifications.error(
@@ -1799,42 +1797,42 @@ export default class Actordsa5 extends Actor {
       }
       return item;
     }
-    
+
     item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
-    
+
     const guideValueArray = item.system.guidevalue.value.split('/').map(x => {
       if (!actor.system.characteristics[x]) return 0;
-      
+
       return Number(actor.system.characteristics[x].initial) +
-             Number(actor.system.characteristics[x].modifier) +
-             Number(actor.system.characteristics[x].advances) +
-             Number(actor.system.characteristics[x].gearmodifier);
+        Number(actor.system.characteristics[x].modifier) +
+        Number(actor.system.characteristics[x].advances) +
+        Number(actor.system.characteristics[x].gearmodifier);
     });
-    
+
     const guideValue = Math.max(...guideValueArray);
-    const baseParry = Math.ceil(skill.system.talentValue.value / 2) + 
-                      Math.max(0, Math.floor((guideValue - 8) / 3)) + 
-                      Number(game.settings.get('dsa5', 'higherDefense'));
-    
+    const baseParry = Math.ceil(skill.system.talentValue.value / 2) +
+      Math.max(0, Math.floor((guideValue - 8) / 3)) +
+      Number(game.settings.get('dsa5', 'higherDefense'));
+
     const isShield = RuleChaos.isShield(item);
     item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
     item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
-    
+
     if (!item.yieldedTwoHand) {
-      const actualWornWeapons = wornWeapons || 
-        actor.items.filter(x => x.type === 'meleeweapon' && 
-                               x.system.worn.value && 
-                               x._id !== item._id && 
-                               !RuleChaos.isYieldedTwohanded(x));
-      
+      const actualWornWeapons = wornWeapons ||
+        actor.items.filter(x => x.type === 'meleeweapon' &&
+          x.system.worn.value &&
+          x._id !== item._id &&
+          !RuleChaos.isYieldedTwohanded(x));
+
       if (actualWornWeapons.length > 0) {
         item.parry += Math.max(...actualWornWeapons.map(x => x.system.pamod.offhandMod));
         item.attack += Math.max(...actualWornWeapons.map(x => x.system.atmod.offhandMod));
       }
     }
-    
+
     let gripDamageMod = 0;
-    
+
     if (item.system.worn.wrongGrip) {
       if (item.yieldedTwoHand) {
         item.parry -= 1;
@@ -1842,11 +1840,11 @@ export default class Actordsa5 extends Actor {
       } else {
         item.system.reach.value = 'medium';
         const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
-        
+
         if (['Two-Handed Impact Weapons', 'Two-Handed Swords'].includes(localizedCT)) {
           item.parry -= 3;
           const bastardRegex = new RegExp(game.i18n.localize('wrongGrip.wrongGripBastardRegex'));
-          
+
           if (bastardRegex.test(item.name)) {
             gripDamageMod = -2;
           } else {
@@ -1861,42 +1859,42 @@ export default class Actordsa5 extends Actor {
         }
       }
     }
-    
+
     item = ItemDataModel._parseDmg(item, actor.system);
-    
+
     if (item.system.guidevalue.value !== '-') {
       const currentGuideValue = Math.max(
         ...item.system.guidevalue.value.split('/').map(x => Number(actor.system.characteristics[x].value))
       );
-      
+
       let damageThreshold = item.system.damageThreshold.value;
       damageThreshold = actor.system.skillModifiers.combat.damageThreshold.reduce((acc, mod) => {
         return mod.target === item.system.combatskill.value ? acc + Number(mod.value) : acc;
       }, damageThreshold);
-      
+
       const extra = Math.max(currentGuideValue - Number(damageThreshold), 0) + gripDamageMod;
-      
+
       if (extra !== 0) {
         item.extraDamage = extra;
         item.damageAdd = Roll.safeEval(item.damageAdd + ' + ' + Number(extra));
         item.damageAdd = (item.damageAdd > 0 ? '+' : '') + item.damageAdd;
       }
     }
-    
+
     EquipmentDamage.weaponWearModifier(item);
-    
+
     if (isBaseWeapon) {
       item.subweapons = {};
       const alternateAttacks = getProperty(item, 'flags.dsa5.alternateAttacks') || {};
-      
+
       for (const key of Object.keys(alternateAttacks)) {
         const duplicatedItem = this.buildSubweapon(item, key);
         item.subweapons[key] = this._prepareMeleeWeapon(duplicatedItem, combatskills, actor, wornWeapons, false);
       }
-      
+
       item.system.damageToolTip = EquipmentDamage.damageTooltip(item);
     }
-    
+
     return item;
   }
 
@@ -2224,17 +2222,17 @@ export default class Actordsa5 extends Actor {
 
     if (typeof effect === 'string' && !foundry.utils.isEmpty(options)) {
       const statusEffect = CONFIG.statusEffects.find((e) => e.id === effect);
-      
+
       if (!statusEffect) {
         console.warn(`Status effect with ID "${effect}" not found.`);
         return null;
       }
-      
+
       effect = duplicate(statusEffect);
-      
+
       effect.name = game.i18n.localize(effect.name);
       effect.flags.dsa5.description = game.i18n.localize(effect.name);
-      
+
       if (effect.changes) {
         effect.changes = effect.changes.map((change) => {
           if (/^system\.condition\./.test(change.key)) {
@@ -2243,9 +2241,9 @@ export default class Actordsa5 extends Actor {
           return change;
         });
       }
-      
+
       effect.statuses = [effect.id];
-      
+
       delete effect.description;
       delete effect.flags.dsa5.value;
       delete effect.flags.dsa5.max;
