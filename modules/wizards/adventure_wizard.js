@@ -233,7 +233,6 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     html.on('click', '.heading-link', (ev) => this._onClickPageLink(ev));
 
-
     html.on('click', '.show-item', async (ev) => {
       //TODO maybe try to open imported character
       let itemId = ev.currentTarget.dataset.uuid;

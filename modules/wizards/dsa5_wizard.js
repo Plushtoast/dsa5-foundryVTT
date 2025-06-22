@@ -26,7 +26,14 @@ export default class WizardDSA5 extends DefaultAppv2 {
       width: 770,
       height: 740,
     },
+    actions: {
+      searchableAbility: this._onSearchableAbility,
+    }
   };
+
+  static _onSearchableAbility(ev, target) {
+    clickableAbility(target);
+  }
 
   async findCompendiumItem(name, types) {
     for (let type of types) {
@@ -305,8 +312,6 @@ export default class WizardDSA5 extends DefaultAppv2 {
       item.sheet.render(true);
     });
     showItem.attr('draggable', true).on('dragstart', (event) => itemDragStart(event));
-
-    html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
 
     html.find('.exclusive').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.tab');

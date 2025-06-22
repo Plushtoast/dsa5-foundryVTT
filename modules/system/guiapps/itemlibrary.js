@@ -193,7 +193,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         }
       ],
     },
-    actions: {},
+    actions: {
+      searchableAbility: this._onSearchableAbility
+    },
     classes: ["dsa5", "sheet", "itemlibrary"]
   };
 
@@ -234,6 +236,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       this.prepareDataModels()
       this.prepareIndexes()
     })
+  }
+
+  static _onSearchableAbility(ev, target) {
+    clickableAbility(target);
   }
 
   async loadSystemSpecificConfig() {
@@ -937,8 +943,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       this.filterItems(category);
     });
 
-    html.on('click', '.searchableAbility a', (ev) => clickableAbility(ev));
-
     this.buildItemIndex()
   }
 
@@ -1048,7 +1052,9 @@ class LibraryModulsFilter extends DefaultAppv2 {
       minimizable: true,
       resizable: true,
     },
-    actions: {},
+    actions: {
+      
+    },
 
     classes: ["dsa5"]
   };

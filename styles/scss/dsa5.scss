@@ -2726,7 +2726,7 @@ h2 {
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100% * var(--b) / var(--a));
+    height: min(100%, calc(100% * var(--b) / var(--a)));
     background-color: rgb(32, 202, 2);
   }
 }

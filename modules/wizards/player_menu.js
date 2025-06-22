@@ -204,10 +204,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     });
     html.find('.selectableRow').on('click', (ev) => this.selectImprovement(ev));
     html.find('.finalizeConjuration').on('click', () => this.finalizeConjuration());
-    html.find('.ruleLink').on('click', (ev) => this.openRules(ev));
-    html.find('.openChar').on('click', () => {
-      this.actor?.sheet.render(true);
-    });
+    
     html.find('.showCC').on('click', () => {
       const cc = new game.dsa5.apps.DSACharacterCalculator();
       cc.actor = this.actor;
@@ -253,8 +250,8 @@ export default class PlayerMenu extends DefaultAppv2 {
     return context;
   }
 
-  async openRules(ev) {
-    const subapp = ev.currentTarget.dataset.subapp;
+  static async openRules(ev, target) {
+    const subapp = target.dataset.subapp;
     const rule = (subapp ? this.subApps.find((x) => x.constructor.name == subapp).constructor.rulePath : this.conjurationData.rules[this.conjurationData.conjurationType])[
       game.i18n.lang
     ];
@@ -360,9 +357,15 @@ export default class PlayerMenu extends DefaultAppv2 {
       height: 740,
     },
     actions: {
-      skillSelect: this.rollConjuration
+      skillSelect: this.rollConjuration,
+      ruleLink: this.openRules,
+      openChar: this._onOpenChar
     }
   };
+
+  static _onOpenChar(ev, target) {
+    this.actor?.sheet.render(true);
+  }
 
   static TABS = {
     sheet: {

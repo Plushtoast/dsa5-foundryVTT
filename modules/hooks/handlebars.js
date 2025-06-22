@@ -31,7 +31,7 @@ function clickableAbilities(a, b) {
             `<span class=\"searchableAbility\" data-category="${b}">` +
             elems
               .split(',')
-              .map((x) => `<a>${x}</a>`)
+              .map((x) => `<a data-action="searchableAbility">${x}</a>`)
               .join(', ') +
             '<span>'
           );

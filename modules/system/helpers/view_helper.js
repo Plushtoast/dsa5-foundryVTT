@@ -111,9 +111,9 @@ function IconVisibility(html, menu, btnLeft, btnRight) {
   columnLayout(html);
 }
 
-export async function clickableAbility(ev) {
-  const categories = $(ev.currentTarget).closest('.searchableAbility')[0].dataset.category.split(' ');
-  let search = ev.currentTarget.text.replace(/\d+$/, '').trim();
+export async function clickableAbility(target) {
+  const categories = $(target).closest('.searchableAbility')[0].dataset.category.split(' ');
+  let search = target.text.replace(/\d+$/, '').trim();
 
   for (let category of categories) {
     const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
