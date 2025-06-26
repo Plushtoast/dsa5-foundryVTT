@@ -6,11 +6,9 @@
       </div>
     </div>
   {{/unless}}
-  {{#each randomCreation as |item ch|}}
-    <div class='row-section tableOdd wrap'>
-      <div class='col'>
-        {{>systems/dsa5/templates/wizard/breedcard.hbs item}}
-      </div>
-    </div>
+  <div class="flexcol gap10px">
+  {{#each randomCreation as |item ch|}}    
+      {{>systems/dsa5/templates/wizard/breedcard.hbs item}}
   {{/each}}
+  </div>
 </div>

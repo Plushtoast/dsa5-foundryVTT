@@ -523,7 +523,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const $elem = $(elem);
       const val = $elem.val();
       if (val !== '') {
-        checkboxes.push([$elem.attr('name'), val.toLowerCase()]);
+        checkboxes.push([$elem.attr('name'), val.toLowerCase() == true]);
       }
     });
 

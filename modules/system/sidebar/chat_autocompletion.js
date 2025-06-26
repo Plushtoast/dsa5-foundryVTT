@@ -276,7 +276,7 @@ export default class DSA5ChatAutoCompletion {
     html.find(`.quick-item:first`).addClass('focus');
     html.find('.quick-item').on('click', ev => this._quickSelect($(ev.currentTarget)));
     
-    const container = this.getContainer(ev.currentTarget);
+    const container = this.getContainer(ev.currentTarget || ev.target);
     const existing = container.find('.quickfind');
     
     if (existing.length) {

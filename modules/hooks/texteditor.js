@@ -85,13 +85,13 @@ export function setEnrichers() {
       pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
       enricher: async (match, options) => {
         let uuid = match[0].match(innerRegex)[0].slice(1);
-        const item = await fromUuid(uuid);
+        const document = await fromUuid(uuid);
 
-        if (!item || item.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
+        if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
         if (!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${game.i18n.localize('GM notes')}</a>`)[0];
 
-        const enriched = await item.sheet.enrichedProperties();
-        const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { item, enriched });
+        const enriched = await document.system.enrichedProperties({ document });
+        const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { document, enriched });
         return $(templ)[0];
       },
     },

@@ -1,0 +1,84 @@
+<h1 id="important-improvements">Important improvements (26/05/2025)</h1>
+<h2 id="appv2--refactors">Appv2 &amp; Refactors </h2>
+
+<p>The system has been updated to Foundry's new framework, <strong>AppV2</strong>. This modernized architecture introduces a range of advanced features that enhance performance, maintainability, and responsive design. However, implementing these improvements required an extensive refactor that has already been underway for over six months.</p>
+<p>Despite the scale of the changes, you should only notice subtle differences in the overall user experience of the DSA/TDE system. Most changes took place under the hood and remain invisible to the end user. In the process, many features were refined or completely rewritten to improve usability and consistency.</p>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/effort.webp" style="width:100%"/>
+<h2 id="data-models">Data Models </h2>
+<p>With this version, DSA/TDE transitions from using templates to a system of <strong>Data Models</strong>. These models enforce stricter input validation—for example, you can no longer enter text into numeric fields. The primary benefit is a reduction in input errors and more consistent access to item and actor data.</p>
+<p>That said, this change can potentially strip invalid or legacy data from existing elements in your world. We've conducted extensive testing, but some edge cases may remain. If you notice any issues, please report them.</p>
+<p>Special thanks to everyone who contributed their worlds for testing—your help was invaluable.</p>
+<h2 id="world-destroyer">World Destroyer </h2>
+<p>Several underlying changes in Foundry have broken compatibility with older content—especially macros. Please remove outdated DSA macros and replace them with the updated versions found in the compendiums.</p>
+<p>To ensure your actors are fully compatible with the new system, we recommend using the <strong>World Destroyer</strong> utility, included in the core module and available via the settings menu.</p>
+<h2 id="ingame-calendar">Ingame calendar </h2>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/calendar.webp" style="float:right;max-width:50%"/>
+<p>Foundry VTT 13 now provides basic calendar support, which is now integrated into the system. A lightweight version of the TDE calendar is included by default (and can be disabled in settings). While simple for now, it opens up possibilities for future features such as automated artifact recharging.<br>
+Optionally you can also enable the automatic daylight adjustment depending on the current time and add some additional light during the night depending on the phase of the moon.</p>
+<p>More detailed calendars will be included in regional supplements—for example, Thorwal will feature its own calendar with corresponding month and day names.<br>
+The calendar depiction is highly optimized with hardware acceleration and additional information about the gods of the respective month ready for your players.<br>
+It features seasons, months, weekdays, moon phases and holidays.</p>
+<h2 id="style">Style </h2>
+<p>Foundry V13 significantly disrupted the layout of the TDE system. In response, we’ve rebuilt and adjusted nearly every UI component.</p>
+<p>At this time, we only support one theme combination: <strong>light-theme + dsa5immersive</strong>. Other theme combinations are not supported.</p>
+<p>The character sheet remains a work in progress and will continue to receive updates.</p>
+<h2 id="dynamic-tokens">Dynamic Tokens </h2>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/tokens.webp" style="float:right;max-width:50%"/>
+<p>All tokens in official premium modules will soon be updated to support <strong>Dynamic Tokens</strong>. These tokens allow for animated effects (such as health loss) and customizable token rings.</p>
+<p>The dynamic DSA/TDE token is already included in the system and will be enabled by default.</p>
+<p>A huge thank-you to <strong>Twolli</strong>, who is creating these tokens on a voluntary basis. This feature would not be possible without his incredible contribution—thousands of tokens are already available across the premium modules.</p>
+<h2 id="token-rotation--flanking-detection-in-foundry13">Token Rotation &amp; Flanking Detection in Foundry13 </h2>
+<p>By default, Foundry13 enables automatic token rotation when tokens move. While this might feel unfamiliar at first, it offers several gameplay advantages:</p>
+<ul class="dsalist">
+<li>Automatic Flanking Detection: Defense rolls can automatically determine whether an attacker is positioned behind a defender and apply the appropriate modifier.</li>
+<li>Integration with Dere Position System: This system—also enabled by default—can apply additional modifiers based on movement and range.</li>
+</ul>
+<p>You can customize or disable this behavior:</p>
+<ul class="dsalist">
+<li>Token Rotation: Toggle automatic rotation in Foundry’s core settings.</li>
+<li>"Attack from Behind" Angle: Configure this in the Master’s Menu. The default is 120°, which defines the rear cone behind a defender. Setting it to 0° disables the detection entirely.</li>
+</ul>
+<p>Quick Tip:</p>
+<ul class="dsalist">
+<li>Hold Shift + mouse wheel to rotate a token.</li>
+<li>Hold Ctrl + mouse wheel for fine rotation steps.</li>
+</ul>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+<li>Shapeshifting can now also be started by players instead of only the GM. The GM still has to confirm. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/474">474</a></li>
+<li>Shapeshifting has now additional options to cover more rules. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1828">1828</a></li>
+<li>Weapons rolls now regard discarded dice rolls. As an example Hruruzat allows to keep the higher of two d6 rolls as damage automatically. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1124">1124</a></li>
+<li>The DSA dark mode module is deprecated as foundry supports this now by default. Disable the DSA/TDE skin in the settings and set foundry to dark theme. Note that this might not be clean on release. Please report issues.</li>
+<li>Improved the performance of embedded things in journals. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1658">1658</a></li>
+<li>The Dere positioning system is now tracking the movement distance of tokens in combat. This allows to set shooter and target roll modifiers automatically in a ranged attack roll. A token counts as running if it moves more than 4 yard, walking up to 4 yard and standing with no movement. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1671">1671</a></li>
+<li>Basic skill rolls now have preselected options too for vision modifiers (e.g. night) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1715">1715</a></li>
+<li>Assassination now also works for ranged attacks (oh boy..pandora's box) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1716">1716</a></li>
+<li>Special abilities can now change the armor value of the target (e.g. Zweihandwaffen-Kampf) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1748">1748</a></li>
+<li>The rules for chariots have been improved. Riding a token with no specified target category is now considered as riding a chariot. You can also configure this on the combat tab of an actor on the riding section. Remember selecting two tokens and opening the token hud on the rider provides the option to mount that token for a bunch of rules and optical automation. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1811">1811</a></li>
+<li>The item library has been completely rewritten and should be a lot more performant. Among a few new filters it also now fades out on drag making it easier to hit your character sheet on small screens.</li>
+<li>You can drop now a whole bag including its contents onto the map. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1875">1875</a></li>
+<li>Animal attacks can now be poisoned similar to normal weapons with just a drag &amp; drop of the poison onto the trait sheet. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1881">1881</a></li>
+<li>There are now additional options to modify crit thresholds for melee weapons (PA &amp; AT separatedly) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1884">1884</a></li>
+<li>TDE/DSA now includes a combat turn marker by default (new feature of foundry13)</li>
+<li>Special abilities can now modify the amount of modifications allowed to be used during casting of a spell <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1909">1909</a></li>
+<li>You can now drag lights from the presets of the light macro onto items to configure the toggle effect of that item with this light. Note that you can also drag the light onto the canvas for quick standard light settings. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1907">1907</a></li>
+<li>Money now shows icons in the inventory</li>
+<li>Special combat abilities can now execute complex macros on an attack which even bypass any defense (e.g. powerful blow) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1928">1928</a></li>
+<li>There is now a TDE/DSA pause icon. It will show the symbol of the god which is related to the current month. The current month will be detected either by the actual current world time on earth or, if activated, on the current month of the ingame calendar (see above) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1933">1933</a></li>
+<li>Improved how items can be affected by their own active effects see <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki/de-status-selbst-erstellte-effekte#items-modifizieren">Wiki</a> <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1842">1842</a></li>
+<li>Items can now alter the damage thresholds related to combat techniques <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1754">1754</a></li>
+<li>Havena modul got some more stuff from another related PDF</li>
+<li>The character generator included in the core modul should now be way more performant</li>
+<li>If you hold your initiative turn and resume it later, the initiative is now updated automatically and the corresponding actor is getting the active turn. (Reminder on the dsa tracker right click the waiting actor to resume the turn) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1549">1549</a></li>
+<li>You can sort initiative now temporarily for the current round in the combat tracker in the sidebar by dragging and droping combatants to their respective position. This will reset on the next round. To change the order permanently hold strg/ctrl during the drag operation.</li>
+<li>Full financial surveillance is now ready at your hands. Enable money tracking in the settings and scan the created journal payment history for missing taxes (enforcer not included) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1714">1714</a></li>
+<li>Creatures can now have a speed in different categories (air, land water). But this is not used in any automation yet.</li>
+<li>The lightmacro (core module) has received some additional explanations to faciliate its usage.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<ul class="dsalist">
+<li>Master's shop should now be compatible with Filepicker+</li>
+<li>Costs of an artisan have been fixed in the blacksmith</li>
+<li>Fixed a bunch of issues with the tavern generator</li>
+<li>Infinite amount of styling, macro and content fixes for all modules</li>
+</ul>

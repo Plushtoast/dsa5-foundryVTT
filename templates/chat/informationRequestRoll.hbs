@@ -8,6 +8,8 @@
     </div>
   </div>
   <p>{{localize 'CHATNOTIFICATION.requestInformation'}}</p>
-  <button class='informationRequestRoll' data-uuid='{{item.uuid}}' data-skill='{{item.system.skill}}' data-mod='{{item.system.modifier}}'>{{item.system.skill}}
+  <div class="flexrow">
+    <button class='informationRequestRoll' data-uuid='{{item.uuid}}' data-skill='{{item.system.skill}}' data-mod='{{item.system.modifier}}'>{{item.system.skill}}
     ({{item.system.modifier}})</button>
+  </div>
 </div>

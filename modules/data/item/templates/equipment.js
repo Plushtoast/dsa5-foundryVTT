@@ -1,7 +1,7 @@
 import { DSADataModel } from "../../abstract.js";
 import ScopableStringField from "../fields/scopable_stringfield.js";
 
-const { SchemaField, StringField, NumberField } = foundry.data.fields;
+const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class EquipmentTemplate extends DSADataModel {
     static defineSchema() {
@@ -20,6 +20,7 @@ export default class EquipmentTemplate extends DSADataModel {
                 attributes: new ScopableStringField({ initial: '' }),
             }),
             parent_id: new StringField({ initial: '' }),
+            tradeLocked: new BooleanField({ initial: false }),
         }
     }
 }

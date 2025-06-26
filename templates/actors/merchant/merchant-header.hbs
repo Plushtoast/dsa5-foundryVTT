@@ -1,24 +1,15 @@
 <header class='sheet-header'>
-  <div class='row-section'>
-    <div class='charname headerInput col fourty row-section'>
-      <div class='col eighty'>
-        {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
-        <span class='label name'>{{localize 'Name'}}</span>
-      </div>
-      <div class='col ten'>
-        <a class='actorDrag' data-tooltip='TT.dragLink'><i class='fas fa-link'></i></a>
-      </div>
-    </div>
-    {{#if (ne merchantType 'loot')}}
-      <div class='headerInput'>
-        {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
-        <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
-      </div>
-      <div class='headerInput'>
-        {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
-        <span class='label-details'>{{localize 'TYPES.Item.career'}}</span>
-      </div>
-    {{/if}}
+  <div class='charname headerInput flexrow'>
+    <h3 class='headerName ellipsis'>{{formInput fields.name value=document.name placeholder=(localize 'Name')}}</h3>
+    <a class='button icon fas fa-minimize flexAlignEnd dsadesignbutton noBorder' data-action='collapseHeader' data-tooltip='TT.collapseHeader'></a>
+    <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>
   </div>
-  
+  {{#if (ne merchantType 'loot')}}
+    <div class='headerbadgeflex headerInput autosizing'>
+      {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
+      {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
+      {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
+    </div>
+  {{/if}}
+
 </header>

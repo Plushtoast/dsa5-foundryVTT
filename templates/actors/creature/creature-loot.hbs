@@ -47,16 +47,21 @@
                         {{item.system.bagweight}}
                     </div>
                     {{/if}}
-                    <div class="col eight center">
-                        {{#if item.toggle}} {{#if item.toggleValue}}
-                        <a data-action="itemToggle" data-tooltip="SHEET.EquipItem"><i class="far fa-check-circle"></i></a> {{else}}
-                        <a data-action="itemToggle" data-tooltip="SHEET.EquipItem"><i class="far fa-circle"></i></a> {{/if}} {{/if}}
+                    <div class="col eight flexrow flexAlignCenter">
+                        {{#if item.toggle}} 
+                        {{#if item.toggleValue}}
+                        <button type="button" class="icon noBorder dsadesignbutton far fa-check-circle" data-action="itemToggle" data-tooltip="SHEET.EquipItem"></button>
+                        {{else}}
+                        <button type="button" class="icon noBorder dsadesignbutton far fa-circle" data-action="itemToggle" data-tooltip="SHEET.EquipItem"></button>
+                        {{/if}}
+                        {{/if}}
                     </div>
 
-                    <div class="col eight center">
-                        <a data-action="quantityClick" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</a>
-                    </div>
-                    <div class="col eight center">
+                    <div class="equipment-item-quantity col eight flexrow flexAlignCenter">
+                            <button type="button" class="noBorder dsadesignbutton" data-action="quantityClick" data-tooltip="TT.strgx10"
+                                data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</button>
+                        </div>
+                    <div class="col eight flexrow flexAlignCenter">
                         {{item.system.preparedWeight}}
                     </div>
                     <div class="equipment-item-action col ten very-small center flexrow">

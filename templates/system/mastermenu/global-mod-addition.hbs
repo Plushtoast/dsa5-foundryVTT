@@ -11,30 +11,24 @@
             <input type="number" name="value" value="{{config.value}}" />
         </div>
     </div>
-    <fieldset>
+    <fieldset class="gap0px">
         <legend>{{localize 'Category'}}</legend>
         {{#each categories as |cat|}}
         <div class="form-group">
-            <label>{{itemCategory cat}}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="target.{{cat}}" value="1" {{checked (lookup ../config.target cat)}}/>
-            </div>
+            <label for="{{rootId}}_target.{{cat}}">{{itemCategory cat}}</label>            
+            <input id="{{rootId}}_target.{{cat}}" type="checkbox" name="target.{{cat}}" value="1" {{checked (lookup ../config.target cat)}}/>            
         </div>
         {{/each}}
     </fieldset>
-    <fieldset>
+    <fieldset class="gap0px">
         <legend>{{localize 'target'}}</legend>
         <div class="form-group">
-            <label>{{localize 'TYPES.Actor.character'}}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="victim.player" value="1" {{checked config.victim.player}}/>
-            </div>
+            <label for="{{rootId}}_victim.player">{{localize 'TYPES.Actor.character'}}</label>            
+            <input id="{{rootId}}_victim.player" type="checkbox" name="victim.player" value="1" {{checked config.victim.player}}/>            
         </div>
         <div class="form-group">
-            <label>{{localize 'TYPES.Actor.npc'}}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="victim.npc" value="1" {{checked config.victim.npc}}/>
-            </div>
+            <label for="{{rootId}}_victim.npc">{{localize 'TYPES.Actor.npc'}}</label>           
+            <input id="{{rootId}}_victim.npc" type="checkbox" name="victim.npc" value="1" {{checked config.victim.npc}}/>            
         </div>
     </fieldset>
     <div class='flexrow' style="margin-top:20px">

@@ -73,6 +73,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/combat_weapon.hbs',
     'systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs',
     'systems/dsa5/templates/actors/parts/horse.hbs',
+    'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
     'systems/dsa5/templates/actors/parts/healthbar.hbs',
     'systems/dsa5/templates/items/traditionArtifact.hbs',
     'systems/dsa5/templates/status/advanced_functions.hbs',
@@ -93,7 +94,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
   ]);
-  
+
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
 
   const actorSheets = [
@@ -114,7 +115,7 @@ Hooks.once('init', () => {
   ItemSheetdsa5.setupSheets();
 
   Hooks.call('registerDSAstyle', DSA5.styles);
-  
+
   DSAWorldCalendar.prepare();
   setupConfiguration();
   DSAWorldCalendar.init();
@@ -153,7 +154,7 @@ Hooks.once('setup', () => {
 
 Hooks.once('i18nInit', () => {
   setupKnownEquipmentModifiers();
-  
+
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
 });
 

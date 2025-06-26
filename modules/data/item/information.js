@@ -23,7 +23,8 @@ export default class InformationData extends ItemDataModel {
     });
   }
 
-  async enrichedProperties(propertiesToEnrich, context) {
+  async enrichedProperties(context) {
+    const propertiesToEnrich = ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail'];
     const enrichedProperties = await Promise.all(
       propertiesToEnrich.map(async (prop) => {
         return { [`enriched${prop}`]: await TextEditor.enrichHTML(context.document.system[prop], { async: true }) };
@@ -34,8 +35,7 @@ export default class InformationData extends ItemDataModel {
 
   async getSheetData(data) {
     data.allSkills = await DSA5_Utility.allSkillsList();
-    const propertiesToEnrich = ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail'];
-    foundry.utils.mergeObject(data, await this.enrichedProperties(propertiesToEnrich, data));
+    foundry.utils.mergeObject(data, await this.enrichedProperties(data));
   }
 
   static async _postItem(item) {

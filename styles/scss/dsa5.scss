@@ -134,7 +134,6 @@ h7 {
 }
 
 .dsa5 {
-
   h1,
   h2,
   h3,
@@ -169,7 +168,7 @@ h7 {
   background-image: url('../../icons/schwierig.webp');
 }
 
-.tabs>[data-tab]>.obfuscateSection {
+.tabs > [data-tab] > .obfuscateSection {
   pointer-events: all;
 }
 
@@ -311,7 +310,6 @@ table.infoTable {
         }
       }
     }
-
   }
 
   .row-schips {
@@ -358,7 +356,6 @@ table.infoTable {
   }*/
 
   .advanceOntop {
-
     a {
       margin-right: 1px;
 
@@ -538,7 +535,6 @@ table.infoTable {
 }
 
 .form-group.full-height {
-
   .editor,
   .tox {
     min-height: 100px;
@@ -566,7 +562,6 @@ form {
     }
 
     &.full-height {
-
       label,
       input {
         align-self: stretch;
@@ -777,7 +772,6 @@ select[multiple] option {
 .skill-section {
   display: flex;
 }
-
 
 .skill-section .flexcolumn {
   flex: 50%;
@@ -1023,7 +1017,7 @@ input[type='text'] {
 .cards {
   padding: 3px;
 
-  >div {
+  > div {
     margin: 1px;
     flex-grow: 1;
     position: relative;
@@ -1045,7 +1039,7 @@ input[type='text'] {
       width: 28px;
       box-shadow: none;
 
-      +a {
+      + a {
         width: calc(100% - 28px);
       }
     }
@@ -1260,11 +1254,16 @@ input[type='text'] {
   text-align: right;
 }
 
+
 .very-small {
   font-size: 10px;
 
   input[type='checkbox'] {
-    --checkbox-size: 10px;
+    --checkbox-size: 2.rem;
+  }
+
+  input[type='radio'] {        
+    --checkbox-size: 2.rem;
   }
 }
 
@@ -1276,8 +1275,26 @@ button.very-small {
   line-height: 14px;
 }
 
+small {
+  input[type='checkbox'] {
+    --checkbox-size: 2.rem;
+  }
+
+  input[type='radio'] {        
+    --checkbox-size: 2.rem;
+  }
+}
+
 .small {
   font-size: 12px;
+
+  input[type='checkbox'] {
+    --checkbox-size: 2.rem;
+  }
+
+  input[type='radio'] {        
+    --checkbox-size: 2.rem;
+  }
 }
 
 .selectableRow {
@@ -1311,7 +1328,6 @@ a.img-entity-link {
 
 .row-section {
   .twoColors {
-
     &:nth-child(4n-1),
     &:nth-child(4n) {
       background-color: var(--oddColor);
@@ -1329,9 +1345,8 @@ a.img-entity-link {
 }
 
 .row-section {
-
-  &.inverseRowtable>.col:nth-child(odd),
-  &.rowtable>.col:nth-child(even) {
+  &.inverseRowtable > .col:nth-child(odd),
+  &.rowtable > .col:nth-child(even) {
     background-color: var(--oddColor);
   }
 }
@@ -1378,7 +1393,6 @@ a.img-entity-link {
 }
 
 .buttons a {
-
   .fas,
   .fa {
     border-radius: 100%;
@@ -1482,7 +1496,7 @@ a.img-entity-link {
 .changes .key,
 .inputTooltipAvailable,
 .journalHeader,
-.tokenQuickHot>ul>li,
+.tokenQuickHot > ul > li,
 .bags,
 .hero,
 .application .window-content {
@@ -1534,7 +1548,6 @@ a.img-entity-link {
   }
 
   .col {
-
     label,
     input {
       border: 1px solid var(--border-color);
@@ -1610,7 +1623,6 @@ a.img-entity-link {
 }
 
 #combat li.combatant {
-
   .token-initiative .initiative,
   .token-name {
     text-shadow: none;
@@ -1638,7 +1650,6 @@ a.img-entity-link {
 
 .application .window-content {
   > {
-
     section,
     form {
       padding: 12px;
@@ -1684,7 +1695,6 @@ a.img-entity-link {
 }
 
 .attacker {
-
   video,
   img {
     margin: 5px 25%;
@@ -1798,7 +1808,6 @@ a.img-entity-link {
 }
 
 .setCustomPrice {
-
   &.edit .priceTag,
   .customPriceTag {
     display: none;
@@ -1821,7 +1830,6 @@ a.img-entity-link {
 }
 
 [data-hide-damage='true'] {
-
   .die-discarded,
   .damageSecret,
   .die-damage {
@@ -1836,7 +1844,6 @@ a.img-entity-link {
 }
 
 .chatModifiers {
-
   ul,
   div {
     display: none;
@@ -1861,7 +1868,7 @@ a.img-entity-link {
   font-weight: normal;
   color: var(--color-text-secondary);
 
-  input[type="search"] {
+  input[type='search'] {
     display: inline-block;
     width: calc(100% - 20px);
   }
@@ -1890,7 +1897,7 @@ input[type='search'] {
   min-width: 180px;
 
   img {
-    transition: all 0.5s ease-in-out; 
+    transition: all 0.5s ease-in-out;
     margin: 0 auto;
     height: 150px;
     object-fit: contain;
@@ -1909,7 +1916,6 @@ input[type='search'] {
     scrollbar-gutter: stable;
 
     .main-content {
-
       padding: 0;
       display: flex;
       position: absolute;
@@ -1922,7 +1928,6 @@ input[type='search'] {
     overflow: visible;
     flex-direction: column;
     gap: 0;
-
   }
 
   .tabs.right {
@@ -2396,9 +2401,8 @@ input[type='search'] {
       margin-bottom: 10px;
       margin-right: 100px;
 
-      &>.col.eight {
+      & > .col.eight {
         flex: 0 0 0%;
-
       }
     }
 
@@ -2731,8 +2735,137 @@ h2 {
   }
 }
 
-a {
+@keyframes pulsingBoxShadow {
+  from {
+    box-shadow: inset 0 0 0px var(--color-warm-1);
+  }
 
+  to {
+    box-shadow: inset 0 0 20px var(--color-warm-1);
+  }
+}
+
+.loadingZuchtgrube {
+  // box-shadow animation
+  position: relative;
+  animation: pulsingBoxShadow 1s infinite alternate;
+}
+
+.breedcard {
+  &:hover {
+    box-shadow: inset 0 0 20px var(--color-warm-1);
+    cursor: pointer;
+  }
+}
+
+.zuchtgrubeLoader {
+  position: absolute;
+  inset: 0;
+
+  span {
+    padding: 10px;
+    color: white;
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+.dsafilepicker {
+  ul {
+    &.directory {
+      background: rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      height: 100%;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      > li {
+        cursor: var(--cursor-pointer);
+        padding: 0.5rem;
+        margin: 0;
+        word-break: break-all;
+        overflow: hidden;
+        border-bottom: 1px solid var(--color-dark-6);
+
+        &.picked {
+          color: var(--color-text-selection);
+          background: var(--color-text-selection-bg);
+          font-weight: 600;
+        }
+      }
+
+      > i {
+        margin-right: 0.25rem;
+      }
+    }
+
+    &.details {
+      img {
+        display: none;
+      }
+    }
+
+    &.tiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+
+      li {
+        padding: 0;
+        border: 1px solid transparent;
+        border-right: 1px solid var(--color-light-5);
+        border-bottom: 1px solid var(--color-light-5);
+
+        img {
+          margin: 0 auto;
+          object-fit: contain;
+          height: 65px;
+          width: 65px;
+        }
+      }
+    }
+
+    &.thumbs {
+      img {
+        flex: 0 0 48px;
+        object-fit: cover;
+        object-position: 50% 50%;
+        margin-right: 1rem;
+        border: none;
+      }
+    }
+
+    &.images {
+      li {
+        position: relative;
+        height: 200px;
+        padding: 0;
+        img {
+          width: 100%;
+          height: 200px;
+          object-fit: contain;
+          object-position: 50% 50%;
+          border: none;
+        }
+
+        span.filename {
+          color: var(--color-light-2);
+          position: absolute;
+          top: 0;
+          width: 400px;
+          padding: 0.5rem 0;
+          left: calc(50% - 200px);
+          background: var(--color-cool-5-75);
+          border-radius: 0 0 6px 6px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+a {
   &.documentName-link,
   &.inline-roll {
     background: var(--bg-color);
@@ -2782,7 +2915,7 @@ a {
   color: #888;
   position: relative;
 
-  &>div {
+  & > div {
     padding: 3px;
   }
 
@@ -3038,7 +3171,6 @@ select.noAppearance {
 
 #combat-popout {
   &.combat-sidebar li.combatant {
-
     .token-initiative .initiative,
     .token-name {
       text-shadow: none;
@@ -3080,7 +3212,7 @@ select.noAppearance {
       position: absolute;
       background: #efe4e4;*/
 
-    &+.select2 {
+    & + .select2 {
       width: 8%;
       background: #efe4e4;
       color: black;
@@ -3206,7 +3338,6 @@ select.noAppearance {
 }
 
 .tocList {
-
   ul,
   ol {
     padding: 0;
@@ -3249,7 +3380,7 @@ select.noAppearance {
 .adventureWizard {
   max-height: 100%;
 
-  >div {
+  > div {
     max-height: 100%;
   }
 
@@ -3287,7 +3418,7 @@ select.noAppearance {
     border-top: 1px solid #b5b3a4;
     margin-top: 5px;
 
-    >div {
+    > div {
       flex: 1;
       max-width: 150px;
       min-width: 150px;
@@ -3500,7 +3631,7 @@ select.noAppearance {
     margin-bottom: 2px;
   }
 
-  .effect>div {
+  .effect > div {
     background-color: rgba(0, 0, 0, 0.3);
   }
 }
@@ -3843,7 +3974,6 @@ select.noAppearance {
 }
 
 .application {
-
   &.initTracker .window-header,
   &.tokenQuickHot .window-header {
     display: none;
@@ -3921,7 +4051,7 @@ select.noAppearance {
   }
 }
 
-.tokenHotbarInner>ul>li.effect>div:before {
+.tokenHotbarInner > ul > li.effect > div:before {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
   content: '\f067';
@@ -3929,7 +4059,6 @@ select.noAppearance {
 
 .application {
   &.initTracker {
-
     &::after,
     .window-content {
       background: none;
@@ -3940,7 +4069,6 @@ select.noAppearance {
   }
 
   &.tokenQuickHot {
-
     &::after,
     .window-content {
       background: none;
@@ -4155,7 +4283,7 @@ select.noAppearance {
   position: relative;
   float: right;
 
-  >span {
+  > span {
     width: 50%;
     height: 100%;
     overflow: hidden;
@@ -4466,7 +4594,6 @@ input[type='checkbox'].autoCheckbox {
 }
 
 .image {
-
   &.rar:after,
   &.common:after {
     content: '';
@@ -4877,8 +5004,8 @@ input[type='checkbox'].autoCheckbox {
     background-image: url('../../icons/categories/plantsupernatural.webp');
   }
 
-  &:hover input~span,
-  input:checked~span {
+  &:hover input ~ span,
+  input:checked ~ span {
     opacity: 1;
   }
 }
@@ -5211,7 +5338,6 @@ input[type='checkbox'].autoCheckbox {
   }
 
   .longLayout {
-
     #macro-list,
     .skillItems {
       li {
@@ -5311,7 +5437,7 @@ input[type='checkbox'].autoCheckbox {
       }
     }
 
-    &>li {
+    & > li {
       flex: 0 0 var(--base-bar-height);
       height: var(--base-bar-height);
 
@@ -5392,7 +5518,7 @@ input[type='checkbox'].autoCheckbox {
     text-align: center;
   }
 
-  .checkbox>i {
+  .checkbox > i {
     cursor: pointer;
     display: inline-block;
     padding: 0px 10px;
@@ -5408,7 +5534,7 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 
-  .checkbox input[type='radio']:checked+i {
+  .checkbox input[type='radio']:checked + i {
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
   }
@@ -5459,7 +5585,6 @@ input[type='checkbox'].autoCheckbox {
 
   .fullSceenMaxWidth,
   fieldset {
-
     max-width: 700px;
     width: 100%;
     margin: 0 auto;
@@ -5469,7 +5594,6 @@ input[type='checkbox'].autoCheckbox {
   select,
   input {
     --input-text-color: white;
-
   }
 
   .scrollable {
@@ -5553,7 +5677,6 @@ input[type='checkbox'].autoCheckbox {
     }
 
     input {
-
       width: 80px;
 
       &.hourInput {
@@ -5619,7 +5742,6 @@ input[type='checkbox'].autoCheckbox {
           background: rgb(202, 6, 6);
           clip-path: polygon(0% 0%, 100% 0%, 50% 20%, 50% 80%, 100% 100%, 0% 100%, 50% 80%, 50% 20%);
         }
-
       }
     }
 
@@ -5742,8 +5864,6 @@ input[type='checkbox'].autoCheckbox {
     }
   }
 }
-
-
 
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('immersive.scss');

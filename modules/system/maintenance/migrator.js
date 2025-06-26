@@ -114,7 +114,7 @@ export default function migrateWorld() {
 
     await setupDefaulTokenConfig();
     const currentVersion = game.settings.get('dsa5', 'migrationVersion');
-    const NEEDS_MIGRATION_VERSION = 33;
+    const NEEDS_MIGRATION_VERSION = 34;
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
     if (INBETA) {

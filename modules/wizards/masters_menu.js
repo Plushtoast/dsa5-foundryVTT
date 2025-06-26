@@ -1030,6 +1030,7 @@ class GlobalModAddition extends FormAppv2 {
         },
       };
     }
+    data.rootId = foundry.utils.randomID();
     data.categories = ['skill', 'spell', 'meleeweapon', 'rangeweapon', 'ritual', 'ceremony', 'liturgy', 'trait'];
     return data;
   }

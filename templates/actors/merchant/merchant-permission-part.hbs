@@ -1,0 +1,75 @@
+<div class="groupbox">
+    <div class="row-section wrap lineheight" data-tooltip="PERMISSION.Configure">
+        <div class="col morph row-section">
+            <div class="col two table-title">
+                {{localize 'TYPES.Actor.character'}}
+            </div>
+            {{#if (eq document.system.merchant.merchantType "merchant")}}
+            <div class="col fifteen center" data-tooltip="MERCHANT.sellingFactor">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <div class="col fifteen center" data-tooltip="MERCHANT.buyingFactor">
+                <i class="fas fa-coins"></i>
+            </div>
+            {{/if}}
+            <div class="col five flexrow">
+                <button type="button" class="icon fas dsadesignbutton noBorder fa-unlock"
+                    data-action="toggleAllAllowMerchant" data-lock="true"></button>
+                <button type="button" class="icon fas dsadesignbutton noBorder fa-lock"
+                    data-action="toggleAllAllowMerchant" data-lock="false"></button>
+            </div>
+        </div>
+        <div class="col two row-section onlyMultiColumn">
+            <div class="col two table-title">
+                {{localize 'TYPES.Actor.character'}}
+            </div>
+            {{#if (eq document.system.merchant.merchantType "merchant")}}
+            <div class="col fifteen center" data-tooltip="MERCHANT.sellingFactor">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <div class="col fifteen center" data-tooltip="MERCHANT.buyingFactor">
+                <i class="fas fa-coins"></i>
+            </div>
+            {{/if}}
+            <div class="col five flexrow">
+                <button type="button" class="icon dsadesignbutton noBorder fas fa-unlock"
+                    data-action="toggleAllAllowMerchant" data-lock="true"></button>
+                <button type="button" class="icon dsadesignbutton noBorder fas fa-lock"
+                    data-action="toggleAllAllowMerchant" data-lock="false"></button>
+            </div>
+        </div>
+
+    </div>
+    <div class="row-section wrap">
+        {{#each players as |player i|}}
+        <div class="col morph row-section flexrow">
+            <div class="col two ellipsis">
+                {{player.name}}
+            </div>
+            {{#if (eq ../document.system.merchant.merchantType "merchant")}}
+            <div class="col fifteen center" data-tooltip="MERCHANT.sellingFactor">
+                <input name="system.merchant.factors.sellingFactor.{{player.id}}" type="number"
+                    value="{{player.sellingFactor}}" />
+
+            </div>
+            <div class="col fifteen center" data-tooltip="MERCHANT.buyingFactor">
+                <input name="system.merchant.factors.buyingFactor.{{player.id}}" type="number"
+                    value="{{player.buyingFactor}}" />
+            </div>
+            {{/if}}
+            <div class="col five flexrow flexAlignCenter">
+                <button type="button"
+                    class="noBorder dsadesignbutton far icon fa-{{ifThen player.allowedMerchant 'check-' ''}}circle"
+                    data-action="allowMerchant" data-user-id="{{player.id}}"></button>
+            </div>
+        </div>
+
+        {{/each}}
+        {{#if (oddLength players)}}
+        <div class="col morph row-section">
+
+        </div>
+        {{/if}}
+    </div>
+
+</div>

@@ -1,0 +1,84 @@
+<h1 id="wichtige-verbesserungen">Wichtige Verbesserungen (26.06.2025)</h1>
+<h2 id="appv2--refactors">Appv2 &amp; Refactors </h2>
+
+<p>Das System wurde auf Foundrys neues Framework <strong>AppV2</strong> aktualisiert. Diese modernisierte Architektur bringt eine Reihe fortschrittlicher Funktionen mit sich, die Leistung, Wartbarkeit und responsives Design verbessern. Die Umsetzung dieser Verbesserungen erforderte jedoch ein umfangreiches Refactoring, das bereits seit über sechs Monaten im Gange ist.</p>
+<p>Trotz des Umfangs der Änderungen wirst du nur subtile Unterschiede in der allgemeinen Benutzererfahrung des DSA-Systems bemerken. Die meisten Änderungen fanden unter der Haube statt und bleiben für Endnutzer unsichtbar. Viele Funktionen wurden dabei überarbeitet oder vollständig neu geschrieben, um die Bedienbarkeit und Konsistenz zu verbessern.</p>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/effort.webp" style="width:100%"/>
+<h2 id="datenmodelle">Datenmodelle </h2>
+<p>Mit dieser Version wechselt DSA/TDE von Templates zu einem System aus <strong>Datenmodellen</strong>. Diese Modelle erzwingen strengere Eingabevalidierungen — zum Beispiel kann man keine Texte mehr in numerische Felder eintragen. Der Hauptvorteil besteht in einer Reduktion von Eingabefehlern und einem konsistenteren Zugriff auf Gegenstands- und Akteurdaten.</p>
+<p>Allerdings kann es dadurch vorkommen, dass ungültige oder veraltete Daten aus bestehenden Elementen in deiner Welt entfernt werden. Wir haben umfangreiche Tests durchgeführt, aber es könnten Randfälle bestehen bleiben. Falls du Probleme bemerkst, melde sie bitte.</p>
+<p>Ein besonderer Dank an alle, die ihre Welten zum Testen zur Verfügung gestellt haben — eure Hilfe war unschätzbar.</p>
+<h2 id="welt-zerstörer">Welt-Zerstörer </h2>
+<p>Mehrere Änderungen in Foundry haben die Kompatibilität mit älteren Inhalten — insbesondere Makros — unterbrochen. Bitte entferne veraltete DSA-Makros und ersetze sie durch die neuen Versionen aus den Kompendien.</p>
+<p>Um sicherzustellen, dass deine Akteure vollständig mit dem neuen System kompatibel sind, empfehlen wir die Nutzung des Tools <strong>Welt-Zerstörer</strong>, das im Kernmodul enthalten und über das Einstellungsmenü verfügbar ist.</p>
+<h2 id="ingame-kalender">Ingame-Kalender </h2>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/calendar.webp" style="float:right;max-width:50%"/>
+<p>Foundry VTT 13 bietet nun grundlegende Kalenderunterstützung, die jetzt ins System integriert ist. Eine einfache Version des DSA-Kalenders ist standardmäßig enthalten (und kann in den Einstellungen deaktiviert werden). Auch wenn sie aktuell noch simpel ist, eröffnet sie Potenzial für zukünftige Funktionen wie automatisches Wiederaufladen von Artefakten.</p>
+<p>Optional kannst du eine automatische Tageslichtanpassung je nach aktueller Uhrzeit aktivieren und zusätzliches Licht während der Nacht je nach Mondphase hinzufügen.</p>
+<p>Ausführlichere Kalender werden in regionalen Ergänzungen enthalten sein — z. B. wird Thorwal seinen eigenen Kalender mit entsprechenden Monats- und Tagesnamen haben. Die Kalenderdarstellung ist hardwarebeschleunigt optimiert und zeigt zusätzliche Informationen zu den Göttern des jeweiligen Monats für eure Spieler.</p>
+<p>Der Kalender enthält Jahreszeiten, Monate, Wochentage, Mondphasen und Feiertage.</p>
+
+<h2 id="stil">Stil </h2>
+<p>Foundry V13 hat das Layout des DSA-Systems stark verändert. Daher haben wir nahezu jede UI-Komponente neu gebaut oder angepasst.</p>
+<p>Derzeit unterstützen wir nur eine Theme-Kombination: <strong>light-theme + dsa5immersive</strong>. Andere Kombinationen werden nicht unterstützt.</p>
+<p>Das Charakterblatt ist noch in Arbeit und wird weiterhin aktualisiert.</p>
+<h2 id="dynamische-tokens">Dynamische Tokens </h2>
+<img src="systems/dsa5/lazy/patchimages/7.1.0/tokens.webp" style="float:right;max-width:50%"/>
+<p>Alle Tokens in offiziellen Premium-Modulen werden bald <strong>dynamische Tokens</strong> unterstützen. Diese Tokens ermöglichen animierte Effekte (z. B. bei Lebensverlust) und anpassbare Token-Ringe.</p>
+<p>Das dynamische DSA-Token ist bereits im System enthalten und standardmäßig aktiviert.</p>
+<p>Ein großes Dankeschön an <strong>Twolli</strong>, der diese Tokens freiwillig erstellt. Diese Funktion wäre ohne seinen unglaublichen Beitrag nicht möglich — tausende Tokens sind bereits in den Premium-Modulen verfügbar.</p>
+<h2 id="token-rotation--flanken-erkennung-in-foundry13">Token-Rotation &amp; Flanken-Erkennung in Foundry13 </h2>
+<p>Standardmäßig aktiviert Foundry13 eine automatische Rotation der Tokens bei Bewegung. Auch wenn dies zunächst ungewohnt erscheint, bietet es spielerische Vorteile:</p>
+<ul>
+<li><strong>Automatische Flankenerkennung</strong>: Verteidigungswürfe erkennen automatisch, ob ein Angreifer hinter dem Verteidiger steht, und wenden den passenden Modifikator an.</li>
+<li><strong>Integration mit dem Dere-Positionssystem</strong>: Dieses System (standardmäßig aktiviert) kann zusätzliche Modifikatoren auf Basis von Bewegung und Reichweite anwenden.</li>
+</ul>
+<p>Du kannst dieses Verhalten anpassen oder deaktivieren:</p>
+<ul>
+<li><strong>Token-Rotation</strong>: In den Foundry-Grundeinstellungen ein- oder ausschalten.</li>
+<li><strong>„Angriff von hinten“-Winkel</strong>: Im Meistermenü konfigurierbar. Der Standardwert ist 120°, was den hinteren Kegel eines Verteidigers definiert. 0° deaktiviert die Erkennung vollständig.</li>
+</ul>
+<p>Kurztipp:</p>
+<ul>
+<li><strong>Shift + Mausrad</strong>: Token drehen</li>
+<li><strong>Strg + Mausrad</strong>: Feine Rotationsschritte</li>
+</ul>
+<h1 id="verbesserungen">Verbesserungen </h1>
+<ul>
+<li>Gestaltwandlung kann nun auch von Spielern gestartet werden (GM muss noch bestätigen) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/474">474</a></li>
+<li>Zusätzliche Optionen für Gestaltwandlung gemäß Regelwerk <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1828">1828</a></li>
+<li>Waffenwürfe berücksichtigen nun verworfene Würfel (z. B. Hruruzat) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1124">1124</a></li>
+<li>DSA-Darkmode-Modul ist veraltet – Foundry unterstützt das jetzt nativ</li>
+<li>Performance eingebetteter Inhalte in Journalen verbessert <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1658">1658</a></li>
+<li>Dere-Positionssystem verfolgt nun Bewegung und ändert Fernkampfmodifikatoren automatisch <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1671">1671</a></li>
+<li>Grundfertigkeitswürfe haben nun vorgewählte Sichtmodifikatoren <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1715">1715</a></li>
+<li>Attentat funktioniert jetzt auch im Fernkampf <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1716">1716</a></li>
+<li>Sonderfertigkeiten können Rüstung des Ziels verändern <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1748">1748</a></li>
+<li>Regeln für Streitwagen verbessert <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1811">1811</a></li>
+<li>Item-Bibliothek komplett überarbeitet, inkl. neuer Filter</li>
+<li>Taschen können nun mitsamt Inhalt auf die Karte gezogen werden <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1875">1875</a></li>
+<li>Tierangriffe können vergiftet werden wie normale Waffen <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1881">1881</a></li>
+<li>Kritische Schwellenwerte für Nahkampfwaffen getrennt modifizierbar <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1884">1884</a></li>
+<li>DSA zeigt nun standardmäßig Marker für die aktuelle Kampfrunde (neues Foundry13-Feature)</li>
+<li>Sonderfertigkeiten können Anzahl der Modifikationen beim Zaubern verändern <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1909">1909</a></li>
+<li>Lichtmakros können auf Items gezogen werden, um Lichtumschaltung zu konfigurieren <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1907">1907</a></li>
+<li>Geld zeigt nun Icons im Inventar</li>
+<li>Sonderfähigkeiten können komplexe Makros beim Angriff auslösen (z. B. Mächtiger Schlag) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1928">1928</a></li>
+<li>Es gibt nun ein DSA-Pause-Symbol mit Gott der aktuellen Monatsanzeige <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1933">1933</a></li>
+<li>Verbesserte Item-Effekte <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1842">1842</a></li>
+<li>Items können Schadensschwellen von Kampftechniken beeinflussen <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1754">1754</a></li>
+<li>Havena-Modul erweitert</li>
+<li>Charaktergenerator deutlich performanter</li>
+<li>Gehaltene Initiative aktualisiert sich korrekt <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1549">1549</a></li>
+<li>Initiative kann temporär per Drag &amp; Drop sortiert werden; dauerhaft mit Strg+Drag</li>
+<li>Finanzüberwachung aktivierbar, inkl. Steuerprüfung <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1714">1714</a></li>
+<li>Kreaturen können nun unterschiedliche Geschwindigkeiten haben (Land, Wasser, Luft)</li>
+<li>Lichtmacro mit zusätzlichen Erklärungen</li>
+</ul>
+<h1 id="fehlerbehebungen">Fehlerbehebungen </h1>
+<ul>
+<li>Werkstatt des Meisters jetzt kompatibel mit Filepicker+</li>
+<li>Kosten bei Schmieden korrigiert</li>
+<li>Diverse Probleme mit dem Tavernen-Generator behoben</li>
+<li>Unzählige Style-, Makro- und Inhalts-Fixes für alle Module</li>
+</ul>

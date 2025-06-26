@@ -29,6 +29,7 @@ export const MerchantSheetMixin = (superclass) =>
         toggleTradeLock: this._toggleTradeLock,
         itemExternalEdit: this._itemExternalEdit,
         tradeWrapper: this._tradeWrapper,
+        changeAmountAllItems: { handler: this.changeAmountAllItems, buttons: [0, 2] },
       },
     };
 
@@ -71,7 +72,7 @@ export const MerchantSheetMixin = (superclass) =>
       inventory: {
         template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs'],
+        templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs', 'systems/dsa5/templates/actors/parts/containerContent.hbs', 'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs'],
       },
       status: {
         template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
@@ -220,8 +221,6 @@ export const MerchantSheetMixin = (superclass) =>
         .on('change', async (ev) => this.setCustomPrice(ev))
         .on('blur', (ev) => $(ev.currentTarget).closest('.setCustomPrice').removeClass('edit'));
 
-      html.find('.changeAmountAllItems').on('mousedown', (ev) => this.changeAmountAllItems(ev));
-
       html.find('.gearSearch').prop('disabled', false);
     }
 
@@ -288,9 +287,9 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
-    async changeAmountAllItems(ev) {
+    static async changeAmountAllItems(ev, target) {
       const updates = [];
-      const rule = this.filterRule(ev.currentTarget);
+      const rule = this.filterRule(target);
       for (let item of this.actor.items) {
         if (rule(item)) {
           let upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value } } };
