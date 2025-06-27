@@ -286,7 +286,7 @@ export function setupConfiguration() {
     hint: 'DSASETTINGS.attackFromBehindAngleHint',
     scope: 'world',
     config: false,
-    default: 120,
+    default: 100,
     type: Number,
     range: {
       min: 0,

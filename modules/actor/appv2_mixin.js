@@ -39,7 +39,9 @@ export const AppV2Mixin = (superclass) =>
     }
 
     async _onDrop(event) {
-      this.element.querySelector('.window-content')?.classList.remove('dsaDraggedOver');
+      document.querySelectorAll('.window-content').forEach((el) => {
+        el.classList.remove('dsaDraggedOver');
+      });
       super._onDrop(event);
     }
 
@@ -54,13 +56,18 @@ export const AppV2Mixin = (superclass) =>
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         const isInBorder = x < padding || x > rect.width - padding || y < padding || y > rect.height - padding;
+        document.querySelectorAll('.window-content').forEach((el) => {
+          el.classList.remove('dsaDraggedOver');
+        });
         if (isInBorder) {
           hovered.classList.remove('dsaDraggedOver');
         } else {
           hovered.classList.add('dsaDraggedOver');
         }
       } else {
-        this.element.querySelector('.window-content')?.classList.remove('dsaDraggedOver');
+        document.querySelectorAll('.window-content').forEach((el) => {
+          el.classList.remove('dsaDraggedOver');
+        });
       }
     }
   };

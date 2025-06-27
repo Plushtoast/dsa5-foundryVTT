@@ -397,13 +397,19 @@ export default class DSA5CombatDialog extends DialogShared {
 
       if (!attackerToken || !defenderToken) return;
 
-      const { rotation: defenderRotation } = defenderToken;
-      const ray = new foundry.canvas.geometry.Ray(defenderToken, attackerToken);
-      const deg = (Math.abs(ray.angle * (180 / Math.PI) - 90) + defenderRotation) % 360;
-      const behindStart = 180 - attackFromBehindAngle / 2;
-      const behindEnd = 180 + attackFromBehindAngle / 2;
+      const { x: attackerX, y: attackerY } = attackerToken;
+      const { x: defenderX, y: defenderY, rotation: defenderRotation } = defenderToken;
 
-      jhtml.find('[name="attackFromBehind"]').prop('checked', deg >= behindStart && deg <= behindEnd);      
+      const dx = attackerX - defenderX;
+      const dy = attackerY - defenderY;
+
+      let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      angle = (angle + 270) % 360;
+      const backAngle = (defenderRotation + 180) % 360;
+      const delta = ((angle - backAngle + 540) % 360) - 180;
+      const isBehind = Math.abs(delta) <= attackFromBehindAngle / 2;      
+
+      jhtml.find('[name="attackFromBehind"]').prop('checked', isBehind);      
     }
   }
 

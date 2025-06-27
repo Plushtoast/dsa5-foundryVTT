@@ -223,7 +223,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
 
-    this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".combatant", {fixed: true});
+    this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".iniTrackerList:not(.waitingTackerList) .combatant", {fixed: true});
   }
 
   _getDsaIniTrackerEntryContextOptions() {

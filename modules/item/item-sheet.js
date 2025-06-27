@@ -1056,7 +1056,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
       scrollable: [''],
     },
     containerContent: {
-      template: 'systems/dsa5/templates/items/item-containerContent.hbs',
+      template: 'systems/dsa5/templates/items/item-containercontent.hbs',
       scrollable: [''],
     },
     enchantment: {

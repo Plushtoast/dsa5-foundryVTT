@@ -202,8 +202,8 @@ export class CalendarCanvas {
 
         const dpr = window.devicePixelRatio || 1;
         const options = {
-            width: this.element.clientWidth,
-            height: this.element.clientHeight,
+            width: Number(this.element.getAttribute('width')) * dpr,
+            height: Number(this.element.getAttribute('height')) * dpr,
             backgroundColor: this.COLORS.BACKGROUND_OUTER,
             antialias: true,
             resolution: dpr,

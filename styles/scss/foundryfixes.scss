@@ -12,7 +12,6 @@ hr {
 
 /*foundry13*/
 .dsa5 {
-
   prose-mirror,
   .prosemirror {
     position: relative;
@@ -42,9 +41,9 @@ hr {
 }
 
 // fixes tooltip wiggling
-//#interface {
- // min-width: 100vw;
- // min-width: 100%;
-//}
+/*#interface {
+  //min-width: 100vw;
+  min-width: calc(100% - var(--av-width));
+}*/
 
 /* Fixes for Foundry 13 */
