@@ -159,7 +159,7 @@ export default class DSA5SpellDialog extends DialogShared {
     }
 
     const changeCast = html.find('.canChangeCastingTime');
-    if (source.system.canChangeCastingTime.value == 'true') {
+    if (source.system.canChangeCastingTime.value) {
       if (changeCast.is(':empty')) {
         changeCast.html(await renderTemplate('systems/dsa5/templates/dialog/parts/canChangeCastingTime.hbs', { rollModifiers: this.dialogData.renderData.rollModifiers }));
         this.setPosition({ height: 'auto' });
@@ -178,7 +178,7 @@ export default class DSA5SpellDialog extends DialogShared {
     let newPosition = baseAsp;
     let newMaintainCost = source.system.maintainCost.value;
 
-    parent.find('.variableBaseCost')[source.system.variableBaseCost == 'true' ? 'show' : 'hide']();
+    parent.find('.variableBaseCost')[source.system.variableBaseCost ? 'show' : 'hide']();
     let mod = 0;
     parent.find('.spellModifier[data-cost]:checked').each(function (index, element) {
       newPosition = newPosition * (element.value < 0 ? 0.5 : 2);

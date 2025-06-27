@@ -993,14 +993,14 @@ class SpellItemDSA5 extends Itemdsa5 {
       maintainCost: spell.system.maintainCost.value,
       spellCastingTime: spell.system.castingTime.value,
       spellReach: spell.system.range.value,
-      canChangeCost: spell.system.canChangeCost.value == 'true',
-      canChangeRange: spell.system.canChangeRange.value == 'true',
-      canChangeCastingTime: spell.system.canChangeCastingTime.value == 'true',
+      canChangeCost: spell.system.canChangeCost.value,
+      canChangeRange: spell.system.canChangeRange.value,
+      canChangeCastingTime: spell.system.canChangeCastingTime.value,
       hasSKModifier: spell.system.resistanceModifier.value == 'SK',
       hasZKModifier: spell.system.resistanceModifier.value == 'ZK',
       maxMods,
       extensions: this.prepareExtensions(actor, spell),
-      variableBaseCost: spell.system.variableBaseCost == 'true',
+      variableBaseCost: spell.system.variableBaseCost,
       characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),
     };
 

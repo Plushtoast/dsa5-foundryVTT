@@ -6,7 +6,7 @@
 
             <div class="form-group">
                 <label class="col seventy">{{localize "maintainedSpells"}}</label>
-                <input class="col five quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
+                <input class="col five center quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
             </div>
             {{#if hasSKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
@@ -15,15 +15,18 @@
                     <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="skModifier" value="{{SKModifier}}" />
                 </div>
             </div>
-            {{/if}} {{#if hasZKModifier}}
+            {{/if}}
+            
+            {{#if hasZKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "zkModifier"}}</label>
                 <div class="form-fields">
                     <input type="number" class="quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" name="zkModifier" value="{{ZKModifier}}" />
                 </div>
             </div>
-            {{/if}} {{#if isRitual}}
-
+            {{/if}}
+            
+            {{#if isRitual}}
             <div class="form-group ritual">
                 <label>{{localize "place"}}</label>
                 <div class="form-fields">
@@ -48,7 +51,8 @@
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">
             </div>
-            {{/if}} 
+            {{/if}}
+
             {{#if isForeign}}
             <div class="center">
                 <b>{{localize 'TT.foreignSpell'}}</b>
