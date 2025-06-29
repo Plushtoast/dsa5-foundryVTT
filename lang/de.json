@@ -2035,6 +2035,8 @@
         }
     },
     "DSASETTINGS": {
+        "dsaTokenRuler": "DSA Token Distanzmesswerkzeug",
+        "dsaTokenRulerHint": "Benutze die integrierte DSA Distanzmessung für Token. Diese berücksichtigt die DSA Regeln für Bewegung und Distanz.",
         "attackFromBehindAngle": "Toter Winkel",
         "attackFromBehindAngleHint": "Der Winkel in dem ein Angriff von hinten als Toter Winkel gilt. Standardmäßig 120°. Setzt den entsprechenden Modifikator bei Angriffen von hinten. Nur aktiv wenn das Dere Positioning System aktiviert ist. Bei 0° wird kein Modifikator gesetzt.",
         "calendar": "DSA Kalender",

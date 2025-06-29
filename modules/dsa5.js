@@ -52,7 +52,7 @@ import OnUseEffect from './system/automation/onUseEffects.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels } from './data/models.js';
-import { DSAToken } from './hooks/token.js';
+import { DSAToken, DSATokenDocument, DSATokenRuler } from './hooks/token.js';
 import * as DSAPause from './hooks/pause.js';
 import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
@@ -146,6 +146,9 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
   CONFIG.Token.objectClass = DSAToken;
+  CONFIG.Token.documentClass = DSATokenDocument;
+  CONFIG.Token.rulerClass = DSATokenRuler;
+  CONFIG.Token.movement.defaultSpeed = 16;
   //CONFIG.debug.hooks = true  
 });
 

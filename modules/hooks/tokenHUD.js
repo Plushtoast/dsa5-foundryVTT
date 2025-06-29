@@ -139,6 +139,27 @@ async function combineSwarm(actor, token) {
   await canvas.scene.deleteEmbeddedDocuments('Token', tokensToRemove);
 }
 
+function setTokenSpeedIndicator(actor, html, data) {
+  let speed = actor.system.status.speed.max;
+  switch (data.movementAction) {
+    case 'fly':
+      //todo: flying speed
+    case 'swim':
+      //todo: swimming speed
+    default:
+
+  }
+  
+  const movementButton = html.find('[data-palette="movementActions"]')
+  const indicator = $(`<div class="speedIndicator">${speed}</div>`)
+  indicator.css({
+    left: movementButton.position().left + movementButton.width(),
+    top: movementButton.position().top + movementButton.height(),
+  });
+  html.find('.col.right').append(indicator)
+  
+}
+
 export default function () {
   Hooks.on('renderTokenHUD', (app, jhtml, data) => {
     const html = $(jhtml);
@@ -162,6 +183,7 @@ export default function () {
     html.find('.attribute input').off('change');
 
     Riding.renderTokenHUD(app, html, data);
+    setTokenSpeedIndicator(actor, html, data);
   });
 
   Hooks.on('renderTokenConfig', (app, html, data) => {

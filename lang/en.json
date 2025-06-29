@@ -1963,6 +1963,8 @@
         "3": "Always show"
     },
     "DSASETTINGS": {
+        "dsaTokenRuler": "DSA Token Ruler",
+        "dsaTokenRulerHint": "Use the integrated TDE distance measurement for tokens. This takes into account the TDE rules for movement and distance.",
         "attackFromBehindAngle": "Angle of Dead Zone",
         "attackFromBehindAngleHint": "The angle in which an attack from behind is considered a dead zone. By default 120°. Sets the corresponding modifier for attacks from behind. Only active if the Dere Positioning System is activated. At 0° no modifier is set.",
         "calendar": "TDE Calendar",

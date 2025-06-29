@@ -1,5 +1,6 @@
 import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
   static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
@@ -223,5 +224,8 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 Hooks.on('updateWorldTime', () => {
   game.dsa5.apps.CalendarWidget.render(true);
   if (game.dsa5.apps.CalendarPicker) game.dsa5.apps.CalendarPicker.refreshCalendar();
+
+  if (!DSA5_Utility.isActiveGM(true) || !game.canvas) return;
+  
   DSAWorldCalendar.autoDayLight();
 });

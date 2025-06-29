@@ -29,4 +29,16 @@ export default class MagicTemplate extends DSADataModel {
       }),
     };
   }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    const downCaseFields = ['guidevalue.magical', 'guidevalue.clerical'];
+    for (const field of downCaseFields) {
+      const prop = foundry.utils.getProperty(source, field)
+      if (prop && typeof prop === 'string') {
+        foundry.utils.setProperty(source, field, prop.toLowerCase());
+      }
+    }
+  }
 }

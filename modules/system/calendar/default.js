@@ -5,7 +5,7 @@ export const DSAKalender = {
   years: {
     yearSuffix: 'YearSuffix',
     yearZero: 0,
-    firstWeekday: 0,
+    firstWeekday: 3,
     leapYear: {
       leapStart: 1000000,
       leapInterval: 1000000,

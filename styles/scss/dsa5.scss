@@ -2342,6 +2342,15 @@ input[type='search'] {
   }
 }
 
+.speedIndicator {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 5px;
+    font-size: 10px;
+    border-radius: 50%;
+  }
+
 .itemLibraryTooltip {
   text-align: left;
   padding: 0.25rem;

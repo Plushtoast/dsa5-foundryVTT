@@ -134,6 +134,14 @@ export function setupConfiguration() {
     default: false,
     type: Boolean,
   });
+  game.settings.register('dsa5', 'dsaTokenRuler', {
+    name: 'DSASETTINGS.dsaTokenRuler',
+    hint: 'DSASETTINGS.dsaTokenRulerHint',
+    scope: 'world',
+    config: true,
+    default: true,
+    type: Boolean,
+  });
   game.settings.register('dsa5', 'tokenizerSetup', {
     name: 'tokenizerSetup',
     hint: 'tokenizerSetup',

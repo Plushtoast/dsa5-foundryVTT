@@ -1,7 +1,6 @@
 import { DSAAura } from '../system/automation/aura.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import Riding from '../system/automation/riding.js';
-import tokenHUD from './tokenHUD.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;
 
@@ -126,4 +125,101 @@ export class DSAToken extends Token {
     if (lastMovement <= 4) return DSAToken.MOVEMENTTYPES.WALKING;
     return DSAToken.MOVEMENTTYPES.RUNNING;
   }
+
+  _getAnimationMovementSpeed(options) {
+    return this.actor ? this.actor.system.status.speed.max * 2 : CONFIG.Token.movement.defaultSpeed;
+  }
+
+  _modifyAnimationMovementSpeed(speed, options) {
+    if (options.terrain instanceof foundry.data.TerrainData) speed /= options.terrain.difficulty;
+    const actionConfig = CONFIG.Token.movement.actions[options.action];
+    return speed * (actionConfig.speedMultiplier ?? 1);
+  }
+
+
 }
+
+
+export class DSATokenDocument extends TokenDocument {
+  _inferMovementAction() {
+    if (this.hasStatusEffect("prone")) return "crawl";
+
+    return super._inferMovementAction();
+  }
+}
+
+export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
+  static COLOR_WALKING = 0x008000; // Green
+  static COLOR_RUNNING = 0xFFC000; // Yellow
+  static COLOR_CRAWLING = 0x808000; // Olive
+  static COLOR_CRAWLING_FAST = 0xFF8000; // Orange
+  static COLOR_SWIMMING = 0x00FFFF; // Cyan
+  static COLOR_SWIMMING_FAST = 0x000FF; // Blue
+  static COLOR_FLYING = 0x800080; // Purple
+  static COLOR_FLYING_FAST = 0xFF00FF; // Magenta
+  static COLOR_IMPOSSIBLE = 0xFF0000; // Red
+
+  _getWaypointStyle(waypoint) {
+    if(!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getWaypointStyle(waypoint);
+    if (!waypoint.explicit && waypoint.next && waypoint.previous && waypoint.actionConfig.visualize
+      && waypoint.next.actionConfig.visualize && (waypoint.action === waypoint.next.action)) return { radius: 0 };
+    const scale = canvas.dimensions.uiScale;
+    return { radius: 6 * scale, color: this._totalDistanceColor(waypoint), alpha: 1 };
+  }
+
+  #colorByMovementAction(action) {
+    switch (action) {
+      case 'swim':
+        return { normal: DSATokenRuler.COLOR_SWIMMING, fast: DSATokenRuler.COLOR_SWIMMING_FAST };
+      case 'fly':
+        return { normal: DSATokenRuler.COLOR_FLYING, fast: DSATokenRuler.COLOR_FLYING_FAST };
+      case 'crawl':
+        return { normal: DSATokenRuler.COLOR_CRAWLING, fast: DSATokenRuler.COLOR_CRAWLING_FAST };
+      default:
+        return { normal: DSATokenRuler.COLOR_WALKING, fast: DSATokenRuler.RUNNING };
+    }
+  }
+
+  _totalDistanceColor(waypoint) {
+    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) {
+      const user = game.users.get(waypoint.userId);
+      return user?.color ?? 0x000000
+    };
+    const colors = this.#colorByMovementAction(waypoint.action);
+
+    let previous = waypoint.previous;
+    let previousDistanceSum = waypoint.cost;
+    while (previous) {
+      previousDistanceSum += previous.cost;
+      previous = previous.previous;      
+    }
+    
+    const maxSpeed = this.token.actor?.system.status?.speed?.max || 0;
+    
+    if (previousDistanceSum < maxSpeed) {
+      return colors.normal;
+    } else if (previousDistanceSum < maxSpeed * 2) {
+      return colors.fast;
+    } else {
+      return DSATokenRuler.COLOR_IMPOSSIBLE;
+    }
+  }
+
+
+  _getSegmentStyle(waypoint) {
+    if(!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getSegmentStyle(waypoint);
+    if (!waypoint.actionConfig.visualize) return { width: 0 };
+
+    const scale = canvas.dimensions.uiScale;
+    return { width: 4 * scale, color: this._totalDistanceColor(waypoint), alpha: 1 };
+  }
+}
+
+
+/*Hooks.on('moveToken', async (token, move, options) => {
+  console.log('moveToken', token, move, options);
+});
+
+Hooks.on('moveToken', async (token, move, options) => {
+  console.log('moveToken', token, move, options);
+});*/
