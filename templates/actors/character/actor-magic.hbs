@@ -19,8 +19,8 @@
                     <div class="actor-tradition-artefact-name col third"><a data-action="itemEdit">{{item.name}}</a></div>
                     <div class="actor-tradition-artefact-type col third center">{{item.system.artifact}}</div>
                     <div class="actor-tradition-artefact-volume col third center">{{item.volumeFinal}} / {{item.volume}}</div>
-                    <div class="actor-tradition-artefact-action col ten very-small center">
-                        <a data-action="tradition-delete" data-tooltip="SHEET.DeleteItem"><i class="fas fa-trash"></i></a>
+                    <div class="actor-tradition-artefact-action col ten very-small flexrow flexAlignCenter">
+                        <button type="button" class="icon fas fa-trash noBorder dsadesignbutton" data-action="traditionDelete" data-tooltip="SHEET.DeleteItem"></button>
                     </div>
                 </div>
                 {{#if item.abilities}}
@@ -28,7 +28,7 @@
                     <div class="row-section wrap cards col">
                     {{#each item.abilities as |ab i|}}
                     <div class="item" data-item-id="{{ab._id}}">
-                        {{#if ab.AEpayable}}<a data-tooltip="SHEET.payAECost" data-action="traditionPayCost" class="traditionPayCost"><i class="fas fa-wand-magic-sparkles"></i></a>{{/if}}{{#if ab.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
+                        {{#if ab.AEpayable}}<button data-tooltip="SHEET.payAECost" data-action="traditionPayCost" class="traditionPayCost"><i class="fas fa-wand-magic-sparkles"></i></button>{{/if}}{{#if ab.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
                     </div>
                     {{/each}}
                     </div>

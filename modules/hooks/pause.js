@@ -22,4 +22,5 @@ Hooks.on('renderGamePause', (app, html, data, options) => {
   const img = html.querySelector('img');
   img.style = '--fa-animation-duration: 12s;';
   img.src = getCurrentMonthImage();
+  html.classList.add('dsa5Pause');
 });

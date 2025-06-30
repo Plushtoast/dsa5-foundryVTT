@@ -287,9 +287,6 @@ export default class WizardDSA5 extends DefaultAppv2 {
         this.updateCharacter($(this.element)).then(() => (this.updating = false));
       }
     });
-    html.find('button.cancel').on('click', () => {
-      this.close();
-    });
 
     const itemDragStart = (event) => {
       event.stopPropagation();
