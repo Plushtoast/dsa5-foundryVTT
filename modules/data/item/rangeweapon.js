@@ -39,6 +39,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       worn: new SchemaField({
         value: new BooleanField({ initial: false }),
       }),
+      isArtifact: new BooleanField({ initial: false,  label: 'SpecCategory.staff' })
     });
   }
 

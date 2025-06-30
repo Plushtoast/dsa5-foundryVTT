@@ -1,7 +1,7 @@
 <div>
     <div class="bags row-section wrap">
         {{#each items as |item i|}}
-        <div class="slot {{item.enchantClass}}" data-tooltip="{{item.name}}" data-item-id="{{item.id}}" data-name="{{item.name}}" data-weight="{{item.system.preparedWeight}}" data-quantity="{{item.quantity.value}}">
+        <div class="slot {{item.enchantClass}}" data-action="selectAsArtifact" data-tooltip="{{item.name}}" data-item-id="{{item.id}}" data-name="{{item.name}}" data-weight="{{item.system.preparedWeight}}" data-quantity="{{item.quantity.value}}">
             <div style="background-image:url('{{item.img}}')"></div>
         </div>
         {{/each}}

@@ -52,6 +52,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
         offHand: new ScopableBooleanField({ label: 'offHand' }),
         wrongGrip: new ScopableBooleanField(),
       }),
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
   }
 

@@ -1,6 +1,6 @@
 import { DSADataModel } from '../../abstract.js';
 
-const { StringField } = foundry.data.fields;
+const { StringField, BooleanField } = foundry.data.fields;
 import DSA5 from '../../../system/config-dsa5.js';
 
 export default class ArtifactTemplate extends DSADataModel {

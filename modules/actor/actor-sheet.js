@@ -1272,7 +1272,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  static async _selectTraditionartifact(ev, target) {
+  static _selectTraditionArtifact(ev, target) {
     if (!this.isEditable) return;
 
     new TraditionArtifactpicker(this.actor).render(true);
@@ -1819,6 +1819,9 @@ class TraditionArtifactpicker extends DefaultAppv2 {
       title: 'SHEET.selectTraditionartifact',
       resizable: true,
     },
+    actions: {
+      selectAsArtifact: this._selectAsArtifact
+    }
   };
 
   static PARTS = {
@@ -1833,12 +1836,8 @@ class TraditionArtifactpicker extends DefaultAppv2 {
     return data;
   }
 
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = $(this.element);
-    html.find('.slot').on('click', async (ev) => {
-      const item = this.actor.items.get(ev.currentTarget.dataset.itemId);
-      await item.update({ 'system.isArtifact': !item.system.isArtifact });
-    });
+  static async _selectAsArtifact(ev, target) {
+    const item = this.actor.items.get(target.dataset.itemId);
+    await item.update({ 'system.isArtifact': !item.system.isArtifact });
   }
 }

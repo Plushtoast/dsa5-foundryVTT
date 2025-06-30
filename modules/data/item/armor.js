@@ -33,6 +33,7 @@ export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, 
         initial: 0,
         label: 'COMBATSKILLCATEGORY.subcategory',
       }),
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
   }
 

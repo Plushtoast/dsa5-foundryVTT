@@ -23,6 +23,7 @@ export default class EquipmentData extends ItemDataModel.mixin(DescriptionTempla
         value: new BooleanField({ initial: false }),
         wearable: new BooleanField({ initial: false, label: 'wearable' }),
       }),
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
   }
 
