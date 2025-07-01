@@ -277,6 +277,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         }
       }
     }
+    
+    const tabKeys = Object.keys(tabs);
+    const hasActive = tabKeys.some(key => tabs[key].active);
+
+    if (!hasActive && tabKeys.length > 0) {
+      const firstTab = tabs[tabKeys[0]];
+      firstTab.active = true;
+      firstTab.cssClass = 'active';
+    }
   }
 
   static _itemContextMenu(event, target) {

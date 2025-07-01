@@ -92,4 +92,16 @@ export default class StatusTemplate extends DSADataModel {
       }),
     };
   }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    const nanFields = ['hitbox'];
+    for (const field of nanFields) {
+      const prop = foundry.utils.getProperty(source, field)
+      if (prop && isNaN(prop)) {
+        foundry.utils.setProperty(source, field, 0);
+      }
+    }
+  }
 }

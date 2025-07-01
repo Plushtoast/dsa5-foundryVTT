@@ -56,6 +56,7 @@ import { DSAToken, DSATokenDocument, DSATokenRuler } from './hooks/token.js';
 import * as DSAPause from './hooks/pause.js';
 import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
+import { DSACombatantGroup } from './combat/combatant_group.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -149,6 +150,7 @@ Hooks.once('init', () => {
   CONFIG.Token.documentClass = DSATokenDocument;
   CONFIG.Token.rulerClass = DSATokenRuler;
   CONFIG.Token.movement.defaultSpeed = 16;
+  //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true  
 });
 

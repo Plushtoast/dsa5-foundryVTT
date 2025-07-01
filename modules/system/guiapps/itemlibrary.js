@@ -474,7 +474,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       if (searchLower && !item.name.toLowerCase().includes(searchLower)) return false;
 
       for (const [attr, value, isStrict] of selectSearches) {
-        if (isStrict ? item[attr] !== value : !item[attr]?.includes(value)) return false;
+        if (isStrict ? item[attr] != value : !item[attr]?.includes(value)) return false;
       }
 
       for (const [attr, value] of textSearches) {

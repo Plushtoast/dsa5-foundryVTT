@@ -46,7 +46,7 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
       scrollable: ['']
     },
     notes: {
-      template: 'systems/dsa5/templates/creature/creature-notes.hbs',
+      template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
       scrollable: ['']
     }
   }
