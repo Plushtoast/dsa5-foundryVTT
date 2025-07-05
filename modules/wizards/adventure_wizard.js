@@ -485,7 +485,6 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     const pinIcon = this.findSceneNote(journal.getFlag('dsa5', 'initId'));
     const enriched = await TextEditor.enrichHTML(content, {
       secrets: game.user.isGM,
-      async: true,
     });
 
     return `<div><h1 class="journalHeader" data-uuid="${journal.uuid}">${journal.name}<div class="jrnIcons">${pinIcon}<a data-action="pinJournal"><i class="fas fa-thumbtack"></i></a><a data-action="showJournal"><i class="fas fa-eye"></i></a></div></h1>${enriched}`;

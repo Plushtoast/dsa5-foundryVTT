@@ -27,7 +27,7 @@ export default class InformationData extends ItemDataModel {
     const propertiesToEnrich = ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail'];
     const enrichedProperties = await Promise.all(
       propertiesToEnrich.map(async (prop) => {
-        return { [`enriched${prop}`]: await TextEditor.enrichHTML(context.document.system[prop], { async: true }) };
+        return { [`enriched${prop}`]: await TextEditor.enrichHTML(context.document.system[prop], { }) };
       }),
     );
     return Object.assign({}, ...enrichedProperties);

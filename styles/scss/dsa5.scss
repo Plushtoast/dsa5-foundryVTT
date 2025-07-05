@@ -2119,15 +2119,15 @@ input[type='search'] {
   background-image: url('../../icons/schip.webp');
 }
 
-.sheet nav.sheet-tabs .item.active,
-.tabs .item.active {
+.sheet nav.sheet-tabs .tabelement.active,
+.tabs .tabelement.active {
   text-shadow:
     0 0 10px rgb(188, 136, 111),
     0 0 10px rgb(188, 136, 111);
   border-bottom: 3px solid var(--border-color);
 }
 
-.sheet nav.sheet-tabs .item {
+.sheet nav.sheet-tabs .tabelement {
   padding: 8px 12px 5px 12px;
   border-bottom: 3px solid transparent;
 }
@@ -4061,7 +4061,7 @@ select.noAppearance {
 }
 
 .tokenHotbarInner > ul > li.effect > div:before {
-  font-family: 'Font Awesome 5 Free';
+  font-family: 'Font Awesome 6 Pro';
   font-weight: 900;
   content: '\f067';
 }
@@ -5128,7 +5128,7 @@ input[type='checkbox'].autoCheckbox {
   .tabs {
     justify-content: initial;
 
-    .item {
+    .tabelement {
       flex: 1;
     }
   }

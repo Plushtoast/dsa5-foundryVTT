@@ -68,7 +68,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async parseToItem(value, types) {
-    if (value.trim() == '') return [];
+    if (value.trim() == '' || value.trim() == "-") return [];
 
     return await Promise.all(
       value.split(', ').map(async (x) => {

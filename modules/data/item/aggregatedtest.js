@@ -54,7 +54,6 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
       result = 'Success';
       txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}${await TextEditor.enrichHTML(item.system.success, {
         secrets: item.isOwner,
-        async: true,
       })}`;
     } else if (item.system.cummulatedQS.value >= 6) {
       result = 'PartSuccess';

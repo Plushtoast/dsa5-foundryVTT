@@ -3,7 +3,7 @@
     <div class="right-btn"><i class="fas fa-angle-right"></i></div>
     <nav class="sheet-tabs tabs" aria-roledescription="Form Tab Navigation">
         {{#each tabs as |tab|}}
-        <a class="item {{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">                
+        <a class="tabelement {{tab.cssClass}}" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">                
             <label>{{#if tab.icon}}<i class="{{tab.icon}}"></i> {{/if}}{{localize tab.label}}</label>
         </a>
         {{/each}}

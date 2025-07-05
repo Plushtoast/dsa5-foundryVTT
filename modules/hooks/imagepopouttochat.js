@@ -13,7 +13,7 @@ export function initImagePopoutTochat() {
 }
 
 async function postImage(app) {
-  const image = app.object;
+  const image = app.options.src
   const template = await renderTemplate('systems/dsa5/templates/chat/imagetochat.hbs', { image });
   ChatMessage.create(DSA5_Utility.chatDataSetup(template));
 }

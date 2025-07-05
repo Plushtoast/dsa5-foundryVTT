@@ -81,7 +81,7 @@ function betaWarning(version, version_specific = '', indef = false) {
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 
-async function checkBetaSettings() {
+async function setDefaultSkin() {
   const uiConfig = game.settings.get('core', 'uiConfig');
   const dsaSkin = game.settings.get('dsa5', 'globalStyle');
 
@@ -108,7 +108,7 @@ async function checkBetaSettings() {
 
 export default function migrateWorld() {
   Hooks.once('ready', async function () {
-    checkBetaSettings();
+    setDefaultSkin();
 
     if (!game.user.isGM) return;
 

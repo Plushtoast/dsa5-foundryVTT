@@ -178,7 +178,6 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         drop: this._dropInitiativeSort.bind(this)
       }
     }).bind(this.element);
-    return super._onRender(context, options);
   }
 }
 
@@ -235,8 +234,6 @@ Hooks.on('preDeleteCombat', (combat, options, user) => {
 Hooks.on('updateCombatant', (combatant, change, user) => {
   if (!DSA5_Utility.isActiveGM()) return;
   
-  RepeatingEffectsHelper.updateCombatHook(combat, change)
-
   if (change.initiative) {
     const baseRoll = combatant.getFlag('dsa5', 'baseRoll');
     if (!baseRoll) {
@@ -338,3 +335,5 @@ class RepeatingEffectsHelper {
     }
   }
 }
+
+Hooks.on("updateCombat", RepeatingEffectsHelper.updateCombatHook)

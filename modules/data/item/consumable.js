@@ -48,9 +48,6 @@ export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, Obf
     return item;
   }
 
-    
-    
-
   static _prepareConsumable(item) {
     if (item.system.maxCharges) {
       item.consumable = true;

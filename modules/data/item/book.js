@@ -33,5 +33,9 @@ export default class BookData extends ItemDataModel.mixin(DescriptionTemplate, O
     if(typeof source.legality === 'string') {
       source.legality = Number(source.legality) || 0;
     }
+
+    if(typeof source.quality === 'string') {
+      source.quality = Number(source.quality) || 0;
+    }
   }
 }

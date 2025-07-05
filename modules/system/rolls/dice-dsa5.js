@@ -1399,7 +1399,6 @@ export default class DiceDSA5 {
       const rollData = actor ? actor.getRollData() : {};
       const enriched = await TextEditor.enrichHTML(html, {
         rollData,
-        async: true,
       });
       chatOptions.content = enriched;
 

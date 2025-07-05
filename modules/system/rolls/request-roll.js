@@ -240,7 +240,7 @@ export default class RequestRoll {
     if (msg.length > 0) {
       await Promise.all(
         msg.map(async (x) => {
-          const enriched = await TextEditor.enrichHTML(x, { async: true });
+          const enriched = await TextEditor.enrichHTML(x, { });
           return enriched;
         }),
       );

@@ -35,10 +35,8 @@ export const MerchantSheetMixin = (superclass) =>
 
     static PARTS = {
       header: {
-        template: 'systems/dsa5/templates/actors/merchant/merchant-header.hbs',
-      },
-      headAttributes: {
-        template: 'systems/dsa5/templates/actors/parts/attributes.hbs',
+        template: 'systems/dsa5/templates/actors/actorv2/merchant-header.hbs',
+        templates: ['systems/dsa5/templates/actors/merchant/merchant-header.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/healthbar.hbs', 'systems/dsa5/templates/actors/actorv2/avatar.hbs']
       },
       tabs: {
         template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',

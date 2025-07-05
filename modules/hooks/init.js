@@ -109,6 +109,7 @@ Hooks.once('init', () => {
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
     foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
   });
+  foundry.applications.apps.DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
   foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
