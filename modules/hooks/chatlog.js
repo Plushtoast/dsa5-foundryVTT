@@ -18,6 +18,7 @@ export default function () {
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
     Hooks.call('startDSA5ChatAutoCompletion', game.dsa5.autoComplete);
     game.dsa5.autoComplete.chatListeners(html);
+    DSA5ChatAutoCompletion.bindRollCommands(html);
     DSA5ChatListeners.chatListeners(html);
   });
 
@@ -66,6 +67,7 @@ export default function () {
     }
 
     DSA5StatusEffects.bindButtons(html);
+    DSA5ChatAutoCompletion.bindRollCommands(html);
 
     html.find('.embeddedItemDrag').each(function (i, cond) {
       cond.setAttribute('draggable', true);
