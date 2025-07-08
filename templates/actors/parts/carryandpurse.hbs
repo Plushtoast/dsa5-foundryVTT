@@ -1,5 +1,4 @@
 <div class="actor-carry-box flexrow wrap gap5px">
-    {{#if prepare.canAdvance}}
     <div class="flex0 flexrow">
         <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
             <span><i class="fas fa-weight-hanging"></i></span>
@@ -9,7 +8,6 @@
             <span>({{prepare.encumbrance}})</span>
         </div>        
     </div>
-    {{/if}}
     <div>
         {{> systems/dsa5/templates/actors/parts/purse.hbs}}
     </div>
