@@ -11,7 +11,7 @@
         <div class="form-group">
             <label for="award_{{hero.id}}">{{hero.name}}</label>    
             <div class="form-fields">
-                <input type="checkbox" id="award_{{hero.id}}" class="smallBox lineheight heroSelector" value="{{hero.id}}" {{checked (hasElem ../selected hero.id)}}>
+                <input type="checkbox" id="award_{{hero.id}}" class="smallBox heroSelector" value="{{hero.id}}" {{checked (hasElem ../selected hero.id)}}>
             </div>
         </div>
     {{/each}}

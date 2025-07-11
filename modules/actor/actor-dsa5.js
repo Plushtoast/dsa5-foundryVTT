@@ -868,6 +868,7 @@ export default class Actordsa5 extends Actor {
       magic,
       traits,
       combatskills,
+      advanceAbility: this.canAdvance,
       canAdvance: this.canAdvance && !this.system.sheetLocked.value,
       sheetLocked: this.system.sheetLocked.value,
       bodyAttrs: ['ff', 'ge', 'ko', 'kk'],

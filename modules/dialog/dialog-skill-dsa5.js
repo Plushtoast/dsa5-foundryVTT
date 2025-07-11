@@ -81,25 +81,36 @@ export default class DSA5SkillDialog extends DialogShared {
 
   async calculateRoutine(data) {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-    const routineButton = $(this.element).find('.routineRoll');
-    if (!actor) return routineButton.prop('disabled', true);
-
-    let routineAllowed = true;
-    for (let i = 0; i < 3; i++) {
-      if (actor.system.characteristics[data[`characteristics${i}`]].max * data[`ch${i}`].max < 13) {
-        routineAllowed = false;
-        break;
-      }
+    const routineButton = $(this.element).find('[data-action="routineRoll"]');
+    if (!actor) {
+      routineButton.prop('disabled', true);
+      return;
     }
 
-    const fw = Number(this.dialogData.source.system.talentValue.value) + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
-    const mod = DSA5.skillDifficultyModifiers[data.testDifficulty] + (await DiceDSA5._situationalModifiers(data));
+    const routineAllowed = [0, 1, 2].every(i => {
+      const charKey = data[`characteristics${i}`];
+      const chKey = data[`ch${i}`];
+      return actor.system.characteristics[charKey].max * data[chKey].max >= 13;
+    });
+
+    const fwBase = Number(this.dialogData.source.system.talentValue.value);
+    const fwMod = data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
+    const fw = fwBase + fwMod;
+
+    const modBase = DSA5.skillDifficultyModifiers[data.testDifficulty];
+    const mod = modBase + (await DiceDSA5._situationalModifiers(data));
+
     const requiredFw = Math.clamp(10 - mod * 3, 1, 19);
     const enoughFw = fw >= requiredFw;
     const canRoutine = routineAllowed && enoughFw;
-    const routine = game.i18n.localize('ROLL.routine');
+
+    const routineLabel = game.i18n.localize('ROLL.routine');
     routineButton.prop('disabled', !canRoutine);
-    routineButton.html(canRoutine ? `${routine} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw / 2)})` : routine);
+    routineButton.html(
+      canRoutine
+        ? `${routineLabel} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw / 2)})`
+        : routineLabel
+    );
 
     this.calculateProbability(actor, this.dialogData.source, mod, fw);
   }

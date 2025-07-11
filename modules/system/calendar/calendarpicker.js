@@ -187,10 +187,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const calendar = game.time.calendar;
     const modifiedComponents = foundry.utils.deepClone(components);
     modifiedComponents.day += hoverBait.index - components.dayOfMonth;
-    
+
     const converted = calendar.componentsToTime(modifiedComponents);
     const convertedComponents = calendar.timeToComponents(converted);
-    
+
     const moon = calendar.translate(convertedComponents.moon.phase.name);
     const month = calendar.translate(calendar.months.values[components.month].name);
     const weekday = calendar.translate(calendar.days.values[convertedComponents.dayOfWeek].name);
@@ -208,10 +208,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const calendar = game.time.calendar;
     const modifiedComponents = foundry.utils.deepClone(components);
     modifiedComponents.day += hoverBait.originalIndex - components.dayOfWeek;
-    
+
     const converted = calendar.componentsToTime(modifiedComponents);
     const convertedComponents = calendar.timeToComponents(converted);
-    
+
     const moon = calendar.translate(convertedComponents.moon.phase.name);
     const dayOfMonth = convertedComponents.dayOfMonth + 1;
     const monthName = calendar.translate(calendar.months.values[convertedComponents.month].name);
@@ -231,25 +231,21 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const monthIndex = hoverBait.originalIndex;
     const monthImage = DSAWorldCalendar.monthImage(monthIndex);
     let img;
-    
+
     // Calculate day offset for this month
     let dayOffset = 0;
     for (let m = 0; m < monthIndex; m++) {
       dayOffset += calendar.months.values[m].days;
     }
-    
     const modifiedComponents = {
       ...calendar.timeToComponents(game.time.worldTime),
       day: dayOffset
     };
-    
     const converted = calendar.componentsToTime(modifiedComponents);
     const convertedComponents = calendar.timeToComponents(converted);
-    
     const monthData = calendar.months.values[monthIndex];
     const season = calendar.seasons.values[convertedComponents.season];
     const monthName = calendar.translate(monthData.name);
-    
     const tooltipContent = `<div>
       <img src="${monthImage}" style="width: 100px; height: 100px; object-fit: cover; object-position: center;" />    
     </div>
@@ -257,19 +253,19 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       <b>${calendar.translate('month', true)}</b>: ${monthName}<br/>
       <b>${calendar.translate('season', true)}</b>: ${calendar.translate(season.name)}
     </div>`;
-    
-    const detailsContent = calendar.translate(`monthDetails.${monthData.name}`);
-    const baseMonthName = calendar.translate(monthData.name, true);
 
-    const mappedName = {
-      "Namenlose Tage": "Namenlos",
-      "Nameless Days": "Namenlos"
-    }[baseMonthName] || baseMonthName;
+    const detailsContent = calendar.translate(`monthDetails.${monthData.name}`);
 
     if (game.modules.get('dsa5-godsofaventuria')) {
-      img = `../../../../modules/dsa5-godsofaventuria/icons/journal/${mappedName}.webp`;
+      const baseMonthName = calendar.translate(monthData.name, true);
+      const mappedName = {
+        "Namenlose Tage": "Namenlos",
+        "Nameless Days": "Namenlos"
+      }[baseMonthName] || baseMonthName;
+
+      img = mappedName;
     }
-    
+
     return { tooltipContent, detailsContent, img };
   }
 
@@ -282,15 +278,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const tooltip = this.element.querySelector('.tooltipBox');
     const calendarDetails = this.element.querySelector('.calendar-details');
     const calendarImage = this.element.querySelector('.calendar-img');
-    
+
     tooltip.innerHTML = tooltipContent;
     tooltip.classList.toggle('dsahidden', !tooltipContent);
     tooltip.classList.toggle('offsetTooltip', detailsContent);
-    
+
     calendarDetails.innerHTML = detailsContent || '';
     calendarDetails.classList.toggle('showThis', detailsContent);
 
-    calendarImage.style.setProperty('--img', img ? `url(${img})` : 'none');
+    calendarImage.dataset.img = img || '';
     calendarImage.classList.toggle('showThis', img);
   }
 
@@ -340,7 +336,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _onSettingChange(ev) {
     const isCheckbox = ev.target.type === 'checkbox';
-    const value =  isCheckbox ? ev.target.checked : ev.target.value;
+    const value = isCheckbox ? ev.target.checked : ev.target.value;
     const setting = ev.target.name;
 
     const settings = game.settings.get('dsa5', 'calendarSettings');

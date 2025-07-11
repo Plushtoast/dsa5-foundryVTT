@@ -405,7 +405,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
         for (let token of canvas.tokens.controlled) {
-          const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
+          const tokenEffects = token.actor ? (await token.actor.actorEffects()).map((x) => x.name) : [];
           sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
         effects = sharedEffects;

@@ -127,7 +127,12 @@ export class DSAToken extends Token {
   }
 
   _getAnimationMovementSpeed(options) {
-    return this.actor ? this.actor.system.status.speed.max * 2 : CONFIG.Token.movement.defaultSpeed;
+    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return super._getAnimationMovementSpeed(options);
+    
+    if(this.actor) {
+      return this.actor.system.status.speed.max || 1;
+    } 
+    return CONFIG.Token.movement.defaultSpeed;
   }
 
   _modifyAnimationMovementSpeed(speed, options) {
@@ -135,8 +140,6 @@ export class DSAToken extends Token {
     const actionConfig = CONFIG.Token.movement.actions[options.action];
     return speed * (actionConfig.speedMultiplier ?? 1);
   }
-
-
 }
 
 
@@ -183,6 +186,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   _totalDistanceColor(waypoint) {
     if (game.canvas.grid.units != game.i18n.localize('gridUnits')) {
       const user = game.users.get(waypoint.userId);
+      
       return user?.color ?? 0x000000
     };
     const colors = this.#colorByMovementAction(waypoint.action);
@@ -194,7 +198,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
       previous = previous.previous;      
     }
     
-    const maxSpeed = this.token.actor?.system.status?.speed?.max || 0;
+    const maxSpeed = this.token.actor?.system?.status?.speed?.max || 0;
     
     if (previousDistanceSum < maxSpeed) {
       return colors.normal;
