@@ -19,73 +19,6 @@ export default class MastersMenu {
       layerClass: DSAMenuLayer,
       group: 'interface',
     };
-    Hooks.on('getSceneControlButtons', (btns) => {
-      const dasMenuOptions = [
-        {
-          name: 'JournalBrowser',
-          title: 'Book.Wizard',
-          icon: 'fa fa-book',
-          button: true,
-          onChange: () => {
-            DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser);
-          },
-        },
-        {
-          name: 'Library',
-          title: 'SHEET.Library',
-          icon: 'fas fa-university',
-          button: true,
-          onChange: () => {
-            DSA5_Utility.renderToggle(game.dsa5.itemLibrary);
-          },
-        },
-        {
-          name: 'PlayerMenu',
-          title: 'PLAYER.title',
-          icon: 'fas fa-dsa5-player',
-          button: true,
-          onChange: () => {
-            DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu);
-          },
-        },
-      ];
-      if (game.settings.get('dsa5', 'masterCanvasControls')) {
-        if (game.dsa5.apps.tokenHotbar) {
-          for (let i = 3; i < game.dsa5.apps.tokenHotbar._gmEntries().length; i++) {
-            const entry = game.dsa5.apps.tokenHotbar._gmEntries()[i];
-            dasMenuOptions.push({
-              name: entry.id,
-              title: entry.name,
-              icon: `fa-dsa5 fa-dsa5-${entry.id}`,
-              button: true,
-              onChange: () => game.dsa5.apps.tokenHotbar.callbackFunctions[entry.id](),
-            });
-          }
-        }
-      }
-      if (game.user.isGM) {
-        if (!game.dsa5.apps.gameMasterMenu) game.dsa5.apps.gameMasterMenu = new GameMasterMenu();
-        dasMenuOptions.push({
-          name: 'mastersMenu',
-          title: 'gmMenu',
-          icon: 'fa fa-dsa5',
-          button: true,
-          onChange: () => {
-            DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
-          },
-        });
-      }
-      btns.gmMenu = {
-        name: 'gmMenu',
-        title: 'dsamenu',
-        icon: 'fas fa-dsa5',
-        layer: 'dsamenu',
-        tools: dasMenuOptions.reduce((a, b) => {
-          a[b.name] = b;
-          return a;
-        }, {}),
-      };
-    });
   }
 }
 
@@ -100,6 +33,78 @@ class DSAMenuLayer extends foundry.canvas.layers.InteractionLayer {
 
   selectObjects(optns) {
     canvas.tokens.selectObjects(optns);
+  }
+
+  static prepareSceneControls() {
+    const tools = {
+      select: {
+        name: 'select',
+        title: 'CONTROLS.BasicSelect',
+        icon: 'fa fa-expand',
+        button: true,
+      },
+      JournalBrowser: {
+        name: 'JournalBrowser',
+        title: 'Book.Wizard',
+        icon: 'fa fa-book',
+        button: true,
+        onChange: (a, b, c, d) => {
+          DSA5_Utility.renderToggle(game.dsa5.apps.journalBrowser);
+        },
+      },
+      Library: {
+        name: 'Library',
+        title: 'SHEET.Library',
+        icon: 'fas fa-university',
+        button: true,
+        onChange: () => {
+          DSA5_Utility.renderToggle(game.dsa5.itemLibrary);
+        },
+      },
+      PlayerMenu: {
+        name: 'PlayerMenu',
+        title: 'PLAYER.title',
+        icon: 'fas fa-dsa5-player',
+        button: true,
+        onChange: () => {
+          DSA5_Utility.renderToggle(game.dsa5.apps.playerMenu);
+        },
+      },
+    }
+    if (game.settings.get('dsa5', 'masterCanvasControls')) {
+      if (game.dsa5.apps.tokenHotbar) {
+        for (let i = 3; i < game.dsa5.apps.tokenHotbar._gmEntries().length; i++) {
+          const entry = game.dsa5.apps.tokenHotbar._gmEntries()[i];
+          tools[entry.id] = {
+            name: entry.id,
+            title: entry.name,
+            icon: `fa-dsa5 fa-dsa5-${entry.id}`,
+            button: true,
+            onChange: () => game.dsa5.apps.tokenHotbar.callbackFunctions[entry.id](),
+          };
+        }
+      }
+    }
+    if (game.user.isGM) {
+      if (!game.dsa5.apps.gameMasterMenu) game.dsa5.apps.gameMasterMenu = new GameMasterMenu();
+      tools.mastersMenu = {
+        name: 'mastersMenu',
+        title: 'gmMenu',
+        icon: 'fa fa-dsa5',
+        button: true,
+        onChange: () => {
+          DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
+        },
+      };
+    }
+    return {
+      name: 'gmMenu',
+      title: 'dsamenu',
+      icon: 'fas fa-dsa5',
+      layer: 'dsamenu',
+      activeTool: "select",
+      tools,
+    };
   }
 }
 
@@ -133,7 +138,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
           }, false)
         ) {
           if (game.dsa5.apps.LightDialog) {
-            if(options.animateDarkness) {
+            if (options.animateDarkness) {
               const interval = 50;
               const duration = options.animateDarkness;
               const limit = duration / interval;
@@ -148,7 +153,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
                 }
               }, interval);
             } else {
-             game.dsa5.apps.LightDialog.onDarknessChange();
+              game.dsa5.apps.LightDialog.onDarknessChange();
             }
           }
 
@@ -159,7 +164,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
           if (!this.rendered) return;
 
-          this.element.querySelector('.updateDarkness').value = data.environment.darknessLevel;          
+          this.element.querySelector('.updateDarkness').value = data.environment.darknessLevel;
         }
       });
       Hooks.on('canvasInit', () => {

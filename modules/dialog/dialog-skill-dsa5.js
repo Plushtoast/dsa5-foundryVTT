@@ -90,7 +90,7 @@ export default class DSA5SkillDialog extends DialogShared {
     const routineAllowed = [0, 1, 2].every(i => {
       const charKey = data[`characteristics${i}`];
       const chKey = data[`ch${i}`];
-      return actor.system.characteristics[charKey].max * data[chKey].max >= 13;
+      return actor.system.characteristics[charKey].value + chKey >= 13;
     });
 
     const fwBase = Number(this.dialogData.source.system.talentValue.value);
