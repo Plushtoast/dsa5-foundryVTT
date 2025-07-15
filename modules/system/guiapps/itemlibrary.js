@@ -709,7 +709,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       ? p => p.getDocuments()
       : documentName === "Actor"
         ? p => p.getIndex({ fields: ["name", "img", "type"] })
-        : p => p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item) });
+        : p => p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item).filter(x => x != 'information') });
 
     await Promise.all(packs.map(async (p, i) => {
       if (i > 2) {

@@ -2360,11 +2360,27 @@ input[type='search'] {
   border-radius: 6px;
   box-shadow: 0 0 0 3px #2d2215 inset;
   font-family: 'Georgia', serif;
+  max-height: 500px;
   
   overflow: hidden;
 
+  &:not(.tooltipBox)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3rem;
+    background: linear-gradient(to bottom, transparent, black);
+    pointer-events: none;
+  }
+
   .groupbox {
     border: none;
+  }
+
+  .plantContainer {
+    --plantContainerSize: 40px;
   }
 
   .table-title {
@@ -4965,28 +4981,29 @@ input[type='checkbox'].autoCheckbox {
   display: inline-block;
   position: relative;
   cursor: pointer;
-  height: 45px;
-  width: 45px;
+  --plantContainerSize: 45px;
+  height: var(--plantContainerSize);
+  width: var(--plantContainerSize);
 
   input {
     position: absolute;
     opacity: 0;
-    height: 45px;
-    width: 45px;
+    height: var(--plantContainerSize);
+    width: var(--plantContainerSize);
   }
 
   span {
     position: absolute;
     top: 0;
     left: 0;
-    height: 45px;
-    width: 45px;
+    height: var(--plantContainerSize);
+    width: var(--plantContainerSize);
     background: url('../../icons/categories/planthealing.webp');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
     opacity: 0.45;
-    transition: all 0.3s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
   }
 
   &.defensive span {
