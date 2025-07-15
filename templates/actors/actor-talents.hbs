@@ -1,121 +1,137 @@
-<div class='tab scrollable gap0px {{tabs.skills.cssClass}}' data-tab='skills' data-group='{{tabs.skills.group}}'>        
+<div class='tab scrollable gap0px {{tabs.skills.cssClass}}' data-tab='skills' data-group='{{tabs.skills.group}}'>
 
-        <div class="row-section wrap skills table-header searchbox">
-            
-            <div class="col morph lineheight searchbox-spacer">
+    <div class="row-section wrap skills table-header searchbox">
+
+        <div class="col morph lineheight searchbox-spacer">
+        </div>
+        <div class="col morph row-section">
+            <div class="col ten center lineheight">
+                <i class="fas fa-search"></i>
             </div>
-            <div class="col morph row-section">
-                <div class="col ten center lineheight">
-                    <i class="fas fa-search"></i>
-                </div>
-                <div class="col eighty lineheight searchbox-input">
-                    <input type="search" class="talentSearch" placeholder="{{localize 'searchTalents'}}" />
-                </div>
-                <div class="col ten flexrow center flexAlignCenter lineheight searchbox-filter" data-tooltip="TT.onlySkilled">
-                    <button type="button" class="dsadesignbutton noBorder" data-action="filterTalents"><i class="fas fa-filter filterTalents"></i></button>
-                </div>
+            <div class="col eighty lineheight searchbox-input">
+                <input type="search" class="talentSearch" placeholder="{{localize 'searchTalents'}}" />
+            </div>
+            <div class="col ten flexrow center flexAlignCenter lineheight searchbox-filter"
+                data-tooltip="TT.onlySkilled">
+                <button type="button" class="dsadesignbutton noBorder" data-action="filterTalents"><i
+                        class="fas fa-filter filterTalents"></i></button>
             </div>
         </div>
-        
+    </div>
 
-        <div class="row-section wrap allTalents showAll">
-            <div class="col morph">
-                {{#each prepare.allSkillsLeft}}
-                <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
-                    <div class="skill-cat col two">
-                        {{localize (concat "SKILL." @key)}}
-                    </div>
-                    <div class="skill-props col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+
+    <div class="row-section wrap allTalents showAll">
+        <div class="col morph">
+            {{#each prepare.allSkillsLeft}}
+            <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
+                <div class="skill-cat col two">
+                    {{localize (concat "SKILL." @key)}}
                 </div>
-                <div class="row-section skills table-title">
-                    <div class="col two">
-                        {{localize "skill"}}
-                    </div>
-                    <div class="headline-test col third center">{{localize "probe"}}</div>
-                    <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="skill-props col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+            </div>
+            <div class="row-section skills table-title">
+                <div class="col two">
+                    {{localize "TYPES.Item.skill"}}
                 </div>
-                {{#each this as |item i|}}
-                <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
-                    <div class="skill-name col two withContext">
-                        <a data-action="itemEdit" class="talentName">{{item.name}}</a> 
-                    </div>
-                    <div class="skill-props col third center">
-                        {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
-                        {{#if item.applications}}
-                        <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
-                    </div>
-                    <div class="skill-value col five flexrow advanceOntop">
-                        {{#if ../../prepare.canAdvance}}
-                        <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
-                        {{/if}}
-                        <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
-                        {{#if ../../prepare.canAdvance}}
-                        <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
-                        {{/if}}
-                    </div>
+                <div class="headline-test col third center">{{localize "probe"}}</div>
+                <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+            </div>
+            {{#each this as |item i|}}
+            <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}"
+                data-item-id="{{item._id}}">
+                <div class="skill-name col two withContext">
+                    <a data-action="itemEdit" class="talentName">{{item.name}}</a>
+                </div>
+                <div class="skill-props col third center flexrow">
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                     {{#if item.applications}}
-                    <div class="col lineheight expandDetails {{item.detailed}}">
-                        <ul>
-                            {{#each item.applications as |apl i|}}
-                            <li class="item" data-item-id="{{apl._id}}"><a data-action="showApplication">{{apl.name}}</a></li>
-                            {{/each}}
-                        </ul>
-                    </div>
+                    <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i
+                            class="fas fa-chevron-down"></i></a>
+                    {{else}}
+                    <a></a>
                     {{/if}}
                 </div>
-
-                {{/each}} {{/each}}
+                <div class="skill-value col five flexrow advanceOntop">
+                    {{#if ../../prepare.canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper"
+                        data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
+                    <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../../prepare.canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem"
+                        data-attr="{{item._id}}"></a>
+                    {{/if}}
+                </div>
+                {{#if item.applications}}
+                <div class="col lineheight expandDetails {{item.detailed}}">
+                    <ul>
+                        {{#each item.applications as |apl i|}}
+                        <li class="item" data-item-id="{{apl._id}}"><a data-action="showApplication">{{apl.name}}</a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
             </div>
-            <div class="col morph">
-                {{#each prepare.allSkillsRight}}
-                    <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
-                        <div class="col two">
-                            {{localize (concat "SKILL." @key)}}
-                        </div>
-                        <div class="col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
-                    </div>
-                    <div class="row-section skills table-title">
-                        <div class="col two">
-                            {{localize "skill"}}
-                        </div>
-                        <div class="headline-test col third center">{{localize "probe"}}</div>
-                        <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
-                    </div>
-                    {{#each this as |item i|}}
-                    <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}" data-item-id="{{item._id}}">
-                        <div class="col two withContext">
-                            <a data-action="itemEdit" class="talentName">{{item.name}}</a>
-                        </div>
-                        <div class="col third center">
-                            {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
-                            {{#if item.applications}}
-                            <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i class="fas fa-chevron-down"></i></a> {{/if}}
-                        </div>
-                        <div class="skill-value col five flexrow advanceOntop">
-                            {{#if ../../prepare.canAdvance}}
-                            <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
-                            {{/if}}
-                            <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
-                            {{#if ../../prepare.canAdvance}}
-                            <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
-                            {{/if}}
-                        </div>
-                        {{#if item.applications}}
-                        <div class="col lineheight expandDetails {{item.detailed}}">
-                            <ul>
-                                {{#each item.applications as |apl i|}}
-                                <li class="item" data-item-id="{{apl._id}}"><a data-action="showApplication">{{apl.name}}</a></li>
-                                {{/each}}
-                            </ul>
-                        </div>
-                        {{/if}}
-                    </div>
 
-                    {{/each}}
-                {{/each}}
-            </div>
+            {{/each}} {{/each}}
         </div>
+        <div class="col morph">
+            {{#each prepare.allSkillsRight}}
+            <div class="row-section skills table-header lineheight {{@key}}" style="margin-top:10px;">
+                <div class="col two">
+                    {{localize (concat "SKILL." @key)}}
+                </div>
+                <div class="col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+            </div>
+            <div class="row-section skills table-title">
+                <div class="col two">
+                    {{localize "TYPES.Item.skill"}}
+                </div>
+                <div class="headline-test col third center">{{localize "probe"}}</div>
+                <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+            </div>
+            {{#each this as |item i|}}
+            <div class="row-section wrap skills lineheight tableOdd item{{#if (eq item.system.talentValue.value 0)}} notLearned{{/if}}"
+                data-item-id="{{item._id}}">
+                <div class="col two withContext">
+                    <a data-action="itemEdit" class="talentName">{{item.name}}</a>
+                </div>
+                <div class="col third center flexrow">
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
+                    {{#if item.applications}}
+                    <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i
+                            class="fas fa-chevron-down"></i></a>{{else}}
+                    <a></a> {{/if}}
+                </div>
+                <div class="skill-value col five flexrow advanceOntop">
+                    {{#if ../../prepare.canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper"
+                        data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
+                    <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../../prepare.canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem"
+                        data-attr="{{item._id}}"></a>
+                    {{/if}}
+                </div>
+                {{#if item.applications}}
+                <div class="col lineheight expandDetails {{item.detailed}}">
+                    <ul>
+                        {{#each item.applications as |apl i|}}
+                        <li class="item" data-item-id="{{apl._id}}"><a data-action="showApplication">{{apl.name}}</a>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/if}}
+            </div>
+
+            {{/each}}
+            {{/each}}
+        </div>
+    </div>
     {{> systems/dsa5/templates/actors/character/actor-aggregatedtests.hbs}}
 
-    
+
 </div>
