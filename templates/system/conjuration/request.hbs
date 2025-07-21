@@ -6,10 +6,10 @@
       <fieldset class="gap0px">
         <legend>{{localize 'probe'}}</legend>
         <div class='row-section'>
-          <div class='col sixty table-title'>
+          <div class='col sixty table-title flexrow'>
             <label class=''>{{localize 'CHARAbbrev.QS'}}:</label>
           </div>
-          <div class='col fourty'>
+          <div class='col fourty center'>
             <input class='conjurationData' data-refresh='true' type='text' name='qs' value='{{creationData.qs}}' />
           </div>
         </div>
@@ -17,7 +17,7 @@
           <div class='col sixty table-title'>
             <label class=''>{{localize 'extensions'}}:</label>
           </div>
-          <div class='col fourty'>
+          <div class='col fourty center'>
             {{creationData.consumedQS}}
           </div>
         </div>
@@ -25,7 +25,7 @@
           <div class='col sixty table-title'>
             <label class=''>{{localize 'PLAYER.services'}}:</label>
           </div>
-          <div class='col fourty'>
+          <div class='col fourty center'>
             {{services}}
           </div>
         </div>
@@ -33,8 +33,8 @@
       <fieldset class="gap0px">
         <legend>{{localize 'PLAYER.conjuration'}}</legend>
         <div class='row-section'>
-          <div class='col center'>
-            <img style='width:70px;height:70px' class='profile' src='{{conjuration.img}}' data-tooltip='{{actor.name}}' />
+          <div class='col'>
+            <img style='width:70px;height:70px;margin:0 auto;' class='profile' src='{{conjuration.img}}' data-tooltip='{{actor.name}}' />
           </div>
         </div>
         <div class='row-section'>
@@ -46,8 +46,8 @@
           </div>
         </div>
         <div class='row-section'>
-          <div class='col fourty table-title'>
-            <label class=''>{{localize 'creatureClass'}}:</label>
+          <div class='col fourty flexrow table-title'>
+            <label>{{localize 'creatureClass'}}:</label>
           </div>
           <div class='col sixty'>
             {{conjuration.system.creatureClass.value}}
@@ -90,7 +90,7 @@
               <span class='small' data-tooltip='CHARAbbrev.QL'>{{item.cost}}</span>
             </div>
             <div class='col ten'>
-              <a class='showEntity small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
+              <a data-action="showEntity" class='small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
             </div>
           </div>
         {{/each}}
@@ -106,7 +106,7 @@
               <span class='small'>{{item.system.at.value}}</span>
             </div>
             <div class='col ten'>
-              <a class='showEntity small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
+              <a data-action="showEntity" class='small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
             </div>
           </div>
         {{/each}}
@@ -117,6 +117,7 @@
 
     <div class='center bags' style="margin-top:20px;">
       <div
+        data-action="newNPC"
         class='slot newNPC'
         draggable='true'
         style="margin:0 auto;background-image:url('{{actor.img}}')"
@@ -128,7 +129,7 @@
 
   {{else}}
     <div style='height:60px;' class="flexrow">
-      <button class='createActor'>{{localize 'PLAYER.finalize'}}</button>
+      <button type="button" data-action='createActor'>{{localize 'PLAYER.finalize'}}</button>
     </div>
   {{/if}}
 </div>

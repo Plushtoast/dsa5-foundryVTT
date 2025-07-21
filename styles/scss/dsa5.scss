@@ -3008,6 +3008,11 @@ a {
   }
 }
 
+.disabledSection {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .libraryImg,
 .extImg {
   background-image: url('../../icons/categories/ability_combat.webp');
@@ -3074,6 +3079,8 @@ input[type='checkbox'].smallBox {
   margin: 0 auto;
 }
 
+
+.dsajournal .compendium,
 .libItem .compendium {
   font-size: 10px;
   color: #696767;
@@ -4141,6 +4148,7 @@ select.noAppearance {
 }
 
 .dsajournal {
+
   .page-heading {
     color: var(--color-dark-1);
   }
@@ -4155,6 +4163,10 @@ select.noAppearance {
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   border-radius: 5px;
+
+  h4{
+    color: white;
+  }
 }
 
 .bagUsage {

@@ -1249,6 +1249,7 @@
     },
     "TT": {
         "collapseHeader": "Kopfzeile einklappen",
+        "conjuringSpells": "Mögliche Zaubersprüche für die Beschwörung",
         "addSpeedCategory": "Geschwindigkeitskategorie hinzufügen",
         "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
         "commaSeparated": "Komma separierte Liste",

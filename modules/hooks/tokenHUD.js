@@ -174,7 +174,7 @@ export default function () {
     }
     html.find('.control-icon[data-action="target"]').on('mousedown', (ev) => {
       if (ev.button == 2) {
-        game.user._onUpdateTokenTargets([]);
+        if (game.canvas.ready) game.user._onUpdateTokenTargets([]);
         $(ev.currentTarget).trigger('click');
         ev.preventDefault();
       }

@@ -68,7 +68,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     game.user.targets.forEach((x) => {
       if (id != x.id) newIds.push(x.id);
     });
-    game.user._onUpdateTokenTargets(newIds);
+
+    if (game.canvas.ready) game.user._onUpdateTokenTargets(newIds);
   }
 
   calculateProbability(actor, item, mod, fw) {

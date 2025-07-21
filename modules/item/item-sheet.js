@@ -919,9 +919,7 @@ class Enchantable extends ItemSheetdsa5 {
 
     if (!item) {
       const itemLibrary = game.dsa5.itemLibrary;
-      if (!itemLibrary.equipmentBuild) {
-        await itemLibrary.buildEquipmentIndex();
-      }
+      await itemLibrary.buildEquipmentIndex();
 
       itemLibrary.findCompendiumItem;
       const cats = enchantment.talisman ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];

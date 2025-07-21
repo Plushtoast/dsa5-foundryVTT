@@ -10,8 +10,9 @@ export default class RequestRoll {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
 
-    game.user._onUpdateTokenTargets([]);
-    let options = {
+    if (game.canvas.ready) game.user._onUpdateTokenTargets([]);
+
+    const options = {
       modifier,
       postFunction: {
         cummulative: messageId,
@@ -24,7 +25,7 @@ export default class RequestRoll {
       default:
         const skill = actor.items.find((i) => i.name == name && i.type == category);
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
-          let result = await actor.basicTest(setupData);
+          const result = await actor.basicTest(setupData);
           await RequestRoll.editGroupCheckRoll(messageId, result, name, category);
         });
     }
@@ -62,7 +63,8 @@ export default class RequestRoll {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
 
     if (actor) {
-      game.user._onUpdateTokenTargets([]);
+      if (game.canvas.ready) game.user._onUpdateTokenTargets([]);
+
       options.modifier = modifier;
 
       switch (category) {

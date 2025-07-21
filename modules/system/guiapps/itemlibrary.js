@@ -445,10 +445,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const aIsCore = a.compendium?.startsWith('dsa5-core') || false;
       const bIsCore = b.compendium?.startsWith('dsa5-core') || false;
 
-      if (aIsCore !== bIsCore) {
-        return bIsCore ? 1 : -1;
-      }
-
+      if (aIsCore && !bIsCore) return 1;
+      if (!aIsCore && bIsCore) return -1;
       return 0;
     });
 

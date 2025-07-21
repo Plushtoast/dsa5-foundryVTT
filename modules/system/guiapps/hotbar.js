@@ -50,7 +50,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   async updateDSA5Hotbar() {
     if (!game.settings.get('dsa5', 'hotbarv3')) return;
 
-    const controlled = canvas.tokens.controlled;
+    const controlled = canvas.tokens?.controlled || [];
     this.token = undefined;
     this.showEffects = false;
     if (controlled.length === 1) {
@@ -120,12 +120,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         tooltip = game.i18n.format('TT.skillgm', { name: data.name });
         break;
       case 'effect':
-        const effect = this.token.actor?.effects.get(data.id);
+        const effect = this.token?.actor?.effects.get(data.id);
         if (effect) description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
 
         break;
       case 'onUse':
-        item = this.token.actor?.items.get(data.id);
+        item = this.token?.actor?.items.get(data.id);
         switch (item.type) {
           case 'specialability':
             description = item.system.rule?.value;
@@ -141,7 +141,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       case 'consumable':
       case 'weapon':
       case 'spell':
-        item = this.token.actor?.items.get(data.id);
+        item = this.token?.actor?.items.get(data.id);
         const itemData = await item.sheet._prepareContext();
 
         if (!game.user.isGM && itemData.document.system.obfuscation?.details) {
@@ -162,7 +162,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         break;
       case 'enchantment':
         const ids = data.id.split('_');
-        item = this.token.actor?.items.get(ids[0]);
+        item = this.token?.actor?.items.get(ids[0]);
         if (item.system.obfuscation?.enchantment) {
           description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', item);
           data.name = `${game.i18n.localize('enchantment')} (${item.name})`;

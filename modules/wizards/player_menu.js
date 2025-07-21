@@ -192,11 +192,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
       if (elem.attr('data-refresh')) this.render();
     });
-    html.find('.initLibrary').on('click', async (ev) => {
-      $(ev.currentTarget).html('<i class="fas fa-spin fa-spinner"></i>');
-      await game.dsa5.itemLibrary.buildEquipmentIndex();
-      this.render();
-    });
+
     html.find('.item-edit').on('click', (ev) => {
       const itemId = $(ev.currentTarget).closest('.item').attr('data-item-id');
       const item = this.actor.items.get(itemId);
@@ -204,7 +200,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     });
     html.find('.selectableRow').on('click', (ev) => this.selectImprovement(ev));
     html.find('.finalizeConjuration').on('click', () => this.finalizeConjuration());
-    
+
     html.find('.showCC').on('click', () => {
       const cc = new game.dsa5.apps.DSACharacterCalculator();
       cc.actor = this.actor;
@@ -217,7 +213,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     html.find('.moreModifiers').on('change', (ev) => {
       const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find((x) => x.name == ev.currentTarget.dataset.name);
       mod.selected = $(ev.currentTarget).val();
-    });    
+    });
 
     new foundry.applications.ux.DragDrop.implementation({
       dropSelector: '.window-content',
@@ -240,7 +236,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   async _preparePartContext(partId, context, options) {
     context = await super._preparePartContext(partId, context, options);
-    
+
     const subApp = this.subApps.find((x) => x.tabName == partId);
     if (subApp) {
       const data = await subApp._getData(context);
@@ -257,7 +253,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     ];
     const fun = async () => {
       const pack = game.packs.get(rule.pack);
-      if(!pack) return ui.notifications.warn('DSAError.notFound', { format: { category: 'Pack', name: rule.pack }, localize: true });
+      if (!pack) return ui.notifications.warn('DSAError.notFound', { format: { category: 'Pack', name: rule.pack }, localize: true });
       const docs = await pack.getDocuments({ name: rule.name });
       for (let doc of docs) {
         doc.sheet.render(true);
@@ -359,7 +355,9 @@ export default class PlayerMenu extends DefaultAppv2 {
     actions: {
       skillSelect: this.rollConjuration,
       ruleLink: this.openRules,
-      openChar: this._onOpenChar
+      openChar: this._onOpenChar,
+      unhidePossibleSpells: this._unhidePossibleSpells,
+      initLibrary: this._onInitLibrary,
     }
   };
 
@@ -370,7 +368,7 @@ export default class PlayerMenu extends DefaultAppv2 {
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'elementals', label: 'PLAYER.conjuration'}
+        { id: 'elementals', label: 'PLAYER.conjuration' }
       ],
       initial: 'elementals',
     }
@@ -391,7 +389,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    for(let app of this.subApps) {
+    for (let app of this.subApps) {
       parts[app.tabName] = app.part;
     }
     return parts;
@@ -443,9 +441,9 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   async prepareEntityAbilities() {
     const data = { entityAbilities: [], entityPackages: [] };
-    if (game.dsa5.itemLibrary.equipmentBuild) {
+    if (game.dsa5.itemLibrary.indexes.Item.build) {
       const entitiesToSearch = [game.i18n.localize('LocalizedIDs.all'), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]];
-      const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems('trait', false)).map((x) => x.getItem()));
+      const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems('trait', false, true)));
 
       let entitySet = new Set();
       let packageSet = new Set();
@@ -474,11 +472,13 @@ export default class PlayerMenu extends DefaultAppv2 {
 
     if (this.actor) {
       const services = this.conjurationData.qs - this.conjurationData.consumedQS + 1;
-      const equipmentIndexLoaded = game.dsa5.itemLibrary.equipmentBuild;
+      const equipmentIndexLoaded = game.dsa5.itemLibrary.indexes.Item.build;
       const { entityAbilities, entityPackages } = await this.prepareEntityAbilities();
+      const requiredSkills = this.conjurationData.skills[this.conjurationData.conjurationType]
       const conjurationskills = this.actor.items
-        .filter((x) => this.conjurationData.skills[this.conjurationData.conjurationType].includes(x.name) && ['liturgy', 'ceremony', 'spell', 'ritual'].includes(x.type))
+        .filter((x) => requiredSkills.includes(x.name) && ['liturgy', 'ceremony', 'spell', 'ritual'].includes(x.type))
         .map((x) => x.toObject());
+      const missingConjurationSkills = requiredSkills.filter((x) => !conjurationskills.some((y) => y.name == x));
 
       let hasMighty = false;
       for (let skill of conjurationskills) {
@@ -523,6 +523,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       mergeObject(data, {
         conjurationSheet,
         conjurationskills,
+        missingConjurationSkills,
       });
     }
 
@@ -541,16 +542,28 @@ export default class PlayerMenu extends DefaultAppv2 {
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     for (let app of this.subApps) {
-      app.addTab(tabs, this.tabGroups.sheet, group); 
+      app.addTab(tabs, this.tabGroups.sheet, group);
     }
     return tabs
+  }
+
+  static async _onInitLibrary(ev, target) {
+    $(target).html('<i class="fas fa-spin fa-spinner"></i>');
+    await game.dsa5.itemLibrary.buildEquipmentIndex();
+    this.render(true);
+  }
+
+  static _unhidePossibleSpells(ev, target) {
+    this.element.querySelectorAll('.possibleSpell').forEach((x) => {
+      x.classList.toggle('dsahidden');;
+    });
   }
 }
 
 class ConjurationRequest extends DefaultAppv2 {
   constructor(conjuration, summoner, creationData) {
     super({
-      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },      
+      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },
     });
     this.conjuration = conjuration;
     this.summoner = summoner;
@@ -592,7 +605,12 @@ class ConjurationRequest extends DefaultAppv2 {
     position: {
       width: 500,
     },
-    classes: ['dsa5', 'largeDialog']
+    classes: ['dsa5', 'largeDialog'],
+    actions: {      
+      createActor: this.createActor,
+      showEntity: this._onShowEntity,
+      newNPC: { handler: this._onNewNPC, buttons: [0, 2] },
+    }
   };
 
   static PARTS = {
@@ -607,7 +625,7 @@ class ConjurationRequest extends DefaultAppv2 {
     }, {});
   }
 
-  async createActor() {
+  static async createActor(ev, target) {
     this.confirmed = true;
     const head = await DSA5_Utility.getFolderForType('Actor', null, game.i18n.localize('PLAYER.conjuration'));
     const folder = await DSA5_Utility.getFolderForType('Actor', head.id, this.creationData.typeName);
@@ -698,35 +716,43 @@ class ConjurationRequest extends DefaultAppv2 {
     this.render();
   }
 
+  static async _onNewNPC(ev, target) {
+    const id = target.dataset.id;
+    if (ev.button == 2) {
+      game.actors.get(id).delete();
+      $(target).remove();
+    } else {
+      game.actors.get(id).sheet.render(true);
+    }
+  }
+
+  static async _onShowEntity(ev, target) {
+    fromUuid(target.dataset.uuid).then(itm => itm.sheet.render(true));
+  }
+
+  _canDrag() {
+    return true;
+  }
+
+  _dragStart(ev) {
+    ev.stopPropagation();
+    const a = ev.currentTarget;
+    let dragData = { type: 'Actor', uuid: a.dataset.uuid };
+    ev.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    const html = $(this.element);
-
-    html.find('.createActor').on('click', () => {
-      this.createActor();
-    });
-
-    html.on('mousedown', '.newNPC', async (ev) => {
-      const id = ev.currentTarget.dataset.id;
-      if (ev.button == 2) {
-        game.actors.get(id).delete();
-        $(ev.currentTarget).remove();
-      } else {
-        game.actors.get(id).sheet.render(true);
+    new foundry.applications.ux.DragDrop.implementation({
+      dragSelector: ".newNPC",
+      permissions: {
+        dragstart: this._canDrag.bind(this),
+      },
+      callbacks: {
+        dragstart: this._dragStart.bind(this),
       }
-    });
-
-    html.on('dragstart', '.newNPC', (event) => {
-      event.stopPropagation();
-      const a = event.currentTarget;
-      let dragData = { type: 'Actor', uuid: a.dataset.uuid };
-      event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
-    });
-    html.find('.showEntity').on('click', (ev) => {
-      ev.stopPropagation();
-      fromUuid(ev.currentTarget.dataset.uuid).then(itm => itm.sheet.render(true));
-    });
+    }).bind(this.element);
   }
 }
 

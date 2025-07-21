@@ -321,6 +321,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       this.updateDarkness(ev);
     });
 
+    html.find('[name="attackFromBehindAngle"]').on('change', (ev) => {
+      game.settings.set('dsa5', 'attackFromBehindAngle', Number(ev.currentTarget.value));
+    });
+
     for (let elem of this.randomCreation) {
       elem.activateListeners(html);
     }

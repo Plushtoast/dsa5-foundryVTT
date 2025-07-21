@@ -1392,6 +1392,7 @@
     },
     "TT": {
         "collapseHeader": "Collapse header",
+        "conjuringSpells": "Possible spells for the conjuring",
         "addSpeedCategory": "Add speed category",
         "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",
         "commaSeparated": "Comma separated list",
