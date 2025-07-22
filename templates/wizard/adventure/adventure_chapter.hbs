@@ -71,7 +71,7 @@
   <h2>{{localize 'Book.toc'}}</h2>
   <ul>
     {{#each subChapters as |item i|}}
-      <li class='fas fa-caret-right'><a data-action='subChapter' class='subChapter' data-jid='{{item.id}}'>{{item.name}}</a></li>
+      <li><a data-action='subChapter' class='subChapter' data-jid='{{item.id}}'><i class="fas fa-caret-right"></i> {{item.name}}</a></li>
     {{/each}}
   </ul>
 </div>

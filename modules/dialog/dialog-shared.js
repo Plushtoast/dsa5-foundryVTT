@@ -59,6 +59,28 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     const template = await renderTemplate('systems/dsa5/templates/dialog/parts/targets.hbs', { targets });
     html.find('.targets').html(template);
     this.updateRollButton(targets);
+    this.rotateToTarget();
+  }
+
+  rotateToTarget() {
+    const targets = Array.from(game.user?.targets || []);
+    if (targets.length > 0 && game.canvas.ready) {
+      const sourceToken = canvas.tokens.get(this.dialogData.speaker.token);
+
+      if(!sourceToken) return;
+
+      const targetAngleActivated = game.settings.get('dsa5', 'attackFromBehindAngle');
+      const dpsEnabled = game.settings.get('dsa5', 'enableDPS')
+
+      if (!targetAngleActivated || !dpsEnabled) return;
+
+      const targetToken = targets[0];
+
+      const angle = Math.atan2(targetToken.center.y - sourceToken.center.y, targetToken.center.x - sourceToken.center.x) * (180 / Math.PI);
+      const adjustedAngle = (angle + 360) % 360 - 90;
+
+      sourceToken.document.update({rotation: adjustedAngle});
+    }
   }
 
   removeTarget(ev) {
@@ -125,6 +147,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     html.on('click', '.rollTarget', (ev) => this.removeTarget(ev));
     html.on('click', '.addTarget', (ev) => this.addTarget(ev));
     html.find('.window-content form').addClass('scrollable');
+
+    this.rotateToTarget();
   }
 
   async addTarget(ev) {

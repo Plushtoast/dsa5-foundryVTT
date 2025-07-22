@@ -25,7 +25,7 @@
     {{/each}}
     <div class="flexcol">
         <label>{{localize 'Module'}}</label>
-        <select name="compendium">
+        <select name="compendium" data-notstrict="true">
             {{selectOptions moduleOptions selected=moduleSelected blank=(localize 'Library.noFilter')}}
         </select>
     </div>
