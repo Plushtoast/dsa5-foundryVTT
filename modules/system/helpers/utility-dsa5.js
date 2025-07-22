@@ -5,10 +5,27 @@ import DSA5 from '../config-dsa5.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5_Utility {
+  static EXPERIENCE_GRADES = [
+    { threshold: 2100, label: 'EXP.legendary' },
+    { threshold: 1700, label: 'EXP.brillant' },
+    { threshold: 1400, label: 'EXP.masterful' },
+    { threshold: 1200, label: 'EXP.competent' },
+    { threshold: 1100, label: 'EXP.experienced' },
+    { threshold: 1000, label: 'EXP.average' },
+  ];
+
+  static WEAPON_TYPES = {
+    melee: 0,
+    range: 1,
+  };
+
+  static DICE_REGEX = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-|–)[0-9]+)?/g;
+
   static async skillByName(name) {
     const pack = game.packs.get(this.getLanguagePack());
     await pack.getIndex();
     const entry = pack.index.find((i) => i.name === name);
+    if (!entry) return null;
     return await pack.getDocument(entry._id);
   }
 
@@ -16,114 +33,176 @@ export default class DSA5_Utility {
     return await this.getCompendiumEntries(this.getLanguagePack(), 'skill');
   }
 
-  static moduleEnabled(id) {
-    return game.modules.get(id) && game.modules.get(id).active;
-  }
-
   static async allCombatSkills() {
     return await this.getCompendiumEntries(this.getLanguagePack(), 'combatskill');
-  }
-
-  static getLanguagePack() {
-    return game.i18n.lang == 'de' ? 'dsa5.skills' : 'dsa5.skillsen';
-  }
-
-  static async getCompendiumEntries(compendium, itemType) {
-    const pack = await game.packs.get(compendium);
-    if (!pack) return ui.notifications.error('No content found');
-
-    const search = Array.isArray(itemType) ? itemType : [itemType];
-    const items = (await pack.getDocuments()).filter((i) => search.includes(i.type));
-    return items.map((x) => x.toObject());
-  }
-
-  static renderToggle(elem) {
-    if (elem.rendered) {
-      if (elem._minimized) elem.maximize();
-      else elem.close();
-    } else elem.render(true);
-  }
-
-  static calcTokenSize(actorData, data) {
-    let tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value];
-    if (tokenSize) {
-      if (tokenSize < 1) {
-        mergeObject(data, {
-          texture: {
-            scaleX: tokenSize,
-            scaleY: tokenSize,
-          },
-          width: 1,
-          height: 1,
-        });
-      } else {
-        const int = Math.floor(tokenSize);
-        const scale = Math.max(tokenSize / int, 0.25);
-        mergeObject(data, {
-          width: int,
-          height: int,
-          texture: {
-            scaleX: scale,
-            scaleY: scale,
-          },
-        });
-      }
-    }
-  }
-
-  static registerMasterTokens(file) {
-    if (!DSA5_Utility.moduleEnabled('dsa5-mastersworkshop')) return;
-
-    DSA5.masterTokens.push(file);
   }
 
   static async allMoneyItems() {
     const customPack = game.settings.get('dsa5', 'moneyKompendium');
     const moneyPack = game.packs.get(customPack) ? customPack : this.getLanguagePack();
-    return (await this.getCompendiumEntries(moneyPack, 'money'))
+    const items = await this.getCompendiumEntries(moneyPack, 'money');
+
+    return items
       .sort((a, b) => a.system.price.value - b.system.price.value)
-      .map((x) => {
-        x.system.quantity.value = 0;
-        return x;
-      });
+      .map(item => ({ ...item, system: { ...item.system, quantity: { value: 0 } } }));
+  }
+
+  static getLanguagePack() {
+    return game.i18n.lang === 'de' ? 'dsa5.skills' : 'dsa5.skillsen';
+  }
+
+  static async getCompendiumEntries(compendium, itemType) {
+    const pack = await game.packs.get(compendium);
+    if (!pack) {
+      ui.notifications.error('No content found');
+      return [];
+    }
+
+    const searchTypes = Array.isArray(itemType) ? itemType : [itemType];
+    const documents = await pack.getDocuments();
+    return documents
+      .filter(doc => searchTypes.includes(doc.type))
+      .map(doc => doc.toObject());
+  }
+
+  static moduleEnabled(id) {
+    const module = game.modules.get(id);
+    return module?.active ?? false;
+  }
+
+  static renderToggle(elem) {
+    if (!elem.rendered) {
+      elem.render(true);
+      return;
+    }
+
+    if (elem._minimized) {
+      elem.maximize();
+    } else {
+      elem.close();
+    }
+  }
+
+  static calcTokenSize(actorData, data) {
+    const tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value];
+    if (!tokenSize) return;
+
+    if (tokenSize < 1) {
+      this._applyTokenScale(data, tokenSize, 1, 1);
+    } else {
+      const size = Math.floor(tokenSize);
+      const scale = Math.max(tokenSize / size, 0.25);
+      this._applyTokenScale(data, scale, size, size);
+    }
+  }
+
+  static _applyTokenScale(data, scale, width, height) {
+    mergeObject(data, {
+      texture: { scaleX: scale, scaleY: scale },
+      width,
+      height,
+    });
   }
 
   static async allSkillsList() {
-    return ((await this.allSkills()) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
+    const skills = await this.allSkills();
+    return skills?.map(skill => skill.name).sort((a, b) => a.localeCompare(b)) ?? [];
   }
 
   static async allCombatSkillsList(weapontype) {
-    const weaponId = {
-      melee: 0,
-      range: 1,
-    }[weapontype];
-    return ((await this.allCombatSkills()).filter((x) => x.system.weapontype.value == weaponId) || []).map((x) => x.name).sort((a, b) => a.localeCompare(b));
+    const weaponId = this.WEAPON_TYPES[weapontype];
+    if (weaponId === undefined) return [];
+
+    const skills = await this.allCombatSkills();
+    return skills
+      .filter(skill => skill.system.weapontype.value === weaponId)
+      .map(skill => skill.name)
+      .sort((a, b) => a.localeCompare(b));
+  }
+
+  static parseAbilityString(ability) {
+    const bonusMatch = ability.match(/[+-]?\d{1,2}$/);
+    const specialMatch = ability.match(/\(([^()]+)\)/);
+    const typeMatch = ability.match(/ (FP|SP|FW|SR)[+-]?\d{1,2}/);
+    const withoutBonus = ability.replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim();
+
+    return {
+      original: withoutBonus,
+      name: withoutBonus.replace(/\((.+?)\)/g, '()'),
+      step: bonusMatch ? Number(bonusMatch[0]) : 1,
+      special: specialMatch?.[1] || '',
+      type: typeMatch ? (typeMatch[1] === 'FP' || typeMatch[1] === 'SP' ? 'FP' : 'FW') : '',
+      bonus: bonusMatch !== null,
+    };
+  }
+
+  static experienceDescription(experience) {
+    const numericExperience = Number(experience);
+    const grade = this.EXPERIENCE_GRADES.find(g => numericExperience >= g.threshold);
+    return grade?.label ?? 'EXP.inexperienced';
+  }
+
+  static categoryLocalization(category, docName = 'Item') {
+    return game.i18n.localize(`TYPES.${docName}.${category}`);
+  }
+
+  static attributeLocalization(attribute) {
+    return game.i18n.localize(`CHAR.${attribute.toUpperCase()}`);
+  }
+
+  static attributeAbbrLocalization(attribute) {
+    return game.i18n.localize(`CHARAbbrev.${attribute.toUpperCase()}`);
+  }
+
+  static replaceDies(content, inlineRoll = false) {
+    const rollPrefix = inlineRoll ? '' : '/r ';
+    return content.replace(this.DICE_REGEX, str => {
+      const normalizedDice = str.replace(/[DwW]/, 'd').replace(/–/, '-');
+      return ` [[${rollPrefix}${normalizedDice}]]`;
+    });
+  }
+
+  static replaceConditions(content) {
+    return content?.replace(DSA5.statusRegex.regex, str => conditionsMatcher([str])) ?? content;
+  }
+
+  static escapeRegex(input) {
+    const source = (typeof input === 'string' || input instanceof String) ? input : '';
+    return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+  }
+
+  static registerMasterTokens(file) {
+    if (!this.moduleEnabled('dsa5-mastersworkshop')) return;
+    DSA5.masterTokens.push(file);
   }
 
   static async callItemTransformationMacro(macroName, source, effect, args = {}) {
     const parts = macroName.split('.');
     const pack = game.packs.get(`${parts[0]}.${parts[1]}`);
     if (!pack) {
-      console.warn(`Pack ${pack} not found`);
+      console.warn(`Pack ${macroName} not found`);
       return {};
     }
 
-    let documents = await pack.getDocuments({ name: parts[2] });
-    let result = {};
-    if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fn = new AsyncFunction('args', 'source', 'effect', documents[0].command);
-      try {
-        args.result = result;
-        await fn.call(this, args, source, effect);
-      } catch (err) {
-        ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
-        console.error(err);
-        result.error = true;
-      }
-    } else {
+    const documents = await pack.getDocuments({ name: parts[2] });
+    if (!documents.length) {
       ui.notifications.error('DSAError.macroNotFound', { localize: true, format: { name: macroName } });
+      return {};
     }
+
+    const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+    const fn = new AsyncFunction('args', 'source', 'effect', documents[0].command);
+    const result = {};
+
+    try {
+      args.result = result;
+      await fn.call(this, args, source, effect);
+    } catch (err) {
+      ui.notifications.error('There was an error in your macro syntax. See the console (F12) for details');
+      console.error(err);
+      result.error = true;
+    }
+
     return result;
   }
 
@@ -133,28 +212,6 @@ export default class DSA5_Utility {
     if (!activeGM && !suppress) ui.notifications.warn('DSAError.requiresGM', { localize: true });
 
     return activeGM?.isSelf;
-  }
-
-  static parseAbilityString(ability) {
-    return {
-      original: ability.replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '').trim(),
-      name: ability
-        .replace(/\((.+?)\)/g, '()')
-        .replace(/ (FP|SR|FW|SP)?[+-]?\d{1,2}$/, '')
-        .trim(),
-      step: Number((ability.match(/[+-]?\d{1,2}$/) || [1])[0]),
-      special: (ability.match(/\(([^()]+)\)/) || ['', ''])[1],
-      type: ability.match(/ (FP|SP)[+-]?\d{1,2}/) ? 'FP' : ability.match(/ (FW|SR)[+-]?\d{1,2}/) ? 'FW' : '',
-      bonus: ability.match(/[-+]\d{1,2}$/) != undefined,
-    };
-  }
-
-  static categoryLocalization(a, docName = 'Item') {
-    return game.i18n.localize(`TYPES.${docName}.${a}`);
-  }
-
-  static attributeLocalization(a) {
-    return game.i18n.localize(`CHAR.${a.toUpperCase()}`);
   }
 
   static attributeAbbrLocalization(a) {
@@ -302,42 +359,12 @@ export default class DSA5_Utility {
     return results;
   }
 
-  static replaceDies(content, inlineRoll = false) {
-    let regex = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-|–)[0-9]+)?/g;
-    let roll = inlineRoll ? '' : '/r ';
-    return content.replace(regex, function (str) {
-      return ` [[${roll}${str.replace(/[DwW]/, 'd').replace(/–/, '-')}]]`;
-    });
-  }
-
   static pushOnlyIfUnique(array, object) {
     if (!array.find((x) => DSA5_Utility.shallowEquals(x, object))) array.push(object);
   }
 
   static shallowEquals(a, b) {
     return JSON.stringify(a) == JSON.stringify(b);
-  }
-
-  static escapeRegex(input) {
-    const source = typeof input === 'string' || input instanceof String ? input : '';
-    return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  }
-
-  static replaceConditions(content) {
-    if (!content) return content;
-
-    return content.replace(DSA5.statusRegex.regex, (str) => conditionsMatcher([str]));
-  }
-
-  static experienceDescription(experience) {
-    const grades = [2100, 1700, 1400, 1200, 1100, 1000];
-    const labels = ['EXP.legendary', 'EXP.brillant', 'EXP.masterful', 'EXP.competent', 'EXP.experienced', 'EXP.average'];
-    let index = 0;
-    for (const grade of grades) {
-      if (Number(experience) >= Number(grade)) return labels[index];
-      index++;
-    }
-    return 'EXP.inexperienced';
   }
 
   static emptyActor(attrs = 12, name = 'Alrik', data = {}) {
@@ -371,4 +398,5 @@ export default class DSA5_Utility {
     actor.emptyActor = createData;
     return actor;
   }
+
 }
