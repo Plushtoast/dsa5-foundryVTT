@@ -2,13 +2,17 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export function initImagePopoutTochat() {
-  Hooks.on('getHeaderControlsImagePopout', (app, buttons) => {
-    buttons.unshift({
-      action: 'posttochat',
-      icon: 'fas fa-comment',
-      label: 'SHEET.PostItem',
-      onClick: async () => postImage(app),
+  Hooks.on('renderImagePopout', (app, html) => {
+    html = $(html); 
+    const button = $(`
+      <button type="button" class="header-control icon fas fa-comment" data-tooltip="SHEET.PostItem" aria-label="Post to Chat" data-action="posttochat"></button>
+    `);
+    button.on('click', (ev) => {
+      ev.preventDefault();
+      postImage(app);
     });
+    const ellipsisbutton = html.find('.window-header .header-control.fa-ellipsis-vertical')
+    ellipsisbutton.before(button);
   });
 }
 
@@ -19,6 +23,5 @@ async function postImage(app) {
 }
 
 export function showPopout(ev) {
-  const dataset = ev.currentTarget.dataset;
-  DSA5_Utility.showArtwork(dataset, false);
+  DSA5_Utility.showArtwork(ev.currentTarget.dataset, false);
 }
