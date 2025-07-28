@@ -602,20 +602,26 @@ export default class Itemdsa5 extends Item {
     let targetWeaponSize = 'short';
 
     game.user.targets.forEach((target) => {
-      if (target.actor) {
-        const targetActor = target.actor;
-        const combatskills = targetActor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), targetActor.system));
-        for (let item of target.actor.items) {
-          const isMeleeWeapon = item.type == 'meleeweapon'
+      const targetActor = target.actor;
+      if (!targetActor) return;
 
-          if (!((isMeleeWeapon && item.system.worn.value) || (item.type == 'trait' && item.system.traitType.value == 'meleeAttack' && item.system.pa))) continue;
+      const combatskills = targetActor.items
+        .filter((x) => x.type == 'combatskill')
+        .map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), targetActor.system));
 
-          if (isMeleeWeapon) item = Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, targetActor);
+      for (let item of targetActor.items) {
+        const isMeleeWeapon = item.type == 'meleeweapon';
+        const isTraitMelee = item.type == 'trait' && item.system.traitType.value == 'meleeAttack' && item.system.pa;
 
-          if (DSA5.meleeRangesArray.indexOf(item.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) targetWeaponSize = item.system.reach.value;
+        if (!(isMeleeWeapon && item.system.worn.value) && !isTraitMelee) continue;
 
-          if (targetWeaponSize == 'long') break;
+        if (isMeleeWeapon) item = Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, targetActor);
+
+        if (DSA5.meleeRangesArray.indexOf(item.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) {
+          targetWeaponSize = item.system.reach.value;
         }
+
+        if (targetWeaponSize === 'long') break;
       }
     });
 
@@ -623,7 +629,7 @@ export default class Itemdsa5 extends Item {
     this.getCombatSkillModifier(actor, source, situationalModifiers);
 
     const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1;
-    if (defenseMalus != 0) {
+    if (defenseMalus !== 0) {
       situationalModifiers.push({
         name: `${game.i18n.localize('statuseffects')} - ${game.i18n.localize('MODS.defenseMalus')}`,
         value: defenseMalus,
