@@ -214,10 +214,6 @@ export default class DSA5_Utility {
     return activeGM?.isSelf;
   }
 
-  static attributeAbbrLocalization(a) {
-    return game.i18n.localize(`CHARAbbrev.${a.toUpperCase()}`);
-  }
-
   static async callAsyncHooks(hook, args) {
     for (let func of DSA5.asyncHooks[hook]) await func(...args);
   }
