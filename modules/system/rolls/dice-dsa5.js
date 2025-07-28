@@ -614,39 +614,41 @@ export default class DiceDSA5 {
     let damageBonusDescription = dmgMultipliers.map((x) => `${x.name} *${x.val}`);
     let armorPen = [];
     let bonusDmg = 0;
+
     for (let val of testData.situationalModifiers) {
-      let number = 0;
       if (val.armorPen) armorPen.push(val.armorPen);
+
       if (val.damageBonus) {
         if (/^\*/.test(val.damageBonus)) {
           DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
           continue;
         }
+
         const isOverride = /^=/.test(val.damageBonus);
         const rollString = `${val.damageBonus}`.replace(/^=/, '');
-
-        let roll = await DiceDSA5._stringToRoll(rollString, testData);
-        number = roll * (val.step || 1);
+        const roll = await DiceDSA5._stringToRoll(rollString, testData);
+        const number = roll * (val.step || 1);
 
         if (isOverride) {
           rollFormula = this.replaceDieLocalization(rollString);
           overrideDamage.push({ name: val.name, roll });
           continue;
-        } else {
-          val.damageBonus = roll;
-          bonusDmg += number;
         }
 
+        val.damageBonus = roll;
+        bonusDmg += number;
+      }
 
-      }      
+      if (val.flatValues?.damageBonus) {
+        bonusDmg += Number(val.flatValues.damageBonus) || 0;
+      }
     }
 
     const actor = this.#actorFromTestData(testData);
-
     let damageRoll = testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
     let damage = damageRoll.total;
-
     let weaponroll = 0;
+
     for (let k of damageRoll.terms) {
       if (k instanceof foundry.dice.terms.Die || k.class == 'Die') {
         for (let l of k.results) {
@@ -662,24 +664,31 @@ export default class DiceDSA5 {
         }
       }
     }
+
     let weaponBonus = damage - weaponroll;
 
     if (overrideDamage.length > 0) {
       damageBonusDescription.push(overrideDamage[0].name + ' ' + damage);
     } else {
       damage += bonusDmg;
-
       damageBonusDescription.push(game.i18n.localize('Roll') + ' ' + weaponroll);
-      if (weaponBonus != 0) damageBonusDescription.push(game.i18n.localize('weaponModifier') + ' ' + weaponBonus);
 
-      testData.situationalModifiers.reduce((prev, x) => {
+      if (weaponBonus != 0) {
+        damageBonusDescription.push(game.i18n.localize('weaponModifier') + ' ' + weaponBonus);
+      }
+
+      for (let x of testData.situationalModifiers) {
         if (x.damageBonus) {
-          const value = /^\*/.test(x.damageBonus) ? x.damageBonus : Number(x.damageBonus) * (x.step || 1);
+          let value = /^\*/.test(x.damageBonus) ? x.damageBonus : Number(x.damageBonus) * (x.step || 1);
+          if (x.flatValues?.damageBonus) {
+            value += Number(x.flatValues.damageBonus) || 0;
+          }
           damageBonusDescription.push(`${x.name} ${value}`);
         }
-      }, damageBonusDescription);
+      }
 
-      if (testData.situationalModifiers.find((x) => x.name.indexOf(game.i18n.localize('CONDITION.bloodrush')) > -1)) {
+      const bloodrushModifier = testData.situationalModifiers.find((x) => x.name.indexOf(game.i18n.localize('CONDITION.bloodrush')) > -1);
+      if (bloodrushModifier) {
         damage += 2;
         damageBonusDescription.push(game.i18n.localize('CONDITION.bloodrush') + ' ' + 2);
       }
@@ -689,7 +698,7 @@ export default class DiceDSA5 {
         damageBonusDescription.push(game.i18n.localize('damageThreshold') + ' ' + weapon.extraDamage);
       }
 
-      let status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
+      const status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
       const statusDmg = await DiceDSA5._stringToRoll(status, testData);
       if (statusDmg != 0) {
         damage += statusDmg;
@@ -698,23 +707,24 @@ export default class DiceDSA5 {
 
       const combatskill = getProperty(weapon, 'system.combatskill.value');
       const ktwDamage = actor.system.skillModifiers.combat.damage.reduce((prev, x) => {
-        if (x.target == combatskill) prev += Number(x.value);
-        return prev;
+        return x.target == combatskill ? prev + Number(x.value) : prev;
       }, 0);
 
       if (ktwDamage) {
-        damage = damage + ktwDamage;
+        damage += ktwDamage;
         damageBonusDescription.push(`${game.i18n.localize('TYPES.Item.combatskill')} (${game.i18n.localize('CHARAbbrev.damage')}) ${ktwDamage}`);
       }
     }
 
     if (doubleDamage) {
-      damage = damage * doubleDamage;
+      damage *= doubleDamage;
       damageBonusDescription.push(game.i18n.format('doubleDamage', { x: doubleDamage }));
     }
+
     for (const el of dmgMultipliers) {
-      damage = damage * el.val;
+      damage *= el.val;
     }
+
     result.armorPen = armorPen;
     result.damagedescription = damageBonusDescription.join(', ');
     result.damage = Math.round(damage);
