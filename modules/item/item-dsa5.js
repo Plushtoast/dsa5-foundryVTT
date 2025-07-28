@@ -14,6 +14,7 @@ import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.j
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import Riding from '../system/automation/riding.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
+import CombatskillData from '../data/item/combatskill.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -602,12 +603,18 @@ export default class Itemdsa5 extends Item {
 
     game.user.targets.forEach((target) => {
       if (target.actor) {
-        for (let x of target.actor.items) {
-          if ((x.type == 'meleeweapon' && x.system.worn.value) || (x.type == 'trait' && x.system.traitType.value == 'meleeAttack' && x.system.pa)) {
-            if (DSA5.meleeRangesArray.indexOf(x.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) targetWeaponSize = x.system.reach.value;
+        const targetActor = target.actor;
+        const combatskills = targetActor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), targetActor.system));
+        for (let item of target.actor.items) {
+          const isMeleeWeapon = item.type == 'meleeweapon'
 
-            if (targetWeaponSize == 'long') break;
-          }
+          if (!((isMeleeWeapon && item.system.worn.value) || (item.type == 'trait' && item.system.traitType.value == 'meleeAttack' && item.system.pa))) continue;
+
+          if (isMeleeWeapon) item = Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, targetActor);
+
+          if (DSA5.meleeRangesArray.indexOf(item.system.reach.value) > DSA5.meleeRangesArray.indexOf(targetWeaponSize)) targetWeaponSize = item.system.reach.value;
+
+          if (targetWeaponSize == 'long') break;
         }
       }
     });

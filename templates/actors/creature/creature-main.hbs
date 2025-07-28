@@ -8,10 +8,9 @@
             
             <div class="groupbox gap5px derivedStatsContainer">
                 <legend class="table-title lineheight">{{localize "derivedStats"}}</legend>
-                {{#if prepare.canAdvance}}
+                {{#if prepare.advanceAbility}}
 
                 {{> systems/dsa5/templates/actors/parts/creature-derived-attributes-large.hbs}}
-                {{> systems/dsa5/templates/actors/parts/experienceBox.hbs}}
 
                 {{else}}
 
@@ -19,6 +18,10 @@
 
                 {{/if}}
             </div>
+
+            {{#if prepare.advanceAbility}}
+                {{> systems/dsa5/templates/actors/parts/experienceBox.hbs}}
+            {{/if}}
         </div>
         <div class="col morph60 gap10px flexcol">
             {{> systems/dsa5/templates/actors/parts/specialabilities.hbs}}

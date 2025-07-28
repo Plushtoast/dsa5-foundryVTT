@@ -19,8 +19,10 @@
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "wounds"}}
+            {{#if prepare.canAdvance}}
             <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
             <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>
+            {{/if}}
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.wounds.fields.initial value=document.system.status.wounds.initial}}
@@ -39,8 +41,10 @@
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "astralenergy"}}
+            {{#if prepare.canAdvance}}
             <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
             <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>
+            {{/if}}
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.astralenergy.current}}
@@ -60,8 +64,10 @@
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
             {{localize "karmaenergy"}}
+            {{#if prepare.canAdvance}}
             <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
             <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>
+            {{/if}}
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.karmaenergy.current}}
@@ -109,7 +115,7 @@
         </div>
     </div>
     <div class="derivedAttrs row-section">
-        <div class="col two lineheight">
+        <div class="col two lineheight flexrow">
             <span>{{localize (ifThen document.system.config.defense "defense" "dodge")}}</span> <button type="button" data-action="defenseToggle" class="defenseToggle icon dsadesignbutton noBorder"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}"></i></button>
         </div>
         <div class="col eight lineheight center">
@@ -166,7 +172,7 @@
         </div>
     </div>
     <div class="derivedAttrs row-section">
-        <div class="col two lineheight">
+        <div class="col two lineheight flexrow">
             <span>{{localize "speed"}}</span> <button type="button" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="TT.addSpeedCategory" data-action="addSpeedCategory"></button>
         </div>
         <div class="col eight lineheight center">

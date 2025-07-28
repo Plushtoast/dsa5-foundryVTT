@@ -325,7 +325,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     Object.assign(data, ...enrichedProperties);
   }
 
-  static _onItemCreate(event, target) {
+  static async _onItemCreate(event, target) {
     event.preventDefault();
     let data = duplicate(target.dataset);
     if (DSA5.equipmentTypes[data.type]) {
@@ -345,7 +345,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     delete data.action;
     delete data.section;
     delete data.tooltip;
-    this.actor.createEmbeddedDocuments('Item', [data]);
+    const items = await this.actor.createEmbeddedDocuments('Item', [data]);
+    items[0].sheet.render(true);
   }
 
   static _handleAggregatedProbe(ev, target) {
