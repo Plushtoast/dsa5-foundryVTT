@@ -107,26 +107,82 @@ export default class Itemdsa5 extends Item {
   }
 
   static getSpecAbModifiers(html, mode) {
-    let res = [];
-    for (let k of html.find('.specAbs')) {
-      let step = Number(k.dataset.step);
-      if (step > 0) {
-        const val = mode == 'attack' ? k.dataset.atbonus : k.dataset.pabonus;
-        const reducedVal = val.split(',').reduce((prev, cur) => {
-          return prev + Number(cur);
-        }, 0);
-        res.push({
-          name: $(k).find('a').text(),
-          value: isNaN(reducedVal) ? Number(val.replace('*', '')) : Number(reducedVal) * step,
-          damageBonus: k.dataset.tpbonus,
-          dmmalus: k.dataset.dmmalus * step,
-          step: step,
-          specAbId: k.dataset.id,
-          type: /^\*/.test(val) ? '*' : undefined,
-        });
+    const res = [];
+    const isAttack = mode === 'attack';
+    const mainAttribute = isAttack ? 'atbonus' : 'pabonus';
+    
+    const matchers = {
+      [mainAttribute]: 'value',
+      tpbonus: 'damageBonus',
+      dmmalus: 'dmmalus',
+    };
+    
+    for (const element of html.find('.specAbs')) {
+      const dataset = element.dataset;
+      const step = Number(dataset.step);
+      
+      if (step <= 0) continue;
+      
+      const modifier = this.#parseModifierValue(dataset, mainAttribute, step);
+      if (!modifier) continue;
+      
+      const flatValues = this.#extractFlatValues(dataset, matchers);
+      
+      res.push({
+        name: $(element).find('a').text().trim(),
+        value: modifier.value + (flatValues.value || 0),
+        damageBonus: dataset.tpbonus,
+        dmmalus: Number(dataset.dmmalus) * step + (flatValues.dmmalus || 0),
+        step,
+        specAbId: dataset.id,
+        type: modifier.type,
+        flatValues
+      });
+    }
+    
+    return res;
+  }
+
+  static #parseModifierValue(dataset, mainAttribute, step) {
+    const val = dataset[mainAttribute];
+    if (!val) return null;
+    
+    const isMultiplier = /^\*/.test(val);
+    
+    let reducedVal;
+    if (val.includes(',')) {
+      reducedVal = val.split(',').reduce((sum, cur) => sum + Number(cur), 0);
+    } else {
+      reducedVal = Number(val.replace(/^\*/, ''));
+    }
+    
+    if (isNaN(reducedVal)) return null;
+    
+    return {
+      value: isMultiplier ? reducedVal : reducedVal * step,
+      type: isMultiplier ? '*' : undefined
+    };
+  }
+
+  static #extractFlatValues(dataset, matchers) {
+    const flatValues = {};
+    
+    for (const key in dataset) {
+      if (!key.endsWith('Flat')) continue;
+      
+      const flatValue = dataset[key];
+      if (!flatValue?.length) continue;
+      
+      const replacedKey = key.replace('Flat', '');
+      const matcherKey = matchers[replacedKey];
+      
+      if (matcherKey) {
+        const value = flatValue.split(',').reduce((sum, x) => sum + (Number(x) || 0), 0);
+        flatValues[matcherKey] = value;
       }
     }
-    return res;
+    
+    return flatValues;
   }
 
   async _buildEmbedHTML(config, options = {}) {
@@ -402,14 +458,16 @@ export default class Itemdsa5 extends Item {
   static buildCombatSpecAbs(actor, categories, toSearch, mode, source) {
     let searchFilter = () => true;
     if (toSearch) {
-      toSearch = [...toSearch, game.i18n.localize('LocalizedIDs.all')].map(x => x.toLowerCase());
-      searchFilter = (x, toSearch) => x.system.list.value
-        .split(/;|,/)
-        .map(y => y.trim().toLowerCase().replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ''))
-        .some(y => toSearch.includes(y));
+      const normalizedSearch = [...toSearch, game.i18n.localize('LocalizedIDs.all')].map(x => x.toLowerCase());
+      searchFilter = (item) =>
+        item.system.list.value
+          .split(/;|,/)
+          .map(y => y.trim().toLowerCase().replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ''))
+          .some(y => normalizedSearch.includes(y));
     }
 
-    const brawlingFilter = game.combat?.isBrawling ? () => true : x => Number(x.system.category.sub) != 5;
+    const brawlingFilter = game.combat?.isBrawling ? () => true : item => Number(item.system.category.sub) !== 5;
+
     const allowedNames = new Set();
     const forbiddenNames = new Set();
     const effectChanges = {};
@@ -418,11 +476,13 @@ export default class Itemdsa5 extends Item {
       if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
       for (const change of effect.changes) {
         if (!change.key.startsWith('self.maneuver.')) continue;
-
         const parsed = DSA5_Utility.parseAbilityString(change.value);
-        if (/-$/.test(parsed.name)) forbiddenNames.add(parsed.name.slice(0, -1).trim());
-        else if (/\+$/.test(parsed.name)) allowedNames.add(parsed.name.slice(0, -1).trim());
-        else {
+
+        if (parsed.name.endsWith('-')) {
+          forbiddenNames.add(parsed.name.slice(0, -1).trim());
+        } else if (parsed.name.endsWith('+')) {
+          allowedNames.add(parsed.name.slice(0, -1).trim());
+        } else {
           const changeMode = change.key.split('.')[2];
           effectChanges[parsed.name] ??= {};
           effectChanges[parsed.name][changeMode] ??= 0;
@@ -431,13 +491,13 @@ export default class Itemdsa5 extends Item {
       }
     }
 
-    const combatSpecAbs = actor.items.filter(x =>
-      x.type == 'specialability' &&
-      categories.includes(x.system.category.value) &&
-      x.system.effect.value &&
-      (searchFilter(x, toSearch) || allowedNames.has(x.name)) &&
-      brawlingFilter(x) &&
-      !forbiddenNames.has(x.name)
+    const combatSpecAbs = actor.items.filter(item =>
+      item.type === 'specialability' &&
+      categories.includes(item.system.category.value) &&
+      item.system.effect.value &&
+      (searchFilter(item, toSearch) || allowedNames.has(item.name)) &&
+      brawlingFilter(item) &&
+      !forbiddenNames.has(item.name)
     );
 
     const result = this.specAbsDataset(combatSpecAbs, actor, mode);
@@ -445,7 +505,9 @@ export default class Itemdsa5 extends Item {
       const changes = effectChanges[specAb.name];
       if (changes) {
         for (const key in changes) {
-          specAb[key].push(changes[key]);
+          const flatKey = `${key}-flat`;
+          if (!specAb[flatKey]) specAb[flatKey] = [];
+          specAb[flatKey].push(changes[key]);
         }
       }
     }
@@ -568,21 +630,22 @@ export default class Itemdsa5 extends Item {
 
   static swarmModifiers(actor, mode, situationalModifiers) {
     if (actor.system.swarm?.count > 1) {
+      const swarmName = game.i18n.localize('swarm.name')
       if (mode == 'attack') {
         situationalModifiers.push(
           {
-            name: `${game.i18n.localize('swarm.name')} - ${game.i18n.localize('MODS.defenseMalus')}`,
+            name: `${swarmName} - ${game.i18n.localize('MODS.defenseMalus')}`,
             value: actor.system.swarm.parry,
             type: 'defenseMalus',
             selected: true,
           },
           {
-            name: `${game.i18n.localize('swarm.name')} - ${game.i18n.localize('CHARAbbrev.AT')}`,
+            name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.AT')}`,
             value: actor.system.swarm.attack,
             selected: true,
           },
           {
-            name: `${game.i18n.localize('swarm.name')} - ${game.i18n.localize('CHARAbbrev.damage')}`,
+            name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.damage')}`,
             value: actor.system.swarm.damage,
             type: 'dmg',
             selected: true,
@@ -590,7 +653,7 @@ export default class Itemdsa5 extends Item {
         );
       } else {
         situationalModifiers.push({
-          name: `${game.i18n.localize('swarm.name')} - ${game.i18n.localize('CHARAbbrev.PA')}`,
+          name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.PA')}`,
           value: actor.system.swarm.parry,
           selected: true,
         });

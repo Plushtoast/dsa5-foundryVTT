@@ -104,31 +104,47 @@ export default class DSA5CombatDialog extends DialogShared {
 
   setCombatSpecTooltip(el) {
     const dataset = el.dataset;
-    const keys = {
-      pa: dataset.pabonus,
-      at: dataset.atbonus,
-      tp: dataset.tpbonus,
-      dm: dataset.dmmalus,
-    };
-    const icons = {
-      pa: 'fas fa-shield-alt',
-      at: 'fas fa-swords',
-      tp: 'fas fa-heart',
-      dm: 'fas fa-balance-scale',
-    };
+    const step = Number(dataset.step) || 0;
 
-    const label = [];
-    if (dataset.step > 1) label.push(`<li class="flexrow center"><div>${dataset.step} <i class="fas fa-xmark"></i></div></li>`);
-
-    for (let key of Object.keys(keys)) {
-      if (keys[key] == 0) continue;
-
-      const icon = `<i class="${icons[key]}"></i>`;
-      label.push(`${icon} ${game.i18n.localize(`LocalizedAbilityModifiers.${key}`).toUpperCase()}: ${keys[key]}`);
+    const tooltipParts = [];
+    
+    if (step > 1) {
+      tooltipParts.push(`<li class="flexrow center"><div>${step} <i class="fas fa-xmark"></i></div></li>`);
     }
 
-    const tooltip = `<ul class="effects-tooltip plain"><li>${label.join('</li><li>')}</li></ul>`;
-    game.tooltip.activate(el, { html: tooltip, })
+    const bonusTypes = [
+      { key: 'pabonus', icon: 'fas fa-shield-alt', label: 'LocalizedAbilityModifiers.pa' },
+      { key: 'atbonus', icon: 'fas fa-swords', label: 'LocalizedAbilityModifiers.at' },
+      { key: 'tpbonus', icon: 'fas fa-heart', label: 'LocalizedAbilityModifiers.tp' },
+      { key: 'dmmalus', icon: 'fas fa-balance-scale', label: 'LocalizedAbilityModifiers.dm' }
+    ];
+
+    for (const { key, icon, label } of bonusTypes) {
+      const value = Number(dataset[key]) || 0;
+      if (value === 0) continue;
+
+      const localizedLabel = game.i18n.localize(label).toUpperCase();
+      let tooltipText = `<i class="${icon}"></i> ${localizedLabel}: ${value}`;
+      
+      const flatKey = `${key}Flat`;
+      if (dataset[flatKey]) {
+        const flatSum = dataset[flatKey]
+          .split(',')
+          .reduce((sum, x) => sum + (Number(x) || 0), 0);
+        
+        const sign = flatSum < 0 ? '' : '+';
+        if (flatSum !== 0) {
+          tooltipText += ` (${sign}${flatSum})`;
+        }
+      }
+      
+      tooltipParts.push(tooltipText);
+    }
+
+    if (tooltipParts.length === 0) return;
+
+    const tooltip = `<ul class="effects-tooltip plain"><li>${tooltipParts.join('</li><li>')}</li></ul>`;
+    game.tooltip.activate(el, { html: tooltip });
     el.dataset.tooltip = tooltip;
   }
 

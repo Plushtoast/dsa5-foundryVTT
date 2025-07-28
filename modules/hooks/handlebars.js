@@ -107,6 +107,18 @@ export default function () {
     consumableQL: (a) => a.system.QLList.split('\n')[Number(a.system.QL) - 1],
     clickableActorItems: (a, b, c, d) => clickableActorItems(a, b, c, d),
     clickableSection: (a, b, c, d) => clickableSection(a, b, c, d),
+    flatMods: (item) => {
+      const flatMods = [];
+      for (const key in item) {
+        if (key.endsWith('-flat')) {
+          const value = item[key];
+          if (value && value.length > 0) {
+            flatMods.push(`data-${key}="${value.join(',')}"`);
+          }
+        }
+      }
+      return flatMods.join(' ');
+    },
     hasLocalization: (a, b) => {
       const val = a.string || a;
       return game.i18n.has(val) ? game.i18n.localize(val) : b || '';

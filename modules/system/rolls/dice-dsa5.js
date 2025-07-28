@@ -636,7 +636,9 @@ export default class DiceDSA5 {
           val.damageBonus = roll;
           bonusDmg += number;
         }
-      }
+
+
+      }      
     }
 
     const actor = this.#actorFromTestData(testData);
