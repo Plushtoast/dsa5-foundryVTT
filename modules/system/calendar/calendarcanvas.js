@@ -200,7 +200,7 @@ export class CalendarCanvas {
     _setupPixiApp() {
         if (this.app) return;
 
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = 1; //window.devicePixelRatio || 1;
         const options = {
             width: Number(this.element.getAttribute('width')) * dpr,
             height: Number(this.element.getAttribute('height')) * dpr,
