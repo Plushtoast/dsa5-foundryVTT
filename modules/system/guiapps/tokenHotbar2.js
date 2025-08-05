@@ -743,7 +743,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _gmEntries() {
-    return this.gmItems.filter((x) => !x.disabled);
+    return game.user.isGM ? this.gmItems.filter((x) => !x.disabled) : [];
   }
 
   _actionEntry(x, cssClass, options = {}) {

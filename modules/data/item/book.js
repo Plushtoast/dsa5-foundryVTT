@@ -30,11 +30,12 @@ export default class BookData extends ItemDataModel.mixin(DescriptionTemplate, O
   static _migrateData(source) {
     super._migrateData(source);
 
-    if(typeof source.legality === 'string' || source.legality === null) {
+
+    if('legality' in source) {
       source.legality = Number(source.legality) || 0;
     }
 
-    if(typeof source.quality === 'string' || source.quality === null) {
+    if('quality' in source) {
       source.quality = Number(source.quality) || 0;
     }
   }
