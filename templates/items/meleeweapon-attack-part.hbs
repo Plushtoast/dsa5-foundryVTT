@@ -1,13 +1,8 @@
-<div class='row-section'>
-  <div class='col eighty'></div>
-  <div class='col ten center'>
-    {{#if scope}}
-      <a data-action='attackDelete' data-key='{{scopeKey}}' data-tooltip='SHEET.DeleteItem'><i class='fa fa-minus'></i></a>
-    {{/if}}
-  </div>
-  <div class='col ten center'>
-    <a data-action='attackAdd' data-tooltip='SHEET.alternateAttack'><i class='fa fa-plus'></i></a>
-  </div>
+<div class='flexrow flexAlignEnd'>
+  {{#if scope}}
+    <button type="button" class="icon fa fa-minus noBorder dsadesignbutton" data-action='attackDelete' data-key='{{scopeKey}}' data-tooltip='SHEET.DeleteItem'></button>
+  {{/if}}
+  <button type="button" class="icon fa fa-plus noBorder dsadesignbutton" data-action='attackAdd' data-tooltip='SHEET.alternateAttack'></button>
 </div>
 {{#if scope}}
   <div class='form-group'>

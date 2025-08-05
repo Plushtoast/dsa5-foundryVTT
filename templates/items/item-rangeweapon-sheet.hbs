@@ -1,21 +1,21 @@
 <div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}">    
     {{#if hasAlternateAttacks}}
-    <nav class="sheet-tabs tabs">
-        <a class="tabelement lineheight active" data-action="tab" data-tab="baseAttack" data-group="alternateAttacks" >{{localize 'CHAR.ATTACK'}}</a>
-        {{#each alternateAttacks as |item key|}}
-            <a class="tabelement lineheight {{item.cssClass}}" data-action="tab" data-group="alternateAttacks" data-tab="{{key}}">{{item.name}}</a>
-        {{/each}}
-    </nav>
-    <section class="content2">
-        <div class="tab active" data-group="alternateAttacks" class="tab" data-tab="baseAttack">
-            {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
-        </div>
-        {{#each alternateAttacks as |item key|}}
-        <div class="tab" data-tab="{{key}}" data-group="alternateAttacks">
-            {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs item systemFields=../systemFields combatskills=../combatskills  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
-        </div>
-        {{/each}}
-    </section>
+        <nav class="sheet-tabs tabs">
+            <a class="tabelement lineheight {{ifThen (eq alternateAttackTab 'baseAttack') 'active' ''}}" data-action="tab" data-tab="baseAttack" data-group="alternateAttacks" >{{localize 'CHAR.ATTACK'}}</a>
+            {{#each alternateAttacks as |item key|}}
+                <a class="tabelement lineheight {{ifThen (eq ../alternateAttackTab key) 'active' ''}}" data-action="tab" data-group="alternateAttacks" data-tab="{{key}}">{{item.name}}</a>
+            {{/each}}
+        </nav>
+        <section class="content2">
+            <div class="tab {{ifThen (eq alternateAttackTab 'baseAttack') 'active' ''}}" data-group="alternateAttacks" class="tab" data-tab="baseAttack">
+                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
+            </div>
+            {{#each alternateAttacks as |item key|}}
+            <div class="tab {{ifThen (eq ../alternateAttackTab key) 'active' ''}}" data-tab="{{key}}" data-group="alternateAttacks">
+                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs document=item systemFields=../systemFields combatskills=../combatskills  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+            </div>
+            {{/each}}
+        </section>
     {{else}}
         {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
     {{/if}}
