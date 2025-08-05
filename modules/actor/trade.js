@@ -98,8 +98,8 @@ export class Trade extends DefaultAppv2 {
   }
 
   static findTradeApp(id) {
-    for (const [id, app] of Array.from(foundry.applications.instances)) {
-      if (app instanceof this && app?.tradeData?.id === id) {
+    for (const [appId, app] of Array.from(foundry.applications.instances)) {
+      if (app instanceof Trade && app?.tradeData?.id === id) {
         return app;
       }
     }
@@ -193,6 +193,7 @@ export class Trade extends DefaultAppv2 {
 
   static receiveOfferedItems(data) {
     const app = this.findTradeApp(data.payload.id);
+    console.log(app)
     if (app) {
       if (data.payload.trader == app.tradeData.sourceId) {
         app.tradeData.offer = data.payload.offered;
@@ -317,6 +318,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   static socketListeners(data) {
+    console.log(data)
     switch (data.type) {
       case 'receiveOfferedItems':
         this.receiveOfferedItems(data);
