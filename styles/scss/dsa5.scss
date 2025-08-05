@@ -4977,6 +4977,11 @@ input[type='checkbox'].autoCheckbox {
   align-items: center;
 }
 
+.flexAlignStart {
+  justify-content: flex-start;
+  align-items: center;
+}
+
 .flexAlignCenter {
   justify-content: center;
   align-items: center;
@@ -5681,29 +5686,23 @@ input[type='checkbox'].autoCheckbox {
 .dsaCalendarPicker {
   .tooltipBox {
     position: absolute;
-    left: calc(50vw - 550px);
-    top: 33%;
+    top: -350px;
     width: 250px;
+    right: 75px;
+    z-index: 5000;
     transform: translateY(-50%);
 
     img {
       position: relative;
     }
-
-    &.offsetTooltip {
-      top: 200px;
-      left: calc(50vw - 630px);
-    }
   }
 
   .calendar-details {
-    position: absolute;
-    left: calc(50vw + 300px);
-    top: 230px;
     opacity: 0;
-    width: calc(50vw - 360px);
+    position:absolute;
     max-width: 400px;
     padding: 30px;
+    left: 0;
     transition: opacity 0.5s ease-in-out;
 
     &.showThis {
@@ -5712,13 +5711,12 @@ input[type='checkbox'].autoCheckbox {
   }
 
   .calendar-img {
-    position: absolute;
     opacity: 0;
-    right: calc(50vw + 320px);
-    top: 260px;
-    width: calc(50vw - 360px);
+    position:absolute;
     height: 600px;
     max-width: 400px;
+    width: 90%;
+    right: 0;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;

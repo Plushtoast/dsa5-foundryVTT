@@ -197,6 +197,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const currentSeconds = this.constructor.calculateSecondsInDay(components);
         const newSeconds = this.constructor.SECONDS_PER_DAY * this.currentPercentage / 100.0;
         
-        game.time.advance(Math.floor(newSeconds - currentSeconds));
+        if(isNaN(newSeconds)) return;
+        
+        const advanceTime = Math.floor(newSeconds - currentSeconds);
+        if (advanceTime === 0) return;
+
+        game.time.advance(advanceTime);
     }
 }

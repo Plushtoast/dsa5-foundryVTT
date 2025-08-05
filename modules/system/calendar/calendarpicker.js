@@ -63,6 +63,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
     data.currentMonth = data.calendar.translate(data.calendar.months.values[data.components.month].name);
     data.currentDay = data.components.dayOfMonth + 1;
+    data.calendarSize = Math.min(window.innerWidth, window.innerHeight) * 0.75;
 
     function getSortableDate(h) {
       return h.month * 100 + h.dayStart;

@@ -3,6 +3,8 @@
  * @class
  */
 export class CalendarCanvas {
+    static DEFAULT_SIZE = 700;
+
     /**
      * @param {HTMLElement} parentElement - Element to attach the canvas to
      * @param {Function} callback - Called when user clicks on a calendar element
@@ -48,12 +50,28 @@ export class CalendarCanvas {
     }
 
     _initializeConstants() {
+        const scale = Number(this.element.getAttribute('width')) / CalendarCanvas.DEFAULT_SIZE;
+
         this.RADIUS = Object.freeze({
-            OUTER: 300,
-            DAYS: 260,
-            WEEKDAYS: 140,
-            OUTER_FRAME: 315,
-            SEASONS: 280
+            OUTER: 300 * scale,
+            DAYS: 260 * scale,
+            WEEKDAYS: 140 * scale,
+            OUTER_FRAME: 315 * scale,
+            SEASONS: 280 * scale
+        });
+
+        this.AREASIZES = Object.freeze({
+            THREE: 3 * scale,
+            FIVE: 5 * scale,
+            SIX: 6 * scale,
+            EIGHT: 8 * scale,
+            NINE: 9 * scale,
+            TEN: 10 * scale,
+            TWENTY: 20 * scale,
+            TWENTYFIVE: 25 * scale,
+            FIFTEEN: 15 * scale,
+            SIXTY: 60 * scale,
+            HUNDRED: 100 * scale
         });
 
         this.COLORS = Object.freeze({
@@ -107,13 +125,13 @@ export class CalendarCanvas {
         this.FONT_STYLE = Object.freeze({
             MONTHS: {
                 fontFamily: 'Garamond',
-                fontSize: 16,
+                fontSize: Math.round(16 * scale),
                 fill: this.COLORS.TEXT_NORMAL,
                 align: 'center'
             },
             WEEKDAYS: {
                 fontFamily: 'Garamond',
-                fontSize: 14,
+                fontSize: Math.round(14 * scale),
                 fill: this.COLORS.TEXT_NORMAL,
                 align: 'center'
             }
@@ -133,10 +151,10 @@ export class CalendarCanvas {
                 weekday: 0
             },
             hitRegions: {
-                month: { min: this.RADIUS.OUTER - 10, max: this.RADIUS.OUTER + 10 },
-                day: { center: this.RADIUS.DAYS, tolerance: 10 },
-                weekday: { center: this.RADIUS.WEEKDAYS, tolerance: 15 },
-                moon: { centerX: 0, centerY: 0, radius: 20 }
+                month: { min: this.RADIUS.OUTER - this.AREASIZES.TEN, max: this.RADIUS.OUTER + this.AREASIZES.TEN },
+                day: { center: this.RADIUS.DAYS, tolerance: this.AREASIZES.TEN },
+                weekday: { center: this.RADIUS.WEEKDAYS, tolerance: this.AREASIZES.TEN },
+                moon: { centerX: 0, centerY: 0, radius: this.AREASIZES.TWENTY }
             }
         };
     }
@@ -531,16 +549,16 @@ export class CalendarCanvas {
             const bgSprite = new PIXI.Sprite(this.spritesheet.bg_goetterkreis);
             bgSprite.anchor.set(0.5);
             bgSprite.width = bgSprite.height = this.RADIUS.OUTER * 2;
-            bgSprite.position.set(this.centerX, this.centerY + 8);
+            bgSprite.position.set(this.centerX, this.centerY + this.AREASIZES.EIGHT);
 
             const godring = new PIXI.Sprite(this.spritesheet.rad_goetterkreis);
             godring.anchor.set(0.5);
             godring.width = godring.height = this.RADIUS.WEEKDAYS * 4.2;
-            godring.position.set(this.centerX + 1, this.centerY + 9);
+            godring.position.set(this.centerX + 1, this.centerY + this.AREASIZES.NINE);
 
             const godringMask = new PIXI.Graphics();
             godringMask.beginFill(0x000000);
-            godringMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
+            godringMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN);
             godringMask.endFill();
 
             godring.mask = godringMask;
@@ -548,10 +566,10 @@ export class CalendarCanvas {
             // Create a blend mask for the background image
             const blendMask = new PIXI.Graphics();
             blendMask.beginFill(0x000000);
-            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + 15);
+            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN);
             blendMask.endFill();
             blendMask.beginHole();
-            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - 15);
+            blendMask.drawCircle(this.centerX, this.centerY, this.RADIUS.WEEKDAYS - this.AREASIZES.FIFTEEN);
             blendMask.endHole();
 
             this.containers.background.addChild(godringMask);
@@ -569,8 +587,8 @@ export class CalendarCanvas {
             const seasons = new PIXI.Graphics();
             this._drawArcSegment(
                 seasons,
-                this.RADIUS.SEASONS - 6,
-                this.RADIUS.SEASONS + 6,
+                this.RADIUS.SEASONS - this.AREASIZES.SIX,
+                this.RADIUS.SEASONS + this.AREASIZES.SIX,
                 season.startAngle + HALF_PI,
                 season.endAngle + HALF_PI,
                 season.gradient,
@@ -656,8 +674,8 @@ export class CalendarCanvas {
         const borderConfigs = [
             { radius: this.RADIUS.OUTER_FRAME, color: this.COLORS.BORDER_OUTER, width: 2 },
             { radius: this.RADIUS.DAYS, color: this.COLORS.BORDER_INNER, width: 1 },
-            { radius: this.RADIUS.WEEKDAYS + 15, color: this.COLORS.BORDER_INNER, width: 1 },
-            { radius: this.RADIUS.WEEKDAYS - 15, color: this.COLORS.BORDER_INNER, width: 1 }
+            { radius: this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 },
+            { radius: this.RADIUS.WEEKDAYS - this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 }
         ];
 
         for (const config of borderConfigs) {
@@ -722,12 +740,12 @@ export class CalendarCanvas {
             if (this.spritesheet && this.textureMatcher[originalIndex]) {
                 const monthSprite = new PIXI.Sprite(this.spritesheet[this.textureMatcher[originalIndex]]);
                 monthSprite.anchor.set(0.5);
-                const radiusOffset = this.RADIUS.OUTER - 100;
+                const radiusOffset = this.RADIUS.OUTER - this.AREASIZES.HUNDRED;
                 monthSprite.position.set(
                     this.centerX + Math.cos(angle) * radiusOffset,
                     this.centerY + Math.sin(angle) * radiusOffset
                 );
-                monthSprite.width = monthSprite.height = 60;
+                monthSprite.width = monthSprite.height = this.AREASIZES.SIXTY;
                 monthSprite.rotation = angle + Math.PI / 2;
 
                 spriteContainer.addChild(monthSprite);
@@ -769,7 +787,7 @@ export class CalendarCanvas {
 
         const { currentMoon } = this.calendarData;
         const moonSize = 30; // Size of the moon
-        const distanceFromCenter = this.RADIUS.WEEKDAYS - 25 - moonSize / 2;
+        const distanceFromCenter = this.RADIUS.WEEKDAYS - this.AREASIZES.TWENTYFIVE - moonSize / 2;
         let moonX = this.centerX;
         let moonY = this.centerY;
         const actualMoon = currentMoon % 8;
@@ -803,7 +821,7 @@ export class CalendarCanvas {
             case 7: // Waning Crescent
                 moonX += distanceFromCenter * Math.cos(PI_4);
                 moonY += distanceFromCenter * Math.sin(PI_4);
-                break;               
+                break;
 
         }
 
@@ -926,9 +944,9 @@ export class CalendarCanvas {
             const isCurrentDay = i === currentDay;
 
             if (isCurrentDay) {
-                highlightedDotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 5);
+                highlightedDotsGraphics.drawCircle(x - this.centerX, y - this.centerY, this.AREASIZES.FIVE);
             } else {
-                dotsGraphics.drawCircle(x - this.centerX, y - this.centerY, 3);
+                dotsGraphics.drawCircle(x - this.centerX, y - this.centerY, this.AREASIZES.THREE);
             }
         }
 
@@ -1042,7 +1060,7 @@ export class CalendarCanvas {
 
             this._drawArcSegment(
                 highlight,
-                this.RADIUS.OUTER - 15,
+                this.RADIUS.OUTER - this.AREASIZES.FIFTEEN,
                 this.RADIUS.OUTER_FRAME,
                 startAngle - offset,
                 endAngle - offset
@@ -1056,8 +1074,8 @@ export class CalendarCanvas {
 
             this._drawArcSegment(
                 highlight,
-                this.RADIUS.WEEKDAYS - 15,
-                this.RADIUS.WEEKDAYS + 15,
+                this.RADIUS.WEEKDAYS - this.AREASIZES.FIFTEEN,
+                this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN,
                 startAngle - offset,
                 endAngle - offset
             );
@@ -1066,7 +1084,7 @@ export class CalendarCanvas {
         }
         else if (type === 'day') {
             const { x, y } = this.precalculated.dayAngles[index];
-            highlight.drawCircle(x, y, 8);
+            highlight.drawCircle(x, y, this.AREASIZES.EIGHT);
         }
         else if (type === 'moon') {
             highlight.beginFill(this.COLORS.HIGHLIGHT_MOON, 0.1);
