@@ -1254,7 +1254,6 @@ input[type='text'] {
   text-align: right;
 }
 
-
 .very-small {
   font-size: 10px;
 
@@ -1262,7 +1261,7 @@ input[type='text'] {
     --checkbox-size: 2.rem;
   }
 
-  input[type='radio'] {        
+  input[type='radio'] {
     --checkbox-size: 2.rem;
   }
 }
@@ -1280,7 +1279,7 @@ small {
     --checkbox-size: 2.rem;
   }
 
-  input[type='radio'] {        
+  input[type='radio'] {
     --checkbox-size: 2.rem;
   }
 }
@@ -1292,7 +1291,7 @@ small {
     --checkbox-size: 2.rem;
   }
 
-  input[type='radio'] {        
+  input[type='radio'] {
     --checkbox-size: 2.rem;
   }
 }
@@ -1921,6 +1920,9 @@ input[type='search'] {
       position: absolute;
       width: 100%;
       min-height: 100%;
+      --scroll-margin: 0.75rem;
+      margin-right: calc(-1 * var(--scroll-margin));
+      padding-right: var(--scroll-margin);
     }
   }
 
@@ -2343,13 +2345,13 @@ input[type='search'] {
 }
 
 .speedIndicator {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 2px 5px;
-    font-size: 10px;
-    border-radius: 50%;
-  }
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 2px 5px;
+  font-size: 10px;
+  border-radius: 50%;
+}
 
 .itemLibraryTooltip {
   text-align: left;
@@ -2361,11 +2363,11 @@ input[type='search'] {
   box-shadow: 0 0 0 3px #2d2215 inset;
   font-family: 'Georgia', serif;
   max-height: 500px;
-  
+
   overflow: hidden;
 
   &:not(.tooltipBox)::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: 0;
     left: 0;
@@ -2698,7 +2700,7 @@ h2 {
 
 #chat-notifications {
   .quickfind {
-    bottom: 102px;
+    position: unset;
   }
 }
 
@@ -3078,7 +3080,6 @@ input[type='checkbox'].smallBox {
 .loader {
   margin: 0 auto;
 }
-
 
 .dsajournal .compendium,
 .libItem .compendium {
@@ -4148,7 +4149,6 @@ select.noAppearance {
 }
 
 .dsajournal {
-
   .page-heading {
     color: var(--color-dark-1);
   }
@@ -4164,7 +4164,7 @@ select.noAppearance {
   color: white;
   border-radius: 5px;
 
-  h4{
+  h4 {
     color: white;
   }
 }
@@ -4749,6 +4749,18 @@ input[type='checkbox'].autoCheckbox {
   &.bauer {
     background-image: url('../../icons/BauerIcon.webp');
   }
+
+  &.hoherdrache {
+    background-image: url('../../icons/hoherdrache.webp');
+  }
+
+  &.toterdrache {
+    background-image: url('../../icons/toterdrache.webp');
+  }
+
+  &.alterdrache {
+    background-image: url('../../icons/alterdrache.webp');
+  }
 }
 
 .journal-picto {
@@ -5298,6 +5310,10 @@ input[type='checkbox'].autoCheckbox {
       border-top-right-radius: 10px;
     }
   }
+  
+  #action-bar {
+    width: calc((var(--hotbar-size) * 5) + 32px);
+  }
 
   .actorEffect,
   .categoryFilter {
@@ -5404,13 +5420,21 @@ input[type='checkbox'].autoCheckbox {
     margin: 0;
     padding: 0;
     white-space: nowrap;
-    overflow-y: auto;
-    display: flex;
-    flex-wrap: wrap;
-    height: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 45px); /* 45px-wide items */
+    grid-auto-rows: var(--base-bar-height); /* row height */
+    gap: 0px; /* or adjust as needed */
+    /*flex-wrap: wrap;*/
+    height: calc(var(--base-bar-height) * 2);
+    max-height: calc(var(--base-bar-height) * 2);
     transition: all 0.15s ease-in-out;
+
+    overflow-y: auto;
     overflow-x: hidden;
     scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    flex-direction: column;
 
     &.dsahidden {
       display: none;
@@ -5476,7 +5500,8 @@ input[type='checkbox'].autoCheckbox {
     }
 
     & > li {
-      flex: 0 0 var(--base-bar-height);
+      /*flex: 0 0 var(--base-bar-height);*/
+      width: var(--base-bar-height);
       height: var(--base-bar-height);
 
       border: 1px solid black;

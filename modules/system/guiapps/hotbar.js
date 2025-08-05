@@ -8,6 +8,8 @@ const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
+  static baseBarHeight = 45;
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     this.addContextColor();
@@ -15,6 +17,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (!game.settings.get('dsa5', 'hotbarv3')) return;
 
     const html = $(this.element);
+    html.addClass('hotbarV3');
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
     html.find('.primary:not(.macro)').on('mousedown', async (ev) => {
       game.tooltip.deactivate();
@@ -40,11 +43,29 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     html.find('.sections').on('pointerover', () => {
       $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
     });
-    
+
     html.find('.sections').on('pointerout', filterOff);
     html.find('.primary').on('pointerover', (ev) => this._betterTooltip(ev));
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
-    html.addClass('hotbarV3');
+
+    html.find('#macro-list, .skillItems').on('wheel', e => {
+      e.preventDefault();
+
+      if (that.isScrolling) return;
+      that.isScrolling = true;
+
+      const delta = e.originalEvent.deltaY;
+      const direction = delta > 0 ? 1 : -1;
+      const rowsToScroll = Math.min(Math.ceil(Math.abs(delta) / 30), 2);
+      const scrollAmount = DSA5Hotbar.baseBarHeight * direction * 2 * rowsToScroll ;
+      const target = e.currentTarget;
+      $(target).stop().animate({
+        scrollTop: target.scrollTop + scrollAmount
+      }, 100, function () {
+        that.isScrolling = false;
+      });
+    });
+    
   }
 
   async updateDSA5Hotbar() {
@@ -357,7 +378,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       gmMode = true;
     }
 
-    const baseBarHeight = 45;
+    const baseBarHeight = DSA5Hotbar.baseBarHeight;
     const rows = 2;
 
     const fallbacks = {
