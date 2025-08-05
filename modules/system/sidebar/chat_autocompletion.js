@@ -129,6 +129,10 @@ export default class DSA5ChatAutoCompletion {
     return $(element);
   }
 
+  isChatNotifications(target) {
+    return target.id === 'chat-notifications'
+  }
+
   _closeQuickfind(ev) {
     this.filtering = false;
     this.getContainer(ev.currentTarget).find('.quickfind').remove();
@@ -282,7 +286,11 @@ export default class DSA5ChatAutoCompletion {
     if (existing.length) {
       existing.replaceWith(html);
     } else {
-      container.append(html);
+      if (this.isChatNotifications(container[0])) {
+        container.find('.overflow').after(html);
+      } else {
+        container.append(html);
+      }      
     }
   }
 
