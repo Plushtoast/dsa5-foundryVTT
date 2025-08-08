@@ -52,12 +52,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       e.preventDefault();
 
       if (that.isScrolling) return;
+
       that.isScrolling = true;
 
       const delta = e.originalEvent.deltaY;
       const direction = delta > 0 ? 1 : -1;
-      const rowsToScroll = Math.min(Math.ceil(Math.abs(delta) / 30), 2);
-      const scrollAmount = DSA5Hotbar.baseBarHeight * direction * 2 * rowsToScroll ;
+      const rowsToScroll = 2;
+      const scrollAmount = DSA5Hotbar.baseBarHeight * direction * rowsToScroll;
       const target = e.currentTarget;
       $(target).stop().animate({
         scrollTop: target.scrollTop + scrollAmount
