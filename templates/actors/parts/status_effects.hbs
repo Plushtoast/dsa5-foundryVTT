@@ -81,7 +81,7 @@
                     <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
-                    {{#if item.editable}}{{#unless item.boolean}}<a data-action="condition-value">{{item.manual}}</a>{{/unless}}{{/if}}
+                    {{#if item.editable}}{{#unless item.boolean}}<a data-action="conditionValue">{{item.manual}}</a>{{/unless}}{{/if}}
                 </div>
                 <div class="col ten center" data-tooltip="value">
                     <span>{{item.value}}</span>

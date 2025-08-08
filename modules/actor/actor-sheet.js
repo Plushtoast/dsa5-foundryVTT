@@ -124,7 +124,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       selectTraditionartifact: this._selectTraditionArtifact,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
-      conditionValue: this._conditionValue,
+      conditionValue: { handler: this._conditionValue, buttons: [0, 2] },
       advanceWrapper: this._advanceWrapper,
       addSpeedCategory: this._addSpeedCategory,
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
