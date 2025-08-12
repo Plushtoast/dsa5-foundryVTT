@@ -114,7 +114,15 @@ function fetchBagItems(item, sourceActor) {
 
 const handleItemDrop = async (canvas, data) => {
   const item = await Item.implementation.fromDropData(data);
+
+  if (!(game.settings.get('dsa5', 'enableItemDropToCanvas') || game.user.isGM || data.tokenId)) return;
+  
   const sourceActor = item.parent;
+
+  if (item.type == 'trap') {
+    await item.system.createRegionBehavior(data);
+    return;
+  }
 
   if (!DSA5.equipmentCategories.has(item.type)) return;
 
@@ -155,13 +163,11 @@ const handleGroupDrop = async (canvas, data) => {
 
 export const connectHook = () => {
   Hooks.on('dropCanvasData', async (canvas, data) => {
-    if (!(game.settings.get('dsa5', 'enableItemDropToCanvas') || game.user.isGM || data.tokenId)) return;
-
-    if (data.type == 'Item') {
-      handleItemDrop(canvas, data);
-      return false;
-    } else if (data.type == 'GroupDrop') {
+    if (data.type == 'GroupDrop') {
       handleGroupDrop(canvas, data);
+      return false;
+    } else if (data.type == 'Item') {
+      handleItemDrop(canvas, data);
       return false;
     }
   });

@@ -137,6 +137,14 @@
         }
     ],
     "documentTypes": {
+        "RegionBehavior": {
+            "DSATrap": {
+                "htmlFields": [
+                    "description",
+                    "gmdescription"
+                ]
+            }
+        },
         "Combatant": {
             "dsacombatant": {}
         },

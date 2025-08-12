@@ -131,10 +131,11 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       { sheetClass: InformationSheet, types: ['information'] },
       { sheetClass: AggregatedTestSheet, types: ['aggregatedTest'] },
       { sheetClass: ApplicationSheetDSA5, types: ['application'] },
-      { sheetClass: NoEffectsSheet, types: ['demonmark', 'trap'] },
+      { sheetClass: NoEffectsSheet, types: ['demonmark'] },
       { sheetClass: NoEffectsEquipmentSheet, types: ['money'] },
       { sheetClass: CombatSkillSheet, types: ['combatskill'] },
       { sheetClass: WithEffectsSheet, types: ['imprint', 'essence'] },
+      { sheetClass: TrapSheet, types: ['trap'] },
       { sheetClass: SkillSheet, types: ['skill'] },
       { sheetClass: TraitSheet, types: ['trait'] },
       { sheetClass: EffectWrapperSheet, types: ['effectwrapper'] },
@@ -343,6 +344,7 @@ class WithEffectsSheet extends ItemSheetdsa5 {
     },
   };
 }
+
 
 const AdvancableSkill = (superclass) =>
   class extends superclass {
@@ -979,16 +981,26 @@ class Enchantable extends ItemSheetdsa5 {
   }
 }
 
-class TraitSheet extends Enchantable {
+class TrapSheet extends Enchantable {
   static PARTS = {
-    header: super.PARTS.header,
+    ...Enchantable.PARTS,
     stat: {
       template: 'systems/dsa5/templates/items/item-stat.hbs',
     },
-    tabs: super.PARTS.tabs,
-    description: super.PARTS.description,
-    enchantment: super.PARTS.enchantment,
-    effects: super.PARTS.effects,
+    details: {
+      template: 'systems/dsa5/templates/items/item-trap-sheet.hbs',
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/items/item-aoe.hbs']
+    }
+  };
+}
+
+class TraitSheet extends Enchantable {
+  static PARTS = {
+    ...Enchantable.PARTS,
+    stat: {
+      template: 'systems/dsa5/templates/items/item-stat.hbs',
+    },
   };
 
   get isEnchantable() {

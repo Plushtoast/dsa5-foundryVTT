@@ -1254,12 +1254,6 @@
         "ql": "Quality of the tavern",
         "addNow": "Add to inventory now?"
     },
-    "TRAP": {
-        "stealth": "Stealth",
-        "trigger": "Trigger",
-        "tools": "Disarming tools",
-        "damageText": "Damage"
-    },
     "BOOKITEM": {
         "author": "Author",
         "category": "Art",

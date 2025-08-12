@@ -119,19 +119,32 @@ export default class RequestRoll {
     $('#chat-log').find(`[data-message-id="${message.id}"`).appendTo('#chat-log');
   }
 
-  static showRQMessage(target, modifier = 0, customLabel = undefined) {
+  static showRQMessage(target, modifier = 0, customLabel = undefined, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false }) {
     const mod = modifier < 0 ? ` ${modifier}` : modifier > 0 ? ` +${modifier}` : '';
     const skill = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)
-    if(!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: target }, localize: true });;
-    const type = skill.type;
-    const msg = game.i18n.format('CHATNOTIFICATION.requestRoll', {
+    if (!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: target }, localize: true });
+
+    const moreDataSet = [
+      `data-type="${skill.type}"`,
+      `data-name="${target}"`,
+      `data-modifier="${modifier}"`,
+      'data-tooltip="TT.requestRoll"',
+    ]
+    for (let key of Object.keys(datasetOptions)) {
+      moreDataSet.push(`data-options-${key}="${datasetOptions[key]}"`)
+    }
+    let msg = game.i18n.format('CHATNOTIFICATION.requestRoll', {
       user: game.user.name,
-      item: `<a class="roll-button request-roll" data-type="${type}" data-tooltip="TT.requestRoll" data-modifier="${modifier}" data-name="${target}"><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>`,
+      item: `<a class="roll-button request-roll" ${moreDataSet.join(' ')}><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>`,
     });
-    ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+    if(otherMessage) {
+      msg = `<div>${otherMessage}</div><div>${msg}</div>`;
+    }
+
+    ChatMessage.create(DSA5_Utility.chatDataSetup(msg, modeOverride, undefined, forceWhisperIDs));
   }
 
-  static async showGCMessage(target, modifier = 0, options = {}) {
+  static async showGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false }) {
     const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target).type;
     const data = {
       results: [],
@@ -145,10 +158,13 @@ export default class RequestRoll {
       targetQs: 10,
       rollOptions: [{ type, modifier, calculatedModifier: modifier, target }],
     };
-    mergeObject(data, options);
+    mergeObject(data, configuration);
     const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
-    let chatData = DSA5_Utility.chatDataSetup(content);
+    let chatData = DSA5_Utility.chatDataSetup(content, modeOverride, undefined, forceWhisperIDs);
     chatData.flags = { gc: data };
+    if (datasetOptions) {
+      chatData.flags.gc.datasetOptions = datasetOptions;
+    }
     ChatMessage.create(chatData);
   }
 
@@ -242,7 +258,7 @@ export default class RequestRoll {
     if (msg.length > 0) {
       await Promise.all(
         msg.map(async (x) => {
-          const enriched = await TextEditor.enrichHTML(x, { });
+          const enriched = await TextEditor.enrichHTML(x, {});
           return enriched;
         }),
       );

@@ -1,0 +1,45 @@
+<div>
+    <div class="flexrow">
+        <img class="flex0" src="systems/dsa5/icons/categories/trap.webp" width="42" height="42" style="margin-right:6px"/>
+        <p>{{{localize "REGIONBEHAVIOR_DSATrap.trapstart" name=tokenAnchor trap=trapName}}}</p>
+    </div>    
+    {{#if behaviour.gmdescription}}
+    <p>{{{behaviour.gmdescription}}}</p>
+    {{else}}
+    <p>{{{behaviour.description}}}</p>
+    {{/if}}
+    <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.hint">
+        <div class="col eighty"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.label"}}</b></div>
+        <div class="col five flexAlignEnd flexrow">{{behaviour.difficulty}}</div>
+    </div>
+    <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.stealth.hint">
+        <div class="col eighty"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.stealth.label"}}</b></div>
+        <div class="col five flexAlignEnd flexrow">{{behaviour.stealth}}</div>
+    </div>
+    {{#if behaviour.damageFormula}}
+    <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.hint">
+        <div class="col third"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}</b></div>
+        <div class="col seventy flexAlignEnd flexrow">{{diceThingsUp behaviour.damageFormula}}</div>
+    </div>
+    {{/if}}
+    {{#if behaviour.tools}}
+    <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.tools.hint">
+        <div class="col two"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.tools.label"}}</b></div>
+        <div class="col two flexAlignEnd flexrow">{{behaviour.tools}}</div>
+    </div>
+    {{/if}}   
+    <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.trigger.hint">
+        <div class="col third"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.trigger.label"}}</b></div>
+        <div class="col seventy flexAlignEnd flexrow">{{localize (concat 'REGIONBEHAVIOR_DSATrap.TRIGGERS.' behaviour.trigger)}}</div>
+    </div>
+     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.complexity.hint">
+        <div class="col two"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.complexity.label"}}</b></div>
+        <div class="col two flexAlignEnd flexrow">{{localize (concat 'REGIONBEHAVIOR_DSATrap.COMPLEXITIES.' behaviour.complexity)}}</div>
+    </div>
+    <div class="flexrow">
+        <button type="button" class="trap-handling" data-action="searchTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.searchHint"><i class="fas fa-eye"></i></button>
+        <button type="button" class="trap-handling" data-action="disarmTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.disarmHint"><i class="fas fa-lock-open"></i></button>
+        <button type="button" class="trap-handling" data-action="triggerTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.triggerHint"><i class="fas fa-bolt"></i></button>
+        <button type="button" class="trap-handling" data-action="showTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.showTrapHint"><i class="fas fa-mask"></i></button>
+    </div>
+</div>

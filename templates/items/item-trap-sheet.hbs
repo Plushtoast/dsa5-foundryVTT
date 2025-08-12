@@ -1,9 +1,14 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}'>
 
-  {{formGroup systemFields.stealth value=document.system.stealth localize=true}}
-  {{formGroup systemFields.trigger value=document.system.trigger localize=true}}
-  {{formGroup systemFields.tools value=document.system.tools localize=true}}
-  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true}}
-  {{formGroup systemFields.damageText value=document.system.damageText localize=true}}
+  {{formGroup systemFields.stealth value=document.system.stealth localize=true hint=false}}
+  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true hint=false}}
+  {{formGroup systemFields.complexity value=document.system.complexity localize=true hint=false}}
+  {{formGroup systemFields.damageFormula value=document.system.damageFormula localize=true hint=false}}
+  {{formGroup systemFields.tools value=document.system.tools localize=true hint=false}}
+  {{formGroup systemFields.trigger value=document.system.trigger localize=true hint=false}}
+  {{formGroup systemFields.charges value=document.system.charges localize=true hint=false}}
+  {{formGroup systemFields.autoPause value=document.system.autoPause localize=true hint=false}}
+  {{formGroup systemFields.events value=document.system.events localize=true hint=false}}
   
+  {{> systems/dsa5/templates/items/item-aoe.hbs}}
 </div>

@@ -27,61 +27,61 @@
             <div class="col browseSpacer ten"></div>
             <div class="row-section col sixty browseElement">
                 <div class="col groupbox">
-                        <div class="row-section wrap">
-                            
-                            <div class="col table-title noBorder row-section">
-                                <div class="col ninety">
-                                    {{localize "BOOKITEM.category"}}
-                                </div>
-                                <div class="col ten center">
-                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
-                                </div>                            
-                            </div>
-                            <div class="col">
-                                {{document.system.category}}
-                            </div>
-                            {{# if document.stealth}}
-                            <div class="col table-title noBorder">
-                                {{localize "TRAP.stealth"}}
-                            </div>
-                            <div class="col">
-                                {{document.stealth}}
-                            </div>
-                            {{/if}}
-                            {{# if document.trigger}}
-                            <div class="col table-title noBorder">
-                                {{localize "TRAP.trigger"}}
-                            </div>
-                            <div class="col">
-                                {{document.trigger}}
-                            </div>
-                            {{/if}}
-                            {{# if document.tools}}
-                            <div class="col table-title noBorder">
-                                {{localize "TRAP.tools"}}
-                            </div>
-                            <div class="col">
-                                {{document.tools}}
-                            </div>
-                            {{/if}}
-                            {{# if document.difficulty}}
-                            <div class="col table-title noBorder">
-                                {{localize "Difficulty"}}
-                            </div>
-                            <div class="col">
-                                {{document.difficulty}}
-                            </div>
-                            {{/if}}
-                            {{# if document.damageText}}
-                            <div class="col table-title noBorder">
-                                {{localize "TRAP.damageText"}}
-                            </div>
-                            <div class="col">
-                                {{document.damageText}}
-                            </div>
-                            {{/if}}  
+                    <div class="row-section wrap">
                         
+                        <div class="col table-title noBorder row-section">
+                            <div class="col ninety">
+                                {{localize "BOOKITEM.category"}}
+                            </div>
+                            <div class="col ten center">
+                                {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
+                            </div>                            
                         </div>
+                        <div class="col">
+                            {{document.system.category}}
+                        </div>
+                        {{#if document.stealth}}
+                        <div class="col table-title noBorder">
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.stealth.label"}}
+                        </div>
+                        <div class="col">
+                            {{document.stealth}}
+                        </div>
+                        {{/if}}
+                        {{#if document.trigger}}
+                        <div class="col table-title noBorder">
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.trigger.label"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'REGIONBEHAVIOR_DSATrap.TRIGGERS.' document.trigger)}}
+                        </div>
+                        {{/if}}
+                        {{#if document.tools}}
+                        <div class="col table-title noBorder">
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.tools.label"}}
+                        </div>
+                        <div class="col">
+                            {{document.tools}}
+                        </div>
+                        {{/if}}
+                        {{#if document.difficulty}}
+                        <div class="col table-title noBorder">
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.label"}}
+                        </div>
+                        <div class="col">
+                            {{document.difficulty}}
+                        </div>
+                        {{/if}}
+                        {{#if document.damageFormula}}
+                        <div class="col table-title noBorder">
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}
+                        </div>
+                        <div class="col">
+                            {{document.damageFormula}}
+                        </div>
+                        {{/if}}  
+                    
+                    </div>
                 </div>
             </div>
             

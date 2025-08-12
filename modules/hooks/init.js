@@ -157,6 +157,8 @@ Hooks.once('i18nInit', () => {
   setupKnownEquipmentModifiers();
 
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
+
+  foundry.helpers.Localization.localizeDataModel(CONFIG.RegionBehavior.dataModels.DSATrap);
 });
 
 class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2 {

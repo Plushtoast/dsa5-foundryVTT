@@ -1137,12 +1137,6 @@
         "ql": "Qualität der Taverne",
         "addNow": "Jetzt dem Inventar hinzufügen?"
     },
-    "TRAP": {
-        "stealth": "Tarnwert",
-        "trigger": "Auslöser",
-        "tools": "Passendes Werkzeug",
-        "damageText": "Schaden"
-    },
     "BOOKITEM": {
         "author": "Autor",
         "category": "Art",
@@ -1400,8 +1394,90 @@
     "TYPES.Actor.character": "Charakter",
     "TYPES.Actor.npc": "Nichtspielercharakter",
     "TYPES.Actor.creature": "Kreatur",
+    "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "REGIONBEHAVIOR_DSATrap": {
+        "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
+        "search": "Wahrnehmen",
+        "searchHint": "Wahrnehmen: Die Falle kann mit einer Probe auf Sinnesschärfe aufgespürt werden. Der Modifikator ist der Tarnwert der Falle.",
+        "disarm": "Entschärfen",
+        "notice": "Entdecken",
+        "showTrap": "Falle anzeigen",
+        "showTrapAll": "Falle den Spielern zeigen",
+        "hideTrapAll": "Falle verbergen",
+        "showTrapHint": "Falle anzeigen: Die Falle kann für alle Spieler oder den Spielleiter sichtbar gemacht werden.",
+        "disarmMessage": "Falle entschärfen ({duration} min)",
+        "noticeTraps": "Fallen sind auf den ersten Blick meist nicht zu erkennen. Jede Falle besitzt einen Tarnwert, einen Modifikator für eine Probe auf Sinnesschärfe, um die Falle rechtzeitig zu bemerken. Üblicherweise sollte der Meister einem Helden bei der Untersuchung oder dem Durchqueren eines Raumabschnitts eine solche Probe zugestehen. Abgesehen von dem Tarnwert, sind Proben auf das Anwendungsgebiet Wahrnehmen unmodifiziert, beim Anwendungsgebiet Suchen ist die Probe zusätzlich um 1 erleichtert. Es macht also einen Unterschied, ob man nach einer Falle sucht oder unwissend einen Raum durchquert. Ob die Probe verdeckt vom Meister oder von der Spielerin selbst abgelegt wird, muss die Spielrunde für sich entscheiden.",
+        "disarmHint": "Entschärfen: Die Falle kann mit einer Probe auf Schlösserknacken entschärft werden. Der Modifikator ist der Schwierigkeitswert der Falle.",
+        "trigger": "Auslösen",
+        "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein.",
+        "COMPLEXITIES": {
+            "0": "Primitiv",
+            "1": "Einfach",
+            "2": "Komplex"
+        },
+        "TRIGGERS": {
+            "0": "Druckplatte",
+            "1": "Stolperdraht",
+            "2": "Schlossmechanismus",
+            "3": "Übernatürlicher Auslöser"
+        },
+        "FIELDS": {            
+            "difficulty": {
+                "label": "Schwierigkeitswert",
+                "hint": "Jede Falle weist einen Schwierigkeitswert auf, der als Modifikator für die Entschärfung mit Schlösserknacken dient."
+            },
+            "stealth": {
+                "label": "Tarnwert",
+                "hint": "Ein Modifikator für eine Probe auf Sinnesschärfe, um die Falle rechtzeitig zu bemerken."
+            },
+            "description": {
+                "label": "Beschreibung",
+                "hint": "Eine kurze Beschreibung des Ereignisses für die Spieler."
+            },
+            "gmdescription": {
+                "label": "GM-Beschreibung",
+                "hint": "Eine detaillierte Beschreibung der Falle für den Spielleiter."
+            },
+            "complexity": {
+                "label": "Komplexität",
+                "hint": "Das Entschärfen einer Falle dauert je nach Komplexität der Falle unterschiedlich lange."
+            },
+            "damageFormula": {
+                "label": "Schaden",
+                "hint": "Wieviel Schaden verursacht die Falle?"
+            },
+            "autoPause": {
+                "label": "Pausieren",
+                "hint": "Die Falle pausiert automatisch nach dem Auslösen."
+            },
+            "charges": {
+                "label": "Ladungen",
+                "hint": "Die Anzahl der Ladungen, die die Falle hat (0 bedeutet unendlich)."
+            },
+            "remainingCharges": {
+                "label": "Verbleibende Ladungen",
+                "hint": "Die Anzahl der verbleibenden Ladungen, die die Falle hat."
+            },
+            "sound": {
+                "label": "Sound",
+                "hint": "Ein Sound, der abgespielt wird, wenn die Falle ausgelöst wird."
+            },
+            "disarmed": {
+                "label": "Entschärft",
+                "hint": "Die Falle wurde bereits entschärft."
+            },
+            "trigger": {
+                "label": "Auslöser",
+                "hint": "Der Auslöser der Falle, z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich."
+            },
+            "tools": {
+                "label": "Werkzeuge",
+                "hint": "Die Werkzeuge, die zum Entschärfen der Falle benötigt werden. Z.B. Dietriche, Kletterhaken oder spezielle Werkzeuge."
+            }
+        }
+    },
     "wrongGrip": {
         "oneHanded": "Einhändig geführt",
         "twoHanded": "Beidhändig geführt",
@@ -1549,6 +1625,7 @@
         "aspectKnowledge": "Aspektkenntnis",
         "sharpshooter": "Scharfschütze",
         "professionSecret": "Berufsgeheimnis",
+        "disarmTraps": "Fallen entschärfen",
         "deaf": "Taub",
         "blind": "Blind",
         "loyalty": "Loyalität",
@@ -1618,6 +1695,7 @@
         "masterfulParry": "Meisterparade",
         "mightyMasterfulParry": "Machtvolle Meisterparade",
         "perception": "Sinnesschärfe",
+        "lockpick": "Schlösserknacken",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
         "wrestle": "Raufen",
