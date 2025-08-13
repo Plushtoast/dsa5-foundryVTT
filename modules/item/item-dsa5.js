@@ -1135,9 +1135,27 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     super.getSituationalModifiers(situationalModifiers, actor, data, source);
+
+    let timeModifier = 0;
+    let assumeTradition = actor.items.find(x => x.type == "specialability" && x.name.startsWith(game.i18n.localize('LocalizedIDs.assumeTradition')))?.name;
+    if (!assumeTradition) assumeTradition = actor.system.tradition.clerical;
+
+    if (assumeTradition) {
+      const gameMonth = game.time.calendar.timeToComponents(game.time.worldTime).month;
+      const monthName = game.time.calendar.constructor.months[gameMonth];
+      console.log(assumeTradition, monthName, gameMonth)
+      if (assumeTradition.toLowerCase().includes(monthName.toLowerCase())) {
+        
+        timeModifier = 1
+      } else if (monthName == 'Namenloser') {
+        timeModifier = -5
+      }
+    }
+
     mergeObject(data, {
       isCeremony: true,
       locationModifiers: DSA5.ceremonyLocationModifiers,
+      timeModifier,
       timeModifiers: DSA5.ceremonyTimeModifiers,
     });
   }
@@ -1705,6 +1723,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     mergeObject(data, {
       isRitual: true,
       locationModifiers: DSA5.ritualLocationModifiers,
+      timeModifier: 0,
       timeModifiers: DSA5.ritualTimeModifiers,
     });
   }
