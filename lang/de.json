@@ -2253,7 +2253,9 @@
         "masterCanvasControls": "Canvas Controls aktivieren",
         "masterCanvasControlsHint": "Fügt Meisterfunktionen zu den Canvas Controls (linke Seite des GUI hinzu).",
         "enableWeaponAdvantages": "Ausrüstungsvor-/nachteile",
-        "enableWeaponAdvantagesHint": "Aktiviere die optionalen Regeln für Waffen- und Rüstungsvor- und nachteile. Sofern Waffen die entsprechenden Regeln enthalten, werden diese automatisch angewendet."
+        "enableWeaponAdvantagesHint": "Aktiviere die optionalen Regeln für Waffen- und Rüstungsvor- und nachteile. Sofern Waffen die entsprechenden Regeln enthalten, werden diese automatisch angewendet.",
+        "hideSpellDetails": "Zauberdetails im Chat",
+        "hideSpellDetailsHint": "Verstecke Wirkung und sonstige Details für Zauber im Chat für alle außer dem Besitzer des Zaubernden."
     },
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie",

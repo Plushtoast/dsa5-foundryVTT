@@ -31,6 +31,14 @@ export function setupConfiguration() {
     default: false,
     type: Boolean,
   });
+  game.settings.register('dsa5', 'hideSpellDetails', {
+    name: 'DSASETTINGS.hideSpellDetails',
+    hint: 'DSASETTINGS.hideSpellDetailsHint',
+    scope: 'world',
+    config: true,
+    default: false,
+    type: Boolean,
+  });
   game.settings.register('dsa5', 'notifyOnFadingEffects', {
     name: 'DSASETTINGS.notifyOnFadingEffects',
     hint: 'DSASETTINGS.notifyOnFadingEffectsHint',

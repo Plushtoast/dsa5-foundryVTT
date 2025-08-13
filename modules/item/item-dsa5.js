@@ -1082,8 +1082,8 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, spell);
-    data['situationalModifiers'] = situationalModifiers;
-
+    data.situationalModifiers = situationalModifiers;
+    
     let dialogOptions = {
       title,
       template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.hbs`,
@@ -1092,6 +1092,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         await this.getCallbackData(testData, html, actor);
         mergeObject(testData.extra.options, options);
+        testData.showSpellDetails = game.settings.get('dsa5', 'showSpellDetails');
         return { testData, cardOptions };
       },
     };
