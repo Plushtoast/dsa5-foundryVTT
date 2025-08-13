@@ -68,8 +68,12 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   static _getChapter(ev, target) {
-    this.selectedType = $(target).closest('.tocList').attr('data-type');
-    this.selectedChapter = target.dataset.id;
+    this.#getChapter($(target).closest('.tocList').attr('data-type'), target.dataset.id);
+  }
+
+  #getChapter(selectedType, selectedChapter) {
+    this.selectedType = selectedType;
+    this.selectedChapter = selectedChapter;
     this.content = undefined;
     this.pageTocs = undefined;
     this.loadPage($(this.element));
@@ -172,7 +176,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     });
   }
 
-  _showBooks() {
+  #resetBook() {
     this.book = null;
     this.bookData = null;
     this.selectedChapter = null;
@@ -187,6 +191,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.currentType = undefined;
     this.pageTocs = undefined;
     this.selectedSubChapter = undefined;
+  }
+
+  _showBooks() {
+    this.#resetBook();
     this.loadPage($(this.element));
   }
 
@@ -849,6 +857,14 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       return game.modules.get(id).active ? 'fa-check' : 'fa-dash';
     }
     return 'fa-times';
+  }
+
+  async loadBookAndPage(book, chapter, bookType, chapterCategory) {
+    //todo figure out booktype, chapterCategory automatically
+    this.#resetBook();
+    await this.loadBook(book, $(this.element), bookType);
+    this.#getChapter(chapterCategory, chapter);
+    await this.render(true);
   }
 }
 

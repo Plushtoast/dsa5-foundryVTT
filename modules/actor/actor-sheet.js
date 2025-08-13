@@ -24,6 +24,7 @@ import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
+import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -102,6 +103,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       chRegenerate: this._chRegenerate,
       chWeaponless: this._chWeaponless,
       chFallingDamage: this._chFallingDamage,
+      combatRules: this._combatRules,
       chRollCombat: this._chRollCombat,
       collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
@@ -707,6 +709,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _chFallingDamage(ev, target) {
     this.actor.setupFallingDamage({}, this.getTokenId());
+  }
+
+  static _combatRules() {
+    DSA5CombatTracker._onCombatRulesButtonClicked();
   }
 
   static async _chRollCombat(ev, target) {

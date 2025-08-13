@@ -21,6 +21,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     actions: {
       convertToBrawl: this._convertToBrawl,
       aggroButton: this._onAggroButtonClicked,
+      combatRules: this._onCombatRulesButtonClicked,
     },
   };
 
@@ -30,6 +31,15 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   static _convertToBrawl() {
     game.combat.convertToBrawl();
+  }
+
+  static async _onCombatRulesButtonClicked() {
+    if (DSA5_Utility.moduleEnabled('dsa5-core')) {
+      if (game.i18n.lang == "de")
+        game.dsa5.apps.journalBrowser.loadBookAndPage("Grundregelwerk", "Kampf", "books", 'Regeln');
+      else
+        game.dsa5.apps.journalBrowser.loadBookAndPage("Core rules", "Combat", "books", 'Rules');
+    }
   }
 
   static runActAttackDialog() {
