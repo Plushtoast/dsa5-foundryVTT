@@ -1,7 +1,9 @@
+import DSA5_Utility from "../helpers/utility-dsa5.js";
+
 export class CalendarWidget extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
     static SECONDS_PER_HOUR = 3600;
     static SECONDS_PER_DAY = 24 * this.SECONDS_PER_HOUR;
-    
+
     static timeGradients = [
         { from: 'dayStart', to: 'dawn', gradient: 'linear-gradient(to top, #0d1b2a, #1b263b)', textColor: '#e0e6ed', key: 'night' }, // Night - light text
         { from: 'dawn', to: 'morning', gradient: 'linear-gradient(to top, #2c3e50, #f39c12)', textColor: '#fffbe6', key: 'dawn' }, // Dawn - light text
@@ -28,6 +30,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             fastForward: { handler: this.fastForward, buttons: [0, 2] },
             smallBackward: { handler: this.smallBackward, buttons: [0, 2] },
             smallForward: { handler: this.smallForward, buttons: [0, 2] },
+            toggleAutoTime: this.onToggleAutoTime,
         },
     };
 
@@ -57,7 +60,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const data = await super._prepareContext(_options);
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const secondsInDay = this.constructor.calculateSecondsInDay(components);
-        
+
         data.components = components;
         data.dateString = game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
         data.dateTooltip = game.time.calendar.format(game.time.worldTime, 'formatSeason');
@@ -65,15 +68,16 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         data.isGM = game.user.isGM;
         data.dayTimeBackground = this.constructor.dayTimeBackground(components);
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
-        
+        data.toggleAutoTime = this.toggleAutoTime
+
         return data;
     }
-    
+
     // Helper method to calculate seconds passed in the current day
     static calculateSecondsInDay(components) {
-        return components.hour * this.SECONDS_PER_HOUR + 
-               components.minute * 60 + 
-               components.second;
+        return components.hour * this.SECONDS_PER_HOUR +
+            components.minute * 60 +
+            components.second;
     }
 
     static editCalendar(ev, target) {
@@ -99,6 +103,19 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     static smallForward(ev, target) {
         const seconds = ev.button != 2 ? 1800 : 60;
         this.timeAdvance(seconds);
+    }
+
+    static onToggleAutoTime(ev, target) {
+        if(!DSA5_Utility.isActiveGM()) return;
+
+        this.toggleAutoTime = !this.toggleAutoTime;
+
+        target.classList.toggle('fas', this.toggleAutoTime);
+        target.classList.toggle('far', !this.toggleAutoTime);
+        
+        this.autoInterval = this.toggleAutoTime ? setInterval(() => {
+            game.time.advance(15);
+        }, 15000) : clearInterval(this.autoInterval);
     }
 
     static backward(ev, target) {
@@ -132,21 +149,21 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     static async toggleAutoLight(ev, target) {
         const calendarSettings = game.settings.get('dsa5', 'calendarSettings');
         calendarSettings.lightByDayTime = !calendarSettings.lightByDayTime;
-        
+
         await game.settings.set('dsa5', 'calendarSettings', calendarSettings);
         target.classList.toggle('fa-toggle-on', calendarSettings.lightByDayTime);
         target.classList.toggle('fa-toggle-off', !calendarSettings.lightByDayTime);
     }
-    
+
     _setupDragHandlers() {
         const indicator = this.element.querySelector('.slideIndicator');
         const container = this.element.querySelector('.dayProgress');
-        
+
         indicator.addEventListener('mousedown', this._handleMouseDown.bind(this));
         this.element.addEventListener('mousemove', this._handleMouseMove.bind(this, container, indicator));
         this.element.addEventListener('mouseup', this._handleMouseUp.bind(this));
     }
-    
+
     _handleMouseDown(e) {
         this.isDragging = true;
         this.wasDragging = false;
@@ -154,38 +171,38 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     _handleMouseMove(container, indicator, e) {
         if (!this.isDragging) return;
 
         this.wasDragging = true;
-        
+
         const containerRect = container.getBoundingClientRect();
         const maxLeft = containerRect.width - indicator.offsetWidth;
         const newLeft = Math.max(0, Math.min(e.clientX - this.offsetX, maxLeft));
         const percentage = newLeft / maxLeft * 100.0;
-        
+
         indicator.style.setProperty('--p', `${percentage}%`);
         this.currentPercentage = percentage;
 
         this._updateTimeIndicator(container, containerRect, percentage);
     }
-    
+
     _updateTimeIndicator(container, containerRect, percentage) {
         const secondsInDay = this.constructor.SECONDS_PER_DAY * percentage / 100.0;
         const hour = Math.floor(secondsInDay / this.constructor.SECONDS_PER_HOUR) || 0;
         const minute = Math.floor((secondsInDay % this.constructor.SECONDS_PER_HOUR) / 60) || 0;
         const second = Math.floor(secondsInDay % 60) || 0;
-        
+
         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
         const dayTimeBackground = this.constructor.dayTimeBackground({ hour, minute, second });
-        
+
         container.style.width = containerRect.width + 'px';
         container.style.background = dayTimeBackground.gradient;
         container.style.color = dayTimeBackground.textColor;
         container.querySelector('.timeIndicator').textContent = timeString;
     }
-    
+
     _handleMouseUp(ev) {
         if (!this.isDragging) return;
 
@@ -196,9 +213,9 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const currentSeconds = this.constructor.calculateSecondsInDay(components);
         const newSeconds = this.constructor.SECONDS_PER_DAY * this.currentPercentage / 100.0;
-        
-        if(isNaN(newSeconds)) return;
-        
+
+        if (isNaN(newSeconds)) return;
+
         const advanceTime = Math.floor(newSeconds - currentSeconds);
         if (advanceTime === 0) return;
 

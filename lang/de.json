@@ -2089,6 +2089,7 @@
                 "label": "Tageszeiten",
                 "moonLight": "Mondlicht",
                 "lightByDayTime": "Licht nach Tageszeit",
+                "toggleAutoTime": "Die Zeit läuft automatisch in Echtzeit weiter (update alle 15sek)",
                 "lightByDayTimeHint": "Der Dunkelheitswert wird automatisch an hand der Uhrzeit angepasst. Es wird die Tageszeit berücksichtigt, sofern Licht nach Tageszeit aktiviert ist.",
                 "moonAddsLight": "Mondlicht beeinflusst Dunkelheit",
                 "moonAddsLightHint": "Mondlicht beeinflusst den automatischen Dunkelheitswert bei Nacht. Es wird die Helligkeit des Mondes mit der Mondphase multipliziert und von der Dunkelheit abgezogen, sofern Licht nach Tageszeit aktiviert ist."
@@ -2264,7 +2265,8 @@
     "COMBATTRACKER": {
         "noDefenses": "Anzahl Verteidigungen",
         "ongoing": "Laufende Handlungen",
-        "waitInit": "Zurückstellen"
+        "waitInit": "Zurückstellen",
+        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><br>Attacke<br>Fernkampfangriffe<br>bis zu Geschwindigkeitswert in Schritt laufen<br>versuchen, eine Tür einzutreten<br>eine Waffe ziehen<br>einen Hebel umlegen<br>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<br>Zauber sprechen, je nach Zauber mehrere Aktionen<br>Liturgie wirken, je nach Liturgie mehrere Aktionen</p><p><b>Beispiele für freie Aktionen</b><br>einen kurzen Satz rufen<br>einen Gegenstand fallen lassen<br>von einem Stuhl aufstehen<br>sich zu Boden werfen<br>sich umdrehen<br>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</p>"
     },
     "CHATFATE": {
         "fatepointUsed": "Das Schicksal ändert sich",
