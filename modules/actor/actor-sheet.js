@@ -1264,6 +1264,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item.update({ 'system.isArtifact': false });
   }
 
+  _tearDown(options) {
+    super._tearDown(options);
+    this.#conditionSearch?.unbind();
+    this.#gearSearch?.unbind();
+    this.#talentSearch?.unbind();
+  }
+
   _filterGear(_event, query, rgx, html) {
     for (const entry of html.querySelectorAll(".item")) {
       if (!query) {
@@ -1320,15 +1327,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   async _deleteActiveEffect(id) {
     if (!this.isEditable) return;
 
-    const item = this.actor.effects.get(id);
-
-    if (item) this.actor.deleteEmbeddedDocuments('ActiveEffect', [item.id]);
+    if (this.actor.effects.has(id)) this.actor.deleteEmbeddedDocuments('ActiveEffect', [id]);
   }
 
   async _itemDeleteDialog(item) {
-    const message = game.i18n.format('DIALOG.DeleteItemDetail', {
-      item: item.name,
-    });
+    const message = game.i18n.format('DIALOG.DeleteItemDetail', { item: item.name, });
     const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {

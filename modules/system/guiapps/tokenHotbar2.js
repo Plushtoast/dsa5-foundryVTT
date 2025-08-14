@@ -985,6 +985,11 @@ export class AddEffectDialog extends DefaultAppv2 {
     }
   }
 
+  _tearDown(options) {
+    super._tearDown(options);
+    this.#conditionSearch?.unbind();
+  }
+
   static async modifyEffectDialog(id, callback) {
     new foundry.applications.api.DialogV2({
       //classes: ["dsa5", "dialog"],

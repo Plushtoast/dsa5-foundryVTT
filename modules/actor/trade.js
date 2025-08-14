@@ -72,6 +72,11 @@ export class Trade extends DefaultAppv2 {
     }
   }
 
+  _tearDown(options) {
+    super._tearDown(options);
+    this.#gearSearch?.unbind();
+  }
+
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const tradeFriend = DSA5_Utility.getSpeaker(this.tradeData.sourceId);

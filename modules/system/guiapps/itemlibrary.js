@@ -972,6 +972,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       source.filterItems.call(source, category, source.indexes[documentName].next)
     }
   }
+  
   async _onItemNameClick(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)

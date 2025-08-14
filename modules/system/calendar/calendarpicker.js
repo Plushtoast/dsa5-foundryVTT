@@ -217,6 +217,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#search.bind(this.element);
   }
 
+  _tearDown(options) {
+    super._tearDown(options);
+    this.#search?.unbind();
+  }
+
   _onSearchFilter(_event, query, rgx, html) {
     for ( const entry of html.querySelectorAll(".event-card") ) {
       if ( !query ) {

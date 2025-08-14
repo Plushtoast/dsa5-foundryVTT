@@ -12,9 +12,9 @@ export default function () {
     html.find('img').on('mousedown', (ev) => {
       if (ev.button == 2)
         game.dsa5.apps.DSA5_Utility.showArtwork({
-          name: obj.name,
+          name: obj.document.name,
           uuid: '',
-          img: $(ev.currentTarget).attr('src'),
+          img: ev.currentTarget.getAttribute('src'),
         });
     });
     bindImgToCanvasDragStart(html);

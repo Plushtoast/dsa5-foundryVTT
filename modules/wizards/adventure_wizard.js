@@ -254,9 +254,9 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       let name = this.book.id;
       if (ev.button == 2)
         game.dsa5.apps.DSA5_Utility.showArtwork({
-          name: name,
+          name,
           uuid: '',
-          img: $(ev.currentTarget).attr('src'),
+          img: ev.currentTarget.getAttribute('src'),
         });
     });
 
