@@ -37,16 +37,18 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     { key: 'enrichedBiography', path: 'details.biography.value' },
   ];
 
+  #talentSearch;
+  #gearSearch;
+  #conditionSearch;
+
   get title() {
     return this.actor.name;
   }
 
   async render(options = {}, _options = {}) {
-    this._saveSearchFields();
     this._saveCollapsed();
     const result = await super.render(options, _options);
     this._setCollapsed();
-    this._restoreSeachFields();
 
     if (this.currentFocus) {
       $(this.element)
@@ -194,39 +196,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
   };
 
-  _saveSearchFields() {
-    if (this.element === null) return;
-
-    const html = $(this.element);
-    this.searchFields = {
-      talentFiltered: html.find('.filterTalents').hasClass('filtered'),
-      searchText: html.find('.talentSearch').val(),
-      gearSearch: html.find('.gearSearch').val(),
-    };
-  }
-
   get canLockSheet() {
     return this.actor.system.canAdvance
-  }
-
-  _restoreSeachFields() {
-    if (this.searchFields != undefined) {
-      const html = $(this.element);
-      if (this.searchFields.talentFiltered) {
-        html.find('.filterTalents').addClass('filtered');
-        html.find('.allTalents').removeClass('showAll');
-      }
-      const talentSearchInput = html.find('.talentSearch');
-      talentSearchInput.val(this.searchFields.searchText);
-      if (this.searchFields.searchText != '') {
-        this._filterTalents(talentSearchInput);
-      }
-      const gearSearchInput = html.find('.gearSearch');
-      gearSearchInput.val(this.searchFields.gearSearch);
-      if (this.searchFields.searchText != '') {
-        this._filterGear(gearSearchInput);
-      }
-    }
   }
 
   _configureRenderParts(options) {
@@ -279,7 +250,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         }
       }
     }
-    
+
     const tabKeys = Object.keys(tabs);
     const hasActive = tabKeys.some(key => tabs[key].active);
 
@@ -827,8 +798,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _filterTalents(ev, target) {
-    $(target).closest('.scrollable').find('.allTalents').toggleClass('showAll');
-    $(target).toggleClass('filtered');
+    const hTarget = $(target);
+    hTarget.closest('.scrollable').find('.allTalents').toggleClass('showAll');
+    hTarget.toggleClass('filtered');
   }
 
   verticalTabs(ev) {
@@ -1005,20 +977,24 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
-    let filterTalents = (ev) => this._filterTalents($(ev.currentTarget));
-    let talSearch = html.find('.talentSearch');
-    talSearch.on('keyup', (event) => this._filterTalents($(event.currentTarget)));
-    talSearch[0] && talSearch[0].addEventListener('search', filterTalents, false);
-
-    let filterConditions = (ev) => this._filterConditions($(ev.currentTarget));
-    let condSearch = html.find('.conditionSearch');
-    condSearch.on('keyup', (event) => this._filterConditions($(event.currentTarget)));
-    condSearch[0] && condSearch[0].addEventListener('search', filterConditions, false);
-
-    let filterGear = (ev) => this._filterGear($(ev.currentTarget));
-    let gearSearch = html.find('.gearSearch');
-    gearSearch.on('keyup', (event) => this._filterGear($(event.currentTarget)));
-    gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
+    this.#talentSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: ".talentSearch",
+      contentSelector: ".allTalents",
+      callback: this._filterTalents.bind(this)
+    });
+    this.#talentSearch.bind(this.element);
+    this.#gearSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: ".gearSearch",
+      contentSelector: "[data-application-part=inventory]",
+      callback: this._filterGear.bind(this)
+    });
+    this.#gearSearch.bind(this.element);
+    this.#conditionSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: ".conditionSearch",
+      contentSelector: ".statusEffectMenu",
+      callback: this._filterConditions.bind(this)
+    });
+    this.#conditionSearch.bind(this.element);
 
     bindImgToCanvasDragStart(html, 'img.charimg');
 
@@ -1275,19 +1251,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  _filterGear(tar) {
-    if (tar.val() != undefined) {
-      let val = tar.val().toLowerCase().trim();
-      let gear = $(this.element).find('.inventory .item');
-      gear.removeClass('filterHide');
-      gear
-        .filter(function () {
-          return $(this).find('a[data-action="itemEdit"]').text().toLowerCase().trim().indexOf(val) == -1;
-        })
-        .addClass('filterHide');
-    }
-  }
-
   static _selectTraditionArtifact(ev, target) {
     if (!this.isEditable) return;
 
@@ -1301,36 +1264,56 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item.update({ 'system.isArtifact': false });
   }
 
-  //TODO replace this with foundry SearchFilter
-  _filterTalents(tar) {
-    if (tar.val() != undefined) {
-      let val = tar.val().toLowerCase().trim();
-      let talents = $(this.element).parent().find('.allTalents');
-      talents.find('.item, .table-header, .table-title').removeClass('filterHide');
-      talents
-        .addClass('showAll')
-        .find('.item')
-        .filter(function () {
-          return $(this).find('.talentName').text().toLowerCase().trim().indexOf(val) == -1;
-        })
-        .addClass('filterHide');
-      if (val.length > 0) {
-        talents.find('.table-header, .table-title:not(:eq(0))').addClass('filterHide');
-        talents.addClass('filterfull');
-      } else talents.removeClass('filterfull');
+  _filterGear(_event, query, rgx, html) {
+    for (const entry of html.querySelectorAll(".item")) {
+      if (!query) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = entry.querySelector('.equipment-item-name [data-action="itemEdit"]')?.textContent || '';
+      if (!title) {
+        entry.hidden = false;
+        continue;
+      }
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
     }
   }
 
-  _filterConditions(tar) {
-    if (tar.val() != undefined) {
-      const val = tar.val().toLowerCase().trim();
-      const conditions = $(this.element).find('.statusEffectMenu li:not(.search)');
-      conditions.removeClass('filterHide');
-      conditions
-        .filter(function () {
-          return game.i18n.localize($(this).find('button').attr('data-tooltip')).toLowerCase().trim().indexOf(val) == -1;
-        })
-        .addClass('filterHide');
+  _filterTalents(_event, query, rgx, html) {
+    const show = !!query;
+    html.classList.add('showAll');
+    html.classList.toggle('filterfull', show);
+    html.querySelector('.table-header').classList.toggle('dsahidden', show);
+    html.querySelectorAll('.table-title:not(:first-of-type)').forEach(el => el.classList.toggle('dsahidden', show));
+
+    for (const entry of html.querySelectorAll(".item")) {
+      if (!query) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = entry.querySelector('.talentName')?.textContent || '';
+      if (!title) {
+        entry.hidden = false;
+        continue;
+      }
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
+    }
+  }
+
+  _filterConditions(_event, query, rgx, html) {
+    for (const entry of html.querySelectorAll("li:not(.search)")) {
+      if (!query) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = game.i18n.localize(entry.querySelector('button').dataset.tooltip) || '';
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
     }
   }
 

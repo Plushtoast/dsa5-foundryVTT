@@ -910,6 +910,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 }
 
 export class AddEffectDialog extends DefaultAppv2 {
+  #conditionSearch;
+
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'tokenStatusEffects'],
     window: {
@@ -957,28 +959,29 @@ export class AddEffectDialog extends DefaultAppv2 {
 
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
 
-    let filterConditions = (ev) => this._filterConditions($(ev.currentTarget), html);
-
-    let search = html.find('.conditionSearch');
-    search.on('keyup', (event) => this._filterConditions($(event.currentTarget), html));
-    search[0] && search[0].addEventListener('search', filterConditions, false);
-
     const positionUpdate = {};
     if (this.options.position.width === 'auto') positionUpdate.width = 'auto';
     if (this.options.position.height === 'auto') positionUpdate.height = 'auto';
     if (!foundry.utils.isEmpty(positionUpdate)) this.setPosition(positionUpdate);
+
+    this.#conditionSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: ".conditionSearch",
+      contentSelector: ".window-content",
+      callback: this._filterConditions.bind(this)
+    });
+    this.#conditionSearch.bind(this.element);
   }
 
-  _filterConditions(tar, html) {
-    if (tar.val() != undefined) {
-      let val = tar.val().toLowerCase().trim();
-      let conditions = html.find('.filterable');
-      html.find('.filterHide').removeClass('filterHide');
-      conditions
-        .filter(function () {
-          return $(this).find('span').text().toLowerCase().trim().indexOf(val) == -1;
-        })
-        .addClass('filterHide');
+  _filterConditions(_event, query, rgx, html) {
+    for (const entry of html.querySelectorAll(".filterable")) {
+      if (!query) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = entry.querySelector('span').textContent || '';
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
     }
   }
 

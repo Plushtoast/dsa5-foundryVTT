@@ -5,6 +5,8 @@ import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, randomID } = foundry.utils;
 
 export class Trade extends DefaultAppv2 {
+  #gearSearch;
+
   static DEFAULT_OPTIONS = {
     classes: ['noscrollWizard'],
     position: {
@@ -53,16 +55,20 @@ export class Trade extends DefaultAppv2 {
     this.render(true);
   }
 
-  _filterGear(tar) {
-    if (tar.val() != undefined) {
-      let val = tar.val().toLowerCase().trim();
-      let gear = $(this.element).find('.inventory .item');
-      gear.removeClass('filterHide');
-      gear
-        .filter(function () {
-          return $(this).find('a[data-action="itemEdit"]').text().toLowerCase().trim().indexOf(val) == -1;
-        })
-        .addClass('filterHide');
+  _filterGear(_event, query, rgx, html) {
+    for (const entry of html.querySelectorAll(".item")) {
+      if (!query) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = entry.querySelector('[data-action="itemEdit"]')?.textContent || '';
+      if (!title) {
+        entry.hidden = false;
+        continue;
+      }
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
     }
   }
 
@@ -130,11 +136,14 @@ export class Trade extends DefaultAppv2 {
     await super._onRender(context, options);
     const html = $(this.element);
     html.find('.trade').on('click', (ev) => this._offerItem(ev));
-    const filterGear = (ev) => this._filterGear($(ev.currentTarget));
     html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
-    let gearSearch = html.find('.gearSearch');
-    gearSearch.on('keyup', (event) => filterGear(event));
-    gearSearch[0] && gearSearch[0].addEventListener('search', filterGear, false);
+
+    this.#gearSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: ".gearSearch",
+      contentSelector: ".window-content",
+      callback: this._filterGear.bind(this)
+    });
+    this.#gearSearch.bind(this.element);
   }
 
   _editItem(target, id) {

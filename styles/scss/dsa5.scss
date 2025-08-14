@@ -1773,10 +1773,6 @@ a.img-entity-link {
 .expandDetails {
   &.shown {
     display: block;
-
-    .filterHide {
-      display: block;
-    }
   }
 
   ul {
@@ -1850,10 +1846,7 @@ a.img-entity-link {
 }
 
 .generationWizard [data-tab='description'] h2,
-.notLearned,
-.showAll .filterHide,
-.statusEffectMenu .filterHide,
-.filterHide {
+.notLearned {
   display: none;
 }
 
@@ -2172,6 +2165,10 @@ input[type='search'] {
   .status-create {
     line-height: 26px;
     display: block;
+  }
+
+  .conditionSearch {
+    color: white;
   }
 
   ul {
