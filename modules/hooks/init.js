@@ -34,6 +34,7 @@ import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
+import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
 const { mergeObject } = foundry.utils;
 
 export default function () {
@@ -111,6 +112,7 @@ Hooks.once('init', () => {
   });
   foundry.applications.apps.DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
   foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', DSACalendarEntrySheet, { types: ['dsacalendar'], makeDefault: true });
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();
@@ -159,6 +161,7 @@ Hooks.once('i18nInit', () => {
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
 
   foundry.helpers.Localization.localizeDataModel(CONFIG.RegionBehavior.dataModels.DSATrap);
+  //foundry.helpers.Localization.localizeDataModel(CONFIG.JournalEntryPage.dataModels.dsacalendar);
 });
 
 class ForbiddenLanguageDialog extends foundry.applications.api.DialogV2 {

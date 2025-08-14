@@ -137,6 +137,9 @@
         }
     ],
     "documentTypes": {
+        "JournalEntryPage": {
+            "dsacalendar": {}
+        },
         "RegionBehavior": {
             "DSATrap": {
                 "htmlFields": [

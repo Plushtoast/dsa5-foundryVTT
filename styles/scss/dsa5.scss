@@ -5933,6 +5933,7 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+@include meta.load-css('calendar.scss');
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('immersive.scss');
 @include meta.load-css('legacy.scss');

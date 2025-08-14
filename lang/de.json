@@ -40,7 +40,7 @@
         "armor": {
             "1": "Rüstungsvorteil",
             "2": "Rüstungsnachteil"
-        },  
+        },
         "rangeweapon": {
             "1": "Waffenvorteil",
             "2": "Waffennachteil"
@@ -277,7 +277,7 @@
     "blessings": "Segnungen",
     "biography": "Hintergrundgeschichte",
     "Category": "Kategorie",
-    "confirmationRoll": "Bestätigungswurf",    
+    "confirmationRoll": "Bestätigungswurf",
     "clerical": "klerikal",
     "circle": "Kreis",
     "condition": "Zustand",
@@ -303,7 +303,7 @@
     "delete": "Löschen",
     "ok": "Ok",
     "combatskillcountdivider": "aus",
-    "closeCombatAttacks": "Nahkampfangriffe",    
+    "closeCombatAttacks": "Nahkampfangriffe",
     "permanentEffects": "Permanente Effekte",
     "permanentEffectsHint": "Active Effects werden auch auf den Träger angwendet, wenn das Traditionsartefakt nicht getragen wird.",
     "Current": "Aktuell",
@@ -685,7 +685,6 @@
                 "category": "Gildenprägungen..."
             }
         }
-        
     },
     "Aggregated": {
         "noMoreAllowed": "Keine Proben mehr erlaubt."
@@ -743,7 +742,7 @@
         "services": "Dienste",
         "finalize": "Fertigstellen",
         "material": "Material"
-    },    
+    },
     "MASTER": {
         "automation": "Automatisierung",
         "globalMods": "Globale Modifikatoren",
@@ -1050,7 +1049,7 @@
         "value": "Wert",
         "modifiers": "Mod.",
         "advances": "Zukauf",
-        "max": "Max", 
+        "max": "Max",
         "AoE": "Größe in Schritt, Template"
     },
     "Range-short": "Kurz",
@@ -1395,8 +1394,49 @@
     "TYPES.Actor.npc": "Nichtspielercharakter",
     "TYPES.Actor.creature": "Kreatur",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
+    "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "dsacalendar": {
+        "FIELDS": {
+            "calendarentries": {
+                "label": "Datum",
+                "title": {
+                    "label": "Name"
+                },
+                "content": {
+                    "label": "Beschreibung"
+                },
+                "location": {
+                    "label": "Ort"
+                },
+                "from": {
+                    "label": "Von"
+                },
+                "to": {
+                    "label": "Bis"
+                },
+                "category": {
+                    "label": "Kategorie"
+                },
+                "visible": {
+                    "label": "Sichtbar für Spieler"
+                }
+            }
+        },
+        "CATEGORIES": {
+            "general": "-",
+            "holidays": "Feiertag",
+            "event": "Jahrestag",
+            "historical": "Historisches Ereignis",
+            "milestones": "Meilenstein"
+        },
+        "events": "Ereignisse",
+        "journals": {
+            "label": "Kalender Journals",
+            "hint": "Wähle Journals mit Kalendereinträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        }
+    },
     "REGIONBEHAVIOR_DSATrap": {
         "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
         "search": "Wahrnehmen",
@@ -1423,7 +1463,7 @@
             "2": "Schlossmechanismus",
             "3": "Übernatürlicher Auslöser"
         },
-        "FIELDS": {            
+        "FIELDS": {
             "difficulty": {
                 "label": "Schwierigkeitswert",
                 "hint": "Jede Falle weist einen Schwierigkeitswert auf, der als Modifikator für die Entschärfung mit Schlösserknacken dient."
@@ -1727,11 +1767,11 @@
         "elementalServant": "Elementarer Diener",
         "callDjinn": "Dschinnenruf",
         "counterAttack": "Gegenhalten",
-        "servantEarth": "Diener der Erde", 
-        "servantFlame": "Diener der Flammen", 
-        "servantCold": "Diener der Kälte", 
-        "servantWave": "Diener der Wellen", 
-        "servantCloud": "Diener der Wolken", 
+        "servantEarth": "Diener der Erde",
+        "servantFlame": "Diener der Flammen",
+        "servantCold": "Diener der Kälte",
+        "servantWave": "Diener der Wellen",
+        "servantCloud": "Diener der Wolken",
         "servantOre": "Diener des Erzes",
         "immuneTo": "Immunität gegen",
         "enemySense": "Feindgespür",
@@ -1978,7 +2018,6 @@
         "dodge": "Ausweichen verbessern",
         "char": "Eigenschaft verbessern"
     },
-    
     "hideOpposedOptions": {
         "0": "Gemäß Rollmodus",
         "1": "Gemäß Rollmodus, kritische Details verstecken",
@@ -2055,7 +2094,7 @@
             "hour": "Stunde",
             "minute": "Minute",
             "second": "Sekunde",
-            "holidays": "Feiertage",
+            "holidays": "Feiertage & Ereignisse",
             "weekday": "Wochentag",
             "season": "Jahreszeit",
             "holiday": {

@@ -4,14 +4,14 @@
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-backward' data-tooltip='CALENDAR.DSA.fastBackward' data-action='fastBackward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-left' data-tooltip='CALENDAR.DSA.backward' data-action='backward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-left' data-tooltip='CALENDAR.DSA.smallBackward' data-action='smallBackward'></button>
+      <button type='button' class='visibilitynone noBorder ui-control icon {{ifThen toggleAutoTime 'fas' 'far'}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
     {{/if}}
     <div data-tooltip='{{dateTooltip}}' class='center button dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto;background:{{dayTimeBackground.gradient}};color:{{dayTimeBackground.textColor}}' data-action='edit'>
       <span class="timeIndicator">{{dateString}}</span>
       <div class="slideIndicator"></div>
     </div>
     {{#if isGM}}
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-toggle-{{ifThen autoLightEnabled 'on' 'off'}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon {{ifThen toggleAutoTime 'fas' 'far'}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
+      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-toggle-{{ifThen autoLightEnabled 'on' 'off'}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>      
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-right' data-tooltip='CALENDAR.DSA.smallForward' data-action='smallForward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-right' data-tooltip='CALENDAR.DSA.forward' data-action='forward'></button>
       <button type='button' class='visibilitynone noBorder ui-control icon fas fa-forward' data-tooltip='CALENDAR.DSA.fastForward' data-action='fastForward'></button>

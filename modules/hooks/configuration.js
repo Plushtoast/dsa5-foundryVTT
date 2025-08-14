@@ -415,6 +415,16 @@ export function setupConfiguration() {
     type: Object,
   });
 
+  game.settings.register('dsa5', 'calendarJournals', {
+    name: 'DSASETTINGS.calendarJournals',
+    scope: 'world',
+    config: false,
+    default: {
+      activated: []
+    },
+    type: Object,
+  });
+
   const moneyChoices = () => {
     const moneyChoices = {};
     for (let pack of game.packs) {

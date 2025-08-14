@@ -73,7 +73,6 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
     async _handleRegionEvent(regionEvent) {
         if (!DSA5_Utility.isActiveGM()) return;
 
-        console.log(regionEvent);
         if (this.disarmed) return;
         if (this.remainingCharges < 1 && this.charges > 0) return;
 
@@ -128,7 +127,6 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
             region: await fromUuid(trapData.region),
             message
         }
-        console.log(options, action)
 
         switch (action) {
             case 'searchTrap':
@@ -271,7 +269,6 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
 
         const roll = await new Roll(this.damageFormula).evaluate();
         const rollString = await roll.render();
-        console.log(rollString)
         const msg = `
             <div>
             <p>${game.i18n.format("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: this.parent.name })}</p>

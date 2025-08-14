@@ -1144,9 +1144,8 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     if (assumeTradition) {
       const gameMonth = game.time.calendar.timeToComponents(game.time.worldTime).month;
       const monthName = game.time.calendar.constructor.months[gameMonth];
-      console.log(assumeTradition, monthName, gameMonth)
-      if (assumeTradition.toLowerCase().includes(monthName.toLowerCase())) {
-        
+
+      if (assumeTradition.toLowerCase().includes(monthName.toLowerCase())) {        
         timeModifier = 1
       } else if (monthName == 'Namenloser') {
         timeModifier = -5

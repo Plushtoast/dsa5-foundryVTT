@@ -47,7 +47,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     }
     const value = Number(this.target.value) || 1;
     const width = this.target.width || 1;
-    console.log(this.target)
+
     switch (this.target.type) {
       case 'cube':
         shape.type = 'rectangle'
@@ -65,9 +65,9 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
         shape.radiusY = value * gridSize;
         break;
       case 'cone':
+        ui.notifications.warn(game.i18n.localize("Method not implemented"));  
         break;
     }
-    console.log(shape)
     return shape;
   }
 
@@ -92,7 +92,6 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
         behavior
       ]
     }
-    console.log(region, data)
     await canvas.scene.createEmbeddedDocuments("Region", [region])
   }
 

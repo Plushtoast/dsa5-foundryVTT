@@ -79,14 +79,14 @@ export const DSAKalender = {
       { name: 'Allaventurisches Gauklertreffen', month: 4, dayStart: 1, dayEnd: 7 },
       { name: 'Opersaison in Vinsalt', month: 5, dayStart: 19 },
       { name: 'Erleuchtungsfest', month: 5, dayStart: 29 },
-      { name: 'Wintersonnenwende', month: 7, dayStart: 0 },
-      { name: 'Tag der Erneuerung', month: 8, dayStart: 29 },
-      { name: 'Tag des Phex', month: 9, dayStart: 15 },
-      { name: 'Tag der Saat', month: 10, dayStart: 0 },
-      { name: 'Bardentreffen', month: 10, dayStart: 6, dayEnd: 11 },
-      { name: 'Tag des Feuers', month: 11, dayStart: 0 },
-      { name: 'Tag der Waffenschmiede', month: 11, dayStart: 20 },
-      { name: 'Fest der Freuden', month: 12, dayStart: 0, dayEnd: 6 }
+      { name: 'Wintersonnenwende', month: 6, dayStart: 0 },
+      { name: 'Tag der Erneuerung', month: 7, dayStart: 29 },
+      { name: 'Tag des Phex', month: 8, dayStart: 15 },
+      { name: 'Tag der Saat', month: 9, dayStart: 0 },
+      { name: 'Bardentreffen', month: 9, dayStart: 6, dayEnd: 11 },
+      { name: 'Tag des Feuers', month: 10, dayStart: 0 },
+      { name: 'Tag der Waffenschmiede', month: 10, dayStart: 20 },
+      { name: 'Fest der Freuden', month: 11, dayStart: 0, dayEnd: 6 }
     ]
   }
 };
