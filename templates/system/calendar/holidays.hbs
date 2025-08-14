@@ -1,9 +1,14 @@
 <div class='tab scrollable standard-form {{tabs.events.cssClass}}' data-tab='events' data-group='{{tabs.events.group}}'>
     <div class="fullSceenMaxWidth dark-theme">
-        <div class="flexcol gap2px">
-            {{#each sortedEntries}}
-            {{> systems/dsa5/templates/journal/calendarcard.hbs yearSuffix=../yearSuffix}}
-            {{/each}}
+        <div class="flexcol gap5px">
+            <div class="flexrow">
+                <input type="search" placeholder="{{localize 'Library.search'}}">
+            </div>
+            <div class="flexcol gap2px eventscontainer">
+                {{#each sortedEntries}}
+                {{> systems/dsa5/templates/journal/calendarcard.hbs yearSuffix=../yearSuffix}}
+                {{/each}}
+            </div>
         </div>
     </div>
 </div>

@@ -40,6 +40,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
   };
 
+  #search;
+
   get title() {
     return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
   }
@@ -206,6 +208,26 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     html.find('.settingChange').on('change', async (ev) => this._onSettingChange(ev));
     html.find('[name="dsa5.calendar"').on('change', async (ev) => this._onChangeCalendar(ev));
     this._drawCalendar();
+
+    this.#search ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: "input[type=search]",
+      contentSelector: ".eventscontainer",
+      callback: this._onSearchFilter.bind(this)
+    });
+    this.#search.bind(this.element);
+  }
+
+  _onSearchFilter(_event, query, rgx, html) {
+    for ( const entry of html.querySelectorAll(".event-card") ) {
+      if ( !query ) {
+        entry.hidden = false;
+        continue;
+      }
+
+      const title = entry.querySelector('.event-card__title').textContent || '';
+      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      entry.hidden = !isMatch;
+    }
   }
 
   #dateFormListeners() {
