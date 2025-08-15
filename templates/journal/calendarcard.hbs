@@ -7,8 +7,15 @@
     </div>
 
     <div class="event-card__body">
-        <h3 id="event-{{@key}}-title" class="event-card__title">{{title}} {{#unless visible}}<i class="fas fa-eye-slash"
+        <div class="flexrow">
+            <h3 id="event-{{@key}}-title" class="event-card__title">{{title}} {{#unless visible}}<i class="fas fa-eye-slash"
                 data-tooltip="dsacalendar.FIELDS.calendarentries.visible.label"></i>{{/unless}}</h3>
+            {{#if isOwner}}
+            <div class="event-card-controls flex0">
+                <button type="button" class="smallBtn fa-solid fa-edit icon" data-action="editEvent" data-uuid="{{uuid}}" data-key="{{calendarKey}}"></button>
+            </div>
+            {{/if}}
+        </div>        
 
         <div class="event-card__meta">
             <span class="event-chip">
@@ -24,7 +31,7 @@
             {{#if location}}
             <span class="event-chip">
                 <i class="fas fa-location-pin"></i>
-                <span>{{location}}</span> 
+                <span class="eventlocation">{{location}}</span> 
             </span>
             {{/if}}
 
@@ -40,5 +47,6 @@
             {{content}}
         </div>
         {{/if}}
-    </div>
+    </div>    
+
 </article>

@@ -18,7 +18,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     actions: {
       removeJournal: { handler: this.#removeJournal, buttons: [0, 2] },
       addJournal: this.#addJournal,
-      filterCategory: this.#filterCategory
+      filterCategory: this.#filterCategory,
+      editEvent: this.#onEditEvent
     }
   };
 
@@ -87,10 +88,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         )
       )
       .flatMap(page =>
-        Object.values(page.system.calendarentries).filter(entry => entry.recurring || (!entry.recurring && entry.from.year === components.year)).map(entry => {
-          DSACalendarEntry.prepareCalendarEntry(entry);
-          return entry;
-        })
+        Object.entries(page.system.calendarentries)
+          .filter(([_key, entry]) => entry.recurring || (!entry.recurring && entry.from.year === components.year))
+          .map(([key, entry]) => {
+            DSACalendarEntry.prepareCalendarEntry(entry);
+            entry.isOwner = page.isOwner;
+            entry.uuid = page.uuid;
+            entry.calendarKey = key;
+            return entry;
+          })
       );
 
     const holidayEntries = CONFIG.time.worldCalendarConfig.holidays.values.map(holiday => {
@@ -112,6 +118,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         },
         category: 1,
         visible: true,
+        recurring: true,
       };
 
       DSACalendarEntry.prepareCalendarEntry(entry);
@@ -147,6 +154,23 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       await game.settings.set('dsa5', 'calendarJournals', settings);
       this.render(true);
     }
+  }
+
+  static async #onEditEvent(ev, target) {
+    const uuid = target.dataset.uuid;
+    const key = target.dataset.key;
+
+    if (!uuid || !key) return;
+
+    const journal = await fromUuid(uuid);
+
+    if (!journal) return;
+
+    const entry = journal.system.calendarentries[key];
+    if (!entry) return;
+
+    this.close();
+    journal.sheet.render({ force: true, search: entry.title });
   }
 
   static async #removeJournal(ev, target) {
@@ -185,7 +209,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     game.socket.emit('system.dsa5', {
       type: 'invalidateCache',
     });
-    this.#cached == null;
+    this.#cached = null;
+  }
+
+  #getSortableDate(h, currentDateValue) {
+    const sortValue = h.from.month * 100 + h.from.dayOfMonth;
+    return sortValue >= currentDateValue ? sortValue : sortValue + 1300;
   }
 
   async _prepareContext(_options) {
@@ -202,12 +231,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
 
     const currentDateValue = data.components.month * 100 + data.components.dayOfMonth;
-    function getSortableDate(h) {
-      const sortValue = h.from.month * 100 + h.from.dayOfMonth;
-      return sortValue >= currentDateValue ? sortValue : sortValue + 1300;
-    }
 
-    data.sortedEntries = (await DSACalendarPicker.fromCache(data.components)).sort((a, b) => getSortableDate(a) - getSortableDate(b));
+    data.sortedEntries = (await DSACalendarPicker.fromCache(data.components))
+      .sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
     data.calendarSetting = game.settings.settings.get('dsa5.calendar');
     data.selectedCalendar = game.settings.get('dsa5', 'calendar');
     data.maxHoursPerDay = calendar.days.hoursPerDay;
@@ -251,7 +277,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#search ??= new foundry.applications.ux.SearchFilter({
       inputSelector: "input[type=search]",
       contentSelector: ".eventscontainer",
-      callback: this._onSearchFilter.bind(this)
+      callback: this.#onSearchFilter.bind(this)
     });
     this.#search.bind(this.element);
   }
@@ -261,7 +287,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#search?.unbind();
   }
 
-  _onSearchFilter(_event, query, rgx, html) {
+  #onSearchFilter(_event, query, rgx, html) {
     for (const entry of html.querySelectorAll(".event-card")) {
       if (!query) {
         entry.hidden = false;
@@ -269,7 +295,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       }
 
       const title = entry.querySelector('.event-card__title').textContent || '';
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const location = entry.querySelector('.eventlocation')?.textContent || '';
+      const description = entry.querySelector('.event-card__desc')?.textContent || '';
+      const isMatch = [title, location, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -297,6 +325,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       this.element.querySelector('.calendarDateChange').innerHTML = div.querySelector('.calendarDateChange').innerHTML;
       this.#dateFormListeners();
       this._drawCalendar();
+
+      this.render({ force: true, parts: ['events'] })
+      //todo also refresh event list
     }
   }
 

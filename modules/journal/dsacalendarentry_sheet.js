@@ -2,6 +2,7 @@ import { DSACalendarEntry } from "../data/journal/dsacalendar.js";
 
 export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.JournalEntryPageHandlebarsSheet {
     #scrollToId;
+    #search;
 
     static DEFAULT_OPTIONS = {
         actions: {
@@ -29,8 +30,8 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         },
     };
 
-    async _prepareContext(_options) {
-        const context = await super._prepareContext(_options);
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
         const calendar = game.time.calendar;
 
         const entries = Object.entries(foundry.utils.duplicate(this.document.system.calendarentries))
@@ -65,17 +66,32 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
     async _onRender(context, options) {
         await super._onRender(context, options);
 
-        if(this.#scrollToId) {
+        if (this.#scrollToId) {
             this.element.querySelector(`[data-id="${this.#scrollToId}"]`)?.scrollIntoView({ behavior: "smooth" });
             this.#scrollToId = null;
-        }
+        }       
+
+        this.#search ??= new foundry.applications.ux.SearchFilter({
+            inputSelector: "input[type=search]",
+            contentSelector: ".eventscontainer",
+            callback: this.#onSearchFilter.bind(this)
+        });
+        if(options.search) {
+            this.#search.query = options.search;
+            options.search = null;
+        }        
+        this.#search.bind(this.element);
     }
 
     static #addCalendarEntry(ev, target) {
+        newEntry();
+    }
+
+    async newEntry() {
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const id = foundry.utils.randomID();
         this.#scrollToId = id;
-        this.document.update({
+        await this.document.update({
             system: {
                 calendarentries: {
                     [id]: {
@@ -94,5 +110,44 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
     static #removeCalendarEntry(ev, target) {
         const key = target.dataset.key;
         this.document.update({ [`system.calendarentries.-=${key}`]: null });
+    }
+
+    _tearDown(options) {
+        super._tearDown(options);
+        this.#search?.unbind();
+    }
+
+    #viewFilter(_event, query, rgx, html) {
+        for (const entry of html.querySelectorAll(".event-card")) {
+            if (!query) {
+                entry.hidden = false;
+                continue;
+            }
+
+            const title = entry.querySelector('.event-card__title').textContent || '';
+            const location = entry.querySelector('.eventlocation')?.textContent || '';
+            const description = entry.querySelector('.event-card__desc')?.textContent || '';
+            const isMatch = [title, location, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+            entry.hidden = !isMatch;
+        }
+    }
+
+    #editFilter(_event, query, rgx, html) {
+        for (const entry of html.querySelectorAll("fieldset")) {
+            if (!query) {
+                entry.hidden = false;
+                continue;
+            }
+
+            const title = entry.querySelector('[name$=".title"]').value || '';
+            const location = entry.querySelector('[name$=".location"]').value || '';
+            const description = entry.querySelector('[name$=".content"]').value || '';
+            const isMatch = [title, location, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+            entry.hidden = !isMatch;
+        }
+    }
+
+    #onSearchFilter(_event, query, rgx, html) {
+        this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
     }
 }

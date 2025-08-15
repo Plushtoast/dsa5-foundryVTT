@@ -36,11 +36,6 @@ export class SpeedSelector extends DefaultAppv2 {
         return data;
     }
 
-    async _onRender(context, options) {
-        await super._onRender(context, options);
-
-    }
-
     static async #saveThis(ev, target) {
         if(!this.actor.isOwner) return this.close();
 

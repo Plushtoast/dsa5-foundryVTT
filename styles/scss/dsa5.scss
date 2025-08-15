@@ -5681,6 +5681,10 @@ input[type='checkbox'].autoCheckbox {
     max-height: calc(100% - 180px);
   }
 
+  button {
+    --button-text-color: var(--color-text-emphatic);
+  }
+
   .fullScreenHeader {
     margin: 30px;
 

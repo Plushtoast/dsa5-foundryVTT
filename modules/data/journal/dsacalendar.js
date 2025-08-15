@@ -50,8 +50,17 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         for (let key of Object.keys(changed.system.calendarentries || {})) {
             this.#recalculateDay(changed.system.calendarentries[key]);
         }
-        game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid)
         await super._preUpdate(changed, options, user);
+    }
+
+    _onUpdate(changed, options, userId) {
+        super._onUpdate(changed, options, userId);
+        game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
+    }
+
+    _onCreate(data, options, userId) {
+        super._onCreate(data, options, userId);
+        game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
     }
 
     static prepareCalendarEntry(entry) {
