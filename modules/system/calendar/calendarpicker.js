@@ -14,8 +14,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     classes: ['dsaCalendarPicker', 'fullScreenApp'],
     actions: {
-      removeJournal: { handler: this._removeJournal, buttons: [0, 2] },
-      addJournal: this._addJournal,
+      removeJournal: { handler: this.#removeJournal, buttons: [0, 2] },
+      addJournal: this.#addJournal,
+      filterCategory: this.#filterCategory
     }
   };
 
@@ -109,7 +110,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     return parts;
   }
 
-  static async _addJournal(ev, target) {
+  static async #addJournal(ev, target) {
     const container = this.element.querySelector('.journalPickerContainer');
     if (container.children.length == 0) {
       const activated = new Set(game.settings.get('dsa5', 'calendarJournals').activated.map(x => x.uuid));
@@ -130,7 +131,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
   }
 
-  static async _removeJournal(ev, target) {
+  static async #removeJournal(ev, target) {
     const uuid = target.dataset.uuid;
 
     if (ev.button == 2) {
@@ -145,6 +146,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       this.close();
       journal.sheet.render(true);
     }
+  }
+
+  static async #filterCategory(ev, target) {
+    const isOn = !target.classList.contains('toggleOn');
+    target.classList.toggle('toggleOn', isOn);
+    const filters = Array.from(target.parentElement.querySelectorAll('.toggleOn')).map(el => el.dataset.filter);
+    const container = this.element.querySelector('.eventscontainer');
+    container.querySelectorAll('.event-card').forEach(card => {
+      const category = card.dataset.category;
+      card.classList.toggle('dsahidden', !filters.includes(category));
+    });
   }
 
   static invalidateCache(uuid) {
@@ -180,6 +192,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.maxHoursPerDay = calendar.days.hoursPerDay;
     data.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
     data.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
+    data.dayCategories = Object.entries(DSACalendarEntry.CATEGORY_CHOICES).reduce((acc, [key, val]) => {
+      acc[key] = { key, name: val, color: DSACalendarEntry.CATEGORY_COLORS[key], icon: DSACalendarEntry.CATEGORY_ICONS[key] };
+      return acc;
+    }, {});
     return data;
   }
 
@@ -204,9 +220,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     tabSlider(html);
     this.#dateFormListeners();
+    this.element.querySelectorAll('.settingChange').forEach(element => {
+      element.addEventListener('change', this._onSettingChange.bind(this));
+    });
+    this.element.querySelector('[name="dsa5.calendar"]').addEventListener('change', this._onChangeCalendar.bind(this));
 
-    html.find('.settingChange').on('change', async (ev) => this._onSettingChange(ev));
-    html.find('[name="dsa5.calendar"').on('change', async (ev) => this._onChangeCalendar(ev));
     this._drawCalendar();
 
     this.#search ??= new foundry.applications.ux.SearchFilter({

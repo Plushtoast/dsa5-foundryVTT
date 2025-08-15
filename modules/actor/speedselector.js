@@ -9,7 +9,7 @@ export class SpeedSelector extends DefaultAppv2 {
             width: 300
         },
         actions: {
-            saveThis: this.saveThis
+            saveThis: this.#saveThis
         }
     }
 
@@ -41,7 +41,7 @@ export class SpeedSelector extends DefaultAppv2 {
 
     }
 
-    static async saveThis(ev, target) {
+    static async #saveThis(ev, target) {
         if(!this.actor.isOwner) return this.close();
 
         const form = this.element.querySelector("form");

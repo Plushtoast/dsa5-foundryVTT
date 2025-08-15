@@ -3,6 +3,9 @@
         <div class="flexcol gap5px">
             <div class="flexrow">
                 <input type="search" placeholder="{{localize 'Library.search'}}">
+                {{#each dayCategories}}
+                  <button type="button" data-action="filterCategory" data-filter="{{key}}" data-tooltip="{{name}}" class="toggleOn icon {{icon}}" style="color: {{this.color}};"></button>
+                {{/each}}
             </div>
             <div class="flexcol gap2px eventscontainer">
                 {{#each sortedEntries}}

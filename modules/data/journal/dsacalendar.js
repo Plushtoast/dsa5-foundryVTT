@@ -15,6 +15,14 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         4: "#bd5b00ff"
     };
 
+    static CATEGORY_ICONS = {
+        0: "fas fa-calendar",
+        1: "fas fa-holly-berry",
+        2: "fas fa-birthday-cake",
+        3: "fas fa-history",
+        4: "fas fa-star"
+    }
+
     static defineSchema() {
         const { TypedObjectField, SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
         return {

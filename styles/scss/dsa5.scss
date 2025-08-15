@@ -3029,6 +3029,10 @@ input[type='checkbox'].smallBox {
   height: 15px;
 }
 
+.toggleOn {
+  background-color: var(--color-cool-4);
+}
+
 .specImg {
   background-image: url('../../icons/categories/ability_combat.webp');
   background-size: contain;
