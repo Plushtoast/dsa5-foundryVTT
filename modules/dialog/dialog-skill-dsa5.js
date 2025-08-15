@@ -8,6 +8,9 @@ import DPS from '../system/automation/derepositioningsystem.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
+
+
+
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
     buttons.find(x => x.action == 'rollButton').label = 'Opposed';
@@ -122,5 +125,15 @@ export default class DSA5SkillDialog extends DialogShared {
     position: {
       width: 700,
     },
+    actions: {
+      focusRuleModifiers: this.#onFocusRuleModifiers
+    }
   };
+
+  static #onFocusRuleModifiers(ev, target) {
+    const value = target.dataset.value;
+    for ( const button of target.parentElement.querySelectorAll("button") ) {
+      button.ariaPressed = `${value === button.dataset.value}`;
+    }
+  }
 }

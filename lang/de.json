@@ -1802,9 +1802,86 @@
         "Zweihandschwerter": "Two-Handed Swords",
         "Peitschen": "Whips"
     },
+    "LocalizedSkills": {
+        "Bekehren & Überzeugen": "Persuasion",
+        "Betören": "Seduction",
+        "Überreden": "Fast-Talk"
+    },
     "LocalizedSpecies": {
         "Zwerg": "Dwarf",
         "Elf": "Elf"
+    },
+    "SKILL_CHECK_MODIFIERS": {
+        "SOCIAL": {
+            "otherSpecies": {
+                "tooltip": "Aktive Partei und passive Partei gehören anderer Kultur und/oder Spezies an.",
+                "label": "Andere Kultur/Spezies"
+            },
+            "socialState": {
+                "tooltip": "Aktive Partei hat einen höheren sozialen Stand",
+                "label": "Sozialer Stand"
+            },
+            "holyLocation": {
+                "tooltip": "Predigt findet an einem Heiligen Ort der richtigen Gottheit statt.",
+                "label": "Heiliger Ort"
+            },
+            "holySymbol": {
+                "tooltip": "Aktive Partei nutzt ein Göttliches Zeichen oder eine andere, mächtige Liturgie vor den Augen der passiven Partei. Gleiches kann für Magie gelten.",
+                "label": "Heiliges Zeichen"
+            },
+            "passiveDonation": {
+                "tooltip": "Passive Partei bekommt eine Spende von der aktiven Partei.",
+                "label": "Spende"
+            },
+            "commonInterest": {
+                "tooltip": "Aktive Partei spricht Thema an, das die passive Partei genauso sieht/erfüllen will.",
+                "label": "Gemeinsames Interesse"
+            },
+            "enemyImage": {
+                "tooltip": "Aktive Partei entspricht einem Feindbild der passiven Partei (z. B. Mittelreicher, die Orks überzeugen wollen).",
+                "label": "Feindbild"
+            },
+            "moralConflict": {
+                "tooltip": "Die aktive Partei verlangt etwas, was gegen die moralischen Prinzipien der passiven Partei verstößt.",
+                "label": "Moralischer Konflikt"
+            },
+            "interest": {
+                "tooltip": "Aktive Partei hat die passive Partei und deren Vorlieben studiert.",
+                "label": "Interesse"
+            },
+            "rahjaglaeubig": {
+                "tooltip": "Passive Partei ist sehr rahjagläubig.",
+                "label": "Rahjagläubig"
+            },
+            "enthaltsam": {
+                "tooltip": "Passive Partei ist sehr enthaltsam.",
+                "label": "Enthaltsam"
+            },
+            "married": {
+                "tooltip": "Passive Partei ist glücklich vergeben.",
+                "label": "Verheiratet"
+            },
+            "forbiddenContact": {
+                "tooltip": "Aktive Partei gehört einer für die passive Partei ungünstigen/verbotenen Gruppe an (z. B. Spezies, Randgruppe, etc.).",
+                "label": "Verbotener Kontakt"
+            },
+            "badHabbit": {
+                "tooltip": "Aktive Partei hat schlechte Manieren (z. B. entsprechende Schlechte Angewohnheiten).",
+                "label": "Schlechte Angewohnheiten"
+            },
+            "reputation": {
+                "tooltip": "Aktive Partei hat einen guten oder schlechten Ruf.",
+                "label": "Ruf"
+            },
+            "truthful": {
+                "tooltip": "Aktive Partei gilt als wahrheitsliebend.",
+                "label": "Wahrheitsliebend"
+            },
+            "knownLiar": {
+                "tooltip": "Aktive Partei ist ein bekannter Lügner.",
+                "label": "Bekannter Lügner"
+            }
+        }
     },
     "DSAError": {
         "invalidSkinCombination": "Die aktuelle DSA Version unterstützt nur das <b>DSA5 Immersive</b> Skin im light-mode.<br/>Verwende jede andere Kombination auf eigene Gefahr (und melde Probleme auf Github).<br/>Möchtest du jetzt das Standard-Skin setzen?",

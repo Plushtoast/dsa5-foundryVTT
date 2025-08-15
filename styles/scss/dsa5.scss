@@ -1833,7 +1833,6 @@ a.img-entity-link {
 }
 
 .dsahidden,
-.roll-dialog-tag,
 .expandDetails {
   display: none;
 }
@@ -2930,6 +2929,7 @@ a {
   padding: 10px;
 }
 
+.focusMods,
 .specAbs {
   border: 1px solid var(--border-color);
   box-shadow: 0 0 12px #6e3b018f inset;
@@ -3031,6 +3031,20 @@ input[type='checkbox'].smallBox {
 
 .toggleOn {
   background-color: var(--color-cool-4);
+}
+
+.split-button.compact {
+  button.ui-control {
+    --control-size: 18px;
+    --font-size-16: 12px;
+    background: var(--oddColor);
+    border: 1px solid var(--color-border-light-tertiary);
+
+    &[aria-pressed="true"]  {
+      background-color: rgba(0,0,0,.7);
+      color: white;
+    }
+  }  
 }
 
 .specImg {

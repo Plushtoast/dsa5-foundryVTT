@@ -1,3 +1,5 @@
+import { SKILL } from "./skill.js";
+
 const DSA5 = {};
 
 DSA5.statusEffects = [
@@ -988,5 +990,7 @@ DSA5.noteIcons = {
   River: 'systems/dsa5/icons/thirdparty/river.svg',
   Trail: 'systems/dsa5/icons/thirdparty/trail.svg',
 };
+
+DSA5.SKILL = SKILL;
 
 export default DSA5;

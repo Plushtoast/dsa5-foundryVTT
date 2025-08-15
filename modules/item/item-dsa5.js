@@ -1747,6 +1747,15 @@ class SkillItemDSA5 extends Itemdsa5 {
     });
   }
 
+  static prepareFocusRuleModifiers(data, actor, skill) {
+    const reverseLookUp = game.i18n.localize(`LocalizedSkills.${skill.name}`);
+    const modifierData = game.dsa5.config.SKILL[reverseLookUp];
+
+    if(!modifierData) return;
+
+    data.focusRuleModifiers = modifierData.modifiers;
+  }
+
   static setupDialog(ev, options, skill, actor, tokenId) {
     let title = skill.name + ' ' + game.i18n.localize('Test') + (options.subtitle || '');
     let testData = {
@@ -1768,6 +1777,7 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     if (options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers);
     this.getSituationalModifiers(data.situationalModifiers, actor, data, skill);
+    this.prepareFocusRuleModifiers(data, actor, skill);
 
     let dialogOptions = {
       title,

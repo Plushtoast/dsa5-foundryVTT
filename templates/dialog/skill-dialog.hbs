@@ -1,13 +1,27 @@
 <form>
-    <div class="row-section skill-test">
-        <div class="talent-test-modifier col sixty" style="max-width:60%">
-        {{> systems/dsa5/templates/dialog/enhanced-default-dialog.hbs}}
+    <div class="row-section skill-test height100">
+        <div class="talent-test-modifier col sixty flexcol columnFlex" style="max-width:60%">
+            {{> systems/dsa5/templates/dialog/enhanced-default-dialog.hbs}}
         </div>
         <div class="talent-test-targets col fourty">
             <div class="targets row-section wrap item">
                 {{> systems/dsa5/templates/dialog/parts/targets.hbs}}
             </div>
+            {{#if focusRuleModifiers.length}}
+            <div class="flexcol specAbsContainer">
+                {{#each focusRuleModifiers}}
+                <div class="flexrow focusMods active" data-tooltip="{{label}}.tooltip">
+                    <div class="ellipsis">{{localize (concat label ".label")}}</div>
+                    <div class="split-button compact flex0">
+                        {{#each collection}}
+                        <button type="button" class="ui-control icon" data-value="{{this}}" data-action="focusRuleModifiers" data-name="{{../label}}.label"
+                            aria-pressed="{{eq this 0}}">{{this}}</button>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
         </div>
     </div>
-    <div class="roll-dialog-tag">skill</div>
 </form>

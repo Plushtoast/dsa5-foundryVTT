@@ -48,10 +48,10 @@
     </div>
 </div>
 {{#if hasSituationalModifiers}}
-<div class="modifiers form-group">
+<div class="modifiers form-group" style="flex-grow: 1;">
     <label>{{localize "DIALOG.SituationalModifiers"}}</label>
-    <div class="form-fields">
-        <select name="situationalModifiers" multiple>
+    <div class="form-fields height100">
+        <select name="situationalModifiers" multiple class="height100">
             {{#each situationalModifiers as |mod t|}}
             <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" {{#if mod.armorPen}}data-armor-pen="{{mod.armorPen}}"{{/if}} value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
                 {{localize mod.name}} [{{mod.value}} {{mod.type}}]

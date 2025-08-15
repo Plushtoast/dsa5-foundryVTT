@@ -1484,7 +1484,7 @@ export default class Actordsa5 extends Actor {
         schipText = 'GroupPointsRemaining';
       }
       let infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
-                ${game.i18n.format('CHATFATE.' + type, { character: '<b>' + this.name + '</b>'})}<br>
+                ${game.i18n.format('CHATFATE.' + type, { character: '<b>' + this.name + '</b>' })}<br>
                 <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
 
       let newTestData = data.preData;
@@ -1756,26 +1756,39 @@ export default class Actordsa5 extends Actor {
   }
 
   static _parseModifiers(html) {
-    return [
-      ...html
-        .find('[name="situationalModifiers"] option:selected')
-        .map(function () {
-          const val = this.value;
-          const data = {
-            name: this.textContent.trim().split('[')[0],
-            value: isNaN(val) ? val : Number(val),
-            type: this.dataset.type,
-          };
-          if (data.type == 'dmg') {
-            data.damageBonus = data.value;
-            data.value = 0;
-          }
-          if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
-          if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
+    const situationalModifiers = html
+      .find('[name="situationalModifiers"] option:selected')
+      .map(function () {
+        const val = this.value;
+        const data = {
+          name: this.textContent.trim().split('[')[0],
+          value: isNaN(val) ? val : Number(val),
+          type: this.dataset.type,
+        };
+        if (data.type == 'dmg') {
+          data.damageBonus = data.value;
+          data.value = 0;
+        }
+        if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
+        if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
 
-          return data;
-        })
-        .get(),
+        return data;
+      })
+      .get()
+
+    const focusRuleModifiers = [];
+    for(const el of html.find('.focusMods')) {
+      for(const btn of el.querySelectorAll('button[aria-pressed=true]')) {
+        focusRuleModifiers.push({
+          name: game.i18n.localize(btn.dataset.name),
+          value: Number(btn.dataset.value),
+        });
+      }
+    }
+
+    return [
+      ...situationalModifiers,
+      ...focusRuleModifiers,
       {
         name: game.i18n.localize('manual'),
         value: Number(html.find('[name="testModifier"]').val()),
