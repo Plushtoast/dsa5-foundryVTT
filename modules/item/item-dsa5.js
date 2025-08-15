@@ -3,7 +3,7 @@ import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
 import DSAActiveEffectConfig from '../status/active_effects.js';
 import RuleChaos from '../system/rules/rule_chaos.js';

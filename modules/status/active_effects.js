@@ -1,6 +1,6 @@
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSATriggers from '../system/automation/triggers.js';

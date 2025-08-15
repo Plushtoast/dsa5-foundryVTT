@@ -1,5 +1,5 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
-import DSA5 from '../config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import AdvantageRulesDSA5 from '../rules/advantage-rules-dsa5.js';

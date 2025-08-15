@@ -1,6 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import Riding from '../system/automation/riding.js';
 import RuleChaos from '../system/rules/rule_chaos.js';

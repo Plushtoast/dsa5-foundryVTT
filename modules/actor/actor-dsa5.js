@@ -1,5 +1,5 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5Dialog from '../dialog/dialog-dsa5.js';

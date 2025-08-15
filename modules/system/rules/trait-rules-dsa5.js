@@ -1,4 +1,4 @@
-import DSA5 from '../config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import ItemRulesDSA5 from './item-rules-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 

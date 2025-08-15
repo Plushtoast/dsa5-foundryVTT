@@ -1,5 +1,5 @@
 import { UserMultipickDialog } from '../dialog/addTargetDialog.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 

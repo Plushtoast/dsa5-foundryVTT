@@ -1,5 +1,5 @@
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
 const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
 
