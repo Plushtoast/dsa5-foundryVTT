@@ -363,10 +363,12 @@ export default class DSA5_Utility {
   static shallowEquals(a, b) {
     return JSON.stringify(a) == JSON.stringify(b);
   }
-
   static emptyActor(attrs = 12, name = 'Alrik', data = {}) {
+    let attrArray;
     if (!Array.isArray(attrs)) {
-      attrs = [attrs, attrs, attrs, attrs, attrs, attrs, attrs, attrs];
+      attrArray = new Array(8).fill(attrs);
+    } else {
+      attrArray = attrs;
     }
 
     const createData = mergeObject(
@@ -376,14 +378,14 @@ export default class DSA5_Utility {
         system: {
           status: { wounds: { value: 50 }, fatePoints: {} },
           characteristics: {
-            mu: { initial: attrs[0] },
-            kl: { initial: attrs[1] },
-            in: { initial: attrs[2] },
-            ch: { initial: attrs[3] },
-            ff: { initial: attrs[4] },
-            ge: { initial: attrs[5] },
-            ko: { initial: attrs[6] },
-            kk: { initial: attrs[7] },
+            mu: { initial: attrArray[0] },
+            kl: { initial: attrArray[1] },
+            in: { initial: attrArray[2] },
+            ch: { initial: attrArray[3] },
+            ff: { initial: attrArray[4] },
+            ge: { initial: attrArray[5] },
+            ko: { initial: attrArray[6] },
+            kk: { initial: attrArray[7] },
           },
         },
       },

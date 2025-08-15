@@ -183,7 +183,8 @@
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
-        "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)"
+        "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
+        "temporaryOff": "Vorübergehend deaktivieren"
     },
     "Equipment": {
         "misc": "Allgemein",

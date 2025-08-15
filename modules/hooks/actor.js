@@ -231,6 +231,8 @@ export default function () {
   };
 
   const askForName = async (tokenObject, setting) => {
+    if(game.canvas.scene.askForNameTemporaryDisabled) return;
+
     const dialogConstructor = game.dsa5.apps.AskForNameDialog || AskForNameDialog;
     dialogConstructor.getDialog(tokenObject, setting);
   };
@@ -339,6 +341,7 @@ export default function () {
     for (let token of canvas.scene.tokens) {
       token.object?.drawAuras();
     }
+    game.canvas.scene.askForNameTemporaryDisabled = false;
   });
 
   Hooks.on('preCreateToken', (token, data, options, userId) => {
@@ -474,9 +477,12 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
           },
         },
         {
-          action: 'cancel',
-          icon: 'fas fa-times',
-          label: 'cancel',
+          action: 'temporaryOff',
+          icon: 'fa fa-question',
+          label: 'DIALOG.temporaryOff',
+          callback: async () => {
+            game.canvas.scene.askForNameTemporaryDisabled = true
+          },
         },
       ],
     }).render(true);
