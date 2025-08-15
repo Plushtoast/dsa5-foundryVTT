@@ -1421,6 +1421,9 @@
                 },
                 "visible": {
                     "label": "Sichtbar für Spieler"
+                },
+                "recurring": {
+                    "label": "Jährliches Ereignis"
                 }
             }
         },

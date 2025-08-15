@@ -40,7 +40,8 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
                     dayOfMonth: new NumberField({ required: false, min: 1, step: 1 }),
                 }),
                 category: new NumberField({ required: true, initial: 0, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
-                visible: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.visible.label" })
+                visible: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
+                recurring: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
             })),
         };
     }
@@ -82,6 +83,8 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         }
 
         date.from.day = dayOffset + dayOfMonth;
-        if (date.to.dayOfMonth) date.to.dayOfMonth = Math.clamp(date.to.dayOfMonth, date.from.dayOfMonth, game.time.calendar.months.values[date.from.month].days + 1);
+        
+        if (date.to?.dayOfMonth) 
+            date.to.dayOfMonth = Math.clamp(date.to.dayOfMonth, date.from.dayOfMonth, game.time.calendar.months.values[date.from.month].days + 1);
     }
 }

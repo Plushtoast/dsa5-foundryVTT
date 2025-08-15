@@ -24,7 +24,13 @@
             {{#if location}}
             <span class="event-chip">
                 <i class="fas fa-location-pin"></i>
-                <span>{{location}}</span>
+                <span>{{location}}</span> 
+            </span>
+            {{/if}}
+
+            {{#if recurring}}
+            <span class="event-chip">
+                <span><i class="fas fa-redo" data-tooltip="dsacalendar.FIELDS.calendarentries.recurring.label"></i></span>
             </span>
             {{/if}}
         </div>

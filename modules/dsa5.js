@@ -58,6 +58,7 @@ import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
+import { DSACalendarEntry } from './data/journal/dsacalendar.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -156,6 +157,7 @@ Hooks.once('init', () => {
   CONFIG.Token.movement.defaultSpeed = 16;
   CONFIG.RegionBehavior.dataModels.DSATrap = DSATrapRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
+  CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true  
 });

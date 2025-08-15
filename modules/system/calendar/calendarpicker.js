@@ -5,6 +5,8 @@ import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static #cached;
+
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-picker',
     tag: 'form',
@@ -60,48 +62,64 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   // invalidate on year and calendar change
   static async fromCache(components) {
-    if (this.cached) {
-      return this.cached;
+    if (this.#cached) {
+      return this.#cached;
     }
-    const journals = await Promise.all(game.settings.get('dsa5', 'calendarJournals').activated.map(j => fromUuid(j.uuid)));
-    const entries = journals.flatMap(j => j.pages.filter(p => p.type === 'dsacalendar' && game.user.isGM || p.system.visible)).flatMap(p => {
-      return Object.values(p.system.calendarentries).map(entry => {
-        DSACalendarEntry.prepareCalendarEntry(entry);
-        return entry;
-      });
+
+    const journalSettings = game.settings.get('dsa5', 'calendarJournals');
+    const journals = await Promise.all(
+      journalSettings.activated.map(async (j) => {
+        try {
+          return await fromUuid(j.uuid);
+        } catch (error) {
+          ui.notifications.error(`Failed to load journal with UUID ${j.name}.`);
+          return null;
+        }
+      })
+    );
+
+    const validJournals = journals.filter(Boolean);
+    const entries = validJournals
+      .flatMap(journal =>
+        journal.pages.filter(page =>
+          page.type === 'dsacalendar' &&
+          (game.user.isGM || page.system.visible)
+        )
+      )
+      .flatMap(page =>
+        Object.values(page.system.calendarentries).filter(entry => entry.recurring || (!entry.recurring && entry.from.year === components.year)).map(entry => {
+          DSACalendarEntry.prepareCalendarEntry(entry);
+          return entry;
+        })
+      );
+
+    const holidayEntries = CONFIG.time.worldCalendarConfig.holidays.values.map(holiday => {
+      const dayOffset = game.time.calendar.months.values
+        .slice(0, holiday.month)
+        .reduce((sum, month) => sum + month.days, 0);
+
+      const entry = {
+        title: game.time.calendar.translate(`holiday.${holiday.name}`),
+        location: holiday.location,
+        from: {
+          dayOfMonth: holiday.dayStart + 1,
+          month: holiday.month,
+          year: components.year,
+          day: dayOffset + holiday.dayStart,
+        },
+        to: {
+          dayOfMonth: holiday.dayEnd ? holiday.dayEnd + 1 : undefined,
+        },
+        category: 1,
+        visible: true,
+      };
+
+      DSACalendarEntry.prepareCalendarEntry(entry);
+      return entry;
     });
 
-    this.cached = CONFIG.time.worldCalendarConfig.holidays.values
-      .map(h => {
-        let dayOffset = 0;
-        for (let m = 0; m < h.month; m++) {
-          dayOffset += game.time.calendar.months.values[m].days;
-        }
-
-        const day = dayOffset + h.dayStart;
-        const year = components.year;
-
-        const entry = {
-          title: game.time.calendar.translate(`holiday.${h.name}`),
-          //content: undefined,
-          location: h.location,
-          from: {
-            dayOfMonth: h.dayStart + 1,
-            month: h.month,
-            year,
-            day,
-          },
-          to: {
-            dayOfMonth: h.dayEnd ? h.dayEnd + 1 : undefined,
-          },
-          category: 1,
-          visible: true,
-        }
-
-        DSACalendarEntry.prepareCalendarEntry(entry);
-        return entry;
-      }).concat(entries);
-    return this.cached;
+    this.#cached = [...holidayEntries, ...entries];
+    return this.#cached;
   }
 
   _configureRenderParts(options) {
@@ -164,7 +182,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const activated = game.settings.get('dsa5', 'calendarJournals').activated;
       if (!activated.some(el => el.uuid === uuid)) return
     }
-    this.cached == null;
+    game.socket.emit('system.dsa5', {
+      type: 'invalidateCache',
+    });
+    this.#cached == null;
   }
 
   async _prepareContext(_options) {
@@ -241,8 +262,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _onSearchFilter(_event, query, rgx, html) {
-    for ( const entry of html.querySelectorAll(".event-card") ) {
-      if ( !query ) {
+    for (const entry of html.querySelectorAll(".event-card")) {
+      if (!query) {
         entry.hidden = false;
         continue;
       }

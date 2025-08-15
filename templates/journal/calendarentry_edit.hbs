@@ -3,7 +3,7 @@
         <button type="button" data-action="addCalendarEntry" class="fas icon fa-plus"></button>
     </div>
     {{#each sortedEntries as |elem key|}}
-    <fieldset>
+    <fieldset data-id="{{key}}">
         <legend class="flexrow">{{formInput ../document.system.schema.fields.calendarentries.element.fields.title value=elem.title
             name=(concat 'system.calendarentries.' key '.title')}}<button type="button" data-action="removeCalendarEntry" data-key="{{key}}" class="fas icon fa-trash"></button></legend>
         <div class="form-group">
@@ -30,10 +30,14 @@
         localize=true name=(concat 'system.calendarentries.' key '.location')}}
         {{formGroup ../document.system.schema.fields.calendarentries.element.fields.category value=elem.category
         localize=true name=(concat 'system.calendarentries.' key '.category') localize=true}}
+        {{formGroup ../document.system.schema.fields.calendarentries.element.fields.recurring value=elem.recurring
+        localize=true name=(concat 'system.calendarentries.' key '.recurring') localize=true}}
+        
         {{#if ../isGM}}
         {{formGroup ../document.system.schema.fields.calendarentries.element.fields.visible value=elem.visible
         localize=true name=(concat 'system.calendarentries.' key '.visible') localize=true}}
         {{/if}}
+        
     </fieldset>
     {{/each}}
 </div>
