@@ -1,7 +1,7 @@
 import DescriptionTemplate from './templates/description.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
-import DSA5 from '../../system/config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 

@@ -2,7 +2,7 @@ import DescriptionTemplate from './templates/description.js';
 import { ItemDataModel } from '../baseitem.js';
 import APValueTemplate from './templates/apvalue.js';
 import RequirementsTemplate from './templates/requirements.js';
-import DSA5 from '../../system/config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;

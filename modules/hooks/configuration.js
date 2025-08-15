@@ -1,4 +1,4 @@
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';

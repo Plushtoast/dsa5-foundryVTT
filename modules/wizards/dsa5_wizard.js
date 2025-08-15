@@ -1,6 +1,6 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';

@@ -29,7 +29,7 @@ import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';

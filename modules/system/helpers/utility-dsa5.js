@@ -1,7 +1,7 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { conditionsMatcher } from '../../hooks/texteditor.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
-import DSA5 from '../config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5_Utility {
@@ -19,7 +19,7 @@ export default class DSA5_Utility {
     range: 1,
   };
 
-  static DICE_REGEX = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-|–)[0-9]+)?/g;
+  static DICE_REGEX = /( |^)(\d{1,2})?[wWdD][0-9]+((\+|-|–)[0-9]+)?(\[[a-zA-ZäöüÄÖÜ ]+\])?(( )?[+-]( )?(\d{1,2})?[wWdD][0-9]+((\+|-|–)[0-9]+)?(\[[a-zA-ZäöüÄÖÜ ]+\])?)+?/g;
 
   static async skillByName(name) {
     const pack = game.packs.get(this.getLanguagePack());
@@ -156,7 +156,7 @@ export default class DSA5_Utility {
 
   static replaceDies(content, inlineRoll = false) {
     const rollPrefix = inlineRoll ? '' : '/r ';
-    return content.replace(this.DICE_REGEX, str => {
+    return content.replaceAll(this.DICE_REGEX, str => {
       const normalizedDice = str.replace(/[DwW]/, 'd').replace(/–/, '-');
       return ` [[${rollPrefix}${normalizedDice}]]`;
     });
@@ -225,17 +225,17 @@ export default class DSA5_Utility {
       content,
     };
 
-    if (['gmroll', 'blindroll'].includes(chatData.rollMode)) chatData['whisper'] = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
-    if (chatData.rollMode === 'blindroll') chatData['blind'] = true;
-    else if (chatData.rollMode === 'selfroll') chatData['whisper'] = [game.user];
+    if (['gmroll', 'blindroll'].includes(chatData.rollMode)) chatData.whisper = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
+    if (chatData.rollMode === 'blindroll') chatData.blind = true;
+    else if (chatData.rollMode === 'selfroll') chatData.whisper = [game.user];
 
     if (forceWhisper) {
-      chatData['speaker'] = ChatMessage.getSpeaker();
-      chatData['whisper'] = ChatMessage.getWhisperRecipients(forceWhisper);
+      chatData.speaker = ChatMessage.getSpeaker();
+      chatData.whisper = ChatMessage.getWhisperRecipients(forceWhisper);
     }
     if (forceWhisperIDs) {
-      chatData['speaker'] = ChatMessage.getSpeaker();
-      chatData['whisper'] = forceWhisperIDs;
+      chatData.speaker = ChatMessage.getSpeaker();
+      chatData.whisper = forceWhisperIDs;
     }
 
     return chatData;
@@ -299,6 +299,7 @@ export default class DSA5_Utility {
     return folder;
   }
 
+  //todo this should go away
   static toObjectIfPossible(source) {
     return typeof source.toObject === 'function' ? source.toObject(false) : duplicate(source);
   }

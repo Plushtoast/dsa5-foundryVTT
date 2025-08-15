@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
-import DSA5 from '../../system/config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';

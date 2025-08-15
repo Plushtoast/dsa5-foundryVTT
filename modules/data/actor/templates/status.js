@@ -1,4 +1,4 @@
-import DSA5 from '../../../system/config-dsa5.js';
+import DSA5 from '../../../config/config-dsa5.js';
 import { DSADataModel } from '../../abstract.js';
 import DSANumberField from '../../fields/dsa_number_field.js';
 

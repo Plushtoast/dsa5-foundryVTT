@@ -1,5 +1,5 @@
 import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5Payment from '../system/helpers/payment.js';
 import RuleChaos from '../system/rules/rule_chaos.js';

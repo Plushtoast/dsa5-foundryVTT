@@ -7,7 +7,7 @@ import Itemdsa5 from './item/item-dsa5.js';
 import ItemSheetdsa5 from './item/item-sheet.js';
 import initHooks from './hooks/init.js';
 import MacroDSA5 from './system/helpers/macroControl.js';
-import DSA5 from './system/config-dsa5.js';
+import DSA5 from './config/config-dsa5.js';
 import DSA5_Utility from './system/helpers/utility-dsa5.js';
 import DSA5Initializer from './system/maintenance/initializer.js';
 import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';

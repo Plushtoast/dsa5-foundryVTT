@@ -6,7 +6,7 @@ import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import { dropToGround } from './itemDrop.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import { Trade } from '../actor/trade.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Combat from '../combat/combat.js';

@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import EncumbranceTemplate from './templates/encumbrance.js';
 import StructureTemplate from './templates/structure.js';
-import DSA5 from '../../system/config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 

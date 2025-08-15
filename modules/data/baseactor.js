@@ -1,5 +1,5 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5 from '../system/config-dsa5.js';
+import DSA5 from '../config/config-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import Riding from '../system/automation/riding.js';
 import { DSADataModel } from './abstract.js';

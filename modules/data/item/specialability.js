@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
-import DSA5 from '../../system/config-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 
