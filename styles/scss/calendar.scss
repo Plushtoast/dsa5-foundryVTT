@@ -26,6 +26,10 @@
             0 2px 6px rgba(0, 0, 0, 0.06),
             0 16px 40px rgba(0, 0, 0, 0.08);
         border-color: var(--color-warm-1);
+
+        .event-card-controls {
+            opacity: 1;
+        }
     }
 
     &:focus-within {
@@ -73,6 +77,21 @@
         }
     }
 
+    .smallBtn {      
+      --button-size: 24px;
+      --font-size-14: 12px;
+      position: relative;
+      top: -16px;
+      right: -6px;
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .event-card-controls {
+        opacity: 0;
+    }
 
     .event-card__body {
         display: grid;
@@ -88,7 +107,7 @@
     .event-card__meta {
         display: flex;
         flex-wrap: wrap;
-        gap: .75rem 1rem;
+        gap: .25rem 0.25rem;
         align-items: center;
         font-size: .92rem;
         color: var(--muted-fg);
