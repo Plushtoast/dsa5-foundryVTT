@@ -227,74 +227,75 @@ export default class DSA5CombatDialog extends DialogShared {
   }
 
   checkCounterAttack(ev) {
-    if (!this.dialogData.mode == 'parry') return;
+    if (this.dialogData.mode !== 'parry') return;
 
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    if (!actor) return;
 
-    if (actor) {
-      const counterAttack = actor.items.get(ev.currentTarget.dataset.id).name == game.i18n.localize('LocalizedIDs.counterAttack');
-      if (counterAttack) {
-        this.dialogData.counterAttack = ev.button == 0;
-        this.prepareWeapon();
-        const mode = ev.button == 0 ? 'attack' : 'parry';
-        const item = actor.items.get(this.dialogData.source._id);
-        let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode: mode });
-        Itemdsa5.getSubClass(item.type).getSituationalModifiers(situationalModifiers, actor, { mode: mode }, item);
-        if (mode == 'attack') {
-          situationalModifiers = situationalModifiers.filter((x) => x.type != 'defenseMalus');
-          let modIndex = situationalModifiers.findIndex((x) => x.name == game.i18n.localize('statuseffects'));
-          let attackStatEffect;
-          if (modIndex >= 0) {
-            attackStatEffect = situationalModifiers.splice(modIndex, 1).pop();
-          }
-          const defenseModifiers = [];
-          Itemdsa5.getSubClass(item.type).getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
-          modIndex = defenseModifiers.findIndex((x) => x.name == game.i18n.localize('statuseffects'));
-          let defenseStatEffect;
-          if (modIndex >= 0) {
-            defenseStatEffect = defenseModifiers.splice(modIndex, 1).pop();
-          }
-          situationalModifiers.unshift(...defenseModifiers);
+    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === game.i18n.localize('LocalizedIDs.counterAttack');
+    if (!isCounterAttack) return;
 
-          if (attackStatEffect) {
-            if (defenseStatEffect) {
-              attackStatEffect.value += defenseStatEffect.value;
-            }
-            situationalModifiers.push(attackStatEffect);
-          } else if (defenseStatEffect) {
-            situationalModifiers.push(defenseStatEffect);
-          }
+    this.dialogData.counterAttack = ev.button === 0;
+    this.prepareWeapon();
+    
+    const mode = ev.button === 0 ? 'attack' : 'parry';
+    const item = actor.items.get(this.dialogData.source._id);
+    const html = $(this.element);
+    const htmlMods = html.find('[name=situationalModifiers]');
+    
+    let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode });
+    Itemdsa5.getSubClass(item.type).getSituationalModifiers(situationalModifiers, actor, { mode }, item);
+
+    if (mode === 'attack') {
+      situationalModifiers = situationalModifiers.filter(x => x.type !== 'defenseMalus');
+      
+      const attackStatIndex = situationalModifiers.findIndex(x => x.name === game.i18n.localize('statuseffects'));
+      const attackStatEffect = attackStatIndex >= 0 ? situationalModifiers.splice(attackStatIndex, 1)[0] : null;
+      
+      const defenseModifiers = [];
+      Itemdsa5.getSubClass(item.type).getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
+      
+      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === game.i18n.localize('statuseffects'));
+      const defenseStatEffect = defenseStatIndex >= 0 ? defenseModifiers.splice(defenseStatIndex, 1)[0] : null;
+      
+      situationalModifiers.unshift(...defenseModifiers);
+      
+      if (attackStatEffect || defenseStatEffect) {
+        const combinedStatusEffect = attackStatEffect || { ...defenseStatEffect };
+        if (attackStatEffect && defenseStatEffect) {
+          combinedStatusEffect.value += defenseStatEffect.value;
         }
-        const html = $(this.element);
-        const htmlMods = html.find('[name=situationalModifiers]');
-        if (situationalModifiers.length > 0) {
-          if (htmlMods.length == 0) {
-            const modBox = `<div class="modifiers form-group">
-              <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
-              <select name="situationalModifiers" multiple />
-            </div>`;
-            html.find('[name=rollMode]').parent().after(modBox);
-            this.position.height += 86;
-            this.setPosition(this.position);
-          }
-          let mods = '';
-          for (const mod of situationalModifiers) {
-            mods += `<option value="${mod.value}" 
-                        data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
-                        ${mod.type ? ' data-type=' + mod.type : ''}
-                        ${mod.specAbId ? ' data-spec-ab-id=' + mod.specAbId : ''}
-                        ${mod.armorPen ? ' data-armor-pen=' + mod.armorPen : ''}
-                        ${mod.selected ? ' selected' : ''}>
-                        ${mod.name} [${mod.value}]
-                    </option>`;
-          }
-          html.find('.modifiers select').html(mods);
-        } else if (htmlMods.length > 0) {
-          htmlMods.parent().remove();
-          this.position.height -= 86;
-          this.setPosition(this.position);
-        }
+        situationalModifiers.push(combinedStatusEffect);
       }
+    }
+
+    if (situationalModifiers.length > 0) {
+      if (htmlMods.length === 0) {
+        const modBox = `<div class="modifiers form-group">
+          <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
+          <select name="situationalModifiers" multiple />
+        </div>`;
+        html.find('[name=rollMode]').parent().after(modBox);
+        this.position.height += 86;
+        this.setPosition(this.position);
+      }
+      
+      const options = situationalModifiers.map(mod => 
+        `<option value="${mod.value}" 
+           data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
+           ${mod.type ? ` data-type="${mod.type}"` : ''}
+           ${mod.specAbId ? ` data-spec-ab-id="${mod.specAbId}"` : ''}
+           ${mod.armorPen ? ` data-armor-pen="${mod.armorPen}"` : ''}
+           ${mod.selected ? ' selected' : ''}>
+           ${mod.name} [${mod.value}]
+        </option>`
+      ).join('');
+      
+      html.find('.modifiers select').html(options);
+    } else if (htmlMods.length > 0) {
+      htmlMods.parent().remove();
+      this.position.height -= 86;
+      this.setPosition(this.position);
     }
   }
 
@@ -645,15 +646,17 @@ export default class DSA5CombatDialog extends DialogShared {
   static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
     this._resolveDefault(testData, cardOptions, html, options);
 
-    //TODO move this to situational modifiers onlye
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
     const data = new foundry.applications.ux.FormDataExtended(form).object;
+    
     const targetIsSwarm = DSA5CombatDialog.targetIsSwarm(testData);
     const attackerIsSwarm = actor.isSwarm();
+    
     testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize;
     testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
-    testData.situationalModifiers.push(
+
+    const modifiers = [
       Itemdsa5.parseValueType(game.i18n.localize('sight'), data.vision || 0),
       {
         name: game.i18n.localize('MODS.attackFromBehind'),
@@ -681,8 +684,6 @@ export default class DSA5CombatDialog extends DialogShared {
         name: game.i18n.localize('sizeCategory'),
         value: targetIsSwarm ? 0 : DSA5.meleeSizeModifier[data.size] || 0,
       },
-      ...Itemdsa5.getSpecAbModifiers(html, mode),
-      ...this.assassinationModifiers(testData, data),
       {
         name: game.i18n.localize('MODS.narrowSpace'),
         value: Number(data.narrowSpace) || 0,
@@ -691,8 +692,16 @@ export default class DSA5CombatDialog extends DialogShared {
         name: game.i18n.localize('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
+    ];
+
+    modifiers.push(
+      ...Itemdsa5.getSpecAbModifiers(html, mode),
+      ...this.assassinationModifiers(testData, data)
     );
-    if (testData.situationalModifiers.some((x) => x.name == game.i18n.localize('LocalizedIDs.counterAttack'))) {
+
+    testData.situationalModifiers.push(...modifiers);
+
+    if (testData.situationalModifiers.some(x => x.name === game.i18n.localize('LocalizedIDs.counterAttack'))) {
       testData.mode = 'attack';
       testData.extra.counterAttack = true;
     }
@@ -700,27 +709,36 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static resolveRangeDialog(testData, cardOptions, html, actor, options) {
     this._resolveDefault(testData, cardOptions, html, options);
+    
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
     const data = new foundry.applications.ux.FormDataExtended(form).object;
-    const zigzag = Number(data.quickChange) || 0;
+    
+    const quickChange = Number(data.quickChange) || 0;
     const sizeMod = Number(data.size) || 0;
-    const rangeMod = html.find('[name="distance"] option:selected')[0].dataset;
-    testData.situationalModifiers.push(
+    const rangeMod = html.find('[name="distance"] option:selected')[0]?.dataset || {};
+    const targetMovement = Number(data.targetMovement) || 0;
+    const shooterMovement = Number(data.shooterMovement) || 0;
+    const mountedOptions = Number(data.mountedOptions) || 0;
+    const aim = Math.min(Number(data.aim) || 0, 4);
+    
+    const getSelectedText = (selector) => html.find(selector).text() || '';
+    
+    const modifiers = [
       {
-        name: game.i18n.localize('MODS.targetMovement') + ' ' + html.find('[name="targetMovement"] option:selected').text(),
-        value: Number(data.targetMovement) || 0,
+        name: `${game.i18n.localize('MODS.targetMovement')} ${getSelectedText('[name="targetMovement"] option:selected')}`,
+        value: targetMovement,
       },
       {
-        name: game.i18n.localize('shooter') + ' ' + html.find('[name="shooterMovement"] option:selected').text(),
-        value: Number(data.shooterMovement) || 0,
+        name: `${game.i18n.localize('shooter')} ${getSelectedText('[name="shooterMovement"] option:selected')}`,
+        value: shooterMovement,
       },
       {
-        name: game.i18n.localize('mount') + ' ' + html.find('[name="mountedOptions"] option:selected').text(),
-        value: Number(data.mountedOptions) || 0,
+        name: `${game.i18n.localize('mount')} ${getSelectedText('[name="mountedOptions"] option:selected')}`,
+        value: mountedOptions,
       },
       {
         name: game.i18n.localize('MODS.quickChange'),
-        value: zigzag,
+        value: quickChange,
       },
       {
         name: game.i18n.localize('MODS.combatTurmoil'),
@@ -728,7 +746,7 @@ export default class DSA5CombatDialog extends DialogShared {
       },
       {
         name: game.i18n.localize('MODS.aim'),
-        value: Math.min(Number(data.aim) || 0, 4),
+        value: aim,
       },
       {
         name: game.i18n.localize('MODS.damage'),
@@ -746,38 +764,68 @@ export default class DSA5CombatDialog extends DialogShared {
       },
       {
         name: game.i18n.localize('distance'),
-        value: rangeMod.attack,
-        damageBonus: rangeMod.damage,
+        value: Number(rangeMod.attack) || 0,
+        damageBonus: Number(rangeMod.damage) || 0,
       },
+    ];
+
+    modifiers.push(
       ...Itemdsa5.getSpecAbModifiers(html, 'attack'),
-      ...this.assassinationModifiersRanged(testData, data),
+      ...this.assassinationModifiersRanged(testData, data)
     );
 
-    const sharpshooter = actor.items.find((x) => x.type == 'specialability' && x.name == game.i18n.localize('LocalizedIDs.sharpshooter'));
-    if (sharpshooter) {
-      const toSearch = getProperty(testData.source, 'system.combatskill.value')?.toLowerCase();
-      if (
-        toSearch &&
-        sharpshooter.system.list.value
-          .split(/;|,/)
-          .map((x) => x.trim().toLowerCase())
-          .includes(toSearch)
-      ) {
-        const possibleMods = [data.targetMovement, data.shooterMovement, data.mountedOptions, zigzag, sizeMod, rangeMod];
-        const sumMod = Math.abs(
-          possibleMods.reduce((prev, cur) => {
-            if (Number(cur) < 0) prev += Number(cur);
-            return prev;
-          }, 0),
-        );
-        const sharpshooterMod = Math.min(Number(sharpshooter.system.step.value) * 2, sumMod);
-        if (sharpshooterMod) {
-          testData.situationalModifiers.push({
-            name: game.i18n.localize('LocalizedIDs.sharpshooter'),
-            value: sharpshooterMod,
-          });
-        }
-      }
+    testData.situationalModifiers.push(...modifiers);
+
+    this._applySharpshooterBonus(testData, actor, data, {
+      targetMovement,
+      shooterMovement,
+      mountedOptions,
+      quickChange,
+      sizeMod,
+      rangeMod
+    });
+  }
+
+  static _applySharpshooterBonus(testData, actor, formData, modValues) {
+    const sharpshooter = actor.items.find(
+      item => item.type === 'specialability' && 
+               item.name === game.i18n.localize('LocalizedIDs.sharpshooter')
+    );
+    
+    if (!sharpshooter) return;
+
+    const combatSkill = getProperty(testData.source, 'system.combatskill.value')?.toLowerCase();
+    if (!combatSkill) return;
+
+    const allowedSkills = sharpshooter.system.list.value
+      .split(/[;,]/)
+      .map(skill => skill.trim().toLowerCase());
+
+    if (!allowedSkills.includes(combatSkill)) return;
+
+    const negativeModifiers = [
+      modValues.targetMovement,
+      modValues.shooterMovement,
+      modValues.mountedOptions,
+      modValues.quickChange,
+      modValues.sizeMod,
+      Number(modValues.rangeMod.attack) || 0
+    ];
+
+    const totalNegativeMods = Math.abs(
+      negativeModifiers.reduce((sum, mod) => {
+        return Number(mod) < 0 ? sum + Number(mod) : sum;
+      }, 0)
+    );
+
+    const maxSharpshooterBonus = Number(sharpshooter.system.step.value) * 2;
+    const sharpshooterBonus = Math.min(maxSharpshooterBonus, totalNegativeMods);
+
+    if (sharpshooterBonus > 0) {
+      testData.situationalModifiers.push({
+        name: game.i18n.localize('LocalizedIDs.sharpshooter'),
+        value: sharpshooterBonus,
+      });
     }
   }
 
