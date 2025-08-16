@@ -472,53 +472,76 @@ export class ActorDataModel extends DSADataModel {
 
   calcSpeed(data, fixated, horse) {
     if (horse) {
-      if (!horse.system.status.speed.max) {
-        horse.system.calcSpeed(horse.system, horse.hasCondition('fixated'));
-      }
-      data.status.speed.max = horse.system.status.speed.max;
-      data.status.speed.airMax = horse.system.status.speed.airMax;
-      data.status.speed.waterMax = horse.system.status.speed.waterMax;
+      this._setHorseSpeed(data, horse);
     } else {
-      const baseMod = (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0)
-      data.status.speed.max = data.status.speed.initial + baseMod;
-      
-      const hasSwim = data.status.speed.water; 
-      const hasAir = data.status.speed.air;
-      const encumbrance = this.calcEncumbrance(data);
-      let painMalus = data.condition?.inpain || 0;
-      const feelsPain = !this.parent.hasCondition('bloodrush');
-
-      data.status.speed.max = Math.round(Math.max(0, data.status.speed.max - Math.min(4, encumbrance)) * data.status.speed.multiplier);
-
-      if (feelsPain) {
-        data.status.speed.max = Math.max(0, data.status.speed.max - painMalus);
-      }
-
-      data.status.speed.max = this._applyStatusEffectsToSpeed(data.status.speed.max, fixated);
-
-      if (hasSwim) {
-        data.status.speed.waterMax = hasSwim + baseMod;
-        data.status.speed.waterMax = Math.round(Math.max(0, data.status.speed.waterMax - Math.min(4, encumbrance)) * data.status.speed.multiplier);
-        if(feelsPain) {
-          data.status.speed.waterMax = Math.max(0, data.status.speed.waterMax - painMalus);
-        }
-        data.status.speed.waterMax = this._applyStatusEffectsToSpeed(data.status.speed.waterMax, fixated, false);
-      } else {
-        data.status.speed.waterMax = Math.round(data.status.speed.max * 0.5);
-      }
-
-      if (hasAir) {
-        data.status.speed.airMax = hasAir + baseMod;
-        data.status.speed.airMax = Math.round(Math.max(0, data.status.speed.airMax - Math.min(4, encumbrance)) * data.status.speed.multiplier);
-        if(feelsPain) {
-          data.status.speed.airMax = Math.max(0, data.status.speed.airMax - painMalus);
-        }
-        data.status.speed.airMax = this._applyStatusEffectsToSpeed(data.status.speed.airMax, fixated, false);
-      }
-
-      //todo this needs to be air/water/ground speed
-      Riding.updateRiderSpeed(this.parent, data.status.speed.max);
+      this._calculateOwnSpeed(data, fixated);
     }
+  }
+
+  _setHorseSpeed(data, horse) {
+    if (!horse.system.status.speed.max) {
+      horse.system.calcSpeed(horse.system, horse.hasCondition('fixated'));
+    }
+    data.status.speed.max = horse.system.status.speed.max;
+    data.status.speed.airMax = horse.system.status.speed.airMax;
+    data.status.speed.waterMax = horse.system.status.speed.waterMax;
+  }
+
+  _calculateOwnSpeed(data, fixated) {
+    const baseMod = (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
+    const encumbrance = Math.min(4, this.calcEncumbrance(data));
+    const painMalus = data.condition?.inpain || 0;
+    const feelsPain = !this.parent.hasCondition('bloodrush');
+
+    data.status.speed.max = this._calculateSpeedType(
+      data.status.speed.initial + baseMod,
+      encumbrance,
+      painMalus,
+      feelsPain,
+      data.status.speed.multiplier,
+      fixated
+    );
+
+    const hasSwim = data.status.speed.water;
+    if (hasSwim) {
+      data.status.speed.waterMax = this._calculateSpeedType(
+        hasSwim + baseMod,
+        encumbrance,
+        painMalus,
+        feelsPain,
+        data.status.speed.multiplier,
+        fixated,
+        false
+      );
+    } else {
+      data.status.speed.waterMax = Math.round(data.status.speed.max * 0.5);
+    }
+
+    const hasAir = data.status.speed.air;
+    if (hasAir) {
+      data.status.speed.airMax = this._calculateSpeedType(
+        hasAir + baseMod,
+        encumbrance,
+        painMalus,
+        feelsPain,
+        data.status.speed.multiplier,
+        fixated,
+        false
+      );
+    }
+
+    //todo this is not ready for swim
+    Riding.updateRiderSpeed(this.parent, data.status.speed.max);
+  }
+
+  _calculateSpeedType(baseSpeed, encumbrance, painMalus, feelsPain, multiplier, fixated, groundOnly = true) {
+    let speed = Math.round(Math.max(0, baseSpeed - encumbrance) * multiplier);
+    
+    if (feelsPain) {
+      speed = Math.max(0, speed - painMalus);
+    }
+    
+    return this._applyStatusEffectsToSpeed(speed, fixated, groundOnly);
   }
 
   _applyStatusEffectsToSpeed(input, fixated, groundOnly = true) {
