@@ -35,11 +35,18 @@
             </span>
             {{/if}}
 
+            {{#if gods}}
+            <span class="event-chip" data-tooltip="dsacalendar.gods">
+                {{gods}}
+            </span>
+            {{/if}}
+
             {{#if recurring}}
             <span class="event-chip">
                 <span><i class="fas fa-redo" data-tooltip="dsacalendar.FIELDS.calendarentries.recurring.label"></i></span>
             </span>
             {{/if}}
+            
         </div>
 
         {{#if content}}

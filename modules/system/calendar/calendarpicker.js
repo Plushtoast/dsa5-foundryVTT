@@ -119,6 +119,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         category: 1,
         visible: true,
         recurring: true,
+        gods: holiday.gods?.join(', ')
       };
 
       DSACalendarEntry.prepareCalendarEntry(entry);

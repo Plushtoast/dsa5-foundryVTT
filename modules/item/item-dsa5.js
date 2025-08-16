@@ -110,24 +110,24 @@ export default class Itemdsa5 extends Item {
     const res = [];
     const isAttack = mode === 'attack';
     const mainAttribute = isAttack ? 'atbonus' : 'pabonus';
-    
+
     const matchers = {
       [mainAttribute]: 'value',
       tpbonus: 'damageBonus',
       dmmalus: 'dmmalus',
     };
-    
+
     for (const element of html.find('.specAbs')) {
       const dataset = element.dataset;
       const step = Number(dataset.step);
-      
+
       if (step <= 0) continue;
-      
+
       const modifier = this.#parseModifierValue(dataset, mainAttribute, step);
       if (!modifier) continue;
-      
+
       const flatValues = this.#extractFlatValues(dataset, matchers);
-      
+
       res.push({
         name: $(element).find('a').text().trim(),
         value: modifier.value + (flatValues.value || 0),
@@ -139,25 +139,25 @@ export default class Itemdsa5 extends Item {
         flatValues
       });
     }
-    
+
     return res;
   }
 
   static #parseModifierValue(dataset, mainAttribute, step) {
     const val = dataset[mainAttribute];
     if (!val) return null;
-    
+
     const isMultiplier = /^\*/.test(val);
-    
+
     let reducedVal;
     if (val.includes(',')) {
       reducedVal = val.split(',').reduce((sum, cur) => sum + Number(cur), 0);
     } else {
       reducedVal = Number(val.replace(/^\*/, ''));
     }
-    
+
     if (isNaN(reducedVal)) return null;
-    
+
     return {
       value: isMultiplier ? reducedVal : reducedVal * step,
       type: isMultiplier ? '*' : undefined
@@ -166,22 +166,22 @@ export default class Itemdsa5 extends Item {
 
   static #extractFlatValues(dataset, matchers) {
     const flatValues = {};
-    
+
     for (const key in dataset) {
       if (!key.endsWith('Flat')) continue;
-      
+
       const flatValue = dataset[key];
       if (!flatValue?.length) continue;
-      
+
       const replacedKey = key.replace('Flat', '');
       const matcherKey = matchers[replacedKey];
-      
+
       if (matcherKey) {
         const value = flatValue.split(',').reduce((sum, x) => sum + (Number(x) || 0), 0);
         flatValues[matcherKey] = value;
       }
     }
-    
+
     return flatValues;
   }
 
@@ -1083,7 +1083,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, spell);
     data.situationalModifiers = situationalModifiers;
-    
+
     let dialogOptions = {
       title,
       template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.hbs`,
@@ -1138,17 +1138,28 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     super.getSituationalModifiers(situationalModifiers, actor, data, source);
 
     let timeModifier = 0;
-    let assumeTradition = actor.items.find(x => x.type == "specialability" && x.name.startsWith(game.i18n.localize('LocalizedIDs.assumeTradition')))?.name;
-    if (!assumeTradition) assumeTradition = actor.system.tradition.clerical;
+    const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(game.i18n.localize('LocalizedIDs.assumeTradition')));
+    let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
 
     if (assumeTradition) {
-      const gameMonth = game.time.calendar.timeToComponents(game.time.worldTime).month;
-      const monthName = game.time.calendar.constructor.months[gameMonth];
+      const components = game.time.calendar.timeToComponents(game.time.worldTime);
+      const gameMonth = components.month;
+      const monthName = game.time.calendar.constructor.months[gameMonth].toLowerCase();
+      const day = components.dayOfMonth;
 
-      if (assumeTradition.toLowerCase().includes(monthName.toLowerCase())) {        
-        timeModifier = 1
-      } else if (monthName == 'Namenloser') {
-        timeModifier = -5
+      const holidays = CONFIG.time.worldCalendarConfig.holidays.values;
+      const isHoliday = holidays.some(h => {
+        if (h.month !== gameMonth || !h.gods) return false;
+        if (!h.gods.some(g => assumeTradition.includes(g.toLowerCase()))) return false;
+        return h.dayEnd ? (h.dayStart <= day && h.dayEnd >= day) : (h.dayStart === day);
+      });
+
+      if (isHoliday) {
+        timeModifier = 2;
+      } else if (assumeTradition.includes(monthName)) {
+        timeModifier = 1;
+      } else if (monthName === 'namenloser') {
+        timeModifier = -5;
       }
     }
 
@@ -1751,7 +1762,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     const reverseLookUp = game.i18n.localize(`LocalizedSkills.${skill.name}`);
     const modifierData = game.dsa5.config.SKILL[reverseLookUp];
 
-    if(!modifierData) return;
+    if (!modifierData) return;
 
     data.focusRuleModifiers = modifierData.modifiers;
   }

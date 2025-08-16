@@ -3,16 +3,25 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export function initImagePopoutTochat() {
   Hooks.on('renderImagePopout', (app, html) => {
-    html = $(html);
-    const button = $('<button type="button" class="header-control icon fas fa-comment" data-tooltip="SHEET.PostItem" aria-label="Post to Chat" data-action="posttochat"></button>');
-    button.on('click', (ev) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'header-control icon fas fa-comment';
+    button.dataset.tooltip = 'SHEET.PostItem';
+    button.dataset.action = 'posttochat';
+    button.addEventListener('click', (ev) => {
       ev.preventDefault();
       postImage(app);
     });
-    const ellipsisbutton = html.find('.window-header .header-control.fa-ellipsis-vertical')
-    const button2 = $('<button type="button" class="header-control icon fas fa-eye" data-tooltip="JOURNAL.ActionShow" aria-label="Post to Chat" data-action="shareImage"></button>');
-    ellipsisbutton.before(button);
-    ellipsisbutton.before(button2);
+
+    const button2 = document.createElement('button');
+    button2.type = 'button';
+    button2.className = 'header-control icon fas fa-eye';
+    button2.dataset.tooltip = 'JOURNAL.ActionShow';
+    button2.dataset.action = 'shareImage';
+
+    const ellipsisButton = html.querySelector('.window-header .header-control.fa-ellipsis-vertical');
+    ellipsisButton.parentNode.insertBefore(button, ellipsisButton);
+    ellipsisButton.parentNode.insertBefore(button2, ellipsisButton);
   });
 }
 
