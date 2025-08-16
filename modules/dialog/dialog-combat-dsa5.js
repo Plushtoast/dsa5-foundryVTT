@@ -20,6 +20,12 @@ export default class DSA5CombatDialog extends DialogShared {
     opportunityAttack: { mod: -4 },
     doubleAttack: { mod: -2 },
     narrowSpace: { mod: 0 },
+    waterOptions: {
+      0: { mod: 0 },
+      1: { mod: -2 },
+      2: { mod: -4 },
+      3: { mod: -6 }
+    }
   };
 
   static rangeweaponRollModifiers = {
@@ -62,6 +68,12 @@ export default class DSA5CombatDialog extends DialogShared {
       1: { mod: 2 },
       2: { mod: 4 },
     },
+    waterOptions: {
+      0: { mod: 0 },
+      1: { mod: -2 },
+      2: { mod: -5000 },
+      3: { mod: -5000 }
+    }
   };
 
   static DEFAULT_OPTIONS = {
@@ -699,6 +711,10 @@ export default class DSA5CombatDialog extends DialogShared {
         name: game.i18n.localize('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
+      {
+        name: `${game.i18n.localize('MODS.combatInWater')} ${this._getSelectedText('waterOptions', html)}`,
+        value: Number(data.waterOptions) || 0,
+      },
     ];
 
     modifiers.push(
@@ -712,6 +728,10 @@ export default class DSA5CombatDialog extends DialogShared {
       testData.mode = 'attack';
       testData.extra.counterAttack = true;
     }
+  }
+
+  static _getSelectedText(selector, html) {
+    return html.find(`[name="${selector}"] option:selected`).text() || '';
   }
 
   static resolveRangeDialog(testData, cardOptions, html, actor, options) {
@@ -728,19 +748,18 @@ export default class DSA5CombatDialog extends DialogShared {
     const mountedOptions = Number(data.mountedOptions) || 0;
     const aim = Math.min(Number(data.aim) || 0, 4);
     
-    const getSelectedText = (selector) => html.find(selector).text() || '';
     
     const modifiers = [
       {
-        name: `${game.i18n.localize('MODS.targetMovement')} ${getSelectedText('[name="targetMovement"] option:selected')}`,
+        name: `${game.i18n.localize('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
         value: targetMovement,
       },
       {
-        name: `${game.i18n.localize('shooter')} ${getSelectedText('[name="shooterMovement"] option:selected')}`,
+        name: `${game.i18n.localize('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
         value: shooterMovement,
       },
       {
-        name: `${game.i18n.localize('mount')} ${getSelectedText('[name="mountedOptions"] option:selected')}`,
+        name: `${game.i18n.localize('mount')} ${this._getSelectedText('mountedOptions', html)}`,
         value: mountedOptions,
       },
       {
@@ -773,6 +792,10 @@ export default class DSA5CombatDialog extends DialogShared {
         name: game.i18n.localize('distance'),
         value: Number(rangeMod.attack) || 0,
         damageBonus: Number(rangeMod.damage) || 0,
+      },
+      {
+        name: `${game.i18n.localize('MODS.combatInWater')} ${this._getSelectedText('waterOptions', html)}`,
+        value: Number(data.waterOptions) || 0,
       },
     ];
 

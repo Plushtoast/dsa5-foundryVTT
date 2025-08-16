@@ -2344,9 +2344,17 @@ input[type='search'] {
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 2px 5px;
   font-size: 10px;
+  padding: 0 4px;
   border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: -9px;
+  right: -11px;
 }
 
 .itemLibraryTooltip {

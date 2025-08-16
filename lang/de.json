@@ -795,6 +795,7 @@
         "armorPen": "Rüstungsdurchdringung",
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
+        "combatInWater": "Wasserkampf",
         "RangeMod": {
             "short": "Nah ({fk} auf FK, {tp} TP)",
             "medium": "Mittel ({fk} auf FK, {tp} TP)",
@@ -813,6 +814,12 @@
             "0": "Ungezielt ({f})",
             "1": "1 Aktion zielen ({f})",
             "2": "2 Aktionen zielen ({f})"
+        },
+        "waterOptions": {
+            "0": "Keine Einschränkung ({f})",
+            "1": "Bis zur Hüfte ({f})",
+            "2": "Bis zur Schulter ({f})",
+            "3": "Bodenloses Wasser ({f})"
         }
     },
     "WIZARD": {

@@ -454,7 +454,6 @@ export class ActorDataModel extends DSADataModel {
     this.baseInitiative(data);
 
     if (horse) {
-      // Use horse's initiative when riding
       data.status.initiative.value = horse.system.status.initiative.value;
       if (!data.status.initiative.value) {
         const horseData = horse.system;
@@ -462,13 +461,10 @@ export class ActorDataModel extends DSADataModel {
         data.status.initiative.value = horseData.status.initiative.value;
       }
     } else {
-      // Apply modifiers to initiative
       data.status.initiative.value += (data.status.initiative.gearmodifier || 0) - Math.min(4, encumbrance);
       
-      // Add fractional part to ensure tie-breaking
       const baseInit = Number((0.01 * data.status.initiative.value).toFixed(2));
       
-      // Apply multiplier
       data.status.initiative.value *= data.status.initiative.multiplier || 1;
       data.status.initiative.value = Math.round(data.status.initiative.value) + baseInit;
     }
@@ -476,50 +472,70 @@ export class ActorDataModel extends DSADataModel {
 
   calcSpeed(data, fixated, horse) {
     if (horse) {
-      // Use horse's speed when riding
-      data.status.speed.max = horse.system.status.speed.max;
-      if (!data.status.speed.max) {
-        const horseData = horse.system;
-        horse.system.calcSpeed(horseData, horse.hasCondition('fixated'));
+      if (!horse.system.status.speed.max) {
+        horse.system.calcSpeed(horse.system, horse.hasCondition('fixated'));
       }
       data.status.speed.max = horse.system.status.speed.max;
+      data.status.speed.airMax = horse.system.status.speed.airMax;
+      data.status.speed.waterMax = horse.system.status.speed.waterMax;
     } else {
-      // Calculate base speed with modifiers
-      data.status.speed.max = data.status.speed.initial + (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0);
+      const baseMod = (data.status.speed.modifier || 0) + (data.status.speed.gearmodifier || 0)
+      data.status.speed.max = data.status.speed.initial + baseMod;
       
-      // Apply encumbrance reduction (max 4)
-      data.status.speed.max = Math.round(
-        Math.max(0, data.status.speed.max - Math.min(4, this.calcEncumbrance(data))) * data.status.speed.multiplier
-      );
+      const hasSwim = data.status.speed.water; 
+      const hasAir = data.status.speed.air;
+      const encumbrance = this.calcEncumbrance(data);
+      let painMalus = data.condition?.inpain || 0;
+      const feelsPain = !this.parent.hasCondition('bloodrush');
 
-      // Apply pain reduction (unless bloodrush condition is active)
-      if (!this.parent.hasCondition('bloodrush')) {
-        data.status.speed.max = Math.max(0, data.status.speed.max - (data.condition?.inpain || 0));
+      data.status.speed.max = Math.round(Math.max(0, data.status.speed.max - Math.min(4, encumbrance)) * data.status.speed.multiplier);
+
+      if (feelsPain) {
+        data.status.speed.max = Math.max(0, data.status.speed.max - painMalus);
       }
 
-      // Apply status effects that modify speed
-      this._applyStatusEffectsToSpeed(data, fixated);
+      data.status.speed.max = this._applyStatusEffectsToSpeed(data.status.speed.max, fixated);
 
-      // Update rider speed if this actor is a mount
+      if (hasSwim) {
+        data.status.speed.waterMax = hasSwim + baseMod;
+        data.status.speed.waterMax = Math.round(Math.max(0, data.status.speed.waterMax - Math.min(4, encumbrance)) * data.status.speed.multiplier);
+        if(feelsPain) {
+          data.status.speed.waterMax = Math.max(0, data.status.speed.waterMax - painMalus);
+        }
+        data.status.speed.waterMax = this._applyStatusEffectsToSpeed(data.status.speed.waterMax, fixated, false);
+      } else {
+        data.status.speed.waterMax = Math.round(data.status.speed.max * 0.5);
+      }
+
+      if (hasAir) {
+        data.status.speed.airMax = hasAir + baseMod;
+        data.status.speed.airMax = Math.round(Math.max(0, data.status.speed.airMax - Math.min(4, encumbrance)) * data.status.speed.multiplier);
+        if(feelsPain) {
+          data.status.speed.airMax = Math.max(0, data.status.speed.airMax - painMalus);
+        }
+        data.status.speed.airMax = this._applyStatusEffectsToSpeed(data.status.speed.airMax, fixated, false);
+      }
+
+      //todo this needs to be air/water/ground speed
       Riding.updateRiderSpeed(this.parent, data.status.speed.max);
     }
   }
 
-  _applyStatusEffectsToSpeed(data, fixated) {
-    // Check for paralysis
+  _applyStatusEffectsToSpeed(input, fixated, groundOnly = true) {
+    if (fixated || this.parent.hasCondition('rooted') || this.parent.hasCondition('incapacitated')) {
+      return 0;
+    }
+
     const paralysis = this.parent.hasCondition('paralysed');
     if (paralysis) {
-      data.status.speed.max = Math.round(data.status.speed.max * (1 - paralysis.flags.dsa5.value * 0.25));
+      input = Math.round(input * (1 - paralysis.flags.dsa5.value * 0.25));
     }
-    
-    // Check for movement-stopping conditions
-    if (fixated || this.parent.hasCondition('rooted') || this.parent.hasCondition('incapacitated')) {
-      data.status.speed.max = 0;
-    } 
-    // Prone limits speed to 1
-    else if (this.parent.hasCondition('prone')) {
-      data.status.speed.max = Math.min(1, data.status.speed.max);
+
+    if (groundOnly && this.parent.hasCondition('prone')) {
+      input = Math.min(1, input);
     }
+
+    return input;
   }
 
   getArmorEncumbrance(actorData, wornArmors) {

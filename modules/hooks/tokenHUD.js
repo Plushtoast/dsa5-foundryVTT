@@ -141,22 +141,24 @@ async function combineSwarm(actor, token) {
 
 function setTokenSpeedIndicator(actor, html, data) {
   let speed = actor.system.status.speed.max;
+  
   switch (data.movementAction) {
     case 'fly':
-    //todo: flying speed
+      speed = actor.system.status.speed.airMax;
+      break;
     case 'swim':
-    //todo: swimming speed
-    default:
+      speed = actor.system.status.speed.waterMax;
+      break;
+  }  
 
-  }
-
-  const movementButton = html.find('[data-palette="movementActions"]')
-  const indicator = $(`<div class="speedIndicator">${speed}</div>`)
-  indicator.css({
-    left: movementButton.position().left + movementButton.width(),
-    top: movementButton.position().top + movementButton.height(),
-  });
-  html.find('.col.right').append(indicator)
+  const movementButton = html.find('button[data-palette="movementActions"][data-action="togglePalette"]')
+  const indicator = $(`
+    <div class="position-relative">
+    ${movementButton.html()}
+    <div class="speedIndicator">${speed}</div>
+    </div>
+  `)  
+  movementButton.html(indicator);
 }
 
 export default function () {

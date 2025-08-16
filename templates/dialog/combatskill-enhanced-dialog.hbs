@@ -68,7 +68,19 @@
                     </select>
                 </div>
             </div>
-            {{/if}} 
+            {{/if}}
+            <div class="waterblock">
+                <div class="form-group">
+                    <label>{{localize "MODS.combatInWater"}}</label>
+                    <div class="form-fields">
+                        <select name="waterOptions">
+                            {{#each rollModifiers.waterOptions as |item key|}}
+                            <option value="{{item.mod}}">{{localize (concat 'MODS.waterOptions.' key) f=item.mod}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+            </div>
             {{#if rangeOptions}}
             <div class="form-group">
                 <label>{{localize "distance"}}</label>
