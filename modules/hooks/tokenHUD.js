@@ -143,13 +143,13 @@ function setTokenSpeedIndicator(actor, html, data) {
   let speed = actor.system.status.speed.max;
   switch (data.movementAction) {
     case 'fly':
-      //todo: flying speed
+    //todo: flying speed
     case 'swim':
-      //todo: swimming speed
+    //todo: swimming speed
     default:
 
   }
-  
+
   const movementButton = html.find('[data-palette="movementActions"]')
   const indicator = $(`<div class="speedIndicator">${speed}</div>`)
   indicator.css({
@@ -157,7 +157,6 @@ function setTokenSpeedIndicator(actor, html, data) {
     top: movementButton.position().top + movementButton.height(),
   });
   html.find('.col.right').append(indicator)
-  
 }
 
 export default function () {
@@ -186,34 +185,44 @@ export default function () {
     setTokenSpeedIndicator(actor, html, data);
   });
 
-  Hooks.on('renderTokenConfig', (app, html, data) => {
-    if (data.isPrototype) {
-      const autoBar = getProperty(app.actor, 'system.config.autoBar');
+  Hooks.on('renderPrototypeTokenConfig', (app, jhtml) => {
+    const html = $(jhtml);
 
-      let hint = html.find('.bar2-max').closest('.form-group');
-      let elem = $(`<div class="form-group">
-                <label>${game.i18n.localize('ActorConfig.autoBar')}</label>
-                <input type="checkbox" class="autoBar" ${autoBar ? 'checked=""' : ''}>
-                <p class="hint">${game.i18n.localize('ActorConfig.AutoBarHint')}</p>
-            </div>`);
-      hint.after(elem);
-      elem.find('.autoBar').on('change', (ev) => {
-        app.actor.update({ 'system.config.autoBar': ev.currentTarget.checked });
+    const addCheckbox = ({ configPath, labelKey, hintKey, anchorSelector }) => {
+      const value = getProperty(app.actor.system, configPath);
+      const anchor = html.find(anchorSelector).closest('.form-group');
+      const elem = $(`
+        <div class="form-group">
+          <label>${game.i18n.localize(labelKey)}</label>
+          <input type="checkbox" class="config-checkbox" ${value ? 'checked' : ''}>
+          <p class="hint">${game.i18n.localize(hintKey)}</p>
+        </div>
+      `);
+      anchor.after(elem);
+      elem.find('.config-checkbox').on('change', (ev) => {
+        app.actor.update({ [`system.${configPath}`]: ev.currentTarget.checked });
       });
+    };
 
-      const autoSize = getProperty(app.actor, 'system.config.autoSize');
-      hint = html.find('input[name="height"]').closest('.form-group');
-      elem = $(`<div class="form-group">
-                <label>${game.i18n.localize('ActorConfig.autoSize')}</label>
-                <input type="checkbox" class="autoSize" ${autoSize ? 'checked=""' : ''}>
-                <p class="hint">${game.i18n.localize('ActorConfig.AutoSizeHint')}</p>
-            </div>`);
-      hint.after(elem);
-      elem.find('.autoSize').on('change', (ev) => {
-        app.actor.update({
-          'system.config.autoSize': ev.currentTarget.checked,
-        });
-      });
-    }
+    addCheckbox({
+      configPath: 'config.autoBar',
+      labelKey: 'ActorConfig.autoBar',
+      hintKey: 'ActorConfig.AutoBarHint',
+      anchorSelector: '[name="bar2.attribute"]',
+    });
+
+    addCheckbox({
+      configPath: 'config.autoSize',
+      labelKey: 'ActorConfig.autoSize',
+      hintKey: 'ActorConfig.AutoSizeHint',
+      anchorSelector: 'input[name="height"]',
+    });
+
+    addCheckbox({
+      configPath: 'config.lockRotation',
+      labelKey: 'ActorConfig.lockRotation',
+      hintKey: 'ActorConfig.lockRotationHint',
+      anchorSelector: 'input[name="lockRotation"]',
+    });
   });
 }

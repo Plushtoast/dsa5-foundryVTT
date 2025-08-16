@@ -1193,6 +1193,8 @@
     "ActorConfig": {
         "autoSize": "Automatische Tokengröße",
         "autoBar": "Automatische Ressourcenleiste",
+        "lockRotation": "Fixierte Drehung (Bewegung)",
+        "lockRotationHint": "Das Token Artwork dreht sich nicht automatisch bei der Bewegung mit.",
         "AutoBarHint": "Die Ressourcenleiste werden anhand der Fähigkeiten des Akteurs definiert (AsP, KaP).",
         "AutoSizeHint": "Die Tokengröße wird anhand der Größenkategorie des Akteurs definiert."
     },

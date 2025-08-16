@@ -609,8 +609,8 @@ export default class DiceDSA5 {
 
   static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
     let rollFormula = this.replaceDieLocalization(weapon.system.damage.value);
-    let overrideDamage = [];
-    let dmgMultipliers = weapon.dmgMultipliers || [];
+    const overrideDamage = [];
+    const dmgMultipliers = weapon.dmgMultipliers || [];
     const baseDmgMultipliers = [];
     const damageBonusDescription = {
       multipliers: dmgMultipliers.map((x) => `${x.name} *${x.val}`),
@@ -618,7 +618,7 @@ export default class DiceDSA5 {
       bonusDmg: [],
       baseDmgBonus: [],
     };
-    let armorPen = [];
+    const armorPen = [];
     let bonusDmg = 0;
     let baseDmgBonus = 0;
 
@@ -660,7 +660,7 @@ export default class DiceDSA5 {
     }
 
     const actor = this.#actorFromTestData(testData);
-    let damageRoll = testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
+    const damageRoll = testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
     let damage = damageRoll.total;
     let weaponroll = 0;
 
@@ -694,7 +694,6 @@ export default class DiceDSA5 {
 
       for (let x of testData.situationalModifiers) {
         if (x.damageBonus) {
-          console.log(x)
           const isMultiplier = /^\*/.test(x.damageBonus);
           let value = isMultiplier ? x.damageBonus.replace(/\*/, '') : Number(x.damageBonus) * (x.step || 1);
           if (x.flatValues?.damageBonus) {
@@ -766,8 +765,6 @@ export default class DiceDSA5 {
 
   static buildBonusDescription(damageBonusDescription) {
     if(damageBonusDescription.override) return damageBonusDescription.override;
-
-    console.log(damageBonusDescription);
 
     const baseDamage = damageBonusDescription.baseDmgBonus.join(' + ');
     const damage = damageBonusDescription.bonusDmg.join(' + ');

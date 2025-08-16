@@ -149,6 +149,12 @@ export class DSATokenDocument extends TokenDocument {
 
     return super._inferMovementAction();
   }
+
+  async _preUpdateMovement(movement, operation) {
+    if(this.actor?.system.config.lockRotation) {
+      movement.autoRotate = false;
+    }
+  }
 }
 
 export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
