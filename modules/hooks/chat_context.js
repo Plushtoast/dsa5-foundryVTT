@@ -1,20 +1,25 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+
 const { getProperty } = foundry.utils;
 
-export const applyDamage = async (li, mode, factor = 1) => {
-  const message = game.messages.get(li.dataset.messageId);
-  const cardData = message.flags.opposeData;
-  const defenderSpeaker = cardData?.speakerDefend;
-  const actor = DSA5_Utility.getSpeaker(defenderSpeaker);
+const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
+const ROLLABLE_TYPES = ['skill', 'spell', 'liturgy', 'ritual', 'ceremony'];
+const STAT_TYPES = ['LeP', 'KaP', 'AsP'];
+const MANA_TYPES = ['ritual', 'spell'];
 
-  if (!actor.isOwner)
-    return ui.notifications.error('DSAError.DamagePermission', { localize: true, });
+const getMessageFromLi = (li) => game.messages.get(li.dataset.messageId);
 
-  await actor.applyDamage(cardData.damage[mode] * factor);
+const getActorFromMessage = (message) => {
+  return message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
+};
+
+const hasOwnership = (actor) => actor?.isOwner || game.user.isGM;
+
+const updateMessageWithCheckmark = async (message, flagPath, contentPattern, replacement) => {
   const update = {
-    'flags.data.damageApplied': true,
-    content: message.content.replace(/hideAnchor">/, `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize('damageApplied')}"></i>`),
+    [`flags.data.${flagPath}`]: true,
+    content: message.content.replace(contentPattern, replacement),
   };
 
   if (game.user.isGM) {
@@ -23,465 +28,488 @@ export const applyDamage = async (li, mode, factor = 1) => {
     game.socket.emit('system.dsa5', {
       type: 'updateMsg',
       payload: {
-        id: li.dataset.messageId,
+        id: message.id,
         updateData: update,
       },
     });
   }
 };
 
-export function chatContext() {
-  const fateAvailable = (actor, group) => {
+export const applyDamage = async (li, mode, factor = 1) => {
+  const message = getMessageFromLi(li);
+  const cardData = message.flags.opposeData;
+  const defenderSpeaker = cardData?.speakerDefend;
+  const actor = DSA5_Utility.getSpeaker(defenderSpeaker);
+
+  if (!actor?.isOwner) {
+    return ui.notifications.error('DSAError.DamagePermission', { localize: true });
+  }
+
+  await actor.applyDamage(cardData.damage[mode] * factor);
+
+  await updateMessageWithCheckmark(
+    message,
+    'damageApplied',
+    /hideAnchor">/,
+    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize('damageApplied')}"></i>`
+  );
+};
+
+class ConditionChecker {
+  static fateAvailable(actor, group) {
     return DSA5_Utility.fateAvailable(actor, group);
-  };
+  }
 
-  const canHurt = function (li, prop = 'damage.value') {
-    const messageId = li.dataset.messageId;
-    let cardData = game.messages.get(messageId).flags.opposeData;
+  static canHurt(li, prop = 'damage.value') {
+    const message = getMessageFromLi(li);
+    const cardData = message.flags.opposeData;
     const isOwner = cardData ? DSA5_Utility.getSpeaker(cardData.speakerDefend)?.isOwner : false;
-    return (
-      ((game.user.isGM || isOwner) && li.querySelector('.opposed-card') !== null) ||
-      li.querySelector('.dice-roll') !== null
-    ) && (getProperty(cardData, prop) || 0) > 0;
-  };
 
-  const canHurtSP = function (li) {
-    return canHurt(li, 'damage.sp');
-  };
+    const hasPermission = (game.user.isGM || isOwner) && li.querySelector('.opposed-card') !== null;
+    const hasRoll = li.querySelector('.dice-roll') !== null;
+    const hasDamage = (getProperty(cardData, prop) || 0) > 0;
 
-  const canCostMana = function (li) {
-    const messageId = li.dataset.messageId;
-    const message = game.messages.get(messageId);
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner || game.user.isGM) {
-        return (
-          ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'].includes(message.flags.data.preData.source.type) ||
-          getProperty(message.flags.data.preData, 'calculatedSpellModifiers.costsMana')
-        );
-      }
+    return (hasPermission || hasRoll) && hasDamage;
+  }
+
+  static canHurtSP(li) {
+    return ConditionChecker.canHurt(li, 'damage.sp');
+  }
+
+  static canCostMana(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-    return false;
-  };
 
-  const canUnhideData = function (li) {
-    if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
+    const sourceType = message.flags.data.preData.source.type;
+    const costsMana = getProperty(message.flags.data.preData, 'calculatedSpellModifiers.costsMana');
 
-    const message = game.messages.get(li.dataset.messageId);
-    return !!message.flags?.hideData?.value;
-  };
+    return SPELL_TYPES.includes(sourceType) || costsMana;
+  }
 
-  const canHideData = function (li) {
-    if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) return false;
-
-    const message = game.messages.get(li.dataset.messageId);
-    return !!!message.flags?.hideData?.value;
-  };
-
-  const canImproveRoll = function (li, group = false) {
-    const message = game.messages.get(li.dataset.messageId);
-    if (message.speaker.actor && message.flags.data) {
-      if (message.flags.data.postData.successLevel > -2) {
-        let actor = game.actors.get(message.speaker.actor);
-        if (actor.isOwner && fateAvailable(actor, group)) {
-          let rollType = message.flags.data.preData.source.type;
-          const mode = message.flags.data.preData.mode || '';
-          if (['skill', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(rollType)) rollType = 'char';
-          let schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`);
-          return !message.flags.data.fateImproved && actor.items.getName(schipSkill);
-        }
-      }
+  static canToggleDataVisibility(li, shouldBeHidden) {
+    if (!(game.user.isGM && game.settings.get('dsa5', 'hideOpposedDamageSelect'))) {
+      return false;
     }
-    return false;
-  };
 
-  const canImproveRollGroup = function (li) {
-    return canImproveRoll(li, true);
-  };
+    const message = getMessageFromLi(li);
+    const isHidden = !!message.flags?.hideData?.value;
 
-  const canIncreaseQS = function (li, group = false) {
-    let message = game.messages.get(li.dataset.messageId);
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner && fateAvailable(actor, group)) {
-        if (!message.flags.data.fatePointAddQSUsed) {
-          return message.flags.data.postData.successLevel > 0 && message.flags.data.postData.qualityStep != undefined;
-        }
-      }
+    return shouldBeHidden ? !isHidden : isHidden;
+  }
+
+  static canImproveRoll(li, group = false) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-    return false;
-  };
 
-  const canIncreaseQSGroup = function (li) {
-    return canIncreaseQS(li, true);
-  };
+    const { successLevel } = message.flags.data.postData;
+    const { fateImproved } = message.flags.data;
 
-  const isTalented = function (li) {
-    let message = game.messages.get(li.dataset.messageId);
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner) {
-        return (
-          actor.items.find((x) => x.name == `${game.i18n.localize('LocalizedIDs.aptitude')} (${message.flags.data.preData.source.name})`) != undefined &&
-          !message.flags.data.talentedRerollUsed
-        );
-      }
+    if (successLevel <= -2 || fateImproved || !ConditionChecker.fateAvailable(actor, group)) {
+      return false;
     }
-    return false;
-  };
 
-  const canRerollDamage = function (li, group = false) {
-    let message = game.messages.get(li.dataset.messageId);
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner && fateAvailable(actor, group)) {
-        return message.flags.data.postData.damageRoll != undefined && !message.flags.data.fatePointDamageRerollUsed;
-      }
+    let rollType = message.flags.data.preData.source.type;
+    const mode = message.flags.data.preData.mode || '';
+
+    if (ROLLABLE_TYPES.includes(rollType)) rollType = 'char';
+
+    const schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`);
+    return !!actor.items.getName(schipSkill);
+  }
+
+  static canIncreaseQS(li, group = false) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-    return false;
-  };
 
-  const canRerollDamageGroup = function (li) {
-    return canRerollDamage(li, true);
-  };
+    const { successLevel, qualityStep } = message.flags.data.postData;
+    const { fatePointAddQSUsed } = message.flags.data;
 
-  const canReroll = function (li, group = false) {
-    let message = game.messages.get(li.dataset.messageId);
+    return ConditionChecker.fateAvailable(actor, group) &&
+      !fatePointAddQSUsed &&
+      successLevel > 0 &&
+      qualityStep !== undefined;
+  }
 
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner && fateAvailable(actor, group)) {
-        return !message.flags.data.fatePointRerollUsed && !(message.flags.data.postData.rollType == 'regenerate');
-      }
+  static isTalented(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-    return false;
-  };
 
-  const canRerollGroup = function (li) {
-    return canReroll(li, true);
-  };
+    const { talentedRerollUsed } = message.flags.data;
+    const sourceName = message.flags.data.preData.source.name;
+    const aptitudeName = `${game.i18n.localize('LocalizedIDs.aptitude')} (${sourceName})`;
 
-  const canHeal = function (li) {
-    let message = game.messages.get(li.dataset.messageId);
-    if (message.speaker.actor && message.flags.data) {
-      let actor = game.actors.get(message.speaker.actor);
-      if (actor.isOwner && ['LeP', 'KaP', 'AsP'].some((x) => getProperty(message.flags, `data.postData.${x}`) != undefined)) {
-        return !message.flags.data.healApplied;
-      }
+    return !talentedRerollUsed && !!actor.items.find(item => item.name === aptitudeName);
+  }
+
+  static canRerollDamage(li, group = false) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-    return false;
-  };
 
-  const showHideData = function (li) {
-    if (game.user.isGM) {
-      let message = game.messages.get(li.dataset.messageId);
-      if ('hideData' in message.flags) {
-        let newHide = !message.flags.hideData.value;
-        let query = $(message.content);
-        query.find('.hideAnchor')[newHide ? 'addClass' : 'removeClass']('hideData');
-        query = $('<div></div>').append(query);
-        message.update({
-          content: query.html(),
-          'flags.hideData.value': newHide,
-        });
-      }
+    const { damageRoll } = message.flags.data.postData;
+    const { fatePointDamageRerollUsed } = message.flags.data;
+
+    return ConditionChecker.fateAvailable(actor, group) &&
+      damageRoll !== undefined &&
+      !fatePointDamageRerollUsed;
+  }
+
+  static canReroll(li, group = false) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
     }
-  };
 
-  const canApplyDefaultRolls = (li) => {
-    const message = game.messages.get(li.dataset.messageId);
-    if (!message || !canvas.tokens) return false;
-    return message.isRoll && message.isContentVisible && canvas.tokens.controlled.length && li.querySelector('.dice-roll');
-  };
+    const { fatePointRerollUsed } = message.flags.data;
+    const { rollType } = message.flags.data.postData;
 
-  const useFate = (li, mode, fateSource = 0) => {
-    let message = game.messages.get(li.dataset.messageId);
-    game.actors.get(message.speaker.actor).useFateOnRoll(message, mode, fateSource);
-  };
+    return ConditionChecker.fateAvailable(actor, group) &&
+      !fatePointRerollUsed &&
+      rollType !== 'regenerate';
+  }
 
-  const applyChatCardDamage = (li, mode, factor = 1) => {
-    const message = game.messages.get(li.dataset.messageId);
-    const roll = message.rolls[0];
-    return Promise.all(
-      canvas.tokens.controlled.map((token) => {
-        const actor = token.actor;
-        const damage = Math.round((mode != 'sp' ? roll.total - Actordsa5.armorValue(actor).armor : roll.total) * factor);
-        return actor.applyDamage(Math.max(0, damage));
-      }),
+  static canHeal(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+
+    if (!actor || !hasOwnership(actor) || !message.flags.data) {
+      return false;
+    }
+
+    const { healApplied } = message.flags.data;
+    const hasStats = STAT_TYPES.some(stat =>
+      getProperty(message.flags, `data.postData.${stat}`) !== undefined
     );
-  };
 
-  const payMana = async (li) => {
-    let message = game.messages.get(li.dataset.messageId);
-    let cardData = message.flags.data;
-    let actor = DSA5_Utility.getSpeaker(message.speaker);
-    if (!actor.isOwner)
-      return ui.notifications.error('DSAError.DamagePermission', { localize: true, });
+    return !healApplied && hasStats;
+  }
 
-    const maintain = cardData.preData.calculatedSpellModifiers.maintainCost.trim();
-    const payType = ['ritual', 'spell'].includes(cardData.preData.source.type) || getProperty(cardData.preData.calculatedSpellModifiers, 'costsMana') ? 'AsP' : 'KaP';
-    const manaApplied = await actor.applyMana(cardData.preData.calculatedSpellModifiers.finalcost, payType);
-    if (maintain && maintain != 0 && manaApplied && cardData.postData.successLevel > 0) {
-      const name = cardData.preData.source.name;
-      try {
-        const cost = maintain.match(/^\d{1,3}/)[0];
-        let duration = maintain.replace(/^\d{1,3}/, '').match(/\d{1,3}/);
-        duration = duration ? Number(duration[0]) || 1 : 1;
-        const effect = {
-          name: `${name} (${game.i18n.localize('maintainCost')})`,
-          img: 'icons/svg/daze.svg',
-          flags: {
-            dsa5: {
-              description: maintain,
-              maintain: cost,
-              payType,
-            },
-          },
-          changes: [],
-          duration: {},
-        };
-        const regexes = [
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.combatRounds'), 'gi'),
-            seconds: 5,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.minutes'), 'gi'),
-            seconds: 60,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.hours'), 'gi'),
-            seconds: 3600,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.days'), 'gi'),
-            seconds: 3600 * 24,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.seconds'), 'gi'),
-            seconds: 1,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.weeks'), 'gi'),
-            seconds: 3600 * 24 * 7,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.months'), 'gi'),
-            seconds: 3600 * 24 * 30,
-          },
-          {
-            regEx: new RegExp(game.i18n.localize('DSAREGEXmaintain.years'), 'gi'),
-            seconds: 3600 * 24 * 350,
-          },
-        ];
-        for (const reg of regexes) {
-          if (reg.regEx.test(maintain)) {
-            const calcTime = Number(duration) * reg.seconds;
-            effect.duration.seconds = calcTime;
-            effect.duration.rounds = effect.duration.seconds / 5;
+  static canApplyDefaultRolls(li) {
+    const message = getMessageFromLi(li);
 
-            break;
-          }
-        }
-        await actor.addCondition(effect);
-      } catch (e) {
-        console.error(`Could not parse duration '${maintain}' of '${name}'`);
+    return message?.isRoll &&
+      message.isContentVisible &&
+      canvas.tokens?.controlled.length > 0 &&
+      !!li.querySelector('.dice-roll');
+  }
+}
+
+class ActionHandler {
+  static async showHideData(li) {
+    if (!game.user.isGM) return;
+
+    const message = getMessageFromLi(li);
+    if (!message.flags.hideData) return;
+
+    const newHide = !message.flags.hideData.value;
+    const query = $(message.content);
+
+    query.find('.hideAnchor')[newHide ? 'addClass' : 'removeClass']('hideData');
+
+    await message.update({
+      content: $('<div></div>').append(query).html(),
+      'flags.hideData.value': newHide,
+    });
+  }
+
+  static useFate(li, mode, fateSource = 0) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+    actor?.useFateOnRoll(message, mode, fateSource);
+  }
+
+  static async applyChatCardDamage(li, mode, factor = 1) {
+    const message = getMessageFromLi(li);
+    const roll = message.rolls[0];
+
+    return Promise.all(
+      canvas.tokens.controlled.map(token => {
+        const { actor } = token;
+        const baseDamage = mode === 'sp' ? roll.total : roll.total - Actordsa5.armorValue(actor).armor;
+        const damage = Math.max(0, Math.round(baseDamage * factor));
+        return actor.applyDamage(damage);
+      })
+    );
+  }
+
+  static async payMana(li) {
+    const message = getMessageFromLi(li);
+    const { data: cardData } = message.flags;
+    const actor = DSA5_Utility.getSpeaker(message.speaker);
+
+    if (!actor?.isOwner) {
+      return ui.notifications.error('DSAError.DamagePermission', { localize: true });
+    }
+
+    const { calculatedSpellModifiers } = cardData.preData;
+    const maintain = calculatedSpellModifiers.maintainCost?.trim();
+    const sourceType = cardData.preData.source.type;
+    const costsMana = getProperty(calculatedSpellModifiers, 'costsMana');
+
+    const payType = MANA_TYPES.includes(sourceType) || costsMana ? 'AsP' : 'KaP';
+    const manaApplied = await actor.applyMana(calculatedSpellModifiers.finalcost, payType);
+
+    if (maintain && maintain !== '0' && manaApplied && cardData.postData.successLevel > 0) {
+      await ActionHandler.handleMaintainEffect(actor, maintain, cardData.preData.source.name, payType);
+    }
+
+    await updateMessageWithCheckmark(
+      message,
+      'manaApplied',
+      /<span class="costCheck">/,
+      '<span class="costCheck"><i class="fas fa-check" style="float:right"></i>'
+    );
+  }
+
+  static async handleMaintainEffect(actor, maintain, name, payType) {
+    try {
+      const cost = maintain.match(/^\d{1,3}/)?.[0];
+      if (!cost) return;
+
+      let duration = maintain.replace(/^\d{1,3}/, '').match(/\d{1,3}/);
+      duration = duration ? Number(duration[0]) || 1 : 1;
+
+      const effect = ActionHandler.createMaintainEffect(name, maintain, cost, payType);
+      const seconds = ActionHandler.calculateDuration(maintain, duration);
+
+      if (seconds) {
+        effect.duration.seconds = seconds;
+        effect.duration.rounds = seconds / 5;
+      }
+
+      await actor.addCondition(effect);
+    } catch (error) {
+      console.error(`Could not parse duration '${maintain}' of '${name}'`, error);
+    }
+  }
+
+  static createMaintainEffect(name, maintain, cost, payType) {
+    return {
+      name: `${name} (${game.i18n.localize('maintainCost')})`,
+      img: 'icons/svg/daze.svg',
+      flags: {
+        dsa5: {
+          description: maintain,
+          maintain: cost,
+          payType,
+        },
+      },
+      changes: [],
+      duration: {},
+    };
+  }
+
+  static calculateDuration(maintain, duration) {
+    const timeUnits = [
+      { key: 'DSAREGEXmaintain.seconds', seconds: 1 },
+      { key: 'DSAREGEXmaintain.combatRounds', seconds: 5 },
+      { key: 'DSAREGEXmaintain.minutes', seconds: 60 },
+      { key: 'DSAREGEXmaintain.hours', seconds: 3600 },
+      { key: 'DSAREGEXmaintain.days', seconds: 3600 * 24 },
+      { key: 'DSAREGEXmaintain.weeks', seconds: 3600 * 24 * 7 },
+      { key: 'DSAREGEXmaintain.months', seconds: 3600 * 24 * 30 },
+      { key: 'DSAREGEXmaintain.years', seconds: 3600 * 24 * 350 },
+    ];
+
+    for (const unit of timeUnits) {
+      const regex = new RegExp(game.i18n.localize(unit.key), 'gi');
+      if (regex.test(maintain)) {
+        return duration * unit.seconds;
       }
     }
-    await message.update({
-      'flags.data.manaApplied': true,
-      content: message.content.replace(/<span class="costCheck">/, `<span class="costCheck"><i class="fas fa-check" style="float:right"></i>`),
-    });
-  };
 
+    return null;
+  }
+
+  static async applyHealing(li) {
+    const message = getMessageFromLi(li);
+    const actor = DSA5_Utility.getSpeaker(message.speaker);
+
+    if (!actor?.isOwner) {
+      return ui.notifications.error('DSAError.DamagePermission', { localize: true });
+    }
+
+    await updateMessageWithCheckmark(
+      message,
+      'healApplied',
+      /<\/div>$/,
+      '<i class="fas fa-check" style="float:right"></i></div>'
+    );
+
+    const { postData } = message.flags.data;
+    await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
+  }
+}
+
+const createContextOptions = () => {
   const applyDamageLabel = () => {
     return game.i18n.localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
-  Hooks.on('getChatMessageContextOptions', (html, options) => {
-    options.push(
-      {
-        name: 'CHATCONTEXT.hideData',
-        icon: '<i class="fas fa-eye"></i>',
-        condition: canHideData,
-        callback: (li) => {
-          showHideData(li);
-        },
-      },
-      {
-        name: 'CHATCONTEXT.showData',
-        icon: '<i class="fas fa-eye"></i>',
-        condition: canUnhideData,
-        callback: (li) => {
-          showHideData(li);
-        },
-      },
-      {
-        name: 'regenerate',
-        icon: '<i class="fas fa-user-plus"></i>',
-        condition: canHeal,
-        callback: async (li) => {
-          const message = await game.messages.get(li.dataset.messageId);
-          const actor = DSA5_Utility.getSpeaker(message.speaker);
-          if (!actor.isOwner)
-            return ui.notifications.error('DSAError.DamagePermission', { localize: true, });
+  const baseOptions = [
+    {
+      name: 'CHATCONTEXT.hideData',
+      icon: '<i class="fas fa-eye"></i>',
+      condition: (li) => ConditionChecker.canToggleDataVisibility(li, true),
+      callback: ActionHandler.showHideData,
+    },
+    {
+      name: 'CHATCONTEXT.showData',
+      icon: '<i class="fas fa-eye"></i>',
+      condition: (li) => ConditionChecker.canToggleDataVisibility(li, false),
+      callback: ActionHandler.showHideData,
+    },
+    {
+      name: 'regenerate',
+      icon: '<i class="fas fa-user-plus"></i>',
+      condition: ConditionChecker.canHeal,
+      callback: ActionHandler.applyHealing,
+    },
+    {
+      name: 'CHATCONTEXT.ApplyMana',
+      icon: '<i class="fas fa-user-minus"></i>',
+      condition: ConditionChecker.canCostMana,
+      callback: ActionHandler.payMana,
+    },
+    {
+      name: applyDamageLabel(),
+      icon: '<i class="fas fa-user-minus"></i>',
+      condition: ConditionChecker.canHurt,
+      callback: (li) => applyDamage(li, 'value'),
+    },
+    {
+      name: 'CHATCONTEXT.ApplyDamageSP',
+      icon: '<i class="fas fa-user-minus"></i>',
+      condition: ConditionChecker.canHurtSP,
+      callback: (li) => applyDamage(li, 'sp'),
+    },
+    {
+      name: applyDamageLabel(),
+      icon: '<i class="fas fa-user-minus"></i>',
+      condition: ConditionChecker.canApplyDefaultRolls,
+      callback: (li) => ActionHandler.applyChatCardDamage(li, 'value'),
+    },
+    {
+      name: 'CHATCONTEXT.ApplyDamageSP',
+      icon: '<i class="fas fa-user-minus"></i>',
+      condition: ConditionChecker.canApplyDefaultRolls,
+      callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp'),
+    },
+    {
+      name: 'CHATCONTEXT.Reroll',
+      icon: '<i class="fas fa-dice"></i>',
+      condition: ConditionChecker.canReroll,
+      callback: (li) => ActionHandler.useFate(li, 'reroll'),
+    },
+    {
+      name: 'CHATCONTEXT.RerollGroup',
+      icon: '<i class="fas fa-dice"></i>',
+      condition: (li) => ConditionChecker.canReroll(li, true),
+      callback: (li) => ActionHandler.useFate(li, 'reroll', 1),
+    },
+    {
+      name: 'CHATCONTEXT.talentedReroll',
+      icon: '<i class="fas fa-dice"></i>',
+      condition: ConditionChecker.isTalented,
+      callback: (li) => ActionHandler.useFate(li, 'isTalented'),
+    },
+    {
+      name: 'CHATCONTEXT.AddQS',
+      icon: '<i class="fas fa-plus-square"></i>',
+      condition: ConditionChecker.canIncreaseQS,
+      callback: (li) => ActionHandler.useFate(li, 'addQS'),
+    },
+    {
+      name: 'CHATCONTEXT.AddQSGroup',
+      icon: '<i class="fas fa-plus-square"></i>',
+      condition: (li) => ConditionChecker.canIncreaseQS(li, true),
+      callback: (li) => ActionHandler.useFate(li, 'addQS', 1),
+    },
+    {
+      name: 'CHATCONTEXT.rerollDamage',
+      icon: '<i class="fas fa-dice"></i>',
+      condition: ConditionChecker.canRerollDamage,
+      callback: (li) => ActionHandler.useFate(li, 'rerollDamage'),
+    },
+    {
+      name: 'CHATCONTEXT.rerollDamageGroup',
+      icon: '<i class="fas fa-dice"></i>',
+      condition: (li) => ConditionChecker.canRerollDamage(li, true),
+      callback: (li) => ActionHandler.useFate(li, 'rerollDamage', 1),
+    },
+    {
+      name: 'CHATCONTEXT.improveFate',
+      icon: '<i class="fas fa-plus-square"></i>',
+      condition: ConditionChecker.canImproveRoll,
+      callback: (li) => ActionHandler.useFate(li, 'Improve'),
+    },
+    {
+      name: 'CHATCONTEXT.improveFateGroup',
+      icon: '<i class="fas fa-plus-square"></i>',
+      condition: (li) => ConditionChecker.canImproveRoll(li, true),
+      callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
+    },
+  ];
 
-          await message.update({
-            'flags.data.healApplied': true,
-            content: message.content.replace(/<\/div>$/, '<i class="fas fa-check" style="float:right"></i></div>'),
-          });
-          await actor.applyRegeneration(message.flags.data.postData.LeP, message.flags.data.postData.AsP, message.flags.data.postData.KaP);
-        },
-      },
-      {
-        name: 'CHATCONTEXT.ApplyMana',
-        icon: '<i class="fas fa-user-minus"></i>',
-        condition: canCostMana,
-        callback: async (li) => {
-          payMana(li);
-        },
-      },
-      {
-        name: applyDamageLabel(),
-        icon: '<i class="fas fa-user-minus"></i>',
-        condition: canHurt,
-        callback: (li) => {
-          applyDamage(li, 'value');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.ApplyDamageSP',
-        icon: '<i class="fas fa-user-minus"></i>',
-        condition: canHurtSP,
-        callback: (li) => {
-          applyDamage(li, 'sp');
-        },
-      },
-      {
-        name: applyDamageLabel(),
-        icon: '<i class="fas fa-user-minus"></i>',
-        condition: canApplyDefaultRolls,
-        callback: (li) => {
-          applyChatCardDamage(li, 'value');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.ApplyDamageSP',
-        icon: '<i class="fas fa-user-minus"></i>',
-        condition: canApplyDefaultRolls,
-        callback: (li) => {
-          applyChatCardDamage(li, 'sp');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.Reroll',
-        icon: '<i class="fas fa-dice"></i>',
-        condition: canReroll,
-        callback: (li) => {
-          useFate(li, 'reroll');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.RerollGroup',
-        icon: '<i class="fas fa-dice"></i>',
-        condition: canRerollGroup,
-        callback: (li) => {
-          useFate(li, 'reroll', 1);
-        },
-      },
-      {
-        name: 'CHATCONTEXT.talentedReroll',
-        icon: '<i class="fas fa-dice"></i>',
-        condition: isTalented,
-        callback: (li) => {
-          useFate(li, 'isTalented');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.AddQS',
-        icon: '<i class="fas fa-plus-square"></i>',
-        condition: canIncreaseQS,
-        callback: (li) => {
-          useFate(li, 'addQS');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.AddQSGroup',
-        icon: '<i class="fas fa-plus-square"></i>',
-        condition: canIncreaseQSGroup,
-        callback: (li) => {
-          useFate(li, 'addQS', 1);
-        },
-      },
-      {
-        name: 'CHATCONTEXT.rerollDamage',
-        icon: '<i class="fas fa-dice"></i>',
-        condition: canRerollDamage,
-        callback: (li) => {
-          useFate(li, 'rerollDamage');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.rerollDamageGroup',
-        icon: '<i class="fas fa-dice"></i>',
-        condition: canRerollDamageGroup,
-        callback: (li) => {
-          useFate(li, 'rerollDamage', 1);
-        },
-      },
-      {
-        name: 'CHATCONTEXT.improveFate',
-        icon: '<i class="fas fa-plus-square"></i>',
-        condition: canImproveRoll,
-        callback: (li) => {
-          useFate(li, 'Improve');
-        },
-      },
-      {
-        name: 'CHATCONTEXT.improveFateGroup',
-        icon: '<i class="fas fa-plus-square"></i>',
-        condition: canImproveRollGroup,
-        callback: (li) => {
-          useFate(li, 'Improve', 1);
-        },
-      },
+  if (game.settings.get('dsa5', 'doubleDamageOptions')) {
+    baseOptions.push(
+      ...createDoubleDamageOptions(applyDamageLabel)
     );
+  }
 
-    if (game.settings.get('dsa5', 'doubleDamageOptions')) {
-      options.push(
-        {
-          name: applyDamageLabel() + ' x2',
-          icon: '<i class="fas fa-user-minus"></i>',
-          condition: canHurt,
-          callback: (li) => {
-            applyDamage(li, 'value', 2);
-          },
-        },
-        {
-          name: game.i18n.localize('CHATCONTEXT.ApplyDamageSP') + ' x2',
-          icon: '<i class="fas fa-user-minus"></i>',
-          condition: canHurtSP,
-          callback: (li) => {
-            applyDamage(li, 'sp', 2);
-          },
-        },
-        {
-          name: applyDamageLabel() + ' x2',
-          icon: '<i class="fas fa-user-minus"></i>',
-          condition: canApplyDefaultRolls,
-          callback: (li) => {
-            applyChatCardDamage(li, 'value', 2);
-          },
-        },
-        {
-          name: game.i18n.localize('CHATCONTEXT.ApplyDamageSP') + ' x2',
-          icon: '<i class="fas fa-user-minus"></i>',
-          condition: canApplyDefaultRolls,
-          callback: (li) => {
-            applyChatCardDamage(li, 'sp', 2);
-          },
-        },
-      );
-    }
+  return baseOptions;
+};
+
+const createDoubleDamageOptions = (applyDamageLabel) => [
+  {
+    name: `${applyDamageLabel()} x2`,
+    icon: '<i class="fas fa-user-minus"></i>',
+    condition: ConditionChecker.canHurt,
+    callback: (li) => applyDamage(li, 'value', 2),
+  },
+  {
+    name: `${game.i18n.localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    icon: '<i class="fas fa-user-minus"></i>',
+    condition: ConditionChecker.canHurtSP,
+    callback: (li) => applyDamage(li, 'sp', 2),
+  },
+  {
+    name: `${applyDamageLabel()} x2`,
+    icon: '<i class="fas fa-user-minus"></i>',
+    condition: ConditionChecker.canApplyDefaultRolls,
+    callback: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
+  },
+  {
+    name: `${game.i18n.localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    icon: '<i class="fas fa-user-minus"></i>',
+    condition: ConditionChecker.canApplyDefaultRolls,
+    callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
+  },
+];
+
+export function chatContext() {
+  Hooks.on('getChatMessageContextOptions', (html, options) => {
+    options.push(...createContextOptions());
   });
 }
