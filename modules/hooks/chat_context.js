@@ -216,6 +216,8 @@ class ConditionChecker {
 }
 
 class ActionHandler {
+  static notification_context_menu_initialized = false;
+
   static async showHideData(li) {
     if (!game.user.isGM) return;
 
@@ -509,7 +511,21 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
 ];
 
 export function chatContext() {
-  Hooks.on('getChatMessageContextOptions', (html, options) => {
+  Hooks.once('getNotificationChatMessageContextOptions', (app, options, c) => {
     options.push(...createContextOptions());
+  });
+  
+  Hooks.on('getChatMessageContextOptions', (app, options, c) => {
+    options.push(...createContextOptions());
+
+    if(ActionHandler.notification_context_menu_initialized) return;
+      
+    ActionHandler.notification_context_menu_initialized = true;    
+    app._createContextMenu(app._getEntryContextOptions, ".message[data-message-id]", {
+      hookName: "getNotificationChatMessageContextOptions",
+      container: document.querySelector('#chat-notifications'),
+      parentClassHooks: false,
+      fixed: true
+    });
   });
 }
