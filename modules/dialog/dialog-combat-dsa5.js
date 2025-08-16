@@ -526,12 +526,14 @@ export default class DSA5CombatDialog extends DialogShared {
         damageBonus: tpMod,
         value: 0,
         step: 1,
+        baseBonus: true
       },
       {
         name: modeTranslated + ' (*)',
         damageBonus: `*${multiplier}`,
         value: 0,
         step: 1,
+        baseBonus: true
       },
     );
     return result;
@@ -548,46 +550,51 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static assassinationModifiers(testData, formData) {
     const mode = formData.assassinate;
-    if (!mode || mode == '-') return [];
+    if (!mode || mode === '-') return [];
 
-    testData.opposingWeaponSize = 0;
+    const opposingWeaponSizeIndex = Math.max(0, DSA5.meleeRangesArray.indexOf(formData.weaponsize));
+    testData.opposingWeaponSize = opposingWeaponSizeIndex;
+
     const advantageousPositionMod = formData.advantageousPosition ? 2 : 0;
-    const opposingWeaponSize = DSA5.meleeRangesArray.indexOf(formData.weaponsize);
     const modeTranslated = game.i18n.localize(`DIALOG.${mode}`);
-    const result = [
-      {
-        name: modeTranslated,
-        value: 10 - advantageousPositionMod - opposingWeaponSize,
-      },
-    ];
-    if (mode == 'assassinate') {
-      let weaponsize = DSA5.meleeRangesArray.indexOf(testData.source.system.reach.value);
-      if (!RuleChaos.isYieldedTwohanded(testData.source) && testData.source.system.worn?.wrongGrip) {
-        weaponsize = Math.min(weaponsize, 1);
+
+    const baseValue = 10 - advantageousPositionMod - opposingWeaponSizeIndex;
+    const result = [{ name: modeTranslated, value: baseValue }];
+
+    if (mode === 'assassinate') {
+      let weaponSize = Math.max(
+        0,
+        DSA5.meleeRangesArray.indexOf(getProperty(testData, 'source.system.reach.value'))
+      );
+
+      if (!RuleChaos.isYieldedTwohanded(testData.source) && getProperty(testData, 'source.system.worn.wrongGrip')) {
+        weaponSize = Math.min(weaponSize, 1);
       }
 
       const dices = DSA5CombatDialog.countDices(testData) - 1;
-      const tpMod = [2, 0, -2, -4][weaponsize] - dices * 2;
-      const multiplier = Math.max(1, 5 - weaponsize - dices);
+      const tpMod = [2, 0, -2, -4][weaponSize] - dices * 2;
+      const multiplier = Math.max(1, 5 - weaponSize - dices);
 
       result.push(
         {
-          name: modeTranslated + ' (' + game.i18n.localize('CHARAbbrev.damage') + ')',
+          name: `${modeTranslated} (${game.i18n.localize('CHARAbbrev.damage')})`,
           damageBonus: tpMod,
           value: 0,
           step: 1,
+          baseBonus: true
         },
         {
-          name: modeTranslated + ' (*)',
+          name: `${modeTranslated} (*)`,
           damageBonus: `*${multiplier}`,
           value: 0,
           step: 1,
-        },
+          baseBonus: true
+        }
       );
     } else {
-      if (!testData.source.effects) testData.source.effects = [];
-
-      if (!testData.source.effects.find((x) => x._id == modeTranslated)) {
+      testData.source.effects = testData.source.effects || [];
+      const exists = testData.source.effects.some((e) => e._id === modeTranslated);
+      if (!exists) {
         testData.source.effects.push({
           _id: modeTranslated,
           changes: [],

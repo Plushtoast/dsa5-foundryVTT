@@ -611,16 +611,28 @@ export default class DiceDSA5 {
     let rollFormula = this.replaceDieLocalization(weapon.system.damage.value);
     let overrideDamage = [];
     let dmgMultipliers = weapon.dmgMultipliers || [];
-    let damageBonusDescription = dmgMultipliers.map((x) => `${x.name} *${x.val}`);
+    const baseDmgMultipliers = [];
+    const damageBonusDescription = {
+      multipliers: dmgMultipliers.map((x) => `${x.name} *${x.val}`),
+      baseMultipliers: [],
+      bonusDmg: [],
+      baseDmgBonus: [],
+    };
     let armorPen = [];
     let bonusDmg = 0;
+    let baseDmgBonus = 0;
 
     for (let val of testData.situationalModifiers) {
       if (val.armorPen) armorPen.push(val.armorPen);
 
       if (val.damageBonus) {
         if (/^\*/.test(val.damageBonus)) {
-          DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
+          if (val.baseBonus) {
+            DSA5_Utility.pushOnlyIfUnique(baseDmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
+          } else {
+            DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
+          }
+          
           continue;
         }
 
@@ -636,7 +648,10 @@ export default class DiceDSA5 {
         }
 
         val.damageBonus = roll;
-        bonusDmg += number;
+        if(val.baseBonus)
+          baseDmgBonus += number;
+        else 
+          bonusDmg += number;
       }
 
       if (val.flatValues?.damageBonus) {
@@ -665,44 +680,56 @@ export default class DiceDSA5 {
       }
     }
 
-    let weaponBonus = damage - weaponroll;
+    const weaponBonus = damage - weaponroll;
 
     if (overrideDamage.length > 0) {
-      damageBonusDescription.push(overrideDamage[0].name + ' ' + damage);
+      damageBonusDescription.override = overrideDamage[0].name + ' ' + damage;
     } else {
-      damage += bonusDmg;
-      damageBonusDescription.push(game.i18n.localize('Roll') + ' ' + weaponroll);
+      damage += baseDmgBonus;
+      damageBonusDescription.baseDmgBonus.push(game.i18n.localize('Roll') + ' ' + weaponroll);
 
       if (weaponBonus != 0) {
-        damageBonusDescription.push(game.i18n.localize('weaponModifier') + ' ' + weaponBonus);
+        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('weaponModifier') + ' ' + weaponBonus);
       }
 
       for (let x of testData.situationalModifiers) {
         if (x.damageBonus) {
-          let value = /^\*/.test(x.damageBonus) ? x.damageBonus : Number(x.damageBonus) * (x.step || 1);
+          console.log(x)
+          const isMultiplier = /^\*/.test(x.damageBonus);
+          let value = isMultiplier ? x.damageBonus.replace(/\*/, '') : Number(x.damageBonus) * (x.step || 1);
           if (x.flatValues?.damageBonus) {
             value += Number(x.flatValues.damageBonus) || 0;
           }
-          damageBonusDescription.push(`${x.name} ${value}`);
+          if(x.baseBonus) {
+            if(isMultiplier)
+              damageBonusDescription.baseMultipliers.push(`${x.name} ${value}`);
+            else
+              damageBonusDescription.baseDmgBonus.push(`${x.name} ${value}`);
+          } else {
+            if (isMultiplier)
+              damageBonusDescription.multipliers.push(`${x.name} ${value}`);
+            else
+              damageBonusDescription.bonusDmg.push(`${x.name} ${value}`);
+          }
         }
       }
 
       const bloodrushModifier = testData.situationalModifiers.find((x) => x.name.indexOf(game.i18n.localize('CONDITION.bloodrush')) > -1);
       if (bloodrushModifier) {
         damage += 2;
-        damageBonusDescription.push(game.i18n.localize('CONDITION.bloodrush') + ' ' + 2);
+        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('CONDITION.bloodrush') + ' ' + 2);
       }
 
       if (weapon.extraDamage) {
         damage = Number(weapon.extraDamage) + Number(damage);
-        damageBonusDescription.push(game.i18n.localize('damageThreshold') + ' ' + weapon.extraDamage);
+        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('damageThreshold') + ' ' + weapon.extraDamage);
       }
 
       const status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
       const statusDmg = await DiceDSA5._stringToRoll(status, testData);
       if (statusDmg != 0) {
         damage += statusDmg;
-        damageBonusDescription.push(game.i18n.localize('statuseffects') + ' ' + statusDmg);
+        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('statuseffects') + ' ' + statusDmg);
       }
 
       const combatskill = getProperty(weapon, 'system.combatskill.value');
@@ -712,13 +739,19 @@ export default class DiceDSA5 {
 
       if (ktwDamage) {
         damage += ktwDamage;
-        damageBonusDescription.push(`${game.i18n.localize('TYPES.Item.combatskill')} (${game.i18n.localize('CHARAbbrev.damage')}) ${ktwDamage}`);
+        damageBonusDescription.baseDmgBonus.push(`${game.i18n.localize('TYPES.Item.combatskill')} (${game.i18n.localize('CHARAbbrev.damage')}) ${ktwDamage}`);
       }
+
+      for (const el of baseDmgMultipliers) {
+        damage *= el.val;
+      }
+
+      damage += bonusDmg;
     }
 
     if (doubleDamage) {
       damage *= doubleDamage;
-      damageBonusDescription.push(game.i18n.format('doubleDamage', { x: doubleDamage }));
+      damageBonusDescription.multipliers.push(game.i18n.format('doubleDamage', { x: doubleDamage }));
     }
 
     for (const el of dmgMultipliers) {
@@ -726,9 +759,35 @@ export default class DiceDSA5 {
     }
 
     result.armorPen = armorPen;
-    result.damagedescription = damageBonusDescription.join(', ');
+    result.damagedescription = DiceDSA5.buildBonusDescription(damageBonusDescription);
     result.damage = Math.round(damage);
     result.damageRoll = duplicate(damageRoll);
+  }
+
+  static buildBonusDescription(damageBonusDescription) {
+    if(damageBonusDescription.override) return damageBonusDescription.override;
+
+    console.log(damageBonusDescription);
+
+    const baseDamage = damageBonusDescription.baseDmgBonus.join(' + ');
+    const damage = damageBonusDescription.bonusDmg.join(' + ');
+    const baseMultipliers = damageBonusDescription.baseMultipliers.join(' * ');
+    const multipliers = damageBonusDescription.multipliers.join(' * ');
+
+    let basePart = baseDamage;
+
+    if (baseMultipliers) {
+      if (baseDamage.length > 1) basePart = `(${basePart})`;
+      basePart = `${basePart} * ${baseMultipliers}`;
+    }
+
+    if (damage) basePart = `${basePart} + ${damage}`;
+
+    let formula = basePart;
+
+    if (multipliers) formula = `(${formula}) * ${multipliers}`;
+
+    return formula;
   }
 
   static async rollWeapon(testData) {
