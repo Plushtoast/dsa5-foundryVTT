@@ -223,16 +223,16 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const calendar = game.time.calendar;
 
     data.isGM = game.user.isGM;
-    data.calendar = calendar;   
+    data.calendar = calendar;
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-    
+
     return data;
   }
 
   async _preparePartContext(partId, context, options) {
     context = await super._preparePartContext(partId, context, options);
-    switch ( partId ) {
+    switch (partId) {
       case "config": await this._prepareConfigContext(context, options); break;
       case "events": await this._prepareEventsContext(context, options); break;
       case "calendar": await this._prepareCalendarContext(context, options); break;
@@ -246,13 +246,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
     context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
-    context.calendarJournals = game.settings.get('dsa5', 'calendarJournals'); 
+    context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
   }
 
   async _prepareCalendarContext(context, options) {
     const calendar = game.time.calendar;
-    if(!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
-    context.worldCalendarConfig = CONFIG.time.worldCalendarConfig; 
+    if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+    context.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
     context.currentMonth = calendar.translate(calendar.months.values[context.components.month].name);
     context.currentDay = context.components.dayOfMonth + 1;
     context.calendarSize = Math.min(window.innerWidth, window.innerHeight) * 0.75;
@@ -260,7 +260,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _prepareEventsContext(context, options) {
     const calendar = game.time.calendar;
-    if(!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+    if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
 
     const currentDateValue = context.components.month * 100 + context.components.dayOfMonth;
     context.sortedEntries = (await DSACalendarPicker.fromCache(context.components))
@@ -382,13 +382,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     switch (hoverBait.type) {
       case "day":
-        tooltipContent = this._buildDayTooltip(hoverBait, components);
+        tooltipContent = await this._buildDayTooltip(hoverBait, components);
         break;
       case "weekday":
-        tooltipContent = this._buildWeekdayTooltip(hoverBait, components);
+        tooltipContent = await this._buildWeekdayTooltip(hoverBait, components);
         break;
       case "month":
-        const result = this._buildMonthTooltip(hoverBait);
+        const result = await this._buildMonthTooltip(hoverBait);
         tooltipContent = result.tooltipContent;
         detailsContent = result.detailsContent;
         img = result.img;
@@ -401,7 +401,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._updateTooltips(tooltipContent, detailsContent, img);
   }
 
-  _buildDayTooltip(hoverBait, components) {
+  async _buildDayTooltip(hoverBait, components) {
     const calendar = game.time.calendar;
     const modifiedComponents = foundry.utils.deepClone(components);
     modifiedComponents.day += hoverBait.index - components.dayOfMonth;
@@ -412,7 +412,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const moon = calendar.translate(convertedComponents.moon.phase.name);
     const month = calendar.translate(calendar.months.values[components.month].name);
     const weekday = calendar.translate(calendar.days.values[convertedComponents.dayOfWeek].name);
-    const holidays = this._getHolidaysFormatted(convertedComponents);
+    const holidays = await this._getHolidaysFormatted(convertedComponents);
 
     return `<div>
       <b>${hoverBait.day}. ${month}</b><br/>
@@ -422,7 +422,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     </div>`;
   }
 
-  _buildWeekdayTooltip(hoverBait, components) {
+  async _buildWeekdayTooltip(hoverBait, components) {
     const calendar = game.time.calendar;
     const modifiedComponents = foundry.utils.deepClone(components);
     modifiedComponents.day += hoverBait.originalIndex - components.dayOfWeek;
@@ -434,7 +434,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const dayOfMonth = convertedComponents.dayOfMonth + 1;
     const monthName = calendar.translate(calendar.months.values[convertedComponents.month].name);
     const weekdayName = calendar.translate(calendar.days.values[hoverBait.originalIndex].name);
-    const holidays = this._getHolidaysFormatted(convertedComponents);
+    const holidays = await this._getHolidaysFormatted(convertedComponents);
 
     return `<div>
       <b>${dayOfMonth}. ${monthName}</b><br/>
@@ -444,7 +444,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     </div>`;
   }
 
-  _buildMonthTooltip(hoverBait) {
+  async _buildMonthTooltip(hoverBait) {
     const calendar = game.time.calendar;
     const monthIndex = hoverBait.originalIndex;
     const monthImage = DSAWorldCalendar.monthImage(monthIndex);
@@ -487,9 +487,23 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     return { tooltipContent, detailsContent, img };
   }
 
-  _getHolidaysFormatted(components) {
-    const holidays = game.time.calendar.findHolidays(components) || [];
-    return holidays.map(h => game.time.calendar.translate(`holiday.${h.name}`)).join('<br/>');
+  async _getHolidaysFormatted(components) {
+    const holidays = await this.constructor.findHolidays(components);
+    if (!holidays.length) return '';
+    const translationPrefix = game.time.calendar.translationPrefix;
+    return '<div style="margin-left: 12px;">' + holidays.map(h => {
+      const key = `${translationPrefix}.holiday.${h.title}`;
+      const name = game.i18n.has(key) ? game.i18n.localize(key) : h.title;
+      return `<div><i style="color: ${DSACalendarEntry.CATEGORY_COLORS[h.category]}" class="${DSACalendarEntry.CATEGORY_ICONS[h.category]}"></i> ${name}</div>`;
+    }).join('') + '</div>';
+  }
+
+  static async findHolidays(components) {
+    const entries = await DSACalendarPicker.fromCache(components);
+    return entries.filter(entry => entry.from.month === components.month
+      && (entry.recurring || entry.from.year === components.year)
+      && (entry.from.dayOfMonth - 1) <= components.dayOfMonth && components.dayOfMonth <= ((entry.to?.dayOfMonth || entry.from.dayOfMonth) - 1)
+    );
   }
 
   _updateTooltips(tooltipContent, detailsContent, img) {

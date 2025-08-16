@@ -1,6 +1,7 @@
 import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
   static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
@@ -120,17 +121,9 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     return `${hourPart} ${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
 
-  findHolidays(components) {
-    return CONFIG.time.worldCalendarConfig.holidays.values.filter(h =>
-      h.month === components.month &&
-      h.dayStart <= components.dayOfMonth &&
-      components.dayOfMonth < (h.dayEnd || h.dayStart + 1)
-    );
-  }
-
-  static seasonParts(calendar, components, _options) {
+  static async seasonParts(calendar, components, _options) {
     const season = calendar.seasons.values[components.season];
-    
+
     return {
       seasonName: calendar.translate(season.name),
       moon: calendar.translate(components.moon?.phase.name || ''),
@@ -138,38 +131,46 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       h: components.hour.toString().padStart(2, '0'),
       m: components.minute.toString().padStart(2, '0'),
       s: components.second.toString().padStart(2, '0'),
-      holiday: calendar.findHolidays(components) || null,
+      holiday: await game.dsa5.apps.CalendarPicker.constructor.findHolidays(components) || null,
     };
   }
 
-  static formatSeason(calendar, components, options) {
-    const { seasonName, moon, dayOfWeek, h, m, s, holiday } = calendar.constructor.seasonParts(calendar, components, options);
+  static async formatSeason(calendar, components, options) {
+    const { seasonName, moon, dayOfWeek, h, m, s, holiday } = await calendar.constructor.seasonParts(calendar, components, options);
 
-    let result = `${seasonName}, ${moon}<br/>${dayOfWeek} - ${h}:${m}:${s}`;
+    const parts = [
+      `${seasonName}, ${moon}`,
+      `${dayOfWeek} - ${h}:${m}:${s}`
+    ];
 
-    if (holiday) {
-      result += holiday.map(h => `<br/>${calendar.translate(`holiday.${h.name}`)}`);
+    if (holiday?.length) {
+      const holidayTexts = holiday.map(h => {
+        const key = `${game.time.calendar.translationPrefix}.holiday.${h.title}`;
+        const name = game.i18n.has(key) ? game.i18n.localize(key) : h.title;
+        return `<i style="color: ${DSACalendarEntry.CATEGORY_COLORS[h.category]}" class="${DSACalendarEntry.CATEGORY_ICONS[h.category]}"></i> ${name}`;
+      });
+      parts.push(...holidayTexts);
     }
 
-    return `<div class="center">${result}</div>`;
+    return `<div class="center">${parts.join('<br/>')}</div>`;
   }
 
   timeToComponents(time = 0) {
     const components = super.timeToComponents(time);
-    
+
     const { year, month, dayOfMonth } = components;
     let season;
-    for ( season=this.seasons.values.length - 1; season>=0; season-- ) {
-      const s = this.seasons.values[season];      
-      if(s.monthStart == month && s.dayStart <= dayOfMonth) break;
-      if ( s.monthStart < month ) break;
+    for (season = this.seasons.values.length - 1; season >= 0; season--) {
+      const s = this.seasons.values[season];
+      if (s.monthStart == month && s.dayStart <= dayOfMonth) break;
+      if (s.monthStart < month) break;
     }
     components.season = season;
 
     // Calculate moon phase
     components.moon = null;
 
-    if (this.moon) {      
+    if (this.moon) {
       const { anchor, cycle, values } = this.moon;
 
       // Calculate total days since anchor date
@@ -226,6 +227,6 @@ Hooks.on('updateWorldTime', () => {
   if (game.dsa5.apps.CalendarPicker) game.dsa5.apps.CalendarPicker.refreshCalendar();
 
   if (!DSA5_Utility.isActiveGM(true) || !game.canvas) return;
-  
+
   DSAWorldCalendar.autoDayLight();
 });

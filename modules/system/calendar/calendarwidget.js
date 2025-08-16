@@ -62,8 +62,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const secondsInDay = this.constructor.calculateSecondsInDay(components);
 
         data.components = components;
-        data.dateString = game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
-        data.dateTooltip = game.time.calendar.format(game.time.worldTime, 'formatSeason');
+        data.dateString = await game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
+        data.dateTooltip = await game.time.calendar.format(game.time.worldTime, 'formatSeason');
         data.autoLightEnabled = game.settings.get('dsa5', 'calendarSettings').lightByDayTime;
         data.isGM = game.user.isGM;
         data.dayTimeBackground = this.constructor.dayTimeBackground(components);
