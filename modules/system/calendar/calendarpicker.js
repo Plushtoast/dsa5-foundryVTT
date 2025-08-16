@@ -221,30 +221,55 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const calendar = game.time.calendar;
+
     data.isGM = game.user.isGM;
-    data.calendar = calendar;
-    data.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
-    data.components = calendar.timeToComponents(game.time.worldTime);
+    data.calendar = calendar;   
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
-    data.currentMonth = calendar.translate(calendar.months.values[data.components.month].name);
-    data.currentDay = data.components.dayOfMonth + 1;
-    data.calendarSize = Math.min(window.innerWidth, window.innerHeight) * 0.75;
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+    
+    return data;
+  }
 
-    const currentDateValue = data.components.month * 100 + data.components.dayOfMonth;
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    switch ( partId ) {
+      case "config": await this._prepareConfigContext(context, options); break;
+      case "events": await this._prepareEventsContext(context, options); break;
+      case "calendar": await this._prepareCalendarContext(context, options); break;
+    }
+    return context;
+  }
 
-    data.sortedEntries = (await DSACalendarPicker.fromCache(data.components))
+  async _prepareConfigContext(context, options) {
+    const calendar = game.time.calendar;
+    context.calendarSetting = game.settings.settings.get('dsa5.calendar');
+    context.selectedCalendar = game.settings.get('dsa5', 'calendar');
+    context.maxHoursPerDay = calendar.days.hoursPerDay;
+    context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+    context.calendarJournals = game.settings.get('dsa5', 'calendarJournals'); 
+  }
+
+  async _prepareCalendarContext(context, options) {
+    const calendar = game.time.calendar;
+    if(!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+    context.worldCalendarConfig = CONFIG.time.worldCalendarConfig; 
+    context.currentMonth = calendar.translate(calendar.months.values[context.components.month].name);
+    context.currentDay = context.components.dayOfMonth + 1;
+    context.calendarSize = Math.min(window.innerWidth, window.innerHeight) * 0.75;
+  }
+
+  async _prepareEventsContext(context, options) {
+    const calendar = game.time.calendar;
+    if(!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+
+    const currentDateValue = context.components.month * 100 + context.components.dayOfMonth;
+    context.sortedEntries = (await DSACalendarPicker.fromCache(context.components))
       .sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
-    data.calendarSetting = game.settings.settings.get('dsa5.calendar');
-    data.selectedCalendar = game.settings.get('dsa5', 'calendar');
-    data.maxHoursPerDay = calendar.days.hoursPerDay;
-    data.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
-    data.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
-    data.dayCategories = Object.entries(DSACalendarEntry.CATEGORY_CHOICES).reduce((acc, [key, val]) => {
+
+    context.dayCategories = Object.entries(DSACalendarEntry.CATEGORY_CHOICES).reduce((acc, [key, val]) => {
       acc[key] = { key, name: val, color: DSACalendarEntry.CATEGORY_COLORS[key], icon: DSACalendarEntry.CATEGORY_ICONS[key] };
       return acc;
     }, {});
-    return data;
   }
 
   async #onDateChange(ev) {
@@ -313,22 +338,16 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async refreshCalendar() {
     if (this.rendered) {
-      const components = game.time.calendar.timeToComponents(game.time.worldTime);
-      const refreshedTimePart = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', {
-        components,
-        calendar: game.time.calendar,
-        currentMonth: game.time.calendar.translate(game.time.calendar.months.values[components.month].name),
-        worldCalendarConfig: CONFIG.time.worldCalendarConfig,
-        currentDay: components.dayOfMonth + 1,
-      });
+      const context = { calendar: game.time.calendar, };
+      await this._prepareCalendarContext(context, {});
+      const refreshedTimePart = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', context);
       const div = document.createElement('div');
       div.innerHTML = refreshedTimePart;
       this.element.querySelector('.calendarDateChange').innerHTML = div.querySelector('.calendarDateChange').innerHTML;
       this.#dateFormListeners();
       this._drawCalendar();
 
-      this.render({ force: true, parts: ['events'] })
-      //todo also refresh event list
+      this.render({ force: true, parts: ['events'] });
     }
   }
 
