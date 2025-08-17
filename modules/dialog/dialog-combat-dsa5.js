@@ -636,7 +636,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static combatInWaterModifiers(testData, formData, html, actor) {
     let waterOptions = Number(formData.waterOptions) || 0;
-
+    
     const token = actor.getActiveTokens()[0] || actor.token;
     if (token) {
       const moveAction = token.document.movementAction;
@@ -653,6 +653,8 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     }
 
+    const waterIndex = html.find('[name="waterOptions"]').prop('selectedIndex');
+
     if (!waterOptions) return [];
 
     const result = [{
@@ -661,7 +663,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }];
 
     const source = testData.source;
-    if (source.type === 'trait' || waterOptions >= -2) return result;
+    if (source.type === 'trait' || waterIndex < 2) return result;
 
     const combatInWater = game.i18n.localize('LocalizedIDs.combatInWater');
     const weaponMadeForWater = getProperty(source, 'system.effect.attributes')?.includes(combatInWater);
@@ -680,7 +682,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     const isGoodWeapon = DSA5.goodWeaponsForWater.has(reverseCombatskill);
-    const isDeepWater = waterOptions < -4;
+    const isDeepWater = waterOptions == 4;
 
     let damageBonus = 1;
     if (!isGoodWeapon) {
