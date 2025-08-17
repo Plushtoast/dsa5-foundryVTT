@@ -1306,7 +1306,8 @@
         "threeD20Check": "3W20 Probe",
         "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)",
         "groupcheck": "Gruppenprobe",
-        "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)"
+        "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)",
+        "payDrag": "Bezahlen bei Drag & Drop"
     },
     "WEAPON": {
         "loading": "Ladestatus: {status}",

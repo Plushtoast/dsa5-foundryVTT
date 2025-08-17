@@ -74,6 +74,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         const dayOfWeek = calendar.days.values[convertedComponents.dayOfWeek]
         entry.monthShort = calendar.translate(month.abbreviation);
         entry.weekdayShort = calendar.translate(dayOfWeek.abbreviation);
+        entry.weekDayLong = calendar.translate(dayOfWeek.name);
         entry.from.monthLong = calendar.translate(month.name);
         entry.categoryName = game.i18n.localize(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
         entry.color = DSACalendarEntry.CATEGORY_COLORS[entry.category];

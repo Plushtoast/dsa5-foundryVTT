@@ -79,6 +79,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       })
     );
 
+    const year = components.year;
     const validJournals = journals.filter(Boolean);
     const entries = validJournals
       .flatMap(journal =>
@@ -89,7 +90,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       )
       .flatMap(page =>
         Object.entries(page.system.calendarentries)
-          .filter(([_key, entry]) => entry.recurring || (!entry.recurring && entry.from.year === components.year))
+          .filter(([_key, entry]) => (entry.recurring && entry.from.year <= year) || (!entry.recurring && entry.from.year === year))
           .map(([key, entry]) => {
             DSACalendarEntry.prepareCalendarEntry(entry);
             entry.isOwner = page.isOwner;
@@ -110,7 +111,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         from: {
           dayOfMonth: holiday.dayStart + 1,
           month: holiday.month,
-          year: components.year,
+          year,
           day: dayOffset + holiday.dayStart,
         },
         to: {

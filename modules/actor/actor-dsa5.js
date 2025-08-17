@@ -137,6 +137,16 @@ export default class Actordsa5 extends Actor {
     };
   }
 
+  speedByMovementType(movementType) {
+    switch (movementType) {
+      case 'fly':
+        return this.system.status.speed.airMax;
+      case 'swim':
+        return this.system.status.speed.waterMax;
+    }
+    return this.system.status.speed.max;
+  }
+
   applyActiveEffects() {
     const overrides = {};
     this.statuses ??= new Set();
@@ -1777,8 +1787,8 @@ export default class Actordsa5 extends Actor {
       .get()
 
     const focusRuleModifiers = [];
-    for(const el of html.find('.focusMods')) {
-      for(const btn of el.querySelectorAll('button[aria-pressed=true]')) {
+    for (const el of html.find('.focusMods')) {
+      for (const btn of el.querySelectorAll('button[aria-pressed=true]')) {
         focusRuleModifiers.push({
           name: game.i18n.localize(btn.dataset.name),
           value: Number(btn.dataset.value),

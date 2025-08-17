@@ -223,29 +223,26 @@ export class ActorDataModel extends DSADataModel {
 
   _processItemWeights(data, containers, wornArmor) {
     for (const item of this.parent.items) {
-      // Handle money weight
       if (ActorDataModel.moneyHasWeight && item.type === 'money') {
         item.system.preparedWeight = parseFloat((item.system.weight.value * item.system.quantity.value).toFixed(3));
         data.totalWeight += Number(item.system.preparedWeight);
         this.moneyWeight += Number(item.system.preparedWeight);
         continue;
       }
-      
-      // Handle equipment categories
+
       if (DSA5.equipmentCategories.has(item.type)) {
         const parentId = item.system.parent_id;
         if (parentId && parentId !== item._id && containers.has(parentId)) {
           containers.get(parentId).push(item);
           continue;
         }
-        
+
         item.system.preparedWeight = parseFloat((item.system.weight.value * item.system.quantity.value).toFixed(3));
-        
+
         if (item.type === 'armor') {
-          // Only count worn armor once, all other copies count fully
-          data.totalWeight += parseFloat((item.system.weight.value * 
+          data.totalWeight += parseFloat((item.system.weight.value *
             (item.system.worn.value ? Math.max(0, item.system.quantity.value - 1) : item.system.quantity.value)).toFixed(3));
-          
+
           if (item.system.worn.value) wornArmor.push(item);
         } else {
           data.totalWeight += Number(item.system.preparedWeight);
@@ -279,7 +276,7 @@ export class ActorDataModel extends DSADataModel {
           bagweight += child.system.preparedWeight;
         }
       }
-      
+
       if (!topLevel) {
         totalWeight += bagweight + elem.system.preparedWeight;
       } else if (elem.system.worn.value) {
@@ -321,14 +318,11 @@ export class ActorDataModel extends DSADataModel {
       }
     }
 
-    // Familiars are considered mages
     data.isMage ||= data.isFamiliar;
-    
-    // Determine if character can advance
+
     data.canAdvance = this.parent.isOwner && (this.parent.type === 'character' || data.isFamiliar || data.isPet);
     this.parent.canAdvance = data.canAdvance;
-    
-    // Calculate experience for advanceable characters
+
     if (data.canAdvance) {
       data.details.experience.current = data.details.experience.total - data.details.experience.spent;
       data.details.experience.description = DSA5_Utility.experienceDescription(data.details.experience.total);
@@ -338,9 +332,9 @@ export class ActorDataModel extends DSADataModel {
   _calculateBasicAttributes(data) {
     if (this.parent.type === 'character' || this.parent.type === 'npc') {
       data.status.wounds.current = data.status.wounds.initial + data.characteristics.ko.value * 2;
-      data.status.soulpower.value = (data.status.soulpower.initial || 0) + 
+      data.status.soulpower.value = (data.status.soulpower.initial || 0) +
         Math.round((data.characteristics.mu.value + data.characteristics.kl.value + data.characteristics.in.value) / 6);
-      data.status.toughness.value = (data.status.toughness.initial || 0) + 
+      data.status.toughness.value = (data.status.toughness.initial || 0) +
         Math.round((data.characteristics.ko.value + data.characteristics.ko.value + data.characteristics.kk.value) / 6);
       data.status.wounds.min = -1 * data.characteristics.ko.value;
     } else if (this.parent.type === 'creature') {
@@ -349,53 +343,45 @@ export class ActorDataModel extends DSADataModel {
       data.status.karmaenergy.current = data.status.karmaenergy.initial;
     }
 
-    // Calculate max wounds with modifiers
     data.status.wounds.max = Math.round(
-      (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) * 
+      (data.status.wounds.current + data.status.wounds.modifier + data.status.wounds.advances) *
       data.status.wounds.multiplier + data.status.wounds.gearmodifier
     );
 
-    // Calculate fate points
-    data.status.fatePoints.max = Number(data.status.fatePoints.current) + 
+    data.status.fatePoints.max = Number(data.status.fatePoints.current) +
       Number(data.status.fatePoints.modifier) + data.status.fatePoints.gearmodifier;
-    
-    // Calculate regeneration values
-    data.status.regeneration.LePmax = data.status.regeneration.LePTemp + 
+
+    data.status.regeneration.LePmax = data.status.regeneration.LePTemp +
       data.status.regeneration.LePMod + data.status.regeneration.LePgearmodifier;
-    data.status.regeneration.KaPmax = data.status.regeneration.KaPTemp + 
+    data.status.regeneration.KaPmax = data.status.regeneration.KaPTemp +
       data.status.regeneration.KaPMod + data.status.regeneration.KaPgearmodifier;
-    data.status.regeneration.AsPmax = data.status.regeneration.AsPTemp + 
+    data.status.regeneration.AsPmax = data.status.regeneration.AsPTemp +
       data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
   }
 
   _calculateEnergyPoints(data) {
-    // Ensure values are initialized
     data.status.astralenergy.rebuy ||= 0;
     data.status.karmaenergy.rebuy ||= 0;
     data.status.astralenergy.permanentLoss ||= 0;
     data.status.karmaenergy.permanentLoss ||= 0;
 
-    // Calculate permanent loss sums
-    data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss - 
+    data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss -
       data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear;
-    data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss - 
+    data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss -
       data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear;
 
     const guide = data.guidevalue;
-    
-    // Calculate energy points for familiars or guided entities
+
     if (data.isFamiliar || (guide && this.parenttype !== 'creature')) {
       data.status.astralenergy.current = data.status.astralenergy.initial;
       data.status.karmaenergy.current = data.status.karmaenergy.initial;
 
-      // Add magical energy based on characteristics
       if (data.characteristics[guide.magical]) {
         data.status.astralenergy.current += Math.round(
           data.characteristics[guide.magical].value * data.energyfactor.magical
         );
       }
 
-      // Add clerical energy based on characteristics
       if (data.characteristics[guide.clerical]) {
         data.status.karmaenergy.current += Math.round(
           data.characteristics[guide.clerical].value * data.energyfactor.clerical
@@ -403,26 +389,24 @@ export class ActorDataModel extends DSADataModel {
       }
     }
 
-    // Calculate max energy points with all modifiers
-    data.status.astralenergy.max = data.status.astralenergy.current + 
-      data.status.astralenergy.modifier + data.status.astralenergy.advances + 
+    data.status.astralenergy.max = data.status.astralenergy.current +
+      data.status.astralenergy.modifier + data.status.astralenergy.advances +
       data.status.astralenergy.gearmodifier - data.status.astralenergy.permanentLossSum;
-      
-    data.status.karmaenergy.max = data.status.karmaenergy.current + 
-      data.status.karmaenergy.modifier + data.status.karmaenergy.advances + 
+
+    data.status.karmaenergy.max = data.status.karmaenergy.current +
+      data.status.karmaenergy.modifier + data.status.karmaenergy.advances +
       data.status.karmaenergy.gearmodifier - data.status.karmaenergy.permanentLossSum;
-      
-    // Calculate soul power and toughness
-    data.status.soulpower.max = data.status.soulpower.value + 
+
+    data.status.soulpower.max = data.status.soulpower.value +
       data.status.soulpower.modifier + data.status.soulpower.gearmodifier;
-      
-    data.status.toughness.max = data.status.toughness.value + 
+
+    data.status.toughness.max = data.status.toughness.value +
       data.status.toughness.modifier + data.status.toughness.gearmodifier;
   }
 
   _calculateDefenseValues(data) {
     data.status.dodge.value = Math.round(data.characteristics.ge.value / 2) + data.status.dodge.gearmodifier;
-    data.status.dodge.max = Number(data.status.dodge.value) + Number(data.status.dodge.modifier) + 
+    data.status.dodge.max = Number(data.status.dodge.value) + Number(data.status.dodge.modifier) +
       Number(game.settings.get('dsa5', 'higherDefense')) / 2;
   }
 
@@ -430,12 +414,12 @@ export class ActorDataModel extends DSADataModel {
     const encumbrance = this.calcEncumbrance(data);
     const horse = Riding.isRiding(this.parent) ? Riding.getHorse(this.parent) : undefined;
     const fixated = this.parent.statuses.has('fixated');
-    
+
     this.calcInitiative(data, encumbrance, horse);
     this.prepareSwarm(data);
     this.effectivePain(data);
     this.calcSpeed(data, fixated, horse);
-    
+
     if (fixated) {
       data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
     }
@@ -446,7 +430,7 @@ export class ActorDataModel extends DSADataModel {
   }
 
   baseInitiative(data) {
-    data.status.initiative.value = Math.round((data.characteristics.mu.value + data.characteristics.ge.value) / 2) + 
+    data.status.initiative.value = Math.round((data.characteristics.mu.value + data.characteristics.ge.value) / 2) +
       (data.status.initiative.modifier || 0);
   }
 
@@ -462,9 +446,9 @@ export class ActorDataModel extends DSADataModel {
       }
     } else {
       data.status.initiative.value += (data.status.initiative.gearmodifier || 0) - Math.min(4, encumbrance);
-      
+
       const baseInit = Number((0.01 * data.status.initiative.value).toFixed(2));
-      
+
       data.status.initiative.value *= data.status.initiative.multiplier || 1;
       data.status.initiative.value = Math.round(data.status.initiative.value) + baseInit;
     }
@@ -528,6 +512,8 @@ export class ActorDataModel extends DSADataModel {
         fixated,
         false
       );
+    } else {
+      data.status.speed.airMax = 0;
     }
 
     //todo this is not ready for swim
@@ -536,11 +522,11 @@ export class ActorDataModel extends DSADataModel {
 
   _calculateSpeedType(baseSpeed, encumbrance, painMalus, feelsPain, multiplier, fixated, groundOnly = true) {
     let speed = Math.round(Math.max(0, baseSpeed - encumbrance) * multiplier);
-    
+
     if (feelsPain) {
       speed = Math.max(0, speed - painMalus);
     }
-    
+
     return this._applyStatusEffectsToSpeed(speed, fixated, groundOnly);
   }
 
@@ -568,11 +554,11 @@ export class ActorDataModel extends DSADataModel {
       a.system.damageToolTip = EquipmentDamage.damageTooltip(a);
       return (sum += a.system.calculatedEncumbrance);
     }, 0);
-    
+
     // Apply riding bonus and special abilities
     const ridingModifier = Riding.isRiding(this.parent) ? -1 : 0;
-    return Math.max(0, encumbrance - 
-      SpecialabilityRulesDSA5.abilityStep(actorData, 'LocalizedIDs.inuredToEncumbrance') + 
+    return Math.max(0, encumbrance -
+      SpecialabilityRulesDSA5.abilityStep(actorData, 'LocalizedIDs.inuredToEncumbrance') +
       ridingModifier);
   }
 
@@ -580,19 +566,16 @@ export class ActorDataModel extends DSADataModel {
     const count = Math.max(1, Number(data.swarm.count) || 1);
     if (count < 2) return;
 
-    // Save the base wounds value
     data.swarm.maxwounds = data.status.wounds.max;
-    
-    // Multiply wounds by swarm count
+
     data.status.wounds.max *= count;
 
-    // Calculate effective swarm bonuses based on remaining health
     const effectiveCount = Math.min(
-      Math.ceil(Math.max(0, data.status.wounds.value) / data.swarm.maxwounds), 
+      Math.ceil(Math.max(0, data.status.wounds.value) / data.swarm.maxwounds),
       count
     );
     const groupSize = Math.max(1, Number(data.swarm.gg) || 1);
-    
+
     data.swarm.effectiveCount = effectiveCount;
     data.swarm.attack = Math.min(10, Math.floor(effectiveCount / groupSize));
     data.swarm.parry = -1;
@@ -601,18 +584,16 @@ export class ActorDataModel extends DSADataModel {
 
   effectivePain(data) {
     let pain = data.condition.inpain || 0;
-    
-    // Apply pain reduction from advantages and abilities (if pain < 4)
+
     if (pain < 4) {
       pain -= AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.ruggedFighter') +
-              AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.ruggedAnimal') +
-              (SpecialabilityRulesDSA5.hasAbility(this.parent, 'LocalizedIDs.traditionKor') ? 1 : 0);
+        AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.ruggedAnimal') +
+        (SpecialabilityRulesDSA5.hasAbility(this.parent, 'LocalizedIDs.traditionKor') ? 1 : 0);
     }
-    
-    // Apply pain increase from disadvantages
+
     if (pain > 0) {
-      pain += AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.sensitiveToPain') + 
-              AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.fragileAnimal');
+      pain += AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.sensitiveToPain') +
+        AdvantageRulesDSA5.vantageStep(this.parent, 'LocalizedIDs.fragileAnimal');
     }
 
     // Clamp pain between 0 and 4
@@ -623,7 +604,6 @@ export class ActorDataModel extends DSADataModel {
     const wornArmor = [];
     const itemModifiers = {};
 
-    // Get all relevant items that can provide modifiers
     const relevantItems = this.parent.items.filter(item => {
       if (['meleeweapon', 'rangeweapon', 'armor', 'equipment'].includes(item.type)) {
         if (item.system.worn.value) {
@@ -635,15 +615,12 @@ export class ActorDataModel extends DSADataModel {
       return ['advantage', 'specialability', 'disadvantage'].includes(item.type);
     });
 
-    // Build modifiers from each item
     relevantItems.forEach(item => this._buildGearAndAbilityModifiers(itemModifiers, item));
 
-    // Check for armor compensation
     if (wornArmor.length > 0) {
       this._getArmorCompensation(this.parent, wornArmor, itemModifiers);
     }
 
-    // Apply all collected modifiers
     this._applyModiferTransformations(itemModifiers);
   }
 
@@ -651,18 +628,15 @@ export class ActorDataModel extends DSADataModel {
     const effect = item.system.effect.value;
     if (!effect) return;
 
-    // Parse effect string for modifiers
     for (let mod of `${effect}`.split(/,|;/).map(x => x.trim())) {
       let vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
       if (vals.length == 2 && !isNaN(vals[0])) {
-        // Create modifier element
         let elem = {
           value: Number(vals[0]) * (item.system.step ? Number(item.system.step.value) || 1 : 1),
           source: item.name,
           type: item.type,
         };
 
-        // Add to appropriate modifier list
         if (itemModifiers[vals[1]] === undefined) {
           itemModifiers[vals[1]] = [elem];
         } else {
@@ -676,7 +650,6 @@ export class ActorDataModel extends DSADataModel {
     const armorCompensation = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.inuredToEncumbrance');
     const armorEncumbrance = wornArmors.reduce((sum, x) => sum + Number(x.system.encumbrance.value), 0);
 
-    // If armor compensation is greater than encumbrance, remove armor penalties
     if (armorCompensation > armorEncumbrance) {
       const modKeys = [game.i18n.localize('CHARAbbrev.GS'), game.i18n.localize('CHARAbbrev.INI')];
       for (let modkey of modKeys) {
@@ -688,18 +661,14 @@ export class ActorDataModel extends DSADataModel {
 
   _applyModiferTransformations(itemModifiers) {
     this.itemModifiers = {};
-    
-    // Process each modifier and apply it to the appropriate field
+
     for (const key of Object.keys(itemModifiers)) {
       let shortCut = DSA5.knownShortcuts[key.toLowerCase()];
       if (shortCut) {
-        // Sum up the values from all sources of this modifier
         const modSum = itemModifiers[key].reduce((prev, cur) => prev + cur.value, 0);
 
-        // Apply to the appropriate field using the shortcut path
         this[shortCut[0]][shortCut[1]][shortCut[2]] += modSum;
 
-        // Store for display
         this.itemModifiers[key] = {
           value: modSum,
           sources: itemModifiers[key].map(x => x.source),

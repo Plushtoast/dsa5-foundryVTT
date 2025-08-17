@@ -36,7 +36,6 @@
         "Du musst Tokens ins Ziel nehmen, um von der Automatisierung von Vergleichsproben zu profitieren.",
         "Du solltest Dinge aus Kompendien nur importieren falls es unbedingt erforderlich ist und niemals das komplette Kompendium (keine Bugfixes und Updates, schlechte Performance).",
         "Foundry selbst beinhaltet auch bereits tausende Icons für Ausrüstung.",
-
         "Im Meistermenü kannst du verschiedene Zufallsgeneratoren finden, wenn du das Modul \"Werkstatt des Meisters\" besitzt.",
         "Du kannst die Bruchfaktorprobe und Waffen- und Rüstungsbeschädigung in den Optionen aktivieren",
         "Modifikatoren auf Grund der Art von Kreaturen werden automatisch hinzugefügt. Du kannst deinen Waffen als Dömane \"geweiht\" oder \"magisch\" hinzufügen, um diese Eigenarten zu überwinden.",
@@ -45,19 +44,15 @@
         "Du kannst dem Meistermenü neue Helden und Feinde durch Drag and Drop hinzufügen.",
         "In den Optionen lässt sich das automatische Token-beim-Drop-aufs-Canvas-Umbennen aktivieren.",
         "Mit dem Linkbutton neben dem Charakternamen auf dem Charakterblatt kannst du den Charakter auf die Hotbar ziehen,",
-
         "Das Grundregelwerk Modul kann Sichtbereiche automatisch einstellen.",
         "Die Bibliothek, der Journalbrowser, das Meistermenü und das Angriffsmenü können über ein Taste aktiviert und geschlossen werden.",
         "Im System sind Tokenrahmen für deine eigene Tokens enthalten.",
         "Das Tokenizer Modul wird automatisch konfiguriert, so dass du schnell die DSA Token Rahmen für eigenes verwenden kannst.",
-
         "Das Spielermenü hilft dir bei Beschwörungen",
         "Im Grundregelwerkmodul findest du nützliche Funktionen für Fackeln und sonstige Lichtquellen.",
         "In den Optionen kannst du den Modifikator für Fremdzauber aktivieren.",
         "Würfelsysteme von \"Rollsmith\" können den DSA Würfeln zugeordnet werden.",
-
         "Im Ulisses und Foundry Discord wird dir geholfen.",
-
         "Füge deinem Charakter ein Dämonenmal hinzu, um den Kreis der Verdammnis zu verfolgen.",
         "Du kannst Waffen bauen die gegen bestimmte Kreaturentypen Bonusschaden anrichten",
         "Du kannst magische Rüstungen bauen",
@@ -70,16 +65,11 @@
         "Aktiviere das Dere Positioning System, um Händler nur noch aus der Nähe kontaktieren zu können.",
         "Aktiviere das Dere Positioning System, um den Distanzmodifikator für Fernkampfangriffe automatisch zu setzen.",
         "Das Grundregelwerk enthält Funktionen für die automatische Konfiguration der Sicht.",
-
         "Update regelmäßig sowohl Foundry, das DSA System und alle Module.",
-
         "Macht’s gut, und danke für den Fisch.",
-
         "Die Tokenbar lässt sich verschieben und anpassen.",
         "Du kannst Charaktergrafiken und Bilder in Journals direkt per Drag and Drop auf die Szene ziehen.",
-
         "Du kannst Gegenstände per Drag & Drop auf der Karte ablegen.",
-
         "Du kannst Waffen einhändige Waffen auch zweihändig führen.",
         "Du kannst zweihändige Waffen auch einhändig führen.",
         "Über den Gegenstand Information kannst du den Spielern Wissen in Abhängigkeit von einer Probe zukommen lassen.",
@@ -90,21 +80,17 @@
         "Einige nützliche DSA Funktionen lassen sich über Hotkeys aufrufen.",
         "Das Herbarium beinhaltet Tools um die Pflanzensuche zu vereinfachen.",
         "Das Grundregelwerk beinhaltet Funktionen um unterschiedliche Lichtquellen am Token zu aktivieren.",
-
         "Zaubererweiterungen können Zauber über Active Effects modifizieren",
         "Du kannst für Zauber ein Flächentemplate einstellen.",
         "Der Spielleiter kann einzelne Tabs von Ausrüstungsgegenständen verbergen.",
         "Informationsitems können in Journalen eingebettet werden.",
         "Das Volumen von Traditionsartefakten kann automatisch berechnet werden.",
-
         "Markierst du zwei Token kannst du über den erscheinenden Button aufsitzen (reiten)",
         "Reiterkampf wird unterstützt.",
-
         "Mit dem Befehl @PostChat[beispiel text bla] kannst du Texte vorbereiten, um sie Spielern im Chat zu posten.",
         "Hat eine Kreatur mehrere Aktionen wird dies im Initiative Tracker mit einer rot hinterlegten Zahl aufgezeigt.",
         "Sturzschaden kann über den Kampftab ausgewürfelt werden.",
         "Wenn du über den Talente Button in der Tokenhotbar hoverst und Buchstaben eingibst, kannst du die Talentliste filtern.",
-
         "Das Grundregelwerkmodul bringt Unterstützung für die Charaktergenerierung.",
         "Um einen schnellen Überblick über die Fähigkeiten eines Charakters zu erhalten, kannst du auf dem Talente Tab die trainierten Fähigkeiten über den Filter Button anzeigen.",
         "Du kannst die Tokenhotbar in der Konfiguration anpassen.",
@@ -114,15 +100,11 @@
         "Spieler können von Notizen editieren von Akteuren, wo sie mindestens die Berechtigung \"Eingeschränkt\" haben.",
         "Du kannst in der Bibliothek den Stöbermodus aktivieren, um alle Elemente von DSA etwas angenehmer durchzulesen und kennenzulernen.",
         "Der Spielleiter kann die Ansicht des Heldenblatts in der Headerleiste auf die limitierte Spieleransicht umstellen.",
-
         "Das Modul Yendors UI erlaubt die Verwendung des Charakterbogens auf deinem Handy.",
-
         "VT-Tom hat ein Video Module mit tonnenweise Exklärvideos für Foundry VTT & DSA gebaut.",
-
         "Über die Meister Hotbar, kannst du ein Menü zum Verwalten von Proviant und widrigen Umständen finden.",
         "Die Sichtautomatisierung kann auch mit einberechnen ob ein Token im Licht oder nicht steht.",
         "NSCs mit mehreren ausgerüsteten Waffen erhalten beim Ziehen auf die Map zufällig nur eine davon ausgerüstet.",
-
         "Spieler können sich bei NSC mit \"Limited\" Benutzerrechten Notizen eintragen.",
         "Sonderfertigkeiten von Traditionsartefakten übertragen Boni, wenn sie einem Traditionsartefakt zugewiesen wurden und dieses auch in der Hand getragen wird.",
         "Mit @Ap[15] kannst du in Journals einen Prompt zum Abenteuerpunkte auszahlen anlegen.",
@@ -136,15 +118,12 @@
         "Der SL kann am Combat tracker den Modus zu einer Prügelei umschalten.",
         "Über das Context Menü von Gegenständen im Inventar kannst du einen Tausch mit anderen Spielern auslösen.",
         "Ausrüstungsgegenstände können nun bei Drag & Drop aus der Bibliothek direkt bezahlt werden, wenn beim Start des Drags gezielt die Münzen aufgenommen werden.",
-
         "Active Effects erlauben es dir, deinen Spielern und Bösewichten Auren mit Effekten zu geben",
         "Du kannst ein Kompendium mit deinen ganz eigenen Währungen verwenden, um immer passend für die jeweilige Region gerüstet zu sein.",
         "Über das Kontextmenü von ausgerüsteten Nahkampfwaffen, kannst du diese auch werfen.",
         "Mit dem Grundregelwerk-Modul lassen sich die Erfolgswahrscheinlichkeiten bei Proben im Voraus anzeigen.",
-
         "Du kannst deine gierigen Spieler das volle Gewicht ihrer Plündereien spüren lassen. Aktiviere dazu die entsprechende Option in den Settings.",
-
-        "Rechtclick auf eine Wurfaufforderung im Chat löst einen verdeckten Wurf an den Spielleiter aus."
-
+        "Rechtclick auf eine Wurfaufforderung im Chat löst einen verdeckten Wurf an den Spielleiter aus.",
+        "Ziehst du Ausrüstung aus der Bibliothek auf den Charakter und beginnst den Drag auf den Münzen, wird der Gegenstand direkt bezahlt."
     ]
 }

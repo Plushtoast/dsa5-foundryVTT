@@ -101,10 +101,7 @@ export class DSAToken extends Token {
   _onClickLeft2(event) {
     const distanceAccessible = game.user.isGM || !DPS.isEnabled || !this.actor?.isMerchant() || DPS.inDistance(this);
 
-    if (!distanceAccessible)
-      return ui.notifications.warn('DSAError.notInRangeToLoot', {
-        localize: true,
-      });
+    if (!distanceAccessible) return ui.notifications.warn('DSAError.notInRangeToLoot', { localize: true, });
 
     super._onClickLeft2(event);
   };
@@ -119,7 +116,6 @@ export class DSAToken extends Token {
     if (Riding.isRiding(this.actor)) return DSAToken.MOVEMENTTYPES.STANDING;
 
     const lastMovement = this.measureMovementPath(this.document.movementHistory).distance;
-    //const actorSpeed = this.actor?.system.status?.speed.max || 0;
 
     if (lastMovement <= 0) return DSAToken.MOVEMENTTYPES.STANDING;
     if (lastMovement <= 4) return DSAToken.MOVEMENTTYPES.WALKING;
@@ -128,10 +124,9 @@ export class DSAToken extends Token {
 
   _getAnimationMovementSpeed(options) {
     if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return super._getAnimationMovementSpeed(options);
-    
-    if(this.actor) {
-      return this.actor.system.status.speed.max || 1;
-    } 
+
+    if (this.actor) return this.actor.speedByMovementType(options.action) || 1;
+
     return CONFIG.Token.movement.defaultSpeed;
   }
 
@@ -151,7 +146,7 @@ export class DSATokenDocument extends TokenDocument {
   }
 
   async _preUpdateMovement(movement, operation) {
-    if(this.actor?.system.config.lockRotation) {
+    if (this.actor?.system.config.lockRotation) {
       movement.autoRotate = false;
     }
   }
@@ -169,7 +164,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   static COLOR_IMPOSSIBLE = 0xFF0000; // Red
 
   _getWaypointStyle(waypoint) {
-    if(!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getWaypointStyle(waypoint);
+    if (!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getWaypointStyle(waypoint);
     if (!waypoint.explicit && waypoint.next && waypoint.previous && waypoint.actionConfig.visualize
       && waypoint.next.actionConfig.visualize && (waypoint.action === waypoint.next.action)) return { radius: 0 };
     const scale = canvas.dimensions.uiScale;
@@ -192,7 +187,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   _totalDistanceColor(waypoint) {
     if (game.canvas.grid.units != game.i18n.localize('gridUnits')) {
       const user = game.users.get(waypoint.userId);
-      
+
       return user?.color ?? 0x000000
     };
     const colors = this.#colorByMovementAction(waypoint.action);
@@ -201,11 +196,11 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     let previousDistanceSum = waypoint.cost;
     while (previous) {
       previousDistanceSum += previous.cost;
-      previous = previous.previous;      
+      previous = previous.previous;
     }
-    
-    const maxSpeed = this.token.actor?.system?.status?.speed?.max || 0;
-    
+
+    const maxSpeed = this.token.actor?.speedByMovementType(waypoint.action) || 0;
+
     if (previousDistanceSum < maxSpeed) {
       return colors.normal;
     } else if (previousDistanceSum < maxSpeed * 2) {
@@ -215,9 +210,8 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     }
   }
 
-
   _getSegmentStyle(waypoint) {
-    if(!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getSegmentStyle(waypoint);
+    if (!game.settings.get('dsa5', 'dsaTokenRuler')) return super._getSegmentStyle(waypoint);
     if (!waypoint.actionConfig.visualize) return { width: 0 };
 
     const scale = canvas.dimensions.uiScale;
