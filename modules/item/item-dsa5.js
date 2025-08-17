@@ -1049,12 +1049,10 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, spell, actor, tokenId) {
-    let sheet = 'spell';
-    if (['ceremony', 'liturgy'].includes(spell.type)) sheet = 'liturgy';
-
+    const sheet = ['ceremony', 'liturgy'].includes(spell.type) ? 'liturgy' : 'spell';
     const title = `${spell.name} ${game.i18n.localize(`${spell.type}Test`)}${options.subtitle || ''}`;
 
-    let testData = {
+    const testData = {
       opposable: spell.system.effectFormula.value.length > 0,
       source: spell,
       extra: {
@@ -1077,7 +1075,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     const actorModMod = getProperty(actor, `system.${sheet}Stats.spellextension`) || 0;
     const maxMods = Math.max(0, Math.floor(Number(spell.system.talentValue.value) / 4) + actorModMod)
 
-    let data = {
+    const data = {
       rollMode: options.rollMode,
       spellCost: spell.system.AsPCost.value,
       maintainCost: spell.system.maintainCost.value,
@@ -1094,11 +1092,11 @@ class SpellItemDSA5 extends Itemdsa5 {
       characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),
     };
 
-    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : [];
+    const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, spell) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, spell);
     data.situationalModifiers = situationalModifiers;
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: `systems/dsa5/templates/dialog/${sheet}-enhanced-dialog.hbs`,
       data,
@@ -1111,7 +1109,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/spell-card.hbs', title, tokenId);
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/spell-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1188,10 +1186,10 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
 class CombatskillDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
-    let mode = options.mode;
-    let title = item.name + ' ' + game.i18n.localize(mode + 'test');
+    const mode = options.mode;
+    const title = item.name + ' ' + game.i18n.localize(mode + 'test');
 
-    let testData = {
+    const testData = {
       opposable: true,
       source: item,
       mode,
@@ -1201,7 +1199,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       },
     };
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/combatskill-dialog.hbs',
       data: {
@@ -1215,7 +1213,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1337,9 +1335,9 @@ class DiseaseItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    let title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
+    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
 
-    let testData = {
+    const testData = {
       opposable: false,
       source: item,
       extra: {
@@ -1348,10 +1346,10 @@ class DiseaseItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let data = {
+    const data = {
       rollMode: options.rollMode,
     };
-    let situationalModifiers = [];
+    const situationalModifiers = [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item);
     data['situationalModifiers'] = situationalModifiers;
 
@@ -1359,7 +1357,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
       mergeObject(data, options.manualResistance);
     }
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/poison-dialog.hbs',
       data,
@@ -1381,7 +1379,7 @@ class DiseaseItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
+    const cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1536,9 +1534,9 @@ class PoisonItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    let title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
+    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
 
-    let testData = {
+    const testData = {
       opposable: false,
       source: item,
       extra: {
@@ -1547,13 +1545,13 @@ class PoisonItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let data = { rollMode: options.rollMode };
+    const data = { rollMode: options.rollMode };
 
-    let situationalModifiers = [];
+    const situationalModifiers = [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item);
     data.situationalModifiers = situationalModifiers;
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/poison-dialog.hbs',
       data,
@@ -1576,7 +1574,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
+    const cardOptions = item._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1678,10 +1676,10 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
   }
 
   static async setupDialog(ev, options, item, actor, tokenId) {
-    let mode = options.mode;
-    let title = item.name + ' ' + game.i18n.localize(mode + 'test');
+    const mode = options.mode;
+    const title = item.name + ' ' + game.i18n.localize(mode + 'test');
 
-    let testData = {
+    const testData = {
       opposable: options.mode != 'parry',
       source: item,
       mode,
@@ -1693,16 +1691,16 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
     if (!(await this.checkAmmunitionState(item, testData, actor, mode))) return;
 
-    let data = {
+    const data = {
       rollMode: options.rollMode,
       mode,
     };
-    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
+    const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId);
     data.situationalModifiers = situationalModifiers;
     if (options.situationalModifiers) data.situationalModifiers.push(...options.situationalModifiers);
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
@@ -1713,7 +1711,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/combatskill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1782,8 +1780,8 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, skill, actor, tokenId) {
-    let title = skill.name + ' ' + game.i18n.localize('Test') + (options.subtitle || '');
-    let testData = {
+    const title = skill.name + ' ' + game.i18n.localize('Test') + (options.subtitle || '');
+    const testData = {
       opposable: true,
       source: skill,
       extra: {
@@ -1792,7 +1790,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let data = {
+    const data = {
       rollMode: options.rollMode,
       difficultyLabels: DSA5.skillDifficultyLabels,
       modifier: options.modifier || 0,
@@ -1804,7 +1802,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     this.getSituationalModifiers(data.situationalModifiers, actor, data, skill);
     this.prepareFocusRuleModifiers(data, actor, skill);
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/skill-dialog.hbs',
       data,
@@ -1828,7 +1826,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       },
     };
 
-    let cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/skill-card.hbs', title, tokenId);
+    const cardOptions = actor._setupCardOptions('systems/dsa5/templates/chat/roll/skill-card.hbs', title, tokenId);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1862,9 +1860,9 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    let mode = options.mode;
-    let title = item.name + ' ' + game.i18n.localize(mode + 'test');
-    let testData = {
+    const mode = options.mode;
+    const title = item.name + ' ' + game.i18n.localize(mode + 'test');
+    const testData = {
       opposable: options.mode != 'parry',
       source: item,
       mode,
@@ -1874,7 +1872,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       },
     };
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject());
-    let data = {
+    const data = {
       rollMode: options.rollMode,
       mode,
       defenseCountString: game.i18n.format('defenseCount', {
@@ -1885,11 +1883,11 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     const traitType = getProperty(item, 'system.traitType.value');
 
-    let situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
+    const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId);
     data['situationalModifiers'] = situationalModifiers;
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
