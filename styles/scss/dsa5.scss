@@ -2307,14 +2307,18 @@ input[type='search'] {
       min-width: 120px;
 
       .priceDrag {
-        padding-top: 2px;
+        padding-top: 4px;
         min-width: 30px;
         line-height: 10px;
         font-size: 10px;
         cursor: grab;
         text-overflow: ellipsis;
         overflow: hidden;
-      }
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.3);
+        }
+      }      
     }
   }
 
