@@ -2,20 +2,20 @@
     {{> systems/dsa5/templates/chat/roll/test-card.hbs}}
      {{#if (gt testData.successLevel 0)}}
 
-    <div class="card-content chatModifiers {{ifThen preData.showSpellDetails 'onlyTarget' ''}}">
+    <div class="card-content chatModifiers {{ifThen preData.hideSpellDetails 'onlyTarget' ''}}">
         <b>{{localize "effect"}}</b>: ...
         <a class="expand-mods"><i class="fas fa-plus"></i></a>
         <div>
             {{{replaceConditions (diceThingsUp preData.source.system.effect.value)}}}
         </div>
     </div>
-    <div class="card-content {{ifThen preData.showSpellDetails 'onlyTarget' ''}}">
+    <div class="card-content {{ifThen preData.hideSpellDetails 'onlyTarget' ''}}">
         <b>{{localize "castingTime"}}</b>: {{preData.calculatedSpellModifiers.castingTime}}
     </div>
-    <div class="card-content {{ifThen preData.showSpellDetails 'onlyTarget' ''}}">
+    <div class="card-content {{ifThen preData.hideSpellDetails 'onlyTarget' ''}}">
         <b>{{localize "duration"}}</b>: {{preData.source.system.duration.value}}
     </div>
-    <div class="card-content {{ifThen preData.showSpellDetails 'onlyTarget' ''}}">
+    <div class="card-content {{ifThen preData.hideSpellDetails 'onlyTarget' ''}}">
         <b>{{localize "reach"}}</b>: {{preData.calculatedSpellModifiers.reach}}
     </div>
     

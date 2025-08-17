@@ -9,16 +9,6 @@ import { delay } from '../system/helpers/view_helper.js';
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
-function automatedAnimation(successLevel, options = {}) {
-  if (DSA5_Utility.moduleEnabled('autoanimations')) {
-    console.warn('Animations for on use effects not enabled yet');
-  }
-}
-
-function effectDummy(name, changes, duration) {
-  return OnUseEffect.effectBaseDummy(name, changes, duration);
-}
-
 async function callMacro(packName, name, actor, item, qs, args = {}) {
   let result = {};
   if (!game.user.can('MACRO_SCRIPT')) {
@@ -35,11 +25,11 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
 
     if (documents.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'automatedAnimation', 'args', documents[0].command);
+      const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'args', documents[0].command);
       try {
         args.result = result;
-        const context = mergeObject({ automatedAnimation, effectDummy }, this);
-        await fn.call(context, actor, item, item, qs, automatedAnimation, args);
+        const that = new OnUseEffect(item);
+        await fn.call(that, actor, item, item, qs, args);
       } catch (err) {
         ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);

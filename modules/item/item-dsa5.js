@@ -1106,7 +1106,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         await this.getCallbackData(testData, html, actor);
         mergeObject(testData.extra.options, options);
-        testData.showSpellDetails = game.settings.get('dsa5', 'showSpellDetails');
+        testData.hideSpellDetails = game.settings.get('dsa5', 'hideSpellDetails');
         return { testData, cardOptions };
       },
     };
