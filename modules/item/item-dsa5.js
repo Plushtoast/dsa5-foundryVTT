@@ -1881,7 +1881,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       multipleDefenseValue,
     };
 
-    const traitType = getProperty(item, 'system.traitType.value');
+    const traitType = item.system.traitType.value;
 
     const situationalModifiers = actor ? DSA5StatusEffects.getRollModifiers(actor, item, { mode }) : [];
     this.getSituationalModifiers(situationalModifiers, actor, data, item, tokenId);
