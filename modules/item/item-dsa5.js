@@ -347,21 +347,35 @@ export default class Itemdsa5 extends Item {
     return super._onDeleteOperation(documents, operation, user);
   }
 
+  //todo this needs the current movement type
   static parseEffect(effect, actor) {
-    let itemModifiers = {};
-    let regex = new RegExp(game.i18n.localize('CHARAbbrev.GS'), 'gi');
-    for (let mod of effect.split(/,|;/).map((x) => x.trim())) {
-      let vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
-      vals[0] = vals[0].replace(regex, actor.system.status.speed.max);
-      if (vals.length == 2) {
-        if (!isNaN(vals[0]) || /(=)?[+-]\d([+-]\d)?/.test(vals[0]) || /(=)?\d[dDwW]\d/.test(vals[0]) || /=\d+/.test(vals[0]) || /\*\d(\.\d)*/.test(vals[0])) {
-          const key = vals[1].toLowerCase();
-          if (itemModifiers[key] == undefined) itemModifiers[key] = [];
+    const itemModifiers = {};
+    const speedRegex = new RegExp(game.i18n.localize('CHARAbbrev.GS'), 'gi');
+    const valuePatterns = [
+      /(=)?[+-]\d([+-]\d)?/,
+      /(=)?\d[dDwW]\d/,
+      /=\d+/,
+      /\*\d(\.\d)*/
+    ];
+    
+    const modifiers = effect.split(/[,;]/).map(x => x.trim()).filter(Boolean);
+    
+    for (const modifier of modifiers) {
+      const cleanedModifier = modifier.replace(/\s+/g, ' ').trim();
+      const parts = cleanedModifier.split(' ').map(x => x.trim());
 
-          itemModifiers[key].push(vals[0]);
-        }
+      if (parts.length !== 2) continue;
+      
+      const [value, key] = parts;
+      const processedValue = value.replace(speedRegex, actor.system.status.speed.max);
+      
+      if (!isNaN(processedValue) || valuePatterns.some(pattern => pattern.test(processedValue))) {
+        const normalizedKey = key.toLowerCase();
+        itemModifiers[normalizedKey] ??= [];
+        itemModifiers[normalizedKey].push(processedValue);
       }
     }
+    
     return itemModifiers;
   }
 
