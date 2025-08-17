@@ -796,6 +796,8 @@
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
         "combatInWater": "Wasserkampf",
+        "impossibleWeapon": "{weapon} nicht einsetzbar",
+        "notSuitableWeapon": "{weapon} nicht geeignet",
         "RangeMod": {
             "short": "Nah ({fk} auf FK, {tp} TP)",
             "medium": "Mittel ({fk} auf FK, {tp} TP)",
@@ -1675,6 +1677,7 @@
         "dm": "vm"
     },
     "LocalizedIDs": {
+        "combatInWater": "Unterwasserkampf",
         "reversalis": "Reversalis",
         "assumeTradition": "Tradition (",
         "immuneToCrit": "Immunität gegen kritische Treffer",

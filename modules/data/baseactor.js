@@ -498,7 +498,15 @@ export class ActorDataModel extends DSADataModel {
         false
       );
     } else {
-      data.status.speed.waterMax = Math.round(data.status.speed.max * 0.5);
+      data.status.speed.waterMax = this._calculateSpeedType(
+        Math.round((data.status.speed.max + baseMod) * 0.5) ,
+        encumbrance,
+        painMalus,
+        feelsPain,
+        data.status.speed.multiplier,
+        fixated,
+        false
+      );
     }
 
     const hasAir = data.status.speed.air;

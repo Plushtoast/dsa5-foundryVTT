@@ -842,6 +842,9 @@ DSA5.magicResistanceModifiers = {
   ZK: 'toughness',
 };
 
+DSA5.impossibleWeaponsForWater = new Set(['Chain Weapons', 'Blowpipes', 'Bows', 'Crossbows', 'Slingshots', 'Throwing Weapons']);
+DSA5.goodWeaponsForWater = new Set(['Daggers', 'Fencing Weapons', 'Polearms']);
+
 DSA5.poisonSubTypes = {
   1: 'poisonCategory.1',
   4: 'poisonCategory.4',

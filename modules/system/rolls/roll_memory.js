@@ -23,6 +23,7 @@ export default class RollMemory {
       'decreaseCastingTime',
       'removeGesture',
       'removeFormula',
+      'waterOptions',
     ];
     if (!DPS.isEnabled) wantedKeys.push('distance');
     return wantedKeys;
