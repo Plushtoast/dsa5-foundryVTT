@@ -17,6 +17,8 @@ import { ModifierCalculator } from './modifier-calculator.js';
 import { CombatSystem } from './combat-system.js';
 import { ItemFactory } from './item-factory.js';
 import { DialogBuilder } from './dialog-builder.js';
+import { CombatSpecialAbilities } from './combat-special-abilities.js';
+import { MiracleModifiers } from './miracle-modifiers.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -174,34 +176,6 @@ export default class Itemdsa5 extends Item {
     return DSA5StatusEffects.hasCondition(this, conditionKey);
   }
 
-  static getMiracleModifiers(actor, source, type, bonusAttribute) {
-    const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
-    const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '').split(/;|,/).map((x) => x.replace(regex, '').trim());
-    const result = [];
-    if (happyTalents.includes(source.name)) {
-      const availableKaP = actor.system.status.karmaenergy.value;
-      const bonus = getProperty(actor, `system.miracle.${bonusAttribute}`) || 0;
-      if (availableKaP < 4) return [];
-
-      result.push({
-        name: game.i18n.localize('LocalizedIDs.miracle'),
-        value: 2 + bonus,
-        type,
-        selected: false,
-      });
-      const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight');
-      if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight, false)) {
-        result.push({
-          name: miracleMight,
-          value: 3 + bonus,
-          type,
-          selected: false,
-        });
-      }
-    }
-    return result;
-  }
-
   static async _onCreateOperation(documents, operation, user) {
     for (let doc of documents) {
       if (doc.actor) await Actordsa5.postUpdateConditions(doc.actor);
@@ -232,106 +206,6 @@ export default class Itemdsa5 extends Item {
     source.system.characteristic1.value = ch1;
     source.system.characteristic2.value = ch2;
     source.system.characteristic3.value = ch3;
-  }
-
-  static specAbsDataset(combatSpecAbs, actor, mode, path = 'effect.value') {
-    const isDefense = mode === 'parry';
-    const keys = isDefense ? ['pa'] : ['at', 'tp', 'dm'];
-    const translatedKeys = Object.fromEntries(
-      keys.map(key => [key, game.i18n.localize(`LocalizedAbilityModifiers.${key}`)])
-    );
-    const validSpecAb = isDefense
-      ? vals => vals.pa.some(v => v !== 0)
-      : vals => vals.at.some(v => v !== 0) || vals.tp.some(v => v !== 0) || vals.dm.some(v => v !== 0);
-
-    return combatSpecAbs.reduce((acc, com) => {
-      const effects = Itemdsa5.parseEffect(getProperty(com.system, path), actor);
-      const variantCount = ['', '2', '3'].filter(x => getProperty(com, `system.effect.value${x}`)).length;
-      const vals = Object.fromEntries(
-        keys.map(key => [key, effects[translatedKeys[key]] || [0]])
-      );
-
-      if (validSpecAb(vals) || (!isDefense && com.effects.size > 0)) {
-        const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
-        const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
-        acc.push({
-          name: com.name,
-          atbonus: vals.at || [0],
-          pabonus: vals.pa || [0],
-          tpbonus: vals.tp || [0],
-          dmmalus: vals.dm || [0],
-          steps,
-          category: {
-            id: com.system.category.sub,
-            css: `ab_${com.system.category.sub}`,
-            name: subCategory,
-          },
-          id: com.id,
-          actor: actor.id,
-          variantCount,
-        });
-      }
-      return acc;
-    }, []);
-  }
-
-  static buildCombatSpecAbs(actor, categories, toSearch, mode, source) {
-    let searchFilter = () => true;
-    if (toSearch) {
-      const normalizedSearch = [...toSearch, game.i18n.localize('LocalizedIDs.all')].map(x => x.toLowerCase());
-      searchFilter = (item) =>
-        item.system.list.value
-          .split(/;|,/)
-          .map(y => y.trim().toLowerCase().replace(/ \([a-zA-Z äüöÄÖÜ]*\)/, ''))
-          .some(y => normalizedSearch.includes(y));
-    }
-
-    const brawlingFilter = game.combat?.isBrawling ? () => true : item => Number(item.system.category.sub) !== 5;
-
-    const allowedNames = new Set();
-    const forbiddenNames = new Set();
-    const effectChanges = {};
-
-    for (const effect of source.effects || []) {
-      if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
-      for (const change of effect.changes) {
-        if (!change.key.startsWith('self.maneuver.')) continue;
-        const parsed = DSA5_Utility.parseAbilityString(change.value);
-
-        if (parsed.name.endsWith('-')) {
-          forbiddenNames.add(parsed.name.slice(0, -1).trim());
-        } else if (parsed.name.endsWith('+')) {
-          allowedNames.add(parsed.name.slice(0, -1).trim());
-        } else {
-          const changeMode = change.key.split('.')[2];
-          effectChanges[parsed.name] ??= {};
-          effectChanges[parsed.name][changeMode] ??= 0;
-          effectChanges[parsed.name][changeMode] += parsed.step;
-        }
-      }
-    }
-
-    const combatSpecAbs = actor.items.filter(item =>
-      item.type === 'specialability' &&
-      categories.includes(item.system.category.value) &&
-      item.system.effect.value &&
-      (searchFilter(item, toSearch) || allowedNames.has(item.name)) &&
-      brawlingFilter(item) &&
-      !forbiddenNames.has(item.name)
-    );
-
-    const result = this.specAbsDataset(combatSpecAbs, actor, mode);
-    for (const specAb of result) {
-      const changes = effectChanges[specAb.name];
-      if (changes) {
-        for (const key in changes) {
-          const flatKey = `${key}-flat`;
-          if (!specAb[flatKey]) specAb[flatKey] = [];
-          specAb[flatKey].push(changes[key]);
-        }
-      }
-    }
-    return result;
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
@@ -965,7 +839,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
     const wrongHandDisabled = AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.ambidextrous');
     source = DSA5_Utility.toObjectIfPossible(source);
     const toSearch = [source.system.combatskill.value];
-    const combatSpecAbs = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
+    const combatSpecAbs = CombatSpecialAbilities.build(actor, ['Combat'], toSearch, data.mode, source);
 
     if (data.mode == 'attack') {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
@@ -980,7 +854,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     if (['attack', 'parry'].includes(data.mode)) {
       situationalModifiers.push(
-        ...MeleeweaponDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, '', data.mode),
+        ...MiracleModifiers.get(actor, { name: source.system.combatskill.value }, '', data.mode),
         ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
       );
     }
@@ -1073,7 +947,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       const source = DSA5_Utility.toObjectIfPossible(_source);
 
       const toSearch = [source.system.combatskill.value];
-      const combatSpecAbs = Itemdsa5.buildCombatSpecAbs(actor, ['Combat'], toSearch, data.mode, source);
+      const combatSpecAbs = CombatSpecialAbilities.build(actor, ['Combat'], toSearch, data.mode, source);
       let currentAmmo = actor.items.get(source.system.currentAmmo.value);
 
       if (currentAmmo) {
@@ -1125,7 +999,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       this.weaponModifiers(situationalModifiers, source, 'damage');
 
       situationalModifiers.push(
-        ...RangeweaponItemDSA5.getMiracleModifiers(actor, { name: source.system.combatskill.value }, '', data.mode),
+        ...MiracleModifiers.get(actor, { name: source.system.combatskill.value }, '', data.mode),
         ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
       );
     }
@@ -1221,7 +1095,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     situationalModifiers.push(
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
       ...actor.getSkillModifier(source.name, source.type),
-      ...SkillItemDSA5.getMiracleModifiers(actor, source, 'FW', 'skill'),
+      ...MiracleModifiers.get(actor, source, 'FW', 'skill'),
     );
 
     for (const thing of actor.system.skillModifiers.global) {
@@ -1282,7 +1156,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
     source = DSA5_Utility.toObjectIfPossible(source);
     const traitType = source.system.traitType.value;
-    const combatSpecialabilities = Itemdsa5.buildCombatSpecAbs(actor, ['Combat', 'animal'], undefined, data.mode, source);
+    const combatSpecialabilities = CombatSpecialAbilities.build(actor, ['Combat', 'animal'], undefined, data.mode, source);
 
     if (data.mode == 'attack' && traitType == 'meleeAttack') {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecialabilities, false);

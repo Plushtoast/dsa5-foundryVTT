@@ -12,6 +12,7 @@ import DPS from '../system/automation/derepositioningsystem.js';
 import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
+import { CombatSpecialAbilities } from '../item/combat-special-abilities.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -332,7 +333,7 @@ export default class DSA5CombatDialog extends DialogShared {
       const specAb = actor.items.get(parent.dataset.id);
       const path = `effect.value${['', '2', '3'][next]}`;
 
-      const res = Itemdsa5.specAbsDataset([specAb], actor, this.dialogData.mode, path)[0];
+      const res = CombatSpecialAbilities.buildDataset([specAb], actor, this.dialogData.mode, path)[0];
 
       parent.dataset.dmmalus = res.dmmalus || 0;
       parent.dataset.atbonus = res.atbonus || 0;

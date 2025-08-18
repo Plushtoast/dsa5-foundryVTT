@@ -24,6 +24,7 @@ import RangeweaponData from '../data/item/rangeweapon.js';
 import { CombatSystem } from '../item/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { DialogBuilder } from '../item/dialog-builder.js';
+import { CombatSpecialAbilities } from '../item/combat-special-abilities.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -1691,8 +1692,8 @@ export default class Actordsa5 extends Actor {
 
     const toSearch = [game.i18n.localize(statusId), game.i18n.localize('LocalizedIDs.wrestle')];
     const combatskills = [
-      ...Itemdsa5.buildCombatSpecAbs(this, ['Combat'], toSearch, 'parry', testData.source),
-      ...Itemdsa5.buildCombatSpecAbs(this, ['animal'], undefined, 'parry', testData.source),
+      ...CombatSpecialAbilities.build(this, ['Combat'], toSearch, 'parry', testData.source),
+      ...CombatSpecialAbilities.build(this, ['animal'], undefined, 'parry', testData.source),
     ];
     const situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
     const isRangeAttack = CombatSystem.getDefenseMalus(situationalModifiers, this);
