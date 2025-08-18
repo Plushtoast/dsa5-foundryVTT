@@ -1,0 +1,86 @@
+/**
+ * Constants and configuration for DSA5 items
+ */
+export const ITEM_CONSTANTS = {
+  DEFAULT_IMAGES: {
+    advantage: 'systems/dsa5/icons/categories/Vorteil.webp',
+    disadvantage: 'systems/dsa5/icons/categories/Nachteil.webp',
+    armor: 'systems/dsa5/icons/categories/Armor.webp',
+    meleeweapon: 'systems/dsa5/icons/categories/Meleeweapon.webp',
+    rangeweapon: 'systems/dsa5/icons/categories/Rangeweapon.webp',
+    equipment: 'systems/dsa5/icons/categories/Equipment.webp',
+    consumable: 'systems/dsa5/icons/categories/consumable.webp',
+    liturgy: 'systems/dsa5/icons/categories/Liturgy.webp',
+    spell: 'systems/dsa5/icons/categories/Spell.webp',
+    ammunition: 'systems/dsa5/icons/categories/Munition.webp',
+    career: 'systems/dsa5/icons/categories/Career.webp',
+    magictrick: 'systems/dsa5/icons/categories/Spelltrick.webp',
+    blessing: 'systems/dsa5/icons/categories/Blessing.webp',
+    combatskill: 'systems/dsa5/icons/categories/Combat_Skill.webp',
+    skill: 'systems/dsa5/icons/categories/Skill.webp',
+    Geweihte: 'systems/dsa5/icons/categories/Geweihte.webp',
+    Weltliche: 'systems/dsa5/icons/categories/Weltliche.webp',
+    Zauberer: 'systems/dsa5/icons/categories/Zauberer.webp',
+    ritual: 'systems/dsa5/icons/categories/ritual.webp',
+    culture: 'icons/environment/people/charge.webp',
+    money: 'systems/dsa5/icons/money-S.webp',
+    ceremony: 'systems/dsa5/icons/categories/ceremony.webp',
+    abilityclerical: 'systems/dsa5/icons/categories/ability_clerical.webp',
+    abilityCombat: 'systems/dsa5/icons/categories/ability_combat.webp',
+    abilityfatePoints: 'systems/dsa5/icons/categories/ability_fate_points.webp',
+    abilitygeneral: 'systems/dsa5/icons/categories/ability_general.webp',
+    specialability: 'systems/dsa5/icons/categories/ability_general.webp',
+    abilitymagical: 'systems/dsa5/icons/categories/ability_magical.webp',
+    abilitylanguage: 'systems/dsa5/icons/categories/Ability_Language.webp',
+    abilitystaff: 'systems/dsa5/icons/categories/ability_staff.webp',
+    abilityceremonial: 'systems/dsa5/icons/categories/ability_ceremonial.webp',
+    abilityanimal: 'systems/dsa5/icons/categories/ability_animal.webp',
+    abilitysecret: 'systems/dsa5/icons/categories/secret.webp',
+    trait: 'systems/dsa5/icons/categories/trait.webp',
+    Tiere: 'systems/dsa5/icons/categories/Tiere.webp',
+    aggregatedTest: 'systems/dsa5/icons/categories/aggregated_test.webp',
+    poison: 'systems/dsa5/icons/categories/poison.webp',
+    disease: 'systems/dsa5/icons/categories/disease.webp',
+    spellextension: 'systems/dsa5/icons/categories/Spellextension.webp',
+    species: 'icons/environment/people/group.webp',
+    application: 'systems/dsa5/icons/categories/Skill.webp',
+    trick: 'systems/dsa5/icons/categories/Tiere.webp',
+    disadvantageanimal: 'systems/dsa5/icons/categories/NachteilAnimal.webp',
+    advantageanimal: 'systems/dsa5/icons/categories/VorteilAnimal.webp',
+    diseaseanimal: 'systems/dsa5/icons/categories/diseaseAnimal.webp',
+    effectwrapper: 'icons/svg/aura.svg',
+    liturgyTalisman: 'systems/dsa5/icons/categories/LiturgieTalisman.webp',
+    plant: 'systems/dsa5/icons/categories/plant.webp',
+    magicalsign: 'systems/dsa5/icons/categories/magicalsign.webp',
+    abilitypact: 'systems/dsa5/icons/categories/ability_pact.webp',
+    demonmark: 'systems/dsa5/icons/categories/ability_pact.webp',
+    patron: 'systems/dsa5/icons/categories/ability_pact.webp',
+    information: 'systems/dsa5/icons/categories/DSA-Auge.webp',
+    essence: 'systems/dsa5/icons/categories/wesenszug.webp',
+    imprint: 'systems/dsa5/icons/categories/praegung.webp',
+    book: 'systems/dsa5/icons/backgrounds/library.webp',
+    trap: 'systems/dsa5/icons/categories/trap.webp',
+  },
+
+  VALUE_PATTERNS: [
+    /(=)?[+-]\d([+-]\d)?/,
+    /(=)?\d[dDwW]\d/,
+    /=\d+/,
+    /\*\d(\.\d)*/
+  ],
+
+  COMBAT_BONUS: {
+    ATTACK: 'atbonus',
+    PARRY: 'pabonus',
+    DAMAGE: 'tpbonus',
+    DEFENSE_MALUS: 'dmmalus'
+  },
+
+  TEMPLATE_PATHS: {
+    SPELL_DIALOG: 'systems/dsa5/templates/dialog/spell-enhanced-dialog.hbs',
+    LITURGY_DIALOG: 'systems/dsa5/templates/dialog/liturgy-enhanced-dialog.hbs',
+    SKILL_DIALOG: 'systems/dsa5/templates/dialog/skill-dialog.hbs',
+    COMBAT_DIALOG: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
+    POISON_DIALOG: 'systems/dsa5/templates/dialog/poison-dialog.hbs'
+  }
+};

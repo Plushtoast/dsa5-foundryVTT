@@ -21,6 +21,9 @@ import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
+import { CombatSystem } from '../item/combat-system.js';
+import { ItemFactory } from '../item/item-factory.js';
+import { DialogBuilder } from '../item/dialog-builder.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -993,7 +996,7 @@ export default class Actordsa5 extends Actor {
 
   setupWeapon(item, mode, options, tokenId) {
     options['mode'] = mode;
-    return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
+    return ItemFactory.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
 
   throwMelee(item, tokenId) {
@@ -1059,7 +1062,7 @@ export default class Actordsa5 extends Actor {
 
     const item = new Item(weaponData);
     options.mode = statusId;
-    return Itemdsa5.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
+    return ItemFactory.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
 
   setupSpell(spell, options = {}, tokenId) {
@@ -1067,7 +1070,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupSkill(skill, options = {}, tokenId) {
-    return Itemdsa5.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId);
+    return ItemFactory.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId);
   }
 
   tokenScrollingText(texts) {
@@ -1527,7 +1530,7 @@ export default class Actordsa5 extends Actor {
         functionName: 'game.dsa5.entities.Actordsa5.updateFallingDamage',
         options,
         tokenId,
-        speaker: Itemdsa5.buildSpeaker(this, tokenId),
+        speaker: DialogBuilder.buildSpeaker(this, tokenId),
       },
     };
     this.setupSkill(skill, optns, tokenId).then(async (finalData) => {
@@ -1566,7 +1569,7 @@ export default class Actordsa5 extends Actor {
       opposable: false,
       extra: {
         options,
-        speaker: Itemdsa5.buildSpeaker(this, tokenId),
+        speaker: DialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1594,7 +1597,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId);
+    const cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1615,7 +1618,7 @@ export default class Actordsa5 extends Actor {
       extra: {
         statusId,
         options,
-        speaker: Itemdsa5.buildSpeaker(this, tokenId),
+        speaker: DialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1662,7 +1665,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/regeneration-card.hbs', title, tokenId);
+    let cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/regeneration-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1682,7 +1685,7 @@ export default class Actordsa5 extends Actor {
       extra: {
         statusId,
         options,
-        speaker: Itemdsa5.buildSpeaker(this, tokenId),
+        speaker: DialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1692,7 +1695,7 @@ export default class Actordsa5 extends Actor {
       ...Itemdsa5.buildCombatSpecAbs(this, ['animal'], undefined, 'parry', testData.source),
     ];
     const situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
-    const isRangeAttack = Itemdsa5.getDefenseMalus(situationalModifiers, this);
+    const isRangeAttack = CombatSystem.getDefenseMalus(situationalModifiers, this);
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
     const data = {
@@ -1716,7 +1719,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.hbs', dialogOptions.title, tokenId);
+    const cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.hbs', dialogOptions.title, tokenId, this);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1739,7 +1742,7 @@ export default class Actordsa5 extends Actor {
       extra: {
         characteristicId,
         options,
-        speaker: Itemdsa5.buildSpeaker(this, tokenId),
+        speaker: DialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1760,7 +1763,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = this._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId);
+    let cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -2072,36 +2075,6 @@ export default class Actordsa5 extends Actor {
     }
 
     return ItemDataModel._parseDmg(item, actor.system, currentAmmo);
-  }
-
-  _setupCardOptions(template, title, tokenId) {
-    const token = game.canvas?.tokens?.get(tokenId);
-    let cardOptions = {
-      speaker: {
-        alias: token ? token.name : this.prototypeToken.name,
-        actor: this.id,
-      },
-      title,
-      template,
-      flags: {
-        img: { src: this.prototypeToken.randomImg ? this.img : this.prototypeToken.texture.src },
-      },
-    };
-    if (this.token) {
-      cardOptions.speaker.alias = this.token.name;
-      cardOptions.speaker.token = this.token.id;
-      cardOptions.speaker.scene = canvas.scene.id;
-      cardOptions.flags.img.src = this.token.texture.src;
-    } else {
-      let speaker = ChatMessage.getSpeaker();
-      if (speaker.actor == this.id) {
-        cardOptions.speaker.alias = speaker.alias;
-        cardOptions.speaker.token = speaker.token;
-        cardOptions.speaker.scene = speaker.scene;
-        cardOptions.flags.img.src = speaker.token ? canvas.tokens.get(speaker.token).document.texture.src : cardOptions.flags.img.src;
-      }
-    }
-    return cardOptions;
   }
 
   async swapMag(weaponId) {

@@ -2,6 +2,7 @@ import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5Payment from '../system/helpers/payment.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
+import { ItemFactory } from '../item/item-factory.js';
 
 export class ItemDataModel extends DSADataModel {
   /**
@@ -89,7 +90,7 @@ export class ItemDataModel extends DSADataModel {
     if (hasPrice) {
       let price = chatData.system.price.value;
       if (chatData.system.QL) {
-        price = Itemdsa5.getSubClass(chatData.type).consumablePrice(chatData);
+        price = ItemFactory.getSubClass(chatData.type).consumablePrice(chatData);
       }
       const prices = await DSA5Payment._moneyToString(price);
       properties.push(`<b>${game.i18n.localize('price')}</b>: ${prices}`);

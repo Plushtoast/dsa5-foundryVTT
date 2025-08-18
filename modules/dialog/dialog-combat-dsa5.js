@@ -10,6 +10,8 @@ import DialogShared from './dialog-shared.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import CombatskillData from '../data/item/combatskill.js';
+import { ModifierCalculator } from '../item/modifier-calculator.js';
+import { ItemFactory } from '../item/item-factory.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -256,7 +258,8 @@ export default class DSA5CombatDialog extends DialogShared {
     const htmlMods = html.find('[name=situationalModifiers]');
 
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode });
-    Itemdsa5.getSubClass(item.type).getSituationalModifiers(situationalModifiers, actor, { mode }, item);
+    const cls = ItemFactory.getSubClass(item.type);
+    cls.getSituationalModifiers(situationalModifiers, actor, { mode }, item);
 
     if (mode === 'attack') {
       situationalModifiers = situationalModifiers.filter(x => x.type !== 'defenseMalus');
@@ -265,7 +268,7 @@ export default class DSA5CombatDialog extends DialogShared {
       const attackStatEffect = attackStatIndex >= 0 ? situationalModifiers.splice(attackStatIndex, 1)[0] : null;
 
       const defenseModifiers = [];
-      Itemdsa5.getSubClass(item.type).getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
+      cls.getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
 
       const defenseStatIndex = defenseModifiers.findIndex(x => x.name === game.i18n.localize('statuseffects'));
       const defenseStatEffect = defenseStatIndex >= 0 ? defenseModifiers.splice(defenseStatIndex, 1)[0] : null;
@@ -745,7 +748,7 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
 
     const modifiers = [
-      Itemdsa5.parseValueType(game.i18n.localize('sight'), data.vision || 0),
+      ModifierCalculator.parseValueType(game.i18n.localize('sight'), data.vision || 0),
       {
         name: game.i18n.localize('MODS.attackFromBehind'),
         value: testData.extra.attackFromBehind,

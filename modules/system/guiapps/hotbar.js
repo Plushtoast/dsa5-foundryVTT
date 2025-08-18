@@ -4,6 +4,7 @@ import { tinyNotification } from '../helpers/view_helper.js';
 import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
+import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -398,7 +399,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       filterCategories.push({
         key,
         tooltip: game.i18n.has(i18nkey) ? game.i18n.localize(i18nkey) : game.i18n.localize(fallbackNames[key]),
-        img: Itemdsa5.defaultImages[key] || fallbacks[key],
+        img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || fallbacks[key],
       });
     }
 

@@ -2,6 +2,7 @@ import Actordsa5 from '../../actor/actor-dsa5.js';
 import { conditionsMatcher } from '../../hooks/texteditor.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
+import { ItemFactory } from '../../item/item-factory.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5_Utility {
@@ -264,7 +265,7 @@ export default class DSA5_Utility {
   static itemPrice(item) {
     return (
       Number(getProperty(item, 'flags.dsa5.customPriceTag')) ||
-      (item.type == 'consumable' ? Itemdsa5.getSubClass(item.type).consumablePrice(item) : Number(item.system.price.value))
+      (item.type == 'consumable' ? ItemFactory.getSubClass(item.type).consumablePrice(item) : Number(item.system.price.value))
     );
   }
 

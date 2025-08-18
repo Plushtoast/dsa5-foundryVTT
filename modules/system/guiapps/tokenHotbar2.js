@@ -11,6 +11,8 @@ import DSA5StatusEffects from '../../status/status_effects.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { ItemDataModel } from '../../data/baseitem.js';
 import CombatskillData from '../../data/item/combatskill.js';
+import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { DialogBuilder } from '../../item/dialog-builder.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -364,7 +366,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     for (const target of game.user.targets) {
       if (target.actor) {
-        const app = new Trade(Itemdsa5.buildSpeaker(actor, tokenId), Itemdsa5.buildSpeaker(target.actor, target.id));
+        const app = new Trade(DialogBuilder.buildSpeaker(actor, tokenId), DialogBuilder.buildSpeaker(target.actor, target.id));
         app.startTrade();
       }
     }
@@ -761,7 +763,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     return {
       name: `${item.name} - ${x.name}`,
       id: `${item.id}_${x.id}`,
-      icon: Itemdsa5.defaultImages[x.talisman ? 'liturgy' : 'spell'],
+      icon: ITEM_CONSTANTS.DEFAULT_IMAGES[x.talisman ? 'liturgy' : 'spell'],
       cssClass,
       abbrev: x.name[0],
       ...options,

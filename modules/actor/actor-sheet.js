@@ -25,6 +25,7 @@ import { AppV2Mixin } from './appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
+import { ItemFactory } from '../item/item-factory.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -1515,7 +1516,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _addLoot(item) {
     item = duplicate(item);
-    let res = this.actor.items.find((i) => Itemdsa5.areEquals(item, i));
+    let res = this.actor.items.find((i) => ItemFactory.areEquals(item, i));
     if (!res) {
       if (this.tabGroups.sheet == 'combat' && item.system.worn) item.system.worn.value = true;
 
@@ -1527,7 +1528,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _addUniqueItem(item) {
     item = duplicate(item);
-    if (!this.actor.items.some((i) => Itemdsa5.areEquals(item, i))) return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
+    if (!this.actor.items.some((i) => ItemFactory.areEquals(item, i))) return (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
   }
 
   async _addDemonMarkOrPatron(item) {
@@ -1756,7 +1757,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           container_id = parentId;
         } else {
           parentItem = this.actor.items.get(parentId);
-          mergeItems = parentItem && hasProperty(item, 'system.quantity.value') && hasProperty(parentItem, 'system.quantity.value') && Itemdsa5.areEquals(item, parentItem);
+          mergeItems = parentItem && hasProperty(item, 'system.quantity.value') && hasProperty(parentItem, 'system.quantity.value') && ItemFactory.areEquals(item, parentItem);
         }
       }
     }
@@ -1784,7 +1785,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     } else {
       const hasPrice = this._itemHasPrice(data);
       if (hasPrice) {
-        const price = `${item.type == 'consumable' ? Itemdsa5.getSubClass(itemData.type).consumablePrice(itemData) : Number(itemData.system.price.value)}`;
+        const price = `${item.type == 'consumable' ? ItemFactory.getSubClass(itemData.type).consumablePrice(itemData) : Number(itemData.system.price.value)}`;
 
         if (price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return;
 

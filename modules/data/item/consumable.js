@@ -7,6 +7,7 @@ import AoeTemplate from './templates/aoe.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import { ItemFactory } from '../../item/item-factory.js';
 
 const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;
@@ -28,7 +29,7 @@ export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, Obf
   }
 
   async getSheetData(data) {
-    data.calculatedPrice = Itemdsa5.getSubClass(data.document.type).consumablePrice(data.document);
+    data.calculatedPrice = ItemFactory.getSubClass(data.document.type).consumablePrice(data.document);
     data.availableSteps = Object.fromEntries(data.document.system.QLList.split('\n').map((_, i) => [i + 1, i + 1]));
     data.enrichedIngredients = await TextEditor.enrichHTML(data.document.system.ingredients, { secrets: data.document.isOwner });
   }

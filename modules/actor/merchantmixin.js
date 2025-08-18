@@ -6,6 +6,7 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
+import { ItemFactory } from '../item/item-factory.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -460,7 +461,7 @@ export const MerchantSheetMixin = (superclass) =>
         });
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
       } else {
-        const res = target.items.find((i) => Itemdsa5.areEquals(item, i));
+        const res = target.items.find((i) => ItemFactory.areEquals(item, i));
         item.system.quantity.value = amount;
         if (!res) {
           return (
