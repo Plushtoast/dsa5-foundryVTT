@@ -1,4 +1,4 @@
-import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
+import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 
 const { getProperty } = foundry.utils;
 

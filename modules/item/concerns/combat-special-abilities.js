@@ -1,6 +1,6 @@
-import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5 from '../config/config-dsa5.js';
-import DSAActiveEffect from '../status/dsa_active_effects.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
+import DSAActiveEffect from '../../status/dsa_active_effects.js';
 import { ModifierCalculator } from './modifier-calculator.js';
 
 const { getProperty } = foundry.utils;

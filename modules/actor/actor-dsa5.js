@@ -21,10 +21,10 @@ import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
-import { CombatSystem } from '../item/combat-system.js';
+import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { DialogBuilder } from '../item/dialog-builder.js';
-import { CombatSpecialAbilities } from '../item/combat-special-abilities.js';
+import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

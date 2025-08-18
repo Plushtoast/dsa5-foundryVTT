@@ -13,12 +13,12 @@ import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.j
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
-import { ModifierCalculator } from './modifier-calculator.js';
-import { CombatSystem } from './combat-system.js';
+import { ModifierCalculator } from './concerns/modifier-calculator.js';
+import { CombatSystem } from './concerns/combat-system.js';
 import { ItemFactory } from './item-factory.js';
 import { DialogBuilder } from './dialog-builder.js';
-import { CombatSpecialAbilities } from './combat-special-abilities.js';
-import { MiracleModifiers } from './miracle-modifiers.js';
+import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
+import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

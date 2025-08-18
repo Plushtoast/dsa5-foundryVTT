@@ -10,9 +10,9 @@ import DialogShared from './dialog-shared.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import CombatskillData from '../data/item/combatskill.js';
-import { ModifierCalculator } from '../item/modifier-calculator.js';
+import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
-import { CombatSpecialAbilities } from '../item/combat-special-abilities.js';
+import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {

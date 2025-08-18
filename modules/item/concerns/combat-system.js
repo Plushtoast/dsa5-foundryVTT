@@ -1,15 +1,15 @@
-import DSA5 from '../config/config-dsa5.js';
-import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
-import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import DSA5StatusEffects from '../status/status_effects.js';
-import CreatureType from '../system/automation/creature-type.js';
-import Riding from '../system/automation/riding.js';
-import DPS from '../system/automation/derepositioningsystem.js';
-import RuleChaos from '../system/rules/rule_chaos.js';
-import CombatskillData from '../data/item/combatskill.js';
-import DSAActiveEffect from '../status/dsa_active_effects.js';
-import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import Actordsa5 from '../actor/actor-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
+import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
+import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
+import DSA5StatusEffects from '../../status/status_effects.js';
+import CreatureType from '../../system/automation/creature-type.js';
+import Riding from '../../system/automation/riding.js';
+import DPS from '../../system/automation/derepositioningsystem.js';
+import RuleChaos from '../../system/rules/rule_chaos.js';
+import CombatskillData from '../../data/item/combatskill.js';
+import DSAActiveEffect from '../../status/dsa_active_effects.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import Actordsa5 from '../../actor/actor-dsa5.js';
 
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 

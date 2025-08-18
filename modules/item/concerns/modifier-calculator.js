@@ -1,5 +1,5 @@
-import { ITEM_CONSTANTS } from '../config/item-constants.js';
-import CreatureType from '../system/automation/creature-type.js';
+import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import CreatureType from '../../system/automation/creature-type.js';
 
 const { getProperty, mergeObject } = foundry.utils;
 
