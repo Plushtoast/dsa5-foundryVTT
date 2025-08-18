@@ -5,6 +5,9 @@ import Riding from '../system/automation/riding.js';
 import { DSADataModel } from './abstract.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
+import { ITEM_CONSTANTS } from '../config/item-constants.js';
+
+const { SKILL, SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
 
 export class ActorDataModel extends DSADataModel {
   // Cache static properties with getters for lazy initialization
@@ -83,7 +86,7 @@ export class ActorDataModel extends DSADataModel {
   }
 
   _createSkillModifiersStructure() {
-    const skillTypes = ['liturgy', 'ceremony', 'ritual', 'spell', 'skill'];
+    const skillTypes = [LITURGY, CEREMONY, RITUAL, SPELL, SKILL];
     const baseSkillModifiers = {
       FP: [],
       step: [],
@@ -135,7 +138,11 @@ export class ActorDataModel extends DSADataModel {
       astralenergy: { permanentGear: 0 },
       karmaenergy: { permanentGear: 0 },
       wounds: { multiplier: 1 },
-      speed: { multiplier: 1 },
+      speed: { 
+        multiplier: 1,
+        airmultiplier: 1,
+        watermultiplier: 1,
+      },
       regeneration: {
         LePgearmodifier: 0,
         KaPgearmodifier: 0,
@@ -301,13 +308,13 @@ export class ActorDataModel extends DSADataModel {
           if (item.name === ActorDataModel.familiarString) data.isFamiliar = true;
           else if (item.name === ActorDataModel.petString) data.isPet = true;
           break;
-        case 'spell':
-        case 'ritual':
+        case SPELL:
+        case RITUAL:
         case 'magictrick':
           data.isMage = true;
           break;
-        case 'liturgy':
-        case 'ceremony':
+        case LITURGY:
+        case CEREMONY:
         case 'blessing':
           data.isPriest = true;
           break;
@@ -493,7 +500,7 @@ export class ActorDataModel extends DSADataModel {
         encumbrance,
         painMalus,
         feelsPain,
-        data.status.speed.multiplier,
+        data.status.speed.watermultiplier,
         fixated,
         false
       );
@@ -503,7 +510,7 @@ export class ActorDataModel extends DSADataModel {
         encumbrance,
         painMalus,
         feelsPain,
-        data.status.speed.multiplier,
+        data.status.speed.watermultiplier,
         fixated,
         false
       );
@@ -516,7 +523,7 @@ export class ActorDataModel extends DSADataModel {
         encumbrance,
         painMalus,
         feelsPain,
-        data.status.speed.multiplier,
+        data.status.speed.airmultiplier,
         fixated,
         false
       );

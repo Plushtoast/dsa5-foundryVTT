@@ -384,6 +384,7 @@ table.infoTable {
     box-sizing: border-box;
     margin: 5px;
 
+    select,
     input {
       border: none;
       border-bottom: 1px solid var(--border-color);
@@ -392,6 +393,10 @@ table.infoTable {
       border-radius: 0px;
       height: auto;
       text-align: left;
+    }
+
+    select {
+      height: calc(var(--input-height) + 1px);
     }
 
     span {

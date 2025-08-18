@@ -191,35 +191,16 @@ export default class Itemdsa5 extends Item {
       spell: SpellItemDSA5,
       liturgy: LiturgyItemDSA5,
       ceremony: CeremonyItemDSA5,
-      advantage: VantageItemDSA5,
-      disadvantage: VantageItemDSA5,
-      aggregatedTest: AggregatedTestItemDSA5,
       trait: TraitItemDSA5,
-      blessing: BlessingItemDSA5,
-      magictrick: CantripItemDSA5,
-      specialability: SpecialAbilityItemDSA5,
       disease: DiseaseItemDSA5,
       poison: PoisonItemDSA5,
-      armor: ArmorItemDSA5,
       money: MoneyItemDSA5,
       rangeweapon: RangeweaponItemDSA5,
       meleeweapon: MeleeweaponDSA5,
-      ammunition: AmmunitionItemDSA5,
-      equipment: EquipmentItemDSA5,
       combatskill: CombatskillDSA5,
       skill: SkillItemDSA5,
       application: ApplicationItemDSA5,
       consumable: ConsumableItemDSA,
-      spellextension: SpellextensionItemDSA5,
-      species: SpeciesItemDSA5,
-      effectwrapper: EffectWrapperItemDSA5,
-      plant: PlantItemDSA5,
-      magicalsign: MagicalSignItemDSA5,
-      patron: PatronItemDSA5,
-      demonmark: DemonmarkItemDSA5,
-      information: InformationItemDSA5,
-      book: BookItemDSA5,
-      trap: TrapItemDSA5,
     });
   }
 
@@ -460,33 +441,13 @@ export default class Itemdsa5 extends Item {
   }
 }
 
-class PlantItemDSA5 extends Itemdsa5 { }
-
-class MagicalSignItemDSA5 extends Itemdsa5 { }
-
-class DemonmarkItemDSA5 extends Itemdsa5 { }
-
-class TrapItemDSA5 extends Itemdsa5 { }
-
-class PatronItemDSA5 extends Itemdsa5 { }
+class WeaponItemDSA5 extends Itemdsa5 { }
 
 class MoneyItemDSA5 extends Itemdsa5 {
   static checkEquality(item, item2) {
     return ItemEquality.checkMoneyEquality(item, item2);
   }
 }
-
-class AggregatedTestItemDSA5 extends Itemdsa5 { }
-
-class AmmunitionItemDSA5 extends Itemdsa5 { }
-
-class EffectWrapperItemDSA5 extends Itemdsa5 { }
-
-class ArmorItemDSA5 extends Itemdsa5 { }
-
-class CantripItemDSA5 extends Itemdsa5 { }
-
-class BlessingItemDSA5 extends CantripItemDSA5 { }
 
 class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
@@ -893,8 +854,6 @@ class ConsumableItemDSA extends Itemdsa5 {
   }
 }
 
-class InformationItemDSA5 extends Itemdsa5 { }
-
 class DiseaseItemDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
     return ResistanceTests.setupDialog(
@@ -907,10 +866,6 @@ class DiseaseItemDSA5 extends Itemdsa5 {
     );
   }
 }
-
-class EquipmentItemDSA5 extends Itemdsa5 { }
-
-class WeaponItemDSA5 extends Itemdsa5 { }
 
 class MeleeweaponDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
@@ -1183,14 +1138,6 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 }
 
-class SpecialAbilityItemDSA5 extends Itemdsa5 { }
-
-class SpeciesItemDSA5 extends Itemdsa5 { }
-
-class SpellextensionItemDSA5 extends Itemdsa5 { }
-
-class BookItemDSA5 extends Itemdsa5 { }
-
 class TraitItemDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source, tokenId) {
     source = DSA5_Utility.toObjectIfPossible(source);
@@ -1236,5 +1183,3 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
 }
-
-class VantageItemDSA5 extends Itemdsa5 { }

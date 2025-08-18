@@ -3,6 +3,15 @@ import { DSADataModel } from '../../abstract.js';
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 
 export default class DetailsTemplate extends DSADataModel {
+  static SOCIAL_STATES_CHOICES = {
+    0: '-',
+    1: 'SOCIAL_CLASS.slave',
+    2: 'SOCIAL_CLASS.freeman',
+    3: 'SOCIAL_CLASS.lessernoble',
+    4: 'SOCIAL_CLASS.noble',
+    5: 'SOCIAL_CLASS.highborn'
+  };
+
   static defineSchema() {
     return {
       details: new SchemaField({
@@ -19,7 +28,7 @@ export default class DetailsTemplate extends DSADataModel {
           value: new StringField({ initial: '' }),
         }),
         socialstate: new SchemaField({
-          value: new StringField({ initial: '' }),
+          value: new NumberField({ initial: 0, choices: this.SOCIAL_STATES_CHOICES }),
         }),
         experience: new SchemaField({
           total: new NumberField({ initial: 0 }),
@@ -59,5 +68,20 @@ export default class DetailsTemplate extends DSADataModel {
         }),
       }),
     };
+  }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if (typeof source.details?.socialstate === 'string') {
+      const social = source.details.socialstate.trim();
+      source.details.socialstate = 0;
+      Object.values(this.SOCIAL_STATES_CHOICES).forEach((key, index) => {
+        const localized = game.i18n.localize(key).toLowerCase();
+        if (localized === social.toLowerCase()) {
+          source.details.socialstate = index;
+        }
+      });
+    }
   }
 }
