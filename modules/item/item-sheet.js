@@ -502,37 +502,22 @@ class EffectWrapperSheet extends WithEffectsSheet {
 
 class LocalizerSheet extends WithEffectsSheet {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-stat.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
+    header: super.PARTS.header,
+    stat: super.PARTS.stat,
+    tabs: super.PARTS.tabs,
     description: {
       template: 'systems/dsa5/templates/items/item-localizerdescription.hbs',
       scrollable: [''],
     },
-    effects: {
-      template: 'systems/dsa5/templates/items/item-effects.hbs',
-      scrollable: [''],
-    },
+    effects: super.PARTS.effects,
   };
 }
 
 class LocalizerWithoutEffectsSheet extends NoEffectsSheet {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-stat.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
+    header: super.PARTS.header,
+    stat: super.PARTS.stat,
+    tabs: super.PARTS.tabs,
     description: {
       template: 'systems/dsa5/templates/items/item-localizerdescription.hbs',
       scrollable: [''],
@@ -1052,29 +1037,9 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
   };
 
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-equipment.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
-    description: {
-      template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: [''],
-    },
+    ...Enchantable.PARTS,
     containerContent: {
       template: 'systems/dsa5/templates/items/item-containercontent.hbs',
-      scrollable: [''],
-    },
-    enchantment: {
-      template: 'systems/dsa5/templates/items/item-enchantment.hbs',
-      scrollable: [''],
-    },
-    effects: {
-      template: 'systems/dsa5/templates/items/item-effects.hbs',
       scrollable: [''],
     },
   };
@@ -1211,19 +1176,12 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
 
 class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
+    header: super.PARTS.header,
     stat: {
       template: 'systems/dsa5/templates/items/item-plant-header.hbs',
     },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
-    description: {
-      template: 'systems/dsa5/templates/items/item-description.hbs',
-      scrollable: [''],
-    },
+    tabs: super.PARTS.tabs,
+    description: super.PARTS.description,
   };
 }
 
@@ -1345,15 +1303,9 @@ class BlessingSheetDSA5 extends NoEffectsSheet {
 
 class ItemCareerDSA5 extends NoEffectsSheet {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-stat.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
+    header: super.PARTS.header,
+    stat: super.PARTS.stat,
+    tabs: super.PARTS.tabs,
     description: {
       template: 'systems/dsa5/templates/items/item-career-description.hbs',
       scrollable: [''],
@@ -1418,15 +1370,9 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
 class ItemCultureDSA5 extends NoEffectsSheet {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-stat.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
+    header: super.PARTS.header,
+    stat: super.PARTS.stat,
+    tabs: super.PARTS.tabs,
     description: {
       template: 'systems/dsa5/templates/items/item-culture-description.hbs',
       scrollable: [''],
@@ -1507,15 +1453,9 @@ class SpecialAbilitySheetDSA5 extends WithEffectsSheet {
 
 class ItemSpeciesDSA5 extends NoEffectsSheet {
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/items/item-header.hbs',
-    },
-    stat: {
-      template: 'systems/dsa5/templates/items/item-stat.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs',
-    },
+    header: super.PARTS.header,
+    stat: super.PARTS.stat,
+    tabs: super.PARTS.tabs,
     description: {
       template: 'systems/dsa5/templates/items/item-species-description.hbs',
       scrollable: [''],
