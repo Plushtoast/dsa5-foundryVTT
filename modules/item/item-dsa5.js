@@ -19,6 +19,9 @@ import { ItemFactory } from './item-factory.js';
 import { DialogBuilder } from './dialog-builder.js';
 import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
 import { MiracleModifiers } from './concerns/miracle-modifiers.js';
+import { ResistanceTests } from './concerns/resistance-tests.js';
+import { SkillTestSupport } from './concerns/skill-test-support.js';
+import { ItemEquality } from './concerns/item-equality.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -481,7 +484,7 @@ class PatronItemDSA5 extends Itemdsa5 { }
 
 class MoneyItemDSA5 extends Itemdsa5 {
   static checkEquality(item, item2) {
-    return item2.type == item.type && game.i18n.localize(item.name) == game.i18n.localize(item2.name) && item.system.description?.value == item2.system.description?.value;
+    return ItemEquality.checkMoneyEquality(item, item2);
   }
 }
 
@@ -819,7 +822,7 @@ class ConsumableItemDSA extends Itemdsa5 {
   }
 
   static checkEquality(item, item2) {
-    return item.type == item2.type && item.name == item2.name && item.system.description.value == item2.system.description.value && item.system.QL == item2.system.QL;
+    return ItemEquality.checkConsumableEquality(item, item2);
   }
 
   static async setupDialog(ev, options, item, actor, tokenId) {
@@ -905,132 +908,21 @@ class ConsumableItemDSA extends Itemdsa5 {
 class InformationItemDSA5 extends Itemdsa5 { }
 
 class DiseaseItemDSA5 extends Itemdsa5 {
-  static getSituationalModifiers(situationalModifiers, actor, data, source) {
-    source = DSA5_Utility.toObjectIfPossible(source);
-    if (game.user.targets.size) {
-      game.user.targets.forEach((target) => {
-        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.ResistanttoDisease', -1, false, true));
-      });
-    }
-    ModifierCalculator.getSkZkModifier(data, source);
-    mergeObject(data, {
-      hasSKModifier: source.system.resistance.value == 'SK',
-      hasZKModifier: source.system.resistance.value == 'ZK',
-    });
-  }
-
   static setupDialog(ev, options, item, actor, tokenId) {
-    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
-
-    const testData = {
-      opposable: false,
-      source: item,
-      extra: {
-        options,
-        speaker: DialogBuilder.buildSpeaker(actor, tokenId),
-      },
-    };
-
-    const data = {
-      rollMode: options.rollMode,
-    };
-    const situationalModifiers = [];
-    this.getSituationalModifiers(situationalModifiers, actor, data, item);
-    data.situationalModifiers = situationalModifiers;
-
-    if (options.manualResistance) {
-      mergeObject(data, options.manualResistance);
-    }
-
-    const dialogOptions = {
-      title,
-      template: ITEM_CONSTANTS.TEMPLATE_PATHS.POISON_DIALOG,
-      data,
-      callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
-        testData.situationalModifiers.push(
-          {
-            name: game.i18n.localize('zkModifier'),
-            value: html.find('[name="zkModifier"]').val() || 0,
-          },
-          {
-            name: game.i18n.localize('skModifier'),
-            value: html.find('[name="skModifier"]').val() || 0,
-          },
-        );
-        mergeObject(testData.extra.options, options);
-        return { testData, cardOptions };
-      },
-    };
-
-    const cardOptions = DialogBuilder._setupItemCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
-
-    return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+    return ResistanceTests.setupDialog(
+      ev, 
+      options, 
+      item, 
+      actor, 
+      tokenId, 
+      'LocalizedIDs.ResistanttoDisease'
+    );
   }
 }
 
 class EquipmentItemDSA5 extends Itemdsa5 { }
 
-class WeaponItemDSA5 extends Itemdsa5 {
-  static speciesModifier(situationalModifiers, actor, data, source) {
-    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
-    const localizedSpecies = game.i18n.localize(`LocalizedSpecies.${creatureClass}`);
-
-    const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
-    if (speciesObject) {
-      const attackOrParry = [ITEM_CONSTANTS.COMBAT_MODES.ATTACK, ITEM_CONSTANTS.COMBAT_MODES.PARRY].includes(data.mode);
-      const domains = (getProperty(source, 'system.effect.attributes') || '').split(',').map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
-      const domainMalus = domains.some((domain) => speciesObject.opposingDomains.has(domain)) ? 1 : 0;
-
-      if (speciesObject.combatskills.has(game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`))) {
-        if (attackOrParry) {
-          situationalModifiers.push({
-            name: game.i18n.format('speciesModifier', {
-              species: creatureClass,
-            }),
-            value: -2 - domainMalus,
-            selected: true,
-            source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
-          });
-        }
-        situationalModifiers.push({
-          name: `${game.i18n.format('speciesModifier', { species: creatureClass })} ${game.i18n.localize('CHARAbbrev.damage')}`,
-          value: -2 - domainMalus,
-          type: 'dmg',
-          selected: true,
-          source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
-        });
-      }
-    }
-  }
-
-  static weaponModifiers(situationalModifiers, source, mode) {
-    for (let effect of source.effects || []) {
-      if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
-
-      for (let change of effect.changes) {
-        if (change.key == `self.situational.${mode}`) {
-          const type = { damage: 'dmg' }[mode] || '';
-          const data = `${change.value}`.split(' ');
-          let value;
-          const name = [effect.name];
-          if (data.length > 1) {
-            value = Number(data.pop());
-            name.push(data.join(' '));
-          } else value = Number(data[0]);
-
-          situationalModifiers.push({
-            name: name.join(' - '),
-            value,
-            source: source.name,
-            type,
-          });
-        }
-      }
-    }
-  }
-}
+class WeaponItemDSA5 extends Itemdsa5 { }
 
 class MeleeweaponDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
@@ -1041,14 +933,14 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK) {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
-      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+      CombatSystem.addWeaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
     } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.PARRY) {
       CombatSystem.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
     }
-    this.weaponModifiers(situationalModifiers, source, data.mode);
+    CombatSystem.addWeaponModifiers(situationalModifiers, source, data.mode);
 
     CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode]);
-    this.speciesModifier(situationalModifiers, actor, data, source);
+    CombatSystem.addSpeciesModifiers(situationalModifiers, actor, data, source);
 
     if ([ITEM_CONSTANTS.COMBAT_MODES.ATTACK, ITEM_CONSTANTS.COMBAT_MODES.PARRY].includes(data.mode)) {
       situationalModifiers.push(
@@ -1078,64 +970,15 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 }
 
 class PoisonItemDSA5 extends Itemdsa5 {
-  static getSituationalModifiers(situationalModifiers, actor, data, source) {
-    source = DSA5_Utility.toObjectIfPossible(source);
-    if (game.user.targets.size) {
-      game.user.targets.forEach((target) => {
-        if (target.actor) situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(target.actor, 'LocalizedIDs.poisonResistance', -1, false, true));
-      });
-    }
-    ModifierCalculator.getSkZkModifier(data, source);
-    mergeObject(data, {
-      hasSKModifier: source.system.resistance.value == 'SK',
-      hasZKModifier: source.system.resistance.value == 'ZK',
-    });
-  }
-
   static setupDialog(ev, options, item, actor, tokenId) {
-    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
-
-    const testData = {
-      opposable: false,
-      source: item,
-      extra: {
-        options,
-        speaker: DialogBuilder.buildSpeaker(actor, tokenId),
-      },
-    };
-
-    const data = { rollMode: options.rollMode };
-
-    const situationalModifiers = [];
-    this.getSituationalModifiers(situationalModifiers, actor, data, item);
-    data.situationalModifiers = situationalModifiers;
-
-    const dialogOptions = {
-      title,
-      template: ITEM_CONSTANTS.TEMPLATE_PATHS.POISON_DIALOG,
-      data,
-      callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
-
-        testData.situationalModifiers.push(
-          {
-            name: game.i18n.localize('zkModifier'),
-            value: html.find('[name="zkModifier"]').val() || 0,
-          },
-          {
-            name: game.i18n.localize('skModifier'),
-            value: html.find('[name="skModifier"]').val() || 0,
-          },
-        );
-        mergeObject(testData.extra.options, options);
-        return { testData, cardOptions };
-      },
-    };
-
-    const cardOptions = DialogBuilder._setupCardOptions(`systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, title, tokenId);
-
-    return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
+    return ResistanceTests.setupDialog(
+      ev, 
+      options, 
+      item, 
+      actor, 
+      tokenId, 
+      'LocalizedIDs.poisonResistance'
+    );
   }
 }
 
@@ -1193,8 +1036,8 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         }
       }
 
-      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.ATTACK);
-      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+      CombatSystem.addWeaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.ATTACK);
+      CombatSystem.addWeaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
 
       situationalModifiers.push(
         ...MiracleModifiers.get(actor, { name: source.system.combatskill.value }, '', data.mode),
@@ -1202,7 +1045,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       );
     }
     CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode]);
-    this.speciesModifier(situationalModifiers, actor, data, _source);
+    CombatSystem.addSpeciesModifiers(situationalModifiers, actor, data, _source);
   }
 
   static async checkAmmunitionState(item, testData, actor, mode) {
@@ -1291,14 +1134,24 @@ class ApplicationItemDSA5 extends Itemdsa5 { }
 class SkillItemDSA5 extends Itemdsa5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
-      ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
+      ...ItemRulesDSA5.getTalentBonus(actor, source.name, [
+        'advantage', 
+        'disadvantage', 
+        'specialability', 
+        'equipment'
+      ]),
       ...actor.getSkillModifier(source.name, source.type),
       ...MiracleModifiers.get(actor, source, 'FW', TEST_TYPES.SKILL),
     );
 
+    // Add global skill modifiers
     for (const thing of actor.system.skillModifiers.global) {
-      situationalModifiers.push({ name: thing.source, value: thing.value });
+      situationalModifiers.push({ 
+        name: thing.source, 
+        value: thing.value 
+      });
     }
+    
     Object.assign(data, {
       visionOptions: DSA5.skillVision,
     });
@@ -1358,14 +1211,14 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK && traitType == 'meleeAttack') {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecialabilities, false);
-      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+      CombatSystem.addWeaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
     } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK && traitType == 'rangeAttack') {
       CombatSystem.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecialabilities);
-      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+      CombatSystem.addWeaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
     } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.PARRY) {
       CombatSystem.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecialabilities, false);
     }
-    this.weaponModifiers(situationalModifiers, source, data.mode);
+    CombatSystem.addWeaponModifiers(situationalModifiers, source, data.mode);
     CombatSystem.addAttackStatEffect(situationalModifiers, actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats'][data.mode]);
   }
 

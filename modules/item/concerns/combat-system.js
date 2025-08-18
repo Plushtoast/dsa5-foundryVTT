@@ -10,6 +10,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import DSAActiveEffect from '../../status/dsa_active_effects.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
+import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 
@@ -357,5 +358,90 @@ export class CombatSystem {
             targetSize,
             combatSpecAbs,
         });
+    }
+
+    /**
+   * Add species-specific combat modifiers
+   * @param {Array<Object>} situationalModifiers - Array to add modifiers to
+   * @param {Object} actor - Acting character
+   * @param {Object} data - Test data
+   * @param {Object} source - Source weapon
+   * @returns {void}
+   */
+    static addSpeciesModifiers(situationalModifiers, actor, data, source) {
+        const creatureClass = actor.type === 'creature'
+            ? actor.system.creatureClass.value
+            : actor.system.details.species.value;
+        const localizedSpecies = game.i18n.localize(`LocalizedSpecies.${creatureClass}`);
+
+        const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
+        if (speciesObject) {
+            const attackOrParry = [
+                ITEM_CONSTANTS.COMBAT_MODES.ATTACK,
+                ITEM_CONSTANTS.COMBAT_MODES.PARRY
+            ].includes(data.mode);
+
+            const domains = (getProperty(source, 'system.effect.attributes') || '')
+                .split(',')
+                .map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
+            const domainMalus = domains.some((domain) =>
+                speciesObject.opposingDomains.has(domain)
+            ) ? 1 : 0;
+
+            const combatSkillKey = game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`);
+            if (speciesObject.combatskills.has(combatSkillKey)) {
+                if (attackOrParry) {
+                    situationalModifiers.push({
+                        name: game.i18n.format('speciesModifier', { species: creatureClass }),
+                        value: -2 - domainMalus,
+                        selected: true,
+                        source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
+                    });
+                }
+                situationalModifiers.push({
+                    name: `${game.i18n.format('speciesModifier', { species: creatureClass })} ${game.i18n.localize('CHARAbbrev.damage')}`,
+                    value: -2 - domainMalus,
+                    type: 'dmg',
+                    selected: true,
+                    source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
+                });
+            }
+        }
+    }
+
+    /**
+   * Add weapon-specific modifiers from active effects
+   * @param {Array<Object>} situationalModifiers - Array to add modifiers to
+   * @param {Object} source - Source weapon
+   * @param {string} mode - Combat mode (attack, parry, damage)
+   * @returns {void}
+   */
+    static addWeaponModifiers(situationalModifiers, source, mode) {
+        for (let effect of source.effects || []) {
+            if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
+
+            for (let change of effect.changes) {
+                if (change.key === `self.situational.${mode}`) {
+                    const type = { damage: 'dmg' }[mode] || '';
+                    const data = `${change.value}`.split(' ');
+                    let value;
+                    const name = [effect.name];
+
+                    if (data.length > 1) {
+                        value = Number(data.pop());
+                        name.push(data.join(' '));
+                    } else {
+                        value = Number(data[0]);
+                    }
+
+                    situationalModifiers.push({
+                        name: name.join(' - '),
+                        value,
+                        source: source.name,
+                        type,
+                    });
+                }
+            }
+        }
     }
 }

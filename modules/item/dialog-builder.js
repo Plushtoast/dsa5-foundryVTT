@@ -147,7 +147,7 @@ export class DialogBuilder {
      * @param {string} tokenId - Token ID
      * @returns {Object} Card options
      */
-    _setupItemCardOptions(template, title, tokenId) {
+    static _setupItemCardOptions(template, title, tokenId) {
         const speaker = ChatMessage.getSpeaker();
         return {
             speaker: {
