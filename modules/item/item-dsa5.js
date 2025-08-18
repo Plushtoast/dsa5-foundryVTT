@@ -143,6 +143,8 @@ export default class Itemdsa5 extends Item {
     });
   }
 
+  // ===== CONDITION MANAGEMENT =====
+
   /**
    * Add condition to item
    * @param {string} effect - Effect key
@@ -176,44 +178,105 @@ export default class Itemdsa5 extends Item {
     return DSA5StatusEffects.hasCondition(this, conditionKey);
   }
 
+  // ===== DOCUMENT LIFECYCLE HOOKS =====
+
+  /**
+   * Handle document creation operations
+   * @param {Array} documents - Created documents
+   * @param {Object} operation - Operation details
+   * @param {Object} user - User performing operation
+   * @returns {Promise} Operation result
+   * @private
+   */
   static async _onCreateOperation(documents, operation, user) {
-    for (let doc of documents) {
-      if (doc.actor) await Actordsa5.postUpdateConditions(doc.actor);
-    }
+    await this._updateActorConditions(documents);
     return super._onCreateOperation(documents, operation, user);
   }
 
+  /**
+   * Handle document update operations
+   * @param {Array} documents - Updated documents
+   * @param {Object} operation - Operation details
+   * @param {Object} user - User performing operation
+   * @returns {Promise} Operation result
+   * @private
+   */
   static async _onUpdateOperation(documents, operation, user) {
-    for (let doc of documents) {
-      if (doc.actor) await Actordsa5.postUpdateConditions(doc.actor);
-    }
+    await this._updateActorConditions(documents);
     return super._onUpdateOperation(documents, operation, user);
   }
 
+  /**
+   * Handle document deletion operations
+   * @param {Array} documents - Deleted documents
+   * @param {Object} operation - Operation details
+   * @param {Object} user - User performing operation
+   * @returns {Promise} Operation result
+   * @private
+   */
   static async _onDeleteOperation(documents, operation, user) {
-    for (let doc of documents) {
-      if (doc.actor) await Actordsa5.postUpdateConditions(doc.actor);
-    }
+    await this._updateActorConditions(documents);
     return super._onDeleteOperation(documents, operation, user);
   }
 
-  //todo this needs the current movement type
+  /**
+   * Update actor conditions for documents
+   * @param {Array} documents - Documents to process
+   * @returns {Promise} Update promise
+   * @private
+   */
+  static async _updateActorConditions(documents) {
+    for (let doc of documents) {
+      if (doc.actor) {
+        await Actordsa5.postUpdateConditions(doc.actor);
+      }
+    }
+  }
+
+  // ===== UTILITY METHODS =====
+
+  /**
+   * Parse effect string into modifiers
+   * @param {string} effect - Effect string
+   * @param {Object} actor - Actor object
+   * @returns {Object} Parsed modifiers
+   * @todo This needs the current movement type
+   */
   static parseEffect(effect, actor) {
     return ModifierCalculator.parseEffect(effect, actor);
   }
 
-  static changeChars(source, ch1, ch2, ch3) {
+  /**
+   * Update characteristics on source item
+   * @param {Object} source - Source item
+   * @param {string} ch1 - First characteristic
+   * @param {string} ch2 - Second characteristic
+   * @param {string} ch3 - Third characteristic
+   */
+  static updateCharacteristics(source, ch1, ch2, ch3) {
     source.system.characteristic1.value = ch1;
     source.system.characteristic2.value = ch2;
     source.system.characteristic3.value = ch3;
   }
 
+
+  // ===== DIALOG AND TESTING =====
+
+  /**
+   * Setup dialog for item test (base implementation)
+   * @param {Event} ev - Event
+   * @param {Object} options - Options
+   * @param {Object} item - Item instance
+   * @param {Object} actor - Actor instance
+   * @param {string} tokenId - Token ID
+   * @returns {Object|null} Dialog configuration
+   */
   static setupDialog(ev, options, item, actor, tokenId) {
     return null;
   }
 
   /**
-   * Setup dialog for item test
+   * Setup dialog for item test (instance method)
    * @param {Event} ev - Event
    * @param {Object} options - Options
    * @param {string} tokenId - Token ID
@@ -251,12 +314,11 @@ export default class Itemdsa5 extends Item {
     return await ItemFactory.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor, render);
   }
 
-  
-
   /**
    * Perform item test
-   * @param {Object} testData - Test data
-   * @param {Object} cardOptions - Card options
+   * @param {Object} params - Test parameters
+   * @param {Object} params.testData - Test data
+   * @param {Object} params.cardOptions - Card options
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} Test result
    */
@@ -269,10 +331,14 @@ export default class Itemdsa5 extends Item {
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
       const opposed = ` - ${game.i18n.localize('Opposed')}`;
-      if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) cardOptions.title += opposed;
+      if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) {
+        cardOptions.title += opposed;
+      }
     }
 
-    if (!options.suppressMessage) DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);
+    if (!options.suppressMessage) {
+      DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);
+    }
 
     return { result, cardOptions };
   }
@@ -367,7 +433,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       fws: formData.fw,
       qls: formData.qs,
     };
-    Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]));
+    Itemdsa5.updateCharacteristics(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]));
     await this.applyExtensions(testData.source, testData.extensions, actor);
   }
 
@@ -1135,7 +1201,7 @@ class SkillItemDSA5 extends Itemdsa5 {
         fws: Number(html.find(`[name="fw"]`).val()),
         qls: Number(html.find(`[name="qs"]`).val()),
       };
-      Itemdsa5.changeChars(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()));
+      Itemdsa5.updateCharacteristics(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()));
       mergeObject(testData.extra.options, options);
       return { testData, cardOptions };
     }

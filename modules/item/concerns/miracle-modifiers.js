@@ -15,7 +15,7 @@ export class MiracleModifiers {
      * @returns {Array} Miracle modifiers
      */
     static get(actor, source, type, bonusAttribute) {
-        if(!this.canUseMiracles(actor, source)) return [];
+        if(!this.#canUseMiracles(actor, source)) return [];
 
         const bonus = getProperty(actor, `system.miracle.${bonusAttribute}`) || 0;
         const result = [{
@@ -44,7 +44,7 @@ export class MiracleModifiers {
      * @param {Object} source - Source item
      * @returns {boolean} Whether miracles can be used
      */
-    static canUseMiracles(actor, source) {
+    static #canUseMiracles(actor, source) {
         const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
         const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '')
             .split(/;|,/)
