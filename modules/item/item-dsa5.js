@@ -22,10 +22,74 @@ import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
-export default class Itemdsa5 extends Item {
-  static DEFAULT_ICON = 'systems/dsa5/icons/blank.webp';
+// ===== TYPE DEFINITIONS =====
 
-  /** @override */
+/**
+ * @typedef {Object} ModifierObject
+ * @property {string} name - Display name of the modifier
+ * @property {number} value - Numeric modifier value
+ * @property {string} [type] - Modifier type (e.g., 'dmg', 'defenseMalus')
+ * @property {boolean} [selected] - Whether modifier is selected by default
+ * @property {string} [source] - Source of the modifier
+ */
+
+/**
+ * @typedef {Object} TestData
+ * @property {Object} source - Source item being tested
+ * @property {boolean} opposable - Whether this test can be opposed
+ * @property {Array<ModifierObject>} situationalModifiers - Applied modifiers
+ * @property {number} testDifficulty - Base difficulty of the test
+ * @property {Object} extra - Extra test data and options
+ */
+
+/**
+ * @typedef {Object} CardOptions
+ * @property {string} template - Template path for the chat card
+ * @property {string} title - Chat card title
+ * @property {Object} speaker - Speaker information for chat
+ * @property {Object} flags - Additional flags for the chat message
+ */
+
+// ===== CONSTANTS =====
+
+/** @constant {Object<string, string>} Test types */
+const TEST_TYPES = {
+  SKILL: 'skill',
+  SPELL: 'spell',
+  LITURGY: 'liturgy',
+  CEREMONY: 'ceremony',
+  RITUAL: 'ritual',
+  COMBAT: 'combat'
+};
+
+/** @constant {Object<string, string>} Actor types */
+const ACTOR_TYPES = {
+  CHARACTER: 'character',
+  NPC: 'npc',
+  CREATURE: 'creature'
+};
+
+/** @constant {string} Opposition indicator for chat titles */
+const OPPOSED_SUFFIX = ' - ';
+
+
+/**
+ * DSA5 Item class extending Foundry VTT's base Item class
+ * Handles all item types in the Das Schwarze Auge 5 system
+ * @extends {Item}
+ */
+export default class Itemdsa5 extends Item {
+  /** @type {string} Default icon path for items without specific icons */
+  static DEFAULT_ICON = ITEM_CONSTANTS.DEFAULT_ICON_PATH;
+
+  /**
+   * Set default icon for item data
+   * @override
+   * @param {Object} data - Item data object
+   * @param {string} [data.img] - Image path
+   * @param {string} data.type - Item type
+   * @returns {void}
+   */
   static defaultIcon(data) {
     if (!data.img || data.img === '') {
       if (data.type in ITEM_CONSTANTS.DEFAULT_IMAGES) {
@@ -38,7 +102,13 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  /** @override */
+  /**
+   * Create new item instances with proper icon defaults
+   * @override
+   * @param {Object|Array<Object>} data - Item creation data
+   * @param {Object} [options={}] - Creation options
+   * @returns {Promise<Itemdsa5|Array<Itemdsa5>>} Created item(s)
+   */
   static async create(data, options) {
     if (Array.isArray(data)) {
       for (let d of data) {
@@ -51,14 +121,22 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-   * Get special ability modifiers from HTML
-   * @param {jQuery} html - HTML element
-   * @param {string} mode - Mode (attack/parry)
-   * @returns {Array} Modifiers array
+   * Get special ability modifiers from HTML form elements
+   * @param {jQuery} html - jQuery wrapped HTML element containing the form
+   * @param {string} mode - Combat mode ('attack' | 'parry')
+   * @returns {Array<Object>} Array of modifier objects with properties:
+   *   - {string} name - Display name of the modifier
+   *   - {number} value - Calculated modifier value
+   *   - {string} damageBonus - Damage bonus string
+   *   - {number} dmmalus - Defense malus value
+   *   - {number} step - Step value from dataset
+   *   - {string} specAbId - Special ability ID
+   *   - {string} [type] - Modifier type (optional)
+   *   - {Object} flatValues - Flat values object
    */
   static getSpecAbModifiers(html, mode) {
     const res = [];
-    const isAttack = mode === 'attack';
+    const isAttack = mode === ITEM_CONSTANTS.COMBAT_MODES.ATTACK;
     const mainAttribute = isAttack ? ITEM_CONSTANTS.ATTACK : ITEM_CONSTANTS.PARRY;
 
     const matchers = {
@@ -93,7 +171,13 @@ export default class Itemdsa5 extends Item {
     return res;
   }
 
-  /** @override */
+  /**
+   * Build embedded HTML for item browsing
+   * @override
+   * @param {Object} config - Embed configuration
+   * @param {Object} [options={}] - Additional rendering options
+   * @returns {Promise<HTMLElement>} Rendered HTML element
+   */
   async _buildEmbedHTML(config, options = {}) {
     const template = `systems/dsa5/templates/items/browse/${this.type}.hbs`;
     const item = await renderTemplate(template, {
@@ -105,6 +189,11 @@ export default class Itemdsa5 extends Item {
     return $(item)[0];
   }
 
+  /**
+   * Register all item subclasses with the ItemFactory
+   * @static
+   * @returns {void}
+   */
   static setupSubClasses() {
     ItemFactory.setupSubclasses({
       ritual: RitualItemDSA5,
@@ -146,33 +235,33 @@ export default class Itemdsa5 extends Item {
   // ===== CONDITION MANAGEMENT =====
 
   /**
-   * Add condition to item
-   * @param {string} effect - Effect key
-   * @param {number} value - Effect value
-   * @param {boolean} absolute - Whether absolute
-   * @param {boolean} auto - Whether automatic
-   * @returns {Promise} Add promise
+   * Add a status condition to this item
+   * @param {string} effect - The effect/condition key to add
+   * @param {number} [value=1] - The value/level of the condition
+   * @param {boolean} [absolute=false] - Whether this is an absolute value
+   * @param {boolean} [auto=true] - Whether to apply automatically
+   * @returns {Promise<Object>} Promise resolving to the add operation result
    */
   async addCondition(effect, value = 1, absolute = false, auto = true) {
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
   }
 
   /**
-   * Remove condition from item
-   * @param {string} effect - Effect key
-   * @param {number} value - Effect value
-   * @param {boolean} auto - Whether automatic
-   * @param {boolean} absolute - Whether absolute
-   * @returns {Promise} Remove promise
+   * Remove a status condition from this item
+   * @param {string} effect - The effect/condition key to remove
+   * @param {number} [value=1] - The value/level to remove
+   * @param {boolean} [auto=true] - Whether to apply automatically
+   * @param {boolean} [absolute=false] - Whether this is an absolute removal
+   * @returns {Promise<Object>} Promise resolving to the removal operation result
    */
   async removeCondition(effect, value = 1, auto = true, absolute = false) {
     return DSA5StatusEffects.removeCondition(this, effect, value, auto, absolute);
   }
 
   /**
-   * Check if item has condition
-   * @param {string} conditionKey - Condition key
-   * @returns {boolean} Whether item has condition
+   * Check if this item has a specific condition
+   * @param {string} conditionKey - The condition key to check for
+   * @returns {boolean} True if the item has the condition, false otherwise
    */
   hasCondition(conditionKey) {
     return DSA5StatusEffects.hasCondition(this, conditionKey);
@@ -181,11 +270,13 @@ export default class Itemdsa5 extends Item {
   // ===== DOCUMENT LIFECYCLE HOOKS =====
 
   /**
-   * Handle document creation operations
-   * @param {Array} documents - Created documents
-   * @param {Object} operation - Operation details
-   * @param {Object} user - User performing operation
-   * @returns {Promise} Operation result
+   * Handle document creation operations and update related actor conditions
+   * @override
+   * @static
+   * @param {Array<Itemdsa5>} documents - Array of created item documents
+   * @param {Object} operation - Database operation details
+   * @param {User} user - User who performed the operation
+   * @returns {Promise<Array<Itemdsa5>>} Promise resolving to the operation result
    * @private
    */
   static async _onCreateOperation(documents, operation, user) {
@@ -194,11 +285,13 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-   * Handle document update operations
-   * @param {Array} documents - Updated documents
-   * @param {Object} operation - Operation details
-   * @param {Object} user - User performing operation
-   * @returns {Promise} Operation result
+   * Handle document update operations and update related actor conditions
+   * @override
+   * @static
+   * @param {Array<Itemdsa5>} documents - Array of updated item documents
+   * @param {Object} operation - Database operation details
+   * @param {User} user - User who performed the operation
+   * @returns {Promise<Array<Itemdsa5>>} Promise resolving to the operation result
    * @private
    */
   static async _onUpdateOperation(documents, operation, user) {
@@ -207,11 +300,13 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-   * Handle document deletion operations
-   * @param {Array} documents - Deleted documents
-   * @param {Object} operation - Operation details
-   * @param {Object} user - User performing operation
-   * @returns {Promise} Operation result
+   * Handle document deletion operations and update related actor conditions
+   * @override
+   * @static
+   * @param {Array<Itemdsa5>} documents - Array of deleted item documents
+   * @param {Object} operation - Database operation details
+   * @param {User} user - User who performed the operation
+   * @returns {Promise<Array<Itemdsa5>>} Promise resolving to the operation result
    * @private
    */
   static async _onDeleteOperation(documents, operation, user) {
@@ -220,9 +315,10 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-   * Update actor conditions for documents
-   * @param {Array} documents - Documents to process
-   * @returns {Promise} Update promise
+   * Update actor conditions for all documents that have associated actors
+   * @static
+   * @param {Array<Itemdsa5>} documents - Array of item documents to process
+   * @returns {Promise<void>} Promise that resolves when all conditions are updated
    * @private
    */
   static async _updateActorConditions(documents) {
@@ -236,22 +332,25 @@ export default class Itemdsa5 extends Item {
   // ===== UTILITY METHODS =====
 
   /**
-   * Parse effect string into modifiers
-   * @param {string} effect - Effect string
-   * @param {Object} actor - Actor object
-   * @returns {Object} Parsed modifiers
-   * @todo This needs the current movement type
+   * Parse effect string into structured modifier data
+   * @static
+   * @param {string} effect - Raw effect string to parse
+   * @param {Object} actor - Actor object providing context for parsing
+   * @returns {Object<string, Array<string|number>>} Parsed modifiers organized by type
+   * @todo This needs the current movement type for proper parsing
    */
   static parseEffect(effect, actor) {
     return ModifierCalculator.parseEffect(effect, actor);
   }
 
   /**
-   * Update characteristics on source item
-   * @param {Object} source - Source item
-   * @param {string} ch1 - First characteristic
-   * @param {string} ch2 - Second characteristic
-   * @param {string} ch3 - Third characteristic
+   * Update the three characteristics values on a source item
+   * @static
+   * @param {Object} source - Source item object to modify
+   * @param {string} ch1 - First characteristic identifier
+   * @param {string} ch2 - Second characteristic identifier  
+   * @param {string} ch3 - Third characteristic identifier
+   * @returns {void}
    */
   static updateCharacteristics(source, ch1, ch2, ch3) {
     source.system.characteristic1.value = ch1;
@@ -263,39 +362,52 @@ export default class Itemdsa5 extends Item {
   // ===== DIALOG AND TESTING =====
 
   /**
-   * Setup dialog for item test (base implementation)
-   * @param {Event} ev - Event
-   * @param {Object} options - Options
-   * @param {Object} item - Item instance
-   * @param {Object} actor - Actor instance
-   * @param {string} tokenId - Token ID
-   * @returns {Object|null} Dialog configuration
+   * Setup dialog for item test (base implementation - should be overridden by subclasses)
+   * @static
+   * @param {Event} ev - DOM event that triggered the dialog
+   * @param {Object} options - Dialog options and configuration
+   * @param {Itemdsa5} item - Item instance to test
+   * @param {Object} actor - Actor performing the test
+   * @param {string} tokenId - ID of the token representing the actor
+   * @returns {Object|null} Dialog configuration object or null if not implemented
    */
   static setupDialog(ev, options, item, actor, tokenId) {
     return null;
   }
 
   /**
-   * Setup dialog for item test (instance method)
-   * @param {Event} ev - Event
-   * @param {Object} options - Options
-   * @param {string} tokenId - Token ID
-   * @returns {Object|null} Dialog configuration
+   * Setup dialog for item test (instance method that delegates to subclass)
+   * @param {Event} ev - DOM event that triggered the dialog
+   * @param {Object} [options={}] - Dialog options and configuration
+   * @param {string} tokenId - ID of the token representing the actor
+   * @returns {Object|null} Dialog configuration object or null if not supported
    */
   setupEffect(ev, options = {}, tokenId) {
     return ItemFactory.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId);
   }
 
   /**
-   * Default equality check
-   * @param {Object} item1 - First item
-   * @param {Object} item2 - Second item
-   * @returns {boolean} Whether items are equal
+   * Default equality check for item stacking purposes
+   * @static
+   * @param {Itemdsa5} item - First item to compare
+   * @param {Itemdsa5} item2 - Second item to compare
+   * @returns {boolean} True if items are considered equal for stacking
    */
   static checkEquality(item, item2) {
-    return item2.type == item.type && item.name == item2.name && item.system.description?.value == item2.system.description?.value;
+    return item2.type == item.type && 
+           item.name == item2.name && 
+           item.system.description?.value == item2.system.description?.value;
   }
 
+  /**
+   * Combine two items by merging their quantities
+   * @static
+   * @param {Object} item1 - Target item (will be modified with new quantity)
+   * @param {Object} item2 - Source item (provides additional quantity)
+   * @param {Object} actor - Actor that owns both items
+   * @param {boolean} [render=true] - Whether to trigger UI re-rendering
+   * @returns {Promise<Object>} Promise resolving to the update operation result
+   */
   static async combineItem(item1, item2, actor, render = true) {
     item1 = duplicate(item1);
     item1.system.quantity.value += item2.system.quantity.value;
@@ -303,24 +415,29 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-     * Combine stackable items
-     * @param {Object} item1 - Target item
-     * @param {Object} item2 - Source item
-     * @param {Object} actor - Actor
-     * @param {boolean} render - Whether to render
-     * @returns {Promise} Update promise
-     */
+   * Stack compatible items together using their specific combination logic
+   * @static
+   * @param {Itemdsa5} stackOn - Target item to stack onto
+   * @param {Itemdsa5} newItem - Source item to add to the stack
+   * @param {Object} actor - Actor that owns both items
+   * @param {boolean} [render=true] - Whether to trigger UI re-rendering
+   * @returns {Promise<Object>} Promise resolving to the stacking operation result
+   */
   static async stackItems(stackOn, newItem, actor, render = true) {
     return await ItemFactory.getSubClass(stackOn.type).combineItem(stackOn, newItem, actor, render);
   }
 
   /**
-   * Perform item test
-   * @param {Object} params - Test parameters
-   * @param {Object} params.testData - Test data
-   * @param {Object} params.cardOptions - Card options
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} Test result
+   * Perform a comprehensive item test (dice rolling and result calculation)
+   * @param {Object} testParams - Test parameters object
+   * @param {TestData} testParams.testData - Core test data including modifiers and difficulty
+   * @param {CardOptions} testParams.cardOptions - Chat card display options
+   * @param {Object} [options={}] - Additional test options
+   * @param {boolean} [options.suppressMessage] - Whether to suppress chat output
+   * @param {string} [options.rerenderMessage] - Message ID to re-render instead of creating new
+   * @returns {Promise<Object>} Promise resolving to test results with structure:
+   *   - {Object} result - Dice roll and test calculation results
+   *   - {CardOptions} cardOptions - Final chat card options used
    */
   async itemTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
@@ -330,7 +447,7 @@ export default class Itemdsa5 extends Item {
 
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
-      const opposed = ` - ${game.i18n.localize('Opposed')}`;
+      const opposed = OPPOSED_SUFFIX + game.i18n.localize('Opposed');
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) {
         cardOptions.title += opposed;
       }
@@ -344,8 +461,8 @@ export default class Itemdsa5 extends Item {
   }
 
   /**
-   * Post item to chat
-   * @returns {Promise} Post promise
+   * Post this item to chat for display to all players
+   * @returns {Promise<void>} Promise that resolves when the item has been posted
    */
   async postItem() {
     this.system.constructor._postItem(this);
@@ -483,7 +600,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     if (source.system.effectFormula.value)
       res.push({
         name: game.i18n.localize('MODS.defenseMalus'),
-        value: -4,
+        value: ITEM_CONSTANTS.RANGE_DEFENSE_MALUS,
         type: 'defenseMalus',
         selected: true,
         source: source.name,
@@ -493,7 +610,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static getPropertyModifiers(actor, item) {
-    const isClerical = ['ceremony', 'liturgy'].includes(item.type);
+    const isClerical = [TEST_TYPES.CEREMONY, TEST_TYPES.LITURGY].includes(item.type);
     const features = (getProperty(item, 'system.feature') || '')
       .replace(/\(a-z äöü-\)/gi, '')
       .split(',')
@@ -533,8 +650,23 @@ class SpellItemDSA5 extends Itemdsa5 {
     return res;
   }
 
+  /**
+   * Apply foreign spell modifier if enabled and applicable
+   * @static
+   * @param {Object} actor - Actor casting the spell
+   * @param {Object} source - Spell item being cast
+   * @param {Array<Object>} situationalModifiers - Array to add modifiers to
+   * @param {Object} data - Data object to modify with foreign spell status
+   * @returns {void}
+   */
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
-    if (game.settings.get('dsa5', 'enableForeignSpellModifer') && ['npc', 'character'].includes(actor.type) && ['spell', 'ritual'].includes(source.type)) {
+    const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
+    const applicableSpellTypes = [TEST_TYPES.SPELL, TEST_TYPES.RITUAL];
+    
+    if (game.settings.get('dsa5', 'enableForeignSpellModifer') && 
+        enabledActorTypes.includes(actor.type) && 
+        applicableSpellTypes.includes(source.type)) {
+      
       const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
       const regx = new RegExp(`(${game.i18n.localize('tradition')}|\\\)|\\\()`, 'g');
       const traditions = actor.system.tradition.magical
@@ -847,7 +979,7 @@ class WeaponItemDSA5 extends Itemdsa5 {
 
     const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
     if (speciesObject) {
-      const attackOrParry = ['attack', 'parry'].includes(data.mode);
+      const attackOrParry = [ITEM_CONSTANTS.COMBAT_MODES.ATTACK, ITEM_CONSTANTS.COMBAT_MODES.PARRY].includes(data.mode);
       const domains = (getProperty(source, 'system.effect.attributes') || '').split(',').map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
       const domainMalus = domains.some((domain) => speciesObject.opposingDomains.has(domain)) ? 1 : 0;
 
@@ -907,10 +1039,10 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
     const toSearch = [source.system.combatskill.value];
     const combatSpecAbs = CombatSpecialAbilities.build(actor, ['Combat'], toSearch, data.mode, source);
 
-    if (data.mode == 'attack') {
+    if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK) {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
-      this.weaponModifiers(situationalModifiers, source, 'damage');
-    } else if (data.mode == 'parry') {
+      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+    } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.PARRY) {
       CombatSystem.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);
@@ -918,7 +1050,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
     CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode]);
     this.speciesModifier(situationalModifiers, actor, data, source);
 
-    if (['attack', 'parry'].includes(data.mode)) {
+    if ([ITEM_CONSTANTS.COMBAT_MODES.ATTACK, ITEM_CONSTANTS.COMBAT_MODES.PARRY].includes(data.mode)) {
       situationalModifiers.push(
         ...MiracleModifiers.get(actor, { name: source.system.combatskill.value }, '', data.mode),
         ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
@@ -1009,7 +1141,7 @@ class PoisonItemDSA5 extends Itemdsa5 {
 
 class RangeweaponItemDSA5 extends WeaponItemDSA5 {
   static getSituationalModifiers(situationalModifiers, actor, data, _source, tokenId) {
-    if (data.mode == 'attack') {
+    if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK) {
       const source = DSA5_Utility.toObjectIfPossible(_source);
 
       const toSearch = [source.system.combatskill.value];
@@ -1061,8 +1193,8 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         }
       }
 
-      this.weaponModifiers(situationalModifiers, source, 'attack');
-      this.weaponModifiers(situationalModifiers, source, 'damage');
+      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.ATTACK);
+      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
 
       situationalModifiers.push(
         ...MiracleModifiers.get(actor, { name: source.system.combatskill.value }, '', data.mode),
@@ -1075,7 +1207,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
   static async checkAmmunitionState(item, testData, actor, mode) {
     let hasAmmo = true;
-    if (mode != 'damage') {
+    if (mode != ITEM_CONSTANTS.COMBAT_MODES.DAMAGE) {
       let itemData = item.system;
       if (itemData.ammunitiongroup.value == 'infinite') {
         //Dont count ammo
@@ -1161,7 +1293,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     situationalModifiers.push(
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
       ...actor.getSkillModifier(source.name, source.type),
-      ...MiracleModifiers.get(actor, source, 'FW', 'skill'),
+      ...MiracleModifiers.get(actor, source, 'FW', TEST_TYPES.SKILL),
     );
 
     for (const thing of actor.system.skillModifiers.global) {
@@ -1224,13 +1356,13 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
     const traitType = source.system.traitType.value;
     const combatSpecialabilities = CombatSpecialAbilities.build(actor, ['Combat', 'animal'], undefined, data.mode, source);
 
-    if (data.mode == 'attack' && traitType == 'meleeAttack') {
+    if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK && traitType == 'meleeAttack') {
       CombatSystem.prepareMeleeAttack(situationalModifiers, actor, data, source, combatSpecialabilities, false);
-      this.weaponModifiers(situationalModifiers, source, 'damage');
-    } else if (data.mode == 'attack' && traitType == 'rangeAttack') {
+      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+    } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.ATTACK && traitType == 'rangeAttack') {
       CombatSystem.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecialabilities);
-      this.weaponModifiers(situationalModifiers, source, 'damage');
-    } else if (data.mode == 'parry') {
+      this.weaponModifiers(situationalModifiers, source, ITEM_CONSTANTS.COMBAT_MODES.DAMAGE);
+    } else if (data.mode == ITEM_CONSTANTS.COMBAT_MODES.PARRY) {
       CombatSystem.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecialabilities, false);
     }
     this.weaponModifiers(situationalModifiers, source, data.mode);

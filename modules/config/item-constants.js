@@ -2,6 +2,7 @@
  * Constants and configuration for DSA5 items
  */
 export const ITEM_CONSTANTS = {
+  DEFAULT_ICON_PATH: 'systems/dsa5/icons/blank.webp',
   DEFAULT_IMAGES: {
     advantage: 'systems/dsa5/icons/categories/Vorteil.webp',
     disadvantage: 'systems/dsa5/icons/categories/Nachteil.webp',
@@ -69,6 +70,12 @@ export const ITEM_CONSTANTS = {
     /\*\d(\.\d)*/
   ],
 
+  COMBAT_MODES: {
+    ATTACK: 'attack',
+    PARRY: 'parry',
+    DAMAGE: 'damage'
+  },
+
   COMBAT_BONUS: {
     ATTACK: 'atbonus',
     PARRY: 'pabonus',
@@ -82,5 +89,7 @@ export const ITEM_CONSTANTS = {
     SKILL_DIALOG: 'systems/dsa5/templates/dialog/skill-dialog.hbs',
     COMBAT_DIALOG: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
     POISON_DIALOG: 'systems/dsa5/templates/dialog/poison-dialog.hbs'
-  }
+  },
+
+  RANGE_DEFENSE_MALUS: -4
 };
