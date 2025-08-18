@@ -249,7 +249,7 @@ export class CombatSystem {
             });
         }
 
-        CombatSystem.addSwarmModifiers(actor, 'attack', situationalModifiers);
+        CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
 
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
@@ -277,7 +277,7 @@ export class CombatSystem {
      */
     static prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled) {
         const isRangeDefense = CombatSystem.getDefenseMalus(situationalModifiers, actor);
-        CombatSystem.addSwarmModifiers(actor, 'parry', situationalModifiers);
+        CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.PARRY, situationalModifiers);
 
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
@@ -346,7 +346,7 @@ export class CombatSystem {
             finalMountedOptions[`${game.i18n.localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
         }
 
-        CombatSystem.addSwarmModifiers(actor, 'attack', situationalModifiers);
+        CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
 
         mergeObject(data, {
             rangeOptions,

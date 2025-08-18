@@ -9,9 +9,7 @@ import DSAActiveEffectConfig from '../status/active_effects.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import CreatureType from '../system/automation/creature-type.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
-import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
-import DSAActiveEffect from '../status/dsa_active_effects.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import { ModifierCalculator } from './concerns/modifier-calculator.js';
 import { CombatSystem } from './concerns/combat-system.js';
@@ -20,7 +18,6 @@ import { DialogBuilder } from './dialog-builder.js';
 import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
 import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
-import { SkillTestSupport } from './concerns/skill-test-support.js';
 import { ItemEquality } from './concerns/item-equality.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -55,16 +52,6 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 // ===== CONSTANTS =====
 
-/** @constant {Object<string, string>} Test types */
-const TEST_TYPES = {
-  SKILL: 'skill',
-  SPELL: 'spell',
-  LITURGY: 'liturgy',
-  CEREMONY: 'ceremony',
-  RITUAL: 'ritual',
-  COMBAT: 'combat'
-};
-
 /** @constant {Object<string, string>} Actor types */
 const ACTOR_TYPES = {
   CHARACTER: 'character',
@@ -75,6 +62,7 @@ const ACTOR_TYPES = {
 /** @constant {string} Opposition indicator for chat titles */
 const OPPOSED_SUFFIX = ' - ';
 
+const { SPELL, LITURGY, CEREMONY, RITUAL, SKILL } = ITEM_CONSTANTS.TEST_TYPES;
 
 /**
  * DSA5 Item class extending Foundry VTT's base Item class
@@ -613,7 +601,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static getPropertyModifiers(actor, item) {
-    const isClerical = [TEST_TYPES.CEREMONY, TEST_TYPES.LITURGY].includes(item.type);
+    const isClerical = [CEREMONY, LITURGY].includes(item.type);
     const features = (getProperty(item, 'system.feature') || '')
       .replace(/\(a-z äöü-\)/gi, '')
       .split(',')
@@ -664,10 +652,10 @@ class SpellItemDSA5 extends Itemdsa5 {
    */
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
     const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
-    const applicableSpellTypes = [TEST_TYPES.SPELL, TEST_TYPES.RITUAL];
-    
-    if (game.settings.get('dsa5', 'enableForeignSpellModifer') && 
-        enabledActorTypes.includes(actor.type) && 
+    const applicableSpellTypes = [SPELL, RITUAL];
+
+    if (game.settings.get('dsa5', 'enableForeignSpellModifer') &&
+        enabledActorTypes.includes(actor.type) &&
         applicableSpellTypes.includes(source.type)) {
       
       const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
@@ -1141,7 +1129,7 @@ class SkillItemDSA5 extends Itemdsa5 {
         'equipment'
       ]),
       ...actor.getSkillModifier(source.name, source.type),
-      ...MiracleModifiers.get(actor, source, 'FW', TEST_TYPES.SKILL),
+      ...MiracleModifiers.get(actor, source, 'FW', SKILL),
     );
 
     // Add global skill modifiers

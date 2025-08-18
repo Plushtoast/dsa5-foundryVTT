@@ -91,5 +91,14 @@ export const ITEM_CONSTANTS = {
     POISON_DIALOG: 'systems/dsa5/templates/dialog/poison-dialog.hbs'
   },
 
-  RANGE_DEFENSE_MALUS: -4
+  RANGE_DEFENSE_MALUS: -4,
+
+  TEST_TYPES: {
+    SKILL: 'skill',
+    SPELL: 'spell',
+    LITURGY: 'liturgy',
+    CEREMONY: 'ceremony',
+    RITUAL: 'ritual',
+    COMBAT: 'combat'
+  }
 };

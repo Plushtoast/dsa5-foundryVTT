@@ -3,6 +3,8 @@ import CreatureType from '../../system/automation/creature-type.js';
 
 const { getProperty, mergeObject } = foundry.utils;
 
+const { SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
+
 /**
  * Utility class for handling modifier calculations and parsing
  */
@@ -122,7 +124,7 @@ export class ModifierCalculator {
         let skMod = [];
         let zkMod = [];
 
-        const hasSpellResistance = ['spell', 'liturgy', 'ceremony', 'ritual'].includes(source.type) &&
+        const hasSpellResistance = [SPELL, LITURGY, CEREMONY, RITUAL].includes(source.type) &&
             source.system.effectFormula.value.trim() === '';
 
         if (game.user.targets.size) {
