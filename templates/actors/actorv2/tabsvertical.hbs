@@ -1,6 +1,7 @@
 <nav class='right tabs' aria-roledescription='Form Tab Navigation'>
   {{#each tabs as |tab|}}
     <button type='button' class='icon {{tab.icon}} {{tab.cssClass}}' data-action="tab" data-tooltip='{{tab.label}}' data-group='{{tab.group}}' data-tab='{{tab.id}}'>
+      {{#if tab.img}}<img src="{{tab.img}}" alt="{{tab.label}}">{{/if}}      
     </button>
   {{/each}}
 </nav>

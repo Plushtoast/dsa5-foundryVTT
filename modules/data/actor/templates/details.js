@@ -73,13 +73,13 @@ export default class DetailsTemplate extends DSADataModel {
   static _migrateData(source) {
     super._migrateData(source);
 
-    if (typeof source.details?.socialstate === 'string') {
-      const social = source.details.socialstate.trim();
-      source.details.socialstate = 0;
-      Object.values(this.SOCIAL_STATES_CHOICES).forEach((key, index) => {
-        const localized = game.i18n.localize(key).toLowerCase();
-        if (localized === social.toLowerCase()) {
-          source.details.socialstate = index;
+    if (typeof source.details?.socialstate?.value === 'string') {
+      const social = source.details.socialstate.value.trim().toLowerCase();
+      source.details.socialstate.value = 0;
+      Object.values(this.SOCIAL_STATES_CHOICES).forEach((value, index) => {
+        const localized = game.i18n.localize(value).toLowerCase();
+        if (localized === social) {
+          source.details.socialstate.value = index;
         }
       });
     }

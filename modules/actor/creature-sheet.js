@@ -12,25 +12,13 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
     },
-    tabs: {
-      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
-      id: "tabs",
-      classes: ["tabs", "right"],
-    },
+    tabs: super.PARTS.tabs,
     main: {
       template: 'systems/dsa5/templates/actors/creature/creature-main.hbs',
       scrollable: ['']
     },
-    combat: {
-      template: 'systems/dsa5/templates/actors/actor-combat.hbs',
-      scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs']
-    },
-    skills: {
-      template: 'systems/dsa5/templates/actors/actor-talents.hbs',
-      templates: ['systems/dsa5/templates/actors/character/actor-aggregatedtests.hbs'],
-      scrollable: ['']
-    },
+    combat: super.PARTS.combat,
+    skills: super.PARTS.skills,
     magic: {
       template: 'systems/dsa5/templates/actors/creature/creature-magic.hbs',
       templates: ['systems/dsa5/templates/actors/parts/spells.hbs', 'systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/magicalSigns.hbs'],
@@ -46,10 +34,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
-    status: {
-      template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
-      scrollable: ['']
-    },
+    status: super.PARTS.status,
     notes: {
       template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
       scrollable: ['']

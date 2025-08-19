@@ -1938,22 +1938,39 @@ input[type='search'] {
     top: 80px;
     z-index: -1;
     border: none;
-
+   
     button {
       width: 38px;
       font-size: large;
       border-left: 8px transparent solid;
       background: var(--copiedBG);
       transition: background-color 0.2s ease-in-out;
+      padding: 3px;
+
+      img {
+        object-fit: contain;
+        border:none;
+        width: 100%;
+        height: 100%;
+        filter: grayscale(1);
+        transition: filter 0.2s ease-in-out;
+      }
 
       &:hover {
         background-color: var(--dsadesign1);
+        border-color: var(--text-color-primary);
+        img {
+          filter: grayscale(0);
+        }
       }
 
       &.active {
         box-shadow: none;
         outline: 1px solid var(--dsadesign1);
         border-color: var(--dsadesign1);
+        img {
+          filter: grayscale(0);
+        }
       }
     }
   }
