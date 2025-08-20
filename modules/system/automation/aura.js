@@ -77,9 +77,9 @@ export class DSAAura {
 
   static async removeAura(aura, token) {
     for (const otherToken of canvas.scene.tokens) {
-      const existingEffect = otherToken.actor.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == aura);
+      const existingEffect = otherToken.actor?.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == aura);
       if (existingEffect) {
-        await otherToken.actor.deleteEmbeddedDocuments('ActiveEffect', [existingEffect.id]);
+        await otherToken.actor.effects.get(existingEffect.id)?.delete();
       }
     }
   }
@@ -175,7 +175,7 @@ export class DSAAura {
 
     for (let token of canvas.scene.tokens) {
       if (!token.actor || token.id == trespasser.id) continue;
-      if ('loot' == getProperty(token.actor, 'system.merchant.merchantType')) continue;
+      if ('loot' == token.actor.system.merchant.merchantType) continue;
 
       for (let [key, aura] of Object.entries(token.object?.auras || {})) {
         let { auraSource, effect, isAura } = getProperty(aura.template.document, 'flags.dsa5');
@@ -226,7 +226,7 @@ export class DSAAura {
       });
       await token.actor.addCondition(newEffect);
     } else if (!inAura && existingEffect) {
-      await token.actor.deleteEmbeddedDocuments('ActiveEffect', [existingEffect.id]);
+      await token.actor.effects.get(existingEffect.id)?.delete();
     }
   }
 }

@@ -319,10 +319,9 @@ export default function () {
     };
     Riding.updateTokenHook(token, data, options);
 
-    const animationName = options.animation?.name || token.object?.animationName;
-    const animationPromise = token.object?.animationContexts.get(animationName)?.promise;
+    const movementAnimationPromis = token.object?.movementAnimationPromis || Promise.resolve();
 
-    (animationPromise || Promise.resolve()).then(() => {
+    movementAnimationPromis.then(() => {
       token.object?.drawAuras();
       if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onTokenMove(token, data, options, prePosition);
     });
