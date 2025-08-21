@@ -958,8 +958,22 @@ export default class DiceDSA5 {
       return numericValue || await this._stringToRoll(modifier.value);
     });
 
+    let compensation = 0;
+    if (filter === ''){
+      compensation = await DiceDSA5._situationalModifiers(testData, DICE_CONSTANTS.MODIFIER_TYPES.COMPENSATION);
+    }
+
     const values = await Promise.all(modifierPromises);
-    return values.reduce((total, value) => total + value, 0);
+    let [pos, neg] = values.reduce((total, value) => {
+      if (value < 0) {
+        total[1] += value;
+      } else {
+        total[0] += value;
+      }
+      return total;
+    }, [0, 0]);
+
+    return pos + Math.min(0, neg + compensation);
   }
 
   /**
@@ -1853,11 +1867,11 @@ export default class DiceDSA5 {
     let qualityStep = 0;
 
     if (successLevel > 0) {
-      fws += await this._situationalModifiers(testData, 'FP');
+      fws += await this._situationalModifiers(testData, DICE_CONSTANTS.MODIFIER_TYPES.FP);
       qualityStep =
         Math.max(1, (fws == 0 ? 1 : fws > 0 ? Math.ceil(fws / 3) : 0) + (testData.qualityStep != undefined ? Number(testData.qualityStep) : 0)) +
         (testData.advancedModifiers.qls || 0) +
-        (await this._situationalModifiers(testData, 'QL'));
+        (await this._situationalModifiers(testData, DICE_CONSTANTS.MODIFIER_TYPES.QL));
     }
 
     qualityStep = Math.min(game.settings.get('dsa5', 'capQSat'), qualityStep);

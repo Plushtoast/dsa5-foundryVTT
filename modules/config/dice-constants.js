@@ -48,7 +48,10 @@ export const DICE_CONSTANTS = {
 
   MODIFIER_TYPES: {
     TPM: 'TPM',
-    MULTIPLY: '*'
+    MULTIPLY: '*',
+    FP: 'FP',
+    QL: 'QL',
+    COMPENSATION: 'CMP'
   },
 
   CHAT_MODES: {

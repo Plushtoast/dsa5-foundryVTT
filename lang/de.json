@@ -98,6 +98,7 @@
         "pKaP": "pKaP",
         "KaP": "KaP",
         "step": "KTW",
+        "CMP": "KMP",
         "attack": "AT",
         "parry": "PA",
         "ATFK": "AT/FK",
