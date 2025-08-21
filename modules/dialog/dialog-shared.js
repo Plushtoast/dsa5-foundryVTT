@@ -64,7 +64,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
 
   rotateToTarget() {
     const targets = Array.from(game.user?.targets || []);
-    if (targets.length > 0 && game.canvas.ready) {
+    if (targets.length > 0 && game.canvas.ready && this.dialogData?.speaker?.token) {
       const sourceToken = canvas.tokens.get(this.dialogData.speaker.token);
 
       if(!sourceToken) return;
