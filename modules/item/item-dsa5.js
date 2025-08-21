@@ -570,7 +570,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     const res = [];
 
     const cost = isClerical ? 'KaPCost' : 'AsPCost';
-    const keys = ['FP', 'step', 'QL', 'TPM', 'FW', cost];
+    const keys = ['FP', 'step', 'QL', 'TPM', 'FW', 'CMP', cost];
     for (const k of keys) {
       const type = k == 'step' ? '' : k;
       const modifiers = getProperty(actor.system.skillModifiers, `feature.${k}`);

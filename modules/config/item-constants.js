@@ -73,7 +73,8 @@ export const ITEM_CONSTANTS = {
   COMBAT_MODES: {
     ATTACK: 'attack',
     PARRY: 'parry',
-    DAMAGE: 'damage'
+    DAMAGE: 'damage',
+    DODGE: 'dodge'
   },
 
   COMBAT_BONUS: {

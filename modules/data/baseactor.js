@@ -92,6 +92,7 @@ export class ActorDataModel extends DSADataModel {
       step: [],
       QL: [],
       TPM: [],
+      CMP: [],
       FW: [],
       botch: 20,
       crit: 1,
@@ -112,6 +113,7 @@ export class ActorDataModel extends DSADataModel {
         step: [],
         QL: [],
         TPM: [],
+        CMP: [],
         FW: [],
         KaPCost: [],
         AsPCost: [],
@@ -126,6 +128,7 @@ export class ActorDataModel extends DSADataModel {
         QL: [],
         TPM: [],
         FW: [],
+        CMP: [],
       };
     });
 

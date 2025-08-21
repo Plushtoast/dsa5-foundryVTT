@@ -796,6 +796,7 @@
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
         "combatInWater": "Wasserkampf",
+        "compensation": "Kompensation",
         "impossibleWeapon": "{weapon} nicht einsetzbar",
         "notSuitableWeapon": "{weapon} nicht geeignet",
         "RangeMod": {

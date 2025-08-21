@@ -333,7 +333,7 @@ export default class Actordsa5 extends Actor {
 
   getSkillModifier(name, sourceType) {
     const result = [];
-    const keys = ['FP', 'step', 'QL', 'TPM', 'FW'];
+    const keys = ['FP', 'step', 'QL', 'TPM', 'FW', 'CMP'];
     for (const k of keys) {
       const type = k == 'step' ? '' : k;
       result.push(

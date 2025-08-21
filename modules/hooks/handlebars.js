@@ -14,6 +14,7 @@ const modifierTypes = {
   damageBonus: 'MODS.damage',
   armorPen: 'MODS.armorPen',
   TPM: 'MODS.partChecks',
+  CMP: 'MODS.compensation'
 };
 
 function clickableAbilities(a, b) {
