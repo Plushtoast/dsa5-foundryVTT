@@ -3,7 +3,7 @@ import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { ModifierCalculator } from './modifier-calculator.js';
-import { DialogBuilder } from '../dialog-builder.js';
+import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 
 const { mergeObject } = foundry.utils;
@@ -65,7 +65,7 @@ export class ResistanceTests {
       source: item,
       extra: {
         options,
-        speaker: DialogBuilder.buildSpeaker(actor, tokenId),
+        speaker: RollDialogBuilder.buildSpeaker(actor, tokenId),
       },
     };
 
@@ -103,7 +103,7 @@ export class ResistanceTests {
       },
     };
 
-    const cardOptions = DialogBuilder._setupItemCardOptions(
+    const cardOptions = RollDialogBuilder._setupItemCardOptions(
       `systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, 
       title, 
       tokenId

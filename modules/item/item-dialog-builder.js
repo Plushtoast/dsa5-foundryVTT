@@ -1,58 +1,19 @@
-import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DSA5 from '../config/config-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
+import { RollDialogBuilder } from "../dialog/dialog-builder.js";
 
 const { mergeObject, getProperty } = foundry.utils;
 
-/**
- * Factory for creating item test dialogs
- */
-export class DialogBuilder {
+export class ItemDialogBuilder extends RollDialogBuilder {
     /**
-     * Build speaker object for chat
-     * @param {Object} actor - Actor
-     * @param {string} tokenId - Token ID
-     * @returns {Object} Speaker object
-     */
-    static buildSpeaker(actor, tokenId) {
-        const speaker = {
-            token: tokenId,
-            actor: actor?.id,
-            scene: canvas.scene?.id,
-        };
-        if (speaker.token == 'emptyActor') speaker.emptyActor = actor.emptyActor;
-        return speaker
-    }
-    /**
-     * Create base dialog configuration
-     * @param {Object} item - Item
-     * @param {Object} actor - Actor
-     * @param {string} tokenId - Token ID
-     * @param {Object} options - Options
-     * @returns {Object} Base dialog configuration
-     */
-    static createBaseConfig(item, actor, tokenId, options, template, title) {
-        return {
-            testData: {
-                source: item,
-                extra: {
-                    options,
-                    speaker: this.buildSpeaker(actor, tokenId),
-                },
-            },
-            cardOptions: this._setupCardOptions(template, title, tokenId, actor)
-        };
-    }
-
-    /**
-     * Create spell dialog
-     * @param {Object} spell - Spell item
-     * @param {Object} actor - Actor
-     * @param {string} tokenId - Token ID
-     * @param {Object} options - Options
-     * @returns {Object} Dialog configuration
-     */
+         * Create spell dialog
+         * @param {Object} spell - Spell item
+         * @param {Object} actor - Actor
+         * @param {string} tokenId - Token ID
+         * @param {Object} options - Options
+         * @returns {Object} Dialog configuration
+         */
     static createSpellDialog(spell, actor, tokenId, options) {
         const sheet = ['ceremony', 'liturgy'].includes(spell.type) ? 'liturgy' : 'spell';
         const title = `${spell.name} ${game.i18n.localize(`${spell.type}Test`)}${options.subtitle || ''}`;
@@ -89,7 +50,7 @@ export class DialogBuilder {
             hasSKModifier: spell.system.resistanceModifier.value === 'SK',
             hasZKModifier: spell.system.resistanceModifier.value === 'ZK',
             maxMods,
-            extensions: this.prepareExtensions(actor, spell),
+            extensions: this.#prepareExtensions(actor, spell),
             variableBaseCost: spell.system.variableBaseCost,
             characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),
         };
@@ -107,58 +68,6 @@ export class DialogBuilder {
                 data,
             },
             ...config,
-        };
-    }
-
-    static _setupCardOptions(template, title, tokenId, actor) {
-        const token = game.canvas?.tokens?.get(tokenId);
-        let cardOptions = {
-            speaker: {
-                alias: token ? token.name : actor.prototypeToken.name,
-                actor: actor.id,
-            },
-            title,
-            template,
-            flags: {
-                img: { src: actor.prototypeToken.randomImg ? actor.img : actor.prototypeToken.texture.src },
-            },
-        };
-        if (actor.token) {
-            cardOptions.speaker.alias = actor.token.name;
-            cardOptions.speaker.token = actor.token.id;
-            cardOptions.speaker.scene = canvas.scene.id;
-            cardOptions.flags.img.src = actor.token.texture.src;
-        } else {
-            let speaker = ChatMessage.getSpeaker();
-            if (speaker.actor == actor.id) {
-                cardOptions.speaker.alias = speaker.alias;
-                cardOptions.speaker.token = speaker.token;
-                cardOptions.speaker.scene = speaker.scene;
-                cardOptions.flags.img.src = speaker.token ? canvas.tokens.get(speaker.token).document.texture.src : cardOptions.flags.img.src;
-            }
-        }
-        return cardOptions;
-    }
-
-    /**
-     * Setup card options for chat
-     * @param {string} template - Template path
-     * @param {string} title - Card title
-     * @param {string} tokenId - Token ID
-     * @returns {Object} Card options
-     */
-    static _setupItemCardOptions(template, title, tokenId) {
-        const speaker = ChatMessage.getSpeaker();
-        return {
-            speaker: {
-                alias: speaker.alias,
-                scene: speaker.scene,
-            },
-            flags: {
-                img: { src: speaker.token ? canvas.tokens.get(speaker.token).document.texture.src : this.img },
-            },
-            title,
-            template,
         };
     }
 
@@ -246,7 +155,7 @@ export class DialogBuilder {
      * @param {Object} spell - Spell
      * @returns {Array} Extensions array
      */
-    static prepareExtensions(actor, spell) {
+    static #prepareExtensions(actor, spell) {
         return actor.items
             .filter((x) => x.type === 'spellextension' &&
                 x.system.source === spell.name &&

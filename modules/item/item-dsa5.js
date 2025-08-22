@@ -14,11 +14,11 @@ import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import { ModifierCalculator } from './concerns/modifier-calculator.js';
 import { CombatSystem } from './concerns/combat-system.js';
 import { ItemFactory } from './item-factory.js';
-import { DialogBuilder } from './dialog-builder.js';
 import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
 import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
+import { ItemDialogBuilder } from './item-dialog-builder.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -668,7 +668,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, spell, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createSpellDialog(spell, actor, tokenId, options)    
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createSpellDialog(spell, actor, tokenId, options)    
 
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, spell);
 
@@ -745,7 +745,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
 class CombatskillDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createCombatDialog(item, actor, tokenId, options);
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
     dialogOptions.callback = (html, options = {}) => {
       cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
       testData.situationalModifiers = Actordsa5._parseModifiers(html);
@@ -806,7 +806,7 @@ class ConsumableItemDSA extends Itemdsa5 {
       preData: {
         source: item.toObject(),
         extra: {
-          speaker: DialogBuilder.buildSpeaker(actor, tokenId),
+          speaker: ItemDialogBuilder.buildSpeaker(actor, tokenId),
         },
       },
       postData: {
@@ -894,7 +894,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createCombatDialog(item, actor, tokenId, options);
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item));
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;
@@ -1021,7 +1021,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
   }
 
   static async setupDialog(ev, options, item, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createCombatDialog(item, actor, tokenId, options);
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
 
     if (!(await this.checkAmmunitionState(item, testData, actor, options.mode))) return;
 
@@ -1110,7 +1110,7 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, skill, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createSkillDialog(skill, actor, tokenId, options);
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createSkillDialog(skill, actor, tokenId, options);
 
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, skill);
     this.prepareFocusRuleModifiers(dialogOptions.data, actor, skill);
@@ -1158,7 +1158,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = DialogBuilder.createCombatDialog(item, actor, tokenId, options);
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject());
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;

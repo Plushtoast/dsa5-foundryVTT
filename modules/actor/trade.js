@@ -1,4 +1,4 @@
-import { DialogBuilder } from '../item/dialog-builder.js';
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
@@ -355,7 +355,7 @@ export class Trade extends DefaultAppv2 {
 export class TradeOptions extends DefaultAppv2 {
   constructor(actor, options) {
     super(options);
-    this.actorId = DialogBuilder.buildSpeaker(actor, actor.token?.id);
+    this.actorId = RollDialogBuilder.buildSpeaker(actor, actor.token?.id);
   }
 
   async _prepareContext(_options) {
@@ -381,7 +381,7 @@ export class TradeOptions extends DefaultAppv2 {
 
   _startTrade(ev) {
     const target = game.actors.get(ev.currentTarget.dataset.id);
-    const app = new Trade(this.actorId, DialogBuilder.buildSpeaker(target, target.token?.id));
+    const app = new Trade(this.actorId, RollDialogBuilder.buildSpeaker(target, target.token?.id));
     app.startTrade();
     this.close();
   }

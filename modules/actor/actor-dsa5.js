@@ -23,7 +23,7 @@ import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
 import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
-import { DialogBuilder } from '../item/dialog-builder.js';
+import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1531,7 +1531,7 @@ export default class Actordsa5 extends Actor {
         functionName: 'game.dsa5.entities.Actordsa5.updateFallingDamage',
         options,
         tokenId,
-        speaker: DialogBuilder.buildSpeaker(this, tokenId),
+        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
       },
     };
     this.setupSkill(skill, optns, tokenId).then(async (finalData) => {
@@ -1570,7 +1570,7 @@ export default class Actordsa5 extends Actor {
       opposable: false,
       extra: {
         options,
-        speaker: DialogBuilder.buildSpeaker(this, tokenId),
+        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1598,7 +1598,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId, this);
+    const cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1608,71 +1608,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupRegeneration(statusId, options = {}, tokenId) {
-    let title = game.i18n.localize('regenerationTest');
-
-    let testData = {
-      source: {
-        type: 'regenerate',
-        system: {},
-      },
-      opposable: false,
-      extra: {
-        statusId,
-        options,
-        speaker: DialogBuilder.buildSpeaker(this, tokenId),
-      },
-    };
-
-    let situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
-    let dialogOptions = {
-      title,
-      template: 'systems/dsa5/templates/dialog/regeneration-dialog.hbs',
-      data: {
-        rollMode: options.rollMode,
-        regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
-        regnerationCampLocations: DSA5.regnerationCampLocations,
-        showAspModifier: this.system.isMage,
-        showKapModifier: this.system.isPriest,
-        situationalModifiers,
-        modifier: options.modifier || 0,
-      },
-      callback: (html, options = {}) => {
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.situationalModifiers.push(
-          {
-            name: game.i18n.localize('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),
-            value: html.find('[name="regnerationCampLocations"]').val(),
-          },
-          {
-            name: game.i18n.localize('interruption') + ' - ' + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
-            value: html.find('[name="regenerationInterruptOptions"]').val(),
-          },
-        );
-        testData.regenerationFactor = html.find('[name="badEnvironment"]').is(':checked') ? 0.5 : 1;
-        const attrs = ['LeP', 'KaP', 'AsP'];
-        const update = {};
-        for (let k of attrs) {
-          testData[`${k}Modifier`] = Number(html.find(`[name="${k}Modifier"]`).val() || 0);
-          testData[`regeneration${k}`] = Number(this.system.status.regeneration[`${k}max`]);
-          const regenerate = html.find(`[name="regenerate${k}"]`).is(':checked') ? 1 : 0;
-          testData[`regenerate${k}`] = regenerate;
-          if (regenerate) update[`system.status.regeneration.${k}Temp`] = 0;
-        }
-
-        mergeObject(testData.extra.options, options);
-        this.update(update);
-        return { testData, cardOptions };
-      },
-    };
-
-    let cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/regeneration-card.hbs', title, tokenId, this);
-
-    return DiceDSA5.setupDialog({
-      dialogOptions,
-      testData,
-      cardOptions,
-    });
+    return ActorDialogBuilder.createRegenerationDialog(statusId, options, tokenId, this);
   }
 
   setupDodge(options = {}, tokenId) {
@@ -1686,7 +1622,7 @@ export default class Actordsa5 extends Actor {
       extra: {
         statusId,
         options,
-        speaker: DialogBuilder.buildSpeaker(this, tokenId),
+        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1720,7 +1656,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.hbs', dialogOptions.title, tokenId, this);
+    const cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/status-card.hbs', dialogOptions.title, tokenId, this);
 
     return DiceDSA5.setupDialog({
       dialogOptions,
@@ -1743,7 +1679,7 @@ export default class Actordsa5 extends Actor {
       extra: {
         characteristicId,
         options,
-        speaker: DialogBuilder.buildSpeaker(this, tokenId),
+        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
       },
     };
 
@@ -1764,7 +1700,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = DialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
+    let cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }

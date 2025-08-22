@@ -49,7 +49,7 @@ export default class DiceDSA5 {
       [DICE_CONSTANTS.ROLL_TYPES.SKILL]: () => this.rollTalent(testData),
       [DICE_CONSTANTS.ROLL_TYPES.COMBATSKILL]: () => this.rollCombatskill(testData),
       [DICE_CONSTANTS.ROLL_TYPES.TRAIT]: () => this.#handleTraitRoll(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.REGENERATE]: () => this.rollRegeneration(testData),
+      [DICE_CONSTANTS.ROLL_TYPES.REGENERATE]: () => this.#rollRegeneration(testData),
       [DICE_CONSTANTS.ROLL_TYPES.MELEEWEAPON]: () => this.#handleWeaponRoll(testData),
       [DICE_CONSTANTS.ROLL_TYPES.RANGEWEAPON]: () => this.#handleWeaponRoll(testData),
       [DICE_CONSTANTS.ROLL_TYPES.DODGE]: () => this.#handleDodgeRoll(testData),
@@ -785,7 +785,7 @@ export default class DiceDSA5 {
     return result;
   }
 
-  static async rollRegeneration(testData) {
+  static async #rollRegeneration(testData) {
     let modifier = await this._situationalModifiers(testData);
     let roll = testData.roll;
     let chars = [];
@@ -812,6 +812,8 @@ export default class DiceDSA5 {
         index += 2;
       }
     } else {
+      const modifierLoc = game.i18n.localize('Modifier');
+      const regenerationLoc = game.i18n.localize('regenerate');
       for (let k of attrs) {
         this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`), k);
         this._appendSituationalModifiers(
@@ -826,17 +828,23 @@ export default class DiceDSA5 {
           SpecialabilityRulesDSA5.abilityStep(actor, `LocalizedIDs.advancedRegeneration${k}`),
           k,
         );
-        this._appendSituationalModifiers(testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize('Modifier')}`, testData[`${k}Modifier`], k);
-        this._appendSituationalModifiers(testData, `${game.i18n.localize(`CHARAbbrev.${k}`)} ${game.i18n.localize('regenerate')}`, testData[`regeneration${k}`], k);
+
+        const label = game.i18n.localize(`CHARAbbrev.${k}`);
+
+        this._appendSituationalModifiers(testData, `${label} ${modifierLoc}`, testData[`${k}Modifier`], k);
+        this._appendSituationalModifiers(testData, `${label} ${regenerationLoc}`, testData[`regeneration${k}`], k);
+
+        await this._situationalModifiers(testData);
 
         chars.push({
           char: k,
           res: roll.terms[index].results[0].result,
           die: 'd6',
         });
-        result[k] = Math.round(
-          Math.max(0, Number(roll.terms[index].results[0].result) + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor),
-        );
+
+        const modifiedValue = (Number(roll.terms[index].results[0].result) + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor);
+        result[k] = Math.round(Math.max(0, modifiedValue));
+
         index += 2;
       }
     }

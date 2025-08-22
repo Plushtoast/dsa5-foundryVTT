@@ -12,7 +12,7 @@ import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { ItemDataModel } from '../../data/baseitem.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
-import { DialogBuilder } from '../../item/dialog-builder.js';
+import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -366,7 +366,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     for (const target of game.user.targets) {
       if (target.actor) {
-        const app = new Trade(DialogBuilder.buildSpeaker(actor, tokenId), DialogBuilder.buildSpeaker(target.actor, target.id));
+        const app = new Trade(RollDialogBuilder.buildSpeaker(actor, tokenId), RollDialogBuilder.buildSpeaker(target.actor, target.id));
         app.startTrade();
       }
     }

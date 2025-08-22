@@ -229,7 +229,7 @@ export default class DSA5StatusEffects {
     }
   }
 
-  static async levelDependentEffects(existing, update) {}
+  static async levelDependentEffects() {}
 
   static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {
     //const immune = this.immuneToEffect(actor, existing, true)
@@ -293,7 +293,6 @@ export default class DSA5StatusEffects {
   }
 
   static getRollModifiers(actor, item, options = {}) {
-    //actor = actor.system ? actor.data : actor
     const source = game.i18n.localize('status') + '/' + game.i18n.localize('condition');
     const result = [];
     const finishedCoreIds = [];
@@ -322,29 +321,31 @@ export default class DSA5StatusEffects {
         }
       }
     }
-    
+
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
 
-      const coreId = [...ef.statuses][0];
-      if (finishedCoreIds.includes(coreId)) continue;
+      for (const coreId of [...ef.statuses]) {
+        if (finishedCoreIds.includes(coreId)) continue;
 
-      const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
-      const value = effectClass.calculateRollModifier(ef, actor, item, options);
+        const effectClass = game.dsa5.config.statusEffectClasses[coreId] || DSA5StatusEffects;
+        const value = effectClass.calculateRollModifier(ef, actor, item, options);
 
-      if (value != 0) {
-        result.push({
-          name: ef.name,
-          value,
-          selected: effectClass.ModifierIsSelected(item, options, actor),
-          source,
-        });
+        if (value != 0) {
+          result.push({
+            name: ef.name,
+            value,
+            selected: effectClass.ModifierIsSelected(item, options, actor),
+            source,
+          });
+        }
       }
     }
+
     const playerOwned = actor.hasPlayerOwner;
     const globalMods = game.settings.get('dsa5', 'masterSettings').globalMods || {};
 
-    for (let key of Object.keys(globalMods)) {
+    for (const key of Object.keys(globalMods)) {
       const ef = expandObject(globalMods[key]);
 
       if (!ef.enabled || !ef.target || !ef.target[item.type]) continue;

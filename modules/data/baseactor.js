@@ -150,6 +150,9 @@ export class ActorDataModel extends DSADataModel {
         LePgearmodifier: 0,
         KaPgearmodifier: 0,
         AsPgearmodifier: 0,
+        LePConditional: [],
+        KaPConditional: [],
+        AsPConditional: [],
       }
     };
   }
