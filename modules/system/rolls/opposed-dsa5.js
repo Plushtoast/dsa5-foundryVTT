@@ -6,10 +6,55 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../../status/active_effects.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSATriggers from '../automation/triggers.js';
+
 const { mergeObject, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
+/**
+ * @typedef {Object} OpposedTestResult
+ * @property {string} winner - The winner of the opposed test ('attacker' or 'defender')
+ * @property {Array<string>} other - Additional result information
+ * @property {number} [differenceSL] - Difference in success levels
+ * @property {Object} [damage] - Damage information if applicable
+ * @property {string} [result] - Formatted result string
+ * @property {string} [img] - Winner's image
+ * @property {Object} speakerAttack - Attacker's speaker data
+ * @property {Object} speakerDefend - Defender's speaker data
+ */
+
+/**
+ * @typedef {Object} TestResult
+ * @property {number} successLevel - Success level of the test
+ * @property {number} qualityStep - Quality step of the test
+ * @property {number} result - Raw test result
+ * @property {string} rollType - Type of roll performed
+ * @property {number} [damage] - Damage value if applicable
+ * @property {boolean} [doubleDamage] - Whether damage should be doubled
+ * @property {Array<string>} [armorPen] - Armor penetration modifiers
+ * @property {Object} source - Source item of the test
+ * @property {Object} [ammo] - Ammunition data if applicable
+ * @property {boolean} [counterAttack] - Whether this is a counter attack
+ */
+
+/**
+ * @typedef {Object} CombatantData
+ * @property {Object} speaker - Speaker information
+ * @property {TestResult} testResult - Test result data
+ * @property {string} messageId - Associated message ID
+ * @property {string} [img] - Combatant's image
+ */
+
+/**
+ * Handles opposed test resolution in the DSA5 system
+ * Manages attack/defense interactions, damage calculation, and result presentation
+ */
 export default class OpposedDsa5 {
+  /**
+   * Main entry point for handling opposed test targets and messages
+   * Routes different types of opposed test scenarios to appropriate handlers
+   * @param {ChatMessage} message - The chat message triggering the opposed test
+   * @returns {Promise<void>}
+   */
   static async handleOpposedTarget(message) {
     if (!message) return;
 
@@ -21,39 +66,59 @@ export default class OpposedDsa5 {
     const preData = message.flags.data.preData;
 
     if (actor.flags.oppose) {
-      // DEFEND
+      // DEFEND - Actor is responding to an attack
       OpposedDsa5.answerOpposedTest(actor, message, testResult, preData);
     } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage) {
-      // ATTACK
+      // ATTACK - Actor is initiating an attack against targets
       OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     } else if (message.flags.data.defenderMessage || message.flags.data.attackerMessage) {
-      // NOT  DEFEND
+      // NOT DEFEND - Resolving final opposed test results
       OpposedDsa5.resolveFinalMessage(message);
     } else if (message.flags.data.unopposedStartMessage) {
-      // EDIT NOT DEFEND
+      // EDIT NOT DEFEND - Re-doing an undefended test
       OpposedDsa5.redoUndefended(message);
     } else if (message.flags.data.startMessagesList) {
-      // EDIT
+      // EDIT - Changing start message data
       OpposedDsa5.changeStartMessage(message);
     } else {
-      // DMG ONLY ROLL
+      // DMG ONLY ROLL - Handle damage-only scenarios
       await this.showDamage(message);
       await this.showSpellWithoutTarget(message);
     }
   }
 
+  /**
+   * Rebuilds an empty actor from message data when original actor is not available
+   * Used for tests where the original actor context has been lost
+   * @param {ChatMessage} message - The message containing actor rebuild data
+   * @returns {Promise<Actor|null>} The rebuilt actor or null if not rebuildable
+   */
   static async rebuildEmptyActor(message) {
     if (message.flags?.data?.preData?.extra?.speaker?.token == 'emptyActor') {
       return DSA5_Utility.emptyActor(12, message.flags?.data?.preData?.source?.name);
     }
   }
 
+  /**
+   * Redoes an undefended opposed test with updated message data
+   * @param {ChatMessage} message - The message containing the redo request
+   * @returns {void}
+   */
   static async redoUndefended(message) {
     let startMessage = game.messages.get(message.flags.data.unopposedStartMessage);
     startmessage.flags.unopposeData.attackMessageId = message.id;
     this.resolveUndefended(startMessage);
   }
 
+  /**
+   * Handles the response from a defending actor to an opposed test
+   * Combines attacker and defender data and processes the opposed test result
+   * @param {Actor} actor - The defending actor
+   * @param {ChatMessage} message - The defender's test message
+   * @param {TestResult} testResult - The defender's test result
+   * @param {Object} preData - Pre-test data from the defender
+   * @returns {Promise<void>}
+   */
   static async answerOpposedTest(actor, message, testResult, preData) {
     const attackMessage = game.messages.get(actor.flags.oppose.messageId);
     if (!attackMessage) {
@@ -96,6 +161,12 @@ export default class OpposedDsa5 {
     await OpposedDsa5.clearOpposed(actor);
   }
 
+  /**
+   * Creates an appropriate HTML tag for displaying media (video or image)
+   * Returns video tag for .webm files, image tag for others
+   * @param {string} path - The file path to the media
+   * @returns {string} HTML tag for displaying the media
+   */
   static videoOrImgTag(path) {
     if (/\.webm$/.test(path)) {
       return `<video loop autoplay src="${path}" width="50" height="50"></video>`;
@@ -103,6 +174,15 @@ export default class OpposedDsa5 {
     return `<img src="${path}" width="50" height="50"/>`;
   }
 
+  /**
+   * Creates an opposed test scenario when an attacker targets one or more defenders
+   * Handles both successful attacks and damage-only scenarios
+   * @param {Actor} actor - The attacking actor
+   * @param {ChatMessage} message - The attacker's test message
+   * @param {TestResult} testResult - The attacker's test result
+   * @param {Object} preData - Pre-test data from the attacker
+   * @returns {Promise<void>}
+   */
   static async createOpposedTest(actor, message, testResult, preData) {
     let attacker;
 
@@ -176,6 +256,14 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Generates HTML content for the opposed test message display
+   * Shows attacker vs target with appropriate status and visual elements
+   * @param {TokenDocument} attacker - The attacking token
+   * @param {Token} target - The target token
+   * @param {boolean} fail - Whether the attack failed
+   * @returns {string} HTML content for the oppose message
+   */
   static opposeMessage(attacker, target, fail) {
     return `<div class="opposed-message">
             <b>${attacker.name}</b> ${game.i18n.localize('ROLL.Targeting')} <b>${target.document.name}</b> ${fail ? game.i18n.localize('ROLL.failed') : ''}
@@ -187,7 +275,13 @@ export default class OpposedDsa5 {
              `;
   }
 
-  //TODO check if this is still needed
+  /**
+   * Updates start messages when the main message data changes
+   * Synchronizes target and oppose flags across related messages
+   * @param {ChatMessage} message - The message with updated data
+   * @returns {Promise<void>}
+   * @todo Check if this method is still needed in current implementation
+   */
   static async changeStartMessage(message) {
     for (let startMessageId of message.flags.data.startMessagesList) {
       let startMessage = game.messages.get(startMessageId);
@@ -211,6 +305,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Resolves and displays the final result of an opposed test
+   * Processes either attacker or defender message to complete the opposed test
+   * @param {ChatMessage} message - The final message in the opposed test sequence
+   * @returns {void}
+   */
   static resolveFinalMessage(message) {
     let attacker, defender;
     if (message.flags.data.defenderMessage) {
@@ -234,6 +334,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Extracts combatant data from a chat message for opposed test processing
+   * Combines test results with speaker and source information
+   * @param {ChatMessage} message - The message containing test data
+   * @returns {CombatantData} Formatted combatant data for opposed test
+   */
   static getMessageDude(message) {
     let res = {
       speaker: message.speaker,
@@ -247,6 +353,13 @@ export default class OpposedDsa5 {
     return res;
   }
 
+  /**
+   * Shows or hides damage information in chat messages
+   * Handles GM-only damage display and dice animation integration
+   * @param {ChatMessage} message - The message containing damage data
+   * @param {boolean} [hide=false] - Whether to hide the damage display
+   * @returns {Promise<void>}
+   */
   static async showDamage(message, hide = false) {
     if (game.user.isGM) {
       if ((!hide || !message.flags.data.hideDamage) && message.flags.data.postData.damageRoll) {
@@ -272,6 +385,14 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Integrates with JB2A (AutoAnimations) module for automated combat animations
+   * Plays appropriate animations based on opposed test results
+   * @param {CombatantData} attacker - The attacking combatant data
+   * @param {CombatantData} defender - The defending combatant data
+   * @param {OpposedTestResult} opposedResult - The result of the opposed test
+   * @returns {Promise<void>}
+   */
   static async playAutomatedJBA2(attacker, defender, opposedResult) {
     if (DSA5_Utility.moduleEnabled('autoanimations')) {
       //const attackerToken = canvas.tokens.get(attacker.speaker.token)
@@ -322,6 +443,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Displays spell animations for spells cast without specific targets
+   * Integrates with AutoAnimations module for visual effects
+   * @param {ChatMessage} message - The message containing spell data
+   * @returns {Promise<void>}
+   */
   static async showSpellWithoutTarget(message) {
     if (DSA5_Utility.moduleEnabled('autoanimations')) {
       const msgData = getProperty(message, 'flags.data');
@@ -341,6 +468,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Clears the opposed test flag from an actor
+   * Removes the targeting state when opposed test is completed or cancelled
+   * @param {Actor} actor - The actor to clear opposed flags from
+   * @returns {Promise<void>}
+   */
   static async clearOpposed(actor) {
     if (game.user.isGM) {
       await actor.update({ [`flags.-=oppose`]: null });
@@ -354,6 +487,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Handles reaction events for different types of opposed tests
+   * Opens appropriate reaction dialogs based on the source type
+   * @param {Event} ev - The click event from the reaction button
+   * @returns {Promise<void>}
+   */
   static async _handleReaction(ev) {
     let messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
     let message = game.messages.get(messageId);
@@ -368,6 +507,12 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Sets up chat message event listeners for opposed test interactions
+   * Handles reaction button clicks and opposed test management
+   * @param {jQuery} html - The HTML element containing chat messages
+   * @returns {Promise<void>}
+   */
   static async chatListeners(html) {
     html.on('click', '.unopposed-button', (event) => {
       event.preventDefault();
@@ -375,6 +520,12 @@ export default class OpposedDsa5 {
     });
   }
 
+  /**
+   * Hides the reaction button from a start message after opposed test completion
+   * Prevents further reactions once the test has been resolved
+   * @param {string} startMessageId - The ID of the start message to modify
+   * @returns {Promise<void>}
+   */
   static async hideReactionButton(startMessageId) {
     if (startMessageId) {
       if (game.user.isGM) {
@@ -395,6 +546,18 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Main orchestration method for completing an opposed test process
+   * Handles the full workflow from evaluation to rendering and cleanup
+   * @param {CombatantData} attacker - The attacking combatant data
+   * @param {CombatantData} defender - The defending combatant data
+   * @param {Object} options - Additional options for the opposed test
+   * @param {boolean} [options.target] - Whether this is a targeted test
+   * @param {string} [options.startMessageId] - ID of the starting message
+   * @param {Array} [options.whisper] - Whisper targets for the result
+   * @param {boolean} [options.blind] - Whether the result should be blind
+   * @returns {Promise<void>}
+   */
   static async completeOpposedProcess(attacker, defender, options) {
     await DSATriggers.postOpposed({ attacker, defender, options });
     const opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
@@ -409,8 +572,26 @@ export default class OpposedDsa5 {
     return opposedResult;
   }
 
+  /**
+   * Hook for custom async processing after opposed test completion
+   * Allows modules to add custom logic after test resolution
+   * @param {CombatantData} attacker - The attacking combatant data
+   * @param {CombatantData} defender - The defending combatant data
+   * @param {OpposedTestResult} opposedResult - The result of the opposed test
+   * @param {Object} options - Additional options for the opposed test
+   * @returns {Promise<void>}
+   */
   static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) { }
 
+  /**
+   * Evaluates the outcome of an opposed test between attacker and defender
+   * Determines winner, damage, and special effects based on test results
+   * @param {TestResult} attackerTest - The attacker's test result
+   * @param {TestResult} defenderTest - The defender's test result
+   * @param {Object} [options={}] - Additional evaluation options
+   * @param {string} [options.additionalInfo] - Extra information to include
+   * @returns {Promise<OpposedTestResult>} The complete opposed test result
+   */
   static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
     let opposeResult = {};
 
@@ -449,6 +630,15 @@ export default class OpposedDsa5 {
     return opposeResult;
   }
 
+  /**
+   * Evaluates weapon-based opposed rolls including damage calculation
+   * Handles armor damage, counter-attacks, and damage modifiers
+   * @param {TestResult} attackerTest - The attacker's weapon test result
+   * @param {TestResult} defenderTest - The defender's test result
+   * @param {OpposedTestResult} opposeResult - The opposed result being built
+   * @param {Object} [options={}] - Additional evaluation options
+   * @returns {void} Modifies opposeResult in place
+   */
   static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
     if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
       const damage = this._calculateOpposedDamage(attackerTest, defenderTest, options);
@@ -494,6 +684,21 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Calculates damage for opposed weapon attacks including armor effects
+   * Handles critical damage, armor penetration, and special defenses
+   * @param {TestResult} attackerTest - The attacker's test result with damage
+   * @param {TestResult} defenderTest - The defender's test result
+   * @param {Object} [options={}] - Additional calculation options
+   * @returns {Object} Damage calculation result with armor effects
+   * @returns {number} returns.damage - Base damage before armor
+   * @returns {number} returns.armor - Effective armor value
+   * @returns {number} returns.sum - Final damage after armor
+   * @returns {Array<string>} returns.messages - Damage calculation messages
+   * @returns {Object} returns.armorDamaged - Armor damage information
+   * @returns {number} returns.armorMod - Armor modifier applied
+   * @returns {string} [returns.tooltip] - Additional tooltip information
+   */
   static _calculateOpposedDamage(attackerTest, defenderTest, options = {}) {
     const actor = DSA5_Utility.getSpeaker(defenderTest.speaker);
 
@@ -553,6 +758,15 @@ export default class OpposedDsa5 {
     };
   }
 
+  /**
+   * Evaluates talent-based opposed rolls (skills, attributes, etc.)
+   * Determines winner based on success levels and quality steps
+   * @param {TestResult} attackerTest - The attacker's talent test result
+   * @param {TestResult} defenderTest - The defender's talent test result
+   * @param {OpposedTestResult} opposeResult - The opposed result being built
+   * @param {Object} [options={}] - Additional evaluation options
+   * @returns {void} Modifies opposeResult in place
+   */
   static _evaluateTalentOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
     if (attackerTest.successLevel > 0 && attackerTest.successLevel > defenderTest.successLevel) {
       opposeResult.winner = 'attacker';
@@ -565,6 +779,14 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Formats the opposed test result for display in chat
+   * Generates localized winner/loser messages with success level differences
+   * @param {OpposedTestResult} opposeResult - The opposed test result to format
+   * @param {Object} attacker - The attacker's speaker data
+   * @param {Object} defender - The defender's speaker data
+   * @returns {void} Modifies opposeResult in place with formatted text and image
+   */
   static formatOpposedResult(opposeResult, attacker, defender) {
     let str = opposeResult.differenceSL ? 'winsFP' : 'wins';
     if (opposeResult.winner == 'attacker') {
@@ -589,11 +811,30 @@ export default class OpposedDsa5 {
     return opposeResult;
   }
 
+  /**
+   * Re-renders messages with updated modifiers after opposed test completion
+   * Updates damage display based on test outcome
+   * @param {OpposedTestResult} opposeResult - The opposed test result
+   * @param {CombatantData} attacker - The attacking combatant data
+   * @param {CombatantData} defender - The defending combatant data
+   * @returns {void}
+   */
   static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {
     let attackerMessage = game.messages.get(attacker.messageId);
     this.showDamage(attackerMessage, opposeResult.winner != 'attacker');
   }
 
+  /**
+   * Renders the final opposed test result as a chat message
+   * Handles damage display options, permissions, and UI configuration
+   * @param {OpposedTestResult} formattedOpposeResult - The formatted opposed result
+   * @param {Object} [options={}] - Rendering options
+   * @param {Array} [options.whisper] - Whisper targets for the message
+   * @param {boolean} [options.blind] - Whether the message should be blind
+   * @param {boolean} [options.target] - Whether this was a targeted test
+   * @param {string} [options.startMessageId] - ID of the starting message
+   * @returns {Promise<void>}
+   */
   static async renderOpposedResult(formattedOpposeResult, options = {}) {
     const hideConfig = game.settings.get('dsa5', 'hideOpposedDamageSelect');
     formattedOpposeResult.hideData = { value: [1, 2].includes(hideConfig) };
@@ -618,6 +859,13 @@ export default class OpposedDsa5 {
     await ChatMessage.create(chatOptions);
   }
 
+  /**
+   * Combines effects from ammunition and situational modifiers into attacker data
+   * Merges special ability effects and active effects for test processing
+   * @param {CombatantData} attacker - The attacker's combatant data
+   * @param {Object} testData - The test data containing modifiers and effects
+   * @returns {void} Modifies attacker data in place
+   */
   static combine_effects(attacker, testData) {
     if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
 
@@ -639,6 +887,13 @@ export default class OpposedDsa5 {
     }
   }
 
+  /**
+   * Resolves an undefended opposed test (when defender doesn't respond)
+   * Creates a default defender result and processes the opposed test
+   * @param {ChatMessage} startMessage - The start message for the undefended test
+   * @param {string} [additionalInfo=''] - Additional information to include in result
+   * @returns {Promise<void>}
+   */
   static async resolveUndefended(startMessage, additionalInfo = '') {
     let unopposeData = startMessage.flags.unopposeData;
 
