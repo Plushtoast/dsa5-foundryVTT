@@ -19,6 +19,8 @@ import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import { SpellModifiers } from './concerns/spell-modifiers.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -452,7 +454,7 @@ class MoneyItemDSA5 extends Itemdsa5 {
 class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
-    testData.situationalModifiers = Actordsa5._parseModifiers(html);
+    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
     const formData = new foundry.applications.ux.FormDataExtended(form).object;
     testData.calculatedSpellModifiers = {
@@ -657,7 +659,7 @@ class SpellItemDSA5 extends Itemdsa5 {
         }
       });
     }
-    situationalModifiers.push(...actor.getSkillModifier(source.name, source.type));
+    situationalModifiers.push(...SpellModifiers.get(actor, source.name, source.type));
 
     for (const thing of actor.system.skillModifiers.global) situationalModifiers.push({ name: thing.source, value: thing.value });
 
@@ -748,7 +750,7 @@ class CombatskillDSA5 extends Itemdsa5 {
     const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
     dialogOptions.callback = (html, options = {}) => {
       cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-      testData.situationalModifiers = Actordsa5._parseModifiers(html);
+      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
       mergeObject(testData.extra.options, options);
       return { testData, cardOptions };
     }
@@ -1083,7 +1085,7 @@ class SkillItemDSA5 extends Itemdsa5 {
         'specialability', 
         'equipment'
       ]),
-      ...actor.getSkillModifier(source.name, source.type),
+      ...SpellModifiers.get(actor, source.name, source.type),
       ...MiracleModifiers.get(actor, source, 'FW', SKILL),
     );
 
@@ -1120,7 +1122,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
       const formData = new foundry.applications.ux.FormDataExtended(form).object;
       testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-      testData.situationalModifiers = Actordsa5._parseModifiers(html);
+      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
       testData.situationalModifiers.push(
         ModifierCalculator.parseValueType(game.i18n.localize('sight'), formData.vision || 0),
       );

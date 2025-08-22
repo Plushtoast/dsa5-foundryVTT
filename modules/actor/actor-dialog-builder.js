@@ -1,5 +1,6 @@
 import DSA5 from "../config/config-dsa5.js";
 import { RollDialogBuilder } from "../dialog/dialog-builder.js";
+import { ModifierCalculator } from "../item/concerns/modifier-calculator.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import Actordsa5 from "./actor-dsa5.js";
@@ -34,7 +35,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 modifier: options.modifier || 0,
             },
             callback: (html, options = {}) => {
-                testData.situationalModifiers = Actordsa5._parseModifiers(html);
+                testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
                 testData.situationalModifiers.push(
                     {

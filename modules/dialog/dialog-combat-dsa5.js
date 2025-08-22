@@ -13,6 +13,7 @@ import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
+import { RollDialogBuilder } from './dialog-builder.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -922,7 +923,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static _resolveDefault(testData, cardOptions, html, options) {
     cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-    testData.situationalModifiers = Actordsa5._parseModifiers(html);
+    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
     mergeObject(testData.extra.options, options);
   }
 

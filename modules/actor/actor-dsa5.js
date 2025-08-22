@@ -25,6 +25,8 @@ import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -329,39 +331,6 @@ export default class Actordsa5 extends Actor {
       default:
         return 1;
     }
-  }
-
-  getSkillModifier(name, sourceType) {
-    const result = [];
-    const keys = ['FP', 'step', 'QL', 'TPM', 'FW', 'CMP'];
-    for (const k of keys) {
-      const type = k == 'step' ? '' : k;
-      result.push(
-        ...this.system.skillModifiers[k]
-          .filter((x) => x.target == name)
-          .map((f) => {
-            return {
-              name: f.source,
-              value: f.value,
-              source: f.item,
-              type,
-            };
-          }),
-      );
-      if (this.system.skillModifiers[sourceType]) {
-        result.push(
-          ...this.system.skillModifiers[sourceType][k].map((f) => {
-            return {
-              name: f.target || f.source,
-              value: f.value,
-              source: f.source,
-              type,
-            };
-          }),
-        );
-      }
-    }
-    return result;
   }
 
   getCombatEffectSkillModifier(name, mode) {
@@ -1181,9 +1150,9 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  preparePostRollAction(message) {
-    let data = message.flags.data;
-    let cardOptions = {
+  #preparePostRollAction(message) {
+    const data = message.flags.data;
+    const cardOptions = {
       flags: { img: { src: message.flags.img.src } },
       rollMode: data.rollMode,
       speaker: message.speaker,
@@ -1486,8 +1455,8 @@ export default class Actordsa5 extends Actor {
 
   async useFateOnRoll(message, type, schipsource) {
     if (type == 'isTalented' || DSA5_Utility.fateAvailable(this, schipsource == 1)) {
-      let data = message.flags.data;
-      let cardOptions = this.preparePostRollAction(message);
+      const data = message.flags.data;
+      const cardOptions = this.#preparePostRollAction(message);
       let fateAvailable;
       let schipText;
       if (schipsource == 0) {
@@ -1694,7 +1663,7 @@ export default class Actordsa5 extends Actor {
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
         testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
+        testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
       },
@@ -1703,48 +1672,6 @@ export default class Actordsa5 extends Actor {
     let cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
-  }
-
-  static _parseModifiers(html) {
-    const situationalModifiers = html
-      .find('[name="situationalModifiers"] option:selected')
-      .map(function () {
-        const val = this.value;
-        const data = {
-          name: this.textContent.trim().split('[')[0],
-          value: isNaN(val) ? val : Number(val),
-          type: this.dataset.type,
-        };
-        if (data.type == 'dmg') {
-          data.damageBonus = data.value;
-          data.value = 0;
-        }
-        if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
-        if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
-
-        return data;
-      })
-      .get()
-
-    const focusRuleModifiers = [];
-    for (const el of html.find('.focusMods')) {
-      for (const btn of el.querySelectorAll('button[aria-pressed=true]')) {
-        focusRuleModifiers.push({
-          name: game.i18n.localize(btn.dataset.name),
-          value: Number(btn.dataset.value),
-        });
-      }
-    }
-
-    return [
-      ...situationalModifiers,
-      ...focusRuleModifiers,
-      {
-        name: game.i18n.localize('manual'),
-        value: Number(html.find('[name="testModifier"]').val()),
-        type: '',
-      },
-    ];
   }
 
   static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {

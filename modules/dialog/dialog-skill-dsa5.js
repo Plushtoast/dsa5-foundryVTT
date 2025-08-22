@@ -5,6 +5,8 @@ import DSA5 from '../config/config-dsa5.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
+import { RollDialogBuilder } from './dialog-builder.js';
+import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
@@ -78,7 +80,7 @@ export default class DSA5SkillDialog extends DialogShared {
   rememberFormData(ev) {
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
-    data.situationalModifiers = Actordsa5._parseModifiers(html);
+    data.situationalModifiers = ModifierCalculator._parseModifiers(html);
     this.calculateRoutine(data);
   }
 

@@ -150,4 +150,46 @@ export class ModifierCalculator {
             ZKModifier: zkMod.length > 0 ? Math.min(...zkMod) : 0,
         });
     }
+
+    static _parseModifiers(html) {
+        const situationalModifiers = html
+            .find('[name="situationalModifiers"] option:selected')
+            .map(function () {
+                const val = this.value;
+                const data = {
+                    name: this.textContent.trim().split('[')[0],
+                    value: isNaN(val) ? val : Number(val),
+                    type: this.dataset.type,
+                };
+
+                if (data.type === 'dmg') {
+                    data.damageBonus = data.value;
+                    data.value = 0;
+                }
+
+                if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
+                if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
+
+                return data;
+            })
+            .get();
+
+        const focusRuleModifiers = html
+            .find('.focusMods button[aria-pressed=true]')
+            .map(function () {
+                return {
+                    name: game.i18n.localize(this.dataset.name),
+                    value: Number(this.dataset.value),
+                };
+            })
+            .get();
+
+        const manualModifier = {
+            name: game.i18n.localize('manual'),
+            value: Number(html.find('[name="testModifier"]').val()),
+            type: '',
+        };
+
+        return [...situationalModifiers, ...focusRuleModifiers, manualModifier];
+    }
 }

@@ -87,7 +87,7 @@ export class ResistanceTests {
       data,
       callback: (html, options = {}) => {
         cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-        testData.situationalModifiers = Actordsa5._parseModifiers(html);
+        testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
         testData.situationalModifiers.push(
           {
             name: game.i18n.localize('zkModifier'),

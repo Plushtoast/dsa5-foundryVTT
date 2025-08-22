@@ -5,6 +5,8 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
+import { RollDialogBuilder } from './dialog-builder.js';
+import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -261,7 +263,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
-    data.situationalModifiers = Actordsa5._parseModifiers(html);
+    data.situationalModifiers = ModifierCalculator._parseModifiers(html);
     const fw = this.dialogData.source.system.talentValue.value + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
     let mod =
       (await DiceDSA5._situationalModifiers(data)) +
