@@ -76,13 +76,31 @@ export default class DSAActiveEffect extends ActiveEffect {
 
   // key: "@meleeweapon.Rondrakamm (2H).system.attack.value"
   _getModifiedItems(actor, change) {
-    const data = change.key.split('.');
-    let type = data.shift();
-    type = type.replace('@', '').toLowerCase();
-    const itemName = data.shift();
-    const key = data.join('.');
-    const value = change.value;
-    const items = itemName == 'self' ? [this.parent] : actor?.items?.filter((x) => x.type == type && (x.name == itemName || x.id == itemName)) || [];
+    const [type, itemName, ...keyParts] = change.key.replace(/^@/, '').split('.');
+    const key = keyParts.join('.');
+    const { value } = change;
+    
+    if (itemName === 'self') {
+      return { items: [this.parent], key, value };
+    }
+
+    if (!actor?.items) {
+      return { items: [], key, value };
+    }
+
+    const normalizedType = type.toLowerCase();
+    const items = actor.items.filter(item => {
+      if (item.type !== normalizedType) return false;
+      if (item.id === itemName) return true;
+      
+      try {
+        const rgx = new RegExp(itemName, 'i');
+        return rgx.test(item.name);
+      } catch (e) {
+        return item.name.toLowerCase() == itemName.toLowerCase();
+      }
+    });
+
     return { items, key, value };
   }
 
