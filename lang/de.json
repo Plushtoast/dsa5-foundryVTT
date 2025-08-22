@@ -221,6 +221,8 @@
     "dsamenu": "DSA Menü",
     "arrow": "Pfeil",
     "armor": "Rüstung",
+    "preventsBrawlDamage": "Blockt Waffen",
+    "preventsBrawlDamageHint": "Das Parieren von Waffen mit dieser Raufen-Waffe verursacht bei Erfolg keinen Schaden beim Parierenden.",
     "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Gewicht</b></div>Traglast: {carrycapacity}<br>Aktuell: {totalWeight}<br/>Belastung: {encumbrance}{moneyWeight}",
     "application": "Anwendungsgebiet",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",

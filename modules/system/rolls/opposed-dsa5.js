@@ -13,38 +13,37 @@ export default class OpposedDsa5 {
   static async handleOpposedTarget(message) {
     if (!message) return;
 
-    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    const actor = DSA5_Utility.getSpeaker(message.speaker) ?? await OpposedDsa5.rebuildEmptyActor(message);
 
-    if (!actor) actor = await OpposedDsa5.rebuildEmptyActor(message);
     if (!actor) return;
 
-    let testResult = message.flags.data.postData;
-    let preData = message.flags.data.preData;
+    const testResult = message.flags.data.postData;
+    const preData = message.flags.data.preData;
 
     if (actor.flags.oppose) {
-      //console.log("answering opposed")
+      // DEFEND
       OpposedDsa5.answerOpposedTest(actor, message, testResult, preData);
     } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage) {
-      //console.log("start opposed")
+      // ATTACK
       OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     } else if (message.flags.data.defenderMessage || message.flags.data.attackerMessage) {
-      //console.log("end opposed")
+      // NOT  DEFEND
       OpposedDsa5.resolveFinalMessage(message);
     } else if (message.flags.data.unopposedStartMessage) {
-      //console.log("repeat")
+      // EDIT NOT DEFEND
       OpposedDsa5.redoUndefended(message);
     } else if (message.flags.data.startMessagesList) {
-      //console.log("change start")
+      // EDIT
       OpposedDsa5.changeStartMessage(message);
     } else {
-      //console.log("show dmg")
+      // DMG ONLY ROLL
       await this.showDamage(message);
       await this.showSpellWithoutTarget(message);
     }
   }
 
   static async rebuildEmptyActor(message) {
-    if(message.flags?.data?.preData?.extra?.speaker?.token == 'emptyActor'){
+    if (message.flags?.data?.preData?.extra?.speaker?.token == 'emptyActor') {
       return DSA5_Utility.emptyActor(12, message.flags?.data?.preData?.source?.name);
     }
   }
@@ -56,13 +55,13 @@ export default class OpposedDsa5 {
   }
 
   static async answerOpposedTest(actor, message, testResult, preData) {
-    let attackMessage = game.messages.get(actor.flags.oppose.messageId);
+    const attackMessage = game.messages.get(actor.flags.oppose.messageId);
     if (!attackMessage) {
       ui.notifications.error('DSAError.staleData', { localize: true });
       await OpposedDsa5.clearOpposed(actor);
       return OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     }
-    let attacker = {
+    const attacker = {
       speaker: actor.flags.oppose.speaker,
       testResult: attackMessage.flags.data.postData,
       messageId: attackMessage.id,
@@ -72,7 +71,7 @@ export default class OpposedDsa5 {
 
     OpposedDsa5.combine_effects(attacker, attackMessage.flags.data.preData);
 
-    let defender = {
+    const defender = {
       speaker: message.speaker,
       testResult,
       messageId: message.id,
@@ -81,14 +80,10 @@ export default class OpposedDsa5 {
 
     defender.testResult.source = message.flags.data.preData.source;
 
-    let listOfDefenders = attackMessage.flags.data.defenderMessage ? Array.from(attackMessage.flags.data.defenderMessage) : [];
+    const listOfDefenders = attackMessage.flags.data.defenderMessage ? Array.from(attackMessage.flags.data.defenderMessage) : [];
     listOfDefenders.push(message.id);
 
-    if (game.user.isGM) {
-      await attackMessage.update({
-        'flags.data.defenderMessage': listOfDefenders,
-      });
-    }
+    if (game.user.isGM) await attackMessage.update({ 'flags.data.defenderMessage': listOfDefenders, });
 
     await message.update({ 'flags.data.attackerMessage': attackMessage.id });
 
@@ -414,7 +409,7 @@ export default class OpposedDsa5 {
     return opposedResult;
   }
 
-  static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) {}
+  static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) { }
 
   static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
     let opposeResult = {};
@@ -627,20 +622,20 @@ export default class OpposedDsa5 {
     if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
 
     const triggerIds = testData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
-    if(!triggerIds.length) return;
+    if (!triggerIds.length) return;
 
     const actor = DSA5_Utility.getSpeaker(attacker.speaker);
-    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])    
+    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])
     const existingIds = new Set(attacker.testResult.source.effects.map(x => x._id));
-    for(const id of triggerIds) {
-       const specAb = actor.items.get(id);
-        if(specAb) {
-          const triggerEffects = specAb.effects.filter(x => allowedTriggers.has(Number(getProperty(x, 'flags.dsa5.advancedFunction'))));
-          for(const effect of triggerEffects) {
-            if(existingIds.has(effect._id)) continue;
-            attacker.testResult.source.effects.push(effect.toObject());
-          }
+    for (const id of triggerIds) {
+      const specAb = actor.items.get(id);
+      if (specAb) {
+        const triggerEffects = specAb.effects.filter(x => allowedTriggers.has(Number(getProperty(x, 'flags.dsa5.advancedFunction'))));
+        for (const effect of triggerEffects) {
+          if (existingIds.has(effect._id)) continue;
+          attacker.testResult.source.effects.push(effect.toObject());
         }
+      }
     }
   }
 

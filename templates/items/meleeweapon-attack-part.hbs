@@ -44,6 +44,16 @@
 {{formGroup systemFields.combatskill.fields.value value=document.system.combatskill.value scope=scope choices=(selfObj combatskills) localize=true}}
 {{formGroup systemFields.reach.fields.value value=document.system.reach.value localize=true scope=scope}}
 
+{{#unless scope}}
+
+  {{#if isBrawling}}
+
+    {{formGroup systemFields.preventsBrawlDamage value=document.system.preventsBrawlDamage localize=true}}
+
+  {{/if}}
+
+{{/unless}}
+
 <div class='form-group doubleInput'>
   <label>{{localize 'critBotch'}}</label>
   <div class='form-fields'>

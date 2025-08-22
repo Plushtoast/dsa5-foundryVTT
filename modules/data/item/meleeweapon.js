@@ -10,6 +10,7 @@ import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
+import DSABooleanField from '../fields/dsa_boolean_field.js';
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
@@ -52,7 +53,8 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
         offHand: new ScopableBooleanField({ label: 'offHand' }),
         wrongGrip: new ScopableBooleanField(),
       }),
-      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      preventsBrawlDamage: new DSABooleanField({ initial: false, label: 'preventsBrawlDamage', tooltip: 'preventsBrawlDamageHint' }),
     });
   }
 

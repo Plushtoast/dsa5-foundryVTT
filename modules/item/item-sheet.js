@@ -1413,6 +1413,12 @@ class MagictrickSheetDSA5 extends NoEffectsSheet {
 
 class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
   isPoisonable = true;
+
+  async _prepareContext(_options) {
+    const context = await super._prepareContext(_options);
+    context.isBrawling = game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
+    return context;
+  }
 }
 
 class PoisonSheetDSA5 extends ItemSheetObfuscation(EffectsEquipmentSheet) {
