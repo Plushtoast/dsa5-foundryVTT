@@ -1,0 +1,22 @@
+<div class="dsa5 chat-card">
+    <div class="opposed-card">
+        <div>
+            {{{result}}}
+        </div>
+        <div class="{{#if hideData.value}}hideData{{/if}} hideAnchor">
+            {{{damage.description}}}
+        </div>
+        {{#each other as |string index|}}
+        <div>
+            {{{string}}}
+        </div>
+        {{/each}}
+        {{#if (and damage applyDamageInChat)}}
+        <div class="row-section center" style="margin-top:10px">          
+            <div class="col two center">
+                <button class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamage"><i class="fas fa-shield-alt"></i>{{localize 'CHARAbbrev.damage'}}</button>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>

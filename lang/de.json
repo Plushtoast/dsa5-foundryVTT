@@ -221,8 +221,6 @@
     "dsamenu": "DSA Menü",
     "arrow": "Pfeil",
     "armor": "Rüstung",
-    "preventsBrawlDamage": "Blockt Waffen",
-    "preventsBrawlDamageHint": "Das Parieren von Waffen mit dieser Raufen-Waffe verursacht bei Erfolg keinen Schaden beim Parierenden.",
     "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Gewicht</b></div>Traglast: {carrycapacity}<br>Aktuell: {totalWeight}<br/>Belastung: {encumbrance}{moneyWeight}",
     "application": "Anwendungsgebiet",
     "advancementCost": "Steigern für {cost} Abenteuerpunkte",
@@ -710,7 +708,13 @@
         "bumFight": "Prügelei!!!",
         "pp": "PP",
         "unarmEveryone": "Alle entwaffnen",
-        "unarmEveryoneText": "Alle Teilnehmer der Prügelei werden entwaffnet. Dadurch werden Waffenreichweiten ignoriert. Nur improvisierte Waffen bleiben ausgerüstet."
+        "attacksHurt": "Die Raufenattacke wird mit einer Waffe abgewehrt, <b>{name}</b> erleidet den halben Waffenschaden der Waffe des Gegners.",
+        "unarmEveryoneText": "Alle Teilnehmer der Prügelei werden entwaffnet. Dadurch werden Waffenreichweiten ignoriert. Nur improvisierte Waffen bleiben ausgerüstet.",
+        "defense": "Unbewaffnete erleiden bei einer erfolgreichen Parade mit Raufen gegen Bewaffnete trotzdem den vollen Schaden (und sollten stattdessen besser ausweichen).",
+        "preventsBrawlAttackDamage": "Bewaffneter Angriff",
+        "preventsBrawlAttackDamageHint": "Der Raufen-Angriff zählt als bewaffnet und der Träger erleidet nicht den halben Waffenschaden des Verteidigers.",
+        "preventsBrawlParryDamage": "Blockt Angriffe",
+        "preventsBrawlParryDamageHint": "Mit dieser Raufen-Waffe können auch bewaffnete Angriffe pariert werden."
     },
     "CONJURATION": {
         "demon": "Dämon",

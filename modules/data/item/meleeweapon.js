@@ -54,7 +54,8 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
         wrongGrip: new ScopableBooleanField(),
       }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
-      preventsBrawlDamage: new DSABooleanField({ initial: false, label: 'preventsBrawlDamage', tooltip: 'preventsBrawlDamageHint' }),
+      preventsBrawlAttackDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlAttackDamage', tooltip: 'BRAWLING.preventsBrawlAttackDamageHint' }),
+      preventsBrawlParryDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlParryDamage', tooltip: 'BRAWLING.preventsBrawlParryDamageHint' }),
     });
   }
 

@@ -620,7 +620,7 @@ export default class OpposedDsa5 {
         case 'liturgy':
         case 'weapon':
         case 'damage':
-          this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options);
+          await this._evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options);
           break;
         default:
           ui.notifications.error('Can not oppose ' + attackerTest.rollType);
@@ -639,20 +639,30 @@ export default class OpposedDsa5 {
    * @param {Object} [options={}] - Additional evaluation options
    * @returns {void} Modifies opposeResult in place
    */
-  static _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
-    if (attackerTest.successLevel > 0 && defenderTest.successLevel < 0) {
+  static async _evaluateWeaponOpposedRoll(attackerTest, defenderTest, opposeResult, options = {}) {
+    const isBrawlingDefense = OpposedDsa5.#brawlingDefenseVersusWeapon(attackerTest, defenderTest);
+    if ((attackerTest.successLevel > 0 && defenderTest.successLevel < 0) || isBrawlingDefense) {
       const damage = this._calculateOpposedDamage(attackerTest, defenderTest, options);
+
+      if (isBrawlingDefense) {
+        opposeResult.other.push(
+          `<div class="flexrow">${game.i18n.localize('BRAWLING.defense')}</div>`
+        );
+      }
+
       if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length) {
         const uuids = damage.armorDamaged.ids.join(';');
         opposeResult.other.push(
           `<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${uuids}">${game.i18n.localize('WEAR.checkShort')}</button></div>`,
         );
       }
+
       if (defenderTest.counterAttack) {
         damage.damage += 2;
         damage.sum = damage.damage - damage.armor;
         damage.tooltip = game.i18n.localize('LocalizedIDs.counterAttack') + ' 2';
       }
+
       if (damage.messages.length) {
         if (!damage.tooltip) damage.tooltip = '';
 
@@ -680,7 +690,69 @@ export default class OpposedDsa5 {
       };
     } else {
       opposeResult.winner = 'defender';
+
+      if(!OpposedDsa5.#attacksVersusWeapon(attackerTest, defenderTest)) return;
+
+      await OpposedDsa5.#attackVersusWeaponMessage(attackerTest, defenderTest);
     }
+  }
+
+  static async #attackVersusWeaponMessage(attackerTest, defenderTest) {
+    const defWeaponDamage = defenderTest.source.system.damage.value;
+
+    const roll = await new Roll(DiceDSA5.replaceDieLocalization(defWeaponDamage)).evaluate()
+    const damage = Math.round(roll.total * 0.5);
+    const attacker = await DSA5_Utility.getSpeaker(attackerTest.speaker);
+
+    const context = {
+      result: game.i18n.format('BRAWLING.attacksHurt', { name: attacker.name }),
+      damage: {
+        description: `<b>${game.i18n.localize('damage')}</b>: <span>${damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i>`
+      },
+      applyDamageInChat: game.settings.get('dsa5', 'applyDamageInChat')
+    }
+
+    const content = await renderTemplate('systems/dsa5/templates/chat/roll/brawling-attack.hbs', context);
+    const chatOptions = {
+      user: game.user.id,
+      content,
+      flags: {
+        opposeData: {
+          speakerDefend: attackerTest.speaker,
+          damage: {
+            value: damage,
+          }
+        }
+      },
+    };
+
+    await ChatMessage.create(chatOptions);
+  }
+
+  static #attacksVersusWeapon(attackerTest, defenderTest) {
+    const atWeapon = attackerTest.source;
+    const defWeapon = defenderTest.source;
+
+    if (!defWeapon || !atWeapon) return false;
+
+    const attackerUsesBrawling = atWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) == 'Brawling' && !atWeapon.system.preventsBrawlAttackDamage;
+    const defenderHasWeapon = defWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) != 'Brawling';
+
+    return attackerUsesBrawling && defenderHasWeapon;
+  }
+
+  static #brawlingDefenseVersusWeapon(attackerTest, defenderTest) {
+    const atWeapon = attackerTest.source;
+    const defWeapon = defenderTest.source;
+
+    if (!defWeapon || !atWeapon) return false;
+
+    const attackerHasWeapon = atWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) != 'Brawling';
+    const defendsWithBrawling = defWeapon.type == 'meleeweapon'
+      && game.i18n.localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) == 'Brawling'
+      && !defWeapon.system.preventsBrawlParryDamage;
+
+    return attackerHasWeapon && defendsWithBrawling;
   }
 
   /**
