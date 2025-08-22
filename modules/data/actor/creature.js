@@ -56,5 +56,14 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
   baseInitiative(data) {
     data.status.initiative.value = data.status.initiative.current + (data.status.initiative.modifier || 0);
   }
+
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    const actionCount = source.actionCount?.value;
+    if (typeof actionCount === 'string') {
+      source.actionCount.value = Number(actionCount) || 1;
+    }
+  }
   
 }

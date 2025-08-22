@@ -3,8 +3,9 @@ const { getProperty } = foundry.utils;
 
 Hooks.once('i18nInit', async () => {
   if (!CreatureType.creatureData) {
-    const r = await fetch(`systems/dsa5/lazy/creaturetype/${game.i18n.lang}.json`);
-    CreatureType.creatureData = await r.json();
+    const lang = game.i18n.lang == 'de' ? 'de' : 'en';
+    const json = await fetch(`systems/dsa5/lazy/creaturetype/${lang}.json`);
+    CreatureType.creatureData = await json.json();
     CreatureType.magical = game.i18n.localize('WEAPON.magical');
     CreatureType.clerical = game.i18n.localize('WEAPON.clerical');
     CreatureType.silverPlated = game.i18n.localize('WEAPON.silverPlated');
@@ -127,6 +128,10 @@ export default class CreatureType {
       const creatureClass = actor.system.creatureClass.value;
       return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0];
     } else return actor.system.details.species.value;
+  }
+
+  classDescription() {
+    return CreatureType.creatureData.DESCRIPTIONS[this.constructor.name];
   }
 
   static addCreatureTypeModifiers(actorData, source, situationalModifiers, attacker) {

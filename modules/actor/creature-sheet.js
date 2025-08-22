@@ -1,6 +1,7 @@
 import ActorSheetDsa5 from './actor-sheet.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
+import CreatureType from '../system/automation/creature-type.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
@@ -80,5 +81,30 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     if (itemData.type == 'trait') return this._addTrait(itemData);
 
     return super._onDropItemCreate(itemData);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+
+    const creatureClass = this.element.querySelector('[name="system.creatureClass.value"]');
+
+    if(!creatureClass) return;
+
+    creatureClass.addEventListener('pointerenter', (event) => {
+      const creatureClasses = CreatureType.detectCreatureType(this.actor);
+
+      if (!creatureClasses.length) return;
+        
+      const description = creatureClasses[0].classDescription();
+
+      if(!description) return;
+
+      const element = event.target;
+      event.stopPropagation();
+      element.dataset.tooltipHtml = "";
+      element.dataset.tooltipHtml = description;
+      const pointerover = new event.constructor(event.type, event);
+      element.dispatchEvent(pointerover);
+    });
   }
 }
