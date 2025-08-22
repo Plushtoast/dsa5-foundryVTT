@@ -198,7 +198,7 @@ export default class OpposedDsa5 {
         : `<div class="flexrow"><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`;
       let startMessagesList = [];
 
-      game.user.targets.forEach(async (target) => {
+      for (const target of game.user.targets) {
         if (target.actor) {
           const content = `${OpposedDsa5.opposeMessage(attacker, target, false)} ${unopposedButton}`;
           let startMessage = await ChatMessage.create({
@@ -241,10 +241,10 @@ export default class OpposedDsa5 {
           }
           Hooks.call('DSAOpposedRollStart', target);
         }
-      });
+      }
       message.flags.data.startMessagesList = startMessagesList;
     } else {
-      game.user.targets.forEach(async (target) => {
+      for (const target of game.user.targets) {
         if (target.actor) {
           await ChatMessage.create({
             user: game.user.id,
@@ -252,7 +252,7 @@ export default class OpposedDsa5 {
             speaker: message.speaker,
           });
         }
-      });
+      }
     }
   }
 
@@ -661,12 +661,11 @@ export default class OpposedDsa5 {
 
       opposeResult.winner = 'attacker';
 
-      const title = [
-        damage.armorMod != 0 ? `${damage.armorMod} ${game.i18n.localize('Modifier')}` : '',
-        damage.armorMultiplier != 1 ? `*${damage.armorMultiplier} ${game.i18n.localize('Modifier')}` : '',
-        damage.spellArmor != 0 ? `${damage.spellArmor} ${game.i18n.localize('spellArmor')}` : '',
-        damage.liturgyArmor != 0 ? `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}` : '',
-      ].join('');
+      let title = '';
+      if (damage.armorMod != 0) title += `${damage.armorMod} ${game.i18n.localize('Modifier')}`;
+      if (damage.armorMultiplier != 1) title += `*${damage.armorMultiplier} ${game.i18n.localize('Modifier')}`;
+      if (damage.spellArmor != 0) title += `${damage.spellArmor} ${game.i18n.localize('spellArmor')}`;
+      if (damage.liturgyArmor != 0) title += `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}`;
 
       const dmgString = game.i18n.localize(game.combat?.isBrawling ? 'BRAWLING.temporary' : 'damage');
       const description = `<b>${dmgString}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ''}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`;
@@ -869,20 +868,24 @@ export default class OpposedDsa5 {
   static combine_effects(attacker, testData) {
     if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
 
-    const triggerIds = testData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
+    const triggerIds = testData.situationalModifiers.reduce((acc, x) => {
+      if (x.specAbId) acc.push(x.specAbId);
+      return acc;
+    }, []);
     if (!triggerIds.length) return;
 
     const actor = DSA5_Utility.getSpeaker(attacker.speaker);
-    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION])
+    const allowedTriggers = new Set([DSATriggers.EVENTS.DAMAGE_TRANSFORMATION]);
     const existingIds = new Set(attacker.testResult.source.effects.map(x => x._id));
     for (const id of triggerIds) {
       const specAb = actor.items.get(id);
-      if (specAb) {
-        const triggerEffects = specAb.effects.filter(x => allowedTriggers.has(Number(getProperty(x, 'flags.dsa5.advancedFunction'))));
-        for (const effect of triggerEffects) {
-          if (existingIds.has(effect._id)) continue;
-          attacker.testResult.source.effects.push(effect.toObject());
-        }
+      if (!specAb) continue;
+
+      for (const effect of specAb.effects) {
+        if (existingIds.has(effect._id)) continue;
+        if (!allowedTriggers.has(Number(getProperty(effect, 'flags.dsa5.advancedFunction')))) continue;
+
+        attacker.testResult.source.effects.push(effect.toObject());
       }
     }
   }
