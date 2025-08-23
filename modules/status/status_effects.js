@@ -23,6 +23,22 @@ export default class DSA5StatusEffects {
     conditions.on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
   }
 
+  static lockedCondition() {
+    const lock = game.i18n.localize('MERCHANT.locked');
+    return {
+      id: 'locked',
+      name: lock,
+      img: 'icons/svg/padlock.svg',
+      flags: {
+        dsa5: {
+          noEffect: true,
+          hidePlayers: true,
+          description: lock,
+        },
+      },
+    };
+  }
+
   static async createCustomEffect(owner, description = '', name) {
     name = name || game.i18n.localize('CONDITION.custom');
     if (description == '') description = name;

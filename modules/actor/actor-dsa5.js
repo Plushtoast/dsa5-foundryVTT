@@ -27,6 +27,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
+import { FateRolls } from './concerns/faterolls.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -120,27 +121,12 @@ export default class Actordsa5 extends Actor {
   async prepareMerchant() {
     if (this.system.merchant.merchantType == 'loot') {
       if (this.system.merchant.locked && !this.hasCondition('locked')) {
-        await this.addCondition(Actordsa5.lockedCondition());
+        await this.addCondition(DSA5StatusEffects.lockedCondition());
       } else if (!this.system.merchant.locked) {
         const ef = this.effects.find((x) => x.statuses.has('locked'));
         if (ef) await this.deleteEmbeddedDocuments('ActiveEffect', [ef.id]);
       }
     }
-  }
-
-  static lockedCondition() {
-    return {
-      id: 'locked',
-      name: game.i18n.localize('MERCHANT.locked'),
-      img: 'icons/svg/padlock.svg',
-      flags: {
-        dsa5: {
-          noEffect: true,
-          hidePlayers: true,
-          description: game.i18n.localize('MERCHANT.locked'),
-        },
-      },
-    };
   }
 
   speedByMovementType(movementType) {
@@ -1150,330 +1136,28 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  #preparePostRollAction(message) {
-    const data = message.flags.data;
-    const cardOptions = {
-      flags: { img: { src: message.flags.img.src } },
-      rollMode: data.rollMode,
-      speaker: message.speaker,
-      template: data.template,
-      title: data.title,
-      user: message.author,
-    };
-    if (data.attackerMessage) cardOptions.attackerMessage = data.attackerMessage;
-    if (data.defenderMessage) cardOptions.defenderMessage = data.defenderMessage;
-    if (data.unopposedStartMessage) cardOptions.unopposedStartMessage = data.unopposedStartMessage;
-    return cardOptions;
-  }
-
-  resetTargetAndMessage(data, cardOptions) {
-    if (data.originalTargets?.size) {
-      game.user.targets = data.originalTargets;
-      game.user.targets.user = game.user;
-    }
-    if (!data.defenderMessage && data.startMessagesList) {
-      cardOptions.startMessagesList = data.startMessagesList;
-    }
-  }
-
   async fatererollDamage(infoMsg, cardOptions, newTestData, message, data, schipsource) {
-    cardOptions.fatePointDamageRerollUsed = true;
-    this.resetTargetAndMessage(data, cardOptions);
-
-    let oldDamageRoll = data.postData.damageRoll;
-    let newRoll = await DiceDSA5.manualRolls(await new Roll(oldDamageRoll.formula || oldDamageRoll._formula).evaluate(), 'CHATCONTEXT.rerollDamage');
-
-    for (let i = 0; i < newRoll.dice.length; i++) newRoll.dice[i].options.colorset = 'black';
-
-    await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
-
-    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    newTestData.damageRoll = duplicate(newRoll);
-
-    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-    await message.update({ 'flags.data.fatePointDamageRerollUsed': true });
-    await this.reduceSchips(schipsource);
+    FateRolls.fatererollDamage(this, infoMsg, cardOptions, newTestData, message, data, schipsource);
   }
 
   async fateisTalented(infoMsg, cardOptions, newTestData, message, data) {
-    cardOptions.talentedRerollUsed = true;
-
-    this.resetTargetAndMessage(data, cardOptions);
-
-    infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
-            ${game.i18n.format('CHATFATE.isTalented', {
-      character: '<b>' + this.name + '</b>',
-    })}<br>`;
-    const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.hbs', {
-      testData: newTestData,
-      postData: data.postData,
-    });
-    new DSA5Dialog({
-      window: { title: 'CHATFATE.selectDice' },
-      content: html,
-      buttons: [
-        {
-          action: 'yes',
-          icon: 'fa fa-check',
-          label: 'ok',
-          callback: async (event, button, dialog) => {
-            const dlg = $(button.form);
-            let diesToReroll = dlg
-              .find('.dieSelected')
-              .map(function () {
-                return Number(this.dataset.index);
-              })
-              .get();
-            if (diesToReroll.length > 0) {
-              let newRoll = [];
-              for (let k of diesToReroll) {
-                let term = newTestData.roll.terms[k * 2];
-                newRoll.push(term.number + 'd' + term.faces + '[' + term.options.colorset + ']');
-              }
-              newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join('+')).evaluate(), 'CHATCONTEXT.talentedReroll');
-              await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
-
-              let ind = 0;
-              const changedRolls = [];
-              const changes = [];
-
-              newTestData.roll = Roll.fromData(newTestData.roll);
-              for (let k of diesToReroll) {
-                const characteristic = newTestData.source.system[`characteristic${k + 1}`];
-                const attr = characteristic ? game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`) + ' - ' : '';
-
-                let val = newRoll.terms[ind * 2].results[0].result;
-                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${val}`);
-                val = Math.min(val, newTestData.roll.terms[k * 2].results[0].result);
-
-                changes.push({ index: k, val });
-                ind += 1;
-              }
-              newTestData.roll.editRollAtIndex(changes);
-              infoMsg += `<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
-              ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
-              this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-              await message.update({ 'flags.data.talentedRerollUsed': true });
-            }
-          },
-        },
-        {
-          action: 'cancel',
-          icon: 'fas fa-times',
-          label: 'cancel',
-        },
-      ],
-    }).render(true);
+    FateRolls.fateisTalented(this, infoMsg, cardOptions, newTestData, message, data);
   }
 
-  //todo refactor this with istalented
   async fatereroll(infoMsg, cardOptions, newTestData, message, data, schipsource) {
-    cardOptions.fatePointDamageRerollUsed = true;
-    this.resetTargetAndMessage(data, cardOptions);
-
-    const html = await renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.hbs', {
-      testData: newTestData,
-      postData: data.postData,
-      singleDie: data.postData.characteristics.length == 1,
-    });
-    new DSA5Dialog({
-      window: { title: 'CHATFATE.selectDice' },
-      content: html,
-      buttons: [
-        {
-          action: 'yes',
-          icon: 'fa fa-check',
-          label: 'ok',
-          callback: async (event, button, dialog) => {
-            const dlg = $(button.form);
-            let diesToReroll = dlg
-              .find('.dieSelected')
-              .map(function () {
-                return Number(this.dataset.index);
-              })
-              .get();
-            if (diesToReroll.length > 0) {
-              let newRoll = [];
-              for (let k of diesToReroll) {
-                let term = newTestData.roll.terms[k * 2];
-                newRoll.push(term.number + 'd' + term.faces + '[' + term.options.colorset + ']');
-              }
-              newRoll = await DiceDSA5.manualRolls(await new Roll(newRoll.join('+')).evaluate(), 'CHATCONTEXT.Reroll');
-              await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
-
-              let ind = 0;
-              let changedRolls = [];
-              const actor = DSA5_Utility.getSpeaker(newTestData.extra.speaker);
-              const phexTradition = game.i18n.localize('LocalizedIDs.traditionPhex');
-              const isPhex = actor.items.some((x) => x.type == 'specialability' && x.name == phexTradition);
-
-              newTestData.roll = Roll.fromData(newTestData.roll);
-              const changes = [];
-              for (let k of diesToReroll) {
-                const characteristic = newTestData.source.system[`characteristic${k + 1}`];
-                const attr = characteristic ? `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : '';
-
-                let val = newRoll.terms[ind * 2].results[0].result;
-                changedRolls.push(`${attr}${newTestData.roll.terms[k * 2].results[0].result}/${val}`);
-
-                if (isPhex) val = Math.min(val, newTestData.roll.terms[k * 2].results[0].result);
-                changes.push({ index: k, val });
-                ind += 1;
-              }
-              newTestData.roll.editRollAtIndex(changes);
-              infoMsg += `<br><b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
-              ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-              newTestData.fateUsed = true;
-
-              this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-              await message.update({
-                'flags.data.fatePointRerollUsed': true,
-              });
-              await this.reduceSchips(schipsource);
-            }
-          },
-        },
-        {
-          action: 'cancel',
-          icon: 'fas fa-times',
-          label: 'cancel',
-        },
-      ],
-    }).render(true);
+    FateRolls.fatereroll(this, infoMsg, cardOptions, newTestData, message, data, schipsource);
   }
 
   async fateaddQS(infoMsg, cardOptions, newTestData, message, data, schipsource) {
-    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    game.user.targets.forEach((t) =>
-      t.setTarget(false, {
-        user: game.user,
-        releaseOthers: false,
-        groupSelection: true,
-      }),
-    );
-
-    cardOptions.fatePointAddQSUsed = true;
-    newTestData.qualityStep = 1;
-
-    this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-    await message.update({ 'flags.data.fatePointAddQSUsed': true });
-    await this.reduceSchips(schipsource);
+    FateRolls.fateaddQS(this, infoMsg, cardOptions, newTestData, message, data, schipsource);
   }
 
   async fateImprove(infoMsg, cardOptions, newTestData, message, data, schipsource) {
-    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-
-    this.resetTargetAndMessage(data, cardOptions);
-
-    let rollType = message.flags.data.preData.source.type;
-    if (['spell', 'liturgy', 'ceremony', 'ritual', 'skill'].includes(rollType)) {
-      const html = await renderTemplate('systems/dsa5/templates/dialog/fateImprove-dialog.hbs', {
-        testData: newTestData,
-        postData: data.postData,
-      });
-      new DSA5Dialog({
-        window: { title: 'CHATFATE.selectDice' },
-        content: html,
-        buttons: [
-          {
-            action: 'Yes',
-            icon: 'fa fa-check',
-            label: 'ok',
-            callback: async (event, button, dialog) => {
-              const dlg = $(button.form);
-              let fws = [0, 0, 0];
-              let diesToUpgrade = dlg
-                .find('.dieSelected')
-                .map(function () {
-                  return Number(this.dataset.index);
-                })
-                .get();
-              if (diesToUpgrade.length == 1) {
-                fws[diesToUpgrade] = 2;
-                const modifier = {
-                  name: game.i18n.localize('CHATCONTEXT.improveFate'),
-                  value: fws.join('|'),
-                  type: 'roll',
-                };
-                newTestData.roll = Roll.fromData(newTestData.roll);
-                newTestData.roll.editRollAtIndex([{ index: diesToUpgrade, val: Math.max(1, newTestData.roll.terms[diesToUpgrade * 2].results[0].result - 2) }]);
-                newTestData.situationalModifiers.push(modifier);
-                this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-                await message.update({ 'flags.data.fateImproved': true });
-                await this.reduceSchips(schipsource);
-              }
-            },
-          },
-          {
-            action: 'cancel',
-            icon: 'fas fa-times',
-            label: 'cancel',
-          },
-        ],
-      }).render(true);
-    } else {
-      const modifier = {
-        name: game.i18n.localize('CHATCONTEXT.improveFate'),
-        value: 2,
-        type: 'roll',
-      };
-      newTestData.situationalModifiers.push(modifier);
-      newTestData.roll = Roll.fromData(newTestData.roll);
-      newTestData.roll.editRollAtIndex([{ index: 0, val: Math.max(1, newTestData.roll.terms[0].results[0].result - 2) }]);
-      this[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
-      await message.update({ 'flags.data.fateImproved': true });
-      await this.reduceSchips(schipsource);
-    }
-  }
-
-  async reduceSchips(schipsource) {
-    if (schipsource == 0)
-      await this.update({
-        'system.status.fatePoints.value': this.system.status.fatePoints.value - 1,
-      });
-    else {
-      await Actordsa5.reduceGroupSchip();
-    }
-  }
-
-  static async reduceGroupSchip() {
-    if (game.user.isGM) {
-      const groupschips = game.settings
-        .get('dsa5', 'groupschips')
-        .split('/')
-        .map((x) => Number(x));
-      groupschips[0] = groupschips[0] - 1;
-      await game.settings.set('dsa5', 'groupschips', groupschips.join('/'));
-    } else {
-      game.socket.emit('system.dsa5', {
-        type: 'reduceGroupSchip',
-        payload: {},
-      });
-    }
+    FateRolls.fateImprove(this, infoMsg, cardOptions, newTestData, message, data, schipsource);
   }
 
   async useFateOnRoll(message, type, schipsource) {
-    if (type == 'isTalented' || DSA5_Utility.fateAvailable(this, schipsource == 1)) {
-      const data = message.flags.data;
-      const cardOptions = this.#preparePostRollAction(message);
-      let fateAvailable;
-      let schipText;
-      if (schipsource == 0) {
-        fateAvailable = this.system.status.fatePoints.value - 1;
-        schipText = 'PointsRemaining';
-      } else {
-        fateAvailable = game.settings.get('dsa5', 'groupschips').split('/')[0];
-        schipText = 'GroupPointsRemaining';
-      }
-      let infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
-                ${game.i18n.format('CHATFATE.' + type, { character: '<b>' + this.name + '</b>' })}<br>
-                <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
-
-      let newTestData = data.preData;
-
-      this[`fate${type}`](infoMsg, cardOptions, newTestData, message, data, schipsource);
-    }
+    FateRolls.useFateOnRoll(this, message, type, schipsource);
   }
 
   get horseSpeed() {

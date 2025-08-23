@@ -5,13 +5,13 @@ import DSAActiveEffectConfig from '../status/active_effects.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import { dropToGround } from './itemDrop.js';
-import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5 from '../config/config-dsa5.js';
 import { Trade } from '../actor/trade.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
+import { FateRolls } from '../actor/concerns/faterolls.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -156,7 +156,7 @@ export function connectSocket() {
         game.dsa5.config.hooks.shapeshift.constructor.onRestoreShape(data.payload);
         break
       case 'reduceGroupSchip':
-        Actordsa5.reduceGroupSchip();
+        FateRolls.reduceGroupSchip();
         break;
       case 'summonCreature':
         PlayerMenu.createConjuration(data.payload);
