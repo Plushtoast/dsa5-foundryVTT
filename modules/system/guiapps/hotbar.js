@@ -73,7 +73,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
 
     const container = this.element.querySelector('.rangeContainer');
-    if(!container) return;
+    if (!container) return;
 
     this.slider = new VerticalSlider(container, 'vSliderDarkness', {
       value: (canvas?.scene?.environment.darknessLevel || 0) * 100,
@@ -86,7 +86,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   onSliderChanged(value) {
-    this.tokenHotbar?.changeDarkness({ currentTarget: { value: value / 100 }})
+    this.tokenHotbar?.changeDarkness({ currentTarget: { value: value / 100 } })
   }
 
   async updateDSA5Hotbar() {
@@ -250,51 +250,48 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       html.querySelectorAll('.skillItems').forEach(el => el.classList.remove('collapsed'));
       html.querySelectorAll('.categoryFilter').forEach(el => el.classList.remove('active'));
       if (this.token?.actor) {
-      this.activeFilters = [];
+        this.activeFilters = [];
       } else {
-      this.gmFilters = [];
+        this.gmFilters = [];
       }
     }
   }
 
   filterSections(ev, html) {
     this.searching = this.searching || '';
-    switch (ev.which) {
-      case 8:
-        this.searching = this.searching.slice(0, -1);
-        break;
-      default:
-        if (!ev.key.match(/^[a-zA-Z0-9öäüÖÄÜ]$/)) return;
 
-        this.searching += ev.key;
+    if (ev.which === 8) {
+      this.searching = this.searching.slice(0, -1);
+    } else if (ev.key.match(/^[a-zA-Z0-9öäüÖÄÜ]$/)) {
+      this.searching += ev.key;
+    } else {
+      return;
     }
+
     ev.preventDefault();
     ev.stopPropagation();
+
     const search = this.searching.toLowerCase();
     tinyNotification(search);
 
     const sections = html.find('.sections');
-    if (search) {
-      sections.addClass('longLayout');
-    } else {
-      sections.removeClass('longLayout');
-    }
-    html
-      .find('.primary')
-      .removeClass('dsahidden')
-      .filter(function () {
-        const find = this.dataset?.name?.toLowerCase().trim();
-        if (find) return find.indexOf(search) == -1;
+    sections.toggleClass('longLayout', !!search);
 
-        return true;
-      })
-      .addClass('dsahidden');
+    sections.find('.hSection').each((_, sec) => {
+      const elements = sec.querySelectorAll('.primary');
+      let filtered = 0;
+      for(const element of elements) {
+        if (element.dataset.skipfilter) continue;
 
-    for (let sec of sections.find('.skillItems')) {
-      const category = sec.dataset.category;
-      const section = $(sec);
-      section.toggleClass('dsahidden', section.find(`li.${category}.dsahidden`).length == section.find(`li.${category}`).length);
-    }
+        const name = element.dataset?.name?.toLowerCase().trim();
+        const hide = name.indexOf(search) === -1;
+        element.classList.toggle('dsahidden', hide);
+        if (hide) filtered++;
+      }
+
+      sec.classList.toggle('dsahidden', filtered === elements.length);
+    });
+
     return false;
   }
 
