@@ -6,8 +6,8 @@ import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { VerticalSlider } from '../helpers/vslider.js';
+import { GlobalToolTipHandler } from '../globals/tooltip.js';
 const { getProperty, mergeObject } = foundry.utils;
-const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static baseBarHeight = 45;
@@ -47,8 +47,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     html.find('.sections').on('pointerout', filterOff);
-    html.find('.primary').on('pointerover', (ev) => this._betterTooltip(ev));
-
+    html.find('.primary').on('pointerover', (ev) => this.#betterTooltip(ev));
 
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
@@ -145,91 +144,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     },
   };
 
-  async _betterTooltip(ev) {
-    const target = ev.currentTarget;
-    const data = target.dataset;
-
-    if ('tooltipClass' in target.dataset) return;
-
-    let tooltip;
-    let item;
-    let description;
-
-    const category = data.category?.split(' ')[0];
-
-    switch (category) {
-      case 'skillgm':
-        tooltip = game.i18n.format('TT.skillgm', { name: data.name });
-        break;
-      case 'effect':
-        const effect = this.token?.actor?.effects.get(data.id);
-        if (effect) description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
-
-        break;
-      case 'onUse':
-        item = this.token?.actor?.items.get(data.id);
-        switch (item.type) {
-          case 'specialability':
-            description = item.system.rule?.value;
-            break;
-          case 'advantage':
-          case 'disadvantage':
-            break;
-          default:
-            description = item.system.description?.value;
-        }
-        break;
-      case 'unequipped':
-      case 'consumable':
-      case 'weapon':
-      case 'spell':
-        item = this.token?.actor?.items.get(data.id);
-        const itemData = await item.sheet._prepareContext();
-
-        if (!game.user.isGM && itemData.document.system.obfuscation?.details) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', itemData);
-        } else {
-          description = $(
-            await renderTemplate(`systems/dsa5/templates/items/browse/${item.type}.hbs`, {
-              isGM: game.user.isGM,
-              ...itemData,
-              document: item,
-              skipHeader: true,
-              hint: true,
-            }),
-          )
-            .find('.groupbox')
-            .html();
-        }
-        break;
-      case 'enchantment':
-        const ids = data.id.split('_');
-        item = this.token?.actor?.items.get(ids[0]);
-        if (item.system.obfuscation?.enchantment) {
-          description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', item);
-          data.name = `${game.i18n.localize('enchantment')} (${item.name})`;
-        } else {
-          const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
-          data.name = `${enchantment.name} (${item.name})`;
-          description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.hbs', { enchantment, document: item });
-        }
-        break;
-      default:
-        return;
-    }
-
-    if (description) {
-      tooltip = `<div class="itemTooltip"><h1>${data.name}</h1>${description}</div>`;
-    }
-
-    if (!tooltip) return;
-
-    game.tooltip.activate(target, {
-      html: tooltip,
-      cssClass: 'dsatooltip'
-    });
-    target.dataset.tooltip = tooltip;
-    target.dataset.tooltipClass = 'dsatooltip';
+  async #betterTooltip(ev) {
+    GlobalToolTipHandler.handleTooltip(ev, this.token?.actor)
   }
 
   static #filterCategory(ev, target) {

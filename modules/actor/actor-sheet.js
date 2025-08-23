@@ -26,6 +26,7 @@ import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
+import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -642,33 +643,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _conditionShow(ev, target) {
     const id = target.dataset.id;
-    const statusEffects = $(target).closest('.statusEffect')[0];
-    const descriptor = statusEffects.dataset.descriptor;
     if (ev.button == 0) {
-      const origin = statusEffects.dataset.origin;
-      if (origin) {
-        fromUuid(origin).then((document) => document.sheet.render(true));
-      } else {
-        let effect;
-        let text;
-        if (descriptor) {
-          effect = CONFIG.statusEffects.find((x) => x.id == descriptor);
-          text = effect.description;
-        } else {
-          //search temporary effects
-          effect = this.actor.effects.find((x) => x.id == id);
-          if (effect) text = effect.flags.dsa5.description;
-        }
-
-        if (effect) {
-          text = `<div style="padding:5px;"><b><a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a></b>: ${game.i18n.localize(text)}</div>`;
-        }
-
-        const elem = $(target).closest('.groupbox').find('.effectDescription');
-        elem.fadeOut('fast', () => {
-          elem.html($(text)).fadeIn('fast');
-        });
-      }
+      this.actor.effects.get(id).sheet.render(true);
     } else if (ev.button == 2 && !target.dataset.locked) {
       this._deleteActiveEffect(id);
     }
@@ -944,6 +920,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     html.find('.tabs button').prop('disabled', false);
 
+    html.find('.gTooltip').on('pointerover', (ev) => this.#betterTooltip(ev));
+
     const autoSizings = html.find('.autosizing input')
     for (let el of autoSizings) {
       const chars = (el.value.length || el.placeholder.length) + 1;
@@ -1073,6 +1051,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const cost = (value - item.system.quantity.value) * 1.0 * item.system.price.value
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.quantity.value': value }]);
     await MoneyTracker.track(this.actor, { type: 'sheetChange' }, cost);
+  }
+
+  #betterTooltip(ev) {
+    GlobalToolTipHandler.handleTooltip(ev, this.actor);
   }
 
   _onItemContext(target) {

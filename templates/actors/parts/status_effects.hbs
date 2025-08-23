@@ -78,7 +78,7 @@
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
                 <div class="col two">
-                    <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
                     {{#if item.editable}}{{#unless item.boolean}}<a data-action="conditionValue">{{item.manual}}</a>{{/unless}}{{/if}}
@@ -165,7 +165,7 @@
                     <img src="{{item.img}}" />
                 </div>
                 <div class="col two">
-                    <a data-action="conditionShow" class="condition-show" data-id="{{item.id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item.id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
 
@@ -238,7 +238,7 @@
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
                 <div class="col two">
-                    <a data-action="conditionShow" class="condition-show" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
+                    <a data-action="conditionShow" class="gTooltip" data-category="effect" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col five center">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
