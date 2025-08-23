@@ -1,0 +1,40 @@
+.v-slider {
+    width: 15px;
+    height: 40px;
+    margin: 3px auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.v-slider-track {
+    position: relative;
+    width: 4px;
+    height: 100%;
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.v-slider-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: var(--color-warm-1);
+    border-radius: 3px;
+    height: 50%;
+}
+
+.v-slider-thumb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 50%;
+    width: 10px;
+    pointer-events: all;
+    height: 10px;
+    background: var(--color-warm-2);
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

@@ -157,9 +157,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
             }
           }
 
-          const hotbarDarkness = ui.hotbar.element.querySelector('[name="updateDarkness"]');
+          const hotbarDarkness = ui.hotbar.element.querySelector('[name="vSliderDarkness"]');
           if (hotbarDarkness) {
-            hotbarDarkness.value = data.environment.darknessLevel;
+            ui.hotbar.updateDarknessSlider(data.environment.darknessLevel);
           }
 
           if (!this.rendered) return;

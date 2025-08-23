@@ -14,16 +14,8 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     },
     combat: super.PARTS.combat,
     skills: super.PARTS.skills,
-    magic: {
-      template: 'systems/dsa5/templates/actors/creature/creature-magic.hbs',
-      templates: ['systems/dsa5/templates/actors/parts/spells.hbs', 'systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/magicalSigns.hbs'],
-      scrollable: ['']
-    },
-    religion: {
-      template: 'systems/dsa5/templates/actors/creature/creature-religion.hbs',
-      templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
-      scrollable: ['']
-    },
+    magic: super.PARTS.magic,
+    religion: super.PARTS.religion,
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],

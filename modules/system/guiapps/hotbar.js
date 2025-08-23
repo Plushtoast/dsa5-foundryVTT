@@ -5,6 +5,7 @@ import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { VerticalSlider } from '../helpers/vslider.js';
 const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -47,6 +48,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     html.find('.sections').on('pointerout', filterOff);
     html.find('.primary').on('pointerover', (ev) => this._betterTooltip(ev));
+
+
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => {
@@ -67,7 +70,19 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         that.isScrolling = false;
       });
     });
-    
+
+    this.slider = new VerticalSlider(this.element.querySelector('.rangeContainer'), 'vSliderDarkness', {
+      value: (canvas?.scene?.environment.darknessLevel || 0) * 100,
+      onChange: (value) => this.onSliderChanged(value)
+    });
+  }
+
+  updateDarknessSlider(value) {
+    this.slider.setValue(value * 100);
+  }
+
+  onSliderChanged(value) {
+    this.tokenHotbar?.changeDarkness({ currentTarget: { value: value / 100 }})
   }
 
   async updateDSA5Hotbar() {
@@ -458,7 +473,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         groups,
         effects,
       },
-      darkness: canvas?.scene?.environment.darknessLevel || 0,
       hotBarcssClass: 'hotbarV3',
       baseBarHeight: `${baseBarHeight}px`,
       barHeight: `${(baseBarHeight + 7) * rows + 40}px`,
