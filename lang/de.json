@@ -1291,7 +1291,7 @@
         "tokenhotbarSkill": "Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
         "effectVariant": "Alternativer Effekt wie z.B. ein zweiter oder dritter Angriff",
         "skillgm": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
-        "requestRoll": "<small>Probe mit aktuellem Held<br/>Links-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> Blind</small>"
+        "requestRoll": "<small>Probe mit aktuellem Held<br/>Links-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> Blinder Wurf</small>"
     },
     "DSA5_TOKENRING": {
         "blank": "DSA5 Tokenring (transparenter Hintergrund)",
@@ -1772,7 +1772,6 @@
         "lockpick": "Schlösserknacken",
         "misfortune": "Pechmagnet",
         "featOfStrength": "Kraftakt",
-        "wrestle": "Raufen",
         "literacy": "Schrift",
         "language": "Sprache",
         "aptitude": "Begabung",

@@ -5,7 +5,7 @@ require 'json'
 ##make this nested
 def compareKeys
     langs = ["de", "en"]
-    langDependentKeys = ["Combatskilldescr", "Racedescr","ReverseSpellRanges", "SKILLdescr", "LocalizedCTs", "LocalizedSpecies"]
+    langDependentKeys = ["Combatskilldescr", "Racedescr","ReverseSpellRanges", "SKILLdescr", "LocalizedSkills", "LocalizedCTs", "LocalizedSpecies"]
     showTBD = false
 
     json = {}

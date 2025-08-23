@@ -119,7 +119,7 @@ export default class RequestRoll {
     $('#chat-log').find(`[data-message-id="${message.id}"`).appendTo('#chat-log');
   }
 
-  static showRQMessage(target, modifier = 0, customLabel = undefined, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false }) {
+  static showRQMessage(target, modifier = 0, customLabel = undefined, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
     const mod = modifier < 0 ? ` ${modifier}` : modifier > 0 ? ` +${modifier}` : '';
     const skill = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)
     if (!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: target }, localize: true });
@@ -144,7 +144,7 @@ export default class RequestRoll {
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, modeOverride, undefined, forceWhisperIDs));
   }
 
-  static async showGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false }) {
+  static async showGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
     const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target).type;
     const data = {
       results: [],

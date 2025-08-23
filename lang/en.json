@@ -47,7 +47,13 @@
         "bumFight": "Bum fight!!!",
         "pp": "BP",
         "unarmEveryone": "Disarm everyone",
-        "unarmEveryoneText": "All participants of the brawl are disarmed. This ignores weapon ranges. Only improvised weapons remain equipped."
+        "attacksHurt": "The brawling attack is parried with a weapon, <b>{name}</b> suffers half the weapon damage of the opponent's weapon.",
+        "defense": "Unarmed characters suffer the full damage when parrying with Brawling against armed opponents (they should rather dodge).",
+        "unarmEveryoneText": "All participants of the brawl are disarmed. This ignores weapon ranges. Only improvised weapons remain equipped.",
+        "preventsBrawlAttackDamage": "Armed Attack",
+        "preventsBrawlAttackDamageHint": "The brawling attack counts as armed and the wielder does not suffer half the weapon damage of the defender.",
+        "preventsBrawlParryDamage": "Blocks Attacks",
+        "preventsBrawlParryDamageHint": "This brawling weapon can also parry armed attacks."
     },
     "CHARAbbrev": {
         "MU": "COU",
@@ -72,6 +78,7 @@
         "KaP": "KP",
         "step": "CTR",
         "attack": "AT",
+        "CMP": "CMP",
         "parry": "PA",
         "ATFK": "AT/RC",
         "GEKK": "AGI,STR",
@@ -153,7 +160,8 @@
         "noLoggedinUser": "No user logged in/available.",
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
-        "dependentMaintainEffects": "Dependent effects (delete too)"
+        "dependentMaintainEffects": "Dependent effects (delete too)",
+        "temporaryOff": "Disable temporarily"
     },
     "Equipment": {
         "misc": "General",
@@ -725,12 +733,30 @@
             "holidays": "holidays",
             "holiday": {
                 "Sommersonnenwende": "Midsummer",
+                "Tag des Heiligen Gilborn": "Day of Saint Gilborn",
+                "Tag der Helden": "Day of Heroes",
                 "Greifenfest": "Griffon Festival",
                 "Tag des Schwurs": "Day of the Oath",
                 "Schwertfest": "Celebration of the Sword",
                 "Tag des Wassers": "Day of Water",
+                "Tag der Besinnung": "Day of Reflection",
+                "Tag des Kampfes": "Day of Battle",
+                "Glückstag": "Day of Luck",
                 "Fischerfest": "Fishermen’s Feast",
                 "Tag der Heimkehr": "Day of Homecoming",
+                "Tag des Großen Schlafs": "Day of the Great Sleep",
+                "Tag der Jagd": "Day of the Hunt",
+                "Prüfungsfest": "Examination Festival",
+                "Feste des Ausgleichs": "Festival of Balance",
+                "Versenkungsfest": "Sinking Festival",
+                "Tag des Aufbruchs": "Day of Departure",
+                "Tag der Ifirn": "Day of Ifirn",
+                "Tage des Namenlosen": "Days of the Nameless",
+                "Wiederkehr der Hornisse": "Return of the Hornet",
+                "Tag des Hirsches": "Day of the Stag",
+                "Thalionmeltag": "Day of Thalionmel",
+                "Nebelfest": "Festival of Fog",
+                "Reinigungsfest": "Festival of Cleansing",
                 "Tag der Treue": "Day of Faithfulness",
                 "Totenfest": "Day of the Dead",
                 "Allaventurisches Gauklertreffen": "All-Aventuri Meeting of Jesters",
@@ -757,6 +783,7 @@
                 "night": "Night",
                 "label": "Daytimes",
                 "moonLight": "Moonlight",
+                "toggleAutoTime": "Time runs automatically in real time (updates every 15 sec, except in combat and pause)",
                 "lightByDayTime": "Light by daytime",
                 "lightByDayTimeHint": "The darkness value is automatically adjusted based on the time of day. The time of day is considered if light by daytime is activated.",
                 "moonAddsLight": "Moonlight adds to darkness",
@@ -980,6 +1007,10 @@
         "armorPen": "Armor penetration",
         "sight": "Sight modifier",
         "sightMax": "Sight modifier incl. Level 4",
+        "combatInWater": "Water combat",
+        "compensation": "Compensation",
+        "impossibleWeapon": "{weapon} not usable",
+        "notSuitableWeapon": "{weapon} not suitable",
         "RangeMod": {
             "short": "Close ({fk} to RC, {tp} DP)",
             "medium": "Medium ({fk} to RC, {tp} DP)",
@@ -998,6 +1029,12 @@
             "0": "Unaimed ({f})",
             "1": "Aim 1 action ({f})",
             "2": "Aim 2 actions ({f})"
+        },
+        "waterOptions": {
+            "0": "No restriction ({f})",
+            "1": "Up to waist ({f})",
+            "2": "Up to shoulder ({f})",
+            "3": "Bottomless water ({f})"
         }
     },
     "wrongGrip": {
@@ -1009,6 +1046,13 @@
         "yieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
         "yieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
         "wrongGripBastardRegex": "(Bastard Sword)"
+    },
+    "SOCIAL_CLASS": {
+        "slave": "Unfree",
+        "freeman": "Free",
+        "lessernoble": "Lesser Noble",
+        "noble": "Noble",
+        "highborn": "Highborn"
     },
     "Features": {
         "Object": "Object",
@@ -1310,6 +1354,8 @@
     "ActorConfig": {
         "autoSize": "Auto token size",
         "autoBar": "Auto token ressource bars",
+        "lockRotation": "Fixed rotation (movement)",
+        "lockRotationHint": "The token artwork does not rotate automatically when moving.",
         "AutoBarHint": "The ressource bars will be defined by the actor's abilities (AE, KE).",
         "AutoSizeHint": "The token size will be defined by the actor's size category."
     },
@@ -1408,7 +1454,7 @@
         "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
         "effectVariant": "Alternative effect like e.g. a second or third attack",
         "skillgm": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: Request group check<br>CTRL + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
-        "requestRoll": "<small>Roll with current hero<br/>Left-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Right-<i class=\"fas fa-computer-mouse\"></i> Blind</small>"
+        "requestRoll": "<small>Roll with current hero<br/>Left-<i class=\"fas fa-computer-mouse\"></i> Normal<br/>Right-<i class=\"fas fa-computer-mouse\"></i> Blind roll</small>"
     },
     "HELP": {
         "showHelp": "Show help",
@@ -1430,7 +1476,8 @@
         "threeD20Check": "3d20 Check",
         "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)",
         "groupcheck": "Group Check",
-        "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)"
+        "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)",
+        "payDrag": "Pay on Drag & Drop"
     },
     "TYPES.Combat.dsacombat": "Combat (TDE)",
     "TYPES.Combatant.dsacombatant": "Combatant (TDE)",
@@ -1474,8 +1521,207 @@
     "TYPES.Actor.character": "Character",
     "TYPES.Actor.npc": "Non Player Character",
     "TYPES.Actor.creature": "Creature",
+    "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
+    "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "npc": "Non Player Character",
     "creature": "Creature",
+    "dsacalendar": {
+        "FIELDS": {
+            "calendarentries": {
+                "label": "Date",
+                "title": {
+                    "label": "Name"
+                },
+                "content": {
+                    "label": "Description"
+                },
+                "location": {
+                    "label": "Location"
+                },
+                "from": {
+                    "label": "From"
+                },
+                "to": {
+                    "label": "To"
+                },
+                "category": {
+                    "label": "Category"
+                },
+                "visible": {
+                    "label": "Visible to Players"
+                },
+                "recurring": {
+                    "label": "Recurring Event"
+                }
+            }
+        },
+        "CATEGORIES": {
+            "general": "-",
+            "holidays": "Holiday",
+            "event": "Anniversary",
+            "historical": "Historical Event",
+            "milestones": "Milestone"
+        },
+        "events": "Events",
+        "gods": "Holiday of the Gods",
+        "journals": {
+            "label": "Calendar Journals",
+            "hint": "Select journals with calendar entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)"
+        }
+    },
+    "REGIONBEHAVIOR_DSATrap": {
+        "trapstart": "<b>{name}</b> triggers <b>{trap}</b>.",
+        "search": "Perception",
+        "searchHint": "Perception: The trap can be detected with a perception check. The modifier is the trap's stealth value.",
+        "disarm": "Disarm",
+        "notice": "Discover",
+        "showTrap": "Show Trap",
+        "showTrapAll": "Show Trap to All Players",
+        "hideTrapAll": "Hide Trap from All Players",
+        "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
+        "disarmMessage": "Disarm Trap ({duration} min)",
+        "noticeTraps": "Traps are usually not recognizable at first glance. Each trap has a stealth value, a modifier for a perception check to notice the trap in time. Usually, the GM should allow a hero to make such a check when investigating or crossing a room section. Apart from the stealth value, perception checks are unmodified, while search checks are additionally eased by 1. It makes a difference whether you are searching for a trap or unknowingly crossing a room. Whether the check is made secretly by the GM or by the player themselves must be decided by the gaming group.",
+        "disarmHint": "Disarm: The trap can be disarmed with a lockpicking check. The modifier is the trap's difficulty value.",
+        "trigger": "Trigger",
+        "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area.",
+        "COMPLEXITIES": {
+            "0": "Primitive",
+            "1": "Simple",
+            "2": "Complex"
+        },
+        "TRIGGERS": {
+            "0": "Pressure Plate",
+            "1": "Tripwire",
+            "2": "Lock Mechanism",
+            "3": "Supernatural Trigger"
+        },
+        "FIELDS": {
+            "difficulty": {
+                "label": "Difficulty Value",
+                "hint": "Each trap has a difficulty value, which serves as a modifier for disarming it with a lockpicking check."
+            },
+            "stealth": {
+                "label": "Stealth Value",
+                "hint": "A modifier for a perception check to notice the trap in time."
+            },
+            "description": {
+                "label": "Description",
+                "hint": "A brief description of the event for the players."
+            },
+            "gmdescription": {
+                "label": "GM Description",
+                "hint": "A detailed description of the trap for the GM."
+            },
+            "complexity": {
+                "label": "Complexity",
+                "hint": "Disarming a trap takes varying amounts of time depending on its complexity."
+            },
+            "damageFormula": {
+                "label": "Damage",
+                "hint": "How much damage does the trap deal?"
+            },
+            "autoPause": {
+                "label": "Pause",
+                "hint": "The trap automatically pauses after being triggered."
+            },
+            "charges": {
+                "label": "Charges",
+                "hint": "The number of charges the trap has (0 means infinite)."
+            },
+            "remainingCharges": {
+                "label": "Remaining Charges",
+                "hint": "The number of remaining charges the trap has."
+            },
+            "sound": {
+                "label": "Sound",
+                "hint": "A sound that is played when the trap is triggered."
+            },
+            "disarmed": {
+                "label": "Disarmed",
+                "hint": "The trap has already been disarmed."
+            },
+            "trigger": {
+                "label": "Trigger",
+                "hint": "The trigger of the trap, e.g. a pressure plate, a rope, or a specific area."
+            },
+            "tools": {
+                "label": "Tools",
+                "hint": "The tools required to disarm the trap, e.g. lockpicks, climbing gear, or special tools."
+            }
+        }
+    },
+    "SKILL_CHECK_MODIFIERS": {
+        "SOCIAL": {
+            "otherSpecies": {
+                "tooltip": "Active and passive party belong to different culture and/or species.",
+                "label": "Different Culture/Species"
+            },
+            "socialState": {
+                "tooltip": "Active party has a higher social status.",
+                "label": "Social Status"
+            },
+            "holyLocation": {
+                "tooltip": "The sermon takes place at a holy site of the appropriate deity.",
+                "label": "Holy Site"
+            },
+            "holySymbol": {
+                "tooltip": "The active party uses a divine symbol or other powerful liturgy before the eyes of the passive party. The same can apply to magic.",
+                "label": "Holy Symbol"
+            },
+            "passiveDonation": {
+                "tooltip": "Passive party receives a donation from the active party.",
+                "label": "Donation"
+            },
+            "commonInterest": {
+                "tooltip": "Active party addresses a topic that the passive party shares or wants to fulfill.",
+                "label": "Common Interest"
+            },
+            "enemyImage": {
+                "tooltip": "Active party corresponds to an enemy image of the passive party (e.g. Middenlanders trying to convince Orcs).",
+                "label": "Enemy Image"
+            },
+            "moralConflict": {
+                "tooltip": "Active party demands something that goes against the moral principles of the passive party.",
+                "label": "Moral Conflict"
+            },
+            "interest": {
+                "tooltip": "Active party has studied the passive party and their preferences.",
+                "label": "Interest"
+            },
+            "rahjaglaeubig": {
+                "tooltip": "Passive party is very Rahjaglaeubig.",
+                "label": "Rahjaglaeubig"
+            },
+            "enthaltsam": {
+                "tooltip": "Passive party is very abstinent.",
+                "label": "Abstinent"
+            },
+            "married": {
+                "tooltip": "Passive party is happily committed.",
+                "label": "Married"
+            },
+            "forbiddenContact": {
+                "tooltip": "Active party belongs to a group that is unfavorable/forbidden for the passive party (e.g. species, fringe group, etc.).",
+                "label": "Forbidden Contact"
+            },
+            "badHabbit": {
+                "tooltip": "Active party has bad manners (e.g. corresponding bad habits).",
+                "label": "Bad Habits"
+            },
+            "reputation": {
+                "tooltip": "Active party has a good or bad reputation.",
+                "label": "Reputation"
+            },
+            "truthful": {
+                "tooltip": "Active party is considered truthful.",
+                "label": "Truthful"
+            },
+            "knownLiar": {
+                "tooltip": "Active party is a known liar.",
+                "label": "Known Liar"
+            }
+        }
+    },
     "UNITS": {
         "weight": "Weight in stone",
         "money": "Value in Silverthaler"
@@ -1609,8 +1855,11 @@
         }
     },
     "LocalizedIDs": {
+        "combatInWater": "Underwater Combat",
         "reversalis": "Reversalis",
+        "assumeTradition": "Tradition (",
         "immuneToCrit": "Immune to critical hits",
+        "disarmTraps": "Disarm Traps",
         "aspectKnowledge": "Aspect Knowledge",
         "sharpshooter": "Sharpshooter",
         "professionSecret": "Trade Secret",
@@ -1620,6 +1869,7 @@
         "loyalty": "Loyalty",
         "mute": "Mute",
         "riding": "Riding",
+        "lockpick": "Pick Locks",
         "ruggedFighter": "Rugged Fighter",
         "sensitiveToPain": "Sensitive to Pain",
         "fragileAnimal": "tbd",
@@ -1680,7 +1930,6 @@
         "companion": "Companion",
         "localKnowledge": "Area Knowledge",
         "naturalArmor": "Natural Armor",
-        "wrestle": "Brawling",
         "all": "all",
         "poisonResistance": "Poison Resitance",
         "ResistanttoDisease": "Resistant to Disease",
@@ -1743,6 +1992,11 @@
         "Two-Handed Impact Weapons": "Two-Handed Impact Weapons",
         "Two-Handed Swords": "Two-Handed Swords",
         "Whips": "Whips"
+    },
+    "LocalizedSkills": {
+        "Persuasion": "Persuasion",
+        "Seduction": "Seduction",
+        "Fast-Talk": "Fast-Talk"
     },
     "LocalizedSpecies": {
         "Dwarf": "Dwarf",
@@ -2095,7 +2349,9 @@
         "masterCanvasControls": "Activate Canvas Controls",
         "masterCanvasControlsHint": "Add master functions to the Canvas Controls (left side of the GUI).",
         "enableWeaponAdvantages": "Equipment advantages/disadvantages",
-        "enableWeaponAdvantagesHint": "Activate the optional rules for weapon and armor advantages and disadvantages. If weapons contain the corresponding rules, they are automatically applied."
+        "enableWeaponAdvantagesHint": "Activate the optional rules for weapon and armor advantages and disadvantages. If weapons contain the corresponding rules, they are automatically applied.",
+        "hideSpellDetails": "Hide Spell Details in Chat",
+        "hideSpellDetailsHint": "Hide effects and other details for spells in chat for everyone except the owner of the spell."
     },
     "TRACKER": {
         "adventurePoints": "Adventure Points History",
@@ -2145,7 +2401,8 @@
     "COMBATTRACKER": {
         "noDefenses": "Defense count",
         "ongoing": "Ongoing actions",
-        "waitInit": "Wait"
+        "waitInit": "Wait",
+        "actionHint": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",

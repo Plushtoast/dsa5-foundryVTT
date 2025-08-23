@@ -71,7 +71,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       });
     });
 
-    this.slider = new VerticalSlider(this.element.querySelector('.rangeContainer'), 'vSliderDarkness', {
+
+    const container = this.element.querySelector('.rangeContainer');
+    if(!container) return;
+
+    this.slider = new VerticalSlider(container, 'vSliderDarkness', {
       value: (canvas?.scene?.environment.darknessLevel || 0) * 100,
       onChange: (value) => this.onSliderChanged(value)
     });
@@ -231,21 +235,24 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static #filterCategory(ev, target) {
     const category = target.dataset.filter;
 
-    const html = $(this.element);
+    const html = this.element;
+    html.querySelector('.sections').classList.toggle('filterOn', !!category);
     if (category) {
-      html.find('.skillItems').addClass('collapsed');
-      html.find(`.skillItems[data-category="${category}"]`).removeClass('collapsed');
-      html.find('.categoryFilter').removeClass('active');
-      html.find(`.categoryFilter[data-filter="${category}"]`).addClass('active');
+      html.querySelectorAll('.skillItems').forEach(el => el.classList.add('collapsed'));
+      const targetSkillItems = html.querySelector(`.skillItems[data-category="${category}"]`);
+      if (targetSkillItems) targetSkillItems.classList.remove('collapsed');
+      html.querySelectorAll('.categoryFilter').forEach(el => el.classList.remove('active'));
+      const targetFilter = html.querySelector(`.categoryFilter[data-filter="${category}"]`);
+      if (targetFilter) targetFilter.classList.add('active');
       if (this.token?.actor) this.activeFilters = [category];
       else this.gmFilters = [category];
     } else {
-      html.find('.skillItems').removeClass('collapsed');
-      html.find('.categoryFilter').removeClass('active');
+      html.querySelectorAll('.skillItems').forEach(el => el.classList.remove('collapsed'));
+      html.querySelectorAll('.categoryFilter').forEach(el => el.classList.remove('active'));
       if (this.token?.actor) {
-        this.activeFilters = [];
+      this.activeFilters = [];
       } else {
-        this.gmFilters = [];
+      this.gmFilters = [];
       }
     }
   }
