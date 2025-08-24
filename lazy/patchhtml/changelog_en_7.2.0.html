@@ -1,0 +1,88 @@
+<h1 id="major-enhancements">Major Enhancements (09/01/2025)</h1>
+<h2 id="traps">Traps </h2>
+<p>The first iteration of traps is now finished. This includes two enhanced/new document types:</p>
+<ul class="dsalist">
+    <li>A scene region behavior which can be selected upon creating a scene region.</li>
+    <li>A item type with enhanced configuration which can be dropped on the map to create a scene region with trap
+        behavior (you can modify this region until it fits where you need it).</li>
+</ul>
+<p>There will also be a new entry in the game manual on how to use these.<br>
+    A future step is planned which will include:</p>
+<ul class="dsalist">
+    <li>Poison</li>
+    <li>Spells</li>
+    <li>Active Effects</li>
+    <li>Better usability for player traps</li>
+    <li>And more</li>
+</ul>
+<p>And finally at some point a module full of prepared traps.</p>
+<h2 id="calendar-improvements">Calendar improvements </h2>
+<p>Among some minor improvements the calendar can now contain own calendar dates.<br>
+    You can create this calendar dates as new Journal Entry types and attach them to the calendar. This way you can
+    maintain multiple calendars and keep some order for different type of dates.<br>
+    These dates can then be inspected in the calendar in a event like calendar type which shows what happens next.<br>
+    Moreover on the calendar widget you can now enable real time advancement which will update the gametime outside of
+    combat or pause every 15s. This will proceed with the circle of the day including lighting and other stuff.<br>
+    There are now also additional holidays and the information to which god they belong. This allows for further
+    automation like roll modifiers on ceremonies depending on holidays or months of the year.</p>
+<p>Many more improvements are planned here too.</p>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+    <li>Token Ruler is now included in DSA/TDE by default. Token ruler is colored depending on the distance travelled
+        for the token and its movement type.</li>
+    <li>If token rotation is enabled, tokens now automatically turn into the direction of their target in combat. This
+        enables some more tactical enhancements like attacks from behind. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1968">1968</a></li>
+    <li>There are some more hints what combat actions can be taken for beginners on the combat tab of the character
+        sheet and in the combat tracker <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1938">1938</a>
+    </li>
+    <li>The automtaic token rename function can now be temporarily disabled (ends on switch of the map). Automatic token
+        renaming can be enabled in the settings. Unlinked tokens can then be renamed after being dropped on the map. The
+        masters workshop additionaly enhances this function with random names. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1962">1962</a></li>
+    <li>Advanced modifiers for focus rules can now be included into the system. This starts with additional modifiers in
+        social conflicts for Fast-Talk, Persuasion and Seduction <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2021">2021</a></li>
+    <li>The tooltip for damage roll results in the chat is now more specific.</li>
+    <li>The automatic rotation of single tokens can now be disabled in the token prototype configuration. This allows
+        manual rotating of the token, but won't change its rotation on movement <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1985">1985</a></li>
+    <li>Air and water speeds are now properly calculated and can be used by changing the walking mode in the token hud.
+        This will additionally affect modifiers shown on combat rolls (combat in water). Weapons with the domain
+        "Underwater Combat" (Unterwasserkampf) will not be affected by negative modifiers modifiers imposed by the
+        water. Compendium items with suitable active effects will updated at a later point <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1960">1960</a></li>
+    <li>There is now a setting to hide spell details in the chat for everyone except the owner of the rolling token.
+        This way the GM can hide spell descriptions from players and reduce meta gaming <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1710">1710</a></li>
+    <li>The social class of an actor is now a drop down field instead of plain text, reflecting the categorization of
+        the TDE/DSA rules. This can potentially lead to another automation in the future, but we have to adjust our
+        databases first accordingly.</li>
+    <li>Skills and spells can now have active effects which reduce negative modifiers called "compensation". Kompendium
+        updates will take as always their time until they include this update <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/857">857</a></li>
+    <li>Active effects can now apply conditional modifiers to regeneration rolls. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1954">1954</a></li>
+    <li>It is no longer possible to defend armed attackes with brawling. Brawling weapons now additionally have settings
+        to configure whether they allow attacks or defenses without danger. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1918">1918</a></li>
+    <li>Hovering the creature type on a creature sheets now shows a tooltip describing specific rules for that creature
+        category (e.g. undeads) if the creature type has been detected properly <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2027">2027</a></li>
+    <li>Active effects which modify items can now also target items matching a regular expression pattern. E.g.
+        previously you could modify all items named "Dolch" like this <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1972">1972</a>:</li>
+</ul>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span> <span class="token property">"key"</span><span class="token operator">:</span> <span class="token string">"@meleeweapon.Dolch.system.atmod.value"</span><span class="token punctuation">,</span> <span class="token property">"mode"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">"value"</span><span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>  
+</code></pre>
+<p>which would add 1 to the AT mod of any "Dolch".<br>
+    Now you can do things like this:</p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span> <span class="token property">"key"</span><span class="token operator">:</span> <span class="token string">"@poison.[a-z ]*.system.step.value"</span><span class="token punctuation">,</span> <span class="token property">"mode"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">"value"</span><span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>
+</code></pre>
+<p>which would increase the level of any poison in the inventory by one.</p>
+<h1 id="bugfixes">Bugfixes </h1>
+<p>We will not list any bugfixes anymore. Instead you can find the timeline when what bugfixes has been resolved right
+    here:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix Timeline</a></p>
+<p>On the same board you can also find plans for future enhancements on the system.<br>
+    Note that you can also use the search function there.</p>

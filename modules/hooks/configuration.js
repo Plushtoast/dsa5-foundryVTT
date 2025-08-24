@@ -114,7 +114,7 @@ export function setupConfiguration() {
     hint: 'migrationVersion',
     scope: 'world',
     config: false,
-    default: 33,
+    default: 34,
     type: Number,
   });
 

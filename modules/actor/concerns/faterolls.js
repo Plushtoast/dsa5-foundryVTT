@@ -9,7 +9,6 @@ const { renderTemplate } = foundry.applications.handlebars;
  * quality step additions, and roll improvements
  */
 export class FateRolls {
-    // Constants for flag names and common values
     static FLAGS = {
         FATE_DAMAGE_REROLL: 'fatePointDamageRerollUsed',
         TALENTED_REROLL: 'talentedRerollUsed',
@@ -43,7 +42,6 @@ export class FateRolls {
             'CHATCONTEXT.rerollDamage'
         );
 
-        // Set all dice to black color
         newRoll.dice.forEach(die => die.options.colorset = this.DICE_COLOR_BLACK);
 
         await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
@@ -95,7 +93,7 @@ export class FateRolls {
                             diesToReroll, 
                             newTestData, 
                             'CHATCONTEXT.talentedReroll',
-                            true // Use minimum for talented rerolls
+                            true
                         );
 
                         const finalInfoMsg = `${enhancedInfoMsg}<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
@@ -158,7 +156,7 @@ export class FateRolls {
                             diesToReroll, 
                             newTestData, 
                             'CHATCONTEXT.Reroll',
-                            false, // Don't force minimum
+                            false,
                             actor,
                             isPhex
                         );
@@ -334,7 +332,6 @@ export class FateRolls {
             user: author,
         };
 
-        // Add optional message properties if they exist
         const optionalProps = ['attackerMessage', 'defenderMessage', 'unopposedStartMessage'];
         optionalProps.forEach(prop => {
             if (data[prop]) cardOptions[prop] = data[prop];
@@ -368,7 +365,6 @@ export class FateRolls {
      * @returns {Object} Object containing newRoll, changedRolls array, and changes array
      */
     static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false) {
-        // Build roll formulas for selected dice
         const rollFormulas = diceIndices.map(index => {
             const term = testData.roll.terms[index * 2];
             return `${term.number}d${term.faces}[${term.options.colorset}]`;
@@ -382,7 +378,6 @@ export class FateRolls {
         
         await DiceDSA5.showDiceSoNice(newRoll, testData.rollMode);
 
-        // Process results and build change arrays
         const changedRolls = [];
         const changes = [];
         testData.roll = Roll.fromData(testData.roll);
@@ -397,7 +392,6 @@ export class FateRolls {
             
             changedRolls.push(`${attr}${originalValue}/${newValue}`);
             
-            // Apply appropriate value selection rule
             let finalValue = newValue;
             if (useMinimum || isPhex) {
                 finalValue = Math.min(newValue, originalValue);

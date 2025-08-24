@@ -104,6 +104,10 @@
         {
             "version": "7.1.0",
             "text": "<ul><li>Die Echsensümpfe, Aventurische Würfelspiele soon.</li><li>Foundry13 compatibility</li><li>Calendar of the Twelve-gods</li><li>Don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>Some english explanatory videos here: <a href=\"https://www.youtube.com/@letsvtt4914\" target=\"_blank\">Let's VTT</a></li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel, Twolli, Zoidable, Qowy, Neilo, Grimheimr and in memoriam <img src=\"systems/dsa5/icons/Garadan6.webp\" style=\"width:15px;height:15px;border:none;\"/>Niemand.</li></ul>"
+        },
+        {
+            "version": "7.2.0",
+            "text": "<ul><li>Der Wolfsfrost und Geschuppte Tyrannen soon.</li><li>Calendar improvements</li><li>Inbuild support for traps with scene regions</li><li>Don't forget to visit <a href=\"https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA\" target=\"_blank\">VTTom's Youtube channel</a> for recent tutorial videos (german, some with subtitle)</li><li>Some english explanatory videos here: <a href=\"https://www.youtube.com/@letsvtt4914\" target=\"_blank\">Let's VTT</a></li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel, Twolli, Zoidable, Qowy, Neilo, Grimheimr and in memoriam <img src=\"systems/dsa5/icons/Garadan6.webp\" style=\"width:15px;height:15px;border:none;\"/>Niemand.</li></ul>"
         }
 
     ]

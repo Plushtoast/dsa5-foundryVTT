@@ -1,0 +1,65 @@
+<h1 id="major-enhancements">Wichtige Erweiterungen (01.09.2025)</h1>
+<h2 id="traps">Fallen</h2>
+<p>Die erste Implementierung von Fallen ist nun abgeschlossen. Dies umfasst zwei neue bzw. erweiterte Dokumenttypen:</p>
+<ul class="dsalist">
+    <li>Ein Regionsverhalten, das beim Erstellen einer Szenenregion ausgewählt werden kann.</li>
+    <li>Ein Item-Typ mit erweiterten Konfigurationsmöglichkeiten, der auf die Karte gezogen werden kann, um eine Szenenregion mit Fallenverhalten zu erstellen (diese Region kann anschließend angepasst werden, bis sie genau passt).</li>
+</ul>
+<p>Es wird außerdem einen neuen Eintrag im Spielhandbuch geben, der erklärt, wie diese zu nutzen sind.<br>
+    Für zukünftige Schritte ist geplant:</p>
+<ul class="dsalist">
+    <li>Gifte</li>
+    <li>Zauber</li>
+    <li>Aktive Effekte</li>
+    <li>Verbesserte Nutzbarkeit für Spieler-Fallen</li>
+    <li>Und mehr</li>
+</ul>
+<p>Schließlich wird es irgendwann auch ein Modul mit einer Sammlung vorbereiteter Fallen geben.</p>
+<h2 id="calendar-improvements">Kalender-Verbesserungen</h2>
+<p>Neben einigen kleineren Verbesserungen kann der Kalender nun auch eigene Kalendereinträge enthalten.<br>
+    Diese Kalendereinträge können als neuer Journal-Eintragstyp erstellt und dem Kalender zugewiesen werden. Auf diese Weise lassen sich mehrere Kalender pflegen und verschiedene Arten von Terminen übersichtlich trennen.<br>
+    Diese Einträge können dann im Kalender in einer ereignisähnlichen Ansicht angezeigt werden, die die nächsten Geschehnisse hervorhebt.<br>
+    Außerdem kann im Kalender-Widget nun die <strong>Echtzeit-Fortschreibung</strong> aktiviert werden: Die Spielzeit wird dadurch außerhalb des Kampfes oder im Pausenmodus alle 15 Sekunden fortgeschrieben. Dies umfasst den Tagesablauf inklusive Beleuchtung und weiteren Effekten.<br>
+    Zusätzlich wurden neue Feiertage ergänzt, inklusive Informationen zu den jeweiligen Göttern. Dies ermöglicht weitere Automatisierungen, wie zum Beispiel Wurfmodifikatoren bei Zeremonien an bestimmten Feiertagen oder in bestimmten Monaten.</p>
+<p>Auch hier sind viele weitere Verbesserungen geplant.</p>
+<h1 id="improvements">Verbesserungen</h1>
+<ul class="dsalist">
+    <li>Der <strong>Token-Ruler</strong> ist nun standardmäßig in DSA/TDE enthalten. Die Farbe des Rulers ändert sich je nach zurückgelegter Distanz und Bewegungsart.</li>
+    <li>Wenn die Token-Rotation aktiviert ist, drehen sich Tokens im Kampf nun automatisch in Richtung ihres Ziels. Dadurch werden zusätzliche taktische Möglichkeiten wie Angriffe von hinten unterstützt. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1968">1968</a></li>
+    <li>Für Einsteiger werden nun zusätzliche Hinweise zu möglichen Kampaktionen angezeigt – sowohl im Reiter "Kampf" des Charakterbogens als auch im Kampfticker. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1938">1938</a></li>
+    <li>Die Funktion zum automatischen Umbenennen von Tokens kann nun temporär deaktiviert werden (endet beim Kartenwechsel). Das automatische Umbenennen kann in den Einstellungen aktiviert werden. Nicht-verknüpfte Tokens können nach dem Platzieren auf der Karte umbenannt werden. Die <em>Meisterwerkstatt</em> erweitert diese Funktion zusätzlich mit zufälligen Namen. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1962">1962</a></li>
+    <li>Erweiterte Modifikatoren für <strong>Fokusregeln</strong> können nun in das System eingebunden werden. Erste Anwendung: zusätzliche Modifikatoren in sozialen Konflikten für Überreden, Betören und Überzeugen. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2021">2021</a></li>
+    <li>Der Tooltip für Schadenswürfe im Chat ist jetzt detaillierter.</li>
+    <li>Die automatische Rotation einzelner Tokens kann nun in der Token-Prototyp-Konfiguration deaktiviert werden. Dadurch bleibt manuelles Drehen möglich, ohne dass Bewegungen die Rotation überschreiben. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1985">1985</a></li>
+    <li>Luft- und Wassergeschwindigkeiten werden nun korrekt berechnet und können über den Bewegungsmodus im Token-HUD eingestellt werden. Dies wirkt sich auch auf Modifikatoren in Kampfproben aus (z. B. Unterwasserkampf). Waffen mit der Domäne <strong>Unterwasserkampf</strong> sind von Abzügen durch Wasser nicht betroffen. Kompendium-Items mit passenden aktiven Effekten werden zu einem späteren Zeitpunkt aktualisiert. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1960">1960</a></li>
+    <li>Neue Einstellung: Zauberdetails im Chat können für alle außer dem Besitzer des würfelnden Tokens verborgen werden. Damit können Spielleiter Metagaming reduzieren. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1710">1710</a></li>
+    <li>Die <strong>soziale Schicht</strong> eines Schauspielers ist nun ein Dropdown-Feld statt Freitext, entsprechend der Kategorisierung der DSA-Regeln. Dies eröffnet künftig Automatisierungsmöglichkeiten, sobald die Datenbanken angepasst wurden.</li>
+    <li>Fertigkeiten und Zauber können nun <strong>Kompensationseffekte</strong> enthalten, die negative Modifikatoren verringern. Kompendium-Updates folgen wie gewohnt später. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/857">857</a></li>
+    <li>Aktive Effekte können nun auch bedingte Modifikatoren auf Regenerationswürfe anwenden. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1954">1954</a></li>
+    <li>Bewaffnete Angriffe können nicht mehr mit <strong>Raufen</strong> pariert werden. Raufen-Waffen haben nun zusätzliche Einstellungen, ob sie Angriffe oder Verteidigungen ohne Risiko erlauben. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1918">1918</a></li>
+    <li>Beim Überfahren des Feldes <strong>Kreaturentyp</strong> im Kreaturenbogen erscheint nun ein Tooltip mit spezifischen Regelhinweisen zu dieser Kategorie (z. B. Untote), sofern der Typ korrekt erkannt wurde. <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2027">2027</a></li>
+    <li>Aktive Effekte, die Items modifizieren, können nun auch über <strong>reguläre Ausdrücke</strong> angewendet werden. Beispiel: bisher konnte man alle Items mit dem Namen „Dolch“ so verändern <a
+            href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1972">1972</a>:</li>
+</ul>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span> <span class="token property">"key"</span><span class="token operator">:</span> <span class="token string">"@meleeweapon.Dolch.system.atmod.value"</span><span class="token punctuation">,</span> <span class="token property">"mode"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">"value"</span><span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>  
+</code></pre>
+<p>Dies würde allen „Dolch“-Waffen +1 auf den AT-Modifikator geben.<br>
+    Nun sind auch Dinge wie dieses möglich:</p>
+<pre data-role="codeBlock" data-info="json" class="language-json json"><code><span class="token punctuation">{</span> <span class="token property">"key"</span><span class="token operator">:</span> <span class="token string">"@poison.[a-z ]*.system.step.value"</span><span class="token punctuation">,</span> <span class="token property">"mode"</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token property">"value"</span><span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span>
+</code></pre>
+<p>Dies erhöht die Stufe jedes Giftes im Inventar um 1.</p>
+<h1 id="bugfixes">Bugfixes</h1>
+<p>Wir werden Bugfixes künftig nicht mehr in den Release Notes auflisten. Stattdessen findet ihr die Übersicht, wann welcher Bug behoben wurde, hier:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix-Zeitachse</a></p>
+<p>Auf demselben Board findet ihr außerdem Pläne für zukünftige Erweiterungen des Systems.<br>
+    Hinweis: Mit der Suchfunktion könnt ihr gezielt nach Änderungen suchen.</p>
