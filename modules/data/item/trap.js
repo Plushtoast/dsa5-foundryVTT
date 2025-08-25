@@ -3,7 +3,7 @@ import { ItemDataModel } from '../baseitem.js';
 import { DSATrapRegionBehavior } from '../regionbehaviors/trap.js';
 import AoeTemplate from './templates/aoe.js';
 
-const { NumberField, StringField } = foundry.data.fields;
+const { StringField } = foundry.data.fields;
 
 export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, AoeTemplate) {
   static LOCALIZATION_PREFIXES = ["REGIONBEHAVIOR_DSATrap"];
@@ -28,9 +28,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     }
 
     for (const key of Object.keys(DSATrapRegionBehavior.sharedSchema())) {
-      if (this[key] !== undefined) {
-        data.system[key] = this[key];
-      }
+      if (this[key] !== undefined) data.system[key] = this[key];
     }
 
     data.system.charges = (await new Roll(this.charges).evaluate()).total
@@ -65,8 +63,10 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
         shape.radiusY = value * gridSize;
         break;
       case 'cone':
-        ui.notifications.warn(game.i18n.localize("Method not implemented"));  
-        break;
+        ui.notifications.warn(game.i18n.localize("Cone templates are currently not supported"));
+        return;
+      default:
+        return;
     }
     return shape;
   }
@@ -85,13 +85,11 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
 
     const region = {
       name,
-      shapes: [
-        shape
-      ],
-      behaviors: [
-        behavior
-      ]
+      behaviors: [behavior]
     }
+
+    if (shape) region.shapes = [shape];
+
     await canvas.scene.createEmbeddedDocuments("Region", [region])
   }
 
