@@ -147,7 +147,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         acc[j.uuid] = j.name;
         return acc;
       }, {});
-      console.log(possibleJournals)
       const content = await renderTemplate('systems/dsa5/templates/journal/calendarjournalpicker.hbs', { possibleJournals, hasJournals: Object.keys(possibleJournals).length > 0 });
       container.innerHTML = content;
     } else {
@@ -353,6 +352,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
       this.render({ force: true, parts: ['events'] });
     }
+  }
+
+  async close(options = {}) {
+    options.animate = false;
+    super.close(options);
   }
 
   _onClose(options) {
