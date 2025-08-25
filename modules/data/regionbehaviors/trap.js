@@ -55,6 +55,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
                     CONST.REGION_EVENTS.TOKEN_ROUND_START,
                     CONST.REGION_EVENTS.TOKEN_ROUND_END,
                 ],
+                initial: [ CONST.REGION_EVENTS.TOKEN_MOVE_IN ]
             }),
         }
     }
