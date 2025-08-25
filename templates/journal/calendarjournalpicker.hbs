@@ -1,3 +1,7 @@
+{{#if hasJournals}}
 <select name="journal">
     {{selectOptions possibleJournals}}
 </select>
+{{else}}
+    <p>{{localize "DSAError.noCalendarsYet"}}</p>
+{{/if}}

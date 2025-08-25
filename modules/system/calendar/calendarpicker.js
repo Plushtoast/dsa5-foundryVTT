@@ -147,11 +147,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         acc[j.uuid] = j.name;
         return acc;
       }, {});
-      const content = await renderTemplate('systems/dsa5/templates/journal/calendarjournalpicker.hbs', { possibleJournals });
+      console.log(possibleJournals)
+      const content = await renderTemplate('systems/dsa5/templates/journal/calendarjournalpicker.hbs', { possibleJournals, hasJournals: Object.keys(possibleJournals).length > 0 });
       container.innerHTML = content;
     } else {
-      const settings = game.settings.get('dsa5', 'calendarJournals');
       const selected = this.element.querySelector('select[name="journal"]');
+      if(!selected) return;
+
+      const settings = game.settings.get('dsa5', 'calendarJournals');
       settings.activated.push({ uuid: selected.value, name: selected.options[selected.selectedIndex].text });
       await game.settings.set('dsa5', 'calendarJournals', settings);
       this.render(true);

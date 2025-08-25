@@ -84,7 +84,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
     }
 
     static #addCalendarEntry(ev, target) {
-        newEntry();
+        this.newEntry();
     }
 
     async newEntry() {
@@ -100,7 +100,8 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
                             dayOfMonth: components.dayOfMonth + 1,
                             month: components.month,
                             year: components.year
-                        }
+                        },
+                        category: 0
                     }
                 }
             }
