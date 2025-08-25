@@ -1464,6 +1464,7 @@
         },
         "events": "Ereignisse",
         "gods": "Feiertag der Götter",
+        "showInCalendar": "Im Kalender anzeigen",
         "journals": {
             "label": "Kalender Journals",
             "hint": "Wähle Journals mit Kalendereinträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
