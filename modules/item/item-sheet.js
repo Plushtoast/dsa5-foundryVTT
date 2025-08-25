@@ -1253,7 +1253,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
   }
 
   static async deleteAttack(event, target) {
-    tabGroups.alternateAttacks = 'baseAttack';
+    this.tabGroups.alternateAttacks = 'baseAttack';
     await this.item.update({ [`flags.dsa5.alternateAttacks.-=${target.dataset.key}`]: null });
   }
 

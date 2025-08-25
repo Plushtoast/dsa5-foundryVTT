@@ -47,7 +47,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
     }
 
     async _preUpdate(changed, options, user) {
-        for (let key of Object.keys(changed.system.calendarentries || {})) {
+        for (let key of Object.keys(changed.system?.calendarentries || {})) {
             this.#recalculateDay(changed.system.calendarentries[key]);
         }
         await super._preUpdate(changed, options, user);
