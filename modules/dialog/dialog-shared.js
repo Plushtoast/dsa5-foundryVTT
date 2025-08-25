@@ -110,7 +110,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
             break;
           }
         }
-        $(this.element).find('.nonOpposedButton,.rollButton').attr('data-tooltip', possibilities.join('<br>'));
+        $(this.element).find('[data-action="nonOpposedButton"],[data-action="rollButton"]').attr('data-tooltip', possibilities.join('<br>'));
       }
     }
   }

@@ -6,6 +6,7 @@ import { DSADataModel } from './abstract.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
+import CreatureType from '../system/automation/creature-type.js';
 
 const { SKILL, SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
 
@@ -46,7 +47,6 @@ export class ActorDataModel extends DSADataModel {
       itemModifiers: {},
       condition: {},
       swarm: { attack: 0, parry: 0, damage: 0 },
-      creatureType: this.creatureType,
       skillModifiers: this._createSkillModifiersStructure(),
       status: this._createStatusStructure(),
       repeatingEffects: {
@@ -135,13 +135,17 @@ export class ActorDataModel extends DSADataModel {
     return baseSkillModifiers;
   }
 
+  get creatureType() {
+    return CreatureType.creatureTypeName(this.parent);
+  }
+
   _createStatusStructure() {
     return {
       initiative: { multiplier: 1 },
       astralenergy: { permanentGear: 0 },
       karmaenergy: { permanentGear: 0 },
       wounds: { multiplier: 1 },
-      speed: { 
+      speed: {
         multiplier: 1,
         airmultiplier: 1,
         watermultiplier: 1,
@@ -512,7 +516,7 @@ export class ActorDataModel extends DSADataModel {
       );
     } else {
       data.status.speed.waterMax = this._calculateSpeedType(
-        Math.round((data.status.speed.max + baseMod) * 0.5) ,
+        Math.round((data.status.speed.max + baseMod) * 0.5),
         encumbrance,
         painMalus,
         feelsPain,
