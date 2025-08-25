@@ -175,11 +175,11 @@ export class ModifierCalculator {
             .get();
 
         const focusRuleModifiers = html
-            .find('.focusMods button[aria-pressed=true]')
+            .find('.focusMods input')
             .map(function () {
                 return {
-                    name: game.i18n.localize(this.dataset.name),
-                    value: Number(this.dataset.value),
+                    name: game.i18n.localize(this.name),
+                    value: Number(this.value),
                 };
             })
             .get();

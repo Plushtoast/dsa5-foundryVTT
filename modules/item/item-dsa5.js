@@ -1108,7 +1108,7 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     if (!modifierData) return;
 
-    data.focusRuleModifiers = modifierData.modifiers;
+    data.focusRuleModifiers = modifierData;
   }
 
   static setupDialog(ev, options, skill, actor, tokenId) {

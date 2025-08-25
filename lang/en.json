@@ -1652,6 +1652,9 @@
         }
     },
     "SKILL_CHECK_MODIFIERS": {
+        "GROUPS": {
+            "socialconflict": "Social Conflict"
+        },
         "SOCIAL": {
             "otherSpecies": {
                 "tooltip": "Active and passive party belong to different culture and/or species.",

@@ -1,0 +1,54 @@
+.vw-controls {
+  width: 30px;
+  position: relative;
+}
+
+.vw-controls button {
+  cursor: pointer;
+  --button-size:20px;
+  width: var(--button-size);
+  font-size: 10px;
+  height: var(--button-size);
+  padding: 0;
+  position: absolute;
+  top: 2px;
+  left: -15px;
+  border-radius: 50%;
+  background: rgba(0,0,0,1);
+  color: white;
+
+  &.vw-increase {
+    left: unset;
+    right: -15px;
+  }
+}
+
+.vw-controls input {
+  width: 30px;
+  text-align: center;
+}
+
+.vw-pip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: #374151;
+  position: absolute;
+  bottom: -5px;
+  left: -5px;
+}
+
+.vw-pip.vw-maxPip {
+  left: unset;
+  right: -5px;
+}
+
+.vw-pip.vw-active {
+  background: darkred;
+  color: white;
+}

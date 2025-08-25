@@ -7,10 +7,14 @@ import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import { RollDialogBuilder } from './dialog-builder.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
+import { ValueWidget } from '../system/helpers/valuewidget.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
-
+  #toggleSection(ev, target) {
+    const section = target.dataset.toggle;
+    this.element.querySelector(`[data-section='${section}']`).classList.toggle('dsahidden');
+  }
 
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
@@ -75,6 +79,14 @@ export default class DSA5SkillDialog extends DialogShared {
     html.find('.modifiers option').on('mousedown', (ev) => {
       this.rememberFormData(ev);
     });
+
+    html.find('.vwidget').each((i, elem) => {
+      new ValueWidget(elem)
+    });
+
+    html.find('[data-action="toggleSection"]').on('click', (ev) => {
+      this.#toggleSection(ev, ev.currentTarget);
+    });
   }
 
   rememberFormData(ev) {
@@ -127,15 +139,5 @@ export default class DSA5SkillDialog extends DialogShared {
     position: {
       width: 700,
     },
-    actions: {
-      focusRuleModifiers: this.#onFocusRuleModifiers
-    }
   };
-
-  static #onFocusRuleModifiers(ev, target) {
-    const value = target.dataset.value;
-    for ( const button of target.parentElement.querySelectorAll("button") ) {
-      button.ariaPressed = `${value === button.dataset.value}`;
-    }
-  }
 }

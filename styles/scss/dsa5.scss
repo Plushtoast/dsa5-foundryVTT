@@ -2764,6 +2764,17 @@ h2 {
   &.f2:after {
     content: 'II';
   }
+
+  &.tiny {
+    width: 30px;
+    height: 20px;
+    float: none;
+    line-height: 20px;
+    background-size: contain;
+    &:after {
+      font-size: 10px;
+    }
+  }
 }
 
 .magazinContainer {
@@ -5438,6 +5449,7 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('hotbar.scss');
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('vslider.scss');
+@include meta.load-css('vwidget.scss');
 
 @include meta.load-css('immersive/immersive.scss');
 @include meta.load-css('legacy/legacy.scss');

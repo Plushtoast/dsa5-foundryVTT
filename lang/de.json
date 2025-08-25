@@ -1843,6 +1843,9 @@
         "Elf": "Elf"
     },
     "SKILL_CHECK_MODIFIERS": {
+        "GROUPS": {
+            "socialconflict": "Sozialer Konflikt"
+        },
         "SOCIAL": {
             "otherSpecies": {
                 "tooltip": "Aktive Partei und passive Partei gehören anderer Kultur und/oder Spezies an.",

@@ -1,88 +1,113 @@
 const SOCIAL_MODIFIERS = [
     {
         label: 'SKILL_CHECK_MODIFIERS.SOCIAL.otherSpecies',
-        collection: [0, -1, -2, -3]
+        min: -3,
+        max: 0
     },
     {
         label: 'SKILL_CHECK_MODIFIERS.SOCIAL.socialState',
-        collection: [0, 1]
+        min: 0,
+        max: 1
     }
 ]
 
 export const SKILL = {
-    "Persuasion": {
-        modifiers: [
-            ...SOCIAL_MODIFIERS,
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.holyLocation',
-                collection: [0, 1, 2, 3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.holySymbol',
-                collection: [0, 1, 2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.passiveDonation',
-                collection: [0, 1, 2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.commonInterest',
-                collection: [0, 1, 2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.enemyImage',
-                collection: [0, -1, -2, -3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.moralConflict',
-                collection: [0, -1, -2, -3]
-            }
-        ]
-    },
-    "Seduction": {
-        modifiers: [
-            ...SOCIAL_MODIFIERS,
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.interest',
-                collection: [0, 1, 2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.rahjaglaeubig',
-                collection: [0, 1, 2, 3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.enthaltsam',
-                collection: [0, -1, -2, -3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.married',
-                collection: [0, -1, -2, -3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.forbiddenContact',
-                collection: [0, -1, -2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.badHabbit',
-                collection: [0, -1, -2]
-            }
-        ]
-    },
-    "Fast-Talk": {
-        modifiers: [
-            ...SOCIAL_MODIFIERS,
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.reputation',
-                collection: [-3, -2, -1, 0, 1, 2, 3]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.truthful',
-                collection: [0, 1, 2]
-            },
-            {
-                label: 'SKILL_CHECK_MODIFIERS.SOCIAL.knownLiar',
-                collection: [0, -1, -2]
-            }
-        ]
-    }
+    "Persuasion": [
+        {
+            group: 'SKILL_CHECK_MODIFIERS.GROUPS.socialconflict',
+            modifiers: [
+                ...SOCIAL_MODIFIERS,
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.holyLocation',
+                    min: 0,
+                    max: 3
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.holySymbol',
+                    min: 0,
+                    max: 2
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.passiveDonation',
+                    min: 0,
+                    max: 2
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.commonInterest',
+                    min: 0,
+                    max: 2
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.enemyImage',
+                    min: -3,
+                    max: 0
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.moralConflict',
+                    min: -3,
+                    max: 0
+                }
+            ]
+        }
+    ],
+    "Seduction": [
+        {
+            group: 'SKILL_CHECK_MODIFIERS.GROUPS.socialconflict',
+            modifiers: [
+                ...SOCIAL_MODIFIERS,
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.interest',
+                    min: 0,
+                    max: 2
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.rahjaglaeubig',
+                    min: 0,
+                    max: 3
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.enthaltsam',
+                    min: -3,
+                    max: 0
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.married',
+                    min: -3,
+                    max: 0
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.forbiddenContact',
+                    min: -2,
+                    max: 0
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.badHabbit',
+                    min: -2,
+                    max: 0
+                }
+            ]
+        }],
+    "Fast-Talk": [
+        {
+            group: 'SKILL_CHECK_MODIFIERS.GROUPS.socialconflict',
+            modifiers: [
+                ...SOCIAL_MODIFIERS,
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.reputation',
+                    min: -3,
+                    max: 3
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.truthful',
+                    min: 0,
+                    max: 2
+                },
+                {
+                    label: 'SKILL_CHECK_MODIFIERS.SOCIAL.knownLiar',
+                    min: -2,
+                    max: 0
+                }
+            ]
+        }
+    ]
 }

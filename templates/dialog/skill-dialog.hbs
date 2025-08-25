@@ -10,12 +10,17 @@
             {{#if focusRuleModifiers.length}}
             <div class="flexcol specAbsContainer">
                 {{#each focusRuleModifiers}}
-                <div class="flexrow focusMods active" data-tooltip="{{label}}.tooltip">
-                    <div class="ellipsis">{{localize (concat label ".label")}}</div>
-                    <div class="split-button compact flex0">
-                        {{#each collection}}
-                        <button type="button" class="ui-control icon" data-value="{{this}}" data-action="focusRuleModifiers" data-name="{{../label}}.label"
-                            aria-pressed="{{eq this 0}}">{{this}}</button>
+                <div>
+                    <a class="button dsadesignbutton noBorder" data-toggle="{{group}}" data-action="toggleSection" data-tooltip="Book.focusRule">
+                        <div class="fokusregel f1 tiny"></div>
+                        <div class="flexrow"><b>{{localize group}}</b></div>
+                    </a>
+                    <div data-section="{{group}}" class="dsahidden">
+                        {{#each modifiers}}
+                        <div class="flexrow focusMods active" data-tooltip="{{label}}.tooltip">
+                            <div class="ellipsis">{{localize (concat label ".label")}}</div>
+                            <div class="vwidget flex0" data-min="{{min}}" data-max="{{max}}" data-name="{{label}}.label"></div>
+                        </div>
                         {{/each}}
                     </div>
                 </div>
