@@ -20,10 +20,29 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
     static TRAPTRIGGER_LOCK = 2;
     static TRAPTRIGGER_SUPERNATURAL = 3;
 
+    static TRAPTYPE_TRAP = 0;
+    static TRAPTYPE_STONE = 1;
+    static TRAPTYPE_ARROW = 2;
+    static TRAPTYPE_BLADE = 3;
+    static TRAPTYPE_CRUSH = 4;
+    static TRAPTYPE_SLIDE = 5;
+    static TRAPTYPE_SUFFOCATE = 6;
+    static TRAPTYPE_MAGICAL = 7;
+
     static sharedSchema() {
         return {
             difficulty: new NumberField({ required: true, initial: 0 }),
             stealth: new NumberField({ required: true, initial: 0 }),
+            trapType: new NumberField({ initial: 0, choices: {
+                [DSATrapRegionBehavior.TRAPTYPE_TRAP]: "REGIONBEHAVIOR_DSATrap.TYPES.0",
+                [DSATrapRegionBehavior.TRAPTYPE_STONE]: "REGIONBEHAVIOR_DSATrap.TYPES.1",
+                [DSATrapRegionBehavior.TRAPTYPE_ARROW]: "REGIONBEHAVIOR_DSATrap.TYPES.2",
+                [DSATrapRegionBehavior.TRAPTYPE_BLADE]: "REGIONBEHAVIOR_DSATrap.TYPES.3",
+                [DSATrapRegionBehavior.TRAPTYPE_CRUSH]: "REGIONBEHAVIOR_DSATrap.TYPES.4",
+                [DSATrapRegionBehavior.TRAPTYPE_SLIDE]: "REGIONBEHAVIOR_DSATrap.TYPES.5",
+                [DSATrapRegionBehavior.TRAPTYPE_SUFFOCATE]: "REGIONBEHAVIOR_DSATrap.TYPES.6",
+                [DSATrapRegionBehavior.TRAPTYPE_MAGICAL]: "REGIONBEHAVIOR_DSATrap.TYPES.7",
+            }}),
             complexity: new NumberField({
                 initial: 0,
                 choices: {

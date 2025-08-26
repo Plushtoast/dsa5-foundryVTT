@@ -1596,6 +1596,16 @@
             "2": "Lock Mechanism",
             "3": "Supernatural Trigger"
         },
+         "TYPES": {
+            "0": "Trapdoor",
+            "1": "Stone Trap",
+            "2": "Arrow Trap",
+            "3": "Blade Trap",
+            "4": "Crushing Trap",
+            "5": "Slippery Trap",
+            "6": "Suffocation Trap",
+            "7": "Magical/Blessed Trap"
+        },
         "FIELDS": {
             "difficulty": {
                 "label": "Difficulty Value",
@@ -1604,6 +1614,10 @@
             "stealth": {
                 "label": "Stealth Value",
                 "hint": "A modifier for a perception check to notice the trap in time."
+            },
+            "trapType": {
+                "label": "Trap type",
+                "hint": "The trap type determines how a hero can interact with the trap."
             },
             "description": {
                 "label": "Description",

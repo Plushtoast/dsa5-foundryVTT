@@ -1496,10 +1496,24 @@
             "2": "Schlossmechanismus",
             "3": "Übernatürlicher Auslöser"
         },
+        "TYPES": {
+            "0": "Falltür",
+            "1": "Steinfalle",
+            "2": "Pfeilschussfalle",
+            "3": "Klingenfalle",
+            "4": "Quetschfalle",
+            "5": "Rutschfalle",
+            "6": "Erstickungsfalle",
+            "7": "Magische/Karmale Falle"
+        },
         "FIELDS": {
             "difficulty": {
                 "label": "Schwierigkeitswert",
                 "hint": "Jede Falle weist einen Schwierigkeitswert auf, der als Modifikator für die Entschärfung mit Schlösserknacken dient."
+            },
+            "trapType": {
+                "label": "Fallentyp",
+                "hint": "Der Fallentyp bestimmt, wie ein Held sich gegen die Falle verhalten kann."
             },
             "stealth": {
                 "label": "Tarnwert",

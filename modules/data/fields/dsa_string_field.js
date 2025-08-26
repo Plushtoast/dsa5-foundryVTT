@@ -1,9 +1,11 @@
 const { StringField } = foundry.data.fields;
 
 export default class DSAStringField extends StringField {
+  /** @inheritDoc */
   toFormGroup(groupConfig = {}, inputConfig = {}) {
     const group = super.toFormGroup(groupConfig, inputConfig);
-    if (inputConfig.tooltip) group.dataset.tooltip = inputConfig.tooltip;
+    const tooltip = inputConfig.tooltip || this.options.tooltip;
+    if (tooltip) group.dataset.tooltip = tooltip;
     return group;
   }
 }
