@@ -2104,7 +2104,6 @@ export default class DiceDSA5 {
 
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
     const applyEffect = this.addApplyEffectData(testData);
-    console.log(applyEffect)
     const immuneTo = CreatureType.checkImmunity(testData);
     const preData = deepClone(testData.preData);
     const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == ATTACK;

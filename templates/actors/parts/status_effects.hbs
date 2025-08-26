@@ -77,7 +77,7 @@
                     <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
-                <div class="col two">
+                <div class="col two ellipsis">
                     <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
@@ -164,7 +164,7 @@
                 <div class="status-img col ten">
                     <img src="{{item.img}}" />
                 </div>
-                <div class="col two">
+                <div class="col two ellipsis">
                     <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item.id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
@@ -237,16 +237,19 @@
                     <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
                     <img src="{{item.img}}" /> {{/if}}
                 </div>
-                <div class="col two">
-                    <a data-action="conditionShow" class="gTooltip" data-category="effect" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
+                <div class="col two ellipsis">
+                    <a data-action="conditionEdit" class="gTooltip" data-category="effect" data-uuid="{{item.uuid}}" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col five center">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
                 </div>
                 <div class="actor-status-action col five right">
-                    <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+                    <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
+                    {{#if item.disabled}}
+                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
+                    {{else}}
+                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
+                    {{/if}}
                 </div>
             </div>
             {{/each}}
