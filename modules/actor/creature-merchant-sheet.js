@@ -1,4 +1,4 @@
-import { MerchantSheetMixin } from './merchantmixin.js';
+import { MerchantSheetMixin } from './mixins/merchantmixin.js';
 import ActorSheetdsa5Creature from './creature-sheet.js';
 
 export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Creature) {

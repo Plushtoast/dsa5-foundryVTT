@@ -21,7 +21,7 @@ import DSA5Payment from '../system/helpers/payment.js';
 import { TradeOptions } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
-import { AppV2Mixin } from './appv2_mixin.js';
+import { AppV2Mixin } from './mixins/appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';

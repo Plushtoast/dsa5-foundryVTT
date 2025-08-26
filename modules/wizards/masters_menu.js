@@ -8,7 +8,7 @@ import RequestRoll from '../system/rolls/request-roll.js';
 import DialogShared from '../dialog/dialog-shared.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
-import { DragMixin } from '../actor/drag_mixin.js';
+import { DragMixin } from '../actor/mixins/drag_mixin.js';
 const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

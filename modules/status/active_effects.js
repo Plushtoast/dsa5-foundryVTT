@@ -602,45 +602,46 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   }
 
   static async _parseEffectDuration(source, testData, preData, attacker) {
-    const specAbIds = {};
-    for (let spec of preData.situationalModifiers.filter((x) => x.specAbId)) {
-      specAbIds[spec.specAbId] = spec.step;
-    }
-    const specKeys = Object.keys(specAbIds);
-    const specAbs = attacker ? attacker.items.filter((x) => specKeys.includes(x.id)) : [];
-    let effects = source.effects ? duplicate(source.effects) : [];
+    const specAbIds = (preData.situationalModifiers || []).reduce((acc, s) => {
+      if (s.specAbId) acc[s.specAbId] = s.step;
+      return acc;
+    }, {});
+    const specKeys = new Set(Object.keys(specAbIds));
+    const specAbs = attacker ? attacker.items.filter((x) => specKeys.has(x.id)) : [];
+
+    const effects = source.effects ? duplicate(source.effects) : [];
     for (const spec of specAbs) {
-      const specEffects = duplicate(spec).effects;
-      for (let specEf of specEffects) {
-        setProperty(specEf, 'flags.dsa5.specStep', specAbIds[spec.id]);
-      }
+      const specEffects = duplicate(spec).effects || [];
+      specEffects.forEach((ef) => setProperty(ef, 'flags.dsa5.specStep', specAbIds[spec.id]));
       effects.push(...specEffects);
     }
 
     let duration = getProperty(source, 'system.duration.value') || '';
-    duration = duration.replace(/ x /g, ' * ').replace(game.i18n.localize('CHARAbbrev.QS'), testData.qualityStep);
+    duration = duration.replace(/ x /g, ' * ').replaceAll(game.i18n.localize('CHARAbbrev.QS'), `${testData.qualityStep}`);
+
     try {
-      for (const reg of DSAActiveEffectConfig.effectDurationRegexes) {
-        if (reg.regEx.test(duration)) {
-          const dur = duration.replace(reg.regEx, '').trim();
-          const time = await DiceDSA5._stringToRoll(dur);
-          if (!isNaN(time)) {
-            for (let ef of effects) {
-              let calcTime = time * reg.seconds;
-              const customDuration = getProperty(ef, 'flags.dsa5.customDuration');
-              if (customDuration) {
-                let qsDuration = customDuration.split(',')[testData.qualityStep - 1];
-                if (qsDuration && qsDuration != '-') calcTime = Number(qsDuration);
-              }
-              ef.duration.seconds = calcTime;
-              ef.duration.rounds = ef.duration.seconds / 5;
-            }
+      for (const { regEx, seconds } of DSAActiveEffectConfig.effectDurationRegexes) {
+        if (!regEx.test(duration)) continue;
+        const dur = duration.replace(regEx, '').trim();
+        const time = await DiceDSA5._stringToRoll(dur);
+        if (isNaN(time)) break;
+
+        for (const ef of effects) {
+          let calcTime = time * seconds;
+          const customDuration = getProperty(ef, 'flags.dsa5.customDuration');
+          if (customDuration) {
+            const parts = String(customDuration).split(',').map((p) => p.trim());
+            const qsDuration = parts[testData.qualityStep - 1];
+            if (qsDuration && qsDuration !== '-') calcTime = Number(qsDuration);
           }
-          break;
+          ef.duration = ef.duration || {};
+          ef.duration.seconds = calcTime;
+          ef.duration.rounds = calcTime / 5;
         }
+        break;
       }
     } catch (e) {
-      console.error(`Could not parse duration '${duration}' of '${source.name}'`);
+      console.error(`Could not parse duration '${duration}' of '${source.name}'`, e);
     }
     return effects;
   }

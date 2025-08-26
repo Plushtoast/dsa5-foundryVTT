@@ -26,7 +26,7 @@ import DPS from './system/automation/derepositioningsystem.js';
 import DSATables from './tables/dsatables.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
 import DSA5StatusEffects from './status/status_effects.js';
-import { MerchantSheetMixin, RandomGoodsAddition } from './actor/merchantmixin.js';
+import { MerchantSheetMixin, RandomGoodsAddition } from './actor/mixins/merchantmixin.js';
 import DSATour from './tours/dsa_tour.js';
 import OpposeDSA from './system/rolls/opposed-dsa5.js';
 import DSAActiveEffect from './status/dsa_active_effects.js';

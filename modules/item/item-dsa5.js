@@ -130,7 +130,7 @@ export default class Itemdsa5 extends Item {
   static getSpecAbModifiers(html, mode) {
     const res = [];
     const isAttack = mode === ITEM_CONSTANTS.COMBAT_MODES.ATTACK;
-    const mainAttribute = isAttack ? ITEM_CONSTANTS.ATTACK : ITEM_CONSTANTS.PARRY;
+    const mainAttribute = isAttack ? ITEM_CONSTANTS.COMBAT_BONUS.ATTACK : ITEM_CONSTANTS.COMBAT_BONUS.PARRY;
 
     const matchers = {
       [mainAttribute]: 'value',
@@ -148,9 +148,10 @@ export default class Itemdsa5 extends Item {
       if (!modifier) continue;
 
       const flatValues = ModifierCalculator.extractFlatValues(dataset, matchers);
+      const name = element.querySelector('a').textContent.trim();
 
       res.push({
-        name: $(element).find('a').text().trim(),
+        name,
         value: modifier.value + (flatValues.value || 0),
         damageBonus: dataset.tpbonus,
         dmmalus: Number(dataset.dmmalus) * step + (flatValues.dmmalus || 0),
@@ -160,7 +161,6 @@ export default class Itemdsa5 extends Item {
         flatValues
       });
     }
-
     return res;
   }
 
@@ -368,9 +368,9 @@ export default class Itemdsa5 extends Item {
    * @returns {boolean} True if items are considered equal for stacking
    */
   static checkEquality(item, item2) {
-    return item2.type == item.type && 
-           item.name == item2.name && 
-           item.system.description?.value == item2.system.description?.value;
+    return item2.type == item.type &&
+      item.name == item2.name &&
+      item.system.description?.value == item2.system.description?.value;
   }
 
   /**
@@ -618,9 +618,9 @@ class SpellItemDSA5 extends Itemdsa5 {
     const applicableSpellTypes = [SPELL, RITUAL];
 
     if (game.settings.get('dsa5', 'enableForeignSpellModifer') &&
-        enabledActorTypes.includes(actor.type) &&
-        applicableSpellTypes.includes(source.type)) {
-      
+      enabledActorTypes.includes(actor.type) &&
+      applicableSpellTypes.includes(source.type)) {
+
       const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
       const regx = new RegExp(`(${game.i18n.localize('tradition')}|\\\)|\\\()`, 'g');
       const traditions = actor.system.tradition.magical
@@ -670,7 +670,7 @@ class SpellItemDSA5 extends Itemdsa5 {
   }
 
   static setupDialog(ev, options, spell, actor, tokenId) {
-    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createSpellDialog(spell, actor, tokenId, options)    
+    const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createSpellDialog(spell, actor, tokenId, options)
 
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, spell);
 
@@ -859,11 +859,11 @@ class ConsumableItemDSA extends Itemdsa5 {
 class DiseaseItemDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
     return ResistanceTests.setupDialog(
-      ev, 
-      options, 
-      item, 
-      actor, 
-      tokenId, 
+      ev,
+      options,
+      item,
+      actor,
+      tokenId,
       'LocalizedIDs.ResistanttoDisease'
     );
   }
@@ -917,11 +917,11 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 class PoisonItemDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
     return ResistanceTests.setupDialog(
-      ev, 
-      options, 
-      item, 
-      actor, 
-      tokenId, 
+      ev,
+      options,
+      item,
+      actor,
+      tokenId,
       'LocalizedIDs.poisonResistance'
     );
   }
@@ -1080,9 +1080,9 @@ class SkillItemDSA5 extends Itemdsa5 {
   static getSituationalModifiers(situationalModifiers, actor, data, source) {
     situationalModifiers.push(
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, [
-        'advantage', 
-        'disadvantage', 
-        'specialability', 
+        'advantage',
+        'disadvantage',
+        'specialability',
         'equipment'
       ]),
       ...SpellModifiers.get(actor, source.name, source.type),
@@ -1091,12 +1091,12 @@ class SkillItemDSA5 extends Itemdsa5 {
 
     // Add global skill modifiers
     for (const thing of actor.system.skillModifiers.global) {
-      situationalModifiers.push({ 
-        name: thing.source, 
-        value: thing.value 
+      situationalModifiers.push({
+        name: thing.source,
+        value: thing.value
       });
     }
-    
+
     Object.assign(data, {
       visionOptions: DSA5.skillVision,
     });

@@ -1,12 +1,12 @@
-import Itemdsa5 from '../item/item-dsa5.js';
-import DSA5 from '../config/config-dsa5.js';
-import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
-import DSA5Payment from '../system/helpers/payment.js';
-import RuleChaos from '../system/rules/rule_chaos.js';
-import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import MoneyTracker from '../system/orwell/money-tracker.js';
-import { DefaultAppv2 } from './baseapp.js';
-import { ItemFactory } from '../item/item-factory.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
+import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
+import DSA5Payment from '../../system/helpers/payment.js';
+import RuleChaos from '../../system/rules/rule_chaos.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import MoneyTracker from '../../system/orwell/money-tracker.js';
+import { DefaultAppv2 } from '../baseapp.js';
+import { ItemFactory } from '../../item/item-factory.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 

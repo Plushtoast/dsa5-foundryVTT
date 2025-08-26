@@ -1004,6 +1004,7 @@ export default class Actordsa5 extends Actor {
       {
         name: game.i18n.localize(`${statusId}Weaponless`),
         type: 'meleeweapon',
+        effects: [],
         system: {
           combatskill: {
             value: game.i18n.localize('LocalizedIDs.wrestle'),

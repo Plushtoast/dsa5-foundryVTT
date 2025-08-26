@@ -5,7 +5,7 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5 from '../config/config-dsa5.js';
 import { slist } from '../system/helpers/view_helper.js';
-import { DragMixin } from '../actor/drag_mixin.js';
+import { DragMixin } from '../actor/mixins/drag_mixin.js';
 import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;

@@ -2061,31 +2061,42 @@ export default class DiceDSA5 {
   }
 
   static addApplyEffectData(testData) {
-    const source = testData.preData.source;
+    const pre = testData.preData || {};
+    const source = pre.source;
+    const successLevel = typeof testData.successLevel !== 'undefined' ? testData.successLevel : (pre.successLevel || 0);
 
-    if (testData.successLevel > 0) {
-      if (['meleeweapon', 'rangeweapon'].includes(source.type) || (source.type == 'trait' && ['rangeAttack', 'meleeAttack'].includes(source.system.traitType.value))) {
-        if (
-          source.effects.some((x) => {
-            return !getProperty(x, 'flags.dsa5.applyToOwner');
-          })
-        )
-          return true;
-      } else if ([SPELL, LITURGY, RITUAL, CEREMONY, 'trait', SKILL].includes(source.type)) {
-        if (source.effects.length > 0) return true;
-      }
+    if (!source) return false;
+
+    const isWeaponLike =
+      ['meleeweapon', 'rangeweapon'].includes(source.type) ||
+      (source.type === 'trait' && ['rangeAttack', 'meleeAttack'].includes(getProperty(source, 'system.traitType.value')));
+
+    if (successLevel > 0 && isWeaponLike) {
+      if ((source.effects || []).some(e => !getProperty(e, 'flags.dsa5.applyToOwner'))) return true;
+    }
+
+    const spellLikeTypes = [SPELL, LITURGY, RITUAL, CEREMONY, 'trait', SKILL];
+    if (successLevel > 0 && spellLikeTypes.includes(source.type)) {
+      if ((source.effects || []).length > 0) return true;
     }
 
     if ([DICE_CONSTANTS.ROLL_TYPES.POISON, DICE_CONSTANTS.ROLL_TYPES.DISEASE].includes(source.type)) {
-      const search = testData.successLevel > 0 ? 1 : 2;
-      return source.effects.filter((x) => getProperty(x, 'flags.dsa5.successEffect') == search || !getProperty(x, 'flags.dsa5.successEffect')).length > 0;
+      const wanted = successLevel > 0 ? 1 : 2;
+      const effects = source.effects || [];
+      return effects.some(e => {
+        const v = getProperty(e, 'flags.dsa5.successEffect');
+        return typeof v === 'undefined' || Number(v) === wanted;
+      });
     }
 
-    const specAbIds = testData.preData.situationalModifiers.filter((x) => x.specAbId).map((x) => x.specAbId);
+    const modifiers = pre.situationalModifiers || testData?.situationalModifiers || [];
+    const specAbIds = modifiers.filter(m => m?.specAbId).map(m => m.specAbId);
+
     if (specAbIds.length > 0) {
-      const actor = DSA5_Utility.getSpeaker(testData.preData.extra.speaker);
-      const specAbs = actor.items.filter((x) => specAbIds.includes(x.id));
-      for (const spec of specAbs) if (spec.effects.length > 0) return true;
+      const actor = DSA5_Utility.getSpeaker(pre.extra?.speaker || testData.extra?.speaker);
+      if (!actor) return false;
+
+      return specAbIds.some(i => actor.items.get(i)?.effects?.size > 0);
     }
 
     return false;
@@ -2093,6 +2104,7 @@ export default class DiceDSA5 {
 
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
     const applyEffect = this.addApplyEffectData(testData);
+    console.log(applyEffect)
     const immuneTo = CreatureType.checkImmunity(testData);
     const preData = deepClone(testData.preData);
     const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == ATTACK;
