@@ -1765,7 +1765,8 @@ export default class DiceDSA5 {
 
     if (res.successLevel > 0) {
       if (testData.source.system.effectFormula.value != '') {
-        let formula = DiceDSA5.replaceDieLocalization(testData.source.system.effectFormula.value.replaceAll(game.i18n.localize('CHARAbbrev.QS'), res.qualityStep));
+        const replaceQS = new RegExp(`(QL|QS|${game.i18n.localize('CHARAbbrev.QS')})`, 'g');
+        let formula = DiceDSA5.replaceDieLocalization(testData.source.system.effectFormula.value.replaceAll(replaceQS, res.qualityStep));
         let armorPen = [];
         for (let mod of testData.situationalModifiers) {
           if (mod.armorPen) armorPen.push(mod.armorPen);

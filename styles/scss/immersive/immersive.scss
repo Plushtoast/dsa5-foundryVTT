@@ -270,15 +270,6 @@
       bottom: 10px;
     }
 
-    .window-header {
-      .aa-item-settings,
-      [id^='popout_'] {
-        width: 15px;
-        height: 15px;
-        margin-top: 10px;
-      }
-    }
-
     &:not(.monarch) .window-header > a {
       width: 15px;
       height: 15px;
@@ -293,17 +284,6 @@
         border-radius: 100%;
         color: white;
       }
-    }
-
-    .aa-item-settings i,
-    .window-header [id^='popout_'] i {
-      width: 22px;
-      border: 1px solid #111;
-      padding: 3px;
-      background-color: #444;
-      text-align: center;
-      border-radius: 100%;
-      color: white;
     }
 
     .window-resize-handle,

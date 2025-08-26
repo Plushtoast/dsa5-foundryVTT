@@ -35,7 +35,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         const calendar = game.time.calendar;
 
         const entries = Object.entries(foundry.utils.duplicate(this.document.system.calendarentries))
-            .filter(x => x.visible || game.user.isGM)
+            .filter(([key, value]) => value.visible || game.user.isGM)
             .sort(([, a], [, b]) => {
                 return a.from.year - b.from.year || a.from.day - b.from.day;
             });

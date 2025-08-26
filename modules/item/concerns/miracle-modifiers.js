@@ -25,6 +25,7 @@ export class MiracleModifiers {
             selected: false,
         }];
 
+        const availableKaP = actor.system.status.karmaenergy.max - actor.system.status.karmaenergy.value;
         const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight');
         if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight, false)) {
             result.push({

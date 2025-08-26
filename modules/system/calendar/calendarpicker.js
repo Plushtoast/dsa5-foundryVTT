@@ -142,7 +142,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (container.children.length == 0) {
       const activated = new Set(game.settings.get('dsa5', 'calendarJournals').activated.map(x => x.uuid));
       const possibleJournals = game.journal.filter(j => {
-        return !activated.has(j.uuid) && j.pages.some(p => p.type === 'dsacalendar');
+        return !activated.has(j.uuid) && (j.pages || []).some(p => p.type === 'dsacalendar');
       }).reduce((acc, j) => {
         acc[j.uuid] = j.name;
         return acc;

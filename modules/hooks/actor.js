@@ -93,7 +93,7 @@ export default function () {
 
   Hooks.on('preDeleteActiveEffect', (effect, options, userid) => {
     const shouldSkip = !DSA5_Utility.isActiveGM() || options.noHook
-    
+
     const actor = effect.parent;
 
     if (actor && actor.documentName == 'Actor') {
@@ -231,7 +231,7 @@ export default function () {
   };
 
   const askForName = async (tokenObject, setting) => {
-    if(game.canvas.scene.askForNameTemporaryDisabled) return;
+    if (game.canvas.scene.askForNameTemporaryDisabled) return;
 
     const dialogConstructor = game.dsa5.apps.AskForNameDialog || AskForNameDialog;
     dialogConstructor.getDialog(tokenObject, setting);
@@ -312,6 +312,7 @@ export default function () {
 
   Hooks.on('updateToken', (token, data, options) => {
     if (!token.rendered) return;
+    if (!DSA5_Utility.isActiveGM()) return;
 
     const prePosition = {
       center: token.object.center,
@@ -319,9 +320,9 @@ export default function () {
     };
     Riding.updateTokenHook(token, data, options);
 
-    const movementAnimationPromis = token.object?.movementAnimationPromis || Promise.resolve();
+    const movementAnimationPromise = token.object?.movementAnimationPromise || Promise.resolve();
 
-    movementAnimationPromis.then(() => {
+    movementAnimationPromise.then(() => {
       token.object?.drawAuras();
       if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onTokenMove(token, data, options, prePosition);
     });
