@@ -121,6 +121,10 @@
         "With the core rulebook module, you can display the probability of success for tests in advance.",
         "You can let your greedy players feel the full weight of their loot. Activate the corresponding option in the settings.",
         "Rightclick on a roll request message in the chat triggers a hidden roll to the GM.",
-        "If you drag equipment from the library onto the character and start the drag on the coins, the item will be paid for directly."
+        "If you drag equipment from the library onto the character and start the drag on the coins, the item will be paid for directly.",
+        "You can prepare traps as items and simply drag them onto the map.",
+        "If you drag items from the library to a character by starting the drag on the coins, they will be paid for.",
+        "You can create custom calendar entries using journals.",
+        "If you set the token's movement type to swimming or flying via the token HUD, the corresponding values will be adjusted automatically."
     ]
 }

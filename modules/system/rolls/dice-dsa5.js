@@ -2024,15 +2024,11 @@ export default class DiceDSA5 {
    * @returns {Promise<void>}
    */
   static async showDiceSoNice(roll, rollMode) {
-    // Check if Dice So Nice is available
-    if (!DSA5_Utility.moduleEnabled('dice-so-nice') || !game.dice3d) {
-      return;
-    }
+    if (!DSA5_Utility.moduleEnabled('dice-so-nice') || !game.dice3d) return;
 
     const { whisper, blind } = this.#getDiceVisibilitySettings(rollMode);
     const promise = game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
 
-    // Wait for animation if immediate display is disabled
     if (!game.settings.get('dice-so-nice', 'immediatelyDisplayChatMessages')) {
       await promise;
     }

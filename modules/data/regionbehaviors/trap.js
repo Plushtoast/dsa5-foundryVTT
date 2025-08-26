@@ -1,8 +1,11 @@
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
+import DiceDSA5 from "../../system/rolls/dice-dsa5.js";
 import RequestRoll from "../../system/rolls/request-roll.js";
+import { ITEM_CONSTANTS } from "../../config/item-constants.js";
 
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
+const { DAMAGE } = ITEM_CONSTANTS.COMBAT_MODES;
 
 export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBehaviorType {
     static REGION_TYPE = 'DSATrap'
@@ -55,7 +58,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
                     CONST.REGION_EVENTS.TOKEN_ROUND_START,
                     CONST.REGION_EVENTS.TOKEN_ROUND_END,
                 ],
-                initial: [ CONST.REGION_EVENTS.TOKEN_MOVE_IN ]
+                initial: [CONST.REGION_EVENTS.TOKEN_MOVE_IN]
             }),
         }
     }
@@ -72,21 +75,20 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
     }
 
     async _handleRegionEvent(regionEvent) {
-        if (!DSA5_Utility.isActiveGM()) return;
-
         if (this.disarmed) return;
         if (this.remainingCharges < 1 && this.charges > 0) return;
 
         const { name, data, region } = regionEvent;
-
         const token = data.token;
 
         if (!token) return;
 
-        token.stopMovement();
+        if (regionEvent.user.isSelf) token.stopMovement();
+
+        if (!DSA5_Utility.isActiveGM()) return;
 
         if (this.autoPause) {
-            game.togglePause(true);
+            game.togglePause(true, { broadcast: true });
             canvas.animatePan({ x: token.x, y: token.y });
         }
 
@@ -109,7 +111,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
                 }
             }
         }
-        ChatMessage.create(chatData);        
+        ChatMessage.create(chatData);
     }
 
     async playSound() {
@@ -278,10 +280,9 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
             </div>
         `
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-        
-        if (this.charges > 0) {
-            this.update({ remainingCharges: this.remainingCharges - 1 });
-        }
+        DiceDSA5._addRollDiceSoNice({ rollMode: game.settings.get("core", "rollMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
+
+        if (this.charges > 0) this.update({ remainingCharges: this.remainingCharges - 1 });
     }
 
     static chatListeners(html) {
