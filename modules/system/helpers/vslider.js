@@ -65,12 +65,13 @@ export class VerticalSlider {
     _updateUI() {
         const pct = (this.value - this.min) / (this.max - this.min);
         const pos = pct * this.track.clientHeight - this.SLIDERHEIGHT;
+        
         this.thumb.style.bottom = `${pos}px`;
         this.fill.style.height = `${pos}px`;
     }
 
     setValue(val) {
-        this.value = Math.max(this.min, Math.min(this.max, val));
+        this.value = Math.clamp(val, this.min, this.max);
         this._updateUI();
     }
 
