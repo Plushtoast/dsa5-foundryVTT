@@ -1,10 +1,12 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
+import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tabSlider } from '../helpers/view_helper.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 const INBETA = false;
+const { NEEDS_MIGRATION_VERSION } = DSA5;
 
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
@@ -114,7 +116,6 @@ export default function migrateWorld() {
 
     await setupDefaulTokenConfig();
     const currentVersion = game.settings.get('dsa5', 'migrationVersion');
-    const NEEDS_MIGRATION_VERSION = 35;
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
     if (INBETA) {

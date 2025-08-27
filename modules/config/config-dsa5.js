@@ -996,4 +996,6 @@ DSA5.noteIcons = {
 
 DSA5.SKILL = SKILL;
 
+DSA5.NEEDS_MIGRATION_VERSION = 35;
+
 export default DSA5;

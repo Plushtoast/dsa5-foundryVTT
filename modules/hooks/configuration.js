@@ -5,6 +5,7 @@ import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { NEEDS_MIGRATION_VERSION } = DSA5;
 
 export function setupConfiguration() {
   game.settings.register('dsa5', 'meleeBotchTableEnabled', {
@@ -114,7 +115,7 @@ export function setupConfiguration() {
     hint: 'migrationVersion',
     scope: 'world',
     config: false,
-    default: 34,
+    default: NEEDS_MIGRATION_VERSION - 1,
     type: Number,
   });
 
