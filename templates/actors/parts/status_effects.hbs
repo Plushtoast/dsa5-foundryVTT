@@ -27,18 +27,13 @@
                 </div>
             </div>
         </div>
-        <div class="row-section">
-            <div class="col effectDescription">
-
-            </div>
-        </div>
         <div class="row-section mainEffects wrap">
 
             <div class="col morph row-section skills table-title">
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
@@ -48,7 +43,7 @@
                 <div class="col ten center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
@@ -56,7 +51,7 @@
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
@@ -66,34 +61,35 @@
                 <div class="col ten center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
             {{#each conditions as |item i|}}
-            <div class="row-section col morph skills statusEffect" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
-                <div class="status-img col ten">
-                    {{#if item.disabled}}
-                    <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
-                    <img src="{{item.img}}" /> {{/if}}
+            <div class="row-section col morph skills" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}} {{{ifThen item.disabled 'style="opacity:0.5;"' ''}}}>
+                <div class="status-img col ten flexcol flexAlignCenter statusEffect effectConfig">
+                    <img src="{{item.img}}" />
                 </div>
-                <div class="col two ellipsis">
-                    <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item._id}}">{{localize item.name}}</a>
+                <div class="col sixty flexcol">
+                    <div class="ellipsis">
+                        <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item._id}}">{{localize item.name}}</a>
+                    </div>
+                    <small class="flexrow gap2px ellipsis">
+                        {{#each item.pips as |pip|}}
+                        <small class="smallBoxItem flex0">{{{pip}}}</small>
+                        {{/each}}
+                    </small>
                 </div>
-                <div class="col ten center">
-                    {{#if item.editable}}{{#unless item.boolean}}<a data-action="conditionValue">{{item.manual}}</a>{{/unless}}{{/if}}
+                <div class="col ten center flexrow">
+                    {{#if item.editable}}{{#unless item.boolean}}
+                        <button type="button" class="dsadesignbutton noBorder" data-action="conditionValue">{{item.manual}}</button>
+                    {{/unless}}{{/if}}
                 </div>
-                <div class="col ten center" data-tooltip="value">
+                <div class="col ten center flexrow" data-tooltip="value">
                     <span>{{item.value}}</span>
                 </div>
-                <div class="actor-status-action col five right">
-                    {{#if item.system.delayed}}<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>{{/if}}
-                    <a data-action="conditionEdit" class="condition-edit" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
-                    {{#if item.disabled}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
-                    {{else}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
-                    {{/if}}
+                <div class="actor-status-action col ten right flexrow">
+                    <button type="button" data-action="statusContextMenu" class="icon fas fa-ellipsis-vertical very-small autoFlex noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                 </div>
             </div>
             {{/each}}
@@ -116,18 +112,13 @@
 
             </div>
         </div>
-        <div class="row-section">
-            <div class="col effectDescription">
-
-            </div>
-        </div>
         <div class="row-section  wrap">
 
             <div class="col morph row-section skills table-title">
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
@@ -137,7 +128,7 @@
                 <div class="col ten center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
@@ -145,7 +136,7 @@
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
@@ -155,16 +146,16 @@
                 <div class="col ten center" data-tooltip="value">
                     {{localize "ABBR.value"}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
             {{#each cumulativeConditions as |item i|}}
             <div class="row-section morph skills col statusEffect" data-id="{{item.id}}" data-descriptor="{{item.id}}">
-                <div class="status-img col ten">
+                <div class="status-img col ten effectConfig">
                     <img src="{{item.img}}" />
                 </div>
-                <div class="col two ellipsis">
+                <div class="col sixty ellipsis">
                     <a data-action="conditionShow" class="gTooltip" data-category="effect" data-id="{{item.id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col ten center">
@@ -173,7 +164,7 @@
                 <div class="col ten center" data-tooltip="value">
                     <span>{{item.value}}</span>
                 </div>
-                <div class="actor-status-action col five right">
+                <div class="actor-status-action col ten right">
 
                 </div>
             </div>
@@ -204,14 +195,14 @@
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
                 <div class="col five center">
                     {{localize 'source'}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
@@ -219,37 +210,30 @@
                 <div class="col ten">
 
                 </div>
-                <div class="col two">
+                <div class="col sixty">
                     {{localize "condition"}}
                 </div>
 
                 <div class="col five center">
                     {{localize 'source'}}
                 </div>
-                <div class="actor-status-action col five">
+                <div class="actor-status-action col ten">
 
                 </div>
             </div>
             {{#each transferedConditions as |item i|}}
-            <div class="row-section morph skills col statusEffect" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}" {{/if}}>
-                <div class="status-img col ten">
-                    {{#if item.disabled}}
-                    <img style="opacity:0.5;" src="{{item.img}}" /> {{else}}
-                    <img src="{{item.img}}" /> {{/if}}
+            <div class="row-section morph skills col statusEffect" data-item-id="{{item.parent.id}}" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}"{{/if}} {{{ifThen item.disabled 'style="opacity:0.5;"' ''}}}>
+                <div class="status-img col ten effectConfig">
+                    <img src="{{item.img}}" /> 
                 </div>
-                <div class="col two ellipsis">
+                <div class="col sixty ellipsis">
                     <a data-action="conditionEdit" class="gTooltip" data-category="effect" data-uuid="{{item.uuid}}" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
                 </div>
                 <div class="col five center">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
                 </div>
-                <div class="actor-status-action col five right">
-                    <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.uuid}}" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
-                    {{#if item.disabled}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
-                    {{else}}
-                    <a data-action="conditionToggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
-                    {{/if}}
+                <div class="actor-status-action col ten right flexrow">
+                    <button type="button" data-action="statusContextMenu" class="icon fas fa-ellipsis-vertical very-small autoFlex noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                 </div>
             </div>
             {{/each}}

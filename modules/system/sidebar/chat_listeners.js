@@ -57,7 +57,7 @@ export default class DSA5ChatListeners {
   }
 
   static showConditions() {
-    let effects = duplicate(CONFIG.statusEffects)
+    const effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
         x.name = game.i18n.localize(x.name);
         return x;
@@ -65,7 +65,7 @@ export default class DSA5ChatListeners {
       .sort((a, b) => {
         return a.name.localeCompare(b.name);
       });
-    let msg = effects.map((x) => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.img}"/>${x.name}</a>`).join(' ');
+    const msg = effects.map((x) => `<a class="chat-condition chatButton" data-id="${x.id}"><img src="${x.img}"/>${x.name}</a>`).join(' ');
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 

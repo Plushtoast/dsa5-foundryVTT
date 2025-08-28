@@ -135,6 +135,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemEdit: this._itemEdit,
       chValue: this._chValue,
       itemContextMenu: this._itemContextMenu,
+      statusContextMenu: this.#statusContextMenu,
       chStatus: this._chStatus,
       filterTalents: this._filterTalents,
       chRegenerate: this._chRegenerate,
@@ -157,7 +158,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemSwapMag: this._itemSwapMag,
       itemToggle: this._itemToggle,
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
-      conditionToggle: this._conditionToggle,
       traditionDelete: this._deleteTraditionArtifact,
       swapWeaponHand: this._swapWeaponHand,
       selectTraditionartifact: this._selectTraditionArtifact,
@@ -305,6 +305,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }));
   }
 
+  static #statusContextMenu(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const { clientX, clientY } = event;
+    target.closest("[data-id]").querySelector('.effectConfig').dispatchEvent(new PointerEvent("contextmenu", {
+      view: window, bubbles: true, cancelable: true, clientX, clientY
+    }));
+  }
+
   async _prepareContext(_options) {
     const sheetData = await super._prepareContext(_options);
     this.wrapperLocked = false;
@@ -317,7 +326,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       acc[key] = `RIDING.speeds.${key}`;
       return acc;
     }, {});
-    DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
+    await DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
     await this.prepareEnrichedFields(sheetData, this.constructor.propertiesToEnrich);
     return sheetData;
   }
@@ -764,12 +773,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  static async _conditionToggle(ev, target) {
-    let condKey = $(target).closest('.statusEffect').attr('data-id');
-    let ef = this.actor.effects.get(condKey);
-    await ef.update({ disabled: !ef.disabled });
-  }
-
   static async _statusAdd(ev, target) {
     const status = target.dataset.id;
     if (status == 'custom') {
@@ -790,7 +793,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static async _conditionValue(ev, target) {
-    let condKey = $(target).closest('.statusEffect').attr('data-descriptor');
+    const condKey = $(target).closest('[data-descriptor]').attr('data-descriptor');
     if (ev.button == 0) await this.actor.addCondition(condKey, 1, false, false);
     else if (ev.button == 2) await this.actor.removeCondition(condKey, 1, false);
   }
@@ -838,6 +841,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
     new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
+      jQuery: false,
+      fixed: true
+    });
+    new foundry.applications.ux.ContextMenu(this.element, '.effectConfig', [], {
+      onOpen: this._onStatusEffectContext.bind(this),
       jQuery: false,
       fixed: true
     });
@@ -1075,6 +1083,39 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!item || item?.type != 'meleeweapon') return;
     ui.context.menuItems = this._getWeaponItemContextOptions(item);
     Hooks.call('dsa5.getWeaponItemContextOptions', item, ui.context.menuItems);
+  }
+
+  _onStatusEffectContext(target) {
+    const header = target.closest('[data-id]');
+    const id = header.dataset.id;
+    const itemId = header.dataset.itemId;
+    const item = itemId ? this.actor.items.get(itemId) : null;
+    const effect = item ? item.effects.get(id) : this.actor.effects.get(id);
+
+    if (!effect) return;
+    ui.context.menuItems = this._getStatusEffectContextOptions(effect, item);
+    Hooks.call('dsa5.getStatusEffectContextOptions', effect, ui.context.menuItems);
+  }
+
+  _getStatusEffectContextOptions(effect, item) {
+    return [
+      {
+        name: 'SHEET.EditItem',
+        icon: "<i class='fas fa-edit'></i>",
+        callback: () => effect.sheet.render(true)
+      },
+      {
+        name: effect.disabled ? 'SHEET.activate' : 'SHEET.deactivate',
+        icon: effect.disabled ? "<i class='far fa-circle'></i>" : "<i class='far fa-check-circle'></i>",
+        callback: () => effect.update({ 'disabled': !effect.disabled })
+      },
+      {
+        name: 'source',
+        icon: "<i class='fas fa-info'></i>",
+        condition: item,
+        callback: () => item.sheet.render(true)
+      }
+    ]
   }
 
   _getWeaponItemContextOptions(item) {

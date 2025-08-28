@@ -135,6 +135,25 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     };
   }
 
+  // Format time as "formatRemaining"
+  static async formatRemaining(calendar, components, options) {
+    const searchParts = ['year', 'month', 'day', 'hour', 'minute'];
+
+    for(const search of searchParts) {
+      if(components[search] > 0) return `> ${components[search]} ${calendar.translate(search)}`;
+    }
+
+    if (components.second) {
+      if(game.combat) {
+        const rounds = Math.floor(components.second / CONFIG.time.roundTime);
+        return `> ${rounds} ${game.i18n.localize('COMBAT.DURATION.ROUNDS.' + (rounds !== 1 ? 'many' : 'one'))}`;
+      }
+      return `> ${components.second} ${calendar.translate('second')}`;
+    }
+    
+    return "?"
+  }
+
   static async formatSeason(calendar, components, options) {
     const { seasonName, moon, dayOfWeek, h, m, s, holiday } = await calendar.constructor.seasonParts(calendar, components, options);
 

@@ -56,7 +56,7 @@ export default class DSA5StatusEffects {
     effect[0]?.sheet.render(true);
   }
 
-  static prepareActiveEffects(target, data) {
+  static async prepareActiveEffects(target, data) {
     data.conditions = [];
     data.transferedConditions = [];
     data.cumulativeConditions = [];
@@ -67,34 +67,34 @@ export default class DSA5StatusEffects {
 
     for (const cnd of target.allApplicableEffects()) {
       if (!isGM && cnd.getFlag('dsa5', 'hidePlayers')) continue;
-
-      const condition = cnd.toObject();
-      const dsa5flags = cnd.getFlag('dsa5') || {};
-      condition.boolean = dsa5flags.value == null;
-
-      const statusesId = cnd.statuses?.values().next().value;
-      if (statusesId) {
-        condition.value = dsa5flags.value;
-        condition.editable = dsa5flags.max;
-        condition.descriptor = statusesId;
-        condition.manual = dsa5flags.manual;
-      }
-
       if (cnd.notApplicable) continue;
 
+      const condition = cnd.toObject();
+
       if (cnd.parent?.documentName != 'Item') {
-        //DSA5StatusEffects.enrichSheetEffect(condition);
+        const dsa5flags = getProperty(cnd, 'flags.dsa5') || {};
+        condition.boolean = dsa5flags.value == null;
+
+        const statusesId = cnd.statuses ? [...cnd.statuses][0] : null;
+        if (statusesId) {
+          condition.value = dsa5flags.value;
+          condition.editable = dsa5flags.max;
+          condition.descriptor = statusesId;
+          condition.manual = dsa5flags.manual;
+        }
+        await DSA5StatusEffects.enrichSheetEffect(condition, cnd);
         data.conditions.push(condition);
       } else {
         condition.uuid = cnd.uuid;
         condition.parent = {
           uuid: cnd.parent?.uuid,
           name: cnd.parent?.name,
+          id: cnd.parent?.id,
         };
         data.transferedConditions.push(condition);
       }
     }
-    
+
     const conds = target.system?.condition || {};
     for (const [key, val] of Object.entries(conds)) {
       if (!val) continue;
@@ -111,15 +111,25 @@ export default class DSA5StatusEffects {
     }
   }
 
-  static enrichSheetEffect(effect){
-    const duration = effect.updateDuration();
-    console.log(duration)
-    const { startRound, rounds, turns } = duration;
-    const passedRounds = (game.combat?.round || 0) - startRound;
+  static async enrichSheetEffect(effect, _sourceEffect) {
     effect.pips = [];
-    
-    console.log(effect)
+
+    if (_sourceEffect.duration.type === 'seconds') {
+      effect.pips.push(`<i class="fas fa-clock"></i> ${await game.time.calendar.format(_sourceEffect.duration.remaining, 'formatRemaining')}`);
+    } else if (_sourceEffect.duration.type !== 'none') {
+      effect.pips.push(`<i class="fas fa-clock"></i> ${_sourceEffect.duration.label}`);
+    }
+
+    for (const status of effect.statuses) {
+      const systemEffect = CONFIG.statusEffects.find(stat => stat.id == status)
+      effect.pips.push(game.i18n.localize(systemEffect.name));
+    }
+
+    if (effect.system.delayed) {
+      effect.pips.push(`<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>`);
+    }
   }
+
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
     if (!target.isOwner) return 'Not owned';
@@ -258,7 +268,7 @@ export default class DSA5StatusEffects {
     }
   }
 
-  static async levelDependentEffects() {}
+  static async levelDependentEffects() { }
 
   static async updateEffect(actor, existing, value, absolute, auto, newEffect = undefined) {
     //const immune = this.immuneToEffect(actor, existing, true)

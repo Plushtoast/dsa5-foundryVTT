@@ -31,7 +31,8 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
       if (this[key] !== undefined) data.system[key] = this[key];
     }
 
-    data.system.charges = (await new Roll(this.charges).evaluate()).total
+    data.system.charges = (await new Roll(this.charges).evaluate()).total || 0;
+    data.system.remainingCharges = data.system.charges;
 
     return data;
   }
