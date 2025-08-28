@@ -156,7 +156,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const settings = game.settings.get('dsa5', 'calendarJournals');
       settings.activated.push({ uuid: selected.value, name: selected.options[selected.selectedIndex].text });
       await game.settings.set('dsa5', 'calendarJournals', settings);
-      this.invalidateCache(selected.value);
+      game.dsa5.apps.CalendarPicker.constructor.invalidateCache(selected.value);
       this.render(true);
     }
   }

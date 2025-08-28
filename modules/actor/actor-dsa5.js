@@ -1817,13 +1817,11 @@ export default class Actordsa5 extends Actor {
 
   async finishResistPainRoll() {
     const skill = this.items.find((x) => x.name == game.i18n.localize('LocalizedIDs.selfControl') && x.type == 'skill');
-    this.setupSkill(skill, { subtitle: ` (${game.i18n.localize('ActiveEffects.resistRoll')})` }, this.token?.id).then(async (setupData) => {
-      const res = await this.basicTest(setupData);
-      const ql = res.result.successLevel || 0;
-      if (ql < 1) {
-        this.addCondition('incapacitated');
-      }
-    });
+    const setupData = await this.setupSkill(skill, { subtitle: ` (${game.i18n.localize('ActiveEffects.resistRoll')})` }, this.token?.id);
+    const res = await this.basicTest(setupData);
+    const ql = res.result.successLevel || 0;
+
+    if (ql < 1) this.addCondition('incapacitated');    
   }
 
   async removeCondition(effect, value = 1, auto = true, absolute = false) {

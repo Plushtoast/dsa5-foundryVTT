@@ -57,30 +57,35 @@ export default class DSA5StatusEffects {
   }
 
   static prepareActiveEffects(target, data) {
-    let systemConditions = duplicate(CONFIG.statusEffects);
     data.conditions = [];
     data.transferedConditions = [];
+    data.cumulativeConditions = [];
+    data.manualConditions = duplicate(CONFIG.statusEffects);
 
-    let appliedConditions = Array.from(target.allApplicableEffects());
+    const efMap = new Map(DSA5.statusEffects.map((e) => [e.id, e]));
+    const isGM = game.user.isGM;
 
-    if (!game.user.isGM)
-      appliedConditions = appliedConditions.filter((e) => {
-        return !e.getFlag('dsa5', 'hidePlayers');
-      });
+    for (const cnd of target.allApplicableEffects()) {
+      if (!isGM && cnd.getFlag('dsa5', 'hidePlayers')) continue;
 
-    for (let cnd of appliedConditions) {
-      let condition = cnd.toObject();
-      condition.boolean = cnd.getFlag('dsa5', 'value') == null;
-      const statusesId = [...cnd.statuses][0];
+      const condition = cnd.toObject();
+      const dsa5flags = cnd.getFlag('dsa5') || {};
+      condition.boolean = dsa5flags.value == null;
+
+      const statusesId = cnd.statuses?.values().next().value;
       if (statusesId) {
-        condition.value = cnd.getFlag('dsa5', 'value');
-        condition.editable = cnd.getFlag('dsa5', 'max');
+        condition.value = dsa5flags.value;
+        condition.editable = dsa5flags.max;
         condition.descriptor = statusesId;
-        condition.manual = cnd.getFlag('dsa5', 'manual');
+        condition.manual = dsa5flags.manual;
       }
 
-      if (cnd.parent?.documentName != 'Item' && !cnd.notApplicable) data.conditions.push(condition);
-      else if (!cnd.notApplicable) {
+      if (cnd.notApplicable) continue;
+
+      if (cnd.parent?.documentName != 'Item') {
+        //DSA5StatusEffects.enrichSheetEffect(condition);
+        data.conditions.push(condition);
+      } else {
         condition.uuid = cnd.uuid;
         condition.parent = {
           uuid: cnd.parent?.uuid,
@@ -89,23 +94,31 @@ export default class DSA5StatusEffects {
         data.transferedConditions.push(condition);
       }
     }
-    data.manualConditions = systemConditions;
+    
+    const conds = target.system?.condition || {};
+    for (const [key, val] of Object.entries(conds)) {
+      if (!val) continue;
 
-    const cumulativeConditions = [];
-    for (let key of Object.keys(target.system?.condition || {})) {
-      if (target.system.condition[key]) {
-        const ef = DSA5.statusEffects.find((x) => x.id == key);
-        if (ef) {
-          cumulativeConditions.push({
-            img: ef.img,
-            id: key,
-            name: game.i18n.localize(ef.name),
-            value: target.system.condition[key],
-          });
-        }
-      }
+      const ef = efMap.get(key);
+      if (!ef) continue;
+
+      data.cumulativeConditions.push({
+        img: ef.img,
+        id: key,
+        name: game.i18n.localize(ef.name),
+        value: val,
+      });
     }
-    data.cumulativeConditions = cumulativeConditions;
+  }
+
+  static enrichSheetEffect(effect){
+    const duration = effect.updateDuration();
+    console.log(duration)
+    const { startRound, rounds, turns } = duration;
+    const passedRounds = (game.combat?.round || 0) - startRound;
+    effect.pips = [];
+    
+    console.log(effect)
   }
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {

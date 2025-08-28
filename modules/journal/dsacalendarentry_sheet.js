@@ -53,7 +53,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
                 entry.from.max = calendar.months.values[entry.from.month].days + 1;
             }
         }
-        context.isRegistered = game.settings.get('dsa5', 'calendarJournals').activated.some(x => x.uuid == this.parent.uuid);
+        context.isRegistered = game.settings.get('dsa5', 'calendarJournals').activated.some(x => x.uuid == this.document.parent.uuid);
         context.isGM = game.user.isGM;
         return context;
     }
