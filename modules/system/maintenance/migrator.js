@@ -172,6 +172,13 @@ class PatchViewer extends DefaultAppv2 {
 
     tabSlider(html);
     html.find('.showMore').on('click', () => this.showMore(html));
+    html.find('img').on('click', (ev) => {
+      game.dsa5.apps.DSA5_Utility.showArtwork({
+        name: 'Changelog',
+        uuid: '',
+        img: ev.currentTarget.getAttribute('src'),
+      });
+    });
   }
 
   async showMore(html) {
