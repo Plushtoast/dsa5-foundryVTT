@@ -119,8 +119,9 @@ export default function migrateWorld() {
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
     if (INBETA) {
-      const v13 = `<p>The currently advised foundry vtt version for DSA/TDE is v12. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
-      betaWarning(13, v13);
+      const version = 13
+      const msg = `<p>The currently advised foundry vtt version for DSA/TDE is v${version - 1}. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
+      betaWarning(version, msg);
     }
 
     if (!needsMigration) return;

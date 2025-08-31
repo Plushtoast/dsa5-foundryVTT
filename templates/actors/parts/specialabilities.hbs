@@ -39,15 +39,18 @@
 <div class="groupbox">
     <legend class="table-title lineheight flexrow">
         <b>{{localize "traits"}}</b>
-        <button type="button" data-action="itemCreate" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="SHEET.addItem" item-section="trait"
-            data-type="trait"></button>
+        <button type="button" data-action="itemCreate" class="icon dsadesignbutton noBorder fas fa-plus very-small"
+            data-tooltip="SHEET.addItem" item-section="trait" data-type="trait"></button>
     </legend>
     <div class="row-section wrap cards">
         {{#each prepare.traits as |trait i|}}
         {{#each trait as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{item.name}}{{roman
+        <div class="item flexrow" data-item-id="{{item._id}}">
+            {{#if item.OnUseEffect}}
+            <button type="button" data-tooltip="SHEET.onUseEffect" class="icon noBorder dsadesignbutton fas fa-dice-six"
+                data-action="onUseItem"></button>
+            {{/if}}
+            <a data-action="itemEdit">{{item.name}}{{roman
                 item.system.step.value item.system.at.value}}</a>
         </div>
         {{/each}}

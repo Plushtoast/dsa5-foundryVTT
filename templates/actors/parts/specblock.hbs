@@ -5,10 +5,12 @@
         {{{../prepare.languagePoints}}}{{/if}}</legend>
     <div class="row-section wrap cards">
         {{#each (lookup ../prepare.specAbs cat) as |item i|}}
-        <div class="item" data-item-id="{{item._id}}">
-            {{#if item.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i
-                    class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{item.name}}{{roman
-                item.system.step.value item.system.maxRank.value}}</a>
+        <div class="item flexrow" data-item-id="{{item._id}}">
+            {{#if item.OnUseEffect}}
+            <button type="button" data-tooltip="SHEET.onUseEffect" class="icon noBorder dsadesignbutton fas fa-dice-six"
+                data-action="onUseItem"></button>
+            {{/if}}
+            <a data-action="itemEdit">{{item.name}}{{roman item.system.step.value item.system.maxRank.value}}</a>
         </div>
         {{/each}}
     </div>

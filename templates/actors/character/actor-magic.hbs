@@ -27,8 +27,13 @@
                 <div class="row-section expandDetails shown">
                     <div class="row-section wrap cards col">
                     {{#each item.abilities as |ab i|}}
-                    <div class="item" data-item-id="{{ab._id}}">
-                        {{#if ab.AEpayable}}<button data-tooltip="SHEET.payAECost" data-action="traditionPayCost" class="traditionPayCost"><i class="fas fa-wand-magic-sparkles"></i></button>{{/if}}{{#if ab.OnUseEffect}}<a data-tooltip="SHEET.onUseEffect" class="onUseItem" data-action="onUseItem"><i class="fas fa-dice-six"></i></a>{{/if}}<a data-action="itemEdit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
+                    <div class="item flexrow" data-item-id="{{ab._id}}">
+                        {{#if ab.AEpayable}}
+                        <button type="button" data-tooltip="SHEET.payAECost" data-action="traditionPayCost" class="noBorder dsadesignbutton icon fas fa-wand-magic-sparkles"></button>{{/if}}
+                        {{#if ab.OnUseEffect}}
+                        <button type="button" data-tooltip="SHEET.onUseEffect" class="icon fas fa-dice-six noBorder dsadesignbutton" data-action="onUseItem"></button>
+                        {{/if}}
+                        <a data-action="itemEdit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
                     </div>
                     {{/each}}
                     </div>
