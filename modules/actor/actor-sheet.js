@@ -66,12 +66,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     header: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited-header.hbs',
     },
-    tabs: this.PARTS.tabs,
+    tabs: {
+      template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
+      id: "tabs",
+      classes: ["tabs", "right"],
+    },
     main: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited.hbs',
       scrollable: ['']
     },
-    notes: this.PARTS.notes,
+    notes: {
+      template: 'systems/dsa5/templates/actors/actor-notes.hbs',
+      scrollable: [''],
+    },
   }
 
   static PARTS = {
