@@ -201,9 +201,9 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
 
     const maxSpeed = this.token.actor?.speedByMovementType(waypoint.action) || 0;
 
-    if (previousDistanceSum < maxSpeed) {
+    if (previousDistanceSum <= maxSpeed) {
       return colors.normal;
-    } else if (previousDistanceSum < maxSpeed * 2) {
+    } else if (previousDistanceSum <= maxSpeed * 2) {
       return colors.fast;
     } else {
       return DSATokenRuler.COLOR_IMPOSSIBLE;
