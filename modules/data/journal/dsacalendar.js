@@ -24,11 +24,11 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
     }
 
     static defineSchema() {
-        const { TypedObjectField, SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
+        const { TypedObjectField, SchemaField, StringField, NumberField, BooleanField, HTMLField } = foundry.data.fields;
         return {
             calendarentries: new TypedObjectField(new SchemaField({
                 title: new StringField({ required: true, label: "dsacalendar.FIELDS.calendarentries.title.label" }),
-                content: new StringField({ label: "dsacalendar.FIELDS.calendarentries.content.label" }),
+                content: new HTMLField({ label: "dsacalendar.FIELDS.calendarentries.content.label" }),
                 location: new StringField({ label: "dsacalendar.FIELDS.calendarentries.location.label" }),
                 from: new SchemaField({
                     dayOfMonth: new NumberField({ required: true, initial: 1, min: 1, step: 1 }),
@@ -63,7 +63,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
     }
 
-    static prepareCalendarEntry(entry) {
+    static async prepareCalendarEntry(entry) {
         const calendar = game.time.calendar;
         const month = calendar.months.values[entry.from.month];
         const converted = calendar.componentsToTime({
@@ -78,6 +78,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         entry.from.monthLong = calendar.translate(month.name);
         entry.categoryName = game.i18n.localize(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
         entry.color = DSACalendarEntry.CATEGORY_COLORS[entry.category];
+        entry.enriched = await foundry.applications.ux.TextEditor.enrichHTML(entry.content, {})
     }
 
     #recalculateDay(date) {
@@ -93,8 +94,8 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         }
 
         date.from.day = dayOffset + dayOfMonth;
-        
-        if (date.to?.dayOfMonth) 
+
+        if (date.to?.dayOfMonth)
             date.to.dayOfMonth = Math.clamp(date.to.dayOfMonth, date.from.dayOfMonth, game.time.calendar.months.values[date.from.month].days + 1);
     }
 }

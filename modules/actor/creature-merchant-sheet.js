@@ -5,7 +5,7 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
-      templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/actor-header.hbs'],
+      templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
     },
     tabs: super.PARTS.tabs,
     main: {
