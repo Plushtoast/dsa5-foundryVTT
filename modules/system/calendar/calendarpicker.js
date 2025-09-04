@@ -19,7 +19,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       removeJournal: { handler: this.#removeJournal, buttons: [0, 2] },
       addJournal: this.#addJournal,
       filterCategory: this.#filterCategory,
-      editEvent: this.#onEditEvent
+      editEvent: this.#onEditEvent,
+      openMoreSearch: this.#toggleMoreSearch,
     }
   };
 
@@ -81,7 +82,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const year = components.year;
     const validJournals = journals.filter(Boolean);
-    const entries = validJournals
+    const entries = await Promise.all(validJournals
       .flatMap(journal =>
         journal.pages.filter(page =>
           page.type === 'dsacalendar' &&
@@ -91,16 +92,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       .flatMap(page =>
         Object.entries(page.system.calendarentries)
           .filter(([_key, entry]) => (entry.recurring && entry.from.year <= year) || (!entry.recurring && entry.from.year === year))
-          .map(([key, entry]) => {
-            DSACalendarEntry.prepareCalendarEntry(entry);
+          .map(async ([key, entry]) => {
+            await DSACalendarEntry.prepareCalendarEntry(entry);
             entry.isOwner = page.isOwner;
             entry.uuid = page.uuid;
+            entry.juuid = page.parent.uuid;
             entry.calendarKey = key;
             return entry;
           })
-      );
+      ));
 
-    const holidayEntries = CONFIG.time.worldCalendarConfig.holidays.values.map(holiday => {
+    const holidayEntries = await Promise.all(CONFIG.time.worldCalendarConfig.holidays.values.map(async (holiday) => {
       const dayOffset = game.time.calendar.months.values
         .slice(0, holiday.month)
         .reduce((sum, month) => sum + month.days, 0);
@@ -118,14 +120,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
           dayOfMonth: holiday.dayEnd ? holiday.dayEnd + 1 : undefined,
         },
         category: 1,
+        juuid: 'dC',
         visible: true,
         recurring: true,
         gods: holiday.gods?.join(', ')
       };
 
-      DSACalendarEntry.prepareCalendarEntry(entry);
+      await DSACalendarEntry.prepareCalendarEntry(entry);
       return entry;
-    });
+    }));
 
     this.#cached = [...holidayEntries, ...entries];
     return this.#cached;
@@ -151,7 +154,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       container.innerHTML = content;
     } else {
       const selected = this.element.querySelector('select[name="journal"]');
-      if(!selected) return;
+      if (!selected) return;
 
       const settings = game.settings.get('dsa5', 'calendarJournals');
       settings.activated.push({ uuid: selected.value, name: selected.options[selected.selectedIndex].text });
@@ -178,6 +181,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     journal.sheet.render({ force: true, search: entry.title });
   }
 
+  static #toggleMoreSearch(ev, target) {
+    const moreOptions = target.closest('.flexcol').querySelector('.moreSearchOptions').classList.toggle('dsahidden');
+    target.classList.toggle('fa-caret-up', !moreOptions);
+    target.classList.toggle('fa-caret-down', moreOptions);
+  }
+
   static async #removeJournal(ev, target) {
     const uuid = target.dataset.uuid;
 
@@ -198,11 +207,24 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   static async #filterCategory(ev, target) {
     const isOn = !target.classList.contains('toggleOn');
     target.classList.toggle('toggleOn', isOn);
-    const filters = Array.from(target.parentElement.querySelectorAll('.toggleOn')).map(el => el.dataset.filter);
+    const searchOptions = {
+      category: new Set(),
+      uuid: new Set(),
+    }
+    for (const elm of Array.from(target.closest('.searchOptions').querySelectorAll('.toggleOn'))) {
+      const type = elm.dataset.filterType;
+      if (type) searchOptions[type].add(elm.dataset.filter);
+    }
     const container = this.element.querySelector('.eventscontainer');
     container.querySelectorAll('.event-card').forEach(card => {
-      const category = card.dataset.category;
-      card.classList.toggle('dsahidden', !filters.includes(category));
+      let isVisible = true;
+      for (const [type, values] of Object.entries(searchOptions)) {
+        if (!values.size) { isVisible = false; break; };
+        const attr = card.dataset[type];
+        if (!attr) { isVisible = false; break; }
+        if (!values.has(attr)) { isVisible = false; break; }
+      }
+      card.classList.toggle('dsahidden', !isVisible);
     });
   }
 
@@ -293,9 +315,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    const html = $(this.element);
 
-    tabSlider(html);
+    tabSlider($(this.element));
     this.#dateFormListeners();
     this.element.querySelectorAll('.settingChange').forEach(element => {
       element.addEventListener('change', this._onSettingChange.bind(this));
@@ -310,6 +331,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       callback: this.#onSearchFilter.bind(this)
     });
     this.#search.bind(this.element);
+
+    const scrollContainer = this.element.querySelector('[data-tab="events"].tab');
+    const sticky = this.element.querySelector('.position-fake-sticky');
+    scrollContainer.addEventListener('scroll', (ev) => {
+      const scrollTop = scrollContainer.scrollTop != 0 ? scrollContainer.scrollTop - 20 : scrollContainer.scrollTop;
+      sticky.style.transform = `translateY(${scrollTop}px)`;
+    });
   }
 
   _tearDown(options) {

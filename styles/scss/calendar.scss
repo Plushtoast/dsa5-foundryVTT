@@ -168,6 +168,10 @@
     }
   }
 
+  .eventscontainer {
+    margin-top: 35px;
+  }
+
   .calendar-img {
     opacity: 0;
     position: absolute;
@@ -187,6 +191,7 @@
 
   .crossedButton {
     position: relative;
+    white-space: nowrap;
 
     &:after {
         content: '';

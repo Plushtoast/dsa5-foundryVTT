@@ -1,11 +1,25 @@
 <div class='tab scrollable standard-form {{tabs.events.cssClass}}' data-tab='events' data-group='{{tabs.events.group}}'>
     <div class="fullSceenMaxWidth dark-theme">
-        <div class="flexcol gap5px">
-            <div class="flexrow">
-                <input type="search" placeholder="{{localize 'Library.search'}}">
-                {{#each dayCategories}}
-                  <button type="button" data-action="filterCategory" data-filter="{{key}}" data-tooltip="{{name}}" class="crossedButton toggleOn icon {{icon}}" style="color: {{this.color}};"></button>
-                {{/each}}
+        <div class="flexcol gap5px position-relative">
+            <div class="flexcol position-fake-sticky searchOptions">
+                <div class="flexrow">
+                    <button type="button" data-action="openMoreSearch" class="crossedButton toggleOn icon fas fa-caret-down"></button>
+                    <input type="search" placeholder="{{localize 'Library.search'}}">
+                    {{#each dayCategories}}
+                    <button type="button" data-action="filterCategory" data-filter-type="category" data-filter="{{key}}" data-tooltip="{{name}}" class="crossedButton toggleOn icon {{icon}}" style="color: {{this.color}};"></button>
+                    {{/each}}
+                </div>
+                <div class="moreSearchOptions dsahidden">
+                    <fieldset>
+                        <legend>{{localize 'dsacalendar.journals.label'}}</legend>
+                        <div class="flexrow wrap gap2px">
+                            <button type="button" data-action="filterCategory" data-filter-type="uuid" data-filter="dC" class="flex0 crossedButton toggleOn">{{appTitle}}</button>
+                            {{#each calendarJournals.activated}}
+                            <button type="button" data-action="filterCategory" data-filter-type="uuid" data-filter="{{uuid}}" class="flex0 crossedButton toggleOn">{{name}}</button>
+                            {{/each}}
+                        </div>
+                    </fieldset>                    
+                </div>
             </div>
             <div class="flexcol gap2px eventscontainer">
                 {{#each sortedEntries}}

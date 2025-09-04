@@ -3549,6 +3549,14 @@ select.noAppearance {
   position: relative;
 }
 
+.position-fake-sticky {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  background: black;
+}
+
 .combatant-advanced {
   flex: 0 0 48px;
   position: relative;

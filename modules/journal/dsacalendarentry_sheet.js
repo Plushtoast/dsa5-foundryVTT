@@ -44,7 +44,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         if (this.isView) {
             for (let key of Object.keys(context.sortedEntries)) {
                 const entry = context.sortedEntries[key];
-                DSACalendarEntry.prepareCalendarEntry(entry);
+                await DSACalendarEntry.prepareCalendarEntry(entry);
             }
         } else {
             context.availableMonths = this.#getLocalizedArray(calendar.months.values, calendar.translationPrefix);
