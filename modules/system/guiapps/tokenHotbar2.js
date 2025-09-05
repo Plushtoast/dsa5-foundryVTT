@@ -73,7 +73,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
 
     const parentUpdate = (source) => {
-      const id = source.parent ? source.parent.id : undefined;
+      const id = source.parent?.id;
       if (id) TokenHotbar2.hookUpdate(id);
     };
 
@@ -88,7 +88,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     Hooks.on('updateToken', (scene, token, updates) => {
       if (!game.dsa5.apps.tokenHotbar) return;
 
-      if (token._id == getProperty(game.dsa5.apps.tokenHotbar, 'actor.prototypeToken.id')) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+      if (token.actor.id == game.dsa5.apps.tokenHotbar.actor?.id) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
@@ -896,16 +896,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     const controlled = canvas.tokens.controlled;
     this.actor = undefined;
-    this.showEffects = false;
+    this.showEffects = controlled.length >= 1;
     if (controlled.length === 1) {
       const actor = controlled[0].actor;
       if (actor && actor.isOwner) {
         this.actor = actor;
       }
-    }
-
-    if (controlled.length >= 1) {
-      this.showEffects = true;
     }
     await this.render(true, { focus: false });
   }

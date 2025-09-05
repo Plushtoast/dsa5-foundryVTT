@@ -59,6 +59,8 @@ import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
 import { DSACalendarEntry } from './data/journal/dsacalendar.js';
+import ACTORCONCERNS from './actor/concerns/module.js';
+import ITEMCONCERNS from './item/concerns/module.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -96,6 +98,10 @@ Hooks.once('init', () => {
     entities: {
       Actordsa5,
       Itemdsa5,
+    },
+    concerns: {
+      Actor: ACTORCONCERNS,
+      Item: ITEMCONCERNS
     },
     sheets: {
       ActorSheetdsa5,
