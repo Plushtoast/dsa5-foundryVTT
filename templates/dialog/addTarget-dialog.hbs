@@ -1,5 +1,5 @@
-<div class='directory targetChoser'>
-  <ul class='directory-list'>
+<div class='directory targetChoser scrollable'>
+  <ul class='directory-list '>
     <li class='actor directory-item flexrow'>
       <div class='combatant-advanced'>
       </div>
@@ -27,6 +27,8 @@
           </div>
         </li>
       {{/each}}
-    {{else}} {{localize 'DIALOG.onlyInCombatTargets'}} {{/if}}
+    {{else}} 
+    <li>{{localize 'DIALOG.onlyInCombatTargets'}}</li>
+    {{/if}}
   </ul>
 </div>
