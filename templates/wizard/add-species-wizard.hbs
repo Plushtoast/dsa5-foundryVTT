@@ -61,8 +61,8 @@
                 <div class="row-section wrap">
                     {{#each item.choices as |choice j|}}
                     <div class="col two flexrow">
-                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="flex0 exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}"/>
-                        <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="flex0 exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice.name}}" value="{{choice.name}}"/>
+                        <label for="exclusive_{{i}}_{{j}}">{{choice.label}}</label>
                     </div>
                     {{/each}}
                 </div>

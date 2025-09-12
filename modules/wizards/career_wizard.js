@@ -114,7 +114,7 @@ export default class CareerWizard extends WizardDSA5 {
     this.fixPreviousCosts(requirements, advantages);
     const disadvantages = await this.parseToItem(this.career.system.recommendedDisadvantages.value, ['disadvantage']);
     this.fixPreviousCosts(requirements, disadvantages);
-    const attributeRequirements = requirements.filter((x) => x.attributeRequirement);
+    const attributeRequirements = this.enrichAttributeRequirements(requirements.filter((x) => x.attributeRequirement));
     const combatskillchoices = this._parseAttributes(this.career.system.combatSkills.value, /,|;/);
     const specAbChoices = this._parseAttributes(this.career.system.specialAbilities.value);
     const spellChoices = this._parseAttributes(this.career.system.spells.value);
@@ -185,6 +185,15 @@ export default class CareerWizard extends WizardDSA5 {
   async addCareer(actor, item) {
     this.actor = actor;
     this.career = item;
+  }
+
+  enrichAttributeRequirements(attributeRequirements) {
+    return attributeRequirements.map((ar) => {
+      const shortcutArr = game.dsa5.config.knownShortcuts[ar.name?.toLowerCase().trim()];
+      const localizedAttr = Array.isArray(shortcutArr) && shortcutArr.length > 1 ? shortcutArr[1] : undefined;
+      ar.label = localizedAttr ? game.i18n.localize(`CHAR.${localizedAttr.toUpperCase()}`) : ar.name;
+      return ar;
+    });
   }
 
   async setAbility(value, types, choices = []) {

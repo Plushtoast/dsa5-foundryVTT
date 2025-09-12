@@ -11,15 +11,16 @@ export default class SpeciesWizard extends WizardDSA5 {
   static PARTS = {
     main: {
       template: 'systems/dsa5/templates/wizard/add-species-wizard.hbs',
-      templates: ['systems/dsa5/templates/system/dsatabs.hbs']},
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs']
+    },
   };
 
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'description', label: 'Description'},
-        { id: 'generalToChose', label: 'WIZARD.generalTab'},
-        { id: 'vantagesToChose', label: 'vantages'}
+        { id: 'description', label: 'Description' },
+        { id: 'generalToChose', label: 'WIZARD.generalTab' },
+        { id: 'vantagesToChose', label: 'vantages' }
       ],
       initial: 'description',
     }
@@ -30,7 +31,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     html.find('.optional').on('change', (ev) => {
       let parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
-      
+
       parent.find('.optional:checked').each(function () {
         apCost += Number($(this).attr('data-cost'));
       });
@@ -69,7 +70,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     const missingVantages = requirements.filter((x) => ['advantage', 'disadvantage'].includes(x.type) && !x.disabled);
     const advantagegroups = await this._toGroups(this.species.system.recommendedAdvantages.value, ['advantage'], requirements);
     const disadvantagegroups = await this._toGroups(this.species.system.recommendedDisadvantages.value, ['disadvantage'], requirements);
-    const attributeRequirements = this._parseAttributes(this.species.system.attributeChange.value);
+    const attributeRequirements = this.enrichAttributeRequirements(this._parseAttributes(this.species.system.attributeChange.value));
     const baseCost = Number(this.species.system.APValue.value);
     const reqCost = requirements.reduce(function (_this, val) {
       return _this + (val.disabled ? 0 : Number(val.system.APValue.value) || 0);
@@ -132,8 +133,8 @@ export default class SpeciesWizard extends WizardDSA5 {
     for (let attr of this.species.system.attributeChange.value.split(',').concat(attributeChoices)) {
       if (attr.includes(game.i18n.localize('combatskillcountdivider') + ':') || attr == '') continue;
 
-      let attrs = attr.trim().split(' ');
-      let dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0);
+      const attrs = attr.trim().split(' ');
+      const dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0);
       dataAttr[dataAttr.length - 1] = 'species';
       update[`system.${dataAttr.join('.')}`] = Number(attrs[1]);
     }
@@ -147,5 +148,23 @@ export default class SpeciesWizard extends WizardDSA5 {
     await APTracker.track(this.actor, { type: 'item', item: this.species, state: 1 }, apCost);
 
     this.finalizeUpdate();
+  }
+
+  enrichAttributeRequirements(attributeRequirements) {
+    return attributeRequirements.map((ar) => {
+      if (ar.choices) {
+        ar.choices = ar.choices.map((c) => {
+          const split = c.split(' ');
+          const shortcutArr = game.dsa5.config.knownShortcuts[split[0]?.toLowerCase().trim()];
+          const localizedAttr = Array.isArray(shortcutArr) && shortcutArr.length > 1 ? shortcutArr.slice(0)[1] : undefined;
+
+          return {
+            name: c,
+            label: localizedAttr ? game.i18n.localize(`CHAR.${localizedAttr.toUpperCase()}`) + ' ' + split[1] : c,
+          };
+        });
+      }
+      return ar;
+    });
   }
 }

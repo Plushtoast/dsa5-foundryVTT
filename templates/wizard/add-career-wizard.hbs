@@ -57,7 +57,7 @@
                 {{#each attributeRequirements as |item i|}}
                 <div class="col two flexrow">
                     <input type="checkbox" id="attribute_{{item.name}}" data-cost="{{item.system.APValue.value}}" class="flex0 attributes" name="attribute_{{item.name}}" data-attribute="{{item.name}}" value="{{item.step}}" checked disabled>
-                    <label for="attribute_{{item.name}}">{{item.name}} {{item.step}} ({{item.system.APValue.value}} AP)</label>
+                    <label for="attribute_{{item.name}}">{{item.label}} {{item.step}} ({{item.system.APValue.value}} AP)</label>
                 </div>
                 {{/each}}
             </div>
