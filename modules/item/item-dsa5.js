@@ -206,6 +206,10 @@ export default class Itemdsa5 extends Item {
     });
   }
 
+  static getSubClass(type) {
+    return ItemFactory.getSubClass(type);
+  }
+
   // ===== CONDITION MANAGEMENT =====
 
   /**

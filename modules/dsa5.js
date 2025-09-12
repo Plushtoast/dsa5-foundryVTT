@@ -61,6 +61,7 @@ import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
 import { DSACalendarEntry } from './data/journal/dsacalendar.js';
 import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
+import { ItemFactory } from './item/item-factory.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -98,6 +99,7 @@ Hooks.once('init', () => {
     entities: {
       Actordsa5,
       Itemdsa5,
+      ItemFactory,
     },
     concerns: {
       Actor: ACTORCONCERNS,

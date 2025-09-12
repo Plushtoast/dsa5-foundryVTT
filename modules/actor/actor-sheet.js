@@ -1356,7 +1356,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const show = !!query;
     html.classList.add('showAll');
     html.classList.toggle('filterfull', show);
-    html.querySelector('.table-header').classList.toggle('dsahidden', show);
+    html.querySelectorAll('.table-header').forEach(el => el.classList.toggle('dsahidden', show));
     html.querySelectorAll('.table-title:not(:first-of-type)').forEach(el => el.classList.toggle('dsahidden', show));
 
     for (const entry of html.querySelectorAll(".item")) {
