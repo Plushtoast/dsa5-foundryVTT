@@ -9,84 +9,65 @@
         </div>
 
         {{#if vantagesToChose}}
-        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose"
-            data-group="{{tabs.vantagesToChose.group}}">
+        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
 
             <p>{{localize 'WIZARD.vantageDescriptionSpecies'}}</p>
-            {{#if missingVantages.length}}
+            {{#if missingVantagesToChose}}
             <h2>{{localize 'WIZARD.missingVantages'}}</h2>
             <div class="row-section wrap">
                 {{#each missingVantages as |item i|}}
                 <div class="col two flexrow">
-                    <input type="checkbox" id="missingvantage_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}"
-                        name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
-                    <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step (or item.system.max.value
-                        item.system.maxRank.value)}} ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}"
-                        data-tooltip="{{item.tooltip}}"></button>
+                    <input type="checkbox" id="missingvantage_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" disabled checked>
+                    <label for="missingvantage_{{i}}">{{item.replaceName}} {{roman item.step (or item.system.max.value item.system.maxRank.value)}} ({{item.apCost}} AP)</label>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
-            {{/if}}
-            {{#if advantagegroups.length}}
+            {{/if}} {{#if advantagesToChose}}
             <h2>{{localize 'recommendedAdvantages'}}</h2>
             {{#each advantagegroups as |group j|}}
             {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
             <div class="row-section wrap">
                 {{#each group.res as |item i|}}
                 <div class="col two flexrow">
-                    <input type="checkbox" id="advantage_{{i}}_{{j}}" class="flex0 optional" data-cost="{{item.apCost}}"
-                        name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if
-                        item.disabled}}disabled{{/if}}>
-                    <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}}
-                        ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}"
-                        data-tooltip="{{item.tooltip}}"></button>
+                    <input type="checkbox" id="advantage_{{i}}_{{j}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                    <label for="advantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
-            {{/each }}
-            {{/if}}
-            {{#if disadvantagegroups.length}}
+            {{/each }} {{/if}} {{#if disadvantagesToChose}}
             <h2>{{localize 'recommendedDisadvantages'}}</h2>
             {{#each disadvantagegroups as |group j|}}
             {{#if group.name}}<h3>{{group.name}}</h3>{{/if}}
             <div class="row-section wrap">
                 {{#each group.res as |item i|}}
                 <div class="col two flexrow">
-                    <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="flex0 optional"
-                        data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}"
-                        value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
-                    <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}}
-                        ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}"
-                        data-tooltip="{{item.tooltip}}"></button>
+                    <input type="checkbox" id="disadvantage_{{i}}_{{j}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                    <label for="disadvantage_{{i}}_{{j}}">{{item.replaceName}} {{roman item.step item.system.max.value}} ({{item.apCost}} AP)</label>
+                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
             {{/each}} {{/if}}
         </div>
-        {{/if}}
-        {{#if attributeRequirements.length}}
-        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose"
-            data-group="{{tabs.generalToChose.group}}">
-            {{#if attributeRequirements.length}}
+        {{/if}} {{#if generalToChose}}
+        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
+            {{#if anyAttributeRequirements}}
             <h2>{{localize 'WIZARD.attributesToChose'}}</h2>
             <p>{{localize 'WIZARD.attributesToChoseHint'}}</p>
             {{#each attributeRequirements as |item i|}}
-            <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}}
-                {{item.allowedCount}}.</p>
-            <div class="row-section wrap">
-                {{#each item.choices as |choice j|}}
-                <div class="col two flexrow">
-                    <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="flex0 exclusive exclusive_{{i}}"
-                        data-sel="{{i}}" name="{{choice}}" value="{{choice}}" />
-                    <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+                <p class="allowedCount_{{i}}" data-count="{{item.allowedCount}}">{{localize 'WIZARD.chose'}} {{item.allowedCount}}.</p>
+                <div class="row-section wrap">
+                    {{#each item.choices as |choice j|}}
+                    <div class="col two flexrow">
+                        <input type="checkbox" id="exclusive_{{i}}_{{j}}" class="flex0 exclusive exclusive_{{i}}" data-sel="{{i}}" name="{{choice}}" value="{{choice}}"/>
+                        <label for="exclusive_{{i}}_{{j}}">{{choice}}</label>
+                    </div>
+                    {{/each}}
                 </div>
-                {{/each}}
-            </div>
-            <hr />
-            {{/each}}
+                <hr /> 
+            {{/each}} 
             {{/if}}
         </div>
         {{/if}}
