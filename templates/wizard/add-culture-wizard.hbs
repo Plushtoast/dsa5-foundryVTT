@@ -11,7 +11,7 @@
         {{#if vantagesToChose}}
         <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
             <p>{{localize 'WIZARD.vantageDescriptionCulture'}}</p>
-            {{#if advantagesToChose}}
+            {{#if advantages.length}}
             <h2>{{localize 'recommendedAdvantages'}}</h2>
             <div class="row-section wrap">
                 {{#each advantages as |item i|}}
@@ -23,7 +23,7 @@
                 {{/each}}
             </div>
             {{/if}} 
-            {{#if disadvantagesToChose}}
+            {{#if disadvantages.length}}
             <h2>{{localize 'recommendedDisadvantages'}}</h2>
             <div class="row-section wrap">
                 {{#each disadvantages as |item i|}}
@@ -45,7 +45,7 @@
                     <input type="text" class="localKnowledge" placeholder="{{culture.system.localKnowledge.value}}" />
                 </div>
             </div>
-            {{#if languagesToChose}}
+            {{#if languages.length}}
             <h2>{{localize 'language'}}</h2>
             <p class="allowedCount_1" data-count="1">{{localize 'WIZARD.chose'}} 1.</p>
             <div class="row-section wrap">
@@ -58,7 +58,7 @@
                 {{/each}}
             </div>
             {{/if}}
-            {{#if writingsToChose}}
+            {{#if writings.length}}
             <h2>{{localize 'writing'}}</h2>
             <div class="row-section wrap">
                 {{#each writings as |item i|}}

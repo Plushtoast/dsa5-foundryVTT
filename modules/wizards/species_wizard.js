@@ -86,12 +86,7 @@ export default class SpeciesWizard extends WizardDSA5 {
       missingVantages,
       attributeRequirements,
       hasLocalization: game.i18n.has(`Racedescr.${this.species.name}`),
-      anyAttributeRequirements: attributeRequirements.length > 0,
-      advantagesToChose: advantagegroups.length > 0,
-      missingVantagesToChose: missingVantages.length > 0,
-      disadvantagesToChose: disadvantagegroups.length > 0,
       vantagesToChose: advantagegroups.length > 0 || disadvantagegroups.length > 0 || missingVantages.length > 0,
-      generalToChose: attributeRequirements.length > 0,
     });
     this.filterTabs(data);
     return data;

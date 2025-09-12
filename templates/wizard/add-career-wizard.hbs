@@ -11,7 +11,7 @@
         {{#if vantagesToChose}}
         <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
             <p>{{localize 'WIZARD.vantageDescription'}}</p>
-            {{#if missingVantagesToChose}}
+            {{#if missingVantages.length}}
             <h2>{{localize 'WIZARD.missingVantages'}}</h2>
             <div class="row-section wrap">
                 {{#each missingVantages as |item i|}}
@@ -23,7 +23,7 @@
                 {{/each}}
             </div>
             {{/if}} 
-            {{#if advantagesToChose}}
+            {{#if advantages.length}}
             <h2>{{localize 'recommendedAdvantages'}}</h2>
             <div class="row-section wrap">
                 {{#each advantages as |item i|}}
@@ -35,7 +35,7 @@
                 {{/each}}
             </div>
             {{/if}} 
-            {{#if disadvantagesToChose}}
+            {{#if disadvantages.length}}
             <h2>{{localize 'recommendedDisadvantages'}}</h2>
             <div class="row-section wrap">
                 {{#each disadvantages as |item i|}}
@@ -51,7 +51,7 @@
         {{/if}} 
         {{#if generalToChose}}
         <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
-            {{#if anyAttributeRequirements}}
+            {{#if attributeRequirements.length}}
             <h2>{{localize 'WIZARD.attributeRequirements'}}</h2>
             <div class="row-section wrap">
                 {{#each attributeRequirements as |item i|}}
@@ -62,7 +62,7 @@
                 {{/each}}
             </div>
             {{/if}} 
-            {{#if missingSpecialabiltiesToChose}}
+            {{#if missingSpecialabilities.length}}
             <h2>{{localize 'WIZARD.missingSpecialAbilities'}}</h2>
             <div class="row-section wrap">
                 {{#each missingSpecialabilities as |item i|}}
@@ -91,7 +91,7 @@
             {{/if}}
         </div>
         {{/if}} 
-        {{#if combatToChose}}
+        {{#if combatskillchoices.length}}
         <div class="tab {{tabs.combatToChose.cssClass}}" data-tab="combatToChose" data-group="{{tabs.combatToChose.group}}">
             <h2>{{localize 'TYPES.Item.combatskill'}}</h2>
             {{#each combatskillchoices as |item i|}}
@@ -138,7 +138,7 @@
             
         </div>
         {{/if}} 
-        {{#if religionToChose}}
+        {{#if liturgyChoices.length}}
         <div class="tab {{tabs.religionToChose.cssClass}}" data-tab="religionToChose" data-group="{{tabs.religionToChose.group}}">
             {{#if liturgyChoices}} 
             <h2>{{localize 'TYPES.Item.spell'}}</h2>
