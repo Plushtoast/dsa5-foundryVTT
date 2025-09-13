@@ -331,7 +331,7 @@ export function setupConfiguration() {
         step: 1,
       },
       onChange: async (val) => {
-        if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val;
+        if (game.dsa5.apps.initTracker && game.combat) game.dsa5.apps.initTracker.render({ force: true });
       },
     },
     tokenhotbarSize: {

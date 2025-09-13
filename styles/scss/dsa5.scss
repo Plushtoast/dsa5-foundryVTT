@@ -3587,23 +3587,23 @@ select.noAppearance {
     right: auto;
     background: #6d0400;
   }
-}
 
-.combatant-advanced i {
-  &.reversed {
-    transform: scaleX(-1);
-  }
+  i {
+    &.reversed {
+      transform: scaleX(-1);
+    }
 
-  &.def:after {
-    content: attr(data-defense-count);
-    position: absolute;
-    left: 0;
-    right: 0;
-    text-align: center;
-    z-index: 1;
-    color: white;
-    font-size: 10px;
-    line-height: 12px;
+    &.def:after {
+      content: attr(data-defense-count);
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 1;
+      color: white;
+      font-size: 10px;
+      line-height: 12px;
+    }
   }
 }
 
