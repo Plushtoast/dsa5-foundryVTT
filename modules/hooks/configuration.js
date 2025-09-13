@@ -8,424 +8,6 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
 
 export function setupConfiguration() {
-  game.settings.register('dsa5', 'meleeBotchTableEnabled', {
-    name: 'DSASETTINGS.meleeBotchTableEnabled',
-    hint: 'DSASETTINGS.meleeBotchTableEnabledHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'rangeBotchTableEnabled', {
-    name: 'DSASETTINGS.rangeBotchTableEnabled',
-    hint: 'DSASETTINGS.rangeBotchTableEnabledHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'applyDamageInChat', {
-    name: 'DSASETTINGS.applyDamageInChat',
-    hint: 'DSASETTINGS.applyDamageInChatHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'hideSpellDetails', {
-    name: 'DSASETTINGS.hideSpellDetails',
-    hint: 'DSASETTINGS.hideSpellDetailsHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'notifyOnFadingEffects', {
-    name: 'DSASETTINGS.notifyOnFadingEffects',
-    hint: 'DSASETTINGS.notifyOnFadingEffectsHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'doubleDamageOptions', {
-    name: 'DSASETTINGS.doubleDamageOptions',
-    hint: 'DSASETTINGS.doubleDamageOptionsHint',
-    scope: 'client',
-    config: true,
-    default: false,
-    type: Boolean,
-    requiresReload: true,
-  });
-  game.settings.register('dsa5', 'defenseBotchTableEnabled', {
-    name: 'DSASETTINGS.defenseBotchTableEnabled',
-    hint: 'DSASETTINGS.defenseBotchTableEnabledHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'higherDefense', {
-    name: 'DSASETTINGS.higherDefense',
-    hint: 'DSASETTINGS.higherDefenseHint',
-    scope: 'world',
-    config: true,
-    default: '0',
-    type: String,
-    choices: {
-      0: '0',
-      2: '+2',
-      4: '+4',
-    },
-  });
-  game.settings.register('dsa5', 'informationDistribution', {
-    name: 'DSASETTINGS.informationDistribution',
-    hint: 'DSASETTINGS.informationDistributionHint',
-    scope: 'world',
-    config: true,
-    default: '0',
-    type: String,
-    choices: {
-      0: 'DSASETTINGS.information0',
-      1: 'DSASETTINGS.information1',
-      2: 'DSASETTINGS.information2',
-    },
-  });
-  game.settings.register('dsa5', 'enableItemDropToCanvas', {
-    name: 'DSASETTINGS.enableItemDropToCanvas',
-    hint: 'DSASETTINGS.enableItemDropToCanvasHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'statusEffectCounterColor', {
-    name: 'DSASETTINGS.statusEffectCounterColor',
-    hint: 'DSASETTINGS.statusEffectCounterColorHint',
-    scope: 'client',
-    config: true,
-    default: '#FFFFFF',
-    type: String,
-  });
-
-  game.settings.register('dsa5', 'migrationVersion', {
-    name: 'migrationVersion',
-    hint: 'migrationVersion',
-    scope: 'world',
-    config: false,
-    default: NEEDS_MIGRATION_VERSION - 1,
-    type: Number,
-  });
-
-  game.settings.register('dsa5', 'journalFontSizeIndex', {
-    name: 'journalFontSizeIndex',
-    hint: 'journalFontSizeIndex',
-    scope: 'client',
-    config: false,
-    default: 5,
-    type: Number,
-  });
-  game.settings.register('dsa5', 'firstTimeStart', {
-    name: 'firstTimeStart',
-    hint: 'firstTimeStart',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'defaultConfigFinished', {
-    name: 'defaultConfigFinished',
-    hint: 'defaultConfigFinished',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'dsaTokenRuler', {
-    name: 'DSASETTINGS.dsaTokenRuler',
-    hint: 'DSASETTINGS.dsaTokenRulerHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'tokenizerSetup', {
-    name: 'tokenizerSetup',
-    hint: 'tokenizerSetup',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'diceSetup', {
-    name: 'diceSetup',
-    hint: 'diceSetup',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-  game.settings.register('dsa5', 'capQSat', {
-    name: 'DSASETTINGS.capQSat',
-    hint: 'DSASETTINGS.capQSatHint',
-    scope: 'world',
-    config: true,
-    default: 6,
-    type: Number,
-  });
-
-  game.settings.register('dsa5', 'hideEffects', {
-    name: 'DSASETTINGS.hideEffects',
-    hint: 'DSASETTINGS.hideEffectsHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'inventorySound', {
-    name: 'DSASETTINGS.inventorySound',
-    hint: 'DSASETTINGS.inventorySoundHint',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'talentModifierEnabled', {
-    name: 'DSASETTINGS.talentModifierEnabled',
-    hint: 'DSASETTINGS.talentModifierEnabledHint',
-    scope: 'client',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'noConfirmationRoll', {
-    name: 'DSASETTINGS.noConfirmationRoll',
-    hint: 'DSASETTINGS.noConfirmationRollHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'lessRegeneration', {
-    name: 'DSASETTINGS.lessRegeneration',
-    hint: 'DSASETTINGS.lessRegenerationHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'limitCombatSpecAbs', {
-    name: 'DSASETTINGS.limitCombatSpecAbs',
-    hint: 'DSASETTINGS.limitCombatSpecAbsHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'allowPhysicalDice', {
-    name: 'DSASETTINGS.allowPhysicalDice',
-    hint: 'DSASETTINGS.allowPhysicalDiceHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enablePauseIcon', {
-    name: 'DSASETTINGS.enablePauseIcon',
-    hint: 'DSASETTINGS.enablePauseIconHint',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enableWeaponAdvantages', {
-    name: 'DSASETTINGS.enableWeaponAdvantages',
-    hint: 'DSASETTINGS.enableWeaponAdvantagesHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'hideOpposedDamageSelect', {
-    name: 'DSASETTINGS.hideOpposedDamageSelect',
-    hint: 'DSASETTINGS.hideOpposedDamageSelectHint',
-    scope: 'world',
-    config: true,
-    default: 0,
-    type: Number,
-    choices: {
-      0: 'hideOpposedOptions.0',
-      1: 'hideOpposedOptions.1',
-      2: 'hideOpposedOptions.2',
-    },
-  });
-
-  game.settings.register('dsa5', 'enableForeignSpellModifer', {
-    name: 'DSASETTINGS.enableForeignSpellModifer',
-    hint: 'DSASETTINGS.enableForeignSpellModiferHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'playerCanEditSpellMacro', {
-    name: 'DSASETTINGS.playerCanEditSpellMacro',
-    hint: 'DSASETTINGS.playerCanEditSpellMacroHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enableDPS', {
-    name: 'DSASETTINGS.enableDPS',
-    hint: 'DSASETTINGS.enableDPSHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'attackFromBehindAngle', {
-    name: 'DSASETTINGS.attackFromBehindAngle',
-    hint: 'DSASETTINGS.attackFromBehindAngleHint',
-    scope: 'world',
-    config: false,
-    default: 100,
-    type: Number,
-    range: {
-      min: 0,
-      max: 360,
-      step: 5,
-    },
-  });
-
-  game.settings.register('dsa5', 'iniTrackerSize', {
-    name: 'DSASETTINGS.iniTrackerSize',
-    hint: 'DSASETTINGS.iniTrackerSizeHint',
-    scope: 'client',
-    config: true,
-    default: 70,
-    type: Number,
-    range: {
-      min: 30,
-      max: 140,
-      step: 5,
-    },
-  });
-
-  game.settings.register('dsa5', 'iniTrackerCount', {
-    name: 'DSASETTINGS.iniTrackerCount',
-    hint: 'DSASETTINGS.iniTrackerCountHint',
-    scope: 'client',
-    config: true,
-    default: 5,
-    type: Number,
-    range: {
-      min: 3,
-      max: 25,
-      step: 1,
-    },
-    onChange: async (val) => {
-      if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val;
-    },
-  });
-
-  game.settings.register('dsa5', 'tokenhotbarSize', {
-    name: 'DSASETTINGS.tokenhotbarSize',
-    hint: 'DSASETTINGS.tokenhotbarSizeHint',
-    scope: 'client',
-    config: false,
-    default: 35,
-    type: Number,
-    range: {
-      min: 15,
-      max: 100,
-      step: 5,
-    },
-    onChange: () => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
-    },
-  });
-
-  game.settings.register('dsa5', 'tokenhotbarLayout', {
-    name: 'DSASETTINGS.tokenhotbarLayout',
-    hint: 'DSASETTINGS.tokenhotbarLayoutHint',
-    scope: 'client',
-    config: false,
-    default: 0,
-    type: Number,
-    choices: {
-      0: 'DSASETTINGS.tokenhotbarLayout0',
-      1: 'DSASETTINGS.tokenhotbarLayout1',
-      2: 'DSASETTINGS.tokenhotbarLayout2',
-      3: 'DSASETTINGS.tokenhotbarLayout3',
-    },
-    onChange: async (val) => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
-    },
-  });
-
-  game.settings.register('dsa5', 'calendar', {
-    name: 'DSASETTINGS.calendar',
-    hint: 'DSASETTINGS.calendarHint',
-    scope: 'world',
-    config: true,
-    default: 'default',
-    requiresReload: true,
-    type: new foundry.data.fields.StringField({ choices: DSAWorldCalendar.collectCalendars(), required: true }),
-  });
-
-  game.settings.register('dsa5', 'calendarSettings', {
-    name: 'DSASETTINGS.calendarSettings',
-    scope: 'world',
-    config: false,
-    default: {
-      "dawn": 5,
-      "morning": 7,
-      "noon": 11,
-      "afternoon": 16,
-      "sunset": 19,
-      "night": 21,
-      "lightByDayTime": false,
-      "moonAddsLight": false,
-      "moon": {
-        "darknessAdjust": 0.15,
-      },
-      "dayDarknessAdjust": {
-        "dawn": 0.55,
-        "morning": 0.2,
-        "noon": 0,
-        "afternoon": 0,
-        "sunset": 0.55,
-        "night": 0.95,
-      }
-    },
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'calendarJournals', {
-    name: 'DSASETTINGS.calendarJournals',
-    scope: 'world',
-    config: false,
-    default: {
-      activated: []
-    },
-    type: Object,
-  });
-
   const moneyChoices = () => {
     const moneyChoices = {};
     for (let pack of game.packs) {
@@ -433,465 +15,818 @@ export function setupConfiguration() {
     }
     return moneyChoices;
   };
-
-  game.settings.register('dsa5', 'moneyKompendium', {
-    name: 'DSASETTINGS.moneyKompendium',
-    hint: 'DSASETTINGS.moneyKompendiumHint',
-    scope: 'world',
-    config: true,
-    default: '',
-    type: new foundry.data.fields.StringField({ choices: moneyChoices }),
-    onChange: async (val) => {
-      const pack = game.packs.get(val);
-      if (!pack) return;
-
-      ui.notifications.info(
-        pack.index
-          .filter((x) => x.type == 'money')
-          .map((x) => x.name)
-          .join(', '),
-      );
-    },
-  });
-
-  game.settings.register('dsa5', 'moneyHasWeight', {
-    name: 'DSASETTINGS.moneyHasWeight',
-    hint: 'DSASETTINGS.moneyHasWeightHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-    requiresReload: true,
-  });
-
   const styles = duplicate(DSA5.styles);
   for (let key of Object.keys(styles)) {
     styles[key] = game.i18n.localize(styles[key]);
   }
-  game.settings.register('dsa5', 'globalStyle', {
-    name: 'DSASETTINGS.globalStyle',
-    hint: 'DSASETTINGS.globalStyleHint',
-    scope: 'client',
-    config: true,
-    default: 'dsa5-immersive',
-    type: String,
-    choices: styles,
-    onChange: async (val) => {
-      $('body').removeClass(Object.keys(styles).join(' ')).addClass(val);
+  const settings = {
+    meleeBotchTableEnabled: {
+      name: 'DSASETTINGS.meleeBotchTableEnabled',
+      hint: 'DSASETTINGS.meleeBotchTableEnabledHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'selfControlOnPain', {
-    name: 'DSASETTINGS.selfControlOnPain',
-    hint: 'DSASETTINGS.selfControlOnPainHint',
-    scope: 'world',
-    config: true,
-    default: 1,
-    type: Number,
-    choices: {
-      0: 'DSASETTINGS.selfControlOnPain0',
-      1: 'DSASETTINGS.selfControlOnPain1',
-      2: 'DSASETTINGS.selfControlOnPain2',
+    rangeBotchTableEnabled: {
+      name: 'DSASETTINGS.rangeBotchTableEnabled',
+      hint: 'DSASETTINGS.rangeBotchTableEnabledHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'forceLanguage', {
-    name: 'DSASETTINGS.forceLanguage',
-    hint: 'DSASETTINGS.forceLanguageHint',
-    scope: 'world',
-    config: true,
-    default: 'none',
-    type: String,
-    choices: {
-      none: '-',
-      de: 'German',
-      en: 'English',
+    applyDamageInChat: {
+      name: 'DSASETTINGS.applyDamageInChat',
+      hint: 'DSASETTINGS.applyDamageInChatHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'hotbarv3', {
-    name: 'DSASETTINGS.hotbarv3',
-    hint: 'DSASETTINGS.hotbarv3Hint',
-    scope: 'client',
-    config: false,
-    default: true,
-    type: Boolean,
-    onChange: () => {
-      ui.hotbar.render(true);
+    hideSpellDetails: {
+      name: 'DSASETTINGS.hideSpellDetails',
+      hint: 'DSASETTINGS.hideSpellDetailsHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'libraryModulsFilter', {
-    name: 'libraryModulsFilter',
-    scope: 'client',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'tokenhotbarPosition', {
-    name: 'tokenhotbarPosition',
-    scope: 'client',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'masterSettings', {
-    name: 'masterSettings',
-    scope: 'world',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'iniTrackerPosition', {
-    name: 'iniTrackerPosition',
-    scope: 'client',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'soundConfig', {
-    name: 'DSASETTINGS.soundConfig',
-    hint: 'DSASETTINGS.soundConfigHint',
-    scope: 'world',
-    config: true,
-    default: '',
-    type: String,
-    onChange: async () => {
-      DSA5SoundEffect.loadSoundConfig();
+    notifyOnFadingEffects: {
+      name: 'DSASETTINGS.notifyOnFadingEffects',
+      hint: 'DSASETTINGS.notifyOnFadingEffectsHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.registerMenu('dsa5', 'changelog', {
-    name: 'Changelog',
-    label: 'Changelog',
-    hint: 'DSASETTINGS.changelog',
-    type: ChangelogForm,
-    restricted: false,
-  });
-
-  game.settings.registerMenu('dsa5', 'exportConfiguration', {
-    name: 'Export/Import Configuration',
-    label: 'Export/Import Configuration',
-    hint: 'DSASETTINGS.exportConfiguration',
-    type: ExportForm,
-    restricted: true,
-  });
-
-  game.settings.registerMenu('dsa5', 'configureTokenbar', {
-    name: 'DSASETTINGS.configureTokenbar',
-    label: 'DSASETTINGS.configureTokenbar',
-    hint: 'DSASETTINGS.configureTokenbarHint',
-    type: ConfigureTokenHotbar,
-    restricted: false,
-  });
-
-  game.settings.register('dsa5', `breadcrumbs_${game.world.id}`, {
-    name: 'DSASETTINGS.breadcrumbs',
-    hint: 'DSASETTINGS.breadcrumbsHint',
-    scope: 'client',
-    config: false,
-    default: '',
-    type: String,
-  });
-
-  game.settings.register('dsa5', 'groupschips', {
-    name: 'DSASETTINGS.groupschips',
-    hint: 'DSASETTINGS.groupschips',
-    scope: 'world',
-    config: false,
-    default: '0/0',
-    type: String,
-    onChange: async () => {
-      if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render();
+    doubleDamageOptions: {
+      name: 'DSASETTINGS.doubleDamageOptions',
+      hint: 'DSASETTINGS.doubleDamageOptionsHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+      requiresReload: true,
     },
-  });
-
-  game.settings.register('dsa5', 'expandChatModifierlist', {
-    name: 'DSASETTINGS.expandChatModifierlist',
-    hint: 'DSASETTINGS.expandChatModifierlistHint',
-    scope: 'client',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'indexWorldItems', {
-    name: 'DSASETTINGS.indexWorldItems',
-    scope: 'client',
-    config: false,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'filterDuplicateItems', {
-    name: 'DSASETTINGS.filterDuplicateItems',
-    scope: 'client',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enableCombatFlow', {
-    name: 'DSASETTINGS.enableCombatFlow',
-    hint: 'DSASETTINGS.enableCombatFlowHint',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-    onchange: () => {
-      if (game.dsa5.apps.initTracker) {
-        game.dsa5.apps.initTracker.close();
-        game.dsa5.apps.initTracker = undefined;
-      }
+    defenseBotchTableEnabled: {
+      name: 'DSASETTINGS.defenseBotchTableEnabled',
+      hint: 'DSASETTINGS.defenseBotchTableEnabledHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'enableCombatPan', {
-    name: 'DSASETTINGS.enableCombatPan',
-    hint: 'DSASETTINGS.enableCombatPanHint',
-    scope: 'client',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enableAPTracking', {
-    name: 'DSASETTINGS.enableAPTracking',
-    hint: 'DSASETTINGS.enableAPTrackingHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'enableMoneyTracking', {
-    name: 'DSASETTINGS.enableMoneyTracking',
-    hint: 'DSASETTINGS.enableMoneyTrackingHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'sightAutomationEnabled', {
-    name: 'sightAutomationEnabled',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'lightSightCompensationEnabled', {
-    name: 'lightSightCompensationEnabled',
-    scope: 'world',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'randomWeaponSelection', {
-    name: 'DSASETTINGS.randomWeaponSelection',
-    hint: 'DSASETTINGS.randomWeaponSelectionHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'showWeaponsOnHover', {
-    name: 'DSASETTINGS.showWeaponsOnHover',
-    hint: 'DSASETTINGS.showWeaponsOnHoverHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'disableDidYouKnow', {
-    name: 'DSASETTINGS.disableDidYouKnow',
-    hint: 'DSASETTINGS.disableDidYouKnowHint',
-    scope: 'client',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'disableTokenhotbar', {
-    name: 'DSASETTINGS.disableTokenhotbar',
-    hint: 'DSASETTINGS.disableTokenhotbarHint',
-    scope: 'client',
-    config: false,
-    default: true,
-    type: Boolean,
-    onChange: (val) => {
-      if (val) game.dsa5.apps.tokenHotbar?.close();
-      else game.dsa5.apps.tokenHotbar?.render(true);
+    higherDefense: {
+      name: 'DSASETTINGS.higherDefense',
+      hint: 'DSASETTINGS.higherDefenseHint',
+      scope: 'world',
+      config: true,
+      default: '0',
+      type: String,
+      choices: {
+        0: '0',
+        2: '+2',
+        4: '+4',
+      },
     },
-  });
-
-  game.settings.register('dsa5', 'disableTokenhotbarMaster', {
-    name: 'DSASETTINGS.disableTokenhotbarMaster',
-    hint: 'DSASETTINGS.disableTokenhotbarMasterHint',
-    scope: 'client',
-    config: false,
-    default: false,
-    type: Boolean,
-    onChange: () => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+    informationDistribution: {
+      name: 'DSASETTINGS.informationDistribution',
+      hint: 'DSASETTINGS.informationDistributionHint',
+      scope: 'world',
+      config: true,
+      default: '0',
+      type: String,
+      choices: {
+        0: 'DSASETTINGS.information0',
+        1: 'DSASETTINGS.information1',
+        2: 'DSASETTINGS.information2',
+      },
     },
-  });
-
-  game.settings.register('dsa5', 'masterCanvasControls', {
-    name: 'DSASETTINGS.masterCanvasControls',
-    hint: 'DSASETTINGS.masterCanvasControls',
-    scope: 'client',
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'scrollingFontsize', {
-    name: 'DSASETTINGS.scrollingFontsize',
-    hint: 'DSASETTINGS.scrollingFontsizeHint',
-    scope: 'client',
-    config: true,
-    default: 16,
-    type: Number,
-    range: {
-      min: 6,
-      max: 50,
-      step: 1,
+    enableItemDropToCanvas: {
+      name: 'DSASETTINGS.enableItemDropToCanvas',
+      hint: 'DSASETTINGS.enableItemDropToCanvasHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'tokenhotbaropacity', {
-    name: 'DSASETTINGS.tokenhotbaropacity',
-    hint: 'DSASETTINGS.tokenhotbaropacityHint',
-    scope: 'client',
-    config: false,
-    default: 0.75,
-    type: Number,
-    range: {
-      min: 0,
-      max: 1,
-      step: 0.05,
+    statusEffectCounterColor: {
+      name: 'DSASETTINGS.statusEffectCounterColor',
+      hint: 'DSASETTINGS.statusEffectCounterColorHint',
+      scope: 'client',
+      config: true,
+      default: '#FFFFFF',
+      type: String,
     },
-    onChange: () => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+    migrationVersion: {
+      name: 'migrationVersion',
+      hint: 'migrationVersion',
+      scope: 'world',
+      config: false,
+      default: NEEDS_MIGRATION_VERSION - 1,
+      type: Number,
     },
-  });
-
-  game.settings.register('dsa5', 'armorAndWeaponDamage', {
-    name: 'DSASETTINGS.armorAndWeaponDamage',
-    hint: 'DSASETTINGS.armorAndWeaponDamageHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'hideRegenerationToOwner', {
-    name: 'DSASETTINGS.hideRegenerationToOwner',
-    hint: 'DSASETTINGS.hideRegenerationToOwnerHint',
-    scope: 'world',
-    config: true,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'indexDescription', {
-    name: 'DSASETTINGS.indexDescription',
-    scope: 'client',
-    config: false,
-    default: true,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'encumbranceForRange', {
-    name: 'DSASETTINGS.encumbranceForRange',
-    hint: 'DSASETTINGS.encumbranceForRangeHint',
-    scope: 'world',
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register('dsa5', 'obfuscateTokenNames', {
-    name: 'DSASETTINGS.obfuscateTokenNames',
-    hint: 'DSASETTINGS.obfuscateTokenNamesHint',
-    scope: 'world',
-    config: true,
-    default: '0',
-    type: String,
-    choices: {
-      0: 'no',
-      1: 'DSASETTINGS.yesNumbered',
-      2: 'DSASETTINGS.renameNumbered',
-      3: 'yes',
-      4: 'DSASETTINGS.rename',
+    journalFontSizeIndex: {
+      name: 'journalFontSizeIndex',
+      hint: 'journalFontSizeIndex',
+      scope: 'client',
+      config: false,
+      default: 5,
+      type: Number,
     },
-  });
-
-  game.settings.register('dsa5', 'merchantNotification', {
-    name: 'DSASETTINGS.merchantNotification',
-    hint: 'DSASETTINGS.merchantNotificationHint',
-    scope: 'world',
-    config: true,
-    default: '0',
-    type: String,
-    choices: {
-      0: 'no',
-      1: 'yes',
-      2: 'MERCHANT.onlyGM',
+    firstTimeStart: {
+      name: 'firstTimeStart',
+      hint: 'firstTimeStart',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
     },
-  });
-
-  game.settings.register('dsa5', 'sightOptions', {
-    name: 'sightOptions',
-    scope: 'world',
-    config: false,
-    default: '0.5|0.7|0.85|0.95',
-    type: String,
-  });
-
-  game.settings.register('dsa5', 'trackedActors', {
-    name: 'sightOptions',
-    scope: 'world',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'enableMasterTokenFunctions', {
-    name: 'enableMasterTokenFunctions',
-    scope: 'world',
-    config: false,
-    default: {},
-    type: Object,
-    onChange: () => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+    defaultConfigFinished: {
+      name: 'defaultConfigFinished',
+      hint: 'defaultConfigFinished',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
     },
-  });
+    dsaTokenRuler: {
+      name: 'DSASETTINGS.dsaTokenRuler',
+      hint: 'DSASETTINGS.dsaTokenRulerHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    tokenizerSetup: {
+      name: 'tokenizerSetup',
+      hint: 'tokenizerSetup',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    diceSetup: {
+      name: 'diceSetup',
+      hint: 'diceSetup',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    capQSat: {
+      name: 'DSASETTINGS.capQSat',
+      hint: 'DSASETTINGS.capQSatHint',
+      scope: 'world',
+      config: true,
+      default: 6,
+      type: Number,
+    },
+    hideEffects: {
+      name: 'DSASETTINGS.hideEffects',
+      hint: 'DSASETTINGS.hideEffectsHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    inventorySound: {
+      name: 'DSASETTINGS.inventorySound',
+      hint: 'DSASETTINGS.inventorySoundHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    talentModifierEnabled: {
+      name: 'DSASETTINGS.talentModifierEnabled',
+      hint: 'DSASETTINGS.talentModifierEnabledHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    noConfirmationRoll: {
+      name: 'DSASETTINGS.noConfirmationRoll',
+      hint: 'DSASETTINGS.noConfirmationRollHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    lessRegeneration: {
+      name: 'DSASETTINGS.lessRegeneration',
+      hint: 'DSASETTINGS.lessRegenerationHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    limitCombatSpecAbs: {
+      name: 'DSASETTINGS.limitCombatSpecAbs',
+      hint: 'DSASETTINGS.limitCombatSpecAbsHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    allowPhysicalDice: {
+      name: 'DSASETTINGS.allowPhysicalDice',
+      hint: 'DSASETTINGS.allowPhysicalDiceHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    enablePauseIcon: {
+      name: 'DSASETTINGS.enablePauseIcon',
+      hint: 'DSASETTINGS.enablePauseIconHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    enableWeaponAdvantages: {
+      name: 'DSASETTINGS.enableWeaponAdvantages',
+      hint: 'DSASETTINGS.enableWeaponAdvantagesHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    hideOpposedDamageSelect: {
+      name: 'DSASETTINGS.hideOpposedDamageSelect',
+      hint: 'DSASETTINGS.hideOpposedDamageSelectHint',
+      scope: 'world',
+      config: true,
+      default: 0,
+      type: Number,
+      choices: {
+        0: 'hideOpposedOptions.0',
+        1: 'hideOpposedOptions.1',
+        2: 'hideOpposedOptions.2',
+      },
+    },
+    enableForeignSpellModifer: {
+      name: 'DSASETTINGS.enableForeignSpellModifer',
+      hint: 'DSASETTINGS.enableForeignSpellModiferHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    playerCanEditSpellMacro: {
+      name: 'DSASETTINGS.playerCanEditSpellMacro',
+      hint: 'DSASETTINGS.playerCanEditSpellMacroHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    enableDPS: {
+      name: 'DSASETTINGS.enableDPS',
+      hint: 'DSASETTINGS.enableDPSHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    attackFromBehindAngle: {
+      name: 'DSASETTINGS.attackFromBehindAngle',
+      hint: 'DSASETTINGS.attackFromBehindAngleHint',
+      scope: 'world',
+      config: false,
+      default: 100,
+      type: Number,
+      range: {
+        min: 0,
+        max: 360,
+        step: 5,
+      },
+    },
+    iniTrackerSize: {
+      name: 'DSASETTINGS.iniTrackerSize',
+      hint: 'DSASETTINGS.iniTrackerSizeHint',
+      scope: 'client',
+      config: true,
+      default: 70,
+      type: Number,
+      range: {
+        min: 30,
+        max: 140,
+        step: 5,
+      },
+    },
+    iniTrackerCount: {
+      name: 'DSASETTINGS.iniTrackerCount',
+      hint: 'DSASETTINGS.iniTrackerCountHint',
+      scope: 'client',
+      config: true,
+      default: 5,
+      type: Number,
+      range: {
+        min: 3,
+        max: 25,
+        step: 1,
+      },
+      onChange: async (val) => {
+        if (game.dsa5.apps.initTracker) game.dsa5.apps.initTracker.constructor.defaultOptions.actorCount = val;
+      },
+    },
+    tokenhotbarSize: {
+      name: 'DSASETTINGS.tokenhotbarSize',
+      hint: 'DSASETTINGS.tokenhotbarSizeHint',
+      scope: 'client',
+      config: false,
+      default: 35,
+      type: Number,
+      range: {
+        min: 15,
+        max: 100,
+        step: 5,
+      },
+      onChange: () => {
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      },
+    },
+    tokenhotbarLayout: {
+      name: 'DSASETTINGS.tokenhotbarLayout',
+      hint: 'DSASETTINGS.tokenhotbarLayoutHint',
+      scope: 'client',
+      config: false,
+      default: 0,
+      type: Number,
+      choices: {
+        0: 'DSASETTINGS.tokenhotbarLayout0',
+        1: 'DSASETTINGS.tokenhotbarLayout1',
+        2: 'DSASETTINGS.tokenhotbarLayout2',
+        3: 'DSASETTINGS.tokenhotbarLayout3',
+      },
+      onChange: async (val) => {
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      },
+    },
+    calendar: {
+      name: 'DSASETTINGS.calendar',
+      hint: 'DSASETTINGS.calendarHint',
+      scope: 'world',
+      config: true,
+      default: 'default',
+      requiresReload: true,
+      type: new foundry.data.fields.StringField({ choices: DSAWorldCalendar.collectCalendars(), required: true }),
+    },
+    calendarSettings: {
+      name: 'DSASETTINGS.calendarSettings',
+      scope: 'world',
+      config: false,
+      default: {
+        "dawn": 5,
+        "morning": 7,
+        "noon": 11,
+        "afternoon": 16,
+        "sunset": 19,
+        "night": 21,
+        "lightByDayTime": false,
+        "moonAddsLight": false,
+        "moon": {
+          "darknessAdjust": 0.15,
+        },
+        "dayDarknessAdjust": {
+          "dawn": 0.55,
+          "morning": 0.2,
+          "noon": 0,
+          "afternoon": 0,
+          "sunset": 0.55,
+          "night": 0.95,
+        }
+      },
+      type: Object,
+    },
+    calendarJournals: {
+      name: 'DSASETTINGS.calendarJournals',
+      scope: 'world',
+      config: false,
+      default: {
+        activated: []
+      },
+      type: Object,
+    },
+    moneyKompendium: {
+      name: 'DSASETTINGS.moneyKompendium',
+      hint: 'DSASETTINGS.moneyKompendiumHint',
+      scope: 'world',
+      config: true,
+      default: '',
+      type: new foundry.data.fields.StringField({ choices: moneyChoices }),
+      onChange: async (val) => {
+        const pack = game.packs.get(val);
+        if (!pack) return;
 
-  game.settings.register('dsa5', 'selectedActors', {
-    name: 'selectedActors',
-    scope: 'world',
-    config: false,
-    default: {},
-    type: Object,
-  });
-
-  game.settings.register('dsa5', 'expansionPermissions', {
-    name: 'expansionPermissions',
-    scope: 'world',
-    config: false,
-    default: {},
-    type: Object,
-  });
+        ui.notifications.info(
+          pack.index
+            .filter((x) => x.type == 'money')
+            .map((x) => x.name)
+            .join(', '),
+        );
+      },
+    },
+    moneyHasWeight: {
+      name: 'DSASETTINGS.moneyHasWeight',
+      hint: 'DSASETTINGS.moneyHasWeightHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+      requiresReload: true,
+    },
+    globalStyle: {
+      name: 'DSASETTINGS.globalStyle',
+      hint: 'DSASETTINGS.globalStyleHint',
+      scope: 'client',
+      config: true,
+      default: 'dsa5-immersive',
+      type: String,
+      choices: styles,
+      onChange: async (val) => {
+        $('body').removeClass(Object.keys(styles).join(' ')).addClass(val);
+      },
+    },
+    selfControlOnPain: {
+      name: 'DSASETTINGS.selfControlOnPain',
+      hint: 'DSASETTINGS.selfControlOnPainHint',
+      scope: 'world',
+      config: true,
+      default: 1,
+      type: Number,
+      choices: {
+        0: 'DSASETTINGS.selfControlOnPain0',
+        1: 'DSASETTINGS.selfControlOnPain1',
+        2: 'DSASETTINGS.selfControlOnPain2',
+      },
+    },
+    forceLanguage: {
+      name: 'DSASETTINGS.forceLanguage',
+      hint: 'DSASETTINGS.forceLanguageHint',
+      scope: 'world',
+      config: true,
+      default: 'none',
+      type: String,
+      choices: {
+        none: '-',
+        de: 'German',
+        en: 'English',
+      },
+    },
+    hotbarv3: {
+      name: 'DSASETTINGS.hotbarv3',
+      hint: 'DSASETTINGS.hotbarv3Hint',
+      scope: 'client',
+      config: false,
+      default: true,
+      type: Boolean,
+      onChange: () => {
+        ui.hotbar.render(true);
+      },
+    },
+    libraryModulsFilter: {
+      name: 'libraryModulsFilter',
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    tokenhotbarPosition: {
+      name: 'tokenhotbarPosition',
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    masterSettings: {
+      name: 'masterSettings',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    iniTrackerPosition: {
+      name: 'iniTrackerPosition',
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    soundConfig: {
+      name: 'DSASETTINGS.soundConfig',
+      hint: 'DSASETTINGS.soundConfigHint',
+      scope: 'world',
+      config: true,
+      default: '',
+      type: String,
+      onChange: async () => {
+        DSA5SoundEffect.loadSoundConfig();
+      },
+    },
+    changelog: {
+      name: 'Changelog',
+      label: 'Changelog',
+      hint: 'DSASETTINGS.changelog',
+      type: ChangelogForm,
+      restricted: false,
+    },
+    exportConfiguration: {
+      name: 'Export/Import Configuration',
+      label: 'Export/Import Configuration',
+      hint: 'DSASETTINGS.exportConfiguration',
+      type: ExportForm,
+      restricted: true,
+    },
+    configureTokenbar: {
+      name: 'DSASETTINGS.configureTokenbar',
+      label: 'DSASETTINGS.configureTokenbar',
+      hint: 'DSASETTINGS.configureTokenbarHint',
+      type: ConfigureTokenHotbar,
+      restricted: false,
+    },
+    [`breadcrumbs_${game.world.id}`]: {
+      name: 'DSASETTINGS.breadcrumbs',
+      hint: 'DSASETTINGS.breadcrumbsHint',
+      scope: 'client',
+      config: false,
+      default: '',
+      type: String,
+    },
+    groupschips: {
+      name: 'DSASETTINGS.groupschips',
+      hint: 'DSASETTINGS.groupschips',
+      scope: 'world',
+      config: false,
+      default: '0/0',
+      type: String,
+      onChange: async () => {
+        if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render();
+      },
+    },
+    expandChatModifierlist: {
+      name: 'DSASETTINGS.expandChatModifierlist',
+      hint: 'DSASETTINGS.expandChatModifierlistHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    indexWorldItems: {
+      name: 'DSASETTINGS.indexWorldItems',
+      scope: 'client',
+      config: false,
+      default: true,
+      type: Boolean,
+    },
+    filterDuplicateItems: {
+      name: 'DSASETTINGS.filterDuplicateItems',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    enableCombatFlow: {
+      name: 'DSASETTINGS.enableCombatFlow',
+      hint: 'DSASETTINGS.enableCombatFlowHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+      onchange: () => {
+        if (game.dsa5.apps.initTracker) {
+          game.dsa5.apps.initTracker.close();
+          game.dsa5.apps.initTracker = undefined;
+        }
+      },
+    },
+    enableCombatPan: {
+      name: 'DSASETTINGS.enableCombatPan',
+      hint: 'DSASETTINGS.enableCombatPanHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    enableAPTracking: {
+      name: 'DSASETTINGS.enableAPTracking',
+      hint: 'DSASETTINGS.enableAPTrackingHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    enableMoneyTracking: {
+      name: 'DSASETTINGS.enableMoneyTracking',
+      hint: 'DSASETTINGS.enableMoneyTrackingHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    sightAutomationEnabled: {
+      name: 'sightAutomationEnabled',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    lightSightCompensationEnabled: {
+      name: 'lightSightCompensationEnabled',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    randomWeaponSelection: {
+      name: 'DSASETTINGS.randomWeaponSelection',
+      hint: 'DSASETTINGS.randomWeaponSelectionHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    showWeaponsOnHover: {
+      name: 'DSASETTINGS.showWeaponsOnHover',
+      hint: 'DSASETTINGS.showWeaponsOnHoverHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    disableDidYouKnow: {
+      name: 'DSASETTINGS.disableDidYouKnow',
+      hint: 'DSASETTINGS.disableDidYouKnowHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    disableTokenhotbar: {
+      name: 'DSASETTINGS.disableTokenhotbar',
+      hint: 'DSASETTINGS.disableTokenhotbarHint',
+      scope: 'client',
+      config: false,
+      default: true,
+      type: Boolean,
+      onChange: (val) => {
+        if (val) game.dsa5.apps.tokenHotbar?.close();
+        else game.dsa5.apps.tokenHotbar?.render(true);
+      },
+    },
+    disableTokenhotbarMaster: {
+      name: 'DSASETTINGS.disableTokenhotbarMaster',
+      hint: 'DSASETTINGS.disableTokenhotbarMasterHint',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+      onChange: () => {
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      },
+    },
+    masterCanvasControls: {
+      name: 'DSASETTINGS.masterCanvasControls',
+      hint: 'DSASETTINGS.masterCanvasControls',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    scrollingFontsize: {
+      name: 'DSASETTINGS.scrollingFontsize',
+      hint: 'DSASETTINGS.scrollingFontsizeHint',
+      scope: 'client',
+      config: true,
+      default: 16,
+      type: Number,
+      range: {
+        min: 6,
+        max: 50,
+        step: 1,
+      },
+    },
+    tokenhotbaropacity: {
+      name: 'DSASETTINGS.tokenhotbaropacity',
+      hint: 'DSASETTINGS.tokenhotbaropacityHint',
+      scope: 'client',
+      config: false,
+      default: 0.75,
+      type: Number,
+      range: {
+        min: 0,
+        max: 1,
+        step: 0.05,
+      },
+      onChange: () => {
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      },
+    },
+    armorAndWeaponDamage: {
+      name: 'DSASETTINGS.armorAndWeaponDamage',
+      hint: 'DSASETTINGS.armorAndWeaponDamageHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    hideRegenerationToOwner: {
+      name: 'DSASETTINGS.hideRegenerationToOwner',
+      hint: 'DSASETTINGS.hideRegenerationToOwnerHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
+    indexDescription: {
+      name: 'DSASETTINGS.indexDescription',
+      scope: 'client',
+      config: false,
+      default: true,
+      type: Boolean,
+    },
+    encumbranceForRange: {
+      name: 'DSASETTINGS.encumbranceForRange',
+      hint: 'DSASETTINGS.encumbranceForRangeHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
+    obfuscateTokenNames: {
+      name: 'DSASETTINGS.obfuscateTokenNames',
+      hint: 'DSASETTINGS.obfuscateTokenNamesHint',
+      scope: 'world',
+      config: true,
+      default: '0',
+      type: String,
+      choices: {
+        0: 'no',
+        1: 'DSASETTINGS.yesNumbered',
+        2: 'DSASETTINGS.renameNumbered',
+        3: 'yes',
+        4: 'DSASETTINGS.rename',
+      },
+    },
+    merchantNotification: {
+      name: 'DSASETTINGS.merchantNotification',
+      hint: 'DSASETTINGS.merchantNotificationHint',
+      scope: 'world',
+      config: true,
+      default: '0',
+      type: String,
+      choices: {
+        0: 'no',
+        1: 'yes',
+        2: 'MERCHANT.onlyGM',
+      },
+    },
+    sightOptions: {
+      name: 'sightOptions',
+      scope: 'world',
+      config: false,
+      default: '0.5|0.7|0.85|0.95',
+      type: String,
+    },
+    trackedActors: {
+      name: 'trackedActors',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    enableMasterTokenFunctions: {
+      name: 'enableMasterTokenFunctions',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+      onChange: () => {
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      },
+    },
+    selectedActors: {
+      name: 'selectedActors',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+    },
+    expansionPermissions: {
+      name: 'expansionPermissions',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+    }
+  };
+  for (const [key, value] of Object.entries(settings)) {
+    game.settings.register('dsa5', key, value);
+  }
 }
 
 const exportSetting = (form) => {

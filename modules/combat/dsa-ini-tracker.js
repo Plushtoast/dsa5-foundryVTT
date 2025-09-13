@@ -28,6 +28,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       toggleDefeated: this.#onCombatantControl,
       toggleHidden: this.#onCombatantControl,
       activateCombatant: this.#onCombatantMouseDown,
+      rolledInit: this.#editCombatant,
     },
     classes: ['dsa5', 'initTracker'],
   };
@@ -193,7 +194,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const html = $(this.element);
 
     const container = html.find('.dragHandler');
-    new foundry.applications.ux.Draggable(this, html, container[0], this.options.resizable);
+    new foundry.applications.ux.Draggable(this, this.element, container[0], this.options.resizable);
 
     container.on('wheel', async (ev) => {
       ev.stopPropagation();
@@ -206,10 +207,6 @@ export default class DSAIniTracker extends DefaultAppv2 {
     turns.on('pointerover', this._onCombatantHoverIn.bind(this))
     turns.on('pointerout', this._onCombatantHoverOut.bind(this));
     turns.on('dblclick', this._onCombatantMouseDown.bind(this));
-
-    if (!game.user.isGM) return;
-
-    html.find('.rolledInit').on('click', (ev) => this.editCombatant(ev));
   }
 
   static rollMyChars() {
@@ -267,7 +264,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     ui.combat._onCombatantMouseDown(ev, target);
   }
 
-  editCombatant(ev) {
+  static #editCombatant(ev) {
+    if(!game.user.isGM) return;
+    
     ui.combat.viewed.combatants.get(ev.currentTarget.dataset.combatantId)?.sheet.render(true)
   }
 
