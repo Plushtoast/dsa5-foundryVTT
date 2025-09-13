@@ -2772,11 +2772,6 @@ h2 {
   width: 3px;
 }
 
-.initTracker .item-structure {
-  top: -102%;
-  border-color: rgb(14, 12, 12);
-}
-
 .item-structure {
   border: 0.5px solid var(--bg-color);
   height: 100%;
@@ -3594,18 +3589,6 @@ select.noAppearance {
   }
 }
 
-.initTracker .combatant-advanced {
-  .actions {
-    right: 0;
-    left: unset;
-  }
-
-  .ongoing {
-    bottom: 4px;
-    top: unset;
-  }
-}
-
 .combatant-advanced i {
   &.reversed {
     transform: scaleX(-1);
@@ -3621,16 +3604,6 @@ select.noAppearance {
     color: white;
     font-size: 10px;
     line-height: 12px;
-  }
-}
-
-.initTracker .combatant-advanced {
-  height: var(--iniTrackerSize);
-
-  i {
-    left: 4px;
-    bottom: 4px;
-    right: unset;
   }
 }
 
@@ -3704,16 +3677,13 @@ select.noAppearance {
   text-align: center;
   line-height: var(--tokenQuickhotsize);
   float: right;
-}
 
-.initTracker .dragHandler:hover {
-  color: white;
+  &:hover {
+    color: white;
+  }
 }
 
 .tokenQuickHot {
-  .dragHandler:hover {
-    color: white;
-  }
 
   a {
     box-shadow: inset 0px 0px 10px #403014;
@@ -3754,144 +3724,8 @@ select.noAppearance {
   line-height: 28px;
 }
 
-.initTracker .waitingTackerList li {
-  width: calc(var(--iniTrackerSize) * 0.5);
-  height: calc(var(--iniTrackerSize) * 0.5);
-}
-
-.waitingTackerList {
-  position: absolute;
-  top: calc(var(--iniTrackerSize) * -0.5);
-  left: 30px;
-}
-
 .temporaryInitiative {
   color: var(--color-text-secondary);
-}
-
-.initTracker {
-  position: absolute;
-
-  .iniItem.newRound,
-  .newRound {
-    border-color: #496fd7;
-    background-color: #496fd72d;
-    box-shadow: inset 0px 0px 10px #496fd7;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-
-    .iniNumber {
-      border-top-left-radius: 0px;
-      border-bottom-left-radius: 0px;
-    }
-  }
-
-  .turnRound {
-    padding: 2px;
-    border-radius: 100%;
-    width: 21px;
-    display: inline-block;
-  }
-
-  .newRound .turnRound {
-    background-color: #496fd7;
-  }
-
-  .waitTitle {
-    background-image: none;
-
-    i {
-      float: left;
-      width: 100%;
-      line-height: calc(var(--iniTrackerSize) * 0.5);
-      text-align: center;
-      color: white;
-    }
-  }
-
-  li {
-    box-shadow: none;
-    border: 1px solid transparent;
-    background-color: transparent;
-    cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-
-    .roll:before {
-      position: absolute;
-      content: '6';
-      color: white;
-      left: 0;
-      right: 0;
-      top: 0px;
-      bottom: 0;
-      text-align: center;
-    }
-  }
-
-  .token-initiative {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
-  }
-
-  .aggroButton {
-    left: 0;
-    right: 0;
-    margin: 0 auto 0;
-    bottom: 0;
-  }
-
-  li {
-    .roll {
-      position: relative;
-      display: block;
-      width: 25px;
-      height: 25px;
-      background: url('../../icons/dice/d6white.svg') no-repeat 50% 50%;
-      margin: 0 auto;
-    }
-
-    &.active {
-      border-color: white;
-      box-shadow: inset 0px 0px 10px white;
-    }
-
-    &.defeated,
-    &.hidden {
-      opacity: 0.5;
-    }
-
-    &.defeated {
-      background-size: 75% 75%;
-      background-position: center;
-    }
-  }
-}
-
-.iniTrackerList {
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-
-  li:last-child {
-    margin-bottom: 0.25rem;
-  }
-}
-
-.initTracker {
-  .dragHandler {
-    width: 15px;
-    background: none;
-    border: none;
-    line-height: var(--iniTrackerSize);
-  }
-
-  li {
-    width: var(--iniTrackerSize);
-    height: var(--iniTrackerSize);
-  }
 }
 
 #hotbar .skillItems li:hover,
@@ -4077,72 +3911,6 @@ select.noAppearance {
   &.initTracker,
   &.tokenQuickHot {
     padding: 0;
-  }
-}
-
-.initTracker {
-  &:hover .iniDetailsList {
-    display: block;
-  }
-}
-
-.iniDetailsList {
-  margin: 10px 29px 0 29px;
-  padding: 0;
-  display: none;
-
-  li {
-    text-align: center;
-    color: white;
-    background: none;
-
-    .iniNumber button {
-      width: 100%;
-    }
-  }
-
-  .token-effects {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 5px 0;
-    min-height: 30px;
-
-    img {
-      width: 20px;
-      border: none;
-      box-shadow: 0px 0px 10px #000 inset;
-    }
-  }
-}
-
-.initTracker {
-  .hoverbuttons {
-    color: white;
-    position: absolute;
-    right: 0;
-    top: 25%;
-    opacity: 0;
-    transform: opacity 0.3s;
-  }
-
-  li:hover .hoverbuttons {
-    opacity: 1;
-  }
-
-  .controls {
-    i {
-      color: white;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 5px;
-    }
-
-    &.right {
-      text-align: right;
-    }
-  }
-
-  button {
-    line-height: 21px;
   }
 }
 
@@ -5442,7 +5210,7 @@ input[type='checkbox'].autoCheckbox {
 }
 
 
-
+@include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');
 @include meta.load-css('theme-dark.scss');
