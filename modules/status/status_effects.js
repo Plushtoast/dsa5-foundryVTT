@@ -111,22 +111,32 @@ export default class DSA5StatusEffects {
     }
   }
 
-  static async enrichSheetEffect(effect, _sourceEffect) {
-    effect.pips = [];
+  static async enrichSheetEffect(effectData, sourceEffect) {
+    effectData.pips = [];
 
-    if (_sourceEffect.duration.type === 'seconds') {
-      effect.pips.push(`<i class="fas fa-clock"></i> ${await game.time.calendar.format(_sourceEffect.duration.remaining, 'formatRemaining')}`);
-    } else if (_sourceEffect.duration.type !== 'none') {
-      effect.pips.push(`<i class="fas fa-clock"></i> ${_sourceEffect.duration.label}`);
+    if (sourceEffect.duration.type === 'seconds') {
+      effectData.pips.push({
+        content: `<i class="fas fa-clock"></i> ${await game.time.calendar.format(sourceEffect.duration.remaining, 'formatRemaining')}`
+      });
+    } else if (sourceEffect.duration.type !== 'none') {
+      effectData.pips.push({
+        content: `<i class="fas fa-clock"></i> ${sourceEffect.duration.label}`
+      });
     }
 
-    for (const status of effect.statuses) {
+    for (const status of sourceEffect.statuses) {
       const systemEffect = CONFIG.statusEffects.find(stat => stat.id == status)
-      effect.pips.push(game.i18n.localize(systemEffect.name));
+      effectData.pips.push({
+        category: 'systemEffect',
+        id: status,
+        content: game.i18n.localize(systemEffect.name)
+      });
     }
 
-    if (effect.system.delayed) {
-      effect.pips.push(`<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>`);
+    if (sourceEffect.system.delayed) {
+      effectData.pips.push({
+        content: `<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>`
+      });
     }
   }
 

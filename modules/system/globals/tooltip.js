@@ -1,3 +1,5 @@
+import DSA5StatusEffects from "../../status/status_effects.js";
+
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class GlobalToolTipHandler {
@@ -13,30 +15,36 @@ export class GlobalToolTipHandler {
         let description;
 
         switch (category) {
+            case 'systemEffect':
+                ({ description, name } = await GlobalToolTipHandler._handleEffectTooltip(data, actor));
+                break;
             case 'skillgm':
-                ({ tooltip } = await this._handleSkillGmTooltip(data));
+                ({ tooltip } = await GlobalToolTipHandler._handleSkillGmTooltip(data));
                 break;
             case 'effect':
-                ({ description, name } = await this._handleEffectTooltip(data, actor));
+                ({ description, name } = await GlobalToolTipHandler._handleEffectTooltip(data, actor));
                 break;
             case 'onUse':
-                ({ description } = await this._handleOnUseTooltip(data, actor));
+                ({ description } = await GlobalToolTipHandler._handleOnUseTooltip(data, actor));
                 break;
             case 'unequipped':
             case 'consumable':
             case 'weapon':
             case 'spell':
-                ({ description } = await this._handleItemTooltip(data, actor));
+                ({ description } = await GlobalToolTipHandler._handleItemTooltip(data, actor));
                 break;
             case 'enchantment':
-                ({ description, name } = await this._handleEnchantmentTooltip(data, actor));
+                ({ description, name } = await GlobalToolTipHandler._handleEnchantmentTooltip(data, actor));
                 break;
             default:
                 return;
         }
 
-        if (description) {
-            tooltip = `<div class="itemTooltip"><h1>${name}</h1>${description}</div>`;
+        if (name || description) {
+            const parts = [];
+            if (name) parts.push(`<h1>${name}</h1>`);
+            if (description) parts.push(description);
+            tooltip = `<div class="itemTooltip">${parts.join('')}</div>`;
         }
 
         if (!tooltip) return;
@@ -45,8 +53,8 @@ export class GlobalToolTipHandler {
             html: tooltip,
             cssClass: 'dsatooltip'
         });
-        target.dataset.tooltip = tooltip;
-        target.dataset.tooltipClass = 'dsatooltip';
+        target.dataset.tooltipHtml = tooltip;
+        target.dataset.tooltipClass = 'dsatooltip';        
     }
 
     static async _handleSkillGmTooltip(data) {
@@ -67,7 +75,16 @@ export class GlobalToolTipHandler {
                 name = game.i18n.localize(effect.name);
             }
         } else {
+            const pips = {};
+            await DSA5StatusEffects.enrichSheetEffect(pips, effect);
             description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
+            if (pips.pips.length) {
+                description = `
+                <small class="flexrow gap2px ellipsis">
+                    ${pips.pips.map(pip => `<small class="smallBoxItem flex0">${pip.content}</small>`).join('')}
+                </small>
+                <p>${description}</p>`;
+            }
             name = effect.name;
         }
 

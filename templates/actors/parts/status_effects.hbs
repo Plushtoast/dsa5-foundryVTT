@@ -76,7 +76,7 @@
                     </div>
                     <small class="flexrow gap2px ellipsis">
                         {{#each item.pips as |pip|}}
-                        <small class="smallBoxItem flex0">{{{pip}}}</small>
+                        <small class="smallBoxItem flex0 gTooltip" data-category="{{pip.category}}" data-id="{{pip.id}}">{{{pip.content}}}</small>
                         {{/each}}
                     </small>
                 </div>
