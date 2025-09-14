@@ -29,13 +29,17 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     CONFIG.time.turnTime = 0;
   }
 
-  translate(key, basicKey = false) {
+  translate(key, basicKey = false, returnNothingIfMissing = false) {
     let translationKey = `CALENDAR.DSA.${key}`;
     if (!basicKey) {
       const customKey = `${this.translationPrefix}.${key}`;
       if (game.i18n.has(customKey)) {
         translationKey = customKey;
       }
+    }
+    const hasTranslation = game.i18n.has(translationKey);
+    if (!hasTranslation && returnNothingIfMissing) {
+      return '';
     }
     return game.i18n.localize(translationKey);
   }

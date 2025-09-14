@@ -119,6 +119,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         to: {
           dayOfMonth: holiday.dayEnd ? holiday.dayEnd + 1 : undefined,
         },
+        content: game.time.calendar.translate(`holidayDesc.${holiday.name}`, false, true),
         category: 1,
         juuid: 'dC',
         visible: true,
