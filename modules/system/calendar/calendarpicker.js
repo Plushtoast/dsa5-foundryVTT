@@ -83,15 +83,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const year = components.year;
     const validJournals = journals.filter(Boolean);
     const entries = await Promise.all(validJournals
-      .flatMap(journal =>
-        journal.pages.filter(page =>
-          page.type === 'dsacalendar' &&
-          (game.user.isGM || page.system.visible)
-        )
-      )
+      .flatMap(journal => journal.pages.filter(page => page.type === 'dsacalendar'))
       .flatMap(page =>
         Object.entries(page.system.calendarentries)
-          .filter(([_key, entry]) => (entry.recurring && entry.from.year <= year) || (!entry.recurring && entry.from.year === year))
+          .filter(([_key, entry]) => {
+            if (!game.user.isGM && !entry.visible) return false;
+            if (entry.recurring && entry.from.year <= year) return true;
+            if (!entry.recurring && entry.from.year === year) return true;
+            return false;
+          })
           .map(async ([key, entry]) => {
             await DSACalendarEntry.prepareCalendarEntry(entry);
             entry.isOwner = page.isOwner;
@@ -138,6 +138,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const parts = super._configureRenderParts(options);
     if (!game.user.isGM) delete parts.config;
     return parts;
+  }
+
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if (!game.user.isGM) delete tabs.config;
+    return tabs;
   }
 
   static async #addJournal(ev, target) {
@@ -268,16 +274,18 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _prepareConfigContext(context, options) {
     const calendar = game.time.calendar;
+    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
+
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
     context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
-    context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
   }
 
   async _prepareCalendarContext(context, options) {
     const calendar = game.time.calendar;
     if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+
     context.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
     context.currentMonth = calendar.translate(calendar.months.values[context.components.month].name);
     context.currentDay = context.components.dayOfMonth + 1;
@@ -287,6 +295,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareEventsContext(context, options) {
     const calendar = game.time.calendar;
     if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
 
     const currentDateValue = context.components.month * 100 + context.components.dayOfMonth;
     context.sortedEntries = (await DSACalendarPicker.fromCache(context.components))
@@ -321,7 +330,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.element.querySelectorAll('.settingChange').forEach(element => {
       element.addEventListener('change', this._onSettingChange.bind(this));
     });
-    this.element.querySelector('[name="dsa5.calendar"]').addEventListener('change', this._onChangeCalendar.bind(this));
+    this.element.querySelector('[name="dsa5.calendar"]')?.addEventListener('change', this._onChangeCalendar.bind(this));
 
     this._drawCalendar();
 
