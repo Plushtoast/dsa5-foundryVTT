@@ -113,7 +113,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       conjurationType: 1,
       skills: {
         1: ['invocatioMinima', 'invocatioMinor', 'invocatioMaior'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`)),
-        2: ['manifesto', 'elementalServant', 'callDjinn', 'servantEarth', 'servantFlame', 'servantCold', 'servantWave', 'servantCloud', 'servantOre'].map((x) =>
+        2: ['manifesto', 'elementalServant', 'callDjinn', 'elementalAlly', 'servantEarth', 'servantFlame', 'servantCold', 'servantWave', 'servantCloud', 'servantOre'].map((x) =>
           game.i18n.localize(`LocalizedIDs.${x}`),
         ),
       },
