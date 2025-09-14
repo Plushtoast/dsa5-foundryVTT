@@ -20,6 +20,9 @@ export default class DSA5Dialog extends DialogShared {
       case 'liturgy':
       case 'ceremony':
         renderData.rollModifiers = DSA5SpellDialog.setData(actor, type, renderData);
+        renderData.statuses = {
+          muted: actor.statuses.has('mute'),
+        };
         return DSA5SpellDialog;
       case 'skill':
         return DSA5SkillDialog;
