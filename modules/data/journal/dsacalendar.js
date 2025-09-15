@@ -1,4 +1,6 @@
 export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
+    static SETTING_NAME = 'calendarJournals';
+
     static CATEGORY_CHOICES = {
         0: "dsacalendar.CATEGORIES.general",
         1: "dsacalendar.CATEGORIES.holidays",

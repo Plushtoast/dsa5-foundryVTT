@@ -53,7 +53,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
                 entry.from.max = calendar.months.values[entry.from.month].days + 1;
             }
         }
-        context.isRegistered = game.settings.get('dsa5', 'calendarJournals').activated.some(x => x.uuid == this.document.parent.uuid);
+        context.isRegistered = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
         context.isGM = game.user.isGM;
         return context;
     }
@@ -76,14 +76,14 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         if (showInCalendar) {
             showInCalendar.addEventListener('change', (event) => {
                 const isChecked = event.target.checked;
-                const settings = game.settings.get('dsa5', 'calendarJournals');
+                const settings = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
                 if (isChecked) {
                     settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
                 } else {
                     settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
                 }
                 game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
-                game.settings.set('dsa5', 'calendarJournals', settings);
+                game.settings.set('dsa5', DSACalendarEntry.SETTING_NAME, settings);
             });
         }
 

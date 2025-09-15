@@ -21,7 +21,7 @@ export class PersonaeDramatis {
 
     async _preparePartContext(context, options) {
         const isGM = game.user.isGM;
-        const actorSettings = game.settings.get('dsa5', 'calendarActors') || { activated: [] };
+        const actorSettings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME) || { activated: [] };
         const activated = actorSettings.activated;
 
         const journals = (await Promise.all(activated.map(async j => {

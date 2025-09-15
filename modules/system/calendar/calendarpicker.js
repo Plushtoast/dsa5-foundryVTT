@@ -3,6 +3,7 @@ import { CalendarCanvas } from './calendarcanvas.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { PersonaeDramatis } from './personaedramatis.js';
+import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
@@ -81,7 +82,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   static async fromCache(components) {
     if (this.#cached) return this.#cached;
 
-    const journalSettings = game.settings.get('dsa5', 'calendarJournals');
+    const journalSettings = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
     const activated = journalSettings.activated || [];
 
     const loaded = await Promise.allSettled(activated.map(j => fromUuid(j.uuid)));
@@ -175,8 +176,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (container.children.length == 0) {
       const activated = new Set(game.settings.get('dsa5', setting).activated.map(x => x.uuid));
       const category = {
-        'calendarJournals': 'dsacalendar',
-        'calendarActors': 'dsapersonaedramatis',
+        [DSACalendarEntry.SETTING_NAME]: 'dsacalendar',
+        [DSAPersonaEntry.SETTING_NAME]: 'dsapersonaedramatis',
       }[setting]
       const possibleJournals = game.journal.filter(j => {
         return !activated.has(j.uuid) && (j.pages || []).some(p => p.type === category);
@@ -265,7 +266,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   static invalidateCache(uuid) {
     if (uuid) {
-      const activated = game.settings.get('dsa5', 'calendarJournals').activated;
+      const activated = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME).activated;
       if (!activated.some(el => el.uuid === uuid)) return
     }
     game.socket.emit('system.dsa5', {
@@ -304,9 +305,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _prepareConfigContext(context, options) {
     const calendar = game.time.calendar;
-    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
+    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
     
-    context.calendarActors = game.settings.get('dsa5', 'calendarActors');
+    context.calendarActors = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
@@ -327,7 +328,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareEventsContext(context, options) {
     const calendar = game.time.calendar;
     if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
-    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
+    if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
 
     const currentDateValue = context.components.month * 100 + context.components.dayOfMonth;
     context.sortedEntries = (await DSACalendarPicker.fromCache(context.components))

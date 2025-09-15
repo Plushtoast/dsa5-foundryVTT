@@ -50,6 +50,7 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
             }
         }
         context.isGM = game.user.isGM;
+        context.isRegistered = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
         return context;
     }
 
@@ -59,6 +60,21 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
         if (this.#scrollToId) {
             this.element.querySelector(`[data-id="${this.#scrollToId}"]`)?.scrollIntoView({ behavior: "smooth" });
             this.#scrollToId = null;
+        }
+
+        const showInCalendar = this.element.querySelector('.showInCalendar');
+        if (showInCalendar) {
+            showInCalendar.addEventListener('change', (event) => {
+                const isChecked = event.target.checked;
+                const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
+                if (isChecked) {
+                    settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
+                } else {
+                    settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
+                }
+                game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
+                game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
+            });
         }
 
         this.#search ??= new foundry.applications.ux.SearchFilter({

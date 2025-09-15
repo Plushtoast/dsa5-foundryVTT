@@ -1,6 +1,8 @@
 const { TextEditor } = foundry.applications.ux;
 
 export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
+    static SETTING_NAME = 'calendarActors';
+    
     static TYPE_CHOICES = {
         0: "PERSONAE.FIELDS.personae.type.choices.person",
         1: "PERSONAE.FIELDS.personae.type.choices.creature"
