@@ -26,6 +26,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 faction: new StringField({ label: "PERSONAE.FIELDS.personae.faction.label", hint: "PERSONAE.FIELDS.personae.faction.hint" }),
                 tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint"}),
                 img: new FilePathField({ categories: ["IMAGE"] }),
+                subtitle: new StringField({ label: "PERSONAE.FIELDS.personae.subtitle.label" }),
             })),
         }
     }
@@ -52,7 +53,11 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             entry.type = isCreature ? 1 : 0;
 
             if (isCreature) {
-                entry.faction = actor.system.creatureClass.value.split(',')[0].trim();
+                const creatureData = actor.system.creatureClass.value.split(',');
+                entry.faction = creatureData[0].trim();
+                entry.subtitle = creatureData[1]?.trim() || "";
+            } else {
+                entry.subtitle = actor.system.details?.career.value || "";
             }
         }
     }

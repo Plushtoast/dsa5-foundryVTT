@@ -1452,6 +1452,9 @@
                         "creature": "Bestie"
                     }
                 },
+                "subtitle": {
+                    "label": "Untertitel"
+                },
                 "description": {
                     "label": "Beschreibung"
                 },

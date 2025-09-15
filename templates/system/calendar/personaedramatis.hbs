@@ -45,10 +45,11 @@
                                 </div>
                                 <div class="persona-list-info">
                                     <h5 class="persona-list-name">{{name}}</h5>
-                                    <p class="persona-list-title">{{system.details.biography.title}}</p>
+                                    {{#if subtitle}}
                                     <div class="persona-list-meta">
-                                        <span class="persona-type">{{type}}</span>
+                                        <span class="persona-type">{{subtitle}}</span>
                                     </div>
+                                    {{/if}}
                                 </div>
                                 <div class="persona-list-status">
                                     <i class="fas fa-chevron-right"></i>
@@ -87,10 +88,11 @@
                                 </div>
                                 <div class="persona-list-info">
                                     <h5 class="persona-list-name">{{name}}</h5>
-                                    <p class="persona-list-title">{{system.details.biography.title}}</p>
+                                    {{#if subtitle}}
                                     <div class="persona-list-meta">
-                                        <span class="persona-type">{{type}}</span>
+                                        <span class="persona-type">{{subtitle}}</span>
                                     </div>
+                                    {{/if}}
                                 </div>
                                 <div class="persona-list-status">
                                     <i class="fas fa-chevron-right"></i>

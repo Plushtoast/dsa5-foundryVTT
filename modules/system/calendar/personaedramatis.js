@@ -221,7 +221,6 @@ export class PersonaeDramatis {
         });
         this.#search.bind(this.element);
 
-        // Add event listeners for list switching
         this.element.addEventListener('click', (event) => {
             const switchBtn = event.target.closest('.list-switch-btn');
             if (switchBtn) {
@@ -231,19 +230,16 @@ export class PersonaeDramatis {
     }
 
     #onSearchFilter(_event, query, rgx, html) {
-        // Get the currently active list
         const activeList = html.dataset.activeList || '0';
         const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
         
         if (!activeListContent) return;
 
-        // Search within faction groups in the active list
         const factionGroups = activeListContent.querySelectorAll('.faction-group');
         
         factionGroups.forEach(factionGroup => {
             let visibleItemsInFaction = 0;
             
-            // Check each persona item in this faction
             const personaItems = factionGroup.querySelectorAll('.persona-list-item');
             personaItems.forEach(entry => {
                 if (!query) {
@@ -253,16 +249,14 @@ export class PersonaeDramatis {
                 }
 
                 const name = entry.querySelector('.persona-list-name')?.textContent || '';
-                const title = entry.querySelector('.persona-list-title')?.textContent || '';
                 const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
-                
-                const isMatch = [title, name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+
+                const isMatch = [name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 entry.hidden = !isMatch;
                 
                 if (isMatch) visibleItemsInFaction++;
             });
             
-            // Hide/show the entire faction group based on whether it has visible items
             factionGroup.hidden = visibleItemsInFaction === 0;
         });
     }
