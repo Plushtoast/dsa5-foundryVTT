@@ -412,6 +412,15 @@ export function setupConfiguration() {
       },
       type: Object,
     },
+    calendarActors: {
+      name: 'DSASETTINGS.calendarActors',
+      scope: 'world',
+      config: false,
+      default: {
+        activated: []
+      },
+      type: Object,
+    },
     moneyKompendium: {
       name: 'DSASETTINGS.moneyKompendium',
       hint: 'DSASETTINGS.moneyKompendiumHint',

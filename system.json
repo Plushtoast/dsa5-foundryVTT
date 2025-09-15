@@ -145,6 +145,9 @@
         "JournalEntryPage": {
             "dsacalendar": {
                 "htmlFields": [ "calendarentries.*.content" ]
+            },
+            "dsapersonaedramatis": {
+                "htmlFields": [ "personae.*.description", "personae.*.notes" ]
             }
         },
         "RegionBehavior": {

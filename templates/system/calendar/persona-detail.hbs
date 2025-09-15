@@ -1,0 +1,57 @@
+<div class="persona-detail-view">
+    <div class="persona-detail-header">
+        <div class="persona-detail-image">
+            <img src="{{actor.img}}" alt="{{actor.name}}" />
+            <div class="persona-status {{actorStatus}}"></div>
+        </div>
+        <div class="persona-detail-title">
+            <h1 class="persona-detail-name">{{actor.name}}</h1>
+            <p class="persona-detail-subtitle">{{faction}}</p>
+            {{#each preparedTags}}
+            <span class="persona-detail-type">{{this}}</span>
+            {{/each}}
+        </div>
+        {{#if isGM}}
+        <div class="persona-detail-actions">
+            <button type="button" class="detail-action-btn edit-btn" data-tooltip="SHEET.EditItem" data-action="editActor" data-persona-uuid="{{uuid}}" data-persona-dramatis-key="{{dramatisKey}}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button type="button" class="detail-action-btn sheet-btn" data-tooltip="PERSONAE.FIELDS.personae.showActorDescription.label" data-action="showSheet" data-uuid="{{actor.uuid}}">
+                <i class="fas fa-user"></i>
+            </button>
+            <button type="button" class="detail-action-btn delete-btn" data-tooltip="PERSONAE.FIELDS.personae.visible.label" data-action="toggleVisibility" data-persona-uuid="{{uuid}}" data-persona-dramatis-key="{{dramatisKey}}">
+                <i class="fas fa-eye{{ifThen visible '' '-slash'}}"></i>
+            </button>
+        </div>
+        {{/if}}
+    </div>
+
+    <div class="persona-detail-content">
+        <div class="detail-section">
+            <h3 class="section-title">{{localize "Description"}}</h3>
+            <div class="section-content">
+                <div class="description-text">{{{preparedDescription}}}</div>
+            </div>
+        </div>
+        {{#if isGM}}
+        {{#if actor.system.details.notes.gmdescription}}
+        <div class="detail-section">
+            <h3 class="section-title">{{localize "GM notes"}}</h3>
+            <div class="section-content">
+                <div class="description-text">{{{actor.system.details.notes.gmdescription}}}</div>
+            </div>
+        </div>
+        {{/if}}
+        {{/if}}
+
+        {{#if preparedNotes}}
+        <div class="detail-section">
+            <h3 class="section-title">{{localize "Notes"}}</h3>
+            <div class="section-content">
+                <div class="description-text">{{{preparedNotes}}}</div>
+            </div>
+        </div>
+        {{/if}}
+        
+    </div>
+</div>

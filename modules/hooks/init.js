@@ -35,6 +35,7 @@ import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
+import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet.js';
 const { mergeObject } = foundry.utils;
 
 export default function () {
@@ -110,9 +111,19 @@ Hooks.once('init', () => {
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
     foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
   });
+
+  const journalSheets = [
+    { sheetClass: DSAPersonaeEntrySheet, types: ['dsapersonaedramatis'], makeDefault: true },
+    { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true }
+  ];
+
+  journalSheets.forEach(({ sheetClass, types, makeDefault }) => {
+    foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', sheetClass, { types, makeDefault });
+  });
+
   foundry.applications.apps.DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
   foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
-  foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', DSACalendarEntrySheet, { types: ['dsacalendar'], makeDefault: true });
+
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();

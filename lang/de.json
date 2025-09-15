@@ -1423,8 +1423,70 @@
     "TYPES.Actor.creature": "Kreatur",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
+    "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "PERSONAE": {
+        "title": "Dramatis Personae / Bestiarium",
+        "ImportantPersons": "Dramatis Personae",
+        "bestiary": "Bestiarium",
+        "Add": "Person/Kreatur hinzufügen",
+        "SelectPersona": "Wähle eine Person/Kreatur",
+        "SelectPersonaHint": "Zeige wichtige Personen und Kreaturen für deine Geschichte an.",
+        "NoPersonsInList": "Keine Personen in der Liste",
+        "FIELDS": {
+            "personae": {
+                "name": {
+                    "label": "Name"
+                },
+                "type": {
+                    "label": "Typ",
+                    "choices": {
+                        "person": "Dramatis Personae",
+                        "creature": "Bestie"
+                    }
+                },
+                "description": {
+                    "label": "Beschreibung"
+                },
+                "notes": {
+                    "label": "Spieler Notizen"
+                },
+                "actor_uuid": {
+                    "label": "Akteur",
+                    "hint": "Ziehe einen Akteur per Drag & Drop hierher, der im Bestiarium repräsentiert wird."
+                },
+                "visible": {
+                    "label": "Sichtbar für Spieler"
+                },
+                "faction": {
+                    "label": "Fraktion/Typus",
+                    "hint": "Der Akteur wird über die Fraktion/den Typus im Bestiarium gruppiert."
+                },
+                "tags": {
+                    "label": "Tags",
+                    "hint": "Eine Komma-separierte Liste von Tags, um die Person/Kreatur mit wichtigen Details zu versehen oder Standard-Tags wie Spezies, Kultur und Profession zu überschreiben."
+                },
+                "showSpecies": {
+                    "label": "Spezies anzeigen"
+                },
+                "showCulture": {
+                    "label": "Kultur anzeigen"
+                },
+                "showProfession": {
+                    "label": "Profession anzeigen"
+                },
+                "showActorDescription": {
+                    "label": "Akteurbeschreibung anzeigen",
+                    "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden."
+                },
+                "showActorPersonalNotes": {
+                    "label": "Akteur Notizen anzeigen",
+                    "hint": "Die persönlichen Notizen des Akteurs werden im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden. Persönliche Notizen können von den Spielern editiert werden."
+                }
+            }
+        }
+    },
     "dsacalendar": {
         "FIELDS": {
             "calendarentries": {
@@ -1465,6 +1527,7 @@
         "events": "Ereignisse",
         "gods": "Feiertag der Götter",
         "showInCalendar": "Im Kalender anzeigen",
+        "showInCalendarHint": "Die Einträge werden unter Feiertage und Ereignisse im Kalender sichtbar gemacht und stehen entsprechend der Sichtbarkeit auch den Spielern zur Verfügung.",
         "journals": {
             "label": "Kalender Journals",
             "hint": "Wähle Journals mit Kalendereinträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"

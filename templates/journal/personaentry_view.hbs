@@ -1,0 +1,12 @@
+<div>
+    <div class="flexcol gap10px">
+        <div class="flexrow">
+            <input type="search" placeholder="{{localize 'Library.search'}}" value="{{search}}">
+        </div>
+        <div class="flexcol gap10px eventscontainer">
+            {{#each sortedEntries}}
+                {{> systems/dsa5/templates/system/calendar/persona-detail.hbs}}
+            {{/each}}
+        </div>
+    </div>
+</div>

@@ -62,6 +62,7 @@ import { DSACalendarEntry } from './data/journal/dsacalendar.js';
 import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
 import { ItemFactory } from './item/item-factory.js';
+import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -139,6 +140,10 @@ Hooks.once('init', () => {
       Combatant: CombatantDataModels,
       RegionBehavior: {
         DSATrap: DSATrapRegionBehavior
+      },
+      JournalEntryPage: {
+        dsacalendar: DSACalendarEntry,
+        dsapersonaedramatis: DSAPersonaEntry
       }
     },
     config: DSA5,
@@ -166,6 +171,7 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.dataModels.DSATrap = DSATrapRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
+  CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
   //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true  
 });

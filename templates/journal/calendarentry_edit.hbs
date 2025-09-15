@@ -1,8 +1,9 @@
 <div class="scrollable">
     {{#if isGM}}
-        <div class="flexrow">
+        <div class="form-group">
             <label>{{localize "dsacalendar.showInCalendar"}}</label>
-            <input type="checkbox" class="showInCalendar"{{checked isRegistered}}/>
+            <input type="checkbox" class="showInCalendar" {{checked isRegistered}}/>
+            <span class="hint">{{localize "dsacalendar.showInCalendarHint"}}</span>
         </div>
     {{/if}}
     <div class="flexrow">
@@ -10,7 +11,7 @@
         <button type="button" data-action="addCalendarEntry" class="fas icon fa-plus"></button>       
     </div>
     
-    <div class="eventscontainer">
+    <div class="eventscontainer flexcol gap10px">
         {{#each sortedEntries as |elem key|}}
         <fieldset data-id="{{key}}">
             <legend class="flexrow">{{formInput ../document.system.schema.fields.calendarentries.element.fields.title value=elem.title
@@ -38,13 +39,13 @@
             {{formGroup ../document.system.schema.fields.calendarentries.element.fields.location value=elem.location
             localize=true name=(concat 'system.calendarentries.' key '.location')}}
             {{formGroup ../document.system.schema.fields.calendarentries.element.fields.category value=elem.category
-            localize=true name=(concat 'system.calendarentries.' key '.category') localize=true}}
+            localize=true name=(concat 'system.calendarentries.' key '.category')}}
             {{formGroup ../document.system.schema.fields.calendarentries.element.fields.recurring value=elem.recurring
-            localize=true name=(concat 'system.calendarentries.' key '.recurring') localize=true}}
+            localize=true name=(concat 'system.calendarentries.' key '.recurring')}}
             
             {{#if ../isGM}}
             {{formGroup ../document.system.schema.fields.calendarentries.element.fields.visible value=elem.visible
-            localize=true name=(concat 'system.calendarentries.' key '.visible') localize=true}}
+            localize=true name=(concat 'system.calendarentries.' key '.visible')}}
             {{/if}}
             
         </fieldset>

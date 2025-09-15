@@ -1,0 +1,74 @@
+<div class='tab scrollable standard-form {{tabs.personae.cssClass}}' data-tab='personae' data-group='{{tabs.personae.group}}'>
+    <div class="fullScreenPadded dark-theme personae-container">
+        <div class="personae-header">
+            <h2 class="section-title"></h2>
+            {{#if isGM}}
+            <div class="personae-controls">
+                <button type="button" class="add-persona" title="{{localize 'PERSONAE.AddPerson'}}">
+                    <i class="fas fa-plus"></i> {{localize "PERSONAE.Add"}}
+                </button>
+            </div>
+            {{/if}}
+        </div>
+
+        <div class="personae-two-column">
+            <div class="personae-list-column">
+                <div class="personae-list-header">
+                    <h3>{{localize "PERSONAE.ImportantPersons"}}</h3>
+                    <div class="list-search">
+                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                
+                <div class="personae-list">
+                    {{#each personae}}
+                    <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                        <div class="persona-list-image">
+                            <img src="{{img}}" alt="{{name}}" />
+                            <div class="persona-status {{status}}"></div>
+                        </div>
+                        <div class="persona-list-info">
+                            <h4 class="persona-list-name">{{name}}</h4>
+                            <p class="persona-list-title">{{system.details.biography.title}}</p>
+                            <div class="persona-list-meta">
+                                <span class="persona-type">{{type}}</span>
+                                {{#if faction}}
+                                <span class="persona-faction">{{faction}}</span>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="persona-list-status">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    {{else}}
+                    <div class="no-personae-list">
+                        <div class="empty-state-small">
+                            <i class="fas fa-users"></i>
+                            <p>{{localize "PERSONAE.NoPersonsInList"}}</p>
+                            {{#if isGM}}
+                            <button type="button" class="flexrow add-persona-small">
+                                <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
+                            </button>
+                            {{/if}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="personae-details-column">
+                <div class="persona-details-container" id="persona-details">
+                    <div class="no-selection">
+                        <div class="no-selection-content">
+                            <i class="fas fa-user-circle"></i>
+                            <h3>{{localize "PERSONAE.SelectPersona"}}</h3>
+                            <p>{{localize "PERSONAE.SelectPersonaHint"}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

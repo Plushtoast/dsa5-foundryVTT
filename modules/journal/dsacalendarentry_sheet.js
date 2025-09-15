@@ -7,7 +7,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
     static DEFAULT_OPTIONS = {
         actions: {
             addCalendarEntry: DSACalendarEntrySheet.#addCalendarEntry,
-            removeCalendarEntry: DSACalendarEntrySheet.#removeCalendarEntry
+            removeCalendarEntry: DSACalendarEntrySheet.#removeCalendarEntry,
         }
     };
 
@@ -71,9 +71,9 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
             this.element.querySelector(`[data-id="${this.#scrollToId}"]`)?.scrollIntoView({ behavior: "smooth" });
             this.#scrollToId = null;
         }
-        
+
         const showInCalendar = this.element.querySelector('.showInCalendar');
-        if(showInCalendar) {
+        if (showInCalendar) {
             showInCalendar.addEventListener('change', (event) => {
                 const isChecked = event.target.checked;
                 const settings = game.settings.get('dsa5', 'calendarJournals');
@@ -92,10 +92,10 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
             contentSelector: ".eventscontainer",
             callback: this.#onSearchFilter.bind(this)
         });
-        if(options.search) {
+        if (options.search) {
             this.#search.query = options.search;
             options.search = null;
-        }        
+        }
         this.#search.bind(this.element);
     }
 

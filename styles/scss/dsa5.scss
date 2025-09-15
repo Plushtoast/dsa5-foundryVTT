@@ -5209,7 +5209,13 @@ input[type='checkbox'].autoCheckbox {
   --color-text-secondary: #fff;
   --color-text-emphatic: #b9b9b9;
 
-  .fullSceenMaxWidth,
+  .fullScreenPadded {
+    margin: 20px 30px 10px 30px;
+    max-height: calc(100vh - 90px);
+    overflow: hidden;
+  }
+
+  .fullScreenMaxWidth,
   fieldset {
     max-width: 700px;
     width: 100%;
@@ -5245,7 +5251,7 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
-
+@include meta.load-css('personae.scss');
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');

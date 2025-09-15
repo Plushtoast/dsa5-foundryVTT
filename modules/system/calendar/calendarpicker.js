@@ -2,6 +2,7 @@ import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
+import { PersonaeDramatis } from './personaedramatis.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
@@ -21,6 +22,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       filterCategory: this.#filterCategory,
       editEvent: this.#onEditEvent,
       openMoreSearch: this.#toggleMoreSearch,
+      ...PersonaeDramatis.actions,      
     }
   };
 
@@ -43,9 +45,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       template: 'systems/dsa5/templates/system/calendar/calendar.hbs',
       templates: ['systems/dsa5/templates/system/calendar/picker.hbs']
     },
+    personae: {
+      template: 'systems/dsa5/templates/system/calendar/personaedramatis.hbs',
+    }
   };
 
   #search;
+  #personaeDramatis = new PersonaeDramatis(this);
 
   get title() {
     return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
@@ -54,9 +60,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'calendar', label: 'CALENDAR.DSA.calendar' },
-        { id: 'events', label: 'CALENDAR.DSA.holidays' },
-        { id: 'config', label: 'CALENDAR.DSA.config' },
+        { id: 'calendar', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-calendar' },
+        { id: 'events', label: 'CALENDAR.DSA.holidays', icon: 'fas fa-person-praying' },
+        { id: 'personae', label: 'PERSONAE.title', icon: 'fas fa-user' },
+        { id: 'config', label: 'CALENDAR.DSA.config', icon: 'fas fa-cog' },
       ],
       initial: 'calendar',
     }
@@ -269,6 +276,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       case "config": await this._prepareConfigContext(context, options); break;
       case "events": await this._prepareEventsContext(context, options); break;
       case "calendar": await this._prepareCalendarContext(context, options); break;
+      case 'personae': await this.#personaeDramatis._preparePartContext(context, options); break;
     }
     return context;
   }
@@ -336,7 +344,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._drawCalendar();
 
     this.#search ??= new foundry.applications.ux.SearchFilter({
-      inputSelector: "input[type=search]",
+      inputSelector: "input.calendarSearch[type=search]",
       contentSelector: ".eventscontainer",
       callback: this.#onSearchFilter.bind(this)
     });
@@ -348,11 +356,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const scrollTop = scrollContainer.scrollTop != 0 ? scrollContainer.scrollTop - 20 : scrollContainer.scrollTop;
       sticky.style.transform = `translateY(${scrollTop}px)`;
     });
+
+    this.#personaeDramatis.onRenderListeners();
   }
 
   _tearDown(options) {
     super._tearDown(options);
     this.#search?.unbind();
+    this.#personaeDramatis._tearDown(options);
   }
 
   #onSearchFilter(_event, query, rgx, html) {
