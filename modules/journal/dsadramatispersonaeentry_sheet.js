@@ -12,7 +12,13 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
             editActor: DSAPersonaeEntrySheet.#editActor,
             showSheet: DSAPersonaeEntrySheet.#showSheet,
             toggleVisibility: DSAPersonaeEntrySheet.#toggleVisibility,
-        }
+            selectActor: DSAPersonaeEntrySheet.#selectActor,
+        },
+        position: {
+            width: 960,
+            height: 700
+        },
+        includeTOC: true,
     };
 
     static EDIT_PARTS = {
@@ -48,6 +54,9 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
                 const entry = context.sortedEntries[key];
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key);
             }
+        }
+        if (this.currentKey && context.sortedEntries[this.currentKey]) {
+            context.detailHTML = await this.renderDetail(this.currentKey);
         }
         context.isGM = game.user.isGM;
         context.isRegistered = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
@@ -87,6 +96,31 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
             options.search = null;
         }
         this.#search.bind(this.element);
+        if (this.options.includeTOC) this.toc = this.constructor.buildTOC(this.element);
+    }
+
+    static buildTOC(html, { includeElement = true } = {}) {
+        const cls = JournalEntryPage.implementation;
+        const root = { level: 0, children: [] };
+        const stack = [root];
+        const searchHeadings = element => {
+            if ((element instanceof HTMLHeadingElement) && element.classList.contains("persona-detail-name")) {
+                const node = cls._makeHeadingNode(element, { includeElement });
+                let parent = stack.at(-1);
+                if (node.level <= parent.level) {
+                    stack.pop();
+                    parent = stack.at(-1);
+                }
+                parent.children.push(node);
+                stack.push(node);
+            }
+            for (const child of (element.children || [])) {
+                searchHeadings(child);
+            }
+        };
+        if (Array.isArray(html)) html.forEach(searchHeadings);
+        else searchHeadings(html);
+        return cls._flattenTOC(root.children);
     }
 
     static #addPersonaEntry(event, target) {
@@ -101,6 +135,7 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
     async newEntry() {
         const id = foundry.utils.randomID();
         this.#scrollToId = id;
+        this.currentKey = id;
         await this.document.update({
             system: {
                 personae: {
@@ -137,17 +172,38 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
     }
 
     #editFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll("fieldset")) {
+        for (const entry of html.querySelectorAll(".persona-list-item")) {
             if (!query) {
                 entry.hidden = false;
                 continue;
             }
 
-            const name = entry.querySelector('[name$=".name"]').value || '';
+            const name = entry.querySelector('.persona-list-name').textContent || '';
 
             const isMatch = [name].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
             entry.hidden = !isMatch;
         }
+    }
+
+    async renderDetail(key) {
+        return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
+            elem: this.document.system.personae[key],
+            document: this.document,
+            isGM: game.user.isGM,
+            key
+        });
+    }
+
+    static async #selectActor(event, target) {
+        const detailsContainer = this.element.querySelector('.persona-details-container');
+        if (!detailsContainer) return;
+
+        const key = target.dataset.personaDramatisKey;
+        this.currentKey = key;
+
+        if (!key) return;
+
+        detailsContainer.innerHTML = await this.renderDetail(key);
     }
 
     static #editActor(event, target) {

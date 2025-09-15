@@ -38,6 +38,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
 
     async #fillActorFields(changed) {
         for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
+            if (!entry) continue;
             if (!entry.actor_uuid) continue;
             
             const actor = await fromUuid(entry.actor_uuid);

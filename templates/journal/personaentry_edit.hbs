@@ -1,77 +1,62 @@
 <div class="scrollable">
-    {{#if isGM}}
-    <div class="form-group">
-        <label>{{localize "dsacalendar.showInCalendar"}}</label>
-        <input type="checkbox" class="showInCalendar" {{checked isRegistered}} />
-        <span class="hint">{{localize "dsacalendar.showInCalendarHint"}}</span>
-    </div>
-    {{/if}}
-    <div class="flexrow">
-        <input type="search" placeholder="{{localize 'Library.search'}}" value="{{search}}">
-        <button type="button" data-action="addPersonaEntry" class="fas icon fa-plus"></button>
-    </div>
+    <div class="personae-two-column">
+        <div class="personae-list-column">
+            <div class="personae-list-header">
+                <div class="flexrow">
+                    <div class="list-search">
+                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}"
+                            value="{{search}}" />
+                        <i class="fas fa-search"></i>
+                    </div>
 
-    <div class="eventscontainer flexcol gap10px">
-        {{#each sortedEntries as |elem key|}}
-        <fieldset data-id="{{key}}">
-            <legend class="flexrow">{{formInput ../document.system.schema.fields.personae.element.fields.name
-                value=elem.name name=(concat 'system.personae.' key '.name')}}<button type="button" 
-                    data-action="removePersonaEntry" data-key="{{key}}" class="fas icon fa-trash"></button></legend>
-
-            {{formGroup ../document.system.schema.fields.personae.element.fields.type value=elem.type
-            localize=true name=(concat 'system.personae.' key '.type')}}
-
-            {{formGroup ../document.system.schema.fields.personae.element.fields.faction value=elem.faction
-            localize=true name=(concat 'system.personae.' key '.faction')}}
-            {{formGroup ../document.system.schema.fields.personae.element.fields.subtitle value=elem.subtitle
-            localize=true name=(concat 'system.personae.' key '.subtitle')}}
-
-            {{formGroup ../document.system.schema.fields.personae.element.fields.actor_uuid value=elem.actor_uuid
-            localize=true name=(concat 'system.personae.' key '.actor_uuid')}}
-            {{formGroup ../document.system.schema.fields.personae.element.fields.tags value=elem.tags
-            localize=true name=(concat 'system.personae.' key '.tags')}}
-
-            <div class="form-group">
-                <label>{{localize ../document.system.schema.fields.personae.element.fields.showSpecies.label}}</label>
-                {{formInput ../document.system.schema.fields.personae.element.fields.showSpecies value=elem.showSpecies name=(concat 'system.personae.' key '.showSpecies')}}
+                    <button type="button" data-action="addPersonaEntry" class="fas icon fa-plus"></button>
+                </div>
+                {{#if isGM}}
+                <div class="form-group" data-tooltip="dsacalendar.showInCalendarHint">
+                    <label>{{localize "dsacalendar.showInCalendar"}}</label>
+                    <input type="checkbox" class="showInCalendar" {{checked isRegistered}} />
+                </div>
+                {{/if}}
             </div>
 
-            {{#if (eq elem.type 0)}}
-            <div class="form-group">
-                <label>{{localize ../document.system.schema.fields.personae.element.fields.showCulture.label}}</label>
-                {{formInput ../document.system.schema.fields.personae.element.fields.showCulture value=elem.showCulture name=(concat 'system.personae.' key '.showCulture')}}
+            <div class="personae-list eventscontainer">
+                {{#each sortedEntries as |persona key|}}
+                <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}"
+                    data-persona-dramatis-key="{{key}}" data-action='selectActor'>
+                    <div class="persona-list-image">
+                        <img src="{{img}}" alt="{{name}}" />
+                        <div class="persona-status {{status}}"></div>
+                    </div>
+                    <div class="persona-list-info">
+                        <h5 class="persona-list-name">{{name}}</h5>
+                        {{#if subtitle}}
+                        <div class="persona-list-meta">
+                            <span class="persona-type">{{subtitle}}</span>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div class="persona-list-status">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                {{/each}}
             </div>
-            <div class="form-group">
-                <label>{{localize ../document.system.schema.fields.personae.element.fields.showProfession.label}}</label>
-                {{formInput ../document.system.schema.fields.personae.element.fields.showProfession value=elem.showProfession name=(concat 'system.personae.' key '.showProfession')}}
-            </div>
-            {{/if}}
-            <div class="form-group">
-                <label>{{localize ../document.system.schema.fields.personae.element.fields.showActorDescription.label}}</label>
-                {{formInput ../document.system.schema.fields.personae.element.fields.showActorDescription value=elem.showActorDescription name=(concat 'system.personae.' key '.showActorDescription')}}
-                <span class="hint">{{localize ../document.system.schema.fields.personae.element.fields.showActorDescription.hint}}</span>
-            </div>
-            <div class="form-group">
-                <label>{{localize ../document.system.schema.fields.personae.element.fields.showActorPersonalNotes.label}}</label>
-                {{formInput ../document.system.schema.fields.personae.element.fields.showActorPersonalNotes value=elem.showActorPersonalNotes name=(concat 'system.personae.' key '.showActorPersonalNotes')}}
-                <span class="hint">{{localize ../document.system.schema.fields.personae.element.fields.showActorPersonalNotes.hint}}</span>
-            </div>
-            {{#if ../isGM}}
-            {{formGroup ../document.system.schema.fields.personae.element.fields.visible value=elem.visible
-            localize=true name=(concat 'system.personae.' key '.visible')}}
-            {{/if}}
+        </div>
 
-            {{#unless elem.showActorDescription}}
-            {{formGroup ../document.system.schema.fields.personae.element.fields.description value=elem.description
-            localize=true classes='full-height' name=(concat 'system.personae.' key '.description')}}
-            {{/unless}}
-
-            {{#unless elem.showActorPersonalNotes}}
-            {{formGroup ../document.system.schema.fields.personae.element.fields.notes value=elem.notes
-            localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
-            {{/unless}}
-
-        </fieldset>
-        {{/each}}
+        <div class="personae-details-column">
+            <div class="persona-details-container">
+                {{#if detailHTML}}
+                {{{detailHTML}}}
+                {{else}}
+                <div class="no-selection">
+                    <div class="no-selection-content">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>{{localize "PERSONAE.SelectPersona"}}</h3>
+                        <p>{{localize "PERSONAE.SelectPersonaHint"}}</p>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+        </div>
     </div>
 </div>

@@ -113,7 +113,7 @@ export class PersonaeDramatis {
         if (!entry) return;
 
         PersonaeDramatis.updateSelectionUI(target);
-        PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey);
+        PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey, target);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -127,8 +127,8 @@ export class PersonaeDramatis {
         listItem.classList.add('selected');
     }
 
-    static async displayActorDetails(entry, page, key) {
-        const detailsContainer = document.getElementById('persona-details');
+    static async displayActorDetails(entry, page, key, target) {
+        const detailsContainer = target.closest('.personae-two-column').querySelector('.persona-details-container');
         if (!detailsContainer) return;
 
         const detailHTML = await PersonaeDramatis.generateActorDetailHTML(entry, page, key);
@@ -189,7 +189,7 @@ export class PersonaeDramatis {
         }
         
         PersonaeDramatis.clearSelection();
-        PersonaeDramatis.clearDetails();
+        PersonaeDramatis.clearDetails(target);
     }
 
     static clearSelection() {
@@ -198,8 +198,8 @@ export class PersonaeDramatis {
         });
     }
 
-    static clearDetails() {
-        const detailsContainer = document.getElementById('persona-details');
+    static clearDetails(target) {
+        const detailsContainer = target.closest('.personae-two-column').querySelector('.persona-details-container');
         if (detailsContainer) {
             detailsContainer.innerHTML = `
                 <div class="no-selection">

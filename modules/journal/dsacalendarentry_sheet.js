@@ -8,7 +8,8 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         actions: {
             addCalendarEntry: DSACalendarEntrySheet.#addCalendarEntry,
             removeCalendarEntry: DSACalendarEntrySheet.#removeCalendarEntry,
-        }
+        },
+        includeTOC: true,
     };
 
     static EDIT_PARTS = {
@@ -97,10 +98,35 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
             options.search = null;
         }
         this.#search.bind(this.element);
+        if (this.options.includeTOC) this.toc = this.constructor.buildTOC(this.element);
     }
 
     static #addCalendarEntry(ev, target) {
         this.newEntry();
+    }
+
+    static buildTOC(html, { includeElement = true } = {}) {
+        const cls = JournalEntryPage.implementation;
+        const root = { level: 0, children: [] };
+        const stack = [root];
+        const searchHeadings = element => {
+            if ((element instanceof HTMLHeadingElement) && element.classList.contains("event-card__title")) {
+                const node = cls._makeHeadingNode(element, { includeElement });
+                let parent = stack.at(-1);
+                if (node.level <= parent.level) {
+                    stack.pop();
+                    parent = stack.at(-1);
+                }
+                parent.children.push(node);
+                stack.push(node);
+            }
+            for (const child of (element.children || [])) {
+                searchHeadings(child);
+            }
+        };
+        if (Array.isArray(html)) html.forEach(searchHeadings);
+        else searchHeadings(html);
+        return cls._flattenTOC(root.children);
     }
 
     async newEntry() {

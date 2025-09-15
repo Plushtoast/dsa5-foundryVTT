@@ -1,9 +1,8 @@
 <div class="scrollable">
     {{#if isGM}}
-        <div class="form-group">
+        <div class="form-group" data-tooltip="dsacalendar.showInCalendarHint">
             <label>{{localize "dsacalendar.showInCalendar"}}</label>
             <input type="checkbox" class="showInCalendar" {{checked isRegistered}}/>
-            <span class="hint">{{localize "dsacalendar.showInCalendarHint"}}</span>
         </div>
     {{/if}}
     <div class="flexrow">
