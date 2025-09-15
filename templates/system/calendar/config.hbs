@@ -1,134 +1,165 @@
 <div class='tab scrollable standard-form {{tabs.config.cssClass}}' data-tab='config' data-group='{{tabs.config.group}}'>
     <div class="form-group fullScreenMaxWidth">
-        <label>{{localize calendarSetting.name}}</label>
-        <div class="form-fields">
-            <select name="dsa5.calendar">
-                {{selectOptions calendarSetting.type.choices selected=selectedCalendar localize=true}}
-            </select>
-        </div>
-        <p class="hint">{{localize calendarSetting.hint}}</p>
+        {{> systems/dsa5/templates/system/dsatabs.hbs tabs=configTabs}}
     </div>
-    
-    <fieldset>
+
+    <div class='tab scrollable standard-form {{configTabs.personae_config.cssClass}}' data-tab='personae_config' data-group='{{configTabs.personae_config.group}}'>
+        <fieldset>
+                <legend>{{localize 'PERSONAE.ImportantPersons'}}</legend>
+                <div class="form-group">
+                    <label>{{localize 'PERSONAE.journals.label'}}</label>
+                    <div class="form-fields">
+                        <div class="journalPickerContainer"></div>
+                        <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarActors"></button>
+                    </div>
+                    <p class="hint">{{{localize 'PERSONAE.journals.hint'}}}</p>
+                </div>
+                <div class="row-section wrap">
+                    {{#if calendarActors.activated.length }}
+                        {{#each calendarActors.activated}}
+                            <a class="smallBoxItem" data-action="removeJournal" data-setting="calendarActors" data-uuid="{{uuid}}">{{name}}</a>
+                        {{/each}}
+                    {{else}}
+                        <div class="smallBoxItem">-</div>
+                    {{/if}}
+                </div>
+                
+        </fieldset>
+    </div>
+
+    <div class='tab scrollable standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
+        <div class="form-group fullScreenMaxWidth">
+            <label>{{localize calendarSetting.name}}</label>
+            <div class="form-fields">
+                <select name="dsa5.calendar">
+                    {{selectOptions calendarSetting.type.choices selected=selectedCalendar localize=true}}
+                </select>
+            </div>
+            <p class="hint">{{localize calendarSetting.hint}}</p>
+        </div>
+
+        <fieldset>
             <legend>{{localize 'dsacalendar.events'}}</legend>
             <div class="form-group">
                 <label>{{localize 'dsacalendar.journals.label'}}</label>
                 <div class="form-fields">
                     <div class="journalPickerContainer"></div>
-                    <button type="button" class="icon fas fa-plus" data-action="addJournal"></button>
+                    <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarJournals"></button>
                 </div>
                 <p class="hint">{{{localize 'dsacalendar.journals.hint'}}}</p>
             </div>
             <div class="row-section wrap">
                 {{#if calendarJournals.activated.length }}
                     {{#each calendarJournals.activated}}
-                        <a class="smallBoxItem" data-action="removeJournal" data-uuid="{{uuid}}">{{name}}</a>
+                        <a class="smallBoxItem" data-action="removeJournal" data-uuid="{{uuid}}" data-setting="calendarJournals">{{name}}</a>
                     {{/each}}
                 {{else}}
                     <div class="smallBoxItem">-</div>
                 {{/if}}
-            </div>
-            
-    </fieldset>
+            </div>                
+        </fieldset>
 
-    <fieldset>
-        <legend>{{localize 'MASTER.automation'}}</legend>
-        <div class="form-group">
-            <label for="{{rootId}}-lightByDayTime">{{localize 'CALENDAR.DSA.dayTimes.lightByDayTime'}}</label>
-            <input id="{{rootId}}-lightByDayTime" type="checkbox" name="lightByDayTime" class="settingChange" {{checked calendarConfig.lightByDayTime}}>
-            <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.lightByDayTimeHint'}}</p>
-        </div>
-        <div class="form-group">
-            <label for="{{rootId}}-moonAddsLight">{{localize 'CALENDAR.DSA.dayTimes.moonAddsLight'}}</label>
-            <input id="{{rootId}}-moonAddsLight" type="checkbox" name="moonAddsLight" class="settingChange" {{checked calendarConfig.moonAddsLight}}>
-            <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.moonAddsLightHint'}}</p>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
-            <div class=" form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.dawn" value='{{calendarConfig.dayDarknessAdjust.dawn}}' min="0" max="1" step="0.05"></range-picker>
+        <fieldset>
+            <legend>{{localize 'MASTER.automation'}}</legend>
+            <div class="form-group">
+                <label for="{{rootId}}-lightByDayTime">{{localize 'CALENDAR.DSA.dayTimes.lightByDayTime'}}</label>
+                <input id="{{rootId}}-lightByDayTime" type="checkbox" name="lightByDayTime" class="settingChange" {{checked calendarConfig.lightByDayTime}}>
+                <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.lightByDayTimeHint'}}</p>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.morning'}}</label>
-            <div class=" form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.morning" value='{{calendarConfig.dayDarknessAdjust.morning}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label for="{{rootId}}-moonAddsLight">{{localize 'CALENDAR.DSA.dayTimes.moonAddsLight'}}</label>
+                <input id="{{rootId}}-moonAddsLight" type="checkbox" name="moonAddsLight" class="settingChange" {{checked calendarConfig.moonAddsLight}}>
+                <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.moonAddsLightHint'}}</p>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.noon'}}</label>
-            <div class=" form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.noon" value='{{calendarConfig.dayDarknessAdjust.noon}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
+                <div class=" form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.dawn" value='{{calendarConfig.dayDarknessAdjust.dawn}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.afternoon'}}</label>
-            <div class=" form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.afternoon" value='{{calendarConfig.dayDarknessAdjust.afternoon}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.morning'}}</label>
+                <div class=" form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.morning" value='{{calendarConfig.dayDarknessAdjust.morning}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.sunset'}}</label>
-            <div class=" form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.sunset" value='{{calendarConfig.dayDarknessAdjust.sunset}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.noon'}}</label>
+                <div class=" form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.noon" value='{{calendarConfig.dayDarknessAdjust.noon}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.night'}}</label>
-            <div class="form-fields">
-                <range-picker class="settingChange" name="dayDarknessAdjust.night" value='{{calendarConfig.dayDarknessAdjust.night}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.afternoon'}}</label>
+                <div class=" form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.afternoon" value='{{calendarConfig.dayDarknessAdjust.afternoon}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.moonLight'}}</label>
-            <div class="form-fields">
-                <range-picker class="settingChange" name="moon.darknessAdjust" value='{{calendarConfig.moon.darknessAdjust}}' min="0" max="1" step="0.05"></range-picker>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.sunset'}}</label>
+                <div class=" form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.sunset" value='{{calendarConfig.dayDarknessAdjust.sunset}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-    </fieldset>
-    <fieldset>
-        <legend>{{localize 'CALENDAR.DSA.dayTimes.label'}}</legend>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="dawn" value='{{calendarConfig.dawn}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.night'}}</label>
+                <div class="form-fields">
+                    <range-picker class="settingChange" name="dayDarknessAdjust.night" value='{{calendarConfig.dayDarknessAdjust.night}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.morning'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="morning" value='{{calendarConfig.morning}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.moonLight'}}</label>
+                <div class="form-fields">
+                    <range-picker class="settingChange" name="moon.darknessAdjust" value='{{calendarConfig.moon.darknessAdjust}}' min="0" max="1" step="0.05"></range-picker>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.noon'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="noon" value='{{calendarConfig.noon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+        </fieldset>
+
+        <fieldset>
+            <legend>{{localize 'CALENDAR.DSA.dayTimes.label'}}</legend>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="dawn" value='{{calendarConfig.dawn}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.afternoon'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="afternoon" value='{{calendarConfig.afternoon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.morning'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="morning" value='{{calendarConfig.morning}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.sunset'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="sunset" value='{{calendarConfig.sunset}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.noon'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="noon" value='{{calendarConfig.noon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>{{localize 'CALENDAR.DSA.dayTimes.night'}}</label>
-            <div class=" flexrow">
-                <range-picker class="flex1 settingChange" name="night" value='{{calendarConfig.night}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.afternoon'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="afternoon" value='{{calendarConfig.afternoon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
             </div>
-        </div>
-    </fieldset>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.sunset'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="sunset" value='{{calendarConfig.sunset}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>{{localize 'CALENDAR.DSA.dayTimes.night'}}</label>
+                <div class=" flexrow">
+                    <range-picker class="flex1 settingChange" name="night" value='{{calendarConfig.night}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
 </div>

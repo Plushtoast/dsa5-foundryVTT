@@ -1434,6 +1434,10 @@
         "SelectPersona": "Wähle eine Person/Kreatur",
         "SelectPersonaHint": "Zeige wichtige Personen und Kreaturen für deine Geschichte an.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "journals": {
+            "label": "Dramatis Personae Journals",
+            "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        },
         "FIELDS": {
             "personae": {
                 "name": {
@@ -1999,7 +2003,7 @@
         "invalidSkinCombination": "Die aktuelle DSA Version unterstützt nur das <b>DSA5 Immersive</b> Skin im light-mode.<br/>Verwende jede andere Kombination auf eigene Gefahr (und melde Probleme auf Github).<br/>Möchtest du jetzt das Standard-Skin setzen?",
         "customEffect": "Für manuelle Effekte darf nur ein Token markiert sein",
         "noTokenSelected": "Kein Token markiert",
-        "noCalendarsYet": "Du hast noch keine (weiteren) Kalender-Journals angelegt.",
+        "noCalendarsYet": "Du hast noch keine (weiteren) Journals angelegt.",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "APUpdateError": "AP Wert konnte nicht angepasst werden. Bitte manuell durchführen.",
         "RangeCannotBeParsed": "Die Reichweite kann nicht automatisch angepasst werden. Format nicht erkannt.",

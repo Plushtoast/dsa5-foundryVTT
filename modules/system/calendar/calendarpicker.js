@@ -22,7 +22,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       filterCategory: this.#filterCategory,
       editEvent: this.#onEditEvent,
       openMoreSearch: this.#toggleMoreSearch,
-      ...PersonaeDramatis.actions,      
+      ...PersonaeDramatis.actions,
     }
   };
 
@@ -35,7 +35,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     config: {
       template: 'systems/dsa5/templates/system/calendar/config.hbs',
-      scrollable: ['']
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/system/dsatabs.hbs'],
     },
     events: {
       template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
@@ -66,54 +67,68 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         { id: 'config', label: 'CALENDAR.DSA.config', icon: 'fas fa-cog' },
       ],
       initial: 'calendar',
+    },
+    config: {
+      tabs: [
+        { id: 'calendar_config', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-cog' },
+        { id: 'personae_config', label: 'PERSONAE.ImportantPersons', icon: 'fas fa-cog' },
+      ],
+      initial: 'calendar_config',
     }
-  }
+  };
 
   // invalidate on year and calendar change
   static async fromCache(components) {
-    if (this.#cached) {
-      return this.#cached;
-    }
+    if (this.#cached) return this.#cached;
 
     const journalSettings = game.settings.get('dsa5', 'calendarJournals');
-    const journals = await Promise.all(
-      journalSettings.activated.map(async (j) => {
-        try {
-          return await fromUuid(j.uuid);
-        } catch (error) {
-          ui.notifications.error(`Failed to load journal with UUID ${j.name}.`);
-          return null;
-        }
-      })
-    );
+    const activated = journalSettings.activated || [];
+
+    const loaded = await Promise.allSettled(activated.map(j => fromUuid(j.uuid)));
+    const validJournals = loaded
+      .filter(r => r.status === 'fulfilled' && r.value)
+      .map(r => r.value);
 
     const year = components.year;
-    const validJournals = journals.filter(Boolean);
-    const entries = await Promise.all(validJournals
-      .flatMap(journal => journal.pages.filter(page => page.type === 'dsacalendar'))
-      .flatMap(page =>
-        Object.entries(page.system.calendarentries)
-          .filter(([_key, entry]) => {
-            if (!game.user.isGM && !entry.visible) return false;
-            if (entry.recurring && entry.from.year <= year) return true;
-            if (!entry.recurring && entry.from.year === year) return true;
-            return false;
-          })
-          .map(async ([key, entry]) => {
-            await DSACalendarEntry.prepareCalendarEntry(entry);
-            entry.isOwner = page.isOwner;
-            entry.uuid = page.uuid;
-            entry.juuid = page.parent.uuid;
-            entry.calendarKey = key;
-            return entry;
-          })
-      ));
 
-    const holidayEntries = await Promise.all(CONFIG.time.worldCalendarConfig.holidays.values.map(async (holiday) => {
-      const dayOffset = game.time.calendar.months.values
-        .slice(0, holiday.month)
-        .reduce((sum, month) => sum + month.days, 0);
+    const candidates = [];
+    for (const journal of validJournals) {
+      for (const page of (journal.pages || [])) {
+        if (page.type !== 'dsacalendar') continue;
+        const entriesObj = page.system?.calendarentries || {};
+        for (const [key, entry] of Object.entries(entriesObj)) {
+          if (!game.user.isGM && !entry.visible) continue;
+          if (entry.recurring ? entry.from.year <= year : entry.from.year === year) {
+            candidates.push({ entry, page, key });
+          }
+        }
+      }
+    }
 
+    const preparedEntries = [];
+    const BATCH = 50;
+    for (let i = 0; i < candidates.length; i += BATCH) {
+      const batch = candidates.slice(i, i + BATCH);
+      const processed = await Promise.all(batch.map(async ({ entry, page, key }) => {
+        await DSACalendarEntry.prepareCalendarEntry(entry);
+        entry.isOwner = page.isOwner;
+        entry.uuid = page.uuid;
+        entry.juuid = page.parent?.uuid;
+        entry.calendarKey = key;
+        return entry;
+      }));
+      preparedEntries.push(...processed);
+    }
+
+    const months = game.time.calendar.months.values;
+    const monthPrefix = new Array(months.length + 1);
+    monthPrefix[0] = 0;
+    for (let m = 0; m < months.length; m++) monthPrefix[m + 1] = monthPrefix[m] + months[m].days;
+
+    const holidayDefs = CONFIG.time.worldCalendarConfig.holidays.values || [];
+    const holidayEntries = [];
+    for (const holiday of holidayDefs) {
+      const dayOffset = monthPrefix[holiday.month] ?? 0;
       const entry = {
         title: game.time.calendar.translate(`holiday.${holiday.name}`),
         location: holiday.location,
@@ -133,12 +148,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         recurring: true,
         gods: holiday.gods?.join(', ')
       };
-
       await DSACalendarEntry.prepareCalendarEntry(entry);
-      return entry;
-    }));
+      holidayEntries.push(entry);
+    }
 
-    this.#cached = [...holidayEntries, ...entries];
+    this.#cached = [...holidayEntries, ...preparedEntries];
     return this.#cached;
   }
 
@@ -155,24 +169,30 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   static async #addJournal(ev, target) {
-    const container = this.element.querySelector('.journalPickerContainer');
+    const fieldset = target.closest('fieldset');
+    const container = fieldset.querySelector('.journalPickerContainer');
+    const setting = target.dataset.setting;
     if (container.children.length == 0) {
-      const activated = new Set(game.settings.get('dsa5', 'calendarJournals').activated.map(x => x.uuid));
+      const activated = new Set(game.settings.get('dsa5', setting).activated.map(x => x.uuid));
+      const category = {
+        'calendarJournals': 'dsacalendar',
+        'calendarActors': 'dsapersonaedramatis',
+      }[setting]
       const possibleJournals = game.journal.filter(j => {
-        return !activated.has(j.uuid) && (j.pages || []).some(p => p.type === 'dsacalendar');
+        return !activated.has(j.uuid) && (j.pages || []).some(p => p.type === category);
       }).reduce((acc, j) => {
         acc[j.uuid] = j.name;
         return acc;
       }, {});
-      const content = await renderTemplate('systems/dsa5/templates/journal/calendarjournalpicker.hbs', { possibleJournals, hasJournals: Object.keys(possibleJournals).length > 0 });
+      const content = await renderTemplate('systems/dsa5/templates/journal/calendarjournalpicker.hbs', { possibleJournals, setting, hasJournals: Object.keys(possibleJournals).length > 0 });
       container.innerHTML = content;
     } else {
-      const selected = this.element.querySelector('select[name="journal"]');
+      const selected = fieldset.querySelector(`select[name="journal_${setting}"]`);
       if (!selected) return;
 
-      const settings = game.settings.get('dsa5', 'calendarJournals');
+      const settings = game.settings.get('dsa5', setting);
       settings.activated.push({ uuid: selected.value, name: selected.options[selected.selectedIndex].text });
-      await game.settings.set('dsa5', 'calendarJournals', settings);
+      await game.settings.set('dsa5', setting, settings);
       game.dsa5.apps.CalendarPicker.constructor.invalidateCache(selected.value);
       this.render(true);
     }
@@ -205,9 +225,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const uuid = target.dataset.uuid;
 
     if (ev.button == 2) {
-      const settings = game.settings.get('dsa5', 'calendarJournals');
+      const setting = target.dataset.setting;
+      const settings = game.settings.get('dsa5', setting);
       settings.activated = settings.activated.filter(el => el.uuid !== uuid);
-      game.settings.set('dsa5', 'calendarJournals', settings);
+      game.settings.set('dsa5', setting, settings);
       this.render(true);
     } else {
       const journal = await fromUuid(uuid);
@@ -261,7 +282,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const calendar = game.time.calendar;
-
+    data.tabs = this._prepareTabs('sheet');
     data.isGM = game.user.isGM;
     data.calendar = calendar;
     data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
@@ -284,11 +305,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareConfigContext(context, options) {
     const calendar = game.time.calendar;
     if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', 'calendarJournals');
-
+    
+    context.calendarActors = game.settings.get('dsa5', 'calendarActors');
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
     context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+    context.configTabs = this._prepareTabs('config');
   }
 
   async _prepareCalendarContext(context, options) {

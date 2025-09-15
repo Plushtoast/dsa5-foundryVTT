@@ -2080,7 +2080,7 @@
         "invalidSkinCombination": "The current TDE version only supports the <b>DSA5 Immersive</b> skin in light mode.<br/>Use any other combination at your own risk (and report issues on Github).<br/>Do you want to set the default skin now?",
         "customEffect": "For manual effects only one token can be selected",
         "noTokenSelected": "No token selected",
-        "noCalendarsYet": "You have not created any (additional) calendar journals yet.",
+        "noCalendarsYet": "You have not created any (additional) journals yet.",
         "elementNotFound": "The element \"{element}\" could not be found.",
         "NoPatron": "The character has no patron assigned yet.",
         "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
