@@ -14,47 +14,104 @@
         <div class="personae-two-column">
             <div class="personae-list-column">
                 <div class="personae-list-header">
-                    <h3>{{localize "PERSONAE.ImportantPersons"}}</h3>
+                    <div class="list-type-switch">
+                        <button type="button" class="list-switch-btn active" data-list-type="0" data-action="switchList">
+                            {{localize "PERSONAE.ImportantPersons"}}
+                        </button>
+                        <button type="button" class="list-switch-btn" data-list-type="1" data-action="switchList">
+                            {{localize "PERSONAE.bestiary"}}
+                        </button>
+                    </div>
                     <div class="list-search">
                         <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
                         <i class="fas fa-search"></i>
                     </div>
                 </div>
                 
-                <div class="personae-list">
-                    {{#each personae}}
-                    <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
-                        <div class="persona-list-image">
-                            <img src="{{img}}" alt="{{name}}" />
-                            <div class="persona-status {{status}}"></div>
+                <div class="personae-list" data-active-list="0">
+                    <!-- Personae Dramatis List -->
+                    <div class="list-content" data-list-type="0">
+                        {{#each personae.personae0 as |factionGroup|}}
+                        <div class="faction-group">
+                            <div class="faction-header">
+                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                <span class="faction-count">({{factionGroup.members.length}})</span>
+                            </div>
+                            {{#each factionGroup.members as |persona|}}
+                            <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                                <div class="persona-list-image">
+                                    <img src="{{img}}" alt="{{name}}" />
+                                    <div class="persona-status {{status}}"></div>
+                                </div>
+                                <div class="persona-list-info">
+                                    <h5 class="persona-list-name">{{name}}</h5>
+                                    <p class="persona-list-title">{{system.details.biography.title}}</p>
+                                    <div class="persona-list-meta">
+                                        <span class="persona-type">{{type}}</span>
+                                    </div>
+                                </div>
+                                <div class="persona-list-status">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            {{/each}}
                         </div>
-                        <div class="persona-list-info">
-                            <h4 class="persona-list-name">{{name}}</h4>
-                            <p class="persona-list-title">{{system.details.biography.title}}</p>
-                            <div class="persona-list-meta">
-                                <span class="persona-type">{{type}}</span>
-                                {{#if faction}}
-                                <span class="persona-faction">{{faction}}</span>
+                        {{else}}
+                        <div class="no-personae-list">
+                            <div class="empty-state-small">
+                                <i class="fas fa-users"></i>
+                                <p>{{localize "PERSONAE.NoPersonsInList"}}</p>
+                                {{#if ../isGM}}
+                                <button type="button" class="flexrow add-persona-small">
+                                    <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
+                                </button>
                                 {{/if}}
                             </div>
                         </div>
-                        <div class="persona-list-status">
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
+                        {{/each}}
                     </div>
-                    {{else}}
-                    <div class="no-personae-list">
-                        <div class="empty-state-small">
-                            <i class="fas fa-users"></i>
-                            <p>{{localize "PERSONAE.NoPersonsInList"}}</p>
-                            {{#if isGM}}
-                            <button type="button" class="flexrow add-persona-small">
-                                <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
-                            </button>
-                            {{/if}}
+
+                    <!-- Beasts List -->
+                    <div class="list-content hidden" data-list-type="1">
+                        {{#each personae.personae1 as |factionGroup|}}
+                        <div class="faction-group">
+                            <div class="faction-header">
+                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                <span class="faction-count">({{factionGroup.members.length}})</span>
+                            </div>
+                            {{#each factionGroup.members as |persona|}}
+                            <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                                <div class="persona-list-image">
+                                    <img src="{{img}}" alt="{{name}}" />
+                                    <div class="persona-status {{status}}"></div>
+                                </div>
+                                <div class="persona-list-info">
+                                    <h5 class="persona-list-name">{{name}}</h5>
+                                    <p class="persona-list-title">{{system.details.biography.title}}</p>
+                                    <div class="persona-list-meta">
+                                        <span class="persona-type">{{type}}</span>
+                                    </div>
+                                </div>
+                                <div class="persona-list-status">
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            {{/each}}
                         </div>
+                        {{else}}
+                        <div class="no-personae-list">
+                            <div class="empty-state-small">
+                                <i class="fas fa-dragon"></i>
+                                <p>{{localize "PERSONAE.NoBeasts"}}</p>
+                                {{#if ../isGM}}
+                                <button type="button" class="flexrow add-persona-small">
+                                    <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
+                                </button>
+                                {{/if}}
+                            </div>
+                        </div>
+                        {{/each}}
                     </div>
-                    {{/each}}
                 </div>
             </div>
 

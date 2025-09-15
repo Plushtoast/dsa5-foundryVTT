@@ -1431,9 +1431,10 @@
         "ImportantPersons": "Dramatis Personae",
         "bestiary": "Bestiarium",
         "Add": "Person/Kreatur hinzufügen",
-        "SelectPersona": "Wähle eine Person/Kreatur",
-        "SelectPersonaHint": "Zeige wichtige Personen und Kreaturen für deine Geschichte an.",
+        "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
+        "SelectPersonaHint": "Zeige Notizen und wichtige Details zu Personen und Kreaturen, denen du auf deinen Abenteuern begegnet bist.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "NoBeasts": "Keine Kreaturen in der Liste",
         "journals": {
             "label": "Dramatis Personae Journals",
             "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"

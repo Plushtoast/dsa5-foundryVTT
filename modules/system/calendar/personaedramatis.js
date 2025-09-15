@@ -16,6 +16,7 @@ export class PersonaeDramatis {
         editActor: PersonaeDramatis.editActor,
         showSheet: PersonaeDramatis.showSheet,
         toggleVisibility: PersonaeDramatis.toggleVisibility,
+        switchList: PersonaeDramatis.switchList,
     }
 
     async _preparePartContext(context, options) {
@@ -32,8 +33,8 @@ export class PersonaeDramatis {
             }
         }))).filter(Boolean);
 
-        context.personae = { 0: [], 1: [] };
-        const out = context.personae;
+        context.personae = { 'personae0': [], 'personae1': [] };
+        const personaeData = { 0: [], 1: [] };
 
         for (const journal of journals) {
             for (const page of journal.pages) {
@@ -49,7 +50,7 @@ export class PersonaeDramatis {
                     const entry = personae[key];
                     if ((!entry.visible && !isGM) || !entry.actor_uuid) continue;
 
-                    out[entry.type].push({
+                    personaeData[entry.type].push({
                         ...entry,
                         uuid: pageUuid,
                         juuid: parentUuid,
@@ -58,6 +59,41 @@ export class PersonaeDramatis {
                 }
             }
         }
+
+        for (const type of ['0', '1']) {
+            const grouped = this._groupByFaction(personaeData[type]);
+            context.personae[`personae${type}`] = grouped;
+        }
+    }
+
+    _groupByFaction(personaeArray) {
+        if (!Array.isArray(personaeArray) || personaeArray.length === 0) return [];
+
+        const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+        const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
+
+        const groups = new Map();
+        for (const persona of personaeArray) {
+            const faction = persona.faction || unknownFaction;
+            let bucket = groups.get(faction);
+            if (!bucket) {
+                bucket = [];
+                groups.set(faction, bucket);
+            }
+            bucket.push(persona);
+        }
+
+        for (const bucket of groups.values()) {
+            bucket.sort((a, b) => collator.compare(a?.name || '', b?.name || ''));
+        }
+
+        const sortedEntries = Array.from(groups.entries()).sort(([fa], [fb]) => {
+            if (fa === unknownFaction) return 1;
+            if (fb === unknownFaction) return -1;
+            return collator.compare(fa, fb);
+        });
+
+        return sortedEntries.map(([faction, members]) => ({ faction, members }));
     }
 
     static async #entryFromTarget(target) {
@@ -135,6 +171,33 @@ export class PersonaeDramatis {
         i.classList.toggle('fa-eye-slash', entry.visible);
     }
 
+    static switchList(event, target) {
+        const listType = target.dataset.listType;
+        const personaeList = target.closest('.personae-list-column');
+        
+        personaeList.querySelectorAll('.list-switch-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.listType === listType);
+        });
+        
+        personaeList.querySelectorAll('.list-content').forEach(content => {
+            content.classList.toggle('hidden', content.dataset.listType !== listType);
+        });
+        
+        const mainList = personaeList.querySelector('.personae-list');
+        if (mainList) {
+            mainList.dataset.activeList = listType;
+        }
+        
+        PersonaeDramatis.clearSelection();
+        PersonaeDramatis.clearDetails();
+    }
+
+    static clearSelection() {
+        document.querySelectorAll('.persona-list-item.selected').forEach(item => {
+            item.classList.remove('selected');
+        });
+    }
+
     static clearDetails() {
         const detailsContainer = document.getElementById('persona-details');
         if (detailsContainer) {
@@ -157,21 +220,51 @@ export class PersonaeDramatis {
             callback: this.#onSearchFilter.bind(this)
         });
         this.#search.bind(this.element);
+
+        // Add event listeners for list switching
+        this.element.addEventListener('click', (event) => {
+            const switchBtn = event.target.closest('.list-switch-btn');
+            if (switchBtn) {
+                PersonaeDramatis.switchList(event, switchBtn);
+            }
+        });
     }
 
     #onSearchFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".persona-list-item")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
+        // Get the currently active list
+        const activeList = html.dataset.activeList || '0';
+        const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
+        
+        if (!activeListContent) return;
 
-            const name = entry.querySelector('.persona-list-name')?.textContent || '';
-            const title = entry.querySelector('.persona-list-title')?.textContent || '';
-            const faction = entry.querySelector('.persona-faction')?.textContent || '';
-            const isMatch = [title, name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
-        }
+        // Search within faction groups in the active list
+        const factionGroups = activeListContent.querySelectorAll('.faction-group');
+        
+        factionGroups.forEach(factionGroup => {
+            let visibleItemsInFaction = 0;
+            
+            // Check each persona item in this faction
+            const personaItems = factionGroup.querySelectorAll('.persona-list-item');
+            personaItems.forEach(entry => {
+                if (!query) {
+                    entry.hidden = false;
+                    visibleItemsInFaction++;
+                    return;
+                }
+
+                const name = entry.querySelector('.persona-list-name')?.textContent || '';
+                const title = entry.querySelector('.persona-list-title')?.textContent || '';
+                const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
+                
+                const isMatch = [title, name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+                entry.hidden = !isMatch;
+                
+                if (isMatch) visibleItemsInFaction++;
+            });
+            
+            // Hide/show the entire faction group based on whether it has visible items
+            factionGroup.hidden = visibleItemsInFaction === 0;
+        });
     }
 
     _tearDown(options) {
