@@ -209,11 +209,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     if (!journal) return;
 
-    const entry = journal.system.calendarentries[key];
-    if (!entry) return;
-
     this.close();
-    journal.sheet.render({ force: true, search: entry.title });
+    journal.sheet.render({ force: true, currentKey: key });
   }
 
   static #toggleMoreSearch(ev, target) {

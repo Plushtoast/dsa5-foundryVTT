@@ -1,73 +1,69 @@
-<div data-id="{{key}}" class="standard-form">
-    <div class="form-group">
-        <label>{{localize document.system.schema.fields.personae.element.fields.name.label}}</label>
-        <div class="form-fields">
-            {{formInput document.system.schema.fields.personae.element.fields.name
-            value=elem.name name=(concat 'system.personae.' key '.name')}}<button type="button"
-                data-action="removePersonaEntry" data-key="{{key}}" data-tooltip="delete"
-                class="fas icon fa-trash"></button>
-        </div>
+<div data-id='{{key}}' class='standard-form'>
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.name.label}}</label>
+    <div class='form-fields gap0px'>
+        {{#if isGM}}
+        <button type='button' data-action='toggleVisibility' data-tooltip="{{document.system.schema.fields.personae.element.fields.visible.label}}" data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
+        {{/if}}
+        {{formInput document.system.schema.fields.personae.element.fields.name value=elem.name name=(concat 'system.personae.' key '.name')}}
+        <button type='button' data-action='removeEntry' data-key='{{key}}' data-tooltip='delete' class='fas icon fa-trash'></button>
     </div>
-    {{formGroup document.system.schema.fields.personae.element.fields.subtitle value=elem.subtitle
-    localize=true name=(concat 'system.personae.' key '.subtitle')}}
+  </div>
+  {{formGroup document.system.schema.fields.personae.element.fields.subtitle value=elem.subtitle localize=true name=(concat 'system.personae.' key '.subtitle')}}
 
-    {{formGroup document.system.schema.fields.personae.element.fields.faction value=elem.faction
-    localize=true name=(concat 'system.personae.' key '.faction')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.faction value=elem.faction localize=true name=(concat 'system.personae.' key '.faction')}}
 
-    {{formGroup document.system.schema.fields.personae.element.fields.type value=elem.type
-    localize=true name=(concat 'system.personae.' key '.type')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.type value=elem.type localize=true name=(concat 'system.personae.' key '.type')}}
 
-    {{formGroup document.system.schema.fields.personae.element.fields.actor_uuid value=elem.actor_uuid
-    localize=true name=(concat 'system.personae.' key '.actor_uuid')}}
-    {{formGroup document.system.schema.fields.personae.element.fields.tags value=elem.tags
-    localize=true name=(concat 'system.personae.' key '.tags')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.actor_uuid value=elem.actor_uuid localize=true name=(concat 'system.personae.' key '.actor_uuid')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.tags value=elem.tags localize=true name=(concat 'system.personae.' key '.tags')}}
 
-    <div class="form-group">
-        <label>{{localize document.system.schema.fields.personae.element.fields.showSpecies.label}}</label>
-        {{formInput document.system.schema.fields.personae.element.fields.showSpecies value=elem.showSpecies
-        name=(concat 'system.personae.' key '.showSpecies')}}
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.showSpecies.label}}</label>
+    {{formInput document.system.schema.fields.personae.element.fields.showSpecies value=elem.showSpecies name=(concat 'system.personae.' key '.showSpecies')}}
+  </div>
+
+  {{#if (eq elem.type 0)}}
+    <div class='form-group'>
+      <label>{{localize document.system.schema.fields.personae.element.fields.showCulture.label}}</label>
+      {{formInput document.system.schema.fields.personae.element.fields.showCulture value=elem.showCulture name=(concat 'system.personae.' key '.showCulture')}}
     </div>
+    <div class='form-group'>
+      <label>{{localize document.system.schema.fields.personae.element.fields.showProfession.label}}</label>
+      {{formInput document.system.schema.fields.personae.element.fields.showProfession value=elem.showProfession name=(concat 'system.personae.' key '.showProfession')}}
+    </div>
+  {{/if}}
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.showActorDescription.label}}</label>
+    {{formInput
+      document.system.schema.fields.personae.element.fields.showActorDescription
+      value=elem.showActorDescription
+      name=(concat 'system.personae.' key '.showActorDescription')
+    }}
+    <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.showActorDescription.hint}}</span>
+  </div>
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.showActorPersonalNotes.label}}</label>
+    {{formInput
+      document.system.schema.fields.personae.element.fields.showActorPersonalNotes
+      value=elem.showActorPersonalNotes
+      name=(concat 'system.personae.' key '.showActorPersonalNotes')
+    }}
+    <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.showActorPersonalNotes.hint}}</span>
+  </div>
 
-    {{#if (eq elem.type 0)}}
-    <div class="form-group">
-        <label>{{localize document.system.schema.fields.personae.element.fields.showCulture.label}}</label>
-        {{formInput document.system.schema.fields.personae.element.fields.showCulture value=elem.showCulture
-        name=(concat 'system.personae.' key '.showCulture')}}
-    </div>
-    <div class="form-group">
-        <label>{{localize document.system.schema.fields.personae.element.fields.showProfession.label}}</label>
-        {{formInput document.system.schema.fields.personae.element.fields.showProfession value=elem.showProfession
-        name=(concat 'system.personae.' key '.showProfession')}}
-    </div>
-    {{/if}}
-    <div class="form-group">
-        <label>{{localize document.system.schema.fields.personae.element.fields.showActorDescription.label}}</label>
-        {{formInput document.system.schema.fields.personae.element.fields.showActorDescription
-        value=elem.showActorDescription name=(concat 'system.personae.' key '.showActorDescription')}}
-        <span class="hint">{{localize
-            document.system.schema.fields.personae.element.fields.showActorDescription.hint}}</span>
-    </div>
-    <div class="form-group">
-        <label>{{localize
-            document.system.schema.fields.personae.element.fields.showActorPersonalNotes.label}}</label>
-        {{formInput document.system.schema.fields.personae.element.fields.showActorPersonalNotes
-        value=elem.showActorPersonalNotes name=(concat 'system.personae.' key '.showActorPersonalNotes')}}
-        <span class="hint">{{localize
-            document.system.schema.fields.personae.element.fields.showActorPersonalNotes.hint}}</span>
-    </div>
-    {{#if isGM}}
-    {{formGroup document.system.schema.fields.personae.element.fields.visible value=elem.visible
-    localize=true name=(concat 'system.personae.' key '.visible')}}
-    {{/if}}
+  {{#unless elem.showActorDescription}}
+    {{formGroup
+      document.system.schema.fields.personae.element.fields.description
+      value=elem.description
+      localize=true
+      classes='full-height'
+      name=(concat 'system.personae.' key '.description')
+    }}
+  {{/unless}}
 
-    {{#unless elem.showActorDescription}}
-    {{formGroup document.system.schema.fields.personae.element.fields.description value=elem.description
-    localize=true classes='full-height' name=(concat 'system.personae.' key '.description')}}
-    {{/unless}}
-
-    {{#unless elem.showActorPersonalNotes}}
-    {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes
-    localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
-    {{/unless}}
+  {{#unless elem.showActorPersonalNotes}}
+    {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
+  {{/unless}}
 
 </div>

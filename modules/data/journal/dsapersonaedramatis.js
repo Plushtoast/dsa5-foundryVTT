@@ -58,6 +58,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 entry.faction = creatureData[0].trim();
                 entry.subtitle = creatureData[1]?.trim() || "";
             } else {
+                entry.faction = this.parent.name;
                 entry.subtitle = actor.system.details?.career.value || "";
             }
         }

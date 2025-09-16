@@ -1,18 +1,13 @@
 import { DSAPersonaEntry } from "../data/journal/dsapersonaedramatis.js";
 import { PersonaeDramatis } from "../system/calendar/personaedramatis.js";
+import SelectJournal from "./select_journal.js";
 
-export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.JournalEntryPageHandlebarsSheet {
-    #scrollToId;
-    #search;
-
+export class DSAPersonaeEntrySheet extends SelectJournal {
+    static objectKey = 'personae';
     static DEFAULT_OPTIONS = {
         actions: {
-            addPersonaEntry: DSAPersonaeEntrySheet.#addPersonaEntry,
-            removePersonaEntry: DSAPersonaeEntrySheet.#removePersonaEntry,
             editActor: DSAPersonaeEntrySheet.#editActor,
             showSheet: DSAPersonaeEntrySheet.#showSheet,
-            toggleVisibility: DSAPersonaeEntrySheet.#toggleVisibility,
-            selectActor: DSAPersonaeEntrySheet.#selectActor,
         },
         position: {
             width: 960,
@@ -54,9 +49,14 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
                 const entry = context.sortedEntries[key];
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key);
             }
-        }
-        if (this.currentKey && context.sortedEntries[this.currentKey]) {
-            context.detailHTML = await this.renderDetail(this.currentKey);
+        } else {
+            if (options.currentKey)
+                this.currentKey = options.currentKey;
+
+            if (this.currentKey && context.sortedEntries[this.currentKey]) {
+                context.currentKey = this.currentKey;
+                context.detailHTML = await this.renderDetail(this.currentKey);
+            }
         }
         context.isGM = game.user.isGM;
         context.isRegistered = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
@@ -65,11 +65,6 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
 
     async _onRender(context, options) {
         await super._onRender(context, options);
-
-        if (this.#scrollToId) {
-            this.element.querySelector(`[data-id="${this.#scrollToId}"]`)?.scrollIntoView({ behavior: "smooth" });
-            this.#scrollToId = null;
-        }
 
         const showInCalendar = this.element.querySelector('.showInCalendar');
         if (showInCalendar) {
@@ -85,18 +80,6 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
                 game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
             });
         }
-
-        this.#search ??= new foundry.applications.ux.SearchFilter({
-            inputSelector: "input[type=search]",
-            contentSelector: ".eventscontainer",
-            callback: this.#onSearchFilter.bind(this)
-        });
-        if (options.search) {
-            this.#search.query = options.search;
-            options.search = null;
-        }
-        this.#search.bind(this.element);
-        if (this.options.includeTOC) this.toc = this.constructor.buildTOC(this.element);
     }
 
     static buildTOC(html, { includeElement = true } = {}) {
@@ -123,18 +106,8 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
         return cls._flattenTOC(root.children);
     }
 
-    static #addPersonaEntry(event, target) {
-        this.newEntry();
-    }
-
-    static #removePersonaEntry(event, target) {
-        const key = target.dataset.key;
-        this.document.update({ [`system.personae.-=${key}`]: null });
-    }
-
     async newEntry() {
         const id = foundry.utils.randomID();
-        this.#scrollToId = id;
         this.currentKey = id;
         await this.document.update({
             system: {
@@ -148,12 +121,7 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
         })
     }
 
-    _tearDown(options) {
-        super._tearDown(options);
-        this.#search?.unbind();
-    }
-
-    #onSearchFilter(_event, query, rgx, html) {
+    onSearchFilter(_event, query, rgx, html) {
         this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
     }
 
@@ -194,27 +162,11 @@ export class DSAPersonaeEntrySheet extends foundry.applications.sheets.journal.J
         });
     }
 
-    static async #selectActor(event, target) {
-        const detailsContainer = this.element.querySelector('.persona-details-container');
-        if (!detailsContainer) return;
-
-        const key = target.dataset.personaDramatisKey;
-        this.currentKey = key;
-
-        if (!key) return;
-
-        detailsContainer.innerHTML = await this.renderDetail(key);
-    }
-
     static #editActor(event, target) {
         PersonaeDramatis.editActor(event, target, { stay: true });
     }
 
     static #showSheet(event, target) {
         PersonaeDramatis.showSheet(event, target, { stay: true });
-    }
-
-    static #toggleVisibility(event, target) {
-        PersonaeDramatis.toggleVisibility(event, target);
     }
 }

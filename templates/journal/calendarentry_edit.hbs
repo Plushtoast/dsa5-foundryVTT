@@ -1,53 +1,59 @@
-<div class="scrollable">
-    {{#if isGM}}
-        <div class="form-group" data-tooltip="dsacalendar.showInCalendarHint">
-            <label>{{localize "dsacalendar.showInCalendar"}}</label>
-            <input type="checkbox" class="showInCalendar" {{checked isRegistered}}/>
-        </div>
-    {{/if}}
-    <div class="flexrow">
-        <input type="search" placeholder="{{localize 'Library.search'}}" value="{{search}}">
-        <button type="button" data-action="addCalendarEntry" class="fas icon fa-plus"></button>       
-    </div>
-    
-    <div class="eventscontainer flexcol gap10px">
-        {{#each sortedEntries as |elem key|}}
-        <fieldset data-id="{{key}}">
-            <legend class="flexrow">{{formInput ../document.system.schema.fields.calendarentries.element.fields.title value=elem.title
-                name=(concat 'system.calendarentries.' key '.title')}}<button type="button" data-action="removeCalendarEntry" data-key="{{key}}" class="fas icon fa-trash"></button></legend>
-            <div class="form-group">
-                <label>{{localize "dsacalendar.FIELDS.calendarentries.label"}}</label>
+<div class="scrollable dark-theme persona-container">
+    <div class="personae-two-column">
+        <div class="personae-list-column">
+            <div class="personae-list-header">
+                <div class="flexrow">
+                    <div class="list-search">
+                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}"
+                            value="{{search}}" />
+                        <i class="fas fa-search"></i>
+                    </div>
 
-                <div class="flexcol form-fields">
-                    <div class="flexrow gap5px">
-                        <div class="flex0">{{localize "dsacalendar.FIELDS.calendarentries.from.label"}}</div>
-                        <input type="number" style="max-width:40px" min="1" max="{{elem.from.max}}" step="1" value="{{elem.from.dayOfMonth}}" name="{{concat 'system.calendarentries.' key '.from.dayOfMonth'}}"/>
-                        <div class="flex0">{{localize "dsacalendar.FIELDS.calendarentries.to.label"}}</div>
-                        <input type="number" style="max-width:40px" min="1" max="{{elem.from.max}}" step="1" value="{{elem.to.dayOfMonth}}" name="{{concat 'system.calendarentries.' key '.to.dayOfMonth'}}"/>
-                        {{formInput ../document.system.schema.fields.calendarentries.element.fields.from.fields.month value=elem.from.month
-                        name=(concat 'system.calendarentries.' key '.from.month') choices=../availableMonths }}
-                        {{formInput ../document.system.schema.fields.calendarentries.element.fields.from.fields.year value=elem.from.year
-                        name=(concat 'system.calendarentries.' key '.from.year')}}
-                        <div class="flex0">{{../yearSuffix}}</div>
+                    <button type="button" data-action="addEntry" class="fas icon fa-plus"></button>
+                </div>
+                {{#if isGM}}
+                <div class="form-group" data-tooltip="dsacalendar.showInCalendarHint">
+                    <label>{{localize "dsacalendar.showInCalendar"}}</label>
+                    <input type="checkbox" class="showInCalendar" {{checked isRegistered}} />
+                </div>
+                {{/if}}
+            </div>
+
+            <div class="personae-list eventscontainer">
+                {{#each sortedEntries as |calendarEntry key|}}
+                <div class="persona-list-item {{ifThen (eq ../currentKey key) 'selected' ''}}" data-key="{{key}}" data-action='selectEntry'>
+                    <div class="persona-list-image">
+                        <img src="{{img}}" alt="{{title}}" />
+                        <div class="persona-status {{status}}"></div>
+                    </div>
+                    <div class="persona-list-info">
+                        <h5 class="persona-list-name">{{title}}</h5>
+                        <div class="persona-list-meta">
+                            <span class="persona-type">{{subtitle}}</span>
+                        </div>
+                    </div>
+                    <div class="persona-list-status">
+                        <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
+                {{/each}}
             </div>
-            {{formGroup ../document.system.schema.fields.calendarentries.element.fields.content value=elem.content
-            localize=true classes='full-height' name=(concat 'system.calendarentries.' key
-            '.content')}}
-            {{formGroup ../document.system.schema.fields.calendarentries.element.fields.location value=elem.location
-            localize=true name=(concat 'system.calendarentries.' key '.location')}}
-            {{formGroup ../document.system.schema.fields.calendarentries.element.fields.category value=elem.category
-            localize=true name=(concat 'system.calendarentries.' key '.category')}}
-            {{formGroup ../document.system.schema.fields.calendarentries.element.fields.recurring value=elem.recurring
-            localize=true name=(concat 'system.calendarentries.' key '.recurring')}}
-            
-            {{#if ../isGM}}
-            {{formGroup ../document.system.schema.fields.calendarentries.element.fields.visible value=elem.visible
-            localize=true name=(concat 'system.calendarentries.' key '.visible')}}
-            {{/if}}
-            
-        </fieldset>
-        {{/each}}
+        </div>
+
+        <div class="personae-details-column">
+            <div class="persona-details-container">
+                {{#if detailHTML}}
+                {{{detailHTML}}}
+                {{else}}
+                <div class="no-selection">
+                    <div class="no-selection-content">
+                        <i class="fas fa-user-circle"></i>
+                        <h3>{{localize "dsacalendar.SelectEntry"}}</h3>
+                        <p>{{localize "dsacalendar.SelectEntryHint"}}</p>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+        </div>
     </div>
 </div>

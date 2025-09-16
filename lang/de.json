@@ -1497,6 +1497,9 @@
         }
     },
     "dsacalendar": {
+        "SelectEntry": "Wähle einen Eintrag",
+        "SelectEntryHint": "Zeige Ereignisse und besondere Tage.",
+        "NoPersonsInList": "Keine Personen in der Liste",
         "FIELDS": {
             "calendarentries": {
                 "label": "Datum",

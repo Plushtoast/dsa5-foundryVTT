@@ -1,62 +1,60 @@
-<div class="scrollable">
-    <div class="personae-two-column">
-        <div class="personae-list-column">
-            <div class="personae-list-header">
-                <div class="flexrow">
-                    <div class="list-search">
-                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}"
-                            value="{{search}}" />
-                        <i class="fas fa-search"></i>
-                    </div>
+<div class='scrollable'>
+  <div class='personae-two-column'>
+    <div class='personae-list-column'>
+      <div class='personae-list-header'>
+        <div class='flexrow'>
+          <div class='list-search'>
+            <input type='search' class='search-input actorsearch' placeholder='{{localize "Book.search"}}' value='{{search}}' />
+            <i class='fas fa-search'></i>
+          </div>
 
-                    <button type="button" data-action="addPersonaEntry" class="fas icon fa-plus"></button>
-                </div>
-                {{#if isGM}}
-                <div class="form-group" data-tooltip="dsacalendar.showInCalendarHint">
-                    <label>{{localize "dsacalendar.showInCalendar"}}</label>
-                    <input type="checkbox" class="showInCalendar" {{checked isRegistered}} />
-                </div>
-                {{/if}}
-            </div>
-
-            <div class="personae-list eventscontainer">
-                {{#each sortedEntries as |persona key|}}
-                <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}"
-                    data-persona-dramatis-key="{{key}}" data-action='selectActor'>
-                    <div class="persona-list-image">
-                        <img src="{{img}}" alt="{{name}}" />
-                        <div class="persona-status {{status}}"></div>
-                    </div>
-                    <div class="persona-list-info">
-                        <h5 class="persona-list-name">{{name}}</h5>
-                        {{#if subtitle}}
-                        <div class="persona-list-meta">
-                            <span class="persona-type">{{subtitle}}</span>
-                        </div>
-                        {{/if}}
-                    </div>
-                    <div class="persona-list-status">
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                </div>
-                {{/each}}
-            </div>
+          <button type='button' data-action='addEntry' class='fas icon fa-plus'></button>
         </div>
+        {{#if isGM}}
+          <div class='form-group' data-tooltip='dsacalendar.showInCalendarHint'>
+            <label>{{localize 'dsacalendar.showInCalendar'}}</label>
+            <input type='checkbox' class='showInCalendar' {{checked isRegistered}} />
+          </div>
+        {{/if}}
+      </div>
 
-        <div class="personae-details-column">
-            <div class="persona-details-container">
-                {{#if detailHTML}}
-                {{{detailHTML}}}
-                {{else}}
-                <div class="no-selection">
-                    <div class="no-selection-content">
-                        <i class="fas fa-user-circle"></i>
-                        <h3>{{localize "PERSONAE.SelectPersona"}}</h3>
-                        <p>{{localize "PERSONAE.SelectPersonaHint"}}</p>
-                    </div>
-                </div>
-                {{/if}}
+      <div class='personae-list eventscontainer'>
+        {{#each sortedEntries as |persona key|}}
+          <div class='persona-list-item {{ifThen (eq ../currentKey key) 'selected' ''}}' data-persona-uuid='{{uuid}}' data-persona-juuid='{{juuid}}' data-key='{{key}}' data-action='selectEntry'>
+            <div class='persona-list-image'>
+              <img src='{{img}}' alt='{{name}}' />
+              <div class='persona-status {{status}}'></div>
             </div>
-        </div>
+            <div class='persona-list-info'>
+              <h5 class='persona-list-name'>{{name}}</h5>
+              {{#if subtitle}}
+                <div class='persona-list-meta'>
+                  <span class='persona-type'>{{subtitle}}</span>
+                </div>
+              {{/if}}
+            </div>
+            <div class='persona-list-status'>
+              <i class='fas fa-chevron-right'></i>
+            </div>
+          </div>
+        {{/each}}
+      </div>
     </div>
+
+    <div class='personae-details-column'>
+      <div class='persona-details-container'>
+        {{#if detailHTML}}
+          {{{detailHTML}}}
+        {{else}}
+          <div class='no-selection'>
+            <div class='no-selection-content'>
+              <i class='fas fa-user-circle'></i>
+              <h3>{{localize 'PERSONAE.SelectPersona'}}</h3>
+              <p>{{localize 'PERSONAE.SelectPersonaHint'}}</p>
+            </div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
 </div>

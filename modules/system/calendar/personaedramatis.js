@@ -131,23 +131,18 @@ export class PersonaeDramatis {
         const detailsContainer = target.closest('.personae-two-column').querySelector('.persona-details-container');
         if (!detailsContainer) return;
 
-        const detailHTML = await PersonaeDramatis.generateActorDetailHTML(entry, page, key);
+        await DSAPersonaEntry.preparePersonaEntry(entry, page, key);
+        const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', entry);
         detailsContainer.innerHTML = detailHTML;
     }
 
-    static async generateActorDetailHTML(entry, page, key) {
-        await DSAPersonaEntry.preparePersonaEntry(entry, page, key);
-
-        return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', entry);
-    }
-
     static async editActor(event, target, options = {}) {
-        const { entry, page } = await PersonaeDramatis.#entryFromTarget(target);
+        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
 
-        if (!entry) return;
+        if (!personaDramatisKey || !page) return;
 
         if (!options.stay) this.close();
-        page.sheet.render({ force: true, search: entry.name });
+        page.sheet.render({ force: true, currentKey: personaDramatisKey });
     }
 
     static async showSheet(event, target, options = {}) {

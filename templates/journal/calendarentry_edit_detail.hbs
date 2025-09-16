@@ -1,0 +1,59 @@
+<div data-id='{{key}}' class='standard-form'>
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.calendarentries.element.fields.title.label}}</label>
+    <div class='form-fields gap0px'>
+        {{#if isGM}}
+        <button type='button' data-action='toggleVisibility' data-tooltip="{{document.system.schema.fields.calendarentries.element.fields.visible.label}}" data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
+        {{/if}}
+        {{formInput document.system.schema.fields.calendarentries.element.fields.title value=elem.title name=(concat 'system.calendarentries.' key '.title')}}
+        <button type='button' data-action='removeEntry' data-tooltip="delete" data-key='{{key}}' class='fas icon fa-trash'></button>      
+    </div>
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'dsacalendar.FIELDS.calendarentries.label'}}</label>
+
+    <div class='flexcol form-fields'>
+      <div class='flexrow gap5px'>
+        <div class='flex0'>{{localize 'dsacalendar.FIELDS.calendarentries.from.label'}}</div>
+        <input
+          type='number'
+          style='max-width:40px'
+          min='1'
+          max='{{elem.from.max}}'
+          step='1'
+          value='{{elem.from.dayOfMonth}}'
+          name='{{concat "system.calendarentries." key ".from.dayOfMonth"}}'
+        />
+        <div class='flex0'>{{localize 'dsacalendar.FIELDS.calendarentries.to.label'}}</div>
+        <input
+          type='number'
+          style='max-width:40px'
+          min='1'
+          max='{{elem.from.max}}'
+          step='1'
+          value='{{elem.to.dayOfMonth}}'
+          name='{{concat "system.calendarentries." key ".to.dayOfMonth"}}'
+        />
+        {{formInput
+          document.system.schema.fields.calendarentries.element.fields.from.fields.month
+          value=elem.from.month
+          name=(concat 'system.calendarentries.' key '.from.month')
+          choices=availableMonths
+        }}
+        {{formInput document.system.schema.fields.calendarentries.element.fields.from.fields.year value=elem.from.year name=(concat 'system.calendarentries.' key '.from.year')}}
+        <div class='flex0'>{{yearSuffix}}</div>
+      </div>
+    </div>
+  </div>
+  {{formGroup
+    document.system.schema.fields.calendarentries.element.fields.content
+    value=elem.content
+    localize=true
+    classes='full-height'
+    name=(concat 'system.calendarentries.' key '.content')
+  }}
+  {{formGroup document.system.schema.fields.calendarentries.element.fields.location value=elem.location localize=true name=(concat 'system.calendarentries.' key '.location')}}
+  {{formGroup document.system.schema.fields.calendarentries.element.fields.category value=elem.category localize=true name=(concat 'system.calendarentries.' key '.category')}}
+  {{formGroup document.system.schema.fields.calendarentries.element.fields.recurring value=elem.recurring localize=true name=(concat 'system.calendarentries.' key '.recurring')}}
+
+</div>

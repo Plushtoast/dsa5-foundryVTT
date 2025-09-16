@@ -1,13 +1,12 @@
 import { DSACalendarEntry } from "../data/journal/dsacalendar.js";
+import SelectJournal from "./select_journal.js";
 
-export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.JournalEntryPageHandlebarsSheet {
-    #scrollToId;
-    #search;
-
+export class DSACalendarEntrySheet extends SelectJournal {
+    static objectKey = 'calendarentries';
     static DEFAULT_OPTIONS = {
-        actions: {
-            addCalendarEntry: DSACalendarEntrySheet.#addCalendarEntry,
-            removeCalendarEntry: DSACalendarEntrySheet.#removeCalendarEntry,
+        position: {
+            width: 1000,
+            height: 700
         },
         includeTOC: true,
     };
@@ -17,6 +16,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/calendarentry_edit.hbs',
+            templates: ['systems/dsa5/templates/journal/calendarentry_edit_detail.hbs'],
             scrollable: [''],
         },
         footer: super.EDIT_PARTS.footer,
@@ -48,14 +48,16 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
                 await DSACalendarEntry.prepareCalendarEntry(entry);
             }
         } else {
-            context.availableMonths = this.#getLocalizedArray(calendar.months.values, calendar.translationPrefix);
-            for (let key of Object.keys(context.sortedEntries)) {
-                const entry = context.sortedEntries[key];
-                entry.from.max = calendar.months.values[entry.from.month].days + 1;
+            if (options.currentKey)
+                this.currentKey = options.currentKey;
+            
+            if (this.currentKey && context.sortedEntries[this.currentKey]) {
+                context.currentKey = this.currentKey;
+                context.detailHTML = await this.renderDetail(this.currentKey);
             }
         }
         context.isRegistered = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
-        context.isGM = game.user.isGM;
+        context.isGM = game.user.isGM;        
         return context;
     }
 
@@ -67,11 +69,6 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
 
     async _onRender(context, options) {
         await super._onRender(context, options);
-
-        if (this.#scrollToId) {
-            this.element.querySelector(`[data-id="${this.#scrollToId}"]`)?.scrollIntoView({ behavior: "smooth" });
-            this.#scrollToId = null;
-        }
 
         const showInCalendar = this.element.querySelector('.showInCalendar');
         if (showInCalendar) {
@@ -86,23 +83,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
                 game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
                 game.settings.set('dsa5', DSACalendarEntry.SETTING_NAME, settings);
             });
-        }
-
-        this.#search ??= new foundry.applications.ux.SearchFilter({
-            inputSelector: "input[type=search]",
-            contentSelector: ".eventscontainer",
-            callback: this.#onSearchFilter.bind(this)
-        });
-        if (options.search) {
-            this.#search.query = options.search;
-            options.search = null;
-        }
-        this.#search.bind(this.element);
-        if (this.options.includeTOC) this.toc = this.constructor.buildTOC(this.element);
-    }
-
-    static #addCalendarEntry(ev, target) {
-        this.newEntry();
+        }        
     }
 
     static buildTOC(html, { includeElement = true } = {}) {
@@ -132,7 +113,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
     async newEntry() {
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const id = foundry.utils.randomID();
-        this.#scrollToId = id;
+        this.currentKey = id;
         await this.document.update({
             system: {
                 calendarentries: {
@@ -150,14 +131,20 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         })
     }
 
-    static #removeCalendarEntry(ev, target) {
-        const key = target.dataset.key;
-        this.document.update({ [`system.calendarentries.-=${key}`]: null });
-    }
+    async renderDetail(key) {
+        const calendar = game.time.calendar;
+        const elem = this.document.system.calendarentries[key];
+        const availableMonths = this.#getLocalizedArray(calendar.months.values, calendar.translationPrefix);
+        elem.from.max = calendar.months.values[elem.from.month].days + 1;
 
-    _tearDown(options) {
-        super._tearDown(options);
-        this.#search?.unbind();
+        return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/calendarentry_edit_detail.hbs', {
+            elem,
+            document: this.document,
+            isGM: game.user.isGM,
+            key,
+            availableMonths,
+            yearSuffix: calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix)
+        });
     }
 
     #viewFilter(_event, query, rgx, html) {
@@ -190,7 +177,7 @@ export class DSACalendarEntrySheet extends foundry.applications.sheets.journal.J
         }
     }
 
-    #onSearchFilter(_event, query, rgx, html) {
+    onSearchFilter(_event, query, rgx, html) {
         this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
-    }
+    }    
 }

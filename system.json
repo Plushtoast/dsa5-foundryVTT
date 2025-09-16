@@ -147,7 +147,10 @@
                 "htmlFields": [ "calendarentries.*.content" ]
             },
             "dsapersonaedramatis": {
-                "htmlFields": [ "personae.*.description", "personae.*.notes" ]
+                "htmlFields": [ "personae.*.description", "personae.*.notes" ],
+                "filePathFields": {
+                    "personae.*.img": ["IMAGE"]
+                }
             }
         },
         "RegionBehavior": {
