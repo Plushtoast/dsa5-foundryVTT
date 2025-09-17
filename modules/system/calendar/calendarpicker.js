@@ -7,7 +7,7 @@ import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-  static #cached;
+  static #yearCache = new Map();
 
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-picker',
@@ -78,9 +78,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
   };
 
-  // invalidate on year and calendar change
   static async fromCache(components) {
-    if (this.#cached) return this.#cached;
+    return this.fromYearCache(components?.year ?? game.time.calendar.timeToComponents(game.time.worldTime).year);
+  }
+
+  static async fromYearCache(year) {
+    if (this.#yearCache.has(year)) return this.#yearCache.get(year);
 
     const journalSettings = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
     const activated = journalSettings.activated || [];
@@ -89,8 +92,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const validJournals = loaded
       .filter(r => r.status === 'fulfilled' && r.value)
       .map(r => r.value);
-
-    const year = components.year;
 
     const candidates = [];
     for (const journal of validJournals) {
@@ -111,12 +112,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     for (let i = 0; i < candidates.length; i += BATCH) {
       const batch = candidates.slice(i, i + BATCH);
       const processed = await Promise.all(batch.map(async ({ entry, page, key }) => {
-        await DSACalendarEntry.prepareCalendarEntry(entry);
-        entry.isOwner = page.isOwner;
-        entry.uuid = page.uuid;
-        entry.juuid = page.parent?.uuid;
-        entry.calendarKey = key;
-        return entry;
+        const e = foundry.utils.deepClone(entry);
+        await DSACalendarEntry.prepareCalendarEntry(e);
+        e.isOwner = page.isOwner;
+        e.uuid = page.uuid;
+        e.juuid = page.parent?.uuid;
+        e.calendarKey = key;
+        return e;
       }));
       preparedEntries.push(...processed);
     }
@@ -149,12 +151,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         recurring: true,
         gods: holiday.gods?.join(', ')
       };
-      await DSACalendarEntry.prepareCalendarEntry(entry);
-      holidayEntries.push(entry);
+      const e = foundry.utils.deepClone(entry);
+      await DSACalendarEntry.prepareCalendarEntry(e);
+      holidayEntries.push(e);
     }
 
-    this.#cached = [...holidayEntries, ...preparedEntries];
-    return this.#cached;
+    const result = [...holidayEntries, ...preparedEntries];
+    this.#yearCache.set(year, result);
+    return result;
   }
 
   _configureRenderParts(options) {
@@ -269,7 +273,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     game.socket.emit('system.dsa5', {
       type: 'invalidateCache',
     });
-    this.#cached = null;
+    this.#yearCache.clear();
   }
 
   #getSortableDate(h, currentDateValue) {
@@ -327,9 +331,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
     if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
 
-    const currentDateValue = context.components.month * 100 + context.components.dayOfMonth;
-    context.sortedEntries = (await DSACalendarPicker.fromCache(context.components))
-      .sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
+    context.initialYear = context.components.year;
 
     context.dayCategories = Object.entries(DSACalendarEntry.CATEGORY_CHOICES).reduce((acc, [key, val]) => {
       acc[key] = { key, name: val, color: DSACalendarEntry.CATEGORY_COLORS[key], icon: DSACalendarEntry.CATEGORY_ICONS[key] };
@@ -379,12 +381,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
 
     this.#personaeDramatis.onRenderListeners();
+
+    this._setupInfiniteScroll();
   }
 
   _tearDown(options) {
     super._tearDown(options);
     this.#search?.unbind();
     this.#personaeDramatis._tearDown(options);
+    if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
+    if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
+    this._evtState = null;
   }
 
   #onSearchFilter(_event, query, rgx, html) {
@@ -654,5 +661,181 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     foundry.utils.setProperty(settings, setting, value);
     await game.settings.set('dsa5', settingName, settings);
     game.dsa5.apps.CalendarWidget.render(true);
+  }
+
+  /* =====================
+   * Events Virtual Scroller
+   * ===================== */
+
+  _setupInfiniteScroll() {
+    const container = this.element.querySelector('.eventscontainer');
+    const root = this.element.querySelector('[data-tab="events"].tab');
+    if (!container || !root) return;
+
+    // If already initialized on this same container, do nothing
+    if (container.dataset.vscrollInit === '1' && this._evtState?.container === container) return;
+
+    // If re-initializing (container changed), clean up old observers/state
+    if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
+    if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
+    this._evtState = null;
+
+    if (container.dataset.vscrollInit === '1') return;
+
+    const topSentinel = document.createElement('div');
+    topSentinel.className = 'events-sentinel top';
+    const bottomSentinel = document.createElement('div');
+    bottomSentinel.className = 'events-sentinel bottom';
+    container.prepend(topSentinel);
+    container.append(bottomSentinel);
+
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    this._evtState = {
+      root,
+      container,
+      topSentinel,
+      bottomSentinel,
+      earliestYear: components.year,
+      latestYear: components.year,
+      loadedYears: new Set(),
+      isLoadingTop: false,
+      isLoadingBottom: false,
+      keepYears: 5,
+    };
+
+    const opts = { root, rootMargin: '200px', threshold: 0 };
+    const topObserver = new IntersectionObserver(async (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !this._evtState.isLoadingTop) {
+          this._evtState.isLoadingTop = true;
+          try { await this._prependPrevYear(); } finally { this._evtState.isLoadingTop = false; }
+        }
+      }
+    }, opts);
+    const bottomObserver = new IntersectionObserver(async (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting && !this._evtState.isLoadingBottom) {
+          this._evtState.isLoadingBottom = true;
+          try { await this._appendNextYear(); } finally { this._evtState.isLoadingBottom = false; }
+        }
+      }
+    }, opts);
+    topObserver.observe(topSentinel);
+    bottomObserver.observe(bottomSentinel);
+    this._evtState.topObserver = topObserver;
+    this._evtState.bottomObserver = bottomObserver;
+
+    container.dataset.vscrollInit = '1';
+
+    this._renderInitialYearChunk(components.year, components);
+  }
+
+  async _renderInitialYearChunk(year, components) {
+    const entries = await this.constructor.fromYearCache(year);
+    const currentDateValue = components.month * 100 + components.dayOfMonth;
+    const sorted = entries.slice().sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
+    await this._insertYearChunk(year, sorted, 'after');
+  }
+
+  async _appendNextYear() {
+    const nextYear = this._evtState.latestYear + 1;
+    if (this._evtState.loadedYears.has(nextYear)) return;
+    const entries = await this.constructor.fromYearCache(nextYear);
+    const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+    await this._insertYearChunk(nextYear, sorted, 'after');
+    this._evtState.latestYear = nextYear;
+    this._pruneYearsIfNeeded();
+  }
+
+  async _prependPrevYear() {
+    const prevYear = this._evtState.earliestYear - 1;
+    if (this._evtState.loadedYears.has(prevYear)) return;
+    const entries = await this.constructor.fromYearCache(prevYear);
+    const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+    const prevHeight = this._evtState.root.scrollHeight;
+    await this._insertYearChunk(prevYear, sorted, 'before');
+    const newHeight = this._evtState.root.scrollHeight;
+    const delta = newHeight - prevHeight;
+    this._evtState.root.scrollTop += delta;
+    this._evtState.earliestYear = prevYear;
+    this._pruneYearsIfNeeded();
+  }
+
+  async _insertYearChunk(year, entries, position) {
+    const { container, topSentinel, bottomSentinel, loadedYears } = this._evtState;
+    if (loadedYears.has(year)) return;
+    if (container.querySelector(`.year-chunk[data-year="${year}"]`)) {
+      loadedYears.add(year);
+      return;
+    }
+
+    const frag = document.createDocumentFragment();
+    const wrapper = document.createElement('div');
+    wrapper.className = 'year-chunk';
+    wrapper.dataset.year = String(year);
+    frag.append(wrapper);
+
+    const tpl = 'systems/dsa5/templates/journal/calendarcard.hbs';
+    const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+
+    const BATCH = 40;
+    for (let i = 0; i < entries.length; i += BATCH) {
+      const batch = entries.slice(i, i + BATCH);
+      const htmls = await Promise.all(batch.map(e => {
+        const displayYear = e.recurring ? year : e.from.year;
+        return renderTemplate(tpl, { ...e, yearSuffix, displayYear });
+      }));
+      const batchContainer = document.createElement('div');
+      batchContainer.innerHTML = htmls.join('');
+      while (batchContainer.firstElementChild) wrapper.appendChild(batchContainer.firstElementChild);
+    }
+
+    if (position === 'before') container.insertBefore(frag, topSentinel.nextSibling);
+    else container.insertBefore(frag, bottomSentinel);
+
+    loadedYears.add(year);
+
+    this._applyActiveFiltersToNewContent(wrapper);
+    this._applyActiveSearchToNewContent(wrapper);
+  }
+
+  _applyActiveFiltersToNewContent(scopeElement) {
+    const toggles = Array.from(this.element.querySelectorAll('.searchOptions .toggleOn'));
+    if (!toggles.length) return;
+    const searchOptions = { category: new Set(), uuid: new Set() };
+    for (const elm of toggles) {
+      const type = elm.dataset.filterType;
+      if (type) searchOptions[type].add(elm.dataset.filter);
+    }
+    for (const card of scopeElement.querySelectorAll('.event-card')) {
+      let isVisible = true;
+      for (const [type, values] of Object.entries(searchOptions)) {
+        if (!values.size) { isVisible = false; break; }
+        const attr = card.dataset[type];
+        if (!attr || !values.has(attr)) { isVisible = false; break; }
+      }
+      card.classList.toggle('dsahidden', !isVisible);
+    }
+  }
+
+  //todo not sure if it is needed
+  _applyActiveSearchToNewContent(scopeElement) {
+    const input = this.element.querySelector('input.calendarSearch[type=search]');
+    const query = input?.value?.trim() || '';
+    if (!query) return;
+    this.#search.search = query;
+  }
+
+  _pruneYearsIfNeeded() {
+    const { loadedYears, container, topSentinel, bottomSentinel, keepYears } = this._evtState;
+    if (loadedYears.size <= keepYears) return;
+    const years = Array.from(loadedYears).sort((a, b) => a - b);
+    while (years.length > keepYears) {
+      const removeFromTop = (this._evtState.latestYear - years[0]) > (years.at(-1) - this._evtState.earliestYear);
+      const yearToRemove = removeFromTop ? years.shift() : years.pop();
+      const chunk = container.querySelector(`.year-chunk[data-year="${yearToRemove}"]`);
+      if (chunk) chunk.remove();
+      loadedYears.delete(yearToRemove);
+    }
   }
 }

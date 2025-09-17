@@ -1,4 +1,4 @@
-<article class="event-card" aria-labelledby="event-{{@key}}-title" data-uuid="{{juuid}}" data-category="{{category}}">
+<article class="event-card" aria-labelledby="event-{{juuid}}-{{calendarKey}}-title" data-uuid="{{juuid}}" data-category="{{category}}">
 
     <div class="event-card__date" aria-hidden="true" style="--gradient-color:{{color}}" data-tooltip="{{categoryName}}">
         <div class="month">{{monthShort}}</div>
@@ -8,7 +8,7 @@
 
     <div class="event-card__body">
         <div class="flexrow">
-            <h3 id="event-{{@key}}-title" class="event-card__title">{{title}} {{#unless visible}}<i class="fas fa-eye-slash"
+            <h3 id="event-{{juuid}}-{{calendarKey}}-title" class="event-card__title">{{title}} {{#unless visible}}<i class="fas fa-eye-slash"
                 data-tooltip="dsacalendar.FIELDS.calendarentries.visible.label"></i>{{/unless}}</h3>
             {{#if isOwner}}
             <div class="event-card-controls flex0">
@@ -25,7 +25,7 @@
                 <span aria-hidden="true">–</span>
                 <span>{{to.dayOfMonth}}.</span>
                 {{/if}}
-                <span>{{from.monthLong}} {{from.year}} {{yearSuffix}}</span>
+                <span>{{from.monthLong}} {{#if displayYear}}{{displayYear}}{{else}}{{from.year}}{{/if}} {{yearSuffix}}</span>
             </span>
 
             {{#if location}}
