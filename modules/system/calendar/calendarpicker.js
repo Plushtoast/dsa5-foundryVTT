@@ -94,7 +94,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       for (let m = 0; m < months.length; m++) monthPrefix[m + 1] = monthPrefix[m] + months[m].days;
 
       const holidayDefs = CONFIG.time.worldCalendarConfig.holidays.values || [];
-      
+
       const preparedHolidayTemplates = [];
       for (const holiday of holidayDefs) {
         const dayOffset = monthPrefix[holiday.month] ?? 0;
@@ -118,7 +118,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         };
         preparedHolidayTemplates.push(template);
       }
-      
+
       this.#holidayDefsCache = preparedHolidayTemplates;
     }
     return this.#holidayDefsCache;
@@ -325,7 +325,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _prepareConfigContext(context, options) {
     const calendar = game.time.calendar;
     if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
-    
+
     context.calendarActors = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
@@ -400,7 +400,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     this.#personaeDramatis.onRenderListeners();
 
-    this._setupInfiniteScroll();    
+    this._setupInfiniteScroll();
   }
 
   _tearDown(options) {
@@ -797,34 +797,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const components = game.time.calendar.timeToComponents(game.time.worldTime);
     const currentYear = components.year;
     const currentDateValue = components.month * 100 + components.dayOfMonth;
-    let todayMarkerInserted = false;
 
-    if (year === currentYear && initialChunk && entries.length > 0) {
-      let todayIndex = entries.findIndex(entry => {
-        const entrySortValue = this.#getSortableDate(entry, currentDateValue);
-        return entrySortValue > currentDateValue;
-      });
-      
-      if (todayIndex === -1) todayIndex = entries.length;
-      
-      const beforeToday = entries.slice(0, todayIndex);
-      const afterToday = entries.slice(todayIndex);
-      
-      await this._renderEntryBatch(beforeToday, wrapper, tpl, yearSuffix, year, initialChunk);
-      
-      if (todayIndex >= 0) {
-        const todayMarker = document.createElement('div');
-        todayMarker.className = 'calendar-today-marker';
-        todayMarker.innerHTML = `<hr><span class="today-label">${game.i18n.localize('dsacalendar.today')}</span>`;
-        wrapper.appendChild(todayMarker);
-        todayMarkerInserted = true;
-      }
-      
-      await this._renderEntryBatch(afterToday, wrapper, tpl, yearSuffix, year, initialChunk);
-      
-    } else {
-      await this._renderEntryBatch(entries, wrapper, tpl, yearSuffix, year, initialChunk);
-    }
+    const shouldAddTodayMarker = year === currentYear && initialChunk;
+    await this._renderEntriesWithMonthDividers(entries, wrapper, tpl, yearSuffix, year, initialChunk, shouldAddTodayMarker ? components : null);
 
     if (position === 'before') container.insertBefore(frag, topSentinel.nextSibling);
     else container.insertBefore(frag, bottomSentinel);
@@ -835,20 +810,44 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._applyActiveSearchToNewContent(wrapper);
   }
 
-  async _renderEntryBatch(entries, wrapper, template, yearSuffix, year, initialChunk) {
-    const BATCH = 40;
-    for (let i = 0; i < entries.length; i += BATCH) {
-      const batch = entries.slice(i, i + BATCH);
-      const htmls = await Promise.all(batch.map(e => {
-        const displayYear = e.recurring ? year : e.from.year;
-        return renderTemplate(template, { ...e, yearSuffix, displayYear, initialChunk });
-      }));
-      const batchContainer = document.createElement('div');
-      batchContainer.innerHTML = htmls.join('');
-      while (batchContainer.firstElementChild) wrapper.appendChild(batchContainer.firstElementChild);
+  async _renderEntriesWithMonthDividers(entries, wrapper, template, yearSuffix, year, initialChunk, currentComponents = null) {
+    if (!entries.length) return;
+
+    let currentMonth = -1;
+
+    for (let i = 0; i < entries.length; i += 1) {
+      const entry = entries[i];
+
+      if (entry.from.month !== currentMonth) {
+        currentMonth = entry.from.month;
+
+        const monthName = game.time.calendar.translate(game.time.calendar.months.values[currentMonth].name);
+        const monthDivider = document.createElement('div');
+        monthDivider.className = 'calendar-month-marker';
+        monthDivider.innerHTML = `<hr><span class="month-label">${monthName} ${year} ${yearSuffix}</span>`;
+        wrapper.appendChild(monthDivider);
+
+        if (currentComponents && currentMonth === currentComponents.month) {
+          const todayMarker = document.createElement('div');
+          todayMarker.className = 'calendar-today-marker';
+          const todayDay = currentComponents.dayOfMonth + 1;
+          const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
+          const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+          const todayLabel = game.i18n.localize('dsacalendar.today');
+          todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
+          wrapper.appendChild(todayMarker);
+        }
+      }
+
+      const displayYear = entry.recurring ? year : entry.from.year;
+      const html = await renderTemplate(template, { ...entry, yearSuffix, displayYear, initialChunk });
+      const tempContainer = document.createElement('div');
+      tempContainer.innerHTML = html;
+      while (tempContainer.firstElementChild) wrapper.appendChild(tempContainer.firstElementChild);
+
     }
-  }  
-  
+  }
+
   _applyActiveFiltersToNewContent(scopeElement) {
     const toggles = Array.from(this.element.querySelectorAll('.searchOptions .toggleOn'));
     if (!toggles.length) return;
@@ -922,8 +921,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     scrollRoot.scrollTo({ top: offset, behavior: 'smooth' });
   }
 
-  static async #scrollToToday() {    
-    const todayMarker = chunk.querySelector('.calendar-today-marker');
+  static async #scrollToToday() {
+    const todayMarker = this.element.querySelector('.calendar-today-marker');
     if (todayMarker) {
       this._scrollToCard(todayMarker);
       return;
@@ -938,6 +937,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._scrollToAdjacentMonth(-1);
   }
 
+  // todo maybe this can be simplified by instead scrolling to the next month divider
   async _scrollToAdjacentMonth(direction) {
     if (!direction || !this.element) return;
 
@@ -948,43 +948,35 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const getVisibleCards = () => Array.from(container.querySelectorAll('.event-card'))
       .filter(el => el.offsetParent !== null && !el.classList.contains('dsahidden'));
 
+    const getVisibleDividers = () => Array.from(container.querySelectorAll('.calendar-month-marker'))
+      .filter(el => el.offsetParent !== null && !el.classList.contains('dsahidden'));
+
     const findTopVisibleCard = (cards) => {
       const rootRect = root.getBoundingClientRect();
       return cards.find(card => {
-      const r = card.getBoundingClientRect();
-      return r.top >= rootRect.top && r.top < rootRect.bottom;
+        const r = card.getBoundingClientRect();
+        return r.top >= rootRect.top && r.top < rootRect.bottom;
       });
     };
 
-    const findTargetCard = (cards, topCard, direction) => {
-      const currentMonth = Number(topCard.dataset.month ?? -1);
-      if (!Number.isFinite(currentMonth) || currentMonth < 0) return;
-      const currentIndex = cards.findIndex(card => card === topCard);
-
-      if (currentIndex === -1) return null;
-
+    const findTargetCard = (dividers, topCard, direction) => {
       if (direction > 0) {
-        for (let i = currentIndex; i < cards.length; i++) {
-          const cardMonth = Number(cards[i].dataset.month);
-          if (cardMonth !== currentMonth) {
-            return cards[i];
+        const topCardRect = topCard.getBoundingClientRect();
+        for (const div of dividers) {
+          const r = div.getBoundingClientRect();
+          if (r.top > topCardRect.top) {
+            return div;
           }
         }
       } else {
-        let currentBlockStart = currentIndex;
-        while (currentBlockStart > 0 && Number(cards[currentBlockStart - 1].dataset.month) === currentMonth) {
-          currentBlockStart--;
+        const topCardRect = topCard.getBoundingClientRect();
+        for (let i = dividers.length - 1; i >= 0; i -= 1) {
+          const div = dividers[i];
+          const r = div.getBoundingClientRect();
+          if (r.top < topCardRect.top) {
+            return dividers[i - 1] || div;
+          }
         }
-        
-        if (currentBlockStart === 0) return null;
-        
-        const prevMonth = Number(cards[currentBlockStart - 1].dataset.month);
-        let prevBlockStart = currentBlockStart - 1;
-        while (prevBlockStart > 0 && Number(cards[prevBlockStart - 1].dataset.month) === prevMonth) {
-          prevBlockStart--;
-        }
-        
-        return cards[prevBlockStart];
       }
       return null;
     };
@@ -995,7 +987,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const topCard = findTopVisibleCard(cards);
     if (!topCard) return;
 
-   let targetCard = findTargetCard(cards, topCard, direction);
+    let dividers = getVisibleDividers();
+    if (!dividers.length) return;
+
+    let targetCard = findTargetCard(dividers, topCard, direction);
 
     if (!targetCard) {
       if (direction > 0) {
@@ -1003,10 +998,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       } else {
         await this._prependPrevYear();
       }
-      
+
       cards = getVisibleCards();
-      targetCard = findTargetCard(cards, topCard, direction);
-      
+      dividers = getVisibleDividers();
+      targetCard = findTargetCard(dividers, topCard, direction);
+
       if (!targetCard && cards.length) {
         targetCard = direction > 0 ? cards[cards.length - 1] : cards[0];
       }
