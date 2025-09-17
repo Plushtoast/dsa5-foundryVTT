@@ -291,7 +291,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     game.socket.emit('system.dsa5', {
       type: 'invalidateCache',
     });
-    // Only clear the year cache, not the holiday definitions cache since those don't change
     this.#yearCache.clear();
   }
 
