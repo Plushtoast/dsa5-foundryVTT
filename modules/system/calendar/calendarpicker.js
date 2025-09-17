@@ -794,16 +794,36 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const tpl = 'systems/dsa5/templates/journal/calendarcard.hbs';
     const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
 
-    const BATCH = 40;
-    for (let i = 0; i < entries.length; i += BATCH) {
-      const batch = entries.slice(i, i + BATCH);
-      const htmls = await Promise.all(batch.map(e => {
-        const displayYear = e.recurring ? year : e.from.year;
-        return renderTemplate(tpl, { ...e, yearSuffix, displayYear, initialChunk });
-      }));
-      const batchContainer = document.createElement('div');
-      batchContainer.innerHTML = htmls.join('');
-      while (batchContainer.firstElementChild) wrapper.appendChild(batchContainer.firstElementChild);
+    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const currentYear = components.year;
+    const currentDateValue = components.month * 100 + components.dayOfMonth;
+    let todayMarkerInserted = false;
+
+    if (year === currentYear && initialChunk && entries.length > 0) {
+      let todayIndex = entries.findIndex(entry => {
+        const entrySortValue = this.#getSortableDate(entry, currentDateValue);
+        return entrySortValue > currentDateValue;
+      });
+      
+      if (todayIndex === -1) todayIndex = entries.length;
+      
+      const beforeToday = entries.slice(0, todayIndex);
+      const afterToday = entries.slice(todayIndex);
+      
+      await this._renderEntryBatch(beforeToday, wrapper, tpl, yearSuffix, year, initialChunk);
+      
+      if (todayIndex >= 0) {
+        const todayMarker = document.createElement('div');
+        todayMarker.className = 'calendar-today-marker';
+        todayMarker.innerHTML = `<hr><span class="today-label">${game.i18n.localize('dsacalendar.today')}</span>`;
+        wrapper.appendChild(todayMarker);
+        todayMarkerInserted = true;
+      }
+      
+      await this._renderEntryBatch(afterToday, wrapper, tpl, yearSuffix, year, initialChunk);
+      
+    } else {
+      await this._renderEntryBatch(entries, wrapper, tpl, yearSuffix, year, initialChunk);
     }
 
     if (position === 'before') container.insertBefore(frag, topSentinel.nextSibling);
@@ -815,6 +835,20 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._applyActiveSearchToNewContent(wrapper);
   }
 
+  async _renderEntryBatch(entries, wrapper, template, yearSuffix, year, initialChunk) {
+    const BATCH = 40;
+    for (let i = 0; i < entries.length; i += BATCH) {
+      const batch = entries.slice(i, i + BATCH);
+      const htmls = await Promise.all(batch.map(e => {
+        const displayYear = e.recurring ? year : e.from.year;
+        return renderTemplate(template, { ...e, yearSuffix, displayYear, initialChunk });
+      }));
+      const batchContainer = document.createElement('div');
+      batchContainer.innerHTML = htmls.join('');
+      while (batchContainer.firstElementChild) wrapper.appendChild(batchContainer.firstElementChild);
+    }
+  }  
+  
   _applyActiveFiltersToNewContent(scopeElement) {
     const toggles = Array.from(this.element.querySelectorAll('.searchOptions .toggleOn'));
     if (!toggles.length) return;
@@ -888,22 +922,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     scrollRoot.scrollTo({ top: offset, behavior: 'smooth' });
   }
 
-  static async #scrollToToday() {
-    const comp = game.time.calendar.timeToComponents(game.time.worldTime);
-    const year = comp.year;
-    const chunk = await this._ensureYearLoaded(year);
-    if (!chunk) return;
-    const currentValue = comp.month * 100 + (comp.dayOfMonth + 1);
-    let best = null; let bestDelta = Infinity;
-    for (const card of chunk.querySelectorAll('.event-card')) {
-      const idx = Number(card.dataset.month);
-      const d = Number(card.dataset.day);
-      if (Number.isNaN(idx) || Number.isNaN(d)) continue;
-      const val = idx * 100 + d;
-      const delta = Math.abs(val - currentValue);
-      if (delta < bestDelta) { bestDelta = delta; best = card; }
+  static async #scrollToToday() {    
+    const todayMarker = chunk.querySelector('.calendar-today-marker');
+    if (todayMarker) {
+      this._scrollToCard(todayMarker);
+      return;
     }
-    if (best) this._scrollToCard(best);
   }
 
   static #scrollForward(event, target) {

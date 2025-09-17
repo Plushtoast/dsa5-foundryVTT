@@ -137,6 +137,61 @@
   }
 }
 
+.calendar-today-marker {
+  position: relative;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  hr {
+    flex: 1;
+    border: none;
+    border-top: 2px solid var(--color-warm-2);
+    margin: 0;
+  }
+
+  .today-label {
+    position: relative;
+    background: var(--background-color);
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-warm-2);
+    border: 2px solid var(--color-warm-2);
+    border-radius: 1rem;
+    margin: 0 1rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 8px solid var(--color-warm-2);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 8px solid var(--color-warm-2);
+    }
+  }
+}
+
 .toggleOn {
   background-color: var(--color-cool-4);
 }
