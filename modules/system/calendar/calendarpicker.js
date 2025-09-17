@@ -554,7 +554,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const monthImage = DSAWorldCalendar.monthImage(monthIndex);
     let img;
 
-    // Calculate day offset for this month
     let dayOffset = 0;
     for (let m = 0; m < monthIndex; m++) {
       dayOffset += calendar.months.values[m].days;
@@ -937,7 +936,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._scrollToAdjacentMonth(-1);
   }
 
-  // todo maybe this can be simplified by instead scrolling to the next month divider
   async _scrollToAdjacentMonth(direction) {
     if (!direction || !this.element) return;
 
