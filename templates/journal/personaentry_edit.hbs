@@ -1,4 +1,4 @@
-<div class='scrollable'>
+<div>
   <div class='personae-two-column'>
     <div class='personae-list-column'>
       <div class='personae-list-header'>
@@ -18,12 +18,14 @@
         {{/if}}
       </div>
 
-      <div class='personae-list eventscontainer'>
+      <div class='personae-list eventscontainer scrollable'>
         {{#each sortedEntries as |persona key|}}
           <div class='persona-list-item {{ifThen (eq ../currentKey key) 'selected' ''}}' data-persona-uuid='{{uuid}}' data-persona-juuid='{{juuid}}' data-key='{{key}}' data-action='selectEntry'>
             <div class='persona-list-image'>
               <img src='{{img}}' alt='{{name}}' />
-              <div class='persona-status {{status}}'></div>
+              {{#if garadanClass}}
+              <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
+              {{/if}}
             </div>
             <div class='persona-list-info'>
               <h5 class='persona-list-name'>{{name}}</h5>
@@ -42,7 +44,7 @@
     </div>
 
     <div class='personae-details-column'>
-      <div class='persona-details-container'>
+      <div class='persona-details-container scrollable'>
         {{#if detailHTML}}
           {{{detailHTML}}}
         {{else}}

@@ -19,21 +19,40 @@
                 {{/if}}
             </div>
 
-            <div class="personae-list eventscontainer">
+            <div class="personae-list eventscontainer scrollable">
                 {{#each sortedEntries as |calendarEntry key|}}
-                <div class="persona-list-item {{ifThen (eq ../currentKey key) 'selected' ''}}" data-key="{{key}}" data-action='selectEntry'>
-                    <div class="persona-list-image">
-                        <img src="{{img}}" alt="{{title}}" />
-                        <div class="persona-status {{status}}"></div>
+                <div class="persona-list-item event-card {{ifThen (eq ../currentKey key) 'selected' ''}}" data-key="{{key}}" data-action='selectEntry'>
+                    <div class="event-card__date" aria-hidden="true" style="--gradient-color:{{color}}" data-tooltip="{{categoryName}}">
+                        <div class="month">{{monthShort}}</div>
+                        <div class="day">{{from.dayOfMonth}}</div>
+                        <div class="weekday" data-tooltip="{{weekDayLong}}">{{weekdayShort}}</div>
                     </div>
                     <div class="persona-list-info">
                         <h5 class="persona-list-name">{{title}}</h5>
                         <div class="persona-list-meta">
-                            <span class="persona-type">{{subtitle}}</span>
+                            <span class="persona-type">
+                                <i class="far fa-clock"></i>
+                                <span>{{from.dayOfMonth}}.</span>
+                                {{#if to.dayOfMonth}}
+                                <span aria-hidden="true">–</span>
+                                <span>{{to.dayOfMonth}}.</span>
+                                {{/if}}
+                                <span>{{from.monthLong}} {{from.year}} {{yearSuffix}}</span>
+                            </span>
+                            {{#if location}}
+                            <span class="persona-type">
+                                <i class="fas fa-location-pin"></i>
+                                <span class="eventlocation">{{location}}</span>
+                            </span>
+                            {{/if}}
+                            <span class="persona-type">
+                                {{#if visible}}
+                                <i class="fas fa-eye"></i>
+                                {{else}}
+                                <i class="fas fa-eye-slash"></i>
+                                {{/if}}
+                            </span>
                         </div>
-                    </div>
-                    <div class="persona-list-status">
-                        <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
                 {{/each}}

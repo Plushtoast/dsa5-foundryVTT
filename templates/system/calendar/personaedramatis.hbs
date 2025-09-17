@@ -41,7 +41,9 @@
                             <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
-                                    <div class="persona-status {{status}}"></div>
+                                    {{#if garadanClass}}
+                                    <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
+                                    {{/if}}
                                 </div>
                                 <div class="persona-list-info">
                                     <h5 class="persona-list-name">{{name}}</h5>
@@ -84,7 +86,9 @@
                             <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
-                                    <div class="persona-status {{status}}"></div>
+                                    {{#if garadanClass}}
+                                    <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
+                                    {{/if}}
                                 </div>
                                 <div class="persona-list-info">
                                     <h5 class="persona-list-name">{{name}}</h5>

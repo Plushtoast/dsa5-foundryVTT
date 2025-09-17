@@ -5,6 +5,15 @@ import DSABooleanField from '../../fields/dsa_boolean_field.js';
 const { SchemaField, NumberField, StringField, ObjectField, BooleanField } = foundry.data.fields;
 
 export default class MerchantTemplate extends DSADataModel {
+  static GARADAN_CHOICES = {
+    1: 'GARADAN.1',
+    2: 'GARADAN.2',
+    3: 'GARADAN.3',
+    4: 'GARADAN.4',
+    5: 'GARADAN.5',
+    6: 'GARADAN.6',
+  };
+  
   static defineSchema() {
     return {
       merchant: new SchemaField({
@@ -23,14 +32,7 @@ export default class MerchantTemplate extends DSADataModel {
           initial: 1,
           label: 'Garadan',
           required: true,
-          choices: {
-            1: 'GARADAN.1',
-            2: 'GARADAN.2',
-            3: 'GARADAN.3',
-            4: 'GARADAN.4',
-            5: 'GARADAN.5',
-            6: 'GARADAN.6',
-          },
+          choices: MerchantTemplate.GARADAN_CHOICES,
         }),
       }),
     };

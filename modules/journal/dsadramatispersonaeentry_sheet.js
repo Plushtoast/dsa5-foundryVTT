@@ -13,7 +13,6 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
             width: 960,
             height: 700
         },
-        includeTOC: true,
     };
 
     static EDIT_PARTS = {
@@ -21,7 +20,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/personaentry_edit.hbs',
-            scrollable: [''],
+            scrollable: ['', 'scrollable'],
         },
         footer: super.EDIT_PARTS.footer,
     };

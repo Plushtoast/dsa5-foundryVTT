@@ -18,6 +18,10 @@
   {{formGroup document.system.schema.fields.personae.element.fields.actor_uuid value=elem.actor_uuid localize=true name=(concat 'system.personae.' key '.actor_uuid')}}
   {{formGroup document.system.schema.fields.personae.element.fields.tags value=elem.tags localize=true name=(concat 'system.personae.' key '.tags')}}
 
+  {{#if (eq elem.type 0)}}
+  {{formGroup document.system.schema.fields.personae.element.fields.garadan value=elem.garadan localize=true name=(concat 'system.personae.' key '.garadan')}}
+  {{/if}}
+
   <div class='form-group'>
     <label>{{localize document.system.schema.fields.personae.element.fields.showSpecies.label}}</label>
     {{formInput document.system.schema.fields.personae.element.fields.showSpecies value=elem.showSpecies name=(concat 'system.personae.' key '.showSpecies')}}

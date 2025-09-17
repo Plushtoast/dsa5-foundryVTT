@@ -1,11 +1,22 @@
+import MerchantTemplate from "../actor/templates/merchant.js";
+
 const { TextEditor } = foundry.applications.ux;
 
 export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
     static SETTING_NAME = 'calendarActors';
-    
+
     static TYPE_CHOICES = {
         0: "PERSONAE.FIELDS.personae.type.choices.person",
         1: "PERSONAE.FIELDS.personae.type.choices.creature"
+    }
+
+    static GARADAN_CLASSES = {
+        1: 'bauer',
+        2: 'springer',
+        3: 'turm',
+        4: 'koenig',
+        5: 'laeufer',
+        6: 'boronsrad'
     }
 
     static defineSchema() {
@@ -24,9 +35,15 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 showActorDescription: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showActorDescription.label", hint: "PERSONAE.FIELDS.personae.showActorDescription.hint" }),
                 showActorPersonalNotes: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showActorPersonalNotes.label", hint: "PERSONAE.FIELDS.personae.showActorPersonalNotes.hint" }),
                 faction: new StringField({ label: "PERSONAE.FIELDS.personae.faction.label", hint: "PERSONAE.FIELDS.personae.faction.hint" }),
-                tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint"}),
+                tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint" }),
                 img: new FilePathField({ categories: ["IMAGE"] }),
                 subtitle: new StringField({ label: "PERSONAE.FIELDS.personae.subtitle.label" }),
+                garadan: new NumberField({
+                    initial: 1,
+                    label: 'Garadan',
+                    required: true,
+                    choices: MerchantTemplate.GARADAN_CHOICES,
+                })
             })),
         }
     }
@@ -40,7 +57,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
             if (!entry) continue;
             if (!entry.actor_uuid) continue;
-            
+
             const actor = await fromUuid(entry.actor_uuid);
             if (!actor) continue;
 
@@ -52,6 +69,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
 
             entry.name = actor.name;
             entry.type = isCreature ? 1 : 0;
+            entry.garadan = actor.system.merchant?.garadan || 1;
 
             if (isCreature) {
                 const creatureData = actor.system.creatureClass.value.split(',');
@@ -82,6 +100,8 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
 
             if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
+
+            entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
         }
 
         entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);

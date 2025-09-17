@@ -2,7 +2,9 @@
     <div class="persona-detail-header">
         <div class="persona-detail-image">
             <img src="{{actor.img}}" alt="{{actor.name}}" />
-            <div class="persona-status {{actorStatus}}"></div>
+            {{#if garadanClass}}
+            <div class="persona-status garjourn {{garadanClass}}" data-tooltip="GARADAN.{{garadan}}"></div>
+            {{/if}}
         </div>
         <div class="persona-detail-title">
             <h1 class="persona-detail-name">{{actor.name}}</h1>
