@@ -20,8 +20,7 @@
             <div class="groupbox">
                 <legend class="table-title lineheight">{{localize 'SHEET.actorConfig'}}</legend>
 
-                {{formGroup systemFields.merchant.fields.merchantType value=document.system.merchant.merchantType
-                localize=true}}
+                {{formGroup systemFields.merchant.fields.merchantType value=document.system.merchant.merchantType localize=true}}
 
                     {{#if (eq document.system.merchant.merchantType "epic")}}
 

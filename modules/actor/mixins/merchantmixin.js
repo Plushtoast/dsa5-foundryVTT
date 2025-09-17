@@ -527,12 +527,18 @@ export const MerchantSheetMixin = (superclass) =>
         if (this.merchantSheetActivated()) {
           this.filterWornEquipment(data);
           this.prepareTradeFriend(data);
-          if (data.prepare.inventory['misc'].items.length == 0) data.prepare.inventory['misc'].show = false;
+          this.hideEmptyCategories(data.prepare.inventory);
         }
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;
 
       return data;
+    }
+
+    hideEmptyCategories(inventory) {
+      for(const key of Object.keys(inventory)) {
+        inventory[key].show = inventory[key].items.length != 0 && inventory[key].items.some(x => !x.system.tradeLocked)
+      }
     }
 
     filterWornEquipment(data) {
@@ -583,7 +589,7 @@ export const MerchantSheetMixin = (superclass) =>
             ? 1
             : (this.actor.system.merchant.buyingFactor || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1);
         let inventory = this.prepareSellPrices(tradeData.inventory, factor);
-        if (inventory['misc'].items.length == 0) inventory['misc'].show = false;
+        this.hideEmptyCategories(inventory);
 
         if (data.merchantType == 'loot') {
           inventory['money'] = {

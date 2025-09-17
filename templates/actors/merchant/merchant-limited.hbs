@@ -141,29 +141,31 @@
                         </div>
                     </div>
                     <div class="row-section wrap rowtable inventory">
-                        {{#each section.items as |item i|}} {{#unless item.system.tradeLocked}}
-                        <div class="col item" data-item-id="{{item._id}}">
-                            <div class="row-section">
-                                <div class="col eight image {{item.enchantClass}}">
-                                    <div class="image" style="background-image: url('{{item.img}}')">
+                        {{#each section.items as |item i|}} 
+                            {{#unless item.system.tradeLocked}}
+                            <div class="col item" data-item-id="{{item._id}}">
+                                <div class="row-section">
+                                    <div class="col eight image {{item.enchantClass}}">
+                                        <div class="image" style="background-image: url('{{item.img}}')">
 
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <a data-action="itemEdit">{{item.name}}</a>
+                                    </div>
+                                    <div class="col four center">
+                                        {{item.calculatedPrice}}
+                                    </div>
+                                    <div class="col eight center">
+                                        {{item.system.quantity.value}}
+                                    </div>
+                                    <div class="col eight center">
+                                        <a class="fas button fa-shopping-cart icon noBorder dsadesignbutton" data-action="tradeWrapper" data-fct="buyItem" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.buy"></a>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <a data-action="itemEdit">{{item.name}}</a>
-                                </div>
-                                <div class="col four center">
-                                    {{item.calculatedPrice}}
-                                </div>
-                                <div class="col eight center">
-                                    {{item.system.quantity.value}}
-                                </div>
-                                <div class="col eight center">
-                                    <a class="fas button fa-shopping-cart icon noBorder dsadesignbutton" data-action="tradeWrapper" data-fct="buyItem" data-price="{{item.calculatedPrice}}" data-tooltip="MERCHANT.buy"></a>
-                                </div>
                             </div>
-                        </div>
-                        {{/unless}} {{/each}}
+                            {{/unless}}
+                        {{/each}}
                     </div>
                 </div>
                 {{/if}} {{/each}}

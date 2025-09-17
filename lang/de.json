@@ -592,6 +592,13 @@
     "zoo": "Zoo",
     "AoE": "Flächeneffekt",
     "doppelganger": "Doppelgänger",
+    "dsa5.ActorSheetdsa5Character": "DSA5 - Held",
+    "dsa5.CharacterMerchantSheetDSA5": "DSA5 - Händler/Schatz/Garadan",
+    "dsa5.MerchantSheetDSA5": "DSA5 - Händler/Schatz/Garadan",
+    "dsa5.CreatureMerchantSheetDSA5": "DSA5 - Händler/Schatz/Garadan",
+    "dsa5.ActorSheetdsa5Creature": "DSA5 - Kreatur",
+    "dsa5.ActorSheetdsa5NPC": "DSA5 - NSC",
+    "dsa5.DSACharBuilder": "DSA5 - Heldenerschaffung",
     "temperature": {
         "heatProtection": "Hitzeschutz",
         "coldProtection": "Kälteschutz"
