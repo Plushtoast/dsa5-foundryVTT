@@ -8,6 +8,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static #yearCache = new Map();
+  static #holidayDefsCache = null;
 
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-picker',
@@ -85,6 +86,44 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     return this.fromYearCache(components?.year ?? game.time.calendar.timeToComponents(game.time.worldTime).year);
   }
 
+  static #getHolidayDefinitions() {
+    if (this.#holidayDefsCache === null) {
+      const months = game.time.calendar.months.values;
+      const monthPrefix = new Array(months.length + 1);
+      monthPrefix[0] = 0;
+      for (let m = 0; m < months.length; m++) monthPrefix[m + 1] = monthPrefix[m] + months[m].days;
+
+      const holidayDefs = CONFIG.time.worldCalendarConfig.holidays.values || [];
+      
+      const preparedHolidayTemplates = [];
+      for (const holiday of holidayDefs) {
+        const dayOffset = monthPrefix[holiday.month] ?? 0;
+        const template = {
+          title: game.time.calendar.translate(`holiday.${holiday.name}`),
+          location: holiday.location,
+          from: {
+            dayOfMonth: holiday.dayStart + 1,
+            month: holiday.month,
+            day: dayOffset + holiday.dayStart,
+          },
+          to: {
+            dayOfMonth: holiday.dayEnd ? holiday.dayEnd + 1 : undefined,
+          },
+          content: game.time.calendar.translate(`holidayDesc.${holiday.name}`, false, true),
+          category: 1,
+          juuid: 'dC',
+          visible: true,
+          recurring: true,
+          gods: holiday.gods?.join(', ')
+        };
+        preparedHolidayTemplates.push(template);
+      }
+      
+      this.#holidayDefsCache = preparedHolidayTemplates;
+    }
+    return this.#holidayDefsCache;
+  }
+
   static async fromYearCache(year) {
     if (this.#yearCache.has(year)) return this.#yearCache.get(year);
 
@@ -126,35 +165,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       preparedEntries.push(...processed);
     }
 
-    const months = game.time.calendar.months.values;
-    const monthPrefix = new Array(months.length + 1);
-    monthPrefix[0] = 0;
-    for (let m = 0; m < months.length; m++) monthPrefix[m + 1] = monthPrefix[m] + months[m].days;
-
-    const holidayDefs = CONFIG.time.worldCalendarConfig.holidays.values || [];
+    const preparedHolidayTemplates = this.#getHolidayDefinitions();
     const holidayEntries = [];
-    for (const holiday of holidayDefs) {
-      const dayOffset = monthPrefix[holiday.month] ?? 0;
-      const entry = {
-        title: game.time.calendar.translate(`holiday.${holiday.name}`),
-        location: holiday.location,
-        from: {
-          dayOfMonth: holiday.dayStart + 1,
-          month: holiday.month,
-          year,
-          day: dayOffset + holiday.dayStart,
-        },
-        to: {
-          dayOfMonth: holiday.dayEnd ? holiday.dayEnd + 1 : undefined,
-        },
-        content: game.time.calendar.translate(`holidayDesc.${holiday.name}`, false, true),
-        category: 1,
-        juuid: 'dC',
-        visible: true,
-        recurring: true,
-        gods: holiday.gods?.join(', ')
-      };
-      const e = foundry.utils.deepClone(entry);
+    for (const template of preparedHolidayTemplates) {
+      const e = foundry.utils.deepClone(template);
+      e.from.year = year;
       await DSACalendarEntry.prepareCalendarEntry(e);
       holidayEntries.push(e);
     }
@@ -276,6 +291,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     game.socket.emit('system.dsa5', {
       type: 'invalidateCache',
     });
+    // Only clear the year cache, not the holiday definitions cache since those don't change
     this.#yearCache.clear();
   }
 
