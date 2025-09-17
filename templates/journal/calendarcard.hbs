@@ -1,4 +1,4 @@
-<article class="event-card" aria-labelledby="event-{{juuid}}-{{calendarKey}}-title" data-uuid="{{juuid}}" data-category="{{category}}">
+<article class="event-card" aria-labelledby="event-{{juuid}}-{{calendarKey}}-title" data-uuid="{{juuid}}" data-category="{{category}}" data-month="{{from.month}}" data-day="{{from.dayOfMonth}}" data-year="{{#if displayYear}}{{displayYear}}{{else}}{{from.year}}{{/if}}">
 
     <div class="event-card__date" aria-hidden="true" style="--gradient-color:{{color}}" data-tooltip="{{categoryName}}">
         <div class="month">{{monthShort}}</div>

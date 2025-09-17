@@ -173,6 +173,34 @@
     min-height: 360px;
   }
 
+  .events-scroll-controls {
+    position: sticky;
+    top: 50%;
+    transform: translateY(-50%);
+    align-self: flex-start;
+    margin-left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+
+    .circleBtn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: rgba(0,0,0,0.05);
+      font-size: 12px;
+      padding: 0 8px;
+      line-height: 1;
+
+      &.icon { font-size: 14px; }
+    }
+  }
+
   .calendar-img {
     opacity: 0;
     position: absolute;

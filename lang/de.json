@@ -1500,6 +1500,9 @@
         "SelectEntry": "Wähle einen Eintrag",
         "SelectEntryHint": "Zeige Ereignisse und besondere Tage.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "nextMonth": "Nächster Monat",
+        "previousMonth": "Vorheriger Monat",
+        "today": "Heute",
         "FIELDS": {
             "calendarentries": {
                 "label": "Datum",

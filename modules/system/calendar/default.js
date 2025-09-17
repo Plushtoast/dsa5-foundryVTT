@@ -90,7 +90,7 @@ export const DSAKalender = {
       { name: 'Opernsaison in Vinsalt', month: 5, dayStart: 19, location: 'Vinsalt' },
       { name: 'Erleuchtungsfest', month: 5, dayStart: 29, gods: ['Hesinde'] },
       { name: 'Wintersonnenwende', month: 6, dayStart: 0, gods: ['Firun', 'Phex', 'Nandus', 'Sumu', 'Rikai'] },
-      { name: 'Tag des Hirsches', month: 6, dayStart: 11, gods: ['Firun'] },
+      { name: 'Tag des Hirsches', month: 6, dayStart: 11, gods: ['Firun'], location: 'Bjaldorn' },
       { name: 'Tag der Ifirn', month: 6, dayStart: 29, gods: ['Firun', 'Ifirn'] },
       { name: 'Tag der Erneuerung', month: 7, dayStart: 29, gods: ['Tsa'] },
       { name: 'Tag des Phex', month: 8, dayStart: 15, gods: ['Phex'] },

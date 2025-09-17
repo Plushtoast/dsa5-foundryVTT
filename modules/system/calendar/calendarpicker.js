@@ -24,6 +24,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       editEvent: this.#onEditEvent,
       openMoreSearch: this.#toggleMoreSearch,
       ...PersonaeDramatis.actions,
+      scrollToToday: this.#scrollToToday,
+      scrollMonthPrev: this.#scrollBackward,
+      scrollMonthNext: this.#scrollForward,
     }
   };
 
@@ -382,7 +385,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     this.#personaeDramatis.onRenderListeners();
 
-    this._setupInfiniteScroll();
+    this._setupInfiniteScroll();    
   }
 
   _tearDown(options) {
@@ -672,10 +675,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const root = this.element.querySelector('[data-tab="events"].tab');
     if (!container || !root) return;
 
-    // If already initialized on this same container, do nothing
     if (container.dataset.vscrollInit === '1' && this._evtState?.container === container) return;
 
-    // If re-initializing (container changed), clean up old observers/state
     if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
     if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
     this._evtState = null;
@@ -734,7 +735,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const entries = await this.constructor.fromYearCache(year);
     const currentDateValue = components.month * 100 + components.dayOfMonth;
     const sorted = entries.slice().sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
-    await this._insertYearChunk(year, sorted, 'after');
+    await this._insertYearChunk(year, sorted, 'after', true);
   }
 
   async _appendNextYear() {
@@ -761,7 +762,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this._pruneYearsIfNeeded();
   }
 
-  async _insertYearChunk(year, entries, position) {
+  async _insertYearChunk(year, entries, position, initialChunk = false) {
     const { container, topSentinel, bottomSentinel, loadedYears } = this._evtState;
     if (loadedYears.has(year)) return;
     if (container.querySelector(`.year-chunk[data-year="${year}"]`)) {
@@ -783,7 +784,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const batch = entries.slice(i, i + BATCH);
       const htmls = await Promise.all(batch.map(e => {
         const displayYear = e.recurring ? year : e.from.year;
-        return renderTemplate(tpl, { ...e, yearSuffix, displayYear });
+        return renderTemplate(tpl, { ...e, yearSuffix, displayYear, initialChunk });
       }));
       const batchContainer = document.createElement('div');
       batchContainer.innerHTML = htmls.join('');
@@ -836,6 +837,144 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const chunk = container.querySelector(`.year-chunk[data-year="${yearToRemove}"]`);
       if (chunk) chunk.remove();
       loadedYears.delete(yearToRemove);
+    }
+  }
+
+  /* =====================
+   * Scrolling helpers (Today / Month +/-)
+   * ===================== */
+  async _ensureYearLoaded(year) {
+    if (!this._evtState.loadedYears.has(year)) {
+      if (year < this._evtState.earliestYear) {
+        const entries = await this.constructor.fromYearCache(year);
+        const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+        const prevHeight = this._evtState.root.scrollHeight;
+        await this._insertYearChunk(year, sorted, 'before');
+        const newHeight = this._evtState.root.scrollHeight;
+        this._evtState.root.scrollTop += (newHeight - prevHeight);
+        this._evtState.earliestYear = Math.min(this._evtState.earliestYear, year);
+      } else {
+        const entries = await this.constructor.fromYearCache(year);
+        const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+        await this._insertYearChunk(year, sorted, 'after');
+        this._evtState.latestYear = Math.max(this._evtState.latestYear, year);
+      }
+      this._pruneYearsIfNeeded();
+    }
+    return this.element.querySelector(`.year-chunk[data-year="${year}"]`);
+  }
+
+  _scrollToCard(el) {
+    if (!el) return;
+    const scrollRoot = this.element.querySelector('[data-tab="events"].tab');
+    const rect = el.getBoundingClientRect();
+    const rootRect = scrollRoot.getBoundingClientRect();
+    const offset = rect.top - rootRect.top + scrollRoot.scrollTop - 60;
+    scrollRoot.scrollTo({ top: offset, behavior: 'smooth' });
+  }
+
+  static async #scrollToToday() {
+    const comp = game.time.calendar.timeToComponents(game.time.worldTime);
+    const year = comp.year;
+    const chunk = await this._ensureYearLoaded(year);
+    if (!chunk) return;
+    const currentValue = comp.month * 100 + (comp.dayOfMonth + 1);
+    let best = null; let bestDelta = Infinity;
+    for (const card of chunk.querySelectorAll('.event-card')) {
+      const idx = Number(card.dataset.month);
+      const d = Number(card.dataset.day);
+      if (Number.isNaN(idx) || Number.isNaN(d)) continue;
+      const val = idx * 100 + d;
+      const delta = Math.abs(val - currentValue);
+      if (delta < bestDelta) { bestDelta = delta; best = card; }
+    }
+    if (best) this._scrollToCard(best);
+  }
+
+  static #scrollForward(event, target) {
+    this._scrollToAdjacentMonth(1);
+  }
+
+  static #scrollBackward(event, target) {
+    this._scrollToAdjacentMonth(-1);
+  }
+
+  async _scrollToAdjacentMonth(direction) {
+    if (!direction || !this.element) return;
+
+    const root = this.element.querySelector('[data-tab="events"].tab');
+    const container = this.element.querySelector('.eventscontainer');
+    if (!root || !container) return;
+
+    const getVisibleCards = () => Array.from(container.querySelectorAll('.event-card'))
+      .filter(el => el.offsetParent !== null && !el.classList.contains('dsahidden'));
+
+    const findTopVisibleCard = (cards) => {
+      const rootRect = root.getBoundingClientRect();
+      return cards.find(card => {
+      const r = card.getBoundingClientRect();
+      return r.top >= rootRect.top && r.top < rootRect.bottom;
+      });
+    };
+
+    const findTargetCard = (cards, topCard, direction) => {
+      const currentMonth = Number(topCard.dataset.month ?? -1);
+      if (!Number.isFinite(currentMonth) || currentMonth < 0) return;
+      const currentIndex = cards.findIndex(card => card === topCard);
+
+      if (currentIndex === -1) return null;
+
+      if (direction > 0) {
+        for (let i = currentIndex; i < cards.length; i++) {
+          const cardMonth = Number(cards[i].dataset.month);
+          if (cardMonth !== currentMonth) {
+            return cards[i];
+          }
+        }
+      } else {
+        let currentBlockStart = currentIndex;
+        while (currentBlockStart > 0 && Number(cards[currentBlockStart - 1].dataset.month) === currentMonth) {
+          currentBlockStart--;
+        }
+        
+        if (currentBlockStart === 0) return null;
+        
+        const prevMonth = Number(cards[currentBlockStart - 1].dataset.month);
+        let prevBlockStart = currentBlockStart - 1;
+        while (prevBlockStart > 0 && Number(cards[prevBlockStart - 1].dataset.month) === prevMonth) {
+          prevBlockStart--;
+        }
+        
+        return cards[prevBlockStart];
+      }
+      return null;
+    };
+
+    let cards = getVisibleCards();
+    if (!cards.length) return;
+
+    const topCard = findTopVisibleCard(cards);
+    if (!topCard) return;
+
+   let targetCard = findTargetCard(cards, topCard, direction);
+
+    if (!targetCard) {
+      if (direction > 0) {
+        await this._appendNextYear();
+      } else {
+        await this._prependPrevYear();
+      }
+      
+      cards = getVisibleCards();
+      targetCard = findTargetCard(cards, topCard, direction);
+      
+      if (!targetCard && cards.length) {
+        targetCard = direction > 0 ? cards[cards.length - 1] : cards[0];
+      }
+    }
+
+    if (targetCard) {
+      this._scrollToCard(targetCard);
     }
   }
 }
