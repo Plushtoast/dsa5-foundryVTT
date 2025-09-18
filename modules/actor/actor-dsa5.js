@@ -28,6 +28,7 @@ import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilitie
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { FateRolls } from './concerns/faterolls.js';
+import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -295,7 +296,7 @@ export default class Actordsa5 extends Actor {
       case 'specialability':
         switch (item.system.category.value) {
           case 'Combat':
-            return [2, 3].includes(Number(item.system.category.sub));
+            return item.system.appliesCombatEffect;
           case 'staff':
             return item.system.permanentEffects || appliedArtifacts.includes(item.system.artifact);
           default:
@@ -517,7 +518,7 @@ export default class Actordsa5 extends Actor {
     const traditionArtifacts = [];
     const availableAmmunition = [];
 
-    const specAbs = Object.fromEntries(Object.keys(DSA5.specialAbilityCategories).map(x => [x, []]));
+    const specAbs = Object.fromEntries(Object.keys(SpecialabilityData.specialAbilityCategories).map(x => [x, []]));
     const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]));
 
     const magic = {
@@ -793,7 +794,7 @@ export default class Actordsa5 extends Actor {
       totalWeight,
       traditionArtifacts,
       armorSum: totalArmor,
-      sortedSpecs: DSA5.sortedSpecs,
+      sortedSpecs: SpecialabilityData.sortedSpecs,
       spellArmor: this.system.spellArmor || 0,
       liturgyArmor: this.system.liturgyArmor || 0,
       money,

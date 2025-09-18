@@ -347,15 +347,6 @@ DSA5.fallingConditions = {
   4: 'fallingConditions.rough4',
 };
 
-DSA5.combatSkillSubCategories = {
-  0: 'COMBATSKILLCATEGORY.0',
-  1: 'COMBATSKILLCATEGORY.1',
-  2: 'COMBATSKILLCATEGORY.2',
-  3: 'COMBATSKILLCATEGORY.3',
-  4: 'COMBATSKILLCATEGORY.4',
-  5: 'COMBATSKILLCATEGORY.5',
-};
-
 DSA5.effectTextStyle = CONFIG.canvasTextStyle.clone();
 DSA5.effectTextStyle.fontSize = '30';
 DSA5.effectTextStyle.fontFamily = 'GentiumBasic';
@@ -545,6 +536,9 @@ DSA5.traditionArtifacts = {
   Schuppenbeutel: 18,
   'Kristallomantische Kristallkugel': 15,
   Echsenhaube: 12,
+  Hauerkette: 9,
+  Zauberschale: 0,
+  Schweinetrommel: 12
 };
 
 DSA5.areaTargetTypes = {
@@ -738,47 +732,6 @@ DSA5.speciesCombatModifiers = {
     opposingDomains: new Set(['Dwarf']),
   },
 };
-
-DSA5.specialAbilityCategories = {
-  Combat: 'SpecCategory.Combat',
-  command: 'SpecCategory.command',
-
-  general: 'SpecCategory.general',
-  generalStyle: 'SpecCategory.generalStyle',
-  extGeneral: 'SpecCategory.extGeneral',
-
-  animal: 'SpecCategory.animal',
-
-  fatePoints: 'SpecCategory.fatePoints',
-  vampire: 'SpecCategory.vampire',
-  lykanthrop: 'SpecCategory.lykanthrop',
-
-  language: 'SpecCategory.language',
-  secret: 'SpecCategory.secret',
-
-  clerical: 'SpecCategory.clerical',
-  clericalStyle: 'SpecCategory.clericalStyle',
-  extClericalStyle: 'SpecCategory.extClericalStyle',
-  ceremonial: 'SpecCategory.ceremonial',
-  vision: 'SpecCategory.vision',
-  prayer: 'SpecCategory.prayer',
-
-  magical: 'SpecCategory.magical',
-  magicalStyle: 'SpecCategory.magicalStyle',
-  extMagical: 'SpecCategory.extMagical',
-  staff: 'SpecCategory.staff',
-  pact: 'SpecCategory.pact',
-  homunculus: 'SpecCategory.homunculus',
-};
-
-DSA5.sortedSpecs = {
-  combat: new Set(['Combat', 'command']),
-  magical: new Set(['magical', 'magicalStyle', 'extMagical', 'pact', 'homunculus']),
-  clerical: new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'ceremonial', 'vision', 'prayer']),
-  unUsed: new Set(['staff']),
-};
-
-DSA5.sortedSpecs.general = new Set(Object.keys(DSA5.specialAbilityCategories).filter((x) => !Object.keys(DSA5.sortedSpecs).some((y) => DSA5.sortedSpecs[y].has(x))));
 
 DSA5.addvantageRules = {};
 DSA5.removevantageRules = {};

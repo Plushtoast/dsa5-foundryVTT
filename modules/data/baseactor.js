@@ -7,6 +7,7 @@ import EquipmentDamage from '../system/automation/equipment-damage.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import CreatureType from '../system/automation/creature-type.js';
+import SpecialabilityData from './item/specialability.js';
 
 const { SKILL, SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
 
@@ -329,8 +330,8 @@ export class ActorDataModel extends DSADataModel {
           data.isPriest = true;
           break;
         case 'specialability':
-          if (DSA5.sortedSpecs.magical.has(item.system.category.value)) data.isMage = true;
-          else if (DSA5.sortedSpecs.clerical.has(item.system.category.value)) data.isPriest = true;
+          if (SpecialabilityData.sortedSpecs.magical.has(item.system.category.value)) data.isMage = true;
+          else if (SpecialabilityData.sortedSpecs.clerical.has(item.system.category.value)) data.isPriest = true;
           break;
       }
     }

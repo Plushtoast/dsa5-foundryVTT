@@ -1,7 +1,7 @@
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
-import DSA5 from '../../config/config-dsa5.js';
 import DSAActiveEffect from '../../status/dsa_active_effects.js';
 import { ModifierCalculator } from './modifier-calculator.js';
+import SpecialabilityData from '../../data/item/specialability.js';
 
 const { getProperty } = foundry.utils;
 
@@ -35,7 +35,7 @@ export class CombatSpecialAbilities {
             );
 
             if (validSpecAb(vals) || (!isDefense && com.effects.size > 0)) {
-                const subCategory = game.i18n.localize(DSA5.combatSkillSubCategories[com.system.category.sub]);
+                const subCategory = game.i18n.localize(SpecialabilityData.combatSkillSubCategories[com.system.category.sub]);
                 const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
                 acc.push({
                     name: com.name,

@@ -1,4 +1,5 @@
 import DSA5 from '../../config/config-dsa5.js';
+import SpecialabilityData from '../../data/item/specialability.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { mergeObject } = foundry.utils;
 
@@ -21,7 +22,7 @@ Hooks.once('ready', () => {
       .reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {});
 
     const content = [];
-    for (const [cat, value] of Object.entries(DSA5.specialAbilityCategories)) {
+    for (const [cat, value] of Object.entries(SpecialabilityData.specialAbilityCategories)) {
       if (cat == 'clerical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`);
       else if (cat == 'magical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`);
 

@@ -3,13 +3,77 @@ import { ItemDataModel } from '../baseitem.js';
 import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
-import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
 export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
+  static COMBAT_SKILL_TYPES = {
+    BASEMANEUVER: 0,
+    SPECIALMANEUVER: 1,
+    COMBATSTYLE: 2,
+    COMBATSTYLE_EXTENDED: 6,
+    PASSIVE: 3,
+    GENERAL: 4,
+    BRAWLING: 5,
+  };
+
+  static APPLIES_COMBAT_EFFECT = new Set([this.COMBAT_SKILL_TYPES.COMBATSTYLE, this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED, this.COMBAT_SKILL_TYPES.PASSIVE]);
+
+  static combatSkillSubCategories = (() => {
+    const categories = {};
+    Object.entries(this.COMBAT_SKILL_TYPES).forEach(([key, value]) => {
+      categories[value] = `COMBATSKILLCATEGORY.${value}`;
+    });
+    return categories;
+  })();
+  
+  static specialAbilityCategories = {
+    Combat: 'SpecCategory.Combat',
+    command: 'SpecCategory.command',
+
+    general: 'SpecCategory.general',
+    generalStyle: 'SpecCategory.generalStyle',
+    extGeneral: 'SpecCategory.extGeneral',
+
+    animal: 'SpecCategory.animal',
+
+    fatePoints: 'SpecCategory.fatePoints',
+    vampire: 'SpecCategory.vampire',
+    lykanthrop: 'SpecCategory.lykanthrop',
+
+    language: 'SpecCategory.language',
+    secret: 'SpecCategory.secret',
+
+    clerical: 'SpecCategory.clerical',
+    clericalStyle: 'SpecCategory.clericalStyle',
+    extClericalStyle: 'SpecCategory.extClericalStyle',
+    ceremonial: 'SpecCategory.ceremonial',
+    vision: 'SpecCategory.vision',
+    prayer: 'SpecCategory.prayer',
+
+    magical: 'SpecCategory.magical',
+    magicalStyle: 'SpecCategory.magicalStyle',
+    extMagical: 'SpecCategory.extMagical',
+    staff: 'SpecCategory.staff',
+    pact: 'SpecCategory.pact',
+    homunculus: 'SpecCategory.homunculus',
+    magicalsign: 'SpecCategory.magicalsign',
+    sikaryan: 'SpecCategory.sikaryan',
+  };
+
+  static sortedSpecs = (() => {
+    const combat = new Set(['Combat', 'command']);
+    const magical = new Set(['magical', 'magicalStyle', 'extMagical', 'pact', 'homunculus', 'magicalsign', 'sikaryan']);
+    const clerical = new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'ceremonial', 'vision', 'prayer']);
+    const unUsed = new Set(['staff']);
+    const allCategories = Object.keys(SpecialabilityData.specialAbilityCategories);
+    const used = new Set([...combat, ...magical, ...clerical, ...unUsed]);
+    const general = new Set(allCategories.filter(cat => !used.has(cat)));
+    return { combat, magical, clerical, unUsed, general };
+  })();
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       rule: new SchemaField({
@@ -24,8 +88,8 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
         canNotMultiply: new DSABooleanField({ label: 'notMultiplyable' }),
       }),
       category: new SchemaField({
-        value: new StringField({ initial: 'general', label: 'Category', required: true, choices: DSA5.specialAbilityCategories }),
-        sub: new NumberField({ initial: 0, required: true, label: 'COMBATSKILLCATEGORY.subcategory', choices: DSA5.combatSkillSubCategories }),
+        value: new StringField({ initial: 'general', label: 'Category', required: true, choices: SpecialabilityData.specialAbilityCategories }),
+        sub: new NumberField({ initial: 0, required: true, label: 'COMBATSKILLCATEGORY.subcategory', choices: SpecialabilityData.combatSkillSubCategories }),
       }),
       distribution: new StringField({ initial: '', label: 'distribution' }),
       list: new SchemaField({
@@ -56,7 +120,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
 
   getSheetData(data) {
     let group = 'SpecCategory.general';
-    data.categories = Object.entries(DSA5.specialAbilityCategories).map(([value, label]) => {
+    data.categories = Object.entries(SpecialabilityData.specialAbilityCategories).map(([value, label]) => {
       if (value == 'clerical') group = 'SpecCategory.clerical';
       else if (value == 'magical') group = 'SpecCategory.magical';
 
@@ -88,5 +152,9 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
 
   refundCost() {
     return SpecialabilityRulesDSA5.stepXPCost(this, this.step.value - 1)
+  }
+
+  get appliesCombatEffect() {
+    return SpecialabilityData.APPLIES_COMBAT_EFFECT.has(this.category.sub);
   }
 }

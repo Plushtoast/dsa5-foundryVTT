@@ -1154,6 +1154,9 @@
         "Krallenkette": "Krallenkette",
         "Lebensring": "Lebensring",
         "Alchimistenschale": "Alchimistenschale",
+        "Zauberschale": "Zauberschale",
+        "Hauerkette": "Hauerkette",
+        "Schweinetrommel": "Schweinetrommel",
         "Scharlatanische Zauberkugel": "Scharlatanische Zauberkugel",
         "Sippenchronik": "Sippenchronik",
         "Schelmenspielzeug": "Schelmenspielzeug",
@@ -2102,7 +2105,8 @@
         "2": "Kampfstil",
         "3": "Passiv",
         "4": "Allgemein",
-        "5": "Prügelei"
+        "5": "Prügelei",
+        "6": "Erweiterte Kampfstilsonderfertigkeit"
     },
     "poisonCategory": {
         "1": "Gift, tierisch",
@@ -2121,6 +2125,7 @@
     "SpecCategory": {
         "clericalStyle": "Liturgiestilsonderfertigkeiten",
         "language": "Sprache",
+        "magicalsign": "Zauberzeichen",
         "secret": "Berufsgeheimnis",
         "ceremonial": "Zeremonialgegenstand",
         "fatePoints": "Schicksalspunktesonderfertigkeiten",
@@ -2141,7 +2146,8 @@
         "extGeneral": "Erweiterte Talentsonderfertigkeiten",
         "command": "Befehlssonderfertigkeiten",
         "staff": "Traditionsartefakt",
-        "pact": "Paktgeschenk"
+        "pact": "Paktgeschenk",
+        "sikaryan": "Sikaryan"
     },
     "TEMPLATE": {
         "BorderThickness": "Rahmenstärke"

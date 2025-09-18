@@ -146,7 +146,10 @@ export default class Migrakel {
         if (find.type == 'specialability') {
           mergeObject(update, {
             system: {
-              category: { sub: find.system.category.sub || 0 },
+              category: {
+                value: find.system.category.value,
+                sub: find.system.category.sub || 0
+              },
               list: { value: find.system.list.value },
               effect: {
                 value2: getProperty(find, 'system.effect.value2') || '',

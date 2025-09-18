@@ -536,8 +536,8 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     hideEmptyCategories(inventory) {
-      for(const key of Object.keys(inventory)) {
-        inventory[key].show = inventory[key].items.length != 0 && inventory[key].items.some(x => !x.system.tradeLocked)
+      for (const key of Object.keys(inventory)) {
+        inventory[key].show = inventory[key].items.length && inventory[key].items.some(x => !x.system.tradeLocked)
       }
     }
 
