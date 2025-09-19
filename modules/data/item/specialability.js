@@ -13,13 +13,19 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     BASEMANEUVER: 0,
     SPECIALMANEUVER: 1,
     COMBATSTYLE: 2,
-    COMBATSTYLE_EXTENDED: 6,
+    COMBATSTYLE_EXTENDED_BASE: 8,
+    COMBATSTYLE_EXTENDED: 6,    
+    COMBATSTYLE_EXTENDED_PASSIVE: 7,
     PASSIVE: 3,
     GENERAL: 4,
     BRAWLING: 5,
   };
 
-  static APPLIES_COMBAT_EFFECT = new Set([this.COMBAT_SKILL_TYPES.COMBATSTYLE, this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED, this.COMBAT_SKILL_TYPES.PASSIVE]);
+  static APPLIES_COMBAT_EFFECT = new Set([
+    this.COMBAT_SKILL_TYPES.COMBATSTYLE, 
+    this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE,
+    this.COMBAT_SKILL_TYPES.PASSIVE
+  ]);
 
   static combatSkillSubCategories = (() => {
     const categories = {};

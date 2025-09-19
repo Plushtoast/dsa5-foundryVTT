@@ -1,7 +1,7 @@
 <div>
   <fieldset class="margin-top noBorder calendarDateChange" {{#unless isGM}}disabled{{/unless}}>
     <div class="flexrow">
-      <h3 class="flexrow">{{currentDay}}. {{currentMonth}} <input data-tooltip="CALENDAR.DSA.year" type='number' class='flexgrow-0 dateChange'
+      <h3 class="flexrow">{{currentDay}}. {{currentMonth}} <input data-tooltip="CALENDAR.DSA.year" type='number' class='flexgrow-0 dateChange' min="0"
           name='year' value='{{components.year}}' /><span>{{localize (concat calendar.translationPrefix '.'
           worldCalendarConfig.years.yearSuffix)}}</span></h3>
 

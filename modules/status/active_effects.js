@@ -448,8 +448,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                   } else {
                     try {
                       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'actor', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
-                      await fn.call(this, ef, actor, callMacro, msg, source, actor, sourceActor, testData, qs);
+                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
+                      await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs);
                     } catch (err) {
                       ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                       console.error(err);

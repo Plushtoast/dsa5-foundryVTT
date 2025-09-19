@@ -2106,7 +2106,8 @@
         "3": "Passiv",
         "4": "Allgemein",
         "5": "Prügelei",
-        "6": "Erweiterte Kampfstilsonderfertigkeit"
+        "6": "Erweiterte Kampfstilsonderfertigkeit (Spezialmanöver)",
+        "7": "Erweiterte Kampfstilsonderfertigkeit (passiv)"
     },
     "poisonCategory": {
         "1": "Gift, tierisch",

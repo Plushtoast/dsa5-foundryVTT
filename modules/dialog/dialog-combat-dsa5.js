@@ -14,6 +14,7 @@ import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { RollDialogBuilder } from './dialog-builder.js';
+import SpecialabilityData from '../data/item/specialability.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -204,14 +205,26 @@ export default class DSA5CombatDialog extends DialogShared {
       let step = Number(dataset.step);
       const maxStep = Number(dataset.maxStep);
       const subcategory = Number(dataset.category);
+      const cTypes = SpecialabilityData.COMBAT_SKILL_TYPES;
 
       if (ev.button == 0) {
         step = Math.min(maxStep, step + 1);
-        if ([0, 1].includes(subcategory) && game.settings.get('dsa5', 'limitCombatSpecAbs')) {
-          const siblings = elem.siblings(`[data-category="${subcategory}"]`);
-          siblings.removeClass('active').attr('data-step', 0);
-          siblings.find('.step').text(DialogShared.roman[0]);
+        if (game.settings.get('dsa5', 'limitCombatSpecAbs')) {
+          const singularCombatSkillCategories = {
+            [cTypes.BASEMANEUVER]: [cTypes.BASEMANEUVER, cTypes.COMBATSTYLE_EXTENDED_BASE],
+            [cTypes.COMBATSTYLE_EXTENDED_BASE]: [cTypes.BASEMANEUVER, cTypes.COMBATSTYLE_EXTENDED_BASE],
+            [cTypes.SPECIALMANEUVER]: [cTypes.SPECIALMANEUVER, cTypes.COMBATSTYLE_EXTENDED],
+            [cTypes.COMBATSTYLE_EXTENDED]: [cTypes.SPECIALMANEUVER, cTypes.COMBATSTYLE_EXTENDED],
+          }[subcategory] || [];
+
+          if (singularCombatSkillCategories.length) {
+            const selector = singularCombatSkillCategories.map(c => `[data-category="${c}"]`).join(',');
+            const siblings = elem.siblings(selector);
+            siblings.removeClass('active').attr('data-step', 0);
+            siblings.find('.step').text(DialogShared.roman[0]);
+          }
         }
+
       } else if (ev.button == 2) {
         step = Math.clamp(maxStep, 0, step - 1);
       }
@@ -641,7 +654,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static combatInWaterModifiers(testData, formData, html, actor) {
     let waterOptions = Number(formData.waterOptions) || 0;
-    
+
     const token = actor.getActiveTokens()[0] || actor.token;
     if (token) {
       const moveAction = token.document.movementAction;

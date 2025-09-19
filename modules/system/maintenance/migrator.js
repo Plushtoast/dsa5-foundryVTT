@@ -147,6 +147,9 @@ class PatchViewer extends DefaultAppv2 {
       title: 'Changelog',
       resizable: true,
     },
+    actions: {
+      showMore: PatchViewer.showMore,
+    }
   };
 
   static PARTS = {
@@ -172,7 +175,6 @@ class PatchViewer extends DefaultAppv2 {
     const html = $(this.element);
 
     tabSlider(html);
-    html.find('.showMore').on('click', () => this.showMore(html));
     html.find('img').on('click', (ev) => {
       game.dsa5.apps.DSA5_Utility.showArtwork({
         name: 'Changelog',
@@ -182,13 +184,13 @@ class PatchViewer extends DefaultAppv2 {
     });
   }
 
-  async showMore(html) {
+  static async showMore(event, target) {
     const prevVersions = [this.json['notes'][this.json['notes'].length - this.versionIndex]];
     if (prevVersions[0].version == '2.3.0') {
-      html.find('.showMore').hide();
+      target.hidden = true;
       return;
     }
-
+    const html = $(this.element);
     const data = await this.fetchVersions(prevVersions);
     html.find('.changelogsection').append(data.changelog[0]);
     html.find('.newssection').append(data.news[0]);
