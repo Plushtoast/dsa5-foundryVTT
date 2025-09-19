@@ -577,15 +577,22 @@ export default class Actordsa5 extends Actor {
     const containers = new Map();
     const applications = new Map();
     let hasTrait = false;
-    const hasAnyItem = this.items.some(x => !['skill', 'combatskill', 'money'].includes(x.type));
     const horse = Riding.getHorse(this, true);
+    const preparedItems = [];
+    let hasAnyItem = false;
+    const anyItemSet = new Set(['skill', 'combatskill', 'money']);
 
-    this.items.filter(x => x.type === 'equipment' && x.system.equipmentType.value === 'bags')
-      .forEach(container => containers.set(container.id, []));
+    for (const it of this.items) {
+      if (!anyItemSet.has(it.type)) hasAnyItem = true;
 
-    const preparedItems = this.items
-      .map(x => x.system.prepareEmbeddedItemSheet())
-      .sort((a, b) => a.name.localeCompare(b.name));
+      if (it.type === 'equipment' && it.system.equipmentType.value === 'bags') {
+        containers.set(it.id, []);
+      }
+
+      preparedItems.push(it.system.prepareEmbeddedItemSheet());
+    }
+
+    preparedItems.sort((a, b) => a.name.localeCompare(b.name));
 
     for (const i of preparedItems) {
       try {

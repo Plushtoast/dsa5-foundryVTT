@@ -574,14 +574,12 @@ export class ActorDataModel extends DSADataModel {
   }
 
   getArmorEncumbrance(actorData, wornArmors) {
-    // Calculate base encumbrance from worn armor
     const encumbrance = wornArmors.reduce((sum, a) => {
-      a.system.calculatedEncumbrance = Number(a.system.encumbrance.value) + EquipmentDamage.armorEncumbranceModifier(a);
+      a.system.calculatedEncumbrance = a.system.encumbrance.value + EquipmentDamage.armorEncumbranceModifier(a);
       a.system.damageToolTip = EquipmentDamage.damageTooltip(a);
-      return (sum += a.system.calculatedEncumbrance);
+      return sum += a.system.calculatedEncumbrance;
     }, 0);
 
-    // Apply riding bonus and special abilities
     const ridingModifier = Riding.isRiding(this.parent) ? -1 : 0;
     return Math.max(0, encumbrance -
       SpecialabilityRulesDSA5.abilityStep(actorData, 'LocalizedIDs.inuredToEncumbrance') +
