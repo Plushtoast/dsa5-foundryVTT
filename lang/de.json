@@ -1055,11 +1055,11 @@
     "Skill-hard": "Sehr schwierig (-3)",
     "Skill-vhard": "Extrem schwierig (-5)",
     "SKILLAbrev": {
-        "body": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span>",
-        "social": "<span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span>",
-        "knowledge": "<span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-in\">IN</span>",
-        "trade": "<span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ko\">KO</span>",
-        "nature": "<span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span>"
+        "body": "<button data-name=\"SKILL.body\" data-ch1=\"mu\" data-ch2=\"ge\" data-ch3=\"kk\" type=\"button\" data-action=\"rollAnySkill\" class=\"noBorder dsadesignbutton\"><span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-kk\">KK</span></button>",
+        "social": "<button data-name=\"SKILL.social\" data-ch1=\"in\" data-ch2=\"ch\" data-ch3=\"ch\" type=\"button\" data-action=\"rollAnySkill\" class=\"noBorder dsadesignbutton\"><span class=\"d20 diet-in\">IN</span><span class=\"d20 diet-ch\">CH</span><span class=\"d20 diet-ch\">CH</span></button>",
+        "knowledge": "<button data-name=\"SKILL.knowledge\" data-ch1=\"kl\" data-ch2=\"kl\" data-ch3=\"in\" type=\"button\" data-action=\"rollAnySkill\" class=\"noBorder dsadesignbutton\"><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-kl\">KL</span><span class=\"d20 diet-in\">IN</span></button>",
+        "trade": "<button data-name=\"SKILL.trade\" data-ch1=\"ff\" data-ch2=\"ff\" data-ch3=\"ko\" type=\"button\" data-action=\"rollAnySkill\" class=\"noBorder dsadesignbutton\"><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ff\">FF</span><span class=\"d20 diet-ko\">KO</span></button>",
+        "nature": "<button data-name=\"SKILL.nature\" data-ch1=\"mu\" data-ch2=\"ge\" data-ch3=\"ko\" type=\"button\" data-action=\"rollAnySkill\" class=\"noBorder dsadesignbutton\"><span class=\"d20 diet-mu\">MU</span><span class=\"d20 diet-ge\">GE</span><span class=\"d20 diet-ko\">KO</span></button>"
     },
     "EXP": {
         "legendary": "Legendär",

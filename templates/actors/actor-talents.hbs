@@ -82,7 +82,7 @@
                 <div class="col two">
                     {{localize (concat "SKILL." @key)}}
                 </div>
-                <div class="col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
+                <div class="skill-props col two">{{{localize (concat "SKILLAbrev." @key)}}}</div>
             </div>
             <div class="row-section skills table-title">
                 <div class="col two">
@@ -97,7 +97,7 @@
                 <div class="col two withContext">
                     <a data-action="itemEdit" class="talentName">{{item.name}}</a>
                 </div>
-                <div class="col third center flexrow">
+                <div class="skill-props col third center flexrow">
                     {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                     {{#if item.applications}}
                     <a data-action="itemDropdown" class="very-small" data-tooltip="SHEET.Dropdown"><i
@@ -132,6 +132,5 @@
         </div>
     </div>
     {{> systems/dsa5/templates/actors/character/actor-aggregatedtests.hbs}}
-
 
 </div>

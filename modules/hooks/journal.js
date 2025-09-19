@@ -5,22 +5,26 @@ import { tinyNotification } from '../system/helpers/view_helper.js';
 import { bindImgToCanvasDragStart } from './imgTileDrop.js';
 
 export default function () {
-  Hooks.on('renderJournalEntryPageSheet', (obj, html, data, options) => {
-    html = $(html);
-    DSA5ChatAutoCompletion.bindRollCommands(html);
-    DSA5StatusEffects.bindButtons(html);
-    html.find('img').on('mousedown', (ev) => {
-      if (ev.button == 2)
-        game.dsa5.apps.DSA5_Utility.showArtwork({
-          name: obj.document.name,
-          uuid: '',
-          img: ev.currentTarget.getAttribute('src'),
-        });
-    });
-    bindImgToCanvasDragStart(html);
+  Hooks.on('renderJournalEntryPageSheet', (app, jhtml, data, options) => {
+    if (!app.isView) return;
+
+    for (const child of jhtml.children) {
+      const html = $(child);
+      DSA5ChatAutoCompletion.bindRollCommands(html);
+      DSA5StatusEffects.bindButtons(html);
+      html.find('img').on('mousedown', (ev) => {
+        if (ev.button == 2)
+          game.dsa5.apps.DSA5_Utility.showArtwork({
+            name: app.document.name,
+            uuid: '',
+            img: ev.currentTarget.getAttribute('src'),
+          });
+      });
+      bindImgToCanvasDragStart(html);
+    }
   });
 
-  Hooks.on('getHeaderControlsJournalEntrySheet', (sheet, buttons) => { 
+  Hooks.on('getHeaderControlsJournalEntrySheet', (sheet, buttons) => {
     buttons.unshift({
       label: 'SHEET.increaseFontSize',
       icon: 'fas fa-arrows-up-down',
@@ -86,7 +90,7 @@ class FontPicker extends foundry.applications.api.HandlebarsApplicationMixin(fou
 
   static async _changeSize(ev, target) {
     const newSize = target.dataset.size;
-    
+
     if (newSize == "-1") {
       await game.settings.set('dsa5', 'journalFontSizeIndex', 0);
       this.connected_element.css('fontSize', '');

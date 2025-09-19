@@ -154,6 +154,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
       showApplication: { handler: this._showApplication, buttons: [0, 2] },
       conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
+      rollAnySkill: this._rollAnySkill,
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
@@ -383,25 +384,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       infoMsg += `${game.i18n.localize('Aggregated.noMoreAllowed')}`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
     } else {
-      this.actor
-        .setupSkill(
-          skill,
+      const options = {
+        moreModifiers: [
           {
-            moreModifiers: [
-              {
-                name: game.i18n.localize('failedTests'),
-                value: -1 * aggregated.system.previousFailedTests.value,
-                selected: true,
-              },
-              {
-                name: game.i18n.localize('Modifier'),
-                value: aggregated.system.baseModifier,
-                selected: true,
-              },
-            ],
+            name: game.i18n.localize('failedTests'),
+            value: -1 * aggregated.system.previousFailedTests.value,
+            selected: true,
           },
-          this.getTokenId(),
-        )
+          {
+            name: game.i18n.localize('Modifier'),
+            value: aggregated.system.baseModifier,
+            selected: true,
+          },
+        ],
+      };
+      this.actor.setupSkill(skill, options, this.getTokenId())
         .then((setupData) => {
           this.actor.basicTest(setupData).then((res) => {
             if (res.result.successLevel > 0) {
@@ -664,6 +661,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     } else if (ev.button == 2 && !target.dataset.locked) {
       this._deleteActiveEffect(id);
     }
+  }
+
+  static async _rollAnySkill(ev, target) {
+    const { name, ch1, ch2, ch3 } = target.dataset;
+    const attributes = { system: { characteristic1: { value: ch1 }, characteristic2: { value: ch2 }, characteristic3: { value: ch3 } } };
+    this.actor.rollAnySkill(game.i18n.localize(name), this.getTokenId(), attributes);
   }
 
   static _itemEdit(ev, target) {

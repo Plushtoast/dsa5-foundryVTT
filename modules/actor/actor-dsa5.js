@@ -1197,6 +1197,14 @@ export default class Actordsa5 extends Actor {
     });
   }
 
+  rollAnySkill(skillName, tokenID, attributes = {}, options = {}) {
+    const cls = getDocumentClass('Item');
+    const skill = new cls({name: skillName, type: 'skill', ...attributes}, { noHook: true });
+    this.setupSkill(skill, options, tokenID).then((setupData) => {
+      this.basicTest(setupData);
+    });
+  }
+
   static async updateFallingDamage(postFunction, result, source) {
     const availableQs = (result.result.qualityStep || 0) * 2;
     mergeObject(postFunction.options, { availableQs });
