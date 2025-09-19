@@ -1,4 +1,5 @@
 <div class="tab standard-form scrollable {{tabs.effects.cssClass}}" data-tab="effects" data-group="{{tabs.effects.group}}">
+    {{#unless noActiveEffects}}
     <div class="row-section wrap margin-top">
 
         <div class="col row-section skills table-title lineheight">
@@ -47,6 +48,7 @@
         </div>
         {{/each}}
     </div>
+    {{/unless}}
     {{#if canOnUseEffect}}
     <div class="form-group full-height" style="margin-top:40px;">
         <label>{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>

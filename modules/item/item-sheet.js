@@ -479,6 +479,14 @@ class NoEffectsSheet extends ItemSheetdsa5 {
   }
 }
 
+class MacroOnlyEffectsSheet extends WithEffectsSheet {
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.noActiveEffects = true;
+    return data;
+  }
+}
+
 class EffectWrapperSheet extends WithEffectsSheet {
   static PARTS = {
     details: {
@@ -1280,23 +1288,21 @@ class RangeweaponSheet extends WeaponSheetDSA5 {
   }
 }
 
-class BlessingSheetDSA5 extends NoEffectsSheet {
+class BlessingSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor;
+    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
   }
 
   async setupEffect() {
     if (this.actor.system.status.karmaenergy.value < 1)
-      return ui.notifications.error('DSAError.NotEnoughKaP', {
-        localize: true,
-      });
+      return ui.notifications.error('DSAError.NotEnoughKaP', { localize: true, });
 
+    await this.actor.update({ 'system.status.karmaenergy.value': (this.actor.system.status.karmaenergy.value -= 1), });
     const cantrip = this.item.system.chatDataToString();
-    await this.actor.update({
-      'system.status.karmaenergy.value': (this.actor.system.status.karmaenergy.value -= 1),
+    const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
+      item: this.item,
+      cantrip: cantrip,
     });
-    let chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('blessing')} ${game.i18n.localize('probe')}</b></p>
-    <p>${this.item.system.description.value}</p><p>${cantrip}</p>`;
     await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
   }
 }
@@ -1391,22 +1397,21 @@ class DiseaseSheetDSA5 extends WithEffectsSheet {
   hasRollEffect = true;
 }
 
-class MagictrickSheetDSA5 extends NoEffectsSheet {
+class MagictrickSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor;
+    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
   }
 
   async setupEffect() {
     if (this.actor.system.status.astralenergy.value < 1)
-      return ui.notifications.error('DSAError.NotEnoughAsP', {
-        localize: true,
-      });
+      return ui.notifications.error('DSAError.NotEnoughAsP', { localize: true });
 
+    await this.actor.update({ 'system.status.astralenergy.value': (this.actor.system.status.astralenergy.value -= 1), });
     const cantrip = this.item.system.chatDataToString();
-    await this.actor.update({
-      'system.status.astralenergy.value': (this.actor.system.status.astralenergy.value -= 1),
+    const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
+      item: this.item,
+      cantrip: cantrip
     });
-    const chatMessage = `<p><b>${this.item.name} - ${game.i18n.localize('magictrick')} ${game.i18n.localize('probe')}</b></p><p>${this.item.system.description.value}</p><p>${cantrip}</p>`;
     await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
   }
 }
