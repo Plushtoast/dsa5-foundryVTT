@@ -464,7 +464,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return asItemData ? documents.map(x => x.toObject()) : documents;
   }
 
-  async executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches, rangeSearches = []) {
+  async executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, rangeSearches = [], startIndex = 0) {
+    const index = indexWrapper?.index || indexWrapper;
     if (!index?.store) return [];
 
     const searchLower = search.toLowerCase();
@@ -491,9 +492,22 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       return true;
     };
 
-    return Object.values(index.store)
+    const allResults = Object.values(index.store)
       .filter(filterFunction)
       .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    
+    const paginatedResults = allResults.slice(
+      startIndex,
+      Math.min(startIndex + this.pageSize, allResults.length)
+    );
+
+    if (indexWrapper?.index) {
+      indexWrapper.next = startIndex + this.pageSize < allResults.length ?
+        startIndex + this.pageSize :
+        undefined;
+    }
+
+    return paginatedResults;
   }
 
   collectDetailSearch(htmlElement) {
@@ -531,21 +545,28 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async advancedFilterStuff(documentGroup, page) {
     const dataFilters = $(this.element).find('.detailFilters');
     const subcategory = dataFilters.attr('data-subc');
-    const index = subcategory ? this.detailFilter[subcategory] : this.findIndex(documentGroup).index;
     const search = this.findIndex(documentGroup).search.toLowerCase();
-    const filterCriteria = this.collectDetailSearch(dataFilters);
-    const { sels: selectSearches, inps: textSearches, checkboxes: booleanSearches } = filterCriteria;
-    const result = await this.executeAdvancedFilter(search, index, selectSearches, textSearches, booleanSearches);
-    this.setBGImage(result, documentGroup);
-    return this.filterDuplications(result);
+    if (!subcategory && !search) return [];
+
+    if (subcategory) {
+      const indexWrapper = this.detailFilter[subcategory];
+      const { sels: selectSearches, inps: textSearches, checkboxes: booleanSearches } = this.collectDetailSearch(dataFilters);
+      const startIndex = Number(page) || 0;
+      
+      const result = await this.executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, [], startIndex);
+      this.setBGImage(result, documentGroup);
+      return this.filterDuplications(result);
+    } else {
+      return await this.filterStuff(documentGroup, page);
+    }
   }
 
   async findEquipmentItemDetailed(search, category, filterCompendium = true) {
     await this.buildDetailFilter('Item', category);
 
-    let index = this.detailFilter[category];
+    let indexWrapper = this.detailFilter[category];
 
-    let result = await this.executeAdvancedFilter(search.search || '', index, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || []);
+    let result = await this.executeAdvancedFilter(search.search || '', indexWrapper, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || [], 0);
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
     return await Promise.all(result.map((x) => fromUuid(x.uuid)));
@@ -673,9 +694,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async filterItems(documentGroup, page) {
-    const filteredItems = this.advancedFiltering && documentGroup != "JournalEntries" ? await this.advancedFilterStuff(documentGroup, page) : await this.filterStuff(documentGroup, page)
-    await this.renderResult(filteredItems, documentGroup, page)
-    return filteredItems
+    const filteredItems = this.advancedFiltering && documentGroup != "JournalEntries" ?
+      await this.advancedFilterStuff(documentGroup, page) :
+      await this.filterStuff(documentGroup, page);
+    await this.renderResult(filteredItems, documentGroup, page);
+    return filteredItems;
   }
 
   async _createIndex(documentName, worldItems) {
@@ -789,16 +812,20 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     target.find('.searchResult ul').html('');
     this.showLoading(target, category);
 
-    this.detailFilter[subcategory] = new FlexSearch.Document({
-      tokenize: "full",
-      cache: true,
-      document: {
-        id: "uuid",
-        store: true,
-        tag: "type",
-        index: fields
-      }
-    });
+    this.detailFilter[subcategory] = {
+      search: "",
+      index: new FlexSearch.Document({
+        tokenize: "full",
+        cache: true,
+        document: {
+          id: "uuid",
+          store: true,
+          tag: "type",
+          index: fields
+        }
+      }),
+      next: undefined
+    };
 
     const items = [];
     if (game.settings.get('dsa5', 'indexWorldItems')) {
@@ -836,7 +863,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     }
 
     for (const item of items) {
-      this.detailFilter[subcategory].add(item);
+      this.detailFilter[subcategory].index.add(item);
     }
     this.hideLoading(target, category);
     progress.update({ message: 'Library.loading', format: { item: catName }, pct: 1 });
@@ -938,6 +965,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
+      
+      if (this.advancedFiltering) {
+        const dataFilters = $(this.element).find('.detailFilters');
+        const subcategory = dataFilters.attr('data-subc');
+        if (subcategory && this.detailFilter[subcategory]) {
+          this.detailFilter[subcategory].next = undefined;
+        }
+      }
+      
       this.filterItems(category);
     });
 
@@ -961,18 +997,33 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   _infiniteScroll(ev, source) {
-    if (source.advancedFiltering) return
-
     const log = $(ev.target);
     const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
-    const category = $(this.element).find('.tab.active')[0].dataset.tab;
-    const documentName = this.systemConfiguration.documentNameFromGroup(category)
+    
+    if (!pct) return;
 
-    if (pct && source.indexes[documentName].next) {
-      source.filterItems.call(source, category, source.indexes[documentName].next)
+    const category = $(this.element).find('.tab.active')[0].dataset.tab;
+    
+    if (source.advancedFiltering) {
+      const dataFilters = $(source.element).find('.detailFilters');
+      const subcategory = dataFilters.attr('data-subc');
+      
+      if (subcategory && source.detailFilter[subcategory]?.next) {
+        source.filterItems.call(source, category, source.detailFilter[subcategory].next);
+      } else {
+        const documentName = source.systemConfiguration.documentNameFromGroup(category);
+        if (source.indexes[documentName]?.next) {
+          source.filterItems.call(source, category, source.indexes[documentName].next);
+        }
+      }
+    } else {
+      const documentName = source.systemConfiguration.documentNameFromGroup(category);
+      if (source.indexes[documentName].next) {
+        source.filterItems.call(source, category, source.indexes[documentName].next);
+      }
     }
   }
-  
+
   async _onItemNameClick(ev) {
     const uuid = ev.currentTarget.dataset.uuid
     const item = await fromUuid(uuid)
@@ -986,6 +1037,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   _onFilterBySearch(ev) {
     const category = $(this.element).find('.tab.active')[0].dataset.tab
     this.findIndex(category).search = ev.currentTarget.value
+    
+    if (this.advancedFiltering) {
+      const dataFilters = $(this.element).find('.detailFilters');
+      const subcategory = dataFilters.attr('data-subc');
+      if (subcategory && this.detailFilter[subcategory]) {
+        this.detailFilter[subcategory].next = undefined;
+      }
+    }
+    
     this.filterItems(category);
   }
 
@@ -1000,16 +1060,37 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     }
 
     if (this.advancedFiltering) {
+      const dataFilters = $(this.element).find('.detailFilters');
+      const subcategory = dataFilters.attr('data-subc');
+      if (subcategory && this.detailFilter[subcategory]) {
+        this.detailFilter[subcategory].next = undefined;
+      }
+      
+      await this.setAdvancedFilters(category, type);
       if (isChecked) {
         const template = await this.buildDetailFilter(category, type);
         $(this.element).find('.tab.active .advancedSearch .advancedSearchContent').html(template);
-      } else {
-        await this.setAdvancedFilters(category, type);
         ev.currentTarget.checked = isChecked;
       }
     }
 
     await this.filterItems(tab);
+  }
+
+  _tearDown(options) {
+    super._tearDown(options);
+    for (let key in this.indexes) {
+      if (this.indexes[key].observer) {
+        this.indexes[key].observer.disconnect();
+        this.indexes[key].observer = undefined;
+      }
+    }
+    for (let key in this.detailFilter) {
+      if (this.detailFilter[key].observer) {
+        this.detailFilter[key].observer.disconnect();
+        this.detailFilter[key].observer = undefined;
+      }
+    }
   }
 
   _onClickAction(event, target) {
@@ -1051,11 +1132,7 @@ class LibraryModulsFilter extends DefaultAppv2 {
       minimizable: true,
       resizable: true,
     },
-    actions: {
-      
-    },
-
-    classes: ["dsa5"]
+    classes: ["dsa5"],
   };
 
   static PARTS = {
