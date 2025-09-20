@@ -86,7 +86,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             entry.garadan = actor.system.merchant?.garadan || 1;
 
             if (isCreature) {
-                const creatureData = actor.system.creatureClass.value.split(',');
+                const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass.value);
                 entry.faction = creatureData[0].trim();
                 entry.subtitle = creatureData[1]?.trim() || "";
             } else {
@@ -95,6 +95,33 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             }
         }
     }
+
+    #splitOutsideBrackets(s = "") {
+        const parts = [];
+        let buf = "";
+        const stack = [];
+        for (let i = 0; i < s.length; i++) {
+            const ch = s[i];
+            if (ch === '(' || ch === '[' || ch === '{') {
+                stack.push(ch);
+                buf += ch;
+                continue;
+            }
+            if (ch === ')' || ch === ']' || ch === '}') {
+                if (stack.length) stack.pop();
+                buf += ch;
+                continue;
+            }
+            if (ch === ',' && stack.length === 0) {
+                parts.push(buf);
+                buf = "";
+                continue;
+            }
+            buf += ch;
+        }
+        if (buf !== "" || s.endsWith(',')) parts.push(buf);
+        return parts.map(p => p.trim());
+    };
 
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;

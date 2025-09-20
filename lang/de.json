@@ -1444,6 +1444,7 @@
         "UnknownFaction": "Unbekannte Fraktion",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
         "SelectPersonaHint": "Zeige Notizen und wichtige Details zu Personen und Kreaturen, denen du auf deinen Abenteuern begegnet bist.",
+        "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
         "NoPersonsInList": "Keine Personen in der Liste",
         "NoBeasts": "Keine Kreaturen in der Liste",
         "journals": {

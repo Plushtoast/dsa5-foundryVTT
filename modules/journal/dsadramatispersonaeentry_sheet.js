@@ -73,20 +73,50 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
     async _onRender(context, options) {
         await super._onRender(context, options);
 
+        if (this.isView) return;
+
         const showInCalendar = this.element.querySelector('.showInCalendar');
-        if (showInCalendar) {
-            showInCalendar.addEventListener('change', (event) => {
-                const isChecked = event.target.checked;
-                const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
-                if (isChecked) {
-                    settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
-                } else {
-                    settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
-                }
-                game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
-                game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
-            });
+        showInCalendar.addEventListener('change', (event) => {
+            const isChecked = event.target.checked;
+            const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
+            if (isChecked) {
+                settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
+            } else {
+                settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
+            }
+            game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
+            game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
+        });
+
+        new foundry.applications.ux.DragDrop.implementation({
+            dropSelector: '.personae-list-column',
+            permissions: {
+                drop: this._canDragDrop.bind(this)
+            },
+            callbacks: {
+                drop: this._onDrop.bind(this)
+            }
+        }).bind(this.element);
+    }
+
+    _canDragDrop(event) {
+        return !this.isView && (this.isEditable || game.user.isGM);
+    }
+
+    async _onDrop(event) {
+        event.preventDefault();
+        const entry = JSON.parse(event.dataTransfer.getData("text/plain"));
+        if (entry.type !== "Actor") return;
+
+        const actor = await fromUuid(entry.uuid);
+        if (!actor) return;
+
+        const options = {
+            actor_uuid: entry.uuid,
         }
+
+        await this.newEntry(options);
+        this.render(true);
     }
 
     static buildTOC(html, { includeElement = true } = {}) {
@@ -113,7 +143,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         return cls._flattenTOC(root.children);
     }
 
-    async newEntry() {
+    async newEntry(options = {}) {
         const id = foundry.utils.randomID();
         this.currentKey = id;
         await this.document.update({
@@ -121,7 +151,8 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
                 personae: {
                     [id]: {
                         name: 'New Entry',
-                        type: 0
+                        type: 0,
+                        ...options
                     }
                 }
             }

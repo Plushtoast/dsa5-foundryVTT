@@ -40,6 +40,19 @@
             </div>
           </div>
         {{/each}}
+        {{#unless sortedEntries.length}}
+         <div class="no-personae-list">
+          <div class="empty-state-small">
+              <i class="fas fa-users"></i>
+              <p>{{localize "PERSONAE.dragPersons"}}</p>
+              {{#if ../isGM}}
+              <button type="button" class="flexrow add-persona-small">
+                  <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
+              </button>
+              {{/if}}
+          </div>
+        </div>
+        {{/unless}}
       </div>
     </div>
 

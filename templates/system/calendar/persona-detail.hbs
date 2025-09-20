@@ -53,14 +53,12 @@
         </div>
         {{#if isGM}}
         <div class='tab {{tabs.slnotes.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='slnotes' data-group='{{tabs.slnotes.group}}'>
-            {{#if actor.system.details.notes.gmdescription}}
             <div class="detail-section">
                 {{#if noTabs}}<h3 class="section-title">{{localize 'GM Notes'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">{{{actor.system.details.notes.gmdescription}}}</div>
                 </div>
             </div>
-            {{/if}}
         </div>
         {{/if}}
 
