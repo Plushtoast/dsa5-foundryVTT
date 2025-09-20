@@ -11,6 +11,18 @@ export class PersonaeDramatis {
         return this.parent.element;
     }
 
+    static TABS = {
+        details: {
+            tabs: [
+                { id: 'description', label: 'Description' },
+                { id: 'notes', label: 'Notes' },
+                { id: 'slnotes', label: 'GM notes', onlyGM: true },
+                { id: 'contacts', label: 'PERSONAE.FIELDS.personae.socialContact.label', onlyGM: true },
+            ],
+            initial: 'description',
+        },
+    }
+
     static actions = {
         selectActor: PersonaeDramatis.selectActor,
         editActor: PersonaeDramatis.editActor,
@@ -127,14 +139,53 @@ export class PersonaeDramatis {
         listItem.classList.add('selected');
     }
 
+    static prepareTabs() {
+        return PersonaeDramatis.TABS.details.tabs.reduce((tabs, tab, index) => {
+            if (tab.onlyGM && !game.user.isGM) return tabs;
+
+            tabs[tab.id] = {
+                cssClass: index === 0 ? 'active' : '',
+                group: 'details',
+                id: tab.id,
+                label: tab.label
+            };
+            return tabs;
+        }, {});
+    }
+
     static async displayActorDetails(entry, page, key, target) {
         const detailsContainer = target.closest('.personae-two-column').querySelector('.persona-details-container');
         if (!detailsContainer) return;
 
         const heros = await DSAPersonaEntry.getHeros();
         await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
-        const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', entry);
+        const tabs = this.prepareTabs();
+        const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', {
+            ...entry,
+            canChangeRelation: game.user.isGM,
+            tabs
+        });
         detailsContainer.innerHTML = detailHTML;
+
+        detailsContainer.querySelectorAll('.relationship-slider').forEach(slider => {
+            slider.addEventListener('input', async (event) => PersonaeDramatis.updateContactRelationshipLevel(event));
+        });
+    }
+
+    static async updateContactRelationshipLevel(event) {
+        const target = event.target;
+        const newValue = target.value;
+        const section = target.closest('.relationship-section');
+        section.querySelector('.relationship-value').textContent = `${newValue}/9`;
+        section.querySelector('.relationship-label').textContent = game.i18n.localize(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
+        target.className = target.className.replace(/level-\d+/g, '');
+        target.classList.add(`level-${newValue}`);
+
+        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        if (!page) return;
+
+        const contactId = target.dataset.contactUuid.replaceAll('.', '_');
+        await page.update({ [`system.personae.${personaDramatisKey}.socialContact.${contactId}.level`]: newValue });
     }
 
     static async editActor(event, target, options = {}) {
@@ -173,20 +224,20 @@ export class PersonaeDramatis {
     static switchList(event, target) {
         const listType = target.dataset.listType;
         const personaeList = target.closest('.personae-list-column');
-        
+
         personaeList.querySelectorAll('.list-switch-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.listType === listType);
         });
-        
+
         personaeList.querySelectorAll('.list-content').forEach(content => {
             content.classList.toggle('hidden', content.dataset.listType !== listType);
         });
-        
+
         const mainList = personaeList.querySelector('.personae-list');
         if (mainList) {
             mainList.dataset.activeList = listType;
         }
-        
+
         PersonaeDramatis.clearSelection();
         PersonaeDramatis.clearDetails(target);
     }
@@ -231,14 +282,14 @@ export class PersonaeDramatis {
     #onSearchFilter(_event, query, rgx, html) {
         const activeList = html.dataset.activeList || '0';
         const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
-        
+
         if (!activeListContent) return;
 
         const factionGroups = activeListContent.querySelectorAll('.faction-group');
-        
+
         factionGroups.forEach(factionGroup => {
             let visibleItemsInFaction = 0;
-            
+
             const personaItems = factionGroup.querySelectorAll('.persona-list-item');
             personaItems.forEach(entry => {
                 if (!query) {
@@ -252,10 +303,10 @@ export class PersonaeDramatis {
 
                 const isMatch = [name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 entry.hidden = !isMatch;
-                
+
                 if (isMatch) visibleItemsInFaction++;
             });
-            
+
             factionGroup.hidden = visibleItemsInFaction === 0;
         });
     }

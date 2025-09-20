@@ -149,7 +149,9 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 uuid,
                 name: hero.name,
                 exists: !!exists,
-                level: exists?.level || 5
+                level: exists?.level || 5,
+                img: hero.img,
+                subtitle: hero.system.details?.career.value || '',
             };
         }
     }

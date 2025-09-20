@@ -1500,7 +1500,7 @@
                     "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden."
                 },
                 "socialContact": {
-                    "label": "Soziale Kontakte",
+                    "label": "Einstellungsstufen",
                     "level": {
                         "label": "Einstellungsstufe",
                         "choices": {

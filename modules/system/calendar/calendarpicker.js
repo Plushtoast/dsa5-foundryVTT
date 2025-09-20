@@ -79,7 +79,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         { id: 'personae_config', label: 'PERSONAE.ImportantPersons', icon: 'fas fa-cog' },
       ],
       initial: 'calendar_config',
-    }
+    },
+    ...PersonaeDramatis.TABS,
   };
 
   static async fromCache(components) {
