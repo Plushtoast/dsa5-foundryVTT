@@ -34,6 +34,7 @@ export class PersonaeDramatis {
         showSheet: PersonaeDramatis.showSheet,
         toggleVisibility: PersonaeDramatis.toggleVisibility,
         switchList: PersonaeDramatis.switchList,
+        newPersona: PersonaeDramatis.newPersona,
     }
 
     async _preparePartContext(context, options) {
@@ -153,7 +154,7 @@ export class PersonaeDramatis {
                 group: 'details',
                 id: tab.id,
                 label: tab.label
-            };
+            }
             return tabs;
         }, {});
     }
@@ -242,6 +243,68 @@ export class PersonaeDramatis {
         if (!options.stay) this.close();
         actor.sheet.render(true);
     }
+
+    static async newPersona(event, target) {
+        if (!game.user.isGM) return;
+
+        this.close();
+
+        const activatedJournals = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME)?.activated || [];
+        if (activatedJournals.length === 0) {
+            const newJournal = await JournalEntry.create({
+                name: game.i18n.localize("PERSONAE.ImportantPersons"), pages: [{
+                    name: game.i18n.localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis"
+                }]
+            });
+            newJournal.sheet.render(true);
+        } else {
+            let journalID;
+            const content = `<p><div class="form-group">
+                <label>${game.i18n.localize("PERSONAE.selectJournal")}</label>
+                <div class="form-fields">
+                    <select name="journal">
+                ${activatedJournals.map(id => `<option value="${id.uuid}">${id.name}</option>`).join('')}
+                    </select>
+                </div>
+            </div></p>`
+            try {
+                 journalID = await foundry.applications.api.DialogV2.wait({
+                    window: {
+                        title: 'PERSONAE.Add',
+                    },
+                    content,
+                    buttons: [
+                        {
+                            action: 'ok',
+                            icon: 'fa fa-check',
+                            label: 'yes',
+                            default: true,
+                            callback: (event, button, dialog) => {
+                                return button.form.elements.journal.value;
+                            },
+                        },
+                        {
+                            action: 'cancel',
+                            icon: 'fas fa-times',
+                            label: 'cancel',
+                            callback: () => {
+                                return false;
+                            },
+                        },
+                    ],
+                });
+            } catch (error) {
+                /* empty */
+            }
+
+            if (!journalID) return;
+
+            const journal = await fromUuid(journalID);
+            if (!journal) return;
+
+            journal.sheet.render(true);
+        }
+    };
 
     static async toggleVisibility(event, target) {
         const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
