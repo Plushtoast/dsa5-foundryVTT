@@ -34,6 +34,7 @@
     </div>
 
     <div class="persona-detail-content">
+        {{#unless noTabs}}
         <nav class="sheet-tabs tabs detail-section" aria-roledescription="Form Tab Navigation">
             {{#each tabs as |tab|}}
             <h3 class="tabelement {{tab.cssClass}} section-title" data-action="tab" data-group="{{tab.group}}" data-tab="{{tab.id}}">
@@ -41,17 +42,20 @@
             </h3>
             {{/each}}
         </nav>
-        <div class='tab {{tabs.description.cssClass}}' data-tab='description' data-group='{{tabs.description.group}}'>
+        {{/unless}}
+        <div class='tab {{tabs.description.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='description' data-group='{{tabs.description.group}}'>
             <div class="detail-section">
+                {{#if noTabs}}<h3 class="section-title">{{localize 'Description'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">{{{preparedDescription}}}</div>
                 </div>
             </div>
         </div>
         {{#if isGM}}
-        <div class='tab {{tabs.slnotes.cssClass}}' data-tab='slnotes' data-group='{{tabs.slnotes.group}}'>
+        <div class='tab {{tabs.slnotes.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='slnotes' data-group='{{tabs.slnotes.group}}'>
             {{#if actor.system.details.notes.gmdescription}}
             <div class="detail-section">
+                {{#if noTabs}}<h3 class="section-title">{{localize 'GM Notes'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">{{{actor.system.details.notes.gmdescription}}}</div>
                 </div>
@@ -60,17 +64,27 @@
         </div>
         {{/if}}
 
-        <div class='tab {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
+        <div class='tab {{tabs.notes.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
             <div class="detail-section">
+                {{#if noTabs}}<h3 class="section-title">{{localize 'Notes'}}</h3>{{/if}}
                 <div class="section-content">
-                    <div class="description-text">{{{preparedNotes}}}</div>
+                    <div class="description-text">
+                        {{#if noTabs}}
+                            {{{preparedNotes}}}
+                        {{else}}
+                            <prose-mirror toggled class="notes-edit" value="{{notes}}" collaborate name="system.personae.{{dramatisKey}}.notes" data-document-uuid="{{uuid}}">
+                                {{{preparedNotes}}}
+                            </prose-mirror>
+                        {{/if}}
+                    </div>
                 </div>
             </div>
         </div>
 
         {{#if contacts}}
-        <div class='tab {{tabs.contacts.cssClass}}' data-tab='contacts' data-group='{{tabs.contacts.group}}'>
+        <div class='tab {{tabs.contacts.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='contacts' data-group='{{tabs.contacts.group}}'>
             <div class="detail-section">
+                {{#if noTabs}}<h3 class="section-title">{{localize 'PERSONAE.FIELDS.personae.socialContact.label'}}</h3>{{/if}}
                 <div class="section-content">
                     {{#each contacts}}
                     <div class="persona-list-item" data-persona-uuid="{{../uuid}}" data-persona-dramatis-key="{{../dramatisKey}}">

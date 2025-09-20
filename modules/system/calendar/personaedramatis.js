@@ -1,14 +1,19 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
 
 export class PersonaeDramatis {
+    static #parent;
     #search;
 
     constructor(parent) {
-        this.parent = parent;
+        PersonaeDramatis.#parent = parent;
     }
 
     get element() {
-        return this.parent.element;
+        return PersonaeDramatis.#parent.element;
+    }
+
+    get parent() {
+        return PersonaeDramatis.#parent;
     }
 
     static TABS = {
@@ -139,9 +144,9 @@ export class PersonaeDramatis {
         listItem.classList.add('selected');
     }
 
-    static prepareTabs() {
+    static prepareTabs(entry) {
         return PersonaeDramatis.TABS.details.tabs.reduce((tabs, tab, index) => {
-            if (tab.onlyGM && !game.user.isGM) return tabs;
+            if (tab.onlyGM && (!game.user.isGM || entry.type === 1)) return tabs;
 
             tabs[tab.id] = {
                 cssClass: index === 0 ? 'active' : '',
@@ -159,7 +164,8 @@ export class PersonaeDramatis {
 
         const heros = await DSAPersonaEntry.getHeros();
         await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
-        const tabs = this.prepareTabs();
+        const tabs = this.prepareTabs(entry);
+        PersonaeDramatis.#parent.tabGroups.details = 'description';
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', {
             ...entry,
             canChangeRelation: game.user.isGM,
@@ -170,6 +176,36 @@ export class PersonaeDramatis {
         detailsContainer.querySelectorAll('.relationship-slider').forEach(slider => {
             slider.addEventListener('input', async (event) => PersonaeDramatis.updateContactRelationshipLevel(event));
         });
+
+        const notesEdit = detailsContainer.querySelector('.notes-edit');
+        if (notesEdit) {
+            notesEdit.addEventListener('change', this.#notesChanged.bind(this));
+        }
+    }
+
+    static #notesChanged(event) {
+        const target = event.target;
+        const newValue = target.value;
+        const { documentUuid } = target.dataset;
+        const name = target.name;
+
+        if (game.user.isGM) {
+            this.updateNotes({ documentUuid, name, newValue });
+        } else {
+            game.socket.emit('system.dsa5', {
+                type: 'personaNotesChanged',
+                payload: {
+                    documentUuid, name, newValue
+                },
+            });
+        }
+    }
+
+    static async updateNotes(data) {
+        const document = await fromUuid(data.documentUuid);
+        if (!document) return;
+
+        await document.update({ [data.name]: data.newValue });
     }
 
     static async updateContactRelationshipLevel(event) {

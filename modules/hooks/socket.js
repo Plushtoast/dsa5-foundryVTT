@@ -12,6 +12,7 @@ import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
+import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -117,6 +118,9 @@ export function connectSocket() {
             data.payload.data,
           );
         });
+        break;
+      case 'personaNotesChanged':
+        PersonaeDramatis.updateNotes(data.payload);
         break;
       case 'socketedConditionAdd':
         fromUuid(data.payload.id).then((item) => {
