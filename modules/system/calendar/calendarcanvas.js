@@ -10,7 +10,8 @@ export class CalendarCanvas {
      * @param {Function} callback - Called when user clicks on a calendar element
      * @param {Function} hoverCallback - Called when user hovers over calendar elements
      */
-    constructor(parentElement, callback, hoverCallback) {
+    constructor(parent, parentElement, callback, hoverCallback) {
+        this.parent = parent;
         this.element = parentElement;
         this.callback = callback;
         this.hoverCallback = hoverCallback;
@@ -247,7 +248,7 @@ export class CalendarCanvas {
 
     async _prepareData() {
         const calendar = game.time.calendar;
-        const components = calendar.timeToComponents(game.time.worldTime);
+        const components = this.parent.actualTimeComponents();
         const daysPerYear = calendar.days.daysPerYear;
 
         // Calculate seasons

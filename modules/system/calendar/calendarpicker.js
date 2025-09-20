@@ -28,6 +28,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       scrollToToday: this.#scrollToToday,
       scrollMonthPrev: this.#scrollBackward,
       scrollMonthNext: this.#scrollForward,
+      confirmDateChange: this.#confirmDateChange,
+      cancelDateChange: this.#cancelDateChange,
     }
   };
 
@@ -58,6 +60,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   #search;
   #personaeDramatis = new PersonaeDramatis(this);
+  #temporaryTime = null;
 
   get title() {
     return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
@@ -337,8 +340,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _prepareCalendarContext(context, options) {
     const calendar = game.time.calendar;
-    if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
 
+    if (!context.components) context.components = this.actualTimeComponents();
+
+    context.isGM = game.user.isGM;
+    context.hasDateChanges = this.#temporaryTime !== null && this.#temporaryTime !== game.time.worldTime;
     context.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
     context.currentMonth = calendar.translate(calendar.months.values[context.components.month].name);
     context.currentDay = context.components.dayOfMonth + 1;
@@ -346,12 +352,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _prepareEventsContext(context, options) {
-    const calendar = game.time.calendar;
-    if (!context.components) context.components = calendar.timeToComponents(game.time.worldTime);
+    if (!context.components) context.components = this.actualTimeComponents();
     if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
 
     context.initialYear = context.components.year;
-
     context.dayCategories = Object.entries(DSACalendarEntry.CATEGORY_CHOICES).reduce((acc, [key, val]) => {
       acc[key] = { key, name: val, color: DSACalendarEntry.CATEGORY_COLORS[key], icon: DSACalendarEntry.CATEGORY_ICONS[key] };
       return acc;
@@ -369,8 +373,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     for (let m = 0; m < components.month; m++) {
       components.day += game.time.calendar.months.values[m].days;
     }
-    const newTime = game.time.calendar.componentsToTime(components);
-    await game.time.set(newTime);
+
+    this.#temporaryTime = game.time.calendar.componentsToTime(components);
+    this.refreshCalendar();
   }
 
   async _onRender(context, options) {
@@ -459,6 +464,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   _onClose(options) {
     this.calendarRenderer?.destroy();
     this.calendarRenderer = null;
+    this.#temporaryTime = null;
   }
 
   _drawCalendar() {
@@ -468,7 +474,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       this.calendarRenderer.element = appContainer;
     }
     else {
-      this.calendarRenderer = new CalendarCanvas(appContainer, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
+      this.calendarRenderer = new CalendarCanvas(this, appContainer, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
     }
     this.calendarRenderer.render();
   }
@@ -479,7 +485,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       return;
     }
 
-    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const components = this.actualTimeComponents();
     const calendar = game.time.calendar;
     let tooltipContent = '';
     let detailsContent = '';
@@ -560,7 +566,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       dayOffset += calendar.months.values[m].days;
     }
     const modifiedComponents = {
-      ...calendar.timeToComponents(game.time.worldTime),
+      ...this.actualTimeComponents(),
       day: dayOffset
     };
     const converted = calendar.componentsToTime(modifiedComponents);
@@ -631,9 +637,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _onCalendarCanvasCallback(clickBait) {
-    if (!game.user.isGM) return;
-
-    let { year, month, day, hour, minute, second, dayOfWeek, dayOfMonth } = game.time.calendar.timeToComponents(game.time.worldTime);
+    let { year, month, day, hour, minute, second, dayOfWeek, dayOfMonth } = this.actualTimeComponents();
 
     switch (clickBait.type) {
       case "month":
@@ -661,13 +665,35 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         break;
 
     }
-    const time = game.time.calendar.componentsToTime({ year, month, day, hour, minute, second });
-    await game.time.set(time);
+
+    this.#temporaryTime = game.time.calendar.componentsToTime({ year, month, day, hour, minute, second });
+    this.refreshCalendar();
   }
 
   async _onChangeCalendar(ev) {
     game.settings.set('dsa5', 'calendar', ev.target.value);
     foundry.applications.settings.SettingsConfig.reloadConfirm({ world: true })
+  }
+
+  actualTimeComponents() {
+    return this.#temporaryTime !== null ?
+      game.time.calendar.timeToComponents(this.#temporaryTime) :
+      game.time.calendar.timeToComponents(game.time.worldTime);
+  }
+
+  static async #confirmDateChange(ev, target) {
+    if (this.#temporaryTime === null) return;
+
+    await game.time.set(this.#temporaryTime);
+
+    this.#temporaryTime = null;
+
+    this.refreshCalendar();
+  }
+
+  static async #cancelDateChange(ev) {
+    this.#temporaryTime = null;
+    this.refreshCalendar();
   }
 
   async _onSettingChange(ev) {
@@ -705,7 +731,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     container.prepend(topSentinel);
     container.append(bottomSentinel);
 
-    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const components = this.actualTimeComponents();
     this._evtState = {
       root,
       container,
@@ -794,9 +820,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const tpl = 'systems/dsa5/templates/journal/calendarcard.hbs';
     const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
 
-    const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    const components = this.actualTimeComponents();
     const currentYear = components.year;
-    const currentDateValue = components.month * 100 + components.dayOfMonth;
+    //const currentDateValue = components.month * 100 + components.dayOfMonth;
 
     const shouldAddTodayMarker = year === currentYear && initialChunk;
     await this._renderEntriesWithMonthDividers(entries, wrapper, tpl, yearSuffix, year, initialChunk, shouldAddTodayMarker ? components : null);

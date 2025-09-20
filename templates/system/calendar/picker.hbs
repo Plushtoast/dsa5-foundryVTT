@@ -1,12 +1,11 @@
 <div>
-  <fieldset class="margin-top noBorder calendarDateChange" {{#unless isGM}}disabled{{/unless}}>
+  <fieldset class="margin-top noBorder calendarDateChange">
     <div class="flexrow">
       <h3 class="flexrow">{{currentDay}}. {{currentMonth}} <input data-tooltip="CALENDAR.DSA.year" type='number' class='flexgrow-0 dateChange' min="0"
           name='year' value='{{components.year}}' /><span>{{localize (concat calendar.translationPrefix '.'
           worldCalendarConfig.years.yearSuffix)}}</span></h3>
-
+      
       <div class="flexAlignEnd flexrow">
-        <div></div>
         <div>
           <i class="fas fa-hourglass-half"></i>
           <input data-tooltip="CALENDAR.DSA.hour" type='number' class='flexgrow-0 hourInput dateChange' name='hour'
@@ -17,6 +16,15 @@
           <span>:</span>
           <input data-tooltip="CALENDAR.DSA.second" type='number' class='flexgrow-0 hourInput dateChange' name='second'
             value='{{components.second}}' min='0' max='59' step='1' />
+          
+        </div>
+        <div class="flexrow">
+            {{#if hasDateChanges}}
+            {{#if isGM}}
+            <button type="button" class="icon fas fa-save" data-action="confirmDateChange" data-tooltip="{{localize 'dsacalendar.confirmDateChange'}}"></button>
+            {{/if}}
+            <button type="button" class="icon fas fa-times" data-action="cancelDateChange" data-tooltip="{{localize 'dsacalendar.cancelDateChange'}}"></button>
+            {{/if}}
         </div>
       </div>
     </div>

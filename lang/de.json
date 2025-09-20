@@ -1527,6 +1527,8 @@
         "NoPersonsInList": "Keine Personen in der Liste",
         "nextMonth": "Nächster Monat",
         "previousMonth": "Vorheriger Monat",
+        "confirmDateChange": "Datum übernehmen",
+        "cancelDateChange": "Ursprüngliches Datum beibehalten",
         "today": "Heute",
         "FIELDS": {
             "calendarentries": {
