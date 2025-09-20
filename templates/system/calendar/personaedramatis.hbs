@@ -38,7 +38,7 @@
                                 <span class="faction-count">({{factionGroup.members.length}})</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanClass}}
@@ -50,6 +50,9 @@
                                     {{#if subtitle}}
                                     <div class="persona-list-meta">
                                         <span class="persona-type">{{subtitle}}</span>
+                                        {{#unless persona.visible}}
+                                        <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        {{/unless}}
                                     </div>
                                     {{/if}}
                                 </div>
@@ -83,7 +86,7 @@
                                 <span class="faction-count">({{factionGroup.members.length}})</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanClass}}
@@ -95,6 +98,9 @@
                                     {{#if subtitle}}
                                     <div class="persona-list-meta">
                                         <span class="persona-type">{{subtitle}}</span>
+                                        {{#unless persona.visible}}
+                                        <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        {{/unless}}
                                     </div>
                                     {{/if}}
                                 </div>

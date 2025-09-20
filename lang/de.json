@@ -1499,9 +1499,22 @@
                     "label": "Akteurbeschreibung anzeigen",
                     "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden."
                 },
-                "showActorPersonalNotes": {
-                    "label": "Akteur Notizen anzeigen",
-                    "hint": "Die persönlichen Notizen des Akteurs werden im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden. Persönliche Notizen können von den Spielern editiert werden."
+                "socialContact": {
+                    "label": "Soziale Kontakte",
+                    "level": {
+                        "label": "Einstellungsstufe",
+                        "choices": {
+                            "1": "Unstillbarer Hass (1)",
+                            "2": "Erklärter Feind (2)",
+                            "3": "Abneigung (3)",
+                            "4": "Leichte Abneigung (4)",
+                            "5": "Neutral (5)",
+                            "6": "Sympathie / Freundschaft (6)",
+                            "7": "Großes Vertrauen (7)",
+                            "8": "Enge Loyalität / Liebe (8)",
+                            "9": "Tiefe Liebe / Opferbereitschaft (9)"
+                        }
+                    }
                 }
             }
         }

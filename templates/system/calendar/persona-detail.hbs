@@ -54,6 +54,25 @@
             </div>
         </div>
         {{/if}}
-        
+
+        {{#if contacts}}
+        <div class="detail-section">
+            <h3 class="section-title">{{localize "PERSONAE.FIELDS.personae.socialContact.label"}}</h3>
+            <div class="section-content">
+                {{#each contacts}}
+                <div class="contact-entry {{ifThen this.exists 'exists'}}">
+                    <span class="contact-name">{{name}}</span>
+                    {{#if this.exists}}
+                    <span class="contact-level">{{localize (concat "PERSONAE.FIELDS.personae.socialContact.level.choices." level)}}</span>
+                    {{else}}
+                    <button type="button" class="add-contact-btn" data-action="addContact" data-persona-uuid="{{../uuid}}" data-persona-dramatis-key="{{../dramatisKey}}" data-contact-uuid="{{this.uuid}}">
+                        <i class="fas fa-plus"></i> {{localize "PERSONAE.FIELDS.personae.socialContact.add"}}
+                    </button>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
     </div>
 </div>

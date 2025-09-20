@@ -44,9 +44,10 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
             });
         context.sortedEntries = Object.fromEntries(entries);
         if (this.isView) {
+            const heros = await DSAPersonaEntry.getHeros();
             for (let key of Object.keys(context.sortedEntries)) {
                 const entry = context.sortedEntries[key];
-                await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key);
+                await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);
             }
         } else {
             if (options.currentKey)
@@ -60,6 +61,13 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         context.isGM = game.user.isGM;
         context.isRegistered = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
         return context;
+    }
+
+    async _prepareContacts(entry) {
+        if (!game.user.isGM) return;
+
+        const heros = await DSAPersonaEntry.getHeros();
+        await DSAPersonaEntry.prepareContacts(entry, heros);
     }
 
     async _onRender(context, options) {
@@ -153,8 +161,10 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
     }
 
     async renderDetail(key) {
+        const entry = foundry.utils.duplicate(this.document.system.personae[key] || {});
+        await this._prepareContacts(entry);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
-            elem: this.document.system.personae[key],
+            elem: entry,
             document: this.document,
             isGM: game.user.isGM,
             key

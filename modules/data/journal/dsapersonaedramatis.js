@@ -19,6 +19,18 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         6: 'boronsrad'
     }
 
+    static SOCIAL_CONTACT_LEVELS = {
+        1: "PERSONAE.FIELDS.personae.socialContact.level.choices.1",
+        2: "PERSONAE.FIELDS.personae.socialContact.level.choices.2",
+        3: "PERSONAE.FIELDS.personae.socialContact.level.choices.3",
+        4: "PERSONAE.FIELDS.personae.socialContact.level.choices.4",
+        5: "PERSONAE.FIELDS.personae.socialContact.level.choices.5",
+        6: "PERSONAE.FIELDS.personae.socialContact.level.choices.6",
+        7: "PERSONAE.FIELDS.personae.socialContact.level.choices.7",
+        8: "PERSONAE.FIELDS.personae.socialContact.level.choices.8",
+        9: "PERSONAE.FIELDS.personae.socialContact.level.choices.9"
+    }
+
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
         return {
@@ -33,7 +45,6 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 showCulture: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showCulture.label" }),
                 showProfession: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showProfession.label" }),
                 showActorDescription: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showActorDescription.label", hint: "PERSONAE.FIELDS.personae.showActorDescription.hint" }),
-                showActorPersonalNotes: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showActorPersonalNotes.label", hint: "PERSONAE.FIELDS.personae.showActorPersonalNotes.hint" }),
                 faction: new StringField({ label: "PERSONAE.FIELDS.personae.faction.label", hint: "PERSONAE.FIELDS.personae.faction.hint" }),
                 tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint" }),
                 img: new FilePathField({ categories: ["IMAGE"] }),
@@ -43,7 +54,10 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                     label: 'Garadan',
                     required: true,
                     choices: MerchantTemplate.GARADAN_CHOICES,
-                })
+                }),
+                socialContact: new TypedObjectField(new SchemaField({
+                    level: new NumberField({ label: "PERSONAE.FIELDS.personae.socialContact.level.label", initial: 5, choices: DSAPersonaEntry.SOCIAL_CONTACT_LEVELS }),
+                })),
             })),
         }
     }
@@ -82,7 +96,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         }
     }
 
-    static async preparePersonaEntry(entry, document, key) {
+    static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
 
         if (!entry.actor) return;
@@ -111,13 +125,41 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "");
             } else {
                 entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "");
-                entry.preparedNotes = await TextEditor.enrichHTML(entry.actor.system.details?.notes.value || "");
             }
         } else {
             entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "");
         }
-
+        entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "");
         entry.uuid = document.uuid;
         entry.dramatisKey = key;
+        await this.prepareContacts(entry, heros);
+    }
+
+    static async prepareContacts(entry, heros) {
+        if (!game.user.isGM) return;
+        if (entry.type === 1) return;
+
+        entry.contacts = {};
+        for (let [uuid, hero] of heros) {
+            if (entry.actor_uuid && entry.actor_uuid === uuid) continue;
+
+            const slugified_uuid = uuid.replaceAll('.', '_');
+            const exists = entry.socialContact[slugified_uuid];
+            entry.contacts[slugified_uuid] = {
+                uuid,
+                name: hero.name,
+                exists: !!exists,
+                level: exists?.level || 5
+            };
+        }
+    }
+
+    static async getHeros() {
+        return (await game.dsa5.apps.gameMasterMenu.getTrackedHeros()).reduce((acc, hero) => {
+            if (hero.type == "character") {
+                acc.push([hero.uuid, hero]);
+            }
+            return acc;
+        }, []);
     }
 }

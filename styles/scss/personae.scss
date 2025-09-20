@@ -198,6 +198,10 @@
   border-radius: 6px;
   border: 1px solid transparent;
 
+  &.invisible {
+    opacity: 0.5;
+  }
+
   &:hover {
     background: var(--personae-gold-alpha-1);
     border-color: var(--personae-gold-alpha-2);

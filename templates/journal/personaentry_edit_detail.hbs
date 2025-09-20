@@ -46,15 +46,6 @@
     }}
     <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.showActorDescription.hint}}</span>
   </div>
-  <div class='form-group'>
-    <label>{{localize document.system.schema.fields.personae.element.fields.showActorPersonalNotes.label}}</label>
-    {{formInput
-      document.system.schema.fields.personae.element.fields.showActorPersonalNotes
-      value=elem.showActorPersonalNotes
-      name=(concat 'system.personae.' key '.showActorPersonalNotes')
-    }}
-    <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.showActorPersonalNotes.hint}}</span>
-  </div>
 
   {{#unless elem.showActorDescription}}
     {{formGroup
@@ -66,8 +57,20 @@
     }}
   {{/unless}}
 
-  {{#unless elem.showActorPersonalNotes}}
-    {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
-  {{/unless}}
+  {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
 
+  {{#if (eq elem.type 0)}}
+    {{#if isGM}}
+    <hr>
+    <h3>{{localize 'PERSONAE.FIELDS.personae.socialContact.label'}}</h3>
+    {{#each elem.contacts}}
+      <div class='form-group'>
+        <label>{{name}}</label>
+        <div class="form-fields">
+          {{formInput ../document.system.schema.fields.personae.element.fields.socialContact.element.fields.level value=level name=(concat 'system.personae.' ../key '.socialContact.' @key '.level') localize=true }}
+        </div>
+      </div>
+    {{/each}}
+    {{/if}}
+  {{/if}}
 </div>

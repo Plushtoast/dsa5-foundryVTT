@@ -131,7 +131,8 @@ export class PersonaeDramatis {
         const detailsContainer = target.closest('.personae-two-column').querySelector('.persona-details-container');
         if (!detailsContainer) return;
 
-        await DSAPersonaEntry.preparePersonaEntry(entry, page, key);
+        const heros = await DSAPersonaEntry.getHeros();
+        await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', entry);
         detailsContainer.innerHTML = detailHTML;
     }
@@ -164,6 +165,9 @@ export class PersonaeDramatis {
         const i = target.querySelector('i');
         i.classList.toggle('fa-eye', !entry.visible);
         i.classList.toggle('fa-eye-slash', entry.visible);
+
+        this.element.querySelector('.persona-list-item.selected')?.classList.toggle('invisible', entry.visible);
+        this.element.querySelector('.persona-list-item.selected .persona-hidden')?.classList.toggle('dsahidden', !entry.visible);
     }
 
     static switchList(event, target) {
