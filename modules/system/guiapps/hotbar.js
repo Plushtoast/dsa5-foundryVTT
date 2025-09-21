@@ -470,21 +470,17 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       if (weapon?.id === w.id) return acc;
       acc.push({
         name: `${equip}: ${w.name}`,
-        icon: "<i class='fa-solid fa-shield-plus'></i>",
+        icon: "<i class='fa-solid fa-swords'></i>",
         callback: () => {
           const canOffHand = isOffHand && !RuleChaos.isYieldedTwohanded(w);
-          this.actor.exclusiveEquipWeapon(w.id, canOffHand)
+          this.actor.exclusiveEquipWeapon(w.id, canOffHand);
         }
       });
       return acc;
     }, []);
 
     if (weapon) {
-      options.push({
-        name: `SHEET.UnEquipItem`,
-        icon: "<i class='fa-solid fa-shield-minus'></i>",
-        callback: () => weapon.update({ 'system.worn.value': false }),
-      });
+      options.push(...weapon.system.getContextOptions());
     }
 
     return options;
@@ -605,7 +601,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     const twoHanded = RuleChaos.isYieldedTwohanded(firstWeapon);
-    console.log(twoHanded, firstWeapon);
     const secondWeapon = twoHanded ? firstWeapon : (offHandWeapons.find(x => x.id !== firstWeapon.id) || emptyHands);
 
     positions.push({

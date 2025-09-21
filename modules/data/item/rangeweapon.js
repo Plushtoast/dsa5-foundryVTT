@@ -39,7 +39,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       worn: new SchemaField({
         value: new BooleanField({ initial: false }),
       }),
-      isArtifact: new BooleanField({ initial: false,  label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
   }
 
@@ -75,10 +75,18 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
     item.toggleValue = item.system.worn.value || false;
-    item.toggle = true;    
+    item.toggle = true;
     item.system.preparedWeight = this.parent.system.preparedWeight;
     this.constructor._prepareItemStructure(item)
     this._setOnUseEffect(item);
     return item;
+  }
+
+  getContextOptions() {
+    return [{
+      name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
+      icon: "<i class='fas fa-shield-alt fa-fw'></i>",
+      callback: () => this.parent.update({ 'system.worn.value': !this.worn.value }),
+    }]
   }
 }

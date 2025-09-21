@@ -27,6 +27,7 @@ import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -618,9 +619,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const itemId = item?.id || this._getItemId(target);
     item = item || this.actor.items.get(itemId);
 
-    if (!['Daggers', 'Fencing Weapons'].includes(game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`))) {
-      await this.actor.items.get(itemId).update({ 'system.worn.wrongGrip': !item.system.worn.wrongGrip });
-    }
+    item.system.swapNumberWeaponHands();
   }
 
   static async _skillSelect(ev, target) {
@@ -1131,38 +1130,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _getWeaponItemContextOptions(item) {
     const options = [];
 
-    if (item.type == 'meleeweapon') {
-      const localizedCT = game.i18n.localize(`LocalizedCTs.${item.system.combatskill.value}`);
-      if (!['Daggers', 'Fencing Weapons'].includes(localizedCT)) {
-        const weaponYield = item.system.getGripInfo().wrongGripLabel;
-
-        options.push({
-          name: weaponYield,
-          icon: "<i class='fas fa-comment fa-hand'></i>",
-          callback: (ev) => this.swapWeaponHand(ev, item),
-        });
-      }
-      const hasWeaponThrow =
-        ['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms'].includes(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this.actor, 'LocalizedIDs.weaponThrow');
-      const throwLabel = `${game.i18n.localize('TYPES.Item.rangeweapon')} ${game.i18n.localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${game.i18n.localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
-      options.push(
-        {
-          name: throwLabel,
-          icon: "<i class='fas fa-trowel'></i>",
-          callback: () => this.actor.throwMelee(item, this.getTokenId()),
-        },
-        {
-          name: 'SHEET.EquipItem',
-          icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-          callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
-        },
-      );
-    } else if (item.type == 'rangeweapon') {
-      options.push({
-        name: 'SHEET.EquipItem',
-        icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
-      });
+    if (['rangeweapon', 'meleeweapon'].includes(item.type)) {
+      options.push(...item.system.getContextOptions());
     }
 
     options.push({
