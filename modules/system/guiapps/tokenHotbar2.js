@@ -438,11 +438,11 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   async executeQuickButton(ev) {
     const actor = canvas.tokens.controlled[0]?.actor;
     const tokenId = canvas.tokens.controlled[0]?.id;
-    const id = ev.currentTarget.dataset.id;
-    const subFunction = ev.currentTarget.dataset.subfunction;
-    const subweapon = ev.currentTarget.dataset.subweapon;
+    const { id, subfunction, subweapon } = ev.currentTarget.dataset;
 
-    switch (subFunction) {
+    // Debug log removed for production
+
+    switch (subfunction) {
       case 'trade':
         this.handleTradeStart(ev, actor, id, tokenId);
         break;

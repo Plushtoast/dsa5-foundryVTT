@@ -10,17 +10,34 @@ const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static BASEBARHEIGHT = 45;
+  static ORDER_GROUPS = ['body', 'social', 'nature', 'knowledge', 'trade'];
+  static VISIBLE_ROWS = 2;
+  
+  static FALLBACK_ICONS = {
+    gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
+    skillgm: 'systems/dsa5/icons/categories/Skill.webp',
+    enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
+  };
+  
+  static FALLBACK_NAMES = {
+    gm: 'gmMenu',
+    skillgm: 'TYPES.Item.skill',
+    enchantment: 'enchantment',
+  };
 
   static DEFAULT_OPTIONS = {
     actions: {
       categoryFilter: this.#filterCategory,
-      quickButton: this.#quickButton
     },
   };
 
   static CONVERSION_PARTS = {
     hotbar: {
       template: 'systems/dsa5/templates/system/hud/hotbar.hbs',
+      templates: [
+        'systems/dsa5/templates/system/hud/actorpart.hbs',
+        'systems/dsa5/templates/system/hud/actionpart.hbs',
+      ],
       scrollable: ['#macro-list'],
     },
   };
@@ -39,17 +56,17 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     const that = this;
-    const fn = function (ev) {
+    const fn = (ev) => {
       if (!html.find('.sections').is(':hover')) return;
 
-      that.filterSections(ev, html);
+      this.filterSections(ev, html);
       return false;
     };
-    const filterOff = function () {
+    const filterOff = () => {
       if (html.find('.sections').is(':hover')) return;
 
       $(document).off('keydown.sectionFilter', fn);
-      that.searching = '';
+      this.searching = '';
       html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
       html.find('.longLayout').removeClass('longLayout');
     };
@@ -59,7 +76,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     html.find('.sections').on('pointerout', filterOff);
     html.find('.primary').on('pointerover', (ev) => this.#betterTooltip(ev));
-
+    html.find('[data-action="quickButton"]').on('click', (ev) => this.#quickButton(ev));
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
@@ -101,7 +118,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
   }
 
-  static async #quickButton(ev, target) {
+  async #quickButton(ev, target) {
     game.tooltip.deactivate();
     await this.tokenHotbar.executeQuickButton(ev);
   }
@@ -186,126 +203,101 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     return false;
   }
 
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    if (!game.settings.get("dsa5", "hotbarv3")) return data;
+  #prepareActorActions(actor, groups) {
+    const combatskills = actor.items.reduce((arr, i) => {
+      if (i.type === 'combatskill') arr.push(CombatskillData._calculateCombatSkillValues(i.toObject(), actor.system));
+      return arr;
+    }, []);
 
-    this.#setActor();
-    const actor = this.actor;
+    const brawl = this.tokenHotbar._brawlEntry(combatskills);
+    const isRiding = Riding.isRiding(actor);
 
-    const groups = { skills: {}, attacks: [], functions: [] };
-    const filterCategories = [];
-    let effects = [];
-    let gmMode = false;
-    let activeSection;
-    const rows = 2;
-
-    const pushSkill = (key, entry) => {
-      if (!groups.skills[key]) groups.skills[key] = [];
-      groups.skills[key].push(entry);
-    };
-
-    const orderGroups = ['body', 'social', 'nature', 'knowledge', 'trade'];
-    const sortSkillList = (list) => {
-      if (!list) return;
-      list.sort((a, b) => orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name));
-    };
-
-    if (actor) {
-      if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
-        activeSection = this.activeSection;
-
-        const combatskills = actor.items.reduce((arr, i) => {
-          if (i.type === 'combatskill') arr.push(CombatskillData._calculateCombatSkillValues(i.toObject(), actor.system));
-          return arr;
-        }, []);
-
-        effects = await this.tokenHotbar._effectEntries(actor);
-        const brawl = this.tokenHotbar._brawlEntry(combatskills);
-        const isRiding = Riding.isRiding(actor);
-
-        if (isRiding) {
-          const ridingEntry = this.tokenHotbar._ridingEntry(actor);
-          if (ridingEntry) groups.skills.skill = [ridingEntry];
-        }
-
-        if (brawl) groups.attacks.push(brawl);
-
-        groups.functions = this.tokenHotbar?._functionEntries() || [];
-
-        for (const x of actor.items) {
-          switch (x.type) {
-            case 'skill':
-              pushSkill('skill', this.tokenHotbar._skillEntry(x, 'skill'));
-              break;
-            case 'spell':
-            case 'liturgy':
-              pushSkill(x.type, this.tokenHotbar._skillEntry(x, 'spell'));
-              break;
-            case 'trait':
-              if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-                groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
-              }
-              break;
-            case 'consumable':
-              pushSkill('consumable', this.tokenHotbar._actionEntry(x, 'consumable', { abbrev: x.system.quantity.value }));
-              break;
-            case 'meleeweapon':
-            case 'rangeweapon': {
-              const entries = this.tokenHotbar._combatEntry(x, combatskills, actor);
-              for (let entry of entries) {
-                if (!x.system.worn.value) entry.cssClass = 'unequipped';
-                groups.attacks.push(entry);
-              }
-              break;
-            }
-            default:
-              break;
-          }
-
-          if (x.getFlag('dsa5', 'onUseEffect')) {
-            pushSkill(x.type, this.tokenHotbar._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
-          }
-          if (x.getFlag('dsa5', 'enchantments')) {
-            if (!groups.skills.enchantment) groups.skills.enchantment = [];
-            for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-              groups.skills.enchantment.push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
-            }
-          }
-        }
-      }
-    } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
-      activeSection = this.gmFilters;
-      groups.skills.gm = this.tokenHotbar?._gmEntries() || [];
-      groups.skills.skillgm = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
-      gmMode = true;
+    if (isRiding) {
+      const ridingEntry = this.tokenHotbar._ridingEntry(actor);
+      if (ridingEntry) groups.skills.skill = [ridingEntry];
     }
 
-    const fallbacks = {
-      gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
-      skillgm: 'systems/dsa5/icons/categories/Skill.webp',
-      enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
-    };
-    const fallbackNames = {
-      gm: 'gmMenu',
-      skillgm: 'TYPES.Item.skill',
-      enchantment: 'enchantment',
-    };
+    if (brawl) groups.attacks.push(brawl);
 
+    groups.functions = this.tokenHotbar?._functionEntries() || [];
+
+    for (const x of actor.items) {
+      switch (x.type) {
+        case 'skill':
+          this.#pushSkill(groups, 'skill', this.tokenHotbar._skillEntry(x, 'skill'));
+          break;
+        case 'spell':
+        case 'liturgy':
+          this.#pushSkill(groups, x.type, this.tokenHotbar._skillEntry(x, 'spell'));
+          break;
+        case 'trait':
+          if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
+            groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
+          }
+          break;
+        case 'consumable':
+          this.#pushSkill(groups, 'consumable', this.tokenHotbar._actionEntry(x, 'consumable', { abbrev: x.system.quantity.value }));
+          break;
+        case 'meleeweapon':
+        case 'rangeweapon': {
+          const entries = this.tokenHotbar._combatEntry(x, combatskills, actor);
+          for (let entry of entries) {
+            if (!x.system.worn.value) entry.cssClass = 'unequipped';
+            groups.attacks.push(entry);
+          }
+          break;
+        }
+        default:
+          break;
+      }
+
+      if (x.getFlag('dsa5', 'onUseEffect')) {
+        this.#pushSkill(groups, x.type, this.tokenHotbar._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+      }
+      if (x.getFlag('dsa5', 'enchantments')) {
+        if (!groups.skills.enchantment) groups.skills.enchantment = [];
+        for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
+          groups.skills.enchantment.push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
+        }
+      }
+    }
+  }
+
+  #pushSkill(groups, key, entry) {
+    if (!groups.skills[key]) groups.skills[key] = [];
+    groups.skills[key].push(entry);
+  }
+
+  #sortSkillList(list) {
+    if (!list) return;
+    list.sort((a, b) => DSA5Hotbar.ORDER_GROUPS.indexOf(a.addClass) - DSA5Hotbar.ORDER_GROUPS.indexOf(b.addClass) || a.name.localeCompare(b.name));
+  }
+
+  async #prepareGMActions(groups) {
+    groups.skills.gm = this.tokenHotbar?._gmEntries() || [];
+    groups.skills.skillgm = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
+    return true;
+  }
+
+  #generateFilterCategories(groups) {
+    const filterCategories = [];
+    
     for (let key of Object.keys(groups.skills)) {
       const i18nkey = `TYPES.Item.${key}`;
       filterCategories.push({
         key,
-        tooltip: game.i18n.has(i18nkey) ? game.i18n.localize(i18nkey) : game.i18n.localize(fallbackNames[key]),
-        img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || fallbacks[key],
+        tooltip: game.i18n.has(i18nkey) 
+          ? game.i18n.localize(i18nkey) 
+          : game.i18n.localize(DSA5Hotbar.FALLBACK_NAMES[key]),
+        img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || DSA5Hotbar.FALLBACK_ICONS[key],
       });
     }
 
-    sortSkillList(groups.skills.skill);
-    sortSkillList(groups.skills.skillgm);
-
     if (groups.attacks.length > 0) {
-      groups.attacks.sort((a, b) => (b.cssClass || '').localeCompare(a.cssClass || '') || a.name.localeCompare(b.name));
+      groups.attacks.sort((a, b) => 
+        (b.cssClass || '').localeCompare(a.cssClass || '') || 
+        a.name.localeCompare(b.name)
+      );
       filterCategories.unshift({
         key: 'attacks',
         tooltip: game.i18n.localize('Combat'),
@@ -313,36 +305,94 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       });
     }
 
-    if (this.showEffects) {
-      if (canvas.tokens.controlled.length > 1) {
-        let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
-        for (let token of canvas.tokens.controlled) {
-          const tokenEffects = token.actor ? (await token.actor.actorEffects()).map((x) => x.name) : [];
-          sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
-        }
-        effects = sharedEffects;
-      }
+    return filterCategories;
+  }
 
-      const label = game.i18n.localize('CONDITION.add');
-      effects.unshift({
-        name: 'CONDITION.add',
-        id: '',
-        icon: 'icons/svg/aura.svg',
-        cssClass: 'effect',
-        abbrev: label[0],
-        subfunction: 'addEffect',
-        indicator: '+',
-      });
+  async #prepareEffects() {
+    if (!this.showEffects) return [];
+
+    let effects = [];
+
+    if (canvas.tokens.controlled.length > 1) {
+      let sharedEffects = await this.tokenHotbar._effectEntries(
+        canvas.tokens.controlled[0].actor, 
+        { subfunction: 'sharedEffect' }
+      );
+      
+      for (let token of canvas.tokens.controlled) {
+        const tokenEffects = token.actor 
+          ? (await token.actor.actorEffects()).map((x) => x.name) 
+          : [];
+        sharedEffects = sharedEffects.filter((x) => 
+          tokenEffects.includes(x.name)
+        );
+      }
+      effects = sharedEffects;
     }
 
+    const label = game.i18n.localize('CONDITION.add');
+    effects.unshift({
+      name: 'CONDITION.add',
+      id: '',
+      icon: 'icons/svg/aura.svg',
+      cssClass: 'effect',
+      abbrev: label[0],
+      subfunction: 'addEffect',
+      indicator: '+',
+    });
+
+    return effects;
+  }
+
+  #determineActiveSection(groups, currentSection) {
     const allowedKeys = Object.keys(groups.skills).concat(['attacks', 'macro']);
+    
+    if (!currentSection || !allowedKeys.includes(currentSection)) {
+      return Object.keys(groups.skills)[0];
+    }
+    
+    return currentSection;
+  }
 
-    if (!activeSection || !allowedKeys.includes(activeSection)) activeSection = Object.keys(groups.skills)[0];
+  async _prepareContext(_options) {
+    const context = await super._prepareContext(_options);
+    if (!game.settings.get("dsa5", "hotbarv3")) return context;
 
-    mergeObject(data, {
+    this.#setActor();
+    this.prepareActorContext(context);
+    const actor = this.actor;
+
+    const groups = { skills: {}, attacks: [], functions: [] };
+    let effects = [];
+    let gmMode = false;
+    let activeSection;
+
+    if (actor) {
+      if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
+        activeSection = this.activeSection;
+        effects = await this.tokenHotbar._effectEntries(actor);
+        this.#prepareActorActions(actor, groups);
+      }
+    } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
+      activeSection = this.gmFilters;
+      gmMode = await this.#prepareGMActions(groups);
+    }
+
+    this.#sortSkillList(groups.skills.skill);
+    this.#sortSkillList(groups.skills.skillgm);
+
+    const filterCategories = this.#generateFilterCategories(groups);
+
+    if (this.showEffects && effects.length === 0) {
+      effects = await this.#prepareEffects();
+    }
+
+    activeSection = this.#determineActiveSection(groups, activeSection);
+
+    mergeObject(context, {
       token: { groups, effects },
       baseBarHeight: `${DSA5Hotbar.BASEBARHEIGHT}px`,
-      barHeight: `${(DSA5Hotbar.BASEBARHEIGHT + 7) * rows + 40}px`,
+      barHeight: `${(DSA5Hotbar.BASEBARHEIGHT + 7) * DSA5Hotbar.VISIBLE_ROWS + 40}px`,
       filterCategories,
       showEffects: this.showEffects,
       activeSection,
@@ -350,11 +400,17 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       slots: this.#getAllMacros(),
     });
 
-    return data;
+    return context;
   }
 
   get tokenHotbar() {
     return game.dsa5.apps.tokenHotbar;
+  }
+
+  prepareActorContext(context) {
+    if (!this.actor) return;
+
+    context.actor = this.actor;
   }
 
   updateHotbar(actorId, force = false) {
@@ -364,7 +420,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #setActor() {
-    const controlled = canvas.tokens.controlled;
+    const controlled = canvas?.tokens?.controlled || [];
     this.actor = controlled.length < 2 ? (controlled[0]?.actor ?? game.user.character) : null;
 
     if (this.actor && !this.actor?.isOwner) this.actor = null;
