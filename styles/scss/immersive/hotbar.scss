@@ -36,7 +36,7 @@
         }
     }
 
-    &.hotbarV3 {
+    &.hotbarV4 {
         margin-bottom: 10px;
 
         .v-slider-fill {
@@ -80,17 +80,6 @@
                     calc(100% - 10px) 50px,
                     0px 30px;
             }
-        }
-
-        .hSection {
-            background-image: url('../../icons/backgrounds/hotbarpart.webp');
-            background-size: 30px 91px;
-            background-repeat: no-repeat;
-            background-position: right;
-        }
-
-        .filterOn .hSection {
-            background: none;
         }
 
         .function {
@@ -190,51 +179,8 @@
         align-self: flex-end;
         margin: 0;
         background: none;
-
-        /*color:silver;*/
         color: #000000;
         border: none;
-
-        /*text-shadow:0px 0px 8px black,0px 0px 8px black;*/
         box-shadow: none;
-    }
-}
-
-
-// TODO check if this is still needed
-@media (max-width: 1120px) {
-    #hotbar {
-        &:before {
-            background-size:
-                36px 88px,
-                66px 88px,
-                190% 100%;
-            background-position:
-                -3px 18px,
-                calc(100% + 3px) 18px,
-                center;
-            right: -58px;
-            left: 6px;
-        }
-
-        &.hotbarV3:before {
-            background-size:
-                36px 105px,
-                66px 105px,
-                190% 100%;
-            background-position:
-                -1px 24px,
-                calc(100% + 30px) 24px,
-                center;
-            left: 0px;
-            right: 0px;
-        }
-
-        #hotbar-controls-right,
-        #hotbar-controls-left {
-            a {
-                margin: 6px 0;
-            }
-        }
     }
 }

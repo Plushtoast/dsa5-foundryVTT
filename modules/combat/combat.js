@@ -10,7 +10,7 @@ export default class DSA5Combat extends Combat {
   }
 
   async refreshTokenbars() {
-    if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+    if (game.dsa5.apps.tokenHotbar) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar(undefined, true);
   }
 
   get isBrawling() {
@@ -24,6 +24,12 @@ export default class DSA5Combat extends Combat {
 
   _onDelete(options, userId) {
     super._onDelete(options, userId);
+    this.refreshTokenbars();
+  }
+
+  /** @inheritDoc */
+  _onUpdate(changed, options, userId) {
+    super._onUpdate(changed, options, userId);
     this.refreshTokenbars();
   }
 

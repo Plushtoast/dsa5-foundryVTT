@@ -347,7 +347,7 @@ export function setupConfiguration() {
         step: 5,
       },
       onChange: () => {
-        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
       },
     },
     tokenhotbarLayout: {
@@ -364,7 +364,7 @@ export function setupConfiguration() {
         3: 'DSASETTINGS.tokenhotbarLayout3',
       },
       onChange: async (val) => {
-        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
       },
     },
     calendar: {
@@ -695,7 +695,7 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
       onChange: () => {
-        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
       },
     },
     masterCanvasControls: {
@@ -732,7 +732,7 @@ export function setupConfiguration() {
         step: 0.05,
       },
       onChange: () => {
-        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
       },
     },
     armorAndWeaponDamage: {
@@ -815,7 +815,7 @@ export function setupConfiguration() {
       default: {},
       type: Object,
       onChange: () => {
-        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+        game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
       },
     },
     selectedActors: {

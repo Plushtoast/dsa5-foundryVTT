@@ -25,7 +25,7 @@
                 <li {{~#if hint}} data-tooltip="{{ hint }}" {{/if}}>
                     <label>
                         <img src="{{ img }}" alt="{{ label }}" width="36" height="36">
-                        <span>{{ label }}</span>
+                        <span class="ellipsis">{{ label }}</span>
                         <input type="radio" name="type" value="{{ value }}" required {{checked (eq value ../type)}} {{
                             disabled disabled }}>
                     </label>

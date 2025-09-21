@@ -204,7 +204,7 @@ export default class Itemdsa5 extends Item {
           });
         });
       },
-      position: { width: 380, height: 600 },
+      position: { width: 400, height: 600 },
       ok: {
         label: title, // FIXME: double localization
         callback: (event, button) => {

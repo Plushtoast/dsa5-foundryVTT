@@ -11,20 +11,15 @@
         <menu id="action-bar" class="flexcol" data-tooltip-direction="UP">
             <div class="flexrow categoryFilters">
                 <div class="flexrow">
-
-                    <button type="button" data-action="categoryFilter" class="categoryFilter flexAlignCenter"
-                        data-filter="" data-tooltip="all">
-                        <i class="fas fa-filter"></i>
-                    </button>
                     {{#each filterCategories as |cat|}}
                     <button type="button" data-action="categoryFilter"
-                        class="categoryFilter flexAlignCenter {{#if (hasElem ../selectedCategories cat.key)}}active{{/if}}"
+                        class="categoryFilter flexAlignCenter {{#if (eq ../activeSection cat.key)}}active{{/if}}"
                         data-filter="{{cat.key}}" data-tooltip="{{cat.tooltip}}">
                         <div style="background-image:url('{{cat.img}}')"></div>
                     </button>
                     {{/each}}
                     <button type="button" data-action="categoryFilter"
-                        class="categoryFilter flexAlignCenter {{#if (hasElem selectedCategories 'macro')}}active{{/if}}"
+                        class="categoryFilter flexAlignCenter {{#if (eq activeSection 'macro')}}active{{/if}}"
                         data-filter="macro" data-tooltip="Macro">
                         <i class="fas fa-code"></i>
                     </button>
@@ -43,7 +38,7 @@
 
             <div class="sections flexrow">
                 {{#if token.groups.attacks}}
-                <ul class="skillItems hSection thinscroll {{#if (hasElem activeFilters 'attacks')}}collapsed{{/if}}"
+                <ul class="skillItems hSection thinscroll {{#unless (eq activeSection 'attacks')}}collapsed{{/unless}}"
                     data-category="attacks">
                     {{#each token.groups.attacks as |item i|}}
                     <li class="{{item.cssClass}} primary slot" data-category="{{item.cssClass}}"
@@ -58,10 +53,10 @@
                 {{/if}}
                 {{#each token.groups.skills as |skills|}}
                     {{#if skills}}
-                    <ul class="skillItems hSection thinscroll  {{#if (hasElem ../activeFilters @key)}}collapsed{{/if}}"
+                    <ul class="skillItems hSection thinscroll  {{#unless (eq ../activeSection @key)}}collapsed{{/unless}}"
                         data-category="{{@key}}">
                         {{#each skills as |item i|}}
-                        <li class="{{item.cssClass}} {{item.addClass}} slot primary" data-category="{{item.cssClass}}"
+                        <li class="{{item.cssClass}} {{item.addClass}} slot primary" data-action="quickButton" data-category="{{item.cssClass}}"
                             data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}"
                             data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
@@ -70,7 +65,7 @@
                         </li>
                         {{/each}}
                         {{#if (eq @key "gm")}}
-                        <li class="modifier slot primary" data-skipfilter="true" data-category="modifier" data-tooltip="TT.tokenhotbarMod"
+                        <li class="modifier slot primary" data-action="quickButton" data-skipfilter="true" data-category="modifier" data-tooltip="TT.tokenhotbarMod"
                             data-subfunction="none">
                             <input type="number" class="quantity-click modifierVal" data-tooltip="TT.strgx10"
                                 data-tooltip-direction="RIGHT" step="1" name="modVal" value="0">
@@ -80,7 +75,7 @@
                     {{/if}}
                 {{/each}}
                 <ul id="macro-list"
-                    class="thinscroll hSection skillItems {{#if (hasElem activeFilters 'macro')}}collapsed{{/if}}"
+                    class="thinscroll hSection skillItems {{#unless (eq activeSection 'macro')}}collapsed{{/unless}}"
                     data-category="macro" data-page="{{page}}">
                     {{#each slots as |slot|}}
                     <li class="primary slot macro {{slot.cssClass}}" role="button" data-action="execute" data-name="{{macro.name}}"
@@ -112,7 +107,7 @@
             {{else}}
             <div class="itdarkness flexcol">
                 {{#each token.groups.functions as |item i|}}
-                <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function"
+                <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function" data-action="quickButton"
                     data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
                     data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                 </button>

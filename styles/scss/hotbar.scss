@@ -1,4 +1,4 @@
-#hotbar.hotbarV3 {
+#hotbar.hotbarV4 {
     --hotbar-size: 90px;
     --hotbar-width: 600px;
     --base-bar-height: 45px;
@@ -12,6 +12,7 @@
 
     margin-bottom: 0;
     min-height: 140px;
+    pointer-events: all;
 
     .sections {
         max-height: var(--hotbar-size);
@@ -249,7 +250,7 @@
 }
 
 @media (max-width: 1120px) {
-    #hotbar.hotbarV3 {
+    #DSAHotbarV4.hotbarV4 {
         height: var(--hotbar-height);
     }
 }

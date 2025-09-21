@@ -1,32 +1,43 @@
-import Itemdsa5 from '../../item/item-dsa5.js';
-import RuleChaos from '../rules/rule_chaos.js';
-import { tinyNotification } from '../helpers/view_helper.js';
 import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import RuleChaos from '../rules/rule_chaos.js';
+import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
-  static baseBarHeight = 45;
+  static BASEBARHEIGHT = 45;
+
+  static DEFAULT_OPTIONS = {
+    actions: {
+      categoryFilter: this.#filterCategory,
+      quickButton: this.#quickButton
+    },
+  };
+
+  static CONVERSION_PARTS = {
+    hotbar: {
+      template: 'systems/dsa5/templates/system/hud/hotbar.hbs',
+      scrollable: ['#macro-list'],
+    },
+  };
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    this.addContextColor();
+
+    this.#addContextColor();
 
     if (!game.settings.get('dsa5', 'hotbarv3')) return;
 
     const html = $(this.element);
-    html.addClass('hotbarV3');
-    html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html.find('.primary:not(.macro)').on('mousedown', async (ev) => {
-      game.tooltip.deactivate();
-      ev.stopPropagation();
-      await this.tokenHotbar.executeQuickButton(ev);
-      return false;
+    this.element.classList.add('hotbarV4');
+    this.element.querySelectorAll('.quantity-click').forEach(el => {
+      el.addEventListener('mousedown', (ev) => RuleChaos.quantityClick(ev));
     });
+
     const that = this;
     const fn = function (ev) {
       if (!html.find('.sections').is(':hover')) return;
@@ -51,24 +62,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
-    html.find('#macro-list, .skillItems').on('wheel', e => {
-      e.preventDefault();
-
-      if (that.isScrolling) return;
-
-      that.isScrolling = true;
-
-      const delta = e.originalEvent.deltaY;
-      const direction = delta > 0 ? 1 : -1;
-      const rowsToScroll = 2;
-      const scrollAmount = DSA5Hotbar.baseBarHeight * direction * rowsToScroll;
-      const target = e.currentTarget;
-      $(target).stop().animate({
-        scrollTop: target.scrollTop + scrollAmount
-      }, 100, function () {
-        that.isScrolling = false;
-      });
-    });
+    html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
 
 
     const container = this.element.querySelector('.rangeContainer');
@@ -88,101 +82,80 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.tokenHotbar?.changeDarkness({ currentTarget: { value: value / 100 } })
   }
 
-  async updateDSA5Hotbar() {
-    if (!game.settings.get('dsa5', 'hotbarv3')) return;
+  #onWheel(e) {
+    e.preventDefault();
 
-    const controlled = canvas.tokens?.controlled || [];
-    this.token = undefined;
-    this.showEffects = false;
-    if (controlled.length === 1) {
-      const actor = controlled[0].actor;
-      if (actor && actor.isOwner) {
-        this.token = controlled[0];
-      }
-    }
+    if (this.isScrolling) return;
 
-    if (controlled.length >= 1) {
-      this.showEffects = true;
-    }
+    this.isScrolling = true;
 
-    await this.render(true, { focus: false });
+    const delta = e.originalEvent.deltaY;
+    const direction = delta > 0 ? 1 : -1;
+    const rowsToScroll = 2;
+    const scrollAmount = DSA5Hotbar.BASEBARHEIGHT * direction * rowsToScroll;
+    const target = e.currentTarget;
+    $(target).stop().animate({
+      scrollTop: target.scrollTop + scrollAmount
+    }, 100, () => {
+      this.isScrolling = false;
+    });
   }
 
-  addContextColor() {
-    const parry = new RegExp(` ${game.i18n.localize('CHAR.PARRY')}$`);
-    const attack = new RegExp(` ${game.i18n.localize('CHAR.ATTACK')}$`);
-    const macroList = $(this.element).find('#macro-list');
-    for (const macro of this.slots) {
-      if (!macro.macro) continue;
-
-      if (parry.test(macro.macro.name)) {
-        macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass('parry');
-      } else if (attack.test(macro.macro.name)) {
-        macroList.find(`[data-macro-id="${macro.macro.id}"]`).addClass('attack');
-      }
-    }
+  static async #quickButton(ev, target) {
+    game.tooltip.deactivate();
+    await this.tokenHotbar.executeQuickButton(ev);
   }
 
+  #addContextColor() {
+    const parryText = ` ${game.i18n.localize('CHAR.PARRY')}`;
+    const attackText = ` ${game.i18n.localize('CHAR.ATTACK')}`;
+
+    for (const slot of this.slots) {
+      const mac = slot.macro;
+      if (!mac?.name) continue;
+
+      const el = this.element.querySelector(`[data-slot="${slot.slot}"]`);
+      if (!el) continue;
+
+      if (mac.name.endsWith(parryText)) el.classList.add('parry');
+      else if (mac.name.endsWith(attackText)) el.classList.add('attack');
+    }
+  }
   _configureRenderParts(options) {
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      return foundry.utils.deepClone(this.constructor.CONVERSION_PARTS);
-    }
+    if (game.settings.get('dsa5', 'hotbarv3')) return foundry.utils.deepClone(this.constructor.CONVERSION_PARTS);
+
     return super._configureRenderParts(options);
   }
 
-  static CONVERSION_PARTS = {
-    hotbar: {
-      root: true,
-      template: 'systems/dsa5/templates/system/hud/hotbar.hbs',
-      scrollable: ['#macro-list'],
-    },
-  };
-
-  static DEFAULT_OPTIONS = {
-    actions: {
-      categoryFilter: this.#filterCategory,
-    },
-  };
-
   async #betterTooltip(ev) {
-    GlobalToolTipHandler.handleTooltip(ev, this.token?.actor)
+    GlobalToolTipHandler.handleTooltip(ev, this.actor)
   }
 
   static #filterCategory(ev, target) {
     const category = target.dataset.filter;
-
     const html = this.element;
-    html.querySelector('.sections').classList.toggle('filterOn', !!category);
-    if (category) {
-      html.querySelectorAll('.skillItems').forEach(el => el.classList.add('collapsed'));
-      const targetSkillItems = html.querySelector(`.skillItems[data-category="${category}"]`);
-      if (targetSkillItems) targetSkillItems.classList.remove('collapsed');
-      html.querySelectorAll('.categoryFilter').forEach(el => el.classList.remove('active'));
-      const targetFilter = html.querySelector(`.categoryFilter[data-filter="${category}"]`);
-      if (targetFilter) targetFilter.classList.add('active');
-      if (this.token?.actor) this.activeFilters = [category];
-      else this.gmFilters = [category];
-    } else {
-      html.querySelectorAll('.skillItems').forEach(el => el.classList.remove('collapsed'));
-      html.querySelectorAll('.categoryFilter').forEach(el => el.classList.remove('active'));
-      if (this.token?.actor) {
-        this.activeFilters = [];
-      } else {
-        this.gmFilters = [];
-      }
-    }
+
+    html.querySelector('.sections')?.classList.toggle('filterOn', !!category);
+
+    html.querySelectorAll('.skillItems').forEach(el =>
+      el.classList.toggle('collapsed', el.dataset.category !== category)
+    );
+
+    html.querySelectorAll('.categoryFilter').forEach(el =>
+      el.classList.toggle('active', el.dataset.filter === category)
+    );
+
+    if (this.actor) this.activeSection = category;
+    else this.gmFilters = category;
   }
 
   filterSections(ev, html) {
     this.searching = this.searching || '';
 
-    if (ev.which === 8) {
-      this.searching = this.searching.slice(0, -1);
-    } else if (ev.key.match(/^[a-zA-Z0-9öäüÖÄÜ]$/)) {
-      this.searching += ev.key;
-    } else {
-      return;
-    }
+    const key = ev.key ?? '';
+    if (key === 'Backspace' || ev.which === 8) this.searching = this.searching.slice(0, -1);
+    else if (key.length === 1 && /\p{L}|\p{N}/u.test(key)) this.searching += key;
+    else return;
 
     ev.preventDefault();
     ev.stopPropagation();
@@ -190,22 +163,24 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const search = this.searching.toLowerCase();
     tinyNotification(search);
 
-    const sections = html.find('.sections');
-    sections.toggleClass('longLayout', !!search);
+    const $sections = html.find('.sections').toggleClass('longLayout', !!search);
 
-    sections.find('.hSection').each((_, sec) => {
-      const elements = sec.querySelectorAll('.primary');
-      let filtered = 0;
-      for(const element of elements) {
-        if (element.dataset.skipfilter) continue;
+    $sections.find('.hSection').each((_, sec) => {
+      const $primaries = $(sec).find('.primary');
+      let hidden = 0;
 
-        const name = element.dataset?.name?.toLowerCase().trim();
-        const hide = name.indexOf(search) === -1;
-        element.classList.toggle('dsahidden', hide);
-        if (hide) filtered++;
-      }
+      $primaries.each((_, el) => {
+        if (el.dataset.skipfilter) {
+          $(el).removeClass('dsahidden');
+          return;
+        }
+        const name = (el.dataset.name || '').toLowerCase().trim();
+        const isHidden = search && name.indexOf(search) === -1;
+        $(el).toggleClass('dsahidden', isHidden);
+        if (isHidden) hidden++;
+      });
 
-      sec.classList.toggle('dsahidden', filtered === elements.length);
+      $(sec).toggleClass('dsahidden', hidden === $primaries.length);
     });
 
     return false;
@@ -213,38 +188,45 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    if (game.settings.get('dsa5', 'hotbarv3')) {
-      await this._h3Data(data);
-    }
-    return data;
-  }
+    if (!game.settings.get("dsa5", "hotbarv3")) return data;
 
-  get tokenHotbar() {
-    return game.dsa5.apps.tokenHotbar;
-  }
+    this.#setActor();
+    const actor = this.actor;
 
-  async _h3Data(data) {
-    const groups = {
-      skills: {},
-      attacks: [],
-    };
+    const groups = { skills: {}, attacks: [], functions: [] };
     const filterCategories = [];
     let effects = [];
     let gmMode = false;
-    let activeFilters = [];
-    const actor = this.token?.actor;
+    let activeSection;
+    const rows = 2;
+
+    const pushSkill = (key, entry) => {
+      if (!groups.skills[key]) groups.skills[key] = [];
+      groups.skills[key].push(entry);
+    };
+
+    const orderGroups = ['body', 'social', 'nature', 'knowledge', 'trade'];
+    const sortSkillList = (list) => {
+      if (!list) return;
+      list.sort((a, b) => orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name));
+    };
+
     if (actor) {
-      if (!['epic', 'loot'].includes(getProperty(actor, 'system.merchant.merchantType'))) {
-        activeFilters = (this.activeFilters || []).filter((x) => x != 'gm');
-        const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
+      if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
+        activeSection = this.activeSection;
+
+        const combatskills = actor.items.reduce((arr, i) => {
+          if (i.type === 'combatskill') arr.push(CombatskillData._calculateCombatSkillValues(i.toObject(), actor.system));
+          return arr;
+        }, []);
+
         effects = await this.tokenHotbar._effectEntries(actor);
         const brawl = this.tokenHotbar._brawlEntry(combatskills);
         const isRiding = Riding.isRiding(actor);
 
         if (isRiding) {
-          const ridingEnttry = this.tokenHotbar._ridingEntry(actor);
-
-          if (ridingEnttry) groups.skills.skill = [ridingEnttry];
+          const ridingEntry = this.tokenHotbar._ridingEntry(actor);
+          if (ridingEntry) groups.skills.skill = [ridingEntry];
         }
 
         if (brawl) groups.attacks.push(brawl);
@@ -254,69 +236,50 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         for (const x of actor.items) {
           switch (x.type) {
             case 'skill':
-              if (!groups.skills[x.type]) groups.skills[x.type] = [];
-
-              groups.skills[x.type].push(this.tokenHotbar._skillEntry(x, 'skill'));
+              pushSkill('skill', this.tokenHotbar._skillEntry(x, 'skill'));
               break;
             case 'spell':
             case 'liturgy':
-              if (!groups.skills[x.type]) groups.skills[x.type] = [];
-
-              groups.skills[x.type].push(this.tokenHotbar._skillEntry(x, 'spell'));
+              pushSkill(x.type, this.tokenHotbar._skillEntry(x, 'spell'));
               break;
             case 'trait':
-              if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
+              if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
+                groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
+              }
               break;
             case 'consumable':
-              if (!groups.skills[x.type]) groups.skills[x.type] = [];
-
-              groups.skills[x.type].push(
-                this.tokenHotbar._actionEntry(x, 'consumable', {
-                  abbrev: x.system.quantity.value,
-                }),
-              );
+              pushSkill('consumable', this.tokenHotbar._actionEntry(x, 'consumable', { abbrev: x.system.quantity.value }));
               break;
             case 'meleeweapon':
-            case 'rangeweapon':
+            case 'rangeweapon': {
               const entries = this.tokenHotbar._combatEntry(x, combatskills, actor);
               for (let entry of entries) {
-                if (!x.system.worn.value) {
-                  entry.cssClass = 'unequipped';
-                }
+                if (!x.system.worn.value) entry.cssClass = 'unequipped';
                 groups.attacks.push(entry);
               }
-            default:
-              if (x.getFlag('dsa5', 'onUseEffect')) {
-                if (!groups.skills[x.type]) groups.skills[x.type] = [];
-
-                groups.skills[x.type].push(
-                  this.tokenHotbar._actionEntry(x, 'onUse', {
-                    subfunction: 'onUse',
-                  }),
-                );
-              }
-              if (x.getFlag('dsa5', 'enchantments')) {
-                if (!groups.skills['enchantment']) groups.skills['enchantment'] = [];
-
-                for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-                  groups.skills['enchantment'].push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
-                }
-              }
               break;
+            }
+            default:
+              break;
+          }
+
+          if (x.getFlag('dsa5', 'onUseEffect')) {
+            pushSkill(x.type, this.tokenHotbar._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+          }
+          if (x.getFlag('dsa5', 'enchantments')) {
+            if (!groups.skills.enchantment) groups.skills.enchantment = [];
+            for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
+              groups.skills.enchantment.push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
+            }
           }
         }
       }
     } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
-      activeFilters = this.gmFilters || [];
+      activeSection = this.gmFilters;
       groups.skills.gm = this.tokenHotbar?._gmEntries() || [];
-      const skills = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
-
-      groups.skills.skillgm = skills;
+      groups.skills.skillgm = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
       gmMode = true;
     }
-
-    const baseBarHeight = DSA5Hotbar.baseBarHeight;
-    const rows = 2;
 
     const fallbacks = {
       gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
@@ -338,19 +301,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       });
     }
 
-    const orderGroups = ['body', 'social', 'nature', 'knowledge', 'trade'];
-    groups.skills.skill?.sort((a, b) => {
-      return orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name);
-    });
-    groups.skills.skillgm?.sort((a, b) => {
-      return orderGroups.indexOf(a.addClass) - orderGroups.indexOf(b.addClass) || a.name.localeCompare(b.name);
-    });
+    sortSkillList(groups.skills.skill);
+    sortSkillList(groups.skills.skillgm);
 
     if (groups.attacks.length > 0) {
-      groups.attacks.sort((a, b) => {
-        return (b.cssClass || '').localeCompare(a.cssClass || '') || a.name.localeCompare(b.name);
-      });
-
+      groups.attacks.sort((a, b) => (b.cssClass || '').localeCompare(a.cssClass || '') || a.name.localeCompare(b.name));
       filterCategories.unshift({
         key: 'attacks',
         tooltip: game.i18n.localize('Combat'),
@@ -361,7 +316,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (this.showEffects) {
       if (canvas.tokens.controlled.length > 1) {
         let sharedEffects = await this.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
-
         for (let token of canvas.tokens.controlled) {
           const tokenEffects = token.actor ? (await token.actor.actorEffects()).map((x) => x.name) : [];
           sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
@@ -370,7 +324,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
 
       const label = game.i18n.localize('CONDITION.add');
-      const effect = {
+      effects.unshift({
         name: 'CONDITION.add',
         id: '',
         icon: 'icons/svg/aura.svg',
@@ -378,41 +332,52 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         abbrev: label[0],
         subfunction: 'addEffect',
         indicator: '+',
-      };
-
-      effects.unshift(effect);
+      });
     }
 
-    if (activeFilters.length > 0) {
-      activeFilters = Object.keys(groups.skills)
-        .concat(['macro', 'attacks'])
-        .filter((x) => !activeFilters.includes(x));
-    }
+    const allowedKeys = Object.keys(groups.skills).concat(['attacks', 'macro']);
+
+    if (!activeSection || !allowedKeys.includes(activeSection)) activeSection = Object.keys(groups.skills)[0];
+
     mergeObject(data, {
-      token: {
-        groups,
-        effects,
-      },
-      hotBarcssClass: 'hotbarV3',
-      baseBarHeight: `${baseBarHeight}px`,
-      barHeight: `${(baseBarHeight + 7) * rows + 40}px`,
+      token: { groups, effects },
+      baseBarHeight: `${DSA5Hotbar.BASEBARHEIGHT}px`,
+      barHeight: `${(DSA5Hotbar.BASEBARHEIGHT + 7) * rows + 40}px`,
       filterCategories,
-      selectedCategories: (actor ? this.activeFilters : this.gmFilters) || [],
       showEffects: this.showEffects,
-      activeFilters,
+      activeSection,
       gmMode,
-      slots: this._getAllMacros(),
+      slots: this.#getAllMacros(),
     });
+
+    return data;
   }
 
-  _getAllMacros() {
-    let macros = Array.from({ length: 50 }, () => '');
-    for (let [k, v] of Object.entries(game.user.hotbar)) {
-      macros[parseInt(k) - 1] = v;
-    }
-    return macros.map((m, i) => {
-      const macro = m ? game.macros.get(m) : null;
+  get tokenHotbar() {
+    return game.dsa5.apps.tokenHotbar;
+  }
+
+  updateHotbar(actorId, force = false) {
+    if (!game.settings.get("dsa5", "hotbarv3")) return;
+
+    if (actorId === this.actor?.id || force) this.render(true, { focus: false });
+  }
+
+  #setActor() {
+    const controlled = canvas.tokens.controlled;
+    this.actor = controlled.length < 2 ? (controlled[0]?.actor ?? game.user.character) : null;
+
+    if (this.actor && !this.actor?.isOwner) this.actor = null;
+    this.showEffects = controlled.length >= 1;
+  }
+
+  #getAllMacros() {
+    const hotbar = game.user?.hotbar ?? {};
+    const emptyLabel = game.i18n.localize('HOTBAR.EMPTY');
+    return Array.from({ length: 50 }, (_, i) => {
       const key = i + 1;
+      const id = hotbar[key] ?? '';
+      const macro = id ? (game.macros.get(id) ?? null) : null;
       return {
         key,
         slot: key,
@@ -420,7 +385,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         img: macro?.img ?? null,
         cssClass: macro ? 'full' : 'open',
         tooltip: macro?.name ?? null,
-        ariaLabel: macro?.name ?? game.i18n.localize('HOTBAR.EMPTY'),
+        ariaLabel: macro?.name ?? emptyLabel,
       };
     });
   }

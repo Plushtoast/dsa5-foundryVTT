@@ -24,7 +24,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   static registerTokenHotbar() {
     if (!game.dsa5.apps.tokenHotbar) {
       game.dsa5.apps.tokenHotbar = new TokenHotbar2();
-      game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+      game.dsa5.apps.tokenHotbar.updateDSA5Hotbar(undefined, true);
       if (!game.settings.get('dsa5', 'disableTokenhotbar')) game.dsa5.apps.tokenHotbar.render(true);
 
       Hooks.call('dsa5TokenHotbarReady', game.dsa5.apps.tokenHotbar);
@@ -72,65 +72,64 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       ];
     }
 
-    const parentUpdate = (source) => {
-      const id = source.parent?.id;
-      if (id) TokenHotbar2.hookUpdate(id);
-    };
-
     Hooks.on('controlToken', (elem, controlTaken) => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar();
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
     });
 
     Hooks.on('updateActor', (actor, updates) => {
-      TokenHotbar2.hookUpdate(actor.id);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(actor.id);
     });
 
     Hooks.on('updateToken', (scene, token, updates) => {
-      if (!game.dsa5.apps.tokenHotbar) return;
-
-      if (token.actor?.id === game.dsa5.apps.tokenHotbar.actor?.id) game.dsa5.apps.tokenHotbar.updateDSA5Hotbar();
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(token.actor?.id);
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
-      TokenHotbar2.hookUpdate(source.data.id);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(source.data.id);
     });
 
     Hooks.on('createOwnedItem', (source, item) => {
-      TokenHotbar2.hookUpdate(source.data.id);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(source.data.id);
     });
 
     Hooks.on('deleteOwnedItem', (source, item) => {
-      TokenHotbar2.hookUpdate(source.data.id);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(source.data.id);
     });
 
     Hooks.on('updateItem', (source, item) => {
-      parentUpdate(source);
+      const id = source.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('createItem', (source, item) => {
-      parentUpdate(source);
+      const id = source.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('deleteItem', (source, item) => {
-      parentUpdate(source);
+      const id = source.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('deleteActiveEffect', (effect, options) => {
-      parentUpdate(effect);
+      const id = effect.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('updateActiveEffect', (effect, options) => {
-      parentUpdate(effect);
+      const id = effect.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('createActiveEffect', (effect, options) => {
-      parentUpdate(effect);
+      const id = effect.parent?.id;
+      if (id) game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(id);
     });
 
     Hooks.on('canvasInit', () => {
       if (!this.rendered) return;
 
-      this.render();
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(undefined, true);
     });
   }
 
@@ -232,11 +231,11 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       return false;
     };
     const filterable = html.find('.filterable')
-    filterable.on('pointerover', () => { 
-      $(document).off('keydown.tokenHotbars2', fn).on('keydown.tokenHotbars2', fn); 
+    filterable.on('pointerover', () => {
+      $(document).off('keydown.tokenHotbars2', fn).on('keydown.tokenHotbars2', fn);
     });
-    filterable.on('pointerout', () => { 
-      $(document).off('keydown.tokenHotbars2', fn); 
+    filterable.on('pointerout', () => {
+      $(document).off('keydown.tokenHotbars2', fn);
     });
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
 
@@ -353,7 +352,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             });
             if (proceed) {
               await result.setupEffect(null, {}, tokenId);
-              await this.updateDSA5Hotbar();
+              await this.updateDSA5Hotbar(undefined, true);
             }
             break;
         }
@@ -889,20 +888,14 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     return currentPosition;
   }
 
-  async updateDSA5Hotbar() {
-    ui.hotbar.updateDSA5Hotbar();
-
+  async updateDSA5Hotbar(actorId, force = false) {
+    ui.hotbar.updateHotbar(actorId, force);
     if (game.settings.get('dsa5', 'disableTokenhotbar')) return;
 
     const controlled = canvas.tokens.controlled;
-    this.actor = undefined;
-    this.showEffects = controlled.length >= 1;
-    if (controlled.length === 1) {
-      const actor = controlled[0].actor;
-      if (actor && actor.isOwner) {
-        this.actor = actor;
-      }
-    }
+    this.showEffects = controlled.length > 0;
+    this.actor = (controlled.length === 1 && controlled[0].actor?.isOwner) ? controlled[0].actor : undefined;
+
     await this.render(true, { focus: false });
   }
 }
