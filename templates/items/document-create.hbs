@@ -1,0 +1,41 @@
+<form id="document-create" autocomplete="off">
+    <div class="flexcol">
+        <div class="flex0">
+            <div class="form-group">
+                <label>{{localize "Name"}}</label>
+                <div class="form-fields">
+                    <input type="text" name="name" placeholder="{{defaultName}}" value="{{ name }}" autofocus>
+                </div>
+            </div>
+            {{#if hasFolders}}
+            <div class="form-group">
+                <label>{{ localize "DOCUMENT.Folder" }}</label>
+                <div class="form-fields">
+                    <select name="folder">
+                        {{selectOptions folders selected=folder blank="" valueAttr="id" labelAttr="name"}}
+                    </select>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+        <div class="flex1 scrollable dsa-card-list" style="max-height: 330px;">
+            {{#if hasTypes}}
+            <ul>
+                {{#each types}}
+                <li {{~#if hint}} data-tooltip="{{ hint }}" {{/if}}>
+                    <label>
+                        <img src="{{ img }}" alt="{{ label }}" width="36" height="36">
+                        <span>{{ label }}</span>
+                        <input type="radio" name="type" value="{{ value }}" required {{checked (eq value ../type)}} {{
+                            disabled disabled }}>
+                    </label>
+                </li>
+                {{/each}}
+            </ul>
+            {{/if}}
+        </div>
+        <div class="flex0">
+            {{{content}}}
+        </div>
+    </div>
+</form>
