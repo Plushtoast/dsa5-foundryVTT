@@ -6,19 +6,26 @@ import RuleChaos from '../rules/rule_chaos.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
+import Actordsa5 from '../../actor/actor-dsa5.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static BASEBARHEIGHT = 45;
   static ORDER_GROUPS = ['body', 'social', 'nature', 'knowledge', 'trade'];
   static VISIBLE_ROWS = 2;
-  
   static FALLBACK_ICONS = {
     gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
     skillgm: 'systems/dsa5/icons/categories/Skill.webp',
     enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
   };
-  
+  static WEAPON_POSITIONS = [
+    "left:calc(50% - 72px);top:75px;",
+    "left:calc(50% + 32px);top:75px;",
+    "left:calc(50% - 88px);top:40px;",
+    "left:calc(50% + 48px);top:40px;",
+    "left:calc(50% - 83px);top:5px;",
+    "left:calc(50% + 43px);top:5px;",
+  ];
   static FALLBACK_NAMES = {
     gm: 'gmMenu',
     skillgm: 'TYPES.Item.skill',
@@ -28,6 +35,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static DEFAULT_OPTIONS = {
     actions: {
       categoryFilter: this.#filterCategory,
+      weapon: this.#onRollWeapon
     },
   };
 
@@ -88,6 +96,16 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.slider = new VerticalSlider(container, 'vSliderDarkness', {
       value: (canvas?.scene?.environment.darknessLevel || 0) * 100,
       onChange: (value) => this.onSliderChanged(value)
+    });
+  }
+
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+
+    new foundry.applications.ux.ContextMenu(this.element, '[data-action="weapon"]', [], {
+      onOpen: this.#onWeaponContext.bind(this),
+      jQuery: false,
+      fixed: true,
     });
   }
 
@@ -165,6 +183,38 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (this.actor) this.activeSection = category;
     else this.gmFilters = category;
   }
+
+  static async #onRollWeapon(ev, target) {
+    const { id, subweapon } = target.dataset;
+
+    const options = {};
+
+    if (!id) {
+      this.actor.setupWeaponless('attack', options, this.actor.token?.id).then((setupData) => {
+        this.actor.basicTest(setupData);
+      });
+      return;
+    }
+
+    const item = this.actor?.items.get(id);
+    if (!item) return;
+
+    switch (item.type) {
+      case 'meleeweapon':
+      case 'rangeweapon':
+        const result = Actordsa5.buildSubweapon(item, subweapon);
+        this.actor.setupWeapon(result, 'attack', options,).then((setupData) => {
+          this.actor.basicTest(setupData);
+        });
+        break;
+      case 'trait':
+        this.actor.setupWeapon(item, 'attack', options, this.actor.token?.id).then((setupData) => {
+          this.actor.basicTest(setupData);
+        });
+        break;
+    }
+  }
+
 
   filterSections(ev, html) {
     this.searching = this.searching || '';
@@ -281,21 +331,21 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #generateFilterCategories(groups) {
     const filterCategories = [];
-    
+
     for (let key of Object.keys(groups.skills)) {
       const i18nkey = `TYPES.Item.${key}`;
       filterCategories.push({
         key,
-        tooltip: game.i18n.has(i18nkey) 
-          ? game.i18n.localize(i18nkey) 
+        tooltip: game.i18n.has(i18nkey)
+          ? game.i18n.localize(i18nkey)
           : game.i18n.localize(DSA5Hotbar.FALLBACK_NAMES[key]),
         img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || DSA5Hotbar.FALLBACK_ICONS[key],
       });
     }
 
     if (groups.attacks.length > 0) {
-      groups.attacks.sort((a, b) => 
-        (b.cssClass || '').localeCompare(a.cssClass || '') || 
+      groups.attacks.sort((a, b) =>
+        (b.cssClass || '').localeCompare(a.cssClass || '') ||
         a.name.localeCompare(b.name)
       );
       filterCategories.unshift({
@@ -315,15 +365,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     if (canvas.tokens.controlled.length > 1) {
       let sharedEffects = await this.tokenHotbar._effectEntries(
-        canvas.tokens.controlled[0].actor, 
+        canvas.tokens.controlled[0].actor,
         { subfunction: 'sharedEffect' }
       );
-      
+
       for (let token of canvas.tokens.controlled) {
-        const tokenEffects = token.actor 
-          ? (await token.actor.actorEffects()).map((x) => x.name) 
+        const tokenEffects = token.actor
+          ? (await token.actor.actorEffects()).map((x) => x.name)
           : [];
-        sharedEffects = sharedEffects.filter((x) => 
+        sharedEffects = sharedEffects.filter((x) =>
           tokenEffects.includes(x.name)
         );
       }
@@ -346,11 +396,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #determineActiveSection(groups, currentSection) {
     const allowedKeys = Object.keys(groups.skills).concat(['attacks', 'macro']);
-    
+
     if (!currentSection || !allowedKeys.includes(currentSection)) {
       return Object.keys(groups.skills)[0];
     }
-    
+
     return currentSection;
   }
 
@@ -359,7 +409,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (!game.settings.get("dsa5", "hotbarv3")) return context;
 
     this.#setActor();
-    this.prepareActorContext(context);
     const actor = this.actor;
 
     const groups = { skills: {}, attacks: [], functions: [] };
@@ -400,7 +449,45 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       slots: this.#getAllMacros(),
     });
 
+    this.prepareActorContext(context);
+
     return context;
+  }
+
+  #onWeaponContext(target) {
+    const { id, mode } = target.dataset;
+    const weapon = this.actor.items.get(id);
+
+    ui.context.menuItems = this.#getWeaponContextOptions(weapon, mode === 'offHand');
+  }
+
+  #getWeaponContextOptions(weapon, isOffHand) {
+    if (weapon?.type === 'trait') return [];
+
+    const equipableWeapons = this.actor.items.filter(i => ['meleeweapon', 'rangeweapon'].includes(i.type) && !i.system.worn.value);
+    const equip = game.i18n.localize('SHEET.EquipItem');
+    const options = equipableWeapons.reduce((acc, w) => {
+      if (weapon?.id === w.id) return acc;
+      acc.push({
+        name: `${equip}: ${w.name}`,
+        icon: "<i class='fa-solid fa-shield-plus'></i>",
+        callback: () => {
+          const canOffHand = isOffHand && !RuleChaos.isYieldedTwohanded(w);
+          this.actor.exclusiveEquipWeapon(w.id, canOffHand)
+        }
+      });
+      return acc;
+    }, []);
+
+    if (weapon) {
+      options.push({
+        name: `SHEET.UnEquipItem`,
+        icon: "<i class='fa-solid fa-shield-minus'></i>",
+        callback: () => weapon.update({ 'system.worn.value': false }),
+      });
+    }
+
+    return options;
   }
 
   get tokenHotbar() {
@@ -411,6 +498,136 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (!this.actor) return;
 
     context.actor = this.actor;
+    context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
+    context.resources = this.#prepareResources(context);
+    context.defenseTooltip = this.#prepareDefenseTooltip(context);
+    context.weapons = this.#weaponPositions(context);
+  }
+
+  #prepareResources(context) {
+    return {
+      LeP: {
+        value: this.actor.system.status.wounds.value,
+        max: this.actor.system.status.wounds.max,
+        label: game.i18n.localize('CHAR.LEP'),
+      },
+      AsP: {
+        value: this.actor.system.status.astralenergy.value,
+        max: this.actor.system.status.astralenergy.max,
+        label: game.i18n.localize('CHAR.ASP'),
+      },
+      KaP: {
+        value: this.actor.system.status.karmaenergy.value,
+        max: this.actor.system.status.karmaenergy.max,
+        label: game.i18n.localize('CHAR.KAP'),
+      },
+    }
+  }
+
+  #prepareDefenseTooltip(context) {
+    const attributes = [
+      { label: game.i18n.localize('actionCount'), value: this.actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
+      { label: game.i18n.localize('speed'), value: this.actor.system.status.speed.max, icon: 'fas fa-running' },
+      { label: game.i18n.localize('soulpower'), value: this.actor.system.status.soulpower.max, icon: 'fas fa-sun' },
+      { label: game.i18n.localize('toughness'), value: this.actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
+    ]
+
+    return attributes.reduce((acc, b) => {
+      if (b.value === undefined) return acc;
+
+      acc.push(`<b><i class="fas ${b.icon}"></i> ${b.label}</b>: ${b.value}`);
+      return acc;
+    }, []).join('<br/>');
+  }
+
+  #weaponPositions(context) {
+    const weapons = context.token.groups.attacks;
+    const positions = [];
+
+    let positionIndex = 0;
+
+    const humanoidWeapons = [];
+    const animalWeapons = [];
+
+    for (const weapon of weapons) {
+      if (weapon.cssClass === 'unequipped') continue;
+
+      const item = this.actor.items.get(weapon.id);
+      if (!item) continue;
+
+      if (item.type == 'trait') {
+        animalWeapons.push(weapon);
+      }
+      else {
+        humanoidWeapons.push(weapon);
+      }
+    }
+    if (humanoidWeapons.length || animalWeapons.length == 0) positionIndex += this.#addHumanoidWeapon(positions, humanoidWeapons, positionIndex);
+
+    positionIndex += this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
+
+    return positions;
+  }
+
+  #addHumanoidWeapon(positions, humanoidWeapons, startIndex) {
+    let positionIndex = startIndex;
+    const emptyHands = {
+      name: game.i18n.localize('attackWeaponless'),
+    }
+
+    const offHandWeapons = [];
+    const mainHandWeapons = [];
+
+    for (let i = 0; i < humanoidWeapons.length; i++) {
+      const w = humanoidWeapons[i];
+      const item = this.actor.items.get(w.id);
+      const offHand = item.system.worn.offHand;
+      if (offHand) offHandWeapons.push(item);
+      else {
+        mainHandWeapons.push(item);
+        if (item.type === 'rangeweapon') {
+          offHandWeapons.push(item);
+        }
+      }
+    }
+
+    mainHandWeapons.sort((a, b) => {
+      if (a.type === b.type) return 0;
+      if (a.type === 'meleeweapon') return -1;
+      if (b.type === 'meleeweapon') return 1;
+      return 0;
+    });
+
+    const firstWeapon = mainHandWeapons[0] || emptyHands;
+    positions.push({
+      weapon: firstWeapon,
+      style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++] || "display:none;",
+    });
+
+    const twoHanded = RuleChaos.isYieldedTwohanded(firstWeapon);
+    console.log(twoHanded, firstWeapon);
+    const secondWeapon = twoHanded ? firstWeapon : (offHandWeapons.find(x => x.id !== firstWeapon.id) || emptyHands);
+
+    positions.push({
+      weapon: secondWeapon,
+      style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++] || "display:none;",
+      mode: 'offHand'
+    });
+    return positionIndex - startIndex;
+  }
+
+  #addAnimalWeapon(positions, animalWeapons, startIndex) {
+    let positionIndex = startIndex;
+
+    for (const weapon of animalWeapons) {
+      if (positionIndex >= DSA5Hotbar.WEAPON_POSITIONS.length) break;
+
+      positions.push({
+        weapon: this.actor.items.get(weapon.id),
+        style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++]
+      });
+    }
+    return positionIndex - startIndex;
   }
 
   updateHotbar(actorId, force = false) {

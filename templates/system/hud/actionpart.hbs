@@ -1,117 +1,119 @@
-<div class="flexrow" style="--base-bar-height:{{baseBarHeight}}">
-    <div id="hotbar-controls-left" class="hotbar-controls flexcol" data-tooltip-direction="LEFT">
-        <button type="button" class="plain fa-solid fa-volume icon" data-action="mute"
-            aria-label="{{localize 'HOTBAR.MUTE'}}" data-tooltip="HOTBAR.MUTE"></button>
-        <button type="button" class="plain fa-solid fa-unlock icon" data-action="lock"
-            aria-label="{{localize 'HOTBAR.LOCK'}}" data-tooltip="HOTBAR.LOCK"></button>
-        <button type="button" class="plain fa-solid fa-trash icon" data-action="clear"
-            aria-label="{{localize 'HOTBAR.CLEAR'}}" data-tooltip="HOTBAR.CLEAR"></button>
-    </div>
-    <menu id="action-bar" class="flexcol" data-tooltip-direction="UP">
-        <div class="flexrow categoryFilters">
-            <div class="flexrow">
-                {{#each filterCategories as |cat|}}
-                <button type="button" data-action="categoryFilter"
-                    class="categoryFilter flexAlignCenter {{#if (eq ../activeSection cat.key)}}active{{/if}}"
-                    data-filter="{{cat.key}}" data-tooltip="{{cat.tooltip}}">
-                    <div style="background-image:url('{{cat.img}}')"></div>
-                </button>
+<div class="flex1">
+    <div class="flexrow flexAlignCenter">
+        <div id="hotbar-controls-left" class="hotbar-controls flexcol flex0" data-tooltip-direction="LEFT">
+            <button type="button" class="plain fa-solid fa-volume icon" data-action="mute"
+                aria-label="{{localize 'HOTBAR.MUTE'}}" data-tooltip="HOTBAR.MUTE"></button>
+            <button type="button" class="plain fa-solid fa-unlock icon" data-action="lock"
+                aria-label="{{localize 'HOTBAR.LOCK'}}" data-tooltip="HOTBAR.LOCK"></button>
+            <button type="button" class="plain fa-solid fa-trash icon" data-action="clear"
+                aria-label="{{localize 'HOTBAR.CLEAR'}}" data-tooltip="HOTBAR.CLEAR"></button>
+        </div>
+        <menu id="action-bar" class="flexcol flex1 gap0px" data-tooltip-direction="UP">
+            <div class="flexrow categoryFilters">
+                <div class="flexrow">
+                    {{#each filterCategories as |cat|}}
+                    <button type="button" data-action="categoryFilter"
+                        class="categoryFilter flexAlignCenter {{#if (eq ../activeSection cat.key)}}active{{/if}}"
+                        data-filter="{{cat.key}}" data-tooltip="{{cat.tooltip}}">
+                        <div style="background-image:url('{{cat.img}}')"></div>
+                    </button>
+                    {{/each}}
+                    <button type="button" data-action="categoryFilter"
+                        class="categoryFilter flexAlignCenter {{#if (eq activeSection 'macro')}}active{{/if}}"
+                        data-filter="macro" data-tooltip="Macro">
+                        <i class="fas fa-code"></i>
+                    </button>
+                    <ul class="flexrow actorEffects">
+                        {{#each token.effects as |item|}}
+                        <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
+                            data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}"
+                            data-subfunction="{{item.subfunction}}">
+                            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">
+                                {{item.indicator}}</div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sections flexrow">
+                {{#if token.groups.attacks}}
+                <ul class="skillItems hSection thinscroll {{#unless (eq activeSection 'attacks')}}collapsed{{/unless}}"
+                    data-category="attacks">
+                    {{#each token.groups.attacks as |item i|}}
+                    <li class="{{item.cssClass}} primary slot" data-category="{{item.cssClass}}"
+                        data-subweapon="{{item.subweapon}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
+                        data-action="quickButton" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                        <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
+                        </div>
+                        <span class="nameContent">{{item.name}}</span>
+                    </li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+                {{#each token.groups.skills as |skills|}}
+                {{#if skills}}
+                <ul class="skillItems hSection thinscroll  {{#unless (eq ../activeSection @key)}}collapsed{{/unless}}"
+                    data-category="{{@key}}">
+                    {{#each skills as |item i|}}
+                    <li class="{{item.cssClass}} {{item.addClass}} slot primary" data-action="quickButton"
+                        data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
+                        data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
+                        <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
+                        </div>
+                        <span class="nameContent">{{{localize item.name}}}</span>
+                    </li>
+                    {{/each}}
+                    {{#if (eq @key "gm")}}
+                    <li class="modifier slot primary" data-action="quickButton" data-skipfilter="true"
+                        data-category="modifier" data-tooltip="TT.tokenhotbarMod" data-subfunction="none">
+                        <input type="number" class="quantity-click modifierVal" data-tooltip="TT.strgx10"
+                            data-tooltip-direction="RIGHT" step="1" name="modVal" value="0">
+                    </li>
+                    {{/if}}
+                </ul>
+                {{/if}}
                 {{/each}}
-                <button type="button" data-action="categoryFilter"
-                    class="categoryFilter flexAlignCenter {{#if (eq activeSection 'macro')}}active{{/if}}"
-                    data-filter="macro" data-tooltip="Macro">
-                    <i class="fas fa-code"></i>
-                </button>
-                <ul class="flexrow actorEffects">
-                    {{#each token.effects as |item|}}
-                    <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
-                        data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}"
-                        data-subfunction="{{item.subfunction}}">
-                        <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">
-                            {{item.indicator}}</div>
+                <ul id="macro-list"
+                    class="thinscroll hSection skillItems {{#unless (eq activeSection 'macro')}}collapsed{{/unless}}"
+                    data-category="macro" data-page="{{page}}">
+                    {{#each slots as |slot|}}
+                    <li class="primary slot macro {{slot.cssClass}}" role="button" data-action="execute"
+                        data-name="{{macro.name}}" data-slot="{{slot.slot}}" style="{{slot.style}}"
+                        aria-label="{{slot.ariaLabel}}" {{#if slot.tooltip}}data-tooltip="{{slot.tooltip}}" {{/if}}>
+                        {{#if slot.img}}<img class="slot-icon" src="{{slot.img}}" alt="{{slot.ariaLabel}}">{{/if}}
+                        <span class="key">{{slot.key}}</span>
+                        <span class="nameContent">{{macro.name}}</span>
                     </li>
                     {{/each}}
                 </ul>
             </div>
-        </div>
+        </menu>
+        <div id="hotbar-controls-right" class="hotbar-controls flexcol flex0" data-tooltip-direction="RIGHT">
 
-        <div class="sections flexrow">
-            {{#if token.groups.attacks}}
-            <ul class="skillItems hSection thinscroll {{#unless (eq activeSection 'attacks')}}collapsed{{/unless}}"
-                data-category="attacks">
-                {{#each token.groups.attacks as |item i|}}
-                <li class="{{item.cssClass}} primary slot" data-category="{{item.cssClass}}"
-                    data-subweapon="{{item.subweapon}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
-                    data-action="quickButton" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-                    <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
-                    </div>
-                    <span class="nameContent">{{item.name}}</span>
-                </li>
+            {{#if gmMode}}
+            <div class="itdarkness flexcol" data-category="darkness" data-tooltip="MASTER.threshold"
+                data-subfunction="darkness">
+
+                <div class="flex0 center">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div class="rangeContainer flex1">
+                </div>
+                <div class="flex0 center">
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
+            {{else}}
+            <div class="itdarkness flexcol">
+                {{#each token.groups.functions as |item i|}}
+                <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function"
+                    data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
+                    data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                </button>
                 {{/each}}
-            </ul>
+            </div>
             {{/if}}
-            {{#each token.groups.skills as |skills|}}
-            {{#if skills}}
-            <ul class="skillItems hSection thinscroll  {{#unless (eq ../activeSection @key)}}collapsed{{/unless}}"
-                data-category="{{@key}}">
-                {{#each skills as |item i|}}
-                <li class="{{item.cssClass}} {{item.addClass}} slot primary" data-action="quickButton"
-                    data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
-                    data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
-                    <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
-                    </div>
-                    <span class="nameContent">{{{localize item.name}}}</span>
-                </li>
-                {{/each}}
-                {{#if (eq @key "gm")}}
-                <li class="modifier slot primary" data-action="quickButton" data-skipfilter="true"
-                    data-category="modifier" data-tooltip="TT.tokenhotbarMod" data-subfunction="none">
-                    <input type="number" class="quantity-click modifierVal" data-tooltip="TT.strgx10"
-                        data-tooltip-direction="RIGHT" step="1" name="modVal" value="0">
-                </li>
-                {{/if}}
-            </ul>
-            {{/if}}
-            {{/each}}
-            <ul id="macro-list"
-                class="thinscroll hSection skillItems {{#unless (eq activeSection 'macro')}}collapsed{{/unless}}"
-                data-category="macro" data-page="{{page}}">
-                {{#each slots as |slot|}}
-                <li class="primary slot macro {{slot.cssClass}}" role="button" data-action="execute"
-                    data-name="{{macro.name}}" data-slot="{{slot.slot}}" style="{{slot.style}}"
-                    aria-label="{{slot.ariaLabel}}" {{#if slot.tooltip}}data-tooltip="{{slot.tooltip}}" {{/if}}>
-                    {{#if slot.img}}<img class="slot-icon" src="{{slot.img}}" alt="{{slot.ariaLabel}}">{{/if}}
-                    <span class="key">{{slot.key}}</span>
-                    <span class="nameContent">{{macro.name}}</span>
-                </li>
-                {{/each}}
-            </ul>
         </div>
-    </menu>
-    <div id="hotbar-controls-right" class="hotbar-controls flexcol" data-tooltip-direction="RIGHT">
-
-        {{#if gmMode}}
-        <div class="itdarkness flexcol" data-category="darkness" data-tooltip="MASTER.threshold"
-            data-subfunction="darkness">
-
-            <div class="flex0 center">
-                <i class="fas fa-moon"></i>
-            </div>
-            <div class="rangeContainer flex1">
-            </div>
-            <div class="flex0 center">
-                <i class="fas fa-sun"></i>
-            </div>
-        </div>
-        {{else}}
-        <div class="itdarkness flexcol">
-            {{#each token.groups.functions as |item i|}}
-            <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function"
-                data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
-                data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-            </button>
-            {{/each}}
-        </div>
-        {{/if}}
     </div>
 </div>

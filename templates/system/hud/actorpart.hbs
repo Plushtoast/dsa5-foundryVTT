@@ -1,0 +1,35 @@
+<div class="flex0 actorPart" data-tooltip-direction="RIGHT">
+    <div class="flexrow resources">
+        <div class="flex0 LeP" data-tooltip-html="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
+            {{resources.LeP.value}}/{{resources.LeP.max}}
+        </div>
+        {{#if resources.AsP.max}}
+        <div class="flex0 AsP" data-tooltip-html="{{resources.AsP.label}} {{resources.AsP.value}}/{{resources.AsP.max}}">
+            {{resources.AsP.value}}/{{resources.AsP.max}}
+        </div>
+        {{/if}}
+        {{#if resources.KaP.max}}
+        <div class="flex0 KaP" data-tooltip-html="{{resources.KaP.label}} {{resources.KaP.value}}/{{resources.KaP.max}}">
+            {{resources.KaP.value}}/{{resources.KaP.max}}
+        </div>
+        {{/if}}
+        {{#unless (or resources.AsP.max resources.KaP.max)}}
+        <div class="flex0"></div>
+        {{/unless}}
+    </div>
+    <div class="hotbar-avatar-container flexrow">
+        <img class="hotbar-avatar flex0 {{ifThen myTurn 'myRound' ''}}" src="{{actorImg}}" />
+        {{#each weapons}}
+        <div data-action="weapon" data-tooltip="{{weapon.name}}" data-id="{{weapon.id}}" class="weapon" data-mode="{{mode}}" style="{{{style}}}">
+            {{#if weapon.img}}
+            <img src="{{weapon.img}}" />
+            {{else}}
+            <i class="fas fa-hand"></i>
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
+    <div class="flexrow quickbuttons">
+        <div class="flex0 dsa-indicator" data-tooltip-class="crucible crucible-tooltip" data-tooltip-html="{{defenseTooltip}}"><i class="fas fa-shield"></i></div>
+    </div>
+</div>

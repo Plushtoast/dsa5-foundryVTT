@@ -440,8 +440,6 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const tokenId = canvas.tokens.controlled[0]?.id;
     const { id, subfunction, subweapon } = ev.currentTarget.dataset;
 
-    // Debug log removed for production
-
     switch (subfunction) {
       case 'trade':
         this.handleTradeStart(ev, actor, id, tokenId);

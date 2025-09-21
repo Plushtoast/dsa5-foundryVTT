@@ -3,22 +3,130 @@
     --hotbar-width: 600px;
     --base-bar-height: 45px;
     --border-radius: 10px;
+    --actorSize: 150px;
     --border-color: #000;
     --hover-color: orangered;
     --active-color: darkgreen;
     --shadow-inset: inset 0 0 5px #636363;
     --bg-transparent: rgba(0, 0, 0, 0.5);
+    --button-padding: 80px;
     --text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 
     margin-bottom: 0;
     min-height: 140px;
     pointer-events: all;
 
+
     .sections {
         max-height: var(--hotbar-size);
         height: var(--hotbar-size);
         background-color: var(--bg-transparent);
-        width: var(--hotbar-width);
+        width: calc(var(--hotbar-width) - var(--button-padding));
+    }
+
+    .actorPart {
+        --color-frame: #3f3128;
+        --ressource-color: #FF9900;
+        --text-color: #cfbea2;
+
+        pointer-events: all;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-in-out;
+
+        .hotbar-avatar-container {
+            position: relative;
+            min-width: 180px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hotbar-avatar {
+            position: relative;
+            z-index: 1;
+            width: 100px;
+            flex: 0 0 100px;
+            min-width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: rgba(28, 26, 26, 0.5);
+            pointer-events: none;
+
+            &.myRound {
+                border-color: darkred;
+            }
+        }
+
+        button {
+            border-color: var(--color-frame);
+            background: rgba(28, 26, 26, 0.5);
+            color: var(--text-color);
+
+            &:hover {
+                border-color: darkred;
+                box-shadow: 0 0 10px darkred;
+            }
+        }
+
+
+        .resources {
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            top: 10px;
+            gap: 40px;
+
+            z-index: 1;
+
+            div {
+                border: 2px solid var(--color-frame);
+                border-radius: 7px;
+                padding: 2px;
+                color: white;
+            }
+        }
+
+        .dsa-indicator,
+        .dsa-indicator i:before {
+            text-align: center;
+            text-shadow:
+                -1px -1px 0 var(--color-frame),
+                1px -1px 0 var(--color-frame),
+                -1px 1px 0 var(--color-frame),
+                1px 1px 0 var(--color-frame);
+        }
+
+        .quickbuttons {
+            align-items: center;
+            justify-content: center;
+            margin-top: -10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .weapon {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+            border: 2px solid var(--color-frame);
+            background: rgba(28, 26, 26, 0.8);
+            cursor: var(--cursor-pointer);
+            color: var(--text-color);
+            position: absolute;
+            z-index: 2;
+
+            &:hover {
+                border-color: darkred;
+                box-shadow: 0 0 10px darkred;
+            }
+
+            img {
+                border-radius: 50%;
+                object-fit: contain;
+            }
+        }
     }
 
     .categoryFilters {
@@ -32,6 +140,9 @@
     .function {
         position: relative;
         color: white;
+        &.coinIcon:before {
+            filter: invert(1);
+        }
     }
 
     ul,
@@ -73,10 +184,15 @@
         }
     }
 
-    #action-bar {
+    .hotbarv4-hotbar-inner {
         width: var(--hotbar-width);
         max-width: var(--hotbar-width);
         gap: 0;
+
+        &.withActor .sections {
+            width: calc(var(--hotbar-width) - var(--actorSize) - var(--button-padding));
+        }
+
     }
 
     .actorEffect,

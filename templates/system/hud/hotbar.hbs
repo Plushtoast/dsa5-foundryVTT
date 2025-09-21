@@ -1,8 +1,6 @@
-<div class="hotbarv4-hotbar-inner">
-    <div class="flexrow">
-        {{#if actor}}
-        {{> systems/dsa5/templates/system/hud/actorpart.hbs}}
-        {{/if}}
-        {{> systems/dsa5/templates/system/hud/actionpart.hbs}}
-    </div>
+<div class="hotbarv4-hotbar-inner flexrow {{ifThen actor 'withActor' ''}}" style="--base-bar-height:{{baseBarHeight}}">
+    {{#if actor}}
+    {{> systems/dsa5/templates/system/hud/actorpart.hbs}}
+    {{/if}}
+    {{> systems/dsa5/templates/system/hud/actionpart.hbs}}
 </div>

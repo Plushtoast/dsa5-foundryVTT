@@ -85,6 +85,7 @@ export default class RuleChaos {
   }
 
   static isYieldedTwohanded(item) {
+    if (!item || !item.system) return false;
     if (item.type == 'trait') return false;
 
     const twoHanded = this.regex2h.test(item.name);
