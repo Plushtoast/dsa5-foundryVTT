@@ -1,5 +1,6 @@
-<div class="flex1">
+<div class="flex1 tooltipConnector" data-tooltip-direction="UP">
     <div class="flexrow flexAlignCenter">
+        {{#if gmMode}}
         <div id="hotbar-controls-left" class="hotbar-controls flexcol flex0" data-tooltip-direction="LEFT">
             <button type="button" class="plain fa-solid fa-volume icon" data-action="mute"
                 aria-label="{{localize 'HOTBAR.MUTE'}}" data-tooltip="HOTBAR.MUTE"></button>
@@ -8,7 +9,8 @@
             <button type="button" class="plain fa-solid fa-trash icon" data-action="clear"
                 aria-label="{{localize 'HOTBAR.CLEAR'}}" data-tooltip="HOTBAR.CLEAR"></button>
         </div>
-        <menu id="action-bar" class="flexcol flex1 gap0px" data-tooltip-direction="UP">
+        {{/if}}
+        <menu id="action-bar" class="flexcol flex1 gap0px">
             <div class="flexrow categoryFilters">
                 <div class="flexrow">
                     {{#each filterCategories as |cat|}}
@@ -26,7 +28,7 @@
                     <ul class="flexrow actorEffects">
                         {{#each token.effects as |item|}}
                         <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
-                            data-id="{{item.id}}" data-tooltip="{{item.name}}" data-name="{{item.name}}"
+                            data-id="{{item.id}}" data-tooltip="{{item.name}}" data-action="quickButton" data-name="{{item.name}}"
                             data-subfunction="{{item.subfunction}}">
                             <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">
                                 {{item.indicator}}</div>
@@ -106,8 +108,11 @@
             </div>
             {{else}}
             <div class="itdarkness flexcol">
+                <button type="button" class="icon plain fas fa-ellipsis-vertical function"
+                    data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
+                </button>
                 {{#each token.groups.functions as |item i|}}
-                <button type="button" class="{{item.cssClass}} icon primary {{item.iconClass}} function"
+                <button type="button" class="{{item.cssClass}} icon plain primary {{item.iconClass}} function"
                     data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
                     data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                 </button>

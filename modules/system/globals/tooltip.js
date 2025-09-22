@@ -36,6 +36,9 @@ export class GlobalToolTipHandler {
             case 'enchantment':
                 ({ description, name } = await GlobalToolTipHandler._handleEnchantmentTooltip(data, actor));
                 break;
+            case 'plain':
+                description = data.betterTooltip;
+                break;
             default:
                 return;
         }
@@ -49,12 +52,16 @@ export class GlobalToolTipHandler {
 
         if (!tooltip) return;
 
-        game.tooltip.activate(target, {
+        const tooltipConnector = target.closest('.tooltipConnector');
+        game.tooltip.activate(tooltipConnector || target, {
             html: tooltip,
             cssClass: 'dsatooltip'
         });
+
+        if (tooltipConnector) return;
+
         target.dataset.tooltipHtml = tooltip;
-        target.dataset.tooltipClass = 'dsatooltip';        
+        target.dataset.tooltipClass = 'dsatooltip';
     }
 
     static async _handleSkillGmTooltip(data) {
@@ -111,6 +118,7 @@ export class GlobalToolTipHandler {
 
     static async _handleItemTooltip(data, actor) {
         const item = actor?.items.get(data.id);
+        if (!item) return {};
         const itemData = await item.sheet._prepareContext();
         let description;
 
@@ -123,7 +131,7 @@ export class GlobalToolTipHandler {
                     ...itemData,
                     document: item,
                     skipHeader: true,
-                    hint: true,
+                    hint: !data.skipHint,
                 }),
             )
                 .find('.groupbox')

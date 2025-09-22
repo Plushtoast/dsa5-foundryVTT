@@ -83,12 +83,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     html.find('.sections').on('pointerout', filterOff);
-    html.find('.primary').on('pointerover', (ev) => this.#betterTooltip(ev));
+    html.find('.primary,.weapon,[data-category="plain"]').on('pointerover', (ev) => this.#betterTooltip(ev));
     html.find('[data-action="quickButton"]').on('click', (ev) => this.#quickButton(ev));
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
-
 
     const container = this.element.querySelector('.rangeContainer');
     if (!container) return;
@@ -106,6 +105,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       onOpen: this.#onWeaponContext.bind(this),
       jQuery: false,
       fixed: true,
+    });
+    new foundry.applications.ux.ContextMenu(this.element, '[data-action="configMenu"]', [], {
+      onOpen: this.#onConfigContext.bind(this),
+      jQuery: false,
+      fixed: true,
+      eventName: 'click'
     });
   }
 
@@ -380,6 +385,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       effects = sharedEffects;
     }
 
+    this.#conditionAddEffect(effects);
+    return effects;
+  }
+
+  #conditionAddEffect(effects) {
     const label = game.i18n.localize('CONDITION.add');
     effects.unshift({
       name: 'CONDITION.add',
@@ -390,8 +400,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       subfunction: 'addEffect',
       indicator: '+',
     });
-
-    return effects;
   }
 
   #determineActiveSection(groups, currentSection) {
@@ -420,6 +428,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
         activeSection = this.activeSection;
         effects = await this.tokenHotbar._effectEntries(actor);
+        this.#conditionAddEffect(effects);
         this.#prepareActorActions(actor, groups);
       }
     } else if (game.user.isGM && !game.settings.get('dsa5', 'disableTokenhotbarMaster')) {
@@ -459,6 +468,47 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const weapon = this.actor.items.get(id);
 
     ui.context.menuItems = this.#getWeaponContextOptions(weapon, mode === 'offHand');
+  }
+
+  #onConfigContext() {
+    const options = [
+      {
+        name: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
+        icon: game.audio.globalMute ? "<i class='fa-solid fa-volume-xmark'></i>" : "<i class='fa-solid fa-volume'></i>",
+        callback: () => {
+          game.audio.globalMute = !game.audio.globalMute;
+          this._updateToggles();
+        }
+      },
+      {
+        name: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
+        icon: this.locked ? "<i class='fa-solid fa-unlock'></i>" : "<i class='fa-solid fa-lock'></i>",
+        callback: async () => {
+          await game.settings.set("core", "hotbarLock", !this.locked, { render: false });
+          this._updateToggles();
+        }
+      },
+      {
+        name: 'HOTBAR.CLEAR',
+        icon: "<i class='fa-solid fa-trash'></i>",
+        callback: async () => {
+          const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+              title: "HOTBAR.CLEAR",
+              icon: "fa-solid fa-trash"
+            },
+            content: game.i18n.localize("HOTBAR.CLEAR_CONFIRM"),
+            modal: true
+          });
+          if (proceed) await game.user.update({ hotbar: {} }, { recursive: false, diff: false, noHook: true });
+        }
+      }
+    ];
+    ui.context.menuItems = options;
+  }
+
+  _updateToggles() {
+    if (!game.settings.get('dsa5', 'hotbarv3') || !this.actor) return super._updateToggles();
   }
 
   #getWeaponContextOptions(weapon, isOffHand) {
