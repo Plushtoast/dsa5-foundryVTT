@@ -70,7 +70,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const fn = (ev) => {
       if (!html.find('.sections').is(':hover')) return;
 
-      this.filterSections(ev, html);wa
+      this.filterSections(ev, html);
       return false;
     };
     const filterOff = () => {
@@ -94,6 +94,20 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     html.find('.hotbar-avatar').on('dblclick', () => this.actor.sheet.render(true));
 
+    new foundry.applications.ux.DragDrop.implementation({
+      dragSelector: ".wiggle-animation",
+      dropSelector: ".wiggle-animation",
+      permissions: {
+        dragstart: this._canDragStartEdit.bind(this),
+        drop: this._canDragDropEdit.bind(this)
+      },
+      callbacks: {
+        dragstart: this._onDragStartEdit.bind(this),
+        dragover: this._onDragOverEdit.bind(this),
+        drop: this._onDropEdit.bind(this),
+      }
+    }).bind(this.element);
+
     const container = this.element.querySelector('.rangeContainer');
     if (!container) return;
 
@@ -101,6 +115,95 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       value: (canvas?.scene?.environment.darknessLevel || 0) * 100,
       onChange: (value) => this.onSliderChanged(value)
     });
+  }
+
+  _canDragStartEdit() {
+    return this.editMode;
+  }
+
+  _canDragDropEdit() {
+    return this.editMode;
+  }
+
+  async _onDragStartEdit(event) {
+    const li = event.currentTarget;
+    if (!li) return;
+
+    let category = li.closest('.hSection').dataset.category;
+    if (!category) {
+      return;
+    }
+
+    const dragData = {
+      type: 'elementResorting',
+      id: li.dataset.id,
+      category,
+    };
+    event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+    event.dataTransfer.effectAllowed = 'move';
+    li.classList.add('dragging');
+    this.draggedElement = li;
+  }
+
+  _onDragOverEdit(event) {
+    if (!this.editMode) return;
+
+    event.preventDefault();
+
+    const target = event.currentTarget;
+    const container = target?.closest('.hSection');
+
+    if (!target || !container) return;
+
+    container.querySelectorAll('.wiggle-animation').forEach(el =>
+      el.classList.toggle('drag-over', el === target)
+    );
+  }
+
+  async _onDropEdit(event) {
+    if (!this.editMode) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = event.currentTarget;
+    const container = target?.closest('.hSection');
+
+    container.querySelector('.drag-over')?.classList.remove('drag-over');
+
+    if (this.draggedElement) {
+      this.draggedElement.classList.remove('dragging');
+      this.draggedElement = null;
+    }
+
+    if (!target || !container) return;    
+
+    let dragData;
+    try {
+      dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+    } catch (e) {
+      return;
+    }
+
+    if (container.dataset.category != dragData.category) return;
+
+    if (!this.actor) return;
+
+    const slots = container.querySelectorAll('li');
+    const slotArray = Array.from(slots).map(s => s.dataset.id);
+    const targetId = target.dataset.id;
+    const fromIndex = slotArray.indexOf(dragData.id);
+    const toIndex = slotArray.indexOf(targetId);
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+
+    slotArray[fromIndex] = targetId;
+    slotArray[toIndex] = dragData.id;
+
+    const currentFlags = this.actor.prototypeToken.getFlag('dsa5', 'hotbarControls') || {};
+    currentFlags[dragData.category] = slotArray;
+
+    await this.actor.prototypeToken.setFlag('dsa5', 'hotbarControls', currentFlags);
   }
 
   async _onFirstRender(context, options) {
@@ -333,6 +436,50 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     list.sort((a, b) => DSA5Hotbar.ORDER_GROUPS.indexOf(a.addClass) - DSA5Hotbar.ORDER_GROUPS.indexOf(b.addClass) || a.name.localeCompare(b.name));
   }
 
+  #applySavedOrdering(groups) {
+    if (!this.actor) return;
+
+    const savedOrder = this.actor.prototypeToken.getFlag('dsa5', 'hotbarControls');
+    if (!savedOrder) return;
+
+    for (const [category, orderArray] of Object.entries(savedOrder)) {
+      if (!orderArray || !Array.isArray(orderArray)) continue;
+
+      if (groups.skills[category]) {
+        groups.skills[category] = this.#reorderArrayByFlags(groups.skills[category], orderArray);
+      }
+    }
+  }
+
+  #reorderArrayByFlags(itemArray, orderArray) {
+    if (!itemArray || !orderArray || itemArray.length === 0 || orderArray.length === 0) return itemArray;
+
+    const itemMap = new Map();
+    itemArray.forEach(item => {
+      if (item.id) itemMap.set(item.id, item);
+    });
+
+    const orderedItems = [];
+    const usedIds = new Set();
+
+    orderArray.forEach(id => {
+      if (itemMap.has(id) && !usedIds.has(id)) {
+        orderedItems.push(itemMap.get(id));
+        usedIds.add(id);
+      }
+    });
+
+    itemArray.forEach(item => {
+      if (item.id && !usedIds.has(item.id)) {
+        orderedItems.push(item);
+      } else if (!item.id) {
+        orderedItems.push(item);
+      }
+    });
+
+    return orderedItems;
+  }
+
   async #prepareGMActions(groups) {
     groups.skills.gm = this.tokenHotbar?._gmEntries() || [];
     groups.skills.skillgm = this.tokenHotbar?.skills || (await this.tokenHotbar?.prepareSkills()) || [];
@@ -422,6 +569,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (!game.settings.get("dsa5", "hotbarv3")) return context;
 
     this.#setActor();
+
+    context.editMode = this.editMode ? 'wiggle-animation' : '';
     const actor = this.actor;
 
     const groups = { skills: {}, attacks: [], functions: [] };
@@ -443,6 +592,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     this.#sortSkillList(groups.skills.skill);
     this.#sortSkillList(groups.skills.skillgm);
+
+    this.#applySavedOrdering(groups);
 
     const filterCategories = this.#generateFilterCategories(groups);
 
@@ -494,6 +645,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       },
       {
+        name: 'SHEET.Configure',
+        icon: "<i class='fa-solid fa-edit'></i>",
+        callback: () => {
+          this.#toggleEditMode();
+        }
+      },
+      {
         name: 'HOTBAR.CLEAR',
         icon: "<i class='fa-solid fa-trash'></i>",
         callback: async () => {
@@ -510,6 +668,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     ];
     ui.context.menuItems = options;
+  }
+
+  #toggleEditMode() {
+    this.editMode = !this.editMode;
+    this.render(true);
   }
 
   _updateToggles() {
@@ -617,9 +780,23 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         humanoidWeapons.push(weapon);
       }
     }
-    if (humanoidWeapons.length || animalWeapons.length == 0) positionIndex += this.#addHumanoidWeapon(positions, humanoidWeapons, positionIndex);
+
+    if (humanoidWeapons.length || animalWeapons.length == 0) {
+      positionIndex += this.#addHumanoidWeapon(positions, humanoidWeapons, positionIndex);
+    }
 
     positionIndex += this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
+
+    //TODO add weapon editing later
+    if (this.editMode && false) {
+      while (positionIndex < DSA5Hotbar.WEAPON_POSITIONS.length) {
+        positions.push({
+          weapon: { name: localize('attackWeaponless') },
+          style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++],
+          isEmpty: true
+        });
+      }
+    }
 
     return positions;
   }
@@ -692,7 +869,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #setActor() {
     const controlled = canvas?.tokens?.controlled || [];
-    this.actor = controlled.length < 2 ? (controlled[0]?.actor ?? game.user.character) : null;
+    const newActor = controlled.length < 2 ? (controlled[0]?.actor ?? game.user.character) : null;
+
+    if (this.actor !== newActor && this.editMode) {
+      this.editMode = false;
+    }
+
+    this.actor = newActor;
 
     if (this.actor && !this.actor?.isOwner) this.actor = null;
     this.showEffects = controlled.length >= 1;

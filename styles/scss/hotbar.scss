@@ -17,6 +17,52 @@
   pointer-events: all;
   width: var(--hotbar-width);
 
+  .wiggle-animation {
+    animation: hotbar-wiggle 2s ease-in-out infinite;
+    animation-direction: alternate;
+  }
+
+  // Wiggle animation keyframes
+  @keyframes hotbar-wiggle {
+    0% {
+      transform: translateY(0) rotate(-1deg) scale(1);
+    }
+    15% {
+      transform: translateY(-1px) rotate(1.5deg) scale(1.03);
+    }
+    30% {
+      transform: translateY(0) rotate(-0.8deg) scale(1.02);
+    }
+    50% {
+      transform: translateY(-1px) rotate(1deg) scale(1.035);
+    }
+    70% {
+      transform: translateY(0) rotate(-0.4deg) scale(1.02);
+    }
+    85% {
+      transform: translateY(-0.8px) rotate(0.8deg) scale(1.03);
+    }
+    100% {
+      transform: translateY(0) rotate(-0.8deg) scale(1);
+    }
+  }
+
+  // Drag and drop styles
+  .dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+    z-index: 1000;
+  }
+
+  @keyframes drop-pulse {
+    0% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   .withActor {
     --button-padding: 75px;
   }
@@ -241,6 +287,22 @@
 
       i {
         font-size: 20px;
+      }
+
+      &.empty-slot {
+        border: 2px dashed var(--color-frame);
+        background: linear-gradient(135deg, rgba(28, 26, 26, 0.4) 0%, rgba(28, 26, 26, 0.2) 100%);
+        opacity: 0.6;
+
+        i {
+          color: var(--text-color);
+          font-size: 16px;
+        }
+
+        &:hover {
+          border-color: var(--active-color);
+          opacity: 0.8;
+        }
       }
     }
   }
@@ -505,6 +567,14 @@
         box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
         filter: grayscale(80%);
         border-color: rgba(74, 144, 226, 0.6);
+      }
+
+      &.drag-over {
+        border-color: darkred;
+        div {
+            box-shadow: inset 0 0 15px rgba(139, 0, 0, 0.7);
+            transform: scale(0.8);
+        }        
       }
 
       &:hover {
