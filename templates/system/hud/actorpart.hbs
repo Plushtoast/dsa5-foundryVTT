@@ -17,7 +17,7 @@
     <div class="hotbar-avatar-container flexrow">
         <img class="hotbar-avatar flex0 {{turnClass}}" data-category="plain" data-better-tooltip="{{defenseTooltip}}" src="{{actorImg}}" />
         {{#each weapons}}
-        <div data-action="weapon" data-skip-hint="true" data-name="{{weapon.name}}" data-category="weapon" data-id="{{weapon.id}}" class="weapon {{#if isEmpty}}empty-slot{{/if}} {{../editMode}}" data-mode="{{mode}}" style="{{{style}}}">
+        <div data-action="weapon" data-skip-hint="true" data-name="{{weapon.name}}" data-category="weapon" data-id="{{weapon.id}}" class="weapon {{#if isEmpty}}empty-slot{{/if}}" data-mode="{{mode}}" style="{{style}}">
             {{#if weapon.img}}
             <img src="{{weapon.img}}" />
             {{else if isEmpty}}
