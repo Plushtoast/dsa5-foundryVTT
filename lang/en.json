@@ -1623,6 +1623,13 @@
         "disarmHint": "Disarm: The trap can be disarmed with a lockpicking check. The modifier is the trap's difficulty value.",
         "trigger": "Trigger",
         "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area.",
+        "manualDisarm": "Manual Disarm",
+        "manualDisarmHint": "Manual Disarm: The GM can manually disarm the trap without requiring a skill check.",
+        "manualDisarmConfirm": "Are you sure you want to manually disarm the trap '{name}'?",
+        "manualDisarmWarning": "This action will immediately disarm the trap without any skill checks or time requirements.",
+        "confirmDisarm": "Confirm Disarm",
+        "manuallyDisarmed": "The trap '{trap}' has been manually disarmed by {gm}.",
+        "alreadyDisarmed": "This trap is already disarmed.",
         "COMPLEXITIES": {
             "0": "Primitive",
             "1": "Simple",

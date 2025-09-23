@@ -1590,6 +1590,13 @@
         "disarmHint": "Entschärfen: Die Falle kann mit einer Probe auf Schlösserknacken entschärft werden. Der Modifikator ist der Schwierigkeitswert der Falle.",
         "trigger": "Auslösen",
         "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein.",
+        "manualDisarm": "Manuell Entschärfen",
+        "manualDisarmHint": "Manuell Entschärfen: Der Spielleiter kann die Falle ohne Fertigkeitsprobe manuell entschärfen.",
+        "manualDisarmConfirm": "Bist du sicher, dass du die Falle '{name}' manuell entschärfen möchtest?",
+        "manualDisarmWarning": "Diese Aktion entschärft die Falle sofort ohne Fertigkeitsproben oder Zeitaufwand.",
+        "confirmDisarm": "Entschärfung bestätigen",
+        "manuallyDisarmed": "Die Falle '{trap}' wurde manuell von {gm} entschärft.",
+        "alreadyDisarmed": "Diese Falle ist bereits entschärft.",
         "COMPLEXITIES": {
             "0": "Primitiv",
             "1": "Einfach",

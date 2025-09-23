@@ -2,6 +2,7 @@ import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
 import DiceDSA5 from "../../system/rolls/dice-dsa5.js";
 import RequestRoll from "../../system/rolls/request-roll.js";
 import { ITEM_CONSTANTS } from "../../config/item-constants.js";
+import { localize, format } from "../../system/helpers/localizer.js";
 
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -157,6 +158,9 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
             case 'disarmTrap':
                 await behavior.system._handleDisarm(event, options);
                 break;
+            case 'manualDisarm':
+                await behavior.system._handleManualDisarm(event, options);
+                break;
             case 'triggerTrap':
                 await behavior.system._handleTrigger(event, options);
                 break;
@@ -184,7 +188,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
     }
 
     async _handleSearch(event, { token, region, message }) {
-        const skill = game.i18n.localize('LocalizedIDs.perception');
+        const skill = localize('LocalizedIDs.perception');
         const customLabel = undefined
         const options = this.requestRollOptions(message, token);
         Object.assign(options.datasetOptions, {
@@ -265,7 +269,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
     }
 
     async _handleDisarm(event, { token, region, message }) {
-        const skill = game.i18n.localize('LocalizedIDs.lockpick');
+        const skill = localize('LocalizedIDs.lockpick');
         const customLabel = undefined;
         const options = this.requestRollOptions(message, token);
         const duration = [1, 5, 5][this.complexity];
@@ -284,6 +288,50 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
         }
     }
 
+    async _handleManualDisarm(event, { token, region, message }) {
+        if (!game.user.isGM) return;
+
+        if (this.disarmed) {
+            ui.notifications.warn(localize("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
+            return;
+        }
+
+        new foundry.applications.api.DialogV2({
+            window: {
+                title: 'REGIONBEHAVIOR_DSATrap.manualDisarm'
+            },
+            position: {
+                width: 400
+            },
+            content: await renderTemplate('systems/dsa5/templates/chat/trap/manualDisarm.hbs', { token, region, message, behaviour: this }),
+            buttons: [
+                {
+                    action: 'confirm',
+                    icon: 'fa fa-check',
+                    label: 'REGIONBEHAVIOR_DSATrap.confirmDisarm',
+                    default: true,
+                    callback: async (event, button, dialog) => {
+                        await this.parent.update({ "system.disarmed": true });
+                        const msg = `
+                            <div>
+                                <p>${format("REGIONBEHAVIOR_DSATrap.manuallyDisarmed", { 
+                                    trap: this.parent.name,
+                                    gm: game.user.name 
+                                })}</p>
+                            </div>
+                        `;
+                        ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+                    },
+                },
+                {
+                    action: 'cancel',
+                    icon: 'fa fa-times',
+                    label: 'Cancel'
+                }
+            ]
+        }).render(true);
+    }
+
     async _handleTrigger(event, { token, region, message }) {
         this.playSound();
 
@@ -293,7 +341,7 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
         const rollString = await roll.render();
         const msg = `
             <div>
-            <p>${game.i18n.format("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: this.parent.name })}</p>
+            <p>${format("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: this.parent.name })}</p>
             <p>${description}</p>
             ${rollString}
             </div>
