@@ -1560,7 +1560,10 @@ export default class Actordsa5 extends Actor {
         updates.push(weaponUpdate);
         break;
     }
-    if (updates) await this.updateEmbeddedDocuments('Item', updates);
+    if (updates) {      
+      await this.updateEmbeddedDocuments('Item', updates);
+      item.system.itemEquippedMessage();
+    }
   }
 
   static calcLZ(item, actor) {

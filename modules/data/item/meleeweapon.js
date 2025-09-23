@@ -13,6 +13,7 @@ import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 import { localize } from '../../system/helpers/localizer.js';
+import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
@@ -167,20 +168,21 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
   async swapNumberWeaponHands() {
     if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localize(`LocalizedCTs.${this.combatskill.value}`))) {
       await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
-      const yielded = RuleChaos.isYieldedTwohanded(this.parent)
-      if (this.parent.actor) {
-        const texts = [{ value: game.i18n.format(yielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
-        this.parent.actor.tokenScrollingText(texts);
-      }
+      this.itemEquippedMessage();
     }
   }
 
   async reEquipItem() {
     const newValue = !this.worn.value;
     await this.parent.update({ 'system.worn.value': newValue });
+    this.itemEquippedMessage();
+  }
 
-    if (this.parent.actor) {
-      const texts = [{ value: localize(newValue ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
+  itemEquippedMessage() {
+    DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
+    const yielded = RuleChaos.isYieldedTwohanded(this.parent);
+    if (this.parent.actor && game.combat) {
+      const texts = [{ value: game.i18n.format(yielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
       this.parent.actor.tokenScrollingText(texts);
     }
   }

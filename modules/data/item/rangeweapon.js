@@ -8,6 +8,7 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
@@ -91,11 +92,14 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   async reEquipItem() {
-    const newValue = !this.worn.value;
-    await this.parent.update({ 'system.worn.value': newValue });
+    await this.parent.update({ 'system.worn.value': !this.worn.value });
+    this.itemEquippedMessage();
+  }
 
-    if (this.parent.actor) {
-      const texts = [{ value: game.i18n.localize(newValue ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
+  itemEquippedMessage() {
+    DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
+    if (this.parent.actor && game.combat) {
+      const texts = [{ value: game.i18n.localize(this.worn.value ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
       this.parent.actor.tokenScrollingText(texts);
     }
   }

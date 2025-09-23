@@ -273,4 +273,6 @@ export class ItemDataModel extends DSADataModel {
       .map(x => this.constructor._chatLineHelper(x))
       .join('<br>');
   }
+
+  itemEquippedMessage() {}
 }
