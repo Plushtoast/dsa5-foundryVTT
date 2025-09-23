@@ -80,7 +80,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         entry.from.monthLong = calendar.translate(month.name);
         entry.categoryName = game.i18n.localize(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
         entry.color = DSACalendarEntry.CATEGORY_COLORS[entry.category];
-        entry.enriched = await foundry.applications.ux.TextEditor.enrichHTML(entry.content, {})
+        entry.enriched = await foundry.applications.ux.TextEditor.enrichHTML(entry.content, { secrets: game.user.isGM });
     }
 
     #recalculateDay(date) {

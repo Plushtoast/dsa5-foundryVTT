@@ -149,14 +149,14 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
 
         if (entry.showActorDescription) {
             if (isCreature) {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "");
+                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
             } else {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "");
+                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "", { secrets: game.user.isGM });
             }
         } else {
-            entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "");
+            entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
         }
-        entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "");
+        entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "", { secrets: game.user.isGM });
         entry.uuid = document.uuid;
         entry.dramatisKey = key;
         await this.prepareContacts(entry, heros);

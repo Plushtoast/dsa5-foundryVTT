@@ -47,7 +47,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         'systems/dsa5/templates/system/hud/actorpart.hbs',
         'systems/dsa5/templates/system/hud/actionpart.hbs',
       ],
-      scrollable: ['#macro-list'],
+      scrollable: ['#macro-list', '.hSection'],
     },
   };
 
@@ -143,6 +143,103 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     event.dataTransfer.effectAllowed = 'move';
     li.classList.add('dragging');
     this.draggedElement = li;
+
+    this.#setupAutoScroll();
+  }
+
+  #setupAutoScroll() {
+    this.#clearAutoScroll();
+
+    this.autoScrollSettings = {
+      scrollZoneSize: 30,
+      scrollSpeed: 2,
+      scrollInterval: 100,
+      isScrolling: false
+    };
+  }
+
+  #clearAutoScroll() {
+    if (this.autoScrollInterval) {
+      clearInterval(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
+    if (this.autoScrollSettings) {
+      this.autoScrollSettings.isScrolling = false;
+    }
+  }
+
+  #checkAutoScroll(event, container) {
+    if (!this.autoScrollSettings || !container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const mouseY = event.clientY;
+
+    const relativeY = mouseY - containerRect.top;
+    const containerHeight = containerRect.height;
+
+    if (relativeY < 0 || relativeY > containerHeight) {
+      this.#stopAutoScroll();
+      return;
+    }
+
+    let scrollDirection = 0;
+    let intensity = 1;
+
+    if (relativeY < this.autoScrollSettings.scrollZoneSize) {
+      scrollDirection = -1;
+      intensity = Math.max(0.5, (this.autoScrollSettings.scrollZoneSize - relativeY) / this.autoScrollSettings.scrollZoneSize);
+    } else if (relativeY > containerHeight - this.autoScrollSettings.scrollZoneSize) {
+      scrollDirection = 1;
+      const distanceFromBottom = containerHeight - relativeY;
+      intensity = Math.max(0.5, (this.autoScrollSettings.scrollZoneSize - distanceFromBottom) / this.autoScrollSettings.scrollZoneSize);
+    }
+
+    if (scrollDirection !== 0) {
+      this.#startAutoScroll(container, scrollDirection, intensity);
+    } else {
+      this.#stopAutoScroll();
+    }
+  }
+
+  #startAutoScroll(container, direction, intensity = 1) {
+    if (this.autoScrollSettings.isScrolling &&
+      this.autoScrollSettings.currentDirection === direction &&
+      Math.abs(this.autoScrollSettings.currentIntensity - intensity) < 0.1) {
+      return;
+    }
+
+    this.#stopAutoScroll();
+
+    this.autoScrollSettings.isScrolling = true;
+    this.autoScrollSettings.currentDirection = direction;
+    this.autoScrollSettings.currentIntensity = intensity;
+
+    const scrollAmount = DSA5Hotbar.BASEBARHEIGHT * direction * this.autoScrollSettings.scrollSpeed * intensity;
+    const intervalTime = Math.max(50, this.autoScrollSettings.scrollInterval / intensity);
+
+    this.autoScrollInterval = setInterval(() => {
+      const currentScroll = container.scrollTop;
+      const maxScroll = container.scrollHeight - container.clientHeight;
+      const newScroll = Math.max(0, Math.min(maxScroll, currentScroll + scrollAmount));
+
+      if (newScroll !== currentScroll) {
+        container.scrollTop = newScroll;
+      } else {
+        this.#stopAutoScroll();
+      }
+    }, intervalTime);
+  }
+
+  #stopAutoScroll() {
+    if (this.autoScrollInterval) {
+      clearInterval(this.autoScrollInterval);
+      this.autoScrollInterval = null;
+    }
+    if (this.autoScrollSettings) {
+      this.autoScrollSettings.isScrolling = false;
+      this.autoScrollSettings.currentDirection = null;
+      this.autoScrollSettings.currentIntensity = null;
+    }
   }
 
   _onDragOverEdit(event) {
@@ -158,6 +255,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     container.querySelectorAll('.wiggle-animation').forEach(el =>
       el.classList.toggle('drag-over', el === target)
     );
+
+    this.#checkAutoScroll(event, container);
   }
 
   async _onDropEdit(event) {
@@ -165,6 +264,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     event.preventDefault();
     event.stopPropagation();
+
+    this.#clearAutoScroll();
 
     const target = event.currentTarget;
     const container = target?.closest('.hSection');
@@ -176,7 +277,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       this.draggedElement = null;
     }
 
-    if (!target || !container) return;    
+    if (!target || !container) return;
 
     let dragData;
     try {
@@ -672,6 +773,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #toggleEditMode() {
     this.editMode = !this.editMode;
+
+    if (!this.editMode) {
+      this.#clearAutoScroll();
+    }
+
     this.render(true);
   }
 
