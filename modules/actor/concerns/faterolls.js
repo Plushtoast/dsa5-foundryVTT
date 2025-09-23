@@ -1,6 +1,7 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
+import { localize } from '../../system/helpers/localizer.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 /**
@@ -67,7 +68,7 @@ export class FateRolls {
         cardOptions.talentedRerollUsed = true;
         this.#resetTargetAndMessage(data, cardOptions);
 
-        const enhancedInfoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
+        const enhancedInfoMsg = `<h3 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h3>
                 ${game.i18n.format('CHATFATE.isTalented', {
                     character: `<b>${actor.name}</b>`,
                 })}<br>`;
@@ -96,7 +97,7 @@ export class FateRolls {
                             true
                         );
 
-                        const finalInfoMsg = `${enhancedInfoMsg}<b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
+                        const finalInfoMsg = `${enhancedInfoMsg}<b>${localize('Roll')}</b>: ${changedRolls.join(', ')}`;
                         await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
 
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -147,7 +148,7 @@ export class FateRolls {
                         const diesToReroll = this.#getSelectedDiceIndices($(button.form));
                         if (diesToReroll.length === 0) return;
 
-                        const phexTradition = game.i18n.localize('LocalizedIDs.traditionPhex');
+                        const phexTradition = localize('LocalizedIDs.traditionPhex');
                         const isPhex = actor.items.some(item => 
                             item.type === 'specialability' && item.name === phexTradition
                         );
@@ -162,7 +163,7 @@ export class FateRolls {
                         );
 
                         newTestData.fateUsed = true;
-                        const finalInfoMsg = `${infoMsg}<br><b>${game.i18n.localize('Roll')}</b>: ${changedRolls.join(', ')}`;
+                        const finalInfoMsg = `${infoMsg}<br><b>${localize('Roll')}</b>: ${changedRolls.join(', ')}`;
                         await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
 
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -385,7 +386,7 @@ export class FateRolls {
         diceIndices.forEach((dieIndex, rollIndex) => {
             const characteristic = testData.source.system[`characteristic${dieIndex + 1}`];
             const attr = characteristic ? 
-                `${game.i18n.localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : '';
+                `${localize(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : '';
 
             const newValue = newRoll.terms[rollIndex * 2].results[0].result;
             const originalValue = testData.roll.terms[dieIndex * 2].results[0].result;
@@ -434,9 +435,9 @@ export class FateRolls {
      * @returns {string} Formatted HTML message
      */
     static #buildFateInfoMessage(actor, type, fateAvailable, schipText) {
-        return `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
+        return `<h3 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h3>
                 ${game.i18n.format(`CHATFATE.${type}`, { character: `<b>${actor.name}</b>` })}<br>
-                <b>${game.i18n.localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
+                <b>${localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
     }
 
     /**
@@ -471,7 +472,7 @@ export class FateRolls {
                             fws[dieIndex] = this.IMPROVEMENT_VALUE;
                             
                             const modifier = {
-                                name: game.i18n.localize('CHATCONTEXT.improveFate'),
+                                name: localize('CHATCONTEXT.improveFate'),
                                 value: fws.join('|'),
                                 type: 'roll',
                             };
@@ -511,7 +512,7 @@ export class FateRolls {
      */
     static async #handleSingleDieImprovement(actor, newTestData, message, data, cardOptions, schipsource) {
         const modifier = {
-            name: game.i18n.localize('CHATCONTEXT.improveFate'),
+            name: localize('CHATCONTEXT.improveFate'),
             value: this.IMPROVEMENT_VALUE,
             type: 'roll',
         };

@@ -11,7 +11,18 @@
         </div>
         {{/if}}
         <menu id="action-bar" class="flexcol flex1 gap0px">
+             <ul class="flexrow actorEffects">
+                {{#each token.effects as |item|}}
+                <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
+                    data-id="{{item.id}}" data-tooltip="{{item.name}}" data-action="quickButton" data-name="{{item.name}}"
+                    data-subfunction="{{item.subfunction}}">
+                    <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">
+                        {{item.indicator}}</div>
+                </li>
+                {{/each}}
+            </ul>
             <div class="flexrow categoryFilters">
+                
                 <div class="flexrow">
                     {{#each filterCategories as |cat|}}
                     <button type="button" data-action="categoryFilter"
@@ -25,16 +36,6 @@
                         data-filter="macro" data-tooltip="Macro">
                         <i class="fas fa-code"></i>
                     </button>
-                    <ul class="flexrow actorEffects">
-                        {{#each token.effects as |item|}}
-                        <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
-                            data-id="{{item.id}}" data-tooltip="{{item.name}}" data-action="quickButton" data-name="{{item.name}}"
-                            data-subfunction="{{item.subfunction}}">
-                            <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">
-                                {{item.indicator}}</div>
-                        </li>
-                        {{/each}}
-                    </ul>
                 </div>
             </div>
 

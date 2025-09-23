@@ -1,4 +1,5 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
+import { localize } from '../../system/helpers/localizer.js';
 
 export class PersonaeDramatis {
     static #parent;
@@ -88,7 +89,7 @@ export class PersonaeDramatis {
         if (!Array.isArray(personaeArray) || personaeArray.length === 0) return [];
 
         const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
-        const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
+        const unknownFaction = localize("PERSONAE.UnknownFaction");
 
         const groups = new Map();
         for (const persona of personaeArray) {
@@ -214,7 +215,7 @@ export class PersonaeDramatis {
         const newValue = target.value;
         const section = target.closest('.relationship-section');
         section.querySelector('.relationship-value').textContent = `${newValue}/9`;
-        section.querySelector('.relationship-label').textContent = game.i18n.localize(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
+        section.querySelector('.relationship-label').textContent = localize(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
         target.className = target.className.replace(/level-\d+/g, '');
         target.classList.add(`level-${newValue}`);
 
@@ -252,15 +253,15 @@ export class PersonaeDramatis {
         const activatedJournals = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME)?.activated || [];
         if (activatedJournals.length === 0) {
             const newJournal = await JournalEntry.create({
-                name: game.i18n.localize("PERSONAE.ImportantPersons"), pages: [{
-                    name: game.i18n.localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis"
+                name: localize("PERSONAE.ImportantPersons"), pages: [{
+                    name: localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis"
                 }]
             });
             newJournal.sheet.render(true);
         } else {
             let journalID;
             const content = `<p><div class="form-group">
-                <label>${game.i18n.localize("PERSONAE.selectJournal")}</label>
+                <label>${localize("PERSONAE.selectJournal")}</label>
                 <div class="form-fields">
                     <select name="journal">
                 ${activatedJournals.map(id => `<option value="${id.uuid}">${id.name}</option>`).join('')}
@@ -354,8 +355,8 @@ export class PersonaeDramatis {
                 <div class="no-selection">
                     <div class="no-selection-content">
                         <i class="fas fa-user-circle"></i>
-                        <h3>${game.i18n.localize("PERSONAE.SelectPersona")}</h3>
-                        <p>${game.i18n.localize("PERSONAE.SelectPersonaHint")}</p>
+                        <h3>${localize("PERSONAE.SelectPersona")}</h3>
+                        <p>${localize("PERSONAE.SelectPersonaHint")}</p>
                     </div>
                 </div>
             `;

@@ -3,14 +3,14 @@ import { RollDialogBuilder } from "../dialog/dialog-builder.js";
 import { ModifierCalculator } from "../item/concerns/modifier-calculator.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
-import Actordsa5 from "./actor-dsa5.js";
+import { localize } from "../system/helpers/localizer.js";
 import { RegenerationModifiers } from "./concerns/regeneration-modifiers.js";
 
 const { mergeObject, getProperty } = foundry.utils;
 
 export class ActorDialogBuilder extends RollDialogBuilder {
     static createRegenerationDialog(statusId, options, tokenId, actor) {
-        const title = game.i18n.localize('regenerationTest');
+        const title = localize('regenerationTest');
         const item = { type: 'regenerate', system: {} };
         const template = 'systems/dsa5/templates/chat/roll/regeneration-card.hbs';
 
@@ -39,11 +39,11 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
                 testData.situationalModifiers.push(
                     {
-                        name: game.i18n.localize('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),
+                        name: localize('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),
                         value: html.find('[name="regnerationCampLocations"]').val(),
                     },
                     {
-                        name: game.i18n.localize('interruption') + ' - ' + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
+                        name: localize('interruption') + ' - ' + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
                         value: html.find('[name="regenerationInterruptOptions"]').val(),
                     },
                 );

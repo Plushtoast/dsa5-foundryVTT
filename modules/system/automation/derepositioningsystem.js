@@ -1,4 +1,5 @@
 import AdvantageRulesDSA5 from '../rules/advantage-rules-dsa5.js';
+import { localize } from '../helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
 export default class DPS {
@@ -126,7 +127,7 @@ export default class DPS {
       if ((maxDist.distanceSum || 0) < dist.distanceSum) maxDist = dist;
     }
 
-    if (maxDist.unit == game.i18n.localize('gridUnits')) {
+    if (maxDist.unit == localize('gridUnits')) {
       const rangeMultiplier = currentAmmo?.system?.rangeMultiplier || 1;
       const rangeBands = rangeweapon.system.reach.value.split('/').map((x) => Number(x) * rangeMultiplier);
       let index = 0;
@@ -157,12 +158,12 @@ export default class DPS {
 Hooks.on('renderSceneConfig', (app, html, msg) => {
   const sceneFlag = getProperty(app.object, 'flags.dsa5.enableDPS');
   const dpsSelector = `<div class="form-group dpsSelector">
-        <label data-tooltip="DSASETTINGS.enableDPSHint">${game.i18n.localize('DSASETTINGS.enableDPS')}</label>
+        <label data-tooltip="DSASETTINGS.enableDPSHint">${localize('DSASETTINGS.enableDPS')}</label>
         <div class="form-fields">
           <select name="flags.dsa5.enableDPS">
-            <option value="" ${sceneFlag == '' ? 'selected' : ''}>${game.i18n.localize('globalConfig')}</option>
-            <option value="2" ${sceneFlag == '2' ? 'selected' : ''}>${game.i18n.localize('yes')}</option>
-            <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${game.i18n.localize('no')}</option>
+            <option value="" ${sceneFlag == '' ? 'selected' : ''}>${localize('globalConfig')}</option>
+            <option value="2" ${sceneFlag == '2' ? 'selected' : ''}>${localize('yes')}</option>
+            <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${localize('no')}</option>
           </select>
         </div>
     </div>`;

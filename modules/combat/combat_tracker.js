@@ -2,6 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
 export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
@@ -54,7 +55,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
     turn.defenseCount = combatant.system.defenseCount;
     turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
-    turn.actionCounts = `${turn.actionCount} ${game.i18n.localize('actionCount')}`;
+    turn.actionCounts = `${turn.actionCount} ${localize('actionCount')}`;
     turn.roundInitiative = combatant.system.roundInitiative;
 
     let remainders = [];
@@ -78,7 +79,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     remainders = remainders.sort((a, b) => a.remaining - b.remaining);
 
     if (remainders.length > 0) {
-      turn.ongoings = `${game.i18n.localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
+      turn.ongoings = `${localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
 
       turn.ongoing = remainders[0].remaining;
     }
@@ -289,8 +290,8 @@ class RepeatingEffectsHelper {
 
       const damageRoll = await new Roll(effectvalues).evaluate();
       const damage = await damageRoll.render();
-      const type = game.i18n.localize(damageRoll.total > 0 ? 'CHATNOTIFICATION.regenerates' : 'CHATNOTIFICATION.getsHurt');
-      const applyDamage = `${this.buildActorName(turn)} ${type} ${game.i18n.localize(attr)} ${damage}`;
+      const type = localize(damageRoll.total > 0 ? 'CHATNOTIFICATION.regenerates' : 'CHATNOTIFICATION.getsHurt');
+      const applyDamage = `${this.buildActorName(turn)} ${type} ${localize(attr)} ${damage}`;
 
       await this.sendEventMessage(applyDamage, combat, turn);
       if (attr == 'wounds') await turn.actor.applyDamage(damageRoll.total * -1);

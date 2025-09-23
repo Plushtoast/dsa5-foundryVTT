@@ -1,6 +1,7 @@
 import MoneyTracker from '../orwell/money-tracker.js';
 import DSA5SoundEffect from './dsa-soundeffect.js';
 import DSA5_Utility from './utility-dsa5.js';
+import { localize, format } from '../helpers/localizer.js';
 
 export default class DSA5Payment {
   static async payMoney(actor, moneyString, silent = false, render = true) {
@@ -19,13 +20,13 @@ export default class DSA5Payment {
     if (money) {
       result.actorsMoney = this._actorsMoney(actor);
       if (result.actorsMoney.sum >= money) {
-        result.msg = game.i18n.format('PAYMENT.pay', {
+        result.msg = format('PAYMENT.pay', {
           actor: actor.name,
           amount: await DSA5Payment._moneyToString(money),
         });
         result.success = true;
       } else {
-        result.msg = game.i18n.format('PAYMENT.cannotpay', {
+        result.msg = format('PAYMENT.cannotpay', {
           actor: actor.name,
           amount: await DSA5Payment._moneyToString(money),
         });
@@ -43,7 +44,7 @@ export default class DSA5Payment {
     if (money) {
       let actorsMoney = this._actorsMoney(actor);
       await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
-      let msg = `<p>${game.i18n.format('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
+      let msg = `<p>${format('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
       if (!silent) {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       }
@@ -56,7 +57,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.wage')}</b></p><p>${game.i18n.format('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${game.i18n.localize('PAYMENT.getPaidButton')}</button></div>`;
+      let msg = `<p><b>${localize('PAYMENT.wage')}</b></p><p>${format('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${localize('PAYMENT.getPaidButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -66,7 +67,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.bill')}</b></p>${game.i18n.format('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${game.i18n.localize('PAYMENT.payButton')}</button></div>`;
+      let msg = `<p><b>${localize('PAYMENT.bill')}</b></p>${format('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${localize('PAYMENT.payButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -75,7 +76,7 @@ export default class DSA5Payment {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.error')}</b></p><p><i>${game.i18n.localize('PAYMENT.getPaidexample')}</i></p>`;
+      let msg = `<p><b>${localize('PAYMENT.error')}</b></p><p><i>${localize('PAYMENT.getPaidexample')}</i></p>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       return false;
     }
@@ -86,7 +87,7 @@ export default class DSA5Payment {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${game.i18n.localize('PAYMENT.error')}</b></p><p><i>${game.i18n.localize('PAYMENT.payexample')}</i></p>`;
+      let msg = `<p><b>${localize('PAYMENT.error')}</b></p><p><i>${localize('PAYMENT.payexample')}</i></p>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       return false;
     }

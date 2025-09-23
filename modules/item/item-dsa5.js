@@ -19,7 +19,7 @@ import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
-import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import { localize, format } from '../system/helpers/localizer.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -148,7 +148,7 @@ export default class Itemdsa5 extends Item {
         if (type === CONST.BASE_DOCUMENT_TYPE) continue;
         if (types && !types.includes(type)) continue;
         let label = CONFIG[this.documentName]?.typeLabels?.[type];
-        label = label && game.i18n.has(label) ? game.i18n.localize(label) : type;
+        label = label && game.i18n.has(label) ? localize(label) : type;
         documentTypes.push({
           value: type,
           label,
@@ -173,8 +173,8 @@ export default class Itemdsa5 extends Item {
 
     // Collect data
     folders ??= collection?._formatFolderSelectOptions() ?? [];
-    const label = game.i18n.localize(this.metadata.label);
-    const title = game.i18n.format("DOCUMENT.Create", { type: label });
+    const label = localize(this.metadata.label);
+    const title = format("DOCUMENT.Create", { type: label });
     const type = data.type || defaultType;
 
     // Render the document creation form
@@ -530,7 +530,7 @@ export default class Itemdsa5 extends Item {
 
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
-      const opposed = OPPOSED_SUFFIX + game.i18n.localize('Opposed');
+      const opposed = OPPOSED_SUFFIX + localize('Opposed');
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) {
         cardOptions.title += opposed;
       }
@@ -573,37 +573,37 @@ class SpellItemDSA5 extends Itemdsa5 {
       maintainCost: html.find('.maintainCost').text(),
     };
     testData.situationalModifiers.push(
-      ModifierCalculator.parseValueType(game.i18n.localize('sight'), formData.vision || 0),
+      ModifierCalculator.parseValueType(localize('sight'), formData.vision || 0),
       {
-        name: game.i18n.localize('removeGesture'),
+        name: localize('removeGesture'),
         value: Number(formData.removeGesture) || 0,
       },
       {
-        name: game.i18n.localize('removeFormula'),
+        name: localize('removeFormula'),
         value: Number(formData.removeFormula) || 0,
       },
       {
-        name: game.i18n.localize('castingTime'),
+        name: localize('castingTime'),
         value: html.find('.castingTime').data('mod'),
       },
       {
-        name: game.i18n.localize('cost'),
+        name: localize('cost'),
         value: html.find('.aspcost').data('mod'),
       },
       {
-        name: game.i18n.localize('reach'),
+        name: localize('reach'),
         value: html.find('.reach').data('mod'),
       },
       {
-        name: game.i18n.localize('zkModifier'),
+        name: localize('zkModifier'),
         value: formData.zkModifier || 0,
       },
       {
-        name: game.i18n.localize('skModifier'),
+        name: localize('skModifier'),
         value: formData.skModifier || 0,
       },
       {
-        name: game.i18n.localize('maintainedSpells'),
+        name: localize('maintainedSpells'),
         value: formData.maintainedSpells * -1,
       },
     );
@@ -662,7 +662,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     const res = [];
     if (source.system.effectFormula.value)
       res.push({
-        name: game.i18n.localize('MODS.defenseMalus'),
+        name: localize('MODS.defenseMalus'),
         value: ITEM_CONSTANTS.RANGE_DEFENSE_MALUS,
         type: 'defenseMalus',
         selected: true,
@@ -731,17 +731,17 @@ class SpellItemDSA5 extends Itemdsa5 {
       applicableSpellTypes.includes(source.type)) {
 
       const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
-      const regx = new RegExp(`(${game.i18n.localize('tradition')}|\\\)|\\\()`, 'g');
+      const regx = new RegExp(`(${localize('tradition')}|\\\)|\\\()`, 'g');
       const traditions = actor.system.tradition.magical
         .replace(regx, '')
         .split(',')
         .map((x) => x.trim().toLowerCase());
-      traditions.push(game.i18n.localize('general').toLowerCase());
+      traditions.push(localize('general').toLowerCase());
 
       data.isForeign = !distributions.some((x) => traditions.includes(x));
       if (data.isForeign) {
         situationalModifiers.push({
-          name: game.i18n.localize('DSASETTINGS.enableForeignSpellModifer'),
+          name: localize('DSASETTINGS.enableForeignSpellModifer'),
           value: -2,
           selected: true,
         });
@@ -802,15 +802,15 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     super.getCallbackData(testData, html, actor);
     testData.situationalModifiers.push(
       {
-        name: game.i18n.localize('CEREMONYMODIFIER.artefact'),
+        name: localize('CEREMONYMODIFIER.artefact'),
         value: html.find('[name="artefactUsage"]').is(':checked') ? 1 : 0,
       },
       {
-        name: game.i18n.localize('place'),
+        name: localize('place'),
         value: html.find('[name="placeModifier"]').val(),
       },
       {
-        name: game.i18n.localize('time'),
+        name: localize('time'),
         value: html.find('[name="timeModifier"]').val(),
       },
     );
@@ -820,7 +820,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     super.getSituationalModifiers(situationalModifiers, actor, data, source);
 
     let timeModifier = 0;
-    const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(game.i18n.localize('LocalizedIDs.assumeTradition')));
+    const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(localize('LocalizedIDs.assumeTradition')));
     let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
 
     if (assumeTradition) {
@@ -941,7 +941,7 @@ class ConsumableItemDSA extends Itemdsa5 {
         source.actor,
       );
 
-      const infoMsg = `${game.i18n.format('ActiveEffects.appliedEffect', {
+      const infoMsg = `${format('ActiveEffects.appliedEffect', {
         target: source.actor.token?.name || source.actor.name,
         source: effectNames.join(', '),
       })} ${msg || ''}`;
@@ -1009,7 +1009,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item));
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;
-    dialogOptions.data.defenseCountString = game.i18n.format('defenseCount', { malus: multipleDefenseValue });
+    dialogOptions.data.defenseCountString = format('defenseCount', { malus: multipleDefenseValue });
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, item);
 
     dialogOptions.callback = (html, options = {}) => {
@@ -1061,7 +1061,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       if (currentAmmo) {
         if (currentAmmo.system.atmod) {
           situationalModifiers.push({
-            name: `${currentAmmo.name} - ${game.i18n.localize('atmod')}`,
+            name: `${currentAmmo.name} - ${localize('atmod')}`,
             value: currentAmmo.system.atmod,
             selected: true,
             specAbId: source.system.currentAmmo.value,
@@ -1069,7 +1069,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         }
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
           const dmgMod = {
-            name: `${currentAmmo.name} - ${game.i18n.localize('MODS.damage')}`,
+            name: `${currentAmmo.name} - ${localize('MODS.damage')}`,
             value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
             type: 'dmg',
             selected: true,
@@ -1081,7 +1081,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         }
         if (currentAmmo.effects.length) {
           situationalModifiers.push({
-            name: `${currentAmmo.name} - ${game.i18n.localize('TYPES.Item.ammunition')}`,
+            name: `${currentAmmo.name} - ${localize('TYPES.Item.ammunition')}`,
             value: 1,
             type: 'effect',
             selected: true,
@@ -1153,19 +1153,19 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     super.getCallbackData(testData, html, actor);
     testData.situationalModifiers.push(
       {
-        name: game.i18n.localize('RITUALMODIFIER.rightClothes'),
+        name: localize('RITUALMODIFIER.rightClothes'),
         value: html.find('[name="rightClothes"]').is(':checked') ? 1 : 0,
       },
       {
-        name: game.i18n.localize('RITUALMODIFIER.rightEquipment'),
+        name: localize('RITUALMODIFIER.rightEquipment'),
         value: html.find('[name="rightEquipment"]').is(':checked') ? 1 : 0,
       },
       {
-        name: game.i18n.localize('place'),
+        name: localize('place'),
         value: html.find('[name="placeModifier"]').val(),
       },
       {
-        name: game.i18n.localize('time'),
+        name: localize('time'),
         value: html.find('[name="timeModifier"]').val(),
       },
     );
@@ -1212,7 +1212,7 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 
   static prepareFocusRuleModifiers(data, actor, skill) {
-    const reverseLookUp = game.i18n.localize(`LocalizedSkills.${skill.name}`);
+    const reverseLookUp = localize(`LocalizedSkills.${skill.name}`);
     const modifierData = game.dsa5.config.SKILL[reverseLookUp];
 
     if (!modifierData) return;
@@ -1233,7 +1233,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
       testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
       testData.situationalModifiers.push(
-        ModifierCalculator.parseValueType(game.i18n.localize('sight'), formData.vision || 0),
+        ModifierCalculator.parseValueType(localize('sight'), formData.vision || 0),
       );
       testData.advancedModifiers = {
         chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
@@ -1273,7 +1273,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject());
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;
-    dialogOptions.data.defenseCountString = game.i18n.format('defenseCount', {
+    dialogOptions.data.defenseCountString = format('defenseCount', {
       malus: multipleDefenseValue,
     });
 

@@ -3,6 +3,7 @@ import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSATriggers from '../system/automation/triggers.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
+import { localize } from '../system/helpers/localizer.js';
 const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -42,31 +43,31 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
 Hooks.once('i18nInit', () => {
   DSAActiveEffectConfig.effectDurationRegexes = [
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.combatRounds'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.combatRounds'), 'i'),
       seconds: 5,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.minutes'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.minutes'), 'i'),
       seconds: 60,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.hours'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.hours'), 'i'),
       seconds: 3600,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.days'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.days'), 'i'),
       seconds: 3600 * 24,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.weeks'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.weeks'), 'i'),
       seconds: 3600 * 24 * 7,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.months'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.months'), 'i'),
       seconds: 3600 * 24 * 30,
     },
     {
-      regEx: new RegExp(game.i18n.localize('DSAREGEX.years'), 'i'),
+      regEx: new RegExp(localize('DSAREGEX.years'), 'i'),
       seconds: 3600 * 24 * 350,
     },
   ];
@@ -227,7 +228,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           );
         }
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
-          obj[e] = game.i18n.localize(`ActiveEffects.messageReceivers.${e}`);
+          obj[e] = localize(`ActiveEffects.messageReceivers.${e}`);
           return obj;
         }, {});
 
@@ -245,8 +246,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           messageReceivers,
           canWeaponAdvantages,
           equipmentAdvantageOptions: {
-            1: game.i18n.localize(`AdvantageRuleItems.${itemType}.1`),
-            2: game.i18n.localize(`AdvantageRuleItems.${itemType}.2`),
+            1: localize(`AdvantageRuleItems.${itemType}.1`),
+            2: localize(`AdvantageRuleItems.${itemType}.2`),
           },
           applySuccessConditions,
           config: this.getConfig(),
@@ -256,7 +257,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
               obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
               return obj;
             },
-            { 2: game.i18n.localize('all') },
+            { 2: localize('all') },
           ),
         });
         break;
@@ -292,7 +293,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       html.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
     if (this.document.statuses.size && game.i18n.has(this.document.description)) {
-      html.find('[data-tab="details"] .editor').replaceWith(`<p>${game.i18n.localize(this.document.description)}</p>`);
+      html.find('[data-tab="details"] .editor').replaceWith(`<p>${localize(this.document.description)}</p>`);
     }
 
     const dropDown = EffectDropdownBuilder.buildDropdownMenu(this.document);
@@ -318,7 +319,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   getStatusEffects() {
     return CONFIG.statusEffects
       .map((x) => {
-        return { id: x.id, name: game.i18n.localize(x.name) };
+        return { id: x.id, name: localize(x.name) };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
   }
@@ -410,10 +411,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                   if (/,/.test(value)) {
                     value = Number(value.split(',')[qs - 1]);
                   } else {
-                    value = Number(value.replace(game.i18n.localize('CHARAbbrev.QS'), qs));
+                    value = Number(value.replace(localize('CHARAbbrev.QS'), qs));
                   }
                   const effectId = getProperty(ef, 'flags.dsa5.args0');
-                  const effectName = game.i18n.localize(`CONDITION.${effectId}`);
+                  const effectName = localize(`CONDITION.${effectId}`);
                   const effectData = {
                     name: `${source.name} (${effectName})`,
                     duration: ef.duration,
@@ -459,7 +460,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                   .split(',')
                   .map((x) => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`)
                   .join(' ');
-                msg += `<p><b>${game.i18n.localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
+                msg += `<p><b>${localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
                 break;
             }
           }
@@ -613,7 +614,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
 
     let duration = getProperty(source, 'system.duration.value') || '';
-    duration = duration.replace(/ x /g, ' * ').replaceAll(game.i18n.localize('CHARAbbrev.QS'), `${testData.qualityStep}`);
+    duration = duration.replace(/ x /g, ' * ').replaceAll(localize('CHARAbbrev.QS'), `${testData.qualityStep}`);
 
     try {
       for (const { regEx, seconds } of DSAActiveEffectConfig.effectDurationRegexes) {

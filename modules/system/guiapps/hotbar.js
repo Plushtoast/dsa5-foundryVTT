@@ -6,6 +6,7 @@ import RuleChaos from '../rules/rule_chaos.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
+import { localize } from '../helpers/localizer.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 const { getProperty, mergeObject } = foundry.utils;
 
@@ -19,12 +20,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
   };
   static WEAPON_POSITIONS = [
-    "left:calc(50% - 72px);top:75px;",
+    "left:calc(50% - 74px);top:75px;",
     "left:calc(50% + 32px);top:75px;",
-    "left:calc(50% - 88px);top:40px;",
+    "left:calc(50% - 91px);top:40px;",
     "left:calc(50% + 48px);top:40px;",
-    "left:calc(50% - 83px);top:5px;",
-    "left:calc(50% + 43px);top:5px;",
+    "left:calc(50% - 86px);top:1px;",
+    "left:calc(50% + 40px);top:1px;",
   ];
   static FALLBACK_NAMES = {
     gm: 'gmMenu',
@@ -63,11 +64,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       el.addEventListener('mousedown', (ev) => RuleChaos.quantityClick(ev));
     });
 
-    const that = this;
     const fn = (ev) => {
       if (!html.find('.sections').is(':hover')) return;
 
-      this.filterSections(ev, html);
+      this.filterSections(ev, html);wa
       return false;
     };
     const filterOff = () => {
@@ -88,6 +88,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
+
+    html.find('.hotbar-avatar').on('dblclick', () => this.actor.sheet.render(true));
 
     const container = this.element.querySelector('.rangeContainer');
     if (!container) return;
@@ -147,8 +149,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #addContextColor() {
-    const parryText = ` ${game.i18n.localize('CHAR.PARRY')}`;
-    const attackText = ` ${game.i18n.localize('CHAR.ATTACK')}`;
+    const parryText = ` ${localize('CHAR.PARRY')}`;
+    const attackText = ` ${localize('CHAR.ATTACK')}`;
 
     for (const slot of this.slots) {
       const mac = slot.macro;
@@ -342,8 +344,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       filterCategories.push({
         key,
         tooltip: game.i18n.has(i18nkey)
-          ? game.i18n.localize(i18nkey)
-          : game.i18n.localize(DSA5Hotbar.FALLBACK_NAMES[key]),
+          ? localize(i18nkey)
+          : localize(DSA5Hotbar.FALLBACK_NAMES[key]),
         img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || DSA5Hotbar.FALLBACK_ICONS[key],
       });
     }
@@ -355,7 +357,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       );
       filterCategories.unshift({
         key: 'attacks',
-        tooltip: game.i18n.localize('Combat'),
+        tooltip: localize('Combat'),
         img: 'systems/dsa5/icons/categories/Meleeweapon.webp',
       });
     }
@@ -390,7 +392,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #conditionAddEffect(effects) {
-    const label = game.i18n.localize('CONDITION.add');
+    const label = localize('CONDITION.add');
     effects.unshift({
       name: 'CONDITION.add',
       id: '',
@@ -497,7 +499,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
               title: "HOTBAR.CLEAR",
               icon: "fa-solid fa-trash"
             },
-            content: game.i18n.localize("HOTBAR.CLEAR_CONFIRM"),
+            content: localize("HOTBAR.CLEAR_CONFIRM"),
             modal: true
           });
           if (proceed) await game.user.update({ hotbar: {} }, { recursive: false, diff: false, noHook: true });
@@ -515,7 +517,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (weapon?.type === 'trait') return [];
 
     const equipableWeapons = this.actor.items.filter(i => ['meleeweapon', 'rangeweapon'].includes(i.type) && !i.system.worn.value);
-    const equip = game.i18n.localize('SHEET.EquipItem');
+    const equip = localize('SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
@@ -548,6 +550,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     context.resources = this.#prepareResources(context);
     context.defenseTooltip = this.#prepareDefenseTooltip(context);
     context.weapons = this.#weaponPositions(context);
+    context.turnClass = game.combat && game.combat?.current?.combatantId === this.actor?.token?.combatant?.id ? 'myRound' : '';
   }
 
   #prepareResources(context) {
@@ -555,35 +558,37 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       LeP: {
         value: this.actor.system.status.wounds.value,
         max: this.actor.system.status.wounds.max,
-        label: game.i18n.localize('CHAR.LEP'),
+        label: localize('CHAR.LEP'),
       },
       AsP: {
         value: this.actor.system.status.astralenergy.value,
         max: this.actor.system.status.astralenergy.max,
-        label: game.i18n.localize('CHAR.ASP'),
+        label: localize('CHAR.ASP'),
       },
       KaP: {
         value: this.actor.system.status.karmaenergy.value,
         max: this.actor.system.status.karmaenergy.max,
-        label: game.i18n.localize('CHAR.KAP'),
+        label: localize('CHAR.KAP'),
       },
     }
   }
 
   #prepareDefenseTooltip(context) {
     const attributes = [
-      { label: game.i18n.localize('actionCount'), value: this.actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
-      { label: game.i18n.localize('speed'), value: this.actor.system.status.speed.max, icon: 'fas fa-running' },
-      { label: game.i18n.localize('soulpower'), value: this.actor.system.status.soulpower.max, icon: 'fas fa-sun' },
-      { label: game.i18n.localize('toughness'), value: this.actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
+      { label: localize('actionCount'), value: this.actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
+      { label: localize('speed'), value: this.actor.system.status.speed.max, icon: 'fas fa-running' },
+      { label: localize('soulpower'), value: this.actor.system.status.soulpower.max, icon: 'fas fa-sun' },
+      { label: localize('toughness'), value: this.actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
     ]
 
-    return attributes.reduce((acc, b) => {
+    const attrString = attributes.reduce((acc, b) => {
       if (b.value === undefined) return acc;
 
       acc.push(`<b><i class="fas ${b.icon}"></i> ${b.label}</b>: ${b.value}`);
       return acc;
     }, []).join('<br/>');
+
+    return `<h1>${this.actor.name}</h1><p>${attrString}</p>`
   }
 
   #weaponPositions(context) {
@@ -618,7 +623,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #addHumanoidWeapon(positions, humanoidWeapons, startIndex) {
     let positionIndex = startIndex;
     const emptyHands = {
-      name: game.i18n.localize('attackWeaponless'),
+      name: localize('attackWeaponless'),
     }
 
     const offHandWeapons = [];
@@ -691,7 +696,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #getAllMacros() {
     const hotbar = game.user?.hotbar ?? {};
-    const emptyLabel = game.i18n.localize('HOTBAR.EMPTY');
+    const emptyLabel = localize('HOTBAR.EMPTY');
     return Array.from({ length: 50 }, (_, i) => {
       const key = i + 1;
       const id = hotbar[key] ?? '';

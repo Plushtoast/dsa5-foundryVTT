@@ -7,6 +7,7 @@ import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
 import { DSATrapRegionBehavior } from '../data/regionbehaviors/trap.js';
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
@@ -123,7 +124,7 @@ export default function () {
     if (getProperty(doc, 'flags.core.initiativeRoll')) {
       const rolls = doc.rolls[0].terms;
       const basnum = `${rolls[0].number}`.split('.')[0];
-      const tooltip = `${game.i18n.localize('baseValue')}: ${basnum}, ${game.i18n.localize('randomValue')}: ${rolls.at(-3).values[0]}")}`;
+      const tooltip = `${localize('baseValue')}: ${basnum}, ${localize('randomValue')}: ${rolls.at(-3).values[0]}")}`;
       const dies = [];
       for (let term of rolls) {
         if (term.faces && term.faces == 6) {
@@ -134,10 +135,10 @@ export default function () {
       }
       const content = `<div>
                 <div class="card-content hide-option roll-result">
-                    <b>${game.i18n.localize('Roll')}</b>: ${dies.join('')}
+                    <b>${localize('Roll')}</b>: ${dies.join('')}
                 </div>
                 <div class="card-content" data-tooltip="${tooltip}">
-                    <b>${game.i18n.localize('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
+                    <b>${localize('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
                 </div>
             </div>`;
 

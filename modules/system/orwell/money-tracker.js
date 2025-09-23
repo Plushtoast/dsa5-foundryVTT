@@ -1,5 +1,6 @@
 import DSA5Payment from "../helpers/payment.js";
 import JournalTracker from "./journal_tracker.js";
+import { localize } from "../helpers/localizer.js";
 
 export default class MoneyTracker extends JournalTracker {
     static configuration = {
@@ -10,9 +11,9 @@ export default class MoneyTracker extends JournalTracker {
 
     static startRow() {
         return this.getRow(
-            game.i18n.localize('Description'),
-            game.i18n.localize('value'),
-            game.i18n.localize('Total'),
+            localize('Description'),
+            localize('value'),
+            localize('Total'),
             'table-title',
         )
     }
@@ -35,13 +36,13 @@ export default class MoneyTracker extends JournalTracker {
         switch (description.type) {
             case 'payment':
                 return description.next > description.previous
-                    ? game.i18n.localize('PAYMENT.wage')
-                    : game.i18n.localize('PAYMENT.wagePaid');
+                    ? localize('PAYMENT.wage')
+                    : localize('PAYMENT.wagePaid');
             case 'sheetChange':
-                return game.i18n.localize('TRACKER.sheetChange');
+                return localize('TRACKER.sheetChange');
             case 'buy':
             case 'sell':
-                return `${game.i18n.localize(`MERCHANT.${description.type}`)} (${description.name}${description.amount != 1 ? ` x${description.amount}` : ''})`;
+                return `${localize(`MERCHANT.${description.type}`)} (${description.name}${description.amount != 1 ? ` x${description.amount}` : ''})`;
         }
     }
 

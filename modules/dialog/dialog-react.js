@@ -5,6 +5,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+import { localize } from '../system/helpers/localizer.js';
 
 export default class DialogReactDSA5 extends Select2Dialog {
   static async showDialog(startMessage) {
@@ -62,7 +63,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
       return { name: k, id: k };
     });
     items.unshift({
-      name: game.i18n.localize('doNothing'),
+      name: localize('doNothing'),
       id: 'doNothing',
     });
     return renderTemplate('systems/dsa5/templates/dialog/dialog-act.hbs', {
@@ -121,12 +122,12 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    const wrestle = game.i18n.localize('LocalizedIDs.wrestle')
+    const wrestle = localize('LocalizedIDs.wrestle')
     const combatskills = this.actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), this.actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
     data.items = [
       {
-        name: game.i18n.localize('attackWeaponless'),
+        name: localize('attackWeaponless'),
         id: 'attackWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.attack.value,
@@ -235,23 +236,23 @@ export class ReactToAttackDialog extends ActAttackDialog {
   async _prepareContext(_options) {
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(this.startMessage);
     const attackActor = ReactToAttackDialog.getAttackActor(this.startMessage);
-    const wrestle = game.i18n.localize('LocalizedIDs.wrestle')
+    const wrestle = localize('LocalizedIDs.wrestle')
     const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
     let items = [
       {
-        name: game.i18n.localize('doNothing'),
+        name: localize('doNothing'),
         id: 'doNothing',
         img: 'systems/dsa5/icons/categories/disease.webp',
       },
       {
-        name: game.i18n.localize('dodge'),
+        name: localize('dodge'),
         id: 'dodge',
         img: 'systems/dsa5/icons/categories/Dodge.webp',
         value: actor.system.status.dodge.max,
       },
       {
-        name: game.i18n.localize('parryWeaponless'),
+        name: localize('parryWeaponless'),
         id: 'parryWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.parry.value,

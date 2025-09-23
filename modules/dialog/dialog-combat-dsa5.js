@@ -13,7 +13,7 @@ import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { RollDialogBuilder } from './dialog-builder.js';
+import { localize, format } from '../system/helpers/localizer.js';
 import SpecialabilityData from '../data/item/specialability.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
@@ -140,7 +140,7 @@ export default class DSA5CombatDialog extends DialogShared {
       const value = Number(dataset[key]) || 0;
       if (value === 0) continue;
 
-      const localizedLabel = game.i18n.localize(label).toUpperCase();
+      const localizedLabel = localize(label).toUpperCase();
       let tooltipText = `<i class="${icon}"></i> ${localizedLabel}: ${value}`;
 
       const flatKey = `${key}Flat`;
@@ -261,7 +261,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     if (!actor) return;
 
-    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === game.i18n.localize('LocalizedIDs.counterAttack');
+    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === localize('LocalizedIDs.counterAttack');
     if (!isCounterAttack) return;
 
     this.dialogData.counterAttack = ev.button === 0;
@@ -279,13 +279,13 @@ export default class DSA5CombatDialog extends DialogShared {
     if (mode === 'attack') {
       situationalModifiers = situationalModifiers.filter(x => x.type !== 'defenseMalus');
 
-      const attackStatIndex = situationalModifiers.findIndex(x => x.name === game.i18n.localize('statuseffects'));
+      const attackStatIndex = situationalModifiers.findIndex(x => x.name === localize('statuseffects'));
       const attackStatEffect = attackStatIndex >= 0 ? situationalModifiers.splice(attackStatIndex, 1)[0] : null;
 
       const defenseModifiers = [];
       cls.getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
 
-      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === game.i18n.localize('statuseffects'));
+      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === localize('statuseffects'));
       const defenseStatEffect = defenseStatIndex >= 0 ? defenseModifiers.splice(defenseStatIndex, 1)[0] : null;
 
       situationalModifiers.unshift(...defenseModifiers);
@@ -302,7 +302,7 @@ export default class DSA5CombatDialog extends DialogShared {
     if (situationalModifiers.length > 0) {
       if (htmlMods.length === 0) {
         const modBox = `<div class="modifiers form-group">
-          <label>${game.i18n.localize('DIALOG.SituationalModifiers')}</label>
+          <label>${localize('DIALOG.SituationalModifiers')}</label>
           <select name="situationalModifiers" multiple />
         </div>`;
         html.find('[name=rollMode]').parent().after(modBox);
@@ -399,7 +399,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   setMovement(html, targets) {
     if (!DPS.isEnabled) return;
-    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return;
+    if (game.canvas.grid.units != localize('gridUnits')) return;
     if (this.dialogData.source.type != 'rangeweapon') return;
 
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
@@ -540,7 +540,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const aimingMod = Math.min(Number(formData.aim) || 0, 4);
     const sizeMod = Number(formData.size) || 0;
-    const modeTranslated = game.i18n.localize(`DIALOG.${mode}`);
+    const modeTranslated = localize(`DIALOG.${mode}`);
     const result = [
       {
         name: modeTranslated,
@@ -552,7 +552,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const multiplier = Math.max(1, 4 - dices);
     result.push(
       {
-        name: modeTranslated + ' (' + game.i18n.localize('CHARAbbrev.damage') + ')',
+        name: modeTranslated + ' (' + localize('CHARAbbrev.damage') + ')',
         damageBonus: tpMod,
         value: 0,
         step: 1,
@@ -586,7 +586,7 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.opposingWeaponSize = opposingWeaponSizeIndex;
 
     const advantageousPositionMod = formData.advantageousPosition ? 2 : 0;
-    const modeTranslated = game.i18n.localize(`DIALOG.${mode}`);
+    const modeTranslated = localize(`DIALOG.${mode}`);
 
     const baseValue = 10 - advantageousPositionMod - opposingWeaponSizeIndex;
     const result = [{ name: modeTranslated, value: baseValue }];
@@ -607,7 +607,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
       result.push(
         {
-          name: `${modeTranslated} (${game.i18n.localize('CHARAbbrev.damage')})`,
+          name: `${modeTranslated} (${localize('CHARAbbrev.damage')})`,
           damageBonus: tpMod,
           value: 0,
           step: 1,
@@ -636,7 +636,7 @@ export default class DSA5CombatDialog extends DialogShared {
           flags: {
             dsa5: {
               description: modeTranslated,
-              resistRoll: `${game.i18n.localize('LocalizedIDs.selfControl')} -3`,
+              resistRoll: `${localize('LocalizedIDs.selfControl')} -3`,
               hideOnToken: false,
               hidePlayers: false,
               customDuration: '',
@@ -676,24 +676,24 @@ export default class DSA5CombatDialog extends DialogShared {
     if (!waterOptions) return [];
 
     const result = [{
-      name: `${game.i18n.localize('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
+      name: `${localize('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
       value: waterOptions,
     }];
 
     const source = testData.source;
     if (source.type === 'trait' || waterIndex < 2) return result;
 
-    const combatInWater = game.i18n.localize('LocalizedIDs.combatInWater');
+    const combatInWater = localize('LocalizedIDs.combatInWater');
     const weaponMadeForWater = getProperty(source, 'system.effect.attributes')?.includes(combatInWater);
 
     if (weaponMadeForWater) return result;
 
     const combatskill = source.system.combatskill?.value;
-    const reverseCombatskill = game.i18n.localize(`LocalizedCTs.${combatskill}`);
+    const reverseCombatskill = localize(`LocalizedCTs.${combatskill}`);
 
     if (DSA5.impossibleWeaponsForWater.has(reverseCombatskill)) {
       result.push({
-        name: `${game.i18n.localize('MODS.combatInWater')} - ${game.i18n.format('MODS.impossibleWeapon', { weapon: combatskill })}`,
+        name: `${localize('MODS.combatInWater')} - ${format('MODS.impossibleWeapon', { weapon: combatskill })}`,
         value: -5000,
       });
       return result;
@@ -711,7 +711,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (damageBonus < 1) {
       result.push({
-        name: `${game.i18n.localize('MODS.combatInWater')} - ${game.i18n.format('MODS.notSuitableWeapon', { weapon: combatskill })}`,
+        name: `${localize('MODS.combatInWater')} - ${format('MODS.notSuitableWeapon', { weapon: combatskill })}`,
         damageBonus: `*${damageBonus}`,
         value: 0,
         step: 1,
@@ -763,39 +763,39 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
 
     const modifiers = [
-      ModifierCalculator.parseValueType(game.i18n.localize('sight'), data.vision || 0),
+      ModifierCalculator.parseValueType(localize('sight'), data.vision || 0),
       {
-        name: game.i18n.localize('MODS.attackFromBehind'),
+        name: localize('MODS.attackFromBehind'),
         value: testData.extra.attackFromBehind,
       },
       {
-        name: game.i18n.localize('MODS.damage'),
+        name: localize('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: game.i18n.format('defenseCount', { malus: multipleDefenseValue }),
+        name: format('defenseCount', { malus: multipleDefenseValue }),
         value: (Number(data.defenseCount) || 0) * multipleDefenseValue,
       },
       {
-        name: game.i18n.localize('MODS.wrongHand'),
+        name: localize('MODS.wrongHand'),
         value: Number(data.wrongHand) || 0,
       },
       {
-        name: game.i18n.localize('MODS.advantageousPosition'),
+        name: localize('MODS.advantageousPosition'),
         value: Number(data.advantageousPosition) || 0,
       },
       {
-        name: game.i18n.localize('sizeCategory'),
+        name: localize('sizeCategory'),
         value: targetIsSwarm ? 0 : DSA5.meleeSizeModifier[data.size] || 0,
       },
       {
-        name: game.i18n.localize('MODS.narrowSpace'),
+        name: localize('MODS.narrowSpace'),
         value: Number(data.narrowSpace) || 0,
       },
       {
-        name: game.i18n.localize('MODS.doubleAttack'),
+        name: localize('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
       ...Itemdsa5.getSpecAbModifiers(html, mode),
@@ -805,7 +805,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     testData.situationalModifiers.push(...modifiers);
 
-    if (testData.situationalModifiers.some(x => x.name === game.i18n.localize('LocalizedIDs.counterAttack'))) {
+    if (testData.situationalModifiers.some(x => x.name === localize('LocalizedIDs.counterAttack'))) {
       testData.mode = 'attack';
       testData.extra.counterAttack = true;
     }
@@ -832,45 +832,45 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const modifiers = [
       {
-        name: `${game.i18n.localize('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
+        name: `${localize('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
         value: targetMovement,
       },
       {
-        name: `${game.i18n.localize('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
+        name: `${localize('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
         value: shooterMovement,
       },
       {
-        name: `${game.i18n.localize('mount')} ${this._getSelectedText('mountedOptions', html)}`,
+        name: `${localize('mount')} ${this._getSelectedText('mountedOptions', html)}`,
         value: mountedOptions,
       },
       {
-        name: game.i18n.localize('MODS.quickChange'),
+        name: localize('MODS.quickChange'),
         value: quickChange,
       },
       {
-        name: game.i18n.localize('MODS.combatTurmoil'),
+        name: localize('MODS.combatTurmoil'),
         value: Number(data.combatTurmoil) || 0,
       },
       {
-        name: game.i18n.localize('MODS.aim'),
+        name: localize('MODS.aim'),
         value: aim,
       },
       {
-        name: game.i18n.localize('MODS.damage'),
+        name: localize('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: game.i18n.localize('sight'),
+        name: localize('sight'),
         value: Number(data.vision) || 0,
       },
       {
-        name: game.i18n.localize('sizeCategory'),
+        name: localize('sizeCategory'),
         value: sizeMod,
       },
       {
-        name: game.i18n.localize('distance'),
+        name: localize('distance'),
         value: Number(rangeMod.attack) || 0,
         damageBonus: Number(rangeMod.damage) || 0,
       },
@@ -894,7 +894,7 @@ export default class DSA5CombatDialog extends DialogShared {
   static _applySharpshooterBonus(testData, actor, formData, modValues) {
     const sharpshooter = actor.items.find(
       item => item.type === 'specialability' &&
-        item.name === game.i18n.localize('LocalizedIDs.sharpshooter')
+        item.name === localize('LocalizedIDs.sharpshooter')
     );
 
     if (!sharpshooter) return;
@@ -928,7 +928,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (sharpshooterBonus > 0) {
       testData.situationalModifiers.push({
-        name: game.i18n.localize('LocalizedIDs.sharpshooter'),
+        name: localize('LocalizedIDs.sharpshooter'),
         value: sharpshooterBonus,
       });
     }
@@ -955,11 +955,11 @@ export default class DSA5CombatDialog extends DialogShared {
     let value = Number(formData.opportunityAttack) || 0;
     if (value) {
       situationalModifiers.push({
-        name: game.i18n.localize('MODS.opportunityAttack'),
+        name: localize('MODS.opportunityAttack'),
         value,
       });
-      const enemySense = game.i18n.localize('LocalizedIDs.enemySense');
-      const winhallStyle = game.i18n.localize('LocalizedIDs.winhallStyle');
+      const enemySense = localize('LocalizedIDs.enemySense');
+      const winhallStyle = localize('LocalizedIDs.winhallStyle');
       game.user.targets.forEach((target) => {
         for (const item of target.actor?.items || []) {
           if (item.type == 'specialability') {
@@ -990,7 +990,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (progress < LZ) {
         buttons.push({
           action: 'reloadButton',
-          label: `${game.i18n.localize('WEAPON.reload')} (${progress}/${LZ})`,
+          label: `${localize('WEAPON.reload')} (${progress}/${LZ})`,
           callback: async () => {
             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
             await actor.updateEmbeddedDocuments('Item', [
@@ -999,7 +999,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 'system.reloadTime.progress': progress + 1,
               },
             ]);
-            const infoMsg = game.i18n.format('WEAPON.isReloading', {
+            const infoMsg = format('WEAPON.isReloading', {
               actor: actor.token?.name || actor.prototypeToken.name,
               item: testData.source.name,
               status: `${progress + 1}/${LZ}`,

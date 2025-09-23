@@ -4,6 +4,7 @@ import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 
 export default function () {
@@ -14,11 +15,11 @@ export default function () {
     if (actor && actor.documentName == 'Actor') {
       if (getProperty(effect, 'flags.dsa5.maintain')) {
         const effectsToRemove = [effect._id];
-        const searchEffect = effect.name.replace('(' + game.i18n.localize('maintainCost') + ')', '').trim();
+        const searchEffect = effect.name.replace('(' + localize('maintainCost') + ')', '').trim();
         const relatedEffects = actor.effects.filter((x) => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id);
         let content = `<p>${game.i18n.format('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
         if (relatedEffects) {
-          content += `<p>${game.i18n.localize('DIALOG.dependentMaintainEffects')}</p>`;
+          content += `<p>${localize('DIALOG.dependentMaintainEffects')}</p>`;
           content += relatedEffects
             .map(
               (x) =>
@@ -290,7 +291,7 @@ export default function () {
     if (setting == 0 || getProperty(actor, 'merchant.merchantType') == 'loot') return;
 
     let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
-    let name = game.i18n.localize('unknown');
+    let name = localize('unknown');
     if ([2, 4].includes(setting)) {
       const tokenId = token.id || token._id;
       if (!tokenId) return;
@@ -441,7 +442,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
 
   static async getDialog(tokenObject, setting) {
     new AskForNameDialog({
-      content: `<div class="form-group"><label for="name">${game.i18n.localize('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
+      content: `<div class="form-group"><label for="name">${localize('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
       buttons: [
         {
           action: 'yes',
@@ -473,7 +474,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
           callback: async () => {
             const tokenId = tokenObject.id || tokenObject._id;
             const token = canvas.scene.tokens.get(tokenId);
-            await token.update({ name: game.i18n.localize('unknown') });
+            await token.update({ name: localize('unknown') });
           },
         },
         {

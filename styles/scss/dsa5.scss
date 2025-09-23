@@ -5118,22 +5118,6 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
-.coinIcon:before {
-  content: '';
-  mask-size: 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  mask-image: url('../../../../icons/svg/coins.svg');
-  -webkit-mask-image: url('../../../../icons/svg/coins.svg');
-  background-color: white;
-}
-
 .dsaRollMode {
   .checkbox input[type='radio'] {
     display: none;

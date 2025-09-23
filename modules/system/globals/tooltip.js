@@ -1,4 +1,5 @@
 import DSA5StatusEffects from "../../status/status_effects.js";
+import { localize } from "../helpers/localizer.js";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -78,13 +79,13 @@ export class GlobalToolTipHandler {
         if (!effect) {
             effect = CONFIG.statusEffects.find(x => x.id === data.id);
             if (effect) {
-                description = game.i18n.localize(effect.description);
-                name = game.i18n.localize(effect.name);
+                description = localize(effect.description);
+                name = localize(effect.name);
             }
         } else {
             const pips = {};
             await DSA5StatusEffects.enrichSheetEffect(pips, effect);
-            description = game.i18n.has(effect.description) ? game.i18n.localize(effect.description) : effect.description;
+            description = game.i18n.has(effect.description) ? localize(effect.description) : effect.description;
             if (pips.pips.length) {
                 description = `
                 <small class="flexrow gap2px ellipsis">
@@ -149,7 +150,7 @@ export class GlobalToolTipHandler {
 
         if (item.system.obfuscation?.enchantment) {
             description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', item);
-            name = `${game.i18n.localize('enchantment')} (${item.name})`;
+            name = `${localize('enchantment')} (${item.name})`;
         } else {
             const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
             name = `${enchantment.name} (${item.name})`;

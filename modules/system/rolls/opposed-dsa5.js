@@ -6,6 +6,7 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../../status/active_effects.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSATriggers from '../automation/triggers.js';
+import { localize } from '../helpers/localizer.js';
 
 const { mergeObject, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -195,7 +196,7 @@ export default class OpposedDsa5 {
       const attackOfOpportunity = message.flags.data.preData.attackOfOpportunity;
       let unopposedButton = attackOfOpportunity
         ? ''
-        : `<div class="flexrow"><button class="unopposed-button small-button chat-button-target" data-target="true">${game.i18n.localize('Unopposed')}</button></div>`;
+        : `<div class="flexrow"><button class="unopposed-button small-button chat-button-target" data-target="true">${localize('Unopposed')}</button></div>`;
       let startMessagesList = [];
 
       for (const target of game.user.targets) {
@@ -235,7 +236,7 @@ export default class OpposedDsa5 {
           }
           startMessagesList.push(startMessage.id);
           if (attackOfOpportunity) {
-            await OpposedDsa5.resolveUndefended(startMessage, game.i18n.localize('OPPOSED.attackOfOpportunity'));
+            await OpposedDsa5.resolveUndefended(startMessage, localize('OPPOSED.attackOfOpportunity'));
           } else if (isDamageRoll) {
             await OpposedDsa5.resolveUndefended(startMessage);
           }
@@ -266,7 +267,7 @@ export default class OpposedDsa5 {
    */
   static opposeMessage(attacker, target, fail) {
     return `<div class="opposed-message">
-            <b>${attacker.name}</b> ${game.i18n.localize('ROLL.Targeting')} <b>${target.document.name}</b> ${fail ? game.i18n.localize('ROLL.failed') : ''}
+            <b>${attacker.name}</b> ${localize('ROLL.Targeting')} <b>${target.document.name}</b> ${fail ? localize('ROLL.failed') : ''}
             </div>
             <div class="opposed-tokens row-section">
                 <div class="col two attacker">${OpposedDsa5.videoOrImgTag(attacker.texture.src)}</div>
@@ -419,17 +420,17 @@ export default class OpposedDsa5 {
       const str = [];
 
       if (isCrit) {
-        str.push(game.i18n.localize('CriticalSuccess'));
+        str.push(localize('CriticalSuccess'));
       } else if (isBotch) {
-        str.push(game.i18n.localize('CriticalFailure'));
+        str.push(localize('CriticalFailure'));
       } else if (isParryCrit) {
-        str.push(`${game.i18n.localize('CHAR.PARRY')} ${game.i18n.localize('CriticalSuccess')}`);
+        str.push(`${localize('CHAR.PARRY')} ${localize('CriticalSuccess')}`);
       } else if (isParryBotch) {
-        str.push(`${game.i18n.localize('CHAR.PARRY')} ${game.i18n.localize('CriticalFailure')}`);
+        str.push(`${localize('CHAR.PARRY')} ${localize('CriticalFailure')}`);
       }
 
       if (!isHit) {
-        str.push(game.i18n.localize('CHAR.PARRY'));
+        str.push(localize('CHAR.PARRY'));
       }
 
       for (let st of str) {
@@ -646,21 +647,21 @@ export default class OpposedDsa5 {
 
       if (isBrawlingDefense) {
         opposeResult.other.push(
-          `<div class="flexrow">${game.i18n.localize('BRAWLING.defense')}</div>`
+          `<div class="flexrow">${localize('BRAWLING.defense')}</div>`
         );
       }
 
       if (damage.armorDamaged.damaged && damage.armorDamaged.ids.length) {
         const uuids = damage.armorDamaged.ids.join(';');
         opposeResult.other.push(
-          `<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${uuids}">${game.i18n.localize('WEAR.checkShort')}</button></div>`,
+          `<div style="margin-top:10px" class="center"><button class="gearDamaged onlyTarget" data-uuid="${uuids}">${localize('WEAR.checkShort')}</button></div>`,
         );
       }
 
       if (defenderTest.counterAttack) {
         damage.damage += 2;
         damage.sum = damage.damage - damage.armor;
-        damage.tooltip = game.i18n.localize('LocalizedIDs.counterAttack') + ' 2';
+        damage.tooltip = localize('LocalizedIDs.counterAttack') + ' 2';
       }
 
       if (damage.messages.length) {
@@ -672,12 +673,12 @@ export default class OpposedDsa5 {
       opposeResult.winner = 'attacker';
 
       let title = '';
-      if (damage.armorMod != 0) title += `${damage.armorMod} ${game.i18n.localize('Modifier')}`;
-      if (damage.armorMultiplier != 1) title += `*${damage.armorMultiplier} ${game.i18n.localize('Modifier')}`;
-      if (damage.spellArmor != 0) title += `${damage.spellArmor} ${game.i18n.localize('spellArmor')}`;
-      if (damage.liturgyArmor != 0) title += `${damage.liturgyArmor} ${game.i18n.localize('liturgyArmor')}`;
+      if (damage.armorMod != 0) title += `${damage.armorMod} ${localize('Modifier')}`;
+      if (damage.armorMultiplier != 1) title += `*${damage.armorMultiplier} ${localize('Modifier')}`;
+      if (damage.spellArmor != 0) title += `${damage.spellArmor} ${localize('spellArmor')}`;
+      if (damage.liturgyArmor != 0) title += `${damage.liturgyArmor} ${localize('liturgyArmor')}`;
 
-      const dmgString = game.i18n.localize(game.combat?.isBrawling ? 'BRAWLING.temporary' : 'damage');
+      const dmgString = localize(game.combat?.isBrawling ? 'BRAWLING.temporary' : 'damage');
       const description = `<b>${dmgString}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ''}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`;
       opposeResult.damage = {
         description,
@@ -707,7 +708,7 @@ export default class OpposedDsa5 {
     const context = {
       result: game.i18n.format('BRAWLING.attacksHurt', { name: attacker.name }),
       damage: {
-        description: `<b>${game.i18n.localize('damage')}</b>: <span>${damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i>`
+        description: `<b>${localize('damage')}</b>: <span>${damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i>`
       },
       applyDamageInChat: game.settings.get('dsa5', 'applyDamageInChat')
     }
@@ -735,8 +736,8 @@ export default class OpposedDsa5 {
 
     if (!defWeapon || !atWeapon) return false;
 
-    const attackerUsesBrawling = atWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) == 'Brawling' && !atWeapon.system.preventsBrawlAttackDamage;
-    const defenderHasWeapon = defWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) != 'Brawling';
+    const attackerUsesBrawling = atWeapon.type == 'meleeweapon' && localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) == 'Brawling' && !atWeapon.system.preventsBrawlAttackDamage;
+    const defenderHasWeapon = defWeapon.type == 'meleeweapon' && localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) != 'Brawling';
 
     return attackerUsesBrawling && defenderHasWeapon;
   }
@@ -747,9 +748,9 @@ export default class OpposedDsa5 {
 
     if (!defWeapon || !atWeapon) return false;
 
-    const attackerHasWeapon = atWeapon.type == 'meleeweapon' && game.i18n.localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) != 'Brawling';
+    const attackerHasWeapon = atWeapon.type == 'meleeweapon' && localize(`LocalizedCTs.${atWeapon.system.combatskill.value}`) != 'Brawling';
     const defendsWithBrawling = defWeapon.type == 'meleeweapon'
-      && game.i18n.localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) == 'Brawling'
+      && localize(`LocalizedCTs.${defWeapon.system.combatskill.value}`) == 'Brawling'
       && !defWeapon.system.preventsBrawlParryDamage;
 
     return attackerHasWeapon && defendsWithBrawling;
@@ -776,7 +777,7 @@ export default class OpposedDsa5 {
     const messages = [];
     let baseDamage = attackerTest.damage;
 
-    const immuneToCrit = game.i18n.localize('LocalizedIDs.immuneToCrit');
+    const immuneToCrit = localize('LocalizedIDs.immuneToCrit');
     if (attackerTest.doubleDamage && actor.items.find((x) => x.name == immuneToCrit && x.type == 'trait')) {
       baseDamage = Math.floor(baseDamage / attackerTest.doubleDamage);
       messages.push(immuneToCrit);

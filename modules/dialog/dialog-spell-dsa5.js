@@ -5,7 +5,7 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
-import { RollDialogBuilder } from './dialog-builder.js';
+import { localize } from '../system/helpers/localizer.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -53,7 +53,7 @@ export default class DSA5SpellDialog extends DialogShared {
         buttons.push(
           {
             action: 'reloadButton',
-            label: `${game.i18n.localize('SPELL.reload')}${progressLabel}`,
+            label: `${localize('SPELL.reload')}${progressLabel}`,
             callback: async (event, button, dialog) => {
               const dlg = $(button.form);
               const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
@@ -93,9 +93,9 @@ export default class DSA5SpellDialog extends DialogShared {
         for (let change of ef.changes) {
           if (DSA5SpellDialog.rollChanges.includes(change.key)) {
             let name = item.name.split(' - ');
-            const typeName = game.i18n.localize(`MODS.${change.key}`);
+            const typeName = localize(`MODS.${change.key}`);
             name = `${name[1] || name[0]}`;
-            const tooltip = `${typeName}: ${change.value}<br/>${game.i18n.localize('spellextension')}: ${name}`;
+            const tooltip = `${typeName}: ${change.value}<br/>${localize('spellextension')}: ${name}`;
             mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`);
           } else if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
@@ -113,8 +113,8 @@ export default class DSA5SpellDialog extends DialogShared {
     }
     const extensionMod = this.dialogData.renderData.rollModifiersPrepared.extensionModifier.mod;
     if (extensionMod) {
-      const typeName = game.i18n.localize(`ABBR.modifiers`);
-      const ext = game.i18n.localize('spellextension');
+      const typeName = localize(`ABBR.modifiers`);
+      const ext = localize('spellextension');
       const tooltip = `${typeName}: ${extensionMod}<br/>${ext}`;
       mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="" value="${extensionMod}">${ext} - ${typeName}</option>`);
     }
@@ -231,13 +231,13 @@ export default class DSA5SpellDialog extends DialogShared {
     }
 
     mod = 0;
-    let newReach = game.i18n.localize('ReverseSpellRanges.' + baseReach);
+    let newReach = localize('ReverseSpellRanges.' + baseReach);
     reach.text(baseReach);
     parent.find('.spellModifier[data-reach]:checked').each(function (index, element) {
       if (newReach == 'self') {
         element.checked = false;
       } else if (newReach == 'touch') {
-        reach.text('4 ' + game.i18n.localize('step'));
+        reach.text('4 ' + localize('step'));
         mod += Number(element.value);
       } else {
         let val = baseReach.split(' ');
@@ -248,7 +248,7 @@ export default class DSA5SpellDialog extends DialogShared {
             localize: true,
           });
         } else {
-          reach.text(newReach * 2 + ' ' + game.i18n.localize('step'));
+          reach.text(newReach * 2 + ' ' + localize('step'));
           mod += Number(element.value);
         }
       }

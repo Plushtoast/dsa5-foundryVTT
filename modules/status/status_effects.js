@@ -1,6 +1,7 @@
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
+import { localize } from '../system/helpers/localizer.js';
 const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
 
 export default class DSA5StatusEffects {
@@ -24,7 +25,7 @@ export default class DSA5StatusEffects {
   }
 
   static lockedCondition() {
-    const lock = game.i18n.localize('MERCHANT.locked');
+    const lock = localize('MERCHANT.locked');
     return {
       id: 'locked',
       name: lock,
@@ -40,7 +41,7 @@ export default class DSA5StatusEffects {
   }
 
   static async createCustomEffect(owner, description = '', name) {
-    name = name || game.i18n.localize('CONDITION.custom');
+    name = name || localize('CONDITION.custom');
     if (description == '') description = name;
 
     const effect = await owner.addCondition({
@@ -105,7 +106,7 @@ export default class DSA5StatusEffects {
       data.cumulativeConditions.push({
         img: ef.img,
         id: key,
-        name: game.i18n.localize(ef.name),
+        name: localize(ef.name),
         value: val,
       });
     }
@@ -129,7 +130,7 @@ export default class DSA5StatusEffects {
       effectData.pips.push({
         category: 'systemEffect',
         id: status,
-        content: game.i18n.localize(systemEffect.name)
+        content: localize(systemEffect.name)
       });
     }
 
@@ -188,7 +189,7 @@ export default class DSA5StatusEffects {
     if (immunities.includes(effect.id)) {
       res = {
         name: target.name,
-        condition: game.i18n.localize(`CONDITION.${effect.id}`),
+        condition: localize(`CONDITION.${effect.id}`),
       };
     }
     if (!res && target.documentName == 'Actor') {
@@ -197,7 +198,7 @@ export default class DSA5StatusEffects {
         if (type.ignoredCondition(effect.id)) {
           res = {
             name: `${target.name} (${type.getName()})`,
-            condition: game.i18n.localize(`CONDITION.${effect.id}`),
+            condition: localize(`CONDITION.${effect.id}`),
           };
           break;
         }
@@ -232,7 +233,7 @@ export default class DSA5StatusEffects {
 
   static async createEffect(actor, effect, value, auto) {
     //const immune = this.immuneToEffect(actor, effect)
-    effect.name = game.i18n.localize(effect.name);
+    effect.name = localize(effect.name);
     this.immuneToEffect(actor, effect, false);
     //if (immune) return immune
 
@@ -342,7 +343,7 @@ export default class DSA5StatusEffects {
   }
 
   static getRollModifiers(actor, item, options = {}) {
-    const source = game.i18n.localize('status') + '/' + game.i18n.localize('condition');
+    const source = localize('status') + '/' + localize('condition');
     const result = [];
     const finishedCoreIds = [];
 
@@ -362,7 +363,7 @@ export default class DSA5StatusEffects {
 
         if (value != 0) {
           result.push({
-            name: game.i18n.localize(ef.name),
+            name: localize(ef.name),
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor),
             source,
@@ -409,7 +410,7 @@ export default class DSA5StatusEffects {
         name: ef.name,
         value: ef.value,
         selected: true,
-        source: game.i18n.localize('MASTER.globalMods'),
+        source: localize('MASTER.globalMods'),
       });
     }
     return result;
@@ -440,7 +441,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const regex = new RegExp(`${game.i18n.localize('TYPES.ITEM.combatskill')} `, 'gi');
+    const regex = new RegExp(`${localize('TYPES.ITEM.combatskill')} `, 'gi');
     const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
     if (
       (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -460,14 +461,14 @@ class RaptureEffect extends DSA5StatusEffects {
 class DeafEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    return item.type == 'skill' && item.name == game.i18n.localize('LocalizedIDs.perception') ? -3 : 0;
+    return item.type == 'skill' && item.name == localize('LocalizedIDs.perception') ? -3 : 0;
   }
 }
 
 class BloodrushEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill') return item.name == game.i18n.localize('LocalizedIDs.featOfStrength') ? 2 : 0;
+    if (item.type == 'skill') return item.name == localize('LocalizedIDs.featOfStrength') ? 2 : 0;
 
     return options.mode == 'attack' ? 4 : 0;
   }
@@ -485,7 +486,7 @@ class TranceEffect extends DSA5StatusEffects {
     if (item.type == 'regenerate') return 0;
     switch (Number(this.clampedCondition(actor, effect))) {
       case -2:
-        const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
+        const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
         const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
         if (
           (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -505,7 +506,7 @@ class TranceEffect extends DSA5StatusEffects {
 class DrunkenEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == game.i18n.localize('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == localize('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }
@@ -514,7 +515,7 @@ class DrunkenEffect extends DSA5StatusEffects {
 class BurningEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == game.i18n.localize('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
+    if (item.type == 'skill' && item.name == localize('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
 
     return 0;
   }
@@ -529,7 +530,7 @@ class ArousalEffect extends DSA5StatusEffects {
 
 class SikaryanlossEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == game.i18n.localize('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
+    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
     else if (item.type == 'regenerate') return this.clampedCondition(actor, effect);
 
     return 0;
@@ -538,7 +539,7 @@ class SikaryanlossEffect extends DSA5StatusEffects {
 
 class DesireEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == game.i18n.localize('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }

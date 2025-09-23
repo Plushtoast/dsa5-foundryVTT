@@ -13,6 +13,7 @@ import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RequestRoll from '../system/rolls/request-roll.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
+import { localize } from '../system/helpers/localizer.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -383,7 +384,7 @@ const AdvancableSkill = (superclass) =>
     }
 
     _checkMaximumItemAdvancement(newValue) {
-      const maxBonus = AdvantageRulesDSA5.vantageStep(this.actor, `${game.i18n.localize(this.advanceSkill)} (${this.item.name})`, false);
+      const maxBonus = AdvantageRulesDSA5.vantageStep(this.actor, `${localize(this.advanceSkill)} (${this.item.name})`, false);
       const max = this._maxAllowedAdvancement(maxBonus);
       const result = newValue <= max;
       if (!result)
@@ -801,7 +802,7 @@ class Enchantable extends ItemSheetdsa5 {
     for (let dragData of dragDataArray) {
       const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
       if (['spell', 'liturgy', 'ceremony', 'ritual'].includes(typeClass)) {
-        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: game.i18n.localize('TYPES.Item.spell') }, localize: true });
+        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: localize('TYPES.Item.spell') }, localize: true });
 
         const enchantment = {
           name: item.name,
@@ -840,7 +841,7 @@ class Enchantable extends ItemSheetdsa5 {
             window: {
               title: game.i18n.format('WIZARD.addItem', { item: item.name }),
             },
-            content: `<p>${game.i18n.localize('DSAError.poisonNeedsToBeInActor')}</p><p>${game.i18n.localize('POISON.addNow')}</p>`,
+            content: `<p>${localize('DSAError.poisonNeedsToBeInActor')}</p><p>${localize('POISON.addNow')}</p>`,
             rejectClose: false,
             modal: true,
           });
@@ -962,7 +963,7 @@ class Enchantable extends ItemSheetdsa5 {
     if (enchantments.some((x) => !x.talisman)) enchantmentLabel.push('enchantment');
     if (enchantments.some((x) => x.talisman)) enchantmentLabel.push('talisman');
 
-    return enchantmentLabel.map((x) => game.i18n.localize(x)).join('/');
+    return enchantmentLabel.map((x) => localize(x)).join('/');
   }
 
   async _prepareContext(_options) {
@@ -1209,9 +1210,9 @@ class MagicalSignSheet extends NoEffectsSheet {
 
     const actor = this.actor;
     const sign = this.item.system.chatDataToString();
-    const skill = actor.items.find((x) => x.type == 'skill' && x.name == game.i18n.localize('LocalizedIDs.artisticAbility'));
+    const skill = actor.items.find((x) => x.type == 'skill' && x.name == localize('LocalizedIDs.artisticAbility'));
     const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign}<span class="costCheck"></span></p>`;
-    const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${game.i18n.localize('TYPES.Item.magicalsign')})` }, undefined);
+    const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${localize('TYPES.Item.magicalsign')})` }, undefined);
     const res = await actor.basicTest(setupData, { suppressMessage: true });
     res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true };
     await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage);
@@ -1273,7 +1274,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
         dsa5: {
           alternateAttacks: {
             [attackName]: {
-              name: game.i18n.localize('CHAR.ATTACK'),
+              name: localize('CHAR.ATTACK'),
             },
           },
         },
@@ -1284,7 +1285,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
 
 class RangeweaponSheet extends WeaponSheetDSA5 {
   get isPoisonable() {
-    return game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`) == 'Throwing Weapons';
+    return localize(`LocalizedCTs.${this.item.system.combatskill.value}`) == 'Throwing Weapons';
   }
 }
 
@@ -1421,7 +1422,7 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
 
   async _prepareContext(_options) {
     const context = await super._prepareContext(_options);
-    context.isBrawling = game.i18n.localize(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
+    context.isBrawling = localize(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
     return context;
   }
 }
@@ -1491,7 +1492,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
           .replace(/\(a-z äöü-\)/gi, '')
           .split(',')
           .map((x) => x.trim())) {
-          if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${game.i18n.localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
+          if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
             focusValue = this.maxByAttr(maxBonus);
             break;
           }
@@ -1499,7 +1500,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
         break;
       case 'liturgy':
       case 'ceremony':
-        const aspect = new RegExp(`^${game.i18n.localize('LocalizedIDs.aspectKnowledge')}`);
+        const aspect = new RegExp(`^${localize('LocalizedIDs.aspectKnowledge')}`);
         if (
           this.actor.items
             .filter((x) => x.type == 'specialability' && aspect.test(x.name))

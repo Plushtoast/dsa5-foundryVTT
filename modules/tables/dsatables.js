@@ -1,6 +1,7 @@
 import DSA5 from '../config/config-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -14,11 +15,11 @@ export default class DSATables {
     options.source = dataset.source;
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
-    const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], game.i18n.localize(`TABLENAMES.${dataset.table}`), dataset);
+    const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], localize(`TABLENAMES.${dataset.table}`), dataset);
     for (let tableResult of tableResults) {
       const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
       const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
-      const title = `${game.i18n.localize('TABLENAMES.' + dataset.table)}`;
+      const title = `${localize('TABLENAMES.' + dataset.table)}`;
 
       const content = await renderTemplate('systems/dsa5/templates/tables/tableCard.hbs', { result, title, hasEffect });
 
@@ -111,23 +112,23 @@ export default class DSATables {
   }
 
   static rollCritBotchButton(table, weaponless, testData) {
-    const title = game.i18n.localize(`TABLENAMES.${table}`);
+    const title = localize(`TABLENAMES.${table}`);
     const speaker = testData.extra.speaker;
     const source = testData.source._id;
     return `, <a class="roll-button botch-roll" data-table="${table}" data-weaponless="${weaponless}" data-source="${source}" data-token="${speaker.token}" data-actor="${speaker.actor}" data-scene="${speaker.scene}"><i class="fas fa-dice"></i>${title}</a>`;
   }
 
   static async defaultBotch() {
-    return ', ' + game.i18n.localize('selfDamage') + (await new Roll('1d6+2').evaluate()).total;
+    return ', ' + localize('selfDamage') + (await new Roll('1d6+2').evaluate()).total;
   }
 
   static defaultAttackCrit(confirmed) {
-    let res = ', ' + game.i18n.localize('halfDefense');
+    let res = ', ' + localize('halfDefense');
     if (confirmed) res += ', ' + game.i18n.format('doubleDamage', { x: 2 });
     return res;
   }
 
   static defaultParryCrit() {
-    return ', ' + game.i18n.localize('attackOfOpportunity');
+    return ', ' + localize('attackOfOpportunity');
   }
 }

@@ -23,6 +23,7 @@ import RuleChaos from '../rules/rule_chaos.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { localize, format } from '../helpers/localizer.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -380,7 +381,7 @@ export default class DiceDSA5 {
    */
   static #buildAttributesList() {
     return Object.keys(DSA5.characteristics).reduce((acc, attr) => {
-      acc[attr] = game.i18n.localize(`CHARAbbrev.${attr.toUpperCase()}`);
+      acc[attr] = localize(`CHARAbbrev.${attr.toUpperCase()}`);
       return acc;
     }, {});
   }
@@ -445,10 +446,10 @@ export default class DiceDSA5 {
       const duplicatusRoll = await DiceDSA5.manualRolls(await new Roll('1d20').evaluate());
       this._addRollDiceSoNice(testData, duplicatusRoll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration('ch'));
       const hit = duplicatusRollTarget >= duplicatusRoll._total;
-      const html = `<div class="card-content"><b>Duplicatus-${game.i18n.localize('Roll')}</b>: <span data-tooltip="${game.i18n.localize('Roll')} vs ${duplicatusRollTarget}" class="die-ch d20">${duplicatusRoll._total}</span></div`;
+      const html = `<div class="card-content"><b>Duplicatus-${localize('Roll')}</b>: <span data-tooltip="${localize('Roll')} vs ${duplicatusRollTarget}" class="die-ch d20">${duplicatusRoll._total}</span></div`;
       res.other = [html];
       if (!hit && res.successLevel > 0) {
-        res.description = `${game.i18n.localize('Failure')}, ${game.i18n.localize('CHATNOTIFICATION.duplicatus')}`;
+        res.description = `${localize('Failure')}, ${localize('CHATNOTIFICATION.duplicatus')}`;
         res.successLevel = 0;
       }
     }
@@ -555,7 +556,7 @@ export default class DiceDSA5 {
 
     this._appendSituationalModifiers(
       testData,
-      `${game.i18n.localize('CHAR.ATTACK')} - ${game.i18n.localize('WEAPON.improvised')}`,
+      `${localize('CHAR.ATTACK')} - ${localize('WEAPON.improvised')}`,
       2,
       'defenseMalus'
     );
@@ -603,7 +604,7 @@ export default class DiceDSA5 {
    */
   static #adjustForOpportunityAttack(testData, adjustThresholds) {
     const opportunityAttack = testData.situationalModifiers.find(
-      (x) => x.name === game.i18n.localize('MODS.opportunityAttack') && x.value !== 0
+      (x) => x.name === localize('MODS.opportunityAttack') && x.value !== 0
     );
 
     if (opportunityAttack) {
@@ -645,7 +646,7 @@ export default class DiceDSA5 {
       };
     }
 
-    const baseDescription = game.i18n.localize(isCrit ? 'CriticalSuccess' : 'CriticalFailure');
+    const baseDescription = localize(isCrit ? 'CriticalSuccess' : 'CriticalFailure');
     let successLevel = isCrit ? DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_SUCCESS : DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_FAILURE;
 
     if (game.settings.get('dsa5', 'noConfirmationRoll')) {
@@ -661,7 +662,7 @@ export default class DiceDSA5 {
     );
 
     return {
-      description: `${game.i18n.localize(confirmationResult.confirmed ? 'confirmed' : 'unconfirmed')} ${baseDescription}${confirmationResult.additionalDescription}`,
+      description: `${localize(confirmationResult.confirmed ? 'confirmed' : 'unconfirmed')} ${baseDescription}${confirmationResult.additionalDescription}`,
       successLevel: confirmationResult.confirmed ? successLevel : (isCrit ? 2 : -2),
       characteristics: confirmationResult.characteristics
     };
@@ -698,7 +699,7 @@ export default class DiceDSA5 {
         testData.extra.options
       );
       confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
-      additionalDescription = `, ${game.i18n.format('usedWeaponExpertise', { a: oldRoll, b: rollConfirm.total })}`;
+      additionalDescription = `, ${format('usedWeaponExpertise', { a: oldRoll, b: rollConfirm.total })}`;
     }
 
     const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id);
@@ -727,7 +728,7 @@ export default class DiceDSA5 {
   static #shouldUseWeaponAptitude(actor, combatskill, confirmResult) {
     return AdvantageRulesDSA5.hasVantage(
       actor,
-      `${game.i18n.localize('LocalizedIDs.weaponAptitude')} (${combatskill})`,
+      `${localize('LocalizedIDs.weaponAptitude')} (${combatskill})`,
       false
     ) && confirmResult < 0;
   }
@@ -750,7 +751,7 @@ export default class DiceDSA5 {
       successLevel = confirmationResult.successLevel;
       characteristics.push(...confirmationResult.characteristics);
     } else if (!isCrit && !isBotch) {
-      description = game.i18n.localize(rollResult.success ? 'Success' : 'Failure');
+      description = localize(rollResult.success ? 'Success' : 'Failure');
     }
 
     return {
@@ -805,31 +806,31 @@ export default class DiceDSA5 {
 
     const isSick = actor.effects.some((x) => x.statuses.has('sick'));
     if (isSick) {
-      this._appendSituationalModifiers(testData, game.i18n.localize('CONDITION.sick'), '*0');
+      this._appendSituationalModifiers(testData, localize('CONDITION.sick'), '*0');
       for (let k of attrs) {
         chars.push({ char: k, res: 0, die: 'd6' });
         result[k] = 0;
         index += 2;
       }
     } else {
-      const modifierLoc = game.i18n.localize('Modifier');
-      const regenerationLoc = game.i18n.localize('regenerate');
+      const modifierLoc = localize('Modifier');
+      const regenerationLoc = localize('regenerate');
       for (let k of attrs) {
-        this._appendSituationalModifiers(testData, game.i18n.localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`), k);
+        this._appendSituationalModifiers(testData, localize(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`), k);
         this._appendSituationalModifiers(
           testData,
-          game.i18n.localize(`LocalizedIDs.weakRegeneration${k}`),
+          localize(`LocalizedIDs.weakRegeneration${k}`),
           AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.weakRegeneration${k}`) * -1,
           k,
         );
         this._appendSituationalModifiers(
           testData,
-          game.i18n.localize(`LocalizedIDs.advancedRegeneration${k}`),
+          localize(`LocalizedIDs.advancedRegeneration${k}`),
           SpecialabilityRulesDSA5.abilityStep(actor, `LocalizedIDs.advancedRegeneration${k}`),
           k,
         );
 
-        const label = game.i18n.localize(`CHARAbbrev.${k}`);
+        const label = localize(`CHARAbbrev.${k}`);
 
         this._appendSituationalModifiers(testData, `${label} ${modifierLoc}`, testData[`${k}Modifier`], k);
         this._appendSituationalModifiers(testData, `${label} ${regenerationLoc}`, testData[`regeneration${k}`], k);
@@ -884,7 +885,7 @@ export default class DiceDSA5 {
 
   static async rollAttribute(testData) {
     let roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
-    this._appendSituationalModifiers(testData, game.i18n.localize('Difficulty'), testData.testDifficulty);
+    this._appendSituationalModifiers(testData, localize('Difficulty'), testData.testDifficulty);
     let result = await this._rollSingleD20(
       roll,
       testData.source.system.value,
@@ -1060,7 +1061,7 @@ export default class DiceDSA5 {
         },
       };
 
-      this._appendSituationalModifiers(testData, game.i18n.localize('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
+      this._appendSituationalModifiers(testData, localize('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
     }
     let result = await this._rollSingleD20(
       roll,
@@ -1228,10 +1229,10 @@ export default class DiceDSA5 {
       damageBonusDescription.override = overrideDamage[0].name + ' ' + damage;
     } else {
       damage += baseDmgBonus;
-      damageBonusDescription.baseDmgBonus.push(game.i18n.localize('Roll') + ' ' + weaponroll);
+      damageBonusDescription.baseDmgBonus.push(localize('Roll') + ' ' + weaponroll);
 
       if (weaponBonus != 0) {
-        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('weaponModifier') + ' ' + weaponBonus);
+        damageBonusDescription.baseDmgBonus.push(localize('weaponModifier') + ' ' + weaponBonus);
       }
 
       for (let x of testData.situationalModifiers) {
@@ -1255,22 +1256,22 @@ export default class DiceDSA5 {
         }
       }
 
-      const bloodrushModifier = testData.situationalModifiers.find((x) => x.name.indexOf(game.i18n.localize('CONDITION.bloodrush')) > -1);
+      const bloodrushModifier = testData.situationalModifiers.find((x) => x.name.indexOf(localize('CONDITION.bloodrush')) > -1);
       if (bloodrushModifier) {
         damage += 2;
-        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('CONDITION.bloodrush') + ' ' + 2);
+        damageBonusDescription.baseDmgBonus.push(localize('CONDITION.bloodrush') + ' ' + 2);
       }
 
       if (weapon.extraDamage) {
         damage = Number(weapon.extraDamage) + Number(damage);
-        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('damageThreshold') + ' ' + weapon.extraDamage);
+        damageBonusDescription.baseDmgBonus.push(localize('damageThreshold') + ' ' + weapon.extraDamage);
       }
 
       const status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
       const statusDmg = await DiceDSA5._stringToRoll(status, testData);
       if (statusDmg != 0) {
         damage += statusDmg;
-        damageBonusDescription.baseDmgBonus.push(game.i18n.localize('statuseffects') + ' ' + statusDmg);
+        damageBonusDescription.baseDmgBonus.push(localize('statuseffects') + ' ' + statusDmg);
       }
 
       const combatskill = getProperty(weapon, 'system.combatskill.value');
@@ -1280,7 +1281,7 @@ export default class DiceDSA5 {
 
       if (ktwDamage) {
         damage += ktwDamage;
-        damageBonusDescription.baseDmgBonus.push(`${game.i18n.localize('TYPES.Item.combatskill')} (${game.i18n.localize('CHARAbbrev.damage')}) ${ktwDamage}`);
+        damageBonusDescription.baseDmgBonus.push(`${localize('TYPES.Item.combatskill')} (${localize('CHARAbbrev.damage')}) ${ktwDamage}`);
       }
 
       for (const el of baseDmgMultipliers) {
@@ -1292,7 +1293,7 @@ export default class DiceDSA5 {
 
     if (doubleDamage) {
       damage *= doubleDamage;
-      damageBonusDescription.multipliers.push(game.i18n.format('doubleDamage', { x: doubleDamage }));
+      damageBonusDescription.multipliers.push(format('doubleDamage', { x: doubleDamage }));
     }
 
     for (const el of dmgMultipliers) {
@@ -1395,7 +1396,7 @@ export default class DiceDSA5 {
     if (isMelee) {
       weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor);
       if (testData.mode == ATTACK) {
-        this._appendSituationalModifiers(testData, game.i18n.localize('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
+        this._appendSituationalModifiers(testData, localize('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
       }
     } else {
       weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor);
@@ -1418,7 +1419,7 @@ export default class DiceDSA5 {
 
     if (testData.extra.counterAttack) {
       this.#actorFromTestData(testData).addCondition('stunned');
-      result.description += ', ' + DSA5_Utility.replaceConditions(game.i18n.localize('stunnedByCounterAttack'));
+      result.description += ', ' + DSA5_Utility.replaceConditions(localize('stunnedByCounterAttack'));
     }
 
     result.rollType = 'weapon';
@@ -1439,9 +1440,9 @@ export default class DiceDSA5 {
           } else if (/^condition /.test(change.value)) {
             const value = change.value.replace(/^condition /, '').split(' ');
             const count = Number(value[1]) || 1;
-            const condition = game.i18n.localize(`CONDITION.${value[0]}`);
+            const condition = localize(`CONDITION.${value[0]}`);
             const msg = DSA5_Utility.replaceConditions(
-              game.i18n.format('CHATNOTIFICATION.suffersCondition', {
+              format('CHATNOTIFICATION.suffersCondition', {
                 actor: actor.name,
                 condition,
                 count,
@@ -1481,7 +1482,7 @@ export default class DiceDSA5 {
         result.description += this._weaponBotchCritEffect(source, 'self.criteffect', actor);
         break;
       case -3:
-        const isWeaponless = getProperty(source, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle') || source.type == 'trait';
+        const isWeaponless = getProperty(source, 'system.combatskill.value') == localize('LocalizedIDs.wrestle') || source.type == 'trait';
         if (isAttack && isMelee && (await DSATables.tableEnabledFor('Melee'))) result.description += DSATables.rollCritBotchButton('Melee', isWeaponless, testData);
         else if (isAttack && (await DSATables.tableEnabledFor('Range'))) result.description += DSATables.rollCritBotchButton('Range', false, testData);
         else if (!isAttack && (await DSATables.tableEnabledFor('Defense'))) result.description += DSATables.rollCritBotchButton('Defense', isWeaponless, testData);
@@ -1666,13 +1667,13 @@ export default class DiceDSA5 {
           const split = k.split('|').map((x) => x.trim());
           if (split[0] == 'condition') {
             const effect = CONFIG.statusEffects.find((x) => x.id == split[1]);
-            result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${game.i18n.localize(effect.name)}</a>`);
+            result.push(`<a class="chat-condition chatButton" data-id="${effect.id}"><img src="${effect.img}"/>${localize(effect.name)}</a>`);
           } else {
             let category = `TYPES.Item.${split[0]}`;
             if (!game.i18n.has(category)) category = split[0];
 
             result.push(
-              `<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${game.i18n.localize(category)}: ${split[1]}</a>`,
+              `<a class="roll-button roll-item" data-name="${split[1]}" data-type="${split[0]}"><i class="fas fa-dice"></i>${localize(category)}: ${split[1]}</a>`,
             );
           }
         }
@@ -1682,7 +1683,7 @@ export default class DiceDSA5 {
     if (poison) {
       result.push(
         `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${poison.name}"
-        data-type="poison"><i class="fas fa-dice"></i>${game.i18n.localize('TYPES.Item.poison')}: ${poison.name}</a>`,
+        data-type="poison"><i class="fas fa-dice"></i>${localize('TYPES.Item.poison')}: ${poison.name}</a>`,
       );
     }
     return result.join(', ');
@@ -1696,20 +1697,20 @@ export default class DiceDSA5 {
     let feature;
     const actor = this.#actorFromTestData(testData);
     if (res.successLevel < 0) {
-      const traditions = ['traditionWitch', 'traditionFjarning', 'braniborian'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`));
+      const traditions = ['traditionWitch', 'traditionFjarning', 'braniborian'].map((x) => localize(`LocalizedIDs.${x}`));
       const factor = actor.items.some((x) => x.type == 'specialability' && traditions.includes(x.name)) ? 3 : 2;
       res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.finalcost / factor);
     }
 
     if (isClerical) {
       feature = 'KaPCost';
-      weakBody = game.i18n.localize('LocalizedIDs.weakKarmicBody');
-      energy = game.i18n.localize(`LocalizedIDs.${res.successLevel > 0 ? 'mightyKarmaControl' : 'karmaControl'}`);
+      weakBody = localize('LocalizedIDs.weakKarmicBody');
+      energy = localize(`LocalizedIDs.${res.successLevel > 0 ? 'mightyKarmaControl' : 'karmaControl'}`);
       globalMod = { val: 'kapModifier', name: 'KaP' };
     } else {
       feature = 'AsPCost';
-      weakBody = game.i18n.localize('LocalizedIDs.weakAstralBody');
-      energy = game.i18n.localize(`LocalizedIDs.${res.successLevel > 0 ? 'energyControl' : 'smallEnergyControl'}`);
+      weakBody = localize('LocalizedIDs.weakAstralBody');
+      energy = localize(`LocalizedIDs.${res.successLevel > 0 ? 'energyControl' : 'smallEnergyControl'}`);
       globalMod = { val: 'aspModifier', name: 'AsP' };
     }
     costModifiers.push(
@@ -1722,7 +1723,7 @@ export default class DiceDSA5 {
         value: SpecialabilityRulesDSA5.abilityStep(actor, energy, false) * -1,
       },
       {
-        name: `${game.i18n.localize('statuseffects')} (${game.i18n.localize('CHARAbbrev.' + globalMod.name)})`,
+        name: `${localize('statuseffects')} (${localize('CHARAbbrev.' + globalMod.name)})`,
         value: actor.system[globalMod.val] + (await this._situationalModifiers(testData, feature)),
       },
     );
@@ -1755,7 +1756,7 @@ export default class DiceDSA5 {
     res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost;
     if (res.successLevel >= 2) {
       let extraFps = (await new Roll('1d6').evaluate()).total;
-      res.description = res.description + ', ' + game.i18n.localize('additionalFPs') + ' ' + extraFps;
+      res.description = res.description + ', ' + localize('additionalFPs') + ' ' + extraFps;
       res.result += extraFps;
       res.qualityStep = Math.min(game.settings.get('dsa5', 'capQSat'), Math.ceil(res.result / 3));
       res.preData.calculatedSpellModifiers.finalcost = Math.round(res.preData.calculatedSpellModifiers.cost / 2);
@@ -1765,7 +1766,7 @@ export default class DiceDSA5 {
 
     if (res.successLevel > 0) {
       if (testData.source.system.effectFormula.value != '') {
-        const replaceQS = new RegExp(`(QL|QS|${game.i18n.localize('CHARAbbrev.QS')})`, 'g');
+        const replaceQS = new RegExp(`(QL|QS|${localize('CHARAbbrev.QS')})`, 'g');
         let formula = DiceDSA5.replaceDieLocalization(testData.source.system.effectFormula.value.replaceAll(replaceQS, res.qualityStep));
         let armorPen = [];
         for (let mod of testData.situationalModifiers) {
@@ -1791,7 +1792,7 @@ export default class DiceDSA5 {
         const damageBonusDescription = [];
         const statusDmg = await DiceDSA5._stringToRoll(actor.system[isClerical ? 'liturgyStats' : 'spellStats'].damage, testData);
         if (statusDmg != 0) {
-          damageBonusDescription.push(game.i18n.localize('statuseffects') + ' ' + statusDmg);
+          damageBonusDescription.push(localize('statuseffects') + ' ' + statusDmg);
         }
         res.armorPen = armorPen;
         res.damageRoll = rollEffect;
@@ -1804,11 +1805,11 @@ export default class DiceDSA5 {
     await this.getDuplicatusRoll(res, testData);
 
     for (const creature of ['minorFairies', 'minorSpirits']) {
-      const name = game.i18n.localize('CONDITION.' + creature);
+      const name = localize('CONDITION.' + creature);
       if (AdvantageRulesDSA5.hasVantage(actor, name, false) && !actor.effects.find((x) => x.name == name)) {
         const ghostroll = await new Roll('1d20').evaluate();
         if (ghostroll.total <= res.preData.calculatedSpellModifiers.finalcost) {
-          res.description += ', ' + game.i18n.format('minorghostsappear', { creature: name });
+          res.description += ', ' + format('minorghostsappear', { creature: name });
           this.#actorFromTestData(testData).addCondition(creature);
         }
       }
@@ -1823,7 +1824,7 @@ export default class DiceDSA5 {
     let successLevel = 0;
     const actor = this.#actorFromTestData(testData);
 
-    this._appendSituationalModifiers(testData, game.i18n.localize('Difficulty'), testData.testDifficulty);
+    this._appendSituationalModifiers(testData, localize('Difficulty'), testData.testDifficulty);
     let modifiers = await this._situationalModifiers(testData);
 
     let fws = Number(testData.source.system.talentValue.value) + testData.advancedModifiers.fws + (await this._situationalModifiers(testData, 'FW'));
@@ -1841,7 +1842,7 @@ export default class DiceDSA5 {
     let botch = actor.system.skillModifiers.botch;
     if ([SPELL, RITUAL].includes(testData.source.type) && AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.wildMagic')) botch = 19;
 
-    if (testData.source.type == SKILL && AdvantageRulesDSA5.hasVantage(actor, `${game.i18n.localize('LocalizedIDs.incompetent')} (${testData.source.name})`, false)) {
+    if (testData.source.type == SKILL && AdvantageRulesDSA5.hasVantage(actor, `${localize('LocalizedIDs.incompetent')} (${testData.source.name})`, false)) {
       let reroll = await new Roll('1d20').evaluate();
       let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0);
       let oldValue = roll.terms[indexOfMinValue * 2].total;
@@ -1850,7 +1851,7 @@ export default class DiceDSA5 {
       roll.editRollAtIndex([{ index: indexOfMinValue, val: reroll.total }]);
       this._addRollDiceSoNice(testData, reroll, roll.terms[indexOfMinValue * 2].options);
       description.push(
-        game.i18n.format('CHATNOTIFICATION.unableReroll', {
+        format('CHATNOTIFICATION.unableReroll', {
           die: indexOfMinValue + 1,
           oldVal: oldValue,
           newVal: reroll.total,
@@ -1858,12 +1859,12 @@ export default class DiceDSA5 {
       );
     }
     let automaticResult = 0;
-    if (testData.source.type == SKILL && TraitRulesDSA5.hasTrait(actor, `${game.i18n.localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`, false)) {
-      description.push(game.i18n.localize('LocalizedIDs.automaticSuccess'));
+    if (testData.source.type == SKILL && TraitRulesDSA5.hasTrait(actor, `${localize('LocalizedIDs.automaticSuccess')} (${testData.source.name})`, false)) {
+      description.push(localize('LocalizedIDs.automaticSuccess'));
       successLevel = 1;
       automaticResult = 1;
-    } else if (testData.source.type == SKILL && TraitRulesDSA5.hasTrait(actor, `${game.i18n.localize('LocalizedIDs.automaticFail')} (${testData.source.name})`, false)) {
-      description.push(game.i18n.localize('LocalizedIDs.automaticFail'));
+    } else if (testData.source.type == SKILL && TraitRulesDSA5.hasTrait(actor, `${localize('LocalizedIDs.automaticFail')} (${testData.source.name})`, false)) {
+      description.push(localize('LocalizedIDs.automaticFail'));
       successLevel = -1;
     } else {
       successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, botch, crit);
@@ -1946,7 +1947,7 @@ export default class DiceDSA5 {
   static getSuccessDescription(successLevel) {
     const index = Math.max(0, Math.min(6, successLevel + 3));
     const descriptionKey = DICE_CONSTANTS.SUCCESS_DESCRIPTIONS[index];
-    return game.i18n.localize(descriptionKey);
+    return localize(descriptionKey);
   }
 
   static async rollItem(testData) {
@@ -2010,7 +2011,7 @@ export default class DiceDSA5 {
 
   static _compareWeaponReach(weapon, testData) {
     //TODO move this to roll dialog
-    let circumvent = testData.situationalModifiers.find((x) => x.name == game.i18n.localize('LocalizedIDs.circumvent'));
+    let circumvent = testData.situationalModifiers.find((x) => x.name == localize('LocalizedIDs.circumvent'));
     const attacker = DSA5.meleeRangesArray.indexOf(weapon.system.reach.value);
     const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize);
     if (circumvent && defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2;
@@ -2135,17 +2136,17 @@ export default class DiceDSA5 {
     if (preData.advancedModifiers) {
       if (preData.advancedModifiers.chars.some((x) => x != 0))
         chatData.modifierList.push({
-          name: game.i18n.localize('MODS.partChecks'),
+          name: localize('MODS.partChecks'),
           value: preData.advancedModifiers.chars,
         });
       if (preData.advancedModifiers.fws != 0)
         chatData.modifierList.push({
-          name: game.i18n.localize('MODS.FW'),
+          name: localize('MODS.FW'),
           value: preData.advancedModifiers.fws,
         });
       if (preData.advancedModifiers.qls != 0)
         chatData.modifierList.push({
-          name: game.i18n.localize('MODS.QS'),
+          name: localize('MODS.QS'),
           value: preData.advancedModifiers.qls,
         });
     }
@@ -2233,9 +2234,9 @@ export default class DiceDSA5 {
             });
         });
       } else {
-        const translatedCategory = game.i18n.has('TYPES.Item.' + category) ? game.i18n.localize('TYPES.Item.' + category) : category;
+        const translatedCategory = game.i18n.has('TYPES.Item.' + category) ? localize('TYPES.Item.' + category) : category;
         ui.notifications.error(
-          game.i18n.format('DSAError.notFound', {
+          format('DSAError.notFound', {
             category: translatedCategory,
             name,
           }),
@@ -2272,11 +2273,11 @@ export default class DiceDSA5 {
         }
         break;
       case 'mod':
-        index = newTestData.situationalModifiers.findIndex((x) => x.name == game.i18n.localize('chatEdit'));
+        index = newTestData.situationalModifiers.findIndex((x) => x.name == localize('chatEdit'));
         if (index > 0) newTestData.situationalModifiers.splice(index, 1);
 
         let newVal = {
-          name: game.i18n.localize('chatEdit'),
+          name: localize('chatEdit'),
           value: Number(input.val()) - (await this._situationalModifiers(newTestData)),
         };
         newTestData.situationalModifiers.push(newVal);
@@ -2329,8 +2330,8 @@ export default class DiceDSA5 {
     }
     const msg = targets.length
       ? targets.map((x) => `<img style="width:25px;height:25px;" src="${x}"/>`).join('')
-      : `<small><i class="fas fa-exclamation-circle"></i> ${game.i18n.localize('DIALOG.noTarget')}</small>`;
-    ev.currentTarget.dataset.tooltip = `<div><p>${game.i18n.localize(i18nkey)}</p>${msg}</div>`;
+      : `<small><i class="fas fa-exclamation-circle"></i> ${localize('DIALOG.noTarget')}</small>`;
+    ev.currentTarget.dataset.tooltip = `<div><p>${localize(i18nkey)}</p>${msg}</div>`;
   }
 
   static async rollResistPain(ev) {

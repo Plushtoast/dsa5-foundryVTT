@@ -1,5 +1,6 @@
 
 import JournalTracker from './journal_tracker.js';
+import { localize } from '../helpers/localizer.js';
 
 export default class APTracker extends JournalTracker {
   static configuration = {
@@ -45,10 +46,10 @@ export default class APTracker extends JournalTracker {
 
   static startRow() {
     return this.getRow(
-      game.i18n.localize('Description'),
-      game.i18n.localize('attributeChange'),
-      game.i18n.localize('cost'),
-      game.i18n.localize('Total'),
+      localize('Description'),
+      localize('attributeChange'),
+      localize('cost'),
+      localize('Total'),
       'table-title',
     )
   }
@@ -56,15 +57,15 @@ export default class APTracker extends JournalTracker {
   static _buildDescription(description) {
     switch (description.type) {
       case 'attribute':
-        return game.i18n.localize(`CHAR.${description.attr.toUpperCase()}`);
+        return localize(`CHAR.${description.attr.toUpperCase()}`);
       case 'permanentLoss':
-        return `${game.i18n.localize(description.attr)} (${game.i18n.localize('permanentCost')})`;
+        return `${localize(description.attr)} (${localize('permanentCost')})`;
       case 'point':
-        return game.i18n.localize(description.attr);
+        return localize(description.attr);
       case 'item':
-        return description.item['toAnchor'] ? description.item.toAnchor().outerHTML : `${game.i18n.localize('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
+        return description.item['toAnchor'] ? description.item.toAnchor().outerHTML : `${localize('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
       case 'sum':
-        return game.i18n.localize('MASTER.awardXP');
+        return localize('MASTER.awardXP');
     }
   }
 }

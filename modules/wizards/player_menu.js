@@ -7,6 +7,7 @@ import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -97,8 +98,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       selectedEntityIds: [],
       selectedPackageIds: [],
       conjurationTypes: {
-        1: game.i18n.localize('CONJURATION.demon'),
-        2: game.i18n.localize('CONJURATION.elemental'),
+        1: localize('CONJURATION.demon'),
+        2: localize('CONJURATION.elemental'),
       },
       rules: {
         1: {
@@ -112,9 +113,9 @@ export default class PlayerMenu extends DefaultAppv2 {
       },
       conjurationType: 1,
       skills: {
-        1: ['invocatioMinima', 'invocatioMinor', 'invocatioMaior'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`)),
+        1: ['invocatioMinima', 'invocatioMinor', 'invocatioMaior'].map((x) => localize(`LocalizedIDs.${x}`)),
         2: ['manifesto', 'elementalServant', 'callDjinn', 'elementalAlly', 'servantEarth', 'servantFlame', 'servantCold', 'servantWave', 'servantCloud', 'servantOre'].map((x) =>
-          game.i18n.localize(`LocalizedIDs.${x}`),
+          localize(`LocalizedIDs.${x}`),
         ),
       },
       modifiers: {
@@ -124,7 +125,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       moreModifiers: {
         2: [
           {
-            name: game.i18n.localize('CONJURATION.groupSummoning'),
+            name: localize('CONJURATION.groupSummoning'),
             options: [1, 2, 3, 4, 5, 6, 7, 8].map((x) => {
               return { name: x, val: x * -2 + 2 };
             }),
@@ -150,14 +151,14 @@ export default class PlayerMenu extends DefaultAppv2 {
     const skill = this.actor.items.get(itemId);
     const moreModifiers = [
       {
-        name: game.i18n.localize('conjuringDifficulty'),
+        name: localize('conjuringDifficulty'),
         value: getProperty(this.conjuration, 'system.conjuringDifficulty.value') || 0,
         selected: true,
       },
     ];
     if (this.conjurationData.packageModifier)
       moreModifiers.push({
-        name: game.i18n.localize('summoningPackage'),
+        name: localize('summoningPackage'),
         value: this.conjurationData.packageModifier,
         selected: true,
       });
@@ -442,7 +443,7 @@ export default class PlayerMenu extends DefaultAppv2 {
   async prepareEntityAbilities() {
     const data = { entityAbilities: [], entityPackages: [] };
     if (game.dsa5.itemLibrary.indexes.Item.build) {
-      const entitiesToSearch = [game.i18n.localize('LocalizedIDs.all'), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]];
+      const entitiesToSearch = [localize('LocalizedIDs.all'), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]];
       const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems('trait', false, true)));
 
       let entitySet = new Set();
@@ -482,7 +483,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
       let hasMighty = false;
       for (let skill of conjurationskills) {
-        skill.hasMighty = this.actor.items.find((x) => x.name == `${skill.name} - ${game.i18n.localize('CONJURATION.powerfulCreature')}`);
+        skill.hasMighty = this.actor.items.find((x) => x.name == `${skill.name} - ${localize('CONJURATION.powerfulCreature')}`);
         hasMighty ||= skill.hasMighty;
       }
       const conjurationModifiers = this.conjurationData.modifiers[this.conjurationData.conjurationType];
@@ -507,7 +508,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       const conjurationSheet = await renderTemplate('systems/dsa5/templates/system/conjuration/summoning.hbs', {
         actor: this.actor,
         conjuration: this.conjuration || {
-          name: game.i18n.localize('CONJURATION.dragConjuration'),
+          name: localize('CONJURATION.dragConjuration'),
           img: 'icons/svg/mystery-man-black.svg',
         },
         conjurationData: this.conjurationData,
@@ -529,7 +530,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
     mergeObject(data, {
       actor: this.actor || {
-        name: game.i18n.localize('CONJURATION.dragActor'),
+        name: localize('CONJURATION.dragActor'),
         img: 'icons/svg/mystery-man-black.svg',
       },
       conjurationData: this.conjurationData,
@@ -563,7 +564,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 class ConjurationRequest extends DefaultAppv2 {
   constructor(conjuration, summoner, creationData) {
     super({
-      window: { title: `${game.i18n.localize('CONJURATION.request')} (${summoner.name})` },
+      window: { title: `${localize('CONJURATION.request')} (${summoner.name})` },
     });
     this.conjuration = conjuration;
     this.summoner = summoner;
@@ -627,7 +628,7 @@ class ConjurationRequest extends DefaultAppv2 {
 
   static async createActor(ev, target) {
     this.confirmed = true;
-    const head = await DSA5_Utility.getFolderForType('Actor', null, game.i18n.localize('PLAYER.conjuration'));
+    const head = await DSA5_Utility.getFolderForType('Actor', null, localize('PLAYER.conjuration'));
     const folder = await DSA5_Utility.getFolderForType('Actor', head.id, this.creationData.typeName);
     const services = this.creationData.qs - this.creationData.consumedQS + 1;
     this.conjuration.folder = folder.id;
@@ -638,10 +639,10 @@ class ConjurationRequest extends DefaultAppv2 {
         changes: modifier.changes,
         duration: {},
         icon: 'icons/svg/aura.svg',
-        name: game.i18n.localize(modifier.name),
+        name: localize(modifier.name),
         flags: {
           dsa5: {
-            description: `${game.i18n.localize('PLAYER.conjuration')} ${game.i18n.localize('extensions')}`,
+            description: `${localize('PLAYER.conjuration')} ${localize('extensions')}`,
             hideOnToken: true,
             hidePlayers: false,
           },
@@ -667,12 +668,12 @@ class ConjurationRequest extends DefaultAppv2 {
       duration: {},
       icon: 'icons/svg/aura.svg',
       id: 'services',
-      name: game.i18n.localize('PLAYER.services'),
+      name: localize('PLAYER.services'),
       flags: {
         dsa5: {
           value: services,
           max: 500,
-          description: `${game.i18n.localize('PLAYER.conjuration')} ${game.i18n.localize('PLAYER.services')}`,
+          description: `${localize('PLAYER.conjuration')} ${localize('PLAYER.services')}`,
           manual: services,
           auto: 0,
           hideOnToken: true,

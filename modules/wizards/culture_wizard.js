@@ -2,10 +2,11 @@ import WizardDSA5 from './dsa5_wizard.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
+import { localize } from '../system/helpers/localizer.js';
 
 export default class CultureWizard extends WizardDSA5 {
   get title() {
-    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.culture')} ${this.culture.name}`, })
+    return game.i18n.format('WIZARD.addItem', { item: `${localize('TYPES.Item.culture')} ${this.culture.name}`, })
   }
 
   static PARTS = {
@@ -50,7 +51,7 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.writing.value
               .split(',')
-              .map((x) => `${game.i18n.localize('LocalizedIDs.literacy')} (${x.trim()})`)
+              .map((x) => `${localize('LocalizedIDs.literacy')} (${x.trim()})`)
               .join(', '),
             ['specialability'],
           );
@@ -60,7 +61,7 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.language.value
               .split(',')
-              .map((x) => `${game.i18n.localize('LocalizedIDs.language')} (${x.trim()}) 3`)
+              .map((x) => `${localize('LocalizedIDs.language')} (${x.trim()}) 3`)
               .join(', '),
             ['specialability'],
           );
@@ -123,10 +124,10 @@ export default class CultureWizard extends WizardDSA5 {
 
     let update = { 'system.details.culture.value': this.culture.name };
 
-    let localKnowledge = await this.findCompendiumItem(`${game.i18n.localize('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
+    let localKnowledge = await this.findCompendiumItem(`${localize('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
     if (localKnowledge) {
       localKnowledge = duplicate(localKnowledge);
-      localKnowledge.name = `${game.i18n.localize('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
+      localKnowledge.name = `${localize('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
       localKnowledge.system.APValue.value = 0;
       await this.actor.createEmbeddedDocuments('Item', [localKnowledge], {
         render: false,

@@ -13,12 +13,9 @@
             {{resources.KaP.value}}/{{resources.KaP.max}}
         </div>
         {{/if}}
-        {{#unless (or resources.AsP.max resources.KaP.max)}}
-        <div class="flex0"></div>
-        {{/unless}}
     </div>
     <div class="hotbar-avatar-container flexrow">
-        <img class="hotbar-avatar flex0 {{ifThen myTurn 'myRound' ''}}" src="{{actorImg}}" />
+        <img class="hotbar-avatar flex0 {{turnClass}}" data-category="plain" data-better-tooltip="{{defenseTooltip}}" src="{{actorImg}}" />
         {{#each weapons}}
         <div data-action="weapon" data-skip-hint="true" data-name="{{weapon.name}}" data-category="weapon" data-id="{{weapon.id}}" class="weapon" data-mode="{{mode}}" style="{{{style}}}">
             {{#if weapon.img}}
@@ -28,8 +25,5 @@
             {{/if}}
         </div>
         {{/each}}
-    </div>
-    <div class="flexrow quickbuttons">
-        <div class="flex0 dsa-indicator" data-category="plain" data-better-tooltip="{{defenseTooltip}}"><i class="fas fa-shield"></i></div>
     </div>
 </div>

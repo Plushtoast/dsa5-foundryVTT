@@ -2,6 +2,7 @@ import DSA5ChatListeners from './chat_listeners.js';
 import RequestRoll from '../rolls/request-roll.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
+import { localize } from '../helpers/localizer.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -17,9 +18,9 @@ export default class DSA5ChatAutoCompletion {
   constructor() {
     this.filtering = false;
     this.combatConstants = {
-      dodge: game.i18n.localize('dodge'),
-      parryWeaponless: game.i18n.localize('parryWeaponless'),
-      attackWeaponless: game.i18n.localize('attackWeaponless'),
+      dodge: localize('dodge'),
+      parryWeaponless: localize('parryWeaponless'),
+      attackWeaponless: localize('attackWeaponless'),
     };
     
     this.initializeSkills();
@@ -37,13 +38,13 @@ export default class DSA5ChatAutoCompletion {
         
         const attributeOptions = Object.values(game.dsa5.config.characteristics)
           .map(x => ({ 
-            name: game.i18n.localize(x), 
+            name: localize(x), 
             type: 'attribute' 
           }));
         
         const specialOptions = [
-          { name: game.i18n.localize('regenerate'), type: 'regeneration' },
-          { name: game.i18n.localize('fallingDamage'), type: 'fallingDamage' }
+          { name: localize('regenerate'), type: 'regeneration' },
+          { name: localize('fallingDamage'), type: 'fallingDamage' }
         ];
         
         DSA5ChatAutoCompletion.skills = [
@@ -227,7 +228,7 @@ export default class DSA5ChatAutoCompletion {
   _setFilteredList(result, cmd, ev) {
     if (!result.length) {
       result.push({
-        name: game.i18n.localize('DSAError.noMatch'),
+        name: localize('DSAError.noMatch'),
         type: 'none',
       });
     }
@@ -246,7 +247,7 @@ export default class DSA5ChatAutoCompletion {
     
     if (!result.length) {
       result.push({
-        name: game.i18n.localize('DSAError.noMatch'),
+        name: localize('DSAError.noMatch'),
         type: 'none',
       });
     }
@@ -404,7 +405,7 @@ export default class DSA5ChatAutoCompletion {
         break;
       case 'attribute':
         const characteristic = Object.keys(game.dsa5.config.characteristics)
-          .find(key => game.i18n.localize(game.dsa5.config.characteristics[key]) === text);
+          .find(key => localize(game.dsa5.config.characteristics[key]) === text);
         actor.setupCharacteristic(characteristic, {}, tokenId)
           .then(setupData => actor.basicTest(setupData));
         break;

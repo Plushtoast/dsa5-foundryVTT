@@ -1,6 +1,7 @@
 import DSA5 from '../../config/config-dsa5.js';
 import SpecialabilityData from '../../data/item/specialability.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import { localize } from '../helpers/localizer.js';
 const { mergeObject } = foundry.utils;
 
 let ADVANCEDFILTERS = {};
@@ -17,23 +18,23 @@ Hooks.once('ready', () => {
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {});
     const allCombat = result[1]
-      .concat([{ name: game.i18n.localize('LocalizedIDs.all') }])
+      .concat([{ name: localize('LocalizedIDs.all') }])
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {});
 
     const content = [];
     for (const [cat, value] of Object.entries(SpecialabilityData.specialAbilityCategories)) {
-      if (cat == 'clerical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.clerical')}">`);
-      else if (cat == 'magical') content.push(`</optgroup><optgroup label="${game.i18n.localize('SpecCategory.magical')}">`);
+      if (cat == 'clerical') content.push(`</optgroup><optgroup label="${localize('SpecCategory.clerical')}">`);
+      else if (cat == 'magical') content.push(`</optgroup><optgroup label="${localize('SpecCategory.magical')}">`);
 
-      content.push(`<option value="${cat}">${game.i18n.localize(value)}</option>`);
+      content.push(`<option value="${cat}">${localize(value)}</option>`);
     }
 
     const specialabilies = `<div class="flexcol">
-            <label>${game.i18n.localize('Category')}</label>
+            <label>${localize('Category')}</label>
             <select name="category.value">
-                <option value="">${game.i18n.localize('Library.noFilter')}</option>
-                <optgroup label="${game.i18n.localize('SpecCategory.general')}">
+                <option value="">${localize('Library.noFilter')}</option>
+                <optgroup label="${localize('SpecCategory.general')}">
                 ${content.join('')}
                 </optgroup>
             </select>
@@ -376,7 +377,7 @@ Hooks.once('ready', () => {
           attr: 'category',
           type: 'select',
           options: [0, 1, 2, 3].reduce((prev, x) => {
-            prev[x] = game.i18n.localize(`PATRON.${x}`);
+            prev[x] = localize(`PATRON.${x}`);
             return prev;
           }, {}),
         },

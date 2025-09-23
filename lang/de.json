@@ -1673,6 +1673,8 @@
     "wrongGrip": {
         "oneHanded": "Einhändig geführt",
         "twoHanded": "Beidhändig geführt",
+        "twoHandedWeapon": "{weapon} beidhändig geführt",
+        "oneHandedWeapon": "{weapon} einhändig geführt",
         "wrongGripped": "Einhändig/Beidhändig geführt",
         "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
         "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",

@@ -4,6 +4,7 @@ import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
+import { localize } from '../helpers/localizer.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
@@ -63,7 +64,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   #temporaryTime = null;
 
   get title() {
-    return game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
+    return localize(DSAWorldCalendar.selectedCalendar().name);
   }
 
   static TABS = {
@@ -309,7 +310,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.tabs = this._prepareTabs('sheet');
     data.isGM = game.user.isGM;
     data.calendar = calendar;
-    data.appTitle = game.i18n.localize(DSAWorldCalendar.selectedCalendar().name);
+    data.appTitle = localize(DSAWorldCalendar.selectedCalendar().name);
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
 
     return data;
@@ -603,7 +604,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const translationPrefix = game.time.calendar.translationPrefix;
     return '<div style="margin-left: 12px;">' + holidays.map(h => {
       const key = `${translationPrefix}.holiday.${h.title}`;
-      const name = game.i18n.has(key) ? game.i18n.localize(key) : h.title;
+      const name = game.i18n.has(key) ? localize(key) : h.title;
       return `<div><i style="color: ${DSACalendarEntry.CATEGORY_COLORS[h.category]}" class="${DSACalendarEntry.CATEGORY_ICONS[h.category]}"></i> ${name}</div>`;
     }).join('') + '</div>';
   }
@@ -859,7 +860,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
           const todayDay = currentComponents.dayOfMonth + 1;
           const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
           const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-          const todayLabel = game.i18n.localize('dsacalendar.today');
+          const todayLabel = localize('dsacalendar.today');
           todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
           wrapper.appendChild(todayMarker);
         }

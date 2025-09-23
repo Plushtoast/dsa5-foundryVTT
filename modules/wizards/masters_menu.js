@@ -9,6 +9,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
+import { localize, format } from '../system/helpers/localizer.js';
 const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -112,7 +113,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   constructor(app) {
     super(app);
     this.heros = [];
-    this.lastSkill = `${game.i18n.localize('LocalizedIDs.perception')}|skill`;
+    this.lastSkill = `${localize('LocalizedIDs.perception')}|skill`;
     this.randomCreation = [];
 
     if (game.user.isGM) {
@@ -440,7 +441,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
     settings.folders.push({
       id: randomID(),
-      name: game.i18n.localize('FOLDER.ExportNewFolder'),
+      name: localize('FOLDER.ExportNewFolder'),
       content: [],
     });
     await game.settings.set('dsa5', 'masterSettings', settings);
@@ -546,9 +547,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       selected: ids,
       amount,
       tracked,
-      text: game.i18n.localize(
-        game.i18n.format(pay ? 'MASTER.payText' : 'MASTER.getPaidText', {
-          heros: game.i18n.localize('MASTER.theGroup'),
+      text: localize(
+        format(pay ? 'MASTER.payText' : 'MASTER.getPaidText', {
+          heros: localize('MASTER.theGroup'),
         }),
       ),
     });
@@ -560,7 +561,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         for (let hero of actors) DSA5Payment.handlePayAction(undefined, pay, number, hero);
       }
     };
-    this.buildDialog(game.i18n.localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback);
+    this.buildDialog(localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback);
   }
 
   async getPaid(ids) {
@@ -573,9 +574,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       selected: ids,
       tracked,
       amount,
-      text: game.i18n.localize(
-        game.i18n.format('MASTER.awardXPText', {
-          heros: game.i18n.localize('MASTER.theGroup'),
+      text: localize(
+        format('MASTER.awardXPText', {
+          heros: localize('MASTER.theGroup'),
         }),
       ),
     });
@@ -609,21 +610,21 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         const message = [];
         if (heros.length > 0)
           message.push(
-            game.i18n.format('MASTER.xpMessage', {
+            format('MASTER.xpMessage', {
               heros: this.getNames(heros),
               number,
             }),
           );
         if (familiars.length > 0)
           message.push(
-            game.i18n.format('MASTER.xpMessage', {
+            format('MASTER.xpMessage', {
               heros: this.getNames(familiars),
               number: familiarXP,
             }),
           );
         if (pets.length > 0)
           message.push(
-            game.i18n.format('MASTER.xpMessage', {
+            format('MASTER.xpMessage', {
               heros: this.getNames(pets),
               number: petXP,
             }),
@@ -634,7 +635,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         if (this.rendered) this.render(true);
       }
     };
-    this.buildDialog(game.i18n.localize('MASTER.awardXP'), template, callback);
+    this.buildDialog(localize('MASTER.awardXP'), template, callback);
   }
 
   getNames(actors) {
@@ -714,7 +715,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
     const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
       amount,
-      text: game.i18n.localize(game.i18n.format('MASTER.doGroupCheck', { skill })),
+      text: localize(format('MASTER.doGroupCheck', { skill })),
     });
     const callback = (dlg) => {
       const number = Number(dlg.find('.input-text').val());
@@ -723,7 +724,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
       RequestRoll.showGCMessage(skill, number);
     };
-    this.buildDialog(game.i18n.localize('HELP.groupcheck'), template, callback);
+    this.buildDialog(localize('HELP.groupcheck'), template, callback);
   }
 
   async rollRequest(amount = 0) {
@@ -734,7 +735,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
     const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
       amount,
-      text: game.i18n.localize(game.i18n.format('MASTER.doRequestRoll', { skill })),
+      text: localize(format('MASTER.doRequestRoll', { skill })),
     });
     const callback = (dlg) => {
       const number = Number(dlg.find('.input-text').val());
@@ -743,7 +744,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
       RequestRoll.showRQMessage(skill, number);
     };
-    this.buildDialog(game.i18n.localize('HELP.request'), template, callback);
+    this.buildDialog(localize('HELP.request'), template, callback);
   }
 
   rollAbility(actorIds) {
@@ -772,7 +773,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
   rollAttribute(actorIds, name) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
-    let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == name);
+    let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => localize(game.dsa5.config.characteristics[key]) == name);
     for (const actor of actors) {
       actor.setupCharacteristic(characteristic, { rollMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
         actor.basicTest(setupData);
@@ -887,7 +888,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const regex = / \[[a-zA-Zäöü\d-]+\]/;
     const visions = [1, 2, 3, 4].map((x) => {
       return {
-        label: game.i18n.localize(`VisionDisruption.step${x}`).replace(regex, ''),
+        label: localize(`VisionDisruption.step${x}`).replace(regex, ''),
         value: thresholds[x - 1],
       };
     });
@@ -967,10 +968,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         .concat(
           Object.values(game.dsa5.config.characteristics)
             .map((x) => {
-              return { name: game.i18n.localize(x), type: 'attribute' };
+              return { name: localize(x), type: 'attribute' };
             })
             .concat({
-              name: game.i18n.localize('regenerate'),
+              name: localize('regenerate'),
               type: 'regeneration',
             }),
         )

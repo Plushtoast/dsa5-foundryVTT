@@ -9,6 +9,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import DSAActiveEffect from '../../status/dsa_active_effects.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { localize } from '../../system/helpers/localizer.js';
 
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 
@@ -39,7 +40,7 @@ export class CombatSystem {
         for (const mal of preData.situationalModifiers || []) {
             if (mal.dmmalus !== undefined && mal.dmmalus !== 0) {
                 situationalModifiers.push({
-                    name: `${game.i18n.localize('MODS.defenseMalus')} - ${mal.name.replace(regex, '')}`,
+                    name: `${localize('MODS.defenseMalus')} - ${mal.name.replace(regex, '')}`,
                     value: mal.dmmalus,
                     selected: true,
                 });
@@ -54,7 +55,7 @@ export class CombatSystem {
 
         if (postData.halfDefense) {
             situationalModifiers.push({
-                name: `${game.i18n.localize('MODS.defenseMalus')} - ${game.i18n.localize('halfDefenseShort')}`,
+                name: `${localize('MODS.defenseMalus')} - ${localize('halfDefenseShort')}`,
                 value: 0.5,
                 type: '*',
                 selected: true,
@@ -98,7 +99,7 @@ export class CombatSystem {
 
         if (val) {
             situationalModifiers.push({
-                name: `Duplicatus - ${game.i18n.localize('doppelganger')}`,
+                name: `Duplicatus - ${localize('doppelganger')}`,
                 value: val,
                 selected: !immuneToIllusion,
                 type: 'effect',
@@ -115,23 +116,23 @@ export class CombatSystem {
      */
     static addSwarmModifiers(actor, mode, situationalModifiers) {
         if (actor.system.swarm?.count > 1) {
-            const swarmName = game.i18n.localize('swarm.name');
+            const swarmName = localize('swarm.name');
 
             if (mode === 'attack') {
                 situationalModifiers.push(
                     {
-                        name: `${swarmName} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                        name: `${swarmName} - ${localize('MODS.defenseMalus')}`,
                         value: actor.system.swarm.parry,
                         type: 'defenseMalus',
                         selected: true,
                     },
                     {
-                        name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.AT')}`,
+                        name: `${swarmName} - ${localize('CHARAbbrev.AT')}`,
                         value: actor.system.swarm.attack,
                         selected: true,
                     },
                     {
-                        name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.damage')}`,
+                        name: `${swarmName} - ${localize('CHARAbbrev.damage')}`,
                         value: actor.system.swarm.damage,
                         type: 'dmg',
                         selected: true,
@@ -139,7 +140,7 @@ export class CombatSystem {
                 );
             } else {
                 situationalModifiers.push({
-                    name: `${swarmName} - ${game.i18n.localize('CHARAbbrev.PA')}`,
+                    name: `${swarmName} - ${localize('CHARAbbrev.PA')}`,
                     value: actor.system.swarm.parry,
                     selected: true,
                 });
@@ -167,7 +168,7 @@ export class CombatSystem {
                     case 'system.rangeStats.defenseMalus':
                     case 'system.meleeStats.defenseMalus':
                         situationalModifiers.push({
-                            name: `${combatskill.name} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                            name: `${combatskill.name} - ${localize('MODS.defenseMalus')}`,
                             value: change.value * -1,
                             type: 'defenseMalus',
                             selected: true,
@@ -187,7 +188,7 @@ export class CombatSystem {
         if (value !== 0) {
             value = isNaN(value) ? value : Number(value);
             situationalModifiers.push({
-                name: game.i18n.localize('statuseffects'),
+                name: localize('statuseffects'),
                 value,
                 selected: true,
             });
@@ -240,7 +241,7 @@ export class CombatSystem {
         const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1;
         if (defenseMalus !== 0) {
             situationalModifiers.push({
-                name: `${game.i18n.localize('statuseffects')} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                name: `${localize('statuseffects')} - ${localize('MODS.defenseMalus')}`,
                 value: defenseMalus,
                 type: 'defenseMalus',
                 selected: true,
@@ -308,7 +309,7 @@ export class CombatSystem {
         const defenseMalus = Number(actor.system.rangeStats.defenseMalus) * -1;
         if (defenseMalus !== 0) {
             situationalModifiers.push({
-                name: `${game.i18n.localize('statuseffects')} - ${game.i18n.localize('MODS.defenseMalus')}`,
+                name: `${localize('statuseffects')} - ${localize('MODS.defenseMalus')}`,
                 value: defenseMalus,
                 type: 'defenseMalus',
                 selected: true,
@@ -341,7 +342,7 @@ export class CombatSystem {
 
         let finalMountedOptions = {};
         for (let key of Object.keys(mountedOptions)) {
-            finalMountedOptions[`${game.i18n.localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
+            finalMountedOptions[`${localize('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
         }
 
         CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
@@ -370,7 +371,7 @@ export class CombatSystem {
         const creatureClass = actor.type === 'creature'
             ? actor.system.creatureClass.value
             : actor.system.details.species.value;
-        const localizedSpecies = game.i18n.localize(`LocalizedSpecies.${creatureClass}`);
+        const localizedSpecies = localize(`LocalizedSpecies.${creatureClass}`);
 
         const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
         if (speciesObject) {
@@ -381,27 +382,27 @@ export class CombatSystem {
 
             const domains = (getProperty(source, 'system.effect.attributes') || '')
                 .split(',')
-                .map((x) => game.i18n.localize(`LocalizedSpecies.${x.trim()}`));
+                .map((x) => localize(`LocalizedSpecies.${x.trim()}`));
             const domainMalus = domains.some((domain) =>
                 speciesObject.opposingDomains.has(domain)
             ) ? 1 : 0;
 
-            const combatSkillKey = game.i18n.localize(`LocalizedCTs.${source.system.combatskill.value}`);
+            const combatSkillKey = localize(`LocalizedCTs.${source.system.combatskill.value}`);
             if (speciesObject.combatskills.has(combatSkillKey)) {
                 if (attackOrParry) {
                     situationalModifiers.push({
                         name: game.i18n.format('speciesModifier', { species: creatureClass }),
                         value: -2 - domainMalus,
                         selected: true,
-                        source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
+                        source: `${localize('TYPES.Item.species')} (${creatureClass})`,
                     });
                 }
                 situationalModifiers.push({
-                    name: `${game.i18n.format('speciesModifier', { species: creatureClass })} ${game.i18n.localize('CHARAbbrev.damage')}`,
+                    name: `${game.i18n.format('speciesModifier', { species: creatureClass })} ${localize('CHARAbbrev.damage')}`,
                     value: -2 - domainMalus,
                     type: 'dmg',
                     selected: true,
-                    source: `${game.i18n.localize('TYPES.Item.species')} (${creatureClass})`,
+                    source: `${localize('TYPES.Item.species')} (${creatureClass})`,
                 });
             }
         }

@@ -1,4 +1,5 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import { localize } from '../helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
 Hooks.once('i18nInit', async () => {
@@ -6,9 +7,9 @@ Hooks.once('i18nInit', async () => {
     const lang = game.i18n.lang == 'de' ? 'de' : 'en';
     const json = await fetch(`systems/dsa5/lazy/creaturetype/${lang}.json`);
     CreatureType.creatureData = await json.json();
-    CreatureType.magical = game.i18n.localize('WEAPON.magical');
-    CreatureType.clerical = game.i18n.localize('WEAPON.clerical');
-    CreatureType.silverPlated = game.i18n.localize('WEAPON.silverPlated');
+    CreatureType.magical = localize('WEAPON.magical');
+    CreatureType.clerical = localize('WEAPON.clerical');
+    CreatureType.silverPlated = localize('WEAPON.silverPlated');
     game.dsa5.apps.CreatureType = CreatureType;
   }
 });
@@ -67,7 +68,7 @@ export default class CreatureType {
     switch (testData.preData.source.type) {
       case 'poison':
       case 'disease': {
-        const immunityName = game.i18n.localize('LocalizedIDs.immuneTo') + ' (' + testData.preData.source.name + ')';
+        const immunityName = localize('LocalizedIDs.immuneTo') + ' (' + testData.preData.source.name + ')';
         for (let target of game.user.targets) {
           const actor = target.actor;
           const immunity = actor.items.find((x) => x.name == immunityName && x.type == 'advantage');
@@ -107,7 +108,7 @@ export default class CreatureType {
                 immuneTo.push({
                   name: testData.preData.source.name,
                   target: `${target.actor.name} (${type.getName()})`,
-                  condition: `${game.i18n.localize('feature')} ${feature}`,
+                  condition: `${localize('feature')} ${feature}`,
                 });
                 found = true;
                 break;
@@ -205,7 +206,7 @@ export default class CreatureType {
         value,
         selected,
         type: 'dmg',
-        source: game.i18n.localize('target'),
+        source: localize('target'),
       },
     ];
   }
@@ -258,7 +259,7 @@ class ChimeraType extends VulnerableToLifeGods {}
 class DaimonidType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Influence', 'Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Influence', 'Transformation'].map((x) => localize(`Features.${x}`));
   }
 
   damageModifier(attackItem) {
@@ -276,7 +277,7 @@ class DragonType extends CreatureType {}
 class DemonType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Influence', 'Transformation', 'Healing', 'Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Influence', 'Transformation', 'Healing', 'Illusion'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -338,7 +339,7 @@ class ElementalType extends CreatureType {
 class FairyType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Illusion'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -347,7 +348,7 @@ class FairyType extends CreatureType {
 class GhostType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Illusion', 'Healing', 'Telekinesis', 'Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Illusion', 'Healing', 'Telekinesis', 'Transformation'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -376,7 +377,7 @@ class GhostType extends CreatureType {
 class GolemType extends VulnerableToLifeGods {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Transformation'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -389,7 +390,7 @@ class GolemType extends VulnerableToLifeGods {
 class HomunculiType extends VulnerableToLifeGods {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Healing'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Healing'].map((x) => localize(`Features.${x}`));
   }
 
   ignoredCondition(condition) {
@@ -406,7 +407,7 @@ class AnimalType extends CreatureType {}
 class UndeadType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Influence', 'Healing', 'Illusion'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Influence', 'Healing', 'Illusion'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }
@@ -430,7 +431,7 @@ class SupernaturalType extends CreatureType {}
 class MagicalConstructType extends CreatureType {
   constructor(creatureClass) {
     super(creatureClass);
-    this.spellImmunities = ['Transformation'].map((x) => game.i18n.localize(`Features.${x}`));
+    this.spellImmunities = ['Transformation'].map((x) => localize(`Features.${x}`));
     this.poisonImmunity = true;
     this.diseaseImmunity = true;
   }

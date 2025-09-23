@@ -6,7 +6,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import DSA5Payment from '../helpers/payment.js';
 import { Trade } from '../../actor/trade.js';
-import Itemdsa5 from '../../item/item-dsa5.js';
+import { localize } from '../helpers/localizer.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { ItemDataModel } from '../../data/baseitem.js';
@@ -35,8 +35,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     super(options);
     this.searching = '';
 
-    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => game.i18n.localize(`LocalizedIDs.${x}`));
-    TokenHotbar2.defaultSkills = new Set([game.i18n.localize('LocalizedIDs.perception')]);
+    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => localize(`LocalizedIDs.${x}`));
+    TokenHotbar2.defaultSkills = new Set([localize('LocalizedIDs.perception')]);
 
     if (game.user.isGM) {
       this.callbackFunctions = {};
@@ -207,7 +207,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const darkness = Number(ev.currentTarget.value);
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': darkness }, { animateDarkness: 3000 });
 
-    tinyNotification(`${game.i18n.localize('MASTER.darkness')} ${darkness}`);
+    tinyNotification(`${localize('MASTER.darkness')} ${darkness}`);
   }
 
   async _onRender(context, options) {
@@ -344,9 +344,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           case 'consumable':
             const proceed = await foundry.applications.api.DialogV2.confirm({
               window: {
-                title: game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
+                title: localize('SHEET.ConsumeItem') + ': ' + result.name,
               },
-              content: game.i18n.localize('SHEET.ConsumeItem') + ': ' + result.name,
+              content: localize('SHEET.ConsumeItem') + ': ' + result.name,
               rejectClose: false,
               modal: true,
             });
@@ -514,7 +514,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       const moreSkills = [];
       let moreSpells = [];
       const isRiding = Riding.isRiding(actor);
-      const rideName = game.i18n.localize('LocalizedIDs.riding');
+      const rideName = localize('LocalizedIDs.riding');
 
       effects = await this._effectEntries(actor);
       if (game.combat) {
@@ -646,7 +646,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
 
     if (this.showEffects) {
-      const label = game.i18n.localize('CONDITION.add');
+      const label = localize('CONDITION.add');
       const effect = {
         name: 'CONDITION.add',
         id: '',
@@ -698,24 +698,24 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _functionEntries() {
-    const trade = game.i18n.localize('MERCHANT.exchangeWithTarget');
+    const trade = localize('MERCHANT.exchangeWithTarget');
     return [
       {
         name: trade,
         id: 'trade',
         cssClass: 'function',
         abbrev: trade[0],
-        iconClass: 'coinIcon',
+        iconClass: 'fas fa-coins',
         subfunction: 'trade',
       },
     ];
   }
 
   _brawlEntry(combatskills) {
-    const brawl = combatskills.find((x) => x.name == game.i18n.localize('LocalizedIDs.wrestle'));
+    const brawl = combatskills.find((x) => x.name == localize('LocalizedIDs.wrestle'));
     if (brawl) {
       return {
-        name: game.i18n.localize('attackWeaponless'),
+        name: localize('attackWeaponless'),
         id: 'attackWeaponless',
         icon: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         attack: brawl.system.attack.value,
@@ -927,9 +927,9 @@ export class AddEffectDialog extends DefaultAppv2 {
     data.effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
         return {
-          name: game.i18n.localize(x.name),
+          name: localize(x.name),
           img: x.img,
-          description: game.i18n.localize(x.description),
+          description: localize(x.description),
           id: x.id,
         };
       })

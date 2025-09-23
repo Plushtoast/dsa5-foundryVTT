@@ -7,6 +7,7 @@ import DSA5 from '../config/config-dsa5.js';
 import { slist } from '../system/helpers/view_helper.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
 import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
+import { localize } from '../system/helpers/localizer.js';
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -167,7 +168,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     Hooks.on('renderJournalDirectory', (app, html) => {
       html = $(html);
       const div = $('<div class="header-actions action-buttons flexrow"></div>');
-      const button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${game.i18n.localize('Book.Wizard')}</button>`);
+      const button = $(`<button id="openJournalBrowser"><i class="fa fa-book"></i>${localize('Book.Wizard')}</button>`);
       button.on('click', () => {
         BookWizard.wizard.render(true);
       });
@@ -539,7 +540,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     new game.dsa5.apps.DSA5Initializer(
       'DSA5 Module Initialization',
       game.i18n.format(`${options?.scope || mod}.importContent`, {
-        defaultText: game.i18n.localize('importDefault'),
+        defaultText: localize('importDefault'),
       }),
       mod,
       game.i18n.lang,
@@ -586,7 +587,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.bookData.isDynamic = true;
     this.bookData.chapters = [
       {
-        name: game.i18n.localize(`${this.bookData.moduleName}.name`),
+        name: localize(`${this.bookData.moduleName}.name`),
         content: journal.folders.map((x) => {
           return {
             name: x.name,
@@ -601,7 +602,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     if (!chapter.actors) return [];
 
     let result = [];
-    const head = await game.folders.contents.find((x) => x.name == game.i18n.localize(`${this.bookData.moduleName}.name`) && x.type == 'Actor' && x.folder == null);
+    const head = await game.folders.contents.find((x) => x.name == localize(`${this.bookData.moduleName}.name`) && x.type == 'Actor' && x.folder == null);
     const folderids = head ? await game.folders.contents.filter((x) => x.type == 'Actor' && x.folder?.id == head.id).map((x) => x.id) : undefined;
     for (let k of chapter.actors) {
       let actor = folderids?.length ? game.actors.contents.find((x) => x.name == k && folderids.includes(x.folder?.id)) : undefined;
@@ -661,7 +662,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       if (this.selectedChapter) {
         if (this.selectedChapter == 'prep') {
           let info = {
-            initDescr: game.i18n.format(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: game.i18n.localize('importDefault') }),
+            initDescr: game.i18n.format(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: localize('importDefault') }),
           };
 
           let modules = this.bookData.modules;

@@ -34,6 +34,7 @@ import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
+import { localize } from '../system/helpers/localizer.js';
 import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
 import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet.js';
 const { mergeObject } = foundry.utils;
@@ -247,18 +248,18 @@ const showWrongLanguageDialog = (forceLanguage) => {
 
 function setupKnownEquipmentModifiers() {
   game.dsa5.config.knownShortcuts = {
-    [game.i18n.localize('CHARAbbrev.INI').toLowerCase()]: ['status', 'initiative', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.GS').toLowerCase()]: ['status', 'speed', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.AsP').toLowerCase()]: ['status', 'astralenergy', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.LeP').toLowerCase()]: ['status', 'wounds', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.KaP').toLowerCase()]: ['status', 'karmaenergy', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.AW').toLowerCase()]: ['status', 'dodge', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.SK').toLowerCase()]: ['status', 'soulpower', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.ZK').toLowerCase()]: ['status', 'toughness', 'gearmodifier'],
-    [game.i18n.localize('CHARAbbrev.FtP').toLowerCase()]: ['status', 'fatePoints', 'gearmodifier'],
+    [localize('CHARAbbrev.INI').toLowerCase()]: ['status', 'initiative', 'gearmodifier'],
+    [localize('CHARAbbrev.GS').toLowerCase()]: ['status', 'speed', 'gearmodifier'],
+    [localize('CHARAbbrev.AsP').toLowerCase()]: ['status', 'astralenergy', 'gearmodifier'],
+    [localize('CHARAbbrev.LeP').toLowerCase()]: ['status', 'wounds', 'gearmodifier'],
+    [localize('CHARAbbrev.KaP').toLowerCase()]: ['status', 'karmaenergy', 'gearmodifier'],
+    [localize('CHARAbbrev.AW').toLowerCase()]: ['status', 'dodge', 'gearmodifier'],
+    [localize('CHARAbbrev.SK').toLowerCase()]: ['status', 'soulpower', 'gearmodifier'],
+    [localize('CHARAbbrev.ZK').toLowerCase()]: ['status', 'toughness', 'gearmodifier'],
+    [localize('CHARAbbrev.FtP').toLowerCase()]: ['status', 'fatePoints', 'gearmodifier'],
   };
   for (const k of Object.keys(DSA5.characteristics)) {
-    game.dsa5.config.knownShortcuts[game.i18n.localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
+    game.dsa5.config.knownShortcuts[localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
   }
 }
 

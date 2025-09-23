@@ -27,7 +27,7 @@ import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
-import MeleeweaponData from '../data/item/meleeweapon.js';
+import { localize, format } from '../system/helpers/localizer.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -380,20 +380,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     let aggregated = this.actor.items.get(itemId).toObject();
     const attr = aggregated.system.talent[`value${target.dataset.which}`];
     let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
-    let infoMsg = `<h3 class="center"><b>${game.i18n.localize('TYPES.Item.aggregatedTest')}</b></h3>`;
+    let infoMsg = `<h3 class="center"><b>${localize('TYPES.Item.aggregatedTest')}</b></h3>`;
     if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
-      infoMsg += `${game.i18n.localize('Aggregated.noMoreAllowed')}`;
+      infoMsg += `${localize('Aggregated.noMoreAllowed')}`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
     } else {
       const options = {
         moreModifiers: [
           {
-            name: game.i18n.localize('failedTests'),
+            name: localize('failedTests'),
             value: -1 * aggregated.system.previousFailedTests.value,
             selected: true,
           },
           {
-            name: game.i18n.localize('Modifier'),
+            name: localize('Modifier'),
             value: aggregated.system.baseModifier,
             selected: true,
           },
@@ -423,7 +423,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async consumeItem(item) {
-    const title = game.i18n.localize('SHEET.ConsumeItem') + ': ' + item.name;
+    const title = localize('SHEET.ConsumeItem') + ': ' + item.name;
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title,
@@ -665,7 +665,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _rollAnySkill(ev, target) {
     const { name, ch1, ch2, ch3 } = target.dataset;
     const attributes = { system: { characteristic1: { value: ch1 }, characteristic2: { value: ch2 }, characteristic3: { value: ch3 } } };
-    this.actor.rollAnySkill(game.i18n.localize(name), this.getTokenId(), attributes);
+    this.actor.rollAnySkill(localize(name), this.getTokenId(), attributes);
   }
 
   static _itemEdit(ev, target) {
@@ -923,7 +923,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!fct) return;
 
     const cost = fct(isAnimal);
-    ev.currentTarget.dataset.tooltip = game.i18n.format(cost.key, cost);
+    ev.currentTarget.dataset.tooltip = format(cost.key, cost);
     game.tooltip.activate(ev.currentTarget)
   }
 
@@ -1233,7 +1233,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       'SHEET.SplitItem',
       callback,
       {
-        name: game.i18n.format('MERCHANT.splitItem', { name: item.name }),
+        name: format('MERCHANT.splitItem', { name: item.name }),
         count: item.system.quantity.value - 1,
         max: item.system.quantity.value - 1,
       }
@@ -1275,7 +1275,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!paid) return;
 
-    const msg = game.i18n.format('CHATNOTIFICATION.paysTraditionAbility', {
+    const msg = format('CHATNOTIFICATION.paysTraditionAbility', {
       name: this.actor.name,
       ability: item.name,
       cost,
@@ -1354,7 +1354,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         continue;
       }
 
-      const title = game.i18n.localize(entry.querySelector('button').dataset.tooltip) || '';
+      const title = localize(entry.querySelector('button').dataset.tooltip) || '';
       const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
@@ -1367,7 +1367,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _itemDeleteDialog(item) {
-    const message = game.i18n.format('DIALOG.DeleteItemDetail', { item: item.name, });
+    const message = format('DIALOG.DeleteItemDetail', { item: item.name, });
     const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
@@ -1495,7 +1495,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       let spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
       if (!spell) {
         ui.notifications.error(
-          game.i18n.format('DSAError.noSpellForExtension', {
+          format('DSAError.noSpellForExtension', {
             name: item.system.source,
             category: DSA5_Utility.categoryLocalization(item.system.category),
             extension: item.name,
@@ -1595,9 +1595,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (game.dsa5.config.hooks.shapeshift) {
       new foundry.applications.api.DialogV2({
         window: {
-          title: game.i18n.localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+          title: localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
         },
-        content: `<p>${game.i18n.localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
+        content: `<p>${localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
         buttons: [
           {
             action: 'shapeshift',
@@ -1683,7 +1683,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         break;
       case 'npc':
         ui.notifications.error(
-          game.i18n.format('DSAError.canNotBeAdded', {
+          format('DSAError.canNotBeAdded', {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type, 'Actor'),
           }),
@@ -1691,7 +1691,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         break
       default:
         ui.notifications.error(
-          game.i18n.format('DSAError.canNotBeAdded', {
+          format('DSAError.canNotBeAdded', {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type),
           }),
@@ -1720,7 +1720,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
             if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
           } else {
             ui.notifications.warn(
-              game.i18n.format('DSAError.notFound', {
+              format('DSAError.notFound', {
                 category: thing.type,
                 name: thing.name,
               }),
@@ -1735,7 +1735,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       //}
     } else {
       ui.notifications.error(
-        game.i18n.format('DSAError.notFound', {
+        format('DSAError.notFound', {
           category: thing.type,
           name: thing.name,
         }),
@@ -1825,7 +1825,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         if (price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return;
 
         tinyNotification(
-          game.i18n.format('PAYMENT.pay', {
+          format('PAYMENT.pay', {
             actor: this.actor.name,
             amount: price,
           }),

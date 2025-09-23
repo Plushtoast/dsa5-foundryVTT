@@ -86,7 +86,17 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
     return [{
       name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
       icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-      callback: () => this.parent.update({ 'system.worn.value': !this.worn.value }),
+      callback: () => this.reEquipItem(),
     }]
+  }
+
+  async reEquipItem() {
+    const newValue = !this.worn.value;
+    await this.parent.update({ 'system.worn.value': newValue });
+
+    if (this.parent.actor) {
+      const texts = [{ value: game.i18n.localize(newValue ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
+      this.parent.actor.tokenScrollingText(texts);
+    }
   }
 }

@@ -2,6 +2,7 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { localize } from '../system/helpers/localizer.js';
 
 const { getProperty } = foundry.utils;
 
@@ -92,37 +93,37 @@ export default class EffectDropdownBuilder {
     static _getBaseOptions() {
         return [
             {
-                name: game.i18n.localize('protection'),
+                name: localize('protection'),
                 val: 'system.totalArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: game.i18n.localize('liturgyArmor'),
+                name: localize('liturgyArmor'),
                 val: 'system.liturgyArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${game.i18n.localize('resistanceModifier')} (${game.i18n.localize('condition')})`,
+                name: `${localize('resistanceModifier')} (${localize('condition')})`,
                 val: 'system.resistances.effects',
                 mode: 0,
                 ph: 'inpain 1',
             },
             {
-                name: `${game.i18n.localize('threshold')} (${game.i18n.localize('condition')})`,
+                name: `${localize('threshold')} (${localize('condition')})`,
                 val: 'system.thresholds.effects',
                 mode: 0,
                 ph: 'inpain 1',
             },
             {
-                name: game.i18n.localize('spellArmor'),
+                name: localize('spellArmor'),
                 val: 'system.spellArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: game.i18n.localize('carrycapacity'),
+                name: localize('carrycapacity'),
                 val: 'system.carryModifier',
                 mode: 2,
                 ph: '1',
@@ -136,14 +137,14 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSkillOptions() {
-        const FW = game.i18n.localize('MODS.FW');
-        const skill = game.i18n.localize('TYPES.Item.skill');
-        const FP = game.i18n.localize('MODS.FP');
-        const stepValue = game.i18n.localize('stepValue');
-        const QS = game.i18n.localize('MODS.QS');
-        const partChecks = game.i18n.localize('MODS.partChecks');
-        const compensation = game.i18n.localize('MODS.compensation');
-        const demo = `${game.i18n.localize('LocalizedIDs.perception')} 1`;
+        const FW = localize('MODS.FW');
+        const skill = localize('TYPES.Item.skill');
+        const FP = localize('MODS.FP');
+        const stepValue = localize('stepValue');
+        const QS = localize('MODS.QS');
+        const partChecks = localize('MODS.partChecks');
+        const compensation = localize('MODS.compensation');
+        const demo = `${localize('LocalizedIDs.perception')} 1`;
 
         const skillOptions = [
             {
@@ -177,7 +178,7 @@ export default class EffectDropdownBuilder {
                 ph: demo,
             },
             {
-                name: `${skill} - ${game.i18n.localize('MODS.global')}`,
+                name: `${skill} - ${localize('MODS.global')}`,
                 val: 'system.skillModifiers.global',
                 mode: 0,
                 ph: '1',
@@ -194,7 +195,7 @@ export default class EffectDropdownBuilder {
         const models = ['liturgy', 'ceremony', 'spell', 'ritual', 'skill', 'feature'];
         for (const model of models) {
             const key = model === 'skill' ? 'skillglobal' : model;
-            const modelName = game.i18n.localize(key);
+            const modelName = localize(key);
 
             skillOptions.push(
                 {
@@ -245,16 +246,16 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getCombatOptions() {
-        const closeCombat = game.i18n.localize('closeCombatAttacks');
-        const rangeCombat = game.i18n.localize('rangeCombatAttacks');
-        const miracle = game.i18n.localize('LocalizedIDs.miracle');
-        const csdemo = `${game.i18n.localize('LocalizedIDs.wrestle')} 1`;
-        const combatskill = game.i18n.localize('TYPES.Item.combatskill');
-        const critSuccess = game.i18n.localize('CriticalSuccess');
-        const AT = game.i18n.localize('CHARAbbrev.AT');
-        const PA = game.i18n.localize('CHARAbbrev.PA');
-        const damage = game.i18n.localize('CHARAbbrev.damage');
-        const defenseMalus = game.i18n.localize('MODS.defenseMalus');
+        const closeCombat = localize('closeCombatAttacks');
+        const rangeCombat = localize('rangeCombatAttacks');
+        const miracle = localize('LocalizedIDs.miracle');
+        const csdemo = `${localize('LocalizedIDs.wrestle')} 1`;
+        const combatskill = localize('TYPES.Item.combatskill');
+        const critSuccess = localize('CriticalSuccess');
+        const AT = localize('CHARAbbrev.AT');
+        const PA = localize('CHARAbbrev.PA');
+        const damage = localize('CHARAbbrev.damage');
+        const defenseMalus = localize('MODS.defenseMalus');
 
         const combatOptions = [
             // Close combat options
@@ -355,7 +356,7 @@ export default class EffectDropdownBuilder {
                 ph: csdemo,
             },
             {
-                name: `${combatskill} - ${game.i18n.localize('KTW')}`,
+                name: `${combatskill} - ${localize('KTW')}`,
                 val: 'system.skillModifiers.combat.step',
                 mode: 0,
                 ph: csdemo,
@@ -367,7 +368,7 @@ export default class EffectDropdownBuilder {
                 ph: csdemo,
             },
             {
-                name: `${combatskill} - ${game.i18n.localize('damageThreshold')}`,
+                name: `${combatskill} - ${localize('damageThreshold')}`,
                 val: 'system.skillModifiers.combat.damageThreshold',
                 mode: 0,
                 ph: csdemo,
@@ -375,7 +376,7 @@ export default class EffectDropdownBuilder {
 
             // Vulnerability
             {
-                name: `${game.i18n.localize('vulnerability')} - ${combatskill}`,
+                name: `${localize('vulnerability')} - ${combatskill}`,
                 val: 'system.vulnerabilities.combatskill',
                 mode: 0,
                 ph: csdemo,
@@ -383,10 +384,10 @@ export default class EffectDropdownBuilder {
 
             // Creature bonus
             {
-                name: game.i18n.localize('MODS.creatureBonus'),
+                name: localize('MODS.creatureBonus'),
                 val: 'system.creatureBonus',
                 mode: 0,
-                ph: `${game.i18n.localize('CONJURATION.elemental')} 1`,
+                ph: `${localize('CONJURATION.elemental')} 1`,
             },
         ];
 
@@ -397,7 +398,7 @@ export default class EffectDropdownBuilder {
 
             for (const k of Object.keys(modifiers)) {
                 combatOptions.push({
-                    name: `${modelName} - ${game.i18n.localize(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
+                    name: `${modelName} - ${localize(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
                     val: `system.${model}RollModifiers.${k}`,
                     mode: 2,
                     ph: '1',
@@ -414,13 +415,13 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getRegenerationOptions() {
-        const regenerate = game.i18n.localize('regenerate');
-        const combatReg = `${regenerate} (${game.i18n.localize('CHARAbbrev.CR')})`;
-        const wounds = game.i18n.localize('wounds');
-        const astralEnergy = game.i18n.localize('astralenergy');
-        const karmaEnergy = game.i18n.localize('karmaenergy');
-        const advanced = game.i18n.localize('advanced');
-        const conditionalHint = `${game.i18n.localize('Description')} 1`;
+        const regenerate = localize('regenerate');
+        const combatReg = `${regenerate} (${localize('CHARAbbrev.CR')})`;
+        const wounds = localize('wounds');
+        const astralEnergy = localize('astralenergy');
+        const karmaEnergy = localize('karmaenergy');
+        const advanced = localize('advanced');
+        const conditionalHint = `${localize('Description')} 1`;
 
         return [
             // Combat regeneration
@@ -489,27 +490,27 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSpellLiturgyOptions() {
-        const AsPCost = game.i18n.localize('AsPCost');
-        const KaPCost = game.i18n.localize('KaPCost');
-        const permanentCost = game.i18n.localize('permanentCost');
-        const featureHint = `${game.i18n.localize('Healing')} 1`;
-        const descriptor = `${game.i18n.localize('Description')} 1`;
-        const advanced = game.i18n.localize('advanced');
-        const feature = game.i18n.localize('feature');
-        const damage = game.i18n.localize('damage');
+        const AsPCost = localize('AsPCost');
+        const KaPCost = localize('KaPCost');
+        const permanentCost = localize('permanentCost');
+        const featureHint = `${localize('Healing')} 1`;
+        const descriptor = `${localize('Description')} 1`;
+        const advanced = localize('advanced');
+        const feature = localize('feature');
+        const damage = localize('damage');
 
         const options = [
             // Base costs
             { name: KaPCost, val: 'system.kapModifier', mode: 2, ph: '1' },
             { name: AsPCost, val: 'system.aspModifier', mode: 2, ph: '1' },
             {
-                name: `${permanentCost} ${game.i18n.localize('CHARAbbrev.AsP')}`,
+                name: `${permanentCost} ${localize('CHARAbbrev.AsP')}`,
                 val: 'system.status.astralenergy.permanentGear',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${permanentCost} ${game.i18n.localize('CHARAbbrev.KaP')}`,
+                name: `${permanentCost} ${localize('CHARAbbrev.KaP')}`,
                 val: 'system.status.karmaenergy.permanentGear',
                 mode: 2,
                 ph: '1',
@@ -517,13 +518,13 @@ export default class EffectDropdownBuilder {
 
             // Spell/Liturgy damage
             {
-                name: `${game.i18n.localize('spell')} - ${damage}`,
+                name: `${localize('spell')} - ${damage}`,
                 val: 'system.spellStats.damage',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${game.i18n.localize('liturgy')} - ${damage}`,
+                name: `${localize('liturgy')} - ${damage}`,
                 val: 'system.liturgyStats.damage',
                 mode: 2,
                 ph: '1',
@@ -563,7 +564,7 @@ export default class EffectDropdownBuilder {
             // Resistance options
             for (const k of ['soulpower', 'toughness']) {
                 options.push({
-                    name: `${game.i18n.localize(k)} (${modelName})`,
+                    name: `${localize(k)} (${modelName})`,
                     val: `system.status.${k}.${model}resist`,
                     mode: 2,
                     ph: '1',
@@ -572,7 +573,7 @@ export default class EffectDropdownBuilder {
 
             // Roll modifiers
             for (const k of Object.keys(DSA5SpellDialog.rollModifiers)) {
-                const loc = game.i18n.localize(k.replace('Spell', ''));
+                const loc = localize(k.replace('Spell', ''));
                 options.push(
                     {
                         name: `${modelName} - ${loc}`,
@@ -604,7 +605,7 @@ export default class EffectDropdownBuilder {
         // Base characteristics
         for (const k of Object.keys(DSA5.characteristics)) {
             options.push({
-                name: game.i18n.localize(`CHAR.${k.toUpperCase()}`),
+                name: localize(`CHAR.${k.toUpperCase()}`),
                 val: `system.characteristics.${k}.gearmodifier`,
                 mode: 2,
                 ph: '1',
@@ -614,7 +615,7 @@ export default class EffectDropdownBuilder {
         // Calculated attributes
         for (const k of DSA5.gearModifyableCalculatedAttributes) {
             options.push({
-                name: game.i18n.localize(k),
+                name: localize(k),
                 val: `system.status.${k}.gearmodifier`,
                 mode: 2,
                 ph: '1',
@@ -624,31 +625,31 @@ export default class EffectDropdownBuilder {
         // Special modifiers
         options.push(
             {
-                name: game.i18n.localize('MODS.sight'),
+                name: localize('MODS.sight'),
                 val: 'system.sightModifier.value',
                 mode: 2,
                 ph: '-1',
             },
             {
-                name: game.i18n.localize('MODS.sightMax'),
+                name: localize('MODS.sightMax'),
                 val: 'system.sightModifier.maxLevel',
                 mode: 5,
                 ph: '4',
             },
             {
-                name: `${game.i18n.localize('LocalizedIDs.immuneTo')} ${game.i18n.localize('condition')}`,
+                name: `${localize('LocalizedIDs.immuneTo')} ${localize('condition')}`,
                 val: 'system.immunities',
                 mode: 2,
                 ph: 'feared',
             },
             {
-                name: game.i18n.localize('temperature.heatProtection'),
+                name: localize('temperature.heatProtection'),
                 val: 'system.temperature.heatProtection',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: game.i18n.localize('temperature.coldProtection'),
+                name: localize('temperature.coldProtection'),
                 val: 'system.temperature.coldProtection',
                 mode: 2,
                 ph: '1',
@@ -669,7 +670,7 @@ export default class EffectDropdownBuilder {
         for (const effect of CONFIG.statusEffects) {
             if (getProperty(effect, 'flags.dsa5.max')) {
                 options.push({
-                    name: game.i18n.localize(effect.name),
+                    name: localize(effect.name),
                     val: `system.condition.${effect.id}`,
                     mode: 2,
                     ph: '1',
@@ -693,7 +694,7 @@ export default class EffectDropdownBuilder {
         // Armor-specific options
         if (parentType === 'armor') {
             options.push({
-                name: game.i18n.localize('CustomActiveEffects.armor.vulnerability'),
+                name: localize('CustomActiveEffects.armor.vulnerability'),
                 val: 'self.armorVulnerability',
                 mode: 0,
                 ph: 'Swords 5',
@@ -703,14 +704,14 @@ export default class EffectDropdownBuilder {
         // Weapon-specific options
         if (['meleeweapon', 'rangeweapon'].includes(parentType)) {
             const modelName = DSA5_Utility.categoryLocalization(parentType);
-            const maneuver = game.i18n.localize('combatmaneuver');
-            const maneuverExample = game.i18n.localize('LocalizedIDs.weaponThrow');
+            const maneuver = localize('combatmaneuver');
+            const maneuverExample = localize('LocalizedIDs.weaponThrow');
 
             // Situational modifiers
             for (const k of ['attack', 'parry', 'damage']) {
                 if (k === 'parry' && parentType === 'rangeweapon') continue;
 
-                const mode = game.i18n.localize(`CHAR.${k.toUpperCase()}`);
+                const mode = localize(`CHAR.${k.toUpperCase()}`);
                 options.push({
                     name: `${modelName} - ${mode}`,
                     val: `self.situational.${k}`,
@@ -722,19 +723,19 @@ export default class EffectDropdownBuilder {
             // Maneuver modifiers
             options.push(
                 {
-                    name: `${maneuver} - ${game.i18n.localize('CHAR.attack')}`,
+                    name: `${maneuver} - ${localize('CHAR.attack')}`,
                     val: 'self.maneuver.atbonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,
                 },
                 {
-                    name: `${maneuver} - ${game.i18n.localize('CHAR.parry')}`,
+                    name: `${maneuver} - ${localize('CHAR.parry')}`,
                     val: 'self.maneuver.pabonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,
                 },
                 {
-                    name: `${maneuver} - ${game.i18n.localize('CHAR.damage')}`,
+                    name: `${maneuver} - ${localize('CHAR.damage')}`,
                     val: 'self.maneuver.tpbonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,

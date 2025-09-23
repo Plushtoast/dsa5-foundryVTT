@@ -5,6 +5,7 @@ import { DefaultAppv2 } from '../../actor/baseapp.js';
 const { duplicate, mergeObject } = foundry.utils;
 import FlexSearch from "../../../libs/flexsearch.bundle.module.min.js"
 import DSA5 from '../../config/config-dsa5.js';
+import { localize } from '../helpers/localizer.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 //todo check if items on index have permission
@@ -139,7 +140,7 @@ class DSASystemConfiguration {
   static async renderTooltip(item, fullTextSearch) {
     const description = this.getDescription(item, fullTextSearch)
     const langKey = `TYPES.${item.documentName}.${item.type}`
-    const type = game.i18n.has(langKey) ? game.i18n.localize(langKey) : item.type
+    const type = game.i18n.has(langKey) ? localize(langKey) : item.type
     return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
   }
 
@@ -359,7 +360,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         if (!this.models[category]) this.models[category] = []
         const langKey = `TYPES.${documentName}.${key}`
         this.models[category].push({
-          label: game.i18n.has(langKey) ? game.i18n.localize(langKey) : key,
+          label: game.i18n.has(langKey) ? localize(langKey) : key,
           selected: false,
           key
         })
@@ -804,7 +805,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (this.detailFilter[subcategory]) return;
 
     const { index, itemType } = this.selectIndex(category);
-    const catName = game.i18n.localize(`TYPES.${itemType}.${subcategory}`);
+    const catName = localize(`TYPES.${itemType}.${subcategory}`);
     const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true });
     const fields = this.subcategoryFields(subcategory);
     const target = $(this.element).find(`*[data-tab="${category}"]`);
@@ -871,7 +872,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async buildDetailFilter(category, subcategory, savedSettings = undefined) {
     if (category === 'none') {
-      return `<p>${game.i18n.localize('Library.selectAdvanced')}</p>`;
+      return `<p>${localize('Library.selectAdvanced')}</p>`;
     }
 
     const indexPromise = this.createDetailIndex(category, subcategory);
@@ -920,7 +921,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       } else {
         let displayName;
         if (game.i18n.has(`${packageName}.name`)) {
-          displayName = game.i18n.localize(`${packageName}.name`);
+          displayName = localize(`${packageName}.name`);
         } else if (packageName === 'dsa5') {
           displayName = game.system.title;
         } else {
@@ -1110,7 +1111,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   showLoading(documentName) {
     this.setBGImage([1], documentName)
-    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${game.i18n.localize('Library.buildingIndex')}</div>`)
+    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${localize('Library.buildingIndex')}</div>`)
     loading.appendTo($(this.element).find('.searchResult'))
   }
 

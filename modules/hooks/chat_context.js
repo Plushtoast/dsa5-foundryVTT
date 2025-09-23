@@ -1,6 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-
+import { localize } from '../system/helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -51,7 +51,7 @@ export const applyDamage = async (li, mode, factor = 1) => {
     message,
     'damageApplied',
     /hideAnchor">/,
-    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${game.i18n.localize('damageApplied')}"></i>`
+    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${localize('damageApplied')}"></i>`
   );
 };
 
@@ -121,7 +121,7 @@ class ConditionChecker {
 
     if (ROLLABLE_TYPES.includes(rollType)) rollType = 'char';
 
-    const schipSkill = game.i18n.localize(`SCHIPSKILLS.${rollType}${mode}`);
+    const schipSkill = localize(`SCHIPSKILLS.${rollType}${mode}`);
     return !!actor.items.getName(schipSkill);
   }
 
@@ -152,7 +152,7 @@ class ConditionChecker {
 
     const { talentedRerollUsed } = message.flags.data;
     const sourceName = message.flags.data.preData.source.name;
-    const aptitudeName = `${game.i18n.localize('LocalizedIDs.aptitude')} (${sourceName})`;
+    const aptitudeName = `${localize('LocalizedIDs.aptitude')} (${sourceName})`;
 
     return !talentedRerollUsed && !!actor.items.find(item => item.name === aptitudeName);
   }
@@ -308,7 +308,7 @@ class ActionHandler {
 
   static createMaintainEffect(name, maintain, cost, payType) {
     return {
-      name: `${name} (${game.i18n.localize('maintainCost')})`,
+      name: `${name} (${localize('maintainCost')})`,
       img: 'icons/svg/daze.svg',
       flags: {
         dsa5: {
@@ -335,7 +335,7 @@ class ActionHandler {
     ];
 
     for (const unit of timeUnits) {
-      const regex = new RegExp(game.i18n.localize(unit.key), 'gi');
+      const regex = new RegExp(localize(unit.key), 'gi');
       if (regex.test(maintain)) {
         return duration * unit.seconds;
       }
@@ -366,7 +366,7 @@ class ActionHandler {
 
 const createContextOptions = () => {
   const applyDamageLabel = () => {
-    return game.i18n.localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
+    return localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
   const baseOptions = [
@@ -491,7 +491,7 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     callback: (li) => applyDamage(li, 'value', 2),
   },
   {
-    name: `${game.i18n.localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     condition: ConditionChecker.canHurtSP,
     callback: (li) => applyDamage(li, 'sp', 2),
@@ -503,7 +503,7 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     callback: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
   },
   {
-    name: `${game.i18n.localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     condition: ConditionChecker.canApplyDefaultRolls,
     callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),

@@ -5,6 +5,7 @@ import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import CombatskillData from '../data/item/combatskill.js';
+import { localize } from '../system/helpers/localizer.js';
 import TraitData from '../data/item/trait.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
 
@@ -40,7 +41,7 @@ export default class TableEffects {
         }
       }
       const tt = game.i18n.format('ActiveEffects.appliedEffect', {
-        source: game.i18n.localize('table'),
+        source: localize('table'),
         target: targets.map((x) => x.name).join(', '),
       });
       await message.update({
@@ -143,7 +144,7 @@ export default class TableEffects {
         }
         let ef;
         if (changes) {
-          const lbl = game.i18n.localize(`CONDITION.${systemEffect}`) + ' - ' + game.i18n.localize('botchCritEffect');
+          const lbl = localize(`CONDITION.${systemEffect}`) + ' - ' + localize('botchCritEffect');
           ef = OnUseEffect.effectBaseDummy(lbl, changes, duration || {});
           ef.icon = baseEffect.icon;
         } else {
@@ -156,7 +157,7 @@ export default class TableEffects {
         }
         return true;
       } else if (changes) {
-        const ef = OnUseEffect.effectBaseDummy(game.i18n.localize('botchCritEffect'), changes || [], duration || {});
+        const ef = OnUseEffect.effectBaseDummy(localize('botchCritEffect'), changes || [], duration || {});
 
         mergeObject(ef, {
           flags: {
