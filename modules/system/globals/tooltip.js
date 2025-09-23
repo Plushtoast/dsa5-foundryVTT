@@ -28,6 +28,10 @@ export class GlobalToolTipHandler {
             case 'onUse':
                 ({ description } = await GlobalToolTipHandler._handleOnUseTooltip(data, actor));
                 break;
+            case 'zbrawl':
+                tooltip = name;
+                break;
+             case 'skill':
             case 'unequipped':
             case 'consumable':
             case 'weapon':

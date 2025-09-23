@@ -56,7 +56,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     this.#addContextColor();
 
-    if (!game.settings.get('dsa5', 'hotbarv3')) return;
+    if (!game.settings.get('dsa5', 'hotbarv3')) {
+      this.element.classList.add('withThemes');
+      return;
+    }
 
     const html = $(this.element);
     this.element.classList.add('hotbarV4');

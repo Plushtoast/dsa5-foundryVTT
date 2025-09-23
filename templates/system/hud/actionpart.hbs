@@ -45,8 +45,7 @@
                     data-category="attacks">
                     {{#each token.groups.attacks as |item i|}}
                     <li class="{{item.cssClass}} primary slot" data-category="{{item.cssClass}}"
-                        data-subweapon="{{item.subweapon}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
-                        data-action="quickButton" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+                        data-subweapon="{{item.subweapon}}" data-id="{{item.id}}" data-action="quickButton" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                         <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
                         </div>
                         <span class="nameContent">{{item.name}}</span>
@@ -60,7 +59,7 @@
                     data-category="{{@key}}">
                     {{#each skills as |item i|}}
                     <li class="{{item.cssClass}} {{item.addClass}} slot primary" data-action="quickButton"
-                        data-category="{{item.cssClass}}" data-id="{{item.id}}" data-tooltip="{{item.name}}"
+                        data-category="{{item.cssClass}}" data-id="{{item.id}}"
                         data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
                         <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}
                         </div>
