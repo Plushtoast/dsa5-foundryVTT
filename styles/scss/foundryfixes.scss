@@ -43,11 +43,15 @@ hr {
 #pause.dsa5Pause {
   top: calc(57vh);
 }
+#players.expanded {
+  
+  #players-inactive.scrollable {
+    max-height: 200px;
+  }
+}
 
-// fixes tooltip wiggling
-/*#interface {
-  //min-width: 100vw;
-  min-width: calc(100% - var(--av-width));
-}*/
+#players-inactive.scrollable {
+  max-height: 0px;
+}
 
 /* Fixes for Foundry 13 */
