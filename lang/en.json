@@ -658,6 +658,13 @@
     "vulnerability": "Vulnerability",
     "information": "Information",
     "zoo": "Zoo",
+    "dsa5.ActorSheetdsa5Character": "TDE5 - Hero",
+    "dsa5.CharacterMerchantSheetDSA5": "TDE5 - Merchant/Loot/Garadan",
+    "dsa5.MerchantSheetDSA5": "TDE5 - Merchant/Loot/Garadan",
+    "dsa5.CreatureMerchantSheetDSA5": "TDE5 - Merchant/Loot/Garadan",
+    "dsa5.ActorSheetdsa5Creature": "TDE5 - Creature",
+    "dsa5.ActorSheetdsa5NPC": "TDE5 - NPC",
+    "dsa5.DSACharBuilder": "TDE5 - Character Creation",
     "CALENDAR": {
         "DSA": {
             "Monday": "Windday",
@@ -1076,9 +1083,11 @@
         }
     },
     "wrongGrip": {
-        "oneHanded": "One-handed guided",
-        "twoHanded": "Two-handed guided",
-        "wrongGripped": "One-/Two-handed guided",
+        "oneHanded": "One-handed wielded",
+        "twoHanded": "Two-handed wielded",
+        "twoHandedWeapon": "{weapon} wielded two-handed",
+        "oneHandedWeapon": "{weapon} wielded one-handed",
+        "wrongGripped": "One-/Two-handed wielded",
         "yieldTwo": "PA -1, DP +1, can be changed once on your turn only",
         "yieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
         "yieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
@@ -1330,11 +1339,99 @@
         "Trinkhorn": "Drinking horn",
         "Schuppenbeutel": "Scale bag",
         "Kristallomantische Kristallkugel": "Crystallomantic crystal orb",
-        "Echsenhaube": "Lizard hood"
+        "Echsenhaube": "Lizard hood",
+        "Zauberschale": "Magical bowl",
+        "Hauerkette": "Tusks necklace",
+        "Schweinetrommel": "Pig drum"
     },
     "POISON": {
         "ql": "Quality of the tavern",
         "addNow": "Add to inventory now?"
+    },
+    "PERSONAE": {
+        "title": "Dramatis Personae / Bestiarium",
+        "ImportantPersons": "Dramatis Personae",
+        "bestiary": "Bestiarium",
+        "Add": "Person/Kreatur hinzufügen",
+        "UnknownFaction": "Unbekannte Fraktion",
+        "selectJournal": "Journal auswählen",
+        "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
+        "SelectPersonaHint": "Zeige Notizen und wichtige Details zu Personen und Kreaturen, denen du auf deinen Abenteuern begegnet bist.",
+        "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
+        "NoPersonsInList": "Keine Personen in der Liste",
+        "NoBeasts": "Keine Kreaturen in der Liste",
+        "journals": {
+            "label": "Dramatis Personae Journals",
+            "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        },
+        "FIELDS": {
+            "personae": {
+                "name": {
+                    "label": "Name"
+                },
+                "type": {
+                    "label": "Type",
+                    "choices": {
+                        "person": "Dramatis Personae",
+                        "creature": "Beast"
+                    }
+                },
+                "subtitle": {
+                    "label": "Subtitle"
+                },
+                "description": {
+                    "label": "Description"
+                },
+                "notes": {
+                    "label": "Player Notes"
+                },
+                "actor_uuid": {
+                    "label": "Actor",
+                    "hint": "Drag and drop an actor here to represent them in the Bestiary."
+                },
+                "visible": {
+                    "label": "Visible to Players"
+                },
+                "faction": {
+                    "label": "Faction/Type",
+                    "hint": "The actor is grouped in the Bestiary by faction/type."
+                },
+                "tags": {
+                    "label": "Tags",
+                    "hint": "A comma-separated list of tags to attach important details to the person/creature or override default tags like species, culture, and profession."
+                },
+                "showSpecies": {
+                    "label": "Show Species"
+                },
+                "showCulture": {
+                    "label": "Show Culture"
+                },
+                "showProfession": {
+                    "label": "Show Profession"
+                },
+                "showActorDescription": {
+                    "label": "Show actor description",
+                    "hint": "The actor's description will be displayed in the Bestiary. If disabled, a custom text can be created in this entry instead."
+                },
+                "socialContact": {
+                    "label": "Social Contact Levels",
+                    "level": {
+                        "label": "Social Contact Level",
+                        "choices": {
+                            "1": "Unquenchable Hatred (1)",
+                            "2": "Declared Enemy (2)",
+                            "3": "Dislike (3)",
+                            "4": "Mild Dislike (4)",
+                            "5": "Neutral (5)",
+                            "6": "Sympathy/Friendship (6)",
+                            "7": "Great Trust (7)",
+                            "8": "Close Loyalty/Love (8)",
+                            "9": "Deep Love / Willingness to Sacrifice (9)"
+                        }
+                    }
+                }
+            }
+        }
     },
     "BOOKITEM": {
         "author": "Author",
@@ -1561,9 +1658,18 @@
     "TYPES.Actor.creature": "Creature",
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
+    "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "npc": "Non Player Character",
     "creature": "Creature",
     "dsacalendar": {
+        "SelectEntry": "Choose an entry",
+        "SelectEntryHint": "Show events and special days.",
+        "NoPersonsInList": "No persons in the list",
+        "nextMonth": "Next month",
+        "previousMonth": "Previous month",
+        "confirmDateChange": "Confirm date change",
+        "cancelDateChange": "Keep original date",
+        "today": "Today",
         "FIELDS": {
             "calendarentries": {
                 "label": "Date",
@@ -1603,6 +1709,7 @@
         "events": "Events",
         "gods": "Holiday of the Gods",
         "showInCalendar": "Show in calendar",
+        "showInCalendarHint": "The entries will be made visible under holidays and events in the calendar and will be available to players according to their visibility.",
         "journals": {
             "label": "Calendar Journals",
             "hint": "Select journals with calendar entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)"
@@ -2531,7 +2638,9 @@
         "2": "Combat Style",
         "3": "Passive",
         "4": "General",
-        "5": "Punch-Up"
+        "5": "Punch-Up",
+        "6": "Advanced Combat Style Specialability (Special Maneuver)",
+        "7": "Advanced Combat Style Specialability (Passive)"
     },
     "poisonCategory": {
         "1": "Poison, animal",
@@ -2572,8 +2681,10 @@
         "generalStyle": "Talent Style Special Abilities",
         "extGeneral": "Advanced Talent Special Abilities",
         "pact": "Pact",
+        "magicalsign": "Magical Sign",
         "staff": "Tradition Artifact",
-        "command": "Command Special Abilities"
+        "command": "Command Special Abilities",
+        "sikaryan": "Sikaryan"
     },
     "RIDING": {
         "unmount": "Unmount",
