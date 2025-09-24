@@ -6,8 +6,8 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
-import { DSATrapRegionBehavior } from '../data/regionbehaviors/trap.js';
 import { localize } from '../system/helpers/localizer.js';
+import { TrapState } from '../chatmessage/trap_state.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
@@ -18,7 +18,7 @@ export default function () {
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
-    DSATrapRegionBehavior.chatListeners(html);
+    TrapState.chatListeners(html);
 
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
     Hooks.call('startDSA5ChatAutoCompletion', game.dsa5.autoComplete);
