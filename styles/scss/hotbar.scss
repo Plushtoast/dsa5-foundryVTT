@@ -25,7 +25,13 @@
   &.collapsedBar {
     justify-content: left;
     --hotbar-width: 150px !important;
-    min-height: 100px;
+    flex-direction: column;
+
+    .hotbarv4-hotbar-inner {
+      align-items: end;
+      margin-bottom: 15px;
+    }
+
     .collapsibleBarPart {
       display: none;
     }
@@ -213,6 +219,7 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
+      backdrop-filter: blur(6px);
       z-index: 1;
 
       div {
@@ -248,8 +255,8 @@
         }
 
         &.KaP {
-          border-color: #7b68ee;
-          background: linear-gradient(135deg, rgba(123, 104, 238, 0.3) 0%, rgba(0, 0, 0, 0.4) 100%);
+          border-color: rgb(147, 207, 14);
+          background: linear-gradient(135deg, rgba(5, 164, 8, 0.3) 0%, rgba(9, 76, 0, 0.531) 100%);
         }
       }
     }
@@ -271,6 +278,7 @@
         0 3px 8px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
       font-size: 18px;
+      backdrop-filter: blur(4px);
 
       &:hover {
         border-color: #c41e3a;
@@ -341,6 +349,7 @@
 
   .categoryFilter {
     overflow: hidden;
+    backdrop-filter: blur(6px);
 
     &:first-child {
       border-top-left-radius: var(--border-radius);

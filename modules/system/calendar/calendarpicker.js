@@ -288,15 +288,22 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
   }
 
+  static clearCache() {
+    this.#yearCache.clear();
+  }
+
   static invalidateCache(uuid) {
+    //console.warn(`Invalidate calendar cache called from ${uuid}`);
     if (uuid) {
       const activated = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME).activated;
       if (!activated.some(el => el.uuid === uuid)) return
     }
+
     game.socket.emit('system.dsa5', {
       type: 'invalidateCache',
     });
-    this.#yearCache.clear();
+
+    this.clearCache();
   }
 
   #getSortableDate(h, currentDateValue) {

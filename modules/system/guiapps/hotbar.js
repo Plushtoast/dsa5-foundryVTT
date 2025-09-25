@@ -833,7 +833,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     context.defenseTooltip = this.#prepareDefenseTooltip(context);
     context.weapons = this.#weaponPositions(context);
     const token = this.actor?.isToken ? this.actor.token : this.actor.getActiveTokens()[0];
-    context.turnClass = game.combat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
+    context.inCombat = game.combat;
+    context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
   }
 
   #prepareResources(context) {

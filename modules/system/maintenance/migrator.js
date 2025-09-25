@@ -16,7 +16,6 @@ async function setupDefaulTokenConfig() {
     defaultToken.base.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
     defaultToken.base.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
     defaultToken.base.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
-    //defaultToken.base.lockRotation = true;
     defaultToken.base.bar1 = { attribute: 'status.wounds' };
     defaultToken.character.sight.enabled = true;
     await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);

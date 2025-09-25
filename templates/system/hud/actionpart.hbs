@@ -90,9 +90,9 @@
                 </ul>
             </div>
         </menu>
-        <div id="hotbar-controls-right" class="hotbar-controls flexcol flex0" data-tooltip-direction="RIGHT">
-
-            {{#if gmMode}}
+        
+        {{#if gmMode}}
+        <div id="hotbar-controls-right" class="hotbar-controls flexcol collapsibleBarPart flex0" data-tooltip-direction="RIGHT">
             <div class="itdarkness flexcol" data-category="darkness" data-tooltip="MASTER.threshold"
                 data-subfunction="darkness">
 
@@ -105,22 +105,22 @@
                     <i class="fas fa-sun"></i>
                 </div>
             </div>
-            {{else}}
-            <div class="itdarkness flexcol">
-                <button type="button" class="icon plain fas fa-ellipsis-vertical function"
-                    data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
-                </button>
-                {{#each token.groups.functions as |item i|}}
-                <button type="button" class="{{item.cssClass}} collapsibleBarPart icon plain primary {{item.iconClass}} function"
-                    data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
-                    data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
-                </button>
-                {{/each}}
-                <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
-                    data-action="collapseBar" data-tooltip="TT.collapseBar">
-                </button>
-            </div>
-            {{/if}}
         </div>
+        {{else}}
+        <div id="hotbar-controls-right" class="hotbar-controls flexcol flex0" data-tooltip-direction="RIGHT">            
+            <button type="button" class="icon plain fas fa-ellipsis-vertical function"
+                data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
+            </button>
+            {{#each token.groups.functions as |item i|}}
+            <button type="button" class="{{item.cssClass}} collapsibleBarPart icon plain primary {{item.iconClass}} function"
+                data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
+                data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
+            </button>
+            {{/each}}
+            <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
+                data-action="collapseBar" data-tooltip="TT.collapseBar">
+            </button>
+        </div>
+        {{/if}}
     </div>
 </div>
