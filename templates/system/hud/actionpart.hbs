@@ -1,16 +1,16 @@
-<div class="flex1 tooltipConnector" data-tooltip-direction="UP">
+<div class="flex1 actionPart tooltipConnector" data-tooltip-direction="UP">
     <div class="flexrow flexAlignCenter">
         {{#if gmMode}}
         <div id="hotbar-controls-left" class="hotbar-controls flexcol flex0" data-tooltip-direction="LEFT">
-            <button type="button" class="plain fa-solid fa-volume icon" data-action="mute"
-                aria-label="{{localize 'HOTBAR.MUTE'}}" data-tooltip="HOTBAR.MUTE"></button>
-            <button type="button" class="plain fa-solid fa-unlock icon" data-action="lock"
-                aria-label="{{localize 'HOTBAR.LOCK'}}" data-tooltip="HOTBAR.LOCK"></button>
-            <button type="button" class="plain fa-solid fa-trash icon" data-action="clear"
-                aria-label="{{localize 'HOTBAR.CLEAR'}}" data-tooltip="HOTBAR.CLEAR"></button>
+            <button type="button" class="icon plain fas fa-ellipsis-vertical function"
+                data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
+            </button>
+            <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
+                data-action="collapseBar" data-tooltip="TT.collapseBar">
+            </button>
         </div>
         {{/if}}
-        <menu id="action-bar" class="flexcol flex1 gap0px">
+        <menu id="action-bar" class="flexcol collapsibleBarPart flex1 gap0px">
              <ul class="flexrow actorEffects">
                 {{#each token.effects as |item|}}
                 <li class="{{item.cssClass}} primary slot actorEffect" data-category="{{item.cssClass}}"
@@ -21,8 +21,7 @@
                 </li>
                 {{/each}}
             </ul>
-            <div class="flexrow categoryFilters">
-                
+            <div class="flexrow categoryFilters">                
                 <div class="flexrow">
                     {{#each filterCategories as |cat|}}
                     <button type="button" data-action="categoryFilter"
@@ -112,11 +111,14 @@
                     data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
                 </button>
                 {{#each token.groups.functions as |item i|}}
-                <button type="button" class="{{item.cssClass}} icon plain primary {{item.iconClass}} function"
+                <button type="button" class="{{item.cssClass}} collapsibleBarPart icon plain primary {{item.iconClass}} function"
                     data-action="quickButton" data-category="{{item.cssClass}}" data-id="{{item.id}}"
                     data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
                 </button>
                 {{/each}}
+                <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
+                    data-action="collapseBar" data-tooltip="TT.collapseBar">
+                </button>
             </div>
             {{/if}}
         </div>

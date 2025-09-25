@@ -1044,7 +1044,6 @@ export default class Actordsa5 extends Actor {
 
   tokenScrollingText(texts) {
     const tokens = this.isToken ? [this.token?.object] : this.getActiveTokens(true);
-    console.log(tokens)
     for (let t of tokens) {
       if (!t) continue;
 

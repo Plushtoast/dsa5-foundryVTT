@@ -36,7 +36,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static DEFAULT_OPTIONS = {
     actions: {
       categoryFilter: this.#filterCategory,
-      weapon: this.#onRollWeapon
+      weapon: this.#onRollWeapon,
+      collapseBar: this.#onCollapse
     },
   };
 
@@ -398,6 +399,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     else this.gmFilters = category;
   }
 
+  static #onCollapse(ev, target) {
+    this.collapseBar = !this.collapseBar;
+    target.classList.toggle('fa-chevron-up', this.collapseBar);
+    target.classList.toggle('fa-chevron-down', !this.collapseBar);
+    this.element.classList.toggle('collapsedBar');
+  }
+
   static async #onRollWeapon(ev, target) {
     const { id, subweapon } = target.dataset;
 
@@ -671,6 +679,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     this.#setActor();
 
+    context.collapseBar = this.collapseBar;
     context.editMode = this.editMode ? 'wiggle-animation' : '';
     const actor = this.actor;
 
@@ -748,6 +757,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       {
         name: 'SHEET.Configure',
         icon: "<i class='fa-solid fa-edit'></i>",
+        condition: () => !!this.actor,
         callback: () => {
           this.#toggleEditMode();
         }
@@ -782,7 +792,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   _updateToggles() {
-    if (!game.settings.get('dsa5', 'hotbarv3') || !this.actor) return super._updateToggles();
+    if (!game.settings.get('dsa5', 'hotbarv3')) return super._updateToggles();
   }
 
   #getWeaponContextOptions(weapon, isOffHand) {

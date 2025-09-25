@@ -22,6 +22,15 @@
     animation-direction: alternate;
   }
 
+  &.collapsedBar {
+    justify-content: left;
+    --hotbar-width: 150px !important;
+    min-height: 100px;
+    .collapsibleBarPart {
+      display: none;
+    }
+  }
+
   // Wiggle animation keyframes
   @keyframes hotbar-wiggle {
     0% {
