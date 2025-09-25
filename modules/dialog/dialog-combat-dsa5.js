@@ -137,7 +137,7 @@ export default class DSA5CombatDialog extends DialogShared {
     ];
 
     for (const { key, icon, label } of bonusTypes) {
-      const value = Number(dataset[key]) || 0;
+      const value = Roll.safeEval(dataset[key]) || 0;
       if (value === 0) continue;
 
       const localizedLabel = localize(label).toUpperCase();
@@ -147,7 +147,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (dataset[flatKey]) {
         const flatSum = dataset[flatKey]
           .split(',')
-          .reduce((sum, x) => sum + (Number(x) || 0), 0);
+          .reduce((sum, x) => sum + (Roll.safeEval(x) || 0), 0);
 
         const sign = flatSum < 0 ? '' : '+';
         if (flatSum !== 0) {

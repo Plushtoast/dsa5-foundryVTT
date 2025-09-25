@@ -35,10 +35,10 @@ export function connectSocket() {
             app.render(true);
           }
         }
-        break;
+        return;
       case "invalidateCache":
-        game.dsa5.apps.CalendarPicker.constructor.invalidateCache();
-        break;
+        game.dsa5.apps.CalendarPicker.constructor.clearCache();
+        return;
       default:
         if (Trade.socketListeners(data)) return;
     }

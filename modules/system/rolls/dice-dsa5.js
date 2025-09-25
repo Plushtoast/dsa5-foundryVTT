@@ -1108,7 +1108,7 @@ export default class DiceDSA5 {
       }
 
       if (diceMatches.length === 0) {
-        return Number(text) || 0;
+        return Roll.safeEval(text) || 0;
       }
 
       const rollPromises = diceMatches.map(diceNotation =>
@@ -1132,8 +1132,7 @@ export default class DiceDSA5 {
           roll.total
         );
       });
-
-      return await Roll.safeEval(evaluationString);
+      return Roll.safeEval(evaluationString);
     } catch (error) {
       console.error(`Error evaluating dice string "${text}":`, error);
       return 0;
@@ -1170,10 +1169,11 @@ export default class DiceDSA5 {
 
       if (val.damageBonus) {
         if (/^\*/.test(val.damageBonus)) {
+          const withoutAsterisk = Number(val.damageBonus.replace('*', ''));
           if (val.baseBonus) {
-            DSA5_Utility.pushOnlyIfUnique(baseDmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
+            DSA5_Utility.pushOnlyIfUnique(baseDmgMultipliers, { name: val.name, val: withoutAsterisk });
           } else {
-            DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: Number(val.damageBonus.replace('*', '')) });
+            DSA5_Utility.pushOnlyIfUnique(dmgMultipliers, { name: val.name, val: withoutAsterisk });
           }
 
           continue;
