@@ -126,7 +126,9 @@ export default class DSA5StatusEffects {
     }
 
     for (const status of sourceEffect.statuses) {
-      const systemEffect = CONFIG.statusEffects.find(stat => stat.id == status)
+      const systemEffect = CONFIG.statusEffects.find(stat => stat.id == status);
+      if (!systemEffect) continue;
+
       effectData.pips.push({
         category: 'systemEffect',
         id: status,
