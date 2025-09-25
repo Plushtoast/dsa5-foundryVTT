@@ -1,0 +1,17 @@
+<h1>{{actor.name}}</h1>
+<p>
+    {{#each attributes}}
+        {{#if value}}
+            <b><i class="fas {{icon}}"></i> {{label}}</b>: {{this.value}}<br/>
+        {{/if}}
+    {{/each}}
+</p>
+{{#if effects.length}}
+<p>
+    <ul class="effects-tooltip plain">
+        {{#each effects}}
+            <li><img src="{{img}}" alt="{{name}}"><span>{{name}}</span></li>
+        {{/each}}
+    </ul>
+</p>
+{{/if}}

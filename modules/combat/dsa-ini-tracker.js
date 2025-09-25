@@ -1,4 +1,5 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
+import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DSA5CombatTracker } from './combat_tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 
@@ -203,10 +204,20 @@ export default class DSAIniTracker extends DefaultAppv2 {
       return false;
     });
 
+    html.find('.betterTooltip').on('pointerover', (ev) => this.#betterTooltip(ev));
+
     const turns = html.find('.iniItem');
     turns.on('pointerover', this._onCombatantHoverIn.bind(this))
     turns.on('pointerout', this._onCombatantHoverOut.bind(this));
     turns.on('dblclick', this._onCombatantMouseDown.bind(this));
+  }
+
+  async #betterTooltip(ev) {
+    const combatantId = ev.currentTarget.dataset.combatantId;
+    const combatant = game.combat.combatants.get(combatantId);
+    if (!combatant?.actor) return;
+
+    GlobalToolTipHandler.handleTooltip(ev, combatant.actor);
   }
 
   static rollMyChars() {
@@ -220,7 +231,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
 
-    this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".iniTrackerList:not(.waitingTackerList) .combatant", {fixed: true});
+    this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".iniTrackerList:not(.waitingTackerList) .combatant", { fixed: true });
   }
 
   _getDsaIniTrackerEntryContextOptions() {
@@ -247,7 +258,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       await combatant.update({
         "system.roundInitiative": roundInitiative + 0.00001,
       });
-      await game.combat.update({ turn: game.combat.turn - 1})
+      await game.combat.update({ turn: game.combat.turn - 1 })
     }
     else ui.combat._onCombatantMouseDown(ev, target);
   }
@@ -265,8 +276,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
   }
 
   static #editCombatant(ev) {
-    if(!game.user.isGM) return;
-    
+    if (!game.user.isGM) return;
+
     ui.combat.viewed.combatants.get(ev.currentTarget.dataset.combatantId)?.sheet.render(true)
   }
 

@@ -31,7 +31,7 @@ export class GlobalToolTipHandler {
             case 'zbrawl':
                 tooltip = name;
                 break;
-             case 'skill':
+            case 'skill':
             case 'unequipped':
             case 'consumable':
             case 'weapon':
@@ -43,6 +43,9 @@ export class GlobalToolTipHandler {
                 break;
             case 'plain':
                 description = data.betterTooltip;
+                break;
+            case 'actorSummary':
+                description = await GlobalToolTipHandler._actorSummaryTooltip(data, actor);
                 break;
             default:
                 return;
@@ -101,6 +104,18 @@ export class GlobalToolTipHandler {
         }
 
         return { description, name };
+    }
+
+    static async _actorSummaryTooltip(data, actor) {
+        const attributes = [
+            { label: localize('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
+            { label: localize('speed'), value: actor.system.status.speed.max, icon: 'fas fa-running' },
+            { label: localize('soulpower'), value: actor.system.status.soulpower.max, icon: 'fas fa-sun' },
+            { label: localize('toughness'), value: actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
+        ];
+
+        const effects = await actor.actorEffects();
+        return await renderTemplate('systems/dsa5/templates/tooltips/actor_summary.hbs', { actor, attributes, effects });
     }
 
     static async _handleOnUseTooltip(data, actor) {

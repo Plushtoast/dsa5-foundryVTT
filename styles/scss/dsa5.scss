@@ -5072,6 +5072,10 @@ input[type='checkbox'].autoCheckbox {
   .itemTooltip {
     padding: 8px;
   }
+
+  .effects-tooltip img {
+    filter: invert(1);
+  }
 }
 
 .itemTooltip {

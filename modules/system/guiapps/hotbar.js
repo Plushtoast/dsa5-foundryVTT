@@ -87,7 +87,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     html.find('.sections').on('pointerout', filterOff);
-    html.find('.primary,.weapon,[data-category="plain"]').on('pointerover', (ev) => this.#betterTooltip(ev));
+    html.find('.primary,.weapon,[data-category="plain"],.hotbar-avatar').on('pointerover', (ev) => this.#betterTooltip(ev));
     html.find('[data-action="quickButton"]').on('click', (ev) => this.#quickButton(ev));
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
@@ -830,7 +830,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     context.actor = this.actor;
     context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
     context.resources = this.#prepareResources(context);
-    context.defenseTooltip = this.#prepareDefenseTooltip(context);
     context.weapons = this.#weaponPositions(context);
     const token = this.actor?.isToken ? this.actor.token : this.actor.getActiveTokens()[0];
     context.inCombat = game.combat;
@@ -855,24 +854,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         label: localize('CHAR.KAP'),
       },
     }
-  }
-
-  #prepareDefenseTooltip(context) {
-    const attributes = [
-      { label: localize('actionCount'), value: this.actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
-      { label: localize('speed'), value: this.actor.system.status.speed.max, icon: 'fas fa-running' },
-      { label: localize('soulpower'), value: this.actor.system.status.soulpower.max, icon: 'fas fa-sun' },
-      { label: localize('toughness'), value: this.actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
-    ]
-
-    const attrString = attributes.reduce((acc, b) => {
-      if (b.value === undefined) return acc;
-
-      acc.push(`<b><i class="fas ${b.icon}"></i> ${b.label}</b>: ${b.value}`);
-      return acc;
-    }, []).join('<br/>');
-
-    return `<h1>${this.actor.name}</h1><p>${attrString}</p>`
   }
 
   #weaponPositions(context) {
