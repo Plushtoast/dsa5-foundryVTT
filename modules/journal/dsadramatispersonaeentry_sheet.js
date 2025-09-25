@@ -8,6 +8,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         actions: {
             editActor: DSAPersonaeEntrySheet.#editActor,
             showSheet: DSAPersonaeEntrySheet.#showSheet,
+            copyActorDescription: DSAPersonaeEntrySheet.#copyActorDescription,
         },
         position: {
             width: 960,
@@ -209,4 +210,23 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
     static #showSheet(event, target) {
         PersonaeDramatis.showSheet(event, target, { stay: true });
     }
+
+    static async #copyActorDescription(event, target) {
+        const key = target.dataset.key;
+        const actorUuid = this.document.system.personae[key]?.actor_uuid;
+        if (!actorUuid) return;
+
+        const actor = fromUuidSync(actorUuid);
+        if (!actor) return;
+
+        const isCreature = actor.type == "creature";
+        const update = {};
+        if(isCreature) {
+            update[`system.personae.${key}.description`] = actor.system.description.value;
+        } else {
+            update[`system.personae.${key}.description`] = actor.system.details.biography.value;
+        }
+        await this.document.update(update);
+    }
+
 }

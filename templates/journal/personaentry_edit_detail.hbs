@@ -48,13 +48,24 @@
   </div>
 
   {{#unless elem.showActorDescription}}
-    {{formGroup
-      document.system.schema.fields.personae.element.fields.description
-      value=elem.description
-      localize=true
-      classes='full-height'
-      name=(concat 'system.personae.' key '.description')
-    }}
+    <div class="form-group stacked full-height">
+      <div class="flexrow">
+        <span class="label"><b>{{localize document.system.schema.fields.personae.element.fields.description.label}}</b></span>
+        <button type="button" data-action="copyActorDescription" data-key='{{key}}' class='fas icon fa-copy' data-tooltip='{{localize "PERSONAE.copyActorDescription"}}'></button>
+      </div>      
+      
+      <div class="form-fields">
+        {{formInput
+          document.system.schema.fields.personae.element.fields.description
+          value=elem.description
+          localize=true
+          classes='full-height'
+          name=(concat 'system.personae.' key '.description')
+        }}
+      </div>
+      
+    </div>
+    
   {{/unless}}
 
   {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}

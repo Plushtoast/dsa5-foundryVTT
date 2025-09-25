@@ -1440,6 +1440,7 @@
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "ImportantPersons": "Dramatis Personae",
+        "copyActorDescription": "Akteurbeschreibung vom Original kopieren",
         "bestiary": "Bestiarium",
         "Add": "Person/Kreatur hinzufügen",
         "UnknownFaction": "Unbekannte Fraktion",
