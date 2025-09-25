@@ -32,11 +32,12 @@ export default function () {
             label: 'Book.tryInit',
             callback: async () => {
               try {
-                const mod = doc.flags.core.sourceId.split('.')[1];
+                const mod = doc._stats.compendiumSource.split('.')[1];
                 const initializer = new game.dsa5.apps.DSA5Initializer('DSA5 Module Initialization', '', mod, game.i18n.lang);
                 const json = await initializer.loadJson();
                 initializer.initScenes(json, [createData.name]);
               } catch (e) {
+                console.warn(e);
                 const newOptions = options || {};
                 options.dsaInit = true;
                 await Scene.create(createData, newOptions);
