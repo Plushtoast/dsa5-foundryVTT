@@ -137,8 +137,13 @@ export default class DSA5CombatDialog extends DialogShared {
     ];
 
     for (const { key, icon, label } of bonusTypes) {
-      const value = Roll.safeEval(dataset[key]) || 0;
-      if (value === 0) continue;
+      let value;
+      try {
+        value = Roll.safeEval(dataset[key]) || 0;
+      } catch { 
+        value = dataset[key] || 0;
+      }      
+      if (!value) continue;
 
       const localizedLabel = localize(label).toUpperCase();
       let tooltipText = `<i class="${icon}"></i> ${localizedLabel}: ${value}`;
