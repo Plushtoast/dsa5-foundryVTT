@@ -26,10 +26,10 @@ export default class DSA5SpellDialog extends DialogShared {
 
   static DEFAULT_OPTIONS = {
     position: {
-        width: 700
+      width: 700
     },
     window: {
-        resizable: true,
+      resizable: true,
     },
   };
 
@@ -101,7 +101,7 @@ export default class DSA5SpellDialog extends DialogShared {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
             ef.apply(this.dialogData.renderData.rollModifiersPrepared, change);
-          }  else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+          } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
             source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
               return x + change.value
             }).join(',');
@@ -183,10 +183,11 @@ export default class DSA5SpellDialog extends DialogShared {
     parent.find('.variableBaseCost')[source.system.variableBaseCost ? 'show' : 'hide']();
     let mod = 0;
     parent.find('.spellModifier[data-cost]:checked').each(function (index, element) {
-      newPosition = newPosition * (element.value < 0 ? 0.5 : 2);
+      const factor = element.dataset.cost < 0 ? 0.5 : 2;
+      newPosition = newPosition * factor;
       if (newMaintainCost != '' && newMaintainCost != undefined) {
         let maintains = String(newMaintainCost).split(' ');
-        maintains[0] = Math.max(Number(maintains[0]) * (element.value < 0 ? 0.5 : 2));
+        maintains[0] = Math.max(Number(maintains[0]) * factor);
         newMaintainCost = maintains.join(' ');
       }
       mod += Number(element.value);
@@ -272,7 +273,7 @@ export default class DSA5SpellDialog extends DialogShared {
         .map((i, x) => Number(x.value))
         .get()
         .reduce((a, b) => a + b, 0) +
-        html.find('[name=maintainedSpells]')[0].value * -1;
+      html.find('[name=maintainedSpells]')[0].value * -1;
 
     super.calculateProbability(actor, this.dialogData.source, mod, fw);
   }

@@ -88,23 +88,21 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
     const creatureClass = this.element.querySelector('[name="system.creatureClass.value"]');
 
-    if(!creatureClass) return;
+    if (!creatureClass) return;
 
     creatureClass.addEventListener('pointerenter', (event) => {
       const creatureClasses = CreatureType.detectCreatureType(this.actor);
 
       if (!creatureClasses.length) return;
-        
+
       const description = creatureClasses[0].classDescription();
 
-      if(!description) return;
+      if (!description) return;
 
-      const element = event.target;
       event.stopPropagation();
-      element.dataset.tooltipHtml = "";
-      element.dataset.tooltipHtml = description;
-      const pointerover = new event.constructor(event.type, event);
-      element.dispatchEvent(pointerover);
+      game.tooltip.activate(event.target, {
+        html: description,
+      });
     });
   }
 }
