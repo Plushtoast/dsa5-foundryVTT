@@ -352,7 +352,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     return { msg, options };
   }
 
-  static async applyAdvancedFunction(actor, effects, source, testData, sourceActor, skipResistRolls = true) {
+  static async applyAdvancedFunction(actor, effects, source, testData, sourceActor, options = {}) {
+    const { skipResistRolls = true } = options;
     let msg = '';
     const resistRolls = [];
     let effectApplied = false;
@@ -443,24 +444,27 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                       },
                     });
                   } else {
-                    try {
+                    //try {
                       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', getProperty(ef, 'flags.dsa5.args3'));
-                      await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs);
-                    } catch (err) {
+                      const command = getProperty(ef, 'flags.dsa5.args3');
+                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
+                      await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs, options);
+                    /*} catch (err) {
                       ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                       console.error(err);
                       console.warn(err.stack);
-                    }
+                    }*/
                   }
                 }
                 break;
               case 3: // Creature Link
-                const creatures = (getProperty(ef, 'flags.dsa5.args4') || '')
-                  .split(',')
-                  .map((x) => `@Compendium[${x.trim().replace(/(@Compendium\[|\])/)}]`)
-                  .join(' ');
-                msg += `<p><b>${localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
+                {
+                  const creatures = (getProperty(ef, 'flags.dsa5.args4') || '')
+                    .split(',')
+                    .map((x) => `@Compendium[${x.trim().replace(/@Compendium\[|\]/g, '')}]`)
+                    .join(' ');
+                  msg += `<p><b>${localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
+                }
                 break;
             }
           }
@@ -480,7 +484,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         console.warn(ef);
       }
     }
-    await actor.createEmbeddedDocuments('ActiveEffect', effectsWithChanges);
+    if (effectsWithChanges.length) await actor.createEmbeddedDocuments('ActiveEffect', effectsWithChanges);
     return {
       msg,
       resistRolls,
@@ -555,7 +559,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           source,
           testData,
           sourceActor,
-          options.skipResistRolls || false,
+          { ...options, skipResistRolls: options.skipResistRolls || false },
         );
         if (effectApplied) {
           const appliedEffect = game.i18n.format('ActiveEffects.appliedEffect', {
@@ -575,6 +579,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         payload: {
           mode,
           id,
+          options: { ...options, user_id: game.user.id },
           actors: actors.map((x) => {
             return {
               token: x.token ? x.token.id : undefined,

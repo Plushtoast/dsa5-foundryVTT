@@ -60,9 +60,8 @@ export default function () {
                 for (let it of button.form.elements) {
                   if (it.classList.contains('effectRemoveSelector')) effectsToRemove.push(it.value);
                 }
-                actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove, {
-                  noHook: true,
-                });
+                actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove, { noHook: true, butOnRemove: true });
+
               },
             },
           ],
@@ -77,7 +76,14 @@ export default function () {
   });
 
   Hooks.on('deleteActiveEffect', (effect, options) => {
-    if (!DSA5_Utility.isActiveGM() || options.noHook) return;
+    if (!DSA5_Utility.isActiveGM()) return;
+    if (options.noHook && options.butOnRemove) {
+      const actor = effect.parent;
+      if (actor && actor.documentName == 'Actor') {
+        DSAActiveEffectConfig.onEffectRemove(actor, effect);
+      }
+    }
+    if (options.noHook) return;
 
     const actor = effect.parent;
     notifyFadingEffect(effect, options);

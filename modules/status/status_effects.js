@@ -141,6 +141,12 @@ export default class DSA5StatusEffects {
         content: `<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>`
       });
     }
+
+    if (sourceEffect.flags?.dsa5?.maintain) {
+      effectData.pips.push({
+        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${sourceEffect.flags?.dsa5?.maintain} ${localize(`CHARAbbrev.${sourceEffect.flags?.dsa5?.payType}`)}`
+      });
+    }
   }
 
 

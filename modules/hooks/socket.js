@@ -62,7 +62,7 @@ export function connectSocket() {
         }
         break;
       case 'addEffect':
-        DSAActiveEffectConfig.applyEffect(data.payload.id, data.payload.mode, data.payload.actors);
+        DSAActiveEffectConfig.applyEffect(data.payload.id, data.payload.mode, data.payload.actors, data.payload.options);
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
