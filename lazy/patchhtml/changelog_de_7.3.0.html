@@ -1,0 +1,56 @@
+<h1 id="wichtige-neuerungen">Wichtige Neuerungen </h1>
+<h2 id="personaesystem">Personae‑System </h2>
+<p>Ein umfassendes System zur Verwaltung von Charakterbeziehungen und sozialen Kontakten wurde implementiert. Dieses neue System ermöglicht dir:</p>
+<ul class="dsalist">
+<li>Soziale Kontakte mit detaillierten Beziehungsangaben anzulegen und zu verwalten</li>
+<li>Beziehungsstufen und sozialen Status gegenüber NSCs nachzuverfolgen</li>
+<li>Kontakte in einer eigenen Oberfläche mit Drag‑and‑Drop zu organisieren</li>
+<li>Verbesserte Interaktionsmechaniken für soziale Begegnungen</li>
+</ul>
+<p>Dieses System erweitert die sozialen Aspekte des Spiels und bietet bessere Werkzeuge, um komplexe Beziehungen in deinen Kampagnen zu verwalten.</p>
+<p>Du findest diese Funktion im neuen Kalender‑Bereich. Das Hauptziel ist, eine Bibliothek für Spieler:innen aufzubauen, in der bereits begegnete Kreaturen, Gegner und Bekannte nachgeschlagen werden können.<br>
+Die Oberfläche unterstützt die Suche und Gruppierung nach Fraktionen sowie das Hinzufügen eigener persönlicher Notizen. Ermutige deine Spieler:innen, Informationen dort zu hinterlegen, damit wichtige Details auch nach längeren Spielpausen erhalten bleiben.<br>
+Du kannst neue Einträge im Bereich „Personae Dramatis“ über Journale hinzufügen. Erstelle neue Journale und füge Seiten mit dem Typ „Personae Dramatis“ hinzu. Diese Seiten fungieren als Proxy zu echten Actor‑Dokumenten. So kannst du zusätzliche Informationen zu Einträgen hinzufügen oder verbergen — z. B. Fraktionszugehörigkeiten vergeben oder Namen ändern, solange die wahre Identität noch verborgen bleiben soll.<br>
+Am einfachsten ist es, Actors auf eine „Personae Dramatis“-Seite zu ziehen. Dadurch werden bestimmte Werte vorausgefüllt. Beachte bitte, dass der Seitenname die Standard‑Fraktion für Personen setzt, während bei Bestien der Kreaturentyp verwendet wird.<br>
+Einzelne Einträge lassen sich leicht ein‑ und ausblenden, so dass du wichtige Actors vorbereiten und sie den Spieler:innen während des Abenteuers gezielt präsentieren kannst.</p>
+<p>Beachte außerdem, dass der soziale Status (Beziehungsstufe) derzeit nicht automatisch in Modifikatoren einfließt.</p>
+<img src="systems/dsa5/lazy/patchimages/7.3.0/persona.webp" style="width:100%"/>
+<h2 id="verbesserungen-am-kalendersystem">Verbesserungen am Kalendersystem </h2>
+<p>Das Kalendersystem wurde deutlich erweitert:</p>
+<ul class="dsalist">
+<li><strong>Unendliches Scrollen</strong>: Monate lassen sich nahtlos per Endlos‑Scrollen durchblättern</li>
+<li><strong>Durchsichtsmodus</strong>: Kalenderdaten können angesehen werden, ohne versehentlich die aktuelle Spielzeit zu ändern <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2053">#2053</a></li>
+<li><strong>Heute‑Markierung</strong>: Klare visuelle Hervorhebung des aktuellen Datums</li>
+<li><strong>Verbesserte Navigation</strong>: Besseres Scroll‑Verhalten und Navigationssteuerungen für Monate</li>
+<li><strong>Feiertagsverbesserungen</strong>: Verbesserungen am Feiertagssystem mit besserem Caching und Performance</li>
+</ul>
+<h2 id="hotbarneugestaltung">Hotbar‑Neugestaltung </h2>
+<p>Das Hotbar‑System wurde komplett neu gestaltet, um die Bedienbarkeit zu verbessern:</p>
+<ul class="dsalist">
+<li><strong>Responsives Design</strong>: Das Hotbar passt sich jetzt verschiedenen Bildschirmgrößen an</li>
+<li><strong>Erweiterte Anpassung</strong>: Verbesserte Möglichkeiten zur Anpassung von Makros <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1782">#1782</a>. Elemente innerhalb der Leiste können neu sortiert werden</li>
+<li><strong>Bessere Performance</strong>: Optimiertes Rendering und Interaktion</li>
+<li><strong>Modernes Interface</strong>: Überarbeitetes visuelles Design</li>
+<li><strong>Verbesserte Tooltips</strong>: Mehr Details an vielen Stellen, z. B. Charakterübersicht</li>
+<li><strong>Erweiterte Waffenverwaltung</strong>: Ein neuer Bereich zeigt die aktuell ausgerüsteten Waffen. Per Rechtsklick auf eine Waffe gibt es zahlreiche Optionen zum Ausrüsten und Ablegen. Diese Optionen sorgen dafür, dass nur so viel ausgerüstet werden kann, wie in zwei Hände passt. Du kannst also nicht gleichzeitig ein Zweihandschwert und einen Zweihandhammer ausgerüstet haben (außer wenn eine Waffe einhändig geführt wird). Das erleichtert das Einrichten automatischer Modifikatoren, z. B. für Waffen‑Größe.</li>
+</ul>
+<p>Bitte beachte, dass die Hotbar‑Ersatzfunktion in den Einstellungen aktiviert sein muss, damit dieses Feature genutzt werden kann.</p>
+<img src="systems/dsa5/lazy/patchimages/7.3.0/hotbar.webp" style="width:100%"/>
+<h1 id="verbesserungen">Verbesserungen </h1>
+<ul class="dsalist">
+<li><strong>Verbesserungen bei Fallen</strong>: Fallen können jetzt manuell entschärft werden; der Zustand und die Interaktionsmechaniken wurden verbessert</li>
+<li><strong>Automatisierung von Statuseffekten</strong>: Der Statuseffekt „Stumm“ wendet nun automatisch Modifikatoren für das Zaubern an <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2044">#2044</a></li>
+<li><strong>Händleroberfläche</strong>: Kategorien ohne Items werden in Händleransichten nun ausgeblendet, für ein aufgeräumteres Erlebnis <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1834">#1834</a></li>
+<li><strong>Leistung der Gegenstandsbibliothek</strong>: Verbesserte Performance in großen Welten beim Einsatz von Detailfiltern in der Gegenstandsbibliothek <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2057">#2057</a></li>
+<li><strong>Makros für Segnungen</strong>: Feldunterstützung für Makros bei Segnungen hinzugefügt <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2063">#2063</a></li>
+<li><strong>Verbesserungen bei Fertigkeitswürfen</strong>: Du kannst jetzt auf eine Gruppen‑Kategorie auf dem Charakterbogen würfeln (z. B. Fertigkeiten der Körper‑Gruppe) <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/1624">#1624</a></li>
+<li><strong>Wundbehandlung</strong>: Verbesserungen am Systemmakro für Wundbehandlung</li>
+<li><strong>Audio‑Verbesserungen</strong>: Griffgeräusche für mehr Immersion hinzugefügt (beim Wechseln von Waffen, benötigt das Game Audio Bundle)</li>
+<li>Der Reiter für Statuseffekte auf dem Charakterbogen enthält neue Details und Verbesserungen.</li>
+<li>Wero999 hat sich der Liste der Beitragenden angeschlossen und steuert Makros für einige Fähigkeiten und Zauber bei.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<p>Wir führen Bugfixes nicht mehr einzeln auf. Stattdessen findest du hier die zeitliche Übersicht, wann welche Fehler behoben wurden:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix Timeline</a></p>
+<p>Auf demselben Board findest du auch Pläne für zukünftige Verbesserungen des Systems.<br>
+Hinweis: Die Suchfunktion dort hilft beim Auffinden einzelner Einträge.</p>

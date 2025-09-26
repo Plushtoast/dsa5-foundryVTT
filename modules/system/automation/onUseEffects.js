@@ -3,6 +3,8 @@ import RuleChaos from '../rules/rule_chaos.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 const { duplicate } = foundry.utils;
 
+// TODO DEPRECATE the socketed actions to queries
+
 export default class OnUseEffect {
   constructor(item) {
     this.item = item;
@@ -27,12 +29,7 @@ export default class OnUseEffect {
       } catch (err) {
         //Todo passing multiple scopes kind of fails
         try {
-          const fn2 = new AsyncFunction(
-            'args',
-            'actor',
-            'item',
-            `
-              const that = this;
+          const fn2 = new AsyncFunction('args', 'actor', 'item', ` const that = this;
               ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
             `,
           );
