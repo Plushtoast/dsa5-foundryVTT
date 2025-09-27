@@ -106,7 +106,11 @@ export class MeasuredTemplateDSA extends foundry.canvas.placeables.MeasuredTempl
     let now = Date.now();
     if (now - this.#moveTime <= 20) return;
     const center = event.data.getLocalPosition(this.layer);
-    const snapped = canvas.grid.getSnappedPoint({ x: center.x, y: center.y }, 2);
+    const snapped = canvas.grid.getSnappedPoint({ x: center.x, y: center.y }, { mode: 2 });
+    console.log(snapped)
+
+    if (!snapped.x || !snapped.y) return;
+
     this.document.updateSource({ x: snapped.x, y: snapped.y });
     this.refresh();
     this.#moveTime = now;
@@ -126,7 +130,7 @@ export class MeasuredTemplateDSA extends foundry.canvas.placeables.MeasuredTempl
 
   async _onConfirmPlacement(event) {
     await this._finishPlacement(event);
-    const destination = canvas.grid.getSnappedPoint({ x: this.document.x, y: this.document.y }, 2);
+    const destination = canvas.grid.getSnappedPoint({ x: this.document.x, y: this.document.y }, { mode: 2 });
     this.document.updateSource(destination);
     this.#events.resolve(canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [this.document.toObject()]));
   }
