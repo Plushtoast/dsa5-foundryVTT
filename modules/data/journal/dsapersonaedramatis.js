@@ -184,6 +184,8 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
     }
 
     static async getHeros() {
+        if (!game.user.isGM) return [];
+
         return (await game.dsa5.apps.gameMasterMenu.getTrackedHeros()).reduce((acc, hero) => {
             if (hero.type == "character") {
                 acc.push([hero.uuid, hero]);
