@@ -1271,6 +1271,7 @@
         "SplitItem": "Split",
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",
+        "EquipItemOffHand": "Equip (Off-Hand)",
         "UnEquipItem": "Unequip",
         "Dropdown": "Details",
         "increaseFontSize": "Increase/Decrease font size",
@@ -2386,6 +2387,8 @@
         "3": "Always show"
     },
     "DSASETTINGS": {
+        "tabsOutsideSheet": "External Tabs",
+        "tabsOutsideSheetHint": "Display the tabs vertically outside the character sheet.",
         "dsaTokenRuler": "DSA Token Ruler",
         "dsaTokenRulerHint": "Use the integrated TDE distance measurement for tokens. This takes into account the TDE rules for movement and distance.",
         "attackFromBehindAngle": "Angle of Dead Zone",

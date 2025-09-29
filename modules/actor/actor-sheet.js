@@ -7,7 +7,7 @@ import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogActorConfig from '../dialog/dialog-actorConfig.js';
 import Actordsa5 from './actor-dsa5.js';
-import { resizeListener, tinyNotification } from '../system/helpers/view_helper.js';
+import { resizeListener, tabSlider, tinyNotification } from '../system/helpers/view_helper.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
@@ -70,7 +70,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     tabs: {
       template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
       id: "tabs",
-      classes: ["tabs", "right"],
+      templates: [
+        "systems/dsa5/templates/actors/actorv2/tabsvertical_inner.hbs",
+        "systems/dsa5/templates/system/dsatabs.hbs"
+      ],
+      classes: [],
     },
     main: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited.hbs',
@@ -90,7 +94,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     tabs: {
       template: 'systems/dsa5/templates/actors/actorv2/tabsvertical.hbs',
       id: "tabs",
-      classes: ["tabs", "right"],
+      templates: [
+        "systems/dsa5/templates/actors/actorv2/tabsvertical_inner.hbs",
+        "systems/dsa5/templates/system/dsatabs.hbs"
+      ],
+      classes: [],
     },
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.hbs',
@@ -127,7 +135,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       width: 770,
       height: 740,
     },
-    classes: ['dsa5', 'actor', 'vertical-tabs'],
+    classes: ['dsa5', 'actor'],
     actions: {
       itemCreate: this._onItemCreate,
       playerview: this._togglePlayerview,
@@ -323,9 +331,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }));
   }
 
-  async _prepareContext(_options) {
-    const sheetData = await super._prepareContext(_options);
+  async _prepareContext(options) {
+    const sheetData = await super._prepareContext(options);
     this.wrapperLocked = false;
+    sheetData.verticalTabs = game.settings.get("dsa5", "tabsOutsideSheet");
     sheetData.systemFields = this.document.system.schema?.fields;
     sheetData.limited = this.actor.limited;
     sheetData.owner = this.actor.isOwner;
@@ -825,15 +834,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     hTarget.toggleClass('filtered');
   }
 
-  verticalTabs(ev) {
-    const dataset = ev.currentTarget.dataset;
-    this.changeTab(dataset.tab, dataset.group)
-    ev.currentTarget.closest('nav').querySelectorAll('button').forEach((el) => {
-      el.classList.remove('active');
-    });
-    ev.currentTarget.classList.add('active');
-  }
-
   static _postItem(ev, target) {
     this.actor.items.get(this._getItemId(target)).postItem();
   }
@@ -859,6 +859,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       fixed: true
     });
 
+    if (game.settings.get("dsa5", "tabsOutsideSheet")) this.#verticalSheetDomSetup(html);
+  }
+
+  #verticalSheetDomSetup(html) {
     let mainContent = this.element.querySelector(".main-content");
     if (!mainContent) {
       mainContent = document.createElement("div");
@@ -876,6 +880,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       const tabs = html.find('.window-content .tab')
       mainContent.append(...tabs);
     }
+    this.element.classList.add("vertical-tabs");
   }
 
   static _collapseHeader(ev, target) {
@@ -938,6 +943,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.tabs button').prop('disabled', false);
 
     html.find('.gTooltip').on('pointerover', (ev) => this.#betterTooltip(ev));
+
+    tabSlider(html);
 
     const autoSizings = html.find('.autosizing input')
     for (let el of autoSizings) {

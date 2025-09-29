@@ -464,6 +464,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
   }
 
+  async refreshPersonae() {
+    if (this.rendered) this.render({ force: true, parts: ['personae'] });
+  }
+
   async close(options = {}) {
     options.animate = false;
     super.close(options);

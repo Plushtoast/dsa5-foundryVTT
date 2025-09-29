@@ -5,7 +5,15 @@
           name='year' value='{{components.year}}' /><span>{{localize (concat calendar.translationPrefix '.'
           worldCalendarConfig.years.yearSuffix)}}</span></h3>
       
-      <div class="flexAlignEnd flexrow">
+      <div class="flexAlignEnd flexrow gap10px">
+        <div class="flexrow flexAlignEnd">
+            {{#if hasDateChanges}}
+            {{#if isGM}}
+            <button type="button" class="icon fas fa-save" data-action="confirmDateChange" data-tooltip="{{localize 'dsacalendar.confirmDateChange'}}"></button>
+            {{/if}}
+            <button type="button" class="icon fas fa-times" data-action="cancelDateChange" data-tooltip="{{localize 'dsacalendar.cancelDateChange'}}"></button>
+            {{/if}}
+        </div>
         <div>
           <i class="fas fa-hourglass-half"></i>
           <input data-tooltip="CALENDAR.DSA.hour" type='number' class='flexgrow-0 hourInput dateChange' name='hour'
@@ -18,14 +26,7 @@
             value='{{components.second}}' min='0' max='59' step='1' />
           
         </div>
-        <div class="flexrow">
-            {{#if hasDateChanges}}
-            {{#if isGM}}
-            <button type="button" class="icon fas fa-save" data-action="confirmDateChange" data-tooltip="{{localize 'dsacalendar.confirmDateChange'}}"></button>
-            {{/if}}
-            <button type="button" class="icon fas fa-times" data-action="cancelDateChange" data-tooltip="{{localize 'dsacalendar.cancelDateChange'}}"></button>
-            {{/if}}
-        </div>
+        
       </div>
     </div>
   </fieldset>

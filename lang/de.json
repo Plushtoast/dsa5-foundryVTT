@@ -1106,6 +1106,7 @@
         "DeleteItem": "Löschen",
         "addItem": "Gegenstand erstellen",
         "EquipItem": "Ausrüsten",
+        "EquipItemOffHand": "Ausrüsten (Nebenhand)",
         "UnEquipItem": "Ausrüstung ablegen",
         "Close": "Schließen",
         "Configure": "Blatt konfigurieren",
@@ -2461,6 +2462,8 @@
         }
     },
     "DSASETTINGS": {
+        "tabsOutsideSheet": "Externe Tabs",
+        "tabsOutsideSheetHint": "Zeige die Tabs außerhalb des Charakterbogens vertikal an.",
         "dsaTokenRuler": "DSA Token Distanzmesswerkzeug",
         "dsaTokenRulerHint": "Benutze die integrierte DSA Distanzmessung für Token. Diese berücksichtigt die DSA Regeln für Bewegung und Distanz.",
         "attackFromBehindAngle": "Toter Winkel",

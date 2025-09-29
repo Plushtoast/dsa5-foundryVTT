@@ -484,11 +484,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       return arr;
     }, []);
 
-    const brawl = this.tokenHotbar._brawlEntry(combatskills);
+    const brawl = this.tokenHotbar?._brawlEntry(combatskills);
     const isRiding = Riding.isRiding(actor);
 
     if (isRiding) {
-      const ridingEntry = this.tokenHotbar._ridingEntry(actor);
+      const ridingEntry = this.tokenHotbar?._ridingEntry(actor);
       if (ridingEntry) groups.skills.skill = [ridingEntry];
     }
 
@@ -499,23 +499,23 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     for (const x of actor.items) {
       switch (x.type) {
         case 'skill':
-          this.#pushSkill(groups, 'skill', this.tokenHotbar._skillEntry(x, 'skill'));
+          this.#pushSkill(groups, 'skill', this.tokenHotbar?._skillEntry(x, 'skill'));
           break;
         case 'spell':
         case 'liturgy':
-          this.#pushSkill(groups, x.type, this.tokenHotbar._skillEntry(x, 'spell'));
+          this.#pushSkill(groups, x.type, this.tokenHotbar?._skillEntry(x, 'spell'));
           break;
         case 'trait':
           if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-            groups.attacks.push(this.tokenHotbar._traitEntry(x, actor.system));
+            groups.attacks.push(this.tokenHotbar?._traitEntry(x, actor.system));
           }
           break;
         case 'consumable':
-          this.#pushSkill(groups, 'consumable', this.tokenHotbar._actionEntry(x, 'consumable', { abbrev: x.system.quantity.value }));
+          this.#pushSkill(groups, 'consumable', this.tokenHotbar?._actionEntry(x, 'consumable', { abbrev: x.system.quantity.value }));
           break;
         case 'meleeweapon':
         case 'rangeweapon': {
-          const entries = this.tokenHotbar._combatEntry(x, combatskills, actor);
+          const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor);
           for (let entry of entries) {
             if (!x.system.worn.value) entry.cssClass = 'unequipped';
             groups.attacks.push(entry);
@@ -527,12 +527,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
 
       if (x.getFlag('dsa5', 'onUseEffect')) {
-        this.#pushSkill(groups, x.type, this.tokenHotbar._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+        this.#pushSkill(groups, x.type, this.tokenHotbar?._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
       }
       if (x.getFlag('dsa5', 'enchantments')) {
         if (!groups.skills.enchantment) groups.skills.enchantment = [];
         for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-          groups.skills.enchantment.push(this.tokenHotbar._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
+          groups.skills.enchantment.push(this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
         }
       }
     }
@@ -802,7 +802,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (weapon?.type === 'trait') return [];
 
     const equipableWeapons = this.actor.items.filter(i => ['meleeweapon', 'rangeweapon'].includes(i.type) && !i.system.worn.value);
-    const equip = localize('SHEET.EquipItem');
+    const equip =  localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
@@ -834,7 +834,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
     context.resources = this.#prepareResources(context);
     context.weapons = this.#weaponPositions(context);
-    const token = this.actor?.isToken ? this.actor.token : this.actor.getActiveTokens()[0];
+    const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
   }

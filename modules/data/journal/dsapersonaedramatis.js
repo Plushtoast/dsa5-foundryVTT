@@ -33,6 +33,10 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
 
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
+
+        const GaradanChoices = foundry.utils.deepClone(MerchantTemplate.GARADAN_CHOICES);
+        GaradanChoices[0] = "-";
+
         return {
             personae: new TypedObjectField(new SchemaField({
                 name: new StringField({ required: true, label: "PERSONAE.FIELDS.personae.name.label" }),
@@ -50,10 +54,9 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 img: new FilePathField({ categories: ["IMAGE"] }),
                 subtitle: new StringField({ label: "PERSONAE.FIELDS.personae.subtitle.label" }),
                 garadan: new NumberField({
-                    initial: 1,
+                    initial: 0,
                     label: 'Garadan',
-                    required: true,
-                    choices: MerchantTemplate.GARADAN_CHOICES,
+                    choices: GaradanChoices,
                 }),
                 socialContact: new TypedObjectField(new SchemaField({
                     level: new NumberField({ label: "PERSONAE.FIELDS.personae.socialContact.level.label", initial: 5, choices: DSAPersonaEntry.SOCIAL_CONTACT_LEVELS }),
@@ -65,6 +68,16 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
     async _preUpdate(changed, options, user) {
         await this.#fillActorFields(changed);
         await super._preUpdate(changed, options, user);
+    }
+
+    _onUpdate(changed, options, userId) {
+        super._onUpdate(changed, options, userId);
+        game.dsa5.apps.CalendarPicker.refreshPersonae();
+    }
+
+    _onCreate(data, options, userId) {
+        super._onCreate(data, options, userId);
+        game.dsa5.apps.CalendarPicker.refreshPersonae();
     }
 
     async #fillActorFields(changed) {
@@ -141,10 +154,8 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
 
             if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
-
-            entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
         }
-
+        entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
         entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
 
         if (entry.showActorDescription) {

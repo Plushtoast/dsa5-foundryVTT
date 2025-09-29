@@ -20,6 +20,15 @@ export function setupConfiguration() {
     styles[key] = game.i18n.localize(styles[key]);
   }
   const settings = {
+    tabsOutsideSheet: {
+      name: 'DSASETTINGS.tabsOutsideSheet',
+      hint: 'DSASETTINGS.tabsOutsideSheetHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+      requiresReload: true,
+    },
     meleeBotchTableEnabled: {
       name: 'DSASETTINGS.meleeBotchTableEnabled',
       hint: 'DSASETTINGS.meleeBotchTableEnabledHint',
@@ -537,27 +546,6 @@ export function setupConfiguration() {
         DSA5SoundEffect.loadSoundConfig();
       },
     },
-    changelog: {
-      name: 'Changelog',
-      label: 'Changelog',
-      hint: 'DSASETTINGS.changelog',
-      type: ChangelogForm,
-      restricted: false,
-    },
-    exportConfiguration: {
-      name: 'Export/Import Configuration',
-      label: 'Export/Import Configuration',
-      hint: 'DSASETTINGS.exportConfiguration',
-      type: ExportForm,
-      restricted: true,
-    },
-    configureTokenbar: {
-      name: 'DSASETTINGS.configureTokenbar',
-      label: 'DSASETTINGS.configureTokenbar',
-      hint: 'DSASETTINGS.configureTokenbarHint',
-      type: ConfigureTokenHotbar,
-      restricted: false,
-    },
     [`breadcrumbs_${game.world.id}`]: {
       name: 'DSASETTINGS.breadcrumbs',
       hint: 'DSASETTINGS.breadcrumbsHint',
@@ -835,6 +823,33 @@ export function setupConfiguration() {
   };
   for (const [key, value] of Object.entries(settings)) {
     game.settings.register('dsa5', key, value);
+  }
+
+  const menus = {
+    changelog: {
+      name: 'Changelog',
+      label: 'Changelog',
+      hint: 'DSASETTINGS.changelog',
+      type: ChangelogForm,
+      restricted: false,
+    },
+    exportConfiguration: {
+      name: 'Export/Import Configuration',
+      label: 'Export/Import Configuration',
+      hint: 'DSASETTINGS.exportConfiguration',
+      type: ExportForm,
+      restricted: true,
+    },
+    configureTokenbar: {
+      name: 'DSASETTINGS.configureTokenbar',
+      label: 'DSASETTINGS.configureTokenbar',
+      hint: 'DSASETTINGS.configureTokenbarHint',
+      type: ConfigureTokenHotbar,
+      restricted: false,
+    },
+  }
+  for (const [key, value] of Object.entries(menus)) {
+    game.settings.registerMenu('dsa5', key, value);
   }
 }
 
