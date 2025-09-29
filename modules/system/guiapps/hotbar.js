@@ -88,7 +88,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     html.find('.sections').on('pointerout', filterOff);
     html.find('.primary,.weapon,[data-category="plain"],.hotbar-avatar').on('pointerover', (ev) => this.#betterTooltip(ev));
-    html.find('[data-action="quickButton"]').on('click', (ev) => this.#quickButton(ev));
+
+    // This can not got to actions at the moment, because event is not handled properly
+    html.find('[data-action="quickButton"]').on('mousedown', (ev) => this.#quickButton(ev));
+    
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));

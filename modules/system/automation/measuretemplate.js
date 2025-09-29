@@ -107,7 +107,6 @@ export class MeasuredTemplateDSA extends foundry.canvas.placeables.MeasuredTempl
     if (now - this.#moveTime <= 20) return;
     const center = event.data.getLocalPosition(this.layer);
     const snapped = canvas.grid.getSnappedPoint({ x: center.x, y: center.y }, { mode: 2 });
-    console.log(snapped)
 
     if (!snapped.x || !snapped.y) return;
 

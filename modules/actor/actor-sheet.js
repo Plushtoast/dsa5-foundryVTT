@@ -257,7 +257,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const html = $(this.element);
     this.collapsedBoxes = [];
     this.openDetails = [];
-    let boxes = html.find('.ch-collapse i');
+    const boxes = html.find('.ch-collapse i');
     for (let box of boxes) {
       this.collapsedBoxes.push($(box).attr('class'));
     }
@@ -268,12 +268,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   _setCollapsed() {
     const html = $(this.element);
-    if (this.collapsedBoxes) {
-      let boxes = html.find('.ch-collapse i');
-      for (let i = 0; i < boxes.length; i++) {
-        $(boxes[i]).attr('class', this.collapsedBoxes[i]);
-        if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf('fa-angle-down') != -1) $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide();
-      }
+    if (!this.collapsedBoxes) return;
+
+    const boxes = html.find('.ch-collapse i');
+    for (let i = 0; i < boxes.length; i++) {
+      $(boxes[i]).attr('class', this.collapsedBoxes[i]);
+      if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf('fa-angle-down') != -1) $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide();
     }
   }
 
