@@ -1362,6 +1362,8 @@
         "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
         "NoPersonsInList": "Keine Personen in der Liste",
         "NoBeasts": "Keine Kreaturen in der Liste",
+        "copyAvatar": "Copy avatar from original actor",
+        "copyToken": "Copy token from original actor",
         "journals": {
             "label": "Dramatis Personae Journals",
             "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
@@ -1377,6 +1379,9 @@
                         "person": "Dramatis Personae",
                         "creature": "Beast"
                     }
+                },
+                "img": {
+                    "label": "Image"
                 },
                 "subtitle": {
                     "label": "Subtitle"

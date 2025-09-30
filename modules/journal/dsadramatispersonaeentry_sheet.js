@@ -9,6 +9,8 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
             editActor: DSAPersonaeEntrySheet.#editActor,
             showSheet: DSAPersonaeEntrySheet.#showSheet,
             copyActorDescription: DSAPersonaeEntrySheet.#copyActorDescription,
+            copyToken: DSAPersonaeEntrySheet.#copyToken,
+            copyAvatar: DSAPersonaeEntrySheet.#copyAvatar,
         },
         position: {
             width: 960,
@@ -21,7 +23,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/personaentry_edit.hbs',
-            scrollable: ['', 'scrollable'],
+            scrollable: ['', '.scrollable', '.persona-details-container'],
         },
         footer: super.EDIT_PARTS.footer,
     };
@@ -209,6 +211,33 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
 
     static #showSheet(event, target) {
         PersonaeDramatis.showSheet(event, target, { stay: true });
+    }
+
+    static async #copyToken(event, target) {
+        const key = target.dataset.key;
+        const actorUuid = this.document.system.personae[key]?.actor_uuid;
+        if (!actorUuid) return;
+
+        const actor = await fromUuid(actorUuid);
+        if (!actor) return;
+
+        const token = actor.prototypeToken;
+        if (!token) return;
+
+        await this.document.update({ [`system.personae.${key}.img`]: token.texture.src });
+    }
+
+    static async #copyAvatar(event, target) {
+        const key = target.dataset.key;
+        const actorUuid = this.document.system.personae[key]?.actor_uuid;
+        if (!actorUuid) return;
+
+        const actor = await fromUuid(actorUuid);
+        if (!actor) return;
+
+        const img = actor.img;
+        if (!img) return;
+        await this.document.update({ [`system.personae.${key}.img`]: img });
     }
 
     static async #copyActorDescription(event, target) {

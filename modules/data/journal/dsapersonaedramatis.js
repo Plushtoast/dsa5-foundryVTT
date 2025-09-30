@@ -51,7 +51,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
                 showActorDescription: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.showActorDescription.label", hint: "PERSONAE.FIELDS.personae.showActorDescription.hint" }),
                 faction: new StringField({ label: "PERSONAE.FIELDS.personae.faction.label", hint: "PERSONAE.FIELDS.personae.faction.hint" }),
                 tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint" }),
-                img: new FilePathField({ categories: ["IMAGE"] }),
+                img: new FilePathField({ categories: ["IMAGE"], label: "PERSONAE.FIELDS.personae.img.label" }),
                 subtitle: new StringField({ label: "PERSONAE.FIELDS.personae.subtitle.label" }),
                 garadan: new NumberField({
                     initial: 0,

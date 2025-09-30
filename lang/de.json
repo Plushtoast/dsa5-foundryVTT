@@ -1450,6 +1450,8 @@
         "SelectPersonaHint": "Zeige Notizen und wichtige Details zu Personen und Kreaturen, denen du auf deinen Abenteuern begegnet bist.",
         "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "copyAvatar": "Avatar vom Original kopieren",
+        "copyToken": "Token vom Original kopieren",
         "NoBeasts": "Keine Kreaturen in der Liste",
         "journals": {
             "label": "Dramatis Personae Journals",
@@ -1466,6 +1468,9 @@
                         "person": "Dramatis Personae",
                         "creature": "Bestie"
                     }
+                },
+                "img": {
+                    "label": "Avatar"
                 },
                 "subtitle": {
                     "label": "Untertitel"

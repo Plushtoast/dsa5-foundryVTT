@@ -694,7 +694,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (actor) {
       if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
         activeSection = this.activeSection;
-        effects = await this.tokenHotbar._effectEntries(actor);
+        effects = await this.tokenHotbar?._effectEntries(actor) || [];
         this.#conditionAddEffect(effects);
         this.#prepareActorActions(actor, groups);
       }

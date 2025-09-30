@@ -16,7 +16,7 @@ export class DSACalendarEntrySheet extends SelectJournal {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/calendarentry_edit.hbs',
             templates: ['systems/dsa5/templates/journal/calendarentry_edit_detail.hbs'],
-            scrollable: ['', 'scrollable'],
+            scrollable: ['', '.scrollable', '.persona-details-container'],
         },
         footer: super.EDIT_PARTS.footer,
     };

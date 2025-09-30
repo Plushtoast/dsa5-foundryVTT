@@ -23,6 +23,16 @@
   {{/if}}
 
   <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.img.label}}</label>
+    <div class='form-fields gap0px'>
+        
+        {{formInput document.system.schema.fields.personae.element.fields.img value=elem.img name=(concat 'system.personae.' key '.img')}}
+        <button type='button' data-action='copyToken' data-key='{{key}}' data-tooltip='PERSONAE.copyToken' class='fas icon fa-copy'></button>
+        <button type='button' data-action='copyAvatar' data-key='{{key}}' data-tooltip='PERSONAE.copyAvatar' class='fas icon fa-user'></button>
+    </div>
+  </div>
+
+  <div class='form-group'>
     <label>{{localize document.system.schema.fields.personae.element.fields.showSpecies.label}}</label>
     {{formInput document.system.schema.fields.personae.element.fields.showSpecies value=elem.showSpecies name=(concat 'system.personae.' key '.showSpecies')}}
   </div>

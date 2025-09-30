@@ -56,6 +56,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     personae: {
       template: 'systems/dsa5/templates/system/calendar/personaedramatis.hbs',
+      scrollable: ['.personae-list', '.persona-details-container']
     }
   };
 
