@@ -1536,6 +1536,7 @@
         "nextMonth": "Nächster Monat",
         "previousMonth": "Vorheriger Monat",
         "confirmDateChange": "Datum übernehmen",
+        "reset": "Zurücksetzen",
         "cancelDateChange": "Ursprüngliches Datum beibehalten",
         "today": "Heute",
         "FIELDS": {

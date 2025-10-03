@@ -60,7 +60,7 @@
         </fieldset>
 
         <fieldset>
-            <legend>{{localize 'MASTER.automation'}}</legend>
+            <legend class="flexrow">{{localize 'MASTER.automation'}} <button type="button" class="icon noBorder fas fa-rotate" data-action="resetAutomation" data-tooltip="dsacalendar.reset"></button></legend>
             <div class="form-group">
                 <label for="{{rootId}}-lightByDayTime">{{localize 'CALENDAR.DSA.dayTimes.lightByDayTime'}}</label>
                 <input id="{{rootId}}-lightByDayTime" type="checkbox" name="lightByDayTime" class="settingChange" {{checked calendarConfig.lightByDayTime}}>
@@ -116,7 +116,7 @@
         </fieldset>
 
         <fieldset>
-            <legend>{{localize 'CALENDAR.DSA.dayTimes.label'}}</legend>
+            <legend class="flexrow">{{localize 'CALENDAR.DSA.dayTimes.label'}} <button type="button" class="icon noBorder fas fa-rotate" data-action="resetDayTimes" data-tooltip="dsacalendar.reset"></button></legend>
             <div class="form-group">
                 <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
                 <div class=" flexrow">

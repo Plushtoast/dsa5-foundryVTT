@@ -1674,6 +1674,7 @@
         "SelectEntryHint": "Show events and special days.",
         "NoPersonsInList": "No persons in the list",
         "nextMonth": "Next month",
+        "reset": "Reset",
         "previousMonth": "Previous month",
         "confirmDateChange": "Confirm date change",
         "cancelDateChange": "Keep original date",

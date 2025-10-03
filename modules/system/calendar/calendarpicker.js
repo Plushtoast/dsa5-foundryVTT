@@ -24,6 +24,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       addJournal: this.#addJournal,
       filterCategory: this.#filterCategory,
       editEvent: this.#onEditEvent,
+      resetAutomation: this.#onResetAutomation,
+      resetDayTimes: this.#onResetDayTimes,
       openMoreSearch: this.#toggleMoreSearch,
       ...PersonaeDramatis.actions,
       scrollToToday: this.#scrollToToday,
@@ -245,6 +247,27 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const moreOptions = target.closest('.flexcol').querySelector('.moreSearchOptions').classList.toggle('dsahidden');
     target.classList.toggle('fa-caret-up', !moreOptions);
     target.classList.toggle('fa-caret-down', moreOptions);
+  }
+
+  async #resetKeys(setting, keys) {
+    const settings = game.settings.get('dsa5', setting);
+    const defaultSettings = game.settings.settings.get(`dsa5.${setting}`).default;
+    for (const key of keys) {
+      foundry.utils.setProperty(settings, key, foundry.utils.getProperty(defaultSettings, key));
+    }
+    await game.settings.set('dsa5', setting, settings);
+  }
+
+  static async #onResetAutomation(ev, target) {
+    const defaultKeys = ['lightByDayTime', 'moonAddsLight', 'moon', 'dayDarknessAdjust'];
+    await this.#resetKeys('calendarSettings', defaultKeys);
+    this.render({ force: true, parts: ['config'] });
+  }
+
+  static async #onResetDayTimes(ev, target) {
+    const defaultKeys = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'];
+    await this.#resetKeys('calendarSettings', defaultKeys);
+    this.render({ force: true, parts: ['config'] });
   }
 
   static async #removeJournal(ev, target) {
