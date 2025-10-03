@@ -5,6 +5,7 @@ import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
 import { localize } from '../helpers/localizer.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
@@ -368,6 +369,21 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     context.maxHoursPerDay = calendar.days.hoursPerDay;
     context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
     context.configTabs = this._prepareTabs('config');
+
+    context.atlasEnabled = DSA5_Utility.moduleEnabled('dsa5-atlas');
+
+    const autoTimes = context.calendarConfig.autoDayTimes && context.atlasEnabled;
+    const dayTimes = game.dsa5.apps.CalendarWidget.constructor.dayTimes;
+    const step = autoTimes ? 0.1 : 1;
+    const disabled = autoTimes;
+    context.dayTimes = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'].map(key => {
+      return {
+        key,
+        value: dayTimes[key],
+        step,
+        disabled,
+      }
+    });
   }
 
   async _prepareCalendarContext(context, options) {
@@ -484,7 +500,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       this.#dateFormListeners();
       this._drawCalendar();
 
-      this.render({ force: true, parts: ['events'] });
+      const parts = game.user.isGM ? ['events', 'config'] : ['events'];
+      this.render({ force: true, parts });
     }
   }
 

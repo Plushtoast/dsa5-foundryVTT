@@ -2441,6 +2441,8 @@
                 "night": "Nacht",
                 "label": "Tageszeiten",
                 "moonLight": "Mondlicht",
+                "autoDayTimes": "Automatische Tageszeiten",
+                "autoDayTimesHint": "Die Tageszeiten werden automatisch an hand der Region und der Jahreszeit angepasst (DSA5 Atlas).",
                 "lightByDayTime": "Licht nach Tageszeit",
                 "toggleAutoTime": "Die Zeit läuft automatisch in Echtzeit weiter (aktualisiert alle 15sek, außer in Kampf und Pause)",
                 "lightByDayTimeHint": "Der Dunkelheitswert wird automatisch an hand der Uhrzeit angepasst. Es wird die Tageszeit berücksichtigt, sofern Licht nach Tageszeit aktiviert ist.",

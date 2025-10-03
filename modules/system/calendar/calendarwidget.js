@@ -41,18 +41,29 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         },
     };
 
+    static get dayTimes() {
+        const calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+        const autoTimes = calendarConfig.autoDayTimes && DSA5_Utility.moduleEnabled('dsa5-atlas');
+
+        if (autoTimes) return game.dsa5.atlas.SeasonsCalculator.autoDayTimes();
+
+        return calendarConfig;
+    }
+
     static dayTimeBackground(components) {
         const maxHoursPerDay = game.time.calendar.days.hoursPerDay;
-        const calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+        const calendarConfig = this.dayTimes;
         const timeGradientsConfig = foundry.utils.mergeObject({
             'dayStart': 0,
             'dayEnd': maxHoursPerDay,
         }, calendarConfig);
 
+        const comparisonTime = components.hour + (components.minute / 60) + (components.second / 3600);
+
         return CalendarWidget.timeGradients.find(g => {
             const from = timeGradientsConfig[g.from] || 0;
             const to = timeGradientsConfig[g.to] || maxHoursPerDay;
-            return components.hour >= from && components.hour < to;
+            return comparisonTime >= from && comparisonTime < to;
         }) || CalendarWidget.timeGradients[0];
     }
 

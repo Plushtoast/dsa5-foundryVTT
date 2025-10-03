@@ -828,6 +828,8 @@
                 "night": "Night",
                 "label": "Daytimes",
                 "moonLight": "Moonlight",
+                "autoDayTimes": "Automatic Daytimes",
+                "autoDayTimesHint": "The daytimes are automatically adjusted based on the region and season (DSA5 Atlas).",
                 "toggleAutoTime": "Time runs automatically in real time (updates every 15 sec, except in combat and pause)",
                 "lightByDayTime": "Light by daytime",
                 "lightByDayTimeHint": "The darkness value is automatically adjusted based on the time of day. The time of day is considered if light by daytime is activated.",

@@ -117,48 +117,22 @@
 
         <fieldset>
             <legend class="flexrow">{{localize 'CALENDAR.DSA.dayTimes.label'}} <button type="button" class="icon noBorder fas fa-rotate" data-action="resetDayTimes" data-tooltip="dsacalendar.reset"></button></legend>
+            {{#if atlasEnabled}}
             <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.dawn'}}</label>
+                <label for="{{rootId}}-autoDayTimes">{{localize 'CALENDAR.DSA.dayTimes.autoDayTimes'}}</label>
+                <input id="{{rootId}}-autoDayTimes" type="checkbox" name="autoDayTimes" class="settingChange" {{checked calendarConfig.autoDayTimes}}>
+                <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.autoDayTimesHint'}}</p>
+            </div>
+            {{/if}}
+            {{#each dayTimes}}
+            <div class="form-group">
+                <label>{{localize (concat 'CALENDAR.DSA.dayTimes.' key)}}</label>
                 <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="dawn" value='{{calendarConfig.dawn}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
+                    <range-picker class="flex1 settingChange" name="{{key}}" value='{{value}}' min="0" max="{{../maxHoursPerDay}}" step="{{step}}" {{disabled disabled}}></range-picker>
                     <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
                 </div>
             </div>
-            <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.morning'}}</label>
-                <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="morning" value='{{calendarConfig.morning}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.noon'}}</label>
-                <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="noon" value='{{calendarConfig.noon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.afternoon'}}</label>
-                <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="afternoon" value='{{calendarConfig.afternoon}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.sunset'}}</label>
-                <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="sunset" value='{{calendarConfig.sunset}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>{{localize 'CALENDAR.DSA.dayTimes.night'}}</label>
-                <div class=" flexrow">
-                    <range-picker class="flex1 settingChange" name="night" value='{{calendarConfig.night}}' min="0" max="{{maxHoursPerDay}}" step="1"></range-picker>
-                    <span class="flex0 unit">&nbsp;{{localize 'CALENDAR.DSA.hour'}}</span>
-                </div>
-            </div>
+            {{/each}}
         </fieldset>
     </div>
 
