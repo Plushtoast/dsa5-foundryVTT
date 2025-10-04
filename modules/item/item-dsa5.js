@@ -726,26 +726,36 @@ class SpellItemDSA5 extends Itemdsa5 {
     const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
     const applicableSpellTypes = [SPELL, RITUAL];
 
-    if (game.settings.get('dsa5', 'enableForeignSpellModifer') &&
-      enabledActorTypes.includes(actor.type) &&
-      applicableSpellTypes.includes(source.type)) {
+    if (!game.settings.get('dsa5', 'enableForeignSpellModifer') ||
+      !enabledActorTypes.includes(actor.type) ||
+      !applicableSpellTypes.includes(source.type)) return;
 
-      const distributions = source.system.distribution.value.split(',').map((x) => x.trim().toLowerCase());
-      const regx = new RegExp(`(${localize('tradition')}|\\\)|\\\()`, 'g');
-      const traditions = actor.system.tradition.magical
-        .replace(regx, '')
-        .split(',')
-        .map((x) => x.trim().toLowerCase());
-      traditions.push(localize('general').toLowerCase());
+    const traditionLabel = localize('tradition');
+    const clean = (s = '') => s
+      .toString()
+      .replace(/[()]/g, '')
+      .replace(new RegExp(traditionLabel, 'gi'), '')
+      .split(',')
+      .map(x => x.trim().toLowerCase())
+      .filter(Boolean);
 
-      data.isForeign = !distributions.some((x) => traditions.includes(x));
-      if (data.isForeign) {
-        situationalModifiers.push({
-          name: localize('DSASETTINGS.enableForeignSpellModifer'),
-          value: -2,
-          selected: true,
-        });
-      }
+    const distributions = clean(source.system.distribution.value);
+    const fromActorTraditions = clean(actor.system.tradition.magical);
+    const fromSpecials = actor.items
+      .filter(i => i.type === 'specialability' && i.name.startsWith(traditionLabel))
+      .map(i => i.name)
+      .flatMap(clean);
+
+    const traditionsSet = new Set([...fromActorTraditions, ...fromSpecials, localize('general').toLowerCase()]);
+
+    data.isForeign = !distributions.some(d => traditionsSet.has(d));
+
+    if (data.isForeign) {
+      situationalModifiers.push({
+      name: localize('DSASETTINGS.enableForeignSpellModifer'),
+      value: -2,
+      selected: true,
+      });
     }
   }
 
