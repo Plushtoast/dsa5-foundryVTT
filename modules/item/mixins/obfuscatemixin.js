@@ -55,13 +55,16 @@ export const ItemSheetObfuscation = (superclass) =>
           }
         }
       }
+      console.log(swaptab);
       if (swaptab) {
-        const tabs = html.find('nav .item:first-child');
+        let tabs = html.find('nav .item:first-child');
+        if (!tabs.length) tabs = html.find('nav .tabelement:first-child');
         if (tabs.length) {
           this.changeTab(tabs[0].dataset.tab, tabs[0].dataset.group);
         } else {
+          html.find('.tab.active').removeClass('active');
           const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', { item: this.item });
-          html.find('.content').html(templ);
+          html.find('.window-content').append(templ);
         }
       }
     }
