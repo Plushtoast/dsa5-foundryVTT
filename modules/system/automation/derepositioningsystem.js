@@ -156,7 +156,7 @@ export default class DPS {
 }
 
 Hooks.on('renderSceneConfig', (app, html, msg) => {
-  const sceneFlag = getProperty(app.object, 'flags.dsa5.enableDPS');
+  const sceneFlag = getProperty(app.document, 'flags.dsa5.enableDPS');
   const dpsSelector = `<div class="form-group dpsSelector">
         <label data-tooltip="DSASETTINGS.enableDPSHint">${localize('DSASETTINGS.enableDPS')}</label>
         <div class="form-fields">

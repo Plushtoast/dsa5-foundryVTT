@@ -46,8 +46,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     config: {
       template: 'systems/dsa5/templates/system/calendar/config.hbs',
-      scrollable: [''],
       templates: ['systems/dsa5/templates/system/dsatabs.hbs'],
+      scrollable: ['', '.innerscroll'],
     },
     events: {
       template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
@@ -374,7 +374,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const autoTimes = context.calendarConfig.autoDayTimes && context.atlasEnabled;
     const dayTimes = game.dsa5.apps.CalendarWidget.constructor.dayTimes;
-    const step = autoTimes ? 0.1 : 1;
+    const step = autoTimes ? 0.01 : 1;
     const disabled = autoTimes;
     context.dayTimes = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'].map(key => {
       return {
@@ -758,6 +758,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     foundry.utils.setProperty(settings, setting, value);
     await game.settings.set('dsa5', settingName, settings);
     game.dsa5.apps.CalendarWidget.render(true);
+
+    if ((ev.target.dataset.refresh)) this.render({ force: true, parts: ['config'] });
   }
 
   /* =====================

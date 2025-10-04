@@ -1,9 +1,9 @@
-<div class='tab scrollable standard-form {{tabs.config.cssClass}}' data-tab='config' data-group='{{tabs.config.group}}'>
+<div class='tab standard-form {{tabs.config.cssClass}}' data-tab='config' data-group='{{tabs.config.group}}'>
     <div class="form-group fullScreenMaxWidth">
         {{> systems/dsa5/templates/system/dsatabs.hbs tabs=configTabs}}
     </div>
 
-    <div class='tab scrollable standard-form {{configTabs.personae_config.cssClass}}' data-tab='personae_config' data-group='{{configTabs.personae_config.group}}'>
+    <div class='tab scrollable innerscroll standard-form {{configTabs.personae_config.cssClass}}' data-tab='personae_config' data-group='{{configTabs.personae_config.group}}'>
         <fieldset>
                 <legend>{{localize 'PERSONAE.ImportantPersons'}}</legend>
                 <div class="form-group">
@@ -27,7 +27,7 @@
         </fieldset>
     </div>
 
-    <div class='tab scrollable standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
+    <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
         <div class="form-group fullScreenMaxWidth">
             <label>{{localize calendarSetting.name}}</label>
             <div class="form-fields">
@@ -120,7 +120,7 @@
             {{#if atlasEnabled}}
             <div class="form-group">
                 <label for="{{rootId}}-autoDayTimes">{{localize 'CALENDAR.DSA.dayTimes.autoDayTimes'}}</label>
-                <input id="{{rootId}}-autoDayTimes" type="checkbox" name="autoDayTimes" class="settingChange" {{checked calendarConfig.autoDayTimes}}>
+                <input id="{{rootId}}-autoDayTimes" data-refresh="true" type="checkbox" name="autoDayTimes" class="settingChange" {{checked calendarConfig.autoDayTimes}}>
                 <p class="hint">{{localize 'CALENDAR.DSA.dayTimes.autoDayTimesHint'}}</p>
             </div>
             {{/if}}
