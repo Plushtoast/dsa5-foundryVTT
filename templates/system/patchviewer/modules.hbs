@@ -1,0 +1,13 @@
+<div class='tab scrollable {{tabs.content.cssClass}}' data-tab='content' data-group='{{tabs.content.group}}'>
+  <h1>{{modules.title}}</h1>
+  {{#each modules.categories}}
+    <h2>{{name}}</h2>
+    <div class="flexrow wrap">
+    {{#each items}}
+      <a href='{{href}}' class="flex0" target='_blank' data-tooltip='{{label}}'>
+        <img src='{{image.src}}' alt='{{label}}' style='margin-right: 5px; margin-bottom: 5px; text-align:center; min-width:210px;' />
+      </a>
+    {{/each}}
+    </div>
+  {{/each}}
+</div>

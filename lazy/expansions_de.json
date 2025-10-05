@@ -1,0 +1,429 @@
+{
+  "title": "Offizielle Module",
+  "categories": [
+    {
+      "name": "Regelbände",
+      "items": [
+        {
+          "label": "Das Schwarze Auge - Grundregelwerk",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2157/dsa5-grundregelwerk-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurische Magie I",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2251/dsa5-aventurische-magie-i-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurische Magie II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2316/dsa5-aventurische-magie-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-2/icons/journal/cover.webp"
+          }
+        },
+        {
+          "label": "Aventurische Magie III",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2726/dsa5-aventurische-magie-iii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-3/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Götterwirken",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2250/dsa5-aventurisches-goetterwirken-i-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Götterwirken II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2641/dsa5-aventurisches-goetterwirken-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria2/icons/journals/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Kompendium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2251/dsa5-aventurische-magie-i-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Kompendium II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2873/dsa5-aventurisches-kompendium-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium2/icons/journal/coverde.webp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Spezialmodule",
+      "items": [
+        {
+          "label": "Werkstatt des Meisters",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2645/dsa5-werkstatt-des-meisters-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg"
+          }
+        },
+        {
+          "label": "Aventurische Tavernen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-aventurian-taverns/icons/journal/coverde.webp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inhalte",
+      "items": [
+        {
+          "label": "Aventurisches Pandämonium I",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2485/dsa5-aventurisches-pandaemonium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-pandaemonium/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Pandämonium II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2642/dsa5-aventurisches-pandaemonium-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-pandaemonium2/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Nekromanthäum",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2706/dsa5-aventurisches-nekromanthaeum-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-necromantheum/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurische Tiergefährten",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2486/dsa5-aventurische-tiergefaehrten-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-companions/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Bestiarium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2218/dsa5-aventurisches-bestiarium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Bestiarium II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2315/dsa5-aventurisches-bestiarium-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary2/icons/journal/cover.webp"
+          }
+        },
+        {
+          "label": "Aventurische Rüstkammer",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2217/dsa5-aventurische-ruestkammer-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurische Rüstkammer II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2644/dsa5-aventurische-ruestkammer-ii-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Transmutarium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Animatorium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4497/dsa5-aventurisches-animatorium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/80/98/07/foundry_cover_animatorium.jpg"
+          }
+        },
+        {
+          "label": "Aventurisches Herbarium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3027/dsa5-aventurisches-herbarium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Aventurisches Herbarium II",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3576/dsa5-aventurisches-herbarium-2-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/22/db/36/ESD036_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Orks - Hauer & Schwarzer Pelz",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-orks-hauer-und-schwarzer-pelz-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Achaz - Schuppenkleid & Lange Zunge",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3724",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/d9/f7/5c/ESD037_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Aventurisches Elementarium",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-aventurisches-elementarium-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-elementarium/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Studierstube der Gildenmagie",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3195/dsa5-studierstube-der-gildenmagie-erweitert-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Körperlose Schrecken",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3942",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/4f/4b/99/ESD045_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Brut der Niederhöllen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4342/dsa5-brut-der-niederhoellen-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/22/b6/98/ESD051_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Rahjas Diener",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3907",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/17/40/f3/ESD043_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Aventurische Bibliothek",
+          "href": "https://www.f-shop.de/detail/index/sArticle/4457",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/50/34/01/ESD052_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Geschöpfe der Anderswelt",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4640/dsa5-geschoepfe-der-anderswelt-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/39/e3/50/a4_cover_anderswelt_vtt.jpg"
+          }
+        },
+        {
+          "label": "Verborgen in der Tiefe",
+          "href": "https://www.f-shop.de/detail/index/sArticle/4659",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/80/7a/72/a4_cover_verbogenindtiefe_vtt.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Abenteuer",
+      "items": [
+        {
+          "label": "Einführungsabenteuer",
+          "href": "https://foundryvtt.com/packages/dsa5-introduction",
+          "image": {
+            "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Rabenkrieg I - Die Zähne des Kaimans",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2640/dsa5-rabenkrieg-1-kampagne-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Rabenkrieg II - Der Biss der Spinne",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2737/dsa5-rabenkrieg-2-kampagne-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg2/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Rabenkrieg III - Der Sturz des Adlers",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3104/dsa5-rabenkrieg-3-kampagne-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Die Krallen der Löwin",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4233/dsa5-rabenkrieg-4-kampagne-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/45/7d/f8/ESD050_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Der Preis des Greifen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4511/dsa5-rabenkrieg-5-kampagne-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/1f/e3/67/foundry_cover_rabenkrieg5.jpg"
+          }
+        },
+        {
+          "label": "Das Geheimnis des Drachenritters",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp"
+          }
+        },
+        {
+          "label": "Labyrinth der Intrigen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Verhandlungskunst und Friedensschwur",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3112/dsa5-verhandlungskunst-und-friedensschwur-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Klingen der Nacht",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3456",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Offenbarung des Himmels",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3575/dsa5-offenbarung-des-himmels-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Das Geheimnis der Zauberschüler",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3575/dsa5-offenbarung-des-himmels-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/91/68/3c/ESD041_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Banner der Treue",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3941",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/46/48/65/ESD044_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Mittsommerrache",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2388/dsa5-mitsommerrache-fuer-foundry",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Hexenreigen",
+          "href": "https://foundryvtt.com/packages/dsa5-witchsdance",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coverde.webp"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Regionalspielhilfen",
+      "items": [
+        {
+          "label": "Die Sonnenküste",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2684/dsa5-sonnenkueste-bundle-fuer-foundry-vtt",
+          "image": {
+            "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-suncoast/icons/journal/coverde.webp"
+          }
+        },
+        {
+          "label": "Das Wüstenreich",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3745",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/21/e5/f0/ESD038_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Die Streitenden Königreiche",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3746",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/62/db/51/ESD039_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Die Dampfenden Dschungel",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3749",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/f6/30/0b/ESD040_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Havena, versunkene Geheimnisse",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3877/dsa5-havena-versunkene-geheimnisse-bundle-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/74/4a/96/ESD017_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Die Siebenwindküste",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3906",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/23/69/d7/ESD042_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Die Winterwacht",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4041/dsa5-die-winterwacht-bundle-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/94/cf/f2/ESD046_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Die Flusslande",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/4186/dsa5-die-flusslande-bundle-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/95/6b/29/ESD049_0_0999.jpg"
+          }
+        },
+        {
+          "label": "Ära des Goldenen Kaisers",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4518/dsa5-aera-des-goldenen-kaisers-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/14/96/70/foundry_cover_-aradesgoldenenOjvGcfsb4DGCV.jpg"
+          }
+        },
+        {
+          "label": "Ära des Goldenen Kaisers",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<div class='tab scrollable {{tabs.changelog.cssClass}}' data-tab='changelog' data-group='{{tabs.changelog.group}}'>
+  <div class='changelogsection'>
+    {{{changelog}}}
+    {{#each prevChangeLogs as |item i|}}
+      <hr style='margin-top:100px' />
+      {{{item}}}
+    {{/each}}
+  </div>
+  <div class='flexrow'>
+    <button type='button' data-action='showMore'>More..</button>
+  </div>
+</div>

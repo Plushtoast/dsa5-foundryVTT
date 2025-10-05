@@ -1,0 +1,12 @@
+<div class='tab scrollable {{tabs.newcontent.cssClass}}' data-tab='newcontent' data-group='{{tabs.newcontent.group}}'>
+  <div class='newssection'>
+    {{{news}}}
+    {{#each prevNews as |item i|}}
+      <hr style='margin-top:100px' />
+      {{{item}}}
+    {{/each}}
+  </div>
+  <div class='flexrow'>
+    <button type='button' data-action='showMore'>More..</button>
+  </div>
+</div>
