@@ -11,7 +11,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coverde.webp"
           },
-          "description": "Das Schwarze Auge - Grundregelwerk für Foundry VTT.",
+          "description": "Das Schwarze Auge ist ein Fantasy-Rollenspiel, in dem du und deine Freunde die Hauptrollen übernehmen: Bestehe als tapferer Ritter, elfische Waldläuferin oder gelehrter Magier Heldentaten und entdecke mit deinen Gefährten das von vielen Kriegen geschwächte…",
           "badges": [
             "Bestseller"
           ]
@@ -23,7 +23,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coverde.webp"
           },
-          "description": "Aventurische Magie I für Foundry VTT.",
+          "description": "Aventurische Magie ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Spielarten der Zauberei widmet. Jede beschriebene magische Tradition wird ausführlich vorgestellt, mitsamt ihren Ritualen, Zaubersprüchen und Besonderheiten.",
           "badges": []
         },
         {
@@ -33,7 +33,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-2/icons/journal/cover.webp"
           },
-          "description": "Aventurische Magie II für Foundry VTT.",
+          "description": "Aventurische Magie 2 ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Spielarten der Zauberei widmet. Jede beschriebene magische Tradition wird ausführlich vorgestellt, mitsamt ihren Ritualen, Zaubersprüchen und Besonderheiten.",
           "badges": []
         },
         {
@@ -43,7 +43,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-3/icons/journal/coverde.webp"
           },
-          "description": "Aventurische Magie III für Foundry VTT.",
+          "description": "Dieses Modul widmet sich den aventurischen Spielarten der Zauberei. Jede beschriebene magische Tradition wird ausführlich vorgestellt, mitsamt ihren Ritualen, Zaubersprüchen und Besonderheiten.",
           "badges": []
         },
         {
@@ -53,7 +53,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coverde.webp"
           },
-          "description": "Aventurisches Götterwirken für Foundry VTT.",
+          "description": "Aventurisches Götterwirken ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Geweihten widmet. Alle Geweihten des Zwölfgötterpantheons und der bekanntesten Halbgötter werden ausführlich beschrieben.",
           "badges": []
         },
         {
@@ -63,17 +63,17 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria2/icons/journals/coverde.webp"
           },
-          "description": "Aventurisches Götterwirken II für Foundry VTT.",
+          "description": "Aventurisches Götterwirken II ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Geweihten widmet. Geweihte der Marbo, des Levthan des Angrosch, aber auch die Schamanen der menschlichen Stammeskulturen werden näher beleuchtet.",
           "badges": []
         },
         {
           "id": "dsa5-compendium",
           "label": "Aventurisches Kompendium",
-          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2251/dsa5-aventurische-magie-i-fuer-foundry-vtt",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2387/dsa5-aventurisches-kompendium-fuer-foundry",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Kompendium für Foundry VTT.",
+          "description": "Mit dem Aventurischen Kompendium erhältst du zahlreiche neue Optionen für den Kampf und mächtige Kampfstile, die nur den besten Kriegern und Schwertmeistern bekannt sind. Doch nicht nur Krieger kommen auf ihre Kosten, auch alle übrigen Heldentypen können von den Erweiterungsregeln profitieren.",
           "badges": []
         },
         {
@@ -83,7 +83,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium2/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Kompendium II für Foundry VTT.",
+          "description": "Mit dem Aventurischen Kompendium II erhältst du ein Regelerweiterungsmodul für DSA5, das dir neue Optionen für den Kampf und Talenteinsatz eröffnet. Zahlreiche neue waffenlose und bewaffnete Kampfstile erweitern die Möglichkeiten der Helden und darüber hinaus…",
           "badges": []
         }
       ]
@@ -98,8 +98,10 @@
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg"
           },
-          "description": "Werkstatt des Meisters für Foundry VTT.",
-          "badges": ["Bestseller"]
+          "description": "Unser erstes exklusives Foundry Modul ist voll gefüllt mit nützlichen und mächtigen Werkzeugen für Meister - sei es schnell einen kompletten NPC herbeizuzaubern oder flugs eine Schatztruhe zu befüllen, eine Taverne inklusive Gästen zu erschaffen oder einfach…",
+          "badges": [
+            "Bestseller"
+          ]
         },
         {
           "id": "dsa5-aventurian-tavers",
@@ -108,7 +110,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-aventurian-taverns/icons/journal/coverde.webp"
           },
-          "description": "Aventurische Tavernen für Foundry VTT.",
+          "description": "Tavernen spielen eine wichtige Rolle für die Abenteurer Aventuriens. Es ist oft der erste Ort, an dem die tapferen Helden zusammentreffen und sich gemeinsam auf den Weg zu neuen Abenteuern machen.",
           "badges": []
         }
       ]
@@ -123,7 +125,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-pandaemonium/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Pandämonium I für Foundry VTT.",
+          "description": "Die Dämonenbeschwörung gehört zu den mächtigsten, aber auch zu den gefährlichsten Kenntnissen der schwarzen Magie. Schon seit Jahrtausenden beschwören aventurische Zauberer Kreaturen der 7.",
           "badges": []
         },
         {
@@ -133,7 +135,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-pandaemonium2/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Pandämonium II für Foundry VTT.",
+          "description": "Die Kunst der Invokation von Dämonen gehört zu den mächtigsten Fähigkeiten eines aventurischen Zauberers, aber auch zu den gefährlichsten. Nur ein falsches Wort, eine Unaufmerksamkeit oder ein verwischter Bannkreis können zum Tod des Beschwörers führen - oder…",
           "badges": []
         },
         {
@@ -143,7 +145,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-necromantheum/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Nekromanthäum für Foundry VTT.",
+          "description": "Klappernde Skelette, faulende Zombies, staubumwaberte Mumien - die aventurische Nekromantie hat es sich zur Aufgabe gemacht, die Körper der Verstorbenen und Verblichenen nach ihrem Dahinscheiden weiterhin einem höheren Zweck zuzuführen. Zumeist besteht dieser…",
           "badges": []
         },
         {
@@ -153,7 +155,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-companions/icons/journal/coverde.webp"
           },
-          "description": "Aventurische Tiergefährten für Foundry VTT.",
+          "description": "Kaum eine Abenteurerin kommt ohne ihren wachsamen Olporter-Hund, ihr blitzschnelles Elenviner Vollblut oder ihre magische Katzenvertraute aus. Tierische Begleiter können einer Heldin bei der Jagd oder im Kampf beistehen, ihr als Reittier dienen oder ihr mit…",
           "badges": []
         },
         {
@@ -163,7 +165,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Bestiarium für Foundry VTT.",
+          "description": "In den Wäldern, Sümpfen und Dschungel Aventuriens lauern furchterregende Kreaturen, die Helden bestenfalls als ihre nächste Mahlzeit betrachten. Durch ihr Gift, messerscharfe Klauen oder ihre schiere Größe stellen…",
           "badges": []
         },
         {
@@ -173,7 +175,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary2/icons/journal/cover.webp"
           },
-          "description": "Aventurisches Bestiarium II für Foundry VTT.",
+          "description": "Aventurien ist bevölkert von magischen Kreaturen, geheimnisvollen Spezies und furchterregenden Wesenheiten. Helden können Ungeheuern überall in der aventurischen Wildnis begegnen, sei es in den Wäldern des Mittelreichs, den dampfenden Dschungeln Meridianas,…",
           "badges": []
         },
         {
@@ -183,7 +185,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coverde.webp"
           },
-          "description": "Aventurische Rüstkammer für Foundry VTT.",
+          "description": "Kein Krieger kommt ohne seine Waffen, kein Dieb ohne sein Einbruchswerkzeug und kein Magier ohne seine Bücher aus. Die Aventurische Rüstkammer enthält Beschreibungen von über 100 nützlichen Ausrüstungsgegenständen, Waffen und Rüstungen für reisende Helden und…",
           "badges": []
         },
         {
@@ -193,7 +195,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp"
           },
-          "description": "Aventurische Rüstkammer II für Foundry VTT.",
+          "description": "Ob heilige Zeremonialgegenstände, ein schützendes Kettenhemd oder ein Pfeil mit Widerhaken – in vielen Situationen braucht ein Held die richtige Ausrüstung. Die Aventurische Rüstkammer II enthält über 150 Beschreibungen, Bilder und Einträge neuer…",
           "badges": []
         },
         {
@@ -203,9 +205,8 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Transmutarium für Foundry VTT.",
-          "badges": [
-          ]
+          "description": "Mit dem Aventurischen Transmutarium werden über 50 Chimären und Daimonide - Hybride aus Lebenden und Dämonen - vorgestellt, welche die Geschichte Aventuriens prägen. Neben Spielwerten, Illustrationen und zahlreichen Ideen für die Verwendung in Abenteuern sind…",
+          "badges": []
         },
         {
           "id": "dsa5-animatorium",
@@ -214,9 +215,8 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/80/98/07/foundry_cover_animatorium.jpg"
           },
-          "description": "Aventurisches Animatorium für Foundry VTT.",
-          "badges": [
-          ]
+          "description": "Unsterbliche, animierte Konstrukte entspringen den Animatorien Aventuriens, um ihren Konstrukteuren als Wächter, Kampfmaschinen, stumme Diener oder Forschungspartner zu dienen. Die magischen Werkstätten und ihre Schöpfer prägten Zeitalter und Regionen, ihre…",
+          "badges": []
         },
         {
           "id": "dsa5-herbarium",
@@ -225,7 +225,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-herbarium/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Herbarium für Foundry VTT.",
+          "description": "Aventurisches Herbarium Das Aventurische Herbarium bietet umfassende Beschreibungen zu Habitat, Wirkung und Verarbeitungsmöglichkeiten von über 60 phantastischen Pflanzen. Sie umfassen Hintergrundinformationen zu Legenden und Volksglauben über das jeweilige…",
           "badges": []
         },
         {
@@ -235,7 +235,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/22/db/36/ESD036_0_0999.jpg"
           },
-          "description": "Aventurisches Herbarium II für Foundry VTT.",
+          "description": "Fast 70 phantastische Pflanzen Aventuriens werden im Aventurischen Herbarium II Modul für Foundry vorgestellt. Zahlreiche Anregungen für eigene Abenteuer rund um Efeuerwälle, Kairangeister und Tarnblattintrigen laden zur Gestaltung eines grünen und…",
           "badges": []
         },
         {
@@ -245,7 +245,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-orcs/icons/journal/coverde.webp"
           },
-          "description": "Orks - Hauer & Schwarzer Pelz für Foundry VTT.",
+          "description": "Bekannt sind Orks vor allem als brutale Krieger und Menschenfeinden. Nur wenige wissen, dass sie auf eine uralte Kultur, in der Ehre und Tapferkeit eine wichtige Rolle spielen, zurückblicken.",
           "badges": []
         },
         {
@@ -255,17 +255,17 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/d9/f7/5c/ESD037_0_0999.jpg"
           },
-          "description": "Achaz - Schuppenkleid & Lange Zunge für Foundry VTT.",
+          "description": "Vor Jahrtausenden beherrschten die Achaz unter Führung des Gottdrachen Pyrdacor weite Teile Aventuriens. Heute leben sie in entlegenen Gegenden als Mitglieder kleiner Stämme oder in den verfallenen Ruinen ihrer einst prächtigen Städte.",
           "badges": []
         },
         {
           "id": "dsa5-elementarium",
           "label": "Aventurisches Elementarium",
-          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/3029/dsa5-aventurisches-elementarium-fuer-foundry-vtt",
+          "href": "https://www.f-shop.de/detail/index/sArticle/3115",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-elementarium/icons/journal/coverde.webp"
           },
-          "description": "Aventurisches Elementarium für Foundry VTT.",
+          "description": "Die aventurischen Kundigen der Elementarmagie beschwören und kontrollieren wundersame Wesen. Das Aventurische Elementarium für Foundry VTT stellt mehr als 40 Wesenheiten vor, darunter elementare Geister, Dschinne und Meister, aber auch Unelementare und…",
           "badges": []
         },
         {
@@ -275,7 +275,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-studyroom/icons/journal/coverde.webp"
           },
-          "description": "Studierstube der Gildenmagie für Foundry VTT.",
+          "description": "Lass dich in die Welt der Magie entführen! Erhalte mit dem erweiterten Modul Studierstube der Gildenmagie typische Ausrüstungsgegenstände, Waffen und Zauber, die jeder Gildenmagier auf seinen Reisen mitnehmen sollte.",
           "badges": []
         },
         {
@@ -285,7 +285,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/4f/4b/99/ESD045_0_0999.jpg"
           },
-          "description": "Körperlose Schrecken für Foundry VTT.",
+          "description": "Geister kommen in verschiedensten Formen und Ausprägungen daher – sei es als tragische Gefesselte Seele mit einem letzten verzweifelten Wunsch, als niederträchtiger Nachtalp mit einem alles verschlingenden Hunger nach Lebenskraft oder als aufopferungsvoller…",
           "badges": []
         },
         {
@@ -295,7 +295,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/22/b6/98/ESD051_0_0999.jpg"
           },
-          "description": "Brut der Niederhöllen für Foundry VTT.",
+          "description": "Die Dämonenbeschwörung gehört zu den mächtigsten, aber auch zu den gefährlichsten Kenntnissen der schwarzen Magie. Schon seit Jahrtausenden beschwören aventurische Zauberer Kreaturen der 7...",
           "badges": []
         },
         {
@@ -305,7 +305,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/17/40/f3/ESD043_0_0999.jpg"
           },
-          "description": "Rahjas Diener für Foundry VTT.",
+          "description": "In diesem Foundry Modul für das DSA5 Regelwerk, werden dir zahlreiche Personen vorgestellt, die eine Verbindung zur Rahjakirche aufweisen. Beispielsweise wichtige Rahjageweihte, aber auch Minnesänger, Zaubertänzerinnen und Schneidermeister für extravagante…",
           "badges": []
         },
         {
@@ -315,7 +315,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/50/34/01/ESD052_0_0999.jpg"
           },
-          "description": "Aventurische Bibliothek für Foundry VTT.",
+          "description": "In uralten Hallen, etwa der verfallenen Silem-Horas-Bibliothek in Selem oder der Gelehrsamen Stube, der Bibliothek des Haupttempels der Hesindekirche, lagern Schätze, die nicht aus Gold und Silber bestehen, sondern aus Papier und Pergament. Bücher sind in…",
           "badges": []
         },
         {
@@ -325,7 +325,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/39/e3/50/a4_cover_anderswelt_vtt.jpg"
           },
-          "description": "Geschöpfe der Anderswelt für Foundry VTT.",
+          "description": "Schillernde Blütenfeen, fleißige Hämmerlinge, verführerische Nymphen, schelmische Kobolde, unheimliche Perchten – in Aventurien ist eine Vielzahl unterschiedlichster Feenwesen bekannt. Sie alle haben gemein, dass sie nicht von Dere, sondern aus ihren eigenen…",
           "badges": []
         },
         {
@@ -335,7 +335,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/80/7a/72/a4_cover_verbogenindtiefe_vtt.jpg"
           },
-          "description": "Verborgen in der Tiefe für Foundry VTT.",
+          "description": "Verborgen in der Tiefe führt die Helden hinab in die unterirdische Welt Aventuriens. Dieses Modul hütet Wissen über vergessen geglaubte Orte: Die Grabanlagen der Magiermogule der Tulamidenlande, die verschütteten Städte der Bosparaner und die verlassenen…",
           "badges": []
         }
       ]
@@ -350,8 +350,11 @@
           "image": {
             "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp"
           },
-          "description": "Einführungsabenteuer für Foundry VTT.",
-          "badges": ["Einsteiger", "Kostenlos"]
+          "description": "Ein simples Einführungsabenteuer für das Schwarze Auge.",
+          "badges": [
+            "Einsteiger",
+            "Kostenlos"
+          ]
         },
         {
           "id": "dsa5-rabenkrieg1",
@@ -360,7 +363,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg1/icons/journal/coverde.webp"
           },
-          "description": "Rabenkrieg I - Die Zähne des Kaimans für Foundry VTT.",
+          "description": "Kriege werden nicht allein auf dem Schlachtfeld gewonnen. Nicht selten sind es die Taten Weniger, die im entscheidenden Augenblick über Sieg oder Niederlage bestimmen.",
           "badges": []
         },
         {
@@ -370,7 +373,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg2/icons/journal/coverde.webp"
           },
-          "description": "Rabenkrieg II - Der Biss der Spinne für Foundry VTT.",
+          "description": "Im zweiten Abenteuer der Rabenkrieg-Kampagne zeigt das Schreckgespenst des Krieges sein wahres Gesicht, während die Helden ihre Stellung in der militärischen Hierarchie überdenken und darüber entscheiden, mit welchen Gefühlen die Nachwelt sich dereinst an den…",
           "badges": []
         },
         {
@@ -380,7 +383,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-rabenkrieg3/icons/journal/coverde.webp"
           },
-          "description": "Rabenkrieg III - Der Sturz des Adlers für Foundry VTT.",
+          "description": "Rabenkrieg 3 – Der Sturz des Adlers Zu Beginn des dritten Abenteuers der Rabenkrieg-Kampagne für Foundry VTT haben sich die Helden als zuverlässig und besonnen genug erwiesen, um ihre nächste Aufgabe von Oderin du Metuant persönlich zu erhalten. Bald finden…",
           "badges": []
         },
         {
@@ -390,7 +393,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/45/7d/f8/ESD050_0_0999.jpg"
           },
-          "description": "Die Krallen der Löwin für Foundry VTT.",
+          "description": "In der 4. Ausgabe des Foundry DSA Rabenkrieg-Moduls, zieht das Heer des alanfanischen Imperiums entschlossen weiter, um in einem borongefälligen Kriegszug das Káhet Ni Kemi von der Herrschaft der tyrannischen Nisut Ela XV.",
           "badges": []
         },
         {
@@ -400,7 +403,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/1f/e3/67/foundry_cover_rabenkrieg5.jpg"
           },
-          "description": "Der Preis des Greifen für Foundry VTT.",
+          "description": "Nach dem Sieg über das Heer der kem’schen Loyalisten planen die al’anfanischen Truppen unter Führung des Schwarzen Generals Oderin du Metuant und der Kemi-Prinzessin Rhônda Setepen, entlang der Ostküste Traheliens ins Herz des Kemi-Reiches vorzustoßen. Doch…",
           "badges": []
         },
         {
@@ -410,8 +413,10 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp"
           },
-          "description": "Das Geheimnis des Drachenritters für Foundry VTT.",
-          "badges": ["Einsteiger"]
+          "description": "In der mittelreichischen Grafschaft Heldentrutz braut sich Unheil zusammen. Räuber, Orks und wilde Wölfe treiben ihr Unwesen und bedrohen Leib und Leben der friedlichen Bewohner der Grafschaft.",
+          "badges": [
+            "Einsteiger"
+          ]
         },
         {
           "id": "dsa5-labyrinthofintrigues",
@@ -420,7 +425,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp"
           },
-          "description": "Labyrinth der Intrigen für Foundry VTT.",
+          "description": "Odenius, der legendäre König der Zyklopeninseln, ist an der Sonnenküste wohlbekannt. Bis heute suchen Gelehrte und Forscher nach seinen verstreuten Hinterlassenschaften, denn zahlreiche Mythen ranken sich um seine phantastischen Konstrukte.",
           "badges": []
         },
         {
@@ -430,7 +435,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-negotiationpeace/icons/journal/coverde.webp"
           },
-          "description": "Verhandlungskunst und Friedensschwur für Foundry VTT.",
+          "description": "Das Modul umfasst drei diplomatische Abenteuer für Foundry VTT. Die Geschichten verschlagen die Helden nach Palmyramis, Tobimorien und Zyklopeninseln (Baltrea).",
           "badges": []
         },
         {
@@ -440,7 +445,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/c2/7d/f1/ESD033_0_0999.jpg"
           },
-          "description": "Klingen der Nacht für Foundry VTT.",
+          "description": "Die Bernsteinbucht: Wo sich die Sonne selbst im Sommer nur kraftlos über den Horizont erhebt und der raue Nordwind unbarmherzig Firuns kalten Atem in die Siedlungen trägt, trotzt ein rauer Menschenschlag tapfer der lebensfeindlichen Natur. Doch ist es nicht…",
           "badges": []
         },
         {
@@ -450,7 +455,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/5d/b3/1a/ESD035_0_0999.jpg"
           },
-          "description": "Offenbarung des Himmels für Foundry VTT.",
+          "description": "Offenbarung des Himmels Das Fürstentum Kosch ist bekannt für seine atemberaubend schönen, urtümlichen Landschaften und die ausgesprochene Gastfreundschaft seiner Bewohner. Doch eure Helden haben in Offenbarung des Himmels nur wenig Zeit, die ländliche Idylle…",
           "badges": []
         },
         {
@@ -460,7 +465,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/91/68/3c/ESD041_0_0999.jpg"
           },
-          "description": "Das Geheimnis der Zauberschüler für Foundry VTT.",
+          "description": "Offenbarung des Himmels Das Fürstentum Kosch ist bekannt für seine atemberaubend schönen, urtümlichen Landschaften und die ausgesprochene Gastfreundschaft seiner Bewohner. Doch eure Helden haben in Offenbarung des Himmels nur wenig Zeit, die ländliche Idylle…",
           "badges": []
         },
         {
@@ -470,7 +475,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/46/48/65/ESD044_0_0999.jpg"
           },
-          "description": "Banner der Treue für Foundry VTT.",
+          "description": "DSA Banner der Treue Der neue Magnum Opus der DSA Foundry Module in einem legendären, aufwändig gestalteten und umfangreichen Modul inklusive aller Inhalte aus dem Meisterset! Begebt euch auf die Spur eines Legaten aus der Zeit der Hunderttürmigen, welche die…",
           "badges": []
         },
         {
@@ -480,7 +485,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-mittsommerrache/icons/journal/coverde.webp"
           },
-          "description": "Mittsommerrache für Foundry VTT.",
+          "description": "Mit Mühe und Not kann sich die Besatzung der Liaiella II. inmitten eines heftigen Sturms in einen Fjord retten.",
           "badges": []
         },
         {
@@ -490,8 +495,11 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coverde.webp"
           },
-          "description": "Hexenreigen für Foundry VTT.",
-          "badges": ["Einsteiger", "Kostenlos"]
+          "description": "Hexenreigen ist ein kostenloses Einstiegsabenteuer für das Schwarze Auge.",
+          "badges": [
+            "Einsteiger",
+            "Kostenlos"
+          ]
         }
       ]
     },
@@ -505,7 +513,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-suncoast/icons/journal/coverde.webp"
           },
-          "description": "Die Sonnenküste für Foundry VTT.",
+          "description": "Mit dieser Regionalspielhilfe und dem umfangreichen Zusatzmaterial mit Inhalten der Rüstkammer der Sonnenküste und Glaube, Macht und Heldenmut sowie Musikstücken aus dem Sphärenklang, erhältst du alles, was es für eine Kampagne in der Sonnenküste braucht.…",
           "badges": []
         },
         {
@@ -515,7 +523,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/21/e5/f0/ESD038_0_0999.jpg"
           },
-          "description": "Das Wüstenreich für Foundry VTT.",
+          "description": "Wüstenreich Bundle Dieses Foundry Bundle enthält die Foundry Umsetzung der Regionalspielhilfe Das Wüstenreich - Die Wüste Khôm und Thalusien, Die Rüstkammer des Wüstenreichs, Das Landkartenset, Rüstkammer des Wüstenreichs und die Sphärenklänge des…",
           "badges": []
         },
         {
@@ -525,7 +533,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/62/db/51/ESD039_0_0999.jpg"
           },
-          "description": "Die Streitenden Königreiche für Foundry VTT.",
+          "description": "Dieses prall gefüllte Bundle enthält die Regionalspielhilfe für Nostria und Andergast, die Rüstkammer und Landkarten der Streitenden Königreiche sowie das dazugehörige Glaube Macht und Heldenmut Heft sowie die Sphärenklänge für die Region. Schon seit beinahe…",
           "badges": []
         },
         {
@@ -535,7 +543,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/f6/30/0b/ESD040_0_0999.jpg"
           },
-          "description": "Die Dampfenden Dschungel für Foundry VTT.",
+          "description": "Dieses prall gefüllte Bundle enthält ergänzendes Hintergrundmaterial zu den Dampfenden Dschungeln, der kaum erforschten Wildnis des Tiefen Südens, von den duftenden Wäldern unter dem Wind Horoban im Westen, jenseits des…",
           "badges": []
         },
         {
@@ -545,7 +553,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/74/4a/96/ESD017_0_0999.jpg"
           },
-          "description": "Havena, versunkene Geheimnisse für Foundry VTT.",
+          "description": "Einst war Havena eine blühende Handelsmetropole, doch die Zeiten der Pracht sind vorbei: Die alte Fürstenstadt an der nebligen Mündung des Großen Flusses schwankt zwischen Verfall und Zuversicht. Während in Nalleshof die Seeleute ihr Geld verprassen, herrscht…",
           "badges": []
         },
         {
@@ -555,7 +563,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/23/69/d7/ESD042_0_0999.jpg"
           },
-          "description": "Die Siebenwindküste für Foundry VTT.",
+          "description": "Mit diesem Foundry Modul erhältst du ergänzendes Hintergrundmaterial zu den nebelverhangenen Sümpfen und Feenwäldern Albernias sowie zur gischtgepeitschten Steilküste und den sturmumtosten Bergen des Windhag. Ergründe das weitgehend unerforschte Delta des…",
           "badges": []
         },
         {
@@ -565,7 +573,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/94/cf/f2/ESD046_0_0999.jpg"
           },
-          "description": "Die Winterwacht für Foundry VTT.",
+          "description": "In diesem Foundry Modul für das DSA5 Regelwerk wird dir die Winterwacht präsentiert. Die Winterwacht ist die neunte Regionalspielhilfe zur 5.",
           "badges": []
         },
         {
@@ -575,7 +583,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/95/6b/29/ESD049_0_0999.jpg"
           },
-          "description": "Die Flusslande für Foundry VTT.",
+          "description": "Die sanften und fruchtbaren Auen des Großen Flusses und die eifersüchtig gehüteten Gebirgszüge der Zwerge bilden gemeinsam die Flusslande, einen Hort der Tradition, in dem Gemütlichkeit, Recht und Ordnung hochgehalten werden. Mit dieser Regionalspielhilfe…",
           "badges": []
         },
         {
@@ -585,7 +593,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/14/96/70/foundry_cover_-aradesgoldenenOjvGcfsb4DGCV.jpg"
           },
-          "description": "Ära des Goldenen Kaisers für Foundry VTT.",
+          "description": "Dieser völlig regelfreie Epochenband, in Foundry VTT integriert, präsentiert Hintergrundwissen zur Ära des Goldenen Kaisers in einem ansprechenden neuen Layout. Das Buch verzichtet auf alle Regelelemente und ist somit die perfekte Grundlage für…",
           "badges": []
         },
         {
@@ -595,7 +603,7 @@
           "image": {
             "src": "https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg"
           },
-          "description": "Die Gestade des Gottwals für Foundry VTT.",
+          "description": "An den gischtumtosten Gestaden des Gottwals finden sich tapfere Seefahrer, zaubermächtige Tierkriegerinnen und finstere Schrecken aus nachtschwarzen Tiefen und längst vergangenen Tagen, die das ohnehin raue Leben im hohen Norden zu einer wahren…",
           "badges": []
         }
       ]

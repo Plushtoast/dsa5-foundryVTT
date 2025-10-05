@@ -116,8 +116,14 @@ export default class DSA5StatusEffects {
     effectData.pips = [];
 
     if (sourceEffect.duration.type === 'seconds') {
+      let timeRemaining;
+
+      if (game.time.calendar instanceof game.dsa5.apps.WorldCalendar) {
+        timeRemaining = await game.time.calendar.format(sourceEffect.duration.remaining, 'formatRemaining');
+      }
+
       effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${await game.time.calendar.format(sourceEffect.duration.remaining, 'formatRemaining')}`
+        content: `<i class="fas fa-clock"></i> ${timeRemaining}`
       });
     } else if (sourceEffect.duration.type !== 'none') {
       effectData.pips.push({

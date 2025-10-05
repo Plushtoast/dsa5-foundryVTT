@@ -11,7 +11,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coveren.webp"
           },
-          "description": "The Dark Eye - Core Rules for Foundry VTT.",
+          "description": "The Dark Eye is an award winning fantasy role-playing game with a rich history and uniqulely detailed world. Discover the Middle Kingdom, weakened by many wars, the exotic lands of the Tulamids, the steaming jungles of the south or the dark lands of shadow.",
           "badges": [
             "Bestseller"
           ]
@@ -23,7 +23,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coveren.webp"
           },
-          "description": "Aventurian Magic I for Foundry VTT.",
+          "description": "Magic of Aventuria is a rules expansion module for TDE5 dedicated to the Aventurian varieties of magic. Each magical tradition described is presented in detail, along with its rituals, spells and peculiarities.",
           "badges": []
         },
         {
@@ -33,7 +33,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coveren.webp"
           },
-          "description": "Gods of Aventuria for Foundry VTT.",
+          "description": "The Gods are everywhere. Few people in Aventuria have not personally witnessed a Blessed Ones wondrous powers and, most Aventurians believe in the gods without question.",
           "badges": []
         },
         {
@@ -43,7 +43,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coveren.webp"
           },
-          "description": "Aventuria Compendium for Foundry VTT.",
+          "description": "The Aventurian Compendium gives you numerous new options for combat and powerful fighting styles known only to the best warriors and swordmasters. But not only warriors get their money's worth, all hero types can benefit from the expansion rules.",
           "badges": []
         }
       ]
@@ -58,7 +58,7 @@
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg"
           },
-          "description": "Master's Workshop for Foundry VTT.",
+          "description": "Our first Foundry exclusive is filled with a wealth of powerful tools for masters - be it quickly conjuring up a complete NPC or filling a treasure chest, creating a tavern including guests or simply generating a menu of the available spirits. The workshop…",
           "badges": []
         }
       ]
@@ -73,7 +73,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp"
           },
-          "description": "Aventurian Bestiary for Foundry VTT.",
+          "description": "In the forests, swamps and jungles of Aventuria fearsome creatures lurk considering heroes to be their prey. With their venom, razor-sharp claws or sheer size, these beasts pose a deadly threat to anyone who gets too close.",
           "badges": []
         },
         {
@@ -83,7 +83,7 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp"
           },
-          "description": "Aventurian Armory for Foundry VTT.",
+          "description": "No warrior can do without his weapons, no thief without his burglary tools and no magician without his books. The Aventuria Armory contains descriptions of over 100 useful items of equipment, weapons and armor for traveling heroes and supplements the rules…",
           "badges": []
         }
       ]
@@ -98,8 +98,11 @@
           "image": {
             "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coveren.webp"
           },
-          "description": "Introduction adventure for Foundry VTT.",
-          "badges": ["Beginners", "Free"]
+          "description": "A free introduction adventure for The Dark Eye.",
+          "badges": [
+            "Beginners",
+            "Free"
+          ]
         },
         {
           "id": "dsa5-witchsdance",
@@ -108,8 +111,11 @@
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coveren.webp"
           },
-          "description": "Witch's dance for Foundry VTT.",
-          "badges": ["Beginners", "Free"]
+          "description": "Aventurian Witch's Dance, an free beginners-friendly Add-on Module for Foundry Virtual Tabletop",
+          "badges": [
+            "Beginners",
+            "Free"
+          ]
         },
         {
           "id": "dsa5-revelations",
@@ -118,9 +124,8 @@
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/40/5b/b7/ESD1009_0_0999.jpg"
           },
-          "description": "Revelations from Heaven for Foundry VTT.",
-          "badges": [
-          ]
+          "description": "The Principality of Kosch is known for its breathtakingly beautiful, pristine landscapes and the outstanding hospitality of its inhabitants. But in Revelation from Heaven, your heroes have little time to enjoy the rural idyll, for they soon discover that…",
+          "badges": []
         }
       ]
     },
@@ -134,7 +139,7 @@
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/86/a7/f5/ESD1010_0_0999.jpg"
           },
-          "description": "The Warring Kingdoms for Foundry VTT.",
+          "description": "This Foundry module provides additional background material on the feuding realms of northwestern Aventuria. Get to know the quarrelsome inhabitants and their homeland, learn more about the rough coast of…",
           "badges": []
         }
       ]

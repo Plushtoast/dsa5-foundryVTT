@@ -63,6 +63,7 @@ import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
 import { ItemFactory } from './item/item-factory.js';
 import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
+import { DSAWorldCalendar } from './system/calendar/calendar.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -96,6 +97,7 @@ Hooks.once('init', () => {
       OnUseEffect,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
+      WorldCalendar: DSAWorldCalendar
     },
     entities: {
       Actordsa5,
