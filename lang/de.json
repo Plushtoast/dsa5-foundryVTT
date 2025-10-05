@@ -2758,5 +2758,21 @@
         "poisoned": "Der Held ist vergiftet worden. So lange das Gift wirkt, kann der Held nicht mehr durch eine normale Regenerationsphase regenerieren.",
         "fixated": "Wenn eine Person am Boden festklebt oder von Ranken oder Fallen an Ort und Stelle gehalten wird, gilt sie als Fixiert. Ihre GS fällt auf 0, ihr Ausweichenwert wird um 4 gesenkt.",
         "defeated": "Der Held ist besiegt und auf dem Weg zu Boron."
+    },
+    "DSA5": {
+        "patchViewer": {
+            "tab": {
+                "store": "Shop"
+            },
+            "modules": {
+                "hero": {
+                    "subtitle": "Erweitere deinen Spieltisch mit vollständig vorbereiteten offiziellen Abenteuern, Regeln und mehr.",
+                    "cta": "Zum F-Shop"
+                },
+                "cta": "Details & Kaufen",
+                "ctaOwned": "Bereits gekauft",
+                "owned": "Besitzt"
+            }
+        }
     }
 }

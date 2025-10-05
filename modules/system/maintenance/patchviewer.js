@@ -5,6 +5,8 @@ const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class PatchViewer extends DefaultAppv2 {
+    #search;
+
     constructor(json, app) {
         super(app);
         this.json = json;
@@ -14,7 +16,7 @@ export class PatchViewer extends DefaultAppv2 {
     static DEFAULT_OPTIONS = {
         classes: ['dsa5', 'largeDialog', 'patches'],
         position: {
-            width: 740,
+            width: 810,
             height: 740,
         },
         window: {
@@ -23,7 +25,8 @@ export class PatchViewer extends DefaultAppv2 {
             contentClasses: ['patchviewer'],
         },
         actions: {
-            showMore: PatchViewer.showMore,
+            showMore: this.#showMore,
+            alreadyBought: this.#alreadyBought
         }
     };
 
@@ -35,7 +38,7 @@ export class PatchViewer extends DefaultAppv2 {
             template: 'systems/dsa5/templates/system/dsatabs.hbs'
         },
         newcontent: {
-            template: 'systems/dsa5/templates/system/patchviewer/news.hbs',            
+            template: 'systems/dsa5/templates/system/patchviewer/news.hbs',
         },
         changelog: {
             template: 'systems/dsa5/templates/system/patchviewer/changelog.hbs',
@@ -50,7 +53,7 @@ export class PatchViewer extends DefaultAppv2 {
             tabs: [
                 { id: 'newcontent', label: 'News' },
                 { id: 'changelog', label: 'Changelog' },
-                { id: 'content', label: 'modules' },
+                { id: 'content', label: 'DSA5.patchViewer.tab.store' },
             ],
             initial: 'newcontent',
         },
@@ -62,15 +65,45 @@ export class PatchViewer extends DefaultAppv2 {
 
         tabSlider(html);
         html.find('img').on('click', (ev) => {
+            const isShopArtWork = ev.currentTarget.closest('.module-card')
+
+            if (isShopArtWork) return;
+
             game.dsa5.apps.DSA5_Utility.showArtwork({
                 name: 'Changelog',
                 uuid: '',
                 img: ev.currentTarget.getAttribute('src'),
             });
         });
+
+        this.#search ??= new foundry.applications.ux.SearchFilter({
+            inputSelector: "input[type=search]",
+            contentSelector: ".module-grids",
+            callback: this.#onSearchFilter.bind(this)
+        });
+        this.#search.bind(this.element);
     }
 
-    static async showMore(event, target) {
+    #onSearchFilter(_event, query, rgx, html) {
+        for (const entry of html.querySelectorAll(".module-card")) {
+            if (!query) {
+                entry.hidden = false;
+                continue;
+            }
+
+            const title = entry.querySelector('h3').textContent || '';
+            const description = entry.querySelector('p')?.textContent || '';
+            const isMatch = [title, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+            entry.hidden = !isMatch;
+        }
+    }
+
+    _tearDown(options) {
+        super._tearDown(options);
+        this.#search?.unbind();
+    }
+
+    static async #showMore(event, target) {
         const prevVersions = [this.json['notes'][this.json['notes'].length - this.versionIndex]];
         if (prevVersions[0].version == '2.3.0') {
             target.hidden = true;
@@ -81,6 +114,17 @@ export class PatchViewer extends DefaultAppv2 {
         html.find('.changelogsection').append(data.changelog[0]);
         html.find('.newssection').append(data.news[0]);
         this.versionIndex += 1;
+    }
+
+    static async #alreadyBought(ev, target) {
+        const i = target.querySelector('i');
+        const toggleOn = i.classList.contains('fa-eye-slash');
+        i.classList.toggle('fa-eye', toggleOn);
+        i.classList.toggle('fa-eye-slash', !toggleOn);
+
+        this.element.querySelectorAll('.module-card--owned').forEach(card => {
+            card.classList.toggle('hidden', !toggleOn);
+        });
     }
 
     async fetchVersions(versions) {
@@ -105,6 +149,9 @@ export class PatchViewer extends DefaultAppv2 {
         const prevVersions = [this.json['notes'][this.json['notes'].length - 2]];
         const preVersions = await this.fetchVersions(prevVersions);
         const modules = await foundry.utils.fetchJsonWithTimeout(`systems/dsa5/lazy/expansions_${lang}.json`);
+        const storeCTAUrl = lang === 'en'
+            ? 'https://www.ulissesf-shop.com/virtual-tabletops/'
+            : 'https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/';
 
         return mergeObject(data, {
             patchName,
@@ -113,7 +160,23 @@ export class PatchViewer extends DefaultAppv2 {
             prevVersions,
             prevChangeLogs: preVersions.changelog,
             prevNews: preVersions.news,
-            modules,
+            modules: this.#prepareModules(modules),
+            storeCTAUrl,
         });
+    }
+
+    #prepareModules(modules) {
+        for (const category of modules.categories ?? []) {
+            category.items = category.items?.map((item, index) => {
+                const owned = item.id ? Boolean(game.modules.get(item.id)) : false;
+                if (owned) {
+                    item.available = true;
+                }
+                item.originalIndex = index;
+                return item;
+            }) ?? [];
+        }
+
+        return modules;
     }
 }

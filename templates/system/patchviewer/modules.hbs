@@ -1,13 +1,63 @@
 <div class='tab scrollable {{tabs.content.cssClass}}' data-tab='content' data-group='{{tabs.content.group}}'>
-  <h1>{{modules.title}}</h1>
-  {{#each modules.categories}}
-    <h2>{{name}}</h2>
-    <div class="flexrow wrap">
-    {{#each items}}
-      <a href='{{href}}' class="flex0" target='_blank' data-tooltip='{{label}}'>
-        <img src='{{image.src}}' alt='{{label}}' style='margin-right: 5px; margin-bottom: 5px; text-align:center; min-width:210px;' />
+  <section class='modules-hero'>
+    <div class='modules-hero__text'>
+      <h1>{{modules.title}}</h1>
+      <p>{{localize 'DSA5.patchViewer.modules.hero.subtitle'}}</p>
+      {{#if storeCTAUrl}}
+        <a class='modules-hero__cta' href='{{storeCTAUrl}}' target='_blank' rel='noopener'>
+          {{localize 'DSA5.patchViewer.modules.hero.cta'}}
+        </a>
+      {{/if}}
+      <a class='modules-hero__cta' href='https://www.foundryvtt.store/search?q=s:dsa5' target='_blank' rel='noopener'>
+        Foundry Marketplace
       </a>
-    {{/each}}
+     
     </div>
+  </section>
+
+  <div class="flexrow gap10px">
+    <input type="search" placeholder="{{localize 'Book.search'}}"/>
+    <button type="button" data-action="alreadyBought" class="dsadesignbutton"><i class="fas fa-eye"></i> {{localize 'DSA5.patchViewer.modules.ctaOwned'}}</button>
+  </div>
+
+    <div class="module-grids">
+  {{#each modules.categories}}
+    <section class='module-category'>
+      <header class='module-category__header'>
+        <h2>{{name}}</h2>
+      </header>
+      <div class='module-grid'>
+        {{#each items}}
+          <article class='module-card {{#if available}}module-card--owned{{/if}}' data-original-index='{{@index}}' data-sort-label='{{label}}'>
+            {{#if badges.length}}
+              <ul class='module-card__badges'>
+                {{#each badges}}
+                  <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+            <a class='module-card__cover' href='{{href}}' target='_blank' rel='noopener' data-tooltip='{{label}}'>
+              {{#if image.src}}
+                <img src='{{image.src}}' alt='{{label}}' />
+              {{/if}}
+            </a>
+            <div class='module-card__body'>
+              <h3>{{label}}</h3>
+              {{#if description}}
+                <p>{{description}}</p>
+              {{/if}}
+              <a class='module-card__cta {{#if available}}module-card__cta--owned{{/if}}' href='{{href}}' target='_blank' rel='noopener' data-tooltip='{{label}}' {{#if available}}aria-disabled='true' tabindex='-1'{{/if}}>
+                {{#if available}}
+                  {{localize 'DSA5.patchViewer.modules.ctaOwned'}}
+                {{else}}
+                  {{localize 'DSA5.patchViewer.modules.cta'}}
+                {{/if}}
+              </a>
+            </div>
+          </article>
+        {{/each}}
+      </div>
+    </section>
   {{/each}}
+  </div>
 </div>

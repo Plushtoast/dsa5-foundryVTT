@@ -2756,5 +2756,21 @@
         "poisoned": "The hero is poisoned. As long as the poison remains in effect, the character cannot benefit from Regeneration Phases.",
         "fixated": "Bound characters are glued to the ground or otherwise held down by ropes, vines or traps. While bound characters have a MOV of 0 and suffer a -4 penalty to Dodge.",
         "defeated": "The hero is defeated and on his way to Boron."
+    },
+    "DSA5": {
+        "patchViewer": {
+            "tab": {
+                "store": "Store"
+            },
+            "modules": {
+                "hero": {
+                    "subtitle": "Expand your tabletop with fully prepared official adventures, rules, and more.",
+                    "cta": "Browse F-Shop"
+                },
+                "cta": "View & Buy",
+                "ctaOwned": "Already Owned",
+                "owned": "Owned"
+            }
+        }
     }
 }

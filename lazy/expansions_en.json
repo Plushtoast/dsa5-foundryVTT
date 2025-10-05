@@ -5,32 +5,46 @@
       "name": "Rules",
       "items": [
         {
+          "id": "dsa5-core",
           "label": "The Dark Eye - Core Rules",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2147/the-dark-eye-core-rules-for-foundry-vtt",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-core/icons/journal/coveren.webp"
-          }
+          },
+          "description": "The Dark Eye - Core Rules for Foundry VTT.",
+          "badges": [
+            "Bestseller"
+          ]
         },
         {
+          "id": "dsa5-magic-1",
           "label": "Aventurian Magic I",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2198/tde5-magic-of-aventuria-i-for-foundry",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coveren.webp"
-          }
+          },
+          "description": "Aventurian Magic I for Foundry VTT.",
+          "badges": []
         },
         {
+          "id": "dsa5-godsofaventuria",
           "label": "Gods of Aventuria",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2200/tde5-gods-of-aventuria-i-for-foundry-vtt",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coveren.webp"
-          }
+          },
+          "description": "Gods of Aventuria for Foundry VTT.",
+          "badges": []
         },
         {
+          "id": "dsa5-compendium",
           "label": "Aventuria Compendium",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2201/tde5-aventuria-compendium-for-foundry-vtt",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coveren.webp"
-          }
+          },
+          "description": "Aventuria Compendium for Foundry VTT.",
+          "badges": []
         }
       ]
     },
@@ -38,11 +52,14 @@
       "name": "Special modules",
       "items": [
         {
+          "id": "dsa5-mastersworkshop",
           "label": "Master's Workshop",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2197/tde5-master-s-workshop-for-foundry",
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/c3/89/d3/ESD1004_0_0999_600x600.jpg"
-          }
+          },
+          "description": "Master's Workshop for Foundry VTT.",
+          "badges": []
         }
       ]
     },
@@ -50,18 +67,24 @@
       "name": "More Content",
       "items": [
         {
+          "id": "dsa5-bestiary",
           "label": "Aventurian Bestiary",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2152/tde5-aventuria-bestiary-for-foundry",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp"
-          }
+          },
+          "description": "Aventurian Bestiary for Foundry VTT.",
+          "badges": []
         },
         {
+          "id": "dsa5-armory",
           "label": "Aventurian Armory",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp"
-          }
+          },
+          "description": "Aventurian Armory for Foundry VTT.",
+          "badges": []
         }
       ]
     },
@@ -69,25 +92,35 @@
       "name": "Adventures",
       "items": [
         {
+          "id": "dsa5-introduction",
           "label": "Introduction adventure",
           "href": "https://foundryvtt.com/packages/dsa5-introduction",
           "image": {
             "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coveren.webp"
-          }
+          },
+          "description": "Introduction adventure for Foundry VTT.",
+          "badges": ["Beginners", "Free"]
         },
         {
+          "id": "dsa5-witchsdance",
           "label": "Witch's dance",
           "href": "https://foundryvtt.com/packages/dsa5-witchsdance",
           "image": {
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coveren.webp"
-          }
+          },
+          "description": "Witch's dance for Foundry VTT.",
+          "badges": ["Beginners", "Free"]
         },
         {
+          "id": "dsa5-revelations",
           "label": "Revelations from Heaven",
           "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2223/tde5-revelations-from-heaven-for-foundry-vtt",
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/40/5b/b7/ESD1009_0_0999.jpg"
-          }
+          },
+          "description": "Revelations from Heaven for Foundry VTT.",
+          "badges": [
+          ]
         }
       ]
     },
@@ -95,11 +128,14 @@
       "name": "Regional supplements",
       "items": [
         {
+          "id": "dsa5-warringkingdoms",
           "label": "The Warring Kingdoms",
           "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2269/tde5-warring-kingdoms-bundle-for-foundry-vtt",
           "image": {
             "src": "https://www.ulissesf-shop.com/media/image/86/a7/f5/ESD1010_0_0999.jpg"
-          }
+          },
+          "description": "The Warring Kingdoms for Foundry VTT.",
+          "badges": []
         }
       ]
     }

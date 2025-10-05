@@ -4244,32 +4244,6 @@ input[type='text'].emphasize {
   }
 }
 
-.patchviewer {
-  padding: 30px;
-  
-  h1 {
-    margin: 0;
-
-    a {
-      display: block;
-      float: left;
-      color: black;
-    }
-
-    img {
-      width: 50px;
-      margin: 0;
-      margin-right: 15px;
-      float: left;
-    }
-  }
-
-  .table-title {
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-  }
-}
-
 .innerscrollable {
   flex: 1 1 auto;
 }
@@ -5241,6 +5215,7 @@ input[type='checkbox'].autoCheckbox {
 }
 
 @include meta.load-css('personae.scss');
+@include meta.load-css('patchviewer.scss');
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');

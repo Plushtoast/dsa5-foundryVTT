@@ -1,0 +1,207 @@
+.patchviewer {
+  padding: 30px;
+
+  h1 {
+    margin: 0;
+
+    a {
+      display: block;
+      float: left;
+      color: black;
+    }
+
+    img {
+      width: 50px;
+      margin: 0;
+      margin-right: 15px;
+      float: left;
+    }
+  }
+
+  .table-title {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+  }
+
+  .modules-tab {
+    padding: 1.5rem;
+  }
+
+  .modules-hero {
+    background: linear-gradient(135deg, rgba(255, 100, 0, 0.1), rgba(255, 100, 0, 0));
+    border: 1px solid rgba(255, 100, 0, 0.2);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+
+    &__text {
+      max-width: 32rem;
+
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        margin: 0 0 1rem 0;
+      }
+
+      .modules-hero__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #ff6400;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.6rem 1.4rem;
+        border-radius: 999px;
+        text-decoration: none;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:hover,
+        &:focus {
+          transform: translateY(-1px);
+          box-shadow: 0 8px 16px rgba(255, 100, 0, 0.35);
+        }
+      }
+    }
+  }
+
+  .module-category {
+    & + .module-category {
+      margin-top: 2rem;
+    }
+
+    &__header {
+      margin-bottom: 1rem;
+
+      h2 {
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  .module-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .module-card {
+    position: relative;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    min-height: 380px;
+    overflow: hidden;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border 0.2s ease;
+
+    &:hover,
+    &:focus-within {
+      transform: translateY(-4px);
+      border-color: rgba(255, 100, 0, 0.5);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    &__badges {
+      list-style: none;
+      margin: 0;
+      padding: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      li {
+        background: #ff6400;
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
+
+    &__cover {
+      display: block;
+      overflow: hidden;
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 0.5rem;
+      flex: 1;
+
+      h3 {
+        font-size: 1.1rem;
+        margin: 0;
+        color: #fff;
+      }
+
+      p {
+        flex: 1;
+        margin: 0;
+        color: var(--color-text-light, #d0d0d0);
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+
+      .module-card__cta {
+        align-self: flex-start;
+        margin-top: 0.75rem;
+        padding: 0.45rem 1rem;
+        border-radius: 999px;
+        background: rgba(255, 100, 0, 0.9);
+        border: 1px solid rgba(255, 100, 0, 0.45);
+        color: #ffb27a;
+        font-weight: 600;
+        text-decoration: none;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border 0.2s ease;
+
+        &:hover,
+        &:focus {
+          background: #ff6400;
+          color: #fff;
+          border-color: #ff6400;
+        }
+
+        &.module-card__cta--owned {
+          pointer-events: none;
+          background: rgba(133, 194, 90, 0.2);
+          border-color: rgba(133, 194, 90, 0.6);
+          color: #c9f3a9;
+          text-decoration: none;
+        }
+      }
+    }
+
+    &--owned {
+      .module-card__cover img {
+        filter: saturate(0.75);
+        opacity: 0.85;
+      }
+    }
+  }
+}
