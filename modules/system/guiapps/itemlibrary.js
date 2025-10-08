@@ -477,7 +477,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return asItemData ? documents.map(x => x.toObject()) : documents;
   }
 
-  async executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, rangeSearches = [], startIndex = 0) {
+  async executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, rangeSearches = [], startIndex = 0, returnAll = false) {
     const index = indexWrapper?.index || indexWrapper;
     if (!index?.store) return [];
 
@@ -509,7 +509,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       .filter(filterFunction)
       .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     
-    const paginatedResults = allResults.slice(
+    const paginatedResults = returnAll ? allResults : allResults.slice(
       startIndex,
       Math.min(startIndex + this.pageSize, allResults.length)
     );
