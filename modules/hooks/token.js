@@ -87,6 +87,7 @@ export class DSAToken extends Token {
 
   async _drawEffect(src, tint, value) {
     if (!src) return;
+
     const tex = await foundry.canvas.loadTexture(src, { fallback: 'icons/svg/hazard.svg' });
     const icon = new PIXI.Sprite(tex);
     icon.tint = tint ?? 0xffffff;

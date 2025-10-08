@@ -1670,13 +1670,15 @@ export default class Actordsa5 extends Actor {
   async toggleStatusEffect(statusId, { active, overlay = false } = {}) {
     const existing = this.effects.find((e) => e.statuses.has(statusId));
 
+    // overlay = true is right click
+    // active means force add
+    
     if (overlay) {
       if (active) return false;
 
       this.removeCondition(statusId, 1, false);
     } else {
       if (!existing || Number.isNumeric(getProperty(existing, 'flags.dsa5.value'))) {
-        if (!active && active != undefined) return false;
 
         await this.addCondition(statusId, 1, false, false);
       } else {
