@@ -288,6 +288,18 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return data
   }
 
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if (!game.user.isGM) delete tabs.Actors;
+    return tabs;
+  }
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (!game.user.isGM) delete parts.Actors;
+    return parts;
+  }
+
   prepareSettings(data) {
     data.settings = {
       advanced: {

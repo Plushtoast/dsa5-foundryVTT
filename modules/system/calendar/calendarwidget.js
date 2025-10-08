@@ -45,7 +45,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const calendarConfig = game.settings.get('dsa5', 'calendarSettings');
         const autoTimes = calendarConfig.autoDayTimes && DSA5_Utility.moduleEnabled('dsa5-atlas');
 
-        if (autoTimes) return game.dsa5.atlas.SeasonsCalculator.autoDayTimes();
+        if (autoTimes) return game.dsa5.atlas.seasonsCalculator.autoDayTimes();
 
         return calendarConfig;
     }
