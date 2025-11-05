@@ -1,4 +1,9 @@
 <div data-id='{{key}}' class='standard-form'>
+  {{#unless actor}}
+  <div class="flexrow flexAlignCenter">
+    <div class="center"><i class="fas fa-warning"></i> {{localize 'PERSONAE.FIELDS.personae.actor_uuid.warning'}}</div>
+  </div>
+  {{/unless}}
   <div class='form-group'>
     <label>{{localize document.system.schema.fields.personae.element.fields.name.label}}</label>
     <div class='form-fields gap0px'>

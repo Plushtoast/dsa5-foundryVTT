@@ -197,11 +197,13 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
     async renderDetail(key) {
         const entry = foundry.utils.duplicate(this.document.system.personae[key] || {});
         await this._prepareContacts(entry);
+        const actor = await fromUuid(entry.actor_uuid);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
             elem: entry,
             document: this.document,
             isGM: game.user.isGM,
-            key
+            key,
+            actor
         });
     }
 

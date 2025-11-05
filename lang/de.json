@@ -1483,7 +1483,8 @@
                 },
                 "actor_uuid": {
                     "label": "Akteur",
-                    "hint": "Ziehe einen Akteur per Drag & Drop hierher, der im Bestiarium repräsentiert wird."
+                    "hint": "Ziehe einen Akteur per Drag & Drop hierher, der im Bestiarium repräsentiert wird.",
+                    "warning": "Ein Persona Entry muss mit einem Akteur verknüpft sein, um in Bestiarium/Personae Dramatis angezeigt zu werden."
                 },
                 "visible": {
                     "label": "Sichtbar für Spieler"

@@ -1396,7 +1396,8 @@
                 },
                 "actor_uuid": {
                     "label": "Actor",
-                    "hint": "Drag and drop an actor here to represent them in the Bestiary."
+                    "hint": "Drag and drop an actor here to represent them in the Bestiary.",
+                    "warning": "A Persona Entry must be linked to an Actor to be displayed in the Bestiary/Dramatis Personae."
                 },
                 "visible": {
                     "label": "Visible to Players"
