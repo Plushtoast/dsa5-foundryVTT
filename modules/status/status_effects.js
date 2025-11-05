@@ -487,10 +487,9 @@ class BloodrushEffect extends DSA5StatusEffects {
   }
 }
 
-//todo improve array from
 class PainEffect extends DSA5StatusEffects {
   static ModifierIsSelected(item, options = {}, actor) {
-    return actor.effects.find((x) => Array.from(x.statuses).includes('bloodrush')) == undefined;
+    return !actor.effects.some((x) => Array.from(x.statuses).includes('bloodrush'));
   }
 }
 

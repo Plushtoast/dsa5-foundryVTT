@@ -298,9 +298,11 @@ export class PersonaeDramatis {
         if (activatedJournals.length === 0) {
             const newJournal = await JournalEntry.create({
                 name: localize("PERSONAE.ImportantPersons"), pages: [{
-                    name: localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis"
+                    name: localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis",
                 }]
             });
+            settings.activated.push({ uuid: newJournal.id, name: newJournal.name });
+            await game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
             newJournal.sheet.render(true);
         } else {
             let journalID;

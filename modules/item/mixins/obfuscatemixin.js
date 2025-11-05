@@ -55,7 +55,6 @@ export const ItemSheetObfuscation = (superclass) =>
           }
         }
       }
-      console.log(swaptab);
       if (swaptab) {
         let tabs = html.find('nav .item:first-child');
         if (!tabs.length) tabs = html.find('nav .tabelement:first-child');

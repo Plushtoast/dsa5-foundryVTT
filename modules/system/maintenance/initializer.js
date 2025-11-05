@@ -82,7 +82,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     let scene = game.packs.get(json.scenes);
     let entries = (await scene.getDocuments()).map((x) => x.toObject());
     let journal = game.packs.get(json.journal);
-    let journs = (await journal.getDocuments()).map((x) => x.toObject());
+    let journs = journal ? (await journal.getDocuments()).map((x) => x.toObject()) : [];
     let scenesToCreate = [];
     let scenesToUpdate = [];
     let finishedIds = new Map();
