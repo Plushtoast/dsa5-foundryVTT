@@ -607,7 +607,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   getTokenId() {
-    return this.token?.id;
+    return this.token?.id ?? this.actor?.getActiveTokens()[0]?.id;
   }
 
   static async _rollDisease(ev, target) {

@@ -91,7 +91,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     // This can not got to actions at the moment, because event is not handled properly
     html.find('[data-action="quickButton"]').on('mousedown', (ev) => this.#quickButton(ev));
-    
+
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
@@ -374,6 +374,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       else if (mac.name.endsWith(attackText)) el.classList.add('attack');
     }
   }
+
   _configureRenderParts(options) {
     if (game.settings.get('dsa5', 'hotbarv3')) return foundry.utils.deepClone(this.constructor.CONVERSION_PARTS);
 
@@ -413,9 +414,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const { id, subweapon } = target.dataset;
 
     const options = {};
+    const activeTokenID = this.actor?.token?.id ?? this.actor?.getActiveTokens()[0]?.id;
 
     if (!id) {
-      this.actor.setupWeaponless('attack', options, this.actor.token?.id).then((setupData) => {
+      this.actor.setupWeaponless('attack', options, activeTokenID).then((setupData) => {
         this.actor.basicTest(setupData);
       });
       return;
@@ -428,12 +430,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       case 'meleeweapon':
       case 'rangeweapon':
         const result = Actordsa5.buildSubweapon(item, subweapon);
-        this.actor.setupWeapon(result, 'attack', options,).then((setupData) => {
+        this.actor.setupWeapon(result, 'attack', options, activeTokenID).then((setupData) => {
           this.actor.basicTest(setupData);
         });
         break;
       case 'trait':
-        this.actor.setupWeapon(item, 'attack', options, this.actor.token?.id).then((setupData) => {
+        this.actor.setupWeapon(item, 'attack', options, activeTokenID).then((setupData) => {
           this.actor.basicTest(setupData);
         });
         break;
@@ -802,7 +804,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (weapon?.type === 'trait') return [];
 
     const equipableWeapons = this.actor.items.filter(i => ['meleeweapon', 'rangeweapon'].includes(i.type) && !i.system.worn.value);
-    const equip =  localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
+    const equip = localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({

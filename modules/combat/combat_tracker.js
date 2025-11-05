@@ -47,6 +47,8 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (!game.combat) return;
 
     const combatant = game.combat.combatant;
+    if(!combatant) return;
+
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
 
