@@ -63,7 +63,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   rotateToTarget() {
-    if(this.dialogData?.mode == 'parry' || this.dialogData?.renderData?.isDodge) return;
+    if (this.dialogData?.mode == 'parry' || this.dialogData?.renderData?.isDodge) return;
     const targets = Array.from(game.user?.targets || []);
 
     if (targets.length === 0) return;

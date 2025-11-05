@@ -239,8 +239,8 @@ export default class Itemdsa5 extends Item {
 
     const matchers = {
       [mainAttribute]: 'value',
-      [ITEM_CONSTANTS.DAMAGE]: 'damageBonus',
-      [ITEM_CONSTANTS.DEFENSE_MALUS]: 'dmmalus',
+      [ITEM_CONSTANTS.COMBAT_BONUS.DAMAGE]: 'damageBonus',
+      [ITEM_CONSTANTS.COMBAT_BONUS.DEFENSE_MALUS]: 'dmmalus',
     };
 
     for (const element of html.find('.specAbs')) {
@@ -1292,7 +1292,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     dialogOptions.callback = (html, options = {}) => {
       if (traitType == 'meleeAttack') {
-        DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, options.mode);
+        DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, dialogOptions.data.mode);
       } else {
         DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
       }

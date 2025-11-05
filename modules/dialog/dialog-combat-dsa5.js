@@ -140,9 +140,9 @@ export default class DSA5CombatDialog extends DialogShared {
       let value;
       try {
         value = Roll.safeEval(dataset[key]) || 0;
-      } catch { 
+      } catch {
         value = dataset[key] || 0;
-      }      
+      }
       if (!value) continue;
 
       const localizedLabel = localize(label).toUpperCase();
@@ -501,14 +501,14 @@ export default class DSA5CombatDialog extends DialogShared {
         } else if (this.dialogData.mode == 'parry') {
           this.dialogData.rollValue = weapon.parry;
         }
-      } else if (source.type == 'dodge') {
-        this.dialogData.rollValue = source.system.value;
-      } else {
-        if (this.dialogData.mode == 'attack' || this.dialogData.counterAttack) {
-          this.dialogData.rollValue = Number(source.system.at.value);
-        } else if (this.dialogData.mode == 'parry') {
-          this.dialogData.rollValue = Number(source.system.pa);
-        }
+      }
+    } else if (source.type == 'dodge') {
+      this.dialogData.rollValue = source.system.value;
+    } else {
+      if (this.dialogData.mode == 'attack' || this.dialogData.counterAttack) {
+        this.dialogData.rollValue = Number(source.system.at.value);
+      } else if (this.dialogData.mode == 'parry') {
+        this.dialogData.rollValue = Number(source.system.pa);
       }
     }
   }
