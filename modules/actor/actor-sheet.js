@@ -1315,7 +1315,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _filterGear(_event, query, rgx, html) {
-    console.log("Filtering gear with query:", query);
     for (const entry of html.querySelectorAll(".item")) {
       if (!query) {
         entry.hidden = false;

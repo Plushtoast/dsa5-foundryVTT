@@ -348,7 +348,14 @@ export default class DSA5StatusEffects {
     return clamped < threshold ? clamped : 0;
   }
 
-  static ModifierIsSelected(item, options = {}, actor) {
+  static ModifierIsSelected(item, options = {}, actor, coreID) {
+    const types = CreatureType.detectCreatureType(actor);
+    for (let type of types) {
+       if (type.ignoredCondition(effect.id)) {
+          return false;
+       }
+    }
+
     return options.mode != 'damage';
   }
 
@@ -379,7 +386,7 @@ export default class DSA5StatusEffects {
           result.push({
             name: localize(ef.name),
             value,
-            selected: effectClass.ModifierIsSelected(item, options, actor),
+            selected: effectClass.ModifierIsSelected(item, options, actor, key),
             source,
           });
         }
@@ -399,7 +406,7 @@ export default class DSA5StatusEffects {
           result.push({
             name: ef.name,
             value,
-            selected: effectClass.ModifierIsSelected(item, options, actor),
+            selected: effectClass.ModifierIsSelected(item, options, actor, coreId),
             source,
           });
         }
@@ -432,11 +439,11 @@ export default class DSA5StatusEffects {
 }
 
 class EncumberedEffect extends DSA5StatusEffects {
-  static ModifierIsSelected(item, options = {}, actor) {
+  static ModifierIsSelected(item, options = {}, actor, coreID) {
     const burdenedSkill = item.type == 'skill' && item.system.burden.value == 'yes';
     const rangeWeaponEnabled = ['rangeweapon'].includes(item.type) && options.mode != 'damage' && game.settings.get('dsa5', 'encumbranceForRange');
     const attack = !['skill', 'spell', 'ritual', 'ceremony', 'liturgy', 'rangeweapon'].includes(item.type) && options.mode != 'damage';
-    return burdenedSkill || attack || rangeWeaponEnabled;
+    return burdenedSkill || attack || rangeWeaponEnabled || super.ModifierIsSelected(item, options, actor, coreID);
   }
 
   static calculateRollModifier(effect, actor, item, options = {}) {
@@ -489,10 +496,11 @@ class BloodrushEffect extends DSA5StatusEffects {
 }
 
 class PainEffect extends DSA5StatusEffects {
-  static ModifierIsSelected(item, options = {}, actor) {
+  static ModifierIsSelected(item, options = {}, actor, coreID) {
     if (TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) return false;
+    if (actor.effects.some((x) => Array.from(x.statuses).includes('bloodrush'))) return false;
 
-    return !actor.effects.some((x) => Array.from(x.statuses).includes('bloodrush'));
+    return super.ModifierIsSelected(item, options, actor, coreID);
   }
 }
 
