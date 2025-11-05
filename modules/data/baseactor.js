@@ -438,10 +438,6 @@ export class ActorDataModel extends DSADataModel {
     this.prepareSwarm(data);
     this.effectivePain(data);
     this.calcSpeed(data, fixated, horse);
-
-    if (fixated) {
-      data.status.dodge.max = Math.max(0, data.status.dodge.max - 4);
-    }
   }
 
   calcEncumbrance(data) {

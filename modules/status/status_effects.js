@@ -351,11 +351,10 @@ export default class DSA5StatusEffects {
   static ModifierIsSelected(item, options = {}, actor, coreID) {
     const types = CreatureType.detectCreatureType(actor);
     for (let type of types) {
-       if (type.ignoredCondition(effect.id)) {
+       if (type.ignoredCondition(coreID)) {
           return false;
        }
     }
-
     return options.mode != 'damage';
   }
 
@@ -483,6 +482,12 @@ class DeafEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
     return item.type == 'skill' && item.name == localize('LocalizedIDs.perception') ? -3 : 0;
+  }
+}
+
+class FixatedEffect extends DSA5StatusEffects {
+  static calculateRollModifier(effect, actor, item, options = {}) {
+    return item.type == 'dodge' ? -4 : 0;
   }
 }
 
@@ -684,4 +689,5 @@ DSA5.statusEffectClasses = {
   sunken: SunkenEffect,
   hunger: HungerEffect,
   thirst: ThirstEffect,
+  fixated: FixatedEffect,
 };
