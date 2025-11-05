@@ -2,6 +2,7 @@ import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
 import { localize } from '../system/helpers/localizer.js';
+import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
 
 export default class DSA5StatusEffects {
@@ -489,6 +490,8 @@ class BloodrushEffect extends DSA5StatusEffects {
 
 class PainEffect extends DSA5StatusEffects {
   static ModifierIsSelected(item, options = {}, actor) {
+    if (TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) return false;
+
     return !actor.effects.some((x) => Array.from(x.statuses).includes('bloodrush'));
   }
 }
