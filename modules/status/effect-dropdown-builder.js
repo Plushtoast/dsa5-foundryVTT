@@ -764,6 +764,6 @@ export default class EffectDropdownBuilder {
             (option) => `<option value="${option.val}" data-mode="${option.mode}" data-ph="${option.ph}">${option.name}</option>`
         );
 
-        return `<select class="selMenu">${optionStrings.join('\n')}</select>`;
+        return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;
     }
 }
