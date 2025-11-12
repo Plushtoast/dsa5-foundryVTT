@@ -414,6 +414,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (ev.currentTarget.name == 'year') game.dsa5.apps.CalendarPicker.constructor.invalidateCache();
 
     const form = ev.target.form;
+    if (!form) return;
+
     const components = new foundry.applications.ux.FormDataExtended(form).object;
     const currentComponents = game.time.calendar.timeToComponents(game.time.worldTime);
     components.month = currentComponents.month;
