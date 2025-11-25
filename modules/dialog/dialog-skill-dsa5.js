@@ -32,6 +32,19 @@ export default class DSA5SkillDialog extends DialogShared {
         },
       },
       {
+        action: 'allgemeinwissenRoll',
+        label: game.i18n.localize('LOCAL.allgemeinwissenButton'),
+        callback: (event, button, dialog) => {
+          const html = $(button.form);
+          game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
+          mergeObject(testData.extra.options, {
+            allgemeinwissen: true
+          });
+          
+          resolve(dialogOptions.callback(html));
+        },
+      },
+      {
         action: 'routineRoll',
         label: 'ROLL.routine',
         callback: (event, button, dialog) => {
@@ -94,8 +107,45 @@ export default class DSA5SkillDialog extends DialogShared {
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
     data.situationalModifiers = ModifierCalculator._parseModifiers(html);
     this.calculateRoutine(data);
+    this.calculateAllgemeinwissen(data);
   }
+  
+async calculateAllgemeinwissen(data) {
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    let awButton = $(this.element).find('[data-action="allgemeinwissenRoll"], [data-button="allgemeinwissenRoll"]');
+    
+    awButton.hide(); 
 
+    if (!actor) return;
+
+    const sfName = game.i18n.localize('LOCAL.allgemeinwissenAbility');
+    const talentsString = game.i18n.localize('LOCAL.knowledgeTalentsList');
+    const knowledgeTalents = talentsString.split(',').map(t => t.trim());
+    const hasAbility = actor.items.some(item => 
+        item.type === "specialability" && 
+        item.name.includes(sfName)
+    );
+    
+    if (!hasAbility) return;
+
+    const currentTalent = this.dialogData.source.name;
+    
+    const isKnowledge = knowledgeTalents.includes(currentTalent) || 
+                        currentTalent.includes("Brett") || 
+                        currentTalent.includes("Glück") ||
+                        (game.i18n.lang == 'en' && currentTalent.includes("Board")); // Fallback Englisch
+
+    if (!isKnowledge) return;
+
+    const modBase = DSA5.skillDifficultyModifiers[data.testDifficulty] || 0;
+    const situational = await DiceDSA5._situationalModifiers(data);
+    const totalMod = modBase + situational;
+
+    if (totalMod >= -3) {
+        awButton.show();
+    }
+  }
+  
   async calculateRoutine(data) {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     const routineButton = $(this.element).find('[data-action="routineRoll"]');
