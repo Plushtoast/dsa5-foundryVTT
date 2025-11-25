@@ -2776,4 +2776,10 @@
             }
         }
     }
+,
+  "LOCAL": {
+    "allgemeinwissenButton": "Allgemeinwissen",
+    "allgemeinwissenAbility": "Allgemeinwissen",
+    "knowledgeTalentsList": "Brett- & Glücksspiel,Geographie,Geschichtswissen,Götter & Kulte,Kriegskunst,Magiekunde,Mechanik,Rechnen,Rechtskunde,Sagen & Legenden,Sphärenkunde,Sternkunde"
+  }
 }
