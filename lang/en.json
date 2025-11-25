@@ -2774,4 +2774,11 @@
             }
         }
     }
+,
+  "LOCAL": {
+    "allgemeinwissenButton": "Common Knowledge",
+    "allgemeinwissenAbility": "Common Knowledge",
+    "knowledgeTalentsList": "Gambling,Geography,History,Religions,Warfare,Magical Lore,Mechanics,Math,Law,Myths & Legends,Sphere Lore,Astronomy"
+  }
 }
+
