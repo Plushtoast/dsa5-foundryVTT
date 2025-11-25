@@ -1869,6 +1869,7 @@ export default class DiceDSA5 {
     } else {
       successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, botch, crit);
       if (testData.routine) successLevel = 1;
+      if (testData.extra.options.allgemeinwissen) successLevel = 1;
 
       description.push(DiceDSA5.getSuccessDescription(successLevel));
     }
@@ -1886,7 +1887,8 @@ export default class DiceDSA5 {
 
     qualityStep = Math.min(game.settings.get('dsa5', 'capQSat'), qualityStep);
     if (qualityStep < automaticResult) qualityStep = automaticResult;
-
+    if (testData.extra.options.allgemeinwissen) qualityStep = 1;
+    
     return {
       result: fws,
       characteristics: [0, 1, 2].map((x) => {
