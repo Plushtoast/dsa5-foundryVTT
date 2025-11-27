@@ -2775,5 +2775,21 @@
                 "owned": "Besitzt"
             }
         }
+    },
+"MASTER_TALENT": {
+        "name": "Meistertalentierter",
+        "alchemistName": "Zauberalchimist",
+        "botchRescue": "Möchtest du den Patzer in einen Misserfolg umwandeln? (10 AsP)",
+        "openDialog": "Ergebnis verbessern (AsP)",
+        "notEnoughAsP": "Nicht genügend AsP vorhanden.",
+        "reroll": "Neu Würfeln",
+        "addFP": "Talentpunkte hinzugewinnen",
+        "improveRoll": "Wurf verbessern",
+        "confirm": "Bestätigen",
+        "cancel": "Abbrechen",
+        "cost": "Kosten",
+        "currentAsP": "Aktuelle AsP",
+        "descriptionAlchemist": "<ul><li>Pro 5 AsP kann 1 FP hinzugewonnen werden (max 18 FP).</li><li>3 W20 neu würfeln für 4 AsP.</li><li>Einzelergebnisse für 2 AsP pro Punkt senken (kein Krit/Patzer-Bau).</li></ul>",
+        "descriptionMaster": "<ul><li>Pro 5 AsP kann 1 FP hinzugewonnen werden (max 18 FP).</li><li>3 W20 neu würfeln für 4 AsP (nur ein Durchgang bei Sammelproben).</li><li>Einzelergebnisse für 2 AsP pro Punkt senken (kein Krit/Patzer-Bau).</li></ul>"
     }
 }
