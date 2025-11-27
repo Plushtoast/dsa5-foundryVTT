@@ -2773,5 +2773,21 @@
                 "owned": "Owned"
             }
         }
+    },
+"MASTER_TALENT": {
+        "name": "Masterfully Talented",
+        "alchemistName": "Magical Alchemist",
+        "botchRescue": "Do you want to turn the Botch into a Failure? (10 AE)",
+        "openDialog": "Improve Result (AE)",
+        "notEnoughAsP": "Not enough AE available.",
+        "reroll": "Reroll",
+        "addFP": "Add Skill Points (SP)",
+        "improveRoll": "Improve Roll",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "cost": "Cost",
+        "currentAsP": "Current AE",
+        "descriptionAlchemist": "<ul><li>Add 1 SP for every 5 AE (up to a maximum of 18 SP total).</li><li>Reroll up to 3 d20 for 4 AE (Fate Point rules apply).</li><li>Lower individual die results by 1 for 2 AE per point (cannot be used to force a Critical Success).</li></ul>",
+        "descriptionMaster": "<ul><li>Add 1 SP for every 5 AE (up to a maximum of 18 SP total).</li><li>Reroll up to 3 d20 for 4 AE (Fate Point rules apply; only affects one roll in cumulative checks).</li><li>Lower individual die results by 1 for 2 AE per point (cannot be used to force a Critical Success).</li></ul>"
     }
 }
