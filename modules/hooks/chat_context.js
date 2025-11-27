@@ -1,6 +1,7 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -472,6 +473,92 @@ const createContextOptions = () => {
       condition: (li) => ConditionChecker.canImproveRoll(li, true),
       callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
     },
+    
+    // --- 1. Eintrag: ZAUBERALCHIMIST / MAGICAL ALCHEMIST ---
+    {
+      name: "MASTER_TALENT.alchemistName",
+      icon: '<i class="fas fa-vial"></i>',
+      condition: (li) => {
+        let messageId = li.data ? li.data("messageId") : (li.dataset ? li.dataset.messageId : null);
+        if (!messageId && li[0] && li[0].dataset) messageId = li[0].dataset.messageId;
+        if (!messageId) return false;
+
+        const message = game.messages.get(messageId);
+        if (!message || !message.flags?.data?.preData || !message.flags?.data?.postData) return false;
+        if (message.flags.dsa5?.masterTalentUsed) return false;
+
+        const postData = message.flags.data.postData;
+        const level = postData.successLevel;
+
+        const isSuccess = level > 0;
+        const isBotch = level === -2;
+
+        // Nur anzeigen bei Erfolg oder einfachem Patzer (-2)
+        if (!isSuccess && !isBotch) return false;
+
+        const actor = getActorFromMessage(message);
+        if (!actor || !hasOwnership(actor)) return false;
+
+        const sourceName = message.flags.data.preData.source.name;
+
+        // Alchimie DE & EN
+        if (sourceName === "Alchimie" || sourceName === "Alchemy") {
+            return actor.items.some(i => 
+                i.name === "Tradition (Zauberalchimisten)" || 
+                i.name === "Tradition (Magical Alchemist)"
+            );
+        }
+        return false;
+      },
+      callback: (li) => {
+        let messageId = li.data ? li.data("messageId") : (li.dataset ? li.dataset.messageId : null);
+        if (!messageId && li[0] && li[0].dataset) messageId = li[0].dataset.messageId;
+        const message = game.messages.get(messageId);
+        DiceDSA5.handleMasterTalent(message);
+      }
+    },
+
+    // --- 2. Eintrag: MEISTERTALENTIERTER / MASTERFULLY TALENTED  ---
+    {
+      name: "MASTER_TALENT.name",
+      icon: '<i class="fas fa-magic"></i>',
+      condition: (li) => {
+        let messageId = li.data ? li.data("messageId") : (li.dataset ? li.dataset.messageId : null);
+        if (!messageId && li[0] && li[0].dataset) messageId = li[0].dataset.messageId;
+        if (!messageId) return false;
+
+        const message = game.messages.get(messageId);
+        if (!message || !message.flags?.data?.preData || !message.flags?.data?.postData) return false;
+        if (message.flags.dsa5?.masterTalentUsed) return false;
+
+        const postData = message.flags.data.postData;
+        const level = postData.successLevel;
+
+        const isSuccess = level > 0;
+        const isBotch = level === -2;
+
+        if (!isSuccess && !isBotch) return false;
+
+        const actor = getActorFromMessage(message);
+        if (!actor || !hasOwnership(actor)) return false;
+
+        const sourceName = message.flags.data.preData.source.name;
+
+        if (sourceName === "Alchimie" || sourceName === "Alchemy") return false;
+
+        return actor.items.some(i => 
+            (i.name.includes("Tradition (Meistertalentierte)") || i.name.includes("Tradition (Masterfully Talented)")) && 
+            i.name.includes(sourceName)
+        );
+      },
+      callback: (li) => {
+        let messageId = li.data ? li.data("messageId") : (li.dataset ? li.dataset.messageId : null);
+        if (!messageId && li[0] && li[0].dataset) messageId = li[0].dataset.messageId;
+        const message = game.messages.get(messageId);
+        DiceDSA5.handleMasterTalent(message);
+      }
+    },
+    
   ];
 
   if (game.settings.get('dsa5', 'doubleDamageOptions')) {
