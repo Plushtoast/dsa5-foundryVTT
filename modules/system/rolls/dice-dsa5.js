@@ -2401,4 +2401,360 @@ export default class DiceDSA5 {
     html.on('click', '.resistPain', (ev) => DiceDSA5.rollResistPain(ev));
     RequestRoll.chatListeners(html);
   }
+  // --- MASTER TALENT LOGIC ---
+
+  static getRollFromMessage(message) {
+    const flags = message.flags?.data;
+    if (!flags) return null;
+    let rollData = null;
+    if (flags.preData?.roll) rollData = flags.preData.roll;
+    else if (flags.postData?.roll) rollData = flags.postData.roll;
+
+    if (rollData) {
+        if (rollData instanceof Roll) return rollData;
+        try { return Roll.fromData(rollData); } 
+        catch (e) { console.warn("DSA5 Master Talent | Roll Error:", e); }
+    }
+    if (message.rolls && message.rolls.length > 0) return message.rolls[0];
+    return null;
+  }
+
+  static async handleMasterTalent(message) {
+    const testData = message.flags.data.postData;
+    const actor = DSA5_Utility.getSpeaker(message.speaker);
+    const roll = this.getRollFromMessage(message);
+
+    if (!roll || !roll.terms) {
+        ui.notifications.warn("Fehler: Keine gültigen Würfeldaten gefunden.");
+        return;
+    }
+    testData.roll = roll;
+
+    // Patzer Logik anhand SuccessLevel (-2 = Patzer, -3 = Schreckliches Missgeschick)
+    const level = testData.successLevel;
+    const isBotch = level === -2;
+    const isDoom = level === -3;
+
+    const isAlchemist = actor.items.some(i => 
+        (i.name === "Tradition (Zauberalchimisten)" || i.name === "Tradition (Magical Alchemist)") && 
+        i.type === "specialability"
+    );
+    const dialogTitle = isAlchemist ? "MASTER_TALENT.alchemistName" : "MASTER_TALENT.name";
+
+    if (isDoom) {
+        return ui.notifications.warn("Ein Schreckliches Missgeschick kann nicht umgewandelt werden.");
+    }
+    
+    if (isBotch) {
+      const cost = 10;
+      if (actor.system.status.astralenergy.value < cost) {
+        return ui.notifications.warn(game.i18n.localize("MASTER_TALENT.notEnoughAsP"));
+      }
+
+      new Dialog({
+        title: game.i18n.localize(dialogTitle),
+        content: `<p>${game.i18n.localize("MASTER_TALENT.botchRescue")}</p>`,
+        buttons: {
+          yes: {
+            icon: '<i class="fas fa-check"></i>',
+            label: game.i18n.localize("MASTER_TALENT.confirm"),
+            callback: async () => {
+              await actor.update({"system.status.astralenergy.value": actor.system.status.astralenergy.value - cost});
+              
+              const newTestData = duplicate(testData);
+              newTestData.successLevel = -1;
+              newTestData.description = game.i18n.localize("Failure"); 
+              
+              const renderData = duplicate(newTestData);
+              renderData.preData = message.flags.data.preData;
+
+              await this.renderRollCard(message.flags.data, renderData, message);
+              await message.update({"flags.dsa5.masterTalentUsed": true});
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: game.i18n.localize("MASTER_TALENT.cancel")
+          }
+        }
+      }).render(true);
+
+    } else if (level > 0) {
+       this.renderMasterTalentDialog(message, actor, isAlchemist, roll);
+    }
+  }
+
+  static async renderMasterTalentDialog(message, actor, isAlchemist, roll) {
+    const testData = message.flags.data.postData;
+    const preData = message.flags.data.preData; 
+    const currentAsP = actor.system.status.astralenergy.value;
+    
+    const source = (testData.source && testData.source.system) ? testData.source : preData.source;
+    const sourceSystem = source.system;
+
+    const chars = [
+        sourceSystem.characteristic1.value,
+        sourceSystem.characteristic2.value,
+        sourceSystem.characteristic3.value
+    ];
+
+    const diceTerms = roll.terms.filter(t => t.results && t.faces === 20);
+    
+    const dice = diceTerms.map((t, i) => {
+      const charData = testData.characteristics ? testData.characteristics[i] : null;
+      const target = charData ? charData.tar : 0;
+      const value = t.results[0].result;
+      const isSuccess = value <= target;
+      const cssClass = isSuccess ? "suc" : "fail";
+      const attr = chars[i].toLowerCase();
+
+      return {
+        index: i, value: value, original: value, attr: attr, cssClass: cssClass,
+        tooltip: `${game.i18n.localize("CHAR." + attr.toUpperCase())} vs ${target}`
+      };
+    });
+
+    const description = isAlchemist ? "MASTER_TALENT.descriptionAlchemist" : "MASTER_TALENT.descriptionMaster";
+    
+    const content = `
+      <div class="master-talent-dialog">
+        <div class="description">${game.i18n.localize(description)}</div>
+        <hr>
+        <nav class="sheet-tabs tabs" data-group="primary">
+          <a class="item active" data-tab="reroll">${game.i18n.localize("MASTER_TALENT.reroll")}</a>
+          <a class="item" data-tab="addFP">${game.i18n.localize("MASTER_TALENT.addFP")}</a>
+          <a class="item" data-tab="improve">${game.i18n.localize("MASTER_TALENT.improveRoll")}</a>
+        </nav>
+        <section class="content" style="padding: 10px 0;">
+          <div class="dice-display" style="display: flex; justify-content: center; margin-bottom: 10px; gap: 5px;">
+             ${dice.map(d => `
+                <div class="die-group" data-index="${d.index}" style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                   <input type="checkbox" class="reroll-checkbox" data-index="${d.index}" style="display:none;">
+                   <a class="dieButton" data-index="${d.index}">
+                      <span data-tooltip="${d.tooltip}" class="${d.cssClass} die-${d.attr} d20">${d.value}</span>
+                   </a>
+                   <div class="improve-controls" style="display:none; margin-top: 5px;">
+                      <a class="improve-btn up"><i class="fas fa-chevron-up"></i></a>
+                      <a class="improve-btn down"><i class="fas fa-chevron-down"></i></a>
+                   </div>
+                </div>
+             `).join("")}
+          </div>
+          <div class="add-fp-controls" style="display:none; text-align: center;">
+             <div style="display: flex; justify-content: center; align-items: center;">
+                 <label style="margin-right: 10px;">${game.i18n.localize("MODS.FW")}: </label>
+                 <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a class="fp-btn up" style="cursor: pointer; font-size: 0.8rem;"><i class="fas fa-chevron-up"></i></a>
+                    <input type="number" class="fp-input" value="0" min="0" style="width: 50px; text-align: center; margin: 2px 0;">
+                    <a class="fp-btn down" style="cursor: pointer; font-size: 0.8rem;"><i class="fas fa-chevron-down"></i></a>
+                 </div>
+             </div>
+          </div>
+          <div class="result-preview" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 5px;">
+             <div><strong>Fähigkeitswert:</strong> <span class="fw-preview">${testData.result}</span></div>
+             <div><strong>Qualitätsstufe:</strong> <span class="qs-preview">${testData.qualityStep}</span></div>
+             <div style="color: darkred;"><strong>${game.i18n.localize("MASTER_TALENT.cost")}:</strong> <span class="asp-cost">0</span> AsP</div>
+             <div><strong>${game.i18n.localize("MASTER_TALENT.currentAsP")}:</strong> ${currentAsP}</div>
+          </div>
+        </section>
+      </div>
+      <style>
+        .master-talent-dialog .dieButton.selected { filter: drop-shadow(0 0 5px gold); transform: scale(1.1); }
+        .master-talent-dialog .dieButton.disabled { opacity: 0.5; pointer-events: none; }
+        .master-talent-dialog input::-webkit-outer-spin-button, .master-talent-dialog input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .master-talent-dialog input[type=number] { -moz-appearance: textfield; }
+      </style>
+    `;
+
+    new Dialog({
+      title: game.i18n.localize(isAlchemist ? "MASTER_TALENT.alchemistName" : "MASTER_TALENT.name"),
+      content: content,
+      buttons: {
+        confirm: {
+          label: game.i18n.localize("MASTER_TALENT.confirm"),
+          callback: async (html) => { await this.applyMasterTalentChanges(html, message, actor, roll); }
+        },
+        cancel: { label: game.i18n.localize("MASTER_TALENT.cancel") }
+      },
+      render: (html) => {
+        const update = (mode) => this.updateMasterTalentPreview(html, testData, mode, roll);
+        
+        html.find('.item').click(ev => {
+           html.find('.item').removeClass('active');
+           $(ev.currentTarget).addClass('active');
+           const tab = $(ev.currentTarget).data('tab');
+           html.find('.improve-controls').hide();
+           html.find('.add-fp-controls').hide();
+           html.find('.dieButton').removeClass('selected disabled').css('cursor', 'default');
+
+           if(tab === 'reroll') {
+              html.find('.dieButton').css('cursor', 'pointer');
+              html.find('.reroll-checkbox:checked').each((i, el) => {
+                  html.find(`.dieButton[data-index="${$(el).data('index')}"]`).addClass('selected');
+              });
+           } 
+           else if (tab === 'addFP') html.find('.add-fp-controls').show();
+           else if (tab === 'improve') html.find('.improve-controls').show();
+           update(tab);
+        });
+
+        html.find('.dieButton').click(ev => {
+            if (html.find('.item.active').data('tab') !== 'reroll') return;
+            const btn = $(ev.currentTarget);
+            const checkbox = html.find(`.reroll-checkbox[data-index="${btn.data('index')}"]`);
+            checkbox.prop('checked', !checkbox.prop('checked'));
+            checkbox.prop('checked') ? btn.addClass('selected') : btn.removeClass('selected');
+            update('reroll');
+        });
+
+        html.find('.fp-btn').click(ev => {
+            const input = html.find('.fp-input');
+            let val = parseInt(input.val()) || 0;
+            $(ev.currentTarget).hasClass('up') ? val++ : val--;
+            input.val(val);
+            update('addFP');
+        });
+
+        html.find('.fp-input').keydown(ev => {
+            if (ev.keyCode === 13) { ev.preventDefault(); update('addFP'); return false; }
+        }).change(() => update('addFP'));
+        
+        html.find('.improve-btn').click(ev => {
+           const group = $(ev.currentTarget).closest('.die-group');
+           const index = group.data('index');
+           const isUp = $(ev.currentTarget).hasClass('up'); 
+           const dieValElem = group.find('.dieButton span');
+           let currentVal = parseInt(dieValElem.text());
+           const d20Terms = roll.terms.filter(t => t.results && t.faces === 20);
+           let originalVal = d20Terms[index].results[0].result;
+           
+           html.find('.die-group').not(group).find('.improve-controls').hide();
+           html.find('.dieButton').not(group.find('.dieButton')).addClass('disabled');
+
+           if (!isUp) { 
+             if (currentVal > 1) {
+                const otherOnes = html.find('.dieButton span').not(dieValElem).filter((i, el) => parseInt($(el).text()) === 1).length;
+                if (currentVal === 2 && otherOnes > 0) {
+                   ui.notifications.warn("Darf keinen Kritischen Erfolg erzeugen."); return;
+                }
+                currentVal--;
+             }
+           } else { 
+             if (currentVal < originalVal) currentVal++;
+             if (currentVal === originalVal) {
+                html.find('.improve-controls').show();
+                html.find('.dieButton').removeClass('disabled');
+             }
+           }
+           dieValElem.text(currentVal);
+           const target = testData.characteristics[index].tar;
+           dieValElem.removeClass('fail suc').addClass(currentVal <= target ? 'suc' : 'fail');
+           update('improve');
+        });
+      }
+    }).render(true);
+  }
+
+  static updateMasterTalentPreview(html, testData, mode, roll) {
+     let cost = 0;
+     let modifiedFW = testData.result; 
+     let newQS = testData.qualityStep;
+
+     if (mode === 'reroll') {
+        if (html.find('.reroll-checkbox:checked').length > 0) cost = 4;
+     } 
+     else if (mode === 'addFP') {
+        let added = parseInt(html.find('.fp-input').val()) || 0;
+        if (added < 0) added = 0;
+        const maxAddable = 18 - testData.result;
+        if (added > maxAddable) {
+            added = Math.max(0, maxAddable); 
+            ui.notifications.warn("Maximal 18 FP erlaubt.");
+        }
+        html.find('.fp-input').val(added);
+        cost = added * 5;
+        modifiedFW += added;
+        newQS = Math.max(1, Math.ceil(modifiedFW / 3)); 
+     } 
+     else if (mode === 'improve') {
+        let diffTotal = 0;
+        let savedFP = 0;
+        const d20Terms = roll.terms.filter(t => t.results && t.faces === 20);
+        html.find('.die-group').each((i, el) => {
+           const current = parseInt($(el).find('.dieButton span').text());
+           const original = d20Terms[i].results[0].result;
+           const diff = original - current; 
+           
+           if (diff > 0) { 
+               diffTotal += diff; 
+               // FP nur gutschreiben, wenn man sich dem Zielwert nähert
+               const target = testData.characteristics[i].tar;
+               const lossOriginal = Math.max(0, original - target);
+               const lossNew = Math.max(0, current - target);
+               savedFP += (lossOriginal - lossNew);
+           }
+        });
+        cost = diffTotal * 2;
+        modifiedFW += savedFP;
+     }
+     
+     newQS = Math.ceil(modifiedFW / 3);
+     if (newQS < 1) newQS = 1;
+     if (newQS > 6) newQS = 6; 
+
+     html.find('.asp-cost').text(cost);
+     html.find('.fw-preview').text(modifiedFW);
+     html.find('.qs-preview').text(newQS);
+  }
+
+  static async applyMasterTalentChanges(html, message, actor, originalRoll) {
+     const activeTab = html.find('.item.active').data('tab');
+     const cost = parseInt(html.find('.asp-cost').text());
+
+     if (actor.system.status.astralenergy.value < cost) {
+        return ui.notifications.warn(game.i18n.localize("MASTER_TALENT.notEnoughAsP"));
+     }
+     await actor.update({"system.status.astralenergy.value": actor.system.status.astralenergy.value - cost});
+
+     const data = message.flags.data;
+     let newTestData = duplicate(data.preData);
+     const postFunction = data.postData.postFunction;
+     let roll = Roll.fromData(originalRoll.toJSON());
+
+     if (activeTab === 'reroll') {
+        const diceToReroll = [];
+        html.find('.reroll-checkbox:checked').each((i, el) => diceToReroll.push($(el).data('index')));
+        const d20Terms = roll.terms.filter(t => t.results && t.faces === 20);
+        for(let idx of diceToReroll) {
+           const newRes = (await new Roll("1d20").evaluate()).total;
+           if(d20Terms[idx]) d20Terms[idx].results[0].result = newRes;
+        }
+     } 
+     else if (activeTab === 'addFP') {
+        const added = parseInt(html.find('.fp-input').val()) || 0;
+        if (!newTestData.situationalModifiers) newTestData.situationalModifiers = [];
+        newTestData.situationalModifiers.push({
+           name: game.i18n.localize("MASTER_TALENT.addFP"),
+           value: added,
+           type: "FP"
+        });
+     } 
+     else if (activeTab === 'improve') {
+        const d20Terms = roll.terms.filter(t => t.results && t.faces === 20);
+        html.find('.die-group').each((i, el) => {
+           const val = parseInt($(el).find('.dieButton span').text());
+           if(d20Terms[i]) d20Terms[i].results[0].result = val;
+        });
+     }
+
+     newTestData.roll = Roll.fromData(roll.toJSON());
+     let chatOptions = { template: data.template, rollMode: data.rollMode, title: data.title, speaker: message.speaker, user: message.author.id };
+
+     if (typeof actor[postFunction] === 'function') {
+        await actor[postFunction]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
+        setTimeout(async () => { await message.update({"flags.dsa5.masterTalentUsed": true}); }, 200);
+     } else {
+        ui.notifications.error("Fehler beim Aktualisieren des Wurfs.");
+     }
+  }
 }
