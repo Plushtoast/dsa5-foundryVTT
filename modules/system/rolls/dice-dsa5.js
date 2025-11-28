@@ -1750,6 +1750,14 @@ export default class DiceDSA5 {
 
   static async rollSpell(testData) {
     let res = await this._rollThreeD20(testData);
+    if (testData.extra.forbiddenGates && testData.extra.forbiddenGates.active) {
+        if (!testData.extra.forbiddenGates.passed) {
+            res.successLevel = -1;
+            res.result = -1; 
+            res.qualityStep = 0;
+            res.description = localize("FORBIDDENGATES.failed");
+        }
+    }
     const isClerical = [CEREMONY, LITURGY].includes(testData.source.type);
     res.rollType = testData.source.type;
     const actor = this.#actorFromTestData(testData);
