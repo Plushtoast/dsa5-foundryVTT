@@ -161,7 +161,15 @@
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
         "dependentMaintainEffects": "Dependent effects (delete too)",
-        "temporaryOff": "Disable temporarily"
+        "temporaryOff": "Disable temporarily",
+		"confirm": "Confirm",
+		"cancel": "Cancel",
+		"Praxisbezug": "Practical Application",
+		"PraxisbezugTitle": "Use Practical Application",
+		"PraxisbezugDescription": "In a suitable situation, the hero may attempt to apply their theoretical knowledge practically before a talent roll. First, make a roll on a suitable Knowledge Talent.",
+		"PraxisbezugInstruction": "You can assign bonuses equal to {qs} to the partial checks.",
+		"PraxisbezugLimit": "(Maximum 2 per attribute)",
+		"PraxisbezugMaxQS": "A maximum of {qs} points can be distributed."
     },
     "Equipment": {
         "misc": "General",
@@ -2773,5 +2781,9 @@
                 "owned": "Owned"
             }
         }
+    },
+    "LOCAL": {
+        "knowledgeTalentsList": "Gambling, Geography, History, Religions, Warfare, Magical Lore, Mechanics, Math, Law, Myths & Legends, Sphere Lore, Astronomy",
+        "praxisbezugAbility": "Practical Application"
     }
 }
