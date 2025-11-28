@@ -44,6 +44,55 @@ export default class DSA5SpellDialog extends DialogShared {
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+    const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+    const isSpell = ["spell", "ritual"].includes(testData.source.type);
+
+    if (isSpell) {
+        const sfName = game.i18n.localize("FORBIDDENGATES.name");
+        const sfAdvancedName = game.i18n.localize("FORBIDDENGATES.advancedName");
+
+        const forbiddenGates = actor.items.find(x => x.type == "specialability" && x.name == sfName);
+        const powerfulGates = actor.items.find(x => x.type == "specialability" && x.name == sfAdvancedName);
+
+        if (forbiddenGates) {
+            buttons.splice(1, 0, {
+                action: "forbiddenGatesRoll",
+                label: game.i18n.localize("FORBIDDENGATES.roll"),
+                callback: async (event, button, dialog) => {
+                    const html = $(button.form);
+                    game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
+
+                    const selfControl = actor.items.find(i => i.name === game.i18n.localize("LocalizedIDs.selfControl") && i.type === "skill");
+                    let passed = false;
+
+                    const isPowerful = !!powerfulGates;
+                    const modifier = isPowerful ? 1 : 0;
+
+                    if (selfControl) {
+                        const skillTest = await actor.setupSkill(selfControl, {
+                            modifier: modifier,
+                            title: `${sfName} - ${game.i18n.localize("LocalizedIDs.selfControl")}`
+                        });
+
+                        const result = await actor.basicTest(skillTest);
+                        passed = result.result.successLevel > 0;
+                    } else {
+                        ui.notifications.warn("Skill 'Self-Control' not found on actor.");
+                    }
+
+                    mergeObject(testData.extra, {
+                        forbiddenGates: {
+                            active: true,
+                            passed: passed,
+                            powerful: isPowerful
+                        }
+                    });
+
+                    resolve(dialogOptions.callback(html));
+                }
+            });
+        }
+    }
     if (['spell', 'liturgy'].includes(testData.source.type)) {
       const LZ = Number(testData.source.system.castingTime.value);
       const progress = testData.source.system.castingTime.progress;
