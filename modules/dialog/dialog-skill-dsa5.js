@@ -67,7 +67,8 @@ export default class DSA5SkillDialog extends DialogShared {
   	const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
       if(actor) { 
           const currentSkillName = this.dialogData.source.name;
-          const hasPraxisbezug = actor.items.some(x => x.type == "specialability" && (x.name == "Praxisbezug" || x.name == "Practical Application"));
+          const sfName = game.i18n.localize('LOCAL.praxisbezugAbility');
+          const hasPraxisbezug = actor.items.some(x => x.type == "specialability" && x.name == sfName);
           const talentsString = game.i18n.localize('LOCAL.knowledgeTalentsList');
           const knowledgeTalents = talentsString.split(',').map(t => t.trim());
           const isKnowledge = knowledgeTalents.includes(currentSkillName) || (this.dialogData.source.system.group && this.dialogData.source.system.group.value == "knowledge");
