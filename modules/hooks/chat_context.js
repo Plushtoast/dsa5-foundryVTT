@@ -1,6 +1,7 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
+const { renderTemplate } = foundry.applications.handlebars;
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -395,6 +396,17 @@ const createContextOptions = () => {
       callback: ActionHandler.payMana,
     },
     {
+      name: 'FORBIDDENGATES.pay', 
+      icon: '<i class="fas fa-dungeon"></i>', 
+      condition: (li) => {
+        const message = getMessageFromLi(li);
+        const flags = message.flags.data;
+        const hasFlag = flags.postData?.forbiddenGates?.active || flags.preData?.extra?.forbiddenGates?.active;
+        return hasFlag; 
+      },
+      callback: (li) => ForbiddenGatesHandler.payCosts(li)
+    },
+    {
       name: applyDamageLabel(),
       icon: '<i class="fas fa-user-minus"></i>',
       condition: ConditionChecker.canHurt,
@@ -509,6 +521,207 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
   },
 ];
+
+class ForbiddenGatesHandler {
+  static async payCosts(li) {
+    const message = getMessageFromLi(li);
+    const preData = message.flags.data.preData;
+    const postData = message.flags.data.postData; 
+    const actor = DSA5_Utility.getSpeaker(message.speaker);
+    
+    const forbiddenData = postData.forbiddenGates || preData.extra.forbiddenGates;
+    if (!forbiddenData) return;
+
+    const passed = forbiddenData.passed;
+    const isPowerful = forbiddenData.powerful || false; 
+    
+    const cost = preData.calculatedSpellModifiers.finalcost;
+    const maxAsP = actor.system.status.astralenergy.value;
+
+    if (!passed || postData.successLevel < 1) {
+      
+      let paidAsP = Math.min(maxAsP, cost);
+      let paidLeP = cost - paidAsP;
+
+      await actor.update({
+        "system.status.astralenergy.value": maxAsP - paidAsP
+      });
+      
+      if (paidLeP > 0) {
+          await actor.applyDamage(paidLeP);
+      }
+
+      await ForbiddenGatesHandler.updateMessage(message, paidAsP, paidLeP);
+      
+    } else {
+      await ForbiddenGatesHandler.showDialog(actor, cost, message, isPowerful);
+    }
+  }
+
+  static async showDialog(actor, totalCost, message, isPowerful) {
+    const currentLeP = actor.system.status.wounds.value;
+    const currentAsP = actor.system.status.astralenergy.value;
+    
+    const minAsP = isPowerful ? 0 : 1;
+    let initAsP = totalCost; 
+    let initLeP = 0;
+
+    const dialogContent = `
+    <div class="forbidden-gates-dialog">
+        <p>${game.i18n.localize("FORBIDDENGATES.description")}</p>
+        <hr>
+        <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; text-align: center; gap: 10px;">
+            <div style="flex: 1;">
+                <label style="font-weight:bold;">${game.i18n.localize("LeP")}</label><br>
+                <span id="fg-current-lep">${currentLeP}</span>
+            </div>
+            
+            <div style="flex: 1; border: 1px solid #777; padding: 5px; border-radius: 5px;">
+                 <label>${game.i18n.localize("FORBIDDENGATES.lepCost")}</label><br>
+                 <input type="number" id="fg-lep-cost" value="${initLeP}" style="width: 50px; text-align: center;">
+            </div>
+
+            <div style="flex: 0.5; display: flex; gap: 5px; justify-content: center;">
+                <a class="fg-arrow" data-dir="left"><i class="fas fa-chevron-left"></i></a>
+                <a class="fg-arrow" data-dir="right"><i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <div style="flex: 1; border: 1px solid #777; padding: 5px; border-radius: 5px;">
+                 <label>${game.i18n.localize("FORBIDDENGATES.aspCost")}</label><br>
+                 <input type="number" id="fg-asp-cost" value="${initAsP}" style="width: 50px; text-align: center;">
+            </div>
+
+            <div style="flex: 1;">
+                <label style="font-weight:bold;">${game.i18n.localize("AsP")}</label><br>
+                <span id="fg-current-asp">${currentAsP}</span>
+            </div>
+        </div>
+    </div>
+    <style>
+        .forbidden-gates-dialog .fg-arrow { 
+            cursor: pointer; padding: 5px 10px; background: #bbb; border: 1px solid #000; border-radius: 3px; color: black; 
+        }
+        .forbidden-gates-dialog .fg-arrow:hover { background: #999; }
+    </style>
+    `;
+
+    new Dialog({
+        title: game.i18n.localize("FORBIDDENGATES.dialogTitle"),
+        content: dialogContent,
+        buttons: {
+            confirm: {
+                label: game.i18n.localize("FORBIDDENGATES.confirm"),
+                callback: async (html) => {
+                    const lepCost = parseInt(html.find('#fg-lep-cost').val());
+                    const aspCost = parseInt(html.find('#fg-asp-cost').val());
+
+                    if (actor.system.status.astralenergy.value < aspCost) {
+                        ui.notifications.error("DSAError.NotEnoughAsP", {localize: true});
+                        return;
+                    }
+                    
+                    if(aspCost > 0) {
+                        await actor.update({
+                            "system.status.astralenergy.value": actor.system.status.astralenergy.value - aspCost
+                        });
+                    }
+                    
+                    if(lepCost > 0) {
+                        await actor.applyDamage(lepCost);
+                    }
+
+                    await ForbiddenGatesHandler.updateMessage(message, aspCost, lepCost);
+                }
+            },
+            cancel: {
+                label: game.i18n.localize("FORBIDDENGATES.cancel")
+            }
+        },
+        render: (html) => {
+            const lepInput = html.find('#fg-lep-cost');
+            const aspInput = html.find('#fg-asp-cost');
+
+            const updateValues = (lep, asp) => {
+                lepInput.val(lep);
+                aspInput.val(asp);
+            };
+
+            html.find('.fg-arrow').click(ev => {
+                const dir = ev.currentTarget.dataset.dir;
+                let l = parseInt(lepInput.val());
+                let a = parseInt(aspInput.val());
+
+                if (dir === "left") {
+                    if (a > minAsP) { 
+                        a--; l++;
+                    }
+                } else {
+                    if (a < totalCost) {
+                        a++; l--;
+                    }
+                }
+                updateValues(l, a);
+            });
+
+            const validateInput = () => {
+                let l = parseInt(lepInput.val()) || 0;
+                let a = parseInt(aspInput.val()) || 0;
+                
+                if (l + a !== totalCost || (a < minAsP && totalCost >= minAsP)) {
+                    a = Math.max(minAsP, totalCost - l);
+                    l = totalCost - a;
+                    if (a < minAsP && totalCost >= minAsP) { a = minAsP; l = totalCost - minAsP; }
+                }
+                updateValues(l, a);
+            };
+
+            lepInput.change(validateInput);
+            aspInput.change(validateInput);
+            
+            html.find('input').keydown(ev => {
+                if(ev.key === "Enter") {
+                    ev.preventDefault();
+                    validateInput();
+                    return false;
+                }
+            });
+        }
+    }).render(true);
+  }
+
+  static async updateMessage(message, paidAsP, paidLeP) {
+      let content = message.content;
+      
+      if (content.includes('class="costCheck"')) {
+         content = content.replace(/<span class="costCheck">/, '<span class="costCheck"><i class="fas fa-check" style="float:right"></i>');
+      } else {
+         content += `<br><span class="costCheck"><i class="fas fa-check"></i> ${game.i18n.localize("FORBIDDENGATES.name")}</span>`;
+      }
+
+      await message.update({
+          content: content,
+          "flags.data.manaApplied": true, 
+          "flags.data.forbiddenGatesPaid": { asp: paidAsP, lep: paidLeP }
+      });
+
+      let infoMsg = "";
+      
+      if (paidAsP > 0) {
+          infoMsg += game.i18n.format("FORBIDDENGATES.paidInfoAsP", { asp: paidAsP });
+      }
+      
+      if (paidLeP > 0) {
+          infoMsg += game.i18n.format("FORBIDDENGATES.paidInfoLeP", { lep: paidLeP });
+      }
+
+      if (infoMsg !== "") {
+          ChatMessage.create({
+              content: infoMsg,
+              speaker: message.speaker
+          });
+      }
+  }
+}
 
 export function chatContext() {
   Hooks.once('getNotificationChatMessageContextOptions', (app, options, c) => {
