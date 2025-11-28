@@ -2773,5 +2773,21 @@
                 "owned": "Owned"
             }
         }
+    },
+"FORBIDDENGATES": {
+        "name": "Forbidden Gates",
+        "advancedName": "Advanced Forbidden Gates",
+        "roll": "Roll (Forbidden Gates)",
+        "pay": "Pay costs (Forbidden Gates)",
+        "notEnoughLeP": "Not enough LP!",
+        "failed": "Self-Control failed! The spell fails.",
+        "dialogTitle": "Cost Distribution (Forbidden Gates)",
+        "description": "You can use LP instead of AE to cast spells. You must spend at least 1 AE per spell (unless utilizing 'Advanced Forbidden Gates').",
+        "lepCost": "LP-Cost",
+        "aspCost": "AE-Cost",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "paidInfoAsP": "You channel the spell's power, consuming {asp} AE. ",
+        "paidInfoLeP": "To complete the effect, you tap into your life force, sacrificing an additional {lep} LP."
     }
 }
