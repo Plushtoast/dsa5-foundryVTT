@@ -132,8 +132,7 @@ async calculateAllgemeinwissen(data) {
     
     const isKnowledge = knowledgeTalents.includes(currentTalent) || 
                         currentTalent.includes("Brett") || 
-                        currentTalent.includes("Glück") ||
-                        (game.i18n.lang == 'en' && currentTalent.includes("Board")); // Fallback Englisch
+                        currentTalent.includes("Glück");
 
     if (!isKnowledge) return;
 
