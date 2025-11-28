@@ -185,7 +185,15 @@
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
-        "temporaryOff": "Vorübergehend deaktivieren"
+        "temporaryOff": "Vorübergehend deaktivieren",
+        "confirm": "Bestätigen",
+		"cancel": "Abbrechen",
+		"Praxisbezug": "Praxisbezug",
+		"PraxisbezugTitle": "Praxisbezug anwenden",
+		"PraxisbezugDescription": "In einer passenden Situation darf der Held vor einer Talentprobe den Versuch wagen, sein theoretisches Wissen praktisch einzusetzen. Dabei legt er zunächst eine Probe auf ein passendes Wissenstalent ab.",
+		"PraxisbezugInstruction": "Du kannst Erleichterungen in Höhe von {qs} auf die Teilproben festlegen.",
+		"PraxisbezugLimit": "(Maximal 2 pro Attribut)",
+		"PraxisbezugMaxQS": "Es sind maximal {qs} Punkte verteilbar."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -2775,5 +2783,9 @@
                 "owned": "Besitzt"
             }
         }
+    },
+    "LOCAL": {
+        "knowledgeTalentsList": "Brett- & Glücksspiel, Geographie, Geschichtswissen, Götter & Kulte, Kriegskunst, Magiekunde, Mechanik, Rechnen, Rechtskunde, Sagen & Legenden, Sphärenkunde, Sternkunde",
+        "praxisbezugAbility": "Praxisbezug"
     }
 }
