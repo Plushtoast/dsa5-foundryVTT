@@ -2784,7 +2784,7 @@
         "notEnoughLeP": "Nicht genügend LeP vorhanden!",
         "failed": "Selbstbeherrschung misslungen! Der Zauber scheitert.",
         "dialogTitle": "Kostenaufteilung (Verbotene Pforten)",
-        "description": "Ein Zauberer kann anstelle von AsP auch LeP für die Zauberkosten aufwenden. Es muss jedoch pro Zauber mindestens 1 AsP aufgewendet werden (außer mit 'Machtvolle Verbotene Pforten').",
+        "description": "Ein Zauberer kann anstelle von AsP auch LeP für die Zauberkosten aufwenden. Es muss jedoch üblicherweise pro Zauber mindestens 1 AsP aufgewendet werden.",
         "lepCost": "LeP-Kosten",
         "aspCost": "AsP-Kosten",
         "confirm": "Bestätigen",
@@ -2793,3 +2793,4 @@
         "paidInfoLeP": "Um den Effekt zu vollenden, nutzt du deine Lebenskraft und setzt zusätzlich {lep} LeP ein."
     }
 }
+
