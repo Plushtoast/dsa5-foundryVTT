@@ -176,7 +176,6 @@ class PraxisbezugDialog extends Dialog {
         this.qs = 0;
         this.rolled = false;
         
-        // Hier wird die Funktion aufgerufen, die den Fehler verursacht hat
         this.data.content = this._buildInitialContent();
         
         this.data.buttons = {
@@ -200,7 +199,6 @@ class PraxisbezugDialog extends Dialog {
         let html = `<p>${game.i18n.localize("DIALOG.PraxisbezugDescription")}</p><hr>`;
         html += `<div class="form-group knowledge-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">`;
         
-        // --- Liste dynamisch laden ---
         const talentsString = game.i18n.localize('LOCAL.knowledgeTalentsList');
         const knowledgeTalents = talentsString.split(',').map(t => t.trim());
 
@@ -250,7 +248,6 @@ class PraxisbezugDialog extends Dialog {
                      if (success) {
                          this.qs = testData.qualityStep || 0;
                          this.rolled = true;
-                         // Timeout für Render-Zyklus
                          setTimeout(() => this._updateToDistributionMode(), 50);
                      } else {
                          // Bei Misserfolg: Dialog schließen
