@@ -401,6 +401,7 @@ const createContextOptions = () => {
       condition: (li) => {
         const message = getMessageFromLi(li);
         const flags = message.flags.data;
+        if (!flags) return false;
         const hasFlag = flags.postData?.forbiddenGates?.active || flags.preData?.extra?.forbiddenGates?.active;
         return hasFlag; 
       },
