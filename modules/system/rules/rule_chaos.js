@@ -79,6 +79,21 @@ export default class RuleChaos {
     return groupschips;
   }
 
+  static getMasterSchips() {
+    const schipSetting = game.settings
+      .get('dsa5', 'masterschips')
+      .split('/')
+      .map((x) => Number(x));
+    const masterschips = [];
+    for (let i = 1; i <= schipSetting[1]; i++) {
+      masterschips.push({
+        value: i,
+        cssClass: i <= schipSetting[0] ? 'fullSchip' : 'emptySchip',
+      });
+    }
+    return masterschips;
+  }
+  
   //todo this should not be necessary
   static ensureNumber(source) {
     source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value;
