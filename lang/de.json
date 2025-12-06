@@ -135,7 +135,8 @@
         "maintainCost": "Aufr.",
         "*": "*",
         "roll": " ",
-        "effect": "Effekt"
+        "effect": "Effekt",
+        "masterFatePoints": "Meisterschips"
     },
     "Features": {
         "Object": "Objekt",
@@ -1276,7 +1277,8 @@
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">brennt</a> und erhält {damage} Schadenspunkt(e).",
             "3": "{actor} steht komplett in <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">Flammen</a> und erhält {damage} Schadenspunkte."
         },
-        "duplicatus": "Doppelgänger getroffen"
+        "duplicatus": "Doppelgänger getroffen",
+        "masterAttackFailure": "Der Meister greift in das Schicksal ein! Der Angriff scheitert."
     },
     "TT": {
         "collapseHeader": "Kopfzeile einklappen",
@@ -2267,7 +2269,8 @@
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
-        "improveFate": "Wurf verbessern (1 Schip)"
+        "improveFate": "Wurf verbessern (1 Schip)",
+        "masterAttackFailure": "Angriff misslungen"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
@@ -2776,4 +2779,5 @@
             }
         }
     }
+
 }
