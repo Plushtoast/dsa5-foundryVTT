@@ -14,8 +14,20 @@
         </div>
     </div>
     <div class="row-section">
-        
-        
+        <div class="col third lineheight center" data-tooltip="masterFatePoints">
+            <b>{{{localize 'CHARAbbrev.masterFatePoints'}}}</b>
+        </div>
+        <div class="col sixty center" data-tooltip="fatePoints">
+            {{#each masterschips as |item i|}}
+            <a class="schip groupschip {{item.cssClass}}" data-action="masterschip" data-val="{{item.value}}"></a>
+            {{/each}}
+        </div>
+        <div class="col ten center">
+            <a data-action="addMasterSchip" data-value="-1"><i class="fas fa-minus"></i></a>
+            <a data-action="addMasterSchip" data-value="1"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+    <div class="row-section">
         <div class="col third lineheight center">
             <b>{{localize "TYPES.Item.skill"}}</b>
         </div>
