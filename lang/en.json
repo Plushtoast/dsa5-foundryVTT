@@ -111,7 +111,8 @@
         "defenseMalus": "DM",
         "*": "*",
         "roll": " ",
-        "effect": "Effect"
+        "effect": "Effect",
+        "masterFatePoints": "Master Chips"
     },
     "AdvantageRuleItems": {
         "armor": {
@@ -1567,7 +1568,8 @@
             "2": "{actor} <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">burns</a> resulting in {damage} sDP.",
             "3": "{actor} is completely <a class=\"chatButton chat-condition\" data-id=\"burning\" draggable=\"true\"><img src=\"icons/svg/fire.svg\">aflame</a> and receives {damage} sDP."
         },
-        "duplicatus": "doppelganger was hit"
+        "duplicatus": "doppelganger was hit",
+        "masterAttackFailure": "The Master intervenes! The attack fails."
     },
     "SPEEDSELECTOR": {
         "title": "Speed setting",
@@ -2341,7 +2343,8 @@
         "hideData": "Hide details to players",
         "showData": "Show details to players",
         "improveFate": "Improve roll (1 FtP)",
-        "improveFateGroup": "Improve roll (1 Group FtP)"
+        "improveFateGroup": "Improve roll (1 Group FtP)",
+        "masterAttackFailure": "Attack failed"
     },
     "Book": {
         "Wizard": "Journal Browser",
@@ -2774,4 +2777,5 @@
             }
         }
     }
+
 }
