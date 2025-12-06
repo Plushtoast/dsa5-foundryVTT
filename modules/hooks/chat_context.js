@@ -1,5 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
 const { getProperty } = foundry.utils;
 
@@ -213,6 +214,48 @@ class ConditionChecker {
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
   }
+
+  static getMasterAttackCost(li) {
+    const message = getMessageFromLi(li);
+    if (!message?.flags?.data) return 1;
+    
+    const data = message.flags.data;
+    let successLevel = data.postData?.successLevel;
+    if (successLevel === undefined) successLevel = data.postData?.result?.successLevel;
+    
+    const isCrit = (successLevel > 2) || data.postData?.result?.critical;
+    return isCrit ? 2 : 1;
+  }
+
+  static canMasterFailAttack(li) {
+    const message = getMessageFromLi(li);
+    if (!game.user.isGM || !message) return false;
+
+    const data = message.flags.data;
+    if (!data) return false;
+
+    const type = data.preData?.source?.type || data.type; 
+    const mode = data.preData?.mode || data.mode;
+    
+    const isWeapon = ["meleeweapon", "rangeweapon"].includes(type);
+    const isAttack = mode === "attack";
+
+    if (!isWeapon || !isAttack) return false;
+
+    let successLevel = data.postData?.successLevel;
+    if (successLevel === undefined) successLevel = data.postData?.result?.successLevel;
+    const isSuccessBool = data.postData?.result?.success || data.postData?.success;
+
+    if ((!successLevel || successLevel <= 0) && !isSuccessBool) return false;
+
+    const isCrit = (successLevel > 2) || data.postData?.result?.critical; 
+    const cost = isCrit ? 2 : 1;
+    
+    const setting = game.settings.get("dsa5", "masterschips");
+    const currentSchips = setting ? Number(setting.split("/")[0]) : 0;
+    
+    return currentSchips >= cost;
+  }
 }
 
 class ActionHandler {
@@ -239,6 +282,11 @@ class ActionHandler {
     const message = getMessageFromLi(li);
     const actor = getActorFromMessage(message);
     actor?.useFateOnRoll(message, mode, fateSource);
+  }
+
+  static masterAttackFailure(li) {
+    const message = getMessageFromLi(li);
+    DiceDSA5.masterAttackFailure(message);
   }
 
   static async applyChatCardDamage(li, mode, factor = 1) {
@@ -369,7 +417,23 @@ const createContextOptions = () => {
     return localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
+const masterAttackOption = {
+    name: "CHATCONTEXT.masterAttackFailure", 
+    icon: '<i class="fas fa-skull"></i>',
+    condition: (li) => {
+        const can = ConditionChecker.canMasterFailAttack(li);
+        if (can) {
+            const cost = ConditionChecker.getMasterAttackCost(li);
+            // Dynamischer Name: Kann unterschiedliche Kosten anzeigen
+            masterAttackOption.name = `${game.i18n.localize("CHATCONTEXT.masterAttackFailure")} (${cost} Meisterschip)`;
+        }
+        return can;
+    },
+    callback: (li) => ActionHandler.masterAttackFailure(li)
+  };
+  
   const baseOptions = [
+    masterAttackOption,
     {
       name: 'CHATCONTEXT.hideData',
       icon: '<i class="fas fa-eye"></i>',
