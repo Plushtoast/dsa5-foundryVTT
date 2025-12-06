@@ -2270,7 +2270,7 @@
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
         "improveFate": "Wurf verbessern (1 Schip)",
-        "masterAttackFailure": "Angriff misslungen"
+        "masterAttackFailure": "Gescheiterter Angriff"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
@@ -2781,3 +2781,4 @@
     }
 
 }
+
