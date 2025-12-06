@@ -435,6 +435,30 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     await game.settings.set('dsa5', 'groupschips', schipSetting.join('/'));
   }
 
+  getMasterSchipSetting() {
+    return game.settings.get('dsa5', 'masterschips').split('/').map((x) => Number(x));
+  }
+
+  async changeMasterSchipCount(value) {
+    const schipSetting = this.getMasterSchipSetting();
+    schipSetting[1] = Math.max(0, schipSetting[1] + value);
+    schipSetting[0] = Math.min(schipSetting[1], schipSetting[0]);
+    await game.settings.set('dsa5', 'masterschips', schipSetting.join('/'));
+  }
+
+  static async _changeMasterSchipCount(ev, target) {
+    await game.dsa5.apps.gameMasterMenu.changeMasterSchipCount(Number(target.dataset.value));
+  }
+
+  static async _changeMasterSchip(ev, target) {
+    let val = Number(target.getAttribute('data-val'));
+    if (val == 1 && $(target).closest('.col').find('.fullSchip').length == 1) val = 0;
+
+    const schipSetting = game.settings.get('dsa5', 'masterschips').split('/').map((x) => Number(x));
+    schipSetting[0] = val;
+    await game.settings.set('dsa5', 'masterschips', schipSetting.join('/'));
+  }
+  
   async _createFolder() {
     const settings = expandObject(game.settings.get('dsa5', 'masterSettings'));
     if (!settings.folders) settings.folders = [];
@@ -824,6 +848,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       requestRoll: this._requestRoll,
       addGroupSchip: this._changeGroupSchipCount,
       groupschip: this._changeGroupSchip,
+      addMasterSchip: this._changeMasterSchipCount,
+      masterschip: this._changeMasterSchip,
       addFolder: this._createFolder,
       heroschip: this._heroschip,
       groupcheck: this._groupCheck,
@@ -883,6 +909,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const data = await super._prepareContext(_options);
     this.heros = await this.getTrackedHeros();
     const groupschips = RuleChaos.getGroupSchips();
+    const masterschips = RuleChaos.getMasterSchips();
 
     const thresholds = game.settings.get('dsa5', 'sightOptions').split('|');
     const regex = / \[[a-zA-Zäöü\d-]+\]/;
@@ -987,6 +1014,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       folders,
       abilities: this.abilities,
       groupschips,
+      masterschips,
       masterSettings,
       lastSkill: this.lastSkill,
       randomCreation: this.randomCreation.map((x) => x.template),
