@@ -566,6 +566,17 @@ export function setupConfiguration() {
         if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render();
       },
     },
+    masterschips: {
+      name: 'DSASETTINGS.masterschips',
+      hint: 'DSASETTINGS.masterschips',
+      scope: 'world',
+      config: false,
+      default: '0/0',
+      type: String,
+      onChange: async () => {
+        if (game.user.isGM) game.dsa5.apps.gameMasterMenu.render();
+      },
+    },
     expandChatModifierlist: {
       name: 'DSASETTINGS.expandChatModifierlist',
       hint: 'DSASETTINGS.expandChatModifierlistHint',
