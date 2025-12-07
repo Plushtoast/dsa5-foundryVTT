@@ -2775,5 +2775,8 @@
                 "owned": "Besitzt"
             }
         }
+    },
+    "LOCAL": {
+        "knowledgeTalentsList": "Brett- & Glücksspiel,Geographie,Geschichtswissen,Götter & Kulte,Kriegskunst,Magiekunde,Mechanik,Rechnen,Rechtskunde,Sagen & Legenden,Sphärenkunde,Sternkunde"
     }
 }
