@@ -2442,6 +2442,22 @@ export default class DiceDSA5 {
         content: html,
         "flags.data": newTestData
     });
+
+    const postFunction = getProperty(newTestData, "preData.extra.options.postFunction");
+    
+    if (postFunction && newTestData.postData.successLevel > 0) {
+        try {
+            newTestData.postData.messageId = message.id;
+
+            await eval(postFunction.functionName)(
+                postFunction, 
+                { result: newTestData.postData, chatData: renderData }, 
+                newTestData.preData.source
+            );
+        } catch (e) {
+            console.warn("Glückssegen: Fehler beim Ausführen der Post-Function:", e);
+        }
+    }
   }
   
   static async chatListeners(html) {
