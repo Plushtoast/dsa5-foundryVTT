@@ -213,6 +213,34 @@ class ConditionChecker {
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
   }
+
+  static canUseWeisheitssegen(li) {
+    const message = getMessageFromLi(li);
+    if (!message || !message.flags.data || !message.flags.data.preData || !message.flags.data.preData.source) return false;
+
+    // 1. Talent-Name prüfen
+    const skillName = message.flags.data.preData.source.name?.trim();
+    
+    // Liste aus Sprachdatei laden
+    const knowledgeListString = game.i18n.localize("LOCAL.knowledgeTalentsList");
+    // String am Komma trennen und Leerzeichen entfernen
+    const validSkills = knowledgeListString.split(",").map(s => s.trim());
+
+    // Abbrechen, wenn Talent nicht in der Liste
+    if (!validSkills.includes(skillName)) return false;
+
+    // 2. Actor holen
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+    if (!actor) return false;
+
+    // 3. Effekt prüfen (Weisheitssegen / Wisdom Blessing)
+    const validEffects = ["Weisheitssegen", "Wisdom Blessing"];
+    
+    return actor.effects.some(e => 
+        (validEffects.includes(e.name?.trim()) || validEffects.includes(e.label?.trim())) && !e.disabled
+    );
+  }
 }
 
 class ActionHandler {
@@ -362,6 +390,26 @@ class ActionHandler {
     const { postData } = message.flags.data;
     await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
   }
+
+  static async useWeisheitssegen(li) {
+    ActionHandler.useFate(li, 'isTalented');
+
+    const message = getMessageFromLi(li);
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+
+    if (actor) {
+        const namesToFind = ["Weisheitssegen", "Wisdom Blessing"];
+        const effectToDelete = actor.effects.find(e => 
+            namesToFind.includes(e.name?.trim()) || 
+            namesToFind.includes(e.label?.trim())
+        );
+
+        if (effectToDelete) {
+            await effectToDelete.delete();
+        }
+    }
+  }
 }
 
 const createContextOptions = () => {
@@ -471,6 +519,12 @@ const createContextOptions = () => {
       icon: '<i class="fas fa-plus-square"></i>',
       condition: (li) => ConditionChecker.canImproveRoll(li, true),
       callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
+    },
+    {
+      name: game.i18n.lang === 'de' ? 'Weisheitssegen' : 'Wisdom Blessing',
+      icon: '<i class="fas fa-praying-hands"></i>',
+      condition: ConditionChecker.canUseWeisheitssegen,
+      callback: (li) => ActionHandler.useWeisheitssegen(li),
     },
   ];
 
