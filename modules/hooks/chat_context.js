@@ -237,10 +237,10 @@ class ConditionChecker {
     const type = data.preData?.source?.type || data.type; 
     const mode = data.preData?.mode || data.mode;
     
-    const isWeapon = ["meleeweapon", "rangeweapon"].includes(type);
-    const isAttack = mode === "attack";
+    if (mode !== "attack") return false;
 
-    if (!isWeapon || !isAttack) return false;
+    const magicTypes = ["spell", "liturgy", "ritual", "ceremony", "magicalsign"];
+    if (magicTypes.includes(type)) return false;
 
     let successLevel = data.postData?.successLevel;
     if (successLevel === undefined) successLevel = data.postData?.result?.successLevel;
