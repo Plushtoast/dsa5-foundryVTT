@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
 const { getProperty } = foundry.utils;
@@ -213,6 +214,24 @@ class ConditionChecker {
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
   }
+  
+  static canUseGluckssegen(li) {
+    const message = getMessageFromLi(li);
+    if (!message || !message.flags.data || !message.flags.data.preData || !message.flags.data.preData.source) return false;
+
+    const type = message.flags.data.preData.source.type;
+    const validTypes = ["skill", "spell", "liturgy", "ritual", "ceremony"];
+    if (!validTypes.includes(type)) return false;
+
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+    if (!actor) return false;
+
+    const validNames = ["Glückssegen", "Luck Blessing"];
+    return actor.effects.some(e => 
+        (validNames.includes(e.name?.trim()) || validNames.includes(e.label?.trim())) && !e.disabled
+    );
+  }
 }
 
 class ActionHandler {
@@ -362,6 +381,10 @@ class ActionHandler {
     const { postData } = message.flags.data;
     await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
   }
+  static useGluckssegen(li) {
+    const message = getMessageFromLi(li);
+    DiceDSA5.useGluckssegen(message);
+  }
 }
 
 const createContextOptions = () => {
@@ -471,6 +494,12 @@ const createContextOptions = () => {
       icon: '<i class="fas fa-plus-square"></i>',
       condition: (li) => ConditionChecker.canImproveRoll(li, true),
       callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
+    },
+    {
+      name: 'CHATCONTEXT.gluckssegen',
+      icon: '<i class="fas fa-praying-hands"></i>',
+      condition: ConditionChecker.canUseGluckssegen,
+      callback: (li) => ActionHandler.useGluckssegen(li),
     },
   ];
 
