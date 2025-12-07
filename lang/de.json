@@ -2267,7 +2267,8 @@
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
-        "improveFate": "Wurf verbessern (1 Schip)"
+        "improveFate": "Wurf verbessern (1 Schip)",
+        "gluckssegen": "Glückssegen"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
@@ -2776,4 +2777,5 @@
             }
         }
     }
+
 }
