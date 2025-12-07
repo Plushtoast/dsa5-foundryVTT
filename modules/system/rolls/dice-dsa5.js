@@ -2355,6 +2355,95 @@ export default class DiceDSA5 {
     }, 2000);
   }
 
+  static async useGluckssegen(message) {
+    const data = message.flags.data;
+    
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+
+    if (actor) {
+        const namesToFind = ["Glückssegen", "Luck Blessing"];
+        const effectToDelete = actor.effects.find(e => 
+            namesToFind.includes(e.name?.trim()) || 
+            namesToFind.includes(e.label?.trim())
+        );
+
+        if (effectToDelete) {
+            await effectToDelete.delete();
+        } else {
+            console.warn(`Glückssegen: Effekt konnte nicht entfernt werden (Actor: ${actor.name}).`);
+        }
+    }
+
+    const newTestData = duplicate(data);
+    
+    const oldResult = newTestData.postData.result;
+    
+    newTestData.postData.result += 1;
+    const currentFP = newTestData.postData.result;
+
+    if (currentFP >= 0) {
+        newTestData.postData.successLevel = 1;
+        newTestData.postData.success = true;
+        
+        let newQS = Math.max(1, Math.ceil(currentFP / 3));
+        const cap = game.settings.get('dsa5', 'capQSat') || 6;
+        newTestData.postData.qualityStep = Math.min(cap, newQS);
+        
+        if (!data.postData.success) {
+             const successText = game.i18n.localize("Success");
+             newTestData.postData.description = successText;
+             if(newTestData.postData.result && newTestData.postData.result.description) {
+                 newTestData.postData.result.description = successText;
+             }
+        }
+    } else {
+        newTestData.postData.successLevel = -1;
+        newTestData.postData.success = false;
+        newTestData.postData.qualityStep = undefined;
+    }
+
+    const fpLabel = game.i18n.localize("CHARAbbrev.FP");
+
+    let effectDisplayTitle = "Luck Blessing";
+    let chatDescription = "The blessing of the gods is consumed! Skill points improve.";
+
+    if (game.i18n.lang === "de") {
+        effectDisplayTitle = "Glückssegen";
+        chatDescription = "Der Segen der Götter ist verflogen! Die Fertigkeitspunkte verbessern sich.";
+    }
+    
+    let changeValueDisplay = `${oldResult} <i class="fas fa-arrow-right"></i> ${currentFP}`;
+
+    const infoMsgContent = `
+    <div class="dsa5 chat-card item-card">
+        <header class="card-header media">
+            <h3 class="item-name">${effectDisplayTitle}</h3>
+        </header>
+        <div class="card-content">
+            <p>${chatDescription}</p>
+            <p><b>${fpLabel}:</b> ${changeValueDisplay}</p>
+        </div>
+    </div>`;
+
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsgContent));
+
+    const renderData = {
+        testData: newTestData.postData,
+        preData: newTestData.preData,
+        hideData: newTestData.hideData,
+        hideDamage: newTestData.hideDamage,
+        modifierList: newTestData.preData.situationalModifiers.filter((x) => x.value != 0)
+    };
+
+    const html = await renderTemplate(data.template, renderData);
+    
+    await message.update({
+        content: html,
+        "flags.data": newTestData
+    });
+  }
+  
   static async chatListeners(html) {
     html.on('click', '.expand-mods', (event) => {
       event.preventDefault();
