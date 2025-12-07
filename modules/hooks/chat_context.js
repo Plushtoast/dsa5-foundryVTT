@@ -213,6 +213,26 @@ class ConditionChecker {
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
   }
+  
+  static canUseStarkungssegen(li) {
+    const message = getMessageFromLi(li);
+    if (!message || !message.flags.data || !message.flags.data.preData || !message.flags.data.preData.source) return false;
+
+    const skillName = message.flags.data.preData.source.name;
+    const validSkills = ["Selbstbeherrschung", "Self Control"];
+    
+    if (!validSkills.includes(skillName)) return false;
+
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+    if (!actor) return false;
+
+    const validEffects = ["Stärkungssegen", "Strength Blessing"];
+    
+    return actor.effects.some(e => 
+        (validEffects.includes(e.name?.trim()) || validEffects.includes(e.label?.trim())) && !e.disabled
+    );
+  }
 }
 
 class ActionHandler {
@@ -362,6 +382,26 @@ class ActionHandler {
     const { postData } = message.flags.data;
     await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
   }
+  
+  static async useStarkungssegen(li) {
+    ActionHandler.useFate(li, 'isTalented');
+
+    const message = getMessageFromLi(li);
+    let actor = DSA5_Utility.getSpeaker(message.speaker);
+    if (!actor) actor = game.actors.get(message.speaker.actor);
+
+    if (actor) {
+        const namesToFind = ["Stärkungssegen", "Strength Blessing"];
+        const effectToDelete = actor.effects.find(e => 
+            namesToFind.includes(e.name?.trim()) || 
+            namesToFind.includes(e.label?.trim())
+        );
+
+        if (effectToDelete) {
+            await effectToDelete.delete();
+        }
+    }
+  }
 }
 
 const createContextOptions = () => {
@@ -471,6 +511,12 @@ const createContextOptions = () => {
       icon: '<i class="fas fa-plus-square"></i>',
       condition: (li) => ConditionChecker.canImproveRoll(li, true),
       callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
+    },
+    {
+      name: game.i18n.lang === 'de' ? 'Stärkungssegen' : 'Strength Blessing',
+      icon: '<i class="fas fa-praying-hands"></i>',
+      condition: ConditionChecker.canUseStarkungssegen,
+      callback: (li) => ActionHandler.useStarkungssegen(li),
     },
   ];
 
