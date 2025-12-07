@@ -218,23 +218,17 @@ class ConditionChecker {
     const message = getMessageFromLi(li);
     if (!message || !message.flags.data || !message.flags.data.preData || !message.flags.data.preData.source) return false;
 
-    // 1. Talent-Name prüfen
     const skillName = message.flags.data.preData.source.name?.trim();
     
-    // Liste aus Sprachdatei laden
     const knowledgeListString = game.i18n.localize("LOCAL.knowledgeTalentsList");
-    // String am Komma trennen und Leerzeichen entfernen
     const validSkills = knowledgeListString.split(",").map(s => s.trim());
 
-    // Abbrechen, wenn Talent nicht in der Liste
     if (!validSkills.includes(skillName)) return false;
 
-    // 2. Actor holen
     let actor = DSA5_Utility.getSpeaker(message.speaker);
     if (!actor) actor = game.actors.get(message.speaker.actor);
     if (!actor) return false;
 
-    // 3. Effekt prüfen (Weisheitssegen / Wisdom Blessing)
     const validEffects = ["Weisheitssegen", "Wisdom Blessing"];
     
     return actor.effects.some(e => 
