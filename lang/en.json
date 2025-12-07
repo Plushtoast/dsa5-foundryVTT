@@ -2341,7 +2341,8 @@
         "hideData": "Hide details to players",
         "showData": "Show details to players",
         "improveFate": "Improve roll (1 FtP)",
-        "improveFateGroup": "Improve roll (1 Group FtP)"
+        "improveFateGroup": "Improve roll (1 Group FtP)",
+        "gluckssegen": "Use Luck Blessing"
     },
     "Book": {
         "Wizard": "Journal Browser",
@@ -2774,4 +2775,5 @@
             }
         }
     }
+
 }
