@@ -35,8 +35,35 @@ export default class DSA5Dialog extends DialogShared {
       {
         action: 'rollButton',
         label: 'Roll',
-        callback: (event, button, dialog) => {
+        callback: async (event, button, dialog) => {
           const html = $(button.form)
+          
+          try {
+             const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+             if(actor) {
+                 const selectedOptions = html.find('[name="situationalModifiers"] option:selected');
+                 
+                 for (let el of selectedOptions) {
+                     const itemId = $(el).attr('data-consumable-id');
+                     
+                     if (itemId) {
+                         let item = actor.items.get(itemId);
+                         if (item) {
+                              let newQty = item.system.quantity.value - 1;
+                              if (newQty <= 0) {
+                                  await item.delete();
+                              } else {
+                                  await item.update({"system.quantity.value": newQty});
+                              }
+                              console.log(`DSA5: Verbrauche Item ${item.name} (ID: ${itemId})`);
+                         }
+                     }
+                 }
+             }
+          } catch(e) {
+              console.error("DSA5 Consumable Error:", e);
+          }
+
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           resolve(dialogOptions.callback(html));
         },
