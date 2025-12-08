@@ -314,6 +314,9 @@ export default class DiceDSA5 {
       testData
     );
 
+    // Gather consumable modifiers
+    this._addConsumableModifiers(situationalModifiers, actor, testData);
+
     // Collect target information
     const targets = this.#collectTargets();
 
@@ -2355,6 +2358,57 @@ export default class DiceDSA5 {
     }, 2000);
   }
 
+  static _addConsumableModifiers(situationalModifiers, actor, testData) {
+      if (!actor) return;
+      
+      const consumables = actor.items.filter(x => x.type == "consumable" && x.system.quantity.value > 0);
+      const targetName = testData.source.name; 
+      const targetType = testData.source.type;
+      const typeLabel = game.i18n.localize("TYPES.Item.consumable");
+
+      for (let item of consumables) {
+          const relevantEffect = item.effects.find(e => {
+              if (e.disabled || e.transfer) return false;
+              return e.changes.some(change => {
+                  const key = change.key;
+                  const val = typeof change.value === "string" ? change.value : String(change.value);
+                  return key.includes(targetName) || val.includes(targetName) || 
+                         (targetType == "spell" && key.includes("spell"));
+              });
+          });
+
+          if (relevantEffect) {
+              let change = relevantEffect.changes.find(c => 
+                  c.key.includes(targetName) || 
+                  (typeof c.value === "string" && c.value.includes(targetName))
+              ) || relevantEffect.changes[0];
+
+              let finalValue = 0;
+              let rawValue = change.value;
+
+              if (typeof rawValue === "string" && isNaN(Number(rawValue))) {
+                  const match = rawValue.match(/-?\d+/);
+                  if (match) finalValue = Number(match[0]);
+              } else {
+                  finalValue = Number(rawValue);
+              }
+
+              if (!finalValue && finalValue !== 0) continue;
+
+              let displayName = `${typeLabel}: ${item.name}`;
+              if (item.system.QL) displayName += ` (QS ${item.system.QL})`;
+
+              situationalModifiers.push({
+                  name: displayName,
+                  value: finalValue, 
+                  type: "", 
+                  selected: false,
+                  consumableId: item.id 
+              });
+          }
+      }
+  }
+  
   static async chatListeners(html) {
     html.on('click', '.expand-mods', (event) => {
       event.preventDefault();
