@@ -19,13 +19,40 @@ export default class DSA5SkillDialog extends DialogShared {
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
-    buttons.find(x => x.action == 'rollButton').label = 'Opposed';
+    
+    const rollBtn = buttons.find(x => x.action == 'rollButton');
+    if (rollBtn) rollBtn.label = 'Opposed';
+    
+    const consumeItems = async (html, actor) => {
+        try {
+             if(actor) {
+                 const selectedOptions = html.find('[name="situationalModifiers"] option:selected');
+                 for (let el of selectedOptions) {
+                     const itemId = $(el).attr('data-consumable-id');
+                     if (itemId) {
+                         let item = actor.items.get(itemId);
+                         if (item) {
+                              let newQty = item.system.quantity.value - 1;
+                              if (newQty <= 0) await item.delete();
+                              else await item.update({"system.quantity.value": newQty});
+                         }
+                     }
+                 }
+             }
+        } catch(e) { console.error(e); }
+    };
+
     buttons.unshift(
       {
         action: 'nonOpposedButton',
         label: 'Roll',
-        callback: (event, button, dialog) => {
+        callback: async (event, button, dialog) => {
           const html = $(button.form);
+          
+          // VERBRAUCH AUSFÜHREN
+          const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+          await consumeItems(html, actor);
+          
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.opposable = false;
           resolve(dialogOptions.callback(html));
@@ -34,8 +61,13 @@ export default class DSA5SkillDialog extends DialogShared {
       {
         action: 'routineRoll',
         label: 'ROLL.routine',
-        callback: (event, button, dialog) => {
+        callback: async (event, button, dialog) => {
           const html = $(button.form);
+
+          // VERBRAUCH AUSFÜHREN (Auch bei Routine!)
+          const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
+          await consumeItems(html, actor);
+
           game.dsa5.memory.remember(testData.extra.speaker, testData.source, testData.mode, html);
           testData.routine = true;
           mergeObject(testData.extra.options, {
@@ -48,8 +80,8 @@ export default class DSA5SkillDialog extends DialogShared {
           });
           resolve(dialogOptions.callback(html));
         },
-      
-      });
+      }
+    );
     return buttons;
   }
 
