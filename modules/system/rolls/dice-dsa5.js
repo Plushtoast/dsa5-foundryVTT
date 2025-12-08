@@ -2383,17 +2383,43 @@ export default class DiceDSA5 {
                   (typeof c.value === "string" && c.value.includes(targetName))
               ) || relevantEffect.changes[0];
 
-              let finalValue = 0;
-              let rawValue = change.value;
+              // 1. TYP BESTIMMEN
+              let modType = "";
+              if (change.key.includes(".FP") || change.key.includes("SkillPoints")) modType = "FP";
+              else if (change.key.includes(".QL") || change.key.includes("qualityStep")) modType = "QL";
+              else if (change.key.includes(".FW") || change.key.includes("talentValue")) modType = "FW";
 
+              // 2. ZAHL EXTRAHIEREN (aus "Geisteressenz 1" wird 1)
+              let rawValue = change.value;
+              let numericPart = 0;
+              
               if (typeof rawValue === "string" && isNaN(Number(rawValue))) {
-                  const match = rawValue.match(/-?\d+/);
-                  if (match) finalValue = Number(match[0]);
+                   // Sucht nach einer Zahl (auch negativ) im String
+                   const match = String(rawValue).match(/-?\d+/);
+                   if (match) numericPart = match[0];
               } else {
-                  finalValue = Number(rawValue);
+                   numericPart = rawValue;
               }
 
-              if (!finalValue && finalValue !== 0) continue;
+              // Sicherheitscheck: Haben wir eine Zahl gefunden?
+              if (!numericPart && numericPart != 0) continue;
+
+              // 3. WERT MIT MODUS ZUSAMMENBAUEN
+              // Wir nehmen die extrahierte Zahl und setzen das Vorzeichen basierend auf dem Modus
+              let finalValue = numericPart;
+              switch (parseInt(change.mode)) {
+                  case 1: // Multiply
+                      finalValue = `*${numericPart}`;
+                      break;
+                  case 3: // Downgrade (Minimum value) - eher selten bei Consumables, aber möglich
+                  case 4: // Upgrade (Maximum value)
+                  case 5: // Override
+                      finalValue = `=${numericPart}`;
+                      break;
+                  // Case 2 (Add) ist Standard (+), braucht kein Prefix
+                  default:
+                      finalValue = Number(numericPart); // Sicherstellen, dass es eine Zahl ist für Addition
+              }
 
               let displayName = `${typeLabel}: ${item.name}`;
               if (item.system.QL) displayName += ` (QS ${item.system.QL})`;
@@ -2401,7 +2427,7 @@ export default class DiceDSA5 {
               situationalModifiers.push({
                   name: displayName,
                   value: finalValue, 
-                  type: "", 
+                  type: modType,       
                   selected: false,
                   consumableId: item.id 
               });
