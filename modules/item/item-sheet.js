@@ -581,7 +581,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   static DEFAULT_OPTIONS = {
     actions: {
       postAsGroupCheck: AggregatedTestSheet.postAsGroupCheck,
-      buildItem: AggregatedTestSheet.postFinishedItem,
+      buildItem: AggregatedTestSheet._postFinishedItemWrapper,
     },
     majorButtons: [
       {
@@ -626,7 +626,11 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     RequestRoll.showGCMessage(rollOptions[0].target, 0, data);
   }
 
-  static async postFinishedItem() {
+  static async _postFinishedItemWrapper(event, target) {
+    await this.postFinishedItem();
+  }
+
+  async postFinishedItem() {
     if (!this.actor) return;
 
     const resultItem = this.item.getFlag('dsa5', 'embeddedItem');

@@ -528,6 +528,12 @@ export default class EffectDropdownBuilder {
                 ph: '1',
             },
             {
+                name: `${liturgy} - ${damage}`,
+                val: 'system.liturgyStats.damage',
+                mode: 2,
+                ph: '1',
+            },
+            {
                 name: foreign,
                 val: 'system.spellStats.foreign',
                 mode: 2,
@@ -542,12 +548,6 @@ export default class EffectDropdownBuilder {
             {
                 name: `${ritual} - ${foreign}`,
                 val: 'system.spellStats.foreignspell',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${liturgy} - ${damage}`,
-                val: 'system.liturgyStats.damage',
                 mode: 2,
                 ph: '1',
             },
