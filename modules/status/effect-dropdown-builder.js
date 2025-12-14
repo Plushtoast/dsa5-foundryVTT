@@ -498,6 +498,10 @@ export default class EffectDropdownBuilder {
         const advanced = localize('advanced');
         const feature = localize('feature');
         const damage = localize('damage');
+        const foreign = localize('DSASETTINGS.enableForeignSpellModifier');
+        const spell = localize('TYPES.Item.spell');
+        const ritual = localize('TYPES.Item.ritual');
+        const liturgy = localize('TYPES.Item.liturgy');
 
         const options = [
             // Base costs
@@ -518,13 +522,31 @@ export default class EffectDropdownBuilder {
 
             // Spell/Liturgy damage
             {
-                name: `${localize('spell')} - ${damage}`,
+                name: `${spell} - ${damage}`,
                 val: 'system.spellStats.damage',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${localize('liturgy')} - ${damage}`,
+                name: foreign,
+                val: 'system.spellStats.foreign',
+                mode: 2,
+                ph: '1',
+            },
+            {
+                name: `${spell} - ${foreign}`,
+                val: 'system.spellStats.foreignritual',
+                mode: 2,
+                ph: '1',
+            },
+            {
+                name: `${ritual} - ${foreign}`,
+                val: 'system.spellStats.foreignspell',
+                mode: 2,
+                ph: '1',
+            },
+            {
+                name: `${liturgy} - ${damage}`,
                 val: 'system.liturgyStats.damage',
                 mode: 2,
                 ph: '1',

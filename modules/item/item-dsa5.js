@@ -750,10 +750,12 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     data.isForeign = !distributions.some(d => traditionsSet.has(d));
 
+    const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
+
     if (data.isForeign) {
       situationalModifiers.push({
       name: localize('DSASETTINGS.enableForeignSpellModifer'),
-      value: -2,
+      value: -2 + modOffset,
       selected: true,
       });
     }
