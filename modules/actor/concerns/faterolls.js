@@ -290,6 +290,7 @@ export class FateRolls {
         } else {
             await this.reduceGroupSchip();
         }
+        this.#throwCoin();
     }
 
     /**
@@ -528,5 +529,23 @@ export class FateRolls {
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_IMPROVED}`]: true });
         await this.#reduceSchips(actor, schipsource);
+    }
+
+
+    /**
+     * Perform a coin toss by rolling a single "1DC" die and display the result with Dice So Nice.
+     *
+     * This private static async helper evaluates a Roll created from the "1DC" notation,
+     * then forwards the evaluated Roll to DiceDSA5.showDiceSoNice using the current core roll mode.
+     *
+     * @private
+     * @static
+     * @async
+     * @returns {Promise<void>} Resolves after the roll is evaluated and the visualization is requested.
+     * @throws {Error} If the roll evaluation fails.
+     */
+    static async #throwCoin() {
+        const coinRoll = await new Roll('1DC').evaluate();
+        DiceDSA5.showDiceSoNice(coinRoll, game.settings.get("core", "rollMode"));
     }
 }
