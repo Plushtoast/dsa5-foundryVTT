@@ -321,6 +321,8 @@ export default class DSA5CombatDialog extends DialogShared {
            ${mod.type ? ` data-type="${mod.type}"` : ''}
            ${mod.specAbId ? ` data-spec-ab-id="${mod.specAbId}"` : ''}
            ${mod.armorPen ? ` data-armor-pen="${mod.armorPen}"` : ''}
+           ${mod.effectId ? ` data-effect-id="${mod.effectId}"` : ''}
+           ${mod.effectUuid ? ` data-effect-uuid="${mod.effectUuid}"` : ''}
            ${mod.selected ? ' selected' : ''}>
            ${mod.name} [${mod.value}]
         </option>`

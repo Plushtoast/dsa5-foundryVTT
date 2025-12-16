@@ -394,6 +394,11 @@ export default class DSA5StatusEffects {
 
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
+      const charges = ef.getFlag?.('dsa5', 'charges');
+      if (charges) {
+        const value = Number(charges.value);
+        if (Number.isFinite(value) && value <= 0) continue;
+      }
 
       for (const coreId of [...ef.statuses]) {
         if (finishedCoreIds.includes(coreId)) continue;
@@ -407,6 +412,8 @@ export default class DSA5StatusEffects {
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, coreId),
             source,
+            effectId: ef.id,
+            effectUuid: ef.uuid,
           });
         }
       }

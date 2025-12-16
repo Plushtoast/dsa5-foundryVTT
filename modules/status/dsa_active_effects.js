@@ -6,6 +6,8 @@ export default class DSAActiveEffect extends ActiveEffect {
   static deprecatedDataRegex = /^data\./;
 
   apply(actor, change) {
+    if (this.isDepleted()) return {};
+
     if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
       const modifiedItems = this._getModifiedItems(actor, change);
 
@@ -34,9 +36,72 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   static realyRealyEnabled(effect) {
+    const charges = effect?.getFlag?.('dsa5', 'charges');
+    if (charges) {
+      const value = Number(charges.value);
+      if (Number.isFinite(value) && value <= 0) return false;
+    }
+
     if (effect.disabled || !effect.transfer || effect.system.delayed || (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)) return false;
 
     return true;
+  }
+
+  hasCharges() {
+    const charges = this.getFlag('dsa5', 'charges');
+    if (!charges) return false;
+    return Number.isFinite(Number(charges.value));
+  }
+
+  getChargeData() {
+    const charges = this.getFlag('dsa5', 'charges');
+    if (!charges) return null;
+
+    const valueRaw = Number(charges.value);
+    const maxRaw = Number(charges.max);
+    const value = Number.isFinite(valueRaw) ? valueRaw : null;
+    const max = Number.isFinite(maxRaw) ? maxRaw : null;
+    if (value === null) return null;
+
+    return {
+      value: Math.max(0, value),
+      max: max === null ? null : Math.max(0, max),
+    };
+  }
+
+  getChargeValue() {
+    return this.getChargeData()?.value;
+  }
+
+  isDepleted() {
+    const value = this.getChargeValue();
+    return Number.isFinite(value) && value <= 0;
+  }
+
+  async consumeCharges(amount = 1) {
+    const charges = this.getChargeData();
+    if (!charges) return;
+
+    const consume = Math.max(1, Number(amount) || 1);
+    const newValue = Math.max(0, charges.value - consume);
+
+    if (newValue <= 0) {
+      // If the effect is embedded in an Item, we disable it rather than deleting it.
+      // If the effect is embedded in an Actor, we delete it.
+      if (this.parent?.documentName === 'Item') {
+        await this.update({
+          disabled: true,
+          'flags.dsa5.charges.value': 0,
+        });
+      } else {
+        await this.delete();
+      }
+      return;
+    }
+
+    await this.update({
+      'flags.dsa5.charges.value': newValue,
+    });
   }
 
   static async _onCreateOperation(documents, operation, user) {
@@ -157,7 +222,14 @@ const applyCustomEffect = (elem, change) => {
         let vals = elem.split(' ');
         const value = vals.pop();
         const target = vals.join(' ');
-        newElems.push({ source, value, target, item: change.effect.parent?.name });
+        newElems.push({
+          source,
+          value,
+          target,
+          item: change.effect.parent?.name,
+          effectId: change.effect.id,
+          effectUuid: change.effect.uuid,
+        });
       }
       update = current.concat(newElems);
   }

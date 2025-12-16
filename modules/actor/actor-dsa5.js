@@ -1705,6 +1705,58 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  async _consumeActiveEffectChargesFromRoll(testData) {
+    if (!testData?.extra) return;
+    if (testData.extra.chargesConsumed) return;
+    testData.extra.chargesConsumed = true;
+
+    const mods = Array.isArray(testData.situationalModifiers) ? testData.situationalModifiers : [];
+    const effectUuids = new Set();
+    for (const mod of mods) {
+      if (!mod || mod.selected === false) continue;
+
+      if (mod.effectUuid) {
+        effectUuids.add(mod.effectUuid);
+        continue;
+      }
+
+      // Fallback: some dialog paths may only provide an effect id.
+      if (mod.effectId) {
+        const effect = this.effects?.get?.(mod.effectId);
+        if (effect?.uuid) effectUuids.add(effect.uuid);
+      }
+    }
+
+    const uuids = [...effectUuids];
+
+    if (!uuids.length) return;
+
+    // Prefer GM execution to avoid permission issues.
+    if (!game.user.isGM) {
+      game.socket.emit('system.dsa5', {
+        type: 'consumeEffectCharges',
+        payload: {
+          effectUuids: uuids,
+          amount: 1,
+        },
+      });
+      return;
+    }
+
+    await Promise.all(uuids.map(async (uuid) => {
+      try {
+        const effect = await fromUuid(uuid);
+        const charges = effect?.getFlag?.('dsa5', 'charges');
+        const value = Number(charges?.value);
+        if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+        if (effect.disabled) return;
+        await effect.consumeCharges(1);
+      } catch (e) {
+        console.error('Failed to consume effect charges', uuid, e);
+      }
+    }));
+  }
+
   async consumeAmmunition(testData) {
     if (testData.extra.ammo && !testData.extra.ammoDecreased) {
       testData.extra.ammoDecreased = true;
@@ -1761,6 +1813,7 @@ export default class Actordsa5 extends Actor {
 
     await this.consumeAmmunition(testData);
     await this.payMiracles(testData);
+    await this._consumeActiveEffectChargesFromRoll(testData);
 
     if (!options.suppressMessage) {
       const msg = await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);

@@ -97,6 +97,15 @@
             <input type="text" name="flags.dsa5.description" value="{{document.flags.dsa5.description}}" />
         </div>
     </div>
+
+    <div class="form-group">
+        <label>{{localize 'charges'}}</label>
+        <div class="form-fields">
+            <input type="number" name="flags.dsa5.charges.value" value="{{document.flags.dsa5.charges.value}}" min="0" step="1" />
+            <span class="sep">/</span>
+            <input type="number" name="flags.dsa5.charges.max" value="{{document.flags.dsa5.charges.max}}" min="0" step="1" placeholder="{{localize 'max'}}" />
+        </div>
+    </div>
     {{#if advancedFunctions}}
     <div class="form-group">
         <label>{{localize 'duration'}}</label>
