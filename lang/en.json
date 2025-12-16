@@ -64,6 +64,7 @@
         "GE": "AGI",
         "KO": "CON",
         "RS": "PRO",
+        "postRoll": "Nach Wurf",
         "VW": "DV",
         "LZ": "LT",
         "KK": "STR",
@@ -161,7 +162,11 @@
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
         "dependentMaintainEffects": "Dependent effects (delete too)",
-        "temporaryOff": "Disable temporarily"
+        "temporaryOff": "Disable temporarily",
+        "postRollBuffPickerTitle": "Apply Improvement",
+        "postRollBuffPickerHint": "Select one or more improvements to apply.",
+        "postRollBuffPickerEmpty": "No matching improvements found.",
+        "noSelection": "Nothing selected."
     },
     "Equipment": {
         "misc": "General",
@@ -1043,6 +1048,7 @@
         "doubleAttack": "Two-Weapon Combat",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
+        "postRoll": "After roll",
         "damage": "Damage modifier",
         "quickChange": "Zigzagging",
         "targetMovement": "Target",
@@ -1997,6 +2003,10 @@
         },
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
+        "chargesChatConsumed": "A charge was consumed.",
+        "chargesChatDepletedDisabled": "The effect is depleted and has been disabled.",
+        "chargesChatDepletedDeleted": "The effect is depleted and has been removed.",
+        "chargesChatPostRollImproved": "Roll improved: {details}.",
         "custom": "Special effect",
         "apply": "Apply",
         "always": "Always",
@@ -2144,6 +2154,7 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
+        "elementalAlly": "Elemental Ally",
         "counterAttack": "Counterattack",
         "servantEarth": "tbd",
         "servantFlame": "tbd",
@@ -2152,7 +2163,8 @@
         "servantCloud": "tbd",
         "servantOre": "tbd",
         "immuneTo": "Immunity to",
-        "enemySense": "Enemy Sense"
+        "enemySense": "Enemy Sense",
+        "winhallStyle": "Winhall Style"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -2341,7 +2353,8 @@
         "hideData": "Hide details to players",
         "showData": "Show details to players",
         "improveFate": "Improve roll (1 FtP)",
-        "improveFateGroup": "Improve roll (1 Group FtP)"
+        "improveFateGroup": "Improve roll (1 Group FtP)",
+        "applyDepletableBuffs": "Apply one-time bonus"
     },
     "Book": {
         "Wizard": "Journal Browser",

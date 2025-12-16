@@ -214,7 +214,6 @@ export default class Actordsa5 extends Actor {
         this.statuses.add(statusId);
       }
     }
-
     return changes;
   }
 

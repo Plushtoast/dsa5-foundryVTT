@@ -142,6 +142,7 @@ export default class EffectDropdownBuilder {
         const FP = localize('MODS.FP');
         const stepValue = localize('stepValue');
         const QS = localize('MODS.QS');
+        const postRoll = localize('MODS.postRoll');
         const partChecks = localize('MODS.partChecks');
         const compensation = localize('MODS.compensation');
         const demo = `${localize('LocalizedIDs.perception')} 1`;
@@ -160,6 +161,12 @@ export default class EffectDropdownBuilder {
                 ph: demo,
             },
             {
+                name: `${skill} - ${FP} (${postRoll})`,
+                val: 'system.skillModifiers.postRoll.FP',
+                mode: 0,
+                ph: demo,
+            },
+            {
                 name: `${skill} - ${stepValue}`,
                 val: 'system.skillModifiers.step',
                 mode: 0,
@@ -168,6 +175,12 @@ export default class EffectDropdownBuilder {
             {
                 name: `${skill} - ${QS}`,
                 val: 'system.skillModifiers.QL',
+                mode: 0,
+                ph: demo,
+            },
+            {
+                name: `${skill} - ${QS} (${postRoll})`,
+                val: 'system.skillModifiers.postRoll.QL',
                 mode: 0,
                 ph: demo,
             },
@@ -498,7 +511,7 @@ export default class EffectDropdownBuilder {
         const advanced = localize('advanced');
         const feature = localize('feature');
         const damage = localize('damage');
-        const foreign = localize('DSASETTINGS.enableForeignSpellModifier');
+        const foreign = localize('DSASETTINGS.enableForeignSpellModifer');
         const spell = localize('TYPES.Item.spell');
         const ritual = localize('TYPES.Item.ritual');
         const liturgy = localize('TYPES.Item.liturgy');

@@ -181,6 +181,28 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     return isInstalled;
   }
 
+  async _updateObject(event, formData) {
+    // If the charges inputs are left empty, Foundry often persists them as empty strings.
+    // Number("") === 0 would incorrectly mark the effect as depleted and prevent it from applying.
+    const valueRaw = formData?.['flags.dsa5.charges.value'];
+    const maxRaw = formData?.['flags.dsa5.charges.max'];
+
+    const isEmpty = (v) => v === '' || v === null || v === undefined;
+
+    // If current charges are empty, we consider charges "not configured" and remove the flag entirely.
+    // (Max without a current value is not meaningful for depletion, and would still cause gating.)
+    if (isEmpty(valueRaw)) {
+      delete formData['flags.dsa5.charges.value'];
+      delete formData['flags.dsa5.charges.max'];
+      formData['flags.dsa5.-=charges'] = null;
+    } else if (isEmpty(maxRaw)) {
+      // Allow "current" without "max".
+      delete formData['flags.dsa5.charges.max'];
+    }
+
+    return super._updateObject(event, formData);
+  }
+
   async _preparePartContext(partId, context) {
     const partContext = await super._preparePartContext(partId, context);
     if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];

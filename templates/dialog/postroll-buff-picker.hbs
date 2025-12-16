@@ -1,0 +1,20 @@
+<section class="content standard-form">
+  {{#if matches.length}}
+    <div class="form-group">
+      <p>{{localize "DIALOG.postRollBuffPickerHint"}}</p>
+    </div>
+
+    <div class="form-group">
+      {{#each matches as |m i|}}
+        <label for="{{m.rootID}}_{{i}}">{{m.label}}</label>
+        <input id="{{m.rootID}}_{{i}}" type="checkbox" name="selected" value="{{m.index}}" {{#if m.checked}}checked{{/if}} />
+      {{/each}}
+    </div>
+    <footer class="flexrow">
+      <button type="button" data-action="apply">{{localize "ok"}}</button>
+      <button type="button" data-action="cancel">{{localize "cancel"}}</button>
+    </footer>
+  {{else}}
+    <p>{{localize "DIALOG.postRollBuffPickerEmpty"}}</p>
+  {{/if}}
+</section>

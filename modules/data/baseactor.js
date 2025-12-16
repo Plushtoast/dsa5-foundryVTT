@@ -65,6 +65,8 @@ export class ActorDataModel extends DSADataModel {
       carryModifier: 0,
       aspModifier: 0,
       kapModifier: 0,
+      vulnerabilities: [],
+      resistances: [],
       immunities: [],
       thresholds: { effects: [] },
       creatureBonus: [],
@@ -99,6 +101,10 @@ export class ActorDataModel extends DSADataModel {
       botch: 20,
       crit: 1,
       global: [],
+      postRoll: {
+        QL: [],
+        FP: [],
+      },
       conditional: {
         AsPCost: [],
         KaPCost: [],

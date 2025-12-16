@@ -90,6 +90,7 @@
         "KK": "KK",
         "FW": "FW",
         "STF": "StF",
+        "postRoll": "Nach Wurf",
         "RPR": "RPr",
         "KTW": "KTW",
         "LeP": "LeP",
@@ -185,7 +186,11 @@
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
-        "temporaryOff": "Vorübergehend deaktivieren"
+        "temporaryOff": "Vorübergehend deaktivieren",
+        "postRollBuffPickerTitle": "Verbesserung anwenden",
+        "postRollBuffPickerHint": "Wähle einen oder mehrere Verbesserungen aus, die angewendet werden sollen.",
+        "postRollBuffPickerEmpty": "Keine passenden Verbesserungen gefunden.",
+        "noSelection": "Nichts ausgewählt."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -800,6 +805,7 @@
         "quickChange": "Ziel schlägt Haken",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
+        "postRoll": "Nach Wurf",
         "damage": "Schadensmodifikator",
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
@@ -1758,6 +1764,10 @@
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
+        "chargesChatConsumed": "Eine Ladung wurde verbraucht.",
+        "chargesChatDepletedDisabled": "Der Effekt ist aufgebraucht und wurde deaktiviert.",
+        "chargesChatDepletedDeleted": "Der Effekt ist aufgebraucht und wurde entfernt.",
+        "chargesChatPostRollImproved": "Probe verbessert: {details}.",
         "messageReceivers": {
             "gm": "Nur für den Spielleiter",
             "players": "Für alle",
@@ -2267,7 +2277,8 @@
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
-        "improveFate": "Wurf verbessern (1 Schip)"
+        "improveFate": "Wurf verbessern (1 Schip)",
+        "applyDepletableBuffs": "Einmaligen Bonus anwenden"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
