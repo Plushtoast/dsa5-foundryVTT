@@ -130,7 +130,7 @@ export class ActorDataModel extends DSADataModel {
         QL: [],
         TPM: [],
         FW: [],
-        CMP: [],
+        CMP: [], // compensation
       };
     });
 

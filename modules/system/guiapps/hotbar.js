@@ -517,7 +517,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
         case 'meleeweapon':
         case 'rangeweapon': {
-          const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor);
+          const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor) || [];
           for (let entry of entries) {
             if (!x.system.worn.value) entry.cssClass = 'unequipped';
             groups.attacks.push(entry);
@@ -566,27 +566,32 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #reorderArrayByFlags(itemArray, orderArray) {
-    if (!itemArray || !orderArray || itemArray.length === 0 || orderArray.length === 0) return itemArray;
+    if (!itemArray || itemArray.length === 0) return itemArray;
+
+    const filteredItemArray = itemArray.filter((item) => !!item);
+    if (!orderArray || orderArray.length === 0) return filteredItemArray;
+
+    const filteredOrderArray = orderArray.filter((id) => !!id);
 
     const itemMap = new Map();
-    itemArray.forEach(item => {
-      if (item.id) itemMap.set(item.id, item);
+    filteredItemArray.forEach(item => {
+      if (item?.id) itemMap.set(item.id, item);
     });
 
     const orderedItems = [];
     const usedIds = new Set();
 
-    orderArray.forEach(id => {
+    filteredOrderArray.forEach(id => {
       if (itemMap.has(id) && !usedIds.has(id)) {
         orderedItems.push(itemMap.get(id));
         usedIds.add(id);
       }
     });
 
-    itemArray.forEach(item => {
-      if (item.id && !usedIds.has(item.id)) {
+    filteredItemArray.forEach(item => {
+      if (item?.id && !usedIds.has(item.id)) {
         orderedItems.push(item);
-      } else if (!item.id) {
+      } else if (!item?.id) {
         orderedItems.push(item);
       }
     });
