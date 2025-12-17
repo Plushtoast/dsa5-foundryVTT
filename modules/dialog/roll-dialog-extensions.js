@@ -19,12 +19,13 @@ export class RollDialogExtensions {
 
   static async getDialogState(dialog) {
     const dialogData = dialog?.dialogData ?? {};
-    const actor = DSA5_Utility.getSpeaker(dialogData.speaker);
+    const speaker = dialogData.speaker ?? dialogData.renderData?.speaker ?? null;
+    const actor = speaker ? DSA5_Utility.getSpeaker(speaker) : null;
 
     return {
       dialog,
       actor,
-      speaker: dialogData.speaker,
+      speaker,
       source: dialogData.source,
       mode: dialogData.mode,
       testData: dialog?.testData,
@@ -117,11 +118,18 @@ export class RollDialogExtensions {
     buttonEl.classList.add('dsahidden');
 
     const updateCacheAndVisibility = async () => {
-      const { menuItems, dialogState } = await this.getContextOptions(dialog);
-      // Cache for synchronous ContextMenu open (ContextMenu does not await async onOpen)
-      dialog._dsa5RollDialogMenuItems = menuItems;
-      dialog._dsa5RollDialogState = dialogState;
-      buttonEl.classList.toggle('dsahidden', menuItems.length === 0);
+      try {
+        const { menuItems, dialogState } = await this.getContextOptions(dialog);
+        // Cache for synchronous ContextMenu open (ContextMenu does not await async onOpen)
+        dialog._dsa5RollDialogMenuItems = menuItems;
+        dialog._dsa5RollDialogState = dialogState;
+        buttonEl.classList.toggle('dsahidden', menuItems.length === 0);
+      } catch (err) {
+        console.error(err);
+        dialog._dsa5RollDialogMenuItems = [];
+        dialog._dsa5RollDialogState = null;
+        buttonEl.classList.add('dsahidden');
+      }
     };
 
     await updateCacheAndVisibility();
