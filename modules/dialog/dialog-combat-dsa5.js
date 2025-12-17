@@ -366,11 +366,6 @@ export default class DSA5CombatDialog extends DialogShared {
     }
   }
 
-  async close(options = {}) {
-    clearInterval(this.checkTargets);
-    return await super.close(options);
-  }
-
   _postItem(ev) {
     ev.stopPropagation();
     const elem = $(ev.currentTarget).closest('.specAbs');

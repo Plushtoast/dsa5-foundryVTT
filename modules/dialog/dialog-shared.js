@@ -167,6 +167,14 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true);
   }
 
+  _tearDown(options) {
+    if (this.checkTargets) {
+      clearInterval(this.checkTargets);
+      this.checkTargets = null;
+    }
+    return super._tearDown(options);
+  }
+
   async prepareFormRecall(html) {
     if (!this.recallData) return;
 
