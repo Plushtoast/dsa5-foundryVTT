@@ -1,6 +1,7 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
+import RuleChaos from '../../system/rules/rule_chaos.js';
 import { localize } from '../../system/helpers/localizer.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -73,10 +74,10 @@ export class FateRolls {
 
         const enhancedInfoMsg = isPostRollReroll
             ? ''
-            : `<h3 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h3>
+            : `<h5 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h5>
                 ${game.i18n.format('CHATFATE.isTalented', {
                 character: `<b>${actor.name}</b>`,
-            })}<br>`;
+            })}`;
 
         const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.hbs', {
             testData: newTestData,
@@ -154,21 +155,21 @@ export class FateRolls {
 
                                     const description = game.i18n.localize(descriptionKey);
                                     chargesLines = `
-                                                                            <p>${description}</p>
-                                                                            <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>`;
+                                                    <p>${description}</p>
+                                                    <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>`;
                                 }
 
                                 const content = `
-                                                                    <div class="dsa5 chat-card item-card">
-                                                                        <header class="card-header media">
-                                                                            <h3 class="item-name">${foundry.utils.escapeHTML(effectName)}</h3>
-                                                                        </header>
-                                                                        <div class="card-content">
-                                                                            <p>${extra}</p>
-                                                                            ${rollLine}
-                                                                            ${chargesLines}
-                                                                        </div>
-                                                                    </div>`;
+                                                <div class="dsa5 chat-card item-card">
+                                                    <header class="card-header media">
+                                                        <h5 class="item-name">${foundry.utils.escapeHTML(effectName)}</h5>
+                                                    </header>
+                                                    <div class="card-content">
+                                                        <p>${extra}</p>
+                                                        ${rollLine}
+                                                        ${chargesLines}
+                                                    </div>
+                                                </div>`;
 
                                 await ChatMessage.create({
                                     content,
@@ -262,7 +263,7 @@ export class FateRolls {
                         );
 
                         newTestData.fateUsed = true;
-                        const finalInfoMsg = `${infoMsg}<br><b>${localize('Roll')}</b>: ${changedRolls.join(', ')}`;
+                        const finalInfoMsg = `${infoMsg}<p><b>${localize('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
                         await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
 
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -350,7 +351,7 @@ export class FateRolls {
             const cardOptions = this.#preparePostRollAction(message);
             const { fateAvailable, schipText } = this.#getFatePointInfo(actor, schipsource);
 
-            const infoMsg = this.#buildFateInfoMessage(actor, type, fateAvailable, schipText);
+            const infoMsg = this.#buildFateInfoMessage(actor, type, fateAvailable, schipText, schipsource);
             const newTestData = data.preData;
 
             await actor[`fate${type}`](infoMsg, cardOptions, newTestData, message, data, schipsource);
@@ -516,14 +517,44 @@ export class FateRolls {
         if (schipsource === this.SCHIP_SOURCES.PERSONAL) {
             return {
                 fateAvailable: actor.system.status.fatePoints.value - 1,
-                schipText: 'PointsRemaining'
+                schipText: 'PointsRemaining',
+                schipsource,
             };
         } else {
             return {
-                fateAvailable: game.settings.get('dsa5', 'groupschips').split('/')[0],
-                schipText: 'GroupPointsRemaining'
+                fateAvailable: Number(game.settings.get('dsa5', 'groupschips').split('/')[0]) - 1,
+                schipText: 'GroupPointsRemaining',
+                schipsource,
             };
         }
+    }
+
+    static #buildSchipIconRow(actor, schipsource, remaining, tooltipText) {
+        const safeRemaining = Math.max(0, Number(remaining) || 0);
+
+        let schipList = [];
+        if (schipsource === this.SCHIP_SOURCES.PERSONAL && typeof actor?.schipshtml === 'function') {
+            // Reuse Actor helper for max size; override filled state based on remaining.
+            schipList = actor.schipshtml().map((x) => ({ ...x }));
+        } else if (schipsource === this.SCHIP_SOURCES.GROUP) {
+            // Reuse RuleChaos helper for max size; override filled state based on remaining.
+            schipList = RuleChaos.getGroupSchips().map((x) => ({ ...x }));
+        }
+
+        if (!Array.isArray(schipList) || schipList.length === 0) {
+            // Fallback to old numeric display if we can't build icons.
+            return `<b>${foundry.utils.escapeHTML(tooltipText)}</b>: ${safeRemaining}`;
+        }
+
+        for (let i = 0; i < schipList.length; i++) {
+            schipList[i].cssClass = i + 1 <= safeRemaining ? 'fullSchip' : 'emptySchip';
+        }
+
+        const icons = schipList
+            .map((x) => `<span class="schip tiny ${x.cssClass}"></span>`)
+            .join('');
+
+        return `<div class="row-schips flexrow flexAlignCenter stackedSchips" data-tooltip="${foundry.utils.escapeHTML(tooltipText)}">${icons}</div>`;
     }
 
     /**
@@ -534,10 +565,15 @@ export class FateRolls {
      * @param {string} schipText - Localization key for fate point text
      * @returns {string} Formatted HTML message
      */
-    static #buildFateInfoMessage(actor, type, fateAvailable, schipText) {
-        return `<h3 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h3>
-                ${game.i18n.format(`CHATFATE.${type}`, { character: `<b>${actor.name}</b>` })}<br>
-                <b>${localize(`CHATFATE.${schipText}`)}</b>: ${fateAvailable}`;
+    static #buildFateInfoMessage(actor, type, fateAvailable, schipText, schipsource) {
+        const tooltipText = localize(`CHATFATE.${schipText}`);
+        const schipsRow = this.#buildSchipIconRow(actor, schipsource, fateAvailable, tooltipText);
+
+        return `<h5 class="center"><b>${localize('CHATFATE.fatepointUsed')}</b></h5>
+                <div class="flexrow">
+                    <div>${game.i18n.format(`CHATFATE.${type}`, { character: `<b>${actor.name}</b>` })}</div>
+                    ${schipsRow}
+                </div>`;
     }
 
     /**
