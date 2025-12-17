@@ -1,0 +1,28 @@
+<h1 id="major-enhancements">Major Enhancements</h1>
+<h2 id="roll-dialog-extensions-abilities-active-effects">Roll Dialog Extensions (Abilities / Active Effects) </h2>
+<p>A new extension interface for roll dialogs has been added. Abilities (and other mechanics) can now contribute additional roll actions via a small context menu (hamburger button) directly inside skill/spell/liturgy/ritual/ceremony roll dialogs.</p>
+<p>This lays the foundation for adding special roll actions without having to fork or replace the core dialog. <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2194">#2194</a></p>
+<h2 id="active-effect-charges">Active Effect Charges </h2>
+<p>Active Effects can now optionally have charges and be depleted when used. Depleted effects no longer apply. This is currently mostly for modifiers appearing in situational modifiers and postroll effects.</p>
+<p>Depending on where the effect lives, depletion will either disable the effect (when embedded on an Item) or remove it (when embedded on an Actor). <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2195">#2195</a></p>
+<h2 id="post-roll-improvements-rerolls">Post-Roll Improvements: Rerolls </h2>
+<p>Post-roll improvements gained a new option: rerolls.</p>
+<ul class="dsalist">
+<li>Rerolls can be offered via Active Effects as a post-roll improvement.</li>
+<li>Rerolls are exclusive (they cannot be combined with Fate Point / QS improvements).</li>
+<li>Rerolls integrate with the existing “Begabung” reroll dialog and consume charges when applicable.</li>
+</ul>
+<p><a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues/2196">#2196</a></p>
+<h1 id="improvements">Improvements </h1>
+<ul class="dsalist">
+<li><strong>Dodge modifiers</strong>: improved display of dodge modifiers (e.g. “Fixiert”).</li>
+<li><strong>Foreign spell malus</strong>: adjusted handling for Foreign-spell modifiers.</li>
+<li><strong>Pain immunity</strong>: for creatures immune to pain, the pain condition level is no longer preselected in checks.</li>
+<li><strong>Personae Dramatis</strong>: required fields are now marked more clearly.</li>
+<li><strong>Game manual</strong>: a bunch of additional chapters are now available in the game manual, especially for the English version (screenshots will follow later, we have to create around 190 more… uff). Currently only in the wiki, ingame journals will be updated after the creation of the screenshots.</li>
+</ul>
+<h1 id="bugfixes">Bugfixes </h1>
+<p>We will not list bugfixes anymore. Instead you can find the timeline when what bugfixes has been resolved right here:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix Timeline</a></p>
+<p>On the same board you can also find plans for future enhancements on the system.<br>
+Note that you can also use the search function there.</p>

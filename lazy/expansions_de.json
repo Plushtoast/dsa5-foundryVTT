@@ -259,6 +259,16 @@
           "badges": []
         },
         {
+          "id": "dsa5-scalytyrants",
+          "label": "Geschuppte Tyrannen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5094/dsa5-geschuppte-tyrannen-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/b8/5d/1b/foundry_cover_geschuppe_ty.jpg"
+          },
+          "description": "Geschuppte Tyrannen ist eine Spielhilfe über die mächtigsten Ungeheuer Aventuriens: die Drachen. Sie sind die Plage ganzer Landstriche, besitzen unermessliche Schätze in ihren Horten und sie zu besiegen ist die Aufgabe wahrer Helden. …",
+          "badges": []
+        },
+        {
           "id": "dsa5-elementarium",
           "label": "Aventurisches Elementarium",
           "href": "https://www.f-shop.de/detail/index/sArticle/3115",
@@ -574,6 +584,26 @@
             "src": "https://www.f-shop.de/media/image/94/cf/f2/ESD046_0_0999.jpg"
           },
           "description": "In diesem Foundry Modul für das DSA5 Regelwerk wird dir die Winterwacht präsentiert. Die Winterwacht ist die neunte Regionalspielhilfe zur 5.",
+          "badges": []
+        },
+        {
+          "id": "dsa5-wolfsfrost",
+          "label": "Der Wolfsfrost",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5014/dsa5-der-wolfsfrost-regionalspielhilfe-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/82/1e/1e/ESD059_0.jpg"
+          },
+          "description": "In den eisigen Nächten des Hohen Nordens ziehen wandernde Nivesen mit ihren Herden durch die Tundra und Siedler versammeln sich am Feuer in verrauchten Holzhütten. Werden die Schrecken aus der Dunkelheit sie diesmal verschonen? …",
+          "badges": []
+        },
+        {
+          "id": "dsa5-lizardswamps",
+          "label": "Die Echsensümpfe",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5027/dsa5-die-echsensuempfe-regionalspielhilfe-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/74/64/b9/a4_cover_echsensuempfe_vtt.jpg"
+          },
+          "description": "Was schlummert unter der uralten Bibliothek der Hauptstadt Selem? Woher kommt der irre Singsang, der aus dem Morast dringt, und warum reiten Echsenmenschen auf den Rücken riesiger Flugechsen? …",
           "badges": []
         },
         {
