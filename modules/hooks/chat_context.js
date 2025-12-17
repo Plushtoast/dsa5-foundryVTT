@@ -225,9 +225,6 @@ class ConditionChecker {
     const actor = getActorFromRollMessage(message);
     if (!actor || !hasOwnership(actor) || !message?.flags?.data) return false;
 
-    const successLevel = Number(getProperty(message, 'flags.data.postData.successLevel'));
-    if (!(successLevel > 0)) return false;
-
     return PostRollBuffs.getMatches(message, actor).length > 0;
   }
 }

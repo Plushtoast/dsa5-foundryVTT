@@ -190,6 +190,9 @@
         "postRollBuffPickerTitle": "Verbesserung anwenden",
         "postRollBuffPickerHint": "Wähle einen oder mehrere Verbesserungen aus, die angewendet werden sollen.",
         "postRollBuffPickerEmpty": "Keine passenden Verbesserungen gefunden.",
+        "postRollRerollDice": "Neu würfeln: {count} Würfel",
+        "postRollRerollExclusive": "Neu würfeln kann nicht mit FP/QS-Verbesserungen kombiniert werden.",
+        "postRollRerollMaxDice": "Du kannst höchstens {max} Würfel neu würfeln.",
         "noSelection": "Nichts ausgewählt."
     },
     "Equipment": {
@@ -806,6 +809,7 @@
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
         "postRoll": "Nach Wurf",
+        "reroll": "Neu würfeln",
         "damage": "Schadensmodifikator",
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
@@ -1768,6 +1772,7 @@
         "chargesChatDepletedDisabled": "Der Effekt ist aufgebraucht und wurde deaktiviert.",
         "chargesChatDepletedDeleted": "Der Effekt ist aufgebraucht und wurde entfernt.",
         "chargesChatPostRollImproved": "Probe verbessert: {details}.",
+        "chargesChatPostRollRerolled": "Probe neu gewürfelt: {count} Würfel.",
         "messageReceivers": {
             "gm": "Nur für den Spielleiter",
             "players": "Für alle",

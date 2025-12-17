@@ -41,6 +41,7 @@ export class PostRollBuffPicker extends foundry.applications.api.HandlebarsAppli
         effectUuid: m.effectUuid,
         fp: m.fp,
         qs: m.qs,
+        rerollDice: m.rerollDice,
         charges: m.charges,
         checked: preselectSingle,
         rootID: foundry.utils.randomID()
@@ -56,6 +57,7 @@ export class PostRollBuffPicker extends foundry.applications.api.HandlebarsAppli
     const parts = [];
     if (match.fp) parts.push(`${fpLabel} ${match.fp > 0 ? '+' : ''}${match.fp}`);
     if (match.qs) parts.push(`${qsLabel} ${match.qs > 0 ? '+' : ''}${match.qs}`);
+    if (match.rerollDice) parts.push(game.i18n.format('DIALOG.postRollRerollDice', { count: match.rerollDice }));
     const charges = match.charges?.max ? ` [${match.charges.value ?? 0}/${match.charges.max}]` : '';
     return `${match.effectName} (${parts.join(', ')})${charges}`;
   }

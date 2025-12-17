@@ -166,6 +166,9 @@
         "postRollBuffPickerTitle": "Apply Improvement",
         "postRollBuffPickerHint": "Select one or more improvements to apply.",
         "postRollBuffPickerEmpty": "No matching improvements found.",
+        "postRollRerollDice": "Reroll {count} dice",
+        "postRollRerollExclusive": "Reroll cannot be combined with FP/QS improvements.",
+        "postRollRerollMaxDice": "You can reroll at most {max} dice.",
         "noSelection": "Nothing selected."
     },
     "Equipment": {
@@ -1049,6 +1052,7 @@
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
         "postRoll": "After roll",
+        "reroll": "Reroll",
         "damage": "Damage modifier",
         "quickChange": "Zigzagging",
         "targetMovement": "Target",
@@ -2007,6 +2011,7 @@
         "chargesChatDepletedDisabled": "The effect is depleted and has been disabled.",
         "chargesChatDepletedDeleted": "The effect is depleted and has been removed.",
         "chargesChatPostRollImproved": "Roll improved: {details}.",
+        "chargesChatPostRollRerolled": "Check rerolled: {count} dice.",
         "custom": "Special effect",
         "apply": "Apply",
         "always": "Always",

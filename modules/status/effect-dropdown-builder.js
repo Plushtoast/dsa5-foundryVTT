@@ -143,6 +143,7 @@ export default class EffectDropdownBuilder {
         const stepValue = localize('stepValue');
         const QS = localize('MODS.QS');
         const postRoll = localize('MODS.postRoll');
+        const reroll = localize('MODS.reroll');
         const partChecks = localize('MODS.partChecks');
         const compensation = localize('MODS.compensation');
         const demo = `${localize('LocalizedIDs.perception')} 1`;
@@ -183,6 +184,12 @@ export default class EffectDropdownBuilder {
                 val: 'system.skillModifiers.postRoll.QL',
                 mode: 0,
                 ph: demo,
+            },
+            {
+                name: `${skill} - ${reroll} (${postRoll})`,
+                val: 'system.skillModifiers.postRoll.reroll',
+                mode: 0,
+                ph: `${localize('LocalizedIDs.perception')} 1`,
             },
             {
                 name: `${skill} - ${partChecks}`,

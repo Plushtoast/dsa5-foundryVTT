@@ -7,6 +7,7 @@ const { TextEditor } = foundry.applications.ux;
 const POST_ROLL_KEYS = {
   FP: 'system.skillModifiers.postRoll.FP',
   QL: 'system.skillModifiers.postRoll.QL',
+  REROLL: 'system.skillModifiers.postRoll.reroll',
 };
 
 const ALLOWED_ANY_TYPES = new Set(['skill', 'spell', 'liturgy', 'ritual', 'ceremony']);
@@ -39,6 +40,15 @@ export default class PostRollBuffs {
     const amount = Number(amountRaw);
     if (!Number.isFinite(amount) || amount === 0) return null;
     return { scope, amount };
+  }
+
+  static _parseEntryWithDefaultAmount(entry, defaultAmount = 1) {
+    const parsed = this._parseEntry(entry);
+    if (parsed) return parsed;
+
+    const scope = `${entry ?? ''}`.trim();
+    if (!scope) return null;
+    return { scope, amount: defaultAmount };
   }
 
   static _matchesScope(scope, source) {
@@ -74,6 +84,9 @@ export default class PostRollBuffs {
     const parts = [];
     if (match.fp) parts.push(`${fpLabel} ${match.fp > 0 ? '+' : ''}${match.fp}`);
     if (match.qs) parts.push(`${qsLabel} ${match.qs > 0 ? '+' : ''}${match.qs}`);
+    if (match.rerollDice) {
+      parts.push(game.i18n.format('DIALOG.postRollRerollDice', { count: match.rerollDice }));
+    }
 
     const charges = match.charges?.max ? ` [${match.charges.value ?? 0}/${match.charges.max}]` : '';
     return `${match.effectName} (${parts.join(', ')})${charges}`;
@@ -181,6 +194,12 @@ export default class PostRollBuffs {
     return successLevel > 0 || success;
   }
 
+  static _ensureRollData(message) {
+    if (!message?.flags?.data) return false;
+    const source = getProperty(message, 'flags.data.preData.source');
+    return !!source;
+  }
+
   static _addSituationalModifier(flagsData, match) {
     const preData = flagsData.preData;
     preData.situationalModifiers ??= [];
@@ -235,10 +254,12 @@ export default class PostRollBuffs {
 
   static getMatches(message, actor) {
     if (!message?.flags?.data || !actor) return [];
-    if (!this._ensureSuccessOnly(message)) return [];
+    if (!this._ensureRollData(message)) return [];
 
     const source = getProperty(message, 'flags.data.preData.source');
     if (!source) return [];
+
+    const successOnly = this._ensureSuccessOnly(message);
 
     const usedEffectUuids = new Set(this._getUsedEffectUuids(message));
 
@@ -254,21 +275,31 @@ export default class PostRollBuffs {
 
       let fp = 0;
       let qs = 0;
+      let rerollDice = 0;
 
       for (const change of effect.changes || []) {
-        if (change?.key !== POST_ROLL_KEYS.FP && change?.key !== POST_ROLL_KEYS.QL) continue;
+        const isRerollKey = change?.key === POST_ROLL_KEYS.REROLL;
+        if (change?.key !== POST_ROLL_KEYS.FP && change?.key !== POST_ROLL_KEYS.QL && !isRerollKey) continue;
+
+        // FP/QS apply only on successful rolls; rerolls are allowed on failed rolls too.
+        if (!successOnly && (change.key === POST_ROLL_KEYS.FP || change.key === POST_ROLL_KEYS.QL)) continue;
 
         for (const entry of this._splitEntries(change.value)) {
-          const parsed = this._parseEntry(entry);
+          const parsed = isRerollKey ? this._parseEntryWithDefaultAmount(entry, 1) : this._parseEntry(entry);
           if (!parsed) continue;
           if (!this._matchesScope(parsed.scope, source)) continue;
 
           if (change.key === POST_ROLL_KEYS.FP) fp += parsed.amount;
           else if (change.key === POST_ROLL_KEYS.QL) qs += parsed.amount;
+          else if (isRerollKey) {
+            const dice = Math.max(1, Number(parsed.amount) || 1);
+            // Take the strongest matching entry per effect.
+            rerollDice = Math.max(rerollDice, dice);
+          }
         }
       }
 
-      if (fp === 0 && qs === 0) continue;
+      if (fp === 0 && qs === 0 && rerollDice === 0) continue;
 
       matches.push({
         effectUuid: effect.uuid,
@@ -276,6 +307,7 @@ export default class PostRollBuffs {
         effectName,
         fp,
         qs,
+        rerollDice,
         charges: chargeData,
       });
     }
@@ -290,7 +322,6 @@ export default class PostRollBuffs {
 
   static async applyMatches(message, matches) {
     if (!message?.flags?.data || !Array.isArray(matches) || matches.length === 0) return;
-    if (!this._ensureSuccessOnly(message)) return;
 
     // Defense-in-depth: chat context is owner/GM only, but also enforce it here.
     const speakerActor = ChatMessage.getSpeakerActor(message.speaker) || game.actors.get(message.speaker?.actor);
@@ -302,6 +333,38 @@ export default class PostRollBuffs {
     const ordered = this.sortMatchesForApply(matches);
 
     const consumptionWarnings = [];
+
+    const hasReroll = ordered.some((m) => (Number(m?.rerollDice) || 0) > 0);
+    if (hasReroll) {
+      // Reroll is exclusive: exactly one reroll match can be applied, with no FP/QS.
+      if (ordered.length !== 1) {
+        ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
+        return;
+      }
+      const match = ordered[0];
+      const dice = Math.max(1, Number(match?.rerollDice) || 1);
+      if (!match?.effectUuid || usedEffectUuids.has(match.effectUuid) || match.fp || match.qs) {
+        ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
+        return;
+      }
+
+      const actor = speakerActor;
+      if (!actor) return;
+
+      // Defer charge consumption + used marking until the Begabung reroll dialog is confirmed.
+      await this._tryUpdateMessage(message, {
+        'flags.dsa5.postRoll.pendingReroll': {
+          effectUuid: match.effectUuid,
+          dice,
+        },
+      });
+
+      actor.useFateOnRoll(message, 'isTalented');
+      return;
+    }
+
+    // FP/QS post-roll buffs apply only on successful rolls.
+    if (!this._ensureSuccessOnly(message)) return;
 
     for (const match of ordered) {
       if (!match?.effectUuid || usedEffectUuids.has(match.effectUuid)) continue;
