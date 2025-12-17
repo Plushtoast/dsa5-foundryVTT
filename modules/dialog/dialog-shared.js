@@ -2,6 +2,7 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
 import { AddTargetDialog } from './addTargetDialog.js';
+import { RollDialogExtensions } from './roll-dialog-extensions.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogShared extends foundry.applications.api.DialogV2 {
@@ -161,6 +162,9 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     html.find('.window-content form').addClass('scrollable');
 
     this.rotateToTarget();
+
+    // Ability/extension burger menu (hidden by default)
+    await RollDialogExtensions.bindBurgerMenu(this);
   }
 
   async addTarget(ev) {

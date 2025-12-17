@@ -152,7 +152,8 @@ export default class Actordsa5 extends Actor {
 
     this.dsatriggers = {
       [DSATriggers.EVENTS.POST_ROLL]: {},
-      [DSATriggers.EVENTS.POST_OPPOSED]: {}
+      [DSATriggers.EVENTS.POST_OPPOSED]: {},
+      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
     };
 
     const appliedArtifacts = this.items

@@ -75,7 +75,7 @@ Hooks.once('i18nInit', () => {
 
 export default class DSAActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
-  static macroIndexes = [2, 6, 7];
+  static macroIndexes = [2, 6, 7, 8];
 
   static DEFAULT_OPTIONS = {
     window: {
@@ -247,6 +247,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           advancedFunctions.push(
             { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL },
             { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED },
+            { name: 'ActiveEffects.advancedFunctions.rollDialogRender', index: DSATriggers.EVENTS.ROLL_DIALOG_RENDER },
           );
         }
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {

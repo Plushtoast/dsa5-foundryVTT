@@ -422,13 +422,14 @@ export default class DiceDSA5 {
     return renderTemplate(dialogOptions.template, dialogOptions.data)
       .then(content => {
         return new Promise((resolve, reject) => {
-          new dialog({
+          const dlg = new dialog({
             window: { title: dialogOptions.title },
             content,
             buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
           })
             .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data)
-            .render(true);
+          dlg.testData = testData;
+          dlg.render(true);
         });
       });
   }

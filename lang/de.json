@@ -1807,7 +1807,8 @@
             "onRemove": "Macro (Effektende)",
             "onUseEffect": "Macro (Benutzung)",
             "postRoll": "Macro (Nach Wurf)",
-            "postOpposed": "Macro (Nach Gegenprobe)"
+            "postOpposed": "Macro (Nach Gegenprobe)",
+            "rollDialogRender": "Würfel-Dialog (Menü)"
         },
         "dialog": {
             "duration": "Effektdauer",

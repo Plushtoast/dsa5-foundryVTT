@@ -64,7 +64,7 @@
         "GE": "AGI",
         "KO": "CON",
         "RS": "PRO",
-        "postRoll": "Nach Wurf",
+                "postRoll": "Nach Wurf",
         "VW": "DV",
         "LZ": "LT",
         "KK": "STR",
@@ -2040,7 +2040,8 @@
             "onRemove": "Macro (End of effect)",
             "onUseEffect": "Macro (On Use)",
             "postRoll": "Macro (after roll)",
-            "postOpposed": "Macro (after opposed roll)"
+            "postOpposed": "Macro (after opposed roll)",
+            "rollDialogRender": "Roll dialog (menu)"
         },
         "dialog": {
             "duration": "Effect Duration",
