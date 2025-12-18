@@ -89,10 +89,29 @@ export default class DSATables {
             },
           });
         }
+        await DSATables.finalizeEffect(ef);
         effects.push(ef);
       }
     }
     return effects;
+  }
+
+  static async finalizeEffect(ef) {
+      if(ef.duration?.seconds) {
+        ef.duration.seconds = (await new Roll(DSATables.#prepareRollString(`${ef.duration.seconds}`)).evaluate()).total;
+      }
+      else if (ef.duration?.rounds) {
+        ef.duration.rounds = (await new Roll(DSATables.#prepareRollString(`${ef.duration.rounds}`)).evaluate()).total;
+      }
+      else if (ef.duration?.turns) {
+        ef.duration.turns = (await new Roll(DSATables.#prepareRollString(`${ef.duration.turns}`)).evaluate()).total;
+      }
+
+      if (!ef.img) ef.img = 'icons/svg/aura.svg';
+  }
+
+  static #prepareRollString(rollBase) {
+    return `${rollBase}`.replaceAll(/wW/g, 'd')
   }
 
   static async getRollTable(packName, name, options = {}) {

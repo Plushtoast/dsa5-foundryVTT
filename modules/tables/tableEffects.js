@@ -7,6 +7,7 @@ import OnUseEffect from '../system/automation/onUseEffects.js';
 import CombatskillData from '../data/item/combatskill.js';
 import { localize } from '../system/helpers/localizer.js';
 import TraitData from '../data/item/trait.js';
+import DSATables from './dsatables.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
 
 export default class TableEffects {
@@ -151,7 +152,7 @@ export default class TableEffects {
           //todo add duration
           ef = systemEffect;
         }
-
+        await DSATables.finalizeEffect(ef);
         for (let target of finalTargets) {
           await target.addCondition(ef);
         }
@@ -167,7 +168,7 @@ export default class TableEffects {
             },
           },
         });
-
+        await DSATables.finalizeEffect(ef);
         for (let target of finalTargets) {
           await target.addCondition(ef);
         }
