@@ -3479,6 +3479,10 @@ select.noAppearance {
     &::-webkit-scrollbar {
       width: 6px;
     }
+
+    button {
+      height: unset;
+    }
   }
 
   .action-buttons {
