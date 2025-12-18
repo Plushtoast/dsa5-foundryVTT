@@ -768,7 +768,6 @@ class SpellItemDSA5 extends Itemdsa5 {
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
       ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalAttunement', 1, true),
       ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalRestriction', -1, true),
-      ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.boundToArtifact', -1, true),
       ...this.getPropertyModifiers(actor, source),
       ...this.attackSpellMalus(source),
     );
