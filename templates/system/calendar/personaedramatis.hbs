@@ -38,7 +38,7 @@
                                 <span class="faction-count">({{factionGroup.members.length}})</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanClass}}
@@ -86,7 +86,7 @@
                                 <span class="faction-count">({{factionGroup.members.length}})</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanClass}}
