@@ -2106,6 +2106,7 @@ export default class DiceDSA5 {
   }
 
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
+    const previousOther = rerenderMessage ? getProperty(rerenderMessage, 'flags.data.postData.other') : undefined;
     const applyEffect = this.addApplyEffectData(testData);
     const immuneTo = CreatureType.checkImmunity(testData);
     const preData = deepClone(testData.preData);
@@ -2181,6 +2182,17 @@ export default class DiceDSA5 {
       if (postFunction) {
         testData.messageId = rerenderMessage.id;
         await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source);
+      }
+
+      // Keep additional info blocks (testData.other) stable across rerenders.
+      if (Array.isArray(previousOther) && previousOther.length) {
+        if (!Array.isArray(testData.other) || testData.other.length === 0) {
+          testData.other = deepClone(previousOther);
+        } else {
+          for (const entry of previousOther) {
+            if (!testData.other.includes(entry)) testData.other.push(entry);
+          }
+        }
       }
 
       const html = await renderTemplate(chatOptions.template, chatData);
