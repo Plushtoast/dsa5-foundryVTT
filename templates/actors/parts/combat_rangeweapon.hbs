@@ -42,7 +42,7 @@
                     <option>-</option>  
                 </select>
                 {{/if}}
-                {{#if (ne item.LZ 0)}}
+                {{#if (and (ne item.LZ 0) (not (gt item.system.aimTime.progress 0)))}}
                 <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress-dsa5 blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -54,10 +54,22 @@
                         <div class="progress-value">{{item.progress}}</div>
                     </div>
                 </a> {{/if}}
+
+                {{#if (gt item.system.aimTime.progress 0)}}
+                <div class="progress-dsa5 blue" data-tooltip="{{item.aimTitle}}">
+                    <span class="progress-left" style="--transformLeft:{{item.aimTransformLeft}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <span class="progress-right" style="--transformRight:{{item.aimTransformRight}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <div class="progress-value">{{item.aimProgress}}</div>
+                </div>
+                {{/if}}
             </div>
             {{else}}
             <div class="no-ammo">
-                - {{#if (ne item.LZ 0)}}
+                - {{#if (and (ne item.LZ 0) (not (gt item.system.aimTime.progress 0)))}}
                 <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress-dsa5 blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -69,6 +81,18 @@
                         <div class="progress-value">{{item.progress}}</div>
                     </div>
                 </a> {{/if}}
+
+                {{#if (gt item.system.aimTime.progress 0)}}
+                <div class="progress-dsa5 blue" data-tooltip="{{item.aimTitle}}">
+                    <span class="progress-left" style="--transformLeft:{{item.aimTransformLeft}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <span class="progress-right" style="--transformRight:{{item.aimTransformRight}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <div class="progress-value">{{item.aimProgress}}</div>
+                </div>
+                {{/if}}
             </div>
             {{/if}}
         </div>

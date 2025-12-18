@@ -767,7 +767,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (ev.button == 0) {
       const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
       update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
-    } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
+    } else if (ev.button == 2) {
+      update['system.reloadTime.progress'] = 0;
+      update['system.aimTime.progress'] = 0;
+    }
 
     await this.actor.updateEmbeddedDocuments('Item', [update]);
   }

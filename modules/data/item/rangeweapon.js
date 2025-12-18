@@ -34,6 +34,9 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
         value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
       }),
+      aimTime: new SchemaField({
+        progress: new ScopableNumberField({ initial: 0 }),
+      }),
       reach: new SchemaField({
         value: new ScopableStringField({ initial: '5/25/40', label: 'reach' }),
       }),
@@ -71,6 +74,27 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       item.title = game.i18n.localize('WEAPON.loaded');
     }
     this.progressTransformation(item, progress);
+  }
+
+  static buildAimProgress(item) {
+    const aimProgress = Math.clamp(Number(item.system?.aimTime?.progress) || 0, 0, 2);
+    const progress = aimProgress / 2;
+
+    item.aimTitle = game.i18n.format('WEAPON.aiming', {
+      status: `${aimProgress}/2`,
+    });
+    item.aimProgress = `${aimProgress}/2`;
+    if (progress >= 1) {
+      item.aimTitle = game.i18n.localize('WEAPON.aimed');
+    }
+
+    if (progress >= 0.5) {
+      item.aimTransformRight = '181deg';
+      item.aimTransformLeft = `${Math.round(progress * 360 - 179)}deg`;
+    } else {
+      item.aimTransformRight = `${Math.round(progress * 360 + 1)}deg`;
+      item.aimTransformLeft = '0deg';
+    }
   }
 
   prepareEmbeddedItemSheet() {

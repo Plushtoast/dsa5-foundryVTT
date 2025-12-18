@@ -512,6 +512,15 @@ export default class DSA5CombatDialog extends DialogShared {
 
   async prepareFormRecall(html) {
     await super.prepareFormRecall(html);
+
+    if (
+      this.dialogData?.source?.type === 'rangeweapon' ||
+      (this.dialogData?.source?.type === 'trait' && this.dialogData.source.system.traitType.value === 'rangeAttack')
+    ) {
+      const aimProgress = Math.clamp(Number(getProperty(this.dialogData.source, 'system.aimTime.progress')) || 0, 0, 2);
+      html.find('[name="aim"]').prop('selectedIndex', aimProgress);
+    }
+
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     DPS.lightLevel(actor, html);
     const isRider = Riding.isRiding(actor);
@@ -1010,6 +1019,43 @@ export default class DSA5CombatDialog extends DialogShared {
           },
         });
       }
+      
+      const loaded = LZ === 0 || progress >= LZ;
+      const aimProgress = Math.clamp(Number(getProperty(testData.source, 'system.aimTime.progress')) || 0, 0, 2);
+      if (loaded && aimProgress < 2) {
+        buttons.push({
+          action: 'aimButton',
+          label: `${localize('WEAPON.aim')} (${aimProgress}/2)`,
+          callback: async () => {
+            const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
+            const weapon = actor?.items?.get(testData.source._id);
+            if (!weapon) return;
+
+            const lz = weapon.type === 'trait' ? Number(weapon.system.reloadTime?.value) || 0 : Actordsa5.calcLZ(weapon, actor);
+            const reloadProgress = Number(weapon.system.reloadTime?.progress) || 0;
+            const loaded = lz === 0 || reloadProgress >= lz;
+            if (!loaded) return;
+
+            const aimProgress = Math.clamp(Number(weapon.system?.aimTime?.progress) || 0, 0, 2);
+            if (aimProgress >= 2) return;
+
+            const newProgress = Math.min(aimProgress + 1, 2);
+            await actor.updateEmbeddedDocuments('Item', [
+              {
+                _id: weapon.id,
+                'system.aimTime.progress': newProgress,
+              },
+            ]);
+
+            const infoMsg = format('WEAPON.isAiming', {
+              actor: actor.token?.name || actor.prototypeToken.name,
+              item: weapon.name,
+              status: `${newProgress}/2`,
+            });
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+          },
+        });
+      }      
     }
     return buttons;
   }

@@ -1624,6 +1624,8 @@ export default class Actordsa5 extends Actor {
       item.LZ = Actordsa5.calcLZ(item, actor);
       if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
 
+      RangeweaponData.buildAimProgress(item);
+
       EquipmentDamage.weaponWearModifier(item);
 
       if (isBaseWeapon) {
@@ -1775,14 +1777,27 @@ export default class Actordsa5 extends Actor {
           testData.extra.ammo.system.quantity.value--;
           ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
         }
-        await this.updateEmbeddedDocuments('Item', [ammoUpdate, { _id: testData.source._id, 'system.reloadTime.progress': 0 }]);
+        await this.updateEmbeddedDocuments('Item', [
+          ammoUpdate,
+          {
+            _id: testData.source._id,
+            'system.reloadTime.progress': 0,
+            'system.aimTime.progress': 0,
+          },
+        ]);
       }
     } else if (
       (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) &&
       !testData.extra.ammoDecreased
     ) {
       testData.extra.ammoDecreased = true;
-      await this.updateEmbeddedDocuments('Item', [{ _id: testData.source._id, 'system.reloadTime.progress': 0 }]);
+      await this.updateEmbeddedDocuments('Item', [
+        {
+          _id: testData.source._id,
+          'system.reloadTime.progress': 0,
+          'system.aimTime.progress': 0,
+        },
+      ]);
     } else if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
       await this.updateEmbeddedDocuments('Item', [
         {
