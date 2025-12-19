@@ -156,6 +156,7 @@ export default class CreatureType {
     if (vulnerabilities) {
       if (['meleeweapon', 'rangeweapon'].includes(source.type)) {
         const toCombatskills = getProperty(vulnerabilities, 'combatskill');
+        if (!toCombatskills) return;
 
         toCombatskills.reduce((prev, x) => {
           if (x.target == source.system.combatskill.value) {

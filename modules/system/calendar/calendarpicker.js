@@ -931,11 +931,31 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!entries.length) return;
 
     let currentMonth = -1;
+    const shouldPlaceTodayMarker = !!currentComponents;
+    const todayMonth = shouldPlaceTodayMarker ? currentComponents.month : null;
+    const todayDay = shouldPlaceTodayMarker ? (currentComponents.dayOfMonth + 1) : null;
+    let todayMarkerInserted = false;
+
+    const appendTodayMarker = () => {
+      if (!shouldPlaceTodayMarker || todayMarkerInserted) return;
+      const todayMarker = document.createElement('div');
+      todayMarker.className = 'calendar-today-marker';
+      const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
+      const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+      const todayLabel = localize('dsacalendar.today');
+      todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
+      wrapper.appendChild(todayMarker);
+      todayMarkerInserted = true;
+    };
 
     for (let i = 0; i < entries.length; i += 1) {
       const entry = entries[i];
 
       if (entry.from.month !== currentMonth) {
+        if (shouldPlaceTodayMarker && !todayMarkerInserted && currentMonth === todayMonth) {
+          appendTodayMarker();
+        }
+
         currentMonth = entry.from.month;
 
         const monthName = game.time.calendar.translate(game.time.calendar.months.values[currentMonth].name);
@@ -943,16 +963,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         monthDivider.className = 'calendar-month-marker';
         monthDivider.innerHTML = `<hr><span class="month-label">${monthName} ${year} ${yearSuffix}</span>`;
         wrapper.appendChild(monthDivider);
+      }
 
-        if (currentComponents && currentMonth === currentComponents.month) {
-          const todayMarker = document.createElement('div');
-          todayMarker.className = 'calendar-today-marker';
-          const todayDay = currentComponents.dayOfMonth + 1;
-          const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
-          const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-          const todayLabel = localize('dsacalendar.today');
-          todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
-          wrapper.appendChild(todayMarker);
+      if (shouldPlaceTodayMarker && !todayMarkerInserted && entry.from.month === todayMonth) {
+        const entryStart = Number(entry?.from?.dayOfMonth);
+        const entryEnd = Number(entry?.to?.dayOfMonth ?? entryStart);
+        if (Number.isFinite(entryStart) && Number.isFinite(entryEnd)) {
+          if (todayDay <= entryStart || (entryStart <= todayDay && todayDay <= entryEnd)) {
+            appendTodayMarker();
+          }
         }
       }
 
@@ -962,6 +981,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       tempContainer.innerHTML = html;
       while (tempContainer.firstElementChild) wrapper.appendChild(tempContainer.firstElementChild);
 
+    }
+
+    if (shouldPlaceTodayMarker && !todayMarkerInserted && currentMonth === todayMonth) {
+      appendTodayMarker();
     }
   }
 

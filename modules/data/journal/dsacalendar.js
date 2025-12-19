@@ -73,8 +73,9 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
             year: entry.from.year,
         });
         const convertedComponents = calendar.timeToComponents(converted);
-        //not sure if abs is ok here but for negative years it is not working
-        const dayOfWeek = Math.abs(calendar.days.values[convertedComponents.dayOfWeek])
+        //not sure if abs is ok here but for negative years it is not working        
+        const absDayOfWeek = Math.abs(convertedComponents.dayOfWeek);
+        const dayOfWeek = calendar.days.values[absDayOfWeek % calendar.days.values.length];
         entry.monthShort = calendar.translate(month.abbreviation);
         entry.weekdayShort = calendar.translate(dayOfWeek.abbreviation);
         entry.weekDayLong = calendar.translate(dayOfWeek.name);
