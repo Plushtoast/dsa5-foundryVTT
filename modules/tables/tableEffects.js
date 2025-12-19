@@ -68,7 +68,11 @@ export default class TableEffects {
       const attributes = getProperty(source, 'system.effect.attributes') || '';
       const regex = new RegExp(`(${CreatureType.magical}|${CreatureType.clerical})`, 'i');
       const isMagical = regex.test(attributes);
-      if (isMagical) await source.update({ 'system.worn.value': false });
+      if (isMagical) {
+        const actor = source.actor || source.parent;
+        if (actor) await actor.equipWeaponToHand(source.id, { equip: false });
+        else await source.update({ 'system.worn.value': false, 'system.worn.offHand': false });
+      }
       else await EquipmentDamage.absoluteDamageLevelToItem(source, args);
 
       return true;
@@ -77,7 +81,9 @@ export default class TableEffects {
 
   static async gearLost(args, mode, targets, source) {
     if (source && ['meleeweapon', 'rangeweapon'].includes(source.type)) {
-      await source.update({ 'system.worn.value': false });
+      const actor = source.actor || source.parent;
+      if (actor) await actor.equipWeaponToHand(source.id, { equip: false });
+      else await source.update({ 'system.worn.value': false, 'system.worn.offHand': false });
       if (args.distance) {
         const roll = await new Roll(args.distance).evaluate();
         const renderedRoll = await roll.render();

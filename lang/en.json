@@ -1285,6 +1285,7 @@
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",
         "EquipItemOffHand": "Equip (Off-Hand)",
+        "RequiresBothHands": "Requires both hands",
         "NoUnequippedWeapons": "Nothing additional to equip",
         "UnEquipItem": "Unequip",
         "Dropdown": "Details",

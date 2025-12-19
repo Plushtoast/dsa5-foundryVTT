@@ -472,7 +472,8 @@ table.infoTable {
   gap: 2px;
 
   .dsadesignbutton.active {
-    background-color: var(--dsadesign1);
+    background-color: var(--sheet-border);
+    border-color: var(--border-color);
     color: white;
     outline: none;
     box-shadow: none;

@@ -28,6 +28,7 @@ import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { localize, format } from '../system/helpers/localizer.js';
+import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -675,8 +676,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item = item || this.actor.items.get(itemId);
     if (!item || item.type !== 'meleeweapon') return;
 
-    if (RuleChaos.isWieldedTwohanded(item)) return;
-    await this.actor.exclusiveEquipWeapon(item.id, !item.system.worn.offHand);
+    if (isTwoHandedWeapon(item)) return;
+    const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+    if (item.system.worn.value) {
+      const wasOffHand = !!item.system.worn.offHand;
+      await this.actor.swapWeaponHandSlot(item.id, desiredHand);
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+      return;
+    }
+    await this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
   }
 
   async swapWeaponHandSlot(target, item = undefined) {
@@ -684,13 +693,28 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const itemId = item?.id || this._getItemId(actualTarget);
     item = item || this.actor.items.get(itemId);
 
-    if (!item || item.type !== 'meleeweapon') return;
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
 
-    if (RuleChaos.isWieldedTwohanded(item)) return;
+    // No hand swapping for 2H weapons.
+    if (isTwoHandedWeapon(item)) return;
 
     const baseTwoHanded = RuleChaos.regex2h.test(item.name);
     const currentOffHand = !!item.system.worn.offHand;
     const clickedHand = actualTarget?.dataset?.hand || actualTarget?.closest?.('[data-hand]')?.dataset?.hand;
+
+    // If it isn't equipped yet, interpret this as an equip request (main/offhand/auto).
+    if (!item.system.worn.value) {
+      const hand = clickedHand === 'offhand' ? 'offhand' : clickedHand === 'main' ? 'main' : 'auto';
+      await this.actor.equipWeaponToHand(item.id, { hand, equip: true });
+      return;
+    }
+
+    const swapAndPlay = async (desiredHand) => {
+      const wasOffHand = !!item.system.worn.offHand;
+      await this.actor.swapWeaponHandSlot(item.id, desiredHand);
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+    };
 
     if (baseTwoHanded && (clickedHand === 'main' || clickedHand === 'offhand')) {
       const clickedIsOffHand = clickedHand === 'offhand';
@@ -698,11 +722,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         await item.system.swapNumberWeaponHands();
         return;
       }
-      await this.actor.exclusiveEquipWeapon(item.id, clickedIsOffHand);
+      await swapAndPlay(clickedIsOffHand ? 'offhand' : 'main');
       return;
     }
 
-    await this.actor.exclusiveEquipWeapon(item.id, !currentOffHand);
+    if (clickedHand === 'main' || clickedHand === 'offhand') {
+      await swapAndPlay(clickedHand);
+      return;
+    }
+
+    await swapAndPlay(currentOffHand ? 'main' : 'offhand');
   }
 
   async swapWeaponHand(target, item = undefined) {
@@ -861,16 +890,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.swapMag(this._getItemId(target));
   }
 
-  static _itemToggle(ev, target) {
+  static async _itemToggle(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
 
     switch (item.type) {
-      case 'armor':
       case 'rangeweapon':
       case 'meleeweapon':
+        await this.actor.equipWeaponToHand(itemId, { hand: 'auto', equip: !item.system.worn.value });
+        DSA5SoundEffect.playEquipmentWearStatusChange(item);
+        break;
+      case 'armor':
       case 'equipment':
-        this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
         DSA5SoundEffect.playEquipmentWearStatusChange(item);
         break;
     }
@@ -1216,18 +1248,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       .filter(i => i.type === weaponType && i.system?.worn && !i.system.worn.value)
       .slice(0, 10);
 
-    return [
-      {
-        name: localize('SHEET.NoUnequippedWeapons'),
-        icon: "<i class='fas fa-minus'></i>",
-        callback: () => {},
-      },
-      ...unequipped.map(w => ({
+    if (!unequipped.length) {
+      return [
+        {
+          name: localize('SHEET.NoUnequippedWeapons'),
+          icon: "<i class='fas fa-minus'></i>",
+          callback: () => {},
+        },
+      ];
+    }
+
+    return unequipped.map(w => ({
       name: `${equipLabel}: ${w.name}`,
       icon,
-      callback: () => this.actor.exclusiveEquipWeapon(w.id, false),
-      })),
-    ];
+      callback: () => this.actor.equipWeaponToHand(w.id, { hand: 'auto', equip: true }),
+    }));
   }
 
   _getWeaponTraitContextOptions(item) {
@@ -1297,7 +1332,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         name: 'offHand',
         icon: "<i class='fas fa-shield-halved'></i>",
         callback: () => {
-          if (!RuleChaos.isWieldedTwohanded(item)) this.actor.exclusiveEquipWeapon(item.id, !item.system.worn.offHand);
+          if (RuleChaos.isWieldedTwohanded(item)) return;
+          const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+          if (item.system.worn.value && this.actor.swapWeaponHandSlot) this.actor.swapWeaponHandSlot(item.id, desiredHand);
+          else this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
         },
       });
     } else if (item.type === 'rangeweapon') {
@@ -1371,7 +1409,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       options.push({
         name: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
+        callback: async () => {
+          if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
+            await this.actor.equipWeaponToHand(item.id, { hand: 'auto', equip: !item.system.worn.value });
+            return;
+          }
+
+          await item.update({ 'system.worn.value': !item.system.worn.value });
+        },
       });
     }
     if (Number(getProperty(item, 'system.quantity.value')) > 1) {

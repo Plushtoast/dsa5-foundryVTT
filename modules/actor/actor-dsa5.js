@@ -8,6 +8,7 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
+import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 import { tinyNotification } from '../system/helpers/view_helper.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../status/active_effects.js';
@@ -1534,36 +1535,143 @@ export default class Actordsa5 extends Actor {
 
   async exclusiveEquipWeapon(itemId, offHand = false) {
     const item = this.items.get(itemId);
-
     if (!item) return;
 
-    let updates = [];
-    switch (item.type) {
-      case 'armor':
-      case 'rangeweapon':
-        const items = this.items.filter((x) => x.type == item.type && x.id != itemId && x.system.worn.value);
-        updates = items.map((x) => {
-          return { _id: x.id, 'system.worn.value': false };
-        });
-        updates.push({ _id: itemId, 'system.worn.value': true });
-        break;
-      case 'meleeweapon':
-        let weapons = this.items.filter((x) => x.type == item.type && x.id != itemId && x.system.worn.value);
-        const weaponUpdate = { _id: itemId, 'system.worn.value': true };
-        if (!RuleChaos.isWieldedTwohanded(item)) {
-          weapons = weapons.filter((x) => RuleChaos.isWieldedTwohanded(x) || x.system.worn.offHand == offHand);
-          weaponUpdate['system.worn.offHand'] = offHand;
-        }
-        updates = weapons.map((x) => {
-          return { _id: x.id, 'system.worn.value': false };
-        });
-        updates.push(weaponUpdate);
-        break;
+    if (item.type === 'meleeweapon' || item.type === 'rangeweapon') {
+      await this.equipWeaponToHand(itemId, { hand: offHand ? 'offhand' : 'main', equip: true });
+      return;
     }
-    if (updates) {      
-      await this.updateEmbeddedDocuments('Item', updates);
+
+    if (item.type === 'armor') {
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': true }]);
       item.system.itemEquippedMessage();
     }
+  }
+
+  _isTwoHandedWeapon(item) {
+    return isTwoHandedWeapon(item);
+  }
+
+  _getEquippedWeaponsForHands() {
+    const equippedWeapons = this.items.filter((x) => (x.type === 'meleeweapon' || x.type === 'rangeweapon') && x.system?.worn?.value);
+    const main = equippedWeapons.find((w) => !getProperty(w, 'system.worn.offHand'));
+    const offhand = equippedWeapons.find((w) => !!getProperty(w, 'system.worn.offHand'));
+    const twoHanded = equippedWeapons.find((w) => this._isTwoHandedWeapon(w));
+    return { equippedWeapons, main, offhand, twoHanded };
+  }
+
+  /**
+   * Equip/unequip a weapon while respecting shared hand slots (melee + ranged).
+   *
+   * Options:
+   * - hand: 'auto' (main-first) | 'main' | 'offhand'
+   * - equip: boolean (default true)
+   */
+  async equipWeaponToHand(itemId, { hand = 'auto', equip = true } = {}) {
+    const item = this.items.get(itemId);
+    if (!item) return;
+    if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
+
+    if (!equip) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': false }]);
+      item.system.itemEquippedMessage();
+      return;
+    }
+
+    const wantsOffhand = hand === 'offhand';
+    const wantsMain = hand === 'main';
+    const isTwoHanded = this._isTwoHandedWeapon(item);
+
+    const { equippedWeapons, main, offhand, twoHanded } = this._getEquippedWeaponsForHands();
+
+    let targetHand;
+    if (isTwoHanded) {
+      targetHand = 'twohanded';
+    } else if (wantsMain) {
+      targetHand = 'main';
+    } else if (wantsOffhand) {
+      targetHand = 'offhand';
+    } else {
+      // auto: main-hand first
+      targetHand = main ? (offhand ? 'main' : 'offhand') : 'main';
+    }
+
+    const updates = [];
+
+    // If a 2H weapon is currently equipped, it blocks both hands.
+    // Equipping a 1H weapon must unequip that 2H weapon.
+    if (targetHand !== 'twohanded' && twoHanded && twoHanded.id !== itemId) {
+      updates.push({ _id: twoHanded.id, 'system.worn.value': false });
+    }
+
+    // If we are equipping a 2H weapon, unequip all other equipped weapons (both hands).
+    if (targetHand === 'twohanded') {
+      for (const w of equippedWeapons) {
+        if (w.id === itemId) continue;
+        updates.push({ _id: w.id, 'system.worn.value': false });
+      }
+      updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': false });
+      await this.updateEmbeddedDocuments('Item', updates);
+      item.system.itemEquippedMessage();
+      return;
+    }
+
+    // Otherwise: 1H equip in chosen hand; unequip whatever currently occupies that hand.
+    const occupying = targetHand === 'main' ? main : offhand;
+    if (occupying && occupying.id !== itemId) {
+      updates.push({ _id: occupying.id, 'system.worn.value': false });
+    }
+
+    // Ensure the weapon is marked equipped and on the correct hand.
+    updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': targetHand === 'offhand' });
+
+    await this.updateEmbeddedDocuments('Item', updates);
+    item.system.itemEquippedMessage();
+  }
+
+  /**
+   * Swap a currently equipped 1H weapon between hands.
+   * If the target hand is occupied, it will swap BOTH hands (unless the other weapon is 2H).
+   */
+  async swapWeaponHandSlot(itemId, desiredHand) {
+    const item = this.items.get(itemId);
+    if (!item) return;
+    if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
+    if (!item.system?.worn?.value) return;
+    if (this._isTwoHandedWeapon(item)) return;
+
+    let { main, offhand, twoHanded } = this._getEquippedWeaponsForHands();
+
+    // Backwards compatibility: older data could have a 2H weapon equipped alongside a 1H.
+    // Swapping hands should resolve that conflict by unequipping the 2H weapon.
+    if (twoHanded && twoHanded.id !== itemId) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: twoHanded.id, 'system.worn.value': false, 'system.worn.offHand': false }]);
+      ({ main, offhand, twoHanded } = this._getEquippedWeaponsForHands());
+    }
+    if (twoHanded) return;
+
+    const currentHand = getProperty(item, 'system.worn.offHand') ? 'offhand' : 'main';
+    const targetHand = desiredHand === 'offhand' ? 'offhand' : 'main';
+    if (currentHand === targetHand) return;
+
+    const occupying = targetHand === 'main' ? main : offhand;
+    const otherHandWeapon = targetHand === 'main' ? offhand : main;
+
+    // If the target hand is occupied, perform a swap-both-hands.
+    if (occupying && occupying.id !== itemId) {
+      // swap-both only when the other weapon isn't 2H (should already be true) but keep safety.
+      if (this._isTwoHandedWeapon(occupying) || this._isTwoHandedWeapon(otherHandWeapon)) return;
+
+      const updates = [
+        { _id: itemId, 'system.worn.offHand': targetHand === 'offhand' },
+        { _id: occupying.id, 'system.worn.offHand': currentHand === 'offhand' },
+      ];
+      await this.updateEmbeddedDocuments('Item', updates);
+      return;
+    }
+
+    // Otherwise just move it.
+    await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.offHand': targetHand === 'offhand' }]);
   }
 
   static calcLZ(item, actor) {

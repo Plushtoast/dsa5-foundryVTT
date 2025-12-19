@@ -96,11 +96,39 @@
             </div>
             {{/if}}
         </div>
-        <div class="col zerofive very-small center flexrow very-small">
-            {{#if item.ammoMax}}
-            <button type="button" data-action="item-swapMag" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button> 
-            {{/if}}
-            <button type="button" data-action="weaponContextMenu" class="icon fas autoFlex fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
+        <div class="combat-item-grip col ten center small">
+            <div class="combatGripControls flexrow flexAlignCenter">
+                {{#if item.ammoMax}}
+                <button type="button" data-action="item-swapMag" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button>
+                {{/if}}
+
+                <div class="combatGripHands flexrow flexAlignCenter {{ifThen item.system.worn.requiresBothHands 'oneButton' 'twoButtons'}}">
+                    {{#if item.system.worn.requiresBothHands}}
+                    <button type="button"
+                        class="combatHandButton dsadesignbutton very-small active"
+                        data-tooltip="wrongGrip.twoHanded">
+                        <i class="fas fa-hands-helping"></i>
+                    </button>
+                    {{else}}
+                    <button type="button"
+                        data-action="swapWeaponHandSlot"
+                        data-hand="main"
+                        class="combatHandButton dsadesignbutton very-small {{ifThen (not item.system.worn.offHand) 'active' ''}}"
+                        data-tooltip="mainHand">
+                        <i class="fas fa-hand-paper"></i>
+                    </button>
+                    <button type="button"
+                        data-action="swapWeaponHandSlot"
+                        data-hand="offhand"
+                        class="combatHandButton dsadesignbutton very-small {{ifThen item.system.worn.offHand 'active' ''}}"
+                        data-tooltip="offHand">
+                        <i class="fas fa-hand-paper combatHandIconOffhand"></i>
+                    </button>
+                    {{/if}}
+                </div>
+
+                <button type="button" data-action="weaponContextMenu" class="noBorder combatGripMenu combatHandButton dsadesignbutton very-small onlyMultiColumn" data-tooltip="SHEET.EditItem"><i class="fas fa-ellipsis-vertical"></i></button>
+            </div>
         </div>
     </div>
     <div class="row-section lineheight expandDetails {{item.detailed}}">

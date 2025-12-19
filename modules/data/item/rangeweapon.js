@@ -6,9 +6,12 @@ import ArtifactTemplate from './templates/artifact.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
+import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
+
+const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
@@ -42,6 +45,8 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       }),
       worn: new SchemaField({
         value: new BooleanField({ initial: false }),
+        offHand: new ScopableBooleanField({ label: 'offHand', initial: false }),
+        requiresBothHands: new BooleanField({ initial: true }),
       }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
@@ -116,6 +121,11 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   async reEquipItem() {
+    if (this.parent?.actor) {
+      await this.parent.actor.equipWeaponToHand(this.parent.id, { hand: 'auto', equip: !this.worn.value });
+      return;
+    }
+
     await this.parent.update({ 'system.worn.value': !this.worn.value });
     this.itemEquippedMessage();
   }
@@ -126,5 +136,12 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       const texts = [{ value: game.i18n.localize(this.worn.value ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
       this.parent.actor.tokenScrollingText(texts);
     }
+  }
+
+  async _preUpdate(changed, options, user) {
+    // If a ranged weapon switches into 2H mode, its offHand flag must be cleared.
+    const requiresBothHands = getProperty(changed, 'system.worn.requiresBothHands');
+    if (requiresBothHands === true) setProperty(changed, 'system.worn.offHand', false);
+    await super._preUpdate(changed, options, user);
   }
 }
