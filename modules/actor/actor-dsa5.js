@@ -756,7 +756,7 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    const otherWeapons = wornweapons.filter(x => !RuleChaos.isYieldedTwohanded(x));
+    const otherWeapons = wornweapons.filter(x => !RuleChaos.isWieldedTwohanded(x));
     for (const wep of wornweapons) {
       try {
         const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
@@ -1412,14 +1412,14 @@ export default class Actordsa5 extends Actor {
 
     const isShield = RuleChaos.isShield(item);
     item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
-    item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
+    item.wieldedTwoHand = RuleChaos.isWieldedTwohanded(item);
 
-    if (!item.yieldedTwoHand) {
+    if (!item.wieldedTwoHand) {
       const actualWornWeapons = wornWeapons ||
         actor.items.filter(x => x.type === 'meleeweapon' &&
           x.system.worn.value &&
           x._id !== item._id &&
-          !RuleChaos.isYieldedTwohanded(x));
+          !RuleChaos.isWieldedTwohanded(x));
 
       if (actualWornWeapons.length > 0) {
         item.parry += Math.max(...actualWornWeapons.map(x => x.system.pamod.offhandMod));
@@ -1430,7 +1430,7 @@ export default class Actordsa5 extends Actor {
     let gripDamageMod = 0;
 
     if (item.system.worn.wrongGrip) {
-      if (item.yieldedTwoHand) {
+      if (item.wieldedTwoHand) {
         item.parry -= 1;
         gripDamageMod = 1;
       } else {
@@ -1549,8 +1549,8 @@ export default class Actordsa5 extends Actor {
       case 'meleeweapon':
         let weapons = this.items.filter((x) => x.type == item.type && x.id != itemId && x.system.worn.value);
         const weaponUpdate = { _id: itemId, 'system.worn.value': true };
-        if (!RuleChaos.isYieldedTwohanded(item)) {
-          weapons = weapons.filter((x) => RuleChaos.isYieldedTwohanded(x) || x.system.worn.offHand == offHand);
+        if (!RuleChaos.isWieldedTwohanded(item)) {
+          weapons = weapons.filter((x) => RuleChaos.isWieldedTwohanded(x) || x.system.worn.offHand == offHand);
           weaponUpdate['system.worn.offHand'] = offHand;
         }
         updates = weapons.map((x) => {

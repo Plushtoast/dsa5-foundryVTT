@@ -608,7 +608,7 @@ export default class DSA5CombatDialog extends DialogShared {
         DSA5.meleeRangesArray.indexOf(getProperty(testData, 'source.system.reach.value'))
       );
 
-      if (!RuleChaos.isYieldedTwohanded(testData.source) && getProperty(testData, 'source.system.worn.wrongGrip')) {
+      if (!RuleChaos.isWieldedTwohanded(testData.source) && getProperty(testData, 'source.system.worn.wrongGrip')) {
         weaponSize = Math.min(weaponSize, 1);
       }
 

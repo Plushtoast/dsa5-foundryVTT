@@ -1100,10 +1100,10 @@
         "twoHandedWeapon": "{weapon} wielded two-handed",
         "oneHandedWeapon": "{weapon} wielded one-handed",
         "wrongGripped": "One-/Two-handed wielded",
-        "yieldTwo": "PA -1, DP +1, can be changed once on your turn only",
-        "yieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
-        "yieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
-        "yieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
+        "wieldTwo": "PA -1, DP +1, can be changed once on your turn only",
+        "wieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
+        "wieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
+        "wieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
         "wrongGripBastardRegex": "(Bastard Sword)"
     },
     "SOCIAL_CLASS": {

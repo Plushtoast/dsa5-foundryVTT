@@ -1707,10 +1707,10 @@
         "twoHandedWeapon": "{weapon} beidhändig geführt",
         "oneHandedWeapon": "{weapon} einhändig geführt",
         "wrongGripped": "Einhändig/Beidhändig geführt",
-        "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
-        "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
-        "yieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
-        "yieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
+        "wieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
+        "wieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
+        "wieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
+        "wieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
         "wrongGripBastardRegex": "(Anderthalbhänder|Bastardschwert)"
     },
     "UNITS": {
