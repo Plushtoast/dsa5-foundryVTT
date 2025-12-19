@@ -6,17 +6,17 @@
         </div>
         {{/if}}
     </div>
-    <div class="combat-item-name thirtyfive col">
+    <div class="combat-item-name three col ellipsis">
         <a data-action="itemEdit">{{item.name}}</a>
     </div>
 
-    <div class="combat-item-skill col five center small onlyMultiColumn">
-        {{localize item.system.combatskill.value}}
+    <div class="combat-item-skill col ellipsis fifteen center small onlyMultiColumn">
+       {{localize item.system.combatskill.value}}
     </div>
-    <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="attack">
+    <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="attack">
         <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
     </div>
-    <div class="combat-item-parry col ten center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="parry">
+    <div class="combat-item-parry col zerofive center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="parry">
         <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a>
     </div>
 
@@ -24,24 +24,40 @@
         <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.gripDamageText}}">{{item.damageAdd}}</span>
     </div>
     <div class="combat-item-range col row-section ten center small notOnMinimum">
-        <div class="col nintey center">
+        <div class="col hundred center">
             {{localize (concat "Range-" item.system.reach.value)}}
         </div>
-        <div class="col ten center very-small row-section wrap flexAlignCenter">
-            <div class="col">
-                <a data-action="swapWeaponHand">
-                    {{#if item.wieldedTwoHand}}
-                        <i data-tooltip="wrongGrip.twoHanded" class="fas fa-hands"></i>
-                    {{else}}
-                        <i data-tooltip="wrongGrip.oneHanded" class="fas fa-hand"></i>
-                    {{/if}}
-                </a>
+    </div>
+
+    <div class="combat-item-grip col ten center small">
+        <div class="combatGripControls flexrow flexAlignCenter">
+            <div class="combatGripHands flexrow flexAlignCenter {{ifThen item.wieldedTwoHand 'oneButton' 'twoButtons'}}">
+                {{#if item.wieldedTwoHand}}
+                <button type="button"
+                    data-action="swapWeaponHand"
+                    class="combatHandButton dsadesignbutton very-small active"
+                    data-tooltip="{{ifThen item.wieldedTwoHand 'wrongGrip.twoHanded' 'wrongGrip.oneHanded'}}">
+                    <i class="fas {{ifThen item.wieldedTwoHand 'fa-hands-helping' 'fa-hand-paper'}}"></i>
+                </button>
+                {{else}}
+                <button type="button"
+                    data-action="swapWeaponHandSlot"
+                    data-hand="main"
+                    class="combatHandButton dsadesignbutton very-small {{ifThen (not item.system.worn.offHand) 'active' ''}}"
+                    data-tooltip="mainHand">
+                    <i class="fas fa-hand-paper"></i>
+                </button>
+                <button type="button"
+                    data-action="swapWeaponHandSlot"
+                    data-hand="offhand"
+                    class="combatHandButton dsadesignbutton very-small {{ifThen item.system.worn.offHand 'active' ''}}"
+                    data-tooltip="offHand">
+                    <i class="fas fa-hand-paper combatHandIconOffhand"></i>
+                </button>
+                {{/if}}
             </div>
-            {{#if item.system.worn.offHand}}
-            <div class="col">
-                <a><i data-tooltip="offHand" class="fas fa-shield-halved"></i></a>
-            </div>
-            {{/if}}
+
+            <button type="button" data-action="weaponContextMenu" class="noBorder combatGripMenu combatHandButton dsadesignbutton very-small onlyMultiColumn" data-tooltip="SHEET.EditItem"><i class="fas fa-ellipsis-vertical"></i></button>
         </div>
     </div>
 </div>

@@ -322,7 +322,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
                 actor.basicTest(setupData);
               });
             } else {
-              actor.exclusiveEquipWeapon(result.id, ev.button == 2);
+              const wantsOffHand = ev.button == 2;
+              const canOffHand = wantsOffHand && result.type === 'meleeweapon' && !RuleChaos.isWieldedTwohanded(result);
+              actor.exclusiveEquipWeapon(result.id, canOffHand);
             }
             break;
           case 'trait':

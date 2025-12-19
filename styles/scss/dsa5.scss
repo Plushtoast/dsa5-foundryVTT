@@ -466,6 +466,65 @@ table.infoTable {
   }
 }
 
+.combatGripControls {
+  justify-content: center;
+  width: 100%;
+  gap: 2px;
+
+  .dsadesignbutton.active {
+    background-color: var(--dsadesign1);
+    color: white;
+    outline: none;
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .combatGripHands {
+    gap: 0px;
+    flex: 2;
+
+    &.oneButton {
+      flex: 1;
+    }
+
+    .combatHandButton {
+      flex: 1;
+    }
+
+    .combatHandButton {
+      &:not(:last-child) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &:not(:first-child) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+
+    .combatHandButton + .combatHandButton {
+      border-left: 0;
+    }
+  }
+
+  .combatGripMenu {
+    flex: 1;
+  }
+}
+
+.combatHandButton {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.combatHandIconOffhand {
+  transform: scaleX(-1);
+}
+
 .gap5px {
   gap: 5px;
 
@@ -2495,6 +2554,10 @@ input[type='search'] {
     text-overflow: ellipsis;
     text-align: start;
   }
+}
+
+.dsaoverflowhidden {
+  overflow: hidden;
 }
 
 .lineheight2 {

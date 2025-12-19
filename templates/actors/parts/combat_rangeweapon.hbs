@@ -15,7 +15,7 @@
             {{localize item.system.combatskill.value}}
         </div>
 
-        <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+        <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-mod="attack">
             <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
         </div>
         <div class="combat-item-damage col ten center">
@@ -96,11 +96,11 @@
             </div>
             {{/if}}
         </div>
-        <div class="col zerofive very-small center onlyMultiColumn flexrow very-small">
-            <button type="button" data-action="itemDropdown" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button> 
+        <div class="col zerofive very-small center flexrow very-small">
             {{#if item.ammoMax}}
             <button type="button" data-action="item-swapMag" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button> 
             {{/if}}
+            <button type="button" data-action="weaponContextMenu" class="icon fas autoFlex fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
         </div>
     </div>
     <div class="row-section lineheight expandDetails {{item.detailed}}">

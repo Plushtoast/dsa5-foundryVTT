@@ -1413,6 +1413,7 @@ export default class Actordsa5 extends Actor {
     const isShield = RuleChaos.isShield(item);
     item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
     item.wieldedTwoHand = RuleChaos.isWieldedTwohanded(item);
+    item.twoHandedWeapon = RuleChaos.regex2h.test(item.name) || item.wieldedTwoHand;
 
     if (!item.wieldedTwoHand) {
       const actualWornWeapons = wornWeapons ||
