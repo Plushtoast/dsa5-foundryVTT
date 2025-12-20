@@ -1552,6 +1552,76 @@ export default class Actordsa5 extends Actor {
     return isTwoHandedWeapon(item);
   }
 
+  canEquipWeaponOffHand(item) {
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return false;
+    return !!getProperty(this, 'system.config.ignoreWeaponHandLimits') || !this._isTwoHandedWeapon(item);
+  }
+
+  async toggleWeaponOffHand(itemId) {
+    const item = this.items.get(itemId);
+    if (!item || item.type !== 'meleeweapon') return;
+
+    const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+    if (item.system.worn.value) {
+      await this.swapWeaponHandSlot(item.id, desiredHand);
+      return;
+    }
+
+    await this.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
+  }
+
+  /**
+   * Interprets a hand-slot click (main/offhand/auto) and applies all rules.
+   * UI layers should only determine `clickedHand` and then call this.
+   */
+  async handleWeaponHandSlotClick(itemId, clickedHand) {
+    const item = this.items.get(itemId);
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+
+    // If it isn't equipped yet, interpret this as an equip request (main/offhand/auto).
+    if (!item.system.worn.value) {
+      const hand = clickedHand === 'offhand' ? 'offhand' : clickedHand === 'main' ? 'main' : 'auto';
+      await this.equipWeaponToHand(item.id, { hand, equip: true });
+      return;
+    }
+
+    // When hand limits are disabled: treat hand buttons as a simple offHand toggle.
+    if (ignoreHandLimits) {
+      const wasOffHand = !!item.system.worn.offHand;
+      const desiredOffHand = clickedHand === 'offhand' ? true : clickedHand === 'main' ? false : !wasOffHand;
+      await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.worn.offHand': desiredOffHand }]);
+      return;
+    }
+
+    // No hand swapping for 2H weapons.
+    if (this._isTwoHandedWeapon(item)) return;
+
+    const baseTwoHanded = RuleChaos.regex2h.test(item.name);
+    const currentOffHand = !!item.system.worn.offHand;
+
+    if (baseTwoHanded && (clickedHand === 'main' || clickedHand === 'offhand')) {
+      const clickedIsOffHand = clickedHand === 'offhand';
+      if (clickedIsOffHand === currentOffHand) {
+        // For melee weapons this toggles wrongGrip (1H/2H mode).
+        if (item.type === 'meleeweapon' && item.system?.swapNumberWeaponHands) {
+          await item.system.swapNumberWeaponHands();
+        }
+        return;
+      }
+      await this.swapWeaponHandSlot(item.id, clickedIsOffHand ? 'offhand' : 'main');
+      return;
+    }
+
+    if (clickedHand === 'main' || clickedHand === 'offhand') {
+      await this.swapWeaponHandSlot(item.id, clickedHand);
+      return;
+    }
+
+    await this.swapWeaponHandSlot(item.id, currentOffHand ? 'main' : 'offhand');
+  }
+
   _getEquippedWeaponsForHands() {
     const equippedWeapons = this.items.filter((x) => (x.type === 'meleeweapon' || x.type === 'rangeweapon') && x.system?.worn?.value);
     const main = equippedWeapons.find((w) => !getProperty(w, 'system.worn.offHand'));
@@ -1571,6 +1641,24 @@ export default class Actordsa5 extends Actor {
     const item = this.items.get(itemId);
     if (!item) return;
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+
+    if (ignoreHandLimits) {
+      if (!equip) {
+        await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': false, 'system.worn.offHand': false }]);
+        item.system.itemEquippedMessage();
+        return;
+      }
+
+      const update = { _id: itemId, 'system.worn.value': true };
+      if (hand === 'offhand') update['system.worn.offHand'] = true;
+      else if (hand === 'main') update['system.worn.offHand'] = false;
+
+      await this.updateEmbeddedDocuments('Item', [update]);
+      item.system.itemEquippedMessage();
+      return;
+    }
 
     if (!equip) {
       await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': false }]);
@@ -1638,6 +1726,15 @@ export default class Actordsa5 extends Actor {
     if (!item) return;
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
     if (!item.system?.worn?.value) return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    if (ignoreHandLimits) {
+      const targetHand = desiredHand === 'offhand' ? 'offhand' : 'main';
+      const currentHand = getProperty(item, 'system.worn.offHand') ? 'offhand' : 'main';
+      if (currentHand === targetHand) return;
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.offHand': targetHand === 'offhand' }]);
+      return;
+    }
     if (this._isTwoHandedWeapon(item)) return;
 
     let { main, offhand, twoHanded } = this._getEquippedWeaponsForHands();

@@ -1118,6 +1118,8 @@
         "addItem": "Gegenstand erstellen",
         "EquipItem": "Ausrüsten",
         "EquipItemOffHand": "Ausrüsten (Nebenhand)",
+        "IgnoreWeaponHandLimits": "Handbeschränkung ignorieren",
+        "IgnoreWeaponHandLimitsHint": "Handbeschränkung ignorieren (mehrere Waffen gleichzeitig ausrüsten)",
         "RequiresBothHands": "Benötigt beide Hände",
         "NoUnequippedWeapons": "Keine weiteren Waffen ausrüstbar",
         "UnEquipItem": "Ausrüstung ablegen",

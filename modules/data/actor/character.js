@@ -14,6 +14,7 @@ export default class CharacterData extends ActorDataModel.mixin(RidingTemplate, 
       config: new SchemaField({
         autoBar: new BooleanField({ initial: true }),
         autoSize: new BooleanField({ initial: true }),
+        ignoreWeaponHandLimits: new BooleanField({ initial: false }),
         lockRotation: new BooleanField({ initial: false }),
       }),
       freeLanguagePoints: new SchemaField({

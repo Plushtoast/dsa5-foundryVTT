@@ -3,7 +3,7 @@ import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import RuleChaos from '../rules/rule_chaos.js';
-import { canEquipWeaponOffHand, isTwoHandedWeapon } from '../helpers/weapon_hands.js';
+import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
@@ -811,7 +811,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     const equipableWeapons = this.actor.items.filter((i) => {
       if (!['meleeweapon', 'rangeweapon'].includes(i.type) || i.system.worn.value) return false;
-      if (isOffHand) return canEquipWeaponOffHand(i);
+      if (isOffHand) return this.actor.canEquipWeaponOffHand(i);
       return true;
     });
     const equip = localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');

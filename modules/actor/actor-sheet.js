@@ -181,6 +181,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       swapWeaponHand: this._swapWeaponHand,
       swapWeaponHandSlot: this._swapWeaponHandSlot,
       toggleWeaponOffHand: this._toggleWeaponOffHand,
+      toggleIgnoreWeaponHandLimits: this._toggleIgnoreWeaponHandLimits,
       selectTraditionartifact: this._selectTraditionArtifact,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
@@ -641,6 +642,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.render(true)
   }
 
+  static async _toggleIgnoreWeaponHandLimits() {
+    const current = !!getProperty(this.actor, 'system.config.ignoreWeaponHandLimits');
+    await this.actor.update({ 'system.config.ignoreWeaponHandLimits': !current });
+  }
+
   showLimited() {
     return (!game.user.isGM && this.actor.limited) || this.playerViewEnabled();
   }
@@ -676,16 +682,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     item = item || this.actor.items.get(itemId);
     if (!item || item.type !== 'meleeweapon') return;
 
-    if (isTwoHandedWeapon(item)) return;
-    const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
-    if (item.system.worn.value) {
-      const wasOffHand = !!item.system.worn.offHand;
-      await this.actor.swapWeaponHandSlot(item.id, desiredHand);
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
+
+    await this.actor.toggleWeaponOffHand(item.id);
+
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
       const updated = this.actor.items.get(item.id);
       if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
-      return;
     }
-    await this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
   }
 
   async swapWeaponHandSlot(target, item = undefined) {
@@ -695,43 +701,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
 
-    // No hand swapping for 2H weapons.
-    if (isTwoHandedWeapon(item)) return;
-
-    const baseTwoHanded = RuleChaos.regex2h.test(item.name);
-    const currentOffHand = !!item.system.worn.offHand;
     const clickedHand = actualTarget?.dataset?.hand || actualTarget?.closest?.('[data-hand]')?.dataset?.hand;
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
 
-    // If it isn't equipped yet, interpret this as an equip request (main/offhand/auto).
-    if (!item.system.worn.value) {
-      const hand = clickedHand === 'offhand' ? 'offhand' : clickedHand === 'main' ? 'main' : 'auto';
-      await this.actor.equipWeaponToHand(item.id, { hand, equip: true });
-      return;
-    }
+    await this.actor.handleWeaponHandSlotClick(item.id, clickedHand);
 
-    const swapAndPlay = async (desiredHand) => {
-      const wasOffHand = !!item.system.worn.offHand;
-      await this.actor.swapWeaponHandSlot(item.id, desiredHand);
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
       const updated = this.actor.items.get(item.id);
       if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
-    };
-
-    if (baseTwoHanded && (clickedHand === 'main' || clickedHand === 'offhand')) {
-      const clickedIsOffHand = clickedHand === 'offhand';
-      if (clickedIsOffHand === currentOffHand) {
-        await item.system.swapNumberWeaponHands();
-        return;
-      }
-      await swapAndPlay(clickedIsOffHand ? 'offhand' : 'main');
-      return;
     }
-
-    if (clickedHand === 'main' || clickedHand === 'offhand') {
-      await swapAndPlay(clickedHand);
-      return;
-    }
-
-    await swapAndPlay(currentOffHand ? 'main' : 'offhand');
   }
 
   async swapWeaponHand(target, item = undefined) {

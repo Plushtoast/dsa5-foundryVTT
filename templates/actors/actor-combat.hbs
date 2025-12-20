@@ -28,6 +28,7 @@
                 <span data-tooltip="reach">{{localize 'CHARAbbrev.RW'}}</span>
             </div>
             <div class="col ten center small flexAlignEnd flexrow">
+                <button type="button" data-action="toggleIgnoreWeaponHandLimits" class="icon noBorder dsadesignbutton very-small onlyMultiColumn" data-tooltip="SHEET.IgnoreWeaponHandLimitsHint">{{#if document.system.config.ignoreWeaponHandLimits}}<i class="far fa-check-circle"></i>{{else}}<i class="far fa-circle"></i>{{/if}}</button>
                 <button type="button" data-action="unequippedWeaponMenu" data-weapon-type="meleeweapon" class="unequipped-weapon-menu icon fas fa-plus very-small noBorder dsadesignbutton onlyMultiColumn" data-tooltip="SHEET.EquipItem"></button>
             </div>
         </div>
@@ -89,6 +90,7 @@
                 {{localize "TYPES.Item.ammunition"}}
             </div>
             <div class="col ten center flexAlignEnd flexrow">
+                <button type="button" data-action="toggleIgnoreWeaponHandLimits" class="icon noBorder dsadesignbutton very-small" data-tooltip="SHEET.IgnoreWeaponHandLimitsHint">{{#if document.system.config.ignoreWeaponHandLimits}}<i class="far fa-check-circle"></i>{{else}}<i class="far fa-circle"></i>{{/if}}</button>
                 <button type="button" data-action="unequippedWeaponMenu" data-weapon-type="rangeweapon" class="unequipped-weapon-menu icon fas fa-plus very-small noBorder dsadesignbutton" data-tooltip="SHEET.EquipItem"></button>
             </div>
         </div>

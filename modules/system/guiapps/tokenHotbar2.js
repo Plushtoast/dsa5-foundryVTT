@@ -13,7 +13,6 @@ import { ItemDataModel } from '../../data/baseitem.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
-import { canEquipWeaponOffHand } from '../helpers/weapon_hands.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -325,7 +324,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
               });
             } else {
               const wantsOffHand = ev.button == 2;
-              const canOffHand = wantsOffHand && canEquipWeaponOffHand(result);
+              const canOffHand = wantsOffHand && actor?.canEquipWeaponOffHand(result);
 
               if (actor) await actor.equipWeaponToHand(result.id, { hand: canOffHand ? 'offhand' : 'auto', equip: true });
               else await result.update({ 'system.worn.value': true, 'system.worn.offHand': !!canOffHand });

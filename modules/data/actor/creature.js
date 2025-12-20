@@ -15,6 +15,7 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
             autoBar: new BooleanField({ initial: true }),
             autoSize: new BooleanField({ initial: true }),
             defense: new BooleanField({ initial: false }),
+            ignoreWeaponHandLimits: new BooleanField({ initial: false }),
             lockRotation: new BooleanField({ initial: false }),
         }),
         details: new SchemaField({
