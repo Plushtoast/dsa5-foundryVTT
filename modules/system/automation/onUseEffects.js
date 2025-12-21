@@ -16,11 +16,11 @@ export default class OnUseEffect {
     if (!documents || !documents.length) {
       for (let pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
         documents = await pack.getDocuments({ name });
-        if (documents.length) break;
+        if (documents?.length) break;
       }
     }
     let result = {};
-    if (documents.length) {
+    if (documents?.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       try {
         args.result = result;

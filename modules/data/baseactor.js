@@ -104,6 +104,7 @@ export class ActorDataModel extends DSADataModel {
       postRoll: {
         QL: [],
         FP: [],
+        reroll: [],
       },
       conditional: {
         AsPCost: [],
