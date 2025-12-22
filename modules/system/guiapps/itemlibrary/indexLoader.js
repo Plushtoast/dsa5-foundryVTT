@@ -76,12 +76,13 @@ export default class ItemLibraryIndexLoader {
 
     /** @type {(path: string) => string | undefined} */
     const getRoute = globalThis.foundry?.utils?.getRoute?.bind(globalThis.foundry.utils);
+    const baseUrl = globalThis.document?.baseURI || globalThis.location?.href || "";
     const flexModuleUrl = getRoute
       ? getRoute("systems/dsa5/libs/flexsearch.bundle.module.min.js")
-      : "/systems/dsa5/libs/flexsearch.bundle.module.min.js";
+      : new URL("systems/dsa5/libs/flexsearch.bundle.module.min.js", baseUrl).toString();
     const flexIifeUrl = getRoute
       ? getRoute("systems/dsa5/bundle/libs/flexsearch.bundle.iife.min.js")
-      : "/systems/dsa5/bundle/libs/flexsearch.bundle.iife.min.js";
+      : new URL("systems/dsa5/bundle/libs/flexsearch.bundle.iife.min.js", baseUrl).toString();
 
     await worker.executeFunction("itemlibrary.ensureIndex", [
       {
@@ -146,33 +147,28 @@ export default class ItemLibraryIndexLoader {
 
 async function itemlibraryEnsureIndex(payload) {
   const { documentName, fields, flexModuleUrl, flexIifeUrl, token } = payload;
-  const getState = () => {
-    globalThis.__dsa5ItemLibraryIndexState = globalThis.__dsa5ItemLibraryIndexState || {
-      indexes: {},
-      config: {},
-    };
-    return globalThis.__dsa5ItemLibraryIndexState;
+  globalThis.__dsa5ItemLibraryIndexState = globalThis.__dsa5ItemLibraryIndexState || {
+    indexes: {},
+    config: {},
   };
+  const state = globalThis.__dsa5ItemLibraryIndexState;
 
-  const ensureFlexSearch = async () => {
-    if (globalThis.FlexSearch) return globalThis.FlexSearch;
+  let flex = globalThis.FlexSearch;
+  if (!flex) {
     try {
       // eslint-disable-next-line no-undef
       const mod = await import(flexModuleUrl);
-      globalThis.FlexSearch = mod?.default ?? mod;
-      return globalThis.FlexSearch;
+      flex = mod?.default ?? mod;
+      globalThis.FlexSearch = flex;
     } catch (err) {
+      // ignore
     }
-    if (typeof importScripts === "function") {
-      importScripts(flexIifeUrl);
-      if (globalThis.FlexSearch) return globalThis.FlexSearch;
-    }
-
-    throw new Error("FlexSearch could not be loaded in worker");
-  };
-
-  const state = getState();
-  const flex = await ensureFlexSearch();
+  }
+  if (!flex && typeof importScripts === "function") {
+    importScripts(flexIifeUrl);
+    flex = globalThis.FlexSearch;
+  }
+  if (!flex) throw new Error("FlexSearch could not be loaded in worker");
 
   const prev = state.config[documentName];
   const nextKey = JSON.stringify({ fields });
@@ -227,14 +223,10 @@ async function itemlibrarySearch(payload) {
   const index = state.indexes[documentName];
   if (!index) return [];
 
-  const runSearch = async () => {
-    if (query === undefined || query === null || query === "") {
-      return typeof index.searchAsync === "function" ? await index.searchAsync(args) : index.search(args);
-    }
-    return typeof index.searchAsync === "function" ? await index.searchAsync(query, args) : index.search(query, args);
-  };
-
-  const results = await runSearch();
+  const results =
+    query === undefined || query === null || query === ""
+      ? (typeof index.searchAsync === "function" ? await index.searchAsync(args) : index.search(args))
+      : (typeof index.searchAsync === "function" ? await index.searchAsync(query, args) : index.search(query, args));
 
   const unique = new Set();
   for (const r of results || []) {
