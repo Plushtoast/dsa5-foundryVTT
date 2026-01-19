@@ -24,7 +24,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coverde.webp"
           },
           "description": "Aventurische Magie ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Spielarten der Zauberei widmet. Jede beschriebene magische Tradition wird ausführlich vorgestellt, mitsamt ihren Ritualen, Zaubersprüchen und Besonderheiten.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-magic-2",
@@ -54,7 +54,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coverde.webp"
           },
           "description": "Aventurisches Götterwirken ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Geweihten widmet. Alle Geweihten des Zwölfgötterpantheons und der bekanntesten Halbgötter werden ausführlich beschrieben.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-godsofaventuria2",
@@ -74,7 +74,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coverde.webp"
           },
           "description": "Mit dem Aventurischen Kompendium erhältst du zahlreiche neue Optionen für den Kampf und mächtige Kampfstile, die nur den besten Kriegern und Schwertmeistern bekannt sind. Doch nicht nur Krieger kommen auf ihre Kosten, auch alle übrigen Heldentypen können von den Erweiterungsregeln profitieren.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-compendium2",
@@ -166,7 +166,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coverde.webp"
           },
           "description": "In den Wäldern, Sümpfen und Dschungel Aventuriens lauern furchterregende Kreaturen, die Helden bestenfalls als ihre nächste Mahlzeit betrachten. Durch ihr Gift, messerscharfe Klauen oder ihre schiere Größe stellen…",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-bestiary2",
@@ -516,6 +516,16 @@
     {
       "name": "Regionalspielhilfen",
       "items": [
+        {
+          "id": "dsa5-atlas",
+          "label": "Magna Carta Aventurica",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5142/dsa5-magna-carta-aventurica-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/c0/9d/59/magna_carta_aventurica_cover_vtt-Kopie.jpg"
+          },
+          "description": "Reisen durch Aventurien sind mehr als nur „von A nach B“: Wege müssen gefunden, Etappen geplant und Zeit sowie Wetter im Blick behalten werden. Magna Carta Aventurica macht genau das zum spielbaren Bestandteil eurer Abenteuer. Statt Kartenblättern und Rechenarbeit…",
+          "badges": ["Neu"]
+        },
         {
           "id": "dsa5-suncoast",
           "label": "Die Sonnenküste",

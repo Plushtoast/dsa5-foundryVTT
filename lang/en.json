@@ -64,7 +64,7 @@
         "GE": "AGI",
         "KO": "CON",
         "RS": "PRO",
-                "postRoll": "Nach Wurf",
+        "postRoll": "Nach Wurf",
         "VW": "DV",
         "LZ": "LT",
         "KK": "STR",
@@ -2680,8 +2680,8 @@
         "3": "Passive",
         "4": "General",
         "5": "Punch-Up",
-        "6": "Advanced Combat Style Specialability (Special Maneuver)",
-        "7": "Advanced Combat Style Specialability (Passive)"
+        "6": "Advanced Combat Style Special Ability (Special Maneuver)",
+        "7": "Advanced Combat Style Special Ability (Passive)"
     },
     "poisonCategory": {
         "1": "Poison, animal",
@@ -2793,7 +2793,19 @@
             "modules": {
                 "hero": {
                     "subtitle": "Expand your tabletop with fully prepared official adventures, rules, and more.",
-                    "cta": "Browse F-Shop"
+                    "cta": "F-Shop"
+                },
+                "tocTitle": "Browse categories",
+                "filtersTitle": "Filter by tags",
+                "filtersNotOwned": "Not owned",
+                "filtersClear": "Clear filters",
+                "enNote": "Some modules are only available in the German F-Shop. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Open German F-Shop</a>. Check English availability here: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">English F-Shop</a>.",
+                "gettingStarted": {
+                    "title": "Getting started",
+                    "text": "Start with the core module and add beginner-friendly or free content to build your first campaigns.",
+                    "coreCta": "Get the core module",
+                    "wiki": "Open the wiki",
+                    "videos": "VTTom videos"
                 },
                 "cta": "View & Buy",
                 "ctaOwned": "Already Owned",

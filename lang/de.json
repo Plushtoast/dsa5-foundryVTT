@@ -2793,11 +2793,23 @@
             "modules": {
                 "hero": {
                     "subtitle": "Erweitere deinen Spieltisch mit vollständig vorbereiteten offiziellen Abenteuern, Regeln und mehr.",
-                    "cta": "Zum F-Shop"
+                    "cta": "F-Shop"
+                },
+                "tocTitle": "Kategorien",
+                "filtersTitle": "Nach Tags filtern",
+                "filtersNotOwned": "Nicht gekauft",
+                "filtersClear": "Filter zurücksetzen",
+                "enNote": "Einige Module sind nur im deutschen F-Shop erhältlich. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Zum deutschen F-Shop</a>. Prüfe die englische Verfügbarkeit hier: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">Englischer F-Shop</a>.",
+                "gettingStarted": {
+                    "title": "Einstieg",
+                    "text": "Starte mit dem Grundmodul und ergänze einsteigerfreundliche oder kostenlose Inhalte für deine ersten Abenteuer.",
+                    "coreCta": "Grundmodul holen",
+                    "wiki": "Zum Wiki",
+                    "videos": "VTTom-Videos"
                 },
                 "cta": "Details & Kaufen",
                 "ctaOwned": "Bereits gekauft",
-                "owned": "Besitzt"
+                "owned": "Im Besitz"
             }
         }
     }
