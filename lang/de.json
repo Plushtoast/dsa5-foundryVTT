@@ -1455,6 +1455,8 @@
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
+    "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
     "PERSONAE": {
@@ -2642,7 +2644,8 @@
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie",
         "money": "Finanzübersicht",
-        "sheetChange": "Charakterblattänderung"
+        "sheetChange": "Charakterblattänderung",
+        "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte."
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

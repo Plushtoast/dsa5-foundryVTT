@@ -146,6 +146,8 @@
             "dsacalendar": {
                 "htmlFields": [ "calendarentries.*.content" ]
             },
+            "dsaaptracker": {},
+            "dsamoneytracker": {},
             "dsapersonaedramatis": {
                 "htmlFields": [ "personae.*.description", "personae.*.notes" ],
                 "filePathFields": {

@@ -6,30 +6,8 @@ export default class MoneyTracker extends JournalTracker {
     static configuration = {
         permission: "enableMoneyTracking",
         flagName: "moneyTrackerId",
-        journalName: 'TRACKER.money'
-    }
-
-    static startRow() {
-        return this.getRow(
-            localize('Description'),
-            localize('value'),
-            localize('Total'),
-            'table-title',
-        )
-    }
-
-    static getRow(description, cost, total, cssClass = '') {
-        return `<div class="row-section ${cssClass}">
-              <div class="col two">
-                  ${description}
-              </div>
-              <div class="col five center">
-                  ${cost}
-              </div>
-              <div class="col third center">
-                  ${total}
-              </div>
-          </div>`;
+        journalName: 'TRACKER.money',
+        pageType: 'dsamoneytracker'
     }
 
     static buildDescription(description) {
@@ -46,17 +24,19 @@ export default class MoneyTracker extends JournalTracker {
         }
     }
 
-    static async _prepareRow(description, cost, actor) {
+    static async _prepareEntryData(description, cost, actor) {
         if (!description.next) {
             description.next = DSA5Payment._actorsMoney(actor).sum
         }
-        const absCost = Math.abs(cost);
-        const sign = cost < 0 ? '-' : '';
-
-        return this.getRow(
-            this.buildDescription(description),
-            `${sign}${await DSA5Payment._moneyToString(absCost)}`,
-            await DSA5Payment._moneyToString(description.next),
-        );
+        return {
+            created: Date.now(),
+            type: description.type,
+            name: description.name || '',
+            amount: description.amount || 1,
+            previous: description.previous ?? null,
+            next: description.next ?? null,
+            cost,
+            total: description.next ?? null,
+        };
     }
 }

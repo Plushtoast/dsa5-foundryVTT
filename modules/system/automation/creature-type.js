@@ -172,9 +172,11 @@ export default class CreatureType {
   ignoredCondition(condition) {
     return false;
   }
+  
   damageModifier(attackItem) {
     return [];
   }
+
   static creatureBonusDamage(actor, attacker) {
     const bonusModifiers = [];
     const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;

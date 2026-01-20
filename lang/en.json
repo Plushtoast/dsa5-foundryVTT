@@ -1689,6 +1689,8 @@
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaaptracker": "AP Tracker",
+    "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
     "npc": "Non Player Character",
     "creature": "Creature",
     "dsacalendar": {
@@ -2569,7 +2571,8 @@
     "TRACKER": {
         "adventurePoints": "Adventure Points History",
         "money": "Financial Overview",
-        "sheetChange": "Character Sheet Change"
+        "sheetChange": "Character Sheet Change",
+        "requiresGM": "Adventure point or money tracking requires a logged in GM or journal edit/creation permissions."
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

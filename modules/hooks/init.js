@@ -37,6 +37,8 @@ import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 import { localize } from '../system/helpers/localizer.js';
 import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
 import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet.js';
+import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
+import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
 const { mergeObject } = foundry.utils;
 
 export default function () {
@@ -115,7 +117,9 @@ Hooks.once('init', () => {
 
   const journalSheets = [
     { sheetClass: DSAPersonaeEntrySheet, types: ['dsapersonaedramatis'], makeDefault: true },
-    { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true }
+    { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true },
+    { sheetClass: DSAAPTrackerEntrySheet, types: ['dsaaptracker'], makeDefault: true },
+    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true }
   ];
 
   journalSheets.forEach(({ sheetClass, types, makeDefault }) => {

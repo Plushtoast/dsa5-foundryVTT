@@ -59,7 +59,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static async postUpdateConditions(actor) {
-    if (!DSA5_Utility.isActiveGM()) return;
+    if (!DSA5_Utility.isActiveGM(true)) return;
 
     const data = actor.system;
     const isMerchant = actor.isMerchant();
