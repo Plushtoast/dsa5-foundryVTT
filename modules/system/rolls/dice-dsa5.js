@@ -2329,7 +2329,7 @@ export default class DiceDSA5 {
     }
   }
 
-  static showCurrentTargets(ev) {
+  static async showCurrentTargets(ev) {
     const targets = [];
     let i18nkey;
     if (ev.currentTarget.dataset.target == 'target') {
@@ -2338,13 +2338,14 @@ export default class DiceDSA5 {
     } else {
       i18nkey = 'TT.applyEffectCaster';
       const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
-      const actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker);
+      let actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker);
+      if (actor?.emptyActor?.parent_source_uuid) actor = await fromUuid(actor.emptyActor.parent_source_uuid);
       if (actor) targets.push(actor.token ? actor.token.texture.src : actor.prototypeToken.texture.src);
     }
     const msg = targets.length
-      ? targets.map((x) => `<img style="width:25px;height:25px;" src="${x}"/>`).join('')
+      ? targets.map((x) => `<img style="display:inline;width:25px;height:25px;" src="${x}"/>`).join('')
       : `<small><i class="fas fa-exclamation-circle"></i> ${localize('DIALOG.noTarget')}</small>`;
-    ev.currentTarget.dataset.tooltip = `<div><p>${localize(i18nkey)}</p>${msg}</div>`;
+    ev.currentTarget.dataset.tooltip = `<div><p>${localize(i18nkey)}</p><p class="center">${msg}</p></div>`;
   }
 
   static async rollResistPain(ev) {

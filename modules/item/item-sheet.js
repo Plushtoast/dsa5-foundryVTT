@@ -879,7 +879,7 @@ class Enchantable extends ItemSheetdsa5 {
     if (item) {
       item = item.toObject();
       item.system.talentValue.value = enchantment.fw;
-      const actor = DSA5_Utility.emptyActor(14, this.item.name);
+      const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
       actor.setupSpell(item, {}, 'emptyActor').then(async (setupData) => {
         const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', {
           item: this.item.name,

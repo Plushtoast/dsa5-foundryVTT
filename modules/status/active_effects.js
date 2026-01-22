@@ -557,6 +557,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 1 : 2;
 
     const attacker = DSA5_Utility.getSpeaker(speaker) || DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'));
+    let parent_source_attacker;
+    if (attacker?.emptyActor?.parent_source_uuid) {
+      parent_source_attacker = await fromUuid(attacker.emptyActor.parent_source_uuid);
+    }
 
     const sourceActor = attacker;
     let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));
@@ -565,7 +569,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
     let actors = [];
     if (mode == 'self') {
-      if (attacker) actors.push(attacker);
+      if (attacker) actors.push(parent_source_attacker ||attacker);
     } else {
       if (targets) actors = targets.map((x) => DSA5_Utility.getSpeaker(x));
       else if (game.user.targets.size) {
