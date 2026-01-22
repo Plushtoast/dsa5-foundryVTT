@@ -801,36 +801,39 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     };
   }
 
-  _combatEntry(x, combatskills, actor, options = []) {
+  _combatEntry(x, combatskills, actor, options = {}) {
+    if (combatskills.length == 0) return [];
+
     const preparedItem =
-      x.type == 'meleeweapon' ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
-    const entries = [
-      {
-        name: x.name,
-        id: x.id,
-        icon: x.img,
-        cssClass: `weapon i${x.id}`,
-        abbrev: x.name[0],
-        attack: preparedItem.attack,
-        damage: preparedItem.damagedie,
-        dadd: preparedItem.damageAdd,
+      x.type === 'meleeweapon'
+        ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor)
+        : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
+
+    const buildEntry = (name, id, img, attack, damagedie, damageAdd, subweapon) => {
+      const entry = {
+        name,
+        id,
+        icon: img,
+        cssClass: `weapon i${id}`,
+        abbrev: name?.[0],
+        attack,
+        damage: damagedie,
+        dadd: damageAdd,
         ...options,
-      },
-    ];
-    for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
-      entries.push({
-        name: value.name,
-        id: x.id,
-        subweapon: key,
-        icon: x.img,
-        cssClass: `weapon i${x.id}`,
-        abbrev: value.name[0],
-        attack: value.attack,
-        damage: value.damagedie,
-        dadd: value.damageAdd,
-        ...options,
-      });
-    }
+      };
+      if (subweapon) entry.subweapon = subweapon;
+      return entry;
+    };
+
+    const entries = [buildEntry(x.name, x.id, x.img, preparedItem.attack, preparedItem.damagedie, preparedItem.damageAdd)];
+
+    const subweapons = preparedItem.subweapons ?? {};
+    entries.push(
+      ...Object.entries(subweapons).map(([key, value]) =>
+        buildEntry(value.name, x.id, x.img, value.attack, value.damagedie, value.damageAdd, key)
+      )
+    );
+
     return entries;
   }
 

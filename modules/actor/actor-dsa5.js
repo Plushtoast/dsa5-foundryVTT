@@ -577,7 +577,7 @@ export default class Actordsa5 extends Actor {
     const containers = new Map();
     const applications = new Map();
     let hasTrait = false;
-    const horse = Riding.getHorse(this, true);  
+    const horse = Riding.getHorse(this, true);
     const preparedItems = [];
     let hasAnyItem = false;
     const anyItemSet = new Set(['skill', 'combatskill', 'money']);
@@ -747,23 +747,25 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    for (const wep of inventory.rangeweapons.items) {
-      try {
-        if (wep.system.worn.value) {
-          rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+    if (combatskills.length) {  
+      for (const wep of inventory.rangeweapons.items) {
+        try {
+          if (wep.system.worn.value) {
+            rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+          }
+        } catch (error) {
+          this._itemPreparationError(wep, error);
         }
-      } catch (error) {
-        this._itemPreparationError(wep, error);
       }
-    }
 
-    const otherWeapons = wornweapons.filter(x => !RuleChaos.isWieldedTwohanded(x));
-    for (const wep of wornweapons) {
-      try {
-        const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
-        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, weaponsExcludingSelf));
-      } catch (error) {
-        this._itemPreparationError(wep, error);
+      const otherWeapons = wornweapons.filter(x => !RuleChaos.isWieldedTwohanded(x));    
+      for (const wep of wornweapons) {
+        try {
+          const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
+          meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, weaponsExcludingSelf));
+        } catch (error) {
+          this._itemPreparationError(wep, error);
+        }
       }
     }
 
@@ -1880,7 +1882,7 @@ export default class Actordsa5 extends Actor {
 
     // overlay = true is right click
     // active means force add
-    
+
     if (overlay) {
       if (active) return false;
 
