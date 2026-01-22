@@ -976,7 +976,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       moduleSelected = savedSettings.selects?.find(x => x[0] === 'compendium')?.[1] || false;
     }
 
-    const moduleOptions = DSA5ItemLibrary.collectModulOptions()
+    const moduleOptions = DSA5ItemLibrary.collectModulOptions('.')
     const template = await renderTemplate(
       'systems/dsa5/templates/system/itemlibrary/parts/detailFilter.hbs',
       { fields, subcategory, moduleOptions, moduleSelected }
@@ -985,7 +985,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return template;
   }
 
-  static collectModulOptions() {
+  static collectModulOptions(postfix = '') {
     const options = {};
     const moduleNameCache = new Map();
 
@@ -993,10 +993,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const packageName = pack.metadata.packageName;
 
 
-      if (options[packageName]) continue;
+      if (options[packageName + postfix]) continue;
 
       if (moduleNameCache.has(packageName)) {
-        options[packageName] = moduleNameCache.get(packageName);
+        options[packageName + postfix] = moduleNameCache.get(packageName);
       } else {
         let displayName;
         if (game.i18n.has(`${packageName}.name`)) {
@@ -1009,7 +1009,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         }
 
         moduleNameCache.set(packageName, displayName);
-        options[packageName] = displayName;
+        options[packageName + postfix] = displayName;
       }
     }
 
@@ -1034,6 +1034,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const html = $(this.element)
     tabSlider(html);
     const source = this
+    this._debouncedInfiniteScroll ||= foundry.utils.debounce(ev => this._infiniteScroll(ev, source), 100);
     html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
@@ -1041,7 +1042,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     html.on("mouseenter", ".searchResult .browser-item", ev => this._onItemHover(ev))
     html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))
     this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
-    html.find('.scrollable').on('scroll.infinit', ev => foundry.utils.debounce(this._infiniteScroll(ev, source), 100));
+    html.find('.scrollable').on('scroll.infinit', this._debouncedInfiniteScroll);
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
@@ -1077,6 +1078,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   _infiniteScroll(ev, source) {
+    if (this._paginationInFlight) return;
     const log = $(ev.target);
     const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
     
@@ -1088,19 +1090,27 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const dataFilters = $(source.element).find('.detailFilters');
       const subcategory = dataFilters.attr('data-subc');
       
-      if (subcategory && source.detailFilter[subcategory]?.next) {
-        source.filterItems.call(source, category, source.detailFilter[subcategory].next);
-      } else {
-        const documentName = source.systemConfiguration.documentNameFromGroup(category);
-        if (source.indexes[documentName]?.next) {
-          source.filterItems.call(source, category, source.indexes[documentName].next);
-        }
+      if (subcategory) {
+        const next = source.detailFilter[subcategory]?.next;
+        if (next === undefined) return;
+        this._paginationInFlight = true;
+        source.filterItems.call(source, category, next)
+          .finally(() => { this._paginationInFlight = false; });
+        return;
       }
+      const documentName = source.systemConfiguration.documentNameFromGroup(category);
+      const next = source.indexes[documentName]?.next;
+      if (next === undefined) return;
+      this._paginationInFlight = true;
+      source.filterItems.call(source, category, next)
+        .finally(() => { this._paginationInFlight = false; });
     } else {
       const documentName = source.systemConfiguration.documentNameFromGroup(category);
-      if (source.indexes[documentName].next) {
-        source.filterItems.call(source, category, source.indexes[documentName].next);
-      }
+      const next = source.indexes[documentName].next;
+      if (next === undefined) return;
+      this._paginationInFlight = true;
+      source.filterItems.call(source, category, next)
+        .finally(() => { this._paginationInFlight = false; });
     }
   }
 
