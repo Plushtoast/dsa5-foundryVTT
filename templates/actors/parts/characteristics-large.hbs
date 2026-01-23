@@ -1,5 +1,5 @@
 <div class="actor-main row-section wrap">
-    <div class="characteristics-table" cellpadding="0">
+    <div class="characteristics-table char-block-mental char-row-header" cellpadding="0">
         <div class="table-row">
             <div class="table-header"></div>
             {{#each prepare.mentalAttrs as |ch|}}
@@ -13,47 +13,8 @@
             </div>
             {{/each}}
         </div>
-        <div class="table-row">
-            <div class="row-type table-data">
-                <div class="header-block lineheight">
-                    {{localize "Initial"}}
-                </div>
-            </div>
-            {{#each prepare.mentalAttrs as |ch|}}
-            <div class="table-data">
-                <input name="system.characteristics.{{ch}}.initial" type="number" value="{{getAttr ../document ch 'initial'}}">
-            </div>
-            {{/each}}
-        </div>
-        {{#if prepare.canAdvance}}
-        <div class="table-row">
-            <div class="row-type table-data">
-                <div class="header-block lineheight">
-                    {{localize "Advances"}}
-                </div>
-            </div>
-            {{#each prepare.mentalAttrs as |ch|}}
-            <div class="table-data">
-                <input name="system.characteristics.{{ch}}.advances" type="number" value="{{getAttr ../document ch 'advances'}}">
-            </div>
-            {{/each}}
-        </div>
-        {{/if}}
-        <div class="actor-main-attr-modifier table-row">
-            <div class="row-type table-data">
-                <div class="header-block lineheight">
-                    {{localize "Modifiers"}}
-                </div>
-            </div>
-            {{#each prepare.mentalAttrs as |ch|}}
-            <div class="number-input table-data">
-                <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../document ch 'modifier'}}">
-            </div>
-            {{/each}}
-        </div>
-
     </div>
-    <div class="characteristics-table ctab2" cellpadding="0">
+    <div class="characteristics-table ctab2 char-block-body char-row-header" cellpadding="0">
         <div class="table-row">
             <div class="table-header onlySingleColumn"></div>
             {{#each prepare.bodyAttrs as |ch|}}
@@ -65,6 +26,22 @@
             </div>
             {{/each}}
         </div>
+    </div>
+    <div class="characteristics-table char-block-mental char-row-initial" cellpadding="0">
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Initial"}}
+                </div>
+            </div>
+            {{#each prepare.mentalAttrs as |ch|}}
+            <div class="table-data">
+                <input name="system.characteristics.{{ch}}.initial" type="number" value="{{getAttr ../document ch 'initial'}}">
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="characteristics-table ctab2 char-block-body char-row-initial" cellpadding="0">
         <div class="table-row">
             <div class="row-type table-data onlySingleColumn">
                 <div class="header-block lineheight">
@@ -77,7 +54,23 @@
             </div>
             {{/each}}
         </div>
-        {{#if prepare.canAdvance}}
+    </div>
+    {{#if prepare.canAdvance}}
+    <div class="characteristics-table char-block-mental char-row-advances" cellpadding="0">
+        <div class="table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Advances"}}
+                </div>
+            </div>
+            {{#each prepare.mentalAttrs as |ch|}}
+            <div class="table-data">
+                <input name="system.characteristics.{{ch}}.advances" type="number" value="{{getAttr ../document ch 'advances'}}">
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="characteristics-table ctab2 char-block-body char-row-advances" cellpadding="0">
         <div class="table-row">
             <div class="row-type table-data onlySingleColumn">
                 <div class="header-block lineheight">
@@ -90,7 +83,23 @@
             </div>
             {{/each}}
         </div>
-        {{/if}}
+    </div>
+    {{/if}}
+    <div class="characteristics-table char-block-mental char-row-modifiers" cellpadding="0">
+        <div class="actor-main-attr-modifier table-row">
+            <div class="row-type table-data">
+                <div class="header-block lineheight">
+                    {{localize "Modifiers"}}
+                </div>
+            </div>
+            {{#each prepare.mentalAttrs as |ch|}}
+            <div class="number-input table-data">
+                <input name="system.characteristics.{{ch}}.modifier" type="number" value="{{getAttr ../document ch 'modifier'}}">
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <div class="characteristics-table ctab2 char-block-body char-row-modifiers" cellpadding="0">
         <div class="actor-main-attr-modifier table-row">
             <div class="row-type table-data onlySingleColumn">
                 <div class="header-block lineheight">
@@ -103,6 +112,5 @@
             </div>
             {{/each}}
         </div>
-
     </div>
 </div>

@@ -1904,6 +1904,58 @@ a.img-entity-link {
   display: block;
 }
 
+.characteristicsSingleColumn {
+  .onlySingleColumn {
+    display: block;
+  }
+}
+
+.singleColumnLayout,
+.minimumColumnLayout,
+.characteristicsSingleColumn {
+  .characteristics-table {
+    flex: 0 0 100%;
+    min-width: 100%;
+
+    &.ctab2 {
+      flex: 0 0 100%;
+      min-width: 100%;
+    }
+
+    &.char-block-mental.char-row-header {
+      order: 1;
+    }
+
+    &.char-block-mental.char-row-initial {
+      order: 2;
+    }
+
+    &.char-block-mental.char-row-advances {
+      order: 3;
+    }
+
+    &.char-block-mental.char-row-modifiers {
+      order: 4;
+    }
+
+    &.char-block-body.char-row-header {
+      order: 5;
+    }
+
+    &.char-block-body.char-row-initial {
+      order: 6;
+    }
+
+    &.char-block-body.char-row-advances {
+      order: 7;
+    }
+
+    &.char-block-body.char-row-modifiers {
+      order: 8;
+    }
+  }
+}
+
 .row-section.skills.searchbox {
   margin-bottom: 10px;
   font-weight: normal;

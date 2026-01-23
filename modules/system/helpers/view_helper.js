@@ -141,10 +141,13 @@ function columnLayout(html) {
   const width = html.width();
   const minWidth = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth').replace('px', ''));
   const width60 = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth60').replace('px', ''));
-  const borderWidth = +6;
+  const width40 = Number(getComputedStyle(document.body).getPropertyValue('--minColumnWidth40').replace('px', ''));
+  const borderWidth = 32;
+  const availableWidth = width - borderWidth;
 
   html.toggleClass('singleColumnLayout', width < minWidth * 2 + borderWidth);
   html.toggleClass('minimumColumnLayout', width <= width60);
+  html.toggleClass('characteristicsSingleColumn', availableWidth < width60 + width40);
 }
 
 export function resizeListener(html) {
