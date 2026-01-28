@@ -2572,7 +2572,74 @@
         "adventurePoints": "Adventure Points History",
         "money": "Financial Overview",
         "sheetChange": "Character Sheet Change",
-        "requiresGM": "Adventure point or money tracking requires a logged in GM or journal edit/creation permissions."
+        "requiresGM": "Adventure point or money tracking requires a logged in GM or journal edit/creation permissions.",
+        "FIELDS": {
+            "ap": {
+                "entries": {
+                    "created": {
+                        "label": "Created"
+                    },
+                    "type": {
+                        "label": "Type"
+                    },
+                    "itemUuid": {
+                        "label": "Item UUID"
+                    },
+                    "itemType": {
+                        "label": "Item Type"
+                    },
+                    "itemName": {
+                        "label": "Item Name"
+                    },
+                    "attr": {
+                        "label": "Attribute"
+                    },
+                    "state": {
+                        "label": "State"
+                    },
+                    "previous": {
+                        "label": "Previous"
+                    },
+                    "next": {
+                        "label": "Next"
+                    },
+                    "cost": {
+                        "label": "Cost"
+                    },
+                    "total": {
+                        "label": "Total"
+                    }
+                }
+            },
+            "money": {
+                "entries": {
+                    "created": {
+                        "label": "Created"
+                    },
+                    "type": {
+                        "label": "Type"
+                    },
+                    "name": {
+                        "label": "Name"
+                    },
+                    "amount": {
+                        "label": "Amount"
+                    },
+                    "previous": {
+                        "label": "Previous"
+                    },
+                    "next": {
+                        "label": "Next"
+                    },
+                    "cost": {
+                        "label": "Value"
+                    },
+                    "total": {
+                        "label": "Total"
+                    }
+                }
+            }
+        }
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",

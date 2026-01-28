@@ -2645,7 +2645,74 @@
         "adventurePoints": "Abenteuerpunkte Historie",
         "money": "Finanzübersicht",
         "sheetChange": "Charakterblattänderung",
-        "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte."
+        "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte.",
+        "FIELDS": {
+            "ap": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "itemUuid": {
+                        "label": "Item-UUID"
+                    },
+                    "itemType": {
+                        "label": "Item-Typ"
+                    },
+                    "itemName": {
+                        "label": "Item-Name"
+                    },
+                    "attr": {
+                        "label": "Attribut"
+                    },
+                    "state": {
+                        "label": "Status"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Kosten"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            },
+            "money": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "name": {
+                        "label": "Name"
+                    },
+                    "amount": {
+                        "label": "Anzahl"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Wert"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            }
+        }
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"

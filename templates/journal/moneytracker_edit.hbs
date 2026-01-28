@@ -25,13 +25,13 @@
                 </button>
             </legend>
             <div class="flexrow">
-                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='Type' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.name value=name name=(concat 'system.entries.' key '.name') label='Name' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.amount value=amount name=(concat 'system.entries.' key '.amount') label='Amount' classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='TRACKER.FIELDS.money.entries.type.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.name value=name name=(concat 'system.entries.' key '.name') label='TRACKER.FIELDS.money.entries.name.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.amount value=amount name=(concat 'system.entries.' key '.amount') label='TRACKER.FIELDS.money.entries.amount.label' localize=true classes='col'}}
             </div>
             <div class="flexrow">
-                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label=(localize 'value') classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label=(localize 'Total') classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label='TRACKER.FIELDS.money.entries.cost.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label='TRACKER.FIELDS.money.entries.total.label' localize=true classes='col'}}
             </div>
         </fieldset>
     {{/each}}

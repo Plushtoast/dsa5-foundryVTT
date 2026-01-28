@@ -610,7 +610,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const moon = calendar.translate(convertedComponents.moon.phase.name);
     const month = calendar.translate(calendar.months.values[components.month].name);
-    const weekday = calendar.translate(calendar.days.values[convertedComponents.dayOfWeek].name);
+    const daysCount = calendar.days.values.length;
+    const dayOfWeekIndex = ((convertedComponents.dayOfWeek % daysCount) + daysCount) % daysCount;
+    const weekday = calendar.translate(calendar.days.values[dayOfWeekIndex].name);
     const holidays = await this._getHolidaysFormatted(convertedComponents);
 
     return `<div>

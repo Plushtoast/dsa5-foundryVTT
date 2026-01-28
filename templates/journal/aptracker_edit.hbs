@@ -25,20 +25,20 @@
                 </button>
             </legend>
             <div class="flexrow">
-                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='Type' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.attr value=attr name=(concat 'system.entries.' key '.attr') label='Attribute' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.itemUuid value=itemUuid name=(concat 'system.entries.' key '.itemUuid') label='Item UUID' classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='TRACKER.FIELDS.ap.entries.type.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.attr value=attr name=(concat 'system.entries.' key '.attr') label='TRACKER.FIELDS.ap.entries.attr.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemUuid value=itemUuid name=(concat 'system.entries.' key '.itemUuid') label='TRACKER.FIELDS.ap.entries.itemUuid.label' localize=true classes='col'}}
             </div>
             <div class="flexrow">
-                {{formGroup ../document.system.schema.fields.entries.element.fields.itemType value=itemType name=(concat 'system.entries.' key '.itemType') label='Item Type' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.itemName value=itemName name=(concat 'system.entries.' key '.itemName') label='Item Name' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.state value=state name=(concat 'system.entries.' key '.state') label='State' classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemType value=itemType name=(concat 'system.entries.' key '.itemType') label='TRACKER.FIELDS.ap.entries.itemType.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemName value=itemName name=(concat 'system.entries.' key '.itemName') label='TRACKER.FIELDS.ap.entries.itemName.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.state value=state name=(concat 'system.entries.' key '.state') label='TRACKER.FIELDS.ap.entries.state.label' localize=true classes='col'}}
             </div>
             <div class="flexrow">
-                {{formGroup ../document.system.schema.fields.entries.element.fields.previous value=previous name=(concat 'system.entries.' key '.previous') label='Previous' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.next value=next name=(concat 'system.entries.' key '.next') label='Next' classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label=(localize 'cost') classes='col'}}
-                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label=(localize 'Total') classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.previous value=previous name=(concat 'system.entries.' key '.previous') label='TRACKER.FIELDS.ap.entries.previous.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.next value=next name=(concat 'system.entries.' key '.next') label='TRACKER.FIELDS.ap.entries.next.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label='TRACKER.FIELDS.ap.entries.cost.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label='TRACKER.FIELDS.ap.entries.total.label' localize=true classes='col'}}
             </div>
         </fieldset>
     {{/each}}

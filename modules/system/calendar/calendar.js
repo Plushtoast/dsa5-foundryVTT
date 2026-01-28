@@ -128,11 +128,13 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 
   static async seasonParts(calendar, components, _options) {
     const season = calendar.seasons.values[components.season];
+    const daysCount = calendar.days.values.length;
+    const dayOfWeekIndex = ((components.dayOfWeek % daysCount) + daysCount) % daysCount;
 
     return {
       seasonName: calendar.translate(season.name),
       moon: calendar.translate(components.moon?.phase.name || ''),
-      dayOfWeek: calendar.translate(calendar.days.values[components.dayOfWeek].name),
+      dayOfWeek: calendar.translate(calendar.days.values[dayOfWeekIndex].name),
       h: components.hour.toString().padStart(2, '0'),
       m: components.minute.toString().padStart(2, '0'),
       s: components.second.toString().padStart(2, '0'),
