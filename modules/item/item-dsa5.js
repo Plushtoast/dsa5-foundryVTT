@@ -837,13 +837,13 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
 
     if (assumeTradition) {
-      const components = game.time.calendar.timeToComponents(game.time.worldTime);
-      const gameMonth = components.month;
-      const calendarMonths = game.time.calendar.constructor.months || [];
+      const components = game?.time?.calendar?.timeToComponents(game?.time?.worldTime);
+      const gameMonth = components?.month;
+      const calendarMonths = game?.time?.calendar?.constructor?.months || [];
       const monthName = (calendarMonths[gameMonth] && typeof calendarMonths[gameMonth] === 'string')
         ? calendarMonths[gameMonth].toLowerCase()
         : "";
-      const day = components.dayOfMonth;
+      const day = components?.dayOfMonth;
 
       const holidays = CONFIG.time.worldCalendarConfig.holidays.values;
       const isHoliday = holidays.some(h => {
