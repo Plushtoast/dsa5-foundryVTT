@@ -2,6 +2,8 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { localize } from '../system/helpers/localizer.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import PostRollBuffs from '../system/rolls/postroll-buffs.js';
+import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -13,6 +15,10 @@ const getMessageFromLi = (li) => game.messages.get(li.dataset.messageId);
 
 const getActorFromMessage = (message) => {
   return message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
+};
+
+const getActorFromRollMessage = (message) => {
+  return DSA5_Utility.getSpeaker(message.speaker) || getActorFromMessage(message);
 };
 
 const hasOwnership = (actor) => actor?.isOwner || game.user.isGM;
@@ -214,6 +220,14 @@ class ConditionChecker {
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
   }
+
+  static canApplyDepletableBuffs(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromRollMessage(message);
+    if (!actor || !hasOwnership(actor) || !message?.flags?.data) return false;
+
+    return PostRollBuffs.getMatches(message, actor).length > 0;
+  }
 }
 
 class ActionHandler {
@@ -362,6 +376,19 @@ class ActionHandler {
 
     const { postData } = message.flags.data;
     await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
+  }
+
+  static async applyDepletableBuffs(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromRollMessage(message);
+    if (!actor || !hasOwnership(actor) || !message?.flags?.data) return;
+
+    const matches = PostRollBuffs.getMatches(message, actor);
+    if (matches.length === 0) return;
+
+    new PostRollBuffPicker(message, matches, async (chosen) => {
+      await PostRollBuffs.applyMatches(message, chosen);
+    }).render(true);
   }
 }
 
@@ -559,6 +586,12 @@ const createContextOptions = () => {
       }
     },
     
+    {
+      name: 'CHATCONTEXT.applyDepletableBuffs',
+      icon: '<i class="fas fa-wand-magic-sparkles"></i>',
+      condition: ConditionChecker.canApplyDepletableBuffs,
+      callback: ActionHandler.applyDepletableBuffs,
+    },
   ];
 
   if (game.settings.get('dsa5', 'doubleDamageOptions')) {

@@ -10,6 +10,7 @@ export default class DSATriggers {
     DAMAGE_TRANSFORMATION: 5,
     POST_ROLL: 6,
     POST_OPPOSED: 7,
+    ROLL_DIALOG_RENDER: 8,
   };
 
   //static cachedEvents = { 6: {}, 7: {} }
@@ -54,5 +55,47 @@ export default class DSATriggers {
         }
       }
     }
+  }
+
+  /**
+   * Collect menu items from all trigger macros for the given type.
+   *
+   * Expected return value of a macro:
+   * - a single ContextMenu item object, or
+   * - an array of ContextMenu item objects
+   *
+   * Macros may also mutate `data.menuItems` directly.
+   */
+  static async collectMacros(actor, testData, type, data) {
+    if (!game.user.can('MACRO_SCRIPT')) {
+      ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
+      return [];
+    }
+
+    const collected = [];
+    const triggerMap = actor?.dsatriggers?.[type];
+    if (!triggerMap) return collected;
+
+    for (let [key, value] of Object.entries(triggerMap)) {
+      const source = actor.items.get(key);
+      const ef = source?.effects?.get(value);
+      const macro = ef?.getFlag?.('dsa5', 'args3');
+      if (!source || !ef || !macro) continue;
+
+      try {
+        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+        const fn = new AsyncFunction('actor', 'testData', 'type', 'data', 'source', 'ef', macro);
+        const result = await fn.call(this, actor, testData, type, data, source, ef);
+
+        if (Array.isArray(result)) collected.push(...result);
+        else if (result) collected.push(result);
+      } catch (err) {
+        ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
+        console.error(err);
+      }
+    }
+
+    if (Array.isArray(data?.menuItems)) collected.push(...data.menuItems);
+    return collected;
   }
 }

@@ -28,6 +28,7 @@ import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { localize, format } from '../system/helpers/localizer.js';
+import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -151,6 +152,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemEdit: this._itemEdit,
       chValue: this._chValue,
       itemContextMenu: this._itemContextMenu,
+      weaponContextMenu: this._weaponContextMenu,
       statusContextMenu: this.#statusContextMenu,
       chStatus: this._chStatus,
       filterTalents: this._filterTalents,
@@ -177,6 +179,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
       traditionDelete: this._deleteTraditionArtifact,
       swapWeaponHand: this._swapWeaponHand,
+      swapWeaponHandSlot: this._swapWeaponHandSlot,
+      toggleWeaponOffHand: this._toggleWeaponOffHand,
+      toggleIgnoreWeaponHandLimits: this._toggleIgnoreWeaponHandLimits,
       selectTraditionartifact: this._selectTraditionArtifact,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
@@ -185,6 +190,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       addSpeedCategory: this._addSpeedCategory,
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
+      unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
     },
     form: {
       submitOnChange: true,
@@ -320,6 +326,40 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
       view: window, bubbles: true, cancelable: true, clientX, clientY
     }));
+  }
+
+  static _weaponContextMenu(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const { clientX, clientY } = event;
+    const weapon = target.closest('.combat-weapon') || target.closest('[data-item-id]')?.querySelector('.combat-weapon');
+    if (!weapon) return;
+    weapon.dispatchEvent(
+      new PointerEvent('contextmenu', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+      }),
+    );
+  }
+
+  static _unequippedWeaponMenu(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const { clientX, clientY } = event;
+    target.dispatchEvent(
+      new PointerEvent('contextmenu', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+        button: 2,
+        buttons: 2,
+      }),
+    );
   }
 
   static #statusContextMenu(event, target) {
@@ -602,6 +642,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.render(true)
   }
 
+  static async _toggleIgnoreWeaponHandLimits() {
+    const current = !!getProperty(this.actor, 'system.config.ignoreWeaponHandLimits');
+    await this.actor.update({ 'system.config.ignoreWeaponHandLimits': !current });
+  }
+
   showLimited() {
     return (!game.user.isGM && this.actor.limited) || this.playerViewEnabled();
   }
@@ -621,14 +666,60 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _swapWeaponHand(ev, target) {
-    this.swapWeaponHand(target);
+    return this.swapWeaponHand(target);
+  }
+  
+  static async _swapWeaponHandSlot(ev, target) {
+    await this.swapWeaponHandSlot(target);
+  }
+
+  static async _toggleWeaponOffHand(ev, target) {
+    await this.toggleWeaponOffHand(target);
+  }
+
+  async toggleWeaponOffHand(target, item = undefined) {
+    const itemId = item?.id || this._getItemId(target);
+    item = item || this.actor.items.get(itemId);
+    if (!item || item.type !== 'meleeweapon') return;
+
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
+
+    await this.actor.toggleWeaponOffHand(item.id);
+
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+    }
+  }
+
+  async swapWeaponHandSlot(target, item = undefined) {
+    const actualTarget = target && typeof target.closest === 'function' ? target : target?.parentElement || target;
+    const itemId = item?.id || this._getItemId(actualTarget);
+    item = item || this.actor.items.get(itemId);
+
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
+
+    const clickedHand = actualTarget?.dataset?.hand || actualTarget?.closest?.('[data-hand]')?.dataset?.hand;
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
+
+    await this.actor.handleWeaponHandSlotClick(item.id, clickedHand);
+
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+    }
   }
 
   async swapWeaponHand(target, item = undefined) {
-    const itemId = item?.id || this._getItemId(target);
+    const actualTarget = target && typeof target.closest === 'function' ? target : target?.parentElement || target;
+    const itemId = item?.id || this._getItemId(actualTarget);
     item = item || this.actor.items.get(itemId);
 
-    item.system.swapNumberWeaponHands();
+    await item.system.swapNumberWeaponHands();
   }
 
   static async _skillSelect(ev, target) {
@@ -767,7 +858,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (ev.button == 0) {
       const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
       update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
-    } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
+    } else if (ev.button == 2) {
+      update['system.reloadTime.progress'] = 0;
+      update['system.aimTime.progress'] = 0;
+    }
 
     await this.actor.updateEmbeddedDocuments('Item', [update]);
   }
@@ -776,16 +870,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.swapMag(this._getItemId(target));
   }
 
-  static _itemToggle(ev, target) {
+  static async _itemToggle(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
 
     switch (item.type) {
-      case 'armor':
       case 'rangeweapon':
       case 'meleeweapon':
+        await this.actor.equipWeaponToHand(itemId, { hand: 'auto', equip: !item.system.worn.value });
+        DSA5SoundEffect.playEquipmentWearStatusChange(item);
+        break;
+      case 'armor':
       case 'equipment':
-        this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
         DSA5SoundEffect.playEquipmentWearStatusChange(item);
         break;
     }
@@ -850,6 +947,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
     new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
+      jQuery: false,
+      fixed: true
+    });
+
+    new foundry.applications.ux.ContextMenu(this.element, '.unequipped-weapon-menu', [], {
+      onOpen: this._onUnequippedWeaponContext.bind(this),
       jQuery: false,
       fixed: true
     });
@@ -1094,11 +1197,74 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _onWeaponItemContext(target) {
-    const item = this.actor.items.get(target.dataset.itemId);
+    const itemId = target.dataset.itemId || target.closest('[data-item-id]')?.dataset?.itemId;
+    const item = this.actor.items.get(itemId);
 
-    if (!item || item?.type != 'meleeweapon') return;
-    ui.context.menuItems = this._getWeaponItemContextOptions(item);
+    if (!item) return;
+
+    if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
+      ui.context.menuItems = this._getWeaponItemContextOptions(item);
+    } else if (item.type === 'trait') {
+      ui.context.menuItems = this._getWeaponTraitContextOptions(item);
+    } else {
+      return;
+    }
     Hooks.call('dsa5.getWeaponItemContextOptions', item, ui.context.menuItems);
+  }
+
+  _onUnequippedWeaponContext(target) {
+    const weaponType = target?.dataset?.weaponType;
+    if (!['meleeweapon', 'rangeweapon'].includes(weaponType)) return;
+
+    ui.context.menuItems = this._getUnequippedWeaponContextOptions(weaponType);
+    Hooks.call('dsa5.getUnequippedWeaponContextOptions', weaponType, ui.context.menuItems);
+  }
+
+  _getUnequippedWeaponContextOptions(weaponType) {
+    const equipLabel = localize('SHEET.EquipItem');
+    const icon = weaponType === 'rangeweapon' ? "<i class='fas fa-bullseye'></i>" : "<i class='fas fa-sword'></i>";
+
+    const unequipped = this.actor.items
+      .filter(i => i.type === weaponType && i.system?.worn && !i.system.worn.value)
+      .slice(0, 10);
+
+    if (!unequipped.length) {
+      return [
+        {
+          name: localize('SHEET.NoUnequippedWeapons'),
+          icon: "<i class='fas fa-minus'></i>",
+          callback: () => {},
+        },
+      ];
+    }
+
+    return unequipped.map(w => ({
+      name: `${equipLabel}: ${w.name}`,
+      icon,
+      callback: () => this.actor.equipWeaponToHand(w.id, { hand: 'auto', equip: true }),
+    }));
+  }
+
+  _getWeaponTraitContextOptions(item) {
+    return [
+      {
+        name: 'SHEET.EditItem',
+        icon: "<i class='fas fa-edit'></i>",
+        callback: () => item.sheet.render(true),
+      },
+      {
+        name: 'SHEET.Dropdown',
+        icon: "<i class='fas fa-chevron-down'></i>",
+        callback: () => {
+          $(this.element).find(`[data-item-id=\"${item.id}\"] .expandDetails:first`).toggleClass('shown');
+        },
+      },
+      {
+        name: 'SHEET.PostItem',
+        icon: "<i class='fas fa-comment fa-fw'></i>",
+        callback: () => item.postItem(),
+      },
+    ];
   }
 
   _onStatusEffectContext(target) {
@@ -1139,6 +1305,27 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (['rangeweapon', 'meleeweapon'].includes(item.type)) {
       options.push(...item.system.getContextOptions());
+    }
+
+    if (item.type === 'meleeweapon') {
+      options.push({
+        name: 'offHand',
+        icon: "<i class='fas fa-shield-halved'></i>",
+        callback: () => {
+          if (RuleChaos.isWieldedTwohanded(item)) return;
+          const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+          if (item.system.worn.value && this.actor.swapWeaponHandSlot) this.actor.swapWeaponHandSlot(item.id, desiredHand);
+          else this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
+        },
+      });
+    } else if (item.type === 'rangeweapon') {
+      options.push({
+        name: 'SHEET.Dropdown',
+        icon: "<i class='fas fa-chevron-down'></i>",
+        callback: () => {
+          $(this.element).find(`.combat-weapon-wrapper[data-item-id="${item.id}"] .expandDetails:first`).toggleClass('shown');
+        },
+      });
     }
 
     options.push({
@@ -1202,7 +1389,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       options.push({
         name: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
+        callback: async () => {
+          if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
+            await this.actor.equipWeaponToHand(item.id, { hand: 'auto', equip: !item.system.worn.value });
+            return;
+          }
+
+          await item.update({ 'system.worn.value': !item.system.worn.value });
+        },
       });
     }
     if (Number(getProperty(item, 'system.quantity.value')) > 1) {
@@ -1442,7 +1636,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getItemId(target) {
-    return target.closest('[data-item-id]').getAttribute('data-item-id');
+    const el = target?.closest?.('[data-item-id]');
+    return el?.getAttribute('data-item-id') || target?.dataset?.itemId;
   }
 
   _getItemDataset(target) {

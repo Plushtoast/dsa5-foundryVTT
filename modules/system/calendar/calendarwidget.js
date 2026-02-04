@@ -81,6 +81,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
         data.toggleAutoTime = this.toggleAutoTime
 
+        Hooks.call('dsa5.calendarWidgetDataReady', data, this);
+
         return data;
     }
 
@@ -100,10 +102,10 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         game.dsa5.apps.CalendarPicker.render(true);
     }
 
-    timeAdvance(seconds, adjustRemainder = false) {
+    timeAdvance(seconds) {
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
-        const adjustment = adjustRemainder ? components.second + (components.minute * 60) : components.second;
-        game.time.advance(seconds + (adjustRemainder ? adjustment : -adjustment));
+        const adjustment = components.second;
+        game.time.advance(seconds + - adjustment);
     }
 
     static smallBackward(ev, target) {
@@ -141,12 +143,12 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
     static fastBackward(ev, target) {
         const seconds = ev.button != 2 ? -this.constructor.SECONDS_PER_DAY : -this.constructor.SECONDS_PER_DAY * 7;
-        this.timeAdvance(seconds, true);
+        this.timeAdvance(seconds);
     }
 
     static fastForward(ev, target) {
         const seconds = ev.button != 2 ? this.constructor.SECONDS_PER_DAY : this.constructor.SECONDS_PER_DAY * 7;
-        this.timeAdvance(seconds, true);
+        this.timeAdvance(seconds);
     }
 
     async _onRender(context, options) {

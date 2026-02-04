@@ -6,9 +6,12 @@ import ArtifactTemplate from './templates/artifact.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
+import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
+
+const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
@@ -34,11 +37,16 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
         value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
       }),
+      aimTime: new SchemaField({
+        progress: new ScopableNumberField({ initial: 0 }),
+      }),
       reach: new SchemaField({
         value: new ScopableStringField({ initial: '5/25/40', label: 'reach' }),
       }),
       worn: new SchemaField({
         value: new BooleanField({ initial: false }),
+        offHand: new ScopableBooleanField({ label: 'offHand', initial: false }),
+        requiresBothHands: new BooleanField({ initial: true }),
       }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
     });
@@ -73,6 +81,27 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
     this.progressTransformation(item, progress);
   }
 
+  static buildAimProgress(item) {
+    const aimProgress = Math.clamp(Number(item.system?.aimTime?.progress) || 0, 0, 2);
+    const progress = aimProgress / 2;
+
+    item.aimTitle = game.i18n.format('WEAPON.aiming', {
+      status: `${aimProgress}/2`,
+    });
+    item.aimProgress = `${aimProgress}/2`;
+    if (progress >= 1) {
+      item.aimTitle = game.i18n.localize('WEAPON.aimed');
+    }
+
+    if (progress >= 0.5) {
+      item.aimTransformRight = '181deg';
+      item.aimTransformLeft = `${Math.round(progress * 360 - 179)}deg`;
+    } else {
+      item.aimTransformRight = `${Math.round(progress * 360 + 1)}deg`;
+      item.aimTransformLeft = '0deg';
+    }
+  }
+
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
     item.toggleValue = item.system.worn.value || false;
@@ -92,6 +121,11 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   async reEquipItem() {
+    if (this.parent?.actor) {
+      await this.parent.actor.equipWeaponToHand(this.parent.id, { hand: 'auto', equip: !this.worn.value });
+      return;
+    }
+
     await this.parent.update({ 'system.worn.value': !this.worn.value });
     this.itemEquippedMessage();
   }
@@ -102,5 +136,12 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
       const texts = [{ value: game.i18n.localize(this.worn.value ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
       this.parent.actor.tokenScrollingText(texts);
     }
+  }
+
+  async _preUpdate(changed, options, user) {
+    // If a ranged weapon switches into 2H mode, its offHand flag must be cleared.
+    const requiresBothHands = getProperty(changed, 'system.worn.requiresBothHands');
+    if (requiresBothHands === true) setProperty(changed, 'system.worn.offHand', false);
+    await super._preUpdate(changed, options, user);
   }
 }

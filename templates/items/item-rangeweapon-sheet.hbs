@@ -19,4 +19,5 @@
     {{else}}
         {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
     {{/if}}
+    {{formGroup systemFields.worn.fields.requiresBothHands value=document.system.worn.requiresBothHands label=(localize 'SHEET.RequiresBothHands') localize=true}}
 </div>

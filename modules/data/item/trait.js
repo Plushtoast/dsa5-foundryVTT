@@ -27,6 +27,9 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
         value: new StringField({ initial: '', label: 'reloadTime' }),
         progress: new NumberField({ initial: 0 }),
       }),
+      aimTime: new SchemaField({
+        progress: new NumberField({ initial: 0 }),
+      }),
       AsPCost: new SchemaField({
         value: new StringField({ initial: '' }),
       }),
@@ -122,6 +125,7 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
     item.attack = Number(item.system.at.value);
     item.LZ = Number(item.system.reloadTime.value);
     if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
+    RangeweaponData.buildAimProgress(item);
 
     return this._parseDmg(item, actorData);
   }

@@ -14,6 +14,7 @@ export default class NpcData extends ActorDataModel.mixin(RidingTemplate, Charac
       config: new SchemaField({
         autoBar: new BooleanField({ initial: true }),
         autoSize: new BooleanField({ initial: true }),
+        ignoreWeaponHandLimits: new BooleanField({ initial: false }),
         lockRotation: new BooleanField({ initial: false }),
       }),
     });

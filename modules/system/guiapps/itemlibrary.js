@@ -3,9 +3,9 @@ import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
 import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 const { duplicate, mergeObject } = foundry.utils;
-import FlexSearch from "../../../libs/flexsearch.bundle.module.min.js"
 import DSA5 from '../../config/config-dsa5.js';
 import { localize } from '../helpers/localizer.js';
+import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 //todo check if items on index have permission
@@ -160,6 +160,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   pageSize = 60
   filterLimit = 10000
 
+  searchDebounceMs = 200
+
   static TABS = {
     sheet: {
       tabs: [
@@ -233,6 +235,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   constructor(app) {
     super(app)
 
+    this._debouncedFilterItems = foundry.utils.debounce((category) => {
+      this.filterItems(category);
+    }, this.searchDebounceMs);
+
+    this.indexLoader = new ItemLibraryIndexLoader();
+
     this.loadSystemSpecificConfig().then(() => {
       this.prepareDataModels()
       this.prepareIndexes()
@@ -252,25 +260,23 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   prepareIndexes() {
     this.indexes = {}
     this.detailFilter = {}
+    this.detailStoreBySubcategory = {}
+    this.candidateUuidsBySubcategory = {}
+    this.detailEnrichmentInFlight = {}
 
     for (let className of this.systemConfiguration.documentNames) {
       const fields = this.systemConfiguration.getSearchFields(className, undefined, this.fullTextSearch).index
 
       this.indexes[className] = {
+        documentName: className,
         search: "",
-        index: new FlexSearch.Document({
-          tokenize: "full",
-          cache: true,
-          document: {
-            id: "uuid",
-            store: true,
-            tag: "type",
-            index: fields
-          }
-        }),
+        index: null,
+        store: {},
         build: false,
         worldBuild: false,
-        next: undefined
+        next: undefined,
+        workerReady: false,
+        buildToken: 0
       }
     }
   }
@@ -417,7 +423,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     const shuffledItems = this.shuffle(filteredItems)
       .slice(0, limit + 5)
-      .map(x => this.indexes.Item.index.get(x));
+      .map(x => this._getStoredObject(this.indexes.Item, x));
 
     const documents = await Promise.all(shuffledItems.map(x => fromUuid(x.uuid)));
     return documents
@@ -448,7 +454,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     };
 
     let result = await this.flattenedResults(this.indexes.Item, search, query);
-    let items = result.map(x => this.indexes.Item.index.get(x));
+    let items = result.map(x => this._getStoredObject(this.indexes.Item, x));
 
     if (filterCompendium) {
       items = items.filter(x => x.compendium);
@@ -469,7 +475,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async getCategoryItems(category, asItemData = false, asItem = false) {
     await this.buildItemIndex();
     const indexResults = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
-    const items = indexResults.map(x => this.indexes.Item.index.get(x));
+    const items = indexResults.map(x => this._getStoredObject(this.indexes.Item, x));
 
     if (!asItemData && !asItem) return items;
 
@@ -478,8 +484,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, rangeSearches = [], startIndex = 0, returnAll = false) {
-    const index = indexWrapper?.index || indexWrapper;
-    if (!index?.store) return [];
+    const store = indexWrapper?.store || indexWrapper?.index?.store;
+    if (!store) return [];
+
+    const candidates = indexWrapper?.candidates;
+    const values = candidates?.length ? candidates.map(uuid => store[uuid]).filter(Boolean) : Object.values(store);
 
     const searchLower = search.toLowerCase();
     const filterFunction = (item) => {
@@ -505,7 +514,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       return true;
     };
 
-    const allResults = Object.values(index.store)
+    const allResults = values
       .filter(filterFunction)
       .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     
@@ -514,7 +523,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       Math.min(startIndex + this.pageSize, allResults.length)
     );
 
-    if (indexWrapper?.index) {
+    if (indexWrapper) {
       indexWrapper.next = startIndex + this.pageSize < allResults.length ?
         startIndex + this.pageSize :
         undefined;
@@ -626,7 +635,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       undefined;
 
     const filteredItems = this.filterDuplications(
-      paginatedResults.map(x => index.index.get(x))
+      paginatedResults.map(x => this._getStoredObject(index, x))
     );
 
     this.setBGImage(filteredItems, category);
@@ -719,6 +728,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (index.build) return;
 
     index.build = true;
+    index.store = {};
+    index.buildToken = this.indexLoader?.bumpBuildToken?.() || (index.buildToken + 1);
     const filteredCompendiums = game.settings.get("dsa5", "libraryModulsFilter");
     const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true });
     this.showLoading(documentName);
@@ -728,6 +739,30 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       (game.user.isGM || p.visible) &&
       !filteredCompendiums[p.metadata.packageName]
     );
+
+    index.workerReady = false;
+    if (!this.indexLoader?.enabled) {
+      this.hideLoading(documentName);
+      index.build = false;
+      ui.notifications.error('DSA5 | ItemLibrary: Worker indexing unavailable');
+      return;
+    }
+
+    const fields = this.systemConfiguration.getSearchFields(documentName, undefined, this.fullTextSearch).index;
+    await this.indexLoader.reset({ documentName, token: index.buildToken });
+    const ok = await this.indexLoader.ensureIndex({
+      documentName,
+      fields,
+      fullTextSearch: this.fullTextSearch,
+      token: index.buildToken
+    });
+    index.workerReady = !!ok;
+    if (!index.workerReady) {
+      this.hideLoading(documentName);
+      index.build = false;
+      ui.notifications.error('DSA5 | ItemLibrary: Worker indexing failed');
+      return;
+    }
 
     await this.indexWorldItems(worldItems, documentName);
     progress.update({
@@ -752,8 +787,21 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
       const documents = await getDocumentsFunction(p);
 
+      const batch = [];
+      const BATCH_SIZE = 200;
       for (const item of documents) {
-        index.index.add(SearchDocument.toSearchableObject(item, documentName));
+        const so = SearchDocument.toSearchableObject(item, documentName);
+        index.store[so.uuid] = so;
+        batch.push(so);
+
+        if (batch.length >= BATCH_SIZE) {
+          await this.indexLoader.addBatch({ documentName, batch, token: index.buildToken });
+          batch.length = 0;
+        }
+      }
+
+      if (batch.length) {
+        await this.indexLoader.addBatch({ documentName, batch, token: index.buildToken });
       }
 
       completedCount++;
@@ -781,7 +829,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async indexWorldItems(worldItems, documentName) {
     if (game.settings.get('dsa5', 'indexWorldItems')) {
       for (const item of worldItems.filter(x => x.visible)) {
-        this.findIndex(documentName).index.add(SearchDocument.toSearchableObject(item, documentName))
+        const wrapper = this.findIndex(documentName);
+        const so = SearchDocument.toSearchableObject(item, documentName);
+        wrapper.store[so.uuid] = so;
+        if (wrapper.workerReady) await this.indexLoader.addBatch({ documentName, batch: [so], token: wrapper.buildToken });
       }
     }
     this.findIndex(documentName).worldBuild = true
@@ -803,23 +854,45 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async flattenedResults(index, search, args) {
-    const searchPromise = search
-      ? index.index.searchAsync(search, args)
-      : index.index.searchAsync(args);
+    if (!this.indexLoader?.enabled || !index?.workerReady) return [];
+    const token = index.buildToken;
+    const res = await this.indexLoader.search({
+      documentName: index.documentName,
+      query: search,
+      args,
+      token
+    });
+    if (index.buildToken !== token) return [];
+    return res;
+  }
 
-    const uniqueResults = new Set();
-    const results = await searchPromise;
-    results.forEach(result => result.result.forEach(item => uniqueResults.add(item)));
-    return Array.from(uniqueResults);
+  _getStoredObject(indexWrapper, uuid) {
+    return indexWrapper?.store?.[uuid];
   }
 
   async createDetailIndex(category, subcategory) {
+    if (this.detailEnrichmentInFlight?.[subcategory]) return this.detailEnrichmentInFlight[subcategory];
     if (this.detailFilter[subcategory]) return;
 
-    const { index, itemType } = this.selectIndex(category);
+    const promise = this._createDetailIndexInternal(category, subcategory);
+    this.detailEnrichmentInFlight[subcategory] = promise;
+    try {
+      return await promise;
+    } finally {
+      delete this.detailEnrichmentInFlight[subcategory];
+    }
+  }
+
+  async _createDetailIndexInternal(category, subcategory) {
+    const { itemType } = this.selectIndex(category);
+    if (itemType === 'Item') await this.buildItemIndex();
+    else if (itemType === 'Actor') await this.buildActorIndex();
+
+    this.detailStoreBySubcategory[subcategory] = this.detailStoreBySubcategory[subcategory] || {};
+
+    const { index } = this.selectIndex(category);
     const catName = localize(`TYPES.${itemType}.${subcategory}`);
     const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true });
-    const fields = this.subcategoryFields(subcategory);
     const target = $(this.element).find(`*[data-tab="${category}"]`);
 
     target.find('.searchResult ul').html('');
@@ -827,31 +900,24 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     this.detailFilter[subcategory] = {
       search: "",
-      index: new FlexSearch.Document({
-        tokenize: "full",
-        cache: true,
-        document: {
-          id: "uuid",
-          store: true,
-          tag: "type",
-          index: fields
-        }
-      }),
+      store: this.detailStoreBySubcategory[subcategory],
+      candidates: [],
       next: undefined
     };
 
-    const items = [];
+    // Fill world items directly (cheap) and cache.
     if (game.settings.get('dsa5', 'indexWorldItems')) {
       const worldStuff = itemType === 'Item' ? game.items : game.actors;
-      items.push(
-        ...worldStuff
-          .filter(x => x.visible && x.type === subcategory)
-          .map(x => AdvancedSearchDocument.toSearchableObject(x, subcategory))
-      );
+      for (const doc of worldStuff.filter(x => x.visible && x.type === subcategory)) {
+        const enriched = AdvancedSearchDocument.toSearchableObject(doc, subcategory);
+        this.detailStoreBySubcategory[subcategory][enriched.uuid] = enriched;
+      }
     }
 
     progress.update({ message: 'Library.loading', format: { item: catName }, pct: 0.1 });
     const uuids = await this.flattenedResults(index, '', { tag: [subcategory], limit: this.filterLimit });
+    this.candidateUuidsBySubcategory[subcategory] = uuids;
+    this.detailFilter[subcategory].candidates = uuids;
 
     const BATCH_SIZE = 25;
     const compendiumUuids = uuids.filter(uuid => uuid.startsWith('Compendium'));
@@ -859,14 +925,18 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     for (let i = 0; i < totalBatches; i++) {
       const batchUuids = compendiumUuids.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
-      const batchItems = await Promise.all(batchUuids.map(uuid => fromUuid(uuid)));
+      const missingUuids = batchUuids.filter(uuid => !this.detailStoreBySubcategory[subcategory][uuid]);
+      const batchItems = await Promise.all(missingUuids.map(uuid => fromUuid(uuid)));
 
-      items.push(...batchItems.map(item => AdvancedSearchDocument.toSearchableObject(item, subcategory)));
+      for (const item of batchItems.filter(Boolean)) {
+        const enriched = AdvancedSearchDocument.toSearchableObject(item, subcategory);
+        this.detailStoreBySubcategory[subcategory][enriched.uuid] = enriched;
+      }
 
       const progressPct = Math.min(0.1 + 0.8 * ((i + 1) / totalBatches), 0.9);
       progress.update({
         message: 'Library.loading',
-        format: { item: `${catName} (${i * BATCH_SIZE + batchItems.length}/${compendiumUuids.length})` },
+        format: { item: `${catName} (${Math.min((i + 1) * BATCH_SIZE, compendiumUuids.length)}/${compendiumUuids.length})` },
         pct: progressPct
       });
 
@@ -875,9 +945,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       }
     }
 
-    for (const item of items) {
-      this.detailFilter[subcategory].index.add(item);
-    }
     this.hideLoading(target, category);
     progress.update({ message: 'Library.loading', format: { item: catName }, pct: 1 });
   }
@@ -909,7 +976,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       moduleSelected = savedSettings.selects?.find(x => x[0] === 'compendium')?.[1] || false;
     }
 
-    const moduleOptions = DSA5ItemLibrary.collectModulOptions()
+    const moduleOptions = DSA5ItemLibrary.collectModulOptions('.')
     const template = await renderTemplate(
       'systems/dsa5/templates/system/itemlibrary/parts/detailFilter.hbs',
       { fields, subcategory, moduleOptions, moduleSelected }
@@ -918,7 +985,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return template;
   }
 
-  static collectModulOptions() {
+  static collectModulOptions(postfix = '') {
     const options = {};
     const moduleNameCache = new Map();
 
@@ -926,10 +993,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const packageName = pack.metadata.packageName;
 
 
-      if (options[packageName]) continue;
+      if (options[packageName + postfix]) continue;
 
       if (moduleNameCache.has(packageName)) {
-        options[packageName] = moduleNameCache.get(packageName);
+        options[packageName + postfix] = moduleNameCache.get(packageName);
       } else {
         let displayName;
         if (game.i18n.has(`${packageName}.name`)) {
@@ -942,7 +1009,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         }
 
         moduleNameCache.set(packageName, displayName);
-        options[packageName] = displayName;
+        options[packageName + postfix] = displayName;
       }
     }
 
@@ -967,6 +1034,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const html = $(this.element)
     tabSlider(html);
     const source = this
+    this._debouncedInfiniteScroll ||= foundry.utils.debounce(ev => this._infiniteScroll(ev, source), 100);
     html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
@@ -974,7 +1042,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     html.on("mouseenter", ".searchResult .browser-item", ev => this._onItemHover(ev))
     html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))
     this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
-    html.find('.scrollable').on('scroll.infinit', ev => foundry.utils.debounce(this._infiniteScroll(ev, source), 100));
+    html.find('.scrollable').on('scroll.infinit', this._debouncedInfiniteScroll);
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
@@ -987,7 +1055,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         }
       }
       
-      this.filterItems(category);
+      this._debouncedFilterItems(category);
     });
 
     this.buildItemIndex()
@@ -1010,6 +1078,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   _infiniteScroll(ev, source) {
+    if (this._paginationInFlight) return;
     const log = $(ev.target);
     const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
     
@@ -1021,19 +1090,27 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const dataFilters = $(source.element).find('.detailFilters');
       const subcategory = dataFilters.attr('data-subc');
       
-      if (subcategory && source.detailFilter[subcategory]?.next) {
-        source.filterItems.call(source, category, source.detailFilter[subcategory].next);
-      } else {
-        const documentName = source.systemConfiguration.documentNameFromGroup(category);
-        if (source.indexes[documentName]?.next) {
-          source.filterItems.call(source, category, source.indexes[documentName].next);
-        }
+      if (subcategory) {
+        const next = source.detailFilter[subcategory]?.next;
+        if (next === undefined) return;
+        this._paginationInFlight = true;
+        source.filterItems.call(source, category, next)
+          .finally(() => { this._paginationInFlight = false; });
+        return;
       }
+      const documentName = source.systemConfiguration.documentNameFromGroup(category);
+      const next = source.indexes[documentName]?.next;
+      if (next === undefined) return;
+      this._paginationInFlight = true;
+      source.filterItems.call(source, category, next)
+        .finally(() => { this._paginationInFlight = false; });
     } else {
       const documentName = source.systemConfiguration.documentNameFromGroup(category);
-      if (source.indexes[documentName].next) {
-        source.filterItems.call(source, category, source.indexes[documentName].next);
-      }
+      const next = source.indexes[documentName].next;
+      if (next === undefined) return;
+      this._paginationInFlight = true;
+      source.filterItems.call(source, category, next)
+        .finally(() => { this._paginationInFlight = false; });
     }
   }
 
@@ -1059,7 +1136,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       }
     }
     
-    this.filterItems(category);
+    this._debouncedFilterItems(category);
   }
 
   async filterChanged(ev) {
@@ -1121,15 +1198,43 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       $(this.element).css({ pointerEvents: "none" });
   }
 
-  showLoading(documentName) {
-    this.setBGImage([1], documentName)
-    const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${localize('Library.buildingIndex')}</div>`)
-    loading.appendTo($(this.element).find('.searchResult'))
+  /**
+   * Show an index-building spinner.
+   * @param {string|JQuery|HTMLElement} targetOrCategory
+   * @param {string} [category]
+   */
+  showLoading(targetOrCategory, category) {
+    if (!this.element) return;
+
+    const hasTarget = targetOrCategory && typeof targetOrCategory === 'object' && (targetOrCategory instanceof HTMLElement || targetOrCategory.jquery);
+    const target = hasTarget ? $(targetOrCategory) : $(this.element);
+    const effectiveCategory = hasTarget ? category : targetOrCategory;
+
+    try {
+      if (typeof effectiveCategory === 'string') this.setBGImage([1], effectiveCategory);
+      const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${localize('Library.buildingIndex')}</div>`);
+      loading.appendTo(target.find('.searchResult'));
+    } catch (e) {
+    }
   }
 
-  hideLoading(documentName) {
-    this.setBGImage([], documentName)
-    $(this.element).find('.loader').remove()
+  /**
+   * Hide the index-building spinner.
+   * @param {string|JQuery|HTMLElement} targetOrCategory
+   * @param {string} [category]
+   */
+  hideLoading(targetOrCategory, category) {
+    if (!this.element) return;
+
+    const hasTarget = targetOrCategory && typeof targetOrCategory === 'object' && (targetOrCategory instanceof HTMLElement || targetOrCategory.jquery);
+    const target = hasTarget ? $(targetOrCategory) : $(this.element);
+    const effectiveCategory = hasTarget ? category : targetOrCategory;
+
+    try {
+      if (typeof effectiveCategory === 'string') this.setBGImage([], effectiveCategory);
+      target.find('.loader').remove();
+    } catch (e) {
+    }
   }
 }
 

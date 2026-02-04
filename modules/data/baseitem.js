@@ -4,6 +4,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
 import { localize } from '../system/helpers/localizer.js';
 import { ItemFactory } from '../item/item-factory.js';
+const { renderTemplate } = foundry.applications.handlebars;
 
 export class ItemDataModel extends DSADataModel {
   /**

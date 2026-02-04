@@ -8,6 +8,7 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
+import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 import { tinyNotification } from '../system/helpers/view_helper.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../status/active_effects.js';
@@ -58,7 +59,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static async postUpdateConditions(actor) {
-    if (!DSA5_Utility.isActiveGM()) return;
+    if (!DSA5_Utility.isActiveGM(true)) return;
 
     const data = actor.system;
     const isMerchant = actor.isMerchant();
@@ -152,7 +153,8 @@ export default class Actordsa5 extends Actor {
 
     this.dsatriggers = {
       [DSATriggers.EVENTS.POST_ROLL]: {},
-      [DSATriggers.EVENTS.POST_OPPOSED]: {}
+      [DSATriggers.EVENTS.POST_OPPOSED]: {},
+      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
     };
 
     const appliedArtifacts = this.items
@@ -214,7 +216,6 @@ export default class Actordsa5 extends Actor {
         this.statuses.add(statusId);
       }
     }
-
     return changes;
   }
 
@@ -576,7 +577,7 @@ export default class Actordsa5 extends Actor {
     const containers = new Map();
     const applications = new Map();
     let hasTrait = false;
-    const horse = Riding.getHorse(this, true);  
+    const horse = Riding.getHorse(this, true);
     const preparedItems = [];
     let hasAnyItem = false;
     const anyItemSet = new Set(['skill', 'combatskill', 'money']);
@@ -746,23 +747,25 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    for (const wep of inventory.rangeweapons.items) {
-      try {
-        if (wep.system.worn.value) {
-          rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+    if (combatskills.length) {  
+      for (const wep of inventory.rangeweapons.items) {
+        try {
+          if (wep.system.worn.value) {
+            rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+          }
+        } catch (error) {
+          this._itemPreparationError(wep, error);
         }
-      } catch (error) {
-        this._itemPreparationError(wep, error);
       }
-    }
 
-    const otherWeapons = wornweapons.filter(x => !RuleChaos.isYieldedTwohanded(x));
-    for (const wep of wornweapons) {
-      try {
-        const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
-        meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, weaponsExcludingSelf));
-      } catch (error) {
-        this._itemPreparationError(wep, error);
+      const otherWeapons = wornweapons.filter(x => !RuleChaos.isWieldedTwohanded(x));    
+      for (const wep of wornweapons) {
+        try {
+          const weaponsExcludingSelf = otherWeapons.filter(x => x._id !== wep._id);
+          meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, weaponsExcludingSelf));
+        } catch (error) {
+          this._itemPreparationError(wep, error);
+        }
       }
     }
 
@@ -1412,14 +1415,15 @@ export default class Actordsa5 extends Actor {
 
     const isShield = RuleChaos.isShield(item);
     item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
-    item.yieldedTwoHand = RuleChaos.isYieldedTwohanded(item);
+    item.wieldedTwoHand = RuleChaos.isWieldedTwohanded(item);
+    item.twoHandedWeapon = RuleChaos.regex2h.test(item.name) || item.wieldedTwoHand;
 
-    if (!item.yieldedTwoHand) {
+    if (!item.wieldedTwoHand) {
       const actualWornWeapons = wornWeapons ||
         actor.items.filter(x => x.type === 'meleeweapon' &&
           x.system.worn.value &&
           x._id !== item._id &&
-          !RuleChaos.isYieldedTwohanded(x));
+          !RuleChaos.isWieldedTwohanded(x));
 
       if (actualWornWeapons.length > 0) {
         item.parry += Math.max(...actualWornWeapons.map(x => x.system.pamod.offhandMod));
@@ -1430,7 +1434,7 @@ export default class Actordsa5 extends Actor {
     let gripDamageMod = 0;
 
     if (item.system.worn.wrongGrip) {
-      if (item.yieldedTwoHand) {
+      if (item.wieldedTwoHand) {
         item.parry -= 1;
         gripDamageMod = 1;
       } else {
@@ -1533,36 +1537,240 @@ export default class Actordsa5 extends Actor {
 
   async exclusiveEquipWeapon(itemId, offHand = false) {
     const item = this.items.get(itemId);
-
     if (!item) return;
 
-    let updates = [];
-    switch (item.type) {
-      case 'armor':
-      case 'rangeweapon':
-        const items = this.items.filter((x) => x.type == item.type && x.id != itemId && x.system.worn.value);
-        updates = items.map((x) => {
-          return { _id: x.id, 'system.worn.value': false };
-        });
-        updates.push({ _id: itemId, 'system.worn.value': true });
-        break;
-      case 'meleeweapon':
-        let weapons = this.items.filter((x) => x.type == item.type && x.id != itemId && x.system.worn.value);
-        const weaponUpdate = { _id: itemId, 'system.worn.value': true };
-        if (!RuleChaos.isYieldedTwohanded(item)) {
-          weapons = weapons.filter((x) => RuleChaos.isYieldedTwohanded(x) || x.system.worn.offHand == offHand);
-          weaponUpdate['system.worn.offHand'] = offHand;
-        }
-        updates = weapons.map((x) => {
-          return { _id: x.id, 'system.worn.value': false };
-        });
-        updates.push(weaponUpdate);
-        break;
+    if (item.type === 'meleeweapon' || item.type === 'rangeweapon') {
+      await this.equipWeaponToHand(itemId, { hand: offHand ? 'offhand' : 'main', equip: true });
+      return;
     }
-    if (updates) {      
-      await this.updateEmbeddedDocuments('Item', updates);
+
+    if (item.type === 'armor') {
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': true }]);
       item.system.itemEquippedMessage();
     }
+  }
+
+  _isTwoHandedWeapon(item) {
+    return isTwoHandedWeapon(item);
+  }
+
+  canEquipWeaponOffHand(item) {
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return false;
+    return !!getProperty(this, 'system.config.ignoreWeaponHandLimits') || !this._isTwoHandedWeapon(item);
+  }
+
+  async toggleWeaponOffHand(itemId) {
+    const item = this.items.get(itemId);
+    if (!item || item.type !== 'meleeweapon') return;
+
+    const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+    if (item.system.worn.value) {
+      await this.swapWeaponHandSlot(item.id, desiredHand);
+      return;
+    }
+
+    await this.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
+  }
+
+  /**
+   * Interprets a hand-slot click (main/offhand/auto) and applies all rules.
+   * UI layers should only determine `clickedHand` and then call this.
+   */
+  async handleWeaponHandSlotClick(itemId, clickedHand) {
+    const item = this.items.get(itemId);
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+
+    // If it isn't equipped yet, interpret this as an equip request (main/offhand/auto).
+    if (!item.system.worn.value) {
+      const hand = clickedHand === 'offhand' ? 'offhand' : clickedHand === 'main' ? 'main' : 'auto';
+      await this.equipWeaponToHand(item.id, { hand, equip: true });
+      return;
+    }
+
+    // When hand limits are disabled: treat hand buttons as a simple offHand toggle.
+    if (ignoreHandLimits) {
+      const wasOffHand = !!item.system.worn.offHand;
+      const desiredOffHand = clickedHand === 'offhand' ? true : clickedHand === 'main' ? false : !wasOffHand;
+      await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.worn.offHand': desiredOffHand }]);
+      return;
+    }
+
+    // No hand swapping for 2H weapons.
+    if (this._isTwoHandedWeapon(item)) return;
+
+    const baseTwoHanded = RuleChaos.regex2h.test(item.name);
+    const currentOffHand = !!item.system.worn.offHand;
+
+    if (baseTwoHanded && (clickedHand === 'main' || clickedHand === 'offhand')) {
+      const clickedIsOffHand = clickedHand === 'offhand';
+      if (clickedIsOffHand === currentOffHand) {
+        // For melee weapons this toggles wrongGrip (1H/2H mode).
+        if (item.type === 'meleeweapon' && item.system?.swapNumberWeaponHands) {
+          await item.system.swapNumberWeaponHands();
+        }
+        return;
+      }
+      await this.swapWeaponHandSlot(item.id, clickedIsOffHand ? 'offhand' : 'main');
+      return;
+    }
+
+    if (clickedHand === 'main' || clickedHand === 'offhand') {
+      await this.swapWeaponHandSlot(item.id, clickedHand);
+      return;
+    }
+
+    await this.swapWeaponHandSlot(item.id, currentOffHand ? 'main' : 'offhand');
+  }
+
+  _getEquippedWeaponsForHands() {
+    const equippedWeapons = this.items.filter((x) => (x.type === 'meleeweapon' || x.type === 'rangeweapon') && x.system?.worn?.value);
+    const main = equippedWeapons.find((w) => !getProperty(w, 'system.worn.offHand'));
+    const offhand = equippedWeapons.find((w) => !!getProperty(w, 'system.worn.offHand'));
+    const twoHanded = equippedWeapons.find((w) => this._isTwoHandedWeapon(w));
+    return { equippedWeapons, main, offhand, twoHanded };
+  }
+
+  /**
+   * Equip/unequip a weapon while respecting shared hand slots (melee + ranged).
+   *
+   * Options:
+   * - hand: 'auto' (main-first) | 'main' | 'offhand'
+   * - equip: boolean (default true)
+   */
+  async equipWeaponToHand(itemId, { hand = 'auto', equip = true } = {}) {
+    const item = this.items.get(itemId);
+    if (!item) return;
+    if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+
+    if (ignoreHandLimits) {
+      if (!equip) {
+        await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': false, 'system.worn.offHand': false }]);
+        item.system.itemEquippedMessage();
+        return;
+      }
+
+      const update = { _id: itemId, 'system.worn.value': true };
+      if (hand === 'offhand') update['system.worn.offHand'] = true;
+      else if (hand === 'main') update['system.worn.offHand'] = false;
+
+      await this.updateEmbeddedDocuments('Item', [update]);
+      item.system.itemEquippedMessage();
+      return;
+    }
+
+    if (!equip) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': false }]);
+      item.system.itemEquippedMessage();
+      return;
+    }
+
+    const wantsOffhand = hand === 'offhand';
+    const wantsMain = hand === 'main';
+    const isTwoHanded = this._isTwoHandedWeapon(item);
+
+    const { equippedWeapons, main, offhand, twoHanded } = this._getEquippedWeaponsForHands();
+
+    let targetHand;
+    if (isTwoHanded) {
+      targetHand = 'twohanded';
+    } else if (wantsMain) {
+      targetHand = 'main';
+    } else if (wantsOffhand) {
+      targetHand = 'offhand';
+    } else {
+      // auto: main-hand first
+      targetHand = main ? (offhand ? 'main' : 'offhand') : 'main';
+    }
+
+    const updates = [];
+
+    // If a 2H weapon is currently equipped, it blocks both hands.
+    // Equipping a 1H weapon must unequip that 2H weapon.
+    if (targetHand !== 'twohanded' && twoHanded && twoHanded.id !== itemId) {
+      updates.push({ _id: twoHanded.id, 'system.worn.value': false });
+    }
+
+    // If we are equipping a 2H weapon, unequip all other equipped weapons (both hands).
+    if (targetHand === 'twohanded') {
+      for (const w of equippedWeapons) {
+        if (w.id === itemId) continue;
+        updates.push({ _id: w.id, 'system.worn.value': false });
+      }
+      updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': false });
+      await this.updateEmbeddedDocuments('Item', updates);
+      item.system.itemEquippedMessage();
+      return;
+    }
+
+    // Otherwise: 1H equip in chosen hand; unequip whatever currently occupies that hand.
+    const occupying = targetHand === 'main' ? main : offhand;
+    if (occupying && occupying.id !== itemId) {
+      updates.push({ _id: occupying.id, 'system.worn.value': false });
+    }
+
+    // Ensure the weapon is marked equipped and on the correct hand.
+    updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': targetHand === 'offhand' });
+
+    await this.updateEmbeddedDocuments('Item', updates);
+    item.system.itemEquippedMessage();
+  }
+
+  /**
+   * Swap a currently equipped 1H weapon between hands.
+   * If the target hand is occupied, it will swap BOTH hands (unless the other weapon is 2H).
+   */
+  async swapWeaponHandSlot(itemId, desiredHand) {
+    const item = this.items.get(itemId);
+    if (!item) return;
+    if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
+    if (!item.system?.worn?.value) return;
+
+    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    if (ignoreHandLimits) {
+      const targetHand = desiredHand === 'offhand' ? 'offhand' : 'main';
+      const currentHand = getProperty(item, 'system.worn.offHand') ? 'offhand' : 'main';
+      if (currentHand === targetHand) return;
+      await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.offHand': targetHand === 'offhand' }]);
+      return;
+    }
+    if (this._isTwoHandedWeapon(item)) return;
+
+    let { main, offhand, twoHanded } = this._getEquippedWeaponsForHands();
+
+    // Backwards compatibility: older data could have a 2H weapon equipped alongside a 1H.
+    // Swapping hands should resolve that conflict by unequipping the 2H weapon.
+    if (twoHanded && twoHanded.id !== itemId) {
+      await this.updateEmbeddedDocuments('Item', [{ _id: twoHanded.id, 'system.worn.value': false, 'system.worn.offHand': false }]);
+      ({ main, offhand, twoHanded } = this._getEquippedWeaponsForHands());
+    }
+    if (twoHanded) return;
+
+    const currentHand = getProperty(item, 'system.worn.offHand') ? 'offhand' : 'main';
+    const targetHand = desiredHand === 'offhand' ? 'offhand' : 'main';
+    if (currentHand === targetHand) return;
+
+    const occupying = targetHand === 'main' ? main : offhand;
+    const otherHandWeapon = targetHand === 'main' ? offhand : main;
+
+    // If the target hand is occupied, perform a swap-both-hands.
+    if (occupying && occupying.id !== itemId) {
+      // swap-both only when the other weapon isn't 2H (should already be true) but keep safety.
+      if (this._isTwoHandedWeapon(occupying) || this._isTwoHandedWeapon(otherHandWeapon)) return;
+
+      const updates = [
+        { _id: itemId, 'system.worn.offHand': targetHand === 'offhand' },
+        { _id: occupying.id, 'system.worn.offHand': currentHand === 'offhand' },
+      ];
+      await this.updateEmbeddedDocuments('Item', updates);
+      return;
+    }
+
+    // Otherwise just move it.
+    await this.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.offHand': targetHand === 'offhand' }]);
   }
 
   static calcLZ(item, actor) {
@@ -1624,6 +1832,8 @@ export default class Actordsa5 extends Actor {
       item.LZ = Actordsa5.calcLZ(item, actor);
       if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
 
+      RangeweaponData.buildAimProgress(item);
+
       EquipmentDamage.weaponWearModifier(item);
 
       if (isBaseWeapon) {
@@ -1672,7 +1882,7 @@ export default class Actordsa5 extends Actor {
 
     // overlay = true is right click
     // active means force add
-    
+
     if (overlay) {
       if (active) return false;
 
@@ -1705,6 +1915,58 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  async _consumeActiveEffectChargesFromRoll(testData) {
+    if (!testData?.extra) return;
+    if (testData.extra.chargesConsumed) return;
+    testData.extra.chargesConsumed = true;
+
+    const mods = Array.isArray(testData.situationalModifiers) ? testData.situationalModifiers : [];
+    const effectUuids = new Set();
+    for (const mod of mods) {
+      if (!mod || mod.selected === false) continue;
+
+      if (mod.effectUuid) {
+        effectUuids.add(mod.effectUuid);
+        continue;
+      }
+
+      // Fallback: some dialog paths may only provide an effect id.
+      if (mod.effectId) {
+        const effect = this.effects?.get?.(mod.effectId);
+        if (effect?.uuid) effectUuids.add(effect.uuid);
+      }
+    }
+
+    const uuids = [...effectUuids];
+
+    if (!uuids.length) return;
+
+    // Prefer GM execution to avoid permission issues.
+    if (!game.user.isGM) {
+      game.socket.emit('system.dsa5', {
+        type: 'consumeEffectCharges',
+        payload: {
+          effectUuids: uuids,
+          amount: 1,
+        },
+      });
+      return;
+    }
+
+    await Promise.all(uuids.map(async (uuid) => {
+      try {
+        const effect = await fromUuid(uuid);
+        const charges = effect?.getFlag?.('dsa5', 'charges');
+        const value = Number(charges?.value);
+        if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+        if (effect.disabled) return;
+        await effect.consumeCharges(1);
+      } catch (e) {
+        console.error('Failed to consume effect charges', uuid, e);
+      }
+    }));
+  }
+
   async consumeAmmunition(testData) {
     if (testData.extra.ammo && !testData.extra.ammoDecreased) {
       testData.extra.ammoDecreased = true;
@@ -1723,14 +1985,27 @@ export default class Actordsa5 extends Actor {
           testData.extra.ammo.system.quantity.value--;
           ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
         }
-        await this.updateEmbeddedDocuments('Item', [ammoUpdate, { _id: testData.source._id, 'system.reloadTime.progress': 0 }]);
+        await this.updateEmbeddedDocuments('Item', [
+          ammoUpdate,
+          {
+            _id: testData.source._id,
+            'system.reloadTime.progress': 0,
+            'system.aimTime.progress': 0,
+          },
+        ]);
       }
     } else if (
       (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) &&
       !testData.extra.ammoDecreased
     ) {
       testData.extra.ammoDecreased = true;
-      await this.updateEmbeddedDocuments('Item', [{ _id: testData.source._id, 'system.reloadTime.progress': 0 }]);
+      await this.updateEmbeddedDocuments('Item', [
+        {
+          _id: testData.source._id,
+          'system.reloadTime.progress': 0,
+          'system.aimTime.progress': 0,
+        },
+      ]);
     } else if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
       await this.updateEmbeddedDocuments('Item', [
         {
@@ -1761,6 +2036,7 @@ export default class Actordsa5 extends Actor {
 
     await this.consumeAmmunition(testData);
     await this.payMiracles(testData);
+    await this._consumeActiveEffectChargesFromRoll(testData);
 
     if (!options.suppressMessage) {
       const msg = await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);

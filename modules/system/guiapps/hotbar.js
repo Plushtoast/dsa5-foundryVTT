@@ -3,6 +3,7 @@ import Riding from '../automation/riding.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import RuleChaos from '../rules/rule_chaos.js';
+import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
@@ -517,7 +518,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
         case 'meleeweapon':
         case 'rangeweapon': {
-          const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor);
+          const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor) || [];
           for (let entry of entries) {
             if (!x.system.worn.value) entry.cssClass = 'unequipped';
             groups.attacks.push(entry);
@@ -566,27 +567,32 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #reorderArrayByFlags(itemArray, orderArray) {
-    if (!itemArray || !orderArray || itemArray.length === 0 || orderArray.length === 0) return itemArray;
+    if (!itemArray || itemArray.length === 0) return itemArray;
+
+    const filteredItemArray = itemArray.filter((item) => !!item);
+    if (!orderArray || orderArray.length === 0) return filteredItemArray;
+
+    const filteredOrderArray = orderArray.filter((id) => !!id);
 
     const itemMap = new Map();
-    itemArray.forEach(item => {
-      if (item.id) itemMap.set(item.id, item);
+    filteredItemArray.forEach(item => {
+      if (item?.id) itemMap.set(item.id, item);
     });
 
     const orderedItems = [];
     const usedIds = new Set();
 
-    orderArray.forEach(id => {
+    filteredOrderArray.forEach(id => {
       if (itemMap.has(id) && !usedIds.has(id)) {
         orderedItems.push(itemMap.get(id));
         usedIds.add(id);
       }
     });
 
-    itemArray.forEach(item => {
-      if (item.id && !usedIds.has(item.id)) {
+    filteredItemArray.forEach(item => {
+      if (item?.id && !usedIds.has(item.id)) {
         orderedItems.push(item);
-      } else if (!item.id) {
+      } else if (!item?.id) {
         orderedItems.push(item);
       }
     });
@@ -803,17 +809,20 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #getWeaponContextOptions(weapon, isOffHand) {
     if (weapon?.type === 'trait') return [];
 
-    const equipableWeapons = this.actor.items.filter(i => ['meleeweapon', 'rangeweapon'].includes(i.type) && !i.system.worn.value);
+    const equipableWeapons = this.actor.items.filter((i) => {
+      if (!['meleeweapon', 'rangeweapon'].includes(i.type) || i.system.worn.value) return false;
+      if (isOffHand) return this.actor.canEquipWeaponOffHand(i);
+      return true;
+    });
     const equip = localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
         name: `${equip}: ${w.name}`,
         icon: "<i class='fa-solid fa-swords'></i>",
-        callback: () => {
-          const canOffHand = isOffHand && !RuleChaos.isYieldedTwohanded(w);
-          this.actor.exclusiveEquipWeapon(w.id, canOffHand);
-        }
+        callback: async () => {
+          await this.actor.equipWeaponToHand(w.id, { hand: isOffHand ? 'offhand' : 'main', equip: true });
+        },
       });
       return acc;
     }, []);
@@ -939,7 +948,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++] || "display:none;",
     });
 
-    const twoHanded = RuleChaos.isYieldedTwohanded(firstWeapon);
+    const twoHanded = isTwoHandedWeapon(firstWeapon);
     const secondWeapon = twoHanded ? firstWeapon : (offHandWeapons.find(x => x.id !== firstWeapon.id) || emptyHands);
 
     positions.push({

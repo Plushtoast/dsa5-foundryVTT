@@ -169,6 +169,8 @@ export class ModifierCalculator {
 
                 if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
                 if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
+                if (this.dataset.effectId) data.effectId = this.dataset.effectId;
+                if (this.dataset.effectUuid) data.effectUuid = this.dataset.effectUuid;
 
                 return data;
             })

@@ -90,6 +90,7 @@
         "KK": "KK",
         "FW": "FW",
         "STF": "StF",
+        "postRoll": "Nach Wurf",
         "RPR": "RPr",
         "KTW": "KTW",
         "LeP": "LeP",
@@ -185,7 +186,14 @@
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
-        "temporaryOff": "Vorübergehend deaktivieren"
+        "temporaryOff": "Vorübergehend deaktivieren",
+        "postRollBuffPickerTitle": "Verbesserung anwenden",
+        "postRollBuffPickerHint": "Wähle einen oder mehrere Verbesserungen aus, die angewendet werden sollen.",
+        "postRollBuffPickerEmpty": "Keine passenden Verbesserungen gefunden.",
+        "postRollRerollDice": "Neu würfeln: {count} Würfel",
+        "postRollRerollExclusive": "Neu würfeln kann nicht mit FP/QS-Verbesserungen kombiniert werden.",
+        "postRollRerollMaxDice": "Du kannst höchstens {max} Würfel neu würfeln.",
+        "noSelection": "Nichts ausgewählt."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -449,6 +457,7 @@
     "Notes": "Notizen",
     "Opposed": "Vergleichsprobe",
     "opposingWeaponSize": "Waffengröße Gegner",
+    "mainHand": "Haupthand",
     "offHand": "Nebenhand",
     "globalConfig": "global",
     "Ongoing": "Laufend",
@@ -800,6 +809,8 @@
         "quickChange": "Ziel schlägt Haken",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
+        "postRoll": "Nach Wurf",
+        "reroll": "Neu würfeln",
         "damage": "Schadensmodifikator",
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
@@ -1107,6 +1118,10 @@
         "addItem": "Gegenstand erstellen",
         "EquipItem": "Ausrüsten",
         "EquipItemOffHand": "Ausrüsten (Nebenhand)",
+        "IgnoreWeaponHandLimits": "Handbeschränkung ignorieren",
+        "IgnoreWeaponHandLimitsHint": "Handbeschränkung ignorieren (mehrere Waffen gleichzeitig ausrüsten)",
+        "RequiresBothHands": "Benötigt beide Hände",
+        "NoUnequippedWeapons": "Keine weiteren Waffen ausrüstbar",
         "UnEquipItem": "Ausrüstung ablegen",
         "Close": "Schließen",
         "Configure": "Blatt konfigurieren",
@@ -1343,6 +1358,10 @@
         "loaded": "Geladen",
         "reload": "Nachladen",
         "isReloading": "{actor} läd {item} nach ({status}).",
+        "aim": "Zielen",
+        "aiming": "Zielen ({status})",
+        "aimed": "Gezielt",
+        "isAiming": "{actor} zielt mit {item} ({status}).",
         "improvised": "Improvisierte Waffe",
         "magical": "Magisch",
         "clerical": "Geweiht",
@@ -1436,6 +1455,8 @@
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
+    "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
     "PERSONAE": {
@@ -1693,10 +1714,10 @@
         "twoHandedWeapon": "{weapon} beidhändig geführt",
         "oneHandedWeapon": "{weapon} einhändig geführt",
         "wrongGripped": "Einhändig/Beidhändig geführt",
-        "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
-        "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
-        "yieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
-        "yieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
+        "wieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
+        "wieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
+        "wieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
+        "wieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
         "wrongGripBastardRegex": "(Anderthalbhänder|Bastardschwert)"
     },
     "UNITS": {
@@ -1758,6 +1779,11 @@
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
+        "chargesChatConsumed": "Eine Ladung wurde verbraucht.",
+        "chargesChatDepletedDisabled": "Der Effekt ist aufgebraucht und wurde deaktiviert.",
+        "chargesChatDepletedDeleted": "Der Effekt ist aufgebraucht und wurde entfernt.",
+        "chargesChatPostRollImproved": "Probe verbessert: {details}.",
+        "chargesChatPostRollRerolled": "Probe neu gewürfelt: {count} Würfel.",
         "messageReceivers": {
             "gm": "Nur für den Spielleiter",
             "players": "Für alle",
@@ -1792,7 +1818,8 @@
             "onRemove": "Macro (Effektende)",
             "onUseEffect": "Macro (Benutzung)",
             "postRoll": "Macro (Nach Wurf)",
-            "postOpposed": "Macro (Nach Gegenprobe)"
+            "postOpposed": "Macro (Nach Gegenprobe)",
+            "rollDialogRender": "Würfel-Dialog (Menü)"
         },
         "dialog": {
             "duration": "Effektdauer",
@@ -1881,7 +1908,6 @@
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
-        "boundToArtifact": "Artefaktgebunden",
         "magicalRestriction": "Magische Einschränkung",
         "magicalAttunement": "Magische Einstimmung",
         "traditionWitch": "Tradition (Hexen)",
@@ -2104,6 +2130,9 @@
         "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
         "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
         "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
+        "elementNotOwned": "Dir fehlt die Erlaubnis, um das Element zu bearbeiten.",
+        "canNotEditInCompendium": "Diese Funktion steht in Kompendien nicht zur Verfügung. Importiere den Eintrag in die Welt, um ihn zu bearbeiten.",
+        "noEffectFound": "Der Effekt konnte nicht gefunden werden.",
         "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
@@ -2267,7 +2296,8 @@
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
-        "improveFate": "Wurf verbessern (1 Schip)"
+        "improveFate": "Wurf verbessern (1 Schip)",
+        "applyDepletableBuffs": "Einmaligen Bonus anwenden"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
@@ -2617,7 +2647,75 @@
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie",
         "money": "Finanzübersicht",
-        "sheetChange": "Charakterblattänderung"
+        "sheetChange": "Charakterblattänderung",
+        "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte.",
+        "FIELDS": {
+            "ap": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "itemUuid": {
+                        "label": "Item-UUID"
+                    },
+                    "itemType": {
+                        "label": "Item-Typ"
+                    },
+                    "itemName": {
+                        "label": "Item-Name"
+                    },
+                    "attr": {
+                        "label": "Attribut"
+                    },
+                    "state": {
+                        "label": "Status"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Kosten"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            },
+            "money": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "name": {
+                        "label": "Name"
+                    },
+                    "amount": {
+                        "label": "Anzahl"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Wert"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            }
+        }
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"
@@ -2768,11 +2866,23 @@
             "modules": {
                 "hero": {
                     "subtitle": "Erweitere deinen Spieltisch mit vollständig vorbereiteten offiziellen Abenteuern, Regeln und mehr.",
-                    "cta": "Zum F-Shop"
+                    "cta": "F-Shop"
+                },
+                "tocTitle": "Kategorien",
+                "filtersTitle": "Nach Tags filtern",
+                "filtersNotOwned": "Nicht gekauft",
+                "filtersClear": "Filter zurücksetzen",
+                "enNote": "Einige Module sind nur im deutschen F-Shop erhältlich. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Zum deutschen F-Shop</a>. Prüfe die englische Verfügbarkeit hier: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">Englischer F-Shop</a>.",
+                "gettingStarted": {
+                    "title": "Einstieg",
+                    "text": "Starte mit dem Grundmodul und ergänze einsteigerfreundliche oder kostenlose Inhalte für deine ersten Abenteuer.",
+                    "coreCta": "Grundmodul holen",
+                    "wiki": "Zum Wiki",
+                    "videos": "VTTom-Videos"
                 },
                 "cta": "Details & Kaufen",
                 "ctaOwned": "Bereits gekauft",
-                "owned": "Besitzt"
+                "owned": "Im Besitz"
             }
         }
     },

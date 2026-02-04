@@ -422,13 +422,14 @@ export default class DiceDSA5 {
     return renderTemplate(dialogOptions.template, dialogOptions.data)
       .then(content => {
         return new Promise((resolve, reject) => {
-          new dialog({
+          const dlg = new dialog({
             window: { title: dialogOptions.title },
             content,
             buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
           })
             .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data)
-            .render(true);
+          dlg.testData = testData;
+          dlg.render(true);
         });
       });
   }
@@ -2105,6 +2106,7 @@ export default class DiceDSA5 {
   }
 
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
+    const previousOther = rerenderMessage ? getProperty(rerenderMessage, 'flags.data.postData.other') : undefined;
     const applyEffect = this.addApplyEffectData(testData);
     const immuneTo = CreatureType.checkImmunity(testData);
     const preData = deepClone(testData.preData);
@@ -2180,6 +2182,17 @@ export default class DiceDSA5 {
       if (postFunction) {
         testData.messageId = rerenderMessage.id;
         await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source);
+      }
+
+      // Keep additional info blocks (testData.other) stable across rerenders.
+      if (Array.isArray(previousOther) && previousOther.length) {
+        if (!Array.isArray(testData.other) || testData.other.length === 0) {
+          testData.other = deepClone(previousOther);
+        } else {
+          for (const entry of previousOther) {
+            if (!testData.other.includes(entry)) testData.other.push(entry);
+          }
+        }
       }
 
       const html = await renderTemplate(chatOptions.template, chatData);
@@ -2316,7 +2329,7 @@ export default class DiceDSA5 {
     }
   }
 
-  static showCurrentTargets(ev) {
+  static async showCurrentTargets(ev) {
     const targets = [];
     let i18nkey;
     if (ev.currentTarget.dataset.target == 'target') {
@@ -2325,13 +2338,14 @@ export default class DiceDSA5 {
     } else {
       i18nkey = 'TT.applyEffectCaster';
       const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
-      const actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker);
+      let actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker);
+      if (actor?.emptyActor?.parent_source_uuid) actor = await fromUuid(actor.emptyActor.parent_source_uuid);
       if (actor) targets.push(actor.token ? actor.token.texture.src : actor.prototypeToken.texture.src);
     }
     const msg = targets.length
-      ? targets.map((x) => `<img style="width:25px;height:25px;" src="${x}"/>`).join('')
+      ? targets.map((x) => `<img style="display:inline;width:25px;height:25px;" src="${x}"/>`).join('')
       : `<small><i class="fas fa-exclamation-circle"></i> ${localize('DIALOG.noTarget')}</small>`;
-    ev.currentTarget.dataset.tooltip = `<div><p>${localize(i18nkey)}</p>${msg}</div>`;
+    ev.currentTarget.dataset.tooltip = `<div><p>${localize(i18nkey)}</p><p class="center">${msg}</p></div>`;
   }
 
   static async rollResistPain(ev) {

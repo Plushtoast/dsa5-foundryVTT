@@ -156,6 +156,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/detail/index/sArticle/4659" target="_blank" title="Verborgen in der Tiefe">
         <img src="https://www.f-shop.de/media/image/80/7a/72/a4_cover_verbogenindtiefe_vtt.jpg" alt="Verborgen in der Tiefe" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5094/dsa5-geschuppte-tyrannen-fuer-foundry-vtt" target="_blank" title="Geschuppte Tyrannen">
+        <img src="https://www.f-shop.de/media/image/b8/5d/1b/foundry_cover_geschuppe_ty.jpg" alt="Geschuppte Tyrannen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <h2>Abenteuer</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">
         <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp" alt="Einführungsabenteuer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -232,6 +235,12 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt" target="_blank" title="Gestade des Gottwals">
         <img src="https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg" alt="Gestade des Gottwals" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5014/dsa5-der-wolfsfrost-regionalspielhilfe-fuer-foundry-vtt" target="_blank" title="Der Wolfsfrost">
+        <img src="https://www.f-shop.de/media/image/82/1e/1e/ESD059_0.jpg" alt="Der Wolfsfrost" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5027/dsa5-die-echsensuempfe-regionalspielhilfe-fuer-foundry-vtt" target="_blank" title="Die Echsensümpfe">
+        <img src="https://www.f-shop.de/media/image/74/64/b9/a4_cover_echsensuempfe_vtt.jpg" alt="Die Echsensümpfe" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
 </div>
 <br>

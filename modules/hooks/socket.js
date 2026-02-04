@@ -46,6 +46,24 @@ export function connectSocket() {
     if (!DSA5_Utility.isActiveGM()) return;
 
     switch (data.type) {
+      case 'consumeEffectCharges':
+        {
+          const effectUuids = data.payload?.effectUuids || [];
+          const amount = data.payload?.amount ?? 1;
+          Promise.all(effectUuids.map(async (uuid) => {
+            try {
+              const effect = await fromUuid(uuid);
+              const charges = effect?.getFlag?.('dsa5', 'charges');
+              const value = Number(charges?.value);
+              if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+              if (effect.disabled) return;
+              await effect.consumeCharges(amount);
+            } catch (e) {
+              console.error('GM socket consumeEffectCharges failed', uuid, e);
+            }
+          }));
+        }
+        break;
       case 'updateKeepField':
         {
           if (DSA5.allowedforeignfields.includes(data.payload.field)) {

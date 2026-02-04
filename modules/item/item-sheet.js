@@ -581,7 +581,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   static DEFAULT_OPTIONS = {
     actions: {
       postAsGroupCheck: AggregatedTestSheet.postAsGroupCheck,
-      buildItem: AggregatedTestSheet.postFinishedItem,
+      buildItem: AggregatedTestSheet._postFinishedItemWrapper,
     },
     majorButtons: [
       {
@@ -626,7 +626,11 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
     RequestRoll.showGCMessage(rollOptions[0].target, 0, data);
   }
 
-  static async postFinishedItem() {
+  static async _postFinishedItemWrapper(event, target) {
+    await this.postFinishedItem();
+  }
+
+  async postFinishedItem() {
     if (!this.actor) return;
 
     const resultItem = this.item.getFlag('dsa5', 'embeddedItem');
@@ -875,7 +879,7 @@ class Enchantable extends ItemSheetdsa5 {
     if (item) {
       item = item.toObject();
       item.system.talentValue.value = enchantment.fw;
-      const actor = DSA5_Utility.emptyActor(14, this.item.name);
+      const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
       actor.setupSpell(item, {}, 'emptyActor').then(async (setupData) => {
         const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', {
           item: this.item.name,

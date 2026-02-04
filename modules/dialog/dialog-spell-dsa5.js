@@ -262,10 +262,17 @@ export default class DSA5SpellDialog extends DialogShared {
 
   async calculateProbability() {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    if (!actor) return;
+
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
     data.situationalModifiers = ModifierCalculator._parseModifiers(html);
-    const fw = this.dialogData.source.system.talentValue.value + data.fw + (await DiceDSA5._situationalModifiers(data, 'FW'));
+
+    const fwBase = Number(this.dialogData.source.system.talentValue.value) || 0;
+    const fwDialog = Number(data.fw) || 0;
+    const fw = fwBase + fwDialog + (await DiceDSA5._situationalModifiers(data, 'FW'));
+
+    const maintainedSpells = Number(html.find('[name=maintainedSpells]').val()) || 0;
     let mod =
       (await DiceDSA5._situationalModifiers(data)) +
       html
@@ -273,7 +280,7 @@ export default class DSA5SpellDialog extends DialogShared {
         .map((i, x) => Number(x.value))
         .get()
         .reduce((a, b) => a + b, 0) +
-      html.find('[name=maintainedSpells]')[0].value * -1;
+      maintainedSpells * -1;
 
     super.calculateProbability(actor, this.dialogData.source, mod, fw);
   }
@@ -307,6 +314,7 @@ export default class DSA5SpellDialog extends DialogShared {
       this.setRollButtonWarning();
     }
     // not great
+    this.calculateProbability();
     const that = this;
     this.checkTargets = setInterval(function () {
       targets = that.compareTargets(html, targets);

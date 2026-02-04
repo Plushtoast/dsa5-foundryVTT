@@ -15,6 +15,8 @@ import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa
 import { localize } from '../../system/helpers/localizer.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
+const { getProperty, setProperty } = foundry.utils;
+
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
 
@@ -91,19 +93,19 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     const twoHanded = RuleChaos.regex2h.test(this.parent.name);
     let wrongGripHint = '';
     if (!twoHanded) {
-      wrongGripHint = 'wrongGrip.yieldTwo';
+      wrongGripHint = 'wrongGrip.wieldTwo';
     } else {
       const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
       switch (localizedCT) {
         case 'Two-Handed Impact Weapons':
         case 'Two-Handed Swords':
           const reg = new RegExp(localize('wrongGrip.wrongGripBastardRegex'));
-          if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.yieldOneBastard';
-          else wrongGripHint = 'wrongGrip.yieldOneSwordBlunt';
+          if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.wieldOneBastard';
+          else wrongGripHint = 'wrongGrip.wieldOneSwordBlunt';
 
           break;
         default:
-          wrongGripHint = 'wrongGrip.yieldOnePolearms';
+          wrongGripHint = 'wrongGrip.wieldOnePolearms';
       }
     }
 
@@ -142,7 +144,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
     if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localizedCT)) {
       options.push({
-        name: RuleChaos.isYieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
+        name: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
         icon: "<i class='fas fa-comment fa-hand'></i>",
         callback: () => this.swapNumberWeaponHands(),
       });
@@ -174,16 +176,35 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   async reEquipItem() {
     const newValue = !this.worn.value;
+
+    if (this.parent?.actor) {
+      await this.parent.actor.equipWeaponToHand(this.parent.id, { hand: 'auto', equip: newValue });
+      return;
+    }
+
     await this.parent.update({ 'system.worn.value': newValue });
     this.itemEquippedMessage();
   }
 
   itemEquippedMessage() {
     DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
-    const yielded = RuleChaos.isYieldedTwohanded(this.parent);
+    const wielded = RuleChaos.isWieldedTwohanded(this.parent);
     if (this.parent.actor && game.combat) {
-      const texts = [{ value: game.i18n.format(yielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
+      const texts = [{ value: game.i18n.format(wielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
       this.parent.actor.tokenScrollingText(texts);
     }
+  }
+
+  async _preUpdate(changed, options, user) {
+    // If a melee weapon switches into 2H mode, its offHand flag must be cleared.
+    // (Offhand is only meaningful for 1H weapons.)
+    const wrongGrip = getProperty(changed, 'system.worn.wrongGrip');
+    if (typeof wrongGrip === 'boolean') {
+      const baseTwoHanded = RuleChaos.regex2h.test(this.parent.name);
+      const willBeTwoHanded = (baseTwoHanded && !wrongGrip) || (!baseTwoHanded && wrongGrip);
+      if (willBeTwoHanded) setProperty(changed, 'system.worn.offHand', false);
+    }
+
+    await super._preUpdate(changed, options, user);
   }
 }
