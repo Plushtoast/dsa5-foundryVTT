@@ -835,15 +835,13 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     let timeModifier = 0;
     const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(localize('LocalizedIDs.assumeTradition')));
     let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
+    let calendarHasMonths = !!game.time.calendar.constructor.months;
 
-    if (assumeTradition) {
-      const components = game?.time?.calendar?.timeToComponents(game?.time?.worldTime);
-      const gameMonth = components?.month;
-      const calendarMonths = game?.time?.calendar?.constructor?.months || [];
-      const monthName = (calendarMonths[gameMonth] && typeof calendarMonths[gameMonth] === 'string')
-        ? calendarMonths[gameMonth].toLowerCase()
-        : "";
-      const day = components?.dayOfMonth;
+    if (assumeTradition && calendarHasMonths) {
+      const components = game.time.calendar.timeToComponents(game.time.worldTime);
+      const gameMonth = components.month;
+      const monthName = game.time.calendar.constructor.months[gameMonth].toLowerCase();
+      const day = components.dayOfMonth;
 
       const holidays = CONFIG.time.worldCalendarConfig.holidays.values;
       const isHoliday = holidays.some(h => {
