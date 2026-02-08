@@ -66,7 +66,9 @@ export class ActorDataModel extends DSADataModel {
       aspModifier: 0,
       kapModifier: 0,
       vulnerabilities: [],
-      resistances: [],
+      resistances: {
+        effects: [],
+      },
       immunities: [],
       thresholds: { effects: [] },
       creatureBonus: [],
