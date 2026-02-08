@@ -1399,22 +1399,8 @@ export default class Actordsa5 extends Actor {
 
     item.attack = Number(skill.system.attack.value) + Number(item.system.atmod.value);
 
-    const guideValueArray = item.system.guidevalue.value.split('/').map(x => {
-      if (!actor.system.characteristics[x]) return 0;
-
-      return Number(actor.system.characteristics[x].initial) +
-        Number(actor.system.characteristics[x].modifier) +
-        Number(actor.system.characteristics[x].advances) +
-        Number(actor.system.characteristics[x].gearmodifier);
-    });
-
-    const guideValue = Math.max(...guideValueArray);
-    const baseParry = Math.ceil(skill.system.talentValue.value / 2) +
-      Math.max(0, Math.floor((guideValue - 8) / 3)) +
-      Number(game.settings.get('dsa5', 'higherDefense'));
-
     const isShield = RuleChaos.isShield(item);
-    item.parry = baseParry + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
+    item.parry = Number(skill.system.parry.value) + Number(item.system.pamod.value) + (isShield ? Number(item.system.pamod.value) : 0);
     item.wieldedTwoHand = RuleChaos.isWieldedTwohanded(item);
     item.twoHandedWeapon = RuleChaos.regex2h.test(item.name) || item.wieldedTwoHand;
 

@@ -181,7 +181,22 @@ Hooks.once('init', () => {
   CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
   //CONFIG.documentClass = DSACombatantGroup;
-  //CONFIG.debug.hooks = true  
+  //CONFIG.debug.hooks = true
+
+  CONFIG.fontDefinitions["Gentium Basic"] = {
+    editor: true,
+    fonts: [
+      {urls: ['systems/dsa5/fonts/GenBasR.woff2']},
+      {urls: ['systems/dsa5/fonts/GenBasBI.woff2'], weight: "500"},
+      {urls: ['systems/dsa5/fonts/GenBasB.woff2'], weight: "700"},
+    ]
+  };
+  CONFIG.fontDefinitions.Andalus = {
+    editor: true,
+    fonts: [
+      {urls: ['systems/dsa5/fonts/andlso.woff2']},
+    ] 
+  };
 });
 
 initHooks();
