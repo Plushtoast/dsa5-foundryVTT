@@ -6,6 +6,7 @@ import { localize } from '../helpers/localizer.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
   static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
+  static isDSAcompatible = true;
 
   static availableCalendars = [
     { key: 'none', name: '-' },
