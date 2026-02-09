@@ -77,6 +77,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.selectedChapter = selectedChapter;
     this.content = undefined;
     this.pageTocs = undefined;
+    this.selectedSubChapter = undefined;
     this.loadPage($(this.element));
   }
 
@@ -486,7 +487,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       if (page.type == 'video') pageContent = `<div class="video-container">${pageContent}</div>`;
       if (!sheet.isV2 && !equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
 
-      content += pageContent;
+      content += `<div style="clear: both">${pageContent}</div>`;
     }
 
     this.pageTocs = pageTocs.join('');
