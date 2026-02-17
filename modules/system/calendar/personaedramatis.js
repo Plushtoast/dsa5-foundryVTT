@@ -465,8 +465,9 @@ export class PersonaeDramatis {
 
                 const name = entry.querySelector('.persona-list-name')?.textContent || '';
                 const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
+                const tags = entry.dataset.personaTags || '';
 
-                const isMatch = [name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+                const isMatch = [name, faction, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 entry.hidden = !isMatch;
 
                 if (isMatch) visibleItemsInFaction++;

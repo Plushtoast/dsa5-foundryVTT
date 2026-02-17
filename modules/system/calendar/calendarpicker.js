@@ -66,6 +66,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   #search;
   #personaeDramatis = new PersonaeDramatis(this);
   #temporaryTime = null;
+  #pendingScrollToToday = false;
+  #eventsTabObserver = null;
 
   get title() {
     return localize(DSAWorldCalendar.selectedCalendar().name);
@@ -331,9 +333,25 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.clearCache();
   }
 
-  #getSortableDate(h, currentDateValue) {
-    const sortValue = h.from.month * 100 + h.from.dayOfMonth;
-    return sortValue >= currentDateValue ? sortValue : sortValue + 1300;
+  #getChronologicalSortKey(entry) {
+    const day = entry?.from?.day;
+    if (typeof day === 'number') return day;
+
+    const month = entry?.from?.month;
+    const dayOfMonth = entry?.from?.dayOfMonth;
+    return month * 100 + dayOfMonth;
+  }
+
+  #tryScrollToToday() {
+    const eventsTab = this.element?.querySelector('.tab[data-tab="events"]');
+    if (!eventsTab?.classList.contains('active')) return false;
+
+    const todayMarker = this.element?.querySelector('.calendar-today-marker');
+    if (!todayMarker) return false;
+
+    requestAnimationFrame(() => this._scrollToCard(todayMarker, { behavior: 'auto' }));
+    this.#pendingScrollToToday = false;
+    return true;
   }
 
   async _prepareContext(_options) {
@@ -414,6 +432,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (ev.currentTarget.name == 'year') game.dsa5.apps.CalendarPicker.constructor.invalidateCache();
 
     const form = ev.target.form;
+    if (!form) return;
+
     const components = new foundry.applications.ux.FormDataExtended(form).object;
     const currentComponents = game.time.calendar.timeToComponents(game.time.worldTime);
     components.month = currentComponents.month;
@@ -430,6 +450,19 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     await super._onRender(context, options);
 
     tabSlider($(this.element));
+
+    this.#eventsTabObserver?.disconnect();
+    const eventsTab = this.element.querySelector('.tab[data-tab="events"]');
+    if (eventsTab) {
+      this.#eventsTabObserver = new MutationObserver(() => {
+        if (this.#pendingScrollToToday) this.#tryScrollToToday();
+        if (!this.#pendingScrollToToday) {
+          this.#eventsTabObserver?.disconnect();
+          this.#eventsTabObserver = null;
+        }
+      });
+      this.#eventsTabObserver.observe(eventsTab, { attributes: true, attributeFilter: ['class'] });
+    }
     this.#dateFormListeners();
     this.element.querySelectorAll('.settingChange').forEach(element => {
       element.addEventListener('change', this._onSettingChange.bind(this));
@@ -461,6 +494,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     super._tearDown(options);
     this.#search?.unbind();
     this.#personaeDramatis._tearDown(options);
+    this.#eventsTabObserver?.disconnect();
+    this.#eventsTabObserver = null;
     if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
     if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
     this._evtState = null;
@@ -575,7 +610,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const moon = calendar.translate(convertedComponents.moon.phase.name);
     const month = calendar.translate(calendar.months.values[components.month].name);
-    const weekday = calendar.translate(calendar.days.values[convertedComponents.dayOfWeek].name);
+    const daysCount = calendar.days.values.length;
+    const dayOfWeekIndex = ((convertedComponents.dayOfWeek % daysCount) + daysCount) % daysCount;
+    const weekday = calendar.translate(calendar.days.values[dayOfWeekIndex].name);
     const holidays = await this._getHolidaysFormatted(convertedComponents);
 
     return `<div>
@@ -829,16 +866,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   async _renderInitialYearChunk(year, components) {
     const entries = await this.constructor.fromYearCache(year);
-    const currentDateValue = components.month * 100 + components.dayOfMonth;
-    const sorted = entries.slice().sort((a, b) => this.#getSortableDate(a, currentDateValue) - this.#getSortableDate(b, currentDateValue));
+    const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
     await this._insertYearChunk(year, sorted, 'after', true);
+    this.#pendingScrollToToday = true;
+    this.#tryScrollToToday();
   }
 
   async _appendNextYear() {
     const nextYear = this._evtState.latestYear + 1;
     if (this._evtState.loadedYears.has(nextYear)) return;
     const entries = await this.constructor.fromYearCache(nextYear);
-    const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+    const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
     await this._insertYearChunk(nextYear, sorted, 'after');
     this._evtState.latestYear = nextYear;
     this._pruneYearsIfNeeded();
@@ -848,7 +886,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const prevYear = this._evtState.earliestYear - 1;
     if (this._evtState.loadedYears.has(prevYear)) return;
     const entries = await this.constructor.fromYearCache(prevYear);
-    const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+    const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
     const prevHeight = this._evtState.root.scrollHeight;
     await this._insertYearChunk(prevYear, sorted, 'before');
     const newHeight = this._evtState.root.scrollHeight;
@@ -895,11 +933,31 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!entries.length) return;
 
     let currentMonth = -1;
+    const shouldPlaceTodayMarker = !!currentComponents;
+    const todayMonth = shouldPlaceTodayMarker ? currentComponents.month : null;
+    const todayDay = shouldPlaceTodayMarker ? (currentComponents.dayOfMonth + 1) : null;
+    let todayMarkerInserted = false;
+
+    const appendTodayMarker = () => {
+      if (!shouldPlaceTodayMarker || todayMarkerInserted) return;
+      const todayMarker = document.createElement('div');
+      todayMarker.className = 'calendar-today-marker';
+      const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
+      const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+      const todayLabel = localize('dsacalendar.today');
+      todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
+      wrapper.appendChild(todayMarker);
+      todayMarkerInserted = true;
+    };
 
     for (let i = 0; i < entries.length; i += 1) {
       const entry = entries[i];
 
       if (entry.from.month !== currentMonth) {
+        if (shouldPlaceTodayMarker && !todayMarkerInserted && currentMonth === todayMonth) {
+          appendTodayMarker();
+        }
+
         currentMonth = entry.from.month;
 
         const monthName = game.time.calendar.translate(game.time.calendar.months.values[currentMonth].name);
@@ -907,16 +965,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         monthDivider.className = 'calendar-month-marker';
         monthDivider.innerHTML = `<hr><span class="month-label">${monthName} ${year} ${yearSuffix}</span>`;
         wrapper.appendChild(monthDivider);
+      }
 
-        if (currentComponents && currentMonth === currentComponents.month) {
-          const todayMarker = document.createElement('div');
-          todayMarker.className = 'calendar-today-marker';
-          const todayDay = currentComponents.dayOfMonth + 1;
-          const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
-          const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-          const todayLabel = localize('dsacalendar.today');
-          todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
-          wrapper.appendChild(todayMarker);
+      if (shouldPlaceTodayMarker && !todayMarkerInserted && entry.from.month === todayMonth) {
+        const entryStart = Number(entry?.from?.dayOfMonth);
+        const entryEnd = Number(entry?.to?.dayOfMonth ?? entryStart);
+        if (Number.isFinite(entryStart) && Number.isFinite(entryEnd)) {
+          if (todayDay <= entryStart || (entryStart <= todayDay && todayDay <= entryEnd)) {
+            appendTodayMarker();
+          }
         }
       }
 
@@ -926,6 +983,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       tempContainer.innerHTML = html;
       while (tempContainer.firstElementChild) wrapper.appendChild(tempContainer.firstElementChild);
 
+    }
+
+    if (shouldPlaceTodayMarker && !todayMarkerInserted && currentMonth === todayMonth) {
+      appendTodayMarker();
     }
   }
 
@@ -976,7 +1037,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!this._evtState.loadedYears.has(year)) {
       if (year < this._evtState.earliestYear) {
         const entries = await this.constructor.fromYearCache(year);
-        const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+        const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
         const prevHeight = this._evtState.root.scrollHeight;
         await this._insertYearChunk(year, sorted, 'before');
         const newHeight = this._evtState.root.scrollHeight;
@@ -984,7 +1045,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         this._evtState.earliestYear = Math.min(this._evtState.earliestYear, year);
       } else {
         const entries = await this.constructor.fromYearCache(year);
-        const sorted = entries.slice().sort((a, b) => (a.from.month * 100 + a.from.dayOfMonth) - (b.from.month * 100 + b.from.dayOfMonth));
+        const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
         await this._insertYearChunk(year, sorted, 'after');
         this._evtState.latestYear = Math.max(this._evtState.latestYear, year);
       }
@@ -993,13 +1054,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     return this.element.querySelector(`.year-chunk[data-year="${year}"]`);
   }
 
-  _scrollToCard(el) {
+  _scrollToCard(el, { behavior = 'smooth' } = {}) {
     if (!el) return;
     const scrollRoot = this.element.querySelector('[data-tab="events"].tab');
     const rect = el.getBoundingClientRect();
     const rootRect = scrollRoot.getBoundingClientRect();
     const offset = rect.top - rootRect.top + scrollRoot.scrollTop - 60;
-    scrollRoot.scrollTo({ top: offset, behavior: 'smooth' });
+    scrollRoot.scrollTo({ top: offset, behavior });
   }
 
   static async #scrollToToday() {

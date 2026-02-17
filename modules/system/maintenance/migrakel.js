@@ -105,7 +105,7 @@ export default class Migrakel {
   static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
     const res = preChoice ?? (await this.showDialog(localize('Migrakel.spells'), true));
     const condition = (x) => {
-      return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension'].includes(x.type);
+      return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension', 'blessing'].includes(x.type);
     };
     if (res == 2) {
       const updator = (find) => {
@@ -120,11 +120,14 @@ export default class Migrakel {
         const upd = {
           effects: find.effects.toObject(),
         };
-        if (find.type != 'spellextension')
+        if (!['spellextension', 'blessing'].includes(find.type))
           upd.system = {
             effectFormula: { value: find.system.effectFormula.value },
           };
 
+        if (find.type == 'blessing')  {
+          this.updateMacro(upd, find); 
+        }
         return upd;
       };
       await this.updateVals(actor, condition, updator);

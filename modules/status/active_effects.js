@@ -75,7 +75,7 @@ Hooks.once('i18nInit', () => {
 
 export default class DSAActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
-  static macroIndexes = [2, 6, 7];
+  static macroIndexes = [2, 6, 7, 8];
 
   static DEFAULT_OPTIONS = {
     window: {
@@ -181,6 +181,28 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     return isInstalled;
   }
 
+  async _updateObject(event, formData) {
+    // If the charges inputs are left empty, Foundry often persists them as empty strings.
+    // Number("") === 0 would incorrectly mark the effect as depleted and prevent it from applying.
+    const valueRaw = formData?.['flags.dsa5.charges.value'];
+    const maxRaw = formData?.['flags.dsa5.charges.max'];
+
+    const isEmpty = (v) => v === '' || v === null || v === undefined;
+
+    // If current charges are empty, we consider charges "not configured" and remove the flag entirely.
+    // (Max without a current value is not meaningful for depletion, and would still cause gating.)
+    if (isEmpty(valueRaw)) {
+      delete formData['flags.dsa5.charges.value'];
+      delete formData['flags.dsa5.charges.max'];
+      formData['flags.dsa5.-=charges'] = null;
+    } else if (isEmpty(maxRaw)) {
+      // Allow "current" without "max".
+      delete formData['flags.dsa5.charges.max'];
+    }
+
+    return super._updateObject(event, formData);
+  }
+
   async _preparePartContext(partId, context) {
     const partContext = await super._preparePartContext(partId, context);
     if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
@@ -225,6 +247,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           advancedFunctions.push(
             { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL },
             { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED },
+            { name: 'ActiveEffects.advancedFunctions.rollDialogRender', index: DSATriggers.EVENTS.ROLL_DIALOG_RENDER },
           );
         }
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
@@ -534,6 +557,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (hasSuccessEffects) testData.qualityStep = testData.successLevel > 0 ? 1 : 2;
 
     const attacker = DSA5_Utility.getSpeaker(speaker) || DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'));
+    let parent_source_attacker;
+    if (attacker?.emptyActor?.parent_source_uuid) {
+      parent_source_attacker = await fromUuid(attacker.emptyActor.parent_source_uuid);
+    }
 
     const sourceActor = attacker;
     let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));
@@ -542,7 +569,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
     let actors = [];
     if (mode == 'self') {
-      if (attacker) actors.push(attacker);
+      if (attacker) actors.push(parent_source_attacker ||attacker);
     } else {
       if (targets) actors = targets.map((x) => DSA5_Utility.getSpeaker(x));
       else if (game.user.targets.size) {

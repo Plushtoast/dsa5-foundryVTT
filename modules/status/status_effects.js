@@ -55,7 +55,10 @@ export default class DSA5StatusEffects {
         },
       },
     });
-    effect[0]?.sheet.render(true);
+    const sheet = effect[0]?.sheet;
+
+    if (sheet) await sheet.render(true);
+    else if(typeof effect === 'string') ui.notifications.error(effect);
   }
 
   static async prepareActiveEffects(target, data) {
@@ -157,11 +160,11 @@ export default class DSA5StatusEffects {
   }
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
-    if (!target.isOwner) return 'Not owned';
-    if (target.inCompendium) return 'Can not add in compendium';
+    if (!target.isOwner) return game.i18n.localize('DSAError.elementNotOwned');
+    if (target.inCompendium) return game.i18n.localize('DSAError.canNotEditInCompendium');
     if (absolute && value < 1) return this.removeCondition(target, effect, value, auto, absolute);
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return 'No Effect Found';
+    if (!effect) return game.i18n.localize('DSAError.noEffectFound');
 
     let existing = this.hasCondition(target, effect.id);
 
@@ -181,9 +184,9 @@ export default class DSA5StatusEffects {
   }
 
   static async removeCondition(target, effect, value = 1, auto = true, absolute = false) {
-    if (!target.isOwner) return 'Not owned';
+    if (!target.isOwner) return game.i18n.localize('DSAError.elementNotOwned');
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return 'No Effect Found';
+    if (!effect) return game.i18n.localize('DSAError.noEffectFound');
 
     let existing = this.hasCondition(target, effect.id);
 
@@ -394,6 +397,11 @@ export default class DSA5StatusEffects {
 
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
+      const charges = ef.getFlag?.('dsa5', 'charges');
+      if (charges) {
+        const value = Number(charges.value);
+        if (Number.isFinite(value) && value <= 0) continue;
+      }
 
       for (const coreId of [...ef.statuses]) {
         if (finishedCoreIds.includes(coreId)) continue;
@@ -407,6 +415,8 @@ export default class DSA5StatusEffects {
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, coreId),
             source,
+            effectId: ef.id,
+            effectUuid: ef.uuid,
           });
         }
       }

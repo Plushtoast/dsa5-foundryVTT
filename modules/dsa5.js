@@ -63,6 +63,8 @@ import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
 import { ItemFactory } from './item/item-factory.js';
 import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
+import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
+import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 
 Hooks.once('init', () => {
@@ -145,7 +147,9 @@ Hooks.once('init', () => {
       },
       JournalEntryPage: {
         dsacalendar: DSACalendarEntry,
-        dsapersonaedramatis: DSAPersonaEntry
+        dsapersonaedramatis: DSAPersonaEntry,
+        dsaaptracker: DSAAPTrackerEntry,
+        dsamoneytracker: DSAMoneyTrackerEntry
       }
     },
     config: DSA5,
@@ -174,8 +178,25 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
+  CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
+  CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
   //CONFIG.documentClass = DSACombatantGroup;
-  //CONFIG.debug.hooks = true  
+  //CONFIG.debug.hooks = true
+
+  CONFIG.fontDefinitions["Gentium Basic"] = {
+    editor: true,
+    fonts: [
+      {urls: ['systems/dsa5/fonts/GenBasR.woff2']},
+      {urls: ['systems/dsa5/fonts/GenBasBI.woff2'], weight: "500"},
+      {urls: ['systems/dsa5/fonts/GenBasB.woff2'], weight: "700"},
+    ]
+  };
+  CONFIG.fontDefinitions.Andalus = {
+    editor: true,
+    fonts: [
+      {urls: ['systems/dsa5/fonts/andlso.woff2']},
+    ] 
+  };
 });
 
 initHooks();

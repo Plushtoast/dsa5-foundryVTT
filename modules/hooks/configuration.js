@@ -130,7 +130,6 @@ export function setupConfiguration() {
     },
     migrationVersion: {
       name: 'migrationVersion',
-      hint: 'migrationVersion',
       scope: 'world',
       config: false,
       default: NEEDS_MIGRATION_VERSION - 1,
@@ -138,7 +137,6 @@ export function setupConfiguration() {
     },
     journalFontSizeIndex: {
       name: 'journalFontSizeIndex',
-      hint: 'journalFontSizeIndex',
       scope: 'client',
       config: false,
       default: 5,
@@ -146,7 +144,13 @@ export function setupConfiguration() {
     },
     firstTimeStart: {
       name: 'firstTimeStart',
-      hint: 'firstTimeStart',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
+    hasSeenNue: {
+      name: 'hasSeenNue',
       scope: 'world',
       config: false,
       default: false,
@@ -154,7 +158,6 @@ export function setupConfiguration() {
     },
     defaultConfigFinished: {
       name: 'defaultConfigFinished',
-      hint: 'defaultConfigFinished',
       scope: 'world',
       config: false,
       default: false,
@@ -170,7 +173,6 @@ export function setupConfiguration() {
     },
     tokenizerSetup: {
       name: 'tokenizerSetup',
-      hint: 'tokenizerSetup',
       scope: 'world',
       config: false,
       default: false,
@@ -178,7 +180,6 @@ export function setupConfiguration() {
     },
     diceSetup: {
       name: 'diceSetup',
-      hint: 'diceSetup',
       scope: 'world',
       config: false,
       default: false,

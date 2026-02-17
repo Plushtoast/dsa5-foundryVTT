@@ -156,6 +156,7 @@ export default class CreatureType {
     if (vulnerabilities) {
       if (['meleeweapon', 'rangeweapon'].includes(source.type)) {
         const toCombatskills = getProperty(vulnerabilities, 'combatskill');
+        if (!toCombatskills) return;
 
         toCombatskills.reduce((prev, x) => {
           if (x.target == source.system.combatskill.value) {
@@ -171,9 +172,11 @@ export default class CreatureType {
   ignoredCondition(condition) {
     return false;
   }
+  
   damageModifier(attackItem) {
     return [];
   }
+
   static creatureBonusDamage(actor, attacker) {
     const bonusModifiers = [];
     const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;

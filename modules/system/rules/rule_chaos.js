@@ -84,7 +84,7 @@ export default class RuleChaos {
     source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value;
   }
 
-  static isYieldedTwohanded(item) {
+  static isWieldedTwohanded(item) {
     if (!item || !item.system) return false;
     if (item.type == 'trait') return false;
 

@@ -246,9 +246,7 @@ export default class Itemdsa5 extends Item {
     for (const element of html.find('.specAbs')) {
       const dataset = element.dataset;
       const step = Number(dataset.step);
-
       if (step <= 0) continue;
-
       const modifier = ModifierCalculator.parseModifierValue(dataset, mainAttribute, step);
       if (!modifier) continue;
 
@@ -694,6 +692,8 @@ class SpellItemDSA5 extends Itemdsa5 {
               value: f.value,
               type,
               source: f.source,
+              effectId: f.effectId || null,
+              effectUuid: f.effectUuid || null,
             };
           }),
       );
@@ -706,6 +706,8 @@ class SpellItemDSA5 extends Itemdsa5 {
           value: f.value,
           source: f.source,
           type: cost,
+          effectId: f.effectId || null,
+          effectUuid: f.effectUuid || null,
         };
       }),
     );
@@ -750,10 +752,12 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     data.isForeign = !distributions.some(d => traditionsSet.has(d));
 
+    const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
+
     if (data.isForeign) {
       situationalModifiers.push({
       name: localize('DSASETTINGS.enableForeignSpellModifer'),
-      value: -2,
+      value: -2 + modOffset,
       selected: true,
       });
     }
@@ -764,7 +768,6 @@ class SpellItemDSA5 extends Itemdsa5 {
       ...ItemRulesDSA5.getTalentBonus(actor, source.name, ['advantage', 'disadvantage', 'specialability', 'equipment']),
       ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalAttunement', 1, true),
       ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.magicalRestriction', -1, true),
-      ...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.boundToArtifact', -1, true),
       ...this.getPropertyModifiers(actor, source),
       ...this.attackSpellMalus(source),
     );
@@ -832,11 +835,12 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     let timeModifier = 0;
     const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(localize('LocalizedIDs.assumeTradition')));
     let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
+    const calendar = game.time.calendar;
 
-    if (assumeTradition) {
-      const components = game.time.calendar.timeToComponents(game.time.worldTime);
+    if (assumeTradition && calendar?.constructor?.isDSAcompatible) {
+      const components = calendar.timeToComponents(game.time.worldTime);
       const gameMonth = components.month;
-      const monthName = game.time.calendar.constructor.months[gameMonth].toLowerCase();
+      const monthName = calendar.constructor.months[gameMonth].toLowerCase();
       const day = components.dayOfMonth;
 
       const holidays = CONFIG.time.worldCalendarConfig.holidays.values;

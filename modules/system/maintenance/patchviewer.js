@@ -6,6 +6,9 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export class PatchViewer extends DefaultAppv2 {
     #search;
+    #activeFilters = new Set();
+    #lastQuery = '';
+    #lastRegex = null;
 
     constructor(json, app) {
         super(app);
@@ -26,7 +29,10 @@ export class PatchViewer extends DefaultAppv2 {
         },
         actions: {
             showMore: this.#showMore,
-            alreadyBought: this.#alreadyBought
+            scrollToCategory: this.#scrollToCategoryAction,
+            closeFeatured: this.#closeFeatured,
+            toggleFilter: this.#toggleFilter,
+            clearFilters: this.#clearFilters
         }
     };
 
@@ -82,20 +88,88 @@ export class PatchViewer extends DefaultAppv2 {
             callback: this.#onSearchFilter.bind(this)
         });
         this.#search.bind(this.element);
+
+
     }
 
     #onSearchFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".module-card")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
+        this.#lastQuery = query ?? '';
+        this.#lastRegex = rgx ?? null;
+        this.#filterModuleCards(html, this.#lastQuery, this.#lastRegex);
+    }
 
-            const title = entry.querySelector('h3').textContent || '';
+    #applyModuleFilters() {
+        const html = this.element;
+        if (!html) return;
+        const input = html.querySelector('input[type=search]');
+        const query = input?.value?.trim() ?? '';
+        const cleanQuery = foundry.applications.ux.SearchFilter.cleanQuery(query);
+        const rgx = cleanQuery ? new RegExp(cleanQuery, 'i') : null;
+        this.#filterModuleCards(html, query, rgx);
+    }
+
+    #filterModuleCards(html, query, rgx) {
+        const activeFilters = this.#activeFilters;
+        const tagFilters = [...activeFilters].filter((filter) => filter !== 'not-owned');
+        const requireNotOwned = activeFilters.has('not-owned');
+        for (const entry of html.querySelectorAll(".module-card")) {
+            const title = entry.querySelector('h3')?.textContent || '';
             const description = entry.querySelector('p')?.textContent || '';
-            const isMatch = [title, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
+            const tagText = entry.querySelector('.module-card__tags')?.textContent || '';
+            const filterList = entry.dataset.filters ? entry.dataset.filters.split('|') : [];
+            const matchesQuery = !query || (rgx && [title, description, tagText].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q))));
+            const matchesTags = !tagFilters.length || filterList.some(tag => tagFilters.includes(tag));
+            const matchesOwned = !requireNotOwned || !entry.classList.contains('module-card--owned');
+            entry.hidden = !(matchesQuery && matchesTags && matchesOwned);
         }
+
+        for (const section of html.querySelectorAll('.module-category')) {
+            const visibleCards = section.querySelectorAll('.module-card:not([hidden])');
+            const isVisible = visibleCards.length > 0;
+            section.hidden = !isVisible;
+            const divider = section.previousElementSibling;
+            if (divider?.classList?.contains('module-category__divider')) {
+                divider.hidden = !isVisible;
+            }
+        }
+    }
+
+    #scrollToCategory(target) {
+        const container = this.element?.querySelector('.tab[data-tab="content"]');
+        const targetEl = this.element?.querySelector(`#${CSS.escape(target)}`);
+        if (!targetEl || !container) return;
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = targetEl.getBoundingClientRect();
+        const offset = targetRect.top - containerRect.top + container.scrollTop - 10;
+        container.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+
+    static #scrollToCategoryAction(event, target) {
+        const anchor = target?.dataset?.target;
+        if (anchor) this.#scrollToCategory(anchor);
+    }
+
+    static #closeFeatured(event, target) {
+        target?.closest('.news-featured')?.classList.add('hidden');
+    }
+
+    static #toggleFilter(event, target) {
+        const button = target;
+        const filter = button?.dataset?.filter;
+        if (!filter) return;
+        const isActive = button.classList.toggle('is-active');
+        if (isActive) {
+            this.#activeFilters.add(filter);
+        } else {
+            this.#activeFilters.delete(filter);
+        }
+        this.#applyModuleFilters();
+    }
+
+    static #clearFilters(event, target) {
+        this.#activeFilters.clear();
+        this.element?.querySelectorAll('[data-action="toggleFilter"]').forEach((btn) => btn.classList.remove('is-active'));
+        this.#applyModuleFilters();
     }
 
     _tearDown(options) {
@@ -114,17 +188,6 @@ export class PatchViewer extends DefaultAppv2 {
         html.find('.changelogsection').append(data.changelog[0]);
         html.find('.newssection').append(data.news[0]);
         this.versionIndex += 1;
-    }
-
-    static async #alreadyBought(ev, target) {
-        const i = target.querySelector('i');
-        const toggleOn = i.classList.contains('fa-eye-slash');
-        i.classList.toggle('fa-eye', toggleOn);
-        i.classList.toggle('fa-eye-slash', !toggleOn);
-
-        this.element.querySelectorAll('.module-card--owned').forEach(card => {
-            card.classList.toggle('hidden', !toggleOn);
-        });
     }
 
     async fetchVersions(versions) {
@@ -152,6 +215,9 @@ export class PatchViewer extends DefaultAppv2 {
         const storeCTAUrl = lang === 'en'
             ? 'https://www.ulissesf-shop.com/virtual-tabletops/'
             : 'https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/';
+        const storeDeUrl = 'https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/';
+        const storeEnUrl = 'https://www.ulissesf-shop.com/virtual-tabletops/';
+        const preparedModules = this.#prepareModules(modules);
 
         return mergeObject(data, {
             patchName,
@@ -160,23 +226,70 @@ export class PatchViewer extends DefaultAppv2 {
             prevVersions,
             prevChangeLogs: preVersions.changelog,
             prevNews: preVersions.news,
-            modules: this.#prepareModules(modules),
+            modules: preparedModules,
+            featuredModules: this.#pickFeaturedModules(preparedModules),
+            moduleFilters: this.#collectModuleFilters(preparedModules),
             storeCTAUrl,
+            storeDeUrl,
+            storeEnUrl,
+            isEnglish: lang === 'en',
         });
     }
 
     #prepareModules(modules) {
-        for (const category of modules.categories ?? []) {
+        for (const [categoryIndex, category] of (modules.categories ?? []).entries()) {
+            const baseSlug = category.name ?? `category-${categoryIndex}`;
+            category.slug = baseSlug.slugify();
             category.items = category.items?.map((item, index) => {
                 const owned = item.id ? Boolean(game.modules.get(item.id)) : false;
                 if (owned) {
                     item.available = true;
                 }
                 item.originalIndex = index;
+                item.category = category.name;
+                item.badges = item.badges ?? [];
+                item.tags = Array.isArray(item.tags) ? item.tags : [];
+                item.filters = [...item.badges, ...item.tags]
+                    .map((value) => foundry.applications.ux.SearchFilter.cleanQuery(String(value)))
+                    .filter(Boolean);
+                item.filterString = item.filters.join('|');
                 return item;
             }) ?? [];
         }
 
         return modules;
+    }
+
+    #pickFeaturedModules(modules, limit = 4) {
+        const teasers = [];
+        for (const category of modules.categories ?? []) {
+            for (const item of category.items ?? []) {
+                if (!item?.image?.src || !item?.href) continue;
+                if (item.available) continue;
+                teasers.push(item);
+                if (teasers.length >= limit) return teasers;
+            }
+        }
+        return teasers;
+    }
+
+    #collectModuleFilters(modules) {
+        const filters = new Map();
+        for (const category of modules.categories ?? []) {
+            for (const item of category.items ?? []) {
+                for (const value of [...(item.badges ?? []), ...(item.tags ?? [])]) {
+                    if (!value) continue;
+                    const key = foundry.applications.ux.SearchFilter.cleanQuery(String(value));
+                    if (!key) continue;
+                    const existing = filters.get(key);
+                    if (existing) {
+                        existing.count += 1;
+                    } else {
+                        filters.set(key, { label: value, value: key, count: 1 });
+                    }
+                }
+            }
+        }
+        return Array.from(filters.values()).sort((a, b) => a.label.localeCompare(b.label));
     }
 }

@@ -61,12 +61,16 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     turn.roundInitiative = combatant.system.roundInitiative;
 
     let remainders = [];
+    let aiming = [];
     if (combatant.actor) {
       for (const x of combatant.actor.items) {
-        if (x.type == 'rangeweapon' && x.system.worn.value && x.system.reloadTime.progress > 0) {
+        const isWornRangeWeapon = x.type == 'rangeweapon' && x.system.worn.value;
+        const lz = isWornRangeWeapon ? Actordsa5.calcLZ(x, combatant.actor) : 0;
+
+        if (isWornRangeWeapon && x.system.reloadTime.progress > 0) {
           const wpn = {
             name: x.name,
-            remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress,
+            remaining: lz - x.system.reloadTime.progress,
           };
           if (wpn.remaining > 0) remainders.push(wpn);
         } else if (['spell', 'liturgy'].includes(x.type) && x.system.castingTime.modified > 0) {
@@ -76,14 +80,35 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
           };
           if (wpn.remaining > 0) remainders.push(wpn);
         }
+
+        if (isWornRangeWeapon) {
+          const aimProgress = Number(x.system?.aimTime?.progress) || 0;
+          if (aimProgress > 0) {
+            const loaded = lz === 0 || (Number(x.system.reloadTime?.progress) || 0) >= lz;
+            if (loaded) {
+              aiming.push({
+                name: x.name,
+                progress: Math.clamp(aimProgress, 0, 2),
+                status: `${aimProgress}/2`,
+              });
+            }
+          }
+        }
       }
     }
     remainders = remainders.sort((a, b) => a.remaining - b.remaining);
 
-    if (remainders.length > 0) {
-      turn.ongoings = `${localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
+    aiming = aiming.sort((a, b) => b.progress - a.progress);
 
-      turn.ongoing = remainders[0].remaining;
+    const ongoingLines = [];
+    if (remainders.length > 0) ongoingLines.push(...remainders.map((x) => `${x.name} - ${x.remaining}`));
+    if (aiming.length > 0) ongoingLines.push(...aiming.map((x) => `${x.name} - ${localize('WEAPON.aim')} ${x.status}`));
+
+    if (ongoingLines.length > 0) {
+      turn.ongoings = `${localize('COMBATTRACKER.ongoing')}<br>${ongoingLines.join('<br>')}`;
+
+      if (remainders.length > 0) turn.ongoing = remainders[0].remaining;
+      else if (aiming.length > 0) turn.ongoing = aiming[0].progress;
     }
     const effects = [];
     for (const e of combatant.actor?.temporaryEffects || []) {

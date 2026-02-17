@@ -6,16 +6,24 @@ export default class APTracker extends JournalTracker {
   static configuration = {
     permission: 'enableAPTracking',
     flagName: 'apTrackerId',
-    journalName: 'TRACKER.adventurePoints'
+    journalName: 'TRACKER.adventurePoints',
+    pageType: 'dsaaptracker'
   }
 
-  static async _prepareRow(description, cost, actor) {
-    return this.getRow(
-      this._buildDescription(description),
-      `<p>${this._buildChange(description)}</p>`,
+  static async _prepareEntryData(description, cost, actor) {
+    return {
+      created: Date.now(),
+      type: description.type,
+      itemUuid: description.item?.uuid || null,
+      itemType: description.item?.type || null,
+      itemName: description.item?.name || null,
+      attr: description.attr || null,
+      state: description.state || null,
+      previous: description.previous ?? null,
+      next: description.next ?? null,
       cost,
-      `${actor.system.details.experience.spent}/${actor.system.details.experience.total}`,
-    );
+      total: `${actor.system.details.experience.spent}/${actor.system.details.experience.total}`,
+    };
   }
 
   static _buildChange(description) {
@@ -25,33 +33,6 @@ export default class APTracker extends JournalTracker {
 
     const symbol = description.next > description.previous ? 'angles-up' : 'angles-down';
     return `${description.previous}&nbsp;<em class="fas fa-${symbol}">&nbsp;</em>&nbsp;${description.next}`;
-  }
-
-  static getRow(description, change, cost, total, cssClass = '') {
-    return `<div class="row-section ${cssClass}">
-              <div class="col fourty">
-                  ${description}
-              </div>
-              <div class="col third center">
-                  ${change}
-              </div>
-              <div class="col ten center">
-                  ${cost}
-              </div>
-              <div class="col five center">
-                  ${total}
-              </div>
-          </div>`;
-  }
-
-  static startRow() {
-    return this.getRow(
-      localize('Description'),
-      localize('attributeChange'),
-      localize('cost'),
-      localize('Total'),
-      'table-title',
-    )
   }
 
   static _buildDescription(description) {

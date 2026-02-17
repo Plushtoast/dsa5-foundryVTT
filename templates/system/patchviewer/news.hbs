@@ -1,10 +1,34 @@
 <div class='tab scrollable {{tabs.newcontent.cssClass}}' data-tab='newcontent' data-group='{{tabs.newcontent.group}}'>
-  <div class='newssection'>
-    {{{news}}}
-    {{#each prevNews as |item i|}}
-      <hr style='margin-top:100px' />
-      {{{item}}}
-    {{/each}}
+  <div class='news-layout'>
+    <div class='newssection'>
+      {{{news}}}
+      {{#each prevNews as |item i|}}
+        <hr style='margin-top:100px' />
+        {{{item}}}
+      {{/each}}
+    </div>
+    {{#if featuredModules.length}}
+      <aside class='news-featured'>
+        <button type='button' class='news-featured__close' data-action='closeFeatured' aria-label='Close'>
+          <i class='fas fa-times'></i>
+        </button>
+        <div class='news-featured__list'>
+          {{#each featuredModules}}
+            <article class='news-featured__item'>
+              <a href='{{href}}' target='_blank' rel='noopener'>
+                <div class='news-featured__image'>
+                  <img src='{{image.src}}' alt='{{label}}' />
+                </div>
+                <div class='news-featured__body'>
+                  <span class='news-featured__category'>{{category}}</span>
+                  <h4>{{label}}</h4>
+                </div>
+              </a>
+            </article>
+          {{/each}}
+        </div>
+      </aside>
+    {{/if}}
   </div>
   <div class='flexrow'>
     <button type='button' data-action='showMore'>More..</button>

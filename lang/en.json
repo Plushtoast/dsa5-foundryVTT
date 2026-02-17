@@ -64,6 +64,7 @@
         "GE": "AGI",
         "KO": "CON",
         "RS": "PRO",
+        "postRoll": "Nach Wurf",
         "VW": "DV",
         "LZ": "LT",
         "KK": "STR",
@@ -161,7 +162,14 @@
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
         "dependentMaintainEffects": "Dependent effects (delete too)",
-        "temporaryOff": "Disable temporarily"
+        "temporaryOff": "Disable temporarily",
+        "postRollBuffPickerTitle": "Apply Improvement",
+        "postRollBuffPickerHint": "Select one or more improvements to apply.",
+        "postRollBuffPickerEmpty": "No matching improvements found.",
+        "postRollRerollDice": "Reroll {count} dice",
+        "postRollRerollExclusive": "Reroll cannot be combined with FP/QS improvements.",
+        "postRollRerollMaxDice": "You can reroll at most {max} dice.",
+        "noSelection": "Nothing selected."
     },
     "Equipment": {
         "misc": "General",
@@ -521,6 +529,7 @@
     "Notes": "Notes",
     "Opposed": "Competitive check",
     "opposingWeaponSize": "Weaponsize opponent",
+    "mainHand": "Main hand",
     "offHand": "Off hand",
     "Ongoing": "Running",
     "protection": "Protection",
@@ -1043,6 +1052,8 @@
         "doubleAttack": "Two-Weapon Combat",
         "combatTurmoil": "Shooting into Melee",
         "QS": "Quality Level modifier",
+        "postRoll": "After roll",
+        "reroll": "Reroll",
         "damage": "Damage modifier",
         "quickChange": "Zigzagging",
         "targetMovement": "Target",
@@ -1090,10 +1101,10 @@
         "twoHandedWeapon": "{weapon} wielded two-handed",
         "oneHandedWeapon": "{weapon} wielded one-handed",
         "wrongGripped": "One-/Two-handed wielded",
-        "yieldTwo": "PA -1, DP +1, can be changed once on your turn only",
-        "yieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
-        "yieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
-        "yieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
+        "wieldTwo": "PA -1, DP +1, can be changed once on your turn only",
+        "wieldOnePolearms": "Weapon reach medium, -1 DP, -1 PA",
+        "wieldOneSwordBlunt": "Weapon reach medium, 0.5 * DP, -3 PA",
+        "wieldOneBastard": "Weapon reach medium, -2 DP, -3 PA",
         "wrongGripBastardRegex": "(Bastard Sword)"
     },
     "SOCIAL_CLASS": {
@@ -1274,6 +1285,10 @@
         "DuplicateItem": "Duplicate",
         "EquipItem": "Equip",
         "EquipItemOffHand": "Equip (Off-Hand)",
+        "IgnoreWeaponHandLimits": "Ignore hand limits",
+        "IgnoreWeaponHandLimitsHint": "Ignore hand limits (allow multiple equipped weapons)",
+        "RequiresBothHands": "Requires both hands",
+        "NoUnequippedWeapons": "Nothing additional to equip",
         "UnEquipItem": "Unequip",
         "Dropdown": "Details",
         "increaseFontSize": "Increase/Decrease font size",
@@ -1530,6 +1545,10 @@
         "loaded": "Reloaded",
         "reload": "Reload",
         "isReloading": "{actor} reloads {item} ({status}).",
+        "aim": "Aim",
+        "aiming": "Aiming ({status})",
+        "aimed": "Aimed",
+        "isAiming": "{actor} aims with {item} ({status}).",
         "improvised": "Improvised weapon",
         "magical": "Magical",
         "clerical": "Blessed",
@@ -1670,6 +1689,8 @@
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaaptracker": "AP Tracker",
+    "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
     "npc": "Non Player Character",
     "creature": "Creature",
     "dsacalendar": {
@@ -1997,6 +2018,11 @@
         },
         "appliedEffect": "Effect <b>{source}</b> applied to <b>{target}</b>.",
         "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
+        "chargesChatConsumed": "A charge was consumed.",
+        "chargesChatDepletedDisabled": "The effect is depleted and has been disabled.",
+        "chargesChatDepletedDeleted": "The effect is depleted and has been removed.",
+        "chargesChatPostRollImproved": "Roll improved: {details}.",
+        "chargesChatPostRollRerolled": "Check rerolled: {count} dice.",
         "custom": "Special effect",
         "apply": "Apply",
         "always": "Always",
@@ -2025,7 +2051,8 @@
             "onRemove": "Macro (End of effect)",
             "onUseEffect": "Macro (On Use)",
             "postRoll": "Macro (after roll)",
-            "postOpposed": "Macro (after opposed roll)"
+            "postOpposed": "Macro (after opposed roll)",
+            "rollDialogRender": "Roll dialog (menu)"
         },
         "dialog": {
             "duration": "Effect Duration",
@@ -2096,7 +2123,6 @@
         "weakAstralBody": "Weak Astral Body",
         "weakKarmicBody": "Weak Karmic Body",
         "restrictedSenseSight": "Restricted Sense (Sight)",
-        "boundToArtifact": "Bound to Artifact",
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
         "traditionWitch": "Tradition (Witch)",
@@ -2144,6 +2170,7 @@
         "manifesto": "Manifesto",
         "elementalServant": "Elemental Servant",
         "callDjinn": "Call Djinn",
+        "elementalAlly": "Elemental Ally",
         "counterAttack": "Counterattack",
         "servantEarth": "tbd",
         "servantFlame": "tbd",
@@ -2152,7 +2179,8 @@
         "servantCloud": "tbd",
         "servantOre": "tbd",
         "immuneTo": "Immunity to",
-        "enemySense": "Enemy Sense"
+        "enemySense": "Enemy Sense",
+        "winhallStyle": "Winhall Style"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -2251,6 +2279,9 @@
         "onlyGMallowed": "This function is only available to the game master.",
         "macroNotFound": "The macro {name} could not be found...sorry.",
         "notOwner": "You are not allowed to modify this actor.",
+        "elementNotOwned": "You do not have permission to edit the element.",
+        "canNotEditInCompendium": "This function is not available in compendiums. Import the element into the world to edit it.",
+        "noEffectFound": "The effect could not be found.",
         "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
         "requiresModule": "This function requires the module {module}.",
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
@@ -2341,7 +2372,8 @@
         "hideData": "Hide details to players",
         "showData": "Show details to players",
         "improveFate": "Improve roll (1 FtP)",
-        "improveFateGroup": "Improve roll (1 Group FtP)"
+        "improveFateGroup": "Improve roll (1 Group FtP)",
+        "applyDepletableBuffs": "Apply one-time bonus"
     },
     "Book": {
         "Wizard": "Journal Browser",
@@ -2542,7 +2574,75 @@
     "TRACKER": {
         "adventurePoints": "Adventure Points History",
         "money": "Financial Overview",
-        "sheetChange": "Character Sheet Change"
+        "sheetChange": "Character Sheet Change",
+        "requiresGM": "Adventure point or money tracking requires a logged in GM or journal edit/creation permissions.",
+        "FIELDS": {
+            "ap": {
+                "entries": {
+                    "created": {
+                        "label": "Created"
+                    },
+                    "type": {
+                        "label": "Type"
+                    },
+                    "itemUuid": {
+                        "label": "Item UUID"
+                    },
+                    "itemType": {
+                        "label": "Item Type"
+                    },
+                    "itemName": {
+                        "label": "Item Name"
+                    },
+                    "attr": {
+                        "label": "Attribute"
+                    },
+                    "state": {
+                        "label": "State"
+                    },
+                    "previous": {
+                        "label": "Previous"
+                    },
+                    "next": {
+                        "label": "Next"
+                    },
+                    "cost": {
+                        "label": "Cost"
+                    },
+                    "total": {
+                        "label": "Total"
+                    }
+                }
+            },
+            "money": {
+                "entries": {
+                    "created": {
+                        "label": "Created"
+                    },
+                    "type": {
+                        "label": "Type"
+                    },
+                    "name": {
+                        "label": "Name"
+                    },
+                    "amount": {
+                        "label": "Amount"
+                    },
+                    "previous": {
+                        "label": "Previous"
+                    },
+                    "next": {
+                        "label": "Next"
+                    },
+                    "cost": {
+                        "label": "Value"
+                    },
+                    "total": {
+                        "label": "Total"
+                    }
+                }
+            }
+        }
     },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
@@ -2653,8 +2753,8 @@
         "3": "Passive",
         "4": "General",
         "5": "Punch-Up",
-        "6": "Advanced Combat Style Specialability (Special Maneuver)",
-        "7": "Advanced Combat Style Specialability (Passive)"
+        "6": "Advanced Combat Style Special Ability (Special Maneuver)",
+        "7": "Advanced Combat Style Special Ability (Passive)"
     },
     "poisonCategory": {
         "1": "Poison, animal",
@@ -2766,7 +2866,19 @@
             "modules": {
                 "hero": {
                     "subtitle": "Expand your tabletop with fully prepared official adventures, rules, and more.",
-                    "cta": "Browse F-Shop"
+                    "cta": "F-Shop"
+                },
+                "tocTitle": "Browse categories",
+                "filtersTitle": "Filter by tags",
+                "filtersNotOwned": "Not owned",
+                "filtersClear": "Clear filters",
+                "enNote": "Some modules are only available in the German F-Shop. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Open German F-Shop</a>. Check English availability here: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">English F-Shop</a>.",
+                "gettingStarted": {
+                    "title": "Getting started",
+                    "text": "Start with the core module and add beginner-friendly or free content to build your first campaigns.",
+                    "coreCta": "Get the core module",
+                    "wiki": "Open the wiki",
+                    "videos": "VTTom videos"
                 },
                 "cta": "View & Buy",
                 "ctaOwned": "Already Owned",

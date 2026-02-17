@@ -67,7 +67,7 @@ export default class DSA5ChatAutoCompletion {
     chatInput.addEventListener('keyup', this._parseInput.bind(this));
 
     $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {      
-      if ($(ev.relatedTarget).closest('.quick-item').length || $(ev.relatedTarget).hasClass('quick-item')) return;
+      if ($(ev.relatedTarget).closest('.quickfind').length || $(ev.relatedTarget).closest('.quick-item').length || $(ev.relatedTarget).hasClass('quick-item')) return;
       this._closeQuickfind(ev);
     });
   }
@@ -279,7 +279,10 @@ export default class DSA5ChatAutoCompletion {
     );
 
     html.find(`.quick-item:first`).addClass('focus');
-    html.find('.quick-item').on('click', ev => this._quickSelect($(ev.currentTarget)));
+    html.find('.quick-item').on('mousedown', ev => {
+      ev.preventDefault();
+      this._quickSelect($(ev.currentTarget));
+    });
     
     const container = this.getContainer(ev.currentTarget || ev.target);
     const existing = container.find('.quickfind');

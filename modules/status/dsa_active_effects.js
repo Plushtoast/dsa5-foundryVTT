@@ -5,7 +5,16 @@ export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
   static deprecatedDataRegex = /^data\./;
 
+  static _parseChargeNumber(raw) {
+    // Empty number inputs come through as ""; treat that as "no charges configured".
+    if (raw === '' || raw === null || raw === undefined) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  }
+
   apply(actor, change) {
+    if (this.isDepleted()) return {};
+
     if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
       const modifiedItems = this._getModifiedItems(actor, change);
 
@@ -34,9 +43,145 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   static realyRealyEnabled(effect) {
-    if (effect.disabled || !effect.transfer || effect.system.delayed || (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)) return false;
+    const charges = effect?.getFlag?.('dsa5', 'charges');
+    if (charges) {
+      const value = this._parseChargeNumber(charges.value);
+      if (value !== null && value <= 0) return false;
+    }
+
+    // Actor-owned effects usually have transfer=false but are still applicable.
+    // Item-owned effects require transfer=true to be applied to an actor.
+    const isActorEffect = effect?.parent?.documentName === 'Actor';
+    if (effect.disabled || (!isActorEffect && !effect.transfer) || effect.system.delayed || (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)) return false;
 
     return true;
+  }
+
+  hasCharges() {
+    const charges = this.getFlag('dsa5', 'charges');
+    if (!charges) return false;
+    return this.constructor._parseChargeNumber(charges.value) !== null;
+  }
+
+  getChargeData() {
+    const charges = this.getFlag('dsa5', 'charges');
+    if (!charges) return null;
+
+    const value = this.constructor._parseChargeNumber(charges.value);
+    const max = this.constructor._parseChargeNumber(charges.max);
+    if (value === null) return null;
+
+    return {
+      value: Math.max(0, value),
+      max: max === null ? null : Math.max(0, max),
+    };
+  }
+
+  getChargeValue() {
+    return this.getChargeData()?.value;
+  }
+
+  isDepleted() {
+    const value = this.getChargeValue();
+    return Number.isFinite(value) && value <= 0;
+  }
+
+  async consumeCharges(amount = 1, options = {}) {
+    const charges = this.getChargeData();
+    if (!charges) return;
+
+    const consume = Math.max(1, Number(amount) || 1);
+    const oldValue = charges.value;
+    const newValue = Math.max(0, charges.value - consume);
+
+    const shouldCreateChatMessage = !!options?.createChatMessage;
+    const speaker = options?.speaker;
+    const extraHtml = typeof options?.chatExtraHtml === 'string' ? options.chatExtraHtml : '';
+
+    const effectName = this.name || this.label || game.i18n.localize('ActiveEffects.custom');
+    const max = charges.max;
+    const maxSuffix = max === null ? '' : `/${max}`;
+    const changeValueDisplay = `${oldValue}${maxSuffix} <i class="fas fa-arrow-right"></i> ${newValue}${maxSuffix}`;
+
+    const actor = this.parent?.documentName === 'Actor' ? this.parent : (this.parent?.documentName === 'Item' ? this.parent?.parent : null);
+    const resolvedSpeaker = speaker || ChatMessage.getSpeaker({ actor });
+
+    if (newValue <= 0) {
+      // If the effect is embedded in an Item, we disable it rather than deleting it.
+      // If the effect is embedded in an Actor, we delete it.
+      if (this.parent?.documentName === 'Item') {
+        await this.update({
+          disabled: true,
+          'flags.dsa5.charges.value': 0,
+        });
+
+        if (shouldCreateChatMessage) {
+          const chargeLabel = game.i18n.localize('charges');
+          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDisabled');
+          const content = `
+          <div class="dsa5 chat-card item-card">
+            <header class="card-header media">
+              <h3 class="item-name">${foundry.utils.escapeHTML(effectName)}</h3>
+            </header>
+            <div class="card-content">
+              ${extraHtml}
+              <p>${description}</p>
+              <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>
+            </div>
+          </div>`;
+          await ChatMessage.create({
+            content,
+            speaker: resolvedSpeaker,
+          });
+        }
+      } else {
+        if (shouldCreateChatMessage) {
+          const chargeLabel = game.i18n.localize('charges');
+          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDeleted');
+          const content = `
+          <div class="dsa5 chat-card item-card">
+            <header class="card-header media">
+              <h3 class="item-name">${foundry.utils.escapeHTML(effectName)}</h3>
+            </header>
+            <div class="card-content">
+              ${extraHtml}
+              <p>${description}</p>
+              <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>
+            </div>
+          </div>`;
+          await ChatMessage.create({
+            content,
+            speaker: resolvedSpeaker,
+          });
+        }
+        await this.delete();
+      }
+      return;
+    }
+
+    await this.update({
+      'flags.dsa5.charges.value': newValue,
+    });
+
+    if (shouldCreateChatMessage) {
+      const chargeLabel = game.i18n.localize('charges');
+      const description = game.i18n.localize('ActiveEffects.chargesChatConsumed');
+      const content = `
+      <div class="dsa5 chat-card item-card">
+        <header class="card-header media">
+          <h3 class="item-name">${foundry.utils.escapeHTML(effectName)}</h3>
+        </header>
+        <div class="card-content">
+          ${extraHtml}
+          <p>${description}</p>
+          <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>
+        </div>
+      </div>`;
+      await ChatMessage.create({
+        content,
+        speaker: resolvedSpeaker,
+      });
+    }
   }
 
   static async _onCreateOperation(documents, operation, user) {
@@ -127,7 +272,7 @@ export default class DSAActiveEffect extends ActiveEffect {
           setProperty(item, key, source);
 
           item.overrides = foundry.utils.expandObject(overrides);
-          if (item.sheet?.rendered) item.sheet.render(true);
+          if (item.sheet?.rendered) item.sheet.render(t.rue);
         }
       }
     }
@@ -137,16 +282,10 @@ export default class DSAActiveEffect extends ActiveEffect {
     super._preDelete(options, user);
     //this._clearModifiedItems();
   }
-
-  static customAttributeEffect = /^system\.(vulnerabilities|resistances)/;
 }
 
 const applyCustomEffect = (elem, change) => {
-  let current = getProperty(elem, change.key) || null;
-  if (current == null && DSAActiveEffect.customAttributeEffect.test(change.key)) {
-    current = [];
-    setProperty(elem, change.key, current);
-  }
+  const current = getProperty(elem, change.key) || null;
   const ct = getType(current);
   let update = null;
   switch (ct) {
@@ -157,7 +296,14 @@ const applyCustomEffect = (elem, change) => {
         let vals = elem.split(' ');
         const value = vals.pop();
         const target = vals.join(' ');
-        newElems.push({ source, value, target, item: change.effect.parent?.name });
+        newElems.push({
+          source,
+          value,
+          target,
+          item: change.effect.parent?.name,
+          effectId: change.effect.id,
+          effectUuid: change.effect.uuid,
+        });
       }
       update = current.concat(newElems);
   }
