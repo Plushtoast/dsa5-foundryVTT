@@ -471,7 +471,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const regex = new RegExp(`${localize('TYPES.ITEM.combatskill')} `, 'gi');
+    const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
     const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
     if (
       (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -522,21 +522,22 @@ class PainEffect extends DSA5StatusEffects {
 class TranceEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    switch (Number(this.clampedCondition(actor, effect))) {
-      case -2:
-        const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
-        const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
-        if (
-          (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
-          (['rangeweapon', 'meleeweapon'].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) ||
-          ['ceremony', 'liturgy'].includes(item.type)
-        ) {
-          return -2;
-        }
-        break;
-      case -3:
-        return -3;
+    const condition = Number(this.clampedCondition(actor, effect));
+
+    if (condition >= -1) return 0;
+    if (condition <= -3) return -3;
+
+    if (condition == -2) {
+      const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
+      const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
+      const isFavored =
+        (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
+        (['rangeweapon', 'meleeweapon'].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) ||
+        ['ceremony', 'liturgy'].includes(item.type);
+
+      return isFavored ? 0 : -2;
     }
+
     return 0;
   }
 }

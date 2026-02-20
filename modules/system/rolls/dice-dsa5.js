@@ -799,6 +799,7 @@ export default class DiceDSA5 {
       extra: {},
     };
     const actor = this.#actorFromTestData(testData);
+    const tranceLevel = Number(actor.system?.condition?.trance || 0);
     const attrs = [];
     if (testData.regenerateLeP) attrs.push('LeP');
     if (actor.system.isMage && testData.regenerateAsP) attrs.push('AsP');
@@ -843,6 +844,13 @@ export default class DiceDSA5 {
           res: roll.terms[index].results[0].result,
           die: 'd6',
         });
+
+        if (k == 'AsP' && tranceLevel > 0) {
+          this._appendSituationalModifiers(testData, localize('CONDITION.trance'), '*0', 'AsP');
+          result[k] = 0;
+          index += 2;
+          continue;
+        }
 
         const modifiedValue = (Number(roll.terms[index].results[0].result) + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor);
         result[k] = Math.round(Math.max(0, modifiedValue));
