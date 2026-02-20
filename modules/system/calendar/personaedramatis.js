@@ -371,6 +371,12 @@ export class PersonaeDramatis {
         const listType = target.dataset.listType;
         const personaeList = target.closest('.personae-list-column');
 
+        PersonaeDramatis.#setActiveList(listType, personaeList, { clearSelection: true });
+    }
+
+    static #setActiveList(listType, personaeList, { clearSelection = true } = {}) {
+        if (!personaeList) return;
+
         PersonaeDramatis.#lastActiveListType = listType;
 
         personaeList.querySelectorAll('.list-switch-btn').forEach(btn => {
@@ -386,9 +392,11 @@ export class PersonaeDramatis {
             mainList.dataset.activeList = listType;
         }
 
-        PersonaeDramatis.clearSelection();
-        PersonaeDramatis.clearDetails(target);
-        PersonaeDramatis.#lastSelectedActor = null;
+        if (clearSelection) {
+            PersonaeDramatis.clearSelection();
+            PersonaeDramatis.clearDetails(personaeList);
+            PersonaeDramatis.#lastSelectedActor = null;
+        }
     }
 
     static clearSelection() {
@@ -412,6 +420,28 @@ export class PersonaeDramatis {
         }
     }
 
+    static async #openLinkedPersona(event) {
+        const link = event.target.closest('.content-link, .documentName-link');
+        if (!link) return;
+
+        const { uuid, type } = link.dataset;
+        if (type != 'Actor' || !uuid) return;
+        
+        const listItem = PersonaeDramatis.#parent.element.querySelector(`.persona-list-item[data-actor-uuid="${uuid}"]`);
+        if (!listItem) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const listType = listItem.closest('.list-content')?.dataset.listType;
+        if (listType) {
+            const personaeListColumn = PersonaeDramatis.#parent.element.querySelector('.personae-list-column');
+            PersonaeDramatis.#setActiveList(listType, personaeListColumn, { clearSelection: false });
+        }
+
+        await PersonaeDramatis.selectActor(event, listItem);
+    }
+
     static #setupDetailListeners(element) {
         const detailsContainer = element.querySelector('.persona-details-container');
         if (!detailsContainer) return;
@@ -424,6 +454,10 @@ export class PersonaeDramatis {
         if (notesEdit) {
             notesEdit.addEventListener('change', PersonaeDramatis.#notesChanged.bind(PersonaeDramatis));
         }
+
+        detailsContainer.querySelectorAll('.content-link, .documentName-link').forEach(link => {
+            link.addEventListener('click', (event) => PersonaeDramatis.#openLinkedPersona(event));
+        });
     }
 
     onRenderListeners() {

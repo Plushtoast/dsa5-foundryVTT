@@ -1517,7 +1517,7 @@
                     "warning": "Ein Persona Entry muss mit einem Akteur verknüpft sein, um in Bestiarium/Personae Dramatis angezeigt zu werden."
                 },
                 "visible": {
-                    "label": "Sichtbar für Spieler"
+                    "label": "Kompletter Eintrag sichtbar für Spieler"
                 },
                 "faction": {
                     "label": "Fraktion/Typus",

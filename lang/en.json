@@ -1415,7 +1415,7 @@
                     "warning": "A Persona Entry must be linked to an Actor to be displayed in the Bestiary/Dramatis Personae."
                 },
                 "visible": {
-                    "label": "Visible to Players"
+                    "label": "Full entry visible to Players"
                 },
                 "faction": {
                     "label": "Faction/Type",
