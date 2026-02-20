@@ -54,6 +54,12 @@
                                         <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
                                         {{/unless}}
                                     </div>
+                                    {{else}}
+                                        {{#unless persona.visible}}
+                                        <div class="persona-list-meta">
+                                            <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        </div>
+                                        {{/unless}}
                                     {{/if}}
                                 </div>
                                 <div class="persona-list-status">
@@ -99,6 +105,12 @@
                                         <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
                                         {{/unless}}
                                     </div>
+                                    {{else}}
+                                        {{#unless persona.visible}}
+                                        <div class="persona-list-meta">
+                                            <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        </div>
+                                        {{/unless}}
                                     {{/if}}
                                 </div>
                                 <div class="persona-list-status">
