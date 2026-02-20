@@ -2,6 +2,7 @@ import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MoneyTracker from '../system/orwell/money-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, randomID } = foundry.utils;
 
@@ -311,6 +312,22 @@ export class Trade extends DefaultAppv2 {
 
     for (let item of Object.values(toAdd)) {
       await actor.sheet._manageDragItems(item, item.type);
+    }
+
+    await this.trackTradeItems(actor, toRemove, toAdd);
+  }
+
+  static async trackTradeItems(actor, toRemove, toAdd) {
+    for (const item of Object.values(toAdd)) {
+      if (!item?.name || item.type === 'money') continue;
+      const amount = Number(item.system?.quantity?.value) || 1;
+      await MoneyTracker.track(actor, { type: 'buy', name: item.name, amount }, 0);
+    }
+
+    for (const item of Object.values(toRemove)) {
+      if (!item?.name || item.type === 'money') continue;
+      const amount = Number(item.system?.quantity?.value) || 1;
+      await MoneyTracker.track(actor, { type: 'sell', name: item.name, amount }, 0);
     }
   }
 

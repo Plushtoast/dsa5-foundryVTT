@@ -2026,6 +2026,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
         if (price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return;
 
+        const amount = Number(itemData.system?.quantity?.value) || 1;
+        await MoneyTracker.track(this.actor, { type: 'buy', name: itemData.name, amount }, Number(price) * -1);
+
         tinyNotification(
           format('PAYMENT.pay', {
             actor: this.actor.name,
