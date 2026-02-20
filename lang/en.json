@@ -2644,6 +2644,12 @@
             }
         }
     },
+    "SPECIALABILITYadvancedSF": {
+        "magicalStyle": "Advanced Magical Special Abilities",
+        "clericalStyle": "Advanced Karma Special Abilities",
+        "generalStyle": "Advanced Skill Special Abilities",
+        "Combat": "Advanced Combat Special Abilities"
+    },
     "WEAR": {
         "check": "Breaking Point Rating Check ({category})",
         "checkShort": "Breaking Point Rating Check",

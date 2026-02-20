@@ -149,13 +149,15 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
 
         } else {
+            entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
+
             if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
 
             if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
 
             if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
         }
-        entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
+
         entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
 
         if (entry.showActorDescription) {

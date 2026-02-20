@@ -34,6 +34,13 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     });
     return categories;
   })();
+
+  static styleSFCategories = new Set(['magicalStyle', 'clericalStyle', 'generalStyle']);
+  static advancedSFCategories ={
+    extGeneral: 'SpecCategory.generalStyle', 
+    extClericalStyle: 'SpecCategory.clericalStyle', 
+    extMagical: 'SpecCategory.magicalStyle'
+  }
   
   static specialAbilityCategories = {
     Combat: 'SpecCategory.Combat',
@@ -113,7 +120,23 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
       duration: new SchemaField({
         value: new StringField({ initial: '', label: 'duration' }),
       }),
+      advancedSF: new StringField({ initial: ''}),
+      styleSF: new StringField({ initial: ''}),
     });
+  }
+
+  get hasAdvancedSF() {
+    if(SpecialabilityData.styleSFCategories.has(this.category.value) || (this.category.value === 'Combat' && this.category.sub === SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE)) return 'SPECIALABILITYadvancedSF.' + this.category.value;
+
+    return false;
+  }
+
+  get hasStyleSF() {
+    const extendedCombatStyles = [SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_BASE, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE];   
+
+    if (this.category.value === 'Combat' && extendedCombatStyles.includes(this.category.sub)) return `COMBATSKILLCATEGORY.${this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED}`;
+
+    return SpecialabilityData.advancedSFCategories[this.category.value];
   }
 
   static _migrateData(source) {

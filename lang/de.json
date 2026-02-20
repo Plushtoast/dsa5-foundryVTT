@@ -155,6 +155,9 @@
     "LIGHT": {
         "daylight": "Tageslicht"
     },
+    "DSANUE": {
+        "firstSteps": "Erste Schritte"
+    },
     "DIALOG": {
         "RollMode": "Würfelmodus",
         "deleteConfirmation": "Löschen bestätigen",
@@ -1409,6 +1412,12 @@
             "1": "sehr selten",
             "0": "nie"
         }
+    },
+    "SPECIALABILITYadvancedSF": {
+        "magicalStyle": "Erweiterte Zaubersonderfertigkeit",
+        "clericalStyle": "Erweiterte Liturgiesonderfertigkeit",
+        "generalStyle": "Erweiterte Talentsonderfertigkeit",
+        "Combat": "Erweiterte Kampfsonderfertigkeit"
     },
     "TYPES.Combat.dsacombat": "Kampf (DSA)",
     "TYPES.Combatant.dsacombatant": "Kämpfer (DSA)",
