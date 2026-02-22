@@ -776,7 +776,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _showApplication(ev, target) {
     if (ev.button == 2) {
-      this._deleteItem(ev.currentTarget);
+      this._deleteItem(target);
     } else {
       const itemId = this._getItemId(target);
       const item = this.actor.items.get(itemId);
