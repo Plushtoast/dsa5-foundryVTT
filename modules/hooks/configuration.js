@@ -509,6 +509,17 @@ export function setupConfiguration() {
         ui.hotbar.render(true);
       },
     },
+    hotbarSortMode: {
+      name: 'DSA5HOTBARCONFIG.sortMode',
+      hint: 'DSA5HOTBARCONFIG.sortModeHint',
+      scope: 'client',
+      config: false,
+      default: 'groupAlpha',
+      type: String,
+      onChange: () => {
+        ui.hotbar.render(true);
+      },
+    },
     libraryModulsFilter: {
       name: 'libraryModulsFilter',
       scope: 'client',

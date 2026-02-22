@@ -5340,11 +5340,11 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');
+@include meta.load-css('hotbar-sort-manager.scss');
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('vslider.scss');
 @include meta.load-css('vwidget.scss');
 @include meta.load-css('card-list.scss');
 @include meta.load-css('immersive/immersive.scss');
 @include meta.load-css('legacy/legacy.scss');
-
 @include meta.load-css('foundryfixes.scss');

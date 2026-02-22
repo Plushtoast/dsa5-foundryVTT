@@ -1160,6 +1160,25 @@
         "NoApplicationsAdded": "Keine Anwendungsgebiete zum Charakter hinzugefügt.",
         "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen."
     },
+    "DSA5HOTBARCONFIG": {
+        "manager": "Hotbar Manager",
+        "sortMode": "Sortierung",
+        "sortModeHint": "Standardsortierung für Talente in der Hotbar",
+        "sortGroupAlpha": "Nach Gruppe (A-Z)",
+        "sortAlpha": "Alphabetisch",
+        "sortValueDesc": "Nach Wert (Hoch → Niedrig)",
+        "sortValueAsc": "Nach Wert (Niedrig → Hoch)",
+        "sortCustom": "Benutzerdefiniert",
+        "save": "Speichern",
+        "setDefault": "Als Standard setzen",
+        "reset": "Sortierung zurücksetzen",
+        "resetAll": "Alle Einstellungen zurücksetzen",
+        "resetAllConfirm": "Bist du sicher, dass du alle Hotbar-Einstellungen (Sortierung, Sichtbarkeit, Favoriten) für diesen Charakter zurücksetzen möchtest?",
+        "hideSkill": "Aus der Hotbar ausblenden",
+        "showSkill": "In der Hotbar anzeigen",
+        "favorite": "Favoriten",
+        "groupVisibility": "Gruppenanzeige umschalten"
+    },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",
         "Bannschwert": "Bannschwert",

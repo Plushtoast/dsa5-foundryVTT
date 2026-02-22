@@ -1327,6 +1327,25 @@
         "NoApplicationsAdded": "No applications added to the character.",
         "startDraggig": "You can add items like abilities, equipment, weapons, professions, species, culture and conditions to the sheet by drag & drop."
     },
+    "DSA5HOTBARCONFIG": {
+        "manager": "Hotbar Manager",
+        "sortMode": "Sort Order",
+        "sortModeHint": "Default sorting for skills on the hotbar",
+        "sortGroupAlpha": "By Group (A-Z)",
+        "sortAlpha": "Alphabetical",
+        "sortValueDesc": "By Value (High → Low)",
+        "sortValueAsc": "By Value (Low → High)",
+        "sortCustom": "Custom",
+        "save": "Save",
+        "setDefault": "Set as Default",
+        "reset": "Reset Order",
+        "resetAll": "Reset All Settings",
+        "resetAllConfirm": "Are you sure you want to reset all hotbar settings (ordering, visibility, favorites) for this character?",
+        "hideSkill": "Hide from Hotbar",
+        "showSkill": "Show on Hotbar",
+        "favorite": "Favorites",
+        "groupVisibility": "Toggle Group Visibility"
+    },
     "dsaStyle": {
         "immersive": "Immersive (TDE4/5)",
         "naked": "Naked",
