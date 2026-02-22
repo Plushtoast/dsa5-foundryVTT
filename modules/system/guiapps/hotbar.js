@@ -9,6 +9,7 @@ import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import { localize } from '../helpers/localizer.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
+import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -981,15 +982,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #setActor() {
     const controlled = canvas?.tokens?.controlled || [];
-    const newActor = controlled.length < 2 ? (controlled[0]?.actor ?? game.user.character) : null;
+    const { actor: newActor } = resolveHotbarActorContext();
 
     if (this.actor !== newActor && this.editMode) {
       this.editMode = false;
     }
 
-    this.actor = newActor;
-
-    if (this.actor && !this.actor?.isOwner) this.actor = null;
+    this.actor = newActor || null;
     this.showEffects = controlled.length >= 1;
   }
 

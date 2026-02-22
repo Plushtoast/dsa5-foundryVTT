@@ -13,6 +13,7 @@ import { ItemDataModel } from '../../data/baseitem.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
+import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -441,8 +442,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async executeQuickButton(ev) {
-    const actor = canvas.tokens.controlled[0]?.actor;
-    const tokenId = canvas.tokens.controlled[0]?.id;
+    const { actor, tokenId } = resolveHotbarActorContext();
     const { id, subfunction, subweapon } = ev.currentTarget.dataset;
 
     switch (subfunction) {
@@ -900,7 +900,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     const controlled = canvas.tokens.controlled;
     this.showEffects = controlled.length > 0;
-    this.actor = (controlled.length === 1 && controlled[0].actor?.isOwner) ? controlled[0].actor : undefined;
+    this.actor = resolveHotbarActorContext().actor;
 
     await this.render(true, { focus: false });
   }
