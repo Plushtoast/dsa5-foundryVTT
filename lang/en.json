@@ -1324,6 +1324,7 @@
         "payAECost": "Pay AE cost",
         "paidPAsP": "Paid permanent AsP/KaP",
         "rebuyPAsP": "Rebought permanent AsP/KaP",
+        "NoApplicationsAdded": "No applications added to the character.",
         "startDraggig": "You can add items like abilities, equipment, weapons, professions, species, culture and conditions to the sheet by drag & drop."
     },
     "dsaStyle": {

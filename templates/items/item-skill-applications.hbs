@@ -1,0 +1,31 @@
+<div class='tab standard-form scrollable {{tabs.applications.cssClass}} gap0px' data-tab='applications' data-group='{{tabs.applications.group}}'>
+  {{#if isOwned}}
+    {{#if applications.length}}
+      {{#each applications as |item i|}}
+        <div class='groupbox item' data-item-id='{{item.id}}'>
+          <div class='flexrow table-title'>
+            <div class='flexrow'>
+                <button type="button" data-action='applicationToggle' data-tooltip='SHEET.Dropdown' class="dsadesignbutton noBorder">{{item.name}}</button>
+            </div>
+            <button type="button" data-action='applicationEdit' data-tooltip='SHEET.EditItem' class="icon dsadesignbutton noBorder fas fa-edit"></button>
+              <button type="button" data-action='applicationDelete' data-tooltip='SHEET.DeleteItem' class="icon dsadesignbutton noBorder fas fa-trash"></button>
+          </div>
+          <div class='expandDetails'>
+            <div class="row-section">
+                <div class='col five image flexrow'>
+                <img src='{{item.img}}' />
+                </div>
+                <div class='col eighty'>
+                {{{hasLocalization (concat "APPLICATION." item.system.skill " - " item.name) item.system.description.value}}}
+                </div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    {{else}}
+      <p>{{localize 'SHEET.NoApplicationsAdded'}}</p>
+    {{/if}}
+  {{else}}
+    <p>{{localize 'SHEET.NoApplicationsAdded'}}</p>
+  {{/if}}
+</div>

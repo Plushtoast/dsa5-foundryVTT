@@ -44,6 +44,16 @@
                             <div class="col">
                                 {{localize document.system.burden.value}}
                             </div>
+                            {{#if applications.length}}
+                            <div class="col table-title noBorder">
+                                {{localize "TYPES.Item.application"}}
+                            </div>
+                            <div class="col">
+                                {{#each applications as |application i|}}
+                                    {{application.name}}{{#unless @last}}, {{/unless}}
+                                {{/each}}
+                            </div>
+                            {{/if}}
                             {{#unless skipHeader}}
                             <div class="col table-title noBorder">
                                 {{localize "StF"}}

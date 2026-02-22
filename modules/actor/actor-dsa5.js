@@ -575,7 +575,6 @@ export default class Actordsa5 extends Actor {
     };
 
     const containers = new Map();
-    const applications = new Map();
     let hasTrait = false;
     const horse = Riding.getHorse(this, true);
     const preparedItems = [];
@@ -717,9 +716,6 @@ export default class Actordsa5 extends Actor {
           case 'imprint':
             imprint.push(i);
             break;
-          case 'application':
-            applications.set(itemSystem.skill, [...(applications.get(itemSystem.skill) || []), i]);
-            break;
         }
       } catch (error) {
         this._itemPreparationError(i, error);
@@ -766,12 +762,6 @@ export default class Actordsa5 extends Actor {
         } catch (error) {
           this._itemPreparationError(wep, error);
         }
-      }
-    }
-
-    for (const category of Object.values(skills)) {
-      for (const skill of category) {
-        skill.applications = applications.get(skill.name) || [];
       }
     }
 

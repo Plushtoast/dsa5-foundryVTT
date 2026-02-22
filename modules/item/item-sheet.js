@@ -544,7 +544,66 @@ class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
   }
 }
 
-class SkillSheet extends AdvancableSkill(LocalizerSheet) { }
+class SkillSheet extends AdvancableSkill(LocalizerSheet) {
+  static PARTS = {
+    ...LocalizerSheet.PARTS,
+    applications: {
+      template: 'systems/dsa5/templates/items/item-skill-applications.hbs',
+      scrollable: [''],
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    ownerActions: {
+      applicationToggle: this._toggleApplication,
+      applicationEdit: this._editApplication,
+      applicationDelete: this._deleteApplication,
+    },
+  };
+
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'description', label: 'Description' },
+        { id: 'details', label: 'Details' },
+        { id: 'applications', label: 'TYPES.Item.application' },
+        { id: 'effects', label: 'statuseffects' },
+      ],
+      initial: 'description',
+    },
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.applications = [];
+
+    if (data.isOwned && this.actor) {
+      const skillName = String(this.item.name || '').trim().toLowerCase();
+      data.applications = this.actor.items.filter((x) => x.type == 'application' && String(x.system.skill || '').trim().toLowerCase() == skillName);
+    }
+
+    return data;
+  }
+
+  static async _deleteApplication(ev, target) {
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.find((x) => x.id == itemId);
+    if (!item) return;
+
+    await this.actor.sheet._itemDeleteDialog(item);
+  }
+
+  static _editApplication(ev, target) {
+    const itemId = this._getItemId(target);
+    this.actor.items.get(itemId)?.sheet.render(true);
+  }
+
+  static _toggleApplication(ev, target) {
+    const elem = $(target);
+    elem.find('i').toggleClass('fa-chevron-down fa-chevron-up');
+    elem.closest('.item').find('.expandDetails:first').toggleClass('shown');
+  }
+}
 
 class AggregatedTestSheet extends ItemSheetdsa5 {
   static TABS = {
@@ -1586,22 +1645,9 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   static async _deleteExtension(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.find((x) => x.id == itemId);
-    const message = game.i18n.format('DIALOG.DeleteItemDetail', {
-      item: item.name,
-    });
-    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
-    const proceed = await foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: 'DIALOG.deleteConfirmation',
-      },
-      content,
-      rejectClose: false,
-      modal: true,
-    });
-    if (proceed) {
-      this._cleverDeleteItem(itemId);
-      $(target).closest('.item').remove();
-    }
+    if (!item) return;
+
+    await this.actor.sheet._itemDeleteDialog(item);
   }
 
   async _cleverDeleteItem(itemId) {

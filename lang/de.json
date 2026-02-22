@@ -1157,6 +1157,7 @@
         "payAECost": "AsP Kosten bezahlen",
         "paidPAsP": "Ausgegebene permanente AsP/KaP",
         "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP",
+        "NoApplicationsAdded": "Keine Anwendungsgebiete zum Charakter hinzugefügt.",
         "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen."
     },
     "traditionArtifacts": {

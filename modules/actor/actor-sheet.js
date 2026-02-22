@@ -163,7 +163,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       chRollCombat: this._chRollCombat,
       collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
-      showApplication: { handler: this._showApplication, buttons: [0, 2] },
       conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
       rollAnySkill: this._rollAnySkill,
     },
@@ -772,16 +771,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     item.sheet.render(true);
-  }
-
-  static _showApplication(ev, target) {
-    if (ev.button == 2) {
-      this._deleteItem(target);
-    } else {
-      const itemId = this._getItemId(target);
-      const item = this.actor.items.get(itemId);
-      item.sheet.render(true);
-    }
   }
 
   static async _chValue(ev, target) {
