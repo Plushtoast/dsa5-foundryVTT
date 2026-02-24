@@ -1,4 +1,4 @@
-<div class="hotbar-sort-manager flexcol standard-form">
+<div class="tab scrollable hotbar-sort-manager-skills flexcol {{tabs.skills.cssClass}}" data-tab="skills" data-group="{{tabs.skills.group}}">
     <div class="sort-toolbar flexrow flexAlignCenter gap2px">
         <select class="sort-mode-select">
             {{#each sortModes as |label key|}}
@@ -40,7 +40,6 @@
                             data-action="toggleVisibility"
                             data-tooltip="{{#if skill.hidden}}{{localize 'DSA5HOTBARCONFIG.showSkill'}}{{else}}{{localize 'DSA5HOTBARCONFIG.hideSkill'}}{{/if}}">
                         </button>
-                        
                     </div>
                 </div>
                 <span class="sort-card-name ellipsis" data-tooltip="{{skill.name}}">{{skill.name}}</span>
@@ -49,8 +48,8 @@
         </div>
     </div>
 
-    <div class="flexrow flexAlignCenter">
-        <button type="button" class="sort-save-btn" data-action="saveChanges" {{#unless isDirty}}disabled{{/unless}}>
+    <div class="sort-manager-footer flexrow flexAlignCenter">
+        <button type="button" class="sort-save-btn" data-action="saveSkills" {{#unless isSkillsDirty}}disabled{{/unless}}>
             <i class="fas fa-save"></i> {{localize "DSA5HOTBARCONFIG.save"}}
         </button>
         <div class="flex1"></div>

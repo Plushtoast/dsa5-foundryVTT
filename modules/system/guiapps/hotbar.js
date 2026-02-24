@@ -909,12 +909,33 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (!this.actor) return;
 
     context.actor = this.actor;
-    context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
+
+    const avatarConfig = this.actor.prototypeToken.getFlag('dsa5', 'hotbarAvatar');
+    if (avatarConfig?.source === 'portrait') {
+      context.actorImg = this.actor.img;
+      context.avatarStyle = this.#buildAvatarStyle(avatarConfig);
+    } else {
+      context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
+      context.avatarStyle = '';
+    }
+
     context.resources = this.#prepareResources(context);
     context.weapons = this.#weaponPositions(context);
     const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
+  }
+
+  #buildAvatarStyle(config) {
+    const { offsetX = 0, offsetY = 0, zoom = 100 } = config;
+    const parts = ['object-fit: cover'];
+    if (offsetX || offsetY) {
+      parts.push(`object-position: calc(50% + ${offsetX}px) calc(50% + ${offsetY}px)`);
+    }
+    if (zoom !== 100) {
+      parts.push(`transform: scale(${zoom / 100})`);
+    }
+    return parts.join('; ');
   }
 
   #prepareResources(context) {

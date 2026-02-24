@@ -1344,7 +1344,15 @@
         "hideSkill": "Hide from Hotbar",
         "showSkill": "Show on Hotbar",
         "favorite": "Favorites",
-        "groupVisibility": "Toggle Group Visibility"
+        "groupVisibility": "Toggle Group Visibility",
+        "tabSkills": "Skills",
+        "tabAvatar": "Avatar",
+        "avatarToken": "Token",
+        "avatarPortrait": "Portrait",
+        "avatarZoom": "Zoom",
+        "avatarReset": "Reset",
+        "avatarDragHint": "Drag to pan, scroll to zoom",
+        "avatarTabHint": "Choose whether the hotbar displays your token image or character portrait. In portrait mode you can adjust the framing to fit the circular avatar area."
     },
     "dsaStyle": {
         "immersive": "Immersive (TDE4/5)",
@@ -2885,6 +2893,47 @@
         "defeated": "The hero is defeated and on his way to Boron."
     },
     "DSA5": {
+        "welcomeApp": {
+            "windowTitle": "Welcome to TDE5",
+            "tab": {
+                "welcome": "Welcome"
+            },
+            "title": "Welcome to The Dark Eye",
+            "intro": "Explore Aventuria with the official TDE5 system for Foundry VTT. Whether you're a seasoned Game Master or just getting started — everything you need is right here.",
+            "quickStart": {
+                "title": "Quick Start",
+                "text": "Set up your game in just a few steps.",
+                "browseStore": "Browse Modules",
+                "startTour": "Start a Tour"
+            },
+            "links": {
+                "title": "Useful Links"
+            },
+            "dontShowAgain": "Don't show this on login",
+            "parts": {
+                "highlights": {
+                    "title": "What's New",
+                    "fullChangelog": "View full changelog"
+                },
+                "spotlight": {
+                    "title": "Module Spotlight"
+                },
+                "community": {
+                    "title": "Community",
+                    "text": "Join the community, report bugs, or help improve the system.",
+                    "reportBugs": "Report Bugs"
+                },
+                "gettingStarted": {
+                    "title": "Getting Started",
+                    "text": "New to TDE5 on Foundry VTT? Here are some tips to get you going.",
+                    "checklistTitle": "Quick Checklist",
+                    "step1": "Set your language and install the core module",
+                    "step2": "Create a new character using the Character Builder",
+                    "step3": "Import an adventure module or create your own scenes",
+                    "step4": "Invite your players and start playing!"
+                }
+            }
+        },
         "patchViewer": {
             "tab": {
                 "store": "Store"

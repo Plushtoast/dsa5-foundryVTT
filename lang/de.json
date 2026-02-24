@@ -155,9 +155,7 @@
     "LIGHT": {
         "daylight": "Tageslicht"
     },
-    "DSANUE": {
-        "firstSteps": "Erste Schritte"
-    },
+
     "DIALOG": {
         "RollMode": "Würfelmodus",
         "deleteConfirmation": "Löschen bestätigen",
@@ -1177,7 +1175,15 @@
         "hideSkill": "Aus der Hotbar ausblenden",
         "showSkill": "In der Hotbar anzeigen",
         "favorite": "Favoriten",
-        "groupVisibility": "Gruppenanzeige umschalten"
+        "groupVisibility": "Gruppenanzeige umschalten",
+        "tabSkills": "Talente",
+        "tabAvatar": "Avatar",
+        "avatarToken": "Token",
+        "avatarPortrait": "Porträt",
+        "avatarZoom": "Zoom",
+        "avatarReset": "Zurücksetzen",
+        "avatarDragHint": "Ziehen zum Verschieben, Scrollen zum Zoomen",
+        "avatarTabHint": "Wähle ob die Hotbar dein Token-Bild oder Charakterporträt anzeigt. Im Porträtmodus kannst du den Bildausschnitt für den runden Avatarbereich anpassen."
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",
@@ -2888,6 +2894,47 @@
         "defeated": "Der Held ist besiegt und auf dem Weg zu Boron."
     },
     "DSA5": {
+        "welcomeApp": {
+            "windowTitle": "Willkommen bei DSA5",
+            "tab": {
+                "welcome": "Willkommen"
+            },
+            "title": "Willkommen bei Das Schwarze Auge",
+            "intro": "Entdecke Aventurien mit dem offiziellen DSA5-System für Foundry VTT. Egal ob erfahrener Meister oder Neuling — hier findest du alles für den Einstieg.",
+            "quickStart": {
+                "title": "Schnellstart",
+                "text": "Richte dein Spiel in wenigen Schritten ein.",
+                "browseStore": "Module durchsuchen",
+                "startTour": "Tour starten"
+            },
+            "links": {
+                "title": "Nützliche Links"
+            },
+            "dontShowAgain": "Beim Anmelden nicht mehr anzeigen",
+            "parts": {
+                "highlights": {
+                    "title": "Neuigkeiten",
+                    "fullChangelog": "Vollständiges Changelog anzeigen"
+                },
+                "spotlight": {
+                    "title": "Modul-Empfehlung"
+                },
+                "community": {
+                    "title": "Community",
+                    "text": "Tritt der Community bei, melde Fehler oder hilf mit, das System zu verbessern.",
+                    "reportBugs": "Fehler melden"
+                },
+                "gettingStarted": {
+                    "title": "Erste Schritte",
+                    "text": "Neu bei DSA5 für Foundry VTT? Hier ein paar Tipps für den Anfang.",
+                    "checklistTitle": "Schnell-Checkliste",
+                    "step1": "Sprache einstellen und Grundmodul installieren",
+                    "step2": "Einen neuen Charakter per Heldenerschaffung erstellen",
+                    "step3": "Ein Abenteuer-Modul importieren oder eigene Szenen anlegen",
+                    "step4": "Spieler einladen und losspielen!"
+                }
+            }
+        },
         "patchViewer": {
             "tab": {
                 "store": "Shop"
