@@ -88,9 +88,9 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             const actor = await fromUuid(entry.actor_uuid);
             if (!actor) continue;
 
-            entry.img = actor.img;
-
             if (entry.actor_uuid === this.personae?.[key]?.actor_uuid) continue;
+
+            entry.img = actor.img;
 
             const isCreature = actor.type === "creature";
 

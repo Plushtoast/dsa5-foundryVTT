@@ -10,6 +10,7 @@ import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import { localize } from '../helpers/localizer.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
+import HotbarSortManager from './hotbar-sort-manager.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -552,6 +553,65 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     list.sort((a, b) => DSA5Hotbar.ORDER_GROUPS.indexOf(a.addClass) - DSA5Hotbar.ORDER_GROUPS.indexOf(b.addClass) || a.name.localeCompare(b.name));
   }
 
+  #applyHotbarSorting(groups) {
+    const sortMode = game.settings.get('dsa5', 'hotbarSortMode');
+
+    if (sortMode === 'custom') {
+      this.#sortSkillList(groups.skills.skill);
+      this.#sortSkillList(groups.skills.skillgm);
+      this.#applySavedOrdering(groups);
+    } else {
+      for (const key of Object.keys(groups.skills)) {
+        const list = groups.skills[key];
+        if (!list) continue;
+
+        switch (sortMode) {
+          case 'alpha':
+            list.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+          case 'valueDesc':
+            list.sort((a, b) => (b.tw ?? 0) - (a.tw ?? 0) || a.name.localeCompare(b.name));
+            break;
+          case 'valueAsc':
+            list.sort((a, b) => (a.tw ?? 0) - (b.tw ?? 0) || a.name.localeCompare(b.name));
+            break;
+          case 'groupAlpha':
+          default:
+            this.#sortSkillList(list);
+            break;
+        }
+      }
+    }
+  }
+
+  #applyHotbarFilters(groups) {
+    if (!this.actor) return;
+
+    const hidden = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHidden') || [];
+    const hiddenGroups = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHiddenGroups') || [];
+    const favorites = this.actor.prototypeToken.getFlag('dsa5', 'hotbarFavorites') || [];
+
+    if (hiddenGroups.length > 0 && groups.skills.skill) {
+      groups.skills.skill = groups.skills.skill.filter((item) => !hiddenGroups.includes(item.addClass));
+    }
+
+    if (hidden.length > 0) {
+      for (const key of Object.keys(groups.skills)) {
+        if (!groups.skills[key]) continue;
+        groups.skills[key] = groups.skills[key].filter((item) => !hidden.includes(item.id));
+      }
+    }
+
+    if (favorites.length > 0) {
+      for (const key of Object.keys(groups.skills)) {
+        if (!groups.skills[key]) continue;
+        const favs = groups.skills[key].filter((item) => favorites.includes(item.id));
+        const rest = groups.skills[key].filter((item) => !favorites.includes(item.id));
+        groups.skills[key] = [...favs, ...rest];
+      }
+    }
+  }
+
   #applySavedOrdering(groups) {
     if (!this.actor) return;
 
@@ -712,10 +772,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       gmMode = await this.#prepareGMActions(groups);
     }
 
-    this.#sortSkillList(groups.skills.skill);
-    this.#sortSkillList(groups.skills.skillgm);
-
-    this.#applySavedOrdering(groups);
+    this.#applyHotbarSorting(groups);
+    this.#applyHotbarFilters(groups);
 
     const filterCategories = this.#generateFilterCategories(groups);
 
@@ -772,6 +830,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         condition: () => !!this.actor,
         callback: () => {
           this.#toggleEditMode();
+        }
+      },
+      {
+        name: 'DSA5HOTBARCONFIG.manager',
+        icon: "<i class='fa-solid fa-bars-sort'></i>",
+        condition: () => !!this.actor,
+        callback: () => {
+          new HotbarSortManager(this.actor).render(true);
         }
       },
       {
