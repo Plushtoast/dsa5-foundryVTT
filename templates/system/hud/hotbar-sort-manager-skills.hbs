@@ -31,10 +31,14 @@
                 <div class="sort-card-img-wrap">
                     <img src="{{skill.img}}" class="sort-card-img" alt="">
                     <div class="sort-card-overlay flexrow">
+                        {{#if (eq ../sortMode 'custom')}}
+                        <span class="sort-card-btn"></span>
+                        {{else}}
                         <button type="button" class="icon noBorder fas fa-star dsadesignbutton sort-card-btn fav-btn {{#if skill.favorite}}active{{/if}}"
                             data-action="toggleFavorite"
                             data-tooltip="{{localize 'DSA5HOTBARCONFIG.favorite'}}">
                         </button>
+                        {{/if}}
                         <span class="sort-card-tw">{{skill.tw}}</span>
                         <button type="button" class="icon noBorder dsadesignbutton fas {{#if skill.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} sort-card-btn vis-btn"
                             data-action="toggleVisibility"

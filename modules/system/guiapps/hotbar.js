@@ -602,7 +602,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     }
 
-    if (favorites.length > 0) {
+    if (favorites.length > 0 && game.settings.get('dsa5', 'hotbarSortMode') !== 'custom') {
       for (const key of Object.keys(groups.skills)) {
         if (!groups.skills[key]) continue;
         const favs = groups.skills[key].filter((item) => favorites.includes(item.id));
