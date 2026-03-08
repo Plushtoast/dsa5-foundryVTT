@@ -1396,6 +1396,7 @@
         "resetShelfLifeTooltip": "Haltbarkeit auf den Verarbeitungszustand zurücksetzen",
 		"processState": "Verarbeitungszustand",
         "unit": "Einheit",
+		"selectMethod": "--- Methodenauswahl ---",
 		"processingState": "Verarbeitungszustand",
 		"supernaturalShelfLifeFactor": "Übernatürliche Haltbarkeit (Faktor)",
 		"itemAdded": "{item} hinzugefügt.",
@@ -3234,3 +3235,4 @@
         }
     }
 }
+
