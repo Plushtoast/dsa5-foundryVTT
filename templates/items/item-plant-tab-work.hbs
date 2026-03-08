@@ -1,0 +1,119 @@
+<div class="tab work scrollable {{tabs.work.cssClass}}" data-group="sheet" data-tab="work">
+    
+    {{!-- BOX 1: Rezepte --}}
+    <div class="groupbox paddingBox">
+        <div class="form-group"><b>{{localize 'PLANT.linkedRecipesHeader'}}</b></div>
+        
+        {{!-- Hilfsmittel --}}
+        <details open class="groupbox">
+            <summary class="label-text">{{localize 'PLANT.auxiliaryRecipes'}}</summary>
+            {{!-- Die drop-area ist der Haupt-Container --}}
+            <div class="drop-area drop-area-full" data-type="auxiliary">
+                {{#each document.system.auxiliaryRecipes as |recipe|}}
+                    <div class="recipe-entry" data-id="{{recipe.id}}" data-type="auxiliary" data-tooltip="Rechtsklick: Entfernen">
+                        <a class="content-link" data-uuid="{{recipe.uuid}}">
+                            <i class="fa-solid fa-suitcase"></i> {{recipe.name}}
+                        </a>
+                    </div>
+                {{else}}
+                    <div class="drop-zone-placeholder">
+                        <img src="systems/dsa5/icons/categories/planthealing.webp" class="category-icon">
+                        <p>{{localize 'PLANT.dropRecipes'}}</p>
+                    </div>
+                {{/each}}
+            </div>
+        </details>
+
+        {{!-- Gifte --}}
+        <details open class="groupbox">
+            <summary class="label-text">{{localize 'PLANT.poisonRecipes'}}</summary>
+            <div class="drop-area drop-area-full" data-type="poison">
+                {{#each document.system.poisonRecipes as |recipe|}}
+                    <div class="recipe-entry" data-id="{{recipe.id}}" data-type="poison" data-tooltip="Rechtsklick: Entfernen">
+                        <a class="content-link" data-uuid="{{recipe.uuid}}">
+                            <i class="fa-solid fa-suitcase"></i> {{recipe.name}}
+                        </a>
+                    </div>
+                {{else}}
+                    <div class="drop-zone-placeholder">
+                        <img src="systems/dsa5/icons/categories/plantpoison.webp" class="category-icon">
+                        <p>{{localize 'PLANT.dropRecipes'}}</p>
+                    </div>
+                {{/each}}
+            </div>
+        </details>
+
+        {{!-- Rauschmittel --}}
+        <details open class="groupbox">
+            <summary class="label-text">{{localize 'PLANT.drugRecipes'}}</summary>
+            <div class="drop-area drop-area-full" data-type="drug">
+                {{#each document.system.drugRecipes as |recipe|}}
+                    <div class="recipe-entry" data-id="{{recipe.id}}" data-type="drug" data-tooltip="Rechtsklick: Entfernen">
+                        <a class="content-link" data-uuid="{{recipe.uuid}}">
+                            <i class="fa-solid fa-suitcase"></i> {{recipe.name}}
+                        </a>
+                    </div>
+                {{else}}
+                    <div class="drop-zone-placeholder">
+                        <img src="systems/dsa5/icons/categories/plantpsychic.webp" class="category-icon">
+                        <p>{{localize 'PLANT.dropRecipes'}}</p>
+                    </div>
+                {{/each}}
+            </div>
+        </details>
+    </div>
+
+{{!-- BOX 2: Pflanzenteile, Bestandteile & Hauptbestandteil mit Zebra-Hintergrund --}}
+<div class="groupbox paddingBox">
+    {{!-- Header-Bereich --}}
+    <div class="form-group no-prefix">
+        <div class="row-section table-title lineheight" style="align-items: center; background: var(--table-title-bg); margin: -5px -5px 5px -5px; padding: 5px; border-bottom: 1px solid var(--border-color);">
+    {{!-- Linke Spalte --}}
+    <div class="col forty" style="font-size: 15.4px; padding-left: 5px;">
+        <b>{{localize 'PLANT.plantPartsHeader'}}</b>
+    </div>
+    
+    {{!-- Mittlere Spalte --}}
+    <div class="col thirty center" 
+         data-tooltip="{{localize 'PLANT.isPartOfPlantTooltip'}}" 
+         style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15.4px; cursor: help;">
+        
+        <b style="line-height: 1;">{{localize 'PLANT.isPartOfPlant'}}</b>
+        
+        <i class="fa-solid fa-jar-wheat" 
+           data-action="openPreservationDetails" 
+           data-tooltip="{{localize 'PLANT.altEffectsTooltip'}}" 
+           style="cursor: pointer; font-size: 19.0px; line-height: 1; display: inline-flex; align-items: center; transform: translateY(-1px);"></i>
+    </div>
+    
+    {{!-- Rechte Spalte --}}
+    <div class="col thirty center" 
+         data-tooltip="{{localize 'PLANT.mainIngredientTooltip'}}" 
+         style="font-size: 15.4px; cursor: help;">
+        <b>{{localize 'PLANT.mainIngredient'}}</b>
+    </div>
+</div>
+
+    {{!-- Zebra-Liste (rowtable) --}}
+    <div class="row-section wrap rowtable">
+        {{#each plantPartList as |part|}}
+            {{!-- Jede Zeile ist eine 'col', damit das nth-child(even) Styling des Systems greift --}}
+            <div class="col" style="width: 100%; border-bottom: 1px solid rgba(0,0,0,0.05); padding: 2px 0;">
+                <div class="row-section" style="align-items: center;">
+                    {{!-- 1. Pflanzenteil Bezeichnung (Links) --}}
+                    <div class="col forty" style="padding-left: 5px;">{{part.localizedLabel}}</div>
+                    
+                    {{!-- 2. Checkbox: Ist Teil der Pflanze (Mitte) --}}
+                    <div class="col thirty center">
+                        <input type="checkbox" name="{{part.path}}" {{checked part.value}} />
+                    </div>
+                    
+                    {{!-- 3. Radiobutton: Hauptbestandteil (Ganz Rechts) --}}
+                    <div class="col thirty center">
+                        <input type="radio" name="system.mainIngredient" value="{{part.key}}" {{checked part.isMain}} style="margin: 0;">
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
