@@ -15,9 +15,12 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
 import { localize } from '../system/helpers/localizer.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
+import { PLANT_SHELF_LIFE_MAP, SPECIFIC_PLANT_METHODS } from './plant-config.js';
+import PlantPreservationDialog from './plant-preservation-dialog.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
   _processFormData(event, form, formData) {
@@ -220,15 +223,32 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     await super._onRender(context, options);
     const html = $(this.element);
 
+    const header = this.element.querySelector(".window-header");
+    if (header) {
+        const seenActions = new Set();
+        const controls = header.querySelectorAll(".header-control");
+        
+        controls.forEach(control => {
+            const action = control.dataset.action;
+            if (action) {
+                if (seenActions.has(action)) {
+                    control.remove();
+                } else {
+                    seenActions.add(action);
+                }
+            }
+        });
+    }
+
     tabSlider(html);
 
     html.find('.domainsPretty').on('click', (ev) => {
-      $(ev.currentTarget).hide();
-      $(ev.currentTarget).next('.domainToggle').show();
+        $(ev.currentTarget).hide();
+        $(ev.currentTarget).next('.domainToggle').show();
     });
 
     html.find('[data-action="editImage"]').on('mousedown', (ev) => {
-      if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
+        if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
     });
 
     html.find('.select2').select2();
@@ -240,28 +260,27 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
 
     const toObserve = html.find('header.item-header h1');
     if (toObserve.length) {
-      const svg = toObserve.find('svg');
-      if (svg) {
-        const observer = new ResizeObserver(function (entries) {
-          svgAutoFit(svg, entries[0].contentRect.width);
-        });
-        observer.observe(toObserve.get(0));
-        const input = toObserve.find('input');
-        if (!input.get(0).disabled) {
-          svg.on('click', () => {
-            svg.hide();
-            input.show();
-            input.trigger('focus');
-          });
-          input.on('blur', () => {
-            svg.show();
-            input.hide();
-          });
+        const svg = toObserve.find('svg');
+        if (svg) {
+            const observer = new ResizeObserver(function (entries) {
+                svgAutoFit(svg, entries[0].contentRect.width);
+            });
+            observer.observe(toObserve.get(0));
+            const input = toObserve.find('input');
+            if (!input.get(0).disabled) {
+                svg.on('click', () => {
+                    svg.hide();
+                    input.show();
+                    input.trigger('focus');
+                });
+                input.on('blur', () => {
+                    svg.show();
+                    input.hide();
+                });
+            }
         }
-      }
     }
-
-  }
+}
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
@@ -1187,15 +1206,867 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   };
 }
 
-class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
-  static PARTS = {
-    header: super.PARTS.header,
-    stat: {
-      template: 'systems/dsa5/templates/items/item-plant-header.hbs',
-    },
-    tabs: super.PARTS.tabs,
-    description: super.PARTS.description,
-  };
+
+class PlantSpoiledDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+    constructor(item) {
+        super({ id: `plant-spoiled-dialog-${item.id}` });
+        this.item = item;
+    }
+
+    static async applyR1Effect(item) {
+        const itemData = item.system;
+        const toDays = { 
+            'seconds': 1/86400, 'minutes': 1/1440, 'hours': 1/24, 
+            'days': 1, 'weeks': 7, 'months': 30, 'years': 365 
+        };
+
+        let baseInDays = 0;
+        if (itemData.plantState === "Roh") {
+            const mainPart = itemData.mainIngredient || "leaves";
+            const rawData = PLANT_SHELF_LIFE_MAP[mainPart]?.raw || "12h";
+            let baseNumber = parseFloat(rawData);
+            if (isNaN(baseNumber) && rawData.includes("year")) baseNumber = 20;
+            const unitCode = String(rawData).replace(/[0-9.]/g, '');
+            const unitMap = { 's': 'seconds', 'i': 'minutes', 'h': 'hours', 'd': 'days', 'w': 'weeks', 'm': 'months', 'y': 'years' };
+            let sourceUnit = unitMap[unitCode] || (rawData.includes("year") ? "years" : "hours");
+            baseInDays = baseNumber * (toDays[sourceUnit] || 1);
+        } else {
+            const mundaneValue = parseFloat(itemData.mundane?.shelfLife?.value) || 0;
+            const mundaneUnit = itemData.processed?.shelfLife?.unit || itemData.shelfLife?.unit || "days";
+            baseInDays = mundaneValue * (toDays[mundaneUnit] || 1);
+        }
+
+        // Berechnung: (Basiswert * 2), supernatural factor auf 1
+        const newShelfLife = baseInDays * 2;
+
+        await item.update({
+            "system.isSpoiled": false,
+            "system.supernatural.factor": 1,
+            "system.remaining.shelfLife.value": Number(Math.round(newShelfLife * 10) / 10),
+            "flags.dsa5.-=spoiledResult": null
+        });
+    }
+
+    static async sendSpoiledMessage(item, resultString) {
+        if (!item.actor) return;
+        const actorName = item.actor.name;
+        const effectText = game.i18n.localize(`PLANT.spoiledRows.R${resultString}`);
+        const localizedMessage = game.i18n.format("PLANT.spoiledChatMessage", { itemName: item.name, actorName: actorName });
+        const content = `<div style="display: flex; justify-content: center; margin-bottom: 15px;"><div class="spoiled-plant-image-click" data-uuid="${item.uuid}" title="${item.name} öffnen" style="width: 55px; height: 55px; background-image: url('${item.img}'); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: pointer;"></div></div><p>${localizedMessage}</p><p><i>${effectText}</i></p>`;
+        await ChatMessage.create({ content: content, whisper: ChatMessage.getWhisperRecipients("GM") });
+    }
+
+    static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS), {
+        classes: ["dsa5", "plant-spoiled-app"], 
+        window: { title: "PLANT.spoiledEffect", resizable: true },
+        position: { width: 780, height: 700 },
+        actions: {
+            rollTable: async function(event, target) {
+                const roll = await new Roll("1d20").evaluate();
+                let res = String(roll.total);
+                const v = roll.total;
+                if (v >= 3 && v <= 5) res = "3_5"; else if (v >= 6 && v <= 7) res = "6_7"; 
+                else if (v >= 8 && v <= 9) res = "8_9"; else if (v >= 11 && v <= 12) res = "11_12"; 
+                else if (v >= 14 && v <= 15) res = "14_15";
+
+                await roll.toMessage({ flavor: `<b>${this.item.name}</b>`, rollMode: CONST.DICE_ROLL_MODES.BLIND });
+                
+                if (res === "1") {
+                    await PlantSpoiledDialog.applyR1Effect(this.item);
+                    this.close();
+                } else {
+                    const wasSpoiled = this.item.system.isSpoiled;
+                    await this.item.update({ "system.isSpoiled": true, "flags.dsa5.spoiledResult": res });
+                    if (!wasSpoiled) await PlantSpoiledDialog.sendSpoiledMessage(this.item, res);
+                    this.render(true);
+                }
+            },
+            showDetails: async function(event, target) {
+                const itemName = target.dataset.name;
+                let item = game.items.find(i => i.name === itemName);
+                if (!item) {
+                    for (let pack of game.packs) {
+                        if (pack.documentName !== "Item") continue;
+                        const index = await pack.getIndex();
+                        const entry = index.find(e => e.name === itemName);
+                        if (entry) { item = await pack.getDocument(entry._id); break; }
+                    }
+                }
+                if (item) item.sheet.render(true);
+            },
+            selectRow: async function(event, target) {
+                const rowElement = target.closest('.selectableRow');
+                if (!rowElement) return;
+                const row = rowElement.dataset.row;
+                
+                if (row === "1") {
+                    await PlantSpoiledDialog.applyR1Effect(this.item);
+                    this.close();
+                } else {
+                    const wasSpoiled = this.item.system.isSpoiled;
+                    await this.item.update({ "system.isSpoiled": true, "flags.dsa5.spoiledResult": row });
+                    if (!wasSpoiled) await PlantSpoiledDialog.sendSpoiledMessage(this.item, row);
+                    this.render(true);
+                }
+            }
+        }
+    });
+
+    static PARTS = { main: { template: "systems/dsa5/templates/items/item-plant-spoiled.hbs" } };
+
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
+        context.currentResult = this.item.getFlag("dsa5", "spoiledResult") || "";
+        return context;
+    }
+}
+
+/**
+ * Das Haupt-Sheet der Pflanze.
+ * Pfad: Data\systems\dsa5\modules\item\PlantSheet.js
+ */
+class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
+    static TABS = {
+        sheet: {
+            tabs: [
+                { id: 'description', label: 'Description' },
+                { id: 'details', label: 'Details' },
+                { id: 'work', label: 'PLANT.work' }, 
+                { id: 'effects', label: 'statuseffects' },
+            ],
+            initial: 'details',
+        },
+    };
+
+    static PARTS = {
+        header: { template: 'systems/dsa5/templates/items/item-header.hbs' },
+        stat: { template: 'systems/dsa5/templates/items/item-plant-header.hbs' },
+        tabs: { template: 'systems/dsa5/templates/items/item-plant-tabs.hbs' }, 
+        description: { template: 'systems/dsa5/templates/items/item-description.hbs' },
+        details: { template: 'systems/dsa5/templates/items/item-plant-sheet.hbs' },
+        work: { template: 'systems/dsa5/templates/items/item-plant-tab-work.hbs' },
+        effects: { template: 'systems/dsa5/templates/items/item-effects.hbs' },
+    };
+	
+	// In der Klasse PlantSheet direkt unter den TABS oder PARTS
+		static async _handleSpoiledConsumption(actor, item, result) {
+    const effectText = game.i18n.localize(`PLANT.spoiledRows.R${result}`);
+    const spoiledTitle = game.i18n.localize("PLANT.spoiledPlantEffectTitle");
+    let chatMsg = `<b>${item.name} (${game.i18n.localize("PLANT.isSpoiled")})</b><br>${effectText}`;
+    
+    // Neuer Helfer: Erstellt einen sauberen ActiveEffect statt addCondition
+    const addTimedStunned = async (durationInSeconds) => {
+        const effectData = {
+            name: `${spoiledTitle}: ${game.i18n.localize("CONDITION.stunned")}`,
+            img: "icons/svg/daze.svg",
+            changes: [
+                {
+                    key: "system.condition.stunned",
+                    mode: 2, // ADD
+                    value: "1",
+                    priority: null
+                }
+            ],
+            duration: {
+                seconds: durationInSeconds,
+                startTime: game.time.worldTime
+            },
+            statuses: ["stunned"],
+            flags: {
+                dsa5: {
+                    value: 1,
+                    manual: 1,
+                    auto: 0,
+                    hideOnToken: false
+                }
+            }
+        };
+
+        await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
+    };
+
+    // Helfer für Compendium-Items (Gifte, Kräuter) basierend auf deinem Makro-Snippet
+		const applyCompendiumEffect = async (itemName) => {
+		let doc = game.items.find(i => i.name === itemName);
+		if (!doc) {
+			for (let pack of game.packs) {
+				if (pack.documentName !== "Item") continue;
+				const index = await pack.getIndex();
+				const entry = index.find(e => e.name === itemName);
+				if (entry) { doc = await pack.getDocument(entry._id); break; }
+			}
+		}
+		
+		if (doc) {
+			let itemData = doc.toObject();
+
+			// 1. FIX: Dauer-Strings bereinigen (verhindert den safeEval-Fehler)
+			if (itemData.effects) {
+				itemData.effects.forEach(eff => {
+					if (eff.duration?.value && typeof eff.duration.value === "string") {
+						eff.duration.value = eff.duration.value.replace(/[Tt]ag(e)?/g, "24");
+					}
+				});
+			}
+
+			// 2. TARGETING: Den Actor als Ziel für das System markieren
+			const token = actor.getActiveTokens()[0] || canvas.tokens.placeables.find(t => t.actor?.id === actor.id);
+			if (token) {
+				// Setzt das Ziel für den aktuellen User auf den eigenen Token
+				token.setTarget(true, { user: game.user, releaseOthers: true, groupSelection: false });
+			}
+
+			// 3. AUSFÜHRUNG: Temporäres Item erstellen und Test triggern
+			const tempItem = await actor.createEmbeddedDocuments("Item", [itemData], { render: false });
+			const itemInstance = actor.items.get(tempItem[0].id);
+
+			try {
+				const setupData = await itemInstance.setupEffect();
+				if (setupData) {
+					// Das System erkennt nun das Target und zieht die Widerstände ab
+					await itemInstance.itemTest(setupData);
+				}
+			} catch (e) {
+				console.warn("Pflanzen-System: Fehler bei Effekt-Setup für " + itemName, e);
+			} finally {
+				await actor.deleteEmbeddedDocuments("Item", [itemInstance.id]);
+			}
+		}
+	};
+
+    switch (result) {
+        case "2":
+            const gmExtra = ` <br><i>${game.i18n.localize("PLANT.gmApplyManually")}</i>`;
+            await ChatMessage.create({ content: chatMsg, speaker: { alias: "System" } });
+            await ChatMessage.create({ content: chatMsg + gmExtra, whisper: ChatMessage.getWhisperRecipients("GM") });
+            return;
+        case "6_7":
+            await addTimedStunned(1800); 
+            break;
+        case "8_9":
+            await addTimedStunned(3600); 
+            break;
+        case "11_12":
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Wurara"));
+            break;
+        case "13":
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Arax"));
+            break;
+        case "14_15":
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.FlinkerDifar"));
+            break;
+        case "16":
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Sumpffieber"));
+            break;
+        case "17":
+            await actor.applyDamage("1d6");
+            break;
+        case "18":
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Wirselkraut"));
+            break;
+        case "19":
+            // 1d3 Heilung via negativem Schaden
+            await actor.applyDamage("-1d3");
+            break;
+        case "20":
+            await actor.applyDamage("2d6");
+            await addTimedStunned(3600);
+            break;
+    }
+
+    await ChatMessage.create({
+        content: chatMsg,
+        speaker: ChatMessage.getSpeaker({ actor: actor }),
+        whisper: ChatMessage.getWhisperRecipients("GM").concat(game.user.id)
+    });
+};
+
+    static DEFAULT_OPTIONS = foundry.utils.mergeObject(ItemSheetdsa5.DEFAULT_OPTIONS, {
+        window: { 
+            size: { width: 750, height: 780 },
+            classes: ["dsa5", "item", "plant-sheet"] 
+        },
+        actions: {
+            consumePlantAction: async function(event, target) { 
+				const item = this.item;
+				const actor = item.actor;
+				if (!actor) return;
+
+				const currentQty = Number(item.system.quantity?.value ?? 0);
+				if (currentQty <= 0) {
+					return ui.notifications.warn(game.i18n.localize("DSA5.NotEnoughItems"));
+				}
+
+				const isSpoiled = item.system.isSpoiled === true;
+				const spoiledResult = item.getFlag("dsa5", "spoiledResult");
+
+				if (isSpoiled && spoiledResult) {
+					await this.constructor._handleSpoiledConsumption(actor, item, spoiledResult);
+				} else {
+					const consumeMacro = item.getFlag("dsa5", "onConsumeEffect");
+					if (consumeMacro && consumeMacro.trim() !== "") {
+						try {
+							const speaker = ChatMessage.getSpeaker({ actor: actor });
+							const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+							const fn = new AsyncFunction("speaker", "actor", "item", "args", consumeMacro);
+							await fn(speaker, actor, item, [speaker, actor, item]);
+						} catch (err) {
+							ui.notifications.error("Fehler im Verzehr-Makro (siehe Konsole)");
+							console.error("DSA5 | Fehler im Verzehr-Makro:", err);
+						}
+					}
+				}
+
+				if (currentQty <= 1) await item.delete();
+				else await item.update({ "system.quantity.value": currentQty - 1 });
+				
+				ui.notifications.info(game.i18n.format("PLANT.itemConsumed", {item: item.name}));
+			},
+			
+			resetShelfLife: async function(event, target) {
+				const itemData = this.item.system;
+				
+				const isRoh = itemData.plantState === "Roh"; 
+				const supernaturalFactor = parseFloat(itemData.supernatural?.factor) || 1;
+				
+				const toDays = { 
+					'seconds': 1/86400, 'minutes': 1/1440, 'hours': 1/24, 
+					'days': 1, 'weeks': 7, 'months': 30, 'years': 365 
+				};
+
+				let finalDays = 0;
+
+				if (isRoh) {
+					const mainPart = itemData.mainIngredient || "leaves";
+					const rawData = PLANT_SHELF_LIFE_MAP[mainPart]?.raw || "12h";
+					
+					let baseNumber = parseFloat(rawData);
+					if (isNaN(baseNumber) && rawData.includes("year")) baseNumber = 20; 
+
+					const unitCode = String(rawData).replace(/[0-9.]/g, '');
+					const unitMap = { 
+						's': 'seconds', 'i': 'minutes', 'h': 'hours', 
+						'd': 'days', 'w': 'weeks', 'm': 'months', 'y': 'years' 
+					};
+					let sourceUnit = unitMap[unitCode] || (rawData.includes("year") ? "years" : "hours");
+
+					const baseInDays = baseNumber * (toDays[sourceUnit] || 1);
+
+					finalDays = baseInDays * supernaturalFactor;
+				} else {
+					const mundaneValue = parseFloat(itemData.mundane?.shelfLife?.value) || 0;
+					const mundaneUnit = itemData.processed?.shelfLife?.unit || itemData.shelfLife?.unit || "days";
+					
+					finalDays = mundaneValue * (toDays[mundaneUnit] || 1) * supernaturalFactor;
+				}
+
+				return await this.item.update({
+					"system.remaining.shelfLife.value": Number(Math.round(finalDays * 10) / 10),
+					"system.isSpoiled": false
+				});
+			},
+						
+			checkShelfLifeAction: async function(event, target) {
+    const item = this.item;
+    const actor = item.actor;
+
+    if (!actor) {
+        ui.notifications.warn("Die Pflanze muss sich in einem Inventar befinden.");
+        return;
+    }
+
+    const skillName = game.i18n.localize("PLANT.skillPlantLore");
+    const skill = actor.items.find(x => x.type == "skill" && x.name == skillName);
+    
+    if (skill) {
+        const tokenId = actor.sheet?.getTokenId?.() || undefined;
+
+        actor.setupSkill(skill, { subtitle: ` (${item.name})` }, tokenId).then(async (setupData) => {
+            const res = await actor.basicTest(setupData);
+            const availableQs = res.result.qualityStep || 0;
+
+            if (availableQs > 0) {
+                let valInDays = Number(item.system.remaining?.shelfLife?.value) || 0;
+                let isSpoiledFlag = item.system.isSpoiled;
+
+                let finalVal = 0;
+                let finalUnit = "";
+
+                // Einheiten-Kaskade
+                if (valInDays >= 365) {
+                    finalVal = valInDays / 365;
+                    finalUnit = "years";
+                } else if (valInDays >= 30) {
+                    finalVal = valInDays / 30;
+                    finalUnit = "months";
+                } else if (valInDays >= 1) {
+                    finalVal = valInDays;
+                    finalUnit = "days";
+                } else {
+                    let hours = valInDays * 24;
+                    if (hours >= 1) {
+                        finalVal = hours;
+                        finalUnit = "hours";
+                    } else {
+                        let minutes = hours * 60;
+                        if (minutes >= 1) {
+                            finalVal = minutes;
+                            finalUnit = "minutes";
+                        } else {
+                            finalVal = minutes * 60;
+                            finalUnit = "seconds";
+                        }
+                    }
+                }
+
+                finalVal = Number(Math.round(finalVal + "e+1") + "e-1");
+                if (isNaN(finalVal)) finalVal = 0;
+
+                let messageKey = "";
+                let templateData = { itemName: item.name, val: finalVal };
+
+                if (isSpoiledFlag) {
+                    messageKey = "PLANT.shelfLifeSpoiled";
+                } else if (valInDays <= 0) { 
+                    messageKey = "PLANT.shelfLifeAlmostSpoiled";
+                } else {
+                    messageKey = "PLANT.shelfLifeRemainingMsg";
+                    const grammarSuffix = (finalVal === 1) ? "Single" : "Plural";
+                    templateData.unit = game.i18n.localize(`PLANT.shelfLifeUnits.${finalUnit}${grammarSuffix}`);
+                }
+
+                const localizedMessage = game.i18n.format(messageKey, templateData);
+
+                const content = `
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <div class="spoiled-plant-image-click" 
+                             data-uuid="${item.uuid}" 
+                             title="${item.name} öffnen"
+                             style="width: 55px; height: 55px; background-image: url('${item.img}'); background-size: contain; background-repeat: no-repeat; background-position: center; cursor: pointer;">
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin: 0;">${localizedMessage}</p>
+                `;
+
+                await ChatMessage.create({
+                    speaker: ChatMessage.getSpeaker({ actor: actor }),
+                    content: content,
+                    whisper: [game.user.id] 
+                });
+            } else if (res.result) {
+                ui.notifications.info(game.i18n.format("PLANT.skillTestFailed", { skill: skillName }));
+            }
+        });
+    }
+},
+			
+            workPlantAction: async function() { 
+                try {
+                    const actor = this.item.actor;
+                    if (!actor) return;
+
+                    let playerMenu = game.dsa5.apps.playerMenu || Object.values(ui.windows).find(app => app.constructor.name === "PlayerMenu");
+
+                    if (!playerMenu) {
+                        const { default: PlayerMenuClass } = await import('/systems/dsa5/modules/wizards/player_menu.js');
+                        playerMenu = new PlayerMenuClass();
+                        game.dsa5.apps.playerMenu = playerMenu;
+                    }
+
+                    await playerMenu.setActor(actor);
+                    
+                    const plantHelper = playerMenu.subApps.find(s => s.tabName === "PlantHelper");
+                    if (plantHelper) {
+                        await plantHelper.setupPlant(this.item);
+                    }
+
+                    playerMenu.bringToFront();
+                } catch (error) {
+                    console.error("DEBUG-SHEET | Fehler:", error);
+                }
+            },
+            openPreservationDetails: async function(event, target) {
+                new PlantPreservationDialog({ item: this.item }).render(true);
+            },
+            showSpoiledInfo: async function(event, target) {
+                new PlantSpoiledDialog(this.item).render(true);
+            }
+        }
+    });
+
+    _getHeaderControls() {
+        let controls = super._getHeaderControls();
+        const hasConsumeMacro = !!(this.item.getFlag("dsa5", "onConsumeEffect")?.trim());
+        
+        controls.push({ 
+            icon: "fa-solid fa-plant-wilt", 
+            label: "PLANT.checkShelfLife", 
+            action: "checkShelfLifeAction" 
+        });
+
+        controls.push({ icon: "fas fa-mortar-pestle", label: "PLANT.workButton", action: "workPlantAction" });
+        
+        if (hasConsumeMacro) {
+            controls.push({ icon: "fas fa-cookie-bite", label: "PLANT.consume", action: "consumePlantAction" });
+        }
+
+        const seenActions = new Set();
+        return controls.filter(c => {
+            if (!c.action) return true;
+            if (seenActions.has(c.action)) return false;
+            seenActions.add(c.action);
+            return true;
+        });
+    }
+
+    async obfuscateItem(ev) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        const section = ev.currentTarget.dataset.obfuscate;
+        const newState = !this.isObfuscated(section);
+        return await this.item.update({ [`system.obfuscation.${section}`]: newState });
+    }
+
+    isObfuscated(section) {
+        return !!this.item.system.obfuscation?.[section];
+    }
+
+    async obfuscateTabs(options) {
+        const tabs = ['details', 'effects', 'description', 'enchantment', 'work'];
+        const html = $(this.element);
+        for (let tab of tabs) {
+            const ele = html.find(`nav [data-tab="${tab}"]`);
+            if (!ele.length) continue;
+            ele.find(".obfuscationBtn").remove();
+            if (game.user.isGM) {
+                const isPale = !this.isObfuscated(tab);
+                ele.append(` <a data-tooltip="Abschnitt verschleiern" class="obfuscationBtn obfuscateSection${isPale ? ' pale' : ''}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`);
+            } else if (this.isObfuscated(tab)) {
+                ele.remove();
+            }
+        }
+    }
+
+    /**
+     * MODIFIZIERTE DATEN-VORBEREITUNG
+     */
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
+        const itemData = this.item.system;
+
+        // Grundvoraussetzung für das Template
+        context.document = this.item;
+        
+        // --- 1. IDENTITÄT UND DEFINITIONEN ---
+        const plantIdentity = this.item.getFlag("dsa5", "originalBasePlant") || this.item.name;
+        const localizedRauschgurke = game.i18n.localize("PLANT.rush_cucumber");
+
+        // 2. Pflanzenteile aus Checkboxen sammeln
+        const checkedParts = Object.keys(itemData.plantPart || {}).filter(k => itemData.plantPart[k]);
+        
+        if (plantIdentity === localizedRauschgurke) {
+            if (!checkedParts.includes("rush_cucumber")) checkedParts.push("rush_cucumber");
+        }
+
+        // --- 3. BASIS-HALTBARKEIT (Dynamische Kaskade für die Anzeige) ---
+        let mainPart = itemData.mainIngredient || "leaves";
+        if (plantIdentity === localizedRauschgurke) {
+            mainPart = "rush_cucumber";
+        }
+
+        const rawData = PLANT_SHELF_LIFE_MAP[mainPart]?.raw || "12h";
+        
+        // Umrechnung des Rohwerts (z.B. "720h" oder "years") in Tage
+        let baseNumber = parseFloat(rawData);
+        if (isNaN(baseNumber) && rawData.includes("year")) baseNumber = 20; // Fallback für reine Text-Werte
+        
+        const unitCode = String(rawData).replace(/[0-9.]/g, '');
+        const unitMap = { 's': 'seconds', 'i': 'minutes', 'h': 'hours', 'd': 'days', 'w': 'weeks', 'm': 'months', 'y': 'years' };
+        let sourceUnit = unitMap[unitCode] || (rawData.includes("year") ? "years" : "hours");
+
+        const toDays = { 'seconds': 1/86400, 'minutes': 1/1440, 'hours': 1/24, 'days': 1, 'weeks': 7, 'months': 30, 'years': 365 };
+        let valInDays = baseNumber * (toDays[sourceUnit] || 1);
+
+        // --- DYNAMISCHE EINHEITEN-WAHL (Die Kaskade) ---
+        let displayValue = 0;
+        let finalUnit = "";
+
+        if (valInDays >= 365) {
+            displayValue = valInDays / 365;
+            finalUnit = "years";
+        } else if (valInDays >= 30) {
+            displayValue = valInDays / 30;
+            finalUnit = "months";
+        } else if (valInDays >= 1) {
+            displayValue = valInDays;
+            finalUnit = "days";
+        } else {
+            let hours = valInDays * 24;
+            if (hours >= 1) {
+                displayValue = hours;
+                finalUnit = "hours";
+            } else {
+                let minutes = hours * 60;
+                if (minutes >= 1) {
+                    displayValue = minutes;
+                    finalUnit = "minutes";
+                } else {
+                    displayValue = minutes * 60;
+                    finalUnit = "seconds";
+                }
+            }
+        }
+
+        // Präzise Rundung auf max. 1 Nachkommastelle
+        displayValue = Number(Math.round(displayValue + "e+1") + "e-1");
+
+        // 4. Prüfen, ob das Mundane-Feld leer ist (Rohzustand)
+        const mundaneVal = itemData.mundane?.shelfLife?.value;
+        const isMundaneEmpty = (mundaneVal === null || mundaneVal === undefined || mundaneVal === "");
+        context.isMundaneEmpty = isMundaneEmpty;
+
+        // 5. UNIT-LOGIK (Sicherheitscheck: Manuelle Wahl vs. Kaskade)
+        let unitLong;
+        if (isMundaneEmpty) {
+            // Im Rohzustand nutzen wir immer die automatische Kaskade
+            unitLong = finalUnit;
+        } else {
+            // Wenn verarbeitet, schauen wir, ob der User manuell etwas im Dropdown gewählt hat
+            const savedUnit = itemData.processed?.shelfLife?.unit || itemData.shelfLife?.unit;
+            
+            // Wenn eine gültige Einheit gespeichert wurde, nutzen wir diese. 
+            // Sonst nutzen wir die berechnete finalUnit aus der Kaskade.
+            unitLong = (savedUnit && savedUnit !== "" && !savedUnit.includes(",")) ? savedUnit : finalUnit;
+        }
+
+        // Jetzt berechnen wir den Wert basierend auf der finalen unitLong neu, 
+        // falls diese von der Kaskade abweicht (z.B. User wählt Monate statt Jahre)
+        if (unitLong !== finalUnit) {
+            const fromDays = { 'seconds': 86400, 'minutes': 1440, 'hours': 24, 'days': 1, 'weeks': 1/7, 'months': 1/30, 'years': 1/365 };
+            displayValue = valInDays * (fromDays[unitLong] || 1);
+            displayValue = Number(Math.round(displayValue + "e+1") + "e-1");
+        }
+
+        const grammarSuffix = (displayValue === 1) ? "Single" : "Plural";
+        context.rawUnit = unitLong; // Das sorgt dafür, dass das Dropdown auf der richtigen Stelle steht
+        context.rawUnitLabel = game.i18n.localize(`PLANT.shelfLifeUnits.${unitLong}${grammarSuffix}`);
+        context.rawPlaceholderValue = game.i18n.format("PLANT.rawStatus", { val: displayValue });
+
+        // 6. Dropdown-Optionen für Zeiteinheiten
+        const unitsForSelect = ['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'];
+        context.shelfLifeDropdownOptions = unitsForSelect.reduce((acc, key) => {
+            acc[key] = game.i18n.localize(`PLANT.shelfLifeUnits.${key}Select`);
+            return acc;
+        }, {});
+
+        // --- 7. METHODEN-LOGIK ---
+        let genericMethods = [];
+        for (const p of checkedParts) {
+            if (PLANT_SHELF_LIFE_MAP[p]?.methods) {
+                genericMethods.push(...PLANT_SHELF_LIFE_MAP[p].methods);
+            }
+        }
+
+        let specificMethods = [];
+        for (const [plantKey, methods] of Object.entries(SPECIFIC_PLANT_METHODS)) {
+            const localizedPlantBaseName = game.i18n.localize(`PLANT.specificPlants.${plantKey}`);
+            const isPlantMatch = (localizedPlantBaseName === plantIdentity);
+            const isParenthesisMatch = this.item.name.startsWith(localizedPlantBaseName) && this.item.name.includes("(");
+            const isProductMatch = methods.some(m => m.p && game.i18n.localize(`PLANT.products.${m.p}`) === this.item.name);
+
+            if (isPlantMatch || isParenthesisMatch || isProductMatch) {
+                specificMethods = methods;
+                break; 
+            }
+        }
+
+        context.availableMethods = {};
+        genericMethods.forEach(method => {
+            context.availableMethods[method.m] = game.i18n.localize(`PLANT.states.${method.m}`);
+        });
+
+        specificMethods.forEach(method => {
+            const specKey = method.m + "_spec";
+            if (method.p) {
+                context.availableMethods[specKey] = game.i18n.localize(`PLANT.products.${method.p}`);
+            } else {
+                context.availableMethods[specKey] = game.i18n.localize(`PLANT.states.${method.m}`) + " (Spezial)";
+            }
+        });
+
+        // --- 8. ZUSTÄNDE UND FLAGS ---
+        context.plantStates = {
+            "Roh": game.i18n.localize("PLANT.stateRaw"),
+            "Haltbargemacht": game.i18n.localize("PLANT.statePreserved")
+        };
+
+        context.isAlreadyPreservedSupernatural = (itemData.supernatural?.factor || 1) > 1;
+        context.isSpoiled = itemData.isSpoiled;
+
+        const plantParts = itemData.plantPart || {};
+        context.plantPartList = Object.keys(plantParts).map(key => ({ 
+            key, 
+            path: `system.plantPart.${key}`, 
+            localizedLabel: game.i18n.localize(`PLANT.${key}`), 
+            value: plantParts[key], 
+            isMain: itemData.mainIngredient === key 
+        }));
+
+        // 9. OPTISCHER WORKAROUND FÜR DROP-DOWN
+        const currentMethod = itemData.preservationMethod;
+        if (currentMethod && !currentMethod.includes("_spec") && specificMethods.some(m => m.m === currentMethod)) {
+             const isSpecificResult = specificMethods.some(m => (m.p && game.i18n.localize(`PLANT.products.${m.p}`) === this.item.name) || (this.item.name.includes("(")));
+             if (isSpecificResult) {
+                 context.document = foundry.utils.deepClone(this.item);
+                 context.document.system.preservationMethod = currentMethod + "_spec";
+             }
+        }
+
+        return context;
+    }
+
+    _onRender(context, options) {
+        super._onRender(context, options);
+        this.obfuscateTabs(context);
+        const html = $(this.element);
+
+        // --- CSS INJECTION FÜR DRAG & DROP UND TABS ---
+        if (!html.find('#plant-sheet-custom-css').length) {
+            html.prepend(`
+            <style id="plant-sheet-custom-css">
+                /* 1. NEU: System-Overlay killen, das sich heimlich über alles legt und Klicks stiehlt */
+                .plant-sheet.dsaDraggedOver::after,
+                .plant-sheet form.dsaDraggedOver::after,
+                .plant-sheet .window-content.dsaDraggedOver::after { 
+                    display: none !important; 
+                    pointer-events: none !important; 
+                }
+
+                /* 2. Basis-Styling der Drop-Fläche (Z-Index erhöht, um immer oben zu liegen) */
+                .drop-area-full { position: relative; z-index: 100; width: 100%; min-height: 110px; margin-top: 5px; border-radius: 8px; transition: all 0.2s ease; display: flex; flex-direction: column; }
+                
+                /* Platzhalter-Inhalt (Icon & Text) */
+                .drop-zone-placeholder { pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 10px; border: 2px dashed #666; border-radius: 8px; height: 100%; }
+                .drop-zone-placeholder i { font-size: 2.5em !important; margin: 0 !important; }
+                .drop-zone-placeholder p { font-size: 1.1em !important; font-weight: bold; margin: 0 !important; }
+                
+                /* 3. Einträge in der Liste (Abstand & Klick-Optik) */
+                .recipe-entry { margin-top: 8px; cursor: pointer; transition: transform 0.1s ease; position: relative; z-index: 101; }
+                .recipe-entry:hover { transform: translateX(3px); }
+                
+                /* 4. Spezifische Highlights (nutzt unsere eigene Hover-Klasse!) */
+                .drop-area[data-type="auxiliary"].plant-drag-hover { background-color: rgba(161, 202, 88, 0.2) !important; }
+                .drop-area[data-type="auxiliary"].plant-drag-hover .drop-zone-placeholder { border: 2px solid #A1CA58 !important; color: #A1CA58 !important; }
+                
+                .drop-area[data-type="poison"].plant-drag-hover { background-color: rgba(204, 78, 82, 0.2) !important; }
+                .drop-area[data-type="poison"].plant-drag-hover .drop-zone-placeholder { border: 2px solid #CC4E52 !important; color: #CC4E52 !important; }
+                
+                .drop-area[data-type="drug"].plant-drag-hover { background-color: rgba(72, 203, 186, 0.2) !important; }
+                .drop-area[data-type="drug"].plant-drag-hover .drop-zone-placeholder { border: 2px solid #48CBBA !important; color: #48CBBA !important; }
+                
+                /* 5. Erzwingt Linksbündigkeit für die einklappbaren Tabs im Dialog */
+                .plant-work-gui-root .left-aligned-details summary { display: flex !important; align-items: center; justify-content: flex-start !important; text-align: left !important; gap: 8px; padding: 5px; cursor: pointer; }
+                .plant-work-gui-root .left-aligned-details summary i { width: 1.5em; text-align: center; }
+                .plant-work-gui-root details.groupbox { margin-bottom: 5px; }
+            </style>
+            `);
+        }
+        
+        // Verdorben-Checkbox Logik
+		html.find('input[name="system.isSpoiled"]').on('change', async (ev) => { 
+			const checked = ev.currentTarget.checked;
+			if (checked) {
+				if (!this.item.getFlag("dsa5", "spoiledResult")) {
+					const roll = await new Roll("1d20").evaluate();
+					let res = String(roll.total);
+					const v = roll.total;
+					if (v >= 3 && v <= 5) res = "3_5"; else if (v >= 6 && v <= 7) res = "6_7"; 
+					else if (v >= 8 && v <= 9) res = "8_9"; else if (v >= 11 && v <= 12) res = "11_12"; 
+					else if (v >= 14 && v <= 15) res = "14_15";
+
+					await this.item.update({ "system.isSpoiled": true, "flags.dsa5.spoiledResult": res });
+					await roll.toMessage({ flavor: `<b>${this.item.name}</b>`, rollMode: CONST.DICE_ROLL_MODES.BLIND });
+                    
+					await PlantSpoiledDialog.sendSpoiledMessage(this.item, res);
+				}
+			} else {
+				await this.item.update({ "system.isSpoiled": false, "flags.dsa5.-=spoiledResult": null });
+			}
+            
+            for (const app of foundry.applications.instances.values()) {
+                if (app.id === `plant-spoiled-dialog-${this.item.id}`) {
+                    app.render(true);
+                    break;
+                }
+            }
+		});
+
+        // Drag & Drop visuelles Feedback (jetzt mit eigener Klasse!)
+        html.find('.drop-area').on('dragenter dragover', (ev) => { 
+            ev.preventDefault(); 
+            ev.stopPropagation(); 
+            $(ev.currentTarget).addClass('plant-drag-hover'); 
+        }).on('dragleave drop', (ev) => { 
+            $(ev.currentTarget).removeClass('plant-drag-hover'); 
+        });
+
+        // Klick auf ein Rezept öffnet das Item-Sheet
+        html.find('.recipe-entry').on('click', async (ev) => { 
+            // Den Namen aus dem Element extrahieren (entweder data-name oder aus dem Text)
+            let itemName = ev.currentTarget.dataset.name || ev.currentTarget.querySelector('.content-link')?.innerText?.trim();
+
+            if (itemName) {
+                // Dynamische Suche über Welt-Items und alle Kompendien
+                let item = game.items.find(i => i.name === itemName);
+                if (!item) {
+                    for (let pack of game.packs) {
+                        if (pack.documentName !== "Item") continue;
+                        const index = await pack.getIndex();
+                        const entry = index.find(e => e.name === itemName);
+                        if (entry) { item = await pack.getDocument(entry._id); break; }
+                    }
+                }
+                
+                // Rückfall-Netz: Falls der Name nicht klappt, UUID probieren
+                if (!item) {
+                    const uuid = ev.currentTarget.querySelector('.content-link')?.dataset.uuid;
+                    if (uuid) item = await fromUuid(uuid);
+                }
+
+                if (item) item.sheet.render(true); 
+            }
+        });
+
+        // Rechtsklick auf ein Rezept löscht es aus der Liste
+        html.find('.recipe-entry').on('contextmenu', async (ev) => { 
+            ev.preventDefault(); 
+            const { id, type } = ev.currentTarget.dataset; 
+            let listName = type === 'poison' ? 'poisonRecipes' : (type === 'drug' ? 'drugRecipes' : 'auxiliaryRecipes'); 
+            const recipes = Array.from(this.document.system[listName] || []); 
+            await this.document.update({ [`system.${listName}`]: recipes.filter(r => r.id !== id) }); 
+        });
+
+        // Rechtsklick auf den Radiobutton (Hauptbestandteil) entfernt die Auswahl
+        html.find('input[type="radio"][name="system.mainIngredient"]').on('contextmenu', async (ev) => { 
+            ev.preventDefault(); 
+            if (ev.currentTarget.checked) await this.document.update({ "system.mainIngredient": "" }); 
+        });
+    }
+
+    async _onDrop(event) {
+        let data; try { data = JSON.parse(event.dataTransfer.getData('text/plain')); } catch (err) { return super._onDrop(event); }
+        if (data.type !== "Item") return super._onDrop(event);
+        const dropArea = event.target.closest('.drop-area'); if (!dropArea) return super._onDrop(event);
+        const item = await Item.fromDropData(data);
+        if (item) {
+            let listName = dropArea.dataset.type === 'poison' ? 'poisonRecipes' : (dropArea.dataset.type === 'drug' ? 'drugRecipes' : 'auxiliaryRecipes');
+            const recipes = foundry.utils.deepClone(this.item.system[listName] || []);
+            if (!recipes.find(r => r.id === item.id)) { 
+                recipes.push({ id: item.id, name: item.name, img: item.img, uuid: item.uuid }); 
+                await this.item.update({ [`system.${listName}`]: recipes }); 
+            }
+        }
+    }
 }
 
 class PatronSheet extends NoEffectsSheet { }
@@ -1647,3 +2518,27 @@ class VantageSheetDSA5 extends WithEffectsSheet {
     }
   }
 }
+
+
+Hooks.on("renderChatMessage", (app, html, msg) => {
+    const jhtml = $(html);
+    
+
+    jhtml.find('.spoiled-plant-image-click').each(function(i, element) {
+        
+
+        element.addEventListener("click", async (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            
+            const uuid = element.dataset.uuid;
+            if (uuid) {
+                const document = await fromUuid(uuid);
+                if (document && document.sheet) {
+                    document.sheet.render(true);
+                }
+            }
+        });
+        
+    });
+});
