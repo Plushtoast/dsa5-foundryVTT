@@ -49,11 +49,22 @@
         {{/each}}
     </div>
     {{/unless}}
+
     {{#if canOnUseEffect}}
     <div class="form-group full-height" style="margin-top:40px;">
         <label>{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
         <div class="form-fields height100">
             <code-mirror language="javascript" indent="2" name="flags.dsa5.onUseEffect" data-tooltip="ActiveEffects.placeholder.onUseEffect">{{~document.flags.dsa5.onUseEffect~}}</code-mirror>
+        </div>        
+    </div>
+    {{/if}}
+
+    {{!-- Macro (Verzehr) - Erscheint nur bei Pflanzen --}}
+    {{#if (eq document.type "plant")}}
+    <div class="form-group full-height" style="margin-top:20px;">
+        <label>{{localize 'PLANT.macroConsume'}}</label>
+        <div class="form-fields height100">
+            <code-mirror language="javascript" indent="2" name="flags.dsa5.onConsumeEffect" data-tooltip="PLANT.macroConsumeTooltip">{{~document.flags.dsa5.onConsumeEffect~}}</code-mirror>
         </div>        
     </div>
     {{/if}}
