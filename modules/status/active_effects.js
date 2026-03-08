@@ -217,7 +217,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         const isCombatSpecAb = ['specialability'].includes(itemType) && item.system.category.value == 'Combat';
         const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType);
         const effectConfigs = {
-          hasSpellEffects: isWeapon || isCombatSpecAb || ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
+          hasSpellEffects: isWeapon || isCombatSpecAb || ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition', 'plant'].includes(itemType),
           hasDamageTransformation: hasVantages || (isCombatSpecAb && item.system.category.sub != 4),
           hasArmorTransformation: hasVantages,
           hasTriggerEffects: ['specialability'].includes(itemType),

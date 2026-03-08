@@ -28,7 +28,7 @@ export const ItemSheetObfuscation = (superclass) =>
     }
 
     async obfuscateTabs(options) {
-      const tabs = ['details', 'effects', 'description', 'enchantment'];
+      const tabs = ['details', 'effects', 'description', 'enchantment', 'work'];
       const html = $(this.element);
       let swaptab = false;
       for (let tab of tabs) {

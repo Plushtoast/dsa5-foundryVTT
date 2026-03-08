@@ -21,6 +21,7 @@ import { ItemEquality } from './concerns/item-equality.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { localize, format } from '../system/helpers/localizer.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
+import { PLANT_SHELF_LIFE_MAP, SPECIFIC_PLANT_METHODS } from './plant-config.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -111,6 +112,47 @@ export default class Itemdsa5 extends Item {
       this.defaultIcon(data);
     }
     return await super.create(data, options);
+  }
+
+/* @override */
+  async _preCreate(data, options, user) {
+    await super._preCreate(data, options, user);
+
+    if (this.type !== "plant") return;
+
+    const sourceData = this.system;
+    let shelfLife = Number(sourceData.remaining?.shelfLife?.value || 0);
+
+    // Kaskaden-Berechnung & Erhaltungs-Mechanik
+    if (shelfLife === 0) {
+        const toDays = {
+            "seconds": 1/86400, "minutes": 1/1440, "hours": 1/24, 
+            "days": 1, "weeks": 7, "months": 30, "years": 365
+        };
+        const rawTimeValues = { 
+            "12h": 0.5, "24h": 1, "3d": 3, "1w": 7, "1m": 30, "3m": 90, "6m": 180, 
+            "8m": 240, "9m": 270, "10m": 300, "12m": 360, "years": 7300, 
+            "033h": 0.0333333 / 24, "22h": 22 / 24, "003h": 0.00333333 / 24, 
+            "222y": 222 * 365, "22d": 22 
+        };
+
+        const manualVal = Number(sourceData.mundane?.shelfLife?.value) || 0;
+        let baseDays;
+
+        if (manualVal > 0) {
+            const savedUnit = sourceData.processed?.shelfLife?.unit || sourceData.shelfLife?.unit || "days";
+            baseDays = manualVal * (toDays[savedUnit] || 1);
+        } else {
+            const mainPart = sourceData.mainIngredient || "leaves";
+            const mapData = PLANT_SHELF_LIFE_MAP[mainPart];
+            baseDays = mapData ? (rawTimeValues[mapData.raw] || 0.5) : 0.5;
+        }
+
+        const factor = Number(sourceData.supernatural?.factor) || 1;
+        shelfLife = Math.round((baseDays * factor) * 10) / 10;
+
+        this.updateSource({ "system.remaining.shelfLife.value": shelfLife });
+    }
   }
 
   /* @override */
@@ -306,6 +348,7 @@ export default class Itemdsa5 extends Item {
       skill: SkillItemDSA5,
       application: ApplicationItemDSA5,
       consumable: ConsumableItemDSA,
+	  plant: PlantItemDSA,
     });
   }
 
@@ -548,6 +591,88 @@ export default class Itemdsa5 extends Item {
   async postItem() {
     this.system.constructor._postItem(this);
   }
+}
+
+export class PlantItemDSA extends Itemdsa5 {
+    
+    // Ermittelt die voraussichtliche Haltbarkeit für den Vorab-Vergleich beim Drag & Drop
+    static getExpectedShelfLife(item) {
+        let val = Number(item.system?.remaining?.shelfLife?.value || 0);
+        if (val > 0) return val; // Wert ist schon fest und wird beibehalten
+        
+        const toDays = { "seconds": 1/86400, "minutes": 1/1440, "hours": 1/24, "days": 1, "weeks": 7, "months": 30, "years": 365 };
+        const rawTimeValues = { "12h": 0.5, "24h": 1, "3d": 3, "1w": 7, "1m": 30, "3m": 90, "6m": 180, "8m": 240, "9m": 270, "10m": 300, "12m": 360, "years": 7300, "033h": 0.0333333 / 24, "22h": 22 / 24, "003h": 0.00333333 / 24, "222y": 222 * 365, "22d": 22 };
+        
+        const manualVal = Number(item.system?.mundane?.shelfLife?.value || 0);
+        let baseDays = 0.5;
+
+        if (manualVal > 0) {
+            const savedUnit = item.system?.processed?.shelfLife?.unit || item.system?.shelfLife?.unit || "days";
+            baseDays = manualVal * (toDays[savedUnit] || 1);
+        } else {
+            const mainPart = item.system?.mainIngredient || "leaves";
+            const mapData = PLANT_SHELF_LIFE_MAP[mainPart];
+            baseDays = mapData ? (rawTimeValues[mapData.raw] || 0.5) : 0.5;
+        }
+
+        const factor = Number(item.system?.supernatural?.factor) || 1;
+        return Math.round((baseDays * factor) * 10) / 10;
+    }
+
+    // Überschreibt den Standard-Vergleich für das automatische Stapeln von Items im DSA5-System
+    static checkEquality(item1, item2) {
+        // 1. Basis-Prüfung aus dem Kern-System (Name, Typ, etc.)
+        if (!super.checkEquality(item1, item2)) return false;
+
+        // 2. Haltbarkeit vergleichen
+        const life1 = this.getExpectedShelfLife(item1);
+        const life2 = this.getExpectedShelfLife(item2);
+
+        // 3. Nur wenn die Rest-Tage identisch sind (Toleranz 0.1), werden sie gestapelt
+        return Math.abs(life1 - life2) <= 0.1;
+    }
+
+    // Logik für den Verzehr der Pflanze
+    static async setupDialog(ev, options, item, actor, tokenId) {
+
+        // Sicherstellen, dass wir den Besitzer haben
+        const speaker = actor || item.actor;
+        if (!speaker) {
+            ui.notifications.warn("Kein Akteur für diesen Verzehr gefunden.");
+            return {};
+        }
+
+        const currentQty = Number(item.system.quantity.value);
+        if (currentQty <= 0) {
+            ui.notifications.error(game.i18n.localize('DSAError.NotEnoughCharges'));
+            return {};
+        }
+
+        // 1. Menge um 1 reduzieren
+        await item.update({ "system.quantity.value": currentQty - 1 });
+
+        // 2. Chat-Nachricht senden
+        // Hier wurde der Text für 'effect' angepasst
+        const chatContent = await renderTemplate("systems/dsa5/templates/chat/consumable-used.hbs", {
+            item: item,
+            effect: "Die Pflanze wurde verzehrt" 
+        });
+        
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(chatContent));
+
+        // 3. Alle Effekte (inkl. args3 Makro) ohne QS-Prüfung auslösen
+        const effects = item.effects.toObject();
+        if (effects.length > 0) {
+            console.error("DEBUG-PLANT | Löse args3-Makros aus.");
+            await DSAActiveEffectConfig.applyAdvancedFunction(speaker, effects, item, {}, speaker);
+        }
+
+        // 4. Leere Daten zurückgeben, um Folgetests im Sheet zu verhindern
+        return {
+            testData: {},
+            cardOptions: {}
+        };
+    }
 }
 
 class WeaponItemDSA5 extends Itemdsa5 { }

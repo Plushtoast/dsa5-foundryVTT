@@ -1,0 +1,314 @@
+<div class="tab scrollable {{tabs.PlantHelper.cssClass}} plant-work-gui" data-group="sheet" data-tab="PlantHelper" data-application-part="PlantHelper">
+    <style>
+        .plant-work-gui-root { padding: 5px !important; }
+        .plant-work-gui-root img { 
+            width: 100% !important; height: 100% !important; 
+            max-width: 100% !important; max-height: 100% !important; 
+            object-fit: cover !important; margin: 0 !important; 
+            display: block !important; background: transparent !important;
+            border: none !important;
+        }
+        
+        .plant-work-gui-root .summary-icon { width: 45px !important; height: 45px !important; object-fit: contain !important; }
+        
+        .plant-work-gui-root .groupbox summary.label-text {
+            display: flex !important; align-items: center !important; justify-content: flex-start !important; 
+            text-align: left !important; gap: 15px !important; padding-left: 5px !important;
+            min-height: 55px !important; cursor: pointer;
+        }
+
+        .plant-work-gui-root .groupbox summary img { 
+            width: 45px !important; height: 45px !important; display: inline-block !important; 
+            vertical-align: middle !important; flex: 0 0 45px !important; object-fit: contain !important;
+            border: none !important;
+        }
+
+        .plant-work-gui-root .browser-item { 
+            height: 46px !important; min-height: 46px !important; margin-bottom: 4px !important; 
+            display: flex !important; border: 1px solid #7a7971 !important;
+            background: rgba(0,0,0,0.05) !important; border-radius: 3px !important;
+            overflow: hidden !important; cursor: pointer !important;
+        }
+        .plant-work-gui-root .browser-item .image { 
+            flex: 0 0 44px !important; width: 44px !important; height: 44px !important; 
+            background-size: cover !important; border-right: 1px solid #7a7971 !important;
+        }
+        .plant-work-gui-root .info-icon-container { 
+            flex: 0 0 40px !important; width: 40px !important; display: flex !important; 
+            align-items: center !important; justify-content: center !important; 
+            border-left: 1px solid #7a7971 !important; background: rgba(255,255,255,0.1) !important;
+        }
+        .plant-work-gui-root .name-icon { 
+            flex: 1 !important; padding: 0 10px !important; display: flex !important; 
+            align-items: center !important; font-size: 13px !important;
+        }
+
+        .plant-work-gui-root .plant-processing-drop-zone {
+            border: 2px dashed #7a7971 !important; background: transparent !important; border-radius: 3px !important;
+            overflow: hidden !important; display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+    </style>
+
+    {{#if actor.system}}
+        <div class="plant-work-gui-root standard-form">
+            <nav class="sheet-tabs tabs" data-group="main" style="display: flex; justify-content: space-around; align-items: center; border-bottom: 2px solid #7a7971; background: rgba(0,0,0,0.02); height: 75px !important;">
+                <a class="item {{#if (eq activeTab 'work')}}active{{/if}}" data-action="tab" data-group="main" data-tab="work" style="display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; justify-content: center; padding: 5px;">
+                    <img src="systems/dsa5/icons/categories/plantcrop.webp" class="summary-icon"> 
+                    <span style="font-weight: bold;">{{localize 'PLANT.work'}}</span>
+                </a>
+                <a class="item {{#if (eq activeTab 'preserveProfane')}}active{{/if}}" data-action="tab" data-group="main" data-tab="preserveProfane" style="display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; justify-content: center; padding: 5px;">
+                    <img src="systems/dsa5/icons/categories/plantphysical.webp" class="summary-icon"> 
+                    <span style="font-weight: bold;">{{localize 'PLANT.preserveProfane'}}</span>
+                </a>
+                <a class="item {{#if (eq activeTab 'preserveSupernatural')}}active{{/if}}" data-action="tab" data-group="main" data-tab="preserveSupernatural" style="display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 1; justify-content: center; padding: 5px;">
+                    <img src="systems/dsa5/icons/categories/plantsupernatural.webp" class="summary-icon"> 
+                    <span style="font-weight: bold;">{{localize 'PLANT.preserveSupernatural'}}</span>
+                </a>
+            </nav>
+
+            <section class="content" style="padding: 10px;">
+                {{#if activeItem}}
+                    
+                    {{!-- ########################## TAB: VERARBEITUNG ########################## --}}
+                    <div class="tab {{#if (eq activeTab 'work')}}active{{/if}}" data-group="main" data-tab="work">
+                        <div class="processing-group">
+                            <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.05); border-radius: 5px; padding: 10px 15px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.1);">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 0 0 50px;">
+                                    <div class="plant-processing-drop-zone has-item" data-action="openActiveItemSheet" data-tooltip="{{localize 'PLANT.workspaceTooltip'}}" style="width: 50px; height: 50px; cursor: pointer;">
+                                        <img src="{{activeItem.img}}">
+                                    </div>
+                                    <span style="font-weight: bold; font-size: 0.9em; color: #532902;">x{{totalPlantQuantity}}</span>
+                                </div>
+                                <p class="plant-info-text" style="flex: 1; margin: 0; line-height: 1.2;">{{localize 'PLANT.recipeInfo'}}</p>
+                            </div>
+                        </div>
+
+                        {{!-- 1. Hilfsmittel --}}
+                        <div class="processing-group" style="margin-bottom: 20px;">
+                            <p class="plant-info-text" style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">{{localize 'PLANT.auxiliaryWorkInfo'}}</p>
+                            <details open class="groupbox">
+                                <summary class="label-text"><img src="systems/dsa5/icons/categories/planthealing.webp"> Pflanzliche Hilfsmittel</summary>
+                                <div class="paddingBox">
+                                    {{#if auxiliaryRecipes.length}}
+                                        <ul class="item-list" style="list-style: none; padding: 0; margin: 0;">
+                                            {{#each auxiliaryRecipes as |recipe|}}
+                                            <li class="browser-item" data-action="produceItem" data-name="{{recipe.name}}">
+                                                <div class="image" style="background-image: url('{{recipe.img}}');"></div>
+                                                <div class="name-icon"><span>{{localize 'PLANT.produceItem' item=recipe.name}}</span></div>
+                                                <div class="info-icon-container" data-action="showDetails" data-name="{{recipe.name}}"><i class="fas fa-info"></i></div>
+                                            </li>
+                                            {{/each}}
+                                        </ul>
+                                    {{else}}
+                                        <div style="padding: 10px; text-align: center; color: #7a7971; font-style: italic; background: rgba(0,0,0,0.02); border-radius: 3px; border: 1px dashed #7a7971;">
+                                            {{localize 'PLANT.noAuxiliaryRecipes'}}
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </details>
+                        </div>
+
+                        {{!-- 2. Gifte --}}
+                        <div class="processing-group" style="margin-bottom: 20px;">
+                            <p class="plant-info-text" style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">{{localize 'PLANT.poisonWorkInfo'}}</p>
+                            <details open class="groupbox">
+                                <summary class="label-text"><img src="systems/dsa5/icons/categories/plantpoison.webp"> Pflanzliche Gifte</summary>
+                                <div class="paddingBox">
+                                    {{#if poisonRecipes.length}}
+                                        <ul class="item-list" style="list-style: none; padding: 0; margin: 0;">
+                                            {{#each poisonRecipes as |recipe|}}
+                                            <li class="browser-item" data-action="produceItem" data-name="{{recipe.name}}">
+                                                <div class="image" style="background-image: url('{{recipe.img}}');"></div>
+                                                <div class="name-icon"><span>{{localize 'PLANT.produceItem' item=recipe.name}}</span></div>
+                                                <div class="info-icon-container" data-action="showDetails" data-name="{{recipe.name}}"><i class="fas fa-info"></i></div>
+                                            </li>
+                                            {{/each}}
+                                        </ul>
+                                    {{else}}
+                                        <div style="padding: 10px; text-align: center; color: #7a7971; font-style: italic; background: rgba(0,0,0,0.02); border-radius: 3px; border: 1px dashed #7a7971;">
+                                            {{localize 'PLANT.noPoisonRecipes'}}
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </details>
+                        </div>
+
+                        {{!-- 3. Rauschmittel --}}
+                        <div class="processing-group" style="margin-bottom: 20px;">
+                            <p class="plant-info-text" style="font-size: 0.9em; opacity: 0.8; margin-bottom: 5px;">{{localize 'PLANT.drugWorkInfo'}}</p>
+                            <details open class="groupbox">
+                                <summary class="label-text"><img src="systems/dsa5/icons/categories/plantpsychic.webp"> Pflanzliche Rauschmittel</summary>
+                                <div class="paddingBox">
+                                    {{#if drugRecipes.length}}
+                                        <ul class="item-list" style="list-style: none; padding: 0; margin: 0;">
+                                            {{#each drugRecipes as |recipe|}}
+                                            <li class="browser-item" data-action="produceItem" data-name="{{recipe.name}}">
+                                                <div class="image" style="background-image: url('{{recipe.img}}');"></div>
+                                                <div class="name-icon"><span>{{localize 'PLANT.produceItem' item=recipe.name}}</span></div>
+                                                <div class="info-icon-container" data-action="showDetails" data-name="{{recipe.name}}"><i class="fas fa-info"></i></div>
+                                            </li>
+                                            {{/each}}
+                                        </ul>
+                                    {{else}}
+                                        <div style="padding: 10px; text-align: center; color: #7a7971; font-style: italic; background: rgba(0,0,0,0.02); border-radius: 3px; border: 1px dashed #7a7971;">
+                                            {{localize 'PLANT.noDrugRecipes'}}
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    {{!-- ########################## TAB: PROFAN ########################## --}}
+                    <div class="tab {{#if (eq activeTab 'preserveProfane')}}active{{/if}}" data-group="main" data-tab="preserveProfane">
+                        {{#if isAlreadyPreservedProfane}}
+                            <div style="height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px; text-align: center;">
+                                <p style="font-size: 1.3em; font-weight: bold; color: #7a7971; max-width: 400px; line-height: 1.3;">{{localize 'PLANT.alreadyPreserved'}}</p>
+                            </div>
+                        {{else}}
+                            <div class="processing-group">
+                                <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.05); border-radius: 5px; padding: 10px 15px; margin-bottom: 10px; border: 1px solid rgba(0,0,0,0.1);">
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 0 0 50px;">
+                                        <div class="plant-processing-drop-zone has-item" data-action="openActiveItemSheet" data-tooltip="{{localize 'PLANT.workspaceTooltip'}}" style="width: 50px; height: 50px; cursor: pointer;">
+                                            <img src="{{activeItem.img}}">
+                                        </div>
+                                        <span style="font-weight: bold; font-size: 0.9em; color: #532902;">x{{totalPlantQuantity}}</span>
+                                    </div>
+                                    <p class="plant-info-text" style="flex: 1; font-size: 1em; margin: 0; line-height: 1.2;">{{localize 'PLANT.profaneWorkInfo'}}</p>
+                                </div>
+                                <div class="groupbox paddingBox" style="width: 100%; box-sizing: border-box;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-end; box-sizing: border-box; margin-bottom: 10px;">
+                                        {{#if (ne bonusFactorText "+0%")}}
+                                            <div style="flex: 0 0 60%; box-sizing: border-box;">
+                                                <p style="margin: 0; font-size: 1em; line-height: 1.4;">{{{shelfLifeDetailText}}}</p>
+                                            </div>
+                                            <div style="flex: 0 0 40%; display: flex; justify-content: center; box-sizing: border-box;">
+                                                <div class="preservation-bonus-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+                                                    <div style="color: green; font-style: italic; font-size: 1.1em; margin-bottom: 5px; text-align: center;"><i class="fas fa-arrow-up"></i> {{bonusFactorText}}</div>
+                                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                                        {{#if hasPeraineSkill}}<img src="{{peraineSkillImg}}" class="summary-icon" data-tooltip="{{localize 'PLANT.tooltipPeraine'}}">{{/if}}
+                                                        {{#if hasPreserveSkill}}<img src="systems/dsa5/icons/categories/plant.webp" class="summary-icon" data-tooltip="{{localize 'PLANT.tooltipPreserve'}}">{{/if}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{else}}
+                                            <div style="flex: 0 0 100%; box-sizing: border-box;">
+                                                <p style="margin: 0; font-size: 1em; line-height: 1.4;">{{{shelfLifeDetailText}}}</p>
+                                            </div>
+                                        {{/if}}
+                                    </div>
+                                    <hr style="margin-top: 10px; border: 0; border-top: 1px solid #7a7971;">
+                                    <div class="preservation-grid" style="display: flex; gap: 0; width: 100%; align-items: flex-start; margin-top: 10px;">
+                                        <div class="preservation-actions" style="flex: 0 0 66%;">
+                                            <ul class="preservation-list" style="list-style: none; padding: 0; margin: 0; width: 100%;">
+                                                {{#each preservationMethods as |method|}}
+                                                <li class="browser-item preservation-item">
+                                                    <div class="image" style="background-image: url('systems/dsa5/icons/categories/consumable.webp');"></div>
+                                                    <div class="name-icon" data-action="applyPreserveFree">
+														<span class="preservation-tooltip-trigger" data-name="{{method.label}}" data-extra-uuids="{{method.extraUuids}}" data-alt-uuids="{{method.altUuids}}" style="font-weight: bold; cursor: help;">{{method.label}}</span>
+													</div>
+                                                    <div class="priceDrag center" data-action="applyPreserve" data-method="{{method.m}}" data-value="{{method.numericValue}}" data-unit="{{method.unit}}" data-pay="true" style="flex: 0 0 50px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border-left: 1px solid #7a7971; background: rgba(0,0,0,0.03);" data-tooltip="{{localize 'PLANT.payAndCreate'}}">
+                                                        <i class="fas fa-coins"></i>
+                                                        <span style="font-weight: bold;">5</span>
+                                                    </div>
+                                                </li>
+                                                {{/each}}
+                                            </ul>
+                                        </div>
+                                        <div class="preservation-results" style="flex: 0 0 34%; box-sizing: border-box;">
+                                            {{#each preservationMethods as |method|}}
+                                            <div style="height: 46px; margin-bottom: 4px; display: flex; align-items: center; padding-left: 15px; font-size: 0.9em; color: #444; line-height: 1.2; border: 1px solid transparent;">
+                                                <i class="fa-solid fa-jar-wheat" data-action="openPreservationDetails" data-method="{{method.m}}" data-tooltip="{{localize 'PLANT.altEffectsTooltip'}}" style="cursor: pointer; margin-right: 15px; font-size: 1.2em; flex: 0 0 25px; text-align: center;"></i>
+                                                <span>{{localize 'PLANT.resultShelfLife'}}: <br><b>{{method.displayLabel}}</b></span>
+                                            </div>
+                                            {{/each}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/if}}
+                    </div>
+
+                    {{!-- ########################## TAB: ÜBERNATÜRLICH ########################## --}}
+                    <div class="tab {{#if (eq activeTab 'preserveSupernatural')}}active{{/if}}" data-group="main" data-tab="preserveSupernatural">
+                        
+                        {{!-- Prüfung auf übernatürliche Haltbarmachung --}}
+                        {{#if isAlreadyPreservedSupernatural}}
+                            <div style="height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 20px; text-align: center;">
+                                <p style="font-size: 1.3em; font-weight: bold; color: #7a7971; max-width: 400px; line-height: 1.3;">{{localize 'PLANT.alreadyPreservedSupernatural'}}</p>
+                            </div>
+                        {{else}}
+                            <div class="processing-group">
+                                <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.05); border-radius: 5px; padding: 10px 15px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.1);">
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 0 0 50px;">
+                                        <div class="plant-processing-drop-zone has-item" data-action="openActiveItemSheet" data-tooltip="{{localize 'PLANT.workspaceTooltip'}}" style="width: 50px; height: 50px; cursor: pointer;">
+                                            <img src="{{activeItem.img}}">
+                                        </div>
+                                        <span style="font-weight: bold; font-size: 0.9em; color: #532902;">x{{totalPlantQuantity}}</span>
+                                    </div>
+                                    <p class="plant-info-text" style="flex: 1; font-size: 1em; margin: 0; line-height: 1.2;">{{localize 'PLANT.supernaturalWorkInfo'}}</p>
+                                </div>
+                                
+                                {{#if supernaturalMethods.length}}
+                                    {{#each supernaturalMethods as |method|}}
+                                        <div class="actor-spells groupbox" style="margin-bottom: 12px; border: 1px solid #7a7971; border-radius: 4px; overflow: hidden; background: rgba(255, 255, 255, 0.3);">
+                                            <div class="row-section wrap">
+                                                <div class="col">
+                                                    <div class="row-section skills table-title lineheight" style="border-bottom: 1px solid #7a7971; padding: 2px 0;">
+                                                        <div class="title-type col four" style="display: flex; align-items: center; gap: 8px; padding-left: 5px;">
+                                                            <img src="{{method.traditionIcon}}" class="summary-icon" style="width: 45px !important; height: 45px !important; object-fit: contain !important; border: none !important; background: transparent !important;"> 
+                                                            <span style="font-weight: bold; font-size: 0.95em;">{{method.tradition}}</span>
+                                                        </div>
+                                                        <div class="col zerofive"></div>
+                                                        <div class="title-test col fifteen center" style="font-size: 0.85em;">{{localize 'probe'}}</div>
+                                                        <div class="title-fw col ten center" style="font-size: 0.85em;">{{localize 'CHARAbbrev.FW'}}</div>
+                                                        <div class="col ten center" style="font-size: 0.85em;">{{localize 'cost'}}</div>
+                                                        <div class="col ten center"><i class="fas fa-hourglass-half" style="font-size: 0.85em;"></i></div>
+                                                    </div>
+                                                </div>
+                                                <div class="actor-spell-item-wrapper col spells item" data-item-id="{{method.id}}">
+                                                    <div class="actor-spell-item row-section skills lineheight" style="align-items: center; min-height: 40px; padding: 4px 0;">
+                                                        <div class="equipment-item-image col zerofive image" style="display: flex; justify-content: flex-start; padding-left: 8px;"><div class="image" style="background-image: url('{{method.img}}'); width: 36px !important; height: 36px !important; background-size: contain !important; background-position: center !important; background-repeat: no-repeat !important; border: none !important; background-color: transparent !important;"></div></div>
+                                                        <div class="actor-spell-name col four withContext"><a data-action="itemEdit" style="font-weight: bold; margin-left: 5px;">{{method.name}}</a></div>
+                                                        <div class="actor-spell-test col fifteen center" style="display: flex; justify-content: center; gap: 2px;">
+                                                            {{#if method.isSpecialAction}}<button type="button" class="noBorder dsadesignbutton" data-action="plantOnUseItem" style="width: 100%; height: 28px;"><i class="fas fa-dice-six"></i></button>
+                                                            {{else if method.isSpell}}<button type="button" data-action="plantSkillSelect" class="noBorder dsadesignbutton" style="width: 100%; height: 28px;">{{#each method.testParts}}<span class="d20 {{this.class}}" style="font-size: 0.75em; font-weight: bold; margin: 0 1px;">{{this.label}}</span>{{/each}}</button>
+                                                            {{else}}<span style="color: #999;">—</span>{{/if}}
+                                                        </div>
+                                                        <div class="actor-spell-fw col ten center flexrow advanceOntop" style="justify-content: center;">
+                                                            {{#if method.isSpecialAction}}<span style="color: #999;">—</span>
+                                                            {{else}}<input type="number" value="{{method.fw}}" readonly style="width: 28px; height: 24px; text-align: center; border: 1px solid #ccc; background: rgba(255,255,255,0.5); font-weight: bold;" />{{/if}}
+                                                        </div>
+                                                        <div class="actor-spell-cost col ten center" style="font-weight: bold; font-size: 0.9em;">{{method.cost}}</div>
+                                                        <div class="actor-spell-duration col ten center" style="font-size: 0.85em;">{{method.duration}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {{/each}}
+                                {{else}}
+                                    <div style="padding: 40px 20px; text-align: center; border: 1px dashed #ccc; border-radius: 5px; color: #777; background: rgba(0,0,0,0.01);">
+                                        <p>{{localize 'PLANT.noSupernaturalMethods'}}</p>
+                                    </div>
+                                {{/if}}
+                            </div>
+                        {{/if}}
+                    </div>
+
+                {{else}}
+                    {{!-- LEERZUSTAND: Keine Pflanze --}}
+                    <div class="plant-work-gui-root plant-processing-drop-zone empty" style="height: 400px; border: 3px dashed #7a7971 !important; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.03) !important; border-radius: 10px;">
+                        <i class="fa-solid fa-seedling" style="font-size: 6em; opacity: 0.4; color: #7a7971;"></i>
+                        <p style="font-size: 1.6em; font-weight: bold; color: #7a7971;">{{localize 'PLANT.dropPlants'}}</p>
+                    </div>
+                {{/if}}
+            </section>
+        </div>
+    {{else}}
+        <div class="row-section" style="margin-top:40px;">
+            <div class="col center">
+                <p>{{localize "CONJURATION.dragActor"}}</p>
+            </div>
+        </div>
+    {{/if}}
+</div>

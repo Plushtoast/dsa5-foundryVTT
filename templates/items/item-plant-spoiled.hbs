@@ -1,0 +1,155 @@
+<div class="plant-spoiled-v2-frame standard-form" data-application-part="main" style="display: flex; flex-direction: column; height: 100%;">
+    
+    <style>
+        .plant-spoiled-v2-frame .browser-item { transition: all 0.2s ease; margin-bottom: 4px; }
+        .plant-spoiled-v2-frame .browser-item:hover { background: rgba(0,0,0,0.1) !important; }
+        .plant-spoiled-v2-frame .browser-item.selected { 
+            background: rgba(83, 41, 2, 0.15) !important; 
+            border-color: #532902 !important; 
+            box-shadow: inset 0 0 4px rgba(83, 41, 2, 0.3); 
+        }
+        .plant-spoiled-v2-frame .browser-item.selected .image { 
+            background: rgba(83, 41, 2, 0.1) !important; 
+            color: #532902; 
+        }
+        .plant-spoiled-v2-frame .info-icon-container {
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .plant-spoiled-v2-frame .info-icon-container:hover {
+            color: #a01010;
+        }
+    </style>
+
+    <section class="content" style="display: flex; flex-direction: column; height: 100%; padding-bottom: 5px;">
+        
+        <div class="processing-group">
+            <div style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.05); border-radius: 5px; padding: 10px 15px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.1);">
+                <p class="plant-info-text" style="flex: 1; margin: 0; line-height: 1.2;">
+                    {{localize 'PLANT.spoiledDescription'}}
+                </p>
+            </div>
+        </div>
+
+        <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+            
+            <div class="header-grid" style="display: flex; border: 1px solid #7a7971; border-bottom: 2px solid #532902; background: rgba(0,0,0,0.1); font-weight: bold; margin-bottom: 8px; border-radius: 4px 4px 0 0; min-height: 35px;">
+                <div class="header-cell" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <i class="fas fa-dice-d20" data-action="rollTable" data-tooltip="{{localize 'PLANT.rollEffectTooltip'}}" style="cursor: pointer; color: #532902; font-size: 1.2em;"></i>
+                </div>
+                <div class="header-cell" style="flex: 1; display: flex; align-items: center; justify-content: flex-start; padding-left: 15px;">
+                    {{localize 'PLANT.spoiledEffect'}}
+                </div>
+            </div>
+
+            <div class="spoiled-list" style="flex: 1; overflow-y: auto; padding-right: 5px;">
+                <ul class="preservation-list" style="list-style: none; padding: 0; margin: 0; width: 100%;">
+                    
+                    {{!-- Zeile 1 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '1') 'selected' ''}}" data-action="selectRow" data-row="1" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">1</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R1'}}</div>
+                    </li>
+
+                    {{!-- Zeile 2 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '2') 'selected' ''}}" data-action="selectRow" data-row="2" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">2</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R2'}}</div>
+                    </li>
+
+                    {{!-- Zeile 3-5 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '3_5') 'selected' ''}}" data-action="selectRow" data-row="3_5" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">3-5</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R3_5'}}</div>
+                    </li>
+
+                    {{!-- Zeile 6-7 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '6_7') 'selected' ''}}" data-action="selectRow" data-row="6_7" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">6-7</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R6_7'}}</div>
+                    </li>
+
+                    {{!-- Zeile 8-9 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '8_9') 'selected' ''}}" data-action="selectRow" data-row="8_9" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">8-9</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R8_9'}}</div>
+                    </li>
+
+                    {{!-- Zeile 10 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '10') 'selected' ''}}" data-action="selectRow" data-row="10" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">10</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R10'}}</div>
+                    </li>
+
+                    {{!-- Zeile 11-12 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '11_12') 'selected' ''}}" data-action="selectRow" data-row="11_12" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">11-12</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R11_12'}}</div>
+                        <div class="info-icon-container" data-action="showDetails" data-name="{{localize 'PLANT.poison.Wurara'}}" data-tooltip="{{localize 'PLANT.poison.Wurara'}}">
+                            <i class="fas fa-info"></i>
+                        </div>
+                    </li>
+
+                    {{!-- Zeile 13 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '13') 'selected' ''}}" data-action="selectRow" data-row="13" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">13</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R13'}}</div>
+                        <div class="info-icon-container" data-action="showDetails" data-name="{{localize 'PLANT.poison.Arax'}}" data-tooltip="{{localize 'PLANT.poison.Arax'}}">
+                            <i class="fas fa-info"></i>
+                        </div>
+                    </li>
+
+                    {{!-- Zeile 14-15 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '14_15') 'selected' ''}}" data-action="selectRow" data-row="14_15" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">14-15</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R14_15'}}</div>
+                        <div class="info-icon-container" data-action="showDetails" data-name="{{localize 'PLANT.poison.FlinkerDifar'}}" data-tooltip="{{localize 'PLANT.poison.FlinkerDifar'}}">
+                            <i class="fas fa-info"></i>
+                        </div>
+                    </li>
+
+                    {{!-- Zeile 16 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '16') 'selected' ''}}" data-action="selectRow" data-row="16" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">16</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R16'}}</div>
+                        <div class="info-icon-container" data-action="showDetails" data-name="{{localize 'PLANT.poison.Sumpffieber'}}" data-tooltip="{{localize 'PLANT.poison.Sumpffieber'}}">
+                            <i class="fas fa-info"></i>
+                        </div>
+                    </li>
+
+                    {{!-- Zeile 17 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '17') 'selected' ''}}" data-action="selectRow" data-row="17" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">17</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R17'}}</div>
+                    </li>
+
+                    {{!-- Zeile 18 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '18') 'selected' ''}}" data-action="selectRow" data-row="18" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">18</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R18'}}</div>
+                        <div class="info-icon-container" data-action="showDetails" data-name="{{localize 'PLANT.poison.Wirselkraut'}}" data-tooltip="{{localize 'PLANT.poison.Wirselkraut'}}">
+                            <i class="fas fa-info"></i>
+                        </div>
+                    </li>
+
+                    {{!-- Zeile 19 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '19') 'selected' ''}}" data-action="selectRow" data-row="19" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">19</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R19'}}</div>
+                    </li>
+
+                    {{!-- Zeile 20 --}}
+                    <li class="browser-item preservation-item selectableRow {{ifThen (eq currentResult '20') 'selected' ''}}" data-action="selectRow" data-row="20" style="display: flex; border: 1px solid #7a7971; border-radius: 4px; background: rgba(0,0,0,0.05); cursor: pointer; min-height: 40px;">
+                        <div class="image center" style="flex: 0 0 70px; border-right: 1px solid #7a7971; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; background: rgba(0,0,0,0.03);">20</div>
+                        <div class="name-icon" style="flex: 1; padding: 8px 10px; display: flex; align-items: center; line-height: 1.3;">{{localize 'PLANT.spoiledRows.R20'}}</div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
