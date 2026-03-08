@@ -8,6 +8,8 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
 import { localize } from '../system/helpers/localizer.js';
+import PlantHelper from './player_menu_plants.js';
+import PlantPreservationDialog from '/systems/dsa5/modules/item/plant-preservation-dialog.js';
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -16,9 +18,12 @@ const { renderTemplate } = foundry.applications.handlebars;
 export default class PlayerMenu extends DefaultAppv2 {
   constructor(app) {
     super(app);
+	this.subApps = [];
     this.entityAbilities = [];
 
     game.dsa5.apps.PlayerMenuSubApp = PlayerMenuSubApp;
+	this.activePlantItem = null;
+	this.registerSubApp(new PlantHelper(this));
     this.summoningModifiers = [
       {
         id: 1,
@@ -90,7 +95,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       },
     ];
 
-    (this.conjurationData = {
+    this.conjurationData = {
       qs: 0,
       consumedQS: 0,
       packageModifier: 0,
@@ -133,11 +138,11 @@ export default class PlayerMenu extends DefaultAppv2 {
         ],
       },
       postFunction: {},
-    }),
-      (this.subApps = []);
+    };
   }
 
   registerSubApp(app) {
+	  app.parent = this;
     this.subApps.push(app);
   }
 
@@ -359,6 +364,38 @@ export default class PlayerMenu extends DefaultAppv2 {
       openChar: this._onOpenChar,
       unhidePossibleSpells: this._unhidePossibleSpells,
       initLibrary: this._onInitLibrary,
+      produceItem: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.produceItem(event, target);
+      },
+      showDetails: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.showDetails(event, target);
+      },
+      applyPreserveFree: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.applyPreserveFree(event, target);
+      },
+	  openActiveItemSheet: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.openActiveItemSheet(event, target);
+      },
+      onUseItem: function(event, target) {
+        const itemId = target.closest('.item').dataset.itemId;
+        this.actor.items.get(itemId)?.use();
+      },
+	  openPreservationDetails: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.openPreservationDetails(event, target);
+      },
+      applyPreserve: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.applyPreserve(event, target);
+      },
+      itemEdit: function(event, target) {
+        const itemId = target.closest('.item').dataset.itemId;
+        this.actor.items.get(itemId)?.sheet.render(true);
+      },
+	  plantSkillSelect: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.plantSkillSelect(event, target);
+      },
+      plantOnUseItem: function(event, target) {
+        this.subApps.find(s => s.tabName === "PlantHelper")?.plantOnUseItem(event, target);
+      }
     }
   };
 
@@ -369,21 +406,19 @@ export default class PlayerMenu extends DefaultAppv2 {
   static TABS = {
     sheet: {
       tabs: [
-        { id: 'elementals', label: 'PLAYER.conjuration' }
+        { id: 'elementals', label: 'PLAYER.conjuration' },
+        { id: 'PlantHelper', label: 'PLANT.processPlants' } // Fest verankert
       ],
       initial: 'elementals',
     }
   }
 
   static PARTS = {
-    header: {
-      template: 'systems/dsa5/templates/system/playermenu/header.hbs',
-    },
-    tabs: {
-      template: 'systems/dsa5/templates/system/dsatabs.hbs'
-    },
-    elementals: {
-      template: 'systems/dsa5/templates/system/playermenu/summoning.hbs',
+    header: { template: 'systems/dsa5/templates/system/playermenu/header.hbs' },
+    tabs: { template: 'systems/dsa5/templates/system/dsatabs.hbs' },
+    elementals: { template: 'systems/dsa5/templates/system/playermenu/summoning.hbs', scrollable: [''] },
+    PlantHelper: { // Fest verankertes Template verhindert den 'template' Fehler
+      template: 'systems/dsa5/templates/items/item-plant-work-gui.hbs',
       scrollable: ['']
     },
   };
@@ -391,7 +426,9 @@ export default class PlayerMenu extends DefaultAppv2 {
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
     for (let app of this.subApps) {
-      parts[app.tabName] = app.part;
+      if (!parts[app.tabName] && app.part) {
+        parts[app.tabName] = app.part;
+      }
     }
     return parts;
   }
@@ -435,7 +472,11 @@ export default class PlayerMenu extends DefaultAppv2 {
     } else {
       for (let app of this.subApps) {
         const res = await app._onDrop(data);
-        if (res === true) break;
+        if (res === true) {
+          this.tabGroups['sheet'] = app.tabName; 
+          this.render(true); 
+          break;
+        }
       }
     }
   }
@@ -539,6 +580,12 @@ export default class PlayerMenu extends DefaultAppv2 {
     });
     return data;
   }
+
+async setActor(actor) {
+    if (!actor || actor.id === this.actor?.id) return;
+    this.actor = actor;
+    return this.render(true);
+}
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
