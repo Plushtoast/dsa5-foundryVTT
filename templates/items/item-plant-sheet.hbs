@@ -1,4 +1,5 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}'>
+
   <div class='center'>
     {{#each attributes}}
       <label class='plantContainer {{this.name}}' data-tooltip='{{concat "PLANT." this.name}}'>
@@ -6,12 +7,82 @@
         <span></span>
       </label>
     {{/each}}
-
-  </div>
+    </div>
 
   {{#if isGM}}
     {{{enrichedInformation}}}
   {{/if}}
+
+  <hr>
+
+{{!-- 1. Zeile: Verbleibende Haltbarkeit --}}
+{{#if isGM}}
+<div class="form-group">
+    <label>{{localize 'PLANT.shelfLifeRemaining'}}</label>
+    <div class="form-fields" style="display: flex; gap: 5px; align-items: center;">
+        {{!-- Haltbarkeits-Zahl --}}
+        <input type="number" 
+               name="system.remaining.shelfLife.value" 
+               value="{{document.system.remaining.shelfLife.value}}"
+               placeholder="0"
+               data-tooltip="{{localize 'PLANT.shelfLifeDragDropTooltip'}}"
+               style="flex: 1; text-align: center; {{#if (and (eq document.system.remaining.shelfLife.value 0) (not isSpoiled))}}border: 1px solid #ff0000; box-shadow: 0 0 5px rgba(255,0,0,0.5);{{/if}}">
+        
+        {{!-- Warn-Icon wenn fast verdorben --}}
+        {{#if (and (eq document.system.remaining.shelfLife.value 0) (not isSpoiled))}}
+            <span style="color: #ff0000; font-size: 0.8em; flex: none;" data-tooltip="{{localize 'PLANT.spoilsToday'}}">
+                <i class="fas fa-clock"></i>
+            </span>
+        {{/if}}
+
+        {{!-- Einheiten-Anzeige (Tag/Tage) --}}
+        <input type="text" 
+               value="{{#if (eq document.system.remaining.shelfLife.value 1)}}{{localize 'PLANT.shelfLifeUnits.daysSingle'}}{{else}}{{localize 'PLANT.shelfLifeUnits.daysPlural'}}{{/if}}" 
+               readonly 
+               style="flex: 1; text-align: center; background: rgba(0, 0, 0, 0.05); cursor: default; margin: 0;"
+               title="{{localize 'PLANT.unit'}}">
+
+        {{!-- Reset-Button am Ende --}}
+        <div style="flex: 0 0 30px; display: flex; justify-content: center; align-items: center;">
+            <a class="reset-shelf-life" data-action="resetShelfLife" data-tooltip="{{localize 'PLANT.resetShelfLifeTooltip'}}" style="cursor: pointer;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </a>
+        </div>
+    </div>
+</div>
+{{/if}}
+
+<div class="form-group">
+  <label>{{localize 'PLANT.processingState'}}</label>
+  <div class="form-fields">
+    {{!-- Das primäre Dropdown --}}
+    <select name="system.plantState">
+        {{selectOptions plantStates selected=document.system.plantState}}
+    </select>
+
+    {{!-- Aufteilung: Erscheint nur bei "Haltbargemacht" --}}
+    {{#if (eq document.system.plantState "Haltbargemacht")}}
+        {{!-- Das neue Dropdown mit den durch die shelfLifeMap gefilterten Optionen --}}
+        <select name="system.preservationMethod">
+			{{selectOptions availableMethods selected=document.system.preservationMethod blank=(localize 'PLANT.selectMethod')}}
+		</select>
+    {{/if}}
+  </div>
+</div>
+
+{{#if isGM}}
+<div class="form-group">
+    <label>{{localize 'PLANT.isSpoiled'}}</label>
+    <div class="form-fields" style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: nowrap;">
+        {{!-- 'flex: none' verhindert, dass die Checkbox sich ausdehnt --}}
+        <input type="checkbox" name="system.isSpoiled" {{checked isSpoiled}} style="flex: none; width: auto; margin: 0;">
+        
+        <a class="spoiled-info-button" data-action="showSpoiledInfo" data-tooltip="{{localize 'PLANT.spoiledEffect'}}" style="flex: none; margin-left: 10px; border: none; cursor: pointer;">
+            <i class="fas fa-info"></i>
+        </a>
+    </div>
+</div>
+{{/if}}
 
   {{formGroup systemFields.location.fields.landscape value=document.system.location.landscape localize=true}}
   {{formGroup systemFields.location.fields.region value=document.system.location.region localize=true}}
@@ -19,6 +90,53 @@
   {{formGroup systemFields.difficulty.fields.identify value=document.system.difficulty.identify localize=true}}
   {{formGroup systemFields.usages value=document.system.usages localize=true}}
 
+<div class="form-group">
+    <label>{{localize 'PLANT.shelfLifeMundane'}}</label>
+    <div class="form-fields" style="display: flex; gap: 5px;">
+        
+        {{!-- 1. Das Zahlenfeld --}}
+        <input type="number" 
+               name="system.mundane.shelfLife.value" 
+               value="{{document.system.mundane.shelfLife.value}}" 
+               placeholder="{{rawPlaceholderValue}}"
+               style="flex: 1; text-align: center;">
+
+        {{!-- 2. Die Einheiten-Anzeige --}}
+        {{#if isMundaneEmpty}}
+            {{!-- Nur Text zur Anzeige, kein 'name' Attribut -> Kein Datenbank-Müll --}}
+            <input type="text" 
+                   value="{{rawUnitLabel}}" 
+                   readonly 
+                   style="flex: 1; text-align: center; background: rgba(0, 0, 0, 0.05); cursor: default; margin: 0;" 
+                   title="{{localize 'PLANT.defaultUnitTitle'}}">
+        {{else}}
+            {{!-- FIX: Der Name ist nun 'processed', um Konflikte mit dem GM-Feld zu vermeiden --}}
+            <select name="system.processed.shelfLife.unit" style="flex: 1; margin: 0;">
+                {{#select rawUnit}}
+                    {{#each shelfLifeDropdownOptions as |label id|}}
+                        <option value="{{id}}">{{label}}</option>
+                    {{/each}}
+                {{/select}}
+            </select>
+        {{/if}}
+    </div>
+</div>
+
+  {{#if isGM}}
+  <div class="form-group">
+    <label>{{localize 'PLANT.supernaturalShelfLifeFactor'}}</label>
+    <div class="form-fields">
+        <input type="number" 
+               name="system.supernatural.factor" 
+               value="{{document.system.supernatural.factor}}" 
+               step="0.1" 
+               placeholder="1.0">
+    </div>
+  </div>
+  {{/if}}
+ 
+  <hr>
+ 
   <div class='form-group full-height'>
     <label>{{localize 'effect'}}</label>
     <div class='form-fields'>
@@ -31,9 +149,13 @@
       {{formInput systemFields.recipes value=document.system.recipes toggled=true enriched=enrichedRecipes}}
     </div>
   </div>
+
+  <hr>
+
   <div class='form-group'>
     <b>{{localize 'PLANT.availability'}}</b>
   </div>
+
   <div class='form-group doubleInput'>
     <label>{{localize 'PLANT.highNorth'}}</label>
     <div class='form-fields'>
