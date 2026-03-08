@@ -110,7 +110,6 @@
                    style="flex: 1; text-align: center; background: rgba(0, 0, 0, 0.05); cursor: default; margin: 0;" 
                    title="{{localize 'PLANT.defaultUnitTitle'}}">
         {{else}}
-            {{!-- FIX: Der Name ist nun 'processed', um Konflikte mit dem GM-Feld zu vermeiden --}}
             <select name="system.processed.shelfLife.unit" style="flex: 1; margin: 0;">
                 {{#select rawUnit}}
                     {{#each shelfLifeDropdownOptions as |label id|}}
