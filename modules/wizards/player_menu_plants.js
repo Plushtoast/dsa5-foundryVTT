@@ -673,6 +673,9 @@ export default class PlantHelper extends getBaseClass() {
             ui.notifications.warn(game.i18n.localize("PLANT.notInInventoryProcessWarning"));
             return;
         }
+		
+		// Vorab prüfen, ob die Pflanze bereits verdorben ist
+        const isActuallySpoiled = plantData.system.isSpoiled === true;
 
         const cleanMethodKey = methodKey.replace("_spec", "");
         const storedMethods = plantData.system.preservationDetails?.methods || {};
@@ -719,7 +722,6 @@ export default class PlantHelper extends getBaseClass() {
             if (altItem) {
                 const altItemData = altItem.toObject();
 
-                // 1. Text sicher extrahieren
                 let newDesc = altItemData.system.description?.value 
                            || altItemData.system.effect?.value 
                            || altItemData.system.effect 
@@ -811,16 +813,31 @@ export default class PlantHelper extends getBaseClass() {
             this.activePlant.system.quantity.value -= 1;
         }
 
-        await actor.createEmbeddedDocuments("Item", [newItemData]);
-        if (extraProducts.length > 0) {
-            for (const p of extraProducts) {
-                const pDoc = await this._findItemByName(p.name);
-                if (pDoc) { let pData = pDoc.toObject(); delete pData._id; await actor.createEmbeddedDocuments("Item", [pData]); }
+        // Die Abzweigung - Verdorben vs. Erfolgreich
+        if (isActuallySpoiled) {
+            ChatMessage.create({
+                user: game.user.id, 
+                speaker: ChatMessage.getSpeaker({ actor: actor }),
+                content: `<b>${game.i18n.localize("PLANT.processingTitle")} ${plantData.name}</b><br><br>${plantData.name} ${game.i18n.localize("PLANT.spoiledMessage")}`
+            });
+        } else {
+            // Nur wenn die Pflanze in Ordnung ist, wird das Endprodukt erzeugt
+            await actor.createEmbeddedDocuments("Item", [newItemData]);
+            
+            if (extraProducts.length > 0) {
+                for (const p of extraProducts) {
+                    const pDoc = await this._findItemByName(p.name);
+                    if (pDoc) { 
+                        let pData = pDoc.toObject(); 
+                        delete pData._id; 
+                        await actor.createEmbeddedDocuments("Item", [pData]); 
+                    }
+                }
             }
         }
-		if (this.parent) {
-    this.parent.render(true);
-	}
 
+        if (this.parent) {
+            this.parent.render(true);
+        }
     }
 }
