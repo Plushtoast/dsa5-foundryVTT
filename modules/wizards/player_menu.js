@@ -417,8 +417,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     header: { template: 'systems/dsa5/templates/system/playermenu/header.hbs' },
     tabs: { template: 'systems/dsa5/templates/system/dsatabs.hbs' },
     elementals: { template: 'systems/dsa5/templates/system/playermenu/summoning.hbs', scrollable: [''] },
-    PlantHelper: { // Fest verankertes Template verhindert den 'template' Fehler
-      template: 'systems/dsa5/templates/items/item-plant-work-gui.hbs',
+    PlantHelper: {  template: 'systems/dsa5/templates/items/item-plant-work-gui.hbs',
       scrollable: ['']
     },
   };
