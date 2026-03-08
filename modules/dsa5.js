@@ -66,6 +66,7 @@ import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
+import { registerPlantTimeHooks } from './hooks/planttime.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -201,3 +202,4 @@ Hooks.once('init', () => {
 
 initHooks();
 connectTokenRing();
+registerPlantTimeHooks();
