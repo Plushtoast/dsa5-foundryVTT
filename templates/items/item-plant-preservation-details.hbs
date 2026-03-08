@@ -1,0 +1,52 @@
+<div class="plant-preservation-root standard-form scrollable">
+    <nav class="sheet-tabs tabs" data-group="main">
+        <a class="item {{#if (eq activeTab 'altEffects')}}active{{/if}}" data-tab="altEffects">{{localize 'PLANT.altEffectsTab'}}</a>
+        <a class="item {{#if (eq activeTab 'extraProducts')}}active{{/if}}" data-tab="extraProducts">{{localize 'PLANT.extraProductsTab'}}</a>
+    </nav>
+
+    <section class="content">
+        <div class="tab {{#if (eq activeTab 'altEffects')}}active{{/if}}" data-tab="altEffects">
+            <p class="hint-text" style="font-style: italic; margin-bottom: 10px; padding: 5px;">{{localize 'PLANT.altEffectsDesc'}}</p>
+            {{#each availableMethods as |m|}}
+                <div class="method-section" style="margin-bottom: 15px; border: 1px solid #7a7971; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 4px;">
+                    <h3 style="border-bottom: 1px solid #7a7971; font-variant: small-caps; margin-bottom: 10px;">{{m.label}}</h3>
+                    {{#if (eq m.alternativeEffects.length 0)}}
+                        <div class="drop-zone" data-field="alternativeEffects" data-method="{{m.key}}" style="border: 2px dashed #7a7971; padding: 15px; text-align: center; background: rgba(0,0,0,0.05); cursor: pointer; color: #666;">
+                            <i class="fas fa-file-import"></i> {{localize 'PLANT.dropHint'}}
+                        </div>
+                    {{/if}}
+                    <ul class="item-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center;">
+                        {{#each m.alternativeEffects}}
+                        <li class="browser-item item" data-field="alternativeEffects" data-method="{{m.key}}" data-uuid="{{this.uuid}}" data-action="showItem" data-tooltip="{{localize 'PLANT.removeItemTooltip'}}" style="display: flex; align-items: stretch; border: 1px solid #7a7971; border-radius: 3px; background: rgba(0,0,0,0.05); width: 100%; max-width: 400px; min-height: 45px; cursor: pointer;">
+                            <div class="image" style="background: transparent url('{{this.img}}') no-repeat center; background-size: contain; flex: 0 0 45px;"></div>
+                            <div class="name-icon" style="flex: 1; display: flex; align-items: center; padding-left: 10px;"><span>{{this.name}}</span></div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            {{/each}}
+        </div>
+
+        <div class="tab {{#if (eq activeTab 'extraProducts')}}active{{/if}}" data-tab="extraProducts">
+            <p class="hint-text" style="font-style: italic; margin-bottom: 10px; padding: 5px;">{{localize 'PLANT.extraProductsDesc'}}</p>
+            {{#each availableMethods as |m|}}
+                <div class="method-section" style="margin-bottom: 15px; border: 1px solid #7a7971; padding: 10px; background: rgba(0,0,0,0.02); border-radius: 4px;">
+                    <h3 style="border-bottom: 1px solid #7a7971; font-variant: small-caps; margin-bottom: 10px;">{{m.label}}</h3>
+                    <div class="drop-zone" data-field="extraProducts" data-method="{{m.key}}" style="border: 2px dashed #7a7971; padding: 10px; background: rgba(0,0,0,0.03); min-height: 60px;">
+                        {{#if (eq m.extraProducts.length 0)}}
+                            <div style="text-align: center; padding: 10px; color: #666;"><i class="fas fa-file-import"></i> {{localize 'PLANT.dropHint'}}</div>
+                        {{/if}}
+                        <ul class="item-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; align-items: center;">
+                            {{#each m.extraProducts}}
+                            <li class="browser-item item" data-field="extraProducts" data-method="{{m.key}}" data-uuid="{{this.uuid}}" data-action="showItem" data-tooltip="{{localize 'PLANT.removeItemTooltip'}}" style="display: flex; align-items: stretch; border: 1px solid #7a7971; border-radius: 3px; background: rgba(0,0,0,0.05); margin-bottom: 5px; min-height: 45px; width: 100%; max-width: 400px; cursor: pointer;">
+                                <div class="image" style="background: transparent url('{{this.img}}') no-repeat center; background-size: contain; flex: 0 0 45px;"></div>
+                                <div class="name-icon" style="flex: 1; display: flex; align-items: center; padding-left: 10px;"><span>{{this.name}}</span></div>
+                            </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </section>
+</div>
