@@ -27,8 +27,7 @@ import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
-
-import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
+import { DICE_CONSTANTS } from '../config/dice-constants.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -659,7 +658,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const item = this.actor.items.get(itemId);
     const SKModifier = this.actor.system.status.soulpower.max * -1;
     const ZKModifier = this.actor.system.status.toughness.max * -1;
-    const setupData = await item.setupEffect(undefined, { messageMode: 'gmroll', manualResistance: { SKModifier, ZKModifier } });
+    const setupData = await item.setupEffect(undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.GM, manualResistance: { SKModifier, ZKModifier } });
     const result = await item.itemTest(setupData);
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }
@@ -1471,7 +1470,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       cost,
     });
     if (ev.button == 2) {
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'gmroll'));
+      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, DICE_CONSTANTS.CHAT_MODES.GM));
     } else {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }

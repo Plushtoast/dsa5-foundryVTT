@@ -9,6 +9,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
+import { DICE_CONSTANTS } from '../config/dice-constants.js';
 
 const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -765,7 +766,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   rollRegeneration(actorIds) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
-      actor.setupRegeneration('regenerate', { messageMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
+      actor.setupRegeneration('regenerate', { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
         actor.basicTest(setupData);
       });
     }
@@ -775,7 +776,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => _loc(game.dsa5.config.characteristics[key]) == name);
     for (const actor of actors) {
-      actor.setupCharacteristic(characteristic, { messageMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
+      actor.setupCharacteristic(characteristic, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
         actor.basicTest(setupData);
       });
     }
@@ -785,7 +786,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
       let skill = actor.items.find((x) => x.name == name && x.type == 'skill');
-      actor.setupSkill(skill, { messageMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
+      actor.setupSkill(skill, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
         actor.basicTest(setupData);
       });
     }

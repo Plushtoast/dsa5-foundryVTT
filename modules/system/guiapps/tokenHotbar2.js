@@ -13,6 +13,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -298,7 +299,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleSkillRoll(ev, actor, id, tokenId, subweapon = undefined) {
     const options = {};
-    if (ev.button == 2) options.messageMode = 'blindroll';
+    if (ev.button == 2) options.messageMode = DICE_CONSTANTS.CHAT_MODES.BLIND;
 
     if ('rideLoyaltyID' == id) {
       Riding.rollLoyalty(actor, options);

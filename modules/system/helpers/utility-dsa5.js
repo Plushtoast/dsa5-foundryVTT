@@ -1,4 +1,5 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { conditionsMatcher } from '../../hooks/texteditor.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
@@ -225,10 +226,12 @@ export default class DSA5_Utility {
       messageMode: modeOverride || game.settings.get('core', 'messageMode'),
       content,
     };
+    const cModes = DICE_CONSTANTS.CHAT_MODES;
 
-    if (['gmroll', 'blindroll'].includes(chatData.messageMode)) chatData.whisper = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
-    if (chatData.messageMode === 'blindroll') chatData.blind = true;
-    else if (chatData.messageMode === 'selfroll') chatData.whisper = [game.user];
+    if ([cModes.GM, cModes.BLIND].includes(chatData.messageMode)) chatData.whisper = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
+    if (chatData.messageMode === cModes.BLIND) chatData.blind = true;
+    else if (chatData.messageMode === cModes.SELF) chatData.whisper = [game.user.id];
+    else if (chatData.messageMode === cModes.IC) chatData.speaker = ChatMessage.getSpeaker();
 
     if (forceWhisper) {
       chatData.speaker = ChatMessage.getSpeaker();

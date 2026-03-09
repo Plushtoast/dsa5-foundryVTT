@@ -29,6 +29,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 const { ATTACK, PARRY, DAMAGE, DODGE } = ITEM_CONSTANTS.COMBAT_MODES;
 const { SKILL, LITURGY, SPELL, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
+const { ROLL_TYPES, CHAT_MODES } = DICE_CONSTANTS;
 
 export default class DiceDSA5 {
   /**
@@ -42,20 +43,20 @@ export default class DiceDSA5 {
 
     // Use a lookup table for better performance and maintainability
     const rollHandlers = {
-      [DICE_CONSTANTS.ROLL_TYPES.CEREMONY]: () => this.rollSpell(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.RITUAL]: () => this.rollSpell(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.LITURGY]: () => this.rollSpell(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.SPELL]: () => this.rollSpell(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.SKILL]: () => this.rollTalent(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.COMBATSKILL]: () => this.rollCombatskill(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.TRAIT]: () => this.#handleTraitRoll(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.REGENERATE]: () => this.#rollRegeneration(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.MELEEWEAPON]: () => this.#handleWeaponRoll(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.RANGEWEAPON]: () => this.#handleWeaponRoll(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.DODGE]: () => this.#handleDodgeRoll(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.POISON]: () => this.rollItem(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.DISEASE]: () => this.rollItem(testData),
-      [DICE_CONSTANTS.ROLL_TYPES.FALLING_DAMAGE]: () => this.rollFallingDamage(testData)
+      [ROLL_TYPES.CEREMONY]: () => this.rollSpell(testData),
+      [ROLL_TYPES.RITUAL]: () => this.rollSpell(testData),
+      [ROLL_TYPES.LITURGY]: () => this.rollSpell(testData),
+      [ROLL_TYPES.SPELL]: () => this.rollSpell(testData),
+      [ROLL_TYPES.SKILL]: () => this.rollTalent(testData),
+      [ROLL_TYPES.COMBATSKILL]: () => this.rollCombatskill(testData),
+      [ROLL_TYPES.TRAIT]: () => this.#handleTraitRoll(testData),
+      [ROLL_TYPES.REGENERATE]: () => this.#rollRegeneration(testData),
+      [ROLL_TYPES.MELEEWEAPON]: () => this.#handleWeaponRoll(testData),
+      [ROLL_TYPES.RANGEWEAPON]: () => this.#handleWeaponRoll(testData),
+      [ROLL_TYPES.DODGE]: () => this.#handleDodgeRoll(testData),
+      [ROLL_TYPES.POISON]: () => this.rollItem(testData),
+      [ROLL_TYPES.DISEASE]: () => this.rollItem(testData),
+      [ROLL_TYPES.FALLING_DAMAGE]: () => this.rollFallingDamage(testData)
     };
 
     const handler = rollHandlers[type] || (() => this.rollAttribute(testData));
@@ -119,21 +120,21 @@ export default class DiceDSA5 {
 
     // Dice roll configuration lookup
     const diceConfigs = {
-      [DICE_CONSTANTS.ROLL_TYPES.LITURGY]: () => this.#createThreeD20Roll(source, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.SPELL]: () => this.#createThreeD20Roll(source, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.CEREMONY]: () => this.#createThreeD20Roll(source, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.RITUAL]: () => this.#createThreeD20Roll(source, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.SKILL]: () => this.#createThreeD20Roll(source, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.REGENERATE]: () => this.#createRegenerationRoll(actor, testData, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.MELEEWEAPON]: () => this.#createWeaponRoll(testData, actor, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.RANGEWEAPON]: () => this.#createWeaponRoll(testData, actor, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.WEAPONLESS]: () => this.#createWeaponRoll(testData, actor, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.COMBATSKILL]: () => this.#createWeaponRoll(testData, actor, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.TRAIT]: () => this.#createWeaponRoll(testData, actor, d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.DODGE]: () => this.#createSingleD20Roll(d3dColors(DODGE)),
-      [DICE_CONSTANTS.ROLL_TYPES.POISON]: () => this.#createPoisonDiseaseRoll(d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.DISEASE]: () => this.#createPoisonDiseaseRoll(d3dColors),
-      [DICE_CONSTANTS.ROLL_TYPES.FALLING_DAMAGE]: () => this.#createFallingDamageRoll(testData)
+      [ROLL_TYPES.LITURGY]: () => this.#createThreeD20Roll(source, d3dColors),
+      [ROLL_TYPES.SPELL]: () => this.#createThreeD20Roll(source, d3dColors),
+      [ROLL_TYPES.CEREMONY]: () => this.#createThreeD20Roll(source, d3dColors),
+      [ROLL_TYPES.RITUAL]: () => this.#createThreeD20Roll(source, d3dColors),
+      [ROLL_TYPES.SKILL]: () => this.#createThreeD20Roll(source, d3dColors),
+      [ROLL_TYPES.REGENERATE]: () => this.#createRegenerationRoll(actor, testData, d3dColors),
+      [ROLL_TYPES.MELEEWEAPON]: () => this.#createWeaponRoll(testData, actor, d3dColors),
+      [ROLL_TYPES.RANGEWEAPON]: () => this.#createWeaponRoll(testData, actor, d3dColors),
+      [ROLL_TYPES.WEAPONLESS]: () => this.#createWeaponRoll(testData, actor, d3dColors),
+      [ROLL_TYPES.COMBATSKILL]: () => this.#createWeaponRoll(testData, actor, d3dColors),
+      [ROLL_TYPES.TRAIT]: () => this.#createWeaponRoll(testData, actor, d3dColors),
+      [ROLL_TYPES.DODGE]: () => this.#createSingleD20Roll(d3dColors(DODGE)),
+      [ROLL_TYPES.POISON]: () => this.#createPoisonDiseaseRoll(d3dColors),
+      [ROLL_TYPES.DISEASE]: () => this.#createPoisonDiseaseRoll(d3dColors),
+      [ROLL_TYPES.FALLING_DAMAGE]: () => this.#createFallingDamageRoll(testData)
     };
 
     const configHandler = diceConfigs[type] || (() => this.#createAttributeRoll(testData, d3dColors));
@@ -564,8 +565,8 @@ export default class DiceDSA5 {
 
   // Move statKeyMap to module-level constant
   static STAT_KEY_MAP = {
-    [DICE_CONSTANTS.ROLL_TYPES.MELEEWEAPON]: 'meleeStats',
-    [DICE_CONSTANTS.ROLL_TYPES.RANGEWEAPON]: 'rangeStats'
+    [ROLL_TYPES.MELEEWEAPON]: 'meleeStats',
+    [ROLL_TYPES.RANGEWEAPON]: 'rangeStats'
   };
 
   /**
@@ -586,7 +587,7 @@ export default class DiceDSA5 {
     crit += stats.crit - DICE_CONSTANTS.DICE.DEFAULT_CRIT;
 
     // Apply mode-specific modifiers for melee weapons
-    if (source.type === DICE_CONSTANTS.ROLL_TYPES.MELEEWEAPON) {
+    if (source.type === ROLL_TYPES.MELEEWEAPON) {
       if (mode === ATTACK) {
         crit += stats.critAT - DICE_CONSTANTS.DICE.DEFAULT_CRIT;
       } else if (mode === PARRY) {
@@ -775,7 +776,7 @@ export default class DiceDSA5 {
     }
 
     let result = {
-      rollType: DICE_CONSTANTS.ROLL_TYPES.FALLING_DAMAGE,
+      rollType: ROLL_TYPES.FALLING_DAMAGE,
       preData: testData,
       modifiers: await this._situationalModifiers(testData),
       extra: {},
@@ -792,7 +793,7 @@ export default class DiceDSA5 {
     let chars = [];
 
     let result = {
-      rollType: DICE_CONSTANTS.ROLL_TYPES.REGENERATE,
+      rollType: ROLL_TYPES.REGENERATE,
       preData: testData,
       modifiers: modifier,
       extra: {},
@@ -1997,13 +1998,13 @@ export default class DiceDSA5 {
       extra: {},
     };
     switch (testData.source.type) {
-      case DICE_CONSTANTS.ROLL_TYPES.POISON:
+      case ROLL_TYPES.POISON:
         let dur = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
         let effect = testData.source.system.effect.value.split(' / ').map((x) => x.trim());
         result.duration = dur.length > 1 ? (result.successLevel > 0 ? dur[0] : dur[1]) : dur[0];
         result.effect = effect.length > 1 ? (result.successLevel > 0 ? effect[0] : effect[1]) : effect[0];
         break;
-      case DICE_CONSTANTS.ROLL_TYPES.DISEASE:
+      case ROLL_TYPES.DISEASE:
         let dmg = testData.source.system.damage.value.split(' / ').map((x) => x.trim());
         let duration = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
         result.damageeffect = dmg.length > 1 ? (result.successLevel > 0 ? dmg[0] : dmg[1]) : dmg[0];
@@ -2053,18 +2054,18 @@ export default class DiceDSA5 {
     const gmUsers = game.users.filter(user => user.isGM).map(user => user.id);
 
     const visibilityMap = {
-      [DICE_CONSTANTS.CHAT_MODES.BLINDROLL]: {
+      [CHAT_MODES.BLIND]: {
         whisper: gmUsers,
         blind: true
       },
-      [DICE_CONSTANTS.CHAT_MODES.GMROLL]: {
+      [CHAT_MODES.GM]: {
         whisper: gmUsers,
         blind: false
       },
-      [DICE_CONSTANTS.CHAT_MODES.SELFROLL]: {
+      [CHAT_MODES.SELF]: {
         whisper: [],
         blind: false
-      }
+      },
     };
 
     return visibilityMap[messageMode] || { whisper: null, blind: false };
@@ -2090,7 +2091,7 @@ export default class DiceDSA5 {
       if ((source.effects || []).length > 0) return true;
     }
 
-    if ([DICE_CONSTANTS.ROLL_TYPES.POISON, DICE_CONSTANTS.ROLL_TYPES.DISEASE].includes(source.type)) {
+    if ([ROLL_TYPES.POISON, ROLL_TYPES.DISEASE].includes(source.type)) {
       const wanted = successLevel > 0 ? 1 : 2;
       const effects = source.effects || [];
       return effects.some(e => {
@@ -2160,9 +2161,9 @@ export default class DiceDSA5 {
         });
     }
 
-    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
-    if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
-    else if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.SELFROLL) chatOptions.whisper = [game.user.id];
+    if ([CHAT_MODES.GM, CHAT_MODES.BLIND].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
+    if (chatOptions.messageMode === CHAT_MODES.BLIND) chatOptions.blind = true;
+    else if (chatOptions.messageMode === CHAT_MODES.SELF) chatOptions.whisper = [game.user.id];
 
     DSA5SoundEffect.playEffect(preData.mode, preData.source, testData.successLevel, chatOptions.whisper, chatOptions.blind);
 
@@ -2314,11 +2315,12 @@ export default class DiceDSA5 {
       user: message.author.id,
     };
 
-    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
+    if ([CHAT_MODES.GM, CHAT_MODES.BLIND].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
 
-    if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
+    if (chatOptions.messageMode === CHAT_MODES.BLIND) chatOptions.blind = true;
+    else if (chatOptions.messageMode === CHAT_MODES.SELF) chatOptions.whisper = [game.user.id];
 
-    if ([DICE_CONSTANTS.ROLL_TYPES.POISON, DICE_CONSTANTS.ROLL_TYPES.DISEASE].includes(newTestData.source.type)) {
+    if ([ROLL_TYPES.POISON, ROLL_TYPES.DISEASE].includes(newTestData.source.type)) {
       new Itemdsa5(newTestData.source)[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });
     } else {
       const speaker = DSA5_Utility.getSpeaker(message.speaker);

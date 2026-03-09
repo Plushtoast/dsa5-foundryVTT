@@ -4,6 +4,7 @@ import { ChatMessageState } from "./chatmessage_state.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import RequestRoll from "../system/rolls/request-roll.js";
 import { ITEM_CONSTANTS } from "../config/item-constants.js";
+import { DICE_CONSTANTS } from "../config/dice-constants.js";
 const { renderTemplate } = foundry.applications.handlebars;
 const { DAMAGE } = ITEM_CONSTANTS.COMBAT_MODES;
 
@@ -24,7 +25,7 @@ export class TrapState extends ChatMessageState {
             trapName: this.behavior.name
         });
 
-        const chatData = DSA5_Utility.chatDataSetup(content, 'selfroll', false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
+        const chatData = DSA5_Utility.chatDataSetup(content, DICE_CONSTANTS.CHAT_MODES.SELF, false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
 
         chatData.flags = {
             dsa5: {

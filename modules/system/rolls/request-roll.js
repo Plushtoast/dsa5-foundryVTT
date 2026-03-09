@@ -323,7 +323,7 @@ export default class RequestRoll {
 
           if (checks >= 20) clearInterval(intervalId);
         }, 10);
-        options.messageMode = 'blindroll';
+        options.messageMode = DICE_CONSTANTS.CHAT_MODES.BLIND;
       }
 
       RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0, options);
