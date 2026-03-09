@@ -161,11 +161,11 @@ export class FateRolls {
                                 usedSet.add(pendingAfter.effectUuid);
                                 await message.update({
                                     'flags.dsa5.postRoll.usedEffectUuids': Array.from(usedSet),
-                                    'flags.dsa5.postRoll.-=pendingReroll': null,
+                                    'flags.dsa5.postRoll.pendingReroll': _del,
                                 });
                             } catch (e) {
                                 console.warn('postRoll reroll consumption failed', e);
-                                await message.update({ 'flags.dsa5.postRoll.-=pendingReroll': null });
+                                await message.update({ 'flags.dsa5.postRoll.pendingReroll': _del });
                             }
                         }
                     },
@@ -177,7 +177,7 @@ export class FateRolls {
                     callback: async () => {
                         const pending = foundry.utils.getProperty(message, 'flags.dsa5.postRoll.pendingReroll');
                         if (pending?.effectUuid) {
-                            await message.update({ 'flags.dsa5.postRoll.-=pendingReroll': null });
+                            await message.update({ 'flags.dsa5.postRoll.pendingReroll': _del });
                         }
                     },
                 },

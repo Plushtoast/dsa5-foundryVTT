@@ -101,6 +101,6 @@ export class DSAAPTrackerEntrySheet extends foundry.applications.sheets.journal.
     static #deleteEntry(event, target) {
         const key = target.dataset.key;
         if (!key) return;
-        this.document.update({ [`system.entries.-=${key}`]: null });
+        this.document.update({ [`system.entries.${key}`]: _del });
     }
 }

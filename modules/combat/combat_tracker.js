@@ -280,7 +280,7 @@ Hooks.on('updateCombatant', (combatant, change, user) => {
       combatant.setFlag('dsa5', 'baseRoll', roll);
     }
   } else if ('initiative' in change && change.initiative == null) {
-    combatant.update({ [`flags.dsa5.-=baseRoll`]: null });
+    combatant.update({ 'flags.dsa5.baseRoll': _del });
   }
 });
 

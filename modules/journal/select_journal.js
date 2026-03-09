@@ -61,7 +61,7 @@ export default class SelectJournal extends foundry.applications.sheets.journal.J
 
     static #removeEntry(ev, target) {
         const key = target.dataset.key;
-        this.document.update({ [`system.${this.constructor.objectKey}.-=${key}`]: null });
+        this.document.update({ [`system.${this.constructor.objectKey}.${key}`]: _del });
     }
 
     static #addEntry(ev, target) {

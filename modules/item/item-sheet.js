@@ -955,7 +955,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   static _deletePoison(ev, target) {
-    this.item.update({ [`flags.dsa5.-=poison`]: null });
+    this.item.update({ 'flags.dsa5.poison': _del });
   }
 
   deleteEnchantment(id, enchantments) {
@@ -1325,7 +1325,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
 
   static async deleteAttack(event, target) {
     this.tabGroups.alternateAttacks = 'baseAttack';
-    await this.item.update({ [`flags.dsa5.alternateAttacks.-=${target.dataset.key}`]: null });
+    await this.item.update({ [`flags.dsa5.alternateAttacks.${target.dataset.key}`]: _del });
   }
 
   static async addAttackSheet() {

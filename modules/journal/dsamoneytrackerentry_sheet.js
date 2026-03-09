@@ -75,6 +75,6 @@ export class DSAMoneyTrackerEntrySheet extends foundry.applications.sheets.journ
     static #deleteEntry(event, target) {
         const key = target.dataset.key;
         if (!key) return;
-        this.document.update({ [`system.entries.-=${key}`]: null });
+        this.document.update({ [`system.entries.${key}`]: _del });
     }
 }

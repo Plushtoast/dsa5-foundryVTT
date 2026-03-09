@@ -476,7 +476,7 @@ export default class OpposedDsa5 {
    */
   static async clearOpposed(actor) {
     if (game.user.isGM) {
-      await actor.update({ [`flags.-=oppose`]: null });
+      await actor.update({ 'flags.oppose': _del });
     } else {
       game.socket.emit('system.dsa5', {
         type: 'clearOpposed',

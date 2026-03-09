@@ -137,7 +137,7 @@ export default class Riding {
       for (let token of actor.getActiveTokens()) {
         tokenUpdates.push({
           _id: token.document.id,
-          [`flags.dsa5.-=horseTokenId`]: null,
+          'flags.dsa5.horseTokenId': _del,
           elevation: Math.max(0, (token.document.elevation ?? 0) - 1),
         });
       }
@@ -148,7 +148,7 @@ export default class Riding {
       for (let horseToken of horse.getActiveTokens()) {
         tokenUpdates.push({
           _id: horseToken.document.id,
-          [`flags.dsa5.-=horseTokenId`]: null,
+          'flags.dsa5.horseTokenId': _del,
         });
         horseTokenId = horseToken.document.id;
       }
@@ -199,13 +199,13 @@ export default class Riding {
 
   static async unmountHorse(actor, token) {
     const tokenUpdate = {
-      [`flags.dsa5.-=horseTokenId`]: null,
+      'flags.dsa5.horseTokenId': _del,
       elevation: Math.max(0, (token.elevation ?? 0) - 1),
     };
     const tokenResized = token.getFlag('dsa5', 'horseResized');
     if (tokenResized) {
       mergeObject(tokenUpdate, {
-        [`flags.dsa5.-=horseResized`]: null,
+        'flags.dsa5.horseResized': _del,
         width: tokenResized.width,
         height: tokenResized.height,
       });
@@ -296,7 +296,7 @@ export default class Riding {
             sizeUpdate,
           );
         })
-        .concat({ _id: horse.token.id, [`flags.dsa5.-=horseTokenId`]: null });
+        .concat({ _id: horse.token.id, 'flags.dsa5.horseTokenId': _del });
       await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates, {
         noHooks: true,
       });
@@ -350,7 +350,7 @@ export default class Riding {
     };
     mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document));
     await rider.actor.update(actorUpdate);
-    await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, [`flags.dsa5.-=horseTokenId`]: null }], { noHooks: true });
+    await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, 'flags.dsa5.horseTokenId': _del }], { noHooks: true });
     await this.addRidingCondition(rider.actor);
   }
 

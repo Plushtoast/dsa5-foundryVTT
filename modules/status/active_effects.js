@@ -117,7 +117,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     effect.update({
       'system.delayed': false,
       duration,
-      'flags.dsa5.-=onDelayed': null,
+      'flags.dsa5.onDelayed': _del,
     });
   }
 
@@ -194,7 +194,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (isEmpty(valueRaw)) {
       delete formData['flags.dsa5.charges.value'];
       delete formData['flags.dsa5.charges.max'];
-      formData['flags.dsa5.-=charges'] = null;
+      formData['flags.dsa5.charges'] = _del;
     } else if (isEmpty(maxRaw)) {
       // Allow "current" without "max".
       delete formData['flags.dsa5.charges.max'];
