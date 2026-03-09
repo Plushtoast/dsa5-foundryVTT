@@ -298,7 +298,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleSkillRoll(ev, actor, id, tokenId, subweapon = undefined) {
     const options = {};
-    if (ev.button == 2) options.rollMode = 'blindroll';
+    if (ev.button == 2) options.messageMode = 'blindroll';
 
     if ('rideLoyaltyID' == id) {
       Riding.rollLoyalty(actor, options);

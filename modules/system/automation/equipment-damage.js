@@ -121,7 +121,7 @@ export default class EquipmentDamage {
 
   static async resolveBreakingTest(item, threshold, category) {
     const roll = await DiceDSA5.manualRolls(await new Roll('1d20').evaluate(), _loc('WEAR.check', { category }));
-    await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'rollMode'));
+    await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'messageMode'));
     const damage = roll.total > threshold ? 1 : 0;
     await this.applyDamageLevelToItem(item, damage);
     const wear = EquipmentDamage.calculateWear(item);

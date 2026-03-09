@@ -132,7 +132,7 @@
         "daylight": "Daylight"
     },
     "DIALOG": {
-        "RollMode": "Rollmode",
+        "MessageMode": "Message mode",
         "DeleteItem": "Remove entry?",
         "deleteConfirmation": "Confirm removal",
         "SituationalModifiers": "Situational\nModifiers",

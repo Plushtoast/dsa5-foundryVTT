@@ -19,7 +19,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
             title,
             template: 'systems/dsa5/templates/dialog/regeneration-dialog.hbs',
             data: {
-                rollMode: options.rollMode,
+                messageMode: options.messageMode,
                 regenerationInterruptOptions: DSA5.regenerationInterruptOptions,
                 regnerationCampLocations: DSA5.regnerationCampLocations,
                 showAspModifier: actor.system.isMage,
@@ -29,7 +29,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
             },
             callback: (html, options = {}) => {
                 testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
-                cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+                cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
                 testData.situationalModifiers.push(
                     {
                         name: _loc('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),

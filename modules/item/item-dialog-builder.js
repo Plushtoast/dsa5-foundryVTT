@@ -34,7 +34,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         const actorModMod = getProperty(actor, `system.${sheet}Stats.spellextension`) || 0;
         const maxMods = Math.max(0, Math.floor(Number(spell.system.talentValue.value) / 4) + actorModMod);
         const data = {
-            rollMode: options.rollMode,
+            messageMode: options.messageMode,
             spellCost: spell.system.AsPCost.value,
             maintainCost: spell.system.maintainCost.value,
             spellCastingTime: spell.system.castingTime.value,
@@ -77,7 +77,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         const config = this.createBaseConfig(skill, actor, tokenId, options, template, title);
         config.testData.opposable = true;
         const data = {
-            rollMode: options.rollMode,
+            messageMode: options.messageMode,
             difficultyLabels: DSA5.skillDifficultyLabels,
             modifier: options.modifier || 0,
             characteristics: [1, 2, 3].map((x) => skill.system[`characteristic${x}`].value),
@@ -113,7 +113,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
             mode,
         });
         const data = {
-            rollMode: options.rollMode,
+            messageMode: options.messageMode,
             mode,
         };
         const situationalModifiers = actor ?

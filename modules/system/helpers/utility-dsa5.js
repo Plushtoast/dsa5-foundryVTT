@@ -222,13 +222,13 @@ export default class DSA5_Utility {
   static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {
     let chatData = {
       user: game.user.id,
-      rollMode: modeOverride || game.settings.get('core', 'rollMode'),
+      messageMode: modeOverride || game.settings.get('core', 'messageMode'),
       content,
     };
 
-    if (['gmroll', 'blindroll'].includes(chatData.rollMode)) chatData.whisper = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
-    if (chatData.rollMode === 'blindroll') chatData.blind = true;
-    else if (chatData.rollMode === 'selfroll') chatData.whisper = [game.user];
+    if (['gmroll', 'blindroll'].includes(chatData.messageMode)) chatData.whisper = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
+    if (chatData.messageMode === 'blindroll') chatData.blind = true;
+    else if (chatData.messageMode === 'selfroll') chatData.whisper = [game.user];
 
     if (forceWhisper) {
       chatData.speaker = ChatMessage.getSpeaker();

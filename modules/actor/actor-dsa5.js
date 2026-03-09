@@ -1245,7 +1245,7 @@ export default class Actordsa5 extends Actor {
       title,
       template: 'systems/dsa5/templates/dialog/fallingdamage-dialog.hbs',
       data: {
-        rollMode: options.rollMode,
+        messageMode: options.messageMode,
         situationalModifiers,
         fallingFloorOptions: DSA5.fallingConditions,
         modifier: options.modifier || 0,
@@ -1257,7 +1257,7 @@ export default class Actordsa5 extends Actor {
             value: html.find('[name="fallingFloor"]').val(),
           },
         ];
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.fallingHeight = html.find('[name="testModifier"]').val();
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
@@ -1302,7 +1302,7 @@ export default class Actordsa5 extends Actor {
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
     const data = {
-      rollMode: options.rollMode,
+      messageMode: options.messageMode,
       combatSpecAbs: combatskills,
       showDefense: true,
       situationalModifiers,
@@ -1353,12 +1353,12 @@ export default class Actordsa5 extends Actor {
       title,
       template: 'systems/dsa5/templates/dialog/characteristic-dialog.hbs',
       data: {
-        rollMode: options.rollMode,
+        messageMode: options.messageMode,
         difficultyLabels: DSA5.attributeDifficultyLabels,
         modifier: options.modifier || 0,
       },
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
         testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
         mergeObject(testData.extra.options, options);

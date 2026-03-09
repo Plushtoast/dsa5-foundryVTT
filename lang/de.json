@@ -157,7 +157,7 @@
     },
 
     "DIALOG": {
-        "RollMode": "Würfelmodus",
+        "MessageMode": "Würfelmodus",
         "deleteConfirmation": "Löschen bestätigen",
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",

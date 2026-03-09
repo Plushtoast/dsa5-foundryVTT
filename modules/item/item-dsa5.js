@@ -796,7 +796,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, spell);
 
     dialogOptions.callback = async (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       await this.getCallbackData(testData, html, actor);
       mergeObject(testData.extra.options, options);
       testData.hideSpellDetails = game.settings.get('dsa5', 'hideSpellDetails');
@@ -871,7 +871,7 @@ class CombatskillDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
     const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
     dialogOptions.callback = (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
       mergeObject(testData.extra.options, options);
       return { testData, cardOptions };
@@ -1240,7 +1240,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     this.prepareFocusRuleModifiers(dialogOptions.data, actor, skill);
 
     dialogOptions.callback = (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
       const formData = new foundry.applications.ux.FormDataExtended(form).object;
       testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];

@@ -309,7 +309,7 @@ export default class DSA5CombatDialog extends DialogShared {
           <label>${_loc('DIALOG.SituationalModifiers')}</label>
           <select name="situationalModifiers" multiple />
         </div>`;
-        html.find('[name=rollMode]').parent().after(modBox);
+        html.find('[name=messageMode]').parent().after(modBox);
         this.position.height += 86;
         this.setPosition(this.position);
       }
@@ -944,7 +944,7 @@ export default class DSA5CombatDialog extends DialogShared {
   }
 
   static _resolveDefault(testData, cardOptions, html, options) {
-    cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+    cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
     testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
     mergeObject(testData.extra.options, options);
   }

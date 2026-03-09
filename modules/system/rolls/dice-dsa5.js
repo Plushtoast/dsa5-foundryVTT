@@ -140,10 +140,10 @@ export default class DiceDSA5 {
     let roll = await configHandler();
 
     roll = await DiceDSA5.manualRolls(roll, type, testData.extra.options);
-    await this.showDiceSoNice(roll, cardOptions.rollMode);
+    await this.showDiceSoNice(roll, cardOptions.messageMode);
 
     testData.roll = roll;
-    testData.rollMode = cardOptions.rollMode;
+    testData.messageMode = cardOptions.messageMode;
 
     return testData;
   }
@@ -286,7 +286,7 @@ export default class DiceDSA5 {
   }
 
   static async setupDialog({ dialogOptions, testData, cardOptions }) {
-    const rollMode = game.settings.get('core', 'rollMode');
+    const messageMode = game.settings.get('core', 'messageMode');
     const sceneStress = DICE_CONSTANTS.DIFFICULTY.CHALLENGING;
 
     // Ensure source is a plain object
@@ -324,7 +324,7 @@ export default class DiceDSA5 {
       hasSituationalModifiers: situationalModifiers.length > 0,
       situationalModifiers,
       attributesList,
-      rollMode: dialogOptions.data.rollMode || rollMode,
+      messageMode: dialogOptions.data.messageMode || messageMode,
       defenseCount: await this.getDefenseCount(testData),
       targets,
     });
@@ -332,7 +332,7 @@ export default class DiceDSA5 {
     cardOptions.user = game.user.id;
 
     // Handle bypass vs. dialog display
-    return this.#handleDialogFlow(testData, dialogOptions, cardOptions, rollMode);
+    return this.#handleDialogFlow(testData, dialogOptions, cardOptions, messageMode);
   }
 
   /**
@@ -390,18 +390,18 @@ export default class DiceDSA5 {
    * @param {Object} testData 
    * @param {Object} dialogOptions 
    * @param {Object} cardOptions 
-   * @param {string} rollMode 
+   * @param {string} messageMode 
    * @returns {Promise}
    */
-  static #handleDialogFlow(testData, dialogOptions, cardOptions, rollMode) {
-    const { bypass, rollMode: optionRollMode } = testData.extra.options;
+  static #handleDialogFlow(testData, dialogOptions, cardOptions, messageMode) {
+    const { bypass, messageMode: optionMessageMode } = testData.extra.options;
 
     if (!bypass) {
       return this.#showDialog(testData, dialogOptions);
     }
 
     // Handle bypass case
-    cardOptions.rollMode = optionRollMode || rollMode;
+    cardOptions.messageMode = optionMessageMode || messageMode;
     if (!testData.situationalModifiers) {
       testData.situationalModifiers = [];
     }
@@ -1510,10 +1510,10 @@ export default class DiceDSA5 {
   }
 
   static async _addRollDiceSoNice(testData, roll, color) {
-    if (testData.rollMode) {
+    if (testData.messageMode) {
       for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, color);
 
-      await this.showDiceSoNice(roll, testData.rollMode);
+      await this.showDiceSoNice(roll, testData.messageMode);
     }
   }
 
@@ -2030,13 +2030,13 @@ export default class DiceDSA5 {
   /**
    * Show dice animation using Dice So Nice module
    * @param {Roll} roll - Roll to animate
-   * @param {string} rollMode - Roll mode for visibility
+   * @param {string} messageMode - Roll mode for visibility
    * @returns {Promise<void>}
    */
-  static async showDiceSoNice(roll, rollMode) {
+  static async showDiceSoNice(roll, messageMode) {
     if (!DSA5_Utility.moduleEnabled('dice-so-nice') || !game.dice3d) return;
 
-    const { whisper, blind } = this.#getDiceVisibilitySettings(rollMode);
+    const { whisper, blind } = this.#getDiceVisibilitySettings(messageMode);
     const promise = game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
 
     if (!game.settings.get('dice-so-nice', 'immediatelyDisplayChatMessages')) {
@@ -2046,10 +2046,10 @@ export default class DiceDSA5 {
 
   /**
    * Get visibility settings for dice animation based on roll mode
-   * @param {string} rollMode - The roll mode
+   * @param {string} messageMode - The roll mode
    * @returns {Object} Visibility settings
    */
-  static #getDiceVisibilitySettings(rollMode) {
+  static #getDiceVisibilitySettings(messageMode) {
     const gmUsers = game.users.filter(user => user.isGM).map(user => user.id);
 
     const visibilityMap = {
@@ -2067,7 +2067,7 @@ export default class DiceDSA5 {
       }
     };
 
-    return visibilityMap[rollMode] || { whisper: null, blind: false };
+    return visibilityMap[messageMode] || { whisper: null, blind: false };
   }
 
   static addApplyEffectData(testData) {
@@ -2160,9 +2160,9 @@ export default class DiceDSA5 {
         });
     }
 
-    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.rollMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
-    if (chatOptions.rollMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
-    else if (chatOptions.rollMode === DICE_CONSTANTS.CHAT_MODES.SELFROLL) chatOptions.whisper = [game.user.id];
+    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
+    if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
+    else if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.SELFROLL) chatOptions.whisper = [game.user.id];
 
     DSA5SoundEffect.playEffect(preData.mode, preData.source, testData.successLevel, chatOptions.whisper, chatOptions.blind);
 
@@ -2172,7 +2172,7 @@ export default class DiceDSA5 {
           preData,
           postData: testData,
           template: chatOptions.template,
-          rollMode: chatOptions.rollMode,
+          messageMode: chatOptions.messageMode,
           isOpposedTest: chatOptions.isOpposedTest,
           title: chatOptions.title,
           hideData: { value: chatData.hideData.value },
@@ -2308,15 +2308,15 @@ export default class DiceDSA5 {
 
     let chatOptions = {
       template: data.template,
-      rollMode: data.rollMode,
+      messageMode: data.messageMode,
       title: data.title,
       speaker: message.speaker,
       user: message.author.id,
     };
 
-    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.rollMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
+    if ([DICE_CONSTANTS.CHAT_MODES.GMROLL, DICE_CONSTANTS.CHAT_MODES.BLINDROLL].includes(chatOptions.messageMode)) chatOptions.whisper = game.users.filter((user) => user.isGM).map((x) => x.id);
 
-    if (chatOptions.rollMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
+    if (chatOptions.messageMode === DICE_CONSTANTS.CHAT_MODES.BLINDROLL) chatOptions.blind = true;
 
     if ([DICE_CONSTANTS.ROLL_TYPES.POISON, DICE_CONSTANTS.ROLL_TYPES.DISEASE].includes(newTestData.source.type)) {
       new Itemdsa5(newTestData.source)[`${data.postData.postFunction}`]({ testData: newTestData, cardOptions: chatOptions }, { rerenderMessage: message });

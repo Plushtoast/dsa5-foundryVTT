@@ -40,7 +40,7 @@ export class FateRolls {
             'CHATCONTEXT.rerollDamage'
         );
         newRoll.dice.forEach(die => die.options.colorset = this.DICE_COLOR_BLACK);
-        await DiceDSA5.showDiceSoNice(newRoll, newTestData.rollMode);
+        await DiceDSA5.showDiceSoNice(newRoll, newTestData.messageMode);
         await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         newTestData.damageRoll = duplicate(newRoll);
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -366,11 +366,11 @@ export class FateRolls {
     static #preparePostRollAction(message) {
         const { data } = message.flags;
         const { img } = message.flags;
-        const { rollMode, template, title } = data;
+        const { messageMode, template, title } = data;
         const { speaker, author } = message;
         const cardOptions = {
             flags: { img: { src: img.src } },
-            rollMode,
+            messageMode,
             speaker,
             template,
             title,
@@ -415,7 +415,7 @@ export class FateRolls {
             await new Roll(rollFormulas.join('+')).evaluate(),
             rollContext
         );
-        await DiceDSA5.showDiceSoNice(newRoll, testData.rollMode);
+        await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode);
         const changedRolls = [];
         const changes = [];
         testData.roll = Roll.fromData(testData.roll);
@@ -586,6 +586,6 @@ export class FateRolls {
      */
     static async #throwCoin() {
         const coinRoll = await new Roll('1DC').evaluate();
-        DiceDSA5.showDiceSoNice(coinRoll, game.settings.get("core", "rollMode"));
+        DiceDSA5.showDiceSoNice(coinRoll, game.settings.get("core", "messageMode"));
     }
 }

@@ -255,7 +255,7 @@ export class TrapState extends ChatMessageState {
             </div>
         `
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-        DiceDSA5._addRollDiceSoNice({ rollMode: game.settings.get("core", "rollMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
+        DiceDSA5._addRollDiceSoNice({ messageMode: game.settings.get("core", "messageMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
 
         if (behavior.system.charges > 0) behavior.update({ 'system.remainingCharges': behavior.system.remainingCharges - 1 });
     }

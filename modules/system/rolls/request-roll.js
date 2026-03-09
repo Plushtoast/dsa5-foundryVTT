@@ -323,7 +323,7 @@ export default class RequestRoll {
 
           if (checks >= 20) clearInterval(intervalId);
         }, 10);
-        options.rollMode = 'blindroll';
+        options.messageMode = 'blindroll';
       }
 
       RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0, options);

@@ -659,7 +659,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const item = this.actor.items.get(itemId);
     const SKModifier = this.actor.system.status.soulpower.max * -1;
     const ZKModifier = this.actor.system.status.toughness.max * -1;
-    const setupData = await item.setupEffect(undefined, { rollMode: 'gmroll', manualResistance: { SKModifier, ZKModifier } });
+    const setupData = await item.setupEffect(undefined, { messageMode: 'gmroll', manualResistance: { SKModifier, ZKModifier } });
     const result = await item.itemTest(setupData);
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }

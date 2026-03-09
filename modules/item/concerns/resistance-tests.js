@@ -63,7 +63,7 @@ export class ResistanceTests {
       },
     };
     const data = {
-      rollMode: options.rollMode,
+      messageMode: options.messageMode,
     };
     const situationalModifiers = [];
     this.#getSituationalModifiers(situationalModifiers, actor, data, item, resistanceVantageKey);
@@ -76,7 +76,7 @@ export class ResistanceTests {
       template: ITEM_CONSTANTS.TEMPLATE_PATHS.POISON_DIALOG,
       data,
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
         testData.situationalModifiers.push(
           {
