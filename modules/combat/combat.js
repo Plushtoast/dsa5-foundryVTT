@@ -38,7 +38,7 @@ export default class DSA5Combat extends Combat {
       window: {
         title: 'BRAWLING.unarmEveryone',
       },
-      content: `<p>${game.i18n.localize('BRAWLING.unarmEveryoneText')}</p>`,
+      content: `<p>${_loc('BRAWLING.unarmEveryoneText')}</p>`,
       rejectClose: false,
       modal: true,
     });

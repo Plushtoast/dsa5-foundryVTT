@@ -158,7 +158,7 @@ export default class DSA5SoundEffect {
     let soundOptions = DSA5SoundEffect.soundPaths[item.type] || DSA5SoundEffect.soundPaths.default;
 
     if( soundOptions.length === 0) return;
-      
+
     const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
     await this.playSoundPath(soundPath, soundToEveryone, 0.5);    
   }

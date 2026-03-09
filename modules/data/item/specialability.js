@@ -41,7 +41,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     extClericalStyle: 'SpecCategory.clericalStyle', 
     extMagical: 'SpecCategory.magicalStyle'
   }
-  
+
   static specialAbilityCategories = {
     Combat: 'SpecCategory.Combat',
     command: 'SpecCategory.command',

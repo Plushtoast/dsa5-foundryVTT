@@ -4,7 +4,7 @@ import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
-import { localize } from '../helpers/localizer.js';
+
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -70,7 +70,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   #eventsTabObserver = null;
 
   get title() {
-    return localize(DSAWorldCalendar.selectedCalendar().name);
+    return _loc(DSAWorldCalendar.selectedCalendar().name);
   }
 
   static TABS = {
@@ -360,7 +360,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.tabs = this._prepareTabs('sheet');
     data.isGM = game.user.isGM;
     data.calendar = calendar;
-    data.appTitle = localize(DSAWorldCalendar.selectedCalendar().name);
+    data.appTitle = _loc(DSAWorldCalendar.selectedCalendar().name);
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
 
     return data;
@@ -693,7 +693,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const translationPrefix = game.time.calendar.translationPrefix;
     return '<div style="margin-left: 12px;">' + holidays.map(h => {
       const key = `${translationPrefix}.holiday.${h.title}`;
-      const name = game.i18n.has(key) ? localize(key) : h.title;
+      const name = game.i18n.has(key) ? _loc(key) : h.title;
       return `<div><i style="color: ${DSACalendarEntry.CATEGORY_COLORS[h.category]}" class="${DSACalendarEntry.CATEGORY_ICONS[h.category]}"></i> ${name}</div>`;
     }).join('') + '</div>';
   }
@@ -944,7 +944,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       todayMarker.className = 'calendar-today-marker';
       const todayMonthName = game.time.calendar.translate(game.time.calendar.months.values[currentComponents.month].name);
       const todayYearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-      const todayLabel = localize('dsacalendar.today');
+      const todayLabel = _loc('dsacalendar.today');
       todayMarker.innerHTML = `<hr><span class="today-label">${todayLabel} - ${todayDay}. ${todayMonthName} ${currentComponents.year} ${todayYearSuffix}</span>`;
       wrapper.appendChild(todayMarker);
       todayMarkerInserted = true;

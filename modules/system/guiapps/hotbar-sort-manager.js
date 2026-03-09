@@ -1,5 +1,4 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
-import { localize } from '../helpers/localizer.js';
 import { tabSlider } from '../helpers/view_helper.js';
 import DSA5 from '../../config/config-dsa5.js';
 
@@ -87,7 +86,7 @@ export default class HotbarSortManager extends DefaultAppv2 {
   }
 
   get title() {
-    return `${localize('DSA5HOTBARCONFIG.manager')} — ${this.actor.name}`;
+    return `${_loc('DSA5HOTBARCONFIG.manager')} — ${this.actor.name}`;
   }
 
   #initDraft() {
@@ -288,14 +287,14 @@ export default class HotbarSortManager extends DefaultAppv2 {
 
     const groupToggles = HotbarSortManager.ORDER_GROUPS.map((key) => ({
       key,
-      label: localize(`SKILL.${key}`),
+      label: _loc(`SKILL.${key}`),
       icon: HotbarSortManager.GROUP_ICONS[key],
       active: !hiddenGroups.includes(key),
     }));
 
     const sortModes = {};
     for (const [key, labelKey] of Object.entries(HotbarSortManager.SORT_MODES)) {
-      sortModes[key] = localize(labelKey);
+      sortModes[key] = _loc(labelKey);
     }
 
     const savedSortMode = game.settings.get('dsa5', 'hotbarSortMode');
@@ -488,7 +487,7 @@ export default class HotbarSortManager extends DefaultAppv2 {
         title: 'DSA5HOTBARCONFIG.resetAll',
         icon: 'fa-solid fa-trash',
       },
-      content: localize('DSA5HOTBARCONFIG.resetAllConfirm'),
+      content: _loc('DSA5HOTBARCONFIG.resetAllConfirm'),
       modal: true,
     });
     if (!proceed) return;

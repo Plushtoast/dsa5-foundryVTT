@@ -136,7 +136,7 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
     game.settings.registerMenu('dsa5', 'dicesonicesettings', {
       name: 'DiceSoNiceSettings',
       label: 'DiceSoNice Settings',
-      hint: game.i18n.localize('DSASETTINGS.dicesonicesettings'),
+      hint: _loc('DSASETTINGS.dicesonicesettings'),
       type: DiceSoNiceForm,
       restricted: false,
     });

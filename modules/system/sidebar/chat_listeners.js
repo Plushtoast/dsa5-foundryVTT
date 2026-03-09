@@ -3,7 +3,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
-import { localize } from '../helpers/localizer.js';
+
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -40,7 +40,7 @@ export default class DSA5ChatListeners {
 
   static postStatus(id) {
     let effect = CONFIG.statusEffects.find((x) => x.id == id);
-    let msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.img}"/>${localize(effect.name)}</h2></a><p>${localize(effect.description)}</p>`;
+    let msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.img}"/>${_loc(effect.name)}</h2></a><p>${_loc(effect.description)}</p>`;
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
@@ -48,19 +48,19 @@ export default class DSA5ChatListeners {
     let msg =
       DSA5.helpContent
         .map(
-          (x) => `<h4>${localize(`HELP.${x.name}`)}</h4>
-            <p><b>${localize('HELP.command')}</b>: ${x.command}</p>
-            <p><b>${localize('HELP.example')}</b>: ${x.example}</p>
-            <p><b>${localize('Description')}</b>: ${localize(`HELP.descr${x.name}`)}</p>`,
+          (x) => `<h4>${_loc(`HELP.${x.name}`)}</h4>
+            <p><b>${_loc('HELP.command')}</b>: ${x.command}</p>
+            <p><b>${_loc('HELP.example')}</b>: ${x.example}</p>
+            <p><b>${_loc('Description')}</b>: ${_loc(`HELP.descr${x.name}`)}</p>`,
         )
-        .join('') + `<p>${localize('HELP.default')}</p>`;
+        .join('') + `<p>${_loc('HELP.default')}</p>`;
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
   static showConditions() {
     const effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
-        x.name = localize(x.name);
+        x.name = _loc(x.name);
         return x;
       })
       .sort((a, b) => {

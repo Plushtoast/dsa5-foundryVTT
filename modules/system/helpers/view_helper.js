@@ -10,7 +10,6 @@ export function svgAutoFit(elem, width = 320, height = 40) {
   let scaleX = width / textWidth;
   let scaleY = height / textHeight;
   let scale = Math.min(scaleX, scaleY);
-  
   let centerX = width / 2 - (textWidth * scale) / 2 - bbox.x * scale;
   let centerY = height / 2 - (textHeight * scale) / 2 - bbox.y * scale;
   if (isFinite(scale)) {

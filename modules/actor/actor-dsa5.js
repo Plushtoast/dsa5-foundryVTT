@@ -27,7 +27,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { FateRolls } from './concerns/faterolls.js';
-import { localize, format } from '../system/helpers/localizer.js';
+
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -330,7 +330,7 @@ export default class Actordsa5 extends Actor {
           .filter((x) => x.target == name)
           .map((f) => {
             return {
-              name: `${f.target || f.source} - ${localize(`CHAR.${k.toUpperCase()}`)}`,
+              name: `${f.target || f.source} - ${_loc(`CHAR.${k.toUpperCase()}`)}`,
               value: f.value,
               source: f.source,
               type: k,
@@ -733,12 +733,11 @@ export default class Actordsa5 extends Actor {
           findspell.extensions = exts.join(', ');
         } else {
           ui.notifications.warn(
-            format('DSAError.noSpellForExtension', {
+            'DSAError.noSpellForExtension', { localize: true, format: {
               name: spell,
               category: DSA5_Utility.categoryLocalization(category),
               extension: exts.join(','),
-            })
-          );
+            }});
         }
       }
     }
@@ -784,7 +783,7 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    const wrestle = localize('LocalizedIDs.wrestle');
+    const wrestle = _loc('LocalizedIDs.wrestle');
     const brawling = combatskills.find(x => x.name === wrestle);
 
     //todo check if these still need to be returned
@@ -792,7 +791,7 @@ export default class Actordsa5 extends Actor {
     const carrycapacity = this.system.carrycapacity;
     const encumbrance = this.system.condition?.encumbered || 0;
     let moneyWeight = this.system.moneyWeight || 0;
-    moneyWeight = moneyWeight > 0 ? `<br>${localize('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
+    moneyWeight = moneyWeight > 0 ? `<br>${_loc('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
 
     return {
       totalWeight,
@@ -808,7 +807,7 @@ export default class Actordsa5 extends Actor {
       },
       encumbrance,
       carrycapacity,
-      encumbranceTooltip: format('encumbranceTooltip', {
+      encumbranceTooltip: _loc('encumbranceTooltip', {
         totalWeight,
         carrycapacity,
         encumbrance,
@@ -893,7 +892,7 @@ export default class Actordsa5 extends Actor {
         const ap = Number(APValue);
         dataUpdate['system.details.experience.spent'] = Number(this.system.details.experience.spent) + ap;
         await this.update(dataUpdate, options);
-        const msg = format(ap > 0 ? 'advancementCost' : 'refundCost', { cost: Math.abs(ap) });
+        const msg = _loc(ap > 0 ? 'advancementCost' : 'refundCost', { cost: Math.abs(ap) });
         tinyNotification(msg);
       } else {
         ui.notifications.error('DSAError.APUpdateError', { localize: true });
@@ -961,8 +960,8 @@ export default class Actordsa5 extends Actor {
   }
 
   throwMelee(item, tokenId) {
-    const throwingWeapons = localize('LocalizedIDs.Throwing Weapons');
-    const localizedCT = localize(`LocalizedCTs.${item.system.combatskill.value}`);
+    const throwingWeapons = _loc('LocalizedIDs.Throwing Weapons');
+    const localizedCT = _loc(`LocalizedCTs.${item.system.combatskill.value}`);
 
     const validWeaponTypes = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
     const hasWeaponThrow = validWeaponTypes.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
@@ -1002,17 +1001,17 @@ export default class Actordsa5 extends Actor {
 
   setupWeaponless(statusId, options = {}, tokenId) {
     const attributes = [];
-    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(localize('magical'));
-    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(localize('blessed'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(_loc('magical'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(_loc('blessed'));
 
     const weaponData = mergeObject(
       {
-        name: localize(`${statusId}Weaponless`),
+        name: _loc(`${statusId}Weaponless`),
         type: 'meleeweapon',
         effects: [],
         system: {
           combatskill: {
-            value: localize('LocalizedIDs.wrestle'),
+            value: _loc('LocalizedIDs.wrestle'),
           },
           effect: {
             attributes: attributes.join(', '),
@@ -1113,7 +1112,7 @@ export default class Actordsa5 extends Actor {
 
     if (options.msg) {
       const renderedRoll = await roll.render();
-      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${format(options.msg, { name: this.name })}</p>${renderedRoll}`));
+      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${_loc(options.msg, { name: this.name })}</p>${renderedRoll}`));
     }
   }
 
@@ -1182,8 +1181,8 @@ export default class Actordsa5 extends Actor {
   }
 
   setupFallingDamage(options, tokenId) {
-    const name = localize('fallingDamage');
-    const skill = this.items.find((x) => x.type == 'skill' && x.name == localize('LocalizedIDs.bodyControl')).toObject();
+    const name = _loc('fallingDamage');
+    const skill = this.items.find((x) => x.type == 'skill' && x.name == _loc('LocalizedIDs.bodyControl')).toObject();
     const optns = {
       subtitle: ` (${name})`,
       postFunction: {
@@ -1229,7 +1228,7 @@ export default class Actordsa5 extends Actor {
   }
 
   _setupFallingHeight(options, tokenId) {
-    let title = localize('fallingDamage');
+    let title = _loc('fallingDamage');
     let testData = {
       source: {
         type: 'fallingDamage',
@@ -1254,7 +1253,7 @@ export default class Actordsa5 extends Actor {
       callback: (html, options = {}) => {
         testData.situationalModifiers = [
           {
-            name: localize('fallingFloor'),
+            name: _loc('fallingFloor'),
             value: html.find('[name="fallingFloor"]').val(),
           },
         ];
@@ -1293,7 +1292,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const toSearch = [localize(statusId), localize('LocalizedIDs.wrestle')];
+    const toSearch = [_loc(statusId), _loc('LocalizedIDs.wrestle')];
     const combatskills = [
       ...CombatSpecialAbilities.build(this, ['Combat'], toSearch, 'parry', testData.source),
       ...CombatSpecialAbilities.build(this, ['animal'], undefined, 'parry', testData.source),
@@ -1312,7 +1311,7 @@ export default class Actordsa5 extends Actor {
       isDodge: true,
     };
     const dialogOptions = {
-      title: `${localize(statusId)} ${localize('Test')}`,
+      title: `${_loc(statusId)} ${_loc('Test')}`,
       template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
@@ -1334,7 +1333,7 @@ export default class Actordsa5 extends Actor {
 
   setupCharacteristic(characteristicId, options = {}, tokenId) {
     let char = duplicate(this.system.characteristics[characteristicId]);
-    let title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + localize('Test');
+    let title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + _loc('Test');
 
     char.attr = characteristicId;
     let testData = {
@@ -1378,7 +1377,7 @@ export default class Actordsa5 extends Actor {
     if (!skill) {
       if (isBaseWeapon) {
         ui.notifications.error(
-          format('DSAError.unknownCombatSkill', {
+          _loc('DSAError.unknownCombatSkill', {
             skill: item.system.combatskill.value,
             item: item.name,
           })
@@ -1415,16 +1414,16 @@ export default class Actordsa5 extends Actor {
         gripDamageMod = 1;
       } else {
         item.system.reach.value = 'medium';
-        const localizedCT = localize(`LocalizedCTs.${item.system.combatskill.value}`);
+        const localizedCT = _loc(`LocalizedCTs.${item.system.combatskill.value}`);
 
         if (['Two-Handed Impact Weapons', 'Two-Handed Swords'].includes(localizedCT)) {
           item.parry -= 3;
-          const bastardRegex = new RegExp(localize('wrongGrip.wrongGripBastardRegex'));
+          const bastardRegex = new RegExp(_loc('wrongGrip.wrongGripBastardRegex'));
 
           if (bastardRegex.test(item.name)) {
             gripDamageMod = -2;
           } else {
-            const oneHanded = localize('wrongGrip.oneHanded');
+            const oneHanded = _loc('wrongGrip.oneHanded');
             item.gripDamageText = ` (${oneHanded} * 0.5)`;
             item.dmgMultipliers ||= [];
             DSA5_Utility.pushOnlyIfUnique(item.dmgMultipliers, { name: oneHanded, val: '0.5' });
@@ -1752,14 +1751,14 @@ export default class Actordsa5 extends Actor {
   static calcLZ(item, actor) {
     let factor = 1;
     let modifier = 0;
-    if (item.system.combatskill.value == localize('LocalizedIDs.Throwing Weapons')) modifier = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.quickdraw') * -1;
+    if (item.system.combatskill.value == _loc('LocalizedIDs.Throwing Weapons')) modifier = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.quickdraw') * -1;
     else if (
-      item.system.combatskill.value == localize('LocalizedIDs.Crossbows') &&
-      SpecialabilityRulesDSA5.hasAbility(actor, `${localize('LocalizedIDs.quickload')} (${localize('LocalizedIDs.Crossbows')})`, false)
+      item.system.combatskill.value == _loc('LocalizedIDs.Crossbows') &&
+      SpecialabilityRulesDSA5.hasAbility(actor, `${_loc('LocalizedIDs.quickload')} (${_loc('LocalizedIDs.Crossbows')})`, false)
     )
       factor = 0.5;
     else {
-      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${localize('LocalizedIDs.quickload')} (${localize(item.system.combatskill.value)})`, false) * -1;
+      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${_loc('LocalizedIDs.quickload')} (${_loc(item.system.combatskill.value)})`, false) * -1;
     }
 
     let reloadTime = `${item.system.reloadTime.value}`.split('/');
@@ -1825,7 +1824,7 @@ export default class Actordsa5 extends Actor {
     } else {
       if (isBaseWeapon)
         ui.notifications.error(
-          format('DSAError.unknownCombatSkill', {
+          _loc('DSAError.unknownCombatSkill', {
             skill: item.system.combatskill.value,
             item: item.name,
           }),
@@ -1878,8 +1877,8 @@ export default class Actordsa5 extends Actor {
   async payMiracles(testData) {
     if (!testData.extra.miraclePaid) {
       testData.extra.miraclePaid = true;
-      const miracleMight = localize('LocalizedIDs.miracleMight');
-      const miracle = localize('LocalizedIDs.miracle');
+      const miracleMight = _loc('LocalizedIDs.miracleMight');
+      const miracle = _loc('LocalizedIDs.miracle');
       const hasMiracleMight = testData.situationalModifiers.some((x) => x.name.trim() == miracleMight);
       const hasMiracle = testData.situationalModifiers.some((x) => x.name.trim() == miracle);
       const cost = hasMiracleMight ? 6 : hasMiracle ? 4 : 0;
@@ -2006,7 +2005,7 @@ export default class Actordsa5 extends Actor {
 
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
-      const opposed = ` - ${localize('Opposed')}`;
+      const opposed = ` - ${_loc('Opposed')}`;
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) cardOptions.title += opposed;
     }
 
@@ -2053,8 +2052,8 @@ export default class Actordsa5 extends Actor {
 
       effect = duplicate(statusEffect);
 
-      effect.name = localize(effect.name);
-      effect.flags.dsa5.description = localize(effect.name);
+      effect.name = _loc(effect.name);
+      effect.flags.dsa5.description = _loc(effect.name);
 
       if (effect.changes) {
         effect.changes = effect.changes.map((change) => {
@@ -2093,8 +2092,8 @@ export default class Actordsa5 extends Actor {
   }
 
   async finishResistPainRoll() {
-    const skill = this.items.find((x) => x.name == localize('LocalizedIDs.selfControl') && x.type == 'skill');
-    const setupData = await this.setupSkill(skill, { subtitle: ` (${localize('ActiveEffects.resistRoll')})` }, this.token?.id);
+    const skill = this.items.find((x) => x.name == _loc('LocalizedIDs.selfControl') && x.type == 'skill');
+    const setupData = await this.setupSkill(skill, { subtitle: ` (${_loc('ActiveEffects.resistRoll')})` }, this.token?.id);
     const res = await this.basicTest(setupData);
     const ql = res.result.successLevel || 0;
 

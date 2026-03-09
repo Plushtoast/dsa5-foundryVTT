@@ -6,7 +6,6 @@ import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.j
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { clickableAbility, tabSlider } from '../system/helpers/view_helper.js';
 const { duplicate, getProperty } = foundry.utils;
-import { localize } from '../system/helpers/localizer.js';
 
 export default class WizardDSA5 extends DefaultAppv2 {
   constructor(app) {
@@ -49,7 +48,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
 
   _parseAttributes(attr, splitter = ',') {
     const result = [];
-    const splstr = localize('combatskillcountdivider') + ':';
+    const splstr = _loc('combatskillcountdivider') + ':';
     for (let k of attr.split(splitter)) {
       if (k.includes(splstr)) {
         const vals = k.split(':');
@@ -103,7 +102,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
             item = {
               name: x.trim(),
               notFound: true,
-              tooltip: localize('DSAError.itemNotFound'),
+              tooltip: _loc('DSAError.itemNotFound'),
               apCost: '?',
             };
           }
@@ -111,7 +110,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
           const uuid = item.uuid;
           item = duplicate(item);
           item.uuid = uuid;
-          item.tooltip = localize('Details');
+          item.tooltip = _loc('Details');
           item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
           if (item.system.APValue) {
             item.APunparseable = isNaN(item.system.APValue.value);
@@ -122,7 +121,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
         item.step = parsed.step;
         let actorHasItem = this.actor.items.find((y) => types.includes(y.type) && y.name == parsed.original) != undefined;
         item.disabled = actorHasItem || item.notFound || item.APunparseable;
-        if (actorHasItem) item.tooltip = localize('YouAlreadyHaveit');
+        if (actorHasItem) item.tooltip = _loc('YouAlreadyHaveit');
         return item;
       }),
     );
@@ -196,7 +195,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
         window: {
           title: 'DIALOG.warning',
         },
-        content: `<p>${game.i18n.format('DIALOG.alreadyAddedCharacterpart', { category: DSA5_Utility.categoryLocalization(category) })}</p>`,
+        content: `<p>${_loc('DIALOG.alreadyAddedCharacterpart', { category: DSA5_Utility.categoryLocalization(category) })}</p>`,
         buttons: [
           {
             action: 'ok',
@@ -337,7 +336,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
     } else {
       $(this.element)
         .find('.dialog-buttons')
-        .html(`<div class="error"><p>${localize('DSAError.notUnderstood')}</p><ul><li>${this.errors.join('</li><li>')}</li></ul></div>`);
+        .html(`<div class="error"><p>${_loc('DSAError.notUnderstood')}</p><ul><li>${this.errors.join('</li><li>')}</li></ul></div>`);
     }
   }
 }

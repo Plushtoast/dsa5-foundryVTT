@@ -27,7 +27,7 @@ import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
-import { localize, format } from '../system/helpers/localizer.js';
+
 import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -428,20 +428,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     let aggregated = this.actor.items.get(itemId).toObject();
     const attr = aggregated.system.talent[`value${target.dataset.which}`];
     let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
-    let infoMsg = `<h3 class="center"><b>${localize('TYPES.Item.aggregatedTest')}</b></h3>`;
+    let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
     if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
-      infoMsg += `${localize('Aggregated.noMoreAllowed')}`;
+      infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
     } else {
       const options = {
         moreModifiers: [
           {
-            name: localize('failedTests'),
+            name: _loc('failedTests'),
             value: -1 * aggregated.system.previousFailedTests.value,
             selected: true,
           },
           {
-            name: localize('Modifier'),
+            name: _loc('Modifier'),
             value: aggregated.system.baseModifier,
             selected: true,
           },
@@ -471,7 +471,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async consumeItem(item) {
-    const title = localize('SHEET.ConsumeItem') + ': ' + item.name;
+    const title = _loc('SHEET.ConsumeItem') + ': ' + item.name;
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title,
@@ -667,7 +667,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static _swapWeaponHand(ev, target) {
     return this.swapWeaponHand(target);
   }
-  
+
   static async _swapWeaponHandSlot(ev, target) {
     await this.swapWeaponHandSlot(target);
   }
@@ -764,7 +764,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _rollAnySkill(ev, target) {
     const { name, ch1, ch2, ch3 } = target.dataset;
     const attributes = { system: { characteristic1: { value: ch1 }, characteristic2: { value: ch2 }, characteristic3: { value: ch3 } } };
-    this.actor.rollAnySkill(localize(name), this.getTokenId(), attributes);
+    this.actor.rollAnySkill(_loc(name), this.getTokenId(), attributes);
   }
 
   static _itemEdit(ev, target) {
@@ -1020,7 +1020,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!fct) return;
 
     const cost = fct(isAnimal);
-    ev.currentTarget.dataset.tooltip = format(cost.key, cost);
+    ev.currentTarget.dataset.tooltip = _loc(cost.key, cost);
     game.tooltip.activate(ev.currentTarget)
   }
 
@@ -1210,7 +1210,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getUnequippedWeaponContextOptions(weaponType) {
-    const equipLabel = localize('SHEET.EquipItem');
+    const equipLabel = _loc('SHEET.EquipItem');
     const icon = weaponType === 'rangeweapon' ? "<i class='fas fa-bullseye'></i>" : "<i class='fas fa-sword'></i>";
 
     const unequipped = this.actor.items
@@ -1220,7 +1220,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!unequipped.length) {
       return [
         {
-          name: localize('SHEET.NoUnequippedWeapons'),
+          name: _loc('SHEET.NoUnequippedWeapons'),
           icon: "<i class='fas fa-minus'></i>",
           callback: () => {},
         },
@@ -1423,7 +1423,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       'SHEET.SplitItem',
       callback,
       {
-        name: format('MERCHANT.splitItem', { name: item.name }),
+        name: _loc('MERCHANT.splitItem', { name: item.name }),
         count: item.system.quantity.value - 1,
         max: item.system.quantity.value - 1,
       }
@@ -1465,7 +1465,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!paid) return;
 
-    const msg = format('CHATNOTIFICATION.paysTraditionAbility', {
+    const msg = _loc('CHATNOTIFICATION.paysTraditionAbility', {
       name: this.actor.name,
       ability: item.name,
       cost,
@@ -1544,7 +1544,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         continue;
       }
 
-      const title = localize(entry.querySelector('button').dataset.tooltip) || '';
+      const title = _loc(entry.querySelector('button').dataset.tooltip) || '';
       const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
@@ -1557,7 +1557,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _itemDeleteDialog(item) {
-    const message = format('DIALOG.DeleteItemDetail', { item: item.name, });
+    const message = _loc('DIALOG.DeleteItemDetail', { item: item.name, });
     const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
@@ -1686,7 +1686,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       let spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
       if (!spell) {
         ui.notifications.error(
-          format('DSAError.noSpellForExtension', {
+          _loc('DSAError.noSpellForExtension', {
             name: item.system.source,
             category: DSA5_Utility.categoryLocalization(item.system.category),
             extension: item.name,
@@ -1786,9 +1786,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (game.dsa5.config.hooks.shapeshift) {
       new foundry.applications.api.DialogV2({
         window: {
-          title: localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+          title: _loc('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
         },
-        content: `<p>${localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
+        content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
         buttons: [
           {
             action: 'shapeshift',
@@ -1874,19 +1874,18 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         break;
       case 'npc':
         ui.notifications.error(
-          format('DSAError.canNotBeAdded', {
+          'DSAError.canNotBeAdded',
+          { localize: true, format: {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type, 'Actor'),
-          }),
-        );
+          }});
         break
       default:
         ui.notifications.error(
-          format('DSAError.canNotBeAdded', {
+          'DSAError.canNotBeAdded', { localize: true, format: {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type),
-          }),
-        );
+          }});
     }
   }
 
@@ -1911,11 +1910,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
             if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
           } else {
             ui.notifications.warn(
-              format('DSAError.notFound', {
+              'DSAError.notFound', { localize: true, format: {
                 category: thing.type,
                 name: thing.name,
-              }),
-            );
+              }});
           }
         }
       }
@@ -1926,11 +1924,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       //}
     } else {
       ui.notifications.error(
-        format('DSAError.notFound', {
+        'DSAError.notFound', { localize: true, format: {
           category: thing.type,
           name: thing.name,
-        }),
-      );
+        }});
     }
   }
 
@@ -2019,7 +2016,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         await MoneyTracker.track(this.actor, { type: 'buy', name: itemData.name, amount }, Number(price) * -1);
 
         tinyNotification(
-          format('PAYMENT.pay', {
+          _loc('PAYMENT.pay', {
             actor: this.actor.name,
             amount: price,
           }),

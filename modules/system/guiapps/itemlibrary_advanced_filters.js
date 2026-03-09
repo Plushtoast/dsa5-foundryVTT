@@ -1,7 +1,7 @@
 import DSA5 from '../../config/config-dsa5.js';
 import SpecialabilityData from '../../data/item/specialability.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import { localize } from '../helpers/localizer.js';
+
 const { mergeObject } = foundry.utils;
 
 let ADVANCEDFILTERS = {};
@@ -18,23 +18,23 @@ Hooks.once('ready', () => {
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {});
     const allCombat = result[1]
-      .concat([{ name: localize('LocalizedIDs.all') }])
+      .concat([{ name: _loc('LocalizedIDs.all') }])
       .sort((a, b) => a.name.localeCompare(b.name))
       .reduce((prev, now) => ({ ...prev, [now.name]: now.name }), {});
 
     const content = [];
     for (const [cat, value] of Object.entries(SpecialabilityData.specialAbilityCategories)) {
-      if (cat == 'clerical') content.push(`</optgroup><optgroup label="${localize('SpecCategory.clerical')}">`);
-      else if (cat == 'magical') content.push(`</optgroup><optgroup label="${localize('SpecCategory.magical')}">`);
+      if (cat == 'clerical') content.push(`</optgroup><optgroup label="${_loc('SpecCategory.clerical')}">`);
+      else if (cat == 'magical') content.push(`</optgroup><optgroup label="${_loc('SpecCategory.magical')}">`);
 
-      content.push(`<option value="${cat}">${localize(value)}</option>`);
+      content.push(`<option value="${cat}">${_loc(value)}</option>`);
     }
 
     const specialabilies = `<div class="flexcol">
-            <label>${localize('Category')}</label>
+            <label>${_loc('Category')}</label>
             <select name="category.value">
-                <option value="">${localize('Library.noFilter')}</option>
-                <optgroup label="${localize('SpecCategory.general')}">
+                <option value="">${_loc('Library.noFilter')}</option>
+                <optgroup label="${_loc('SpecCategory.general')}">
                 ${content.join('')}
                 </optgroup>
             </select>
@@ -377,7 +377,7 @@ Hooks.once('ready', () => {
           attr: 'category',
           type: 'select',
           options: [0, 1, 2, 3].reduce((prev, x) => {
-            prev[x] = localize(`PATRON.${x}`);
+            prev[x] = _loc(`PATRON.${x}`);
             return prev;
           }, {}),
         },

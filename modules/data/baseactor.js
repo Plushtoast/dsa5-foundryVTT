@@ -8,7 +8,6 @@ import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import CreatureType from '../system/automation/creature-type.js';
 import SpecialabilityData from './item/specialability.js';
-import { localize } from '../system/helpers/localizer.js';
 
 const { SKILL, SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
 
@@ -20,14 +19,14 @@ export class ActorDataModel extends DSADataModel {
 
   static get familiarString() {
     if (this._familiarString === null) {
-      this._familiarString = localize('LocalizedIDs.familiar');
+      this._familiarString = _loc('LocalizedIDs.familiar');
     }
     return this._familiarString;
   }
 
   static get petString() {
     if (this._petString === null) {
-      this._petString = localize('LocalizedIDs.companion');
+      this._petString = _loc('LocalizedIDs.companion');
     }
     return this._petString;
   }
@@ -218,7 +217,7 @@ export class ActorDataModel extends DSADataModel {
       this._applyConditionsAndMovement(this);
     } catch (error) {
       console.error(`Error preparing actor data for ${this.parent.name}:`, error);
-      ui.notifications.error(game.i18n.format('DSAError.PreparationError', { name: this.parent.name }) + error.message);
+      ui.notifications.error(_loc('DSAError.PreparationError', { name: this.parent.name }) + error.message);
     }
   }
 
@@ -681,7 +680,7 @@ export class ActorDataModel extends DSADataModel {
     const armorEncumbrance = wornArmors.reduce((sum, x) => sum + Number(x.system.encumbrance.value), 0);
 
     if (armorCompensation > armorEncumbrance) {
-      const modKeys = [localize('CHARAbbrev.GS'), localize('CHARAbbrev.INI')];
+      const modKeys = [_loc('CHARAbbrev.GS'), _loc('CHARAbbrev.INI')];
       for (let modkey of modKeys) {
         if (!itemModifiers[modkey]) continue;
         itemModifiers[modkey] = itemModifiers[modkey].filter(x => x.type != 'armor');

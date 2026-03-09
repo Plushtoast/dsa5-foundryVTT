@@ -96,7 +96,7 @@ async function setDefaultSkin() {
   if (!setDefaults) return;
 
   const proceed = await foundry.applications.api.DialogV2.confirm({
-    content: `<p>${game.i18n.localize('DSAError.invalidSkinCombination')}</p>`,
+    content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
     rejectClose: false,
     modal: true
   });
@@ -134,5 +134,4 @@ export default function migrateWorld() {
     migrateDSA(currentVersion, NEEDS_MIGRATION_VERSION);
   });
 }
-
 

@@ -77,7 +77,7 @@ export default class DetailsTemplate extends DSADataModel {
       const social = source.details.socialstate.value.trim().toLowerCase();
       source.details.socialstate.value = 0;
       Object.values(this.SOCIAL_STATES_CHOICES).forEach((value, index) => {
-        const localized = game.i18n.localize(value).toLowerCase();
+        const localized = _loc(value).toLowerCase();
         if (localized === social) {
           source.details.socialstate.value = index;
         }

@@ -273,7 +273,7 @@ export class CalendarCanvas {
     }
 
     _getLocalizedArray(values, translationPrefix) {
-        return values.map(item => game.i18n.localize(`${translationPrefix}.${item.name}`));
+        return values.map(item => _loc(`${translationPrefix}.${item.name}`));
     }
 
     _calculateSeasons(calendar, daysPerYear) {

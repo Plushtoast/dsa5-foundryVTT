@@ -1,15 +1,11 @@
 import MerchantTemplate from "../actor/templates/merchant.js";
-
 const { TextEditor } = foundry.applications.ux;
-
 export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
     static SETTING_NAME = 'calendarActors';
-
     static TYPE_CHOICES = {
         0: "PERSONAE.FIELDS.personae.type.choices.person",
         1: "PERSONAE.FIELDS.personae.type.choices.creature"
     }
-
     static GARADAN_CLASSES = {
         1: 'bauer',
         2: 'springer',
@@ -18,7 +14,6 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         5: 'laeufer',
         6: 'boronsrad'
     }
-
     static SOCIAL_CONTACT_LEVELS = {
         1: "PERSONAE.FIELDS.personae.socialContact.level.choices.1",
         2: "PERSONAE.FIELDS.personae.socialContact.level.choices.2",
@@ -30,13 +25,10 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         8: "PERSONAE.FIELDS.personae.socialContact.level.choices.8",
         9: "PERSONAE.FIELDS.personae.socialContact.level.choices.9"
     }
-
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
-
         const GaradanChoices = foundry.utils.deepClone(MerchantTemplate.GARADAN_CHOICES);
         GaradanChoices[0] = "-";
-
         return {
             personae: new TypedObjectField(new SchemaField({
                 name: new StringField({ required: true, label: "PERSONAE.FIELDS.personae.name.label" }),
@@ -64,40 +56,30 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             })),
         }
     }
-
     async _preUpdate(changed, options, user) {
         await this.#fillActorFields(changed);
         await super._preUpdate(changed, options, user);
     }
-
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
         game.dsa5.apps.CalendarPicker.refreshPersonae();
     }
-
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
         game.dsa5.apps.CalendarPicker.refreshPersonae();
     }
-
     async #fillActorFields(changed) {
         for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
             if (!entry) continue;
             if (!entry.actor_uuid) continue;
-
             const actor = await fromUuid(entry.actor_uuid);
             if (!actor) continue;
-
             if (entry.actor_uuid === this.personae?.[key]?.actor_uuid) continue;
-
             entry.img = actor.img;
-
             const isCreature = actor.type === "creature";
-
             entry.name = actor.name;
             entry.type = isCreature ? 1 : 0;
             entry.garadan = actor.system.merchant?.garadan || 1;
-
             if (isCreature) {
                 const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass.value);
                 entry.faction = creatureData[0].trim();
@@ -108,7 +90,6 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             }
         }
     }
-
     #splitOutsideBrackets(s = "") {
         const parts = [];
         let buf = "";
@@ -135,31 +116,21 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         if (buf !== "" || s.endsWith(',')) parts.push(buf);
         return parts.map(p => p.trim());
     };
-
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
-
         if (!entry.actor) return;
-
         entry.preparedTags = [];
         entry.isGM = game.user.isGM;
         const isCreature = entry.actor.type === "creature";
-
         if (isCreature) {
             if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
-
         } else {
             entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
-
             if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
-
             if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
-
             if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
         }
-
         entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
-
         if (entry.showActorDescription) {
             if (isCreature) {
                 entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
@@ -174,15 +145,12 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         entry.dramatisKey = key;
         await this.prepareContacts(entry, heros);
     }
-
     static async prepareContacts(entry, heros) {
         if (!game.user.isGM) return;
         if (entry.type === 1) return;
-
         entry.contacts = {};
         for (let [uuid, hero] of heros) {
             if (entry.actor_uuid && entry.actor_uuid === uuid) continue;
-
             const slugified_uuid = uuid.replaceAll('.', '_');
             const exists = entry.socialContact[slugified_uuid];
             entry.contacts[slugified_uuid] = {
@@ -195,10 +163,8 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             };
         }
     }
-
     static async getHeros() {
         if (!game.user.isGM) return [];
-
         return (await game.dsa5.apps.gameMasterMenu.getTrackedHeros()).reduce((acc, hero) => {
             if (hero.type == "character") {
                 acc.push([hero.uuid, hero]);

@@ -144,15 +144,15 @@ export default class DSA5_Utility {
   }
 
   static categoryLocalization(category, docName = 'Item') {
-    return game.i18n.localize(`TYPES.${docName}.${category}`);
+    return _loc(`TYPES.${docName}.${category}`);
   }
 
   static attributeLocalization(attribute) {
-    return game.i18n.localize(`CHAR.${attribute.toUpperCase()}`);
+    return _loc(`CHAR.${attribute.toUpperCase()}`);
   }
 
   static attributeAbbrLocalization(attribute) {
-    return game.i18n.localize(`CHARAbbrev.${attribute.toUpperCase()}`);
+    return _loc(`CHARAbbrev.${attribute.toUpperCase()}`);
   }
 
   static replaceDies(content, inlineRoll = false) {

@@ -122,6 +122,3 @@ export class DSADataModel extends foundry.abstract.TypeDataModel {
   // todo toembed
 }
 
-
-
-

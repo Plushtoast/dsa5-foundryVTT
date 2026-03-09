@@ -55,7 +55,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   async getSheetData(data) {
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.weaponStabilities[game.i18n.localize(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
   }
 
   static chatData(data, name) {
@@ -71,12 +71,12 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   static buildReloadProgress(item) {
     const progress = item.system.reloadTime.progress / item.LZ;
-    item.title = game.i18n.format('WEAPON.loading', {
+    item.title = _loc('WEAPON.loading', {
       status: `${item.system.reloadTime.progress}/${item.LZ}`,
     });
     item.progress = `${item.system.reloadTime.progress}/${item.LZ}`;
     if (progress >= 1) {
-      item.title = game.i18n.localize('WEAPON.loaded');
+      item.title = _loc('WEAPON.loaded');
     }
     this.progressTransformation(item, progress);
   }
@@ -85,12 +85,12 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
     const aimProgress = Math.clamp(Number(item.system?.aimTime?.progress) || 0, 0, 2);
     const progress = aimProgress / 2;
 
-    item.aimTitle = game.i18n.format('WEAPON.aiming', {
+    item.aimTitle = _loc('WEAPON.aiming', {
       status: `${aimProgress}/2`,
     });
     item.aimProgress = `${aimProgress}/2`;
     if (progress >= 1) {
-      item.aimTitle = game.i18n.localize('WEAPON.aimed');
+      item.aimTitle = _loc('WEAPON.aimed');
     }
 
     if (progress >= 0.5) {
@@ -133,7 +133,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   itemEquippedMessage() {
     DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
     if (this.parent.actor && game.combat) {
-      const texts = [{ value: game.i18n.localize(this.worn.value ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
+      const texts = [{ value: _loc(this.worn.value ? 'SHEET.EquipItem' : 'SHEET.UnEquipItem') + ` ${this.parent.name}` }];
       this.parent.actor.tokenScrollingText(texts);
     }
   }

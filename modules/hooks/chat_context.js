@@ -1,6 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
 const { getProperty } = foundry.utils;
@@ -57,7 +57,7 @@ export const applyDamage = async (li, mode, factor = 1) => {
     message,
     'damageApplied',
     /hideAnchor">/,
-    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${localize('damageApplied')}"></i>`
+    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${_loc('damageApplied')}"></i>`
   );
 };
 
@@ -127,7 +127,7 @@ class ConditionChecker {
 
     if (ROLLABLE_TYPES.includes(rollType)) rollType = 'char';
 
-    const schipSkill = localize(`SCHIPSKILLS.${rollType}${mode}`);
+    const schipSkill = _loc(`SCHIPSKILLS.${rollType}${mode}`);
     return !!actor.items.getName(schipSkill);
   }
 
@@ -158,7 +158,7 @@ class ConditionChecker {
 
     const { talentedRerollUsed } = message.flags.data;
     const sourceName = message.flags.data.preData.source.name;
-    const aptitudeName = `${localize('LocalizedIDs.aptitude')} (${sourceName})`;
+    const aptitudeName = `${_loc('LocalizedIDs.aptitude')} (${sourceName})`;
 
     return !talentedRerollUsed && !!actor.items.find(item => item.name === aptitudeName);
   }
@@ -322,7 +322,7 @@ class ActionHandler {
 
   static createMaintainEffect(name, maintain, cost, payType) {
     return {
-      name: `${name} (${localize('maintainCost')})`,
+      name: `${name} (${_loc('maintainCost')})`,
       img: 'icons/svg/daze.svg',
       flags: {
         dsa5: {
@@ -349,7 +349,7 @@ class ActionHandler {
     ];
 
     for (const unit of timeUnits) {
-      const regex = new RegExp(localize(unit.key), 'gi');
+      const regex = new RegExp(_loc(unit.key), 'gi');
       if (regex.test(maintain)) {
         return duration * unit.seconds;
       }
@@ -393,7 +393,7 @@ class ActionHandler {
 
 const createContextOptions = () => {
   const applyDamageLabel = () => {
-    return localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
+    return _loc(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
   const baseOptions = [
@@ -524,7 +524,7 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     callback: (li) => applyDamage(li, 'value', 2),
   },
   {
-    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    name: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     condition: ConditionChecker.canHurtSP,
     callback: (li) => applyDamage(li, 'sp', 2),
@@ -536,7 +536,7 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     callback: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
   },
   {
-    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    name: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     condition: ConditionChecker.canApplyDefaultRolls,
     callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
@@ -547,12 +547,12 @@ export function chatContext() {
   Hooks.once('getNotificationChatMessageContextOptions', (app, options, c) => {
     options.push(...createContextOptions());
   });
-  
+
   Hooks.on('getChatMessageContextOptions', (app, options, c) => {
     options.push(...createContextOptions());
 
     if(ActionHandler.notification_context_menu_initialized) return;
-      
+
     ActionHandler.notification_context_menu_initialized = true;    
     app._createContextMenu(app._getEntryContextOptions, ".message[data-message-id]", {
       hookName: "getNotificationChatMessageContextOptions",

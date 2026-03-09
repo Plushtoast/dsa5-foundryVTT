@@ -1,17 +1,13 @@
 import DSAActiveEffect from '../../status/dsa_active_effects.js';
-
 const { deepClone, getProperty, setProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
-
 const POST_ROLL_KEYS = {
   FP: 'system.skillModifiers.postRoll.FP',
   QL: 'system.skillModifiers.postRoll.QL',
   REROLL: 'system.skillModifiers.postRoll.reroll',
 };
-
 const ALLOWED_ANY_TYPES = new Set(['skill', 'spell', 'liturgy', 'ritual', 'ceremony']);
-
 export default class PostRollBuffs {
   static POST_ROLL_KEYS = POST_ROLL_KEYS;
 
@@ -79,15 +75,14 @@ export default class PostRollBuffs {
   }
 
   static _formatMatchLabel(match) {
-    const fpLabel = game.i18n.localize('CHARAbbrev.FP');
-    const qsLabel = game.i18n.localize('CHARAbbrev.QS');
+    const fpLabel = _loc('CHARAbbrev.FP');
+    const qsLabel = _loc('CHARAbbrev.QS');
     const parts = [];
     if (match.fp) parts.push(`${fpLabel} ${match.fp > 0 ? '+' : ''}${match.fp}`);
     if (match.qs) parts.push(`${qsLabel} ${match.qs > 0 ? '+' : ''}${match.qs}`);
     if (match.rerollDice) {
-      parts.push(game.i18n.format('DIALOG.postRollRerollDice', { count: match.rerollDice }));
+      parts.push(_loc('DIALOG.postRollRerollDice', { count: match.rerollDice }));
     }
-
     const charges = match.charges?.max ? ` [${match.charges.value ?? 0}/${match.charges.max}]` : '';
     return `${match.effectName} (${parts.join(', ')})${charges}`;
   }
@@ -113,7 +108,6 @@ export default class PostRollBuffs {
 
     const preData = flagsData.preData;
     const postData = flagsData.postData;
-
     const renderData = {
       testData: postData,
       preData,
@@ -121,13 +115,10 @@ export default class PostRollBuffs {
       hideDamage: flagsData.hideDamage,
       modifierList: (preData?.situationalModifiers || []).filter((x) => x?.value != 0),
     };
-
     const html = await renderTemplate(template, renderData);
-
     const actor = ChatMessage.getSpeakerActor(message.speaker) || game.users.get(message.author)?.character;
     const rollData = actor ? actor.getRollData() : {};
     const enriched = await TextEditor.enrichHTML(html, { rollData });
-
     await this._tryUpdateMessage(message, {
       content: enriched,
       flags: {
@@ -141,19 +132,16 @@ export default class PostRollBuffs {
     const parts = [];
     const fp = Number(match.fp) || 0;
     const qs = Number(match.qs) || 0;
-
     if (fp) {
-      const fpLabel = game.i18n.localize('CHARAbbrev.FP');
+      const fpLabel = _loc('CHARAbbrev.FP');
       parts.push(`${fpLabel} ${fp > 0 ? '+' : ''}${fp}`);
     }
     if (qs) {
-      const qsLabel = game.i18n.localize('CHARAbbrev.QS');
+      const qsLabel = _loc('CHARAbbrev.QS');
       parts.push(`${qsLabel} ${qs > 0 ? '+' : ''}${qs}`);
     }
-
     if (parts.length === 0) return '';
-
-    return game.i18n.format('ActiveEffects.chargesChatPostRollImproved', {
+    return _loc('ActiveEffects.chargesChatPostRollImproved', {
       details: parts.join(', '),
     });
   }
@@ -177,7 +165,6 @@ export default class PostRollBuffs {
         }
         return { consumed: false, reason: 'noConsumeCharges' };
       }
-
       // Post-roll buff application is restricted to owner/GM; if we reach this, permissions are insufficient.
       return { consumed: false, reason: 'noPermission' };
     } catch (e) {
@@ -189,7 +176,6 @@ export default class PostRollBuffs {
   static _ensureSuccessOnly(message) {
     const successLevel = Number(getProperty(message, 'flags.data.postData.successLevel'));
     const success = !!getProperty(message, 'flags.data.postData.success');
-
     // SuccessLevel is the main signal in this system; success is a helpful fallback.
     return successLevel > 0 || success;
   }
@@ -203,7 +189,6 @@ export default class PostRollBuffs {
   static _addSituationalModifier(flagsData, match) {
     const preData = flagsData.preData;
     preData.situationalModifiers ??= [];
-
     if (match.fp) {
       preData.situationalModifiers.push({
         name: this._formatMatchLabel({ ...match, qs: 0 }),
@@ -214,7 +199,6 @@ export default class PostRollBuffs {
         effectId: match.effectId,
       });
     }
-
     if (match.qs) {
       preData.situationalModifiers.push({
         name: this._formatMatchLabel({ ...match, fp: 0 }),
@@ -229,14 +213,12 @@ export default class PostRollBuffs {
 
   static _applyFP(flagsData, amount) {
     const cap = game.settings.get('dsa5', 'capQSat') || 6;
-
     const postData = flagsData.postData;
     const current = Number(postData.result);
     if (!Number.isFinite(current)) return;
 
     const next = current + Number(amount);
     postData.result = next;
-
     // Recalculate QS from FP.
     const qs = Math.min(cap, Math.max(1, Math.ceil(next / 3)));
     postData.qualityStep = qs;
@@ -245,7 +227,6 @@ export default class PostRollBuffs {
   static _applyQL(flagsData, amount) {
     const cap = game.settings.get('dsa5', 'capQSat') || 6;
     const postData = flagsData.postData;
-
     const current = Number(postData.qualityStep);
     const base = Number.isFinite(current) ? current : Math.max(1, Math.ceil(Number(postData.result) / 3));
     const next = Math.min(cap, base + Number(amount));
@@ -260,35 +241,26 @@ export default class PostRollBuffs {
     if (!source) return [];
 
     const successOnly = this._ensureSuccessOnly(message);
-
     const usedEffectUuids = new Set(this._getUsedEffectUuids(message));
-
     const matches = [];
-
     for (const effect of actor.effects) {
       if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
       if (usedEffectUuids.has(effect.uuid)) continue;
 
       const effectName = effect.name || effect.label || 'Effect';
-
       const chargeData = typeof effect.getChargeData === 'function' ? effect.getChargeData() : null;
-
       let fp = 0;
       let qs = 0;
       let rerollDice = 0;
-
       for (const change of effect.changes || []) {
         const isRerollKey = change?.key === POST_ROLL_KEYS.REROLL;
         if (change?.key !== POST_ROLL_KEYS.FP && change?.key !== POST_ROLL_KEYS.QL && !isRerollKey) continue;
-
         // FP/QS apply only on successful rolls; rerolls are allowed on failed rolls too.
         if (!successOnly && (change.key === POST_ROLL_KEYS.FP || change.key === POST_ROLL_KEYS.QL)) continue;
-
         for (const entry of this._splitEntries(change.value)) {
           const parsed = isRerollKey ? this._parseEntryWithDefaultAmount(entry, 1) : this._parseEntry(entry);
           if (!parsed) continue;
           if (!this._matchesScope(parsed.scope, source)) continue;
-
           if (change.key === POST_ROLL_KEYS.FP) fp += parsed.amount;
           else if (change.key === POST_ROLL_KEYS.QL) qs += parsed.amount;
           else if (isRerollKey) {
@@ -298,7 +270,6 @@ export default class PostRollBuffs {
           }
         }
       }
-
       if (fp === 0 && qs === 0 && rerollDice === 0) continue;
 
       matches.push({
@@ -311,7 +282,6 @@ export default class PostRollBuffs {
         charges: chargeData,
       });
     }
-
     return matches;
   }
 
@@ -329,11 +299,8 @@ export default class PostRollBuffs {
 
     const flagsData = deepClone(message.flags.data);
     const usedEffectUuids = new Set(this._getUsedEffectUuids(message));
-
     const ordered = this.sortMatchesForApply(matches);
-
     const consumptionWarnings = [];
-
     const hasReroll = ordered.some((m) => (Number(m?.rerollDice) || 0) > 0);
     if (hasReroll) {
       // Reroll is exclusive: exactly one reroll match can be applied, with no FP/QS.
@@ -347,10 +314,8 @@ export default class PostRollBuffs {
         ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
         return;
       }
-
       const actor = speakerActor;
       if (!actor) return;
-
       // Defer charge consumption + used marking until the Begabung reroll dialog is confirmed.
       await this._tryUpdateMessage(message, {
         'flags.dsa5.postRoll.pendingReroll': {
@@ -358,11 +323,9 @@ export default class PostRollBuffs {
           dice,
         },
       });
-
       actor.useFateOnRoll(message, 'isTalented');
       return;
     }
-
     // FP/QS post-roll buffs apply only on successful rolls.
     if (!this._ensureSuccessOnly(message)) return;
 
@@ -372,28 +335,21 @@ export default class PostRollBuffs {
       // Apply effect (FP first, then QS).
       if (match.fp) this._applyFP(flagsData, match.fp);
       if (match.qs) this._applyQL(flagsData, match.qs);
-
       this._addSituationalModifier(flagsData, match);
-
       // Mark used on this message (regardless of whether charges are successfully consumed).
       usedEffectUuids.add(match.effectUuid);
-
       // Consume charges (best-effort).
       const { consumed, reason } = await this._consumeEffectCharges(match.effectUuid, { message, match });
       if (!consumed) {
         consumptionWarnings.push({ match, reason });
       }
     }
-
     // Persist used effects.
     const usedList = Array.from(usedEffectUuids);
-
     await this._tryUpdateMessage(message, {
       'flags.dsa5.postRoll.usedEffectUuids': usedList,
     });
-
     await this._rerenderRollMessage(message, flagsData);
-
     if (consumptionWarnings.length > 0) {
       ui.notifications.warn('DSAError.requiresGM', { localize: true });
     }

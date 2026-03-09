@@ -2,7 +2,6 @@ import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
-import { localize } from '../helpers/localizer.js';
 
 export class DSAWorldCalendar extends foundry.data.CalendarData {
   static months = ['Praios', 'Rondra', 'Efferd', 'Travia', 'Boron', 'Hesinde', 'Firun', 'Tsa', 'Phex', 'Peraine', 'Ingerimm', 'Rahja', 'Namenloser'];
@@ -43,7 +42,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     if (!hasTranslation && returnNothingIfMissing) {
       return '';
     }
-    return localize(translationKey);
+    return _loc(translationKey);
   }
 
   static async autoDayLight() {
@@ -74,7 +73,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     return Object.fromEntries(
       this.availableCalendars.map(calendar => [
         calendar.key,
-        localize(calendar.name)
+        _loc(calendar.name)
       ])
     );
   }
@@ -122,7 +121,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const hourIndex = h;
     const hourPart = components.hour > 11 ? "2." : "1.";
     const hourName = calendar.translate(CONFIG.time.worldCalendarConfig.months.values[hourIndex].name);
-    const hourSuffix = localize('CALENDAR.DSA.hourSuffix');
+    const hourSuffix = _loc('CALENDAR.DSA.hourSuffix');
 
     return `${hourPart} ${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
@@ -154,11 +153,11 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     if (components.second) {
       if(game.combat) {
         const rounds = Math.floor(components.second / CONFIG.time.roundTime);
-        return `> ${rounds} ${localize('COMBAT.DURATION.ROUNDS.' + (rounds !== 1 ? 'many' : 'one'))}`;
+        return `> ${rounds} ${_loc('COMBAT.DURATION.ROUNDS.' + (rounds !== 1 ? 'many' : 'one'))}`;
       }
       return `> ${components.second} ${calendar.translate('second')}`;
     }
-    
+
     return "?"
   }
 
@@ -173,7 +172,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     if (holiday?.length) {
       const holidayTexts = holiday.map(h => {
         const key = `${game.time.calendar.translationPrefix}.holiday.${h.title}`;
-        const name = game.i18n.has(key) ? localize(key) : h.title;
+        const name = game.i18n.has(key) ? _loc(key) : h.title;
         return `<i style="color: ${DSACalendarEntry.CATEGORY_COLORS[h.category]}" class="${DSACalendarEntry.CATEGORY_ICONS[h.category]}"></i> ${name}`;
       });
       parts.push(...holidayTexts);

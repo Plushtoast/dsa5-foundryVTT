@@ -56,24 +56,24 @@ export class DSAAPTrackerEntrySheet extends foundry.applications.sheets.journal.
             let descriptionHtml = '';
             switch (entry.type) {
                 case 'attribute':
-                    descriptionHtml = game.i18n.localize(`CHAR.${(entry.attr || '').toUpperCase()}`);
+                    descriptionHtml = _loc(`CHAR.${(entry.attr || '').toUpperCase()}`);
                     break;
                 case 'permanentLoss':
-                    descriptionHtml = `${game.i18n.localize(entry.attr || '')} (${game.i18n.localize('permanentCost')})`;
+                    descriptionHtml = `${_loc(entry.attr || '')} (${_loc('permanentCost')})`;
                     break;
                 case 'point':
-                    descriptionHtml = game.i18n.localize(entry.attr || '');
+                    descriptionHtml = _loc(entry.attr || '');
                     break;
                 case 'item':
                     if (entry.itemUuid) {
                         const item = await fromUuid(entry.itemUuid);
-                        descriptionHtml = item?.toAnchor ? item.toAnchor().outerHTML : `${game.i18n.localize('TYPES.Item.' + (entry.itemType || ''))}: ${entry.itemName || ''}`;
+                        descriptionHtml = item?.toAnchor ? item.toAnchor().outerHTML : `${_loc('TYPES.Item.' + (entry.itemType || ''))}: ${entry.itemName || ''}`;
                     } else {
-                        descriptionHtml = `${game.i18n.localize('TYPES.Item.' + (entry.itemType || ''))}: ${entry.itemName || ''}`;
+                        descriptionHtml = `${_loc('TYPES.Item.' + (entry.itemType || ''))}: ${entry.itemName || ''}`;
                     }
                     break;
                 case 'sum':
-                    descriptionHtml = game.i18n.localize('MASTER.awardXP');
+                    descriptionHtml = _loc('MASTER.awardXP');
                     break;
                 default:
                     descriptionHtml = '';

@@ -6,7 +6,7 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import { TrapState } from '../chatmessage/trap_state.js';
 const { getProperty } = foundry.utils;
 
@@ -28,7 +28,6 @@ export default function () {
   });
 
   Hooks.on('renderChatInput', applyNotificationListeners);
-
 
   function applyNotificationListeners(app, html, context) {
     if (context.previousParent.id != 'chat-notifications') return;
@@ -124,7 +123,7 @@ export default function () {
     if (getProperty(doc, 'flags.core.initiativeRoll')) {
       const rolls = doc.rolls[0].terms;
       const basnum = `${rolls[0].number}`.split('.')[0];
-      const tooltip = `${localize('baseValue')}: ${basnum}, ${localize('randomValue')}: ${rolls.at(-3).values[0]}")}`;
+      const tooltip = `${_loc('baseValue')}: ${basnum}, ${_loc('randomValue')}: ${rolls.at(-3).values[0]}")}`;
       const dies = [];
       for (let term of rolls) {
         if (term.faces && term.faces == 6) {
@@ -135,10 +134,10 @@ export default function () {
       }
       const content = `<div>
                 <div class="card-content hide-option roll-result">
-                    <b>${localize('Roll')}</b>: ${dies.join('')}
+                    <b>${_loc('Roll')}</b>: ${dies.join('')}
                 </div>
                 <div class="card-content" data-tooltip="${tooltip}">
-                    <b>${localize('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
+                    <b>${_loc('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
                 </div>
             </div>`;
 

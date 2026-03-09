@@ -5,9 +5,7 @@ import Actordsa5 from '../../actor/actor-dsa5.js';
 import { ModifierCalculator } from './modifier-calculator.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
-
 const { mergeObject } = foundry.utils;
-
 /**
  * Handles resistance test functionality for diseases and poisons
  */
@@ -23,7 +21,6 @@ export class ResistanceTests {
    */
   static #getSituationalModifiers(situationalModifiers, actor, data, source, resistanceVantageKey) {
     source = DSA5_Utility.toObjectIfPossible(source);
-    
     if (game.user.targets.size) {
       game.user.targets.forEach((target) => {
         if (target.actor) {
@@ -39,14 +36,12 @@ export class ResistanceTests {
         }
       });
     }
-    
     ModifierCalculator.getSkZkModifier(data, source);
     mergeObject(data, {
       hasSKModifier: source.system.resistance.value === 'SK',
       hasZKModifier: source.system.resistance.value === 'ZK',
     });
   }
-
   /**
    * Setup dialog for resistance tests
    * @param {Event} ev - DOM event
@@ -58,8 +53,7 @@ export class ResistanceTests {
    * @returns {Object} Dialog configuration
    */
   static setupDialog(ev, options, item, actor, tokenId, resistanceVantageKey) {
-    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + game.i18n.localize('Test');
-
+    const title = item.name + ' ' + DSA5_Utility.categoryLocalization(item.type) + ' ' + _loc('Test');
     const testData = {
       opposable: false,
       source: item,
@@ -68,19 +62,15 @@ export class ResistanceTests {
         speaker: RollDialogBuilder.buildSpeaker(actor, tokenId),
       },
     };
-
     const data = {
       rollMode: options.rollMode,
     };
-    
     const situationalModifiers = [];
     this.#getSituationalModifiers(situationalModifiers, actor, data, item, resistanceVantageKey);
     data.situationalModifiers = situationalModifiers;
-
     if (options.manualResistance) {
       mergeObject(data, options.manualResistance);
     }
-
     const dialogOptions = {
       title,
       template: ITEM_CONSTANTS.TEMPLATE_PATHS.POISON_DIALOG,
@@ -90,11 +80,11 @@ export class ResistanceTests {
         testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
         testData.situationalModifiers.push(
           {
-            name: game.i18n.localize('zkModifier'),
+            name: _loc('zkModifier'),
             value: html.find('[name="zkModifier"]').val() || 0,
           },
           {
-            name: game.i18n.localize('skModifier'),
+            name: _loc('skModifier'),
             value: html.find('[name="skModifier"]').val() || 0,
           },
         );
@@ -102,13 +92,11 @@ export class ResistanceTests {
         return { testData, cardOptions };
       },
     };
-
     const cardOptions = RollDialogBuilder._setupItemCardOptions(
       `systems/dsa5/templates/chat/roll/${item.type}-card.hbs`, 
       title, 
       tokenId
     );
-
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
 }

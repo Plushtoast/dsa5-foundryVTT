@@ -1,5 +1,4 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
 
 const { getProperty } = foundry.utils;
 
@@ -10,19 +9,19 @@ export default function () {
     const buttons = [
       {
         icon: '<i class="fas fa-bug"></i>',
-        label: localize('DSA5Error'),
+        label: _loc('DSA5Error'),
         link: 'https://github.com/Plushtoast/dsa5-foundryVTT/issues',
         attrs: { id: 'reportADSABug' },
       },
       {
         icon: '<i class="fas fa-info-circle"></i>',
-        label: localize('DSA5Wiki'),
+        label: _loc('DSA5Wiki'),
         link: `https://github.com/Plushtoast/dsa5-foundryVTT/wiki${game.i18n.lang == 'de' ? '/de-Home' : ''}`,
       },
       {
         icon: '<div></div>',
         label: 'F-Shop',
-        link: localize('fshopLink'),
+        link: _loc('fshopLink'),
         attrs: { class: 'fshopButton' }
       }
     ]
@@ -39,7 +38,7 @@ export default function () {
   });
 
   Hooks.on('renderCompendiumDirectory', (app, html, data) => {
-    const button = $(`<button type="button"><i class="fas fa-university"></i> <span>${localize('ItemLibrary')}</span></button>`);
+    const button = $(`<button type="button"><i class="fas fa-university"></i> <span>${_loc('ItemLibrary')}</span></button>`);
     const headerActions = $(html).find('.header-actions');
     const container = $('<div class="header-actions action-buttons flexrow"></div>');
     container.append(button);

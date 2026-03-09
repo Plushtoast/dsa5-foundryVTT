@@ -11,7 +11,7 @@ export default class RuleChaos {
     let multipleDefense = -3;
 
     if (
-      (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle')) &&
+      (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == _loc('LocalizedIDs.wrestle')) &&
       SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.masterfulDodge')
     )
       multipleDefense = -2;
@@ -26,7 +26,7 @@ export default class RuleChaos {
   static async bleedingMessage(actor) {
     await ChatMessage.create(
       DSA5_Utility.chatDataSetup(
-        game.i18n.format('CHATNOTIFICATION.applyBleeding', {
+        _loc('CHATNOTIFICATION.applyBleeding', {
           actor: actor.name,
           actorId: actor.id,
           tokenId: actor.token ? actor.token.id : '',
@@ -36,7 +36,7 @@ export default class RuleChaos {
   }
 
   static isShield(item) {
-    return game.i18n.localize('LocalizedIDs.Shields') == getProperty(item, 'system.combatskill.value');
+    return _loc('LocalizedIDs.Shields') == getProperty(item, 'system.combatskill.value');
   }
 
   static _getFunctionData(ev) {
@@ -123,7 +123,7 @@ export default class RuleChaos {
     const { data, actor } = RuleChaos._getFunctionData(ev);
     if (!actor) return;
 
-    const skill = actor.items.find((i) => i.name == game.i18n.localize('LocalizedIDs.selfControl') && i.type == 'skill');
+    const skill = actor.items.find((i) => i.name == _loc('LocalizedIDs.selfControl') && i.type == 'skill');
     actor.setupSkill(skill, {}, data.token).then(async (setupData) => {
       const result = await actor.basicTest(setupData);
 
@@ -147,9 +147,7 @@ export default class RuleChaos {
           await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
           await ChatMessage.create(
             DSA5_Utility.chatDataSetup(
-              game.i18n.format('CHATNOTIFICATION.gotBleeding', {
-                actor: actor.name,
-              }),
+              _loc('CHATNOTIFICATION.gotBleeding', { actor: actor.name }),
             ),
           );
         }

@@ -61,7 +61,7 @@ export class DSACalendarEntrySheet extends SelectJournal {
 
     #getLocalizedArray(values, translationPrefix) {
         return values.map((item, index) => {
-            return { label: game.i18n.localize(`${translationPrefix}.${item.name}`), value: index };
+            return { label: _loc(`${translationPrefix}.${item.name}`), value: index };
         });
     }
 

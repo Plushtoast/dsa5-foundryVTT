@@ -7,7 +7,7 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../../system/orwell/money-tracker.js';
 import { DefaultAppv2 } from '../baseapp.js';
 import { ItemFactory } from '../../item/item-factory.js';
-import { localize } from '../../system/helpers/localizer.js';
+
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -386,8 +386,8 @@ export const MerchantSheetMixin = (superclass) =>
       if (notify == 0 || getProperty(item.system, 'equipmentType.value') == 'service') return;
 
       const notif = 'MERCHANT.' + (buy ? 'buy' : 'sell') + (noNeedToPay ? 'Loot' : '') + 'Notification';
-      const anchor = item.type == 'money' ? localize(item.name) : res.toAnchor().outerHTML;
-      const template = game.i18n.format(notif, {
+      const anchor = item.type == 'money' ? _loc(item.name) : res.toAnchor().outerHTML;
+      const template = _loc(notif, {
         item: anchor,
         source: source.name,
         target: target.name,
@@ -421,7 +421,7 @@ export const MerchantSheetMixin = (superclass) =>
       const item = duplicate(sourceItem);
       const isService = getProperty(item, 'system.equipmentType.value') == 'service';
       if (isService) {
-        const msg = game.i18n.format('MERCHANT.buyNotification', {
+        const msg = _loc('MERCHANT.buyNotification', {
           item: item.name,
           amount,
           source: target.name,
@@ -495,7 +495,7 @@ export const MerchantSheetMixin = (superclass) =>
         window: {
           title: 'MERCHANT.clearInventory',
         },
-        content: localize('MERCHANT.deleteAllGoods'),
+        content: _loc('MERCHANT.deleteAllGoods'),
         rejectClose: false,
         modal: true,
       });
@@ -567,7 +567,7 @@ export const MerchantSheetMixin = (superclass) =>
         }
         const money = {
           items: data.prepare.money.coins.map((x) => {
-            x.name = localize(x.name);
+            x.name = _loc(x.name);
             return x;
           }),
           show: true,
@@ -595,7 +595,7 @@ export const MerchantSheetMixin = (superclass) =>
         if (data.merchantType == 'loot') {
           inventory['money'] = {
             items: tradeData.money.coins.map((x) => {
-              x.name = localize(x.name);
+              x.name = _loc(x.name);
               return x;
             }),
             show: true,
@@ -736,7 +736,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
       return acc;
     }, new Set());
 
-    const regex = new RegExp(`${localize('magical')}|${localize('blessed')}`, 'i');
+    const regex = new RegExp(`${_loc('magical')}|${_loc('blessed')}`, 'i');
     const filtered = items.filter((x) => {
       const domain = getProperty(x.system, 'effect.attributes');
       const price = Number(getProperty(x.system, 'price.value')) || 0;

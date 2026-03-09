@@ -2,7 +2,6 @@ import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import WizardDSA5 from './dsa5_wizard.js';
-import { localize, format } from '../system/helpers/localizer.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
@@ -10,18 +9,18 @@ const { TextEditor } = foundry.applications.ux;
 export default class CareerWizard extends WizardDSA5 {
   constructor(app) {
     super(app);
-    this.attributes = Object.keys(DSA5.characteristics).map((x) => localize(`CHARAbbrev.${x.toUpperCase()}`));
+    this.attributes = Object.keys(DSA5.characteristics).map((x) => _loc(`CHARAbbrev.${x.toUpperCase()}`));
   }
 
   static get abilityExceptions() {
     return {
-      principles: new RegExp(`^${localize('LocalizedIDs.principles')} \\\(`),
-      obligations: new RegExp(`^${localize('LocalizedIDs.obligations')} \\\(`),
+      principles: new RegExp(`^${_loc('LocalizedIDs.principles')} \\\(`),
+      obligations: new RegExp(`^${_loc('LocalizedIDs.obligations')} \\\(`),
     };
   }
 
   get title() {
-    return format('WIZARD.addItem', { item: `${localize('TYPES.Item.career')} ${this.career?.name}`, })
+    return _loc('WIZARD.addItem', { item: `${_loc('TYPES.Item.career')} ${this.career?.name}`, })
   }
 
   static PARTS = {
@@ -151,7 +150,7 @@ export default class CareerWizard extends WizardDSA5 {
     const missingSpecialabilities = requirements.filter((x) => x.type == 'specialability' && !x.disabled);
     mergeObject(data, {
       career: this.career,
-      description: format('WIZARD.careerdescr', {
+      description: _loc('WIZARD.careerdescr', {
         career: this.career.name,
         cost: baseCost + reqCost,
       }),
@@ -192,7 +191,7 @@ export default class CareerWizard extends WizardDSA5 {
     return attributeRequirements.map((ar) => {
       const shortcutArr = game.dsa5.config.knownShortcuts[ar.name?.toLowerCase().trim()];
       const localizedAttr = Array.isArray(shortcutArr) && shortcutArr.length > 1 ? shortcutArr[1] : undefined;
-      ar.label = localizedAttr ? localize(`CHAR.${localizedAttr.toUpperCase()}`) : ar.name;
+      ar.label = localizedAttr ? _loc(`CHAR.${localizedAttr.toUpperCase()}`) : ar.name;
       return ar;
     });
   }
@@ -203,7 +202,7 @@ export default class CareerWizard extends WizardDSA5 {
     let itemsToCreate = [];
     let itemsToUpdate = [];
 
-    const selectionString = localize('combatskillcountdivider') + ':';
+    const selectionString = _loc('combatskillcountdivider') + ':';
 
     for (let k of value.split(',').concat(choices)) {
       if (k.includes(selectionString) || k == '') continue;
@@ -234,7 +233,7 @@ export default class CareerWizard extends WizardDSA5 {
           const langCats = types.map((x) => DSA5_Utility.categoryLocalization(x)).join('/');
           this.errors.push(`${langCats}: ${k}`);
           ui.notifications.error(
-            format('DSAError.notFound', {
+            _loc('DSAError.notFound', {
               category: langCats,
               name: k,
             }),
@@ -264,8 +263,8 @@ export default class CareerWizard extends WizardDSA5 {
         } else {
           this.errors.push(`${DSA5_Utility.categoryLocalization(type)}: ${k}`);
           ui.notifications.error(
-            format('DSAError.notFound', {
-              category: localize(type),
+            _loc('DSAError.notFound', {
+              category: _loc(type),
               name: name,
             }),
           );
@@ -331,7 +330,7 @@ export default class CareerWizard extends WizardDSA5 {
     const combatSkills = this.career.system.combatSkills.value
       .split(',')
       .concat(this.getExclusiveChoices(parent, '.combatskill'))
-      .filter((skill) => !(skill.includes(localize('combatskillcountdivider') + ':') || skill == ''));
+      .filter((skill) => !(skill.includes(_loc('combatskillcountdivider') + ':') || skill == ''));
     await this.updateSkill(combatSkills, 'combatskill', 1, false);
     await this.actor.update(update);
 

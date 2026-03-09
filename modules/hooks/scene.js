@@ -2,7 +2,7 @@ const { getProperty, mergeObject } = foundry.utils;
 
 export default function () {
   Hooks.on('preCreateScene', function (doc, createData, options, userId) {
-    if (!createData.grid?.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') } });
+    if (!createData.grid?.units) doc.updateSource({ grid: { units: _loc('gridUnits') } });
 
     if (!createData.backgroundColor) {
       doc.updateSource({ backgroundColor: '#000000' });
@@ -13,7 +13,7 @@ export default function () {
         window: {
           title: 'DIALOG.warning',
         },
-        content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
+        content: `<p>${createData.name}</p><p>${_loc('DSAError.mapsViaJournalbrowser')}</p>`,
         buttons: [
           {
             action: 'yes',

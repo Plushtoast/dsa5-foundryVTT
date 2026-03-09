@@ -1,6 +1,6 @@
 import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 import { ChatMessageState } from "./chatmessage_state.js";
-import { localize, format } from "../system/helpers/localizer.js";
+
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import RequestRoll from "../system/rolls/request-roll.js";
 import { ITEM_CONSTANTS } from "../config/item-constants.js";
@@ -100,7 +100,7 @@ export class TrapState extends ChatMessageState {
 
     async _handleSearch(event) {
         const { token, region, message, behavior } = this;
-        const skill = localize('LocalizedIDs.perception');
+        const skill = _loc('LocalizedIDs.perception');
         const customLabel = undefined
         const options = this.#requestRollOptions(message, token);
         Object.assign(options.datasetOptions, {
@@ -183,11 +183,11 @@ export class TrapState extends ChatMessageState {
 
     async _handleDisarm(event) {
         const { token, region, message, behavior } = this;
-        const skill = localize('LocalizedIDs.lockpick');
+        const skill = _loc('LocalizedIDs.lockpick');
         const customLabel = undefined;
         const options = this.#requestRollOptions(message, token);
         const duration = [1, 5, 5][behavior.system.complexity];
-        options.otherMessage = `<b>${game.i18n.format('REGIONBEHAVIOR_DSATrap.disarmMessage', {
+        options.otherMessage = `<b>${_loc('REGIONBEHAVIOR_DSATrap.disarmMessage', {
             duration
         })}</b>`;
 
@@ -207,7 +207,7 @@ export class TrapState extends ChatMessageState {
         if (!game.user.isGM) return;
 
         if (behavior.system.disarmed) {
-            ui.notifications.warn(localize("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
+            ui.notifications.warn(_loc("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
             return;
         }
 
@@ -249,7 +249,7 @@ export class TrapState extends ChatMessageState {
         const rollString = await roll.render();
         const msg = `
             <div>
-            <p>${format("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
+            <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
             <p>${description}</p>
             ${rollString}
             </div>

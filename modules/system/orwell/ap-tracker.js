@@ -1,6 +1,5 @@
 
 import JournalTracker from './journal_tracker.js';
-import { localize } from '../helpers/localizer.js';
 
 export default class APTracker extends JournalTracker {
   static configuration = {
@@ -38,15 +37,15 @@ export default class APTracker extends JournalTracker {
   static _buildDescription(description) {
     switch (description.type) {
       case 'attribute':
-        return localize(`CHAR.${description.attr.toUpperCase()}`);
+        return _loc(`CHAR.${description.attr.toUpperCase()}`);
       case 'permanentLoss':
-        return `${localize(description.attr)} (${localize('permanentCost')})`;
+        return `${_loc(description.attr)} (${_loc('permanentCost')})`;
       case 'point':
-        return localize(description.attr);
+        return _loc(description.attr);
       case 'item':
-        return description.item['toAnchor'] ? description.item.toAnchor().outerHTML : `${localize('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
+        return description.item['toAnchor'] ? description.item.toAnchor().outerHTML : `${_loc('TYPES.Item.' + description.item.type)}: ${description.item.name}`;
       case 'sum':
-        return localize('MASTER.awardXP');
+        return _loc('MASTER.awardXP');
     }
   }
 }

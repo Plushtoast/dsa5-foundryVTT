@@ -185,9 +185,9 @@ export default function () {
       const anchor = html.find(anchorSelector).closest('.form-group');
       const elem = $(`
         <div class="form-group">
-          <label>${game.i18n.localize(labelKey)}</label>
+          <label>${_loc(labelKey)}</label>
           <input type="checkbox" class="config-checkbox" ${value ? 'checked' : ''}>
-          <p class="hint">${game.i18n.localize(hintKey)}</p>
+          <p class="hint">${_loc(hintKey)}</p>
         </div>
       `);
       anchor.after(elem);

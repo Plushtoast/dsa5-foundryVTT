@@ -2,11 +2,10 @@ import WizardDSA5 from './dsa5_wizard.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
-import { localize } from '../system/helpers/localizer.js';
 
 export default class CultureWizard extends WizardDSA5 {
   get title() {
-    return game.i18n.format('WIZARD.addItem', { item: `${localize('TYPES.Item.culture')} ${this.culture.name}`, })
+    return _loc('WIZARD.addItem', { item: `${_loc('TYPES.Item.culture')} ${this.culture.name}`, })
   }
 
   static PARTS = {
@@ -51,7 +50,7 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.writing.value
               .split(',')
-              .map((x) => `${localize('LocalizedIDs.literacy')} (${x.trim()})`)
+              .map((x) => `${_loc('LocalizedIDs.literacy')} (${x.trim()})`)
               .join(', '),
             ['specialability'],
           );
@@ -61,7 +60,7 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.language.value
               .split(',')
-              .map((x) => `${localize('LocalizedIDs.language')} (${x.trim()}) 3`)
+              .map((x) => `${_loc('LocalizedIDs.language')} (${x.trim()}) 3`)
               .join(', '),
             ['specialability'],
           );
@@ -69,7 +68,7 @@ export default class CultureWizard extends WizardDSA5 {
     let baseCost = Number(this.culture.system.APValue.value);
     mergeObject(data, {
       culture: this.culture,
-      description: game.i18n.format('WIZARD.culturedescr', {
+      description: _loc('WIZARD.culturedescr', {
         culture: this.culture.name,
         cost: baseCost,
       }),
@@ -124,10 +123,10 @@ export default class CultureWizard extends WizardDSA5 {
 
     let update = { 'system.details.culture.value': this.culture.name };
 
-    let localKnowledge = await this.findCompendiumItem(`${localize('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
+    let localKnowledge = await this.findCompendiumItem(`${_loc('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
     if (localKnowledge) {
       localKnowledge = duplicate(localKnowledge);
-      localKnowledge.name = `${localize('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
+      localKnowledge.name = `${_loc('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
       localKnowledge.system.APValue.value = 0;
       await this.actor.createEmbeddedDocuments('Item', [localKnowledge], {
         render: false,

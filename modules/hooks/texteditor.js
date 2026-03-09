@@ -1,5 +1,5 @@
 import DSA5 from '../config/config-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
@@ -15,7 +15,7 @@ export function setEnrichers() {
   };
   const titles = {
     Rq: '',
-    Gc: `${localize('HELP.groupcheck')} `,
+    Gc: `${_loc('HELP.groupcheck')} `,
     Ch: '',
     AP: '',
     Pay: '',
@@ -28,14 +28,14 @@ export function setEnrichers() {
   const replaceRegex2 = /[\[\]]/g;
   const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
-    Pay: localize('PAYMENT.payButton'),
-    GetPaid: localize('PAYMENT.getPaidButton'),
-    AP: localize('MASTER.awardXP'),
+    Pay: _loc('PAYMENT.payButton'),
+    GetPaid: _loc('PAYMENT.getPaidButton'),
+    AP: _loc('MASTER.awardXP'),
   };
 
   if (!DSA5.statusRegex) {
-    let effects = DSA5.statusEffects.map((x) => localize(x.name).toLowerCase());
-    let keywords = ['status', 'condition', 'level', 'levels'].map((x) => localize(x)).join('|');
+    let effects = DSA5.statusEffects.map((x) => _loc(x.name).toLowerCase());
+    let keywords = ['status', 'condition', 'level', 'levels'].map((x) => _loc(x)).join('|');
     DSA5.statusRegex = {
       effects: effects,
       regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi'),
@@ -55,7 +55,7 @@ export function setEnrichers() {
         let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, '') : skill;
 
         if (json.attrs) {
-          customText += ` (${json.attrs.split(',').join('/')}, ${localize('CHARAbbrev.FW')} ${json.fw || 0})`;
+          customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
         }
 
         return $(
@@ -88,7 +88,7 @@ export function setEnrichers() {
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
-        if (!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${localize('GM notes')}</a>`)[0];
+        if (!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${_loc('GM notes')}</a>`)[0];
 
         const enriched = await document.system.enrichedProperties({ document });
         const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { document, enriched });

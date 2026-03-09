@@ -386,7 +386,7 @@ export class PatchViewer extends DefaultAppv2 {
             iconEl.className = `welcome-app-header__icon ${config.icon}`;
         }
         if (versionEl) {
-            versionEl.textContent = game.i18n.localize(config.title);
+            versionEl.textContent = _loc(config.title);
         }
     }
 
@@ -553,8 +553,8 @@ export class PatchViewer extends DefaultAppv2 {
         const videoGuides = (cfg.videoGuides[lang] ?? cfg.videoGuides['en']).map(v => ({
             url: `https://www.youtube.com/watch?v=${v.id}`,
             thumb: `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`,
-            title: game.i18n.localize(v.titleKey),
-            desc: game.i18n.localize(v.descKey),
+            title: _loc(v.titleKey),
+            desc: _loc(v.descKey),
         }));
 
         const moduleCards = cfg.moduleCards.map(c => {
@@ -567,11 +567,11 @@ export class PatchViewer extends DefaultAppv2 {
             return {
                 href,
                 image: c.image ?? '',
-                title: game.i18n.localize(c.titleKey),
-                desc: game.i18n.localize(c.descKey),
-                category: c.categoryKey ? game.i18n.localize(c.categoryKey) : '',
+                title: _loc(c.titleKey),
+                desc: _loc(c.descKey),
+                category: c.categoryKey ? _loc(c.categoryKey) : '',
                 free: c.free ?? false,
-                freeLabel: c.free ? game.i18n.localize('DSA5.welcomeApp.beginnerModules.free') : '',
+                freeLabel: c.free ? _loc('DSA5.welcomeApp.beginnerModules.free') : '',
                 external: c.external ?? false,
                 icon: c.icon ?? '',
                 action: c.action ?? '',
@@ -581,20 +581,20 @@ export class PatchViewer extends DefaultAppv2 {
 
         const gettingStartedSteps = cfg.gettingStartedSteps.map(s => ({
             icon: s.icon,
-            text: game.i18n.localize(s.textKey),
+            text: _loc(s.textKey),
         }));
 
         const welcomeLinks = cfg.links.map(l => ({
             href: l.href ?? resolve(l.hrefKey) ?? '',
             icon: l.icon,
-            label: l.label ?? game.i18n.localize(l.labelKey),
+            label: l.label ?? _loc(l.labelKey),
         }));
 
         const starterHints = cfg.starterHints.map(h => ({
             shortcut: h.shortcut ?? '',
             icon: h.icon,
-            title: game.i18n.localize(h.titleKey),
-            desc: game.i18n.localize(h.descKey),
+            title: _loc(h.titleKey),
+            desc: _loc(h.descKey),
             action: h.action ?? '',
         }));
 
@@ -603,17 +603,17 @@ export class PatchViewer extends DefaultAppv2 {
             image: 'systems/dsa5/icons/modules/vttom.webp',
             title: 'VTTom',
             titleIcon: 'fa-brands fa-youtube',
-            desc: game.i18n.localize('DSA5.welcomeApp.vttom.desc'),
-            cta: game.i18n.localize('DSA5.welcomeApp.vttom.cta'),
+            desc: _loc('DSA5.welcomeApp.vttom.desc'),
+            cta: _loc('DSA5.welcomeApp.vttom.cta'),
             ctaIcon: 'fa-solid fa-external-link',
             isLink: true,
         } : {
             href: '',
             image: 'systems/dsa5/icons/splashen.webp',
-            title: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonTitle'),
+            title: _loc('DSA5.welcomeApp.vttom.comingSoonTitle'),
             titleIcon: 'fa-solid fa-video',
-            desc: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonDesc'),
-            cta: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonCta'),
+            desc: _loc('DSA5.welcomeApp.vttom.comingSoonDesc'),
+            cta: _loc('DSA5.welcomeApp.vttom.comingSoonCta'),
             ctaIcon: 'fa-solid fa-clock',
             isLink: false,
         };

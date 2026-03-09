@@ -13,7 +13,6 @@ import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { localize, format } from '../system/helpers/localizer.js';
 import SpecialabilityData from '../data/item/specialability.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
@@ -145,7 +144,7 @@ export default class DSA5CombatDialog extends DialogShared {
       }
       if (!value) continue;
 
-      const localizedLabel = localize(label).toUpperCase();
+      const localizedLabel = _loc(label).toUpperCase();
       let tooltipText = `<i class="${icon}"></i> ${localizedLabel}: ${value}`;
 
       const flatKey = `${key}Flat`;
@@ -266,7 +265,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     if (!actor) return;
 
-    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === localize('LocalizedIDs.counterAttack');
+    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === _loc('LocalizedIDs.counterAttack');
     if (!isCounterAttack) return;
 
     this.dialogData.counterAttack = ev.button === 0;
@@ -284,13 +283,13 @@ export default class DSA5CombatDialog extends DialogShared {
     if (mode === 'attack') {
       situationalModifiers = situationalModifiers.filter(x => x.type !== 'defenseMalus');
 
-      const attackStatIndex = situationalModifiers.findIndex(x => x.name === localize('statuseffects'));
+      const attackStatIndex = situationalModifiers.findIndex(x => x.name === _loc('statuseffects'));
       const attackStatEffect = attackStatIndex >= 0 ? situationalModifiers.splice(attackStatIndex, 1)[0] : null;
 
       const defenseModifiers = [];
       cls.getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
 
-      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === localize('statuseffects'));
+      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === _loc('statuseffects'));
       const defenseStatEffect = defenseStatIndex >= 0 ? defenseModifiers.splice(defenseStatIndex, 1)[0] : null;
 
       situationalModifiers.unshift(...defenseModifiers);
@@ -307,7 +306,7 @@ export default class DSA5CombatDialog extends DialogShared {
     if (situationalModifiers.length > 0) {
       if (htmlMods.length === 0) {
         const modBox = `<div class="modifiers form-group">
-          <label>${localize('DIALOG.SituationalModifiers')}</label>
+          <label>${_loc('DIALOG.SituationalModifiers')}</label>
           <select name="situationalModifiers" multiple />
         </div>`;
         html.find('[name=rollMode]').parent().after(modBox);
@@ -401,7 +400,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   setMovement(html, targets) {
     if (!DPS.isEnabled) return;
-    if (game.canvas.grid.units != localize('gridUnits')) return;
+    if (game.canvas.grid.units != _loc('gridUnits')) return;
     if (this.dialogData.source.type != 'rangeweapon') return;
 
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
@@ -551,7 +550,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const aimingMod = Math.min(Number(formData.aim) || 0, 4);
     const sizeMod = Number(formData.size) || 0;
-    const modeTranslated = localize(`DIALOG.${mode}`);
+    const modeTranslated = _loc(`DIALOG.${mode}`);
     const result = [
       {
         name: modeTranslated,
@@ -563,7 +562,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const multiplier = Math.max(1, 4 - dices);
     result.push(
       {
-        name: modeTranslated + ' (' + localize('CHARAbbrev.damage') + ')',
+        name: modeTranslated + ' (' + _loc('CHARAbbrev.damage') + ')',
         damageBonus: tpMod,
         value: 0,
         step: 1,
@@ -597,7 +596,7 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.opposingWeaponSize = opposingWeaponSizeIndex;
 
     const advantageousPositionMod = formData.advantageousPosition ? 2 : 0;
-    const modeTranslated = localize(`DIALOG.${mode}`);
+    const modeTranslated = _loc(`DIALOG.${mode}`);
 
     const baseValue = 10 - advantageousPositionMod - opposingWeaponSizeIndex;
     const result = [{ name: modeTranslated, value: baseValue }];
@@ -618,7 +617,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
       result.push(
         {
-          name: `${modeTranslated} (${localize('CHARAbbrev.damage')})`,
+          name: `${modeTranslated} (${_loc('CHARAbbrev.damage')})`,
           damageBonus: tpMod,
           value: 0,
           step: 1,
@@ -647,7 +646,7 @@ export default class DSA5CombatDialog extends DialogShared {
           flags: {
             dsa5: {
               description: modeTranslated,
-              resistRoll: `${localize('LocalizedIDs.selfControl')} -3`,
+              resistRoll: `${_loc('LocalizedIDs.selfControl')} -3`,
               hideOnToken: false,
               hidePlayers: false,
               customDuration: '',
@@ -687,24 +686,24 @@ export default class DSA5CombatDialog extends DialogShared {
     if (!waterOptions) return [];
 
     const result = [{
-      name: `${localize('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
+      name: `${_loc('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
       value: waterOptions,
     }];
 
     const source = testData.source;
     if (source.type === 'trait' || waterIndex < 2) return result;
 
-    const combatInWater = localize('LocalizedIDs.combatInWater');
+    const combatInWater = _loc('LocalizedIDs.combatInWater');
     const weaponMadeForWater = getProperty(source, 'system.effect.attributes')?.includes(combatInWater);
 
     if (weaponMadeForWater) return result;
 
     const combatskill = source.system.combatskill?.value;
-    const reverseCombatskill = localize(`LocalizedCTs.${combatskill}`);
+    const reverseCombatskill = _loc(`LocalizedCTs.${combatskill}`);
 
     if (DSA5.impossibleWeaponsForWater.has(reverseCombatskill)) {
       result.push({
-        name: `${localize('MODS.combatInWater')} - ${format('MODS.impossibleWeapon', { weapon: combatskill })}`,
+        name: `${_loc('MODS.combatInWater')} - ${_loc('MODS.impossibleWeapon', { weapon: combatskill })}`,
         value: -5000,
       });
       return result;
@@ -722,7 +721,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (damageBonus < 1) {
       result.push({
-        name: `${localize('MODS.combatInWater')} - ${format('MODS.notSuitableWeapon', { weapon: combatskill })}`,
+        name: `${_loc('MODS.combatInWater')} - ${_loc('MODS.notSuitableWeapon', { weapon: combatskill })}`,
         damageBonus: `*${damageBonus}`,
         value: 0,
         step: 1,
@@ -774,39 +773,39 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
 
     const modifiers = [
-      ModifierCalculator.parseValueType(localize('sight'), data.vision || 0),
+      ModifierCalculator.parseValueType(_loc('sight'), data.vision || 0),
       {
-        name: localize('MODS.attackFromBehind'),
+        name: _loc('MODS.attackFromBehind'),
         value: testData.extra.attackFromBehind,
       },
       {
-        name: localize('MODS.damage'),
+        name: _loc('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: format('defenseCount', { malus: multipleDefenseValue }),
+        name: _loc('defenseCount', { malus: multipleDefenseValue }),
         value: (Number(data.defenseCount) || 0) * multipleDefenseValue,
       },
       {
-        name: localize('MODS.wrongHand'),
+        name: _loc('MODS.wrongHand'),
         value: Number(data.wrongHand) || 0,
       },
       {
-        name: localize('MODS.advantageousPosition'),
+        name: _loc('MODS.advantageousPosition'),
         value: Number(data.advantageousPosition) || 0,
       },
       {
-        name: localize('sizeCategory'),
+        name: _loc('sizeCategory'),
         value: targetIsSwarm ? 0 : DSA5.meleeSizeModifier[data.size] || 0,
       },
       {
-        name: localize('MODS.narrowSpace'),
+        name: _loc('MODS.narrowSpace'),
         value: Number(data.narrowSpace) || 0,
       },
       {
-        name: localize('MODS.doubleAttack'),
+        name: _loc('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
       ...Itemdsa5.getSpecAbModifiers(html, mode),
@@ -816,7 +815,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     testData.situationalModifiers.push(...modifiers);
 
-    if (testData.situationalModifiers.some(x => x.name === localize('LocalizedIDs.counterAttack'))) {
+    if (testData.situationalModifiers.some(x => x.name === _loc('LocalizedIDs.counterAttack'))) {
       testData.mode = 'attack';
       testData.extra.counterAttack = true;
     }
@@ -840,48 +839,47 @@ export default class DSA5CombatDialog extends DialogShared {
     const mountedOptions = Number(data.mountedOptions) || 0;
     const aim = Math.min(Number(data.aim) || 0, 4);
 
-
     const modifiers = [
       {
-        name: `${localize('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
+        name: `${_loc('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
         value: targetMovement,
       },
       {
-        name: `${localize('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
+        name: `${_loc('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
         value: shooterMovement,
       },
       {
-        name: `${localize('mount')} ${this._getSelectedText('mountedOptions', html)}`,
+        name: `${_loc('mount')} ${this._getSelectedText('mountedOptions', html)}`,
         value: mountedOptions,
       },
       {
-        name: localize('MODS.quickChange'),
+        name: _loc('MODS.quickChange'),
         value: quickChange,
       },
       {
-        name: localize('MODS.combatTurmoil'),
+        name: _loc('MODS.combatTurmoil'),
         value: Number(data.combatTurmoil) || 0,
       },
       {
-        name: localize('MODS.aim'),
+        name: _loc('MODS.aim'),
         value: aim,
       },
       {
-        name: localize('MODS.damage'),
+        name: _loc('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: localize('sight'),
+        name: _loc('sight'),
         value: Number(data.vision) || 0,
       },
       {
-        name: localize('sizeCategory'),
+        name: _loc('sizeCategory'),
         value: sizeMod,
       },
       {
-        name: localize('distance'),
+        name: _loc('distance'),
         value: Number(rangeMod.attack) || 0,
         damageBonus: Number(rangeMod.damage) || 0,
       },
@@ -905,7 +903,7 @@ export default class DSA5CombatDialog extends DialogShared {
   static _applySharpshooterBonus(testData, actor, formData, modValues) {
     const sharpshooter = actor.items.find(
       item => item.type === 'specialability' &&
-        item.name === localize('LocalizedIDs.sharpshooter')
+        item.name === _loc('LocalizedIDs.sharpshooter')
     );
 
     if (!sharpshooter) return;
@@ -939,7 +937,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (sharpshooterBonus > 0) {
       testData.situationalModifiers.push({
-        name: localize('LocalizedIDs.sharpshooter'),
+        name: _loc('LocalizedIDs.sharpshooter'),
         value: sharpshooterBonus,
       });
     }
@@ -966,11 +964,11 @@ export default class DSA5CombatDialog extends DialogShared {
     let value = Number(formData.opportunityAttack) || 0;
     if (value) {
       situationalModifiers.push({
-        name: localize('MODS.opportunityAttack'),
+        name: _loc('MODS.opportunityAttack'),
         value,
       });
-      const enemySense = localize('LocalizedIDs.enemySense');
-      const winhallStyle = localize('LocalizedIDs.winhallStyle');
+      const enemySense = _loc('LocalizedIDs.enemySense');
+      const winhallStyle = _loc('LocalizedIDs.winhallStyle');
       game.user.targets.forEach((target) => {
         for (const item of target.actor?.items || []) {
           if (item.type == 'specialability') {
@@ -1001,7 +999,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (progress < LZ) {
         buttons.push({
           action: 'reloadButton',
-          label: `${localize('WEAPON.reload')} (${progress}/${LZ})`,
+          label: `${_loc('WEAPON.reload')} (${progress}/${LZ})`,
           callback: async () => {
             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
             await actor.updateEmbeddedDocuments('Item', [
@@ -1010,7 +1008,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 'system.reloadTime.progress': progress + 1,
               },
             ]);
-            const infoMsg = format('WEAPON.isReloading', {
+            const infoMsg = _loc('WEAPON.isReloading', {
               actor: actor.token?.name || actor.prototypeToken.name,
               item: testData.source.name,
               status: `${progress + 1}/${LZ}`,
@@ -1019,13 +1017,13 @@ export default class DSA5CombatDialog extends DialogShared {
           },
         });
       }
-      
+
       const loaded = LZ === 0 || progress >= LZ;
       const aimProgress = Math.clamp(Number(getProperty(testData.source, 'system.aimTime.progress')) || 0, 0, 2);
       if (loaded && aimProgress < 2) {
         buttons.push({
           action: 'aimButton',
-          label: `${localize('WEAPON.aim')} (${aimProgress}/2)`,
+          label: `${_loc('WEAPON.aim')} (${aimProgress}/2)`,
           callback: async () => {
             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
             const weapon = actor?.items?.get(testData.source._id);
@@ -1047,7 +1045,7 @@ export default class DSA5CombatDialog extends DialogShared {
               },
             ]);
 
-            const infoMsg = format('WEAPON.isAiming', {
+            const infoMsg = _loc('WEAPON.isAiming', {
               actor: actor.token?.name || actor.prototypeToken.name,
               item: weapon.name,
               status: `${newProgress}/2`,

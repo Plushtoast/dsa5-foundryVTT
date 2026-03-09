@@ -4,7 +4,7 @@ import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
-import { localize } from '../system/helpers/localizer.js';
+
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 
 export default function () {
@@ -15,11 +15,11 @@ export default function () {
     if (actor && actor.documentName == 'Actor') {
       if (getProperty(effect, 'flags.dsa5.maintain')) {
         const effectsToRemove = [effect._id];
-        const searchEffect = effect.name.replace('(' + localize('maintainCost') + ')', '').trim();
+        const searchEffect = effect.name.replace('(' + _loc('maintainCost') + ')', '').trim();
         const relatedEffects = actor.effects.filter((x) => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id);
-        let content = `<p>${game.i18n.format('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
+        let content = `<p>${_loc('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
         if (relatedEffects) {
-          content += `<p>${localize('DIALOG.dependentMaintainEffects')}</p>`;
+          content += `<p>${_loc('DIALOG.dependentMaintainEffects')}</p>`;
           content += relatedEffects
             .map(
               (x) =>
@@ -178,7 +178,7 @@ export default function () {
 
     ChatMessage.create(
       DSA5_Utility.chatDataSetup(
-        game.i18n.format('CHATNOTIFICATION.fadingEffect', {
+        _loc('CHATNOTIFICATION.fadingEffect', {
           effect: effect.name,
           actor: effect.parent.link,
         }),
@@ -228,7 +228,7 @@ export default function () {
       ) {
         await actor.addCondition('bloodrush');
         const msg = DSA5_Utility.replaceConditions(
-          `${game.i18n.format('CHATNOTIFICATION.gainsBloodrush', {
+          `${_loc('CHATNOTIFICATION.gainsBloodrush', {
             character: '<b>' + actor.name + '</b>',
           })}`,
         );
@@ -297,7 +297,7 @@ export default function () {
     if (setting == 0 || getProperty(actor, 'merchant.merchantType') == 'loot') return;
 
     let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
-    let name = localize('unknown');
+    let name = _loc('unknown');
     if ([2, 4].includes(setting)) {
       const tokenId = token.id || token._id;
       if (!tokenId) return;
@@ -448,7 +448,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
 
   static async getDialog(tokenObject, setting) {
     new AskForNameDialog({
-      content: `<div class="form-group"><label for="name">${localize('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
+      content: `<div class="form-group"><label for="name">${_loc('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
       buttons: [
         {
           action: 'yes',
@@ -480,7 +480,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
           callback: async () => {
             const tokenId = tokenObject.id || tokenObject._id;
             const token = canvas.scene.tokens.get(tokenId);
-            await token.update({ name: localize('unknown') });
+            await token.update({ name: _loc('unknown') });
           },
         },
         {

@@ -5,7 +5,7 @@ const { mergeObject } = foundry.utils;
 
 export default class SpeciesWizard extends WizardDSA5 {
   get title() {
-    return game.i18n.format('WIZARD.addItem', { item: `${game.i18n.localize('TYPES.Item.species')} ${this.species.name}`, })
+    return _loc('WIZARD.addItem', { item: `${_loc('TYPES.Item.species')} ${this.species.name}`, })
   }
 
   static PARTS = {
@@ -77,7 +77,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     }, 0);
     mergeObject(data, {
       species: this.species,
-      description: game.i18n.format('WIZARD.speciesdescr', {
+      description: _loc('WIZARD.speciesdescr', {
         species: this.species.name,
         cost: baseCost + reqCost,
       }),
@@ -131,7 +131,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     });
 
     for (let attr of this.species.system.attributeChange.value.split(',').concat(attributeChoices)) {
-      if (attr.includes(game.i18n.localize('combatskillcountdivider') + ':') || attr == '') continue;
+      if (attr.includes(_loc('combatskillcountdivider') + ':') || attr == '') continue;
 
       const attrs = attr.trim().split(' ');
       const dataAttr = game.dsa5.config.knownShortcuts[attrs[0].toLowerCase().trim()].slice(0);
@@ -160,7 +160,7 @@ export default class SpeciesWizard extends WizardDSA5 {
 
           return {
             name: c,
-            label: localizedAttr ? game.i18n.localize(`CHAR.${localizedAttr.toUpperCase()}`) + ' ' + split[1] : c,
+            label: localizedAttr ? _loc(`CHAR.${localizedAttr.toUpperCase()}`) + ' ' + split[1] : c,
           };
         });
       }

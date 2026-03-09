@@ -51,7 +51,6 @@ export default class TestSuite {
       for (let item of items) {
         console.log("Rendering", item.name, item.uuid)
         await item.sheet.render({ force: true, animate: false});
-        
 
         if (renderEmbedded && documentType == 'Actor') {
           for(let emb of item.items) {

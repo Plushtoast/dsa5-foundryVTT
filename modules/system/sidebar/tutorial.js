@@ -4,7 +4,7 @@ export default class DSA5Tutorial {
   static async firstTimeMessage() {
     if (!game.settings.get('dsa5', 'firstTimeStart')) {
       await DSA5Tutorial.setupDefaultOptions();
-      const welcomeMsg = game.i18n.localize('WELCOME');
+      const welcomeMsg = _loc('WELCOME');
       ChatMessage.create(DSA5_Utility.chatDataSetup(welcomeMsg));
       DSA5Tutorial.firstTimeLanguage();
       await game.settings.set('dsa5', 'firstTimeStart', true);
@@ -16,10 +16,10 @@ export default class DSA5Tutorial {
     new foundry.applications.api.DialogV2({
       window: { title: 'DIALOG.firstTime' },
       position: { width: 400 },
-      content: `<p>${game.i18n.localize('DIALOG.firstTimeWarning')}</p>`,
+      content: `<p>${_loc('DIALOG.firstTimeWarning')}</p>`,
       buttons: languages.map((lang) => ({
         action: lang,
-        label: game.i18n.localize(lang),
+        label: _loc(lang),
         callback: () => DSA5Tutorial.setLanguage(lang),
       })),
     }).render(true);

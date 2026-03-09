@@ -116,7 +116,7 @@ const handleItemDrop = async (canvas, data) => {
   const item = await Item.implementation.fromDropData(data);
 
   if (!(game.settings.get('dsa5', 'enableItemDropToCanvas') || game.user.isGM || data.tokenId)) return;
-  
+
   const sourceActor = item.parent;
 
   if (item.type == 'trap') {
@@ -133,7 +133,7 @@ const handleItemDrop = async (canvas, data) => {
   const isBag = item.system.isBagWithContents && sourceActor;
 
   RangeSelectDialog.create('DSASETTINGS.enableItemDropToCanvas', callback, {
-    name: game.i18n.format('MERCHANT.dropGround', { name: item.name }),
+    name: _loc('MERCHANT.dropGround', { name: item.name }),
     count: item.system.quantity.value,
     isBag
   });

@@ -2,11 +2,9 @@ export class SpellModifiers {
   static get(actor, name, sourceType) {
     const result = [];
     const keys = ['FP', 'step', 'QL', 'TPM', 'FW', 'CMP'];
-    
     for (const key of keys) {
       const type = key === 'step' ? '' : key;
       const modifiers = actor.system.skillModifiers[key];
-      
       if (Array.isArray(modifiers)) {
         result.push(
           ...modifiers
@@ -21,7 +19,6 @@ export class SpellModifiers {
             }))
         );
       }
-      
       const sourceModifiers = actor.system.skillModifiers[sourceType]?.[key];
       if (Array.isArray(sourceModifiers)) {
         result.push(
@@ -36,7 +33,6 @@ export class SpellModifiers {
         );
       }
     }
-    
     return result;
   }
 }

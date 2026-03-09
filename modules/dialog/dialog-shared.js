@@ -1,6 +1,6 @@
 import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
 const { renderTemplate } = foundry.applications.handlebars;
@@ -22,14 +22,14 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   setRollButtonWarning() {
     if (this.dialogData.mode !== 'attack') return '';
 
-    const noTarget = localize('DIALOG.noTarget');
+    const noTarget = _loc('DIALOG.noTarget');
     return `<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`;
   }
 
   setMultipleTargetsWarning() {
     if (this.dialogData.mode !== 'attack') return '';
 
-    const noTarget = localize('DIALOG.multipleTarget');
+    const noTarget = _loc('DIALOG.multipleTarget');
     return `<span class="multipleTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`;
   }
 
@@ -45,7 +45,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async updateRollButton(targets, multiplier = 1) {
-    let rollTag = this.renderRollValueDie(multiplier) + localize('Roll');
+    let rollTag = this.renderRollValueDie(multiplier) + _loc('Roll');
 
     if (targets.length === 0) {
       rollTag += this.setRollButtonWarning();
@@ -116,7 +116,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
       if (probability <= 1) break;
 
       const formattedProbability = `${probability}`.padStart(2, '0');
-      possibilities.push(`${localize('CHARAbbrev.QS')} ${qs}: ${formattedProbability}%`);
+      possibilities.push(`${_loc('CHARAbbrev.QS')} ${qs}: ${formattedProbability}%`);
     }
 
     $(this.element)

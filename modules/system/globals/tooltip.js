@@ -1,20 +1,15 @@
 import DSA5StatusEffects from "../../status/status_effects.js";
-import { localize } from "../helpers/localizer.js";
-
 const { renderTemplate } = foundry.applications.handlebars;
-
 export class GlobalToolTipHandler {
     static async handleTooltip(ev, actor) {
         const target = ev.currentTarget;
         const data = target.dataset;
-
         if ('tooltipClass' in target.dataset) return;
 
         const category = data.category?.split(' ')[0];
         let tooltip;
         let name = data.name;
         let description;
-
         switch (category) {
             case 'systemEffect':
                 ({ description, name } = await GlobalToolTipHandler._handleEffectTooltip(data, actor));
@@ -50,7 +45,6 @@ export class GlobalToolTipHandler {
             default:
                 return;
         }
-
         if (name || description) {
             const parts = [];
             if (name) parts.push(`<h1>${name}</h1>`);
@@ -74,7 +68,7 @@ export class GlobalToolTipHandler {
 
     static async _handleSkillGmTooltip(data) {
         return {
-            tooltip: game.i18n.format('TT.skillgm', { name: data.name })
+            tooltip: _loc('TT.skillgm', { name: data.name })
         };
     }
 
@@ -82,17 +76,16 @@ export class GlobalToolTipHandler {
         let effect = actor?.effects.get(data.id);
         let description;
         let name;
-
         if (!effect) {
             effect = CONFIG.statusEffects.find(x => x.id === data.id);
             if (effect) {
-                description = localize(effect.description);
-                name = localize(effect.name);
+                description = _loc(effect.description);
+                name = _loc(effect.name);
             }
         } else {
             const pips = {};
             await DSA5StatusEffects.enrichSheetEffect(pips, effect);
-            description = game.i18n.has(effect.description) ? localize(effect.description) : effect.description;
+            description = game.i18n.has(effect.description) ? _loc(effect.description) : effect.description;
             if (pips.pips.length) {
                 description = `
                 <small class="flexrow gap2px ellipsis">
@@ -102,18 +95,16 @@ export class GlobalToolTipHandler {
             }
             name = effect.name;
         }
-
         return { description, name };
     }
 
     static async _actorSummaryTooltip(data, actor) {
         const attributes = [
-            { label: localize('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
-            { label: localize('speed'), value: actor.system.status.speed.max, icon: 'fas fa-running' },
-            { label: localize('soulpower'), value: actor.system.status.soulpower.max, icon: 'fas fa-sun' },
-            { label: localize('toughness'), value: actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
+            { label: _loc('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
+            { label: _loc('speed'), value: actor.system.status.speed.max, icon: 'fas fa-running' },
+            { label: _loc('soulpower'), value: actor.system.status.soulpower.max, icon: 'fas fa-sun' },
+            { label: _loc('toughness'), value: actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
         ];
-
         const effects = await actor.actorEffects();
         return await renderTemplate('systems/dsa5/templates/tooltips/actor_summary.hbs', { actor, attributes, effects });
     }
@@ -121,7 +112,6 @@ export class GlobalToolTipHandler {
     static async _handleOnUseTooltip(data, actor) {
         const item = actor?.items.get(data.id);
         let description;
-
         switch (item.type) {
             case 'specialability':
                 description = item.system.rule?.value;
@@ -132,7 +122,6 @@ export class GlobalToolTipHandler {
             default:
                 description = item.system.description?.value;
         }
-
         return { description };
     }
 
@@ -141,7 +130,6 @@ export class GlobalToolTipHandler {
         if (!item) return {};
         const itemData = await item.sheet._prepareContext();
         let description;
-
         if (!game.user.isGM && itemData.document.system.obfuscation?.details) {
             description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', itemData);
         } else {
@@ -157,7 +145,6 @@ export class GlobalToolTipHandler {
                 .find('.groupbox')
                 .html();
         }
-
         return { description };
     }
 
@@ -166,16 +153,14 @@ export class GlobalToolTipHandler {
         const item = actor?.items.get(ids[0]);
         let description;
         let name;
-
         if (item.system.obfuscation?.enchantment) {
             description = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', item);
-            name = `${localize('enchantment')} (${item.name})`;
+            name = `${_loc('enchantment')} (${item.name})`;
         } else {
             const enchantment = item.getFlag('dsa5', 'enchantments').find((x) => x.id == ids[1]);
             name = `${enchantment.name} (${item.name})`;
             description = await renderTemplate('systems/dsa5/templates/items/enchantment-preview.hbs', { enchantment, document: item });
         }
-
         return { description, name };
     }
 }

@@ -124,7 +124,7 @@ export class DSAToken extends Token {
   }
 
   _getAnimationMovementSpeed(options) {
-    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return super._getAnimationMovementSpeed(options);
+    if (game.canvas.grid.units != _loc('gridUnits')) return super._getAnimationMovementSpeed(options);
 
     if (this.actor) return this.actor.speedByMovementType(options.action) || 1;
 
@@ -137,7 +137,6 @@ export class DSAToken extends Token {
     return speed * (actionConfig.speedMultiplier ?? 1);
   }
 }
-
 
 export class DSATokenDocument extends TokenDocument {
   _inferMovementAction() {
@@ -186,7 +185,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   }
 
   _totalDistanceColor(waypoint) {
-    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) {
+    if (game.canvas.grid.units != _loc('gridUnits')) {
       const user = game.users.get(waypoint.userId);
 
       return user?.color ?? 0x000000
@@ -219,7 +218,6 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     return { width: 4 * scale, color: this._totalDistanceColor(waypoint), alpha: 1 };
   }
 }
-
 
 /*Hooks.on('moveToken', async (token, move, options) => {
   console.log('moveToken', token, move, options);

@@ -1,7 +1,7 @@
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
 
@@ -26,7 +26,7 @@ export default class DSA5StatusEffects {
   }
 
   static lockedCondition() {
-    const lock = localize('MERCHANT.locked');
+    const lock = _loc('MERCHANT.locked');
     return {
       id: 'locked',
       name: lock,
@@ -42,7 +42,7 @@ export default class DSA5StatusEffects {
   }
 
   static async createCustomEffect(owner, description = '', name) {
-    name = name || localize('CONDITION.custom');
+    name = name || _loc('CONDITION.custom');
     if (description == '') description = name;
 
     const effect = await owner.addCondition({
@@ -110,7 +110,7 @@ export default class DSA5StatusEffects {
       data.cumulativeConditions.push({
         img: ef.img,
         id: key,
-        name: localize(ef.name),
+        name: _loc(ef.name),
         value: val,
       });
     }
@@ -142,7 +142,7 @@ export default class DSA5StatusEffects {
       effectData.pips.push({
         category: 'systemEffect',
         id: status,
-        content: localize(systemEffect.name)
+        content: _loc(systemEffect.name)
       });
     }
 
@@ -154,17 +154,17 @@ export default class DSA5StatusEffects {
 
     if (sourceEffect.flags?.dsa5?.maintain) {
       effectData.pips.push({
-        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${sourceEffect.flags?.dsa5?.maintain} ${localize(`CHARAbbrev.${sourceEffect.flags?.dsa5?.payType}`)}`
+        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${sourceEffect.flags?.dsa5?.maintain} ${_loc(`CHARAbbrev.${sourceEffect.flags?.dsa5?.payType}`)}`
       });
     }
   }
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
-    if (!target.isOwner) return game.i18n.localize('DSAError.elementNotOwned');
-    if (target.inCompendium) return game.i18n.localize('DSAError.canNotEditInCompendium');
+    if (!target.isOwner) return _loc('DSAError.elementNotOwned');
+    if (target.inCompendium) return _loc('DSAError.canNotEditInCompendium');
     if (absolute && value < 1) return this.removeCondition(target, effect, value, auto, absolute);
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return game.i18n.localize('DSAError.noEffectFound');
+    if (!effect) return _loc('DSAError.noEffectFound');
 
     let existing = this.hasCondition(target, effect.id);
 
@@ -184,9 +184,9 @@ export default class DSA5StatusEffects {
   }
 
   static async removeCondition(target, effect, value = 1, auto = true, absolute = false) {
-    if (!target.isOwner) return game.i18n.localize('DSAError.elementNotOwned');
+    if (!target.isOwner) return _loc('DSAError.elementNotOwned');
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return game.i18n.localize('DSAError.noEffectFound');
+    if (!effect) return _loc('DSAError.noEffectFound');
 
     let existing = this.hasCondition(target, effect.id);
 
@@ -206,7 +206,7 @@ export default class DSA5StatusEffects {
     if (immunities.includes(effect.id)) {
       res = {
         name: target.name,
-        condition: localize(`CONDITION.${effect.id}`),
+        condition: _loc(`CONDITION.${effect.id}`),
       };
     }
     if (!res && target.documentName == 'Actor') {
@@ -215,7 +215,7 @@ export default class DSA5StatusEffects {
         if (type.ignoredCondition(effect.id)) {
           res = {
             name: `${target.name} (${type.getName()})`,
-            condition: localize(`CONDITION.${effect.id}`),
+            condition: _loc(`CONDITION.${effect.id}`),
           };
           break;
         }
@@ -223,7 +223,7 @@ export default class DSA5StatusEffects {
     }
     if (!res || !(ui.notifications && !silent)) return;
 
-    const msg = game.i18n.format('DSAError.conditionInvalidToCreature', {
+    const msg = _loc('DSAError.conditionInvalidToCreature', {
       name: res.name,
       condition: res.condition,
     });
@@ -250,7 +250,7 @@ export default class DSA5StatusEffects {
 
   static async createEffect(actor, effect, value, auto) {
     //const immune = this.immuneToEffect(actor, effect)
-    effect.name = localize(effect.name);
+    effect.name = _loc(effect.name);
     this.immuneToEffect(actor, effect, false);
     //if (immune) return immune
 
@@ -366,7 +366,7 @@ export default class DSA5StatusEffects {
   }
 
   static getRollModifiers(actor, item, options = {}) {
-    const source = localize('status') + '/' + localize('condition');
+    const source = _loc('status') + '/' + _loc('condition');
     const result = [];
     const finishedCoreIds = [];
 
@@ -386,7 +386,7 @@ export default class DSA5StatusEffects {
 
         if (value != 0) {
           result.push({
-            name: localize(ef.name),
+            name: _loc(ef.name),
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, key),
             source,
@@ -440,7 +440,7 @@ export default class DSA5StatusEffects {
         name: ef.name,
         value: ef.value,
         selected: true,
-        source: localize('MASTER.globalMods'),
+        source: _loc('MASTER.globalMods'),
       });
     }
     return result;
@@ -471,7 +471,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
+    const regex = new RegExp(`${_loc('TYPES.Item.combatskill')} `, 'gi');
     const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
     if (
       (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -491,7 +491,7 @@ class RaptureEffect extends DSA5StatusEffects {
 class DeafEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    return item.type == 'skill' && item.name == localize('LocalizedIDs.perception') ? -3 : 0;
+    return item.type == 'skill' && item.name == _loc('LocalizedIDs.perception') ? -3 : 0;
   }
 }
 
@@ -504,7 +504,7 @@ class FixatedEffect extends DSA5StatusEffects {
 class BloodrushEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill') return item.name == localize('LocalizedIDs.featOfStrength') ? 2 : 0;
+    if (item.type == 'skill') return item.name == _loc('LocalizedIDs.featOfStrength') ? 2 : 0;
 
     return options.mode == 'attack' ? 4 : 0;
   }
@@ -528,7 +528,7 @@ class TranceEffect extends DSA5StatusEffects {
     if (condition <= -3) return -3;
 
     if (condition == -2) {
-      const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
+      const regex = new RegExp(`${_loc('TYPES.Item.combatskill')} `, 'gi');
       const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
       const isFavored =
         (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -545,7 +545,7 @@ class TranceEffect extends DSA5StatusEffects {
 class DrunkenEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }
@@ -554,7 +554,7 @@ class DrunkenEffect extends DSA5StatusEffects {
 class BurningEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
 
     return 0;
   }
@@ -569,7 +569,7 @@ class ArousalEffect extends DSA5StatusEffects {
 
 class SikaryanlossEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
     else if (item.type == 'regenerate') return this.clampedCondition(actor, effect);
 
     return 0;
@@ -578,7 +578,7 @@ class SikaryanlossEffect extends DSA5StatusEffects {
 
 class DesireEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }

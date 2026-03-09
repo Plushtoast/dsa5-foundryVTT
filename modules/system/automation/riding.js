@@ -1,7 +1,7 @@
 import actor from '../../hooks/actor.js';
 import CreatureType from './creature-type.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import { localize } from '../helpers/localizer.js';
+
 const { mergeObject, getProperty, hasProperty } = foundry.utils;
 
 export default class Riding {
@@ -81,11 +81,10 @@ export default class Riding {
     const skill = this.getLoyaltyFromHorse(horse);
     if (!skill) {
       return ui.notifications.warn(
-        game.i18n.format('DSAError.notFound', {
+        'DSAError.notFound', { localize: true, format: {
           category: DSA5_Utility.categoryLocalization('skill'),
-          name: localize('LocalizedIDs.loyalty'),
-        }),
-      );
+          name: _loc('LocalizedIDs.loyalty'),
+        }});
     }
     horse.setupSkill(skill, options, horse.token?.id).then((setupData) => {
       horse.basicTest(setupData);
@@ -108,7 +107,7 @@ export default class Riding {
   }
 
   static getLoyaltyFromHorse(horse) {
-    return horse.items.find((x) => x.type == 'skill' && x.name.startsWith(localize('LocalizedIDs.loyalty')));
+    return horse.items.find((x) => x.type == 'skill' && x.name.startsWith(_loc('LocalizedIDs.loyalty')));
   }
 
   static onRender(html, actor) {
@@ -170,7 +169,7 @@ export default class Riding {
   }
 
   static getRidingCondition(actor) {
-    const ridingLabel = localize('RIDING.riding');
+    const ridingLabel = _loc('RIDING.riding');
     return actor.effects.find((x) => x.name == ridingLabel);
   }
 
@@ -193,7 +192,7 @@ export default class Riding {
     if (actor.system.horse.token && !actor.system.horse.actorLink) horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
     else if (actor.system.horse.actorId) horse = game.actors.get(actor.system.horse.actorId);
 
-    if (!horse && returnEmptyHorse && actor.system.horse.isRiding) horse = { name: localize('unknown') };
+    if (!horse && returnEmptyHorse && actor.system.horse.isRiding) horse = { name: _loc('unknown') };
 
     return horse;
   }
@@ -231,12 +230,12 @@ export default class Riding {
 
   static ridingCondition() {
     return {
-      name: localize('RIDING.riding'),
+      name: _loc('RIDING.riding'),
       img: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       changes: [{ key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 }],
       flags: {
         dsa5: {
-          description: localize('RIDING.ridingDescription'),
+          description: _loc('RIDING.ridingDescription'),
         },
       },
     };
@@ -248,12 +247,12 @@ export default class Riding {
         window: {
           title: 'DSAError.horseMustBeImported',
         },
-        content: `<p>${localize('DSAError.horseMustBeImportedText')}</p>`,
+        content: `<p>${_loc('DSAError.horseMustBeImportedText')}</p>`,
         rejectClose: false,
       });
       if (!confirmed) return;
 
-      const folder = await DSA5_Utility.getFolderForType('Actor', null, localize('RIDING.horse'));
+      const folder = await DSA5_Utility.getFolderForType('Actor', null, _loc('RIDING.horse'));
       const importedHorse = horse.toObject();
       importedHorse.folder = folder.id;
       horse = await Actor.implementation.create(importedHorse);
@@ -401,12 +400,12 @@ export default class Riding {
       horse.effects.filter((x) => hasProperty(x, 'flags.dsa5.horseSpeed')).map((x) => x.id),
     );
     await horse.addCondition({
-      name: localize('speed') + ': ' + localize(`RIDING.speeds.${speed}`),
+      name: _loc('speed') + ': ' + _loc(`RIDING.speeds.${speed}`),
       icon: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       changes: [this.speedKeys[speed]],
       flags: {
         dsa5: {
-          description: localize(`RIDING.speed.${speed}`),
+          description: _loc(`RIDING.speed.${speed}`),
           horseSpeed: speed,
         },
       },

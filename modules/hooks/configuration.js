@@ -17,7 +17,7 @@ export function setupConfiguration() {
   };
   const styles = duplicate(DSA5.styles);
   for (let key of Object.keys(styles)) {
-    styles[key] = game.i18n.localize(styles[key]);
+    styles[key] = _loc(styles[key]);
   }
   const settings = {
     tabsOutsideSheet: {

@@ -39,7 +39,6 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
 
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
-
         const entries = Object.entries(foundry.utils.duplicate(this.document.system.personae))
             .filter(([key, value]) => value.visible || game.user.isGM)
             .sort(([, a], [, b]) => {
@@ -55,7 +54,6 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         } else {
             if (options.currentKey)
                 this.currentKey = options.currentKey;
-
             if (this.currentKey && context.sortedEntries[this.currentKey]) {
                 context.currentKey = this.currentKey;
                 context.detailHTML = await this.renderDetail(this.currentKey);
@@ -90,7 +88,6 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
             game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
             game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
         });
-
         new foundry.applications.ux.DragDrop.implementation({
             dropSelector: '.personae-list-column',
             permissions: {
@@ -117,11 +114,9 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         const options = {
             actor_uuid: entry.uuid,
         }
-
         await this.newEntry(options);
         this.render(true);
     }
-
     static buildTOC(html, { includeElement = true } = {}) {
         const cls = JournalEntryPage.implementation;
         const root = { level: 0, children: [] };
@@ -172,9 +167,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
                 entry.hidden = false;
                 continue;
             }
-
             const name = entry.querySelector('.persona-detail-name').textContent || '';
-
             const isMatch = [name].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
             entry.hidden = !isMatch;
         }
@@ -186,9 +179,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
                 entry.hidden = false;
                 continue;
             }
-
             const name = entry.querySelector('.persona-list-name').textContent || '';
-
             const isMatch = [name].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
             entry.hidden = !isMatch;
         }
@@ -239,9 +230,9 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
 
         const img = actor.img;
         if (!img) return;
+
         await this.document.update({ [`system.personae.${key}.img`]: img });
     }
-
     static async #copyActorDescription(event, target) {
         const key = target.dataset.key;
         const actorUuid = this.document.system.personae[key]?.actor_uuid;
@@ -259,5 +250,4 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         }
         await this.document.update(update);
     }
-
 }

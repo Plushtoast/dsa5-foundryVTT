@@ -2,10 +2,10 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
 import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
-const { duplicate, mergeObject } = foundry.utils;
 import DSA5 from '../../config/config-dsa5.js';
-import { localize } from '../helpers/localizer.js';
 import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
+
+const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 //todo check if items on index have permission
@@ -74,7 +74,6 @@ class SearchDocument {
   }
 }
 
-
 class AdvancedSearchDocument extends SearchDocument {
   static toSearchableObject(item, subcategory) {
     const object = super.toSearchableObject(item, item.documentName)
@@ -140,7 +139,7 @@ class DSASystemConfiguration {
   static async renderTooltip(item, fullTextSearch) {
     const description = this.getDescription(item, fullTextSearch)
     const langKey = `TYPES.${item.documentName}.${item.type}`
-    const type = game.i18n.has(langKey) ? localize(langKey) : item.type
+    const type = game.i18n.has(langKey) ? _loc(langKey) : item.type
     return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
   }
 
@@ -230,7 +229,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       templates: ['systems/dsa5/templates/system/itemlibrary/parts/filterarea.hbs']
     }
   }
-
 
   constructor(app) {
     super(app)
@@ -378,7 +376,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         if (!this.models[category]) this.models[category] = []
         const langKey = `TYPES.${documentName}.${key}`
         this.models[category].push({
-          label: game.i18n.has(langKey) ? localize(langKey) : key,
+          label: game.i18n.has(langKey) ? _loc(langKey) : key,
           selected: false,
           key
         })
@@ -404,7 +402,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async buildJournalEntryIndex() {
     await this._createIndex("JournalEntry", game.journal)
   }
-
 
   async setAdvancedFilters(category = 'none', subcategory = 'none') {
     for (let key in this.models) {
@@ -517,7 +514,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const allResults = values
       .filter(filterFunction)
       .sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-    
+
     const paginatedResults = returnAll ? allResults : allResults.slice(
       startIndex,
       Math.min(startIndex + this.pageSize, allResults.length)
@@ -574,7 +571,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const indexWrapper = this.detailFilter[subcategory];
       const { sels: selectSearches, inps: textSearches, checkboxes: booleanSearches } = this.collectDetailSearch(dataFilters);
       const startIndex = Number(page) || 0;
-      
+
       const result = await this.executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, [], startIndex);
       this.setBGImage(result, documentGroup);
       return this.filterDuplications(result);
@@ -891,7 +888,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.detailStoreBySubcategory[subcategory] = this.detailStoreBySubcategory[subcategory] || {};
 
     const { index } = this.selectIndex(category);
-    const catName = localize(`TYPES.${itemType}.${subcategory}`);
+    const catName = _loc(`TYPES.${itemType}.${subcategory}`);
     const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true });
     const target = $(this.element).find(`*[data-tab="${category}"]`);
 
@@ -951,7 +948,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   async buildDetailFilter(category, subcategory, savedSettings = undefined) {
     if (category === 'none') {
-      return `<p>${localize('Library.selectAdvanced')}</p>`;
+      return `<p>${_loc('Library.selectAdvanced')}</p>`;
     }
 
     const indexPromise = this.createDetailIndex(category, subcategory);
@@ -992,7 +989,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     for (const pack of game.packs.filter(p => p.metadata.type === 'Item')) {
       const packageName = pack.metadata.packageName;
 
-
       if (options[packageName + postfix]) continue;
 
       if (moduleNameCache.has(packageName)) {
@@ -1000,7 +996,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       } else {
         let displayName;
         if (game.i18n.has(`${packageName}.name`)) {
-          displayName = localize(`${packageName}.name`);
+          displayName = _loc(`${packageName}.name`);
         } else if (packageName === 'dsa5') {
           displayName = game.system.title;
         } else {
@@ -1046,7 +1042,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
-      
+
       if (this.advancedFiltering) {
         const dataFilters = $(this.element).find('.detailFilters');
         const subcategory = dataFilters.attr('data-subc');
@@ -1054,7 +1050,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
           this.detailFilter[subcategory].next = undefined;
         }
       }
-      
+
       this._debouncedFilterItems(category);
     });
 
@@ -1081,15 +1077,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (this._paginationInFlight) return;
     const log = $(ev.target);
     const pct = (log.scrollTop() + log.innerHeight()) >= log[0].scrollHeight - 100;
-    
+
     if (!pct) return;
 
     const category = $(this.element).find('.tab.active')[0].dataset.tab;
-    
+
     if (source.advancedFiltering) {
       const dataFilters = $(source.element).find('.detailFilters');
       const subcategory = dataFilters.attr('data-subc');
-      
+
       if (subcategory) {
         const next = source.detailFilter[subcategory]?.next;
         if (next === undefined) return;
@@ -1127,7 +1123,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   _onFilterBySearch(ev) {
     const category = $(this.element).find('.tab.active')[0].dataset.tab
     this.findIndex(category).search = ev.currentTarget.value
-    
+
     if (this.advancedFiltering) {
       const dataFilters = $(this.element).find('.detailFilters');
       const subcategory = dataFilters.attr('data-subc');
@@ -1135,7 +1131,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         this.detailFilter[subcategory].next = undefined;
       }
     }
-    
+
     this._debouncedFilterItems(category);
   }
 
@@ -1155,7 +1151,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
       }
-      
+
       await this.setAdvancedFilters(category, type);
       if (isChecked) {
         const template = await this.buildDetailFilter(category, type);
@@ -1212,7 +1208,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     try {
       if (typeof effectiveCategory === 'string') this.setBGImage([1], effectiveCategory);
-      const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${localize('Library.buildingIndex')}</div>`);
+      const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${_loc('Library.buildingIndex')}</div>`);
       loading.appendTo(target.find('.searchResult'));
     } catch (e) {
     }

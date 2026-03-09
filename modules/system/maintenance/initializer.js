@@ -101,7 +101,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
             window: {
               title: 'Book.sceneReset',
             },
-            content: `<p>${game.i18n.format('Book.sceneResetDescription', { name: entry.name })}</p>`,
+            content: `<p>${_loc('Book.sceneResetDescription', { name: entry.name })}</p>`,
             buttons: [
               {
                 action: 'yes',
@@ -228,7 +228,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       const updates = [];
       for (let folder in this.folders) {
         const flag = this.folders[folder].getFlag('dsa5', 'parent');
-        let parent = flag == headReplace ? game.i18n.localize(`${this.moduleScope}.name`) : flag;
+        let parent = flag == headReplace ? _loc(`${this.moduleScope}.name`) : flag;
         if (parent) {
           updates.push({
             _id: this.folders[folder].id,
@@ -334,7 +334,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       Hooks.once('renderCompendium', (app, html, data) => {
         html = $(html);
         const compendiumUi = html.find(`[data-pack="${json.macro}"] header`);
-        compendiumUi.append($(`<p>${game.i18n.localize('Book.macroHint')}</p>`));
+        compendiumUi.append($(`<p>${_loc('Book.macroHint')}</p>`));
       });
       await game.packs.get(json.macro).render(true);
     }
@@ -366,7 +366,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = '') {
-    if (!folderName) folderName = game.i18n.localize(`${this.moduleScope}.name`);
+    if (!folderName) folderName = _loc(`${this.moduleScope}.name`);
 
     return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color);
   }

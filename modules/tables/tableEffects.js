@@ -5,7 +5,6 @@ import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import CombatskillData from '../data/item/combatskill.js';
-import { localize } from '../system/helpers/localizer.js';
 import TraitData from '../data/item/trait.js';
 import DSATables from './dsatables.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
@@ -41,8 +40,8 @@ export default class TableEffects {
           if (!result) console.warn(`Table effect for <${method} not working yet`, ef, mode, targets, source);
         }
       }
-      const tt = game.i18n.format('ActiveEffects.appliedEffect', {
-        source: localize('table'),
+      const tt = _loc('ActiveEffects.appliedEffect', {
+        source: _loc('table'),
         target: targets.map((x) => x.name).join(', '),
       });
       await message.update({
@@ -87,7 +86,7 @@ export default class TableEffects {
       if (args.distance) {
         const roll = await new Roll(args.distance).evaluate();
         const renderedRoll = await roll.render();
-        const msg = game.i18n.format('WEAPON.dropped', {
+        const msg = _loc('WEAPON.dropped', {
           distance: roll.total,
         });
         ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${msg}</p>${renderedRoll}`));
@@ -151,7 +150,7 @@ export default class TableEffects {
         }
         let ef;
         if (changes) {
-          const lbl = localize(`CONDITION.${systemEffect}`) + ' - ' + localize('botchCritEffect');
+          const lbl = _loc(`CONDITION.${systemEffect}`) + ' - ' + _loc('botchCritEffect');
           ef = OnUseEffect.effectBaseDummy(lbl, changes, duration || {});
           ef.icon = baseEffect.icon;
         } else {
@@ -164,7 +163,7 @@ export default class TableEffects {
         }
         return true;
       } else if (changes) {
-        const ef = OnUseEffect.effectBaseDummy(localize('botchCritEffect'), changes || [], duration || {});
+        const ef = OnUseEffect.effectBaseDummy(_loc('botchCritEffect'), changes || [], duration || {});
 
         mergeObject(ef, {
           flags: {

@@ -1,7 +1,6 @@
 import MoneyTracker from '../orwell/money-tracker.js';
 import DSA5SoundEffect from './dsa-soundeffect.js';
 import DSA5_Utility from './utility-dsa5.js';
-import { localize, format } from '../helpers/localizer.js';
 
 export default class DSA5Payment {
   static async payMoney(actor, moneyString, silent = false, render = true) {
@@ -20,13 +19,13 @@ export default class DSA5Payment {
     if (money) {
       result.actorsMoney = this._actorsMoney(actor);
       if (result.actorsMoney.sum >= money) {
-        result.msg = format('PAYMENT.pay', {
+        result.msg = _loc('PAYMENT.pay', {
           actor: actor.name,
           amount: await DSA5Payment._moneyToString(money),
         });
         result.success = true;
       } else {
-        result.msg = format('PAYMENT.cannotpay', {
+        result.msg = _loc('PAYMENT.cannotpay', {
           actor: actor.name,
           amount: await DSA5Payment._moneyToString(money),
         });
@@ -44,7 +43,7 @@ export default class DSA5Payment {
     if (money) {
       let actorsMoney = this._actorsMoney(actor);
       await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
-      let msg = `<p>${format('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
+      let msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
       if (!silent) {
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       }
@@ -57,7 +56,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${localize('PAYMENT.wage')}</b></p><p>${format('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${localize('PAYMENT.getPaidButton')}</button></div>`;
+      let msg = `<p><b>${_loc('PAYMENT.wage')}</b></p><p>${_loc('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${_loc('PAYMENT.getPaidButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -67,7 +66,7 @@ export default class DSA5Payment {
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${localize('PAYMENT.bill')}</b></p>${format('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${localize('PAYMENT.payButton')}</button></div>`;
+      let msg = `<p><b>${_loc('PAYMENT.bill')}</b></p>${_loc('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${_loc('PAYMENT.payButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -76,7 +75,7 @@ export default class DSA5Payment {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${localize('PAYMENT.error')}</b></p><p><i>${localize('PAYMENT.getPaidexample')}</i></p>`;
+      let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.getPaidexample')}</i></p>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       return false;
     }
@@ -87,7 +86,7 @@ export default class DSA5Payment {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${localize('PAYMENT.error')}</b></p><p><i>${localize('PAYMENT.payexample')}</i></p>`;
+      let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.payexample')}</i></p>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       return false;
     }

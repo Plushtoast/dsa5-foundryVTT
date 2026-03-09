@@ -1,6 +1,5 @@
 import DSA5Payment from "../helpers/payment.js";
 import JournalTracker from "./journal_tracker.js";
-import { localize } from "../helpers/localizer.js";
 
 export default class MoneyTracker extends JournalTracker {
     static configuration = {
@@ -14,13 +13,13 @@ export default class MoneyTracker extends JournalTracker {
         switch (description.type) {
             case 'payment':
                 return description.next > description.previous
-                    ? localize('PAYMENT.wage')
-                    : localize('PAYMENT.wagePaid');
+                    ? _loc('PAYMENT.wage')
+                    : _loc('PAYMENT.wagePaid');
             case 'sheetChange':
-                return localize('TRACKER.sheetChange');
+                return _loc('TRACKER.sheetChange');
             case 'buy':
             case 'sell':
-                return `${localize(`MERCHANT.${description.type}`)} (${description.name}${description.amount != 1 ? ` x${description.amount}` : ''})`;
+                return `${_loc(`MERCHANT.${description.type}`)} (${description.name}${description.amount != 1 ? ` x${description.amount}` : ''})`;
         }
     }
 

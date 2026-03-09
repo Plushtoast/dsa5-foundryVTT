@@ -69,7 +69,7 @@ export default class RequestRoll {
 
       switch (category) {
         case 'attribute':
-          const characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => game.i18n.localize(game.dsa5.config.characteristics[key]) == name);
+          const characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => _loc(game.dsa5.config.characteristics[key]) == name);
           actor.setupCharacteristic(characteristic, options, tokenId).then((setupData) => {
             actor.basicTest(setupData);
           });
@@ -133,7 +133,7 @@ export default class RequestRoll {
     for (let key of Object.keys(datasetOptions)) {
       moreDataSet.push(`data-options-${key}="${datasetOptions[key]}"`)
     }
-    let msg = game.i18n.format('CHATNOTIFICATION.requestRoll', {
+    let msg = _loc('CHATNOTIFICATION.requestRoll', {
       user: game.user.name,
       item: `<a class="roll-button request-roll" ${moreDataSet.join(' ')}><i class="fas fa-dice"></i> ${customLabel || target}${mod}</a>`,
     });

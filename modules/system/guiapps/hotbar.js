@@ -7,7 +7,6 @@ import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
-import { localize } from '../helpers/localizer.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
@@ -363,8 +362,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #addContextColor() {
-    const parryText = ` ${localize('CHAR.PARRY')}`;
-    const attackText = ` ${localize('CHAR.ATTACK')}`;
+    const parryText = ` ${_loc('CHAR.PARRY')}`;
+    const attackText = ` ${_loc('CHAR.ATTACK')}`;
 
     for (const slot of this.slots) {
       const mac = slot.macro;
@@ -444,7 +443,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         break;
     }
   }
-
 
   filterSections(ev, html) {
     this.searching = this.searching || '';
@@ -675,8 +673,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       filterCategories.push({
         key,
         tooltip: game.i18n.has(i18nkey)
-          ? localize(i18nkey)
-          : localize(DSA5Hotbar.FALLBACK_NAMES[key]),
+          ? _loc(i18nkey)
+          : _loc(DSA5Hotbar.FALLBACK_NAMES[key]),
         img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || DSA5Hotbar.FALLBACK_ICONS[key],
       });
     }
@@ -688,7 +686,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       );
       filterCategories.unshift({
         key: 'attacks',
-        tooltip: localize('Combat'),
+        tooltip: _loc('Combat'),
         img: 'systems/dsa5/icons/categories/Meleeweapon.webp',
       });
     }
@@ -723,7 +721,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #conditionAddEffect(effects) {
-    const label = localize('CONDITION.add');
+    const label = _loc('CONDITION.add');
     effects.unshift({
       name: 'CONDITION.add',
       id: '',
@@ -849,7 +847,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
               title: "HOTBAR.CLEAR",
               icon: "fa-solid fa-trash"
             },
-            content: localize("HOTBAR.CLEAR_CONFIRM"),
+            content: _loc("HOTBAR.CLEAR_CONFIRM"),
             modal: true
           });
           if (proceed) await game.user.update({ hotbar: {} }, { recursive: false, diff: false, noHook: true });
@@ -881,7 +879,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       if (isOffHand) return this.actor.canEquipWeaponOffHand(i);
       return true;
     });
-    const equip = localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
+    const equip = _loc(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
@@ -943,17 +941,17 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       LeP: {
         value: this.actor.system.status.wounds.value,
         max: this.actor.system.status.wounds.max,
-        label: localize('CHAR.LEP'),
+        label: _loc('CHAR.LEP'),
       },
       AsP: {
         value: this.actor.system.status.astralenergy.value,
         max: this.actor.system.status.astralenergy.max,
-        label: localize('CHAR.ASP'),
+        label: _loc('CHAR.ASP'),
       },
       KaP: {
         value: this.actor.system.status.karmaenergy.value,
         max: this.actor.system.status.karmaenergy.max,
-        label: localize('CHAR.KAP'),
+        label: _loc('CHAR.KAP'),
       },
     }
   }
@@ -991,7 +989,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (this.editMode && false) {
       while (positionIndex < DSA5Hotbar.WEAPON_POSITIONS.length) {
         positions.push({
-          weapon: { name: localize('attackWeaponless') },
+          weapon: { name: _loc('attackWeaponless') },
           style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++],
           isEmpty: true
         });
@@ -1004,7 +1002,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #addHumanoidWeapon(positions, humanoidWeapons, startIndex) {
     let positionIndex = startIndex;
     const emptyHands = {
-      name: localize('attackWeaponless'),
+      name: _loc('attackWeaponless'),
     }
 
     const offHandWeapons = [];
@@ -1081,7 +1079,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #getAllMacros() {
     const hotbar = game.user?.hotbar ?? {};
-    const emptyLabel = localize('HOTBAR.EMPTY');
+    const emptyLabel = _loc('HOTBAR.EMPTY');
     return Array.from({ length: 50 }, (_, i) => {
       const key = i + 1;
       const id = hotbar[key] ?? '';

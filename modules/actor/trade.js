@@ -86,7 +86,7 @@ export class Trade extends DefaultAppv2 {
 
     inventory.inventory['money'] = {
       items: inventory.money.coins.map((x) => {
-        x.name = game.i18n.localize(x.name);
+        x.name = _loc(x.name);
         return x;
       }),
       show: true,

@@ -131,7 +131,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
     if (item.type != 'disadvantage') return xpCost;
 
     for (const id of ['principles', 'obligations']) {
-      const reg = new RegExp(`^${game.i18n.localize('LocalizedIDs.' + id)} \\\(`);
+      const reg = new RegExp(`^${_loc('LocalizedIDs.' + id)} \\\(`);
       if (reg.test(item.name)) {
         const shouldBeSingular = actor.items.filter((i) => filter(i, reg, item));
         const maxPaid = Math.min(0, ...shouldBeSingular.map((x) => AdvantageRulesDSA5.calcAPCostSum(x)));
@@ -151,17 +151,17 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
   }
 
   static hasVantage(actor, talent, localize = true) {
-    if (localize) talent = game.i18n.localize(talent);
+    if (localize) talent = _loc(talent);
     return super.hasItem(actor, talent, ['advantage', 'disadvantage']);
   }
 
   static vantageStep(actor, talent, localize = true) {
-    if (localize) talent = game.i18n.localize(talent);
+    if (localize) talent = _loc(talent);
     return super.itemStep(actor, talent, ['advantage', 'disadvantage']);
   }
 
   static getVantageAsModifier(actor, talent, factor = 1, startsWith = false, selected = false) {
-    talent = game.i18n.localize(talent);
+    talent = _loc(talent);
     return super.itemAsModifier(actor, talent, factor, ['advantage', 'disadvantage'], startsWith, selected);
   }
 }

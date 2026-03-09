@@ -1,5 +1,4 @@
 const { mergeObject, getProperty } = foundry.utils;
-import { localize } from '../helpers/localizer.js';
 
 export default class Migrakel {
   static async showDialog(content, migrateAll = false) {
@@ -103,7 +102,7 @@ export default class Migrakel {
   }
 
   static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.spells'), true));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.spells'), true));
     const condition = (x) => {
       return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension', 'blessing'].includes(x.type);
     };
@@ -136,7 +135,7 @@ export default class Migrakel {
   }
 
   static async updateSpecialAbilities(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.abilities')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.abilities')));
     if (res) {
       const updator = (find) => {
         let update = {
@@ -186,7 +185,7 @@ export default class Migrakel {
   }
 
   static async updateCombatskills(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.cskills')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.cskills')));
     if (res) {
       const updator = (find) => {
         return {
@@ -202,7 +201,7 @@ export default class Migrakel {
   }
 
   static async updateSkills(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.skills')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.skills')));
     if (res) {
       const condition = (x) => {
         return ['skill'].includes(x.type);
@@ -228,7 +227,7 @@ export default class Migrakel {
   }
 
   static async updateGear(actor, preChoice = undefined) {
-    const choice = preChoice ?? (await this.showDialog(localize('Migrakel.gear')));
+    const choice = preChoice ?? (await this.showDialog(_loc('Migrakel.gear')));
     if (choice) {
       let condition = (x) => {
         return ['meleeweapon', 'armor', 'rangeweapon', 'equipment', 'poison', 'disease', 'consumable', 'ammunition'].includes(x.type);
@@ -270,7 +269,7 @@ export default class Migrakel {
         actor.items
           .filter((x) => x.type == 'money')
           .map((x) => {
-            return { _id: x.id, name: localize(x.name) };
+            return { _id: x.id, name: _loc(x.name) };
           }),
       );
     }

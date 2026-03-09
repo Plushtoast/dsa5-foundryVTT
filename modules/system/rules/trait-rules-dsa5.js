@@ -8,13 +8,13 @@ export default class TraitRulesDSA5 extends ItemRulesDSA5 {
   }
 
   static hasTrait(actor, talent, localize = true) {
-    if(localize) talent = game.i18n.localize(talent);
+    if(localize) talent = _loc(talent);
     return super.hasItem(actor, talent, ['trait']);
   }
 }
 
 Hooks.on('setup', () => {
-  const familiar = game.i18n.localize('LocalizedIDs.familiar');
+  const familiar = _loc('LocalizedIDs.familiar');
   DSA5.addTraitRules[familiar] = async (actor, item) => {
     if (item.effects.length == 0) {
       item.effects = [
@@ -84,7 +84,7 @@ Hooks.on('setup', () => {
         },
       ];
     }
-    const witchSenseName = game.i18n.localize('LocalizedIDs.witchSense');
+    const witchSenseName = _loc('LocalizedIDs.witchSense');
     if (!ItemRulesDSA5.hasItem(actor, witchSenseName, ['trait'])) {
       const witchSense = await DSA5_Utility.findAnyItem([{ name: witchSenseName, type: 'trait' }]);
       await actor.createEmbeddedDocuments('Item', witchSense);

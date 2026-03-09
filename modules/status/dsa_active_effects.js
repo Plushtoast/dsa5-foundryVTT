@@ -32,7 +32,7 @@ export default class DSAActiveEffect extends ActiveEffect {
       }
     } else {
       if (DSAActiveEffect.deprecatedDataRegex.test(change.key)) {
-        const msg = game.i18n.format('DSAError.ActiveEffectDataChange', {
+        const msg = _loc('DSAError.ActiveEffectDataChange', {
           name: actor.name,
         });
         console.error(msg);
@@ -98,7 +98,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     const speaker = options?.speaker;
     const extraHtml = typeof options?.chatExtraHtml === 'string' ? options.chatExtraHtml : '';
 
-    const effectName = this.name || this.label || game.i18n.localize('ActiveEffects.custom');
+    const effectName = this.name || this.label || _loc('ActiveEffects.custom');
     const max = charges.max;
     const maxSuffix = max === null ? '' : `/${max}`;
     const changeValueDisplay = `${oldValue}${maxSuffix} <i class="fas fa-arrow-right"></i> ${newValue}${maxSuffix}`;
@@ -116,8 +116,8 @@ export default class DSAActiveEffect extends ActiveEffect {
         });
 
         if (shouldCreateChatMessage) {
-          const chargeLabel = game.i18n.localize('charges');
-          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDisabled');
+          const chargeLabel = _loc('charges');
+          const description = _loc('ActiveEffects.chargesChatDepletedDisabled');
           const content = `
           <div class="dsa5 chat-card item-card">
             <header class="card-header media">
@@ -136,8 +136,8 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
       } else {
         if (shouldCreateChatMessage) {
-          const chargeLabel = game.i18n.localize('charges');
-          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDeleted');
+          const chargeLabel = _loc('charges');
+          const description = _loc('ActiveEffects.chargesChatDepletedDeleted');
           const content = `
           <div class="dsa5 chat-card item-card">
             <header class="card-header media">
@@ -164,8 +164,8 @@ export default class DSAActiveEffect extends ActiveEffect {
     });
 
     if (shouldCreateChatMessage) {
-      const chargeLabel = game.i18n.localize('charges');
-      const description = game.i18n.localize('ActiveEffects.chargesChatConsumed');
+      const chargeLabel = _loc('charges');
+      const description = _loc('ActiveEffects.chargesChatConsumed');
       const content = `
       <div class="dsa5 chat-card item-card">
         <header class="card-header media">
@@ -224,7 +224,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     const [type, itemName, ...keyParts] = change.key.replace(/^@/, '').split('.');
     const key = keyParts.join('.');
     const { value } = change;
-    
+
     if (itemName === 'self') {
       return { items: [this.parent], key, value };
     }
@@ -237,7 +237,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     const items = actor.items.filter(item => {
       if (item.type !== normalizedType) return false;
       if (item.id === itemName) return true;
-      
+
       try {
         const rgx = new RegExp(itemName, 'i');
         return rgx.test(item.name);

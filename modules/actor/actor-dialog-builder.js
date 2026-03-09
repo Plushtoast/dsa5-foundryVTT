@@ -3,25 +3,18 @@ import { RollDialogBuilder } from "../dialog/dialog-builder.js";
 import { ModifierCalculator } from "../item/concerns/modifier-calculator.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
-import { localize } from "../system/helpers/localizer.js";
 import { RegenerationModifiers } from "./concerns/regeneration-modifiers.js";
-
 const { mergeObject, getProperty } = foundry.utils;
-
 export class ActorDialogBuilder extends RollDialogBuilder {
     static createRegenerationDialog(statusId, options, tokenId, actor) {
-        const title = localize('regenerationTest');
+        const title = _loc('regenerationTest');
         const item = { type: 'regenerate', system: {} };
         const template = 'systems/dsa5/templates/chat/roll/regeneration-card.hbs';
-
         const { testData, cardOptions } = this.createBaseConfig(item, actor, tokenId, options, template, title)
-
         testData.opposable = false;
         testData.extra.statusId = statusId;
-
         const situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item);
         situationalModifiers.push(...RegenerationModifiers.get(actor));
-
         const dialogOptions = {
             title,
             template: 'systems/dsa5/templates/dialog/regeneration-dialog.hbs',
@@ -39,11 +32,11 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
                 testData.situationalModifiers.push(
                     {
-                        name: localize('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),
+                        name: _loc('camplocation') + ' - ' + html.find('[name="regnerationCampLocations"] option:selected').text(),
                         value: html.find('[name="regnerationCampLocations"]').val(),
                     },
                     {
-                        name: localize('interruption') + ' - ' + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
+                        name: _loc('interruption') + ' - ' + html.find('[name="regenerationInterruptOptions"] option:selected').text(),
                         value: html.find('[name="regenerationInterruptOptions"]').val(),
                     },
                 );
@@ -57,14 +50,11 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                     testData[`regenerate${k}`] = regenerate;
                     if (regenerate) update[`system.status.regeneration.${k}Temp`] = 0;
                 }
-
                 mergeObject(testData.extra.options, options);
                 actor.update(update);
                 return { testData, cardOptions };
             },
         };
-
         return DiceDSA5.setupDialog({ testData, cardOptions, dialogOptions });
     }
-
 }

@@ -2,7 +2,6 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
 
 const { getProperty } = foundry.utils;
 
@@ -93,37 +92,37 @@ export default class EffectDropdownBuilder {
     static _getBaseOptions() {
         return [
             {
-                name: localize('protection'),
+                name: _loc('protection'),
                 val: 'system.totalArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: localize('liturgyArmor'),
+                name: _loc('liturgyArmor'),
                 val: 'system.liturgyArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${localize('resistanceModifier')} (${localize('condition')})`,
+                name: `${_loc('resistanceModifier')} (${_loc('condition')})`,
                 val: 'system.resistances.effects',
                 mode: 0,
                 ph: 'inpain 1',
             },
             {
-                name: `${localize('threshold')} (${localize('condition')})`,
+                name: `${_loc('threshold')} (${_loc('condition')})`,
                 val: 'system.thresholds.effects',
                 mode: 0,
                 ph: 'inpain 1',
             },
             {
-                name: localize('spellArmor'),
+                name: _loc('spellArmor'),
                 val: 'system.spellArmor',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: localize('carrycapacity'),
+                name: _loc('carrycapacity'),
                 val: 'system.carryModifier',
                 mode: 2,
                 ph: '1',
@@ -137,16 +136,16 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSkillOptions() {
-        const FW = localize('MODS.FW');
-        const skill = localize('TYPES.Item.skill');
-        const FP = localize('MODS.FP');
-        const stepValue = localize('stepValue');
-        const QS = localize('MODS.QS');
-        const postRoll = localize('MODS.postRoll');
-        const reroll = localize('MODS.reroll');
-        const partChecks = localize('MODS.partChecks');
-        const compensation = localize('MODS.compensation');
-        const demo = `${localize('LocalizedIDs.perception')} 1`;
+        const FW = _loc('MODS.FW');
+        const skill = _loc('TYPES.Item.skill');
+        const FP = _loc('MODS.FP');
+        const stepValue = _loc('stepValue');
+        const QS = _loc('MODS.QS');
+        const postRoll = _loc('MODS.postRoll');
+        const reroll = _loc('MODS.reroll');
+        const partChecks = _loc('MODS.partChecks');
+        const compensation = _loc('MODS.compensation');
+        const demo = `${_loc('LocalizedIDs.perception')} 1`;
 
         const skillOptions = [
             {
@@ -189,7 +188,7 @@ export default class EffectDropdownBuilder {
                 name: `${skill} - ${reroll} (${postRoll})`,
                 val: 'system.skillModifiers.postRoll.reroll',
                 mode: 0,
-                ph: `${localize('LocalizedIDs.perception')} 1`,
+                ph: `${_loc('LocalizedIDs.perception')} 1`,
             },
             {
                 name: `${skill} - ${partChecks}`,
@@ -198,7 +197,7 @@ export default class EffectDropdownBuilder {
                 ph: demo,
             },
             {
-                name: `${skill} - ${localize('MODS.global')}`,
+                name: `${skill} - ${_loc('MODS.global')}`,
                 val: 'system.skillModifiers.global',
                 mode: 0,
                 ph: '1',
@@ -215,7 +214,7 @@ export default class EffectDropdownBuilder {
         const models = ['liturgy', 'ceremony', 'spell', 'ritual', 'skill', 'feature'];
         for (const model of models) {
             const key = model === 'skill' ? 'skillglobal' : model;
-            const modelName = localize(key);
+            const modelName = _loc(key);
 
             skillOptions.push(
                 {
@@ -266,16 +265,16 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getCombatOptions() {
-        const closeCombat = localize('closeCombatAttacks');
-        const rangeCombat = localize('rangeCombatAttacks');
-        const miracle = localize('LocalizedIDs.miracle');
-        const csdemo = `${localize('LocalizedIDs.wrestle')} 1`;
-        const combatskill = localize('TYPES.Item.combatskill');
-        const critSuccess = localize('CriticalSuccess');
-        const AT = localize('CHARAbbrev.AT');
-        const PA = localize('CHARAbbrev.PA');
-        const damage = localize('CHARAbbrev.damage');
-        const defenseMalus = localize('MODS.defenseMalus');
+        const closeCombat = _loc('closeCombatAttacks');
+        const rangeCombat = _loc('rangeCombatAttacks');
+        const miracle = _loc('LocalizedIDs.miracle');
+        const csdemo = `${_loc('LocalizedIDs.wrestle')} 1`;
+        const combatskill = _loc('TYPES.Item.combatskill');
+        const critSuccess = _loc('CriticalSuccess');
+        const AT = _loc('CHARAbbrev.AT');
+        const PA = _loc('CHARAbbrev.PA');
+        const damage = _loc('CHARAbbrev.damage');
+        const defenseMalus = _loc('MODS.defenseMalus');
 
         const combatOptions = [
             // Close combat options
@@ -376,7 +375,7 @@ export default class EffectDropdownBuilder {
                 ph: csdemo,
             },
             {
-                name: `${combatskill} - ${localize('KTW')}`,
+                name: `${combatskill} - ${_loc('KTW')}`,
                 val: 'system.skillModifiers.combat.step',
                 mode: 0,
                 ph: csdemo,
@@ -388,7 +387,7 @@ export default class EffectDropdownBuilder {
                 ph: csdemo,
             },
             {
-                name: `${combatskill} - ${localize('damageThreshold')}`,
+                name: `${combatskill} - ${_loc('damageThreshold')}`,
                 val: 'system.skillModifiers.combat.damageThreshold',
                 mode: 0,
                 ph: csdemo,
@@ -396,7 +395,7 @@ export default class EffectDropdownBuilder {
 
             // Vulnerability
             {
-                name: `${localize('vulnerability')} - ${combatskill}`,
+                name: `${_loc('vulnerability')} - ${combatskill}`,
                 val: 'system.vulnerabilities.combatskill',
                 mode: 0,
                 ph: csdemo,
@@ -404,10 +403,10 @@ export default class EffectDropdownBuilder {
 
             // Creature bonus
             {
-                name: localize('MODS.creatureBonus'),
+                name: _loc('MODS.creatureBonus'),
                 val: 'system.creatureBonus',
                 mode: 0,
-                ph: `${localize('CONJURATION.elemental')} 1`,
+                ph: `${_loc('CONJURATION.elemental')} 1`,
             },
         ];
 
@@ -418,7 +417,7 @@ export default class EffectDropdownBuilder {
 
             for (const k of Object.keys(modifiers)) {
                 combatOptions.push({
-                    name: `${modelName} - ${localize(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
+                    name: `${modelName} - ${_loc(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
                     val: `system.${model}RollModifiers.${k}`,
                     mode: 2,
                     ph: '1',
@@ -435,13 +434,13 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getRegenerationOptions() {
-        const regenerate = localize('regenerate');
-        const combatReg = `${regenerate} (${localize('CHARAbbrev.CR')})`;
-        const wounds = localize('wounds');
-        const astralEnergy = localize('astralenergy');
-        const karmaEnergy = localize('karmaenergy');
-        const advanced = localize('advanced');
-        const conditionalHint = `${localize('Description')} 1`;
+        const regenerate = _loc('regenerate');
+        const combatReg = `${regenerate} (${_loc('CHARAbbrev.CR')})`;
+        const wounds = _loc('wounds');
+        const astralEnergy = _loc('astralenergy');
+        const karmaEnergy = _loc('karmaenergy');
+        const advanced = _loc('advanced');
+        const conditionalHint = `${_loc('Description')} 1`;
 
         return [
             // Combat regeneration
@@ -510,31 +509,31 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSpellLiturgyOptions() {
-        const AsPCost = localize('AsPCost');
-        const KaPCost = localize('KaPCost');
-        const permanentCost = localize('permanentCost');
-        const featureHint = `${localize('Healing')} 1`;
-        const descriptor = `${localize('Description')} 1`;
-        const advanced = localize('advanced');
-        const feature = localize('feature');
-        const damage = localize('damage');
-        const foreign = localize('DSASETTINGS.enableForeignSpellModifer');
-        const spell = localize('TYPES.Item.spell');
-        const ritual = localize('TYPES.Item.ritual');
-        const liturgy = localize('TYPES.Item.liturgy');
+        const AsPCost = _loc('AsPCost');
+        const KaPCost = _loc('KaPCost');
+        const permanentCost = _loc('permanentCost');
+        const featureHint = `${_loc('Healing')} 1`;
+        const descriptor = `${_loc('Description')} 1`;
+        const advanced = _loc('advanced');
+        const feature = _loc('feature');
+        const damage = _loc('damage');
+        const foreign = _loc('DSASETTINGS.enableForeignSpellModifer');
+        const spell = _loc('TYPES.Item.spell');
+        const ritual = _loc('TYPES.Item.ritual');
+        const liturgy = _loc('TYPES.Item.liturgy');
 
         const options = [
             // Base costs
             { name: KaPCost, val: 'system.kapModifier', mode: 2, ph: '1' },
             { name: AsPCost, val: 'system.aspModifier', mode: 2, ph: '1' },
             {
-                name: `${permanentCost} ${localize('CHARAbbrev.AsP')}`,
+                name: `${permanentCost} ${_loc('CHARAbbrev.AsP')}`,
                 val: 'system.status.astralenergy.permanentGear',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: `${permanentCost} ${localize('CHARAbbrev.KaP')}`,
+                name: `${permanentCost} ${_loc('CHARAbbrev.KaP')}`,
                 val: 'system.status.karmaenergy.permanentGear',
                 mode: 2,
                 ph: '1',
@@ -606,7 +605,7 @@ export default class EffectDropdownBuilder {
             // Resistance options
             for (const k of ['soulpower', 'toughness']) {
                 options.push({
-                    name: `${localize(k)} (${modelName})`,
+                    name: `${_loc(k)} (${modelName})`,
                     val: `system.status.${k}.${model}resist`,
                     mode: 2,
                     ph: '1',
@@ -615,7 +614,7 @@ export default class EffectDropdownBuilder {
 
             // Roll modifiers
             for (const k of Object.keys(DSA5SpellDialog.rollModifiers)) {
-                const loc = localize(k.replace('Spell', ''));
+                const loc = _loc(k.replace('Spell', ''));
                 options.push(
                     {
                         name: `${modelName} - ${loc}`,
@@ -647,7 +646,7 @@ export default class EffectDropdownBuilder {
         // Base characteristics
         for (const k of Object.keys(DSA5.characteristics)) {
             options.push({
-                name: localize(`CHAR.${k.toUpperCase()}`),
+                name: _loc(`CHAR.${k.toUpperCase()}`),
                 val: `system.characteristics.${k}.gearmodifier`,
                 mode: 2,
                 ph: '1',
@@ -657,7 +656,7 @@ export default class EffectDropdownBuilder {
         // Calculated attributes
         for (const k of DSA5.gearModifyableCalculatedAttributes) {
             options.push({
-                name: localize(k),
+                name: _loc(k),
                 val: `system.status.${k}.gearmodifier`,
                 mode: 2,
                 ph: '1',
@@ -667,31 +666,31 @@ export default class EffectDropdownBuilder {
         // Special modifiers
         options.push(
             {
-                name: localize('MODS.sight'),
+                name: _loc('MODS.sight'),
                 val: 'system.sightModifier.value',
                 mode: 2,
                 ph: '-1',
             },
             {
-                name: localize('MODS.sightMax'),
+                name: _loc('MODS.sightMax'),
                 val: 'system.sightModifier.maxLevel',
                 mode: 5,
                 ph: '4',
             },
             {
-                name: `${localize('LocalizedIDs.immuneTo')} ${localize('condition')}`,
+                name: `${_loc('LocalizedIDs.immuneTo')} ${_loc('condition')}`,
                 val: 'system.immunities',
                 mode: 2,
                 ph: 'feared',
             },
             {
-                name: localize('temperature.heatProtection'),
+                name: _loc('temperature.heatProtection'),
                 val: 'system.temperature.heatProtection',
                 mode: 2,
                 ph: '1',
             },
             {
-                name: localize('temperature.coldProtection'),
+                name: _loc('temperature.coldProtection'),
                 val: 'system.temperature.coldProtection',
                 mode: 2,
                 ph: '1',
@@ -712,7 +711,7 @@ export default class EffectDropdownBuilder {
         for (const effect of CONFIG.statusEffects) {
             if (getProperty(effect, 'flags.dsa5.max')) {
                 options.push({
-                    name: localize(effect.name),
+                    name: _loc(effect.name),
                     val: `system.condition.${effect.id}`,
                     mode: 2,
                     ph: '1',
@@ -736,7 +735,7 @@ export default class EffectDropdownBuilder {
         // Armor-specific options
         if (parentType === 'armor') {
             options.push({
-                name: localize('CustomActiveEffects.armor.vulnerability'),
+                name: _loc('CustomActiveEffects.armor.vulnerability'),
                 val: 'self.armorVulnerability',
                 mode: 0,
                 ph: 'Swords 5',
@@ -746,14 +745,14 @@ export default class EffectDropdownBuilder {
         // Weapon-specific options
         if (['meleeweapon', 'rangeweapon'].includes(parentType)) {
             const modelName = DSA5_Utility.categoryLocalization(parentType);
-            const maneuver = localize('combatmaneuver');
-            const maneuverExample = localize('LocalizedIDs.weaponThrow');
+            const maneuver = _loc('combatmaneuver');
+            const maneuverExample = _loc('LocalizedIDs.weaponThrow');
 
             // Situational modifiers
             for (const k of ['attack', 'parry', 'damage']) {
                 if (k === 'parry' && parentType === 'rangeweapon') continue;
 
-                const mode = localize(`CHAR.${k.toUpperCase()}`);
+                const mode = _loc(`CHAR.${k.toUpperCase()}`);
                 options.push({
                     name: `${modelName} - ${mode}`,
                     val: `self.situational.${k}`,
@@ -765,19 +764,19 @@ export default class EffectDropdownBuilder {
             // Maneuver modifiers
             options.push(
                 {
-                    name: `${maneuver} - ${localize('CHAR.attack')}`,
+                    name: `${maneuver} - ${_loc('CHAR.attack')}`,
                     val: 'self.maneuver.atbonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,
                 },
                 {
-                    name: `${maneuver} - ${localize('CHAR.parry')}`,
+                    name: `${maneuver} - ${_loc('CHAR.parry')}`,
                     val: 'self.maneuver.pabonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,
                 },
                 {
-                    name: `${maneuver} - ${localize('CHAR.damage')}`,
+                    name: `${maneuver} - ${_loc('CHAR.damage')}`,
                     val: 'self.maneuver.tpbonus',
                     mode: 0,
                     ph: `${maneuverExample} 1`,
