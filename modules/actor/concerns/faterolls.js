@@ -459,15 +459,12 @@ export class FateRolls {
     static #buildSchipIconRow(actor, schipsource, remaining, tooltipText) {
         const safeRemaining = Math.max(0, Number(remaining) || 0);
         let schipList = [];
-        if (schipsource === this.SCHIP_SOURCES.PERSONAL && typeof actor?.schipshtml === 'function') {
-            // Reuse Actor helper for max size; override filled state based on remaining.
+        if (schipsource === this.SCHIP_SOURCES.PERSONAL) {
             schipList = actor.schipshtml().map((x) => ({ ...x }));
         } else if (schipsource === this.SCHIP_SOURCES.GROUP) {
-            // Reuse RuleChaos helper for max size; override filled state based on remaining.
             schipList = RuleChaos.getGroupSchips().map((x) => ({ ...x }));
         }
         if (!Array.isArray(schipList) || schipList.length === 0) {
-            // Fallback to old numeric display if we can't build icons.
             return `<b>${foundry.utils.escapeHTML(tooltipText)}</b>: ${safeRemaining}`;
         }
         for (let i = 0; i < schipList.length; i++) {

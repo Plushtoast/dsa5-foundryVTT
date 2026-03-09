@@ -30,7 +30,6 @@ export default class PostRollBuffs {
     const parts = `${entry}`.trim().split(/\s+/);
     if (parts.length < 2) return null;
 
-    // Allow multi-word scope names by treating the last token as the numeric amount.
     const amountRaw = parts[parts.length - 1];
     const scope = parts.slice(0, -1).join(' ');
     const amount = Number(amountRaw);
@@ -51,18 +50,14 @@ export default class PostRollBuffs {
     const scopeNorm = this._norm(scope);
     if (!scopeNorm) return false;
 
-    // Built-in wildcard.
     if (scopeNorm === 'any') return ALLOWED_ANY_TYPES.has(source?.type);
 
-    // Match against roll source type (skill/spell/liturgy/...).
     const typeNorm = this._norm(source?.type);
     if (typeNorm && scopeNorm === typeNorm) return true;
 
-    // Match against roll source group (primarily for skills).
     const groupNorm = this._norm(source?.system?.group?.value ?? source?.system?.group);
     if (groupNorm && scopeNorm === groupNorm) return true;
 
-    // Match against the displayed name (case-insensitive, diacritics-insensitive).
     const nameNorm = this._norm(source?.name);
     if (nameNorm && nameNorm.includes(scopeNorm)) return true;
 
@@ -151,7 +146,6 @@ export default class PostRollBuffs {
       const effect = await fromUuid(effectUuid);
       if (!effect) return { consumed: false, reason: 'notFound' };
 
-      // If we can update it directly, do so.
       if (effect.isOwner || effect.parent?.isOwner || game.user.isGM) {
         if (typeof effect.consumeCharges === 'function') {
           const improvement = this._formatPostRollImprovement(match);
@@ -165,7 +159,6 @@ export default class PostRollBuffs {
         }
         return { consumed: false, reason: 'noConsumeCharges' };
       }
-      // Post-roll buff application is restricted to owner/GM; if we reach this, permissions are insufficient.
       return { consumed: false, reason: 'noPermission' };
     } catch (e) {
       console.warn('postRoll buff consume failed', e);
@@ -176,7 +169,6 @@ export default class PostRollBuffs {
   static _ensureSuccessOnly(message) {
     const successLevel = Number(getProperty(message, 'flags.data.postData.successLevel'));
     const success = !!getProperty(message, 'flags.data.postData.success');
-    // SuccessLevel is the main signal in this system; success is a helpful fallback.
     return successLevel > 0 || success;
   }
 
@@ -219,7 +211,6 @@ export default class PostRollBuffs {
 
     const next = current + Number(amount);
     postData.result = next;
-    // Recalculate QS from FP.
     const qs = Math.min(cap, Math.max(1, Math.ceil(next / 3)));
     postData.qualityStep = qs;
   }
@@ -285,30 +276,22 @@ export default class PostRollBuffs {
     return matches;
   }
 
-  static sortMatchesForApply(matches) {
-    // Keep selection order stable; apply logic handles FP first then QS per effect.
-    return [...matches];
-  }
-
   static async applyMatches(message, matches) {
     if (!message?.flags?.data || !Array.isArray(matches) || matches.length === 0) return;
 
-    // Defense-in-depth: chat context is owner/GM only, but also enforce it here.
     const speakerActor = ChatMessage.getSpeakerActor(message.speaker) || game.actors.get(message.speaker?.actor);
     if (!(game.user.isGM || speakerActor?.isOwner)) return;
 
     const flagsData = deepClone(message.flags.data);
     const usedEffectUuids = new Set(this._getUsedEffectUuids(message));
-    const ordered = this.sortMatchesForApply(matches);
     const consumptionWarnings = [];
-    const hasReroll = ordered.some((m) => (Number(m?.rerollDice) || 0) > 0);
+    const hasReroll = matches.some((m) => (Number(m?.rerollDice) || 0) > 0);
     if (hasReroll) {
-      // Reroll is exclusive: exactly one reroll match can be applied, with no FP/QS.
-      if (ordered.length !== 1) {
+      if (matches.length !== 1) {
         ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
         return;
       }
-      const match = ordered[0];
+      const match = matches[0];
       const dice = Math.max(1, Number(match?.rerollDice) || 1);
       if (!match?.effectUuid || usedEffectUuids.has(match.effectUuid) || match.fp || match.qs) {
         ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
@@ -316,7 +299,7 @@ export default class PostRollBuffs {
       }
       const actor = speakerActor;
       if (!actor) return;
-      // Defer charge consumption + used marking until the Begabung reroll dialog is confirmed.
+
       await this._tryUpdateMessage(message, {
         'flags.dsa5.postRoll.pendingReroll': {
           effectUuid: match.effectUuid,
@@ -326,25 +309,21 @@ export default class PostRollBuffs {
       actor.useFateOnRoll(message, 'isTalented');
       return;
     }
-    // FP/QS post-roll buffs apply only on successful rolls.
     if (!this._ensureSuccessOnly(message)) return;
 
-    for (const match of ordered) {
+    for (const match of matches) {
       if (!match?.effectUuid || usedEffectUuids.has(match.effectUuid)) continue;
 
-      // Apply effect (FP first, then QS).
       if (match.fp) this._applyFP(flagsData, match.fp);
       if (match.qs) this._applyQL(flagsData, match.qs);
       this._addSituationalModifier(flagsData, match);
-      // Mark used on this message (regardless of whether charges are successfully consumed).
       usedEffectUuids.add(match.effectUuid);
-      // Consume charges (best-effort).
       const { consumed, reason } = await this._consumeEffectCharges(match.effectUuid, { message, match });
       if (!consumed) {
         consumptionWarnings.push({ match, reason });
       }
     }
-    // Persist used effects.
+
     const usedList = Array.from(usedEffectUuids);
     await this._tryUpdateMessage(message, {
       'flags.dsa5.postRoll.usedEffectUuids': usedList,

@@ -290,14 +290,12 @@ export default class DiceDSA5 {
     const messageMode = game.settings.get('core', 'messageMode');
     const sceneStress = DICE_CONSTANTS.DIFFICULTY.CHALLENGING;
 
-    // Ensure source is a plain object
     if (typeof testData.source.toObject === 'function') {
       testData.source = testData.source.toObject(false);
     }
 
     const actor = this.#actorFromTestData(testData);
 
-    // Apply default test configuration
     mergeObject(testData, {
       testDifficulty: sceneStress,
     });
@@ -307,20 +305,15 @@ export default class DiceDSA5 {
       testModifier: dialogOptions.data.modifier || 0,
     });
 
-    // Gather situational modifiers
     const situationalModifiers = this.#gatherSituationalModifiers(
       dialogOptions.data.situationalModifiers,
       actor,
       testData
     );
 
-    // Collect target information
     const targets = this.#collectTargets();
-
-    // Build attributes list for dialog
     const attributesList = this.#buildAttributesList();
 
-    // Merge dialog configuration
     mergeObject(dialogOptions.data, {
       hasSituationalModifiers: situationalModifiers.length > 0,
       situationalModifiers,
@@ -332,7 +325,6 @@ export default class DiceDSA5 {
 
     cardOptions.user = game.user.id;
 
-    // Handle bypass vs. dialog display
     return this.#handleDialogFlow(testData, dialogOptions, cardOptions, messageMode);
   }
 
