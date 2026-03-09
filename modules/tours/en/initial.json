@@ -2,6 +2,7 @@
     "title": "TDE specific tools",
     "module": "dsa5",
     "id": "tdeTools",
+    "description": "An overview of the TDE specific tools and menus for GMs and players.",
     "canBeResumed": true,
     "display": true,
     "steps": [

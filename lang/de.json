@@ -2901,14 +2901,76 @@
             },
             "title": "Willkommen bei Das Schwarze Auge",
             "intro": "Entdecke Aventurien mit dem offiziellen DSA5-System für Foundry VTT. Egal ob erfahrener Meister oder Neuling — hier findest du alles für den Einstieg.",
+            "header": {
+                "welcome": "Willkommen",
+                "store": "Offizielle Module",
+                "news": "Neuigkeiten",
+                "changelog": "Changelog"
+            },
             "quickStart": {
                 "title": "Schnellstart",
                 "text": "Richte dein Spiel in wenigen Schritten ein.",
                 "browseStore": "Module durchsuchen",
                 "startTour": "Tour starten"
             },
+            "gameManual": "Spielanleitung",
+            "vttom": {
+                "desc": "VTTom erklärt alles rund um Das Schwarze Auge für Foundry VTT — Tutorials, Changelogs, Modul-Guides und vieles mehr.",
+                "cta": "Zum Kanal"
+            },
+            "gettingStarted": {
+                "title": "Erste Schritte",
+                "subtitle": "Neu bei Das Schwarze Auge für Foundry VTT? Folge diesen Schritten, um dein erstes Spiel einzurichten.",
+                "step1": "Das Grundregelwerk-Modul besorgen — es enthält Archetypen, Spezies, Zauber und alles zum Spielen",
+                "step2": "Die Spielanleitung lesen, um das System in Foundry VTT kennenzulernen",
+                "step3": "Ein Einstiegsabenteuer wählen — das kostenlose Einführungsabenteuer erklärt die Regeln Schritt für Schritt mit vorgefertigten Charakteren",
+                "step4": "Charaktere erstellen — mit Archetypen aus dem Grundmodul oder komplett selbst bauen",
+                "step5": "Spieler einladen, Charaktere zuweisen und losspielen!"
+            },
+            "hints": {
+                "title": "Kurzreferenz",
+                "subtitle": "Nützliche Kürzel und Tipps, um sich schneller im System zurechtzufinden.",
+                "library": "Bibliothek",
+                "libraryDesc": "Drücke L, um die Bibliothek zu öffnen — alle Gegenstände, Zauber, Talente und Ausrüstung zum Ziehen auf Charakterbögen.",
+                "journalBrowser": "Journal-Browser",
+                "journalBrowserDesc": "Drücke J, um den Journal-Browser zu öffnen — enthält die Spielanleitung und alle Inhalte gekaufter Premium-Module.",
+                "charCreation": "Heldenerschaffung",
+                "charCreationDesc": "Ziehe eine Spezies, dann Kultur, dann Profession auf einen Charakterbogen. Oder nutze den Heldengenerator aus dem Grundmodul für eine geführte Erstellung.",
+                "rolling": "Proben würfeln",
+                "rollingDesc": "Klicke auf ein Talent oder eine Eigenschaft auf dem Charakterbogen, um eine Probe zu würfeln. Rechtsklick für Optionen wie Modifikatoren.",
+                "combat": "Kampf",
+                "combatDesc": "Nutze den Kampf-Tracker für Initiative und Rundenabfolge. Markiere Gegner als Ziel vor einem Angriff, um Automatisierungen wie Größen- und Bewaffnungsmodifikatoren zu aktivieren."
+            },
+            "beginnerModules": {
+                "title": "Empfohlen für Einsteiger",
+                "subtitle": "Starte mit diesen kostenlosen oder einsteigerfreundlichen Modulen in Das Schwarze Auge.",
+                "free": "Kostenlos",
+                "introAdventure": "Einführungsabenteuer",
+                "introAdventureDesc": "Ein einfaches Einführungsabenteuer zum Erlernen der Grundlagen.",
+                "witchsDance": "Hexenreigen",
+                "witchsDanceDesc": "Ein kostenloses vollständiges Abenteuer für den Einstieg in DSA5.",
+                "dragonKnight": "Geheimnis des Drachenritters",
+                "dragonKnightDesc": "Eine klassische Einsteiger-Kampagne im Mittelreich.",
+                "coreModule": "Grundregeln",
+                "coreModuleDesc": "Das unverzichtbare Grundwerk — alle Regeln, Talente und mehr für DSA5.",
+                "catAdventure": "Abenteuer",
+                "catCampaign": "Kampagne",
+                "catRules": "Regelwerk",
+                "browseAll": "Alle Module durchsuchen",
+                "browseAllDesc": "Entdecke den vollständigen Katalog offizieller DSA5-Module."
+            },
+            "videos": {
+                "title": "Video-Anleitungen",
+                "whatIsAventuria": "Was ist Aventurien?",
+                "whatIsAvDesc": "Eine kurze Einführung in die Welt Aventuriens und das DSA5-Rollenspiel.",
+                "whoAreTheTwelveGods": "Wer sind die Zwölfgötter?",
+                "whoAreTheTwelveGodsDesc": "Erfahre alles über die Zwölfgötter Aventuriens.",
+                "whatDoINeed": "Was brauche ich für Foundry DSA?",
+                "whatDoINeedDesc": "Welche Module und Vorbereitungen brauchst du für DSA in Foundry VTT."
+            },
             "links": {
-                "title": "Nützliche Links"
+                "title": "Nützliche Links",
+                "vttInfo": "DSA für VTT"
             },
             "dontShowAgain": "Beim Anmelden nicht mehr anzeigen",
             "parts": {
@@ -2925,9 +2987,9 @@
                     "reportBugs": "Fehler melden"
                 },
                 "gettingStarted": {
-                    "title": "Erste Schritte",
-                    "text": "Neu bei DSA5 für Foundry VTT? Hier ein paar Tipps für den Anfang.",
-                    "checklistTitle": "Schnell-Checkliste",
+                    "title": "Ressourcen & Tipps",
+                    "text": "Neu bei DSA5 für Foundry VTT? Hier ein paar nützliche Links für den Anfang.",
+                    "checklistTitle": "Schnell-Tipps",
                     "step1": "Sprache einstellen und Grundmodul installieren",
                     "step2": "Einen neuen Charakter per Heldenerschaffung erstellen",
                     "step3": "Ein Abenteuer-Modul importieren oder eigene Szenen anlegen",

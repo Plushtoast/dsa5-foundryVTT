@@ -4,31 +4,24 @@ export default class DSA5Tutorial {
   static async firstTimeMessage() {
     if (!game.settings.get('dsa5', 'firstTimeStart')) {
       await DSA5Tutorial.setupDefaultOptions();
-      let msg = game.i18n.localize('WELCOME');
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
+      const welcomeMsg = game.i18n.localize('WELCOME');
+      ChatMessage.create(DSA5_Utility.chatDataSetup(welcomeMsg));
       DSA5Tutorial.firstTimeLanguage();
       await game.settings.set('dsa5', 'firstTimeStart', true);
     }
   }
 
   static firstTimeLanguage() {
-    const langs = ['de', 'en'];
-
+    const languages = ['de', 'en'];
     new foundry.applications.api.DialogV2({
-      window: {
-        title: 'DIALOG.firstTime',
-      },
-      position: {
-        width: 400,
-      },
+      window: { title: 'DIALOG.firstTime' },
+      position: { width: 400 },
       content: `<p>${game.i18n.localize('DIALOG.firstTimeWarning')}</p>`,
-      buttons: langs.map((lang) => {
-        return {
-          action: lang,
-          label: game.i18n.localize(lang),
-          callback: () => DSA5Tutorial.setLanguage(lang),
-        };
-      }),
+      buttons: languages.map((lang) => ({
+        action: lang,
+        label: game.i18n.localize(lang),
+        callback: () => DSA5Tutorial.setLanguage(lang),
+      })),
     }).render(true);
   }
 

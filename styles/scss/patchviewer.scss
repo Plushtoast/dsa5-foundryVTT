@@ -1,5 +1,64 @@
 .patchviewer {
   padding: 30px;
+  --muted-color: rgba(255, 255, 255, 0.6);
+
+  // ── Did-you-know tip section ──
+
+  .welcome-tip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .welcome-tip-next {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.8);
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      background: rgba(255, 100, 0, 0.3);
+      border-color: rgba(255, 100, 0, 0.6);
+      color: #fff;
+    }
+  }
+
+  .welcome-tip-text {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+
+    &--out {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    &--in {
+      animation: tipFadeIn 0.3s ease forwards;
+    }
+  }
+
+  @keyframes tipFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   h1 {
     margin: 0;
@@ -23,22 +82,19 @@
     border-radius: 10px;
   }
 
-  .modules-tab {
-    padding: 1.5rem;
-  }
-
   .modules-layout {
-    display: flex;
-    gap: 1.5rem;
     align-items: flex-start;
   }
 
-  .modules-toc {
-    flex: 0 0 220px;
+  .darkbox {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 1rem;
+  }
+
+  .modules-toc {
+    flex: 0 0 220px;    
     position: sticky;
     top: 1rem;
     max-height: 65vh;
@@ -46,24 +102,54 @@
 
     h3 {
       margin: 0 0 0.75rem 0;
-      font-size: 1rem;
+      font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: rgba(255, 255, 255, 0.75);
+      color: var(--muted-color);
     }
 
     nav {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.35rem;
+    }
+
+    &__search {
+      margin-bottom: 0.75rem;
+
+      input[type=search] {
+        padding: 0.4rem 0.6rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+
+        &::placeholder {
+          color: var(--muted-color);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: rgba(255, 100, 0, 0.5);
+        }
+      }
+    }
+
+    &__filters {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+      .modules-filters__clear {
+        margin-top: 0.4rem;
+        font-size: 0.72rem;
+      }
     }
 
     .modules-toc__link {
-      color: #fff;
+      color: rgba(255, 255, 255, 0.85);
       background: transparent;
       border: 1px solid transparent;
-      text-align: left;
-      padding: 0.45rem 0.6rem;
       border-radius: 8px;
       cursor: pointer;
       transition:
@@ -104,18 +190,12 @@
 
 
   .modules-hero {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+    backdrop-filter: blur(4px);
     box-shadow: none;
     position: relative;
     overflow: visible;
-
-    &::after {
-      content: none;
-    }
+    color: rgba(255, 255, 255, 0.9);
 
     &__grid {
       display: flex;
@@ -134,6 +214,11 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
       position: relative;
       overflow: hidden;
+      color: rgba(255, 255, 255, 0.9);
+
+      h1, h2, h3 {
+        color: #fff;
+      }
 
       h1 {
         font-size: 1.8rem;
@@ -142,12 +227,12 @@
 
       p {
         margin: 0 0 1rem 0;
+        color: rgba(255, 255, 255, 0.85);
       }
 
       .modules-hero__cta {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
         background: #ff6400;
         color: #fff;
         font-weight: 600;
@@ -168,11 +253,8 @@
   }
 
   .modules-hero__aside {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 0.9rem 1rem;
     flex: 1 1 260px;
+    color: rgba(255, 255, 255, 0.85);
 
     h2 {
       margin: 0 0 0.4rem 0;
@@ -182,7 +264,15 @@
 
     p {
       margin: 0 0 0.6rem 0;
-      color: rgba(255, 255, 255, 0.85);
+    }
+
+    ul, ol {
+      padding-left: 1.2rem;
+      margin: 0;
+
+      li {
+        margin-bottom: 0.3rem;
+      }
     }
   }
 
@@ -243,24 +333,6 @@
     justify-items: start;
   }
 
-  .modules-filters {
-    margin: 0.75rem 0 1rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 0.75rem 0.9rem;
-  }
-
-  .modules-filters__label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.85);
-  }
-
   .modules-filters__chips {
     display: flex;
     flex-wrap: wrap;
@@ -271,13 +343,8 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: rgba(0, 0, 0, 0.55);
     color: rgba(255, 255, 255, 0.9);
-    padding: 0.3rem 0.7rem;
     border-radius: 999px;
     font-size: 0.8rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    cursor: pointer;
     transition:
       border 0.2s ease,
       color 0.2s ease,
@@ -301,7 +368,6 @@
     border: none;
     color: rgba(255, 255, 255, 0.9);
     text-decoration: underline;
-    cursor: pointer;
     padding: 0;
   }
 
@@ -562,4 +628,703 @@
     color: #fff;
   }
 
+
+  .welcome-app-header {
+    flex-shrink: 0;
+
+    &__bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.35rem 0.8rem;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+    }
+
+    &__logo {
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    &__icon {
+      font-size: 1rem;
+      color: #ff6400;
+      flex-shrink: 0;
+      width: 18px;
+      text-align: center;
+    }
+
+    &__version {
+      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &__dismiss {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+      user-select: none;
+      flex-shrink: 0;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #fff;
+      }
+
+      input[type='checkbox'] {
+        margin: 0;
+        accent-color: #ff6400;
+      }
+    }
+  }
+
+  // ── Welcome page ──
+
+  .welcome-page {
+    position: relative;
+  }
+
+  // ── Banner hero — full-visible image with text overlay ──
+
+  .welcome-banner {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    &__image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    &__overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.8rem 2rem;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.85) 0%,
+        rgba(0, 0, 0, 0.45) 40%,
+        rgba(0, 0, 0, 0.1) 70%,
+        transparent 100%
+      );
+
+      h1 {
+        font-size: 1.8rem;
+        margin: 0 0 0.4rem 0;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+      }
+
+      p {
+        margin: 0 0 0.8rem 0;
+        max-width: 48rem;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+
+      a {
+        text-decoration: none;
+        color: #ffe3cf;
+        border: 1px solid rgba(255, 100, 0, 0.6);
+        border-radius: 999px;
+        padding: 0.4rem 1rem;
+        font-weight: 600;
+        font-size: 0.82rem;
+        backdrop-filter: blur(4px);
+        background: rgba(255, 100, 0, 0.15);
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease,
+          border-color 0.2s ease;
+
+        &:hover,
+        &:focus {
+          background: #ff6400;
+          color: #fff;
+          border-color: #ff6400;
+        }
+      }
+    }
+  }
+
+  // ── Generic welcome section ──
+
+  .welcome-section {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.25rem;
+    backdrop-filter: blur(4px);
+
+    h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+
+      i {
+        color: #ff6400;
+        margin-right: 0.3rem;
+      }
+    }
+
+    > p {
+      margin: 0 0 0.75rem 0;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // ── Getting started checklist ──
+
+  .welcome-twin-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    > .welcome-section {
+      margin-bottom: 0;
+    }
+
+    &__right {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      > .welcome-section {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // ── VTTom promo card ──
+
+  .welcome-vttom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: rgba(255, 0, 0, 0.4);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    &__avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 0.6rem;
+    }
+
+    &__body {
+      h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.4rem 0;
+
+        i {
+          color: #ff0000;
+        }
+      }
+
+      p {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.45;
+        margin: 0 0 0.6rem 0;
+      }
+    }
+
+    &__cta {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #ffe3cf;
+      border: 1px solid rgba(255, 0, 0, 0.4);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease;
+    }
+
+    &:hover &__cta {
+      background: rgba(255, 0, 0, 0.6);
+      color: #fff;
+    }
+
+    &--static {
+      cursor: default;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.06);
+        box-shadow: none;
+      }
+    }
+
+    &__cta--muted {
+      color: rgba(255, 255, 255, 0.5);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+  }
+
+  .welcome-checklist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    counter-reset: step;
+
+    li {
+      counter-increment: step;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: rgba(255, 100, 0, 0.08);
+      }
+
+      &::before {
+        content: counter(step);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(255, 100, 0, 0.25);
+        color: #ff6400;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      i {
+        color: rgba(255, 255, 255, 0.4);
+        width: 16px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // ── Starter hints / Quick Reference ──
+
+  .welcome-hints {
+    background: rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.04);
+
+    &__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.6rem;
+    }
+
+    &__card {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: rgba(255, 100, 0, 0.08);
+      }
+
+      &--clickable {
+        cursor: pointer;
+
+        &:hover {
+          background: rgba(255, 100, 0, 0.12);
+          border-color: rgba(255, 100, 0, 0.2);
+        }
+      }
+    }
+
+    &__icon {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 100, 0, 0.15);
+      color: #ff6400;
+      font-size: 0.9rem;
+
+      kbd {
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #ff6400;
+        background: none;
+        border: none;
+        padding: 0;
+        line-height: 1;
+      }
+    }
+
+    &__body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+
+      strong {
+        font-size: 0.85rem;
+        color: #fff;
+      }
+
+      small {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.35;
+      }
+    }
+  }
+
+  // ── Carousel widget (3D wheel) ──
+
+  .welcome-carousel {
+    position: relative;
+    border-radius: 10px;
+    perspective: 1200px;
+    overflow: visible;
+
+    &__viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    &__track {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      // Height set dynamically per carousel from JS
+    }
+
+    &__slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 60%;
+      margin-left: 20%;
+      display: flex;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0 0.5rem;
+      transition:
+        transform 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform, opacity, filter;
+      pointer-events: none;
+      opacity: 0;
+
+      &.is-active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 3;
+      }
+
+      &.is-prev,
+      &.is-next {
+        opacity: 0.45;
+        z-index: 2;
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      &.is-hidden {
+        opacity: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      > * {
+        width: 100%;
+        max-width: 360px;
+      }
+    }
+
+    &__nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0 0.2rem;
+    }
+
+    &__arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.4);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 100, 0, 0.3);
+        color: #fff;
+        border-color: rgba(255, 100, 0, 0.5);
+      }
+    }
+
+    &__dots {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    &__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition:
+        background 0.25s ease,
+        transform 0.25s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      &.is-active {
+        background: #ff6400;
+        transform: scale(1.3);
+      }
+    }
+
+  }
+
+  // ── Beginner module cards ──
+
+  .welcome-module-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+    padding: 1rem 0.8rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 100, 0, 0.5);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    > i {
+      font-size: 1.6rem;
+      color: #ff6400;
+      margin-bottom: 0.2rem;
+    }
+
+    &__cover {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.3rem;
+    }
+
+    &__category {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    strong {
+      font-size: 0.85rem;
+    }
+
+    small {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.3;
+    }
+
+    &__badge {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      background: #4caf50;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    &--free {
+      border-color: rgba(76, 175, 80, 0.3);
+
+      &:hover {
+        border-color: rgba(76, 175, 80, 0.6);
+      }
+    }
+  }
+
+  // ── Video link cards ──
+
+  .welcome-video-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    text-decoration: none;
+    color: #fff;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 0, 0, 0.4);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    &__thumb {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 0;
+      padding-bottom: 56.25%; // 16:9 aspect ratio
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      margin-bottom: 0.25rem;
+      overflow: hidden;
+
+      img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        transition: transform 0.3s ease, filter 0.3s ease;
+      }
+
+      i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.5rem;
+        color: rgba(255, 255, 255, 0.85);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        z-index: 1;
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+    }
+
+    &:hover .welcome-video-card__thumb {
+      img {
+        transform: scale(1.05);
+        filter: brightness(0.7);
+      }
+
+      i {
+        color: #ff0000;
+        transform: translate(-50%, -50%) scale(1.15);
+      }
+    }
+
+    strong {
+      font-size: 0.9rem;
+    }
+
+    small {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.3;
+    }
+  }
+
+  // ── Links section ──
+
+  .welcome-links {
+    h2 {
+      margin: 0 0 0.6rem 0;
+      font-size: 1.05rem;
+    }
+  }
 }

@@ -11,6 +11,7 @@ import { initImagePopoutTochat } from './imagepopouttochat.js';
 import { connectSocket } from './socket.js';
 import { DSAAura } from '../system/automation/aura.js';
 import registerGameManual from '../journal/game_manual.js';
+import { showWelcomeApp } from '../system/maintenance/migrator.js';
 
 export default function () {
   Hooks.on('ready', async () => {
@@ -39,7 +40,7 @@ export default function () {
     DSAIniTracker.connectHooks();
     const hook = (dat) => {
       if (dat.tabName == 'settings') {
-        DSATour.travelAgency();
+        DSATour.ensureRegistered();
         Hooks.off('changeSidebarTab', hook);
       }
     };
@@ -52,6 +53,8 @@ export default function () {
     registerGameManual();
 
     if (game.settings.get('dsa5', 'calendar') !== 'none') game.dsa5.apps.CalendarWidget.render(true);
+
+    showWelcomeApp();
 
     Hooks.call('DSA5ready', game.dsa5);
   });

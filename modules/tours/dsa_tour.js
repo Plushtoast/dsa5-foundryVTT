@@ -4,6 +4,12 @@ export default class DSATour extends foundry.nue.Tour {
   static tours = ['systems/dsa5/modules/tours/lang/initial', 'systems/dsa5/modules/tours/lang/library', 'systems/dsa5/modules/tours/lang/actor'];
   static gmTours = ['systems/dsa5/modules/tours/lang/mastermenu'];
 
+  static async ensureRegistered() {
+    if (![...game.tours.keys()].some(k => k.startsWith('dsa5.'))) {
+      await this.travelAgency();
+    }
+  }
+
   static async travelAgency() {
     const lang = game.i18n.lang == 'de' ? 'de' : 'en';
     console.log('Adding DSA/TDE Tours');

@@ -2,6 +2,7 @@
     "title": "Bibliothek",
     "module": "dsa5",
     "id": "tdeLibrary",
+    "description": "Ein Überblick über die Funktionen der DSA Bibliothek.",
     "canBeResumed": false,
     "display": true,
     "preCommand": "await game.dsa5.itemLibrary.buildEquipmentIndex();this.app=game.dsa5.itemLibrary;",

@@ -69,7 +69,16 @@ async function migrateTo33() {
 export async function showPatchViewer() {
   const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
   const json = await notes.json();
-  const patchViewer = new PatchViewer(json);
+  const patchViewer = new PatchViewer(json, undefined, { initialTab: 'newcontent' });
+  patchViewer.render(true);
+}
+
+export async function showWelcomeApp() {
+  if (!PatchViewer.shouldAutoShow()) return;
+  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
+  const json = await notes.json();
+  const initialTab = PatchViewer.getInitialTab();
+  const patchViewer = new PatchViewer(json, undefined, { initialTab });
   patchViewer.render(true);
 }
 

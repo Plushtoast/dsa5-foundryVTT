@@ -2900,14 +2900,77 @@
             },
             "title": "Welcome to The Dark Eye",
             "intro": "Explore Aventuria with the official TDE5 system for Foundry VTT. Whether you're a seasoned Game Master or just getting started — everything you need is right here.",
+            "header": {
+                "welcome": "Welcome",
+                "store": "Official Modules",
+                "news": "What's New",
+                "changelog": "Changelog"
+            },
             "quickStart": {
                 "title": "Quick Start",
                 "text": "Set up your game in just a few steps.",
                 "browseStore": "Browse Modules",
                 "startTour": "Start a Tour"
             },
+            "gameManual": "Game Manual",
+            "vttom": {
+                "desc": "VTTom covers everything about The Dark Eye for Foundry VTT — tutorials, changelogs, module guides and much more.",
+                "cta": "Visit Channel",
+                "comingSoonTitle": "Video Tutorials",
+                "comingSoonDesc": "A dedicated English video channel with tutorials, guides, and module walkthroughs is being planned — stay tuned!",
+                "comingSoonCta": "Coming Soon"
+            },
+            "gettingStarted": {
+                "title": "Getting Started",
+                "subtitle": "New to The Dark Eye on Foundry VTT? Follow these steps to set up your first game.",
+                "step1": "Get the Core Rules module — it contains archetypes, species, spells, and everything you need to play",
+                "step2": "Read the Game Manual to learn how the system works in Foundry VTT",
+                "step3": "Pick a starter adventure — the free Introduction Adventure teaches rules step by step with pre-made characters",
+                "step4": "Create characters using archetypes from the Core Module or build them from scratch",
+                "step5": "Invite your players, assign characters, and start playing!"
+            },
+            "hints": {
+                "title": "Quick Reference",
+                "subtitle": "Useful shortcuts and tips to get around the system faster.",
+                "library": "Library",
+                "libraryDesc": "Press L to open the Library — all items, spells, talents, and equipment ready to drag & drop onto character sheets.",
+                "journalBrowser": "Journal Browser",
+                "journalBrowserDesc": "Press J to open the Journal Browser — contains the Game Manual and all content from purchased premium modules.",
+                "charCreation": "Character Creation",
+                "charCreationDesc": "Drag a species, then culture, then profession onto a character sheet. Or use the Character Generator from the Core Module for guided creation.",
+                "rolling": "Rolling Checks",
+                "rollingDesc": "Click any skill or attribute on a character sheet to roll a check. Right-click for options like modifiers.",
+                "combat": "Combat",
+                "combatDesc": "Use the Combat Tracker to manage initiative and turns. Target enemies before attacking to enable automations like size and weaponry modifiers."
+            },
+            "beginnerModules": {
+                "title": "Recommended for Beginners",
+                "subtitle": "Start with these free or beginner-friendly modules to get into The Dark Eye quickly.",
+                "free": "Free",
+                "introAdventure": "Introduction Adventure",
+                "introAdventureDesc": "A simple introductory adventure to learn the basics.",
+                "witchsDance": "Witch's Dance",
+                "witchsDanceDesc": "A free full adventure for getting started with TDE5.",
+                "dragonKnight": "Secret of the Dragon Knight",
+                "dragonKnightDesc": "A classic beginner-friendly campaign in the Midlands.",
+                "coreModule": "Core Rules",
+                "coreModuleDesc": "The essential companion — all core rules, talents, and more for TDE5.",
+                "catAdventure": "Adventure",
+                "catCampaign": "Campaign",
+                "catRules": "Rules",
+                "browseAll": "Browse All Modules",
+                "browseAllDesc": "Explore the full catalogue of official TDE5 modules."
+            },
+            "videos": {
+                "title": "Video Guides",
+                "whatIsAventuria": "What is Aventuria?",
+                "whatIsAvDesc": "A short introduction to the world of Aventuria and The Dark Eye RPG.",
+                "livePlay": "TDE Introduction Adventure — Live Play",
+                "livePlayDesc": "Watch a full live-play session of the introductory adventure for The Dark Eye."
+            },
             "links": {
-                "title": "Useful Links"
+                "title": "Useful Links",
+                "vttInfo": "TDE for VTT"
             },
             "dontShowAgain": "Don't show this on login",
             "parts": {
@@ -2924,9 +2987,9 @@
                     "reportBugs": "Report Bugs"
                 },
                 "gettingStarted": {
-                    "title": "Getting Started",
-                    "text": "New to TDE5 on Foundry VTT? Here are some tips to get you going.",
-                    "checklistTitle": "Quick Checklist",
+                    "title": "Resources & Tips",
+                    "text": "New to TDE5 on Foundry VTT? Here are some useful links to get you going.",
+                    "checklistTitle": "Quick Tips",
                     "step1": "Set your language and install the core module",
                     "step2": "Create a new character using the Character Builder",
                     "step3": "Import an adventure module or create your own scenes",

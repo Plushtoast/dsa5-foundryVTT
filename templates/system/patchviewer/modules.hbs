@@ -1,5 +1,5 @@
 <div class='tab scrollable {{tabs.content.cssClass}}' data-tab='content' data-group='{{tabs.content.group}}'>
-  <section class='modules-hero'>
+  <section class='modules-hero darkbox'>
     <div class='modules-hero__grid'>
       <div class='modules-hero__text'>
         <h1>{{modules.title}}</h1>
@@ -13,7 +13,7 @@
           Foundry Marketplace
         </a>
       </div>
-      <div class='modules-hero__aside'>
+      <div class='modules-hero__aside darkbox'>
         <h2>{{localize 'DSA5.patchViewer.modules.gettingStarted.title'}}</h2>
         <p>{{localize 'DSA5.patchViewer.modules.gettingStarted.text'}}</p>
         <div class='modules-hero__links'>
@@ -31,24 +31,21 @@
     </div>
   {{/if}}
 
-  <div class='modules-layout'>
-    <aside class='modules-toc'>
+  <div class='flexrow gap10px modules-layout'>
+    <aside class='modules-toc darkbox'>
+      <div class='modules-toc__search'>
+        <input type="search" placeholder="{{localize 'Book.search'}}"/>
+      </div>
       <h3>{{localize 'DSA5.patchViewer.modules.tocTitle'}}</h3>
       <nav>
         {{#each modules.categories}}
           <button type='button' class='modules-toc__link' data-action='scrollToCategory' data-target='category-{{slug}}'>{{name}}</button>
         {{/each}}
       </nav>
-    </aside>
-
-    <div class='modules-content'>
-      <div class="flexrow gap10px">
-        <input type="search" placeholder="{{localize 'Book.search'}}"/>
-      </div>
 
       {{#if moduleFilters.length}}
-        <div class='modules-filters'>
-          <span class='modules-filters__label'>{{localize 'DSA5.patchViewer.modules.filtersTitle'}}</span>
+        <div class='modules-toc__filters'>
+          <h3>{{localize 'DSA5.patchViewer.modules.filtersTitle'}}</h3>
           <div class='modules-filters__chips'>
             <button type='button' class='modules-filter-chip' data-action='toggleFilter' data-filter='not-owned'>
               {{localize 'DSA5.patchViewer.modules.filtersNotOwned'}}
@@ -63,7 +60,9 @@
           <button type='button' class='modules-filters__clear' data-action='clearFilters'>{{localize 'DSA5.patchViewer.modules.filtersClear'}}</button>
         </div>
       {{/if}}
+    </aside>
 
+    <div class='modules-content'>
       <div class="module-grids">
         {{#each modules.categories}}
           {{#unless @first}}

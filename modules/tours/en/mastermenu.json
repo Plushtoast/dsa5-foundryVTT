@@ -2,6 +2,7 @@
   "title": "Master menu",
   "module": "dsa5",
   "id": "tdeMastermenu",
+  "description": "An overview of the functions of the master menu.",
   "canBeResumed": false,
   "display": true,
   "restricted": true,

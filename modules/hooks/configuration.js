@@ -149,12 +149,12 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
-    hasSeenNue: {
-      name: 'hasSeenNue',
-      scope: 'world',
+    welcomeAppDismissedVersion: {
+      name: 'welcomeAppDismissedVersion',
+      scope: 'client',
       config: false,
-      default: false,
-      type: Boolean,
+      default: 0,
+      type: Number,
     },
     defaultConfigFinished: {
       name: 'defaultConfigFinished',
