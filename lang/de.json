@@ -1503,7 +1503,7 @@
 		  "achazschamanen": "Tradition (Achazschamanen)",
 		  "tairachkult": "Tradition (Tairachkult)"
 		},
-		"supernatural": {
+		"supernaturalgroup": {
 		  "sumusElixiere": "Sumus Elixiere",
 		  "druiden": "Druiden",
 		  "liedDerPflanzen": "Lied der Pflanzen",
@@ -1716,7 +1716,7 @@
 			"R19": "Der Lausbefall der Pflanze erzeugt eine kuriose Wechselwirkung und der Anwender erhält bei Einnahme durch Verzehr oder, wenn möglich, Einatmung des Rauchs der Pflanze sofort 1W3 LeP zurück.",
 			"R20": "Der Anwender reagiert empfindlich auf das Miasma der Pflanze und wird beim Einatmen ihres Duftes nach 5 Minuten von Krämpfen geschüttelt (1 Stufe Schmerz für 1 Stunde), bei Einnahme erleidet er sogar 2W6 SP."
 		},
-		"poison": {
+		"poisongroup": {
 			"Wurara": "Wurara",
 			"Arax": "Arax",
 			"FlinkerDifar": "Flinker Difar",
@@ -3235,4 +3235,5 @@
         }
     }
 }
+
 
