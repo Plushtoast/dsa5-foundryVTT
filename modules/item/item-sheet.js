@@ -1348,13 +1348,11 @@ class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
         effects: { template: 'systems/dsa5/templates/items/item-effects.hbs' },
     };
 	
-	// In der Klasse PlantSheet direkt unter den TABS oder PARTS
 		static async _handleSpoiledConsumption(actor, item, result) {
     const effectText = game.i18n.localize(`PLANT.spoiledRows.R${result}`);
     const spoiledTitle = game.i18n.localize("PLANT.spoiledPlantEffectTitle");
     let chatMsg = `<b>${item.name} (${game.i18n.localize("PLANT.isSpoiled")})</b><br>${effectText}`;
     
-    // Neuer Helfer: Erstellt einen sauberen ActiveEffect statt addCondition
     const addTimedStunned = async (durationInSeconds) => {
         const effectData = {
             name: `${spoiledTitle}: ${game.i18n.localize("CONDITION.stunned")}`,
@@ -1385,7 +1383,7 @@ class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
         await actor.createEmbeddedDocuments("ActiveEffect", [effectData]);
     };
 
-    // Helfer für Compendium-Items (Gifte, Kräuter) basierend auf deinem Makro-Snippet
+			// gleiche Basis wie smoke makro
 		const applyCompendiumEffect = async (itemName) => {
 		let doc = game.items.find(i => i.name === itemName);
 		if (!doc) {
@@ -1423,7 +1421,6 @@ class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
 			try {
 				const setupData = await itemInstance.setupEffect();
 				if (setupData) {
-					// Das System erkennt nun das Target und zieht die Widerstände ab
 					await itemInstance.itemTest(setupData);
 				}
 			} catch (e) {
@@ -1447,22 +1444,22 @@ class PlantSheet extends ItemSheetObfuscation(ItemSheetdsa5) {
             await addTimedStunned(3600); 
             break;
         case "11_12":
-            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Wurara"));
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poisongroup.Wurara"));
             break;
         case "13":
-            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Arax"));
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poisongroup.Arax"));
             break;
         case "14_15":
-            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.FlinkerDifar"));
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poisongroup.FlinkerDifar"));
             break;
         case "16":
-            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Sumpffieber"));
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poisongroup.Sumpffieber"));
             break;
         case "17":
             await actor.applyDamage("1d6");
             break;
         case "18":
-            await applyCompendiumEffect(game.i18n.localize("PLANT.poison.Wirselkraut"));
+            await applyCompendiumEffect(game.i18n.localize("PLANT.poisongroup.Wirselkraut"));
             break;
         case "19":
             // 1d3 Heilung via negativem Schaden
