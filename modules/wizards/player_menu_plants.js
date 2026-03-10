@@ -257,11 +257,11 @@ export default class PlantHelper extends getBaseClass() {
         }
 
         const checkList = [
-            { nameKey: "PLANT.supernatural.sumusElixiere", traditionKey: "PLANT.supernatural.druiden", icon: "systems/dsa5/icons/traditionen/druiden.webp", isSchale: false }, 
-            { nameKey: "PLANT.supernatural.liedDerPflanzen", traditionKey: "PLANT.supernatural.elfen", icon: "systems/dsa5/icons/traditionen/elfen.webp", isSchale: false }, 
-            { nameKey: "PLANT.supernatural.wachskonservierung", traditionKey: "PLANT.supernatural.zibilja", icon: "systems/dsa5/icons/traditionen/zibiljas.webp", isSchale: false }, 
-            { nameKey: "PLANT.supernatural.pflanzenkraft", traditionKey: "PLANT.supernatural.schamanen", icon: shamanIcon, isSchale: false }, 
-            { nameKey: "PLANT.supernatural.konservierendeSchale", traditionKey: "PLANT.supernatural.zauberalchimist", icon: "systems/dsa5/icons/traditionen/zauberalchimisten.webp", isSchale: true }
+            { nameKey: "PLANT.supernaturalgroup.sumusElixiere", traditionKey: "PLANT.supernaturalgroup.druiden", icon: "systems/dsa5/icons/traditionen/druiden.webp", isSchale: false }, 
+            { nameKey: "PLANT.supernaturalgroup.liedDerPflanzen", traditionKey: "PLANT.supernaturalgroup.elfen", icon: "systems/dsa5/icons/traditionen/elfen.webp", isSchale: false }, 
+            { nameKey: "PLANT.supernaturalgroup.wachskonservierung", traditionKey: "PLANT.supernaturalgroup.zibilja", icon: "systems/dsa5/icons/traditionen/zibiljas.webp", isSchale: false }, 
+            { nameKey: "PLANT.supernaturalgroup.pflanzenkraft", traditionKey: "PLANT.supernaturalgroup.schamanen", icon: shamanIcon, isSchale: false }, 
+            { nameKey: "PLANT.supernaturalgroup.konservierendeSchale", traditionKey: "PLANT.supernaturalgroup.zauberalchimist", icon: "systems/dsa5/icons/traditionen/zauberalchimisten.webp", isSchale: true }
         ];
 
         for (const entry of checkList) {
