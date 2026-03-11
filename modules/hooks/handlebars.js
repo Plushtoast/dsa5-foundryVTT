@@ -126,7 +126,7 @@ export default function () {
       return game.i18n.has(val) ? _loc(val) : b || '';
     },
     successEffect: (a, parent) => {
-      const sucEf = getProperty(a, 'flags.dsa5.successEffect');
+      const sucEf = a.system?.successEffect;
       if (sucEf == 1) return ` (${_loc('ActiveEffects.onSuccess')})`;
       if (sucEf == 2) return ` (${_loc('ActiveEffects.onFailure')})`;
 

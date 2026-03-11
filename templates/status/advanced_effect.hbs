@@ -2,65 +2,65 @@
     <div class="form-group">
         <label>{{localize 'ActiveEffects.hideOnToken'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="flags.dsa5.hideOnToken" {{checked document.flags.dsa5.hideOnToken}} />
+            <input type="checkbox" name="system.visibility.hideOnToken" {{checked document.system.visibility.hideOnToken}} />
         </div>
     </div>
     <div class="form-group">
         <label>{{localize 'ActiveEffects.hidePlayers'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="flags.dsa5.hidePlayers" {{checked document.flags.dsa5.hidePlayers}}/>
+            <input type="checkbox" name="system.visibility.hidePlayers" {{checked document.system.visibility.hidePlayers}}/>
         </div>        
     </div>
     {{#if effectConfigs.hasSuccessEffects}}
     <div class="form-group">
         <label>{{localize "ActiveEffects.apply"}}</label>
         <div class="form-fields">
-            <select name="flags.dsa5.successEffect">
-                {{selectOptions applySuccessConditions selected=document.flags.dsa5.successEffect localize=true blank="ActiveEffects.always"}}
+            <select name="system.successEffect">
+                {{selectOptions applySuccessConditions selected=document.system.successEffect localize=true blank="ActiveEffects.always"}}
             </select>
         </div>
     </div>
     <div class="form-group">
         <label>{{localize 'ActiveEffects.onDelayed'}} ({{localize 'ActiveEffects.dialog.seconds'}})</label>
         <div class="form-fields">
-            <input type="text" name="flags.dsa5.onDelayed" value="{{document.flags.dsa5.onDelayed}}" />
+            <input type="text" name="system.macroArgs.onDelayed" value="{{document.system.macroArgs.onDelayed}}" />
         </div>
     </div>
     {{/if}}
-    <div class="auraBox paddingBox{{#if document.flags.dsa5.isAura}} groupbox{{/if}}">
+    <div class="auraBox paddingBox{{#if document.system.aura.isAura}} groupbox{{/if}}">
         <div class="form-group">
             <label>{{localize 'ActiveEffects.isAura'}}</label>
             
             <div class="form-fields">
-                <input type="checkbox" class="auraSelector" name="flags.dsa5.isAura" {{checked document.flags.dsa5.isAura}}/>
+                <input type="checkbox" class="auraSelector" name="system.aura.isAura" {{checked document.system.aura.isAura}}/>
             </div>
         </div>
         
-        <div class="auraDetails{{#unless document.flags.dsa5.isAura}} dsahidden{{/unless}}">
+        <div class="auraDetails{{#unless document.system.aura.isAura}} dsahidden{{/unless}}">
             <div class="form-group">
                 <label>{{localize "ActiveEffects.disposition"}}</label>
                 <div class="form-fields">
-                    <select name="flags.dsa5.disposition">
-                        {{selectOptions dispositions selected=document.flags.dsa5.disposition localize=true}}
+                    <select name="system.aura.disposition">
+                        {{selectOptions dispositions selected=document.system.aura.disposition localize=true}}
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <label>{{localize 'ActiveEffects.radius'}}</label>
                 <div class="form-fields">
-                    <input type="text" name="flags.dsa5.auraRadius" value="{{document.flags.dsa5.auraRadius}}" />
+                    <input type="text" name="system.aura.auraRadius" value="{{document.system.aura.auraRadius}}" />
                 </div>
             </div>
             <div class="form-group">
                 <label>{{ localize "TEMPLATE.FIELDS.BorderColor.label" }}</label>
                 <div class="form-fields">
-                    <color-picker name="flags.dsa5.borderColor" value="{{document.flags.dsa5.borderColor}}"></color-picker>
+                    <color-picker name="system.aura.borderColor" value="{{document.system.aura.borderColor}}"></color-picker>
                 </div>
             </div>
             <div class="form-group">
                 <label>{{ localize "TEMPLATE.BorderThickness" }}</label>
                 <div class="form-fields">
-                    <input type="number" name="flags.dsa5.borderThickness" value="{{document.flags.dsa5.borderThickness}}" />
+                    <input type="number" name="system.aura.borderThickness" value="{{document.system.aura.borderThickness}}" />
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
     <div class="form-group" data-tooltip="ActiveEffects.applyToOwnerHint">
         <label>{{localize 'ActiveEffects.applyToOwner'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="flags.dsa5.applyToOwner" {{checked document.flags.dsa5.applyToOwner}}/>
+            <input type="checkbox" name="system.applyToOwner" {{checked document.system.applyToOwner}}/>
         </div>
     </div>
     {{/if}}
@@ -86,45 +86,45 @@
     <div class="form-group">
         <label>{{localize "DSASETTINGS.notifyOnFadingEffects"}}</label>
         <div class="form-fields">
-            <select class="advancedSelector" name="flags.dsa5.removeMessage">
-                {{selectOptions messageReceivers selected=document.flags.dsa5.removeMessage blank="-"}}
+            <select class="advancedSelector" name="system.removeMessage">
+                {{selectOptions messageReceivers selected=document.system.removeMessage blank="-"}}
             </select>
         </div>        
     </div>
     <div class="form-group">
         <label>{{localize 'Description'}}</label>
         <div class="form-fields">
-            <input type="text" name="flags.dsa5.description" value="{{document.flags.dsa5.description}}" />
+            <input type="text" name="system.description" value="{{document.system.description}}" />
         </div>
     </div>
 
     <div class="form-group">
         <label>{{localize 'charges'}}</label>
         <div class="form-fields">
-            <input type="number" name="flags.dsa5.charges.value" value="{{document.flags.dsa5.charges.value}}" min="0" step="1" />
+            <input type="number" name="system.charges.value" value="{{document.system.charges.value}}" min="0" step="1" />
             <span class="sep">/</span>
-            <input type="number" name="flags.dsa5.charges.max" value="{{document.flags.dsa5.charges.max}}" min="0" step="1" placeholder="{{localize 'max'}}" />
+            <input type="number" name="system.charges.max" value="{{document.system.charges.max}}" min="0" step="1" placeholder="{{localize 'max'}}" />
         </div>
     </div>
     {{#if advancedFunctions}}
     <div class="form-group">
         <label>{{localize 'duration'}}</label>
         <div class="form-fields">
-            <input type="text" name="flags.dsa5.customDuration" value="{{document.flags.dsa5.customDuration}}" />
+            <input type="text" name="system.customDuration" value="{{document.system.customDuration}}" />
         </div>
     </div>
     <div class="form-group">
         <label>{{localize "ActiveEffects.custom"}}</label>
         <div class="form-fields">
-            <select class="advancedSelector" name="flags.dsa5.advancedFunction">
-                {{selectOptions advancedFunctions selected=document.flags.dsa5.advancedFunction valueAttr="index" labelAttr="name" localize=true}}            
+            <select class="advancedSelector" name="system.advancedFunction">
+                {{selectOptions advancedFunctions selected=document.system.advancedFunction valueAttr="index" labelAttr="name" localize=true}}            
             </select>
         </div>
     </div>
     <div class="form-group">
         <label>{{localize 'ActiveEffects.resistRoll'}}</label>
         <div class="form-fields">
-            <input type="text" name="flags.dsa5.resistRoll" value="{{document.flags.dsa5.resistRoll}}" placeholder="{{localize 'LocalizedIDs.perception'}} -2" />
+            <input type="text" name="system.resistRoll" value="{{document.system.resistRoll}}" placeholder="{{localize 'LocalizedIDs.perception'}} -2" />
         </div>
     </div>
     <div class="advancedFunctions">
@@ -135,9 +135,9 @@
         <label>{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label>
         <div class="form-fields height100">
             {{#if config.canEditMacros}}
-                <code-mirror language="javascript" indent="2" name="flags.dsa5.onRemove" data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.flags.dsa5.onRemove~}}</code-mirror>
+                <code-mirror language="javascript" indent="2" name="system.macroArgs.onRemove" data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.system.macroArgs.onRemove~}}</code-mirror>
             {{else}}
-                <p class="input-text">{{#if document.flags.dsa5.args3}}{{document.flags.dsa5.onRemove}}{{else}} - {{/if}}</p>
+                <p class="input-text">{{#if document.system.macroArgs.onRemove}}{{document.system.macroArgs.onRemove}}{{else}} - {{/if}}</p>
             {{/if}}
         </div>        
     </div>

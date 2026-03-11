@@ -56,19 +56,17 @@ export default class ItemRulesDSA5 {
       const change = duplicate(source[name].activeEffect);
       change.value = `${adoption.name} ${change.value}`;
       const activeEffect = {
-        changes: [change],
-        duration: {},
-        icon: 'icons/svg/aura.svg',
-        name: `${name} (${adoption.name})`,
-        transfer: true,
-        flags: {
-          dsa5: {
-            description: `${name} (${adoption.name})`,
+        system: {
+          description: `${name} (${adoption.name})`,
+          visibility: {
             hideOnToken: true,
             hidePlayers: false,
           },
+          changes: [change],
         },
-        tint: '',
+        duration: {},
+        img: 'icons/svg/aura.svg',
+        name: `${name} (${adoption.name})`,
       };
       item.effects.push(activeEffect);
     }

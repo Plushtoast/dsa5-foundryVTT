@@ -1,5 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import CreatureType from '../system/automation/creature-type.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';

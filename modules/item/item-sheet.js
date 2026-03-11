@@ -282,7 +282,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
 
     if (!game.user.isGM)
       data.conditions = data.conditions.filter((e) => {
-        return !e.getFlag('dsa5', 'hidePlayers');
+        return !e.system?.visibility?.hidePlayers;
       });
 
     data.enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');

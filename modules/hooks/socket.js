@@ -1,7 +1,7 @@
 import PlayerMenu from '../wizards/player_menu.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import RequestRoll from '../system/rolls/request-roll.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import { dropToGround } from './itemDrop.js';

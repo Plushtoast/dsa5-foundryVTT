@@ -2,7 +2,7 @@ import actor from '../../hooks/actor.js';
 import CreatureType from './creature-type.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 
-const { mergeObject, getProperty, hasProperty } = foundry.utils;
+const { mergeObject, getProperty } = foundry.utils;
 
 export default class Riding {
   static preRenderedUnmountHud =
@@ -232,11 +232,9 @@ export default class Riding {
     return {
       name: _loc('RIDING.riding'),
       img: 'systems/dsa5/icons/thirdparty/horse-head.svg',
-      changes: [{ key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 }],
-      flags: {
-        dsa5: {
-          description: _loc('RIDING.ridingDescription'),
-        },
+      system: {
+        description: _loc('RIDING.ridingDescription'),
+        changes: [{ key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 }],
       },
     };
   }
@@ -362,7 +360,7 @@ export default class Riding {
   };
 
   static getHorseSpeed(horse) {
-    return horse.effects.find((x) => getProperty(x, 'flags.dsa5.horseSpeed'))?.flags.dsa5.horseSpeed || 0;
+    return horse.effects.find((x) => Number.isFinite(x.system?.horseSpeed))?.system.horseSpeed || 0;
   }
 
   static horseSpeedModifier(horse) {
@@ -397,17 +395,16 @@ export default class Riding {
   static async setSpeed(horse, speed) {
     await horse.deleteEmbeddedDocuments(
       'ActiveEffect',
-      horse.effects.filter((x) => hasProperty(x, 'flags.dsa5.horseSpeed')).map((x) => x.id),
+      horse.effects.filter((x) => Number.isFinite(x.system?.horseSpeed)).map((x) => x.id),
     );
     await horse.addCondition({
       name: _loc('speed') + ': ' + _loc(`RIDING.speeds.${speed}`),
       icon: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       changes: [this.speedKeys[speed]],
-      flags: {
-        dsa5: {
-          description: _loc(`RIDING.speed.${speed}`),
-          horseSpeed: speed,
-        },
+      system: {
+        horseSpeed: Number(speed),
+        description: _loc(`RIDING.speed.${speed}`),
+        changes: [this.speedKeys[speed]],
       },
     });
   }

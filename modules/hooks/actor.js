@@ -1,4 +1,4 @@
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
@@ -155,7 +155,7 @@ export default function () {
   const notifyFadingEffect = async (effect, options) => {
     if (!effect.parent) return;
 
-    const target = getProperty(effect, 'flags.dsa5.removeMessage');
+    const target = effect.system.removeMessage;
 
     if (!((game.settings.get('dsa5', 'notifyOnFadingEffects') && effect.parent.documentName == 'Actor') || target)) return;
 

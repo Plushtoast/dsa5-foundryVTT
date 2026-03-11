@@ -709,7 +709,7 @@ export default class EffectDropdownBuilder {
         const options = [];
 
         for (const effect of CONFIG.statusEffects) {
-            if (getProperty(effect, 'flags.dsa5.max')) {
+            if (effect.system?.condition?.max) {
                 options.push({
                     name: _loc(effect.name),
                     val: `system.condition.${effect.id}`,

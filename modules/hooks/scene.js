@@ -64,12 +64,15 @@ export default function () {
       },
     };
 
-    if (createData.flags?.dsa5?.onDelayed) {
+    const onDelayed = createData.system?.macroArgs?.onDelayed;
+    if (onDelayed) {
       mergeObject(update, {
-        duration: { seconds: createData.flags.dsa5.onDelayed },
+        duration: { seconds: onDelayed },
         system: {
-          delayed: true,
-          originalDuration: createData.duration,
+          delayed: {
+            enabled: true,
+            originalDuration: createData.duration,
+          },
         },
       });
     }

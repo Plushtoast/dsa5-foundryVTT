@@ -839,7 +839,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async _effectEntries(actor, options = {}) {
     return (await actor.actorEffects()).map((x) => {
-      const level = x.getFlag('dsa5', 'value') || '';
+      const level = x.system.condition.value || '';
       const name = level ? `${x.name} (${level})` : x.name;
       return {
         name: name,

@@ -23,7 +23,7 @@ import BookWizard from '../wizards/adventure_wizard.js';
 import MastersMenu from '../wizards/masters_menu.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
 import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
 import DPS from '../system/automation/derepositioningsystem.js';

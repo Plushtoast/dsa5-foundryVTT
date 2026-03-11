@@ -11,7 +11,7 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 import { tinyNotification } from '../system/helpers/view_helper.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import CreatureType from '../system/automation/creature-type.js';
 import Riding from '../system/automation/riding.js';
@@ -50,7 +50,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static async deferredEffectAddition(effect, actor, target) {
-    const current = actor.effects.find((x) => x.statuses.has(effect))?.flags.dsa5.auto || 0;
+    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
     const isChange = current != target;
     const attr = `changing${effect}`;
     actor[attr] = isChange;
@@ -192,14 +192,16 @@ export default class Actordsa5 extends Actor {
     const changes = [];
 
     for (const e of this.effects) {
-      if (e.disabled || e.system.delayed) continue;
+      const delayedData = e.system?.delayed;
+      const isDelayed = !!delayedData?.enabled;
+      if (e.disabled || isDelayed) continue;
 
-      if (getProperty(e, 'flags.dsa5.isAura')) {
+      if (e.system.aura.isAura) {
         this.auras.push(e.uuid);
         continue;
       }
 
-      const multiply = Number(e.getFlag('dsa5', 'value')) || 1;
+      const multiply = Number(e.system.condition.value) || 1;
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
@@ -222,7 +224,9 @@ export default class Actordsa5 extends Actor {
   collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages) {
     for (let item of this.items) {
       for (const e of item.effects) {
-        if (e.disabled || !e.transfer || e.system.delayed) continue;
+        const delayedData = e.system?.delayed;
+        const isDelayed = !!delayedData?.enabled;
+        if (e.disabled || !e.transfer || isDelayed) continue;
 
         let apply = true;
         let multiply = 1;
@@ -230,14 +234,14 @@ export default class Actordsa5 extends Actor {
         apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
         multiply = this.getEffectMultiplier(item);
 
-        const advancedFunction = getProperty(e, 'flags.dsa5.advancedFunction');
+        const advancedFunction = e.system.advancedFunction;
         if (Object.prototype.hasOwnProperty.call(this.dsatriggers, advancedFunction)) {
           this.dsatriggers[advancedFunction][item.id] = e.id;
         }
 
         e.notApplicable = !apply;
 
-        if (apply && getProperty(e, 'flags.dsa5.isAura')) {
+        if (apply && e.system.aura.isAura) {
           this.auras.push(e.uuid);
           continue;
         }
@@ -267,7 +271,7 @@ export default class Actordsa5 extends Actor {
       case 'meleeweapon':
       case 'rangeweapon':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
-        return item.system.worn.value && effect.getFlag('dsa5', 'applyToOwner');
+        return item.system.worn.value && effect.system.applyToOwner;
 
       case 'armor':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
@@ -277,7 +281,7 @@ export default class Actordsa5 extends Actor {
         return !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value);
 
       case 'trait':
-        return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.getFlag('dsa5', 'applyToOwner');
+        return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.system.applyToOwner;
 
       case 'ammunition':
       case 'plant':
@@ -460,7 +464,7 @@ export default class Actordsa5 extends Actor {
     const force =
       args[1] == 'effects' &&
       args[3].some((x) => {
-        return ['flags.dsa5.auraRadius', 'flags.dsa5.borderColor', 'flags.dsa5.disposition', 'flags.dsa5.fillColor', 'flags.dsa5.borderThickness'].some((y) => hasProperty(x, y));
+        return ['system.aura.auraRadius', 'system.aura.borderColor', 'system.aura.disposition', 'system.aura.fillColor', 'system.aura.borderThickness'].some((y) => hasProperty(x, y));
       });
     this.drawAuras(force);
   }
@@ -1863,7 +1867,7 @@ export default class Actordsa5 extends Actor {
 
       this.removeCondition(statusId, 1, false);
     } else {
-      if (!existing || Number.isNumeric(getProperty(existing, 'flags.dsa5.value'))) {
+      if (!existing || Number.isNumeric(existing.system?.condition?.value)) {
 
         await this.addCondition(statusId, 1, false, false);
       } else {
@@ -1931,7 +1935,7 @@ export default class Actordsa5 extends Actor {
     await Promise.all(uuids.map(async (uuid) => {
       try {
         const effect = await fromUuid(uuid);
-        const charges = effect?.getFlag?.('dsa5', 'charges');
+        const charges = effect?.system?.charges;
         const value = Number(charges?.value);
         if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
         if (effect.disabled) return;
@@ -2053,7 +2057,7 @@ export default class Actordsa5 extends Actor {
       effect = duplicate(statusEffect);
 
       effect.name = _loc(effect.name);
-      effect.flags.dsa5.description = _loc(effect.name);
+      effect.system.description = _loc(effect.system.description || effect.name);
 
       if (effect.changes) {
         effect.changes = effect.changes.map((change) => {
@@ -2066,9 +2070,6 @@ export default class Actordsa5 extends Actor {
 
       effect.statuses = [effect.id];
 
-      delete effect.description;
-      delete effect.flags.dsa5.value;
-      delete effect.flags.dsa5.max;
       delete effect.id;
 
       mergeObject(effect, options);

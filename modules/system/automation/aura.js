@@ -77,7 +77,7 @@ export class DSAAura {
 
   static async removeAura(aura, token) {
     for (const otherToken of canvas.scene.tokens) {
-      const existingEffect = otherToken.actor?.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == aura);
+      const existingEffect = otherToken.actor?.effects.find((e) => e.system?.aura?.templateSource == aura);
       if (existingEffect) {
         await otherToken.actor.effects.get(existingEffect.id)?.delete();
       }
@@ -179,7 +179,7 @@ export class DSAAura {
 
       for (let [key, aura] of Object.entries(token.object?.auras || {})) {
         let { auraSource, effect, isAura } = getProperty(aura.template.document, 'flags.dsa5');
-        const disposition = effect.flags?.dsa5?.disposition ?? 2;
+        const disposition = effect.system?.aura?.disposition ?? 2;
 
         if (!isAura) continue;
 
@@ -192,7 +192,7 @@ export class DSAAura {
     const { child, template } = aura;
     const document = template.document;
     let { auraSource, effect, isAura } = getProperty(document, 'flags.dsa5');
-    const disposition = effect.flags?.dsa5?.disposition ?? 2;
+    const disposition = effect.system?.aura?.disposition ?? 2;
 
     if (!isAura || !game.canvas) return;
 
@@ -212,14 +212,14 @@ export class DSAAura {
     if (!token.actor) return;
 
     const inAura = await DSAAura.inAura(sourceToken, token, document);
-    const existingEffect = token.actor.effects.find((e) => getProperty(e, 'flags.dsa5.templateSource') == auraSource);
+    const existingEffect = token.actor.effects.find((e) => e.system?.aura?.templateSource == auraSource);
 
     if (inAura && DSAAura.validAuraTarget(token, disposition) && !existingEffect) {
       const newEffect = duplicate(effect);
       mergeObject(newEffect, {
         name: `${effect.name} (Aura)`,
-        flags: {
-          dsa5: {
+        system: {
+          aura: {
             templateSource: auraSource,
           },
         },
@@ -233,11 +233,11 @@ export class DSAAura {
 
 export class AuraTemplate extends MeasuredTemplateDSA {
   static fromItem(effect, token, auraId) {
-    const radius = Number(getProperty(effect, 'flags.dsa5.auraRadius'));
+    const radius = Number(effect.system?.aura?.auraRadius);
     if (!radius) return;
 
     const newEffect = duplicate(effect);
-    delete newEffect.flags.dsa5.isAura;
+    delete newEffect.system?.aura?.isAura;
 
     mergeObject(newEffect, {
       flags: {
@@ -255,13 +255,13 @@ export class AuraTemplate extends MeasuredTemplateDSA {
       direction: 0,
       x: token.center.x,
       y: token.center.y,
-      borderColor: effect.flags.dsa5.borderColor,
+      borderColor: effect.system?.aura?.borderColor,
       flags: {
         dsa5: {
           effect: newEffect,
           auraSource: auraId,
           isAura: true,
-          borderThickness: effect.flags.dsa5.borderThickness || 3,
+          borderThickness: effect.system?.aura?.borderThickness || 3,
         },
       },
     };

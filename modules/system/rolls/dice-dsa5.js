@@ -8,7 +8,7 @@ import TraitRulesDSA5 from '../rules/trait-rules-dsa5.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import OpposedDsa5 from './opposed-dsa5.js';
-import DSAActiveEffectConfig from '../../status/active_effects.js';
+import DSAActiveEffectConfig from '../../status/active_effect_config.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import EquipmentDamage from '../automation/equipment-damage.js';
 import EquipmentDamageDialog from '../../dialog/dialog-equipmentdamage.js';
@@ -2072,10 +2072,10 @@ export default class DiceDSA5 {
 
     const isWeaponLike =
       ['meleeweapon', 'rangeweapon'].includes(source.type) ||
-      (source.type === 'trait' && ['rangeAttack', 'meleeAttack'].includes(getProperty(source, 'system.traitType.value')));
+      (source.type === 'trait' && ['rangeAttack', 'meleeAttack'].includes(source.system.traitType.value));
 
     if (successLevel > 0 && isWeaponLike) {
-      if ((source.effects || []).some(e => !getProperty(e, 'flags.dsa5.applyToOwner'))) return true;
+      if ((source.effects || []).some(e => !e.system.applyToOwner)) return true;
     }
 
     const spellLikeTypes = [SPELL, LITURGY, RITUAL, CEREMONY, 'trait', SKILL];
@@ -2086,10 +2086,7 @@ export default class DiceDSA5 {
     if ([ROLL_TYPES.POISON, ROLL_TYPES.DISEASE].includes(source.type)) {
       const wanted = successLevel > 0 ? 1 : 2;
       const effects = source.effects || [];
-      return effects.some(e => {
-        const v = getProperty(e, 'flags.dsa5.successEffect');
-        return typeof v === 'undefined' || Number(v) === wanted;
-      });
+      return effects.some(e => e.system.successEffect == wanted);
     }
 
     const modifiers = pre.situationalModifiers || testData?.situationalModifiers || [];

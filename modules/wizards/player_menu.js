@@ -637,16 +637,17 @@ class ConjurationRequest extends DefaultAppv2 {
     for (let modifier of this.creationData.modifiers) {
       this.conjuration.effects.push({
         changes: modifier.changes,
-        duration: {},
-        icon: 'icons/svg/aura.svg',
-        name: _loc(modifier.name),
-        flags: {
-          dsa5: {
-            description: `${_loc('PLAYER.conjuration')} ${_loc('extensions')}`,
+        system: {
+          description: `${_loc('PLAYER.conjuration')} ${_loc('extensions')}`,
+          visibility: {
             hideOnToken: true,
             hidePlayers: false,
           },
+          changes: modifier.changes,
         },
+        duration: {},
+        img: 'icons/svg/aura.svg',
+        name: _loc(modifier.name),
       });
       if (modifier.fun) {
         modifier.fun(this.conjuration, this.creationData);
@@ -664,22 +665,24 @@ class ConjurationRequest extends DefaultAppv2 {
     const entityPackages = (await Promise.all(this.creationData.packageIds.map((x) => fromUuid(x)))).map((x) => x.toObject(false));
     //this.conjuration.items.push(...entityAbilities, ...entityPackages)
     this.conjuration.effects.push({
-      changes: [],
-      duration: {},
-      icon: 'icons/svg/aura.svg',
-      id: 'services',
-      name: _loc('PLAYER.services'),
-      flags: {
-        dsa5: {
+      system: {
+        description: `${_loc('PLAYER.conjuration')} ${_loc('PLAYER.services')}`,
+        condition: {
           value: services,
           max: 500,
-          description: `${_loc('PLAYER.conjuration')} ${_loc('PLAYER.services')}`,
           manual: services,
           auto: 0,
+        },
+        visibility: {
           hideOnToken: true,
           hidePlayers: false,
         },
+        changes: [],
       },
+      duration: {},
+      img: 'icons/svg/aura.svg',
+      id: 'services',
+      name: _loc('PLAYER.services'),
     });
 
     if (game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type]) {

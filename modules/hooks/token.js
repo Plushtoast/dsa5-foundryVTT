@@ -23,8 +23,10 @@ export class DSAToken extends Token {
             img: 'systems/dsa5/icons/thirdparty/bee.svg',
             id: 'swarm',
             name: 'swarm.name',
-            flags: {
-              dsa5: { value: this.actor.system.swarm?.effectiveCount || 1 },
+            system: {
+              condition: {
+                value: this.actor.system.swarm?.effectiveCount || 1,
+              },
             },
           }),
         );
@@ -37,7 +39,7 @@ export class DSAToken extends Token {
       if (effect.getFlag('core', 'overlay') && !hasOverlay) {
         promises.push(this._drawOverlay(effect.img, effect.tint));
         hasOverlay = true;
-      } else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, 'flags.dsa5.value')));
+      } else promises.push(this._drawEffect(effect.img, effect.tint, effect.system?.condition?.value));
     }
     await Promise.allSettled(promises);
 

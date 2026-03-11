@@ -7,268 +7,254 @@ DSA5.statusEffects = [
     img: 'icons/svg/skull.svg',
     id: 'dead',
     name: 'CONDITION.defeated',
-    description: 'CONDITIONDESCRIPTION.defeated',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.defeated',
     },
   },
   {
     id: 'inpain',
     name: 'CONDITION.inpain',
     img: 'icons/svg/blood.svg',
-    description: 'CONDITIONDESCRIPTION.inpain',
-    changes: [{ key: 'system.condition.inpain', mode: 2, value: 1 }],
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.inpain',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.inpain', mode: 2, value: 1 }],
     },
   },
   {
     id: 'prone',
     name: 'CONDITION.prone',
     img: 'icons/svg/falling.svg',
-    description: 'CONDITIONDESCRIPTION.prone',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.prone',
     },
   },
   {
     id: 'unconscious',
     name: 'CONDITION.unconscious',
     img: 'icons/svg/unconscious.svg',
-    description: 'CONDITIONDESCRIPTION.unconscious',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.unconscious',
     },
   },
   {
     id: 'rooted',
     name: 'CONDITION.rooted',
     img: 'icons/svg/net.svg',
-    description: 'CONDITIONDESCRIPTION.rooted',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.rooted',
     },
   },
   {
     id: 'fixated',
     name: 'CONDITION.fixated',
     img: 'icons/svg/padlock.svg',
-    description: 'CONDITIONDESCRIPTION.fixated',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.fixated',
     },
   },
   {
     id: 'surprised',
     name: 'CONDITION.surprised',
     img: 'icons/svg/hazard.svg',
-    description: 'CONDITIONDESCRIPTION.surprised',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.surprised',
     },
   },
   {
     id: 'blind',
     name: 'CONDITION.blind',
     img: 'icons/svg/blind.svg',
-    description: 'CONDITIONDESCRIPTION.blind',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.blind',
     },
   },
   {
     id: 'poisoned',
     name: 'CONDITION.poisoned',
     img: 'icons/svg/poison.svg',
-    description: 'CONDITIONDESCRIPTION.poisoned',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.poisoned',
     },
   },
   {
     id: 'sick',
     name: 'CONDITION.sick',
     img: 'icons/svg/biohazard.svg',
-    description: 'CONDITIONDESCRIPTION.sick',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.sick',
     },
   },
   {
     id: 'deaf',
     name: 'CONDITION.deaf',
     img: 'icons/svg/deaf.svg',
-    description: 'CONDITIONDESCRIPTION.deaf',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.deaf',
     },
   },
   {
     id: 'burning',
     name: 'CONDITION.burning',
     img: 'icons/svg/fire.svg',
-    description: 'CONDITIONDESCRIPTION.burning',
-    changes: [{ key: 'system.condition.burning', mode: 2, value: 1 }],
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.burning',
+      condition: {
         value: 1,
         max: 3,
       },
+      changes: [{ key: 'system.condition.burning', mode: 2, value: 1 }],
     },
   },
   {
     id: 'invisible',
     name: 'CONDITION.invisible',
     img: 'icons/svg/circle.svg',
-    description: 'CONDITIONDESCRIPTION.invisible',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.invisible',
     },
   },
   {
     id: 'constricted',
     name: 'CONDITION.constricted',
     img: 'icons/svg/cave.svg',
-    description: 'CONDITIONDESCRIPTION.constricted',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.constricted',
     },
   },
   {
     id: 'bloodrush',
     name: 'CONDITION.bloodrush',
     img: 'icons/svg/bones.svg',
-    description: 'CONDITIONDESCRIPTION.bloodrush',
-    changes: [
+    system: {
+      description: 'CONDITIONDESCRIPTION.bloodrush',
+      changes: [
       {
         key: 'system.skillModifiers.step',
         mode: 0,
         value: 'Kraftakt 2;Feat of Strength 2',
       },
     ],
-    flags: {
-      dsa5: {},
     },
   },
   {
     id: 'mute',
     name: 'CONDITION.mute',
     img: 'icons/svg/silenced.svg',
-    description: 'CONDITIONDESCRIPTION.mute',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.mute',
     },
   },
   {
     id: 'incapacitated',
     name: 'CONDITION.incapacitated',
     img: 'icons/svg/sleep.svg',
-    description: 'CONDITIONDESCRIPTION.incapacitated',
-    flags: {
-      dsa5: {},
+    system: {
+      description: 'CONDITIONDESCRIPTION.incapacitated',
     },
   },
   {
     id: 'encumbered',
     name: 'CONDITION.encumbered',
     img: 'icons/svg/anchor.svg',
-    changes: [{ key: 'system.condition.encumbered', mode: 2, value: 1 }],
-    description: 'CONDITIONDESCRIPTION.encumbered',
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.encumbered',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.encumbered', mode: 2, value: 1 }],
     },
   },
   {
     id: 'stunned',
     name: 'CONDITION.stunned',
     img: 'icons/svg/daze.svg',
-    changes: [{ key: 'system.condition.stunned', mode: 2, value: 1 }],
-    description: 'CONDITIONDESCRIPTION.stunned',
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.stunned',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.stunned', mode: 2, value: 1 }],
     },
   },
   {
     id: 'raptured',
     name: 'CONDITION.raptured',
-    img: 'icons/svg/ice-aura.svg',
-    changes: [{ key: 'system.condition.raptured', mode: 2, value: 1 }],
-    description: 'CONDITIONDESCRIPTION.raptured',
-    flags: {
-      dsa5: {
+    img: 'icons/svg/ice-aura.svg',   
+    system: {
+      description: 'CONDITIONDESCRIPTION.raptured',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.raptured', mode: 2, value: 1 }],
     },
   },
   {
     id: 'feared',
     name: 'CONDITION.feared',
     img: 'icons/svg/terror.svg',
-    description: 'CONDITIONDESCRIPTION.feared',
-    changes: [{ key: 'system.condition.feared', mode: 2, value: 1 }],
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.feared',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.feared', mode: 2, value: 1 }],
     },
   },
   {
     id: 'paralysed',
     name: 'CONDITION.paralysed',
     img: 'icons/svg/paralysis.svg',
-    description: 'CONDITIONDESCRIPTION.paralysed',
-    changes: [{ key: 'system.condition.paralysed', mode: 2, value: 1 }],
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.paralysed',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.paralysed', mode: 2, value: 1 }],
     },
   },
   {
     id: 'confused',
     name: 'CONDITION.confused',
     img: 'icons/svg/stoned.svg',
-    description: 'CONDITIONDESCRIPTION.confused',
-    changes: [{ key: 'system.condition.confused', mode: 2, value: 1 }],
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.confused',
+      condition: {
         value: 1,
         max: 4,
       },
+      changes: [{ key: 'system.condition.confused', mode: 2, value: 1 }],
     },
   },
   {
     id: 'minorSpirits',
     name: 'CONDITION.minorSpirits',
     img: 'icons/svg/terror.svg',
-    description: 'CONDITIONDESCRIPTION.minorSpirits',
-    changes: [{ key: 'system.skillModifiers.global', mode: 0, value: -1 }],
+    system: {
+      description: 'CONDITIONDESCRIPTION.minorSpirits',
+      changes: [{ key: 'system.skillModifiers.global', mode: 0, value: -1 }],
+    },    
     duration: { seconds: 600 },
-    flags: {
-      dsa5: {},
-    },
   },
   {
     id: 'services',
     name: 'PLAYER.services',
     img: 'icons/svg/aura.svg',
-    description: 'CONDITIONDESCRIPTION.services',
-    flags: {
-      dsa5: {
+    system: {
+      description: 'CONDITIONDESCRIPTION.services',
+      condition: {
         value: 1,
         max: 500,
+      },
+      visibility: {
         hideOnToken: true,
       },
     },

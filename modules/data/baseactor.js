@@ -568,7 +568,7 @@ export class ActorDataModel extends DSADataModel {
 
     const paralysis = this.parent.hasCondition('paralysed');
     if (paralysis) {
-      input = Math.round(input * (1 - paralysis.flags.dsa5.value * 0.25));
+      input = Math.round(input * (1 - (paralysis.system?.condition?.value || 0) * 0.25));
     }
 
     if (groundOnly && this.parent.hasCondition('prone')) {

@@ -3,7 +3,7 @@ import DiceDSA5 from './dice-dsa5.js';
 import { ReactToAttackDialog, ReactToSkillDialog } from '../../dialog/dialog-react.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import EquipmentDamage from '../automation/equipment-damage.js';
-import DSAActiveEffectConfig from '../../status/active_effects.js';
+import DSAActiveEffectConfig from '../../status/active_effect_config.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSATriggers from '../automation/triggers.js';
 
@@ -955,7 +955,7 @@ export default class OpposedDsa5 {
 
       for (const effect of specAb.effects) {
         if (existingIds.has(effect._id)) continue;
-        if (!allowedTriggers.has(Number(getProperty(effect, 'flags.dsa5.advancedFunction')))) continue;
+        if (!allowedTriggers.has(effect.system.advancedFunction)) continue;
 
         attacker.testResult.source.effects.push(effect.toObject());
       }
