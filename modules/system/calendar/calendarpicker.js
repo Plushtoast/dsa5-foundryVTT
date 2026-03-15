@@ -435,7 +435,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!form) return;
 
     const components = new foundry.applications.ux.FormDataExtended(form).object;
-    const currentComponents = game.time.calendar.timeToComponents(game.time.worldTime);
+    const currentComponents = this.actualTimeComponents();
     components.month = currentComponents.month;
     components.day = Math.min(currentComponents.day, game.time.calendar.months.values[components.month].days - 1);
     for (let m = 0; m < components.month; m++) {
