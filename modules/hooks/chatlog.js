@@ -100,14 +100,18 @@ export default function () {
     let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables)/);
     cmd = cmd ? cmd[0] : '';
     switch (cmd) {
-      case '/pay':
-        if (game.user.isGM) DSA5Payment.createPayChatMessage(content);
-        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+      case '/pay': {
+        const { moneyString, description } = DSA5Payment.parseChatCommand(content);
+        if (game.user.isGM) DSA5Payment.createPayChatMessage(moneyString, description);
+        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
-      case '/getPaid':
-        if (game.user.isGM) DSA5Payment.createGetPaidChatMessage(content);
-        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+      }
+      case '/getPaid': {
+        const { moneyString, description } = DSA5Payment.parseChatCommand(content);
+        if (game.user.isGM) DSA5Payment.createGetPaidChatMessage(moneyString, description);
+        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
+      }
       case '/help':
         DSA5ChatListeners.getHelp();
         return false;

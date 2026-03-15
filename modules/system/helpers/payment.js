@@ -72,6 +72,27 @@ export default class DSA5Payment {
     }
   }
 
+  static parseChatCommand(content) {
+    const command = content.replace(/^\/(pay|getPaid)\s*/i, '').trim();
+    const separatorIndex = command.search(/\s/);
+
+    if (separatorIndex === -1) {
+      return {
+        moneyString: command,
+        description: undefined,
+      };
+    }
+
+    const moneyString = command.slice(0, separatorIndex);
+    const rawDescription = command.slice(separatorIndex).trim();
+    const description = rawDescription?.match(/^\((.*)\)$/)?.[1]?.trim() || rawDescription;
+
+    return {
+      moneyString,
+      description,
+    };
+  }
+
   static _getPaidmoney(moneyString) {
     let money = this._parseMoneyString(moneyString);
 

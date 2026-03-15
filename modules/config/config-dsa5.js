@@ -669,13 +669,13 @@ DSA5.startXP = {
 DSA5.helpContent = [
   {
     name: 'pay',
-    command: '/pay [0-9]+',
-    example: '/pay 5.03',
+    command: '/pay [0-9]+ [description]',
+    example: '/pay 5.03 Tavern bill',
   },
   {
     name: 'getPaid',
-    command: '/getPaid [0-9]+',
-    example: '/getPaid 5.03',
+    command: '/getPaid [0-9]+ [description]',
+    example: '/getPaid 5.03 Quest reward',
   },
   {
     name: 'quickAbility',
