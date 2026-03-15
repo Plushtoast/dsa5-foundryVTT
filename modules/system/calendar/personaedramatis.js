@@ -294,14 +294,16 @@ export class PersonaeDramatis {
 
         this.close();
 
-        const activatedJournals = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME)?.activated || [];
+        const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME) || { activated: [] };
+        settings.activated ||= [];
+        const activatedJournals = settings.activated;
         if (activatedJournals.length === 0) {
             const newJournal = await JournalEntry.create({
                 name: localize("PERSONAE.ImportantPersons"), pages: [{
                     name: localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis",
                 }]
             });
-            settings.activated.push({ uuid: newJournal.id, name: newJournal.name });
+            settings.activated.push({ uuid: newJournal.uuid, name: newJournal.name });
             await game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
             newJournal.sheet.render(true);
         } else {
