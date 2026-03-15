@@ -134,7 +134,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
   get hasStyleSF() {
     const extendedCombatStyles = [SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_BASE, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE];   
 
-    if (this.category.value === 'Combat' && extendedCombatStyles.includes(this.category.sub)) return `COMBATSKILLCATEGORY.${this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED}`;
+    if (this.category.value === 'Combat' && extendedCombatStyles.includes(this.category.sub)) return `SpecCategory.extCombat`;
 
     return SpecialabilityData.advancedSFCategories[this.category.value];
   }
