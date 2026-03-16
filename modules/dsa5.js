@@ -66,6 +66,7 @@ import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
+//import { DAGTalentTree } from './actor/dag/dag_talent_tree.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -99,7 +100,8 @@ Hooks.once('init', () => {
       OnUseEffect,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
-      WorldCalendar: DSAWorldCalendar
+      WorldCalendar: DSAWorldCalendar,
+      //DAGTalentTree,
     },
     entities: {
       Actordsa5,

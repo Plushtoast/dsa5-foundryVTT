@@ -655,13 +655,13 @@ DSA5.startXP = {
 DSA5.helpContent = [
   {
     name: 'pay',
-    command: '/pay [0-9]+',
-    example: '/pay 5.03',
+    command: '/pay [0-9]+ [description]',
+    example: '/pay 5.03 Tavern bill',
   },
   {
     name: 'getPaid',
-    command: '/getPaid [0-9]+',
-    example: '/getPaid 5.03',
+    command: '/getPaid [0-9]+ [description]',
+    example: '/getPaid 5.03 Quest reward',
   },
   {
     name: 'quickAbility',
@@ -935,6 +935,6 @@ DSA5.noteIcons = {
 
 DSA5.SKILL = SKILL;
 
-DSA5.NEEDS_MIGRATION_VERSION = 37;
+DSA5.NEEDS_MIGRATION_VERSION = 38;
 
 export default DSA5;

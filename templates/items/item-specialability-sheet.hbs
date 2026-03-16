@@ -9,7 +9,7 @@
   {{/if}}
 
   {{#if document.system.hasStyleSF }}
-    {{formGroup systemFields.styleSF value=document.system.styleSF localize=true label=document.system.hasStyleSF  elementType='textarea'}}
+    {{formGroup systemFields.styleSF value=document.system.styleSF localize=true label=document.system.hasStyleSF classes='full-height' elementType='textarea'}}
   {{/if}}
   
   {{formGroup systemFields.rule.fields.value value=document.system.rule.value localize=true classes='full-height' elementType='textarea'}}

@@ -188,11 +188,13 @@ export default class Riding {
 
   static getHorse(actor, returnEmptyHorse = false) {
     let horse;
+    const horseData = actor.system.horse;
+    const hasTokenData = !foundry.utils.isEmpty(horseData.token || {});
 
-    if (actor.system.horse.token && !actor.system.horse.actorLink) horse = DSA5_Utility.getSpeaker(actor.system.horse.token);
-    else if (actor.system.horse.actorId) horse = game.actors.get(actor.system.horse.actorId);
+    if (hasTokenData && !horseData.actorLink) horse = DSA5_Utility.getSpeaker(horseData.token);
+    else if (horseData.actorId) horse = game.actors.get(horseData.actorId);
 
-    if (!horse && returnEmptyHorse && actor.system.horse.isRiding) horse = { name: _loc('unknown') };
+    if (!horse && returnEmptyHorse && horseData.isRiding) horse = { name: _loc('unknown') };
 
     return horse;
   }
