@@ -74,7 +74,7 @@
             </header>
             <div class='module-grid'>
               {{#each items}}
-                <article class='module-card {{#if available}}module-card--owned{{/if}}' data-original-index='{{@index}}' data-sort-label='{{label}}' data-filters='{{filterString}}'>
+                <article class='module-card {{#if available}}module-card--owned{{/if}}' data-original-index='{{@index}}' data-sort-label='{{label}}' data-filters='{{filterString}}' data-module-id='{{id}}'>
                   {{#if badges.length}}
                     <ul class='module-card__badges'>
                       {{#each badges}}
@@ -102,11 +102,18 @@
                         {{/each}}
                       </div>
                     {{/if}}
-                    {{#unless available}}
-                      <a class='module-card__cta' href='{{href}}' target='_blank' rel='noopener' data-tooltip='{{label}}'>
-                        {{localize 'DSA5.patchViewer.modules.cta'}}
-                      </a>
-                    {{/unless}}
+                    <div class='flexrow gap5px'>
+                      {{#if id}}
+                        <a class='module-card__cta' data-action='openModuleDetails' data-module-id='{{id}}'>
+                          {{localize 'DSA5.patchViewer.modules.details'}}
+                        </a>
+                      {{/if}}
+                      {{#unless available}}
+                        <a class='module-card__cta' href='{{href}}' target='_blank' rel='noopener' data-tooltip='{{label}}'>
+                          {{localize 'DSA5.patchViewer.modules.cta'}}
+                        </a>
+                      {{/unless}}
+                    </div>
                   </div>
                 </article>
               {{/each}}

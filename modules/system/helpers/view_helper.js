@@ -111,15 +111,38 @@ function IconVisibility(html, menu, btnLeft, btnRight) {
 }
 
 export async function clickableAbility(target) {
-  const categories = $(target).closest('.searchableAbility')[0].dataset.category.split(' ');
-  let search = target.text.replace(/\d+$/, '').trim();
+  const wrapper = $(target).closest('.searchableAbility')[0];
+  const documentGroup = wrapper?.dataset?.documentGroup;
+  const categories = wrapper?.dataset?.category?.split(' ').filter(Boolean) || [];
+  let search = target.textContent.replace(/\d+$/, '').trim();
+
+  const renderFoundLibraryDocument = async (document) => {
+    if (!document) return false;
+
+    document.sheet.render(true);
+    return true;
+  };
+
+  const findJournalEntry = async (entryName) => {
+    const library = game.dsa5.itemLibrary;
+    await library.buildJournalEntryIndex();
+
+    const results = await library.flattenedResults(library.indexes.JournalEntry, entryName, { index: ['name'] });
+    const entries = results.map((result) => library._getStoredObject(library.indexes.JournalEntry, result)).filter((entry) => entry?.compendium);
+    const match = entries.find((entry) => entry.name === entryName) || entries[0];
+
+    return match ? fromUuid(match.uuid) : null;
+  };
+
+  if (documentGroup === 'JournalEntries') {
+    return await renderFoundLibraryDocument(await findJournalEntry(search));
+  }
 
   for (let category of categories) {
     const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
     const res = items.find((x) => x.name == search);
     if (res) {
-      res.sheet.render(true);
-      return;
+      return await renderFoundLibraryDocument(res);
     }
   }
   if (/\(/.test(search)) {
@@ -129,11 +152,12 @@ export async function clickableAbility(target) {
       const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
       const res = items.find((x) => x.name == search);
       if (res) {
-        res.sheet.render(true);
-        return;
+        return await renderFoundLibraryDocument(res);
       }
     }
   }
+
+  return false;
 }
 
 function columnLayout(html) {

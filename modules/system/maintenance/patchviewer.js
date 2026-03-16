@@ -4,6 +4,8 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSATour from '../../tours/dsa_tour.js';
 import DidYouKnow from '../helpers/didyouknow.js';
+import ModuleDetailsDataLoader from './module_details_loader.js';
+import ModuleDetailsApp from './module_details_app.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -13,6 +15,7 @@ export class PatchViewer extends DefaultAppv2 {
     #lastQuery = '';
     #lastRegex = null;
     #carouselTimers = [];
+    #moduleLookup = new Map();
 
     constructor(json, app, { initialTab } = {}) {
         super(app);
@@ -49,6 +52,7 @@ export class PatchViewer extends DefaultAppv2 {
             openLibrary: this.#openLibrary,
             openJournalBrowser: this.#openJournalBrowser,
             nextTip: this.#nextTip,
+            openModuleDetails: this.#openModuleDetails,
         }
     };
 
@@ -622,6 +626,7 @@ export class PatchViewer extends DefaultAppv2 {
     }
 
     #prepareModules(modules) {
+        this.#moduleLookup = new Map();
         for (const [categoryIndex, category] of (modules.categories ?? []).entries()) {
             const baseSlug = category.name ?? `category-${categoryIndex}`;
             category.slug = baseSlug.slugify();
@@ -638,6 +643,9 @@ export class PatchViewer extends DefaultAppv2 {
                     .map((value) => foundry.applications.ux.SearchFilter.cleanQuery(String(value)))
                     .filter(Boolean);
                 item.filterString = item.filters.join('|');
+                if (item.id) {
+                    this.#moduleLookup.set(item.id, item);
+                }
                 return item;
             }) ?? [];
         }
@@ -734,6 +742,26 @@ export class PatchViewer extends DefaultAppv2 {
 
     static #openJournalBrowser() {
         game.dsa5.apps.journalBrowser.render(true);
+    }
+
+    static async #openModuleDetails(event, target) {
+        const moduleId = target?.dataset?.moduleId;
+        if (!moduleId) return;
+
+        const moduleData = this.#moduleLookup.get(moduleId);
+        try {
+            const payload = await ModuleDetailsDataLoader.loadData();
+            if (!payload?.modules?.[moduleId]) {
+                ui.notifications.warn('DSA5.patchViewer.moduleDetails.unavailableText', { localize: true });
+                return;
+            }
+        } catch (error) {
+            console.error('DSA5 | Failed to load module details dataset', error);
+            ui.notifications.warn('DSA5.patchViewer.moduleDetails.unavailableText', { localize: true });
+            return;
+        }
+
+        new ModuleDetailsApp(moduleId, moduleData).render(true);
     }
 
     static async #nextTip() {

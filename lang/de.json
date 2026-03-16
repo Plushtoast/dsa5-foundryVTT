@@ -3018,9 +3018,25 @@
                     "wiki": "Zum Wiki",
                     "videos": "VTTom-Videos"
                 },
-                "cta": "Details & Kaufen",
+                "details": "Inhalte anzeigen",
+                "cta": "Im Shop öffnen",
                 "ctaOwned": "Bereits gekauft",
                 "owned": "Im Besitz"
+            },
+            "moduleDetails": {
+                "windowTitle": "Moduldetails",
+                "storeLink": "Shopseite öffnen",
+                "overallAutomation": "Automatisierungsgrad",
+                "specialFeatures": "Besondere Hinweise",
+                "badgesLabel": "Hinweise",
+                "tagsLabel": "Tags",
+                "note": "Diese Liste ist nur ein Auszug. Module enthalten in der Regel zusätzliche Inhalte, die hier nicht erfasst werden. Ein Häkchen oder das Fehlen eines Häkchens beschreibt nur den verfolgten Automatisierungsstatus, und Einträge können trotzdem teilweise automatisiert sein.",
+                "unavailableTitle": "Keine Details verfügbar",
+                "unavailableText": "Für dieses Modul ist aktuell kein erzeugter Detaildatensatz verfügbar.",
+                "entryNotFound": "Kein Bibliothekseintrag für {name} gefunden.",
+                "automatedTooltip": "Automatisiert",
+                "notAutomatedTooltip": "Manuell",
+                "searchEmpty": "Keine Einträge entsprechen der aktuellen Suche."
             }
         }
     }

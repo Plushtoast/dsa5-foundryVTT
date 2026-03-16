@@ -426,6 +426,7 @@
         font-weight: 700;
         padding: 0.25rem 0.6rem;
         border-radius: 999px;
+        margin: 0;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -485,7 +486,6 @@
 
       .module-card__cta {
         align-self: flex-start;
-        margin-top: 0.75rem;
         padding: 0.45rem 1rem;
         border-radius: 999px;
         background: rgba(255, 100, 0, 0.9);
@@ -535,6 +535,86 @@
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .module-details__automation-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0 0.4rem;
+    white-space: nowrap;
+    background: rgba(18, 18, 18, 0.9);
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    &--automated {
+      background: rgba(24, 36, 24, 0.95);
+      color: #c9f3a9;
+      border-color: rgba(133, 194, 90, 0.55);
+    }
+
+    &--neutral {
+      background: rgba(24, 24, 24, 0.95);
+      color: rgba(255, 255, 255, 0.78);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+  }
+
+  .module-details__automation-healthbar {
+    margin: 0;
+    border-radius: 10px;
+    border-width: 1px;
+
+    .bar {
+      left: 0;
+      width: calc(100% * var(--a) / var(--b));
+    }
+
+    .barLabel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.75rem;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+  }
+
+  .module-details__layout {
+    align-items: flex-start;
+  }
+
+  .module-details__sidebar {
+    .modules-toc__link {
+      width: 100%;
+      text-align: left;
+
+      &.active {
+        background: rgba(255, 100, 0, 0.35);
+        border-color: rgba(255, 100, 0, 0.7);
+        color: #fff;
+      }
+
+      &.searchMatch:not(.active) {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 100, 0, 0.35);
+      }
+    }
+  }
+
+  .module-details__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .module-details__category {
+    display: none;
+
+    &.active {
+      display: block;
     }
   }
 

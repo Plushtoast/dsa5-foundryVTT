@@ -3018,9 +3018,25 @@
                     "wiki": "Open the wiki",
                     "videos": "VTTom videos"
                 },
-                "cta": "View & Buy",
+                "details": "Show contents",
+                "cta": "Open store",
                 "ctaOwned": "Already Owned",
                 "owned": "Owned"
+            },
+            "moduleDetails": {
+                "windowTitle": "Module Details",
+                "storeLink": "Open store page",
+                "overallAutomation": "Automation coverage",
+                "specialFeatures": "Special features",
+                "badgesLabel": "Highlights",
+                "tagsLabel": "Tags",
+                "note": "This list is only an excerpt. Modules usually contain additional content that is not tracked here. A checkmark or the absence of one only reflects tracked automation status, and entries may still be partially automated.",
+                "unavailableTitle": "Details unavailable",
+                "unavailableText": "No generated detail dataset is available for this module right now.",
+                "entryNotFound": "No library entry found for {name}.",
+                "automatedTooltip": "Automated",
+                "notAutomatedTooltip": "Manual",
+                "searchEmpty": "No entries match the current search."
             }
         }
     }
