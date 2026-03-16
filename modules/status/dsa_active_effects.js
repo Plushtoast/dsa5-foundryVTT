@@ -191,9 +191,7 @@ export default class DSAActiveEffect extends ActiveEffect {
       return;
     }
 
-    await this.update({
-      'system.charges.value': newValue,
-    });
+    await this.update({ 'system.charges.value': newValue });
 
     if (shouldCreateChatMessage) {
       const chargeLabel = _loc('charges');
@@ -209,10 +207,7 @@ export default class DSAActiveEffect extends ActiveEffect {
           <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>
         </div>
       </div>`;
-      await ChatMessage.create({
-        content,
-        speaker: resolvedSpeaker,
-      });
+      await ChatMessage.create({ content, speaker: resolvedSpeaker });
     }
   }
 

@@ -35,6 +35,7 @@ export const ITEM_CONSTANTS = {
     abilitylanguage: 'systems/dsa5/icons/categories/Ability_Language.webp',
     abilitystaff: 'systems/dsa5/icons/categories/ability_staff.webp',
     abilityceremonial: 'systems/dsa5/icons/categories/ability_ceremonial.webp',
+    abilityhomunculus: 'systems/dsa5/icons/categories/homunculus.webp',
     abilityanimal: 'systems/dsa5/icons/categories/ability_animal.webp',
     abilitysecret: 'systems/dsa5/icons/categories/secret.webp',
     trait: 'systems/dsa5/icons/categories/trait.webp',

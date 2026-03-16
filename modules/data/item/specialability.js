@@ -13,14 +13,15 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     BASEMANEUVER: 0,
     SPECIALMANEUVER: 1,
     COMBATSTYLE: 2,
-    COMBATSTYLE_EXTENDED_BASE: 8,
-    COMBATSTYLE_EXTENDED: 6,    
-    COMBATSTYLE_EXTENDED_PASSIVE: 7,
+    COMBATSTYLE_EXTENDED_BASE: 8, // combatstyle that count as basemaneuver
+    COMBATSTYLE_EXTENDED: 6,  // combatstyle that count as specialmaneuver
+    COMBATSTYLE_EXTENDED_PASSIVE: 7, // effects always apply
     PASSIVE: 3,
     GENERAL: 4,
     BRAWLING: 5,
   };
 
+  //
   static APPLIES_COMBAT_EFFECT = new Set([
     this.COMBAT_SKILL_TYPES.COMBATSTYLE, 
     this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE,
