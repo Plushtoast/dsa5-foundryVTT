@@ -24,6 +24,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { localize, format } from '../helpers/localizer.js';
+import { ForbiddenGatesHandler } from '../helpers/forbidden_gates.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1759,6 +1760,7 @@ export default class DiceDSA5 {
 
   static async rollSpell(testData) {
     let res = await this._rollThreeD20(testData);
+    res = ForbiddenGatesHandler.checkRollSpellResult(res, testData);
     const isClerical = [CEREMONY, LITURGY].includes(testData.source.type);
     res.rollType = testData.source.type;
     const actor = this.#actorFromTestData(testData);
