@@ -5,12 +5,10 @@ export class ForbiddenGatesHandler {
     static checkRollSpellResult(res, testData) {
         const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
         
-        // Wir setzen das Flag für die Logik (Misserfolg erzwingen)
         if (actor && actor.system.forbiddenGatesTemp) {
             testData.extra = testData.extra || {};
             testData.extra.forbiddenGates = actor.system.forbiddenGatesTemp;
             res.forbiddenGates = actor.system.forbiddenGatesTemp;
-            // Wir löschen die Temp-Daten HIER NOCH NICHT, damit der ChatMessage-Hook sie gleich abgreifen kann!
         }
 
         if (testData.extra?.forbiddenGates?.active) {
@@ -94,7 +92,6 @@ export class ForbiddenGatesHandler {
 
 // --- GLOBALE HOOKS ---
 
-// 1. Forciert das Flag direkt in die Datenbank, egal was das System vorher herausfiltert!
 Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
     if (game.user.id !== userId) return;
 
@@ -104,23 +101,19 @@ Hooks.on("preCreateChatMessage", (message, data, options, userId) => {
         const actor = game.actors.get(actorId);
         
         if (actor && actor.system.forbiddenGatesTemp) {
-            // Zwingt die Daten fest in die zu speichernde Chat-Nachricht
             message.updateSource({
                 "flags.data.postData.forbiddenGates": actor.system.forbiddenGatesTemp,
                 "flags.data.preData.extra.forbiddenGates": actor.system.forbiddenGatesTemp
             });
-            // Jetzt bereinigen wir den Zwischenspeicher
             delete actor.system.forbiddenGatesTemp;
         }
     }
 });
 
-// 2. Kontextmenü-Eintrag global anhängen (chat_context.js bleibt komplett sauber!)
 Hooks.on('getChatMessageContextOptions', (html, options) => {
     options.push(ForbiddenGatesHandler.getChatContextOption());
 });
 
-// 3. Burger-Menü in Dialogen aktivieren
 Hooks.on('renderDialog', (app, html, data) => {
     if (game.dsa5 && game.dsa5.apps && game.dsa5.apps.RollDialogExtensions) {
         if (html.find('.skill-test').length > 0 || html.find('.dialog-buttons').length > 0) {
@@ -129,7 +122,6 @@ Hooks.on('renderDialog', (app, html, data) => {
     }
 });
 
-// 4. Burger-Menü Logik
 Hooks.on('dsa5.getRollDialogContextOptions', (dialogState, menuItems) => {
     const { source, actor, dialog } = dialogState;
 
@@ -161,8 +153,6 @@ Hooks.on('dsa5.getRollDialogContextOptions', (dialogState, menuItems) => {
                 const result = await actor.basicTest(skillTest);
                 passed = result?.result?.successLevel > 0;
             }
-
-            // Daten auf dem Actor parken, damit preCreateChatMessage sie gleich abholen kann
             actor.system.forbiddenGatesTemp = { active: true, passed, powerful: isPowerful };
 
             const htmlElement = dialog.element ? dialog.element : (dialog._element ? dialog._element[0] : null);
@@ -174,7 +164,6 @@ Hooks.on('dsa5.getRollDialogContextOptions', (dialogState, menuItems) => {
     });
 });
 
-// --- V2 Dialog für die Kostenverteilung ---
 class ForbiddenGatesDialog extends foundry.applications.api.DialogV2 {
     constructor(actor, totalCost, message, isPowerful) {
         const currentLeP = actor.system.status.wounds.value;
