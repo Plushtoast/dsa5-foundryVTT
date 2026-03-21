@@ -1,0 +1,6 @@
+*
+!.gitignore
+!ISSUE_TEMPLATE/
+!ISSUE_TEMPLATE/**
+!workflows/
+!workflows/**

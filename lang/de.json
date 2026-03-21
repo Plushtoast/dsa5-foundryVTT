@@ -2134,6 +2134,7 @@
         "NotEnoughFate": "Nicht genug Schicksalspunkte",
         "noSpellForExtension": "{category} {name} für Zauber-/Liturgieerweiterung {extension} nicht vorhanden.",
         "NotEnoughCharges": "Nicht genug Ladungen",
+        "NotEnoughItems": "Kein Exemplar dieses Gegenstands mehr zum Verbrauchen vorhanden",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",

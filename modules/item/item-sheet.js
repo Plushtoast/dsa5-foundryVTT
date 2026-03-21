@@ -1245,7 +1245,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   };
 }
 
-class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
+class PlantSheet extends ItemSheetObfuscation(EffectsEquipmentSheet) {
   static PARTS = {
     header: super.PARTS.header,
     stat: {
@@ -1253,7 +1253,36 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
     },
     tabs: super.PARTS.tabs,
     description: super.PARTS.description,
+    effects: super.PARTS.effects,
   };
+
+  static DEFAULT_OPTIONS = {
+    actions: {
+      consumeItem: function () {
+        this.setupEffect();
+      },
+    },
+    majorButtons: [
+      {
+        label: 'SHEET.ConsumeItem',
+        icon: 'fas fa-dice-d20',
+        action: 'consumeItem',
+        visible: function () {
+          return this.actor;
+        },
+      },
+    ],
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.noActiveEffects = true;
+    return data;
+  }
+
+  setupEffect() {
+    this.item.setupEffect();
+  }
 }
 
 class PatronSheet extends NoEffectsSheet { }

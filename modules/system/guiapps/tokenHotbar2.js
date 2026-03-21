@@ -348,6 +348,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             });
             break;
           case 'consumable':
+          case 'plant':
             const proceed = await foundry.applications.api.DialogV2.confirm({
               window: {
                 title: _loc('SHEET.ConsumeItem') + ': ' + result.name,

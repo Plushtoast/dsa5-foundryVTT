@@ -65,7 +65,7 @@ export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, 
   }
 
   prepareEmbeddedItemSheet() {
-    const item = super.prepareEmbeddedItemSheet();   
+    const item = super.prepareEmbeddedItemSheet();
     item.system.preparedWeight = this.parent.system.preparedWeight;
     return item;
   }

@@ -11,6 +11,7 @@ import CreatureType from '../system/automation/creature-type.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
+import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ModifierCalculator } from './concerns/modifier-calculator.js';
 import { CombatSystem } from './concerns/combat-system.js';
 import { ItemFactory } from './item-factory.js';
@@ -300,6 +301,7 @@ export default class Itemdsa5 extends Item {
       disease: DiseaseItemDSA5,
       poison: PoisonItemDSA5,
       money: MoneyItemDSA5,
+      plant: PlantItemDSA5,
       rangeweapon: RangeweaponItemDSA5,
       meleeweapon: MeleeweaponDSA5,
       combatskill: CombatskillDSA5,
@@ -464,6 +466,44 @@ export default class Itemdsa5 extends Item {
    */
   setupEffect(ev, options = {}, tokenId) {
     return ItemFactory.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId);
+  }
+
+  static async _createUseChatMessage(item, actor, tokenId, effect, options = {}) {
+    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
+      item,
+      effect,
+      applyEffect: options.applyEffect,
+      hasAreaTemplate: options.hasAreaTemplate,
+    });
+
+    const chatOptions = DSA5_Utility.chatDataSetup(msg);
+    chatOptions['flags.data'] = {
+      preData: {
+        source: item.toObject(),
+        extra: {
+          speaker: ItemDialogBuilder.buildSpeaker(actor, tokenId),
+        },
+      },
+    };
+
+    if (options.postData) {
+      chatOptions['flags.data'].postData = options.postData;
+    }
+
+    await ChatMessage.create(chatOptions);
+  }
+
+  static async _applyItemUseActiveEffect(source, testData = {}) {
+    const effects = source.effects.toObject();
+    if (!effects.length) return;
+
+    const { msg, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, testData, source.actor);
+
+    const infoMsg = `${_loc('ActiveEffects.appliedEffect', {
+      target: source.actor.token?.name || source.actor.name,
+      source: effectNames.join(', '),
+    })} ${msg || ''}`;
+    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
   }
 
   /**
@@ -911,11 +951,6 @@ class ConsumableItemDSA extends Itemdsa5 {
     const newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value;
 
     const effect = DSA5_Utility.replaceDies(item.system.QLList.split('\n')[item.system.QL - 1], false);
-    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
-      item,
-      effect,
-      hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
-    });
     if (newQuantity == 0) {
       await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
     } else {
@@ -925,41 +960,15 @@ class ConsumableItemDSA extends Itemdsa5 {
       });
     }
 
-    const chatOptions = DSA5_Utility.chatDataSetup(msg);
-    chatOptions['flags.data'] = {
-      preData: {
-        source: item.toObject(),
-        extra: {
-          speaker: ItemDialogBuilder.buildSpeaker(actor, tokenId),
-        },
-      },
+    await this._createUseChatMessage(item, actor, tokenId, effect, {
+      hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
       postData: {
         qualityStep: item.system.QL,
       },
-    };
-    await ChatMessage.create(chatOptions);
-    await this._applyActiveEffect(item);
-  }
-
-  static async _applyActiveEffect(source) {
-    let effects = source.effects.toObject();
-    if (effects.length > 0) {
-      const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(
-        source.actor,
-        effects,
-        source,
-        {
-          qualityStep: source.system.QL,
-        },
-        source.actor,
-      );
-
-      const infoMsg = `${_loc('ActiveEffects.appliedEffect', {
-        target: source.actor.token?.name || source.actor.name,
-        source: effectNames.join(', '),
-      })} ${msg || ''}`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    }
+    });
+    await this._applyItemUseActiveEffect(item, {
+      qualityStep: item.system.QL,
+    });
   }
 
   static async combineItem(item1, item2, actor, render = true) {
@@ -976,6 +985,40 @@ class ConsumableItemDSA extends Itemdsa5 {
     item1.system.charges = newCharges;
     return await actor.updateEmbeddedDocuments('Item', [item1], { render });
   }
+}
+
+class PlantItemDSA5 extends Itemdsa5 {
+  static async setupDialog(ev, options, item, actor, tokenId) {
+    if (!item.isOwned) return;
+
+    const quantity = Number(item.system.quantity.value) || 0;
+    if (quantity <= 0) {
+      ui.notifications.error('DSAError.NotEnoughItems', { localize: true });
+      return;
+    }
+
+    const newQuantity = quantity - 1;
+    const effect = item.system.effect || '';
+    if (newQuantity > 0) {
+      await item.update({ 'system.quantity.value': newQuantity });
+    }
+
+    await this._createUseChatMessage(item, actor, tokenId, effect, {
+      applyEffect: item.effects.length > 0,
+      hasAreaTemplate: false,
+    });
+
+    await this._applyItemUseActiveEffect(item);
+
+    if (item.getFlag('dsa5', 'onUseEffect')) {
+      await new OnUseEffect(item).executeOnUseEffect();
+    }
+
+    if (newQuantity <= 0) {
+      await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
+    }
+  }
+
 }
 
 class DiseaseItemDSA5 extends Itemdsa5 {

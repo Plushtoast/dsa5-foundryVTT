@@ -1345,7 +1345,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       {
         name: 'SHEET.ConsumeItem',
         icon: "<i class='fas fa-wine-bottle fa-fw'></i>",
-        condition: () => item.type == 'consumable',
+        condition: () => ['consumable', 'plant'].includes(item.type),
         callback: () => this.consumeItem(item),
       },
       {

@@ -2276,6 +2276,7 @@
         "NotEnoughKaP": "Not enough Karma Points",
         "NotEnoughFate": "Not enough fate points",
         "NotEnoughCharges": "Not enough charges",
+        "NotEnoughItems": "No remaining item to consume",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
         "itemNotFound": "This entry was not found in the database. Please create it manually.",
