@@ -5,6 +5,20 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
 
+async function fetchPatchNotes() {
+  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
+  return await notes.json();
+}
+
+async function announceChangelog(json) {
+  const version = json?.notes?.[json.notes.length - 1];
+  if (!version?.version) return;
+
+  const patchName = json['default'].replace(/VERSION/g, version.version);
+  const msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
+  await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+}
+
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
     console.log('Configuring default token settings');
@@ -23,7 +37,9 @@ async function setupDefaulTokenConfig() {
 }
 
 async function migrateDSA(currentVersion, migrationVersion) {
-  await showPatchViewer();
+  const json = await fetchPatchNotes();
+  await announceChangelog(json);
+  await showPatchViewer(json);
 
   if (currentVersion < 24) {
     await migratTo24();
@@ -66,17 +82,15 @@ async function migrateTo33() {
   await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
 }
 
-export async function showPatchViewer() {
-  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
-  const json = await notes.json();
+export async function showPatchViewer(json = undefined) {
+  json ??= await fetchPatchNotes();
   const patchViewer = new PatchViewer(json, undefined, { initialTab: 'newcontent' });
   patchViewer.render(true);
 }
 
 export async function showWelcomeApp() {
   if (!PatchViewer.shouldAutoShow()) return;
-  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
-  const json = await notes.json();
+  const json = await fetchPatchNotes();
   const initialTab = PatchViewer.getInitialTab();
   const patchViewer = new PatchViewer(json, undefined, { initialTab });
   patchViewer.render(true);

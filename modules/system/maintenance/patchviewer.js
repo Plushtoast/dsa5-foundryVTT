@@ -511,8 +511,6 @@ export class PatchViewer extends DefaultAppv2 {
         const data = await super._prepareContext(_options);
         let version = this.json['notes'][this.json['notes'].length - 1];
         const patchName = this.json['default'].replace(/VERSION/g, version.version);
-        let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
 
         const lang = game.i18n.lang;
         const curVersion = await this.fetchVersions([version]);
