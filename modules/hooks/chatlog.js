@@ -100,7 +100,7 @@ export default function () {
   });
 
   Hooks.on('chatMessage', (html, content, msg) => {
-    const normalizedContent = content.replace(/^<p>|<\/p>$/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
+    const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
     let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables)(?:\s|$)/i);
     cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {

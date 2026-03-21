@@ -7,11 +7,11 @@ export default class DSA5ChatAutoCompletion {
   static skills = [];
   static cmds = ['sk', 'at', 'pa', 'sp', 'li', 'rq', 'gc', 'w', 'ch'];
   static KEY = {
-    UP: 38,
-    DOWN: 40,
-    ENTER: 13,
-    TAB: 9,
-    ESC: 27
+    UP: 'ArrowUp',
+    DOWN: 'ArrowDown',
+    ENTER: 'Enter',
+    TAB: 'Tab',
+    ESC: 'Escape'
   };
 
   constructor() {
@@ -65,22 +65,31 @@ export default class DSA5ChatAutoCompletion {
     const chatInput = document.querySelector('.chat-input');
     chatInput.addEventListener('keyup', this._parseInput.bind(this));
 
-    $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {      
-      if ($(ev.relatedTarget).closest('.quickfind').length || $(ev.relatedTarget).closest('.quick-item').length || $(ev.relatedTarget).hasClass('quick-item')) return;
+    const blurHandler = (ev) => {
+      const related = ev.relatedTarget;
+      if (related?.closest('.quickfind') || related?.closest('.quick-item') || related?.classList.contains('quick-item')) return;
       this._closeQuickfind(ev);
-    });
+    };
+
+    chatInput.addEventListener('focusout', blurHandler);
+
+    const notificationInput = document.querySelector('#chat-notifications .chat-input');
+    if (notificationInput && notificationInput !== chatInput) {
+      notificationInput.addEventListener('focusout', blurHandler);
+    }
   }
 
   _parseInput(ev) {
-    const val = ev.target.value;
-    const keyCode = ev.which;
+    const pmDiv = ev.currentTarget.querySelector('.ProseMirror') ?? ev.target;
+    const val = pmDiv.textContent;
+    const key = ev.key;
 
     if (this.filtering && [DSA5ChatAutoCompletion.KEY.UP, DSA5ChatAutoCompletion.KEY.DOWN, 
-                          DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(keyCode)) {
+                          DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(key)) {
       return this._navigateQuickFind(ev);
     }
 
-    if (keyCode === DSA5ChatAutoCompletion.KEY.ESC) {
+    if (key === DSA5ChatAutoCompletion.KEY.ESC) {
       this._closeQuickfind(ev);
       return false;
     }
@@ -108,25 +117,48 @@ export default class DSA5ChatAutoCompletion {
 
   _completeCurrentEntry(target) {
     const container = this.getContainer(target);
-    const chatbox = container.find('.chat-input');
-    const cmdText = chatbox.val().split(' ')[0];
+    const cmdText = this._getChatInputText(container).split(' ')[0];
 
     let newVal = cmdText + ' ';
     if (/^\/w$/i.test(cmdText)) {
-      newVal += `[${target.text()}] `;
+      newVal += `[${target.textContent}] `;
     } else {
-      newVal += target.text();
+      newVal += target.textContent;
     }
 
-    chatbox.val(newVal);
+    this._setChatInputText(container, newVal);
+  }
+
+  _getChatInputText(container) {
+    const pmDiv = container?.querySelector('.chat-input .ProseMirror');
+    return pmDiv?.textContent?.trim() ?? '';
+  }
+
+  _setChatInputText(container, text) {
+    const pmDiv = container?.querySelector('.chat-input .ProseMirror');
+    if (!pmDiv) return;
+    const p = pmDiv.querySelector('p');
+    if (!p) return;
+    pmDiv.focus();
+    if (text) {
+      p.textContent = text;
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(p);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } else {
+      p.innerHTML = '<br>';
+    }
   }
 
   getContainer(target) {
-    let element = target.closest('.chat-form');
-    if (!element || !element.length) {
+    let element = target?.closest?.('.chat-form');
+    if (!element) {
       element = document.querySelector('#chat-notifications');
     }
-    return $(element);
+    return element;
   }
 
   isChatNotifications(target) {
@@ -135,10 +167,13 @@ export default class DSA5ChatAutoCompletion {
 
   _closeQuickfind(ev) {
     this.filtering = false;
-    this.getContainer(ev.currentTarget).find('.quickfind').remove();
+    const container = this.getContainer(ev.currentTarget ?? ev.target);
+    container?.querySelector('.quickfind')?.remove();
   }
 
   _filterW(search, ev) {
+    if (/\[.*\]/.test(search)) return;
+
     const result = game.users.contents
       .filter(user => user.active && user.name.toLowerCase().includes(search))
       .map(user => ({ name: user.name, type: 'user' }));
@@ -271,26 +306,30 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _setList(result, cmd, ev) {
-    const html = $(
-      `<div class="quickfind dsalist"><ul>${
-        result.map(x => `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join('')
-      }</ul></div>`
-    );
+    const listHTML = result.map(x => 
+      `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`
+    ).join('');
 
-    html.find(`.quick-item:first`).addClass('focus');
-    html.find('.quick-item').on('mousedown', ev => {
-      ev.preventDefault();
-      this._quickSelect($(ev.currentTarget));
+    const template = document.createElement('template');
+    template.innerHTML = `<div class="quickfind dsalist"><ul>${listHTML}</ul></div>`;
+    const html = template.content.firstElementChild;
+
+    html.querySelector('.quick-item')?.classList.add('focus');
+    html.querySelectorAll('.quick-item').forEach(item => {
+      item.addEventListener('mousedown', ev => {
+        ev.preventDefault();
+        this._quickSelect(ev.currentTarget);
+      });
     });
 
     const container = this.getContainer(ev.currentTarget || ev.target);
-    const existing = container.find('.quickfind');
+    const existing = container.querySelector('.quickfind');
 
-    if (existing.length) {
+    if (existing) {
       existing.replaceWith(html);
     } else {
-      if (this.isChatNotifications(container[0])) {
-        container.find('.overflow').after(html);
+      if (this.isChatNotifications(container)) {
+        container.querySelector('.overflow')?.after(html);
       } else {
         container.append(html);
       }      
@@ -300,30 +339,34 @@ export default class DSA5ChatAutoCompletion {
   _navigateQuickFind(ev) {
     if (!this.filtering) return true;
 
-    const container = this.getContainer(ev.currentTarget);
-    const target = container.find('.focus');
+    const container = this.getContainer(ev.currentTarget ?? ev.target);
+    const target = container?.querySelector('.focus');
 
-    if (!target.length) return true;
+    if (!target) return true;
 
-    switch (ev.which) {
-      case DSA5ChatAutoCompletion.KEY.UP:
-        if (target.prev('.quick-item').length) {
-          target.removeClass('focus');
-          target.prev('.quick-item').addClass('focus');
+    switch (ev.key) {
+      case DSA5ChatAutoCompletion.KEY.UP: {
+        const prev = target.previousElementSibling;
+        if (prev?.classList.contains('quick-item')) {
+          target.classList.remove('focus');
+          prev.classList.add('focus');
         }
         ev.preventDefault();
         return false;
+      }
 
-      case DSA5ChatAutoCompletion.KEY.DOWN:
-        if (target.next('.quick-item').length) {
-          target.removeClass('focus');
-          target.next('.quick-item').addClass('focus');
+      case DSA5ChatAutoCompletion.KEY.DOWN: {
+        const next = target.nextElementSibling;
+        if (next?.classList.contains('quick-item')) {
+          target.classList.remove('focus');
+          next.classList.add('focus');
         }
         ev.preventDefault();
         return false;
+      }
 
       case DSA5ChatAutoCompletion.KEY.ENTER:
-        if (target.attr('data-category') !== 'W') {
+        if (target.dataset.category !== 'W') {
           ev.stopPropagation();
           ev.preventDefault();
           this._quickSelect(target);
@@ -367,7 +410,7 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickSelect(target) {
-    const cmd = target.attr('data-category');
+    const cmd = target.dataset.category;
 
     switch (cmd) {
       case 'NM':
@@ -378,6 +421,7 @@ export default class DSA5ChatAutoCompletion {
         break;
       case 'W':
         this._completeCurrentEntry(target);
+        this._closeQuickfind({ currentTarget: target, target });
         break;
       default:
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
@@ -394,8 +438,8 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickSK(target, actor, tokenId) {
-    const type = target.attr('data-type');
-    const text = target.text();
+    const type = target.dataset.type;
+    const text = target.textContent;
 
     switch (type) {
       case 'skill':
@@ -420,30 +464,30 @@ export default class DSA5ChatAutoCompletion {
 
   _resetChatAutoCompletion(target) {
     const container = this.getContainer(target);
-    container.find('.chat-input').val('');
-    container.find('.quickfind').remove();
+    this._setChatInputText(container, '');
+    container.querySelector('.quickfind')?.remove();
   }
 
   getNumberFromChat(target) {
     const container = this.getContainer(target);
-    const val = container.find('.chat-input').val();
+    const val = this._getChatInputText(container);
     return Number(val.match(/(-|\+)?\d+/g)) || 0;
   }
 
   _quickGC(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showGCMessage(target.text(), modifier);
+    RequestRoll.showGCMessage(target.textContent, modifier);
   }
 
   _quickRQ(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showRQMessage(target.text(), modifier);
+    RequestRoll.showRQMessage(target.textContent, modifier);
   }
 
   _quickPA(target, actor, tokenId) {
-    const text = target.text();
+    const text = target.textContent;
 
     if (this.combatConstants.dodge === text) {
       actor.setupDodge({}, tokenId)
@@ -464,7 +508,7 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickAT(target, actor, tokenId) {
-    const text = target.text();
+    const text = target.textContent;
 
     if (this.combatConstants.attackWeaponless === text) {
       actor.setupWeaponless('attack', {}, tokenId)
@@ -494,7 +538,7 @@ export default class DSA5ChatAutoCompletion {
   _quickSP(target, actor, tokenId) {
     const types = ['ritual', 'spell'];
     const spell = actor.items.find(item => 
-      types.includes(item.type) && item.name === target.text()
+      types.includes(item.type) && item.name === target.textContent
     );
 
     if (spell) {
@@ -506,7 +550,7 @@ export default class DSA5ChatAutoCompletion {
   _quickLI(target, actor, tokenId) {
     const types = ['liturgy', 'ceremony'];
     const liturgy = actor.items.find(item => 
-      types.includes(item.type) && item.name === target.text()
+      types.includes(item.type) && item.name === target.textContent
     );
 
     if (liturgy) {
@@ -553,7 +597,7 @@ export default class DSA5ChatAutoCompletion {
     });
 
     html.on('click', '.request-CH', (ev) => {
-      DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { 
+      DSA5ChatListeners.check3D20(ev.currentTarget, ev.currentTarget.dataset.name, { 
         modifier: Number(ev.currentTarget.dataset.modifier) || 0 
       });
       ev.stopPropagation();

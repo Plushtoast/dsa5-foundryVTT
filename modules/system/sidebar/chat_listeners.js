@@ -74,7 +74,6 @@ export default class DSA5ChatListeners {
     let attrs = 12;
     let json = {};
     if (target) {
-      target = target.get(0);
       skill = await DSA5_Utility.skillByName(skill || target.textContent);
       if (target.dataset.attrs) attrs = target.dataset.attrs.split('|');
       if (target.dataset.json) json = JSON.parse(decodeURIComponent(target.dataset.json));
