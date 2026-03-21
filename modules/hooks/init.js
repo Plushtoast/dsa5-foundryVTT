@@ -99,6 +99,8 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
     'systems/dsa5/templates/dialog/parts/message-mode.hbs',
+    'systems/dsa5/templates/chat/payment/batch-request.hbs',
+    'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);

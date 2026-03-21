@@ -787,7 +787,7 @@ export function setupConfiguration() {
       hint: 'DSASETTINGS.merchantNotificationHint',
       scope: 'world',
       config: true,
-      default: '0',
+      default: '2',
       type: String,
       choices: {
         0: 'no',

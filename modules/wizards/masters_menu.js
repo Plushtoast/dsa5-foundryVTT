@@ -1,6 +1,6 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5Payment from '../system/helpers/payment.js';
-import PaymentRequestService from '../system/helpers/payment-requests.js';
+import DSA5Payment from '../system/payment/payment.js';
+import PaymentRequestService from '../system/payment/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { delay, slist, tabSlider } from '../system/helpers/view_helper.js';
@@ -117,8 +117,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.heros = [];
     this.lastSkill = `${_loc('LocalizedIDs.perception')}|skill`;
     this.randomCreation = [];
-    this._boundDarknessChange = this._onDarknessChange.bind(this);
-    this._darknessEventTarget = null;
+    this._darknessAnimationIntervalId = null;
 
     if (game.user.isGM) {
       Hooks.on('updateActor', async (document, data, options, userId) => {
@@ -134,14 +133,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
           this.render();
         }
       });
+      Hooks.on('updateScene', (document, data, options) => this._onSceneDarknessUpdate(document, data, options));
       Hooks.on('canvasInit', () => {
-        this._activateDarknessListener();
         if (!this.rendered) return;
 
         this.render();
       });
-
-      this._activateDarknessListener();
     }
   }
 
@@ -368,37 +365,58 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Number(ev.currentTarget.value) }, { animateDarkness: 2000 });
   }
 
-  _activateDarknessListener() {
-    const environment = canvas.environment;
-    if (!environment || this._darknessEventTarget === environment) return;
+  _onSceneDarknessUpdate(document, data, options) {
+    if (document !== canvas.scene || !hasProperty(data, 'environment.darknessLevel')) return;
 
-    if (this._darknessEventTarget) {
-      this._darknessEventTarget.removeEventListener('darknessChange', this._boundDarknessChange);
-    }
+    const targetDarkness = Number(data.environment.darknessLevel);
+    if (!Number.isFinite(targetDarkness)) return;
 
-    environment.addEventListener('darknessChange', this._boundDarknessChange);
-    this._darknessEventTarget = environment;
+    this._syncDarknessControls(targetDarkness);
+    this._triggerDarknessChangeUpdates(options.animateDarkness);
   }
 
-  _onDarknessChange(event) {
-    const currentDarkness = event?.environmentData?.darknessLevel ?? canvas.scene?.environment.darknessLevel;
-    if (!Number.isFinite(currentDarkness)) return;
+  _triggerDarknessChangeUpdates(animateDarkness) {
+    if (!game.dsa5.apps.LightDialog) return;
 
-    if (game.dsa5.apps.LightDialog) {
+    if (this._darknessAnimationIntervalId) {
+      clearInterval(this._darknessAnimationIntervalId);
+      this._darknessAnimationIntervalId = null;
+    }
+
+    if (!animateDarkness) {
       game.dsa5.apps.LightDialog.onDarknessChange();
+      return;
     }
 
-    const hotbarDarkness = ui.hotbar?.element?.querySelector('[name="vSliderDarkness"]');
-    if (hotbarDarkness) {
-      ui.hotbar.updateDarknessSlider(currentDarkness);
+    const interval = 50;
+    const duration = typeof animateDarkness === 'number' ? animateDarkness : 0;
+    const limit = Math.ceil(duration / interval);
+
+    if (limit <= 1) {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+      return;
     }
+
+    let count = 0;
+    this._darknessAnimationIntervalId = setInterval(() => {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+
+      count++;
+      if (count >= limit) {
+        clearInterval(this._darknessAnimationIntervalId);
+        this._darknessAnimationIntervalId = null;
+      }
+    }, interval);
+  }
+
+  _syncDarknessControls(darknessLevel) {
+    if (!Number.isFinite(darknessLevel)) return;
+
+    ui.hotbar?.updateDarknessSlider(darknessLevel);
 
     if (!this.rendered) return;
 
-    const darknessInput = this.element.querySelector('.updateDarkness');
-    if (darknessInput) {
-      darknessInput.value = currentDarkness;
-    }
+    this.element.querySelector('.updateDarkness').value = darknessLevel;
   }
 
   async updateSightThreshold(ev) {

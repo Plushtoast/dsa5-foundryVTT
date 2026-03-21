@@ -17,7 +17,7 @@ import Riding from '../system/automation/riding.js';
 import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
 import { RangeSelectDialog } from '../hooks/itemDrop.js';
-import DSA5Payment from '../system/helpers/payment.js';
+import DSA5Payment from '../system/payment/payment.js';
 import { TradeOptions } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';

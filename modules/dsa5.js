@@ -12,7 +12,10 @@ import DSA5_Utility from './system/helpers/utility-dsa5.js';
 import DSA5Initializer from './system/maintenance/initializer.js';
 import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';
 import DSA5ChatListeners from './system/sidebar/chat_listeners.js';
-import DSA5Payment from './system/helpers/payment.js';
+import DSA5Payment from './system/payment/payment.js';
+import QueryOrchestrator from './system/queries/query-orchestrator.js';
+import PaymentRequestService from './system/payment/payment-requests.js';
+import TransactionSummaryService from './system/payment/transaction-summary.js';
 import { DSA5CombatTracker } from './combat/combat_tracker.js';
 import DSA5Combat from './combat/combat.js';
 import DSA5Combatant from './combat/combatant.js';
@@ -76,6 +79,9 @@ Hooks.once('init', () => {
       DSA5Initializer,
       DSA5ChatListeners,
       DSA5Payment,
+      QueryOrchestrator,
+      PaymentRequestService,
+      TransactionSummaryService,
       SpecialabilityRulesDSA5,
       AdvantageRulesDSA5,
       Migrakel,
@@ -200,6 +206,9 @@ Hooks.once('init', () => {
       {urls: ['systems/dsa5/fonts/andlso.woff2']},
     ] 
   };
+
+  PaymentRequestService.register();
+  TransactionSummaryService.register();
 });
 
 initHooks();

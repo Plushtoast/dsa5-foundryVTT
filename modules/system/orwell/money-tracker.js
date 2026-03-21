@@ -1,4 +1,4 @@
-import DSA5Payment from "../helpers/payment.js";
+import DSA5Payment from "../payment/payment.js";
 import JournalTracker from "./journal_tracker.js";
 
 export default class MoneyTracker extends JournalTracker {

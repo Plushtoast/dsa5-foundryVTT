@@ -1,0 +1,36 @@
+<div class="dsa5 transaction-summary-card">
+  <div class="row-section flexAlignCenter">
+    <div class="col ninety">
+      <h2>{{title}}</h2>
+      <p><b>{{{participantsHtml}}}</b></p>
+    </div>
+  </div>
+
+  {{#each transfers}}
+    <div>
+        <b>{{actorName}}</b>
+    </div>
+    
+    {{#if items.length}}
+    {{#each items}}
+        <div class="row-section tableOdd">
+            <div class="col ten">
+                {{quantity}}
+            </div>
+            <div class="col seventy ellipsis">
+                {{{linkHtml}}}
+            </div>
+            <div class="col five">
+                {{{priceHtml}}}
+            </div>
+        </div>
+    {{/each}}
+    {{else}}
+    <div class="row-section tableOdd">
+        <div class="col">
+            -
+        </div>
+    </div>
+    {{/if}}
+  {{/each}}
+</div>

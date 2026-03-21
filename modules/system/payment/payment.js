@@ -1,15 +1,60 @@
 import MoneyTracker from '../orwell/money-tracker.js';
-import DSA5SoundEffect from './dsa-soundeffect.js';
-import DSA5_Utility from './utility-dsa5.js';
+import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 
 export default class DSA5Payment {
+  static async executePayment(actor, mode, moneyString, options = {}) {
+    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent } = options;
+
+    if (!actor) {
+      return {
+        success: false,
+        msg: _loc('PAYMENT.onlyActors'),
+        money: 0,
+      };
+    }
+
+    if (mode === 'pay') {
+      const canPay = await DSA5Payment.canPay(actor, moneyString, notifyOnFailure);
+      if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, silent);
+
+      if (showChatMessage && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
+
+      return canPay;
+    }
+
+    let money = this._getPaidmoney(moneyString, showChatMessage);
+    if (!money) {
+      return {
+        success: false,
+        msg: _loc('PAYMENT.error'),
+        money: 0,
+      };
+    }
+
+    let actorsMoney = this._actorsMoney(actor);
+    await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
+    let msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
+    if (showChatMessage) {
+      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+    }
+    return {
+      success: true,
+      msg: _loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) }),
+      money,
+      actorsMoney,
+    };
+  }
+
   static async payMoney(actor, moneyString, silent = false, render = true) {
-    const canPay = await DSA5Payment.canPay(actor, moneyString, silent);
-    if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, silent);
+    const result = await DSA5Payment.executePayment(actor, 'pay', moneyString, {
+      silent,
+      render,
+      showChatMessage: !silent,
+      notifyOnFailure: silent,
+    });
 
-    if (!silent && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
-
-    return canPay.success;
+    return result.success;
   }
 
   static async canPay(actor, moneyString, silent) {
@@ -38,17 +83,17 @@ export default class DSA5Payment {
   }
 
   static async getMoney(actor, moneyString, silent = false, render = true) {
-    let money = this._getPaidmoney(moneyString);
+    const result = await this.executePayment(actor, 'getPaid', moneyString, {
+      silent,
+      render,
+      showChatMessage: !silent,
+      notifyOnFailure: false,
+    });
+    return result.success;
+  }
 
-    if (money) {
-      let actorsMoney = this._actorsMoney(actor);
-      await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
-      let msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
-      if (!silent) {
-        ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
-      }
-      return true;
-    }
+  static parsePaymentAmount(moneyString, mode = 'pay', announceError = true) {
+    return mode === 'pay' ? this._getPaymoney(moneyString, announceError) : this._getPaidmoney(moneyString, announceError);
   }
 
   static async createGetPaidChatMessage(moneyString, whisper = undefined) {
@@ -92,23 +137,27 @@ export default class DSA5Payment {
     };
   }
 
-  static _getPaidmoney(moneyString) {
+  static _getPaidmoney(moneyString, announceError = true) {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.getPaidexample')}</i></p>`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+      if (announceError) {
+        let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.getPaidexample')}</i></p>`;
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+      }
       return false;
     }
     return money;
   }
 
-  static _getPaymoney(moneyString) {
+  static _getPaymoney(moneyString, announceError = true) {
     let money = this._parseMoneyString(moneyString);
 
     if (!money) {
-      let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.payexample')}</i></p>`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+      if (announceError) {
+        let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.payexample')}</i></p>`;
+        ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+      }
       return false;
     }
     return money;
@@ -167,7 +216,16 @@ export default class DSA5Payment {
   }
 
   static _parseMoneyString(moneyString) {
-    const match = moneyString.replace(',', '.').match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/);
+    if (typeof moneyString === 'number') {
+      return Number.isFinite(moneyString) && moneyString > 0 ? moneyString : false;
+    }
+
+    if (moneyString == null) return false;
+
+    const normalizedMoneyString = String(moneyString).trim();
+    if (!normalizedMoneyString) return false;
+
+    const match = normalizedMoneyString.replace(',', '.').match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/);
     if (match) {
       return Number(match[0]);
     } else {

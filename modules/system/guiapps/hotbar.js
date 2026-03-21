@@ -330,7 +330,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   updateDarknessSlider(value) {
-    this.slider.setValue(value * 100);
+    this.slider?.setValue(value * 100);
   }
 
   onSliderChanged(value) {

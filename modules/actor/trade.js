@@ -3,6 +3,7 @@ import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
+import TransactionSummaryService from '../system/payment/transaction-summary.js';
 import { DefaultAppv2 } from './baseapp.js';
 const { mergeObject, randomID } = foundry.utils;
 
@@ -230,6 +231,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   static socketStartTrade(data) {
+    TransactionSummaryService.ensureTradeSummary(data.payload);
     const target = DSA5_Utility.getSpeaker(data.payload.targetId);
     if (this.isGMTrade(target) || this.isPlayerTrade(target)) {
       const app = new Trade(data.payload.targetId, data.payload.sourceId, {
@@ -246,6 +248,7 @@ export class Trade extends DefaultAppv2 {
       type: 'acceptTrade',
       payload: {
         id: this.tradeData.id,
+        trader: this.tradeData.sourceId,
         accepted: this.tradeData.offerAccepted,
       },
     });
@@ -266,8 +269,10 @@ export class Trade extends DefaultAppv2 {
   }
 
   async finishTrade() {
+    let transferSummary = [];
     if (DSA5_Utility.isActiveGM()) {
-      await Trade.updateData(this.tradeData);
+      transferSummary = await Trade.updateData(this.tradeData);
+      await TransactionSummaryService.finalizeTradeSummary(this.tradeData, 'completed', transferSummary);
     }
 
     game.socket.emit('system.dsa5', {
@@ -275,6 +280,7 @@ export class Trade extends DefaultAppv2 {
       payload: {
         id: this.tradeData.id,
         tradeData: this.tradeData,
+        transferSummary,
       },
     });
 
@@ -286,8 +292,13 @@ export class Trade extends DefaultAppv2 {
     const source = DSA5_Utility.getSpeaker(tradeData.sourceId);
     const target = DSA5_Utility.getSpeaker(tradeData.targetId);
 
-    await this.modifyActor(source, tradeData.offer, tradeData.offered);
-    await this.modifyActor(target, tradeData.offered, tradeData.offer);
+    const sourceReceived = await this.modifyActor(source, tradeData.offer, tradeData.offered);
+    const targetReceived = await this.modifyActor(target, tradeData.offered, tradeData.offer);
+
+    return [
+      { actorName: source.name, items: sourceReceived },
+      { actorName: target.name, items: targetReceived },
+    ].filter((entry) => entry.items.length > 0);
   }
 
   static async modifyActor(actor, toRemove, toAdd) {
@@ -310,11 +321,18 @@ export class Trade extends DefaultAppv2 {
     await actor.deleteEmbeddedDocuments('Item', removeIds, { render: false });
     await actor.updateEmbeddedDocuments('Item', updateItems, { render: false });
 
+    const receivedItems = [];
     for (let item of Object.values(toAdd)) {
-      await actor.sheet._manageDragItems(item, item.type);
+      const targetItem = await actor.sheet._manageDragItems(item, item.type);
+      const resolvedItem = targetItem || actor.items.find((existing) => Itemdsa5.areEquals?.(item, existing)) || actor.items.find((existing) => existing.name === item.name && existing.type === item.type);
+      receivedItems.push({
+        item: resolvedItem || item,
+        quantity: Number(item.system?.quantity?.value) || 0,
+      });
     }
 
     await this.trackTradeItems(actor, toRemove, toAdd);
+    return receivedItems.filter((entry) => entry.quantity > 0 && entry.item?.name);
   }
 
   static async trackTradeItems(actor, toRemove, toAdd) {
@@ -331,21 +349,17 @@ export class Trade extends DefaultAppv2 {
     }
   }
 
-  static tradeWasFinished(data) {
+  static async tradeWasFinished(data) {
     const app = this.findTradeApp(data.payload.id);
-    if (DSA5_Utility.isActiveGM()) {
-      Trade.updateData(data.payload.tradeData);
-    }
-    if (app) {
-      app.close({ skipSocket: true });
-    }
+
+    if (app) app.close({ skipSocket: true });
   }
 
   static tradeWasCanceled(data) {
     const app = this.findTradeApp(data.payload.id);
-    if (app) {
-      app.close({ skipSocket: true });
-    }
+    TransactionSummaryService.finalizeTradeSummary({ id: data.payload.id }, 'canceled');
+
+    if (app) app.close({ skipSocket: true });
   }
 
   static socketListeners(data) {

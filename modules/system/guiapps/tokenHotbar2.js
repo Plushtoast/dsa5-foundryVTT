@@ -4,7 +4,8 @@ import Riding from '../automation/riding.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tinyNotification } from '../helpers/view_helper.js';
-import DSA5Payment from '../helpers/payment.js';
+import DSA5Payment from '../payment/payment.js';
+import PaymentRequestService from '../payment/payment-requests.js';
 import { Trade } from '../../actor/trade.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
@@ -415,9 +416,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const money = `${$(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val()}`;
 
     if (ev.button == 2) {
-      DSA5Payment.createGetPaidChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'getPaid', amount: money, actors: PaymentRequestService.activeCharacterActors(), source: 'tokenHotbar' });
     } else {
-      DSA5Payment.createPayChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'pay', amount: money, actors: PaymentRequestService.activeCharacterActors(), source: 'tokenHotbar' });
     }
   }
 

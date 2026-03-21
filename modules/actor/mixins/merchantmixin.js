@@ -1,10 +1,11 @@
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
-import DSA5Payment from '../../system/helpers/payment.js';
+import DSA5Payment from '../../system/payment/payment.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../../system/orwell/money-tracker.js';
+import TransactionSummaryService from '../../system/payment/transaction-summary.js';
 import { DefaultAppv2 } from '../baseapp.js';
 import { ItemFactory } from '../../item/item-factory.js';
 
@@ -385,19 +386,15 @@ export const MerchantSheetMixin = (superclass) =>
       const notify = game.settings.get('dsa5', 'merchantNotification');
       if (notify == 0 || getProperty(item.system, 'equipmentType.value') == 'service') return;
 
-      const notif = 'MERCHANT.' + (buy ? 'buy' : 'sell') + (noNeedToPay ? 'Loot' : '') + 'Notification';
-      const anchor = item.type == 'money' ? _loc(item.name) : res.toAnchor().outerHTML;
-      const template = _loc(notif, {
-        item: anchor,
-        source: source.name,
-        target: target.name,
+      await TransactionSummaryService.recordMerchantTransaction({
+        source,
+        target,
+        notify,
+        item,
+        receivedItem: res,
         amount,
         price,
-        buy,
       });
-      const chatData = DSA5_Utility.chatDataSetup(template);
-      if (notify == 2) chatData['whisper'] = ChatMessage.getWhisperRecipients('GM').map((u) => u.id);
-      await ChatMessage.create(chatData);
     }
 
     static noNeedToPay(target, source, price) {
