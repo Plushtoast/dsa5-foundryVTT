@@ -233,18 +233,18 @@ export default class PlantHelper extends getBaseClass() {
         const supernaturalMethods = [];
         
         // --- Dynamische Bestimmung des Schamanen-Icons ---
-        let shamanIcon = "systems/dsa5/icons/traditionen/scharlatane.webp"; // Standard-Fallback !!!!!BILDER SIND PLATZHALTER!!!!
+        let shamanIcon = "systems/dsa5/icons/months/Achaz.webp"; // Standard-Fallback 
         
-        // Liste der möglichen Traditionen als Sprachschlüssel ---- !!!!!BILDER SIND PLATZHALTER!!!! ----
+        // Liste der möglichen Traditionen als Sprachschlüssel 
         const shamanTraditions = {
-            "PLANT.traditions.ferkinaschamanen": "systems/dsa5/icons/traditionen/geoden.webp",
-            "PLANT.traditions.fjarningerschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.gjalskerschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.nivesenschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.tahayaschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.trollzackerschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.achazschamanen": "systems/dsa5/icons/traditionen/scharlatane.webp",
-            "PLANT.traditions.tairachkult": "systems/dsa5/icons/traditionen/scharlatane.webp"
+            "PLANT.traditions.ferkinaschamanen": "systems/dsa5/icons/months/Ferkina.webp",
+            "PLANT.traditions.fjarningerschamanen": "systems/dsa5/icons/months/Fjarninger.webp",
+            "PLANT.traditions.gjalskerschamanen": "systems/dsa5/icons/months/Gjalsker.webp",
+            "PLANT.traditions.nivesenschamanen": "systems/dsa5/icons/months/Nivesen.webp",
+            "PLANT.traditions.tahayaschamanen": "systems/dsa5/icons/months/Tahaya.webp",
+            "PLANT.traditions.trollzackerschamanen": "systems/dsa5/icons/months/Trollzacker.webp",
+            "PLANT.traditions.achazschamanen": "systems/dsa5/icons/months/Achaz.webp",
+            "PLANT.traditions.tairachkult": "systems/dsa5/icons/months/Tairach.webp"
         };
 
         for (const [traditionKey, iconPath] of Object.entries(shamanTraditions)) {
