@@ -1,5 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-const { getProperty, setProperty, getType } = foundry.utils;
+const { setProperty, getType } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
@@ -67,6 +67,46 @@ export default class DSAActiveEffect extends ActiveEffect {
       }
       return super.apply(actor, change);
     }
+  }
+
+  static _applyChangeCustom(targetDoc, change, current, delta, changes) {
+    const update = this._applyCustomEffect(targetDoc, change, current, delta);
+    if (update !== null) {
+      changes[change.key] = update;
+      return;
+    }
+
+    return super._applyChangeCustom(targetDoc, change, current, delta, changes);
+  }
+
+  static _applyCustomEffect(targetDoc, change, current) {
+    const currentValue = current || null;
+    const currentType = getType(currentValue);
+    let update = null;
+
+    switch (currentType) {
+      case 'Array': {
+        let newElems = [];
+        const source = change.effect.name;
+        for (let elem of `${change.value}`.split(/[;,]+/)) {
+          let vals = elem.split(' ');
+          const value = vals.pop();
+          const target = vals.join(' ');
+          newElems.push({
+            source,
+            value,
+            target,
+            item: change.effect.parent?.name,
+            effectId: change.effect.id,
+            effectUuid: change.effect.uuid,
+          });
+        }
+        update = currentValue.concat(newElems);
+        break;
+      }
+    }
+
+    return update;
   }
 
   static realyRealyEnabled(effect) {
@@ -410,34 +450,3 @@ export default class DSAActiveEffect extends ActiveEffect {
     return super.migrateData(source);
   }
 }
-
-const applyCustomEffect = (elem, change) => {
-  const current = getProperty(elem, change.key) || null;
-  const ct = getType(current);
-  let update = null;
-  switch (ct) {
-    case 'Array':
-      let newElems = [];
-      const source = change.effect.name;
-      for (let elem of `${change.value}`.split(/[;,]+/)) {
-        let vals = elem.split(' ');
-        const value = vals.pop();
-        const target = vals.join(' ');
-        newElems.push({
-          source,
-          value,
-          target,
-          item: change.effect.parent?.name,
-          effectId: change.effect.id,
-          effectUuid: change.effect.uuid,
-        });
-      }
-      update = current.concat(newElems);
-  }
-  if (update !== null) setProperty(elem, change.key, update);
-  return update;
-};
-
-Hooks.on('applyActiveEffect', (actor, change) => {
-  return applyCustomEffect(actor, change);
-});
