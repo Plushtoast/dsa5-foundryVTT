@@ -1,5 +1,6 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Payment from '../system/helpers/payment.js';
+import PaymentRequestService from '../system/helpers/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { delay, slist, tabSlider } from '../system/helpers/view_helper.js';
@@ -116,6 +117,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.heros = [];
     this.lastSkill = `${_loc('LocalizedIDs.perception')}|skill`;
     this.randomCreation = [];
+    this._boundDarknessChange = this._onDarknessChange.bind(this);
+    this._darknessEventTarget = null;
 
     if (game.user.isGM) {
       Hooks.on('updateActor', async (document, data, options, userId) => {
@@ -131,49 +134,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
           this.render();
         }
       });
-      Hooks.on('updateScene', (document, data, options, userId) => {
-        const properties = ['environment.darknessLevel'];
-        if (
-          game.canvas.id == document.id &&
-          properties.reduce((a, b) => {
-            return a || hasProperty(data, b);
-          }, false)
-        ) {
-          if (game.dsa5.apps.LightDialog) {
-            if (options.animateDarkness) {
-              const interval = 50;
-              const duration = options.animateDarkness;
-              const limit = duration / interval;
-              let count = 0;
-
-              const intervalId = setInterval(() => {
-                game.dsa5.apps.LightDialog.onDarknessChange()
-
-                count++;
-                if (count >= limit) {
-                  clearInterval(intervalId);
-                }
-              }, interval);
-            } else {
-              game.dsa5.apps.LightDialog.onDarknessChange();
-            }
-          }
-
-          const hotbarDarkness = ui.hotbar.element.querySelector('[name="vSliderDarkness"]');
-          if (hotbarDarkness) {
-            ui.hotbar.updateDarknessSlider(data.environment.darknessLevel);
-          }
-
-          if (!this.rendered) return;
-
-          this.element.querySelector('.updateDarkness').value = data.environment.darknessLevel;
-        }
-      });
       Hooks.on('canvasInit', () => {
+        this._activateDarknessListener();
         if (!this.rendered) return;
 
         this.render();
       });
+
+      this._activateDarknessListener();
     }
   }
 
@@ -400,6 +368,39 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Number(ev.currentTarget.value) }, { animateDarkness: 2000 });
   }
 
+  _activateDarknessListener() {
+    const environment = canvas.environment;
+    if (!environment || this._darknessEventTarget === environment) return;
+
+    if (this._darknessEventTarget) {
+      this._darknessEventTarget.removeEventListener('darknessChange', this._boundDarknessChange);
+    }
+
+    environment.addEventListener('darknessChange', this._boundDarknessChange);
+    this._darknessEventTarget = environment;
+  }
+
+  _onDarknessChange(event) {
+    const currentDarkness = event?.environmentData?.darknessLevel ?? canvas.scene?.environment.darknessLevel;
+    if (!Number.isFinite(currentDarkness)) return;
+
+    if (game.dsa5.apps.LightDialog) {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+    }
+
+    const hotbarDarkness = ui.hotbar?.element?.querySelector('[name="vSliderDarkness"]');
+    if (hotbarDarkness) {
+      ui.hotbar.updateDarknessSlider(currentDarkness);
+    }
+
+    if (!this.rendered) return;
+
+    const darknessInput = this.element.querySelector('.updateDarkness');
+    if (darknessInput) {
+      darknessInput.value = currentDarkness;
+    }
+  }
+
   async updateSightThreshold(ev) {
     const index = Number(ev.currentTarget.dataset.index);
     const value = Number(ev.currentTarget.value);
@@ -559,7 +560,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       if (!isNaN(number)) {
         const actors = [];
         dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)));
-        for (let hero of actors) DSA5Payment.handlePayAction(undefined, pay, number, hero);
+        PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors, source: 'mastersMenu' });
       }
     };
     this.buildDialog(_loc(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback);
