@@ -1,0 +1,15 @@
+<div class="tab scrollable gap0px companion-tab-content" data-tab="owner" data-group="sheet" data-application-part="owner">
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize "SHEET.Owner"}}</legend>
+        <div class="row-section wrap cards">
+            {{#each petOwners}}
+            <div class="companion-header-ui item owner-card" data-action="openOwnerSheet" data-uuid="{{this.uuid}}">
+                <img src="{{this.img}}" alt="{{this.name}}" width="50" height="50" class="owner-card-img">
+                <h3 class="owner-card-title">
+                    {{this.name}}
+                </h3>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
