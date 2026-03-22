@@ -29,6 +29,7 @@ import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { localize, format } from '../system/helpers/localizer.js';
 import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
+import CompanionHandler from './companion-handler.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -1783,37 +1784,46 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async creatureDrop(item) {
-    if (game.dsa5.config.hooks.shapeshift) {
-      new foundry.applications.api.DialogV2({
-        window: {
-          title: localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+    const buttons = [
+      {
+        action: 'companion',
+        icon: 'fas fa-handshake',
+        label: 'SHEET.AnimalCompanion',
+        callback: () => {
+          CompanionHandler.setCompanion(this, item.uuid);
         },
-        content: `<p>${localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
-        buttons: [
-          {
-            action: 'shapeshift',
-            icon: 'fas fa-paw',
-            label: 'CONDITION.shapeshift',
-            callback: () => {
-              const shapeshift = game.dsa5.config.hooks.shapeshift;
-              shapeshift.setShapeshift(this.actor, item);
-              shapeshift.render(true);
-            },
-          },
-          {
-            action: 'horse',
-            icon: 'fas fa-horse',
-            label: 'RIDING.horse',
-            default: true,
-            callback: () => {
-              Riding.setHorse(this.actor, item, this.token);
-            },
-          },
-        ],
-      }).render(true);
-    } else {
-      Riding.setHorse(this.actor, item, this.token);
+      },
+      {
+        action: 'horse',
+        icon: 'fas fa-horse',
+        label: 'RIDING.horse',
+        default: true,
+        callback: () => {
+          Riding.setHorse(this.actor, item, this.token);
+        },
+      }
+    ];
+
+    if (game.dsa5.config.hooks.shapeshift) {
+      buttons.unshift({
+        action: 'shapeshift',
+        icon: 'fas fa-paw',
+        label: 'CONDITION.shapeshift',
+        callback: () => {
+          const shapeshift = game.dsa5.config.hooks.shapeshift;
+          shapeshift.setShapeshift(this.actor, item);
+          shapeshift.render(true);
+        },
+      });
     }
+
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+      },
+      content: `<p>${localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
+      buttons: buttons,
+    }).render(true);
   }
 
   async _manageDragItems(item, typeClass) {
