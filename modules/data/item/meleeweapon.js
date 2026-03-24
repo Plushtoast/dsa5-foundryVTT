@@ -143,9 +143,9 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     const localizedCT = _loc(`LocalizedCTs.${this.combatskill.value}`);
     if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localizedCT)) {
       options.push({
-        name: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
+        label: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
         icon: "<i class='fas fa-comment fa-hand'></i>",
-        callback: () => this.swapNumberWeaponHands(),
+        onClick: () => this.swapNumberWeaponHands(),
       });
     }
 
@@ -153,14 +153,14 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     const throwLabel = `${_loc('TYPES.Item.rangeweapon')} ${_loc('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${_loc('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
     options.push(
       {
-        name: throwLabel,
+        label: throwLabel,
         icon: "<i class='fas fa-trowel'></i>",
-        callback: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
+        onClick: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
       },
       {
-        name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
+        label: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => this.reEquipItem(),
+        onClick: () => this.reEquipItem(),
       },
     );
     return options;

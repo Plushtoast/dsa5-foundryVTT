@@ -1219,38 +1219,38 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!unequipped.length) {
       return [
         {
-          name: _loc('SHEET.NoUnequippedWeapons'),
+          label: _loc('SHEET.NoUnequippedWeapons'),
           icon: "<i class='fas fa-minus'></i>",
-          callback: () => {},
+          onClick: () => {},
         },
       ];
     }
 
     return unequipped.map(w => ({
-      name: `${equipLabel}: ${w.name}`,
+      label: `${equipLabel}: ${w.name}`,
       icon,
-      callback: () => this.actor.equipWeaponToHand(w.id, { hand: 'auto', equip: true }),
+      onClick: () => this.actor.equipWeaponToHand(w.id, { hand: 'auto', equip: true }),
     }));
   }
 
   _getWeaponTraitContextOptions(item) {
     return [
       {
-        name: 'SHEET.EditItem',
+        label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit'></i>",
-        callback: () => item.sheet.render(true),
+        onClick: () => item.sheet.render(true),
       },
       {
-        name: 'SHEET.Dropdown',
+        label: 'SHEET.Dropdown',
         icon: "<i class='fas fa-chevron-down'></i>",
-        callback: () => {
+        onClick: () => {
           $(this.element).find(`[data-item-id=\"${item.id}\"] .expandDetails:first`).toggleClass('shown');
         },
       },
       {
-        name: 'SHEET.PostItem',
+        label: 'SHEET.PostItem',
         icon: "<i class='fas fa-comment fa-fw'></i>",
-        callback: () => item.postItem(),
+        onClick: () => item.postItem(),
       },
     ];
   }
@@ -1270,20 +1270,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _getStatusEffectContextOptions(effect, item) {
     return [
       {
-        name: 'SHEET.EditItem',
+        label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit'></i>",
-        callback: () => effect.sheet.render(true)
+        onClick: () => effect.sheet.render(true)
       },
       {
-        name: effect.disabled ? 'SHEET.activate' : 'SHEET.deactivate',
+        label: effect.disabled ? 'SHEET.activate' : 'SHEET.deactivate',
         icon: effect.disabled ? "<i class='far fa-circle'></i>" : "<i class='far fa-check-circle'></i>",
-        callback: () => effect.update({ 'disabled': !effect.disabled })
+        onClick: () => effect.update({ 'disabled': !effect.disabled })
       },
       {
-        name: 'source',
+        label: 'source',
         icon: "<i class='fas fa-info'></i>",
-        condition: item,
-        callback: () => item.sheet.render(true)
+        visible: !!item,
+        onClick: () => item.sheet.render(true)
       }
     ]
   }
@@ -1297,9 +1297,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (item.type === 'meleeweapon') {
       options.push({
-        name: 'offHand',
+        label: 'offHand',
         icon: "<i class='fas fa-shield-halved'></i>",
-        callback: () => {
+        onClick: () => {
           if (RuleChaos.isWieldedTwohanded(item)) return;
           const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
           if (item.system.worn.value && this.actor.swapWeaponHandSlot) this.actor.swapWeaponHandSlot(item.id, desiredHand);
@@ -1309,9 +1309,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
 
     options.push({
-      name: 'SHEET.PostItem',
+      label: 'SHEET.PostItem',
       icon: "<i class='fas fa-comment fa-fw'></i>",
-      callback: () => item.postItem(),
+      onClick: () => item.postItem(),
     });
 
     return options;
@@ -1320,56 +1320,56 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _getItemContextOptions(item) {
     const options = [
       {
-        name: 'SHEET.EditItem',
+        label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit fa-fw'></i>",
-        callback: () => item.sheet.render(true),
+        onClick: () => item.sheet.render(true),
       },
       {
-        name: 'SHEET.PostItem',
+        label: 'SHEET.PostItem',
         icon: "<i class='fas fa-comment fa-fw'></i>",
-        callback: () => item.postItem(),
+        onClick: () => item.postItem(),
       },
       {
-        name: 'SHEET.DuplicateItem',
+        label: 'SHEET.DuplicateItem',
         icon: "<i class='fas fa-copy fa-fw'></i>",
-        callback: () => this.handleItemCopy(item.toObject(), item.type),
+        onClick: () => this.handleItemCopy(item.toObject(), item.type),
       },
       {
-        name: 'SHEET.ConsumeItem',
+        label: 'SHEET.ConsumeItem',
         icon: "<i class='fas fa-wine-bottle fa-fw'></i>",
-        condition: () => ['consumable', 'plant'].includes(item.type),
-        callback: () => this.consumeItem(item),
+        visible: () => ['consumable', 'plant'].includes(item.type),
+        onClick: () => this.consumeItem(item),
       },
       {
-        name: 'SHEET.onUseEffect',
+        label: 'SHEET.onUseEffect',
         icon: "<i class='fas fa-dice-six fa-fw'></i>",
-        condition: () => getProperty(item, 'flags.dsa5.onUseEffect'),
-        callback: () => new OnUseEffect(item).executeOnUseEffect(),
+        visible: () => getProperty(item, 'flags.dsa5.onUseEffect'),
+        onClick: () => new OnUseEffect(item).executeOnUseEffect(),
       },
       {
-        name: 'SHEET.DeleteItem',
+        label: 'SHEET.DeleteItem',
         icon: "<i class='fas fa-trash fa-fw'></i>",
-        callback: () => this._itemDeleteDialog(item),
+        onClick: () => this._itemDeleteDialog(item),
       },
       {
-        name: 'MERCHANT.exchange',
+        label: 'MERCHANT.exchange',
         icon: "<i class='fas fa-coins'></i>",
-        condition: () => DSA5.equipmentCategories.has(item.type),
-        callback: () => this._startTrade(item),
+        visible: () => DSA5.equipmentCategories.has(item.type),
+        onClick: () => this._startTrade(item),
       },
       {
-        name: 'SHEET.changeMoney',
+        label: 'SHEET.changeMoney',
         icon: "<i class='fas fa-coins'></i>",
-        condition: () => item.type == 'money',
-        callback: () => DSA5Payment._replaceMoney(this.actor),
+        visible: () => item.type == 'money',
+        onClick: () => DSA5Payment._replaceMoney(this.actor),
       },
     ];
 
     if (hasProperty(item, 'system.worn.wearable') || ['meleeweapon', 'rangeweapon', 'armor'].includes(item.type)) {
       options.push({
-        name: 'SHEET.EquipItem',
+        label: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: async () => {
+        onClick: async () => {
           if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
             await this.actor.equipWeaponToHand(item.id, { hand: 'auto', equip: !item.system.worn.value });
             return;
@@ -1381,9 +1381,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
     if (Number(getProperty(item, 'system.quantity.value')) > 1) {
       options.push({
-        name: 'SHEET.SplitItem',
+        label: 'SHEET.SplitItem',
         icon: "<i class='fas fa-arrows-split-up-and-left fa-fw'></i>",
-        callback: () => this._splitItem(item),
+        onClick: () => this._splitItem(item),
       });
     }
 

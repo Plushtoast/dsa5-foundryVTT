@@ -807,41 +807,41 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #onConfigContext() {
     const options = [
       {
-        name: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
+        label: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
         icon: game.audio.globalMute ? "<i class='fa-solid fa-volume-xmark'></i>" : "<i class='fa-solid fa-volume'></i>",
-        callback: () => {
+        onClick: () => {
           game.audio.globalMute = !game.audio.globalMute;
           this._updateToggles();
         }
       },
       {
-        name: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
+        label: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
         icon: this.locked ? "<i class='fa-solid fa-unlock'></i>" : "<i class='fa-solid fa-lock'></i>",
-        callback: async () => {
+        onClick: async () => {
           await game.settings.set("core", "hotbarLock", !this.locked, { render: false });
           this._updateToggles();
         }
       },
       {
-        name: 'SHEET.Configure',
+        label: 'SHEET.Configure',
         icon: "<i class='fa-solid fa-edit'></i>",
-        condition: () => !!this.actor,
-        callback: () => {
+        visible: () => !!this.actor,
+        onClick: () => {
           this.#toggleEditMode();
         }
       },
       {
-        name: 'DSA5HOTBARCONFIG.manager',
+        label: 'DSA5HOTBARCONFIG.manager',
         icon: "<i class='fa-solid fa-bars-sort'></i>",
-        condition: () => !!this.actor,
-        callback: () => {
+        visible: () => !!this.actor,
+        onClick: () => {
           new HotbarSortManager(this.actor).render(true);
         }
       },
       {
-        name: 'HOTBAR.CLEAR',
+        label: 'HOTBAR.CLEAR',
         icon: "<i class='fa-solid fa-trash'></i>",
-        callback: async () => {
+        onClick: async () => {
           const proceed = await foundry.applications.api.DialogV2.confirm({
             window: {
               title: "HOTBAR.CLEAR",
@@ -883,9 +883,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
-        name: `${equip}: ${w.name}`,
+        label: `${equip}: ${w.name}`,
         icon: "<i class='fa-solid fa-swords'></i>",
-        callback: async () => {
+        onClick: async () => {
           await this.actor.equipWeaponToHand(w.id, { hand: isOffHand ? 'offhand' : 'main', equip: true });
         },
       });

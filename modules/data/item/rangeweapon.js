@@ -114,9 +114,9 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   getContextOptions() {
     return [{
-      name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
+      label: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
       icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-      callback: () => this.reEquipItem(),
+      onClick: () => this.reEquipItem(),
     }]
   }
 

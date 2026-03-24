@@ -1623,7 +1623,7 @@ export default class Actordsa5 extends Actor {
     if (!item) return;
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
 
-    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    const ignoreHandLimits = this.system.config.ignoreWeaponHandLimits;
 
     if (ignoreHandLimits) {
       if (!equip) {
@@ -1694,6 +1694,7 @@ export default class Actordsa5 extends Actor {
     // Ensure the weapon is marked equipped and on the correct hand.
     updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': targetHand === 'offhand' });
 
+    console.log(updates)
     await this.updateEmbeddedDocuments('Item', updates);
     item.system.itemEquippedMessage();
   }

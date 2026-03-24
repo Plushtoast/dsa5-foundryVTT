@@ -6,6 +6,52 @@ import DSATriggers from '../system/automation/triggers.js';
 export class RollDialogExtensions {
   static BURGER_SELECTOR = '.dsa5-roll-ability-menu';
 
+  static #normalizeMenuItem(item, dialogState) {
+    if (!item || typeof item !== 'object') return null;
+    const handler = item.onClick ?? item.callback;
+    if (typeof handler !== 'function') return null;
+
+    const visible =
+      typeof item.visible === 'function'
+        ? (...args) => {
+            try {
+              return item.visible(dialogState, ...args);
+            } catch (err) {
+              console.error(err);
+              return false;
+            }
+          }
+        : item.visible;
+    const legacyVisible =
+      visible !== undefined
+        ? visible
+        : typeof item.condition === 'function'
+          ? (...args) => {
+              try {
+                return item.condition(dialogState, ...args);
+              } catch (err) {
+                console.error(err);
+                return false;
+              }
+            }
+          : item.condition;
+
+    return {
+      ...item,
+      label: item.label ?? item.name,
+      visible: legacyVisible,
+      onClick: async (...args) => {
+        try {
+          console.debug('DSA5 roll-dialog action invoked', { label: item.label ?? item.name });
+          return await handler(dialogState, ...args);
+        } catch (err) {
+          ui.notifications.error('There was an error in your roll-dialog action. See the console (F12) for details');
+          console.error(err);
+        }
+      },
+    };
+  }
+
   static #getFormData(dialog) {
     try {
       const form = dialog?.element?.querySelector?.('form');
@@ -43,32 +89,8 @@ export class RollDialogExtensions {
     Hooks.call('dsa5.getRollDialogContextOptions', dialogState, menuItems);
     const normalized = [];
     for (const item of menuItems) {
-      if (!item || typeof item !== 'object') continue;
-      if (typeof item.callback !== 'function') continue;
-      const wrappedCondition =
-        typeof item.condition === 'function'
-          ? (...args) => {
-              try {
-                return item.condition(dialogState, ...args);
-              } catch (err) {
-                console.error(err);
-                return false;
-              }
-            }
-          : item.condition;
-      normalized.push({
-        ...item,
-        condition: wrappedCondition,
-        callback: async (...args) => {
-          try {
-            console.debug('DSA5 roll-dialog action invoked', { name: item.name });
-            return await item.callback(dialogState, ...args);
-          } catch (err) {
-            ui.notifications.error('There was an error in your roll-dialog action. See the console (F12) for details');
-            console.error(err);
-          }
-        },
-      });
+      const normalizedItem = this.#normalizeMenuItem(item, dialogState);
+      if (normalizedItem) normalized.push(normalizedItem);
     }
     return { dialogState, menuItems: normalized };
   }
