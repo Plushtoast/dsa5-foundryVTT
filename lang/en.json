@@ -2387,6 +2387,14 @@
         "summaryMerchantTitle": "Trade",
         "summaryTradeTitle": "Exchange"
     },
+    "DSAQUERIES": {
+        "knowledgeCheck": "Knowledge Check",
+        "approve": "Approve",
+        "pending": "Awaiting GM approval...",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "noGMOnline": "No GM is currently online to approve this request."
+    },
     "rangeMovementOptions": {
         "STATIONARY": "motionless (+2)",
         "SLOW": "moving slowly (+-0)",

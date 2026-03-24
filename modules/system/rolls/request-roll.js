@@ -1,6 +1,7 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import InformationQueryService from '../queries/information-query.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -336,5 +337,6 @@ export default class RequestRoll {
     html.on('click', '.removeSkillFromGC', (ev) => RequestRoll.removeSkillFromGC(ev));
     html.on('click', '.addSkillToGC', (ev) => RequestRoll.addSkillToGC(ev));
     html.on('click', '.informationRequestRoll', (ev) => RequestRoll.informationRequestRoll(ev));
+    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
   }
 }

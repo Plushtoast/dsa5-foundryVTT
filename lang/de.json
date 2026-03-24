@@ -2319,6 +2319,14 @@
         "summaryMerchantTitle": "Handel",
         "summaryTradeTitle": "Tausch"
     },
+    "DSAQUERIES": {
+        "knowledgeCheck": "Wissensprobe",
+        "approve": "Genehmigen",
+        "pending": "Warte auf SL-Genehmigung...",
+        "approved": "Genehmigt",
+        "rejected": "Abgelehnt",
+        "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen."
+    },
     "rangeMovementOptions": {
         "STATIONARY": "steht still (+2)",
         "SLOW": "bewegt sich leicht (+-0)",

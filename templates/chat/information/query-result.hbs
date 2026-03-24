@@ -1,0 +1,15 @@
+<div class="information-query-result">
+  <div class="hideData row-section">
+    <div class="col ninety">
+      <b>{{itemName}}</b>
+    </div>
+  </div>
+  {{#if (eq status "pending")}}
+  <p><i class="fas fa-spinner fa-spin"></i> {{localize "DSAQUERIES.pending"}}</p>
+  {{else if (eq status "approved")}}
+  <p><i class="fas fa-check icon-green"></i> {{localize "DSAQUERIES.approved"}}</p>
+  {{else if (eq status "rejected")}}
+  <p><i class="fas fa-times icon-red"></i> {{localize "DSAQUERIES.rejected"}}</p>
+  {{/if}}
+  <p>{{actorName}} — {{skillName}} ({{localize "CHARAbbrev.QS"}} {{rolledQS}})</p>
+</div>

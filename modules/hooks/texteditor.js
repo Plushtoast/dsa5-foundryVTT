@@ -88,7 +88,14 @@ export function setEnrichers() {
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
-        if (!game.user.isGM) return $(`<a class="content-link"><i class="fas fa-mask"></i>${_loc('GM notes')}</a>`)[0];
+        if (!game.user.isGM) {
+          const templ = await renderTemplate('systems/dsa5/templates/items/infopreview-player.hbs', {
+            uuid,
+            skill: document.system.skill,
+            modifier: document.system.modifier,
+          });
+          return $(templ)[0];
+        }
 
         const enriched = await document.system.enrichedProperties({ document });
         const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { document, enriched });

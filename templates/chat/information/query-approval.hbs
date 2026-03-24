@@ -1,0 +1,45 @@
+<div class="information-query-approval">
+  <p><b>{{actorName}}</b> ({{playerName}})</p>
+  <p>{{skillName}} — {{localize "CHARAbbrev.QS"}} {{rolledQS}}</p>
+  <hr>
+  <div class="information-query-entries">
+    {{#each qsEntries}}
+    {{#if this.text}}
+    <div class="flexrow information-query-entry">
+      <label class="flex0">
+        <input type="checkbox" name="qs{{this.qs}}" {{#if this.included}}checked{{/if}}>
+        {{localize "CHARAbbrev.QS"}} {{this.qs}}
+      </label>
+      <span class="flex3">{{{this.text}}}</span>
+    </div>
+    {{/if}}
+    {{/each}}
+    {{#if critText}}
+    <div class="flexrow information-query-entry">
+      <label class="flex0">
+        <input type="checkbox" name="crit" {{#if critIncluded}}checked{{/if}}>
+        {{localize "CriticalSuccess"}}
+      </label>
+      <span class="flex3">{{{critText}}}</span>
+    </div>
+    {{/if}}
+    {{#if botchText}}
+    <div class="flexrow information-query-entry">
+      <label class="flex0">
+        <input type="checkbox" name="botch" {{#if botchIncluded}}checked{{/if}}>
+        {{localize "CriticalFailure"}}
+      </label>
+      <span class="flex3">{{{botchText}}}</span>
+    </div>
+    {{/if}}
+    {{#if failText}}
+    <div class="flexrow information-query-entry">
+      <label class="flex0">
+        <input type="checkbox" name="fail" {{#if failIncluded}}checked{{/if}}>
+        {{localize "Failure"}}
+      </label>
+      <span class="flex3">{{{failText}}}</span>
+    </div>
+    {{/if}}
+  </div>
+</div>

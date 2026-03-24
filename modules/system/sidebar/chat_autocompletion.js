@@ -2,6 +2,7 @@ import DSA5ChatListeners from './chat_listeners.js';
 import RequestRoll from '../rolls/request-roll.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
+import InformationQueryService from '../queries/information-query.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -621,6 +622,8 @@ export default class DSA5ChatAutoCompletion {
       const master = game.dsa5.apps.gameMasterMenu;
       master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier);
     });
+
+    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
 
     const itemDragStart = (event) => {
       event.stopPropagation();
