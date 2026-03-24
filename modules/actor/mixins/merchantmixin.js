@@ -6,6 +6,7 @@ import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../../system/orwell/money-tracker.js';
 import TransactionSummaryService from '../../system/payment/transaction-summary.js';
+import { InventoryBulkActionHelper } from '../../system/helpers/inventory-bulk-action.js';
 import { DefaultAppv2 } from '../baseapp.js';
 import { ItemFactory } from '../../item/item-factory.js';
 
@@ -500,10 +501,9 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     async removeAllGoods(actor, target) {
-      let text = $(target).text();
+      const text = $(target).text();
       $(target).html(' <i class="fa fa-spin fa-spinner"></i>');
-      let ids = actor.items.filter((x) => DSA5.equipmentCategories.has(x.type) && !getProperty(x.system, 'worn.value')).map((x) => x.id);
-      await actor.deleteEmbeddedDocuments('Item', ids);
+      await InventoryBulkActionHelper.deleteInventory(actor, { includeEquipped: false });
       $(target).text(text);
     }
 

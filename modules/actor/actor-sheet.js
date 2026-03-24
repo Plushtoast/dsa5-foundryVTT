@@ -28,6 +28,7 @@ import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
+import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -153,6 +154,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemContextMenu: this._itemContextMenu,
       weaponContextMenu: this._weaponContextMenu,
       statusContextMenu: this.#statusContextMenu,
+      bulkInventoryContextMenu: this._bulkInventoryContextMenu,
       chStatus: this._chStatus,
       filterTalents: this._filterTalents,
       chRegenerate: this._chRegenerate,
@@ -324,6 +326,22 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
       view: window, bubbles: true, cancelable: true, clientX, clientY
     }));
+  }
+
+  static _bulkInventoryContextMenu(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const { clientX, clientY } = event;
+    target.closest('.inventory-bulk-actions-menu').dispatchEvent(
+      new PointerEvent('contextmenu', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        clientX,
+        clientY,
+      }),
+    );
   }
 
   static _weaponContextMenu(event, target) {
@@ -949,6 +967,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       jQuery: false,
       fixed: true
     });
+    new foundry.applications.ux.ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
+      onOpen: this._onBulkInventoryContext.bind(this),
+      jQuery: false,
+      fixed: true,
+    });
 
     if (game.settings.get("dsa5", "tabsOutsideSheet")) this.#verticalSheetDomSetup(html);
   }
@@ -1180,6 +1203,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     Hooks.call('dsa5.getItemContextOptions', item, ui.context.menuItems);
   }
 
+  _onBulkInventoryContext(_target) {
+    ui.context.menuItems = this._getBulkInventoryContextOptions();
+  }
+
   static _addSpeedCategory(ev, target) {
     new SpeedSelector(this.actor).render(true);
   }
@@ -1315,6 +1342,82 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     return options;
+  }
+
+  _getBulkInventoryContextOptions() {
+    const hasItems = InventoryBulkActionHelper.hasInventoryItems(this.actor, { includeEquipped: true });
+
+    if (!hasItems) {
+      return [
+        {
+          label: 'INVENTORYBULK.noItems',
+          icon: "<i class='fas fa-box-open fa-fw'></i>",
+          onClick: () => {},
+        },
+      ];
+    }
+
+    return [
+      {
+        label: 'INVENTORYBULK.delete',
+        icon: "<i class='fas fa-trash fa-fw'></i>",
+        onClick: () => this._bulkDeleteInventory(),
+      },
+      {
+        label: 'INVENTORYBULK.dropGround',
+        icon: "<i class='fas fa-arrow-down-to-line fa-fw'></i>",
+        visible: () => InventoryBulkActionHelper.canDropInventoryToGround(this.actor),
+        onClick: () => this._bulkDropInventory(false),
+      },
+      {
+        label: 'INVENTORYBULK.dropBag',
+        icon: "<i class='fas fa-box-archive fa-fw'></i>",
+        onClick: () => this._bulkDropInventory(true),
+      },
+    ];
+  }
+
+  async _confirmBulkInventoryAction(messageKey, formatData = {}) {
+    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', {
+      message: game.i18n.format(messageKey, formatData),
+    });
+
+    return await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: 'INVENTORYBULK.title',
+      },
+      content,
+      rejectClose: false,
+      modal: true,
+    });
+  }
+
+  async _bulkDeleteInventory() {
+    const proceed = await this._confirmBulkInventoryAction('INVENTORYBULK.deleteConfirm', { name: this.actor.name });
+    if (!proceed) return;
+
+    await InventoryBulkActionHelper.deleteInventory(this.actor, { includeEquipped: true });
+  }
+
+  async _bulkDropInventory(useBag) {
+    if (!useBag && !InventoryBulkActionHelper.canDropInventoryToGround(this.actor)) {
+      ui.notifications.error('INVENTORYBULK.requiresToken', { localize: true });
+      return;
+    }
+
+    const proceed = await this._confirmBulkInventoryAction(
+      useBag ? 'INVENTORYBULK.dropBagConfirm' : 'INVENTORYBULK.dropGroundConfirm',
+      { name: this.actor.name },
+    );
+    if (!proceed) return;
+
+    const movedItems = useBag
+      ? await InventoryBulkActionHelper.moveInventoryToBag(this.actor, { includeEquipped: true })
+      : await InventoryBulkActionHelper.dropInventoryToGround(this.actor, { includeEquipped: true });
+
+    if (!useBag && movedItems < 0) {
+      ui.notifications.error('INVENTORYBULK.requiresToken', { localize: true });
+    }
   }
 
   _getItemContextOptions(item) {

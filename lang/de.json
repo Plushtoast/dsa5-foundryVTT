@@ -2884,6 +2884,18 @@
         "otherOffer": "Angebot des Handelspartners",
         "accept": "Akzeptieren"
     },
+    "INVENTORYBULK": {
+        "title": "Inventaraktionen",
+        "delete": "Inventar entfernen",
+        "deleteConfirm": "Alle Inventargegenstände von {name} entfernen?",
+        "dropGround": "Inventar auf den Boden legen",
+        "dropGroundConfirm": "Alle Inventargegenstände von {name} auf den Boden legen?",
+        "dropBag": "Inventar in einen Beutel legen",
+        "dropBagConfirm": "Alle Inventargegenstände von {name} in einen Beutel auf dem Akteur legen?",
+        "dropPileName": "Habseligkeiten von {name}",
+        "noItems": "Keine Inventargegenstände vorhanden",
+        "requiresToken": "Für diese Aktion braucht der Akteur einen aktiven Token in der aktuellen Szene."
+    },
     "GARADAN": {
         "1": "Bauer",
         "2": "Springer",

@@ -268,6 +268,18 @@
         "otherOffer": "Offer of the trading partner",
         "accept": "Accept"
     },
+    "INVENTORYBULK": {
+        "title": "Inventory actions",
+        "delete": "Delete inventory",
+        "deleteConfirm": "Remove all inventory items from {name}?",
+        "dropGround": "Drop inventory to the ground",
+        "dropGroundConfirm": "Drop all inventory items from {name} onto the ground?",
+        "dropBag": "Place inventory in a bag",
+        "dropBagConfirm": "Place all inventory items from {name} into a bag on the actor?",
+        "dropPileName": "{name}'s belongings",
+        "noItems": "No inventory items available",
+        "requiresToken": "This actor needs an active token in the current scene to drop inventory."
+    },
     "GARADAN": {
         "1": "Pawn",
         "2": "Knight",

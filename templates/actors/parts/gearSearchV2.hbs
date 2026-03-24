@@ -6,6 +6,15 @@
         <div class="col ten center">
             <i class="fas fa-search"></i>
         </div>
-        <input type="search" class="gearSearch col eighty" placeholder="{{localize 'gearSearch'}}" />
+        <input type="search" class="gearSearch col {{#if showBulkInventoryActions}}seventy{{else}}eighty{{/if}}" placeholder="{{localize 'gearSearch'}}" />
+        {{#if showBulkInventoryActions}}
+        <div class="col ten center">
+            <button
+                type="button"
+                class="icon fa-solid fa-box-open noBorder dsadesignbutton inventory-bulk-actions-menu"
+                data-action="bulkInventoryContextMenu"
+                data-tooltip="INVENTORYBULK.title"></button>
+        </div>
+        {{/if}}
     </div>
 </div>

@@ -1,5 +1,5 @@
 <div class='tab scrollable {{tabs.inventory.cssClass}} gap0px' data-tab='inventory' data-group='{{tabs.inventory.group}}'>
-    {{> systems/dsa5/templates/actors/parts/gearSearchV2.hbs}} 
+    {{> systems/dsa5/templates/actors/parts/gearSearchV2.hbs showBulkInventoryActions=owner}}
     {{#each prepare.inventory as |section sid|}} 
     {{#if section.show}}
     <div class="actor-equipment groupbox">
