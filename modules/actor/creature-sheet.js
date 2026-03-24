@@ -9,6 +9,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   };
 
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
@@ -43,6 +44,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   }
 
   static LIMITEDPARTS = {
+    sheet: super.PARTS.sheet,
     limited: {
       template: 'systems/dsa5/templates/actors/limited/creature-limited.hbs',
     }

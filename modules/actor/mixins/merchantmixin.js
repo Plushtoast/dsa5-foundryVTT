@@ -38,6 +38,7 @@ export const MerchantSheetMixin = (superclass) =>
     };
 
     static PARTS = {
+      sheet: super.PARTS.sheet,
       header: {
         template: 'systems/dsa5/templates/actors/actorv2/merchant-header.hbs',
         templates: ['systems/dsa5/templates/actors/merchant/merchant-header.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/healthbar.hbs', 'systems/dsa5/templates/actors/actorv2/avatar.hbs']
@@ -62,6 +63,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     static MERCHANTPARTS = {
       merchant: {
+        sheet: super.PARTS.sheet,
         header: {
           template: 'systems/dsa5/templates/actors/merchant/merchant_limited_header.hbs',
         },
@@ -76,12 +78,14 @@ export const MerchantSheetMixin = (superclass) =>
         },
       },
       loot: {
+        sheet: super.PARTS.sheet,
         inventory: {
           template: 'systems/dsa5/templates/actors/merchant/merchant-limited-loot.hbs',
           templates: ['systems/dsa5/templates/actors/parts/gearSearch.hbs'],
         },
       },
       epic: {
+        sheet: super.PARTS.sheet,
         tabs: super.PARTS.tabs,
         inventory: {
           template: 'systems/dsa5/templates/actors/merchant/merchant-epic.hbs',

@@ -42,6 +42,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     { key: 'enrichedBiography', path: 'details.biography.value' },
   ];
 
+  static SHEET_PART = {
+    template: 'systems/dsa5/templates/actors/actorv2/sheet.hbs',
+    root: true,
+  };
+
   #talentSearch;
   #gearSearch;
   #conditionSearch;
@@ -66,6 +71,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static LIMITEDPARTS = {
+    sheet: this.SHEET_PART,
     header: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited-header.hbs',
     },
@@ -89,6 +95,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static PARTS = {
+    sheet: this.SHEET_PART,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/actor-header.hbs'],
@@ -986,29 +993,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       jQuery: false,
       fixed: true,
     });
-
-    if (game.settings.get("dsa5", "tabsOutsideSheet")) this.#verticalSheetDomSetup(html);
-  }
-
-  #verticalSheetDomSetup(html) {
-    let mainContent = this.element.querySelector(".main-content");
-    if (!mainContent) {
-      mainContent = document.createElement("div");
-      mainContent.classList.add("main-content");
-      mainContent.dataset.containerId = "main";
-      const tabs = this.element.querySelector(".tabs");
-      if (!tabs) this.element.querySelector('.window-content').append(mainContent);
-      else tabs.after(mainContent);
-    }
-    if (mainContent) {
-      const sheetBody = document.createElement("div");
-      sheetBody.classList.add("sheet-body");
-      mainContent.after(sheetBody);
-      sheetBody.replaceChildren(mainContent);
-      const tabs = html.find('.window-content .tab')
-      mainContent.append(...tabs);
-    }
-    this.element.classList.add("vertical-tabs");
   }
 
   static _collapseHeader(ev, target) {
@@ -1064,6 +1048,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await super._onRender(context, options);
 
     const html = $(this.element);
+    this.element.classList.toggle('vertical-tabs', game.settings.get('dsa5', 'tabsOutsideSheet'));
     const posthand = (ev) => {
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };

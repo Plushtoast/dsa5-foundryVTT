@@ -1,0 +1,28 @@
+<template data-application-part='header'></template>
+<template data-application-part='tabs'></template>
+
+{{#if verticalTabs}}
+  <div class='sheet-body'>
+    <div class='main-content'>
+      <template data-application-part='limited'></template>
+      <template data-application-part='main'></template>
+      <template data-application-part='combat'></template>
+      <template data-application-part='skills'></template>
+      <template data-application-part='magic'></template>
+      <template data-application-part='religion'></template>
+      <template data-application-part='inventory'></template>
+      <template data-application-part='status'></template>
+      <template data-application-part='notes'></template>
+    </div>
+  </div>
+{{else}}
+  <template data-application-part='limited'></template>
+  <template data-application-part='main'></template>
+  <template data-application-part='combat'></template>
+  <template data-application-part='skills'></template>
+  <template data-application-part='magic'></template>
+  <template data-application-part='religion'></template>
+  <template data-application-part='inventory'></template>
+  <template data-application-part='status'></template>
+  <template data-application-part='notes'></template>
+{{/if}}
