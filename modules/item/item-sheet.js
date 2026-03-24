@@ -21,10 +21,10 @@ const { TextEditor } = foundry.applications.ux;
 
 export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
   _processFormData(event, form, formData) {
-    const data = formData.object;
+    const data = super._processFormData(event, form, formData);
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
-    Object.keys(overrides).forEach((v) => delete data[v]);
-    return foundry.utils.expandObject(data);
+    Object.keys(overrides).forEach((v) => foundry.utils.deleteProperty(data, v));
+    return data;
   }
 
   static TABS = {
@@ -269,7 +269,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
 
     data.isOwned = this.actor;
     data.editable = this.isEditable;
-    data.systemFields = this.document.system.schema?.fields;
+    data.systemFields = this.document.system.schema.fields;
 
     if (data.isOwned) {
       data.canAdvance = this.actor.canAdvance && this._advancable();
@@ -292,7 +292,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner });
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
 
-    await this.item.system.getSheetData?.(data);
+    await this.item.system.getSheetData(data);
 
     return data;
   }
