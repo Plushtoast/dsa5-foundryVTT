@@ -159,6 +159,7 @@
         "setTargetToUserHint": "Transfer currently targeted tokens to user.",
         "setTargetToUser": "Set player target",
         "noLoggedinUser": "No user logged in/available.",
+        "selectSupernaturalAction": "Choose spell or liturgy.",
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
         "dependentMaintainEffects": "Dependent effects (delete too)",

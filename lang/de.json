@@ -184,6 +184,7 @@
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
+        "selectSupernaturalAction": "Bitte wähle Zauber oder Liturgie.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",

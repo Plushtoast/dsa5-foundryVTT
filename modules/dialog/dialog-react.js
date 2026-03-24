@@ -168,6 +168,16 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         });
       }
     }
+
+    const hasMagicEntries = this.actor.items.some((x) => ['spell', 'liturgy'].includes(x.type));
+    if (hasMagicEntries) {
+      data.items.push({
+        name: ActCastSpellDialog.getActionLabel(this.actor),
+        id: 'castSpell',
+        special: 'castSpell',
+        img: 'systems/dsa5/icons/categories/ability_magical.webp',
+      });
+    }
     data.dieClass = 'die-mu'
     data.title = 'DIALOG.selectAction'
     return data;
@@ -177,7 +187,9 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const actor = dialog.actor;
     const tokenId = dialog.tokenId;
 
-    if ('attackWeaponless' == dataset.value) {
+    if ('castSpell' == dataset.special) {
+      ActCastSpellDialog.showDialog(actor, tokenId);
+    } else if ('attackWeaponless' == dataset.value) {
       actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
@@ -195,6 +207,93 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         });
       }
     }
+  }
+}
+
+export class ActCastSpellDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static async showDialog(actor, tokenId) {
+    new ActCastSpellDialog(actor, tokenId).render(true);
+  }
+
+  static getActionLabel(actor) {
+    const spellLabel = _loc('TYPES.Item.spell');
+    const liturgyLabel = _loc('TYPES.Item.liturgy');
+
+    if (actor.system.isMage && actor.system.isPriest) return `${spellLabel}/${liturgyLabel}`;
+    if (actor.system.isMage) return spellLabel;
+    if (actor.system.isPriest) return liturgyLabel;
+    return _loc('DIALOG.selectSupernaturalAction');
+  }
+
+  static prepareMagicSelectionEntry(item) {
+    const entry = item.toObject();
+    const preparedCastingTime = Number(entry.system.castingTime.modified) || Number(entry.system.castingTime.value) || 0;
+    const castingProgress = Number(entry.system.castingTime.progress) || 0;
+    const isOngoing = preparedCastingTime > 1 && castingProgress > 0;
+
+    entry.progressLabel = isOngoing ? `${castingProgress}/${preparedCastingTime}` : '';
+    entry.isOngoing = isOngoing;
+    entry.ongoingClass = isOngoing ? 'emphasize2' : '';
+    return entry;
+  }
+
+  static DEFAULT_OPTIONS = {
+    window: { title: 'DIALOG.selectSupernaturalAction' },
+    position: {
+      width: 760,
+      height: 'auto'
+    },
+    actions: {
+      spellSelect: this._spellSelect
+    }
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/dialog-act-spell-selection.hbs',
+    },
+  };
+
+  constructor(actor, tokenId) {
+    super();
+    this.actor = actor;
+    this.tokenId = tokenId;
+  }
+
+  static _spellSelect(event, target) {
+    this.callbackResult(target.dataset, this);
+    this.close();
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const spells = [];
+    const liturgies = [];
+
+    for (const item of this.actor.items) {
+      if (item.type == 'spell') spells.push(this.constructor.prepareMagicSelectionEntry(item));
+      else if (item.type == 'liturgy') liturgies.push(this.constructor.prepareMagicSelectionEntry(item));
+    }
+
+    spells.sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
+    liturgies.sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
+
+    data.title = 'DIALOG.selectSupernaturalAction';
+    data.spells = spells;
+    data.liturgies = liturgies;
+    data.hasSpells = spells.length > 0;
+    data.hasLiturgies = liturgies.length > 0;
+    data.emptyMessage = 'DIALOG.noSelection';
+    return data;
+  }
+
+  callbackResult(dataset, dialog) {
+    const item = dialog.actor.items.get(dataset.itemId);
+    if (!item) return;
+
+    dialog.actor.setupSpell(item, {}, dialog.tokenId).then((setupData) => {
+      dialog.actor.basicTest(setupData);
+    });
   }
 }
 
