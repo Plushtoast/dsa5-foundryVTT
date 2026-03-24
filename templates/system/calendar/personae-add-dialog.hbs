@@ -1,0 +1,45 @@
+<form>
+    <p>{{labels.hint}}</p>
+    <div class="form-group">
+        <label>{{labels.targetMode}}</label>
+        <div class="form-fields">
+            <select name="mode">
+                {{#each modes}}
+                <option value="{{this.value}}">{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="existing-page">
+        <label>{{labels.selectPage}}</label>
+        <div class="form-fields">
+            <select name="pageUuid">
+                {{#each pages}}
+                <option value="{{this.value}}">{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-page">
+        <label>{{labels.selectJournalForPage}}</label>
+        <div class="form-fields">
+            <select name="journalUuid">
+                {{#each journals}}
+                <option value="{{this.value}}">{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-page,new-journal">
+        <label>{{labels.pageName}}</label>
+        <div class="form-fields">
+            <input type="text" name="pageName" value="{{defaultName}}">
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-journal">
+        <label>{{labels.journalName}}</label>
+        <div class="form-fields">
+            <input type="text" name="journalName" value="{{defaultName}}">
+        </div>
+    </div>
+</form>

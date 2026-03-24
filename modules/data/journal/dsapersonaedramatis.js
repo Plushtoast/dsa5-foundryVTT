@@ -81,9 +81,9 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             entry.type = isCreature ? 1 : 0;
             entry.garadan = actor.system.merchant?.garadan || 1;
             if (isCreature) {
-                const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass.value);
-                entry.faction = creatureData[0].trim();
-                entry.subtitle = creatureData[1]?.trim() || "";
+                const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass?.value || "");
+                entry.faction = creatureData[0] || "";
+                entry.subtitle = creatureData[1] || "";
             } else {
                 entry.faction = this.parent.name;
                 entry.subtitle = actor.system.details?.career.value || "";

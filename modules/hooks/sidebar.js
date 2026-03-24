@@ -1,4 +1,5 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 
 const { getProperty } = foundry.utils;
 
@@ -56,6 +57,20 @@ export default function () {
       game.data.packs = game.data.packs.filter((x) => x.id != id);
       $(html).find(`li[data-pack="${id}"]`).remove();
     }
+  });
+
+  Hooks.on('getActorContextOptions', (app, options) => {
+    options.push({
+      label: 'PERSONAE.addActorFromDirectory',
+      icon: 'fa-solid fa-address-book',
+      visible: li => game.user.isGM && !!app.collection.get(li.dataset.entryId),
+      onClick: async (event, li) => {
+        const actor = app.collection.get(li.dataset.entryId);
+        if (!actor) return;
+
+        await PersonaeDramatis.addActorToPersonae(actor);
+      }
+    });
   });
 
   Hooks.on('renderActorDirectory', (app, html, data) => {

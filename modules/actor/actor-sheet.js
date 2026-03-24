@@ -29,6 +29,7 @@ import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
+import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -140,6 +141,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     actions: {
       itemCreate: this._onItemCreate,
       playerview: this._togglePlayerview,
+      addToPersonae: this._addToPersonae,
       actorConfig: this._configActor,
       library: this._openLibrary,
       locksheet: this._changeAdvanceLock,
@@ -221,6 +223,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       resizable: true,
       contentClasses: ['standard-form'],
       controls: [
+        {
+          action: 'addToPersonae',
+          label: 'PERSONAE.addActor',
+          icon: 'fas fa-address-book',
+          visible: function () {
+            return game.user.isGM;
+          },
+        },
         {
           action: 'actorConfig',
           label: 'Migrakel.Migration',
@@ -619,6 +629,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static async _openLibrary(ev, target) {
     game.dsa5.itemLibrary.render(true);
+  }
+
+  static async _addToPersonae() {
+    await PersonaeDramatis.addActorToPersonae(this.actor);
   }
 
   static async _configActor(ev, target) {
