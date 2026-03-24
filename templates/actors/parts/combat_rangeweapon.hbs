@@ -8,7 +8,7 @@
             {{/if}}
         </div>
         <div class="combat-item-name three col">
-            <a data-action="itemEdit">{{item.name}}</a>
+            <a data-action="itemEdit" class="gTooltip" data-category="rangeweaponDetails" data-id="{{item._id}}" data-subweapon="{{isSub}}">{{item.name}}</a>
         </div>
 
         <div class="combat-item-skill col five center small onlyMultiColumn">
@@ -129,14 +129,6 @@
 
                 <button type="button" data-action="weaponContextMenu" class="noBorder combatGripMenu combatHandButton dsadesignbutton very-small onlyMultiColumn" data-tooltip="SHEET.EditItem"><i class="fas fa-ellipsis-vertical"></i></button>
             </div>
-        </div>
-    </div>
-    <div class="row-section lineheight expandDetails {{item.detailed}}">
-        <div class="col">
-            <ul>
-                <li><b>{{localize "reach"}}</b>: {{item.calculatedRange}}</li>
-                <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.system.reloadTime.progress}})</li>
-            </ul>
         </div>
     </div>
 </div>

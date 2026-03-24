@@ -42,6 +42,9 @@ export class GlobalToolTipHandler {
             case 'actorSummary':
                 description = await GlobalToolTipHandler._actorSummaryTooltip(data, actor);
                 break;
+            case 'rangeweaponDetails':
+                description = await GlobalToolTipHandler._rangeweaponDetailsTooltip(data, actor);
+                break;
             default:
                 return;
         }
@@ -146,6 +149,36 @@ export class GlobalToolTipHandler {
                 .html();
         }
         return { description };
+    }
+
+    static async _rangeweaponDetailsTooltip(data, actor) {
+        const item = actor?.items.get(data.id);
+        if (!item) return;
+
+        let resolved = item.toObject();
+        if (data.subweapon) {
+            resolved = actor.constructor.buildSubweapon(resolved, data.subweapon);
+        }
+
+        let calculatedRange = resolved.system.reach.value;
+        if (resolved.system.ammunitiongroup.value !== '-') {
+            const currentAmmo = actor.items.get(resolved.system.currentAmmo.value);
+            if (currentAmmo) {
+                const rangeMultiplier = Number(currentAmmo.system.rangeMultiplier) || 1;
+                calculatedRange = calculatedRange
+                    .split('/')
+                    .map((x) => Math.round(Number(x) * rangeMultiplier))
+                    .join('/');
+            }
+        }
+
+        const LZ = actor.constructor.calcLZ(resolved, actor);
+
+        return await renderTemplate('systems/dsa5/templates/tooltips/rangeweapon_details.hbs', {
+            calculatedRange,
+            LZ,
+            reloadProgress: resolved.system.reloadTime.progress,
+        });
     }
 
     static async _handleEnchantmentTooltip(data, actor) {

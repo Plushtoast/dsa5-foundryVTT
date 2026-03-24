@@ -1306,14 +1306,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           else this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
         },
       });
-    } else if (item.type === 'rangeweapon') {
-      options.push({
-        name: 'SHEET.Dropdown',
-        icon: "<i class='fas fa-chevron-down'></i>",
-        callback: () => {
-          $(this.element).find(`.combat-weapon-wrapper[data-item-id="${item.id}"] .expandDetails:first`).toggleClass('shown');
-        },
-      });
     }
 
     options.push({
