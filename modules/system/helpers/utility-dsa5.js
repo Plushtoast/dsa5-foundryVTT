@@ -173,6 +173,54 @@ export default class DSA5_Utility {
     return source.replace(/[-[/\]{}()*+?.,\\^$|#\s]/g, '\\$&');
   }
 
+  static cleanTraditionTokens(value = '', traditionLabel = _loc('tradition')) {
+    const labelRegex = traditionLabel ? new RegExp(this.escapeRegex(traditionLabel), 'gi') : null;
+
+    return value
+      .toString()
+      .replace(/[()]/g, '')
+      .replace(labelRegex ?? /$^/, '')
+      .split(/[,;]/)
+      .map((entry) => entry.trim().toLowerCase().replace(/\s+/g, ' '))
+      .filter(Boolean);
+  }
+
+  static traditionTokenVariants(token = '') {
+    const normalized = token.toString().trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!normalized) return new Set();
+
+    const parts = normalized.split(' ');
+    const lastWord = parts.pop();
+    const baseParts = parts.length ? `${parts.join(' ')} ` : '';
+    const variants = new Set([normalized]);
+    const addVariant = (word) => {
+      if (word && word.length >= 3) variants.add(`${baseParts}${word}`.trim());
+    };
+
+    addVariant(lastWord);
+
+    if (lastWord.endsWith('ies') && lastWord.length > 4) addVariant(`${lastWord.slice(0, -3)}y`);
+    if (/(ches|shes|sses|xes|zes|oes)$/i.test(lastWord) && lastWord.length > 4) addVariant(lastWord.slice(0, -2));
+    if (lastWord.endsWith('es') && lastWord.length > 4) addVariant(lastWord.slice(0, -2));
+    if (lastWord.endsWith('s') && lastWord.length > 4 && !lastWord.endsWith('ss')) addVariant(lastWord.slice(0, -1));
+    if (lastWord.endsWith('n') && lastWord.length > 4) addVariant(lastWord.slice(0, -1));
+    if (lastWord.endsWith('e') && lastWord.length > 4) addVariant(lastWord.slice(0, -1));
+
+    return variants;
+  }
+
+  static hasMatchingTradition(leftTokens = [], rightTokens = []) {
+    const rightVariants = new Set(rightTokens.flatMap((token) => [...this.traditionTokenVariants(token)]));
+
+    return leftTokens.some((token) => {
+      for (const variant of this.traditionTokenVariants(token)) {
+        if (rightVariants.has(variant)) return true;
+      }
+
+      return false;
+    });
+  }
+
   static registerMasterTokens(file) {
     if (!this.moduleEnabled('dsa5-mastersworkshop')) return;
     DSA5.masterTokens.push(file);

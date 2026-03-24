@@ -771,25 +771,18 @@ class SpellItemDSA5 extends Itemdsa5 {
       !enabledActorTypes.includes(actor.type) ||
       !applicableSpellTypes.includes(source.type)) return;
 
+    // TODO: Sync tradition identifiers in the underlying data instead of relying on display-label normalization here.
     const traditionLabel = _loc('tradition');
-    const clean = (s = '') => s
-      .toString()
-      .replace(/[()]/g, '')
-      .replace(new RegExp(traditionLabel, 'gi'), '')
-      .split(',')
-      .map(x => x.trim().toLowerCase())
-      .filter(Boolean);
-
-    const distributions = clean(source.system.distribution.value);
-    const fromActorTraditions = clean(actor.system.tradition.magical);
+    const distributions = DSA5_Utility.cleanTraditionTokens(source.system.distribution.value, traditionLabel);
+    const fromActorTraditions = DSA5_Utility.cleanTraditionTokens(actor.system.tradition.magical, traditionLabel);
     const fromSpecials = actor.items
       .filter(i => i.type === 'specialability' && i.name.startsWith(traditionLabel))
       .map(i => i.name)
-      .flatMap(clean);
+      .flatMap((name) => DSA5_Utility.cleanTraditionTokens(name, traditionLabel));
 
-    const traditionsSet = new Set([...fromActorTraditions, ...fromSpecials, _loc('general').toLowerCase()]);
+    const ownTraditions = [...fromActorTraditions, ...fromSpecials, _loc('general').toLowerCase()];
 
-    data.isForeign = !distributions.some(d => traditionsSet.has(d));
+    data.isForeign = !DSA5_Utility.hasMatchingTradition(distributions, ownTraditions);
 
     const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
 
