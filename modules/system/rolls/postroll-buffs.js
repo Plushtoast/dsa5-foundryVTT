@@ -8,6 +8,7 @@ const POST_ROLL_KEYS = {
   REROLL: 'system.skillModifiers.postRoll.reroll',
 };
 const ALLOWED_ANY_TYPES = new Set(['skill', 'spell', 'liturgy', 'ritual', 'ceremony']);
+export const MAX_POST_ROLL_REROLL_DICE = 3;
 export default class PostRollBuffs {
   static POST_ROLL_KEYS = POST_ROLL_KEYS;
 
@@ -255,7 +256,7 @@ export default class PostRollBuffs {
           if (change.key === POST_ROLL_KEYS.FP) fp += parsed.amount;
           else if (change.key === POST_ROLL_KEYS.QL) qs += parsed.amount;
           else if (isRerollKey) {
-            const dice = Math.max(1, Number(parsed.amount) || 1);
+            const dice = Math.clamp(Number(parsed.amount) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
             // Take the strongest matching entry per effect.
             rerollDice = Math.max(rerollDice, dice);
           }
@@ -292,7 +293,7 @@ export default class PostRollBuffs {
         return;
       }
       const match = matches[0];
-      const dice = Math.max(1, Number(match?.rerollDice) || 1);
+      const dice = Math.clamp(Number(match?.rerollDice) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
       if (!match?.effectUuid || usedEffectUuids.has(match.effectUuid) || match.fp || match.qs) {
         ui.notifications.warn('DIALOG.postRollRerollExclusive', { localize: true });
         return;

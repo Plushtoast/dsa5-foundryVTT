@@ -1,6 +1,7 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
+import { MAX_POST_ROLL_REROLL_DICE } from '../../system/rolls/postroll-buffs.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 const { renderTemplate } = foundry.applications.handlebars;
 /**
@@ -70,6 +71,7 @@ export class FateRolls {
         const html = await renderTemplate('systems/dsa5/templates/dialog/isTalentedReroll-dialog.hbs', {
             testData: newTestData,
             postData: data.postData,
+            allowMultipleSelection: isPostRollReroll,
         });
         const dialog = new DSA5Dialog({
             window: { title: 'CHATFATE.selectDice' },
@@ -84,7 +86,7 @@ export class FateRolls {
                         if (diesToReroll.length === 0) return;
                         const pending = foundry.utils.getProperty(message, 'flags.dsa5.postRoll.pendingReroll');
                         if (pending?.effectUuid) {
-                            const maxDice = Math.max(1, Number(pending.dice) || 1);
+                            const maxDice = this.#getPostRollRerollDiceLimit(pending.dice);
                             if (diesToReroll.length > maxDice) {
                                 ui.notifications.warn('DIALOG.postRollRerollMaxDice', { localize: true, format: { max: maxDice } }, { permanent: false });
                                 return;
@@ -109,7 +111,7 @@ export class FateRolls {
                         if (pendingAfter?.effectUuid) {
                             try {
                                 const effect = await fromUuid(pendingAfter.effectUuid);
-                                const diceCount = Math.max(1, Number(pendingAfter.dice) || diesToReroll.length || 1);
+                                const diceCount = this.#getPostRollRerollDiceLimit(pendingAfter.dice || diesToReroll.length);
                                 const extra = _loc('ActiveEffects.chargesChatPostRollRerolled', { count: diceCount });
                                 const effectName = effect?.name || effect?.label || _loc('ActiveEffects.custom');
                                 const chargeData = typeof effect?.getChargeData === 'function' ? effect.getChargeData() : null;
@@ -395,6 +397,11 @@ export class FateRolls {
             })
             .get();
     }
+
+    static #getPostRollRerollDiceLimit(value) {
+        return Math.clamp(Number(value) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
+    }
+
     /**
      * Processes reroll logic for dice, handling roll creation and result calculation
      * @param {number[]} diceIndices - Indices of dice to reroll
