@@ -6,6 +6,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         0: "PERSONAE.FIELDS.personae.type.choices.person",
         1: "PERSONAE.FIELDS.personae.type.choices.creature"
     }
+    
     static GARADAN_CLASSES = {
         1: 'bauer',
         2: 'springer',
@@ -14,6 +15,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         5: 'laeufer',
         6: 'boronsrad'
     }
+
     static SOCIAL_CONTACT_LEVELS = {
         1: "PERSONAE.FIELDS.personae.socialContact.level.choices.1",
         2: "PERSONAE.FIELDS.personae.socialContact.level.choices.2",
@@ -25,13 +27,14 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         8: "PERSONAE.FIELDS.personae.socialContact.level.choices.8",
         9: "PERSONAE.FIELDS.personae.socialContact.level.choices.9"
     }
+
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
         const GaradanChoices = foundry.utils.deepClone(MerchantTemplate.GARADAN_CHOICES);
         GaradanChoices[0] = "-";
         return {
             personae: new TypedObjectField(new SchemaField({
-                name: new StringField({ required: true, label: "PERSONAE.FIELDS.personae.name.label" }),
+                name: new StringField({ required: true, initial: 'New Entry', label: "PERSONAE.FIELDS.personae.name.label" }),
                 type: new NumberField({ required: true, initial: 0, choices: DSAPersonaEntry.TYPE_CHOICES, label: "PERSONAE.FIELDS.personae.type.label" }),
                 notes: new HTMLField({ label: "PERSONAE.FIELDS.personae.notes.label" }),
                 description: new HTMLField({ label: "PERSONAE.FIELDS.personae.description.label" }),
@@ -56,18 +59,33 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             })),
         }
     }
+
+    static createEntryData(options = {}) {
+        const { actor, ...overrides } = options;
+        const entry = { ...overrides };
+        if (actor) {
+            entry.name = actor.name;
+            entry.type = actor.type === 'creature' ? 1 : 0;
+            entry.actor_uuid = actor.uuid;
+        }
+        return entry;
+    }
+
     async _preUpdate(changed, options, user) {
         await this.#fillActorFields(changed);
         await super._preUpdate(changed, options, user);
     }
+
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
         game.dsa5.apps.CalendarPicker.refreshPersonae();
     }
+
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
         game.dsa5.apps.CalendarPicker.refreshPersonae();
     }
+
     async #fillActorFields(changed) {
         for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
             if (!entry) continue;
@@ -90,6 +108,7 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
             }
         }
     }
+
     #splitOutsideBrackets(s = "") {
         const parts = [];
         let buf = "";
@@ -115,7 +134,8 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
         }
         if (buf !== "" || s.endsWith(',')) parts.push(buf);
         return parts.map(p => p.trim());
-    };
+    }
+
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
         if (!entry.actor) return;

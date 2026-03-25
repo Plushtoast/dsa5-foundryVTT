@@ -111,9 +111,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         const actor = await fromUuid(entry.uuid);
         if (!actor) return;
 
-        const options = {
-            actor_uuid: entry.uuid,
-        }
+        const options = { actor };
         await this.newEntry(options);
         this.render(true);
     }
@@ -147,11 +145,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         await this.document.update({
             system: {
                 personae: {
-                    [id]: {
-                        name: 'New Entry',
-                        type: 0,
-                        ...options
-                    }
+                    [id]: DSAPersonaEntry.createEntryData(options)
                 }
             }
         })

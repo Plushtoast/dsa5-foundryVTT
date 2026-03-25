@@ -15,6 +15,7 @@ import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
+import { CalendarEventCreation } from '../calendar/calendarentrycreation.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -67,6 +68,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           disabled: setting.payMoney,
           icon: 'systems/dsa5/icons/money-D.webp',
           id: 'payMoney',
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
+        {
+          name: 'dsacalendar.createEvent',
+          disabled: setting.createCalendarEvent,
+          iconClass: 'fas fa-calendar-day',
+          id: CalendarEventCreation.HOTBAR_ID,
           cssClass: 'gm',
           abbrev: '',
           subfunction: 'gm',
@@ -400,6 +410,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     switch (id) {
       case 'masterMenu':
         DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
+        break;
+      case CalendarEventCreation.HOTBAR_ID:
+        CalendarEventCreation.startFromHotbar();
         break;
       case 'payMoney':
         this.payMoney(ev);

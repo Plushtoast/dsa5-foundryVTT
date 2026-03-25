@@ -37,11 +37,22 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
                 to: new SchemaField({
                     dayOfMonth: new NumberField({ required: false, min: 1, step: 1 }),
                 }),
-                category: new NumberField({ required: true, initial: 0, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
+                category: new NumberField({ required: true, initial: 2, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
                 visible: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
-                recurring: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
+                recurring: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
             })),
         };
+    }
+    static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
+        return foundry.utils.mergeObject({
+            title: _loc('dsacalendar.newEntryPlaceholder'),
+            from: {
+                dayOfMonth: dateContext.dayOfMonth + 1,
+                month: dateContext.month,
+                year: dateContext.year,
+                day: dateContext.day,
+            },
+        }, overrides);
     }
     async _preUpdate(changed, options, user) {
         for (let key of Object.keys(changed.system?.calendarentries || {})) {

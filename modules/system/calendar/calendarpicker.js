@@ -1,5 +1,6 @@
 import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
+import { CalendarEventCreation } from './calendarentrycreation.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { PersonaeDramatis } from './personaedramatis.js';
@@ -25,6 +26,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       addJournal: this.#addJournal,
       filterCategory: this.#filterCategory,
       editEvent: this.#onEditEvent,
+      createEvent: this.#onCreateEvent,
       resetAutomation: this.#onResetAutomation,
       resetDayTimes: this.#onResetDayTimes,
       openMoreSearch: this.#toggleMoreSearch,
@@ -244,6 +246,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     this.close();
     journal.sheet.render({ force: true, currentKey: key });
+  }
+
+  static async #onCreateEvent(ev, target) {
+    await CalendarEventCreation.startFromCalendarPicker(this);
   }
 
   static #toggleMoreSearch(ev, target) {

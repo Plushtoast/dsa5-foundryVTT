@@ -123,15 +123,7 @@ export class DSACalendarEntrySheet extends SelectJournal {
         await this.document.update({
             system: {
                 calendarentries: {
-                    [id]: {
-                        title: 'New Entry',
-                        from: {
-                            dayOfMonth: components.dayOfMonth + 1,
-                            month: components.month,
-                            year: components.year
-                        },
-                        category: 0
-                    }
+                    [id]: DSACalendarEntry.createEntryData(components)
                 }
             }
         })
