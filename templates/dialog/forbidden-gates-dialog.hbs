@@ -1,0 +1,41 @@
+<div class="forbidden-gates-dialog scrollable fg-dialog">
+    
+    <div class="description marginBottom">
+        {{localize "FORBIDDENGATES.description"}}
+    </div>
+    <hr>
+
+    <div class="row-section flexgap fg-cost-row">
+        
+        <div class="columnFlex center fg-col-flex-1">
+            <label><strong>{{localize "LeP"}}</strong></label>
+            <span class="fg-current-lep fg-current-val">{{currentLeP}}</span>
+        </div>
+
+        <div class="columnFlex center fg-input-box">
+             <label>{{localize "FORBIDDENGATES.lepCost"}}</label>
+             <input type="number" class="fg-lep-cost input-text margin-top fg-cost-input" value="{{lepCost}}">
+        </div>
+
+        <div class="row-section center fg-controls">
+            <a data-action="adjustCosts" data-dir="left" class="fg-arrow"><i class="fas fa-chevron-left"></i></a>
+            <a data-action="adjustCosts" data-dir="right" class="fg-arrow"><i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="columnFlex center fg-input-box">
+             <label>{{localize "FORBIDDENGATES.aspCost"}}</label>
+             <input type="number" class="fg-asp-cost input-text margin-top fg-cost-input" value="{{aspCost}}">
+        </div>
+
+        <div class="columnFlex center fg-col-flex-1">
+            <label><strong>{{localize "AsP"}}</strong></label>
+            <span class="fg-current-asp fg-current-val">{{currentAsP}}</span>
+        </div>
+        
+    </div>
+
+    <footer class="row-section gap5px fg-footer">
+        <button type="button" data-action="confirm" class="col two dsa5 button"><i class="fas fa-check"></i> {{localize "FORBIDDENGATES.confirm"}}</button>
+        <button type="button" data-action="cancel" class="col two dsa5 button"><i class="fas fa-times"></i> {{localize "FORBIDDENGATES.cancel"}}</button>
+    </footer>
+</div>
