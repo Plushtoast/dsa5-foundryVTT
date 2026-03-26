@@ -242,7 +242,7 @@ DSA5.statusEffects = [
       description: 'CONDITIONDESCRIPTION.minorSpirits',
       changes: [{ key: 'system.skillModifiers.global', mode: 0, value: -1 }],
     },    
-    duration: { seconds: 600 },
+    duration: { value: 600, units: 'seconds' },
   },
   {
     id: 'services',

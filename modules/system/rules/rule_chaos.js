@@ -102,19 +102,17 @@ export default class RuleChaos {
   static _buildDuration(rounds) {
     const update = {
       duration: {
-        startTime: game.time.worldTime,
-        rounds: rounds,
-        seconds: rounds * 5,
+        value: rounds,
+        units: 'rounds',
+      },
+      start: {
+        time: game.time.worldTime,
       },
     };
     if (game.combat) {
-      mergeObject(update, {
-        duration: {
-          combat: game.combat.id,
-          startRound: game.combat.round,
-          startTurn: game.combat.turn,
-        },
-      });
+      update.start.combat = game.combat.id;
+      update.start.round = game.combat.round;
+      update.start.turn = game.combat.turn;
     }
     return update;
   }
@@ -139,7 +137,7 @@ export default class RuleChaos {
         const durationUpdate = RuleChaos._buildDuration(duration);
 
         if (existing) {
-          const remaining = game.combat ? (existing.data.duration.startRound || 1) + existing.data.duration.rounds - game.combat.round : existing.data.duration.rounds;
+          const remaining = game.combat ? (existing.start?.round || 1) + (existing.duration.value || 0) - game.combat.round : (existing.duration.value || 0);
           if (duration > remaining) await existing.update(durationUpdate);
         } else {
           const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));

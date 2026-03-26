@@ -97,14 +97,20 @@ export default class DSATables {
   }
 
   static async finalizeEffect(ef) {
-      if(ef.duration?.seconds) {
-        ef.duration.seconds = (await new Roll(DSATables.#prepareRollString(`${ef.duration.seconds}`)).evaluate()).total;
-      }
-      else if (ef.duration?.rounds) {
-        ef.duration.rounds = (await new Roll(DSATables.#prepareRollString(`${ef.duration.rounds}`)).evaluate()).total;
-      }
-      else if (ef.duration?.turns) {
-        ef.duration.turns = (await new Roll(DSATables.#prepareRollString(`${ef.duration.turns}`)).evaluate()).total;
+      if (ef.duration?.value) {
+        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.value}`)).evaluate()).total;
+      } else if (ef.duration?.seconds) {
+        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.seconds}`)).evaluate()).total;
+        ef.duration.units = 'seconds';
+        delete ef.duration.seconds;
+      } else if (ef.duration?.rounds) {
+        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.rounds}`)).evaluate()).total;
+        ef.duration.units = 'rounds';
+        delete ef.duration.rounds;
+      } else if (ef.duration?.turns) {
+        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.turns}`)).evaluate()).total;
+        ef.duration.units = 'turns';
+        delete ef.duration.turns;
       }
 
       if (!ef.img) ef.img = 'icons/svg/aura.svg';

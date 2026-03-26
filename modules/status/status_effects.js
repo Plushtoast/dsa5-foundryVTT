@@ -116,19 +116,26 @@ export default class DSA5StatusEffects {
   static async enrichSheetEffect(effectData, sourceEffect) {
     effectData.pips = [];
 
-    if (sourceEffect.duration.type === 'seconds') {
+    const duration = sourceEffect.duration;
+    if (duration.units === 'seconds' && typeof duration.value === 'number') {
       let timeRemaining;
 
-      if (game.time.calendar instanceof game.dsa5.apps.WorldCalendar) {
-        timeRemaining = await game.time.calendar.format(sourceEffect.duration.remaining, 'formatRemaining');
+      if (sourceEffect.start && Number.isFinite(duration.seconds) && game.time.calendar instanceof game.dsa5.apps.WorldCalendar) {
+        const endTime = sourceEffect.start.time + duration.seconds;
+        if (endTime > game.time.worldTime) {
+          const components = game.time.calendar.difference(endTime);
+          timeRemaining = await game.time.calendar.format(components, 'formatRemaining');
+        }
       }
 
+      if (timeRemaining) {
+        effectData.pips.push({
+          content: `<i class="fas fa-clock"></i> ${timeRemaining}`
+        });
+      }
+    } else if (typeof duration.value === 'number') {
       effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${timeRemaining}`
-      });
-    } else if (sourceEffect.duration.type !== 'none') {
-      effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${sourceEffect.duration.label}`
+        content: `<i class="fas fa-clock"></i> ${duration.label}`
       });
     }
 
@@ -334,7 +341,7 @@ export default class DSA5StatusEffects {
     update.system.condition.value = Math.max(0, Math.min(max, update.system.condition.manual + update.system.condition.auto));
     if (newEffect.duration) {
       update.duration = newEffect.duration;
-      update.duration.startTime = game.time.worldTime;
+      update.start = { time: game.time.worldTime };
     }
 
     (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update);

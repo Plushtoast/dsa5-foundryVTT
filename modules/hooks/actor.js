@@ -41,14 +41,14 @@ export default function () {
               callback: async () => {
                 const paid = await actor.applyMana(Number(getProperty(effect, 'flags.dsa5.maintain')), getProperty(effect, 'flags.dsa5.payType'));
                 if (paid) {
-                  const duration = {
-                    startTime: game.time.worldTime,
+                  const start = {
+                    time: game.time.worldTime,
                   };
                   if (game.combat) {
-                    duration.startRound = game.combat.round;
-                    duration.startTurn = game.combat.turn;
+                    start.round = game.combat.round;
+                    start.turn = game.combat.turn;
                   }
-                  actor.updateEmbeddedDocuments('ActiveEffect', [{ _id: effect._id, duration }]);
+                  actor.updateEmbeddedDocuments('ActiveEffect', [{ _id: effect._id, start }]);
                 }
               },
             },

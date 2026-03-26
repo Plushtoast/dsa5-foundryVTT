@@ -59,15 +59,15 @@ export default function () {
     if (doc.parent.documentName != 'Actor') return;
 
     let update = {
-      duration: {
-        startTime: game.time.worldTime,
+      start: {
+        time: game.time.worldTime,
       },
     };
 
     const onDelayed = createData.system?.macroArgs?.onDelayed;
     if (onDelayed) {
       mergeObject(update, {
-        duration: { seconds: onDelayed },
+        duration: { value: onDelayed, units: 'seconds' },
         system: {
           delayed: {
             enabled: true,
@@ -82,11 +82,11 @@ export default function () {
       return;
     }
 
-    update.duration.combat = game.combat.id;
-    update.duration.startRound = game.combat.round;
-    update.duration.startTurn = game.combat.turn;
-    if (!doc.duration.rounds && doc.duration.seconds) {
-      update.duration.rounds = doc.duration.seconds / 5;
+    update.start.combat = game.combat.id;
+    update.start.round = game.combat.round;
+    update.start.turn = game.combat.turn;
+    if (doc.duration.units === 'seconds' && typeof doc.duration.value === 'number') {
+      update.duration = { value: doc.duration.value / 5, units: 'rounds' };
     }
     doc.updateSource(update);
   });

@@ -147,10 +147,11 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     return await callMacro(packName, name, actor, item, qs, args);
   }
 
-  static async startDelayedEffect(duration, effect) {
+  static async startDelayedEffect({ duration, start }, effect) {
     effect.update({
       'system.delayed.enabled': false,
       duration,
+      start,
       'system.macroArgs.onDelayed': '',
     });
   }
@@ -160,20 +161,23 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const delayedData = effect.system?.delayed;
     const isDelayed = !!delayedData?.enabled;
     if (isDelayed) {
-      const duration = delayedData?.originalDuration || {
-        seconds: '',
-        rounds: '',
+      const orig = delayedData?.originalDuration || {};
+      const duration = {
+        value: orig.value ?? orig.seconds ?? orig.rounds ?? null,
+        units: orig.units ?? (orig.rounds ? 'rounds' : 'seconds'),
       };
-      mergeObject(duration, {
-        startRound: game.combat?.round,
-        startTurn: game.combat?.turn,
-        startTime: game.time.worldTime,
-      });
-      if (!duration.rounds && duration.seconds) {
-        duration.rounds = Number(duration.seconds) / 5;
+      if (duration.units === 'seconds' && typeof duration.value === 'number') {
+        duration.value = duration.value / 5;
+        duration.units = 'rounds';
       }
+      const start = { time: game.time.worldTime };
+      if (game.combat) {
+        start.round = game.combat.round;
+        start.turn = game.combat.turn;
+      }
+      const updateData = { duration, start };
       if (effect.changes.length || effect.statuses.size) {
-        this.startDelayedEffect(duration, effect);
+        this.startDelayedEffect(updateData, effect);
         continueDeletion = false;
       }
 
@@ -186,6 +190,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         delete macroEffect.system?.macroArgs?.onDelayed;
         macroEffect.system.delayed = { enabled: false };
         macroEffect.duration = duration;
+        macroEffect.start = start;
         this.applyAdvancedFunction(actor, [macroEffect], source, testData, sourceActor);
       }
     }
@@ -679,8 +684,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             if (qsDuration && qsDuration !== '-') calcTime = Number(qsDuration);
           }
           ef.duration = ef.duration || {};
-          ef.duration.seconds = calcTime;
-          ef.duration.rounds = calcTime / 5;
+          ef.duration.value = calcTime;
+          ef.duration.units = 'seconds';
         }
         break;
       }

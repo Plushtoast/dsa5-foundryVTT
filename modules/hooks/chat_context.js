@@ -310,8 +310,8 @@ class ActionHandler {
       const seconds = ActionHandler.calculateDuration(maintain, duration);
 
       if (seconds) {
-        effect.duration.seconds = seconds;
-        effect.duration.rounds = seconds / 5;
+        effect.duration.value = seconds;
+        effect.duration.units = 'seconds';
       }
 
       await actor.addCondition(effect);

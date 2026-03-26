@@ -1,5 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-const { setProperty, getType } = foundry.utils;
+const { setProperty, getType, isPlainObject } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
@@ -351,6 +351,33 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   static migrateData(source) {
+    // Migrate legacy duration fields to v14 schema (start + duration.value/units).
+    // Replicates Foundry core #migrateDuration and start migration so the
+    // backward-compat shims (removed in v16) are never triggered.
+    const duration = source.duration;
+    if (isPlainObject(duration)) {
+      // Migrate start timing data out of duration
+      if (Object.hasOwn(duration, 'startTime') && !Object.hasOwn(source, 'start')) {
+        source.start = typeof duration.startTime === 'number' ? {} : null;
+        if (source.start) {
+          if (duration.combat !== undefined) { source.start.combat = duration.combat; delete duration.combat; }
+          if (duration.startRound !== undefined) { source.start.round = duration.startRound; delete duration.startRound; }
+          if (duration.startTime !== undefined) { source.start.time = duration.startTime; delete duration.startTime; }
+          if (duration.startTurn !== undefined) { source.start.turn = duration.startTurn; delete duration.startTurn; }
+        }
+      }
+      // Migrate legacy duration.rounds/turns/seconds → duration.value + duration.units
+      for (const unit of ['rounds', 'turns', 'seconds']) {
+        const hasRealProperty = Object.hasOwn(duration, unit) && !Object.getOwnPropertyDescriptor(duration, unit)?.get;
+        if (hasRealProperty && typeof duration[unit] === 'number') {
+          if (!Object.hasOwn(duration, 'value')) duration.value = duration[unit];
+          if (!Object.hasOwn(duration, 'units')) duration.units = unit;
+          delete duration[unit];
+          break;
+        }
+      }
+    }
+
     // Migrate legacy flat delayed fields into the nested delayed schema.
     // Old shape examples:
     // - system.delayed: true|false
