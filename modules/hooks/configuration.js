@@ -441,6 +441,25 @@ export function setupConfiguration() {
       },
       type: Object,
     },
+    calendarFeatureVisibility: {
+      name: 'DSASETTINGS.calendarFeatureVisibility',
+      scope: 'world',
+      config: false,
+      default: {
+        calendar: true,
+        events: true,
+        personae: true,
+        questlog: true,
+      },
+      type: Object,
+    },
+    calendarPlayerDateVisibility: {
+      name: 'DSASETTINGS.calendarPlayerDateVisibility',
+      scope: 'world',
+      config: false,
+      default: 'exact',
+      type: String,
+    },
     moneyKompendium: {
       name: 'DSASETTINGS.moneyKompendium',
       hint: 'DSASETTINGS.moneyKompendiumHint',

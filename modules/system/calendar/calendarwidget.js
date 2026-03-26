@@ -81,6 +81,25 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
         data.toggleAutoTime = this.toggleAutoTime
 
+        if (!data.isGM) {
+            const visibility = game.settings.get('dsa5', 'calendarPlayerDateVisibility');
+            if (visibility !== 'exact') {
+                const datePart = data.dateString.split(', ').slice(1).join(', ');
+                if (visibility === 'rough-time') {
+                    const dayTimeLabel = game.i18n.localize(`CALENDAR.DSA.dayTimes.${data.dayTimeBackground.key}`);
+                    data.dateString = `${dayTimeLabel}, ${datePart}`;
+                    data.dateTooltip = data.dateTooltip.replace(/\d{2}:\d{2}:\d{2}/, dayTimeLabel);
+                } else if (visibility === 'date-only') {
+                    data.dateString = datePart;
+                    data.dateTooltip = data.dateTooltip.replace(/ - \d{2}:\d{2}:\d{2}/, '');
+                }
+            }
+            const featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+            data.canOpenCalendarPicker = Object.values(featureVisibility).some(v => v);
+        } else {
+            data.canOpenCalendarPicker = true;
+        }
+
         Hooks.call('dsa5.calendarWidgetDataReady', data, this);
 
         return data;
@@ -97,6 +116,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (this.wasDragging) {
             this.wasDragging = false;
             return;
+        }
+
+        if (!game.user.isGM) {
+            const featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+            if (!Object.values(featureVisibility).some(v => v)) return;
         }
 
         game.dsa5.apps.CalendarPicker.render(true);

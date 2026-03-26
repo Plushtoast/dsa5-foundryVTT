@@ -98,11 +98,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     config: {
       tabs: [
-        { id: 'calendar_config', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-cog' },
-        { id: 'personae_config', label: 'PERSONAE.ImportantPersons', icon: 'fas fa-cog' },
-        { id: 'questlog_config', label: 'DSAQUESTLOG.title', icon: 'fas fa-scroll' },
+        { id: 'general_config', label: 'CALENDAR.DSA.config', icon: 'fas fa-cog' },
+        { id: 'calendar_config', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-calendar' },
       ],
-      initial: 'calendar_config',
+      initial: 'general_config',
     },
     ...PersonaeDramatis.TABS,
   };
@@ -206,13 +205,25 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    if (!game.user.isGM) delete parts.config;
+    if (!game.user.isGM) {
+      delete parts.config;
+      const visibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+      for (const key of ['calendar', 'events', 'personae', 'questlog']) {
+        if (!visibility[key]) delete parts[key];
+      }
+    }
     return parts;
   }
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
-    if (!game.user.isGM) delete tabs.config;
+    if (!game.user.isGM && group === 'sheet') {
+      delete tabs.config;
+      const visibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+      for (const key of ['calendar', 'events', 'personae', 'questlog']) {
+        if (!visibility[key]) delete tabs[key];
+      }
+    }
     return tabs;
   }
 
@@ -409,6 +420,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
     context.configTabs = this._prepareTabs('config');
 
+    context.featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+    context.playerDateVisibility = game.settings.get('dsa5', 'calendarPlayerDateVisibility');
+
     context.atlasEnabled = DSA5_Utility.moduleEnabled('dsa5-atlas');
 
     const autoTimes = context.calendarConfig.autoDayTimes && context.atlasEnabled;
@@ -517,6 +531,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#dateFormListeners();
     this.element.querySelectorAll('.settingChange').forEach(element => {
       element.addEventListener('change', this._onSettingChange.bind(this));
+    });
+    this.element.querySelectorAll('.directSettingChange').forEach(element => {
+      element.addEventListener('change', this._onDirectSettingChange.bind(this));
     });
     this.element.querySelector('[name="dsa5.calendar"]')?.addEventListener('change', this._onChangeCalendar.bind(this));
 
@@ -853,6 +870,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     game.dsa5.apps.CalendarWidget.render(true);
 
     if ((ev.target.dataset.refresh)) this.render({ force: true, parts: ['config'] });
+  }
+
+  async _onDirectSettingChange(ev) {
+    const settingName = ev.target.dataset.settingName;
+    await game.settings.set('dsa5', settingName, ev.target.value);
+    game.dsa5.apps.CalendarWidget.render(true);
   }
 
   /* =====================

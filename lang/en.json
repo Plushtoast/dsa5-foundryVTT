@@ -841,6 +841,18 @@
             "config": "Configuration",
             "events": "Events",
             "calendar": "Calendar",
+            "featureVisibility": {
+                "label": "Player Feature Visibility",
+                "hint": "Choose which calendar features are visible to players. GMs always have access to all features."
+            },
+            "playerDateVisibility": {
+                "label": "Player Date Display",
+                "hint": "Choose how the date and time are displayed in the calendar widget for players.",
+                "mode": "Display Mode",
+                "exact": "Exact time",
+                "roughTime": "Rough time of day",
+                "dateOnly": "Date only"
+            },
             "dayTimes": {
                 "dawn": "Dawn",
                 "morning": "Morning",

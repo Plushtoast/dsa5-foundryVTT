@@ -2702,7 +2702,19 @@
             },
             "config": "Einstellungen",
             "events": "Ereignisse",
-            "calendar": "Kalender"
+            "calendar": "Kalender",
+            "featureVisibility": {
+                "label": "Spieler Funktionssichtbarkeit",
+                "hint": "Wähle welche Kalenderfunktionen für Spieler sichtbar sind. Spielleiter haben immer Zugriff auf alle Funktionen."
+            },
+            "playerDateVisibility": {
+                "label": "Spieler Datumsanzeige",
+                "hint": "Wähle wie Datum und Uhrzeit im Kalender-Widget für Spieler angezeigt werden.",
+                "mode": "Anzeigemodus",
+                "exact": "Genaue Uhrzeit",
+                "roughTime": "Ungefähre Tageszeit",
+                "dateOnly": "Nur Datum"
+            }
         }
     },
     "DSASETTINGS": {
