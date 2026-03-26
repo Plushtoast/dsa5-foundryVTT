@@ -3,6 +3,7 @@ import RequestRoll from '../rolls/request-roll.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
 import InformationQueryService from '../queries/information-query.js';
+import ChatCommandService from './chat_command_service.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -441,26 +442,7 @@ export default class DSA5ChatAutoCompletion {
   _quickSK(target, actor, tokenId) {
     const type = target.dataset.type;
     const text = target.textContent;
-
-    switch (type) {
-      case 'skill':
-        const skill = actor.items.find(i => i.name === text && i.type === 'skill');
-        if (skill) {
-          actor.setupSkill(skill, {}, tokenId)
-            .then(setupData => actor.basicTest(setupData));
-        }
-        break;
-      case 'attribute':
-        const characteristic = Object.keys(game.dsa5.config.characteristics)
-          .find(key => _loc(game.dsa5.config.characteristics[key]) === text);
-        actor.setupCharacteristic(characteristic, {}, tokenId)
-          .then(setupData => actor.basicTest(setupData));
-        break;
-      case 'regeneration':
-        actor.setupRegeneration('regenerate', {}, tokenId)
-          .then(setupData => actor.basicTest(setupData));
-        break;
-    }
+    ChatCommandService.executeAbilityRoll(actor, text, type, tokenId);
   }
 
   _resetChatAutoCompletion(target) {
@@ -478,13 +460,13 @@ export default class DSA5ChatAutoCompletion {
   _quickGC(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showGCMessage(target.textContent, modifier);
+    ChatCommandService.groupCheck(target.textContent, modifier);
   }
 
   _quickRQ(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showRQMessage(target.textContent, modifier);
+    ChatCommandService.requestRoll(target.textContent, modifier);
   }
 
   _quickPA(target, actor, tokenId) {

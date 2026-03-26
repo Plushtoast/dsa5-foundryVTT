@@ -7,6 +7,7 @@ import { delay, slist, tabSlider } from '../system/helpers/view_helper.js';
 import PlayerMenu from './player_menu.js';
 import RequestRoll from '../system/rolls/request-roll.js';
 import DialogShared from '../dialog/dialog-shared.js';
+import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
@@ -742,7 +743,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       const [skill, type] = this.lastSkill.split('|');
       if (type != 'skill') return;
 
-      RequestRoll.showGCMessage(skill, number);
+      ChatCommandService.groupCheck(skill, number);
     };
     this.buildDialog(_loc('HELP.groupcheck'), template, callback);
   }
@@ -762,7 +763,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       const [skill, type] = this.lastSkill.split('|');
       if (!skillRollCategories.includes(type)) return;
 
-      RequestRoll.showRQMessage(skill, number);
+      ChatCommandService.requestRoll(skill, number);
     };
     this.buildDialog(_loc('HELP.request'), template, callback);
   }
@@ -785,29 +786,21 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   rollRegeneration(actorIds) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
-      actor.setupRegeneration('regenerate', { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, null, 'regeneration', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 
   rollAttribute(actorIds, name) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
-    let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => _loc(game.dsa5.config.characteristics[key]) == name);
     for (const actor of actors) {
-      actor.setupCharacteristic(characteristic, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, name, 'attribute', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 
   rollSkill(actorIds, name) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
-      let skill = actor.items.find((x) => x.name == name && x.type == 'skill');
-      actor.setupSkill(skill, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, name, 'skill', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 

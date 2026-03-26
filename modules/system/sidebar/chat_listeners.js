@@ -3,6 +3,8 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
+import ChatCommandService from './chat_command_service.js';
+import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -19,8 +21,13 @@ export default class DSA5ChatListeners {
     });
 
     const helpButton = $(`<button type="button" class="ui-control icon fas fa-question" data-tooltip="HELP.showHelp" aria-label="Help"></button>`);
-    helpButton.on('click', () => DSA5ChatListeners.getHelp());
     html.find('.control-buttons').prepend(helpButton);
+    new foundry.applications.ux.ContextMenu(html[0], '.fa-question', [], {
+      eventName: 'click',
+      onOpen: DSA5ChatListeners._onHelpContextMenu,
+      jQuery: false,
+      fixed: true,
+    });
     html.on('click', '.showPatchViewer', () => showPatchViewer());
     html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev));
     html.on('click', '.panToToken', (ev) => DSA5ChatListeners.panToToken(ev));
@@ -117,5 +124,44 @@ export default class DSA5ChatListeners {
   static async showTables() {
     const msg = await renderTemplate('systems/dsa5/templates/tables/systemtables.hbs', { tables: DSA5.systemTables });
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+  }
+
+  static _onHelpContextMenu() {
+    ui.context.menuItems = [
+      { label: _loc('HELP.showHelp'), icon: 'fas fa-question', onClick: () => DSA5ChatListeners.getHelp() },
+      { label: _loc('HELP.pay'), icon: 'fas fa-coins', onClick: () => ChatCommandService.openPaymentDialog('pay') },
+      { label: _loc('HELP.getPaid'), icon: 'fas fa-hand-holding-usd', onClick: () => ChatCommandService.openPaymentDialog('getPaid') },
+      {
+        label: _loc('HELP.quickAbility'),
+        icon: 'fas fa-bolt',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.quickAbility', {
+            onSubmit: (name, modifier) => {
+              const skillEntry = DSA5ChatAutoCompletion.skills.find((x) => x.name === name);
+              if (skillEntry) ChatCommandService.speakerAbilityRoll(name, skillEntry.type);
+            },
+          }),
+      },
+      { label: _loc('HELP.conditions'), icon: 'fas fa-biohazard', onClick: () => DSA5ChatListeners.showConditions() },
+      { label: _loc('HELP.tables'), icon: 'fas fa-table', onClick: () => DSA5ChatListeners.showTables() },
+      {
+        label: _loc('HELP.request'),
+        icon: 'fas fa-dice',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.request', {
+            onSubmit: (name, modifier) => ChatCommandService.requestRoll(name, modifier),
+          }),
+      },
+      { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },
+      {
+        label: _loc('HELP.groupcheck'),
+        icon: 'fas fa-users',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.groupcheck', {
+            filterFn: (x) => x.type === 'skill',
+            onSubmit: (name, modifier) => ChatCommandService.groupCheck(name, modifier),
+          }),
+      },
+    ];
   }
 }
