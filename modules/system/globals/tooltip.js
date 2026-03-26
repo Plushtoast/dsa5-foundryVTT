@@ -82,7 +82,7 @@ export class GlobalToolTipHandler {
         if (!effect) {
             effect = CONFIG.statusEffects.find(x => x.id === data.id);
             if (effect) {
-                description = _loc(effect.description);
+                description = _loc(effect.system?.description || effect.description || effect.name);
                 name = _loc(effect.name);
             }
         } else {
