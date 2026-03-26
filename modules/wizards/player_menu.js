@@ -359,11 +359,29 @@ export default class PlayerMenu extends DefaultAppv2 {
       openChar: this._onOpenChar,
       unhidePossibleSpells: this._unhidePossibleSpells,
       initLibrary: this._onInitLibrary,
+      quickSelectActor: this.#quickSelectActor,
+      unselectActor: this.#unselectActor,
     }
   };
 
   static _onOpenChar(ev, target) {
     this.actor?.sheet.render(true);
+  }
+
+  static #quickSelectActor(ev, target) {
+    const actorId = target.dataset.actorId;
+    const actor = game.actors.get(actorId);
+    if (actor) {
+      this.trackedId = actor.id;
+      this.actor = actor;
+      this.render(true);
+    }
+  }
+
+  static #unselectActor(ev, target) {
+    this.actor = null;
+    this.trackedId = null;
+    this.render(true);
   }
 
   static TABS = {
@@ -466,10 +484,28 @@ export default class PlayerMenu extends DefaultAppv2 {
     return data;
   }
 
+  async getAvailableActors() {
+    const trackedActors = game.settings.get('dsa5', 'trackedActors');
+    let actors;
+    if (trackedActors.actors?.length > 0) {
+      actors = game.actors
+        .filter((x) => trackedActors.actors.includes(x.id))
+        .sort((a, b) => trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id));
+    } else {
+      actors = game.actors.filter((x) => x.hasPlayerOwner);
+    }
+    if (!game.user.isGM) actors = actors.filter((a) => a.isOwner);
+    return actors;
+  }
+
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
 
-    if (!game.user.isGM && !this.actor) this.actor = game.user.character;
+    const availableActors = await this.getAvailableActors();
+    if (!game.user.isGM && !this.actor) {
+      if (availableActors.length === 1) this.actor = availableActors[0];
+      else this.actor = game.user.character;
+    }
 
     if (this.actor) {
       const services = this.conjurationData.qs - this.conjurationData.consumedQS + 1;
@@ -536,6 +572,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       conjurationData: this.conjurationData,
       conjurationTypes: this.conjurationData.conjurationTypes,
       canCalculate: DSA5_Utility.moduleEnabled('dsa5-core') && this.actor?.type == 'character',
+      availableActors: availableActors.map((a) => ({ id: a.id, name: a.name, img: a.img })),
+      showActorSwitcher: availableActors.length > 1 || game.user.isGM,
     });
     return data;
   }

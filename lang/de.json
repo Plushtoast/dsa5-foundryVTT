@@ -767,7 +767,9 @@
         "creation": "Herstellung",
         "services": "Dienste",
         "finalize": "Fertigstellen",
-        "material": "Material"
+        "material": "Material",
+        "selectActor": "Akteur auswählen",
+        "noActorHint": "Ziehe einen Akteur hierhin oder wähle einen unten aus."
     },
     "MASTER": {
         "automation": "Automatisierung",

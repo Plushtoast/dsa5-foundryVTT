@@ -1,6 +1,13 @@
-<div class="row-section">
-    <div class="col third center">
-      <img style="width:70px;height:70px" class="profile centerMargin" src="{{actor.img}}" data-tooltip="{{actor.name}}">
+<div>
+  {{#if actor.system}}
+  <div class="row-section">
+    <div class="col third center position-relative">
+      <img style="width:70px;height:70px" class="profile centerMargin" src="{{actor.img}}"
+        data-tooltip="{{actor.name}}">
+      {{#if showActorSwitcher}}
+      <a data-action="unselectActor" style="position:absolute;top:0;right:0;" data-tooltip="PLAYER.selectActor"><i
+          class="fas fa-times"></i></a>
+      {{/if}}
     </div>
     <div class="col seventy">
       <div class="row-section">
@@ -16,3 +23,22 @@
 
     </div>
   </div>
+  {{else}}
+  <div class="no-personae-list">
+    <div class="empty-state-small">
+      <i class="fas fa-hat-wizard"></i>
+      <h3>{{localize "PLAYER.selectActor"}}</h3>
+      <p>{{localize "PLAYER.noActorHint"}}</p>
+    </div>
+    {{#if availableActors.length}}
+    <div class="row-section bags gap2px wrap flexAlignCenter">
+      {{#each availableActors as |a|}}
+      <div class="slot" data-action="quickSelectActor" data-actor-id="{{a.id}}"
+        style="background-image:url('{{a.img}}')" data-tooltip="{{a.name}}">
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+  </div>
+  {{/if}}
+</div>

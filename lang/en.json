@@ -1018,7 +1018,9 @@
         "creation": "Production",
         "services": "Services",
         "finalize": "Finalize",
-        "material": "Material"
+        "material": "Material",
+        "selectActor": "Select Actor",
+        "noActorHint": "Drag an actor here or select one below."
     },
     "MASTER": {
         "automation": "Automation",
