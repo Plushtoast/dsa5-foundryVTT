@@ -4,27 +4,21 @@
     </div>
 
     <div class='tab scrollable innerscroll standard-form {{configTabs.personae_config.cssClass}}' data-tab='personae_config' data-group='{{configTabs.personae_config.group}}'>
-        <fieldset>
-                <legend>{{localize 'PERSONAE.ImportantPersons'}}</legend>
-                <div class="form-group">
-                    <label>{{localize 'PERSONAE.journals.label'}}</label>
-                    <div class="form-fields">
-                        <div class="journalPickerContainer"></div>
-                        <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarActors"></button>
-                    </div>
-                    <p class="hint">{{{localize 'PERSONAE.journals.hint'}}}</p>
-                </div>
-                <div class="row-section wrap">
-                    {{#if calendarActors.activated.length }}
-                        {{#each calendarActors.activated}}
-                            <a class="smallBoxItem" data-action="removeJournal" data-setting="calendarActors" data-uuid="{{uuid}}">{{name}}</a>
-                        {{/each}}
-                    {{else}}
-                        <div class="smallBoxItem">-</div>
-                    {{/if}}
-                </div>
-                
-        </fieldset>
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="PERSONAE.ImportantPersons"
+            label="PERSONAE.journals.label"
+            hint="PERSONAE.journals.hint"
+            setting="calendarActors"
+            journals=calendarActors}}
+    </div>
+
+    <div class='tab scrollable innerscroll standard-form {{configTabs.questlog_config.cssClass}}' data-tab='questlog_config' data-group='{{configTabs.questlog_config.group}}'>
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="DSAQUESTLOG.title"
+            label="DSAQUESTLOG.journals.label"
+            hint="DSAQUESTLOG.journals.hint"
+            setting="questlogJournals"
+            journals=questlogJournals}}
     </div>
 
     <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
@@ -38,26 +32,12 @@
             <p class="hint">{{localize calendarSetting.hint}}</p>
         </div>
 
-        <fieldset>
-            <legend>{{localize 'dsacalendar.events'}}</legend>
-            <div class="form-group">
-                <label>{{localize 'dsacalendar.journals.label'}}</label>
-                <div class="form-fields">
-                    <div class="journalPickerContainer"></div>
-                    <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarJournals"></button>
-                </div>
-                <p class="hint">{{{localize 'dsacalendar.journals.hint'}}}</p>
-            </div>
-            <div class="row-section wrap">
-                {{#if calendarJournals.activated.length }}
-                    {{#each calendarJournals.activated}}
-                        <a class="smallBoxItem" data-action="removeJournal" data-uuid="{{uuid}}" data-setting="calendarJournals">{{name}}</a>
-                    {{/each}}
-                {{else}}
-                    <div class="smallBoxItem">-</div>
-                {{/if}}
-            </div>                
-        </fieldset>
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="dsacalendar.events"
+            label="dsacalendar.journals.label"
+            hint="dsacalendar.journals.hint"
+            setting="calendarJournals"
+            journals=calendarJournals}}
 
         <fieldset>
             <legend class="flexrow">{{localize 'MASTER.automation'}} <button type="button" class="icon noBorder fas fa-rotate" data-action="resetAutomation" data-tooltip="dsacalendar.reset"></button></legend>

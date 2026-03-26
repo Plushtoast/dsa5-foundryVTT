@@ -250,7 +250,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 // Set up hook to update calendar displays when world time changes
 Hooks.on('updateWorldTime', () => {
   game.dsa5.apps.CalendarWidget.render(true);
-  if (game.dsa5.apps.CalendarPicker) game.dsa5.apps.CalendarPicker.refreshCalendar();
+  game.dsa5?.apps?.CalendarPicker?.refreshCalendar?.();
 
   if (!DSA5_Utility.isActiveGM(true) || !game.canvas) return;
 

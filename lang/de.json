@@ -162,6 +162,7 @@
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
+        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "ItemRequiresAdoption": "Eintrag anpassen",
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
@@ -179,7 +180,6 @@
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele",
         "addTarget": "Ziel hinzufügen",
-        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
@@ -1491,10 +1491,24 @@
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaquestlog": "Questlog",
     "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "DSAJOURNALTARGET": {
+        "dialogTitle": "Neuer Eintrag",
+        "hint": "Wähle aus, wo der neue Eintrag gespeichert werden soll.",
+        "addToExistingPage": "Bestehende Seite",
+        "addToNewPage": "Neue Seite",
+        "addToNewJournal": "Neues Journal",
+        "targetMode": "Ziel",
+        "selectPage": "Seite",
+        "selectJournal": "Journal",
+        "pageName": "Seitenname",
+        "journalName": "Journalname",
+        "targetCreationFailed": "Das Ziel konnte nicht erstellt werden."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "ImportantPersons": "Dramatis Personae",
@@ -1503,18 +1517,7 @@
         "Add": "Person/Kreatur hinzufügen",
         "addActor": "Zu Dramatis Personae hinzufügen",
         "addActorFromDirectory": "Zu Dramatis Personae hinzufügen",
-        "addActorDialogTitle": "Akteur zu Dramatis Personae hinzufügen",
-        "addActorDialogHint": "Wähle aus, wo {actor} hinzugefügt werden soll.",
-        "addActorToExistingPage": "Zu bestehender Dramatis-Personae-Seite hinzufügen",
-        "addActorToNewPage": "Neue Dramatis-Personae-Seite in bestehendem Journal anlegen",
-        "addActorToNewJournal": "Neues Journal mit Dramatis-Personae-Seite anlegen",
-        "targetMode": "Ziel",
-        "selectPage": "Bestehende Seite",
-        "selectJournalForPage": "Journal für die neue Seite",
-        "pageName": "Seitenname",
-        "journalName": "Journalname",
         "actorAlreadyExists": "{actor} ist bereits in Dramatis Personae auf der Seite {page} im Journal {journal} enthalten.",
-        "targetCreationFailed": "{actor} konnte nicht zu Dramatis Personae hinzugefügt werden.",
         "UnknownFaction": "Unbekannte Fraktion",
         "selectJournal": "Journal auswählen",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
@@ -1601,24 +1604,127 @@
             }
         }
     },
+    "DSAQUESTLOG": {
+        "title": "Questlog",
+        "summary": "Zusammenfassung",
+        "objectives": "Ziele",
+        "timeline": "Zeitverlauf",
+        "linkedPages": "Verknüpfte Seiten",
+        "startDate": "Beginn",
+        "targetDate": "Ziel",
+        "completionDate": "Beendet",
+        "createQuest": "Quest-Eintrag erstellen",
+        "defaultJournalName": "Questlog",
+        "newEntryPlaceholder": "Neue Quest",
+        "newObjectivePlaceholder": "Neues Ziel",
+        "SelectQuest": "Quest auswählen",
+        "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
+        "emptyTitle": "Noch keine Quests",
+        "emptyHint": "Erstelle oder registriere ein Questlog-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
+        "showInQuestlog": "Im Questlog anzeigen",
+        "showInQuestlogHint": "Die Quest-Einträge sind im Questlog-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
+        "addObjective": "Ziel hinzufügen",
+        "addLinkedPage": "Verknüpfte Seite hinzufügen",
+        "playerOwners": "Zugewiesene Spieler",
+        "noObjectives": "Noch keine Ziele.",
+        "noLinkedPages": "Keine verknüpften Seiten.",
+        "missingLink": "Fehlt",
+        "ungrouped": "Unsortiert",
+        "toggleObjectiveDone": "Zielabschluss umschalten",
+        "toggleVisibility": "Spielersichtbarkeit umschalten",
+        "showQuestlogJournal": "Questlog-Journal anzeigen",
+        "journals": {
+            "label": "Questlog-Journale",
+            "hint": "Wähle Journale mit Questlog-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        },
+        "AUDIENCE": {
+            "0": "Gruppe",
+            "1": "Ausgewählte Spieler",
+            "2": "Nur SL"
+        },
+        "STATUS": {
+            "0": "Offen",
+            "1": "Beendet"
+        },
+        "PRIORITY": {
+            "0": "Hauptquest",
+            "1": "Nebenquest",
+            "2": "Persönlich"
+        },
+        "FIELDS": {
+            "quests": {
+                "title": {
+                    "label": "Titel"
+                },
+                "summary": {
+                    "label": "Zusammenfassung"
+                },
+                "details": {
+                    "label": "Details"
+                },
+                "gmNotes": {
+                    "label": "SL-Notizen"
+                },
+                "status": {
+                    "label": "Zustand"
+                },
+                "priority": {
+                    "label": "Priorität"
+                },
+                "audience": {
+                    "label": "Sichtbarkeit"
+                },
+                "playerOwners": {
+                    "label": "Zugewiesene Spieler"
+                },
+                "visible": {
+                    "label": "Für Spieler sichtbar"
+                },
+                "pinToTop": {
+                    "label": "Oben anheften"
+                },
+                "chapter": {
+                    "label": "Kapitel / Gruppe"
+                },
+                "location": {
+                    "label": "Ort"
+                },
+                "tags": {
+                    "label": "Stichworte"
+                },
+                "createdAtWorldTime": {
+                    "label": "Erstellt"
+                },
+                "updatedAtWorldTime": {
+                    "label": "Aktualisiert"
+                },
+                "objectives": {
+                    "text": {
+                        "label": "Ziel"
+                    },
+                    "done": {
+                        "label": "Erledigt"
+                    },
+                    "visible": {
+                        "label": "Für Spieler sichtbar"
+                    }
+                },
+                "linkedPages": {
+                    "uuid": {
+                        "label": "UUID der Journalseite",
+                        "hint": "Verknüpfe die UUID einer Journalseite."
+                    }
+                }
+            }
+        }
+    },
     "dsacalendar": {
         "SelectEntry": "Wähle einen Eintrag",
         "SelectEntryHint": "Zeige Ereignisse und besondere Tage.",
         "NoPersonsInList": "Keine Personen in der Liste",
         "createEvent": "Kalendereintrag erstellen",
-        "addEventDialogTitle": "Kalendereintrag erstellen",
-        "addEventDialogHint": "Wähle, wo der neue Kalendereintrag gespeichert werden soll.",
-        "addEventToExistingPage": "Zu vorhandener Kalenderseite hinzufügen",
-        "addEventToNewPage": "Neue Kalenderseite erstellen",
-        "addEventToNewJournal": "Neues Kalenderjournal erstellen",
-        "targetMode": "Ziel",
-        "selectPage": "Kalenderseite",
-        "selectJournalForPage": "Journal",
-        "pageName": "Seitenname",
-        "journalName": "Journalname",
         "defaultJournalName": "Kalender",
         "newEntryPlaceholder": "Neuer Eintrag",
-        "targetCreationFailed": "Das Ziel für den Kalendereintrag konnte nicht erstellt werden.",
         "nextMonth": "Nächster Monat",
         "previousMonth": "Vorheriger Monat",
         "confirmDateChange": "Datum übernehmen",

@@ -1,17 +1,21 @@
 <form>
-    <p>{{labels.hint}}</p>
+    <p>{{localize 'DSAJOURNALTARGET.hint'}}</p>
     <div class="form-group">
-        <label>{{labels.targetMode}}</label>
+        <label>{{localize 'DSAJOURNALTARGET.targetMode'}}</label>
         <div class="form-fields">
             <select name="mode">
-                {{#each modes}}
-                <option value="{{this.value}}">{{this.label}}</option>
-                {{/each}}
+                {{#if hasExistingPages}}
+                <option value="existing-page">{{localize 'DSAJOURNALTARGET.addToExistingPage'}}</option>
+                {{/if}}
+                {{#if hasExistingJournals}}
+                <option value="new-page">{{localize 'DSAJOURNALTARGET.addToNewPage'}}</option>
+                {{/if}}
+                <option value="new-journal">{{localize 'DSAJOURNALTARGET.addToNewJournal'}}</option>
             </select>
         </div>
     </div>
     <div class="form-group personae-target-group" data-mode="existing-page">
-        <label>{{labels.selectPage}}</label>
+        <label>{{localize 'DSAJOURNALTARGET.selectPage'}}</label>
         <div class="form-fields">
             <select name="pageUuid">
                 {{#each pages}}
@@ -21,7 +25,7 @@
         </div>
     </div>
     <div class="form-group personae-target-group" data-mode="new-page">
-        <label>{{labels.selectJournalForPage}}</label>
+        <label>{{localize 'DSAJOURNALTARGET.selectJournal'}}</label>
         <div class="form-fields">
             <select name="journalUuid">
                 {{#each journals}}
@@ -31,13 +35,13 @@
         </div>
     </div>
     <div class="form-group personae-target-group" data-mode="new-page,new-journal">
-        <label>{{labels.pageName}}</label>
+        <label>{{localize 'DSAJOURNALTARGET.pageName'}}</label>
         <div class="form-fields">
             <input type="text" name="pageName" value="{{defaultName}}">
         </div>
     </div>
     <div class="form-group personae-target-group" data-mode="new-journal">
-        <label>{{labels.journalName}}</label>
+        <label>{{localize 'DSAJOURNALTARGET.journalName'}}</label>
         <div class="form-fields">
             <input type="text" name="journalName" value="{{defaultName}}">
         </div>

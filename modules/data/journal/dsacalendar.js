@@ -1,5 +1,16 @@
-export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
+import { JournalListDataModel } from './journallistdatamodel.js';
+
+export class DSACalendarEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarJournals';
+    static HOTBAR_ID = 'createCalendarEvent';
+    static CREATION_CONFIG = {
+        pageType: 'dsacalendar',
+        entryCollection: 'calendarentries',
+        defaultName: 'dsacalendar.defaultJournalName',
+        dialogTitle: 'dsacalendar.createEvent',
+        refreshParts: ['events', 'config'],
+    };
+
     static CATEGORY_CHOICES = {
         0: "dsacalendar.CATEGORIES.general",
         1: "dsacalendar.CATEGORIES.holidays",
@@ -46,12 +57,7 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
     static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
         return foundry.utils.mergeObject({
             title: _loc('dsacalendar.newEntryPlaceholder'),
-            from: {
-                dayOfMonth: dateContext.dayOfMonth + 1,
-                month: dateContext.month,
-                year: dateContext.year,
-                day: dateContext.day,
-            },
+            from: this.createDateSnapshot(dateContext, { includeDay: true }),
         }, overrides);
     }
     async _preUpdate(changed, options, user) {

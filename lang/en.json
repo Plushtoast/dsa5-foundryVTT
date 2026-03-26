@@ -1407,6 +1407,19 @@
         "ql": "Quality of the tavern",
         "addNow": "Add to inventory now?"
     },
+    "DSAJOURNALTARGET": {
+        "dialogTitle": "New entry",
+        "hint": "Choose where the new entry should be stored.",
+        "addToExistingPage": "Existing page",
+        "addToNewPage": "New page",
+        "addToNewJournal": "New journal",
+        "targetMode": "Target",
+        "selectPage": "Page",
+        "selectJournal": "Journal",
+        "pageName": "Page name",
+        "journalName": "Journal name",
+        "targetCreationFailed": "The target could not be created."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "copyActorDescription": "Copy actor description from original actor",
@@ -1415,18 +1428,7 @@
         "Add": "Person/Kreatur hinzufügen",
         "addActor": "Add to Dramatis Personae",
         "addActorFromDirectory": "Add to Dramatis Personae",
-        "addActorDialogTitle": "Add actor to Dramatis Personae",
-        "addActorDialogHint": "Choose where to add {actor}.",
-        "addActorToExistingPage": "Add to existing Dramatis Personae page",
-        "addActorToNewPage": "Create a new Dramatis Personae page in an existing journal",
-        "addActorToNewJournal": "Create a new journal with a Dramatis Personae page",
-        "targetMode": "Destination",
-        "selectPage": "Existing page",
-        "selectJournalForPage": "Journal for the new page",
-        "pageName": "Page name",
-        "journalName": "Journal name",
         "actorAlreadyExists": "{actor} is already included in Dramatis Personae on page {page} in journal {journal}.",
-        "targetCreationFailed": "Failed to add {actor} to Dramatis Personae.",
         "UnknownFaction": "Unbekannte Fraktion",
         "selectJournal": "Journal auswählen",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
@@ -1508,6 +1510,120 @@
                             "8": "Close Loyalty/Love (8)",
                             "9": "Deep Love / Willingness to Sacrifice (9)"
                         }
+                    }
+                }
+            }
+        }
+    },
+    "DSAQUESTLOG": {
+        "title": "Questlog",
+        "summary": "Summary",
+        "objectives": "Objectives",
+        "timeline": "Timeline",
+        "linkedPages": "Linked Pages",
+        "startDate": "Start",
+        "targetDate": "Target",
+        "completionDate": "Ended",
+        "createQuest": "Create quest entry",
+        "defaultJournalName": "Questlog",
+        "newEntryPlaceholder": "New Quest",
+        "newObjectivePlaceholder": "New Objective",
+        "SelectQuest": "Choose a quest",
+        "SelectQuestHint": "Show objectives, notes, and related references for the current adventure.",
+        "emptyTitle": "No quests yet",
+        "emptyHint": "Create or register a questlog journal to track adventure progress here.",
+        "showInQuestlog": "Show in questlog",
+        "showInQuestlogHint": "The quest entries will be available in the questlog tab of the calendar picker according to their visibility.",
+        "addObjective": "Add objective",
+        "addLinkedPage": "Add linked page",
+        "playerOwners": "Assigned players",
+        "noObjectives": "No objectives yet.",
+        "noLinkedPages": "No linked pages.",
+        "missingLink": "Missing",
+        "ungrouped": "Unsorted",
+        "toggleObjectiveDone": "Toggle objective completion",
+        "toggleVisibility": "Toggle player visibility",
+        "showQuestlogJournal": "Show questlog journal",
+        "journals": {
+            "label": "Questlog Journals",
+            "hint": "Select journals with questlog entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)"
+        },
+        "AUDIENCE": {
+            "0": "Party",
+            "1": "Selected players",
+            "2": "GM only"
+        },
+        "STATUS": {
+            "0": "Open",
+            "1": "Ended"
+        },
+        "PRIORITY": {
+            "0": "Main Quest",
+            "1": "Side Quest",
+            "2": "Personal"
+        },
+        "FIELDS": {
+            "quests": {
+                "title": {
+                    "label": "Title"
+                },
+                "summary": {
+                    "label": "Summary"
+                },
+                "details": {
+                    "label": "Details"
+                },
+                "gmNotes": {
+                    "label": "GM Notes"
+                },
+                "status": {
+                    "label": "State"
+                },
+                "priority": {
+                    "label": "Priority"
+                },
+                "audience": {
+                    "label": "Audience"
+                },
+                "playerOwners": {
+                    "label": "Assigned players"
+                },
+                "visible": {
+                    "label": "Visible to Players"
+                },
+                "pinToTop": {
+                    "label": "Pin to top"
+                },
+                "chapter": {
+                    "label": "Chapter / Group"
+                },
+                "location": {
+                    "label": "Location"
+                },
+                "tags": {
+                    "label": "Tags"
+                },
+                "createdAtWorldTime": {
+                    "label": "Created"
+                },
+                "updatedAtWorldTime": {
+                    "label": "Updated"
+                },
+                "objectives": {
+                    "text": {
+                        "label": "Objective"
+                    },
+                    "done": {
+                        "label": "Completed"
+                    },
+                    "visible": {
+                        "label": "Visible to Players"
+                    }
+                },
+                "linkedPages": {
+                    "uuid": {
+                        "label": "Page UUID",
+                        "hint": "Link a journal entry page UUID."
                     }
                 }
             }
@@ -1744,6 +1860,7 @@
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaquestlog": "Questlog",
     "TYPES.JournalEntryPage.dsaaptracker": "AP Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
     "npc": "Non Player Character",
@@ -1753,19 +1870,8 @@
         "SelectEntryHint": "Show events and special days.",
         "NoPersonsInList": "No persons in the list",
         "createEvent": "Create calendar event",
-        "addEventDialogTitle": "Create calendar event",
-        "addEventDialogHint": "Choose where the new calendar event should be stored.",
-        "addEventToExistingPage": "Add to existing calendar page",
-        "addEventToNewPage": "Create a new calendar page",
-        "addEventToNewJournal": "Create a new calendar journal",
-        "targetMode": "Target",
-        "selectPage": "Calendar page",
-        "selectJournalForPage": "Journal",
-        "pageName": "Page name",
-        "journalName": "Journal name",
         "defaultJournalName": "Calendar",
         "newEntryPlaceholder": "New Event",
-        "targetCreationFailed": "The calendar event target could not be created.",
         "nextMonth": "Next month",
         "reset": "Reset",
         "previousMonth": "Previous month",

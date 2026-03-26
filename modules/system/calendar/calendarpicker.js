@@ -1,10 +1,11 @@
 import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
-import { CalendarEventCreation } from './calendarentrycreation.js';
-import { tabSlider } from '../../system/helpers/view_helper.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
+import { tabSlider } from '../../system/helpers/view_helper.js';
 import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
+import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
+import { QuestLogFeature } from './questlog.js';
 
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
@@ -31,6 +32,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       resetDayTimes: this.#onResetDayTimes,
       openMoreSearch: this.#toggleMoreSearch,
       ...PersonaeDramatis.actions,
+      ...QuestLogFeature.actions,
       scrollToToday: this.#scrollToToday,
       scrollMonthPrev: this.#scrollBackward,
       scrollMonthNext: this.#scrollForward,
@@ -48,7 +50,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     config: {
       template: 'systems/dsa5/templates/system/calendar/config.hbs',
-      templates: ['systems/dsa5/templates/system/dsatabs.hbs'],
+      templates: [
+        'systems/dsa5/templates/system/dsatabs.hbs',
+        'systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs',
+      ],
       scrollable: ['', '.innerscroll'],
     },
     events: {
@@ -62,11 +67,16 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     personae: {
       template: 'systems/dsa5/templates/system/calendar/personaedramatis.hbs',
       scrollable: ['.personae-list', '.persona-details-container']
+    },
+    questlog: {
+      template: 'systems/dsa5/templates/system/calendar/questlog.hbs',
+      scrollable: ['.questlog-list', '.persona-details-container']
     }
   };
 
   #search;
   #personaeDramatis = new PersonaeDramatis(this);
+  #questLog = new QuestLogFeature(this);
   #temporaryTime = null;
   #pendingScrollToToday = false;
   #eventsTabObserver = null;
@@ -80,6 +90,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       tabs: [
         { id: 'calendar', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-calendar' },
         { id: 'events', label: 'CALENDAR.DSA.holidays', icon: 'fas fa-person-praying' },
+        { id: 'questlog', label: 'DSAQUESTLOG.title', icon: 'fas fa-scroll' },
         { id: 'personae', label: 'PERSONAE.title', icon: 'fas fa-user' },
         { id: 'config', label: 'CALENDAR.DSA.config', icon: 'fas fa-cog' },
       ],
@@ -89,6 +100,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       tabs: [
         { id: 'calendar_config', label: 'CALENDAR.DSA.calendar', icon: 'fas fa-cog' },
         { id: 'personae_config', label: 'PERSONAE.ImportantPersons', icon: 'fas fa-cog' },
+        { id: 'questlog_config', label: 'DSAQUESTLOG.title', icon: 'fas fa-scroll' },
       ],
       initial: 'calendar_config',
     },
@@ -213,6 +225,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const category = {
         [DSACalendarEntry.SETTING_NAME]: 'dsacalendar',
         [DSAPersonaEntry.SETTING_NAME]: 'dsapersonaedramatis',
+        [DSAQuestLogEntry.SETTING_NAME]: 'dsaquestlog',
       }[setting]
       const possibleJournals = game.journal.filter(j => {
         return !activated.has(j.uuid) && (j.pages || []).some(p => p.type === category);
@@ -249,7 +262,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   static async #onCreateEvent(ev, target) {
-    await CalendarEventCreation.startFromCalendarPicker(this);
+    await DSACalendarEntry.startCreation(this, this?.actualTimeComponents?.() ?? game.time.calendar.timeToComponents(game.time.worldTime));
   }
 
   static #toggleMoreSearch(ev, target) {
@@ -258,7 +271,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     target.classList.toggle('fa-caret-down', moreOptions);
   }
 
-  async #resetKeys(setting, keys) {
+  async _resetKeys(setting, keys) {
     const settings = game.settings.get('dsa5', setting);
     const defaultSettings = game.settings.settings.get(`dsa5.${setting}`).default;
     for (const key of keys) {
@@ -269,13 +282,13 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   static async #onResetAutomation(ev, target) {
     const defaultKeys = ['lightByDayTime', 'moonAddsLight', 'moon', 'dayDarknessAdjust'];
-    await this.#resetKeys('calendarSettings', defaultKeys);
+    await this._resetKeys('calendarSettings', defaultKeys);
     this.render({ force: true, parts: ['config'] });
   }
 
   static async #onResetDayTimes(ev, target) {
     const defaultKeys = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'];
-    await this.#resetKeys('calendarSettings', defaultKeys);
+    await this._resetKeys('calendarSettings', defaultKeys);
     this.render({ force: true, parts: ['config'] });
   }
 
@@ -379,6 +392,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       case "events": await this._prepareEventsContext(context, options); break;
       case "calendar": await this._prepareCalendarContext(context, options); break;
       case 'personae': await this.#personaeDramatis._preparePartContext(context, options); break;
+      case 'questlog': await this.#questLog._preparePartContext(context, options); break;
     }
     return context;
   }
@@ -388,6 +402,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (!context.calendarJournals) context.calendarJournals = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
 
     context.calendarActors = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
+    context.questlogJournals = game.settings.get('dsa5', DSAQuestLogEntry.SETTING_NAME);
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
@@ -452,6 +467,36 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.refreshCalendar();
   }
 
+  async refreshParts(parts = []) {
+    if (this.rendered) {
+      await this.render({ force: true, parts });
+    }
+  }
+
+  async refreshCalendar() {
+    if (!this.rendered) return;
+
+    const context = { calendar: game.time.calendar };
+    await this._prepareCalendarContext(context, {});
+    const refreshedTimePart = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', context);
+    const div = document.createElement('div');
+    div.innerHTML = refreshedTimePart;
+    this.element.querySelector('.calendarDateChange').innerHTML = div.querySelector('.calendarDateChange').innerHTML;
+    this.#dateFormListeners();
+    this._drawCalendar();
+
+    const parts = game.user.isGM ? ['events', 'config'] : ['events'];
+    await this.refreshParts(parts);
+  }
+
+  async refreshPersonae() {
+    await this.refreshParts(['personae']);
+  }
+
+  async refreshQuestlog() {
+    await this.refreshParts(['questlog']);
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -492,6 +537,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
 
     this.#personaeDramatis.onRenderListeners();
+    this.#questLog.onRenderListeners();
 
     this._setupInfiniteScroll();
   }
@@ -500,6 +546,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     super._tearDown(options);
     this.#search?.unbind();
     this.#personaeDramatis._tearDown(options);
+    this.#questLog._tearDown(options);
     this.#eventsTabObserver?.disconnect();
     this.#eventsTabObserver = null;
     if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
@@ -530,24 +577,19 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
   }
 
-  async refreshCalendar() {
-    if (this.rendered) {
-      const context = { calendar: game.time.calendar, };
-      await this._prepareCalendarContext(context, {});
-      const refreshedTimePart = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/picker.hbs', context);
-      const div = document.createElement('div');
-      div.innerHTML = refreshedTimePart;
-      this.element.querySelector('.calendarDateChange').innerHTML = div.querySelector('.calendarDateChange').innerHTML;
-      this.#dateFormListeners();
-      this._drawCalendar();
+  async openDocumentSheet(documentOrUuid, { currentKey = null, close = true } = {}) {
+    const document = typeof documentOrUuid === 'string' ? await fromUuid(documentOrUuid) : documentOrUuid;
+    if (!document?.sheet?.render) return null;
 
-      const parts = game.user.isGM ? ['events', 'config'] : ['events'];
-      this.render({ force: true, parts });
+    if (close) await this.close();
+
+    if (currentKey) {
+      document.sheet.render({ force: true, currentKey });
+    } else {
+      document.sheet.render(true);
     }
-  }
 
-  async refreshPersonae() {
-    if (this.rendered) this.render({ force: true, parts: ['personae'] });
+    return document;
   }
 
   async close(options = {}) {
@@ -777,7 +819,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       game.time.calendar.timeToComponents(game.time.worldTime);
   }
 
-  static async #confirmDateChange(ev, target) {
+  async _confirmDateChange() {
     if (this.#temporaryTime === null) return;
 
     await game.time.set(this.#temporaryTime);
@@ -787,9 +829,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.refreshCalendar();
   }
 
-  static async #cancelDateChange(ev) {
+  async _cancelDateChange() {
     this.#temporaryTime = null;
     this.refreshCalendar();
+  }
+
+  static async #confirmDateChange(ev, target) {
+    return this._confirmDateChange(ev, target);
+  }
+
+  static async #cancelDateChange(ev, target) {
+    return this._cancelDateChange(ev, target);
   }
 
   async _onSettingChange(ev) {

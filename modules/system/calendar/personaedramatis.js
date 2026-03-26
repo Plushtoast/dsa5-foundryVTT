@@ -39,10 +39,6 @@ export class PersonaeDramatis {
         newPersona: PersonaeDramatis.newPersona,
     }
 
-    static #defaultPersonaeName() {
-        return _loc("PERSONAE.ImportantPersons");
-    }
-
     static #findExistingPersona(actorUuid) {
         if (!actorUuid) return null;
 
@@ -53,61 +49,6 @@ export class PersonaeDramatis {
             }
         }
         return null;
-    }
-
-    static async #refreshPersonaeRegistrationUI() {
-        const picker = game.dsa5?.apps?.CalendarPicker;
-        if (picker?.rendered) {
-            await picker.render({ force: true, parts: ['personae', 'config'] });
-        }
-    }
-
-    static async #registerJournalInCalendarActors(journal) {
-        await JournalEntryTargetHelper.registerJournal(journal, {
-            settingName: DSAPersonaEntry.SETTING_NAME,
-            refresh: () => this.#refreshPersonaeRegistrationUI(),
-        });
-    }
-
-    static async #chooseActorDirectoryTarget(actor) {
-        return JournalEntryTargetHelper.chooseTarget({
-            pageType: 'dsapersonaedramatis',
-            defaultName: this.#defaultPersonaeName(),
-            dialogTitle: _loc('PERSONAE.addActorDialogTitle'),
-            templateData: {
-            actorName: actor.name || '',
-            },
-            labels: {
-                hint: _loc('PERSONAE.addActorDialogHint', { actor: actor.name || '' }),
-                addToExistingPage: _loc('PERSONAE.addActorToExistingPage'),
-                addToNewPage: _loc('PERSONAE.addActorToNewPage'),
-                addToNewJournal: _loc('PERSONAE.addActorToNewJournal'),
-                targetMode: _loc('PERSONAE.targetMode'),
-                selectPage: _loc('PERSONAE.selectPage'),
-                selectJournalForPage: _loc('PERSONAE.selectJournalForPage'),
-                pageName: _loc('PERSONAE.pageName'),
-                journalName: _loc('PERSONAE.journalName'),
-            },
-        });
-    }
-
-    static async #ensureActorDirectoryTarget(target) {
-        return JournalEntryTargetHelper.ensureTarget(target, {
-            pageType: 'dsapersonaedramatis',
-            defaultName: this.#defaultPersonaeName(),
-        });
-    }
-
-    static async #createPersonaEntry(page, actor) {
-        const key = foundry.utils.randomID();
-        await page.update({
-            system: {
-                personae: {
-                    [key]: DSAPersonaEntry.createEntryData({ actor })
-                }
-            }
-        });
-        return key;
     }
 
     static async addActorToPersonae(actor) {
@@ -126,23 +67,10 @@ export class PersonaeDramatis {
             return;
         }
 
-        const target = await this.#chooseActorDirectoryTarget(actor);
-        if (!target) return;
-
-        const { journal, page } = await this.#ensureActorDirectoryTarget(target);
-        if (!journal || !page) {
-            ui.notifications.error('PERSONAE.targetCreationFailed', {
-                localize: true,
-                format: {
-                    actor: actor.name,
-                }
-            });
-            return;
-        }
-
-        await this.#registerJournalInCalendarActors(journal);
-        const currentKey = await this.#createPersonaEntry(page, actor);
-        page.sheet.render({ force: true, currentKey });
+        await DSAPersonaEntry.startCreation(
+            game.dsa5?.apps?.CalendarPicker,
+            { actor },
+        );
     }
 
     async _preparePartContext(context, options) {
@@ -356,83 +284,19 @@ export class PersonaeDramatis {
         const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
         if (!personaDramatisKey || !page) return;
 
-        if (!options.stay) this.close();
-        page.sheet.render({ force: true, currentKey: personaDramatisKey });
+        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: personaDramatisKey, close: !options.stay });
     }
 
     static async showSheet(event, target, options = {}) {
         const uuid = target.dataset.uuid;
         if (!uuid) return;
-        const actor = await fromUuid(uuid);
-        if (!actor) return;
 
-        if (!options.stay) this.close();
-        actor.sheet.render(true);
+        await PersonaeDramatis.#parent.openDocumentSheet(uuid, { close: !options.stay });
     }
 
     static async newPersona(event, target) {
-        if (!game.user.isGM) return;
-
-        this.close();
-
-        const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME) || { activated: [] };
-        settings.activated ||= [];
-        const activatedJournals = settings.activated;
-        if (activatedJournals.length === 0) {
-            const newJournal = await JournalEntry.create({
-                name: _loc("PERSONAE.ImportantPersons"), pages: [{
-                    name: _loc("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis",
-                }]
-            });
-            await this.#registerJournalInCalendarActors(newJournal);
-            newJournal.sheet.render(true);
-        } else {
-            let journalID;
-            const content = `<p><div class="form-group">
-                <label>${_loc("PERSONAE.selectJournal")}</label>
-                <div class="form-fields">
-                    <select name="journal">
-                ${activatedJournals.map(id => `<option value="${id.uuid}">${id.name}</option>`).join('')}
-                    </select>
-                </div>
-            </div></p>`
-            try {
-                journalID = await foundry.applications.api.DialogV2.wait({
-                    window: {
-                        title: 'PERSONAE.Add',
-                    },
-                    content,
-                    buttons: [
-                        {
-                            action: 'ok',
-                            icon: 'fa fa-check',
-                            label: 'yes',
-                            default: true,
-                            callback: (event, button, dialog) => {
-                                return button.form.elements.journal.value;
-                            },
-                        },
-                        {
-                            action: 'cancel',
-                            icon: 'fas fa-times',
-                            label: 'cancel',
-                            callback: () => {
-                                return false;
-                            },
-                        },
-                    ],
-                });
-            } catch (error) {
-                /* empty */
-            }
-            if (!journalID) return;
-
-            const journal = await fromUuid(journalID);
-            if (!journal) return;
-
-            journal.sheet.render(true);
-        }
-    };
+        await DSAPersonaEntry.startCreation(this, {});
+    }
 
     static async toggleVisibility(event, target) {
         const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);

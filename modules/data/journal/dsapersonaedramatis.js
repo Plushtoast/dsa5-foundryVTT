@@ -1,7 +1,16 @@
 import MerchantTemplate from "../actor/templates/merchant.js";
+import { JournalListDataModel } from './journallistdatamodel.js';
 const { TextEditor } = foundry.applications.ux;
-export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
+export class DSAPersonaEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarActors';
+    static CREATION_CONFIG = {
+        pageType: 'dsapersonaedramatis',
+        entryCollection: 'personae',
+        defaultName: 'PERSONAE.ImportantPersons',
+        dialogTitle: 'PERSONAE.addActorFromDirectory',
+        refreshParts: ['personae', 'config'],
+    };
+
     static TYPE_CHOICES = {
         0: "PERSONAE.FIELDS.personae.type.choices.person",
         1: "PERSONAE.FIELDS.personae.type.choices.creature"
@@ -78,12 +87,12 @@ export class DSAPersonaEntry extends foundry.abstract.TypeDataModel {
 
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
-        game.dsa5.apps.CalendarPicker.refreshPersonae();
+        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
     }
 
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
-        game.dsa5.apps.CalendarPicker.refreshPersonae();
+        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
     }
 
     async #fillActorFields(changed) {

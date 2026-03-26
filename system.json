@@ -148,6 +148,9 @@
             },
             "dsaaptracker": {},
             "dsamoneytracker": {},
+            "dsaquestlog": {
+                "htmlFields": [ "quests.*.details", "quests.*.gmNotes" ]
+            },
             "dsapersonaedramatis": {
                 "htmlFields": [ "personae.*.description", "personae.*.notes" ],
                 "filePathFields": {

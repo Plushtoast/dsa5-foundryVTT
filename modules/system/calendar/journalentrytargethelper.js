@@ -41,18 +41,15 @@ export class JournalEntryTargetHelper {
     pageType,
     defaultName,
     dialogTitle,
-    labels,
     templateData = {},
   }) {
+    dialogTitle ??= _loc('DSAJOURNALTARGET.dialogTitle');
     const targets = this.collectTargets(pageType);
-    const modes = [];
-    if (targets.pages.length) modes.push({ value: 'existing-page', label: labels.addToExistingPage });
-    if (targets.journals.length) modes.push({ value: 'new-page', label: labels.addToNewPage });
-    modes.push({ value: 'new-journal', label: labels.addToNewJournal });
 
-    const content = await renderTemplate('systems/dsa5/templates/system/calendar/personae-add-dialog.hbs', {
+    const content = await renderTemplate('systems/dsa5/templates/system/calendar/journal-target-dialog.hbs', {
       defaultName,
-      modes,
+      hasExistingPages: targets.pages.length > 0,
+      hasExistingJournals: targets.journals.length > 0,
       pages: targets.pages.map((target) => ({
         value: target.uuid,
         label: `${target.journalName} / ${target.name}`,
@@ -61,14 +58,6 @@ export class JournalEntryTargetHelper {
         value: target.uuid,
         label: target.name,
       })),
-      labels: {
-        hint: labels.hint,
-        targetMode: labels.targetMode,
-        selectPage: labels.selectPage,
-        selectJournalForPage: labels.selectJournalForPage,
-        pageName: labels.pageName,
-        journalName: labels.journalName,
-      },
       ...templateData,
     });
 

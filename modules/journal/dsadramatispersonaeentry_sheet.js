@@ -1,9 +1,10 @@
 import { DSAPersonaEntry } from "../data/journal/dsapersonaedramatis.js";
 import { PersonaeDramatis } from "../system/calendar/personaedramatis.js";
-import SelectJournal from "./select_journal.js";
+import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
 
-export class DSAPersonaeEntrySheet extends SelectJournal {
+export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'personae';
+    static settingName = DSAPersonaEntry.SETTING_NAME;
     static DEFAULT_OPTIONS = {
         actions: {
             editActor: DSAPersonaeEntrySheet.#editActor,
@@ -17,6 +18,10 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
             height: 700
         },
     };
+
+    static sortEntryPairs([, a], [, b]) {
+        return a.name.localeCompare(b.name);
+    }
 
     static EDIT_PARTS = {
         header: super.EDIT_PARTS.header,
@@ -37,31 +42,14 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         },
     };
 
-    async _prepareContext(options) {
-        const context = await super._prepareContext(options);
-        const entries = Object.entries(foundry.utils.duplicate(this.document.system.personae))
-            .filter(([key, value]) => value.visible || game.user.isGM)
-            .sort(([, a], [, b]) => {
-                return a.name.localeCompare(b.name);
-            });
-        context.sortedEntries = Object.fromEntries(entries);
+    async _prepareEntries(context, options) {
         if (this.isView) {
             const heros = await DSAPersonaEntry.getHeros();
             for (let key of Object.keys(context.sortedEntries)) {
                 const entry = context.sortedEntries[key];
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);
             }
-        } else {
-            if (options.currentKey)
-                this.currentKey = options.currentKey;
-            if (this.currentKey && context.sortedEntries[this.currentKey]) {
-                context.currentKey = this.currentKey;
-                context.detailHTML = await this.renderDetail(this.currentKey);
-            }
         }
-        context.isGM = game.user.isGM;
-        context.isRegistered = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
-        return context;
     }
 
     async _prepareContacts(entry) {
@@ -71,23 +59,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         await DSAPersonaEntry.prepareContacts(entry, heros);
     }
 
-    async _onRender(context, options) {
-        await super._onRender(context, options);
-
-        if (this.isView) return;
-
-        const showInCalendar = this.element.querySelector('.showInCalendar');
-        showInCalendar.addEventListener('change', (event) => {
-            const isChecked = event.target.checked;
-            const settings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME);
-            if (isChecked) {
-                settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
-            } else {
-                settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
-            }
-            game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
-            game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
-        });
+    async _onRenderEditable(context, options) {
         new foundry.applications.ux.DragDrop.implementation({
             dropSelector: '.personae-list-column',
             permissions: {
@@ -97,6 +69,10 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
                 drop: this._onDrop.bind(this)
             }
         }).bind(this.element);
+    }
+
+    async _afterRegistrationChange() {
+        await game.dsa5?.apps?.CalendarPicker?.refreshParts?.(['personae', 'config']);
     }
 
     _canDragDrop(event) {
@@ -115,6 +91,7 @@ export class DSAPersonaeEntrySheet extends SelectJournal {
         await this.newEntry(options);
         this.render(true);
     }
+    
     static buildTOC(html, { includeElement = true } = {}) {
         const cls = JournalEntryPage.implementation;
         const root = { level: 0, children: [] };

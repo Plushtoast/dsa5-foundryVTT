@@ -67,6 +67,7 @@ import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
 import { ItemFactory } from './item/item-factory.js';
 import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
+import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
@@ -157,6 +158,7 @@ Hooks.once('init', () => {
       JournalEntryPage: {
         dsacalendar: DSACalendarEntry,
         dsapersonaedramatis: DSAPersonaEntry,
+        dsaquestlog: DSAQuestLogEntry,
         dsaaptracker: DSAAPTrackerEntry,
         dsamoneytracker: DSAMoneyTrackerEntry
       }
@@ -188,6 +190,7 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
+  CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;
   CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
   //CONFIG.documentClass = DSACombatantGroup;

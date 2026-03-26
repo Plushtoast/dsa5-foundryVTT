@@ -432,6 +432,15 @@ export function setupConfiguration() {
       },
       type: Object,
     },
+    questlogJournals: {
+      name: 'DSASETTINGS.questlogJournals',
+      scope: 'world',
+      config: false,
+      default: {
+        activated: []
+      },
+      type: Object,
+    },
     moneyKompendium: {
       name: 'DSASETTINGS.moneyKompendium',
       hint: 'DSASETTINGS.moneyKompendiumHint',
