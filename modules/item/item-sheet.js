@@ -741,6 +741,7 @@ class Enchantable extends ItemSheetdsa5 {
       enchRoll: this._enchRoll,
       enchDelete: this._enchDelete,
       enchShow: this._enchShow,
+      enchExtDelete: this._enchExtDelete,
       poisonTogglePermanent: this._poisonTogglePermanent,
       poisonDelete: this._deletePoison,
       poisonShow: this._poisonShow,
@@ -779,6 +780,18 @@ class Enchantable extends ItemSheetdsa5 {
     let item = await this.getSpell(enchantment);
 
     if (item) item.sheet.render(true);
+  }
+
+  static _enchExtDelete(ev, target) {
+    const enchEl = $(target).parents('.statusEffect');
+    const enchId = enchEl.attr('data-id');
+    const extIdx = Number($(target).closest('[data-ext-idx]').attr('data-ext-idx'));
+    const enchantments = this.item.getFlag('dsa5', 'enchantments');
+    const enchantment = enchantments.find((x) => x.id == enchId);
+    if (enchantment?.extensions) {
+      enchantment.extensions.splice(extIdx, 1);
+      this.item.update({ flags: { dsa5: { enchantments } } });
+    }
   }
 
   static _poisonTogglePermanent(ev, target) {
@@ -849,13 +862,16 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   async _handleDrop(dragData) {
-    if (this.isEnchantable) await this._enchant([dragData]);
+    if (this.isEnchantable) {
+      await this._enchant([dragData]);
+      await this._enchantExtension(dragData);
+    }
     if (this.isPoisonable) await this._poison(dragData);
     await super._handleDrop(dragData);
   }
 
   async _enchant(dragDataArray) {
-    const enchantments = this.item.getFlag('dsa5', 'enchantments') || [];
+    const enchantments = duplicate(this.item.getFlag('dsa5', 'enchantments') || []);
     if (enchantments.length + dragDataArray.length > 7)
       return ui.notifications.error('DSAError.tooManyEnchants', {
         localize: true,
@@ -884,6 +900,36 @@ class Enchantable extends ItemSheetdsa5 {
       const update = { flags: { dsa5: { enchantments } } };
       await this.item.update(update);
     }
+  }
+
+  async _enchantExtension(dragData) {
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (typeClass !== 'spellextension') return;
+    if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: _loc('TYPES.Item.spellextension') }, localize: true });
+
+    const enchantments = duplicate(this.item.getFlag('dsa5', 'enchantments') || []);
+    const spellTypes = item.system.category === 'liturgy' || item.system.category === 'ceremony'
+      ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
+    const enchantment = enchantments.find((e) => e.name === item.system.source && spellTypes.includes(this._enchantmentCategory(e)));
+    if (!enchantment) {
+      return ui.notifications.error('DSAError.noEnchantmentForExtension', { localize: true });
+    }
+    if (enchantment.fw < item.system.talentValue) {
+      return ui.notifications.error('DSAError.talentValueTooLow', { localize: true });
+    }
+    if (!enchantment.extensions) enchantment.extensions = [];
+    if (enchantment.extensions.some((e) => e.name === item.name)) return;
+
+    enchantment.extensions.push({
+      name: item.name,
+      pack: item.pack,
+      itemId: item.id,
+    });
+    await this.item.update({ flags: { dsa5: { enchantments } } });
+  }
+
+  _enchantmentCategory(enchantment) {
+    return enchantment.talisman ? 'liturgy' : 'spell';
   }
 
   async _poison(dragData) {
@@ -938,7 +984,11 @@ class Enchantable extends ItemSheetdsa5 {
       item = item.toObject();
       item.system.talentValue.value = enchantment.fw;
       const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
-      actor.setupSpell(item, {}, 'emptyActor').then(async (setupData) => {
+      const options = {};
+      if (enchantment.extensions?.length) {
+        options.enchantmentExtensions = await this._resolveEnchantmentExtensions(enchantment.extensions);
+      }
+      actor.setupSpell(item, options, 'emptyActor').then(async (setupData) => {
         const infoMsg = _loc('CHATNOTIFICATION.enchantmentUsed', {
           item: this.item.name,
           spell: item.name,
@@ -952,6 +1002,26 @@ class Enchantable extends ItemSheetdsa5 {
         }
       });
     }
+  }
+
+  async _resolveEnchantmentExtensions(extensions) {
+    const resolved = [];
+    for (const ext of extensions) {
+      const pack = game.packs.get(ext.pack);
+      if (!pack) continue;
+      let item = await pack.getDocument(ext.itemId);
+      if (!item) {
+        const idx = pack.index.getName(ext.name);
+        if (idx) item = await pack.getDocument(idx._id);
+      }
+      if (item) {
+        const mapped = item;
+        mapped.shortName = item.name.split(' - ').length > 1 ? item.name.split(' - ')[1] : item.name;
+        mapped.descr = $(item.system.description.value).text() || '';
+        resolved.push(mapped);
+      }
+    }
+    return resolved;
   }
 
   static _deletePoison(ev, target) {
@@ -1001,7 +1071,7 @@ class Enchantable extends ItemSheetdsa5 {
   enchantMentId(target) {
     return {
       id: $(target).parents('.statusEffect').attr('data-id'),
-      enchantments: this.item.getFlag('dsa5', 'enchantments'),
+      enchantments: duplicate(this.item.getFlag('dsa5', 'enchantments') || []),
     };
   }
 

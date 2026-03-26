@@ -2460,6 +2460,7 @@
         "tooManyEnchants": "An item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only {element} from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
+        "noEnchantmentForExtension": "No matching enchantment found for this spell extension.",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
         "noConjurationActive": "No actor to summon active (drag and drop)",

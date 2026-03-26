@@ -45,7 +45,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
             hasSKModifier: spell.system.resistanceModifier.value === 'SK',
             hasZKModifier: spell.system.resistanceModifier.value === 'ZK',
             maxMods,
-            extensions: this.#prepareExtensions(actor, spell),
+            extensions: options.enchantmentExtensions || this.#prepareExtensions(actor, spell),
             variableBaseCost: spell.system.variableBaseCost,
             characteristics: [1, 2, 3].map((x) => spell.system[`characteristic${x}`].value),
         };

@@ -2294,6 +2294,7 @@
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur {element} aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
+        "noEnchantmentForExtension": "Keine passende Verzauberung für diese Zaubererweiterung gefunden.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
