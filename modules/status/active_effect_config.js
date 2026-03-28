@@ -167,7 +167,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         units: orig.units ?? (orig.rounds ? 'rounds' : 'seconds'),
       };
       if (duration.units === 'seconds' && typeof duration.value === 'number') {
-        duration.value = duration.value / 5;
+        duration.value = Math.round(duration.value / CONFIG.time.roundTime);
         duration.units = 'rounds';
       }
       const start = { time: game.time.worldTime };
@@ -430,7 +430,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
           const delayedData = {
             duration: {
-              seconds: onDelayed,
+              value: parseInt(onDelayed) || 0,
+              units: 'seconds',
             },
             system: {
               delayed: {

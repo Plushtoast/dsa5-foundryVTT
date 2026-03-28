@@ -67,7 +67,7 @@ export default function () {
     const onDelayed = createData.system?.macroArgs?.onDelayed;
     if (onDelayed) {
       mergeObject(update, {
-        duration: { value: onDelayed, units: 'seconds' },
+        duration: { value: parseInt(onDelayed) || 0, units: 'seconds' },
         system: {
           delayed: {
             enabled: true,
@@ -86,7 +86,7 @@ export default function () {
     update.start.round = game.combat.round;
     update.start.turn = game.combat.turn;
     if (doc.duration.units === 'seconds' && typeof doc.duration.value === 'number') {
-      update.duration = { value: doc.duration.value / 5, units: 'rounds' };
+      update.duration = { value: Math.round(doc.duration.value / CONFIG.time.roundTime), units: 'rounds' };
     }
     doc.updateSource(update);
   });
