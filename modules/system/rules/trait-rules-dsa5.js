@@ -20,55 +20,55 @@ Hooks.on('setup', () => {
       item.effects = [
         {
           changes: [
-            { key: 'system.status.wounds.gearmodifier', mode: 2, value: 10 },
-            { key: 'system.status.soulpower.gearmodifier', mode: 2, value: 1 },
-            { key: 'system.status.toughness.gearmodifier', mode: 2, value: 1 },
+            { key: 'system.status.wounds.gearmodifier', type: 'add', value: 10 },
+            { key: 'system.status.soulpower.gearmodifier', type: 'add', value: 1 },
+            { key: 'system.status.toughness.gearmodifier', type: 'add', value: 1 },
             {
               key: 'system.status.astralenergy.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 15,
             },
             {
               key: 'system.characteristics.mu.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.kl.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.in.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.ch.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.ff.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.ge.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.ko.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
             {
               key: 'system.characteristics.kk.gearmodifier',
-              mode: 2,
+              type: 'add',
               value: 1,
             },
-            { key: 'system.totalArmor', mode: 2, value: 1 },
+            { key: 'system.totalArmor', type: 'add', value: 1 },
           ],
           duration: {},
           icon: 'icons/svg/aura.svg',

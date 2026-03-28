@@ -76,20 +76,13 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
       const ef = {
         name: `${dict.treatPain} (${this.macroData.qs})`,
         img: 'icons/svg/aura.svg',
-        changes: [
-          {
-            key: 'system.resistances.effects',
-            value: `inpain ${this.macroData.qs}`,
-            mode: 0,
-          },
-        ],
         system: {
           description: `${dict.treatPain} (${this.macroData.qs})`,
           changes: [
             {
               key: 'system.resistances.effects',
               value: `inpain ${this.macroData.qs}`,
-              mode: 0,
+              type: 'custom',
             },
           ],
         },

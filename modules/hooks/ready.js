@@ -9,7 +9,6 @@ import DSAIniTracker from '../combat/dsa-ini-tracker.js';
 import DSATour from '../tours/dsa_tour.js';
 import { initImagePopoutTochat } from './imagepopouttochat.js';
 import { connectSocket } from './socket.js';
-import { DSAAura } from '../system/automation/aura.js';
 import registerGameManual from '../journal/game_manual.js';
 import { showWelcomeApp } from '../system/maintenance/migrator.js';
 
@@ -48,7 +47,6 @@ export default function () {
 
     setEnrichers();
     initImagePopoutTochat();
-    DSAAura.bindAuraHooks();
 
     registerGameManual();
 

@@ -14,7 +14,7 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import EquipmentDamageDialog from '../../dialog/dialog-equipmentdamage.js';
 import DSATables from '../../tables/dsatables.js';
 import RequestRoll from './request-roll.js';
-import { MeasuredTemplateDSA } from '../automation/measuretemplate.js';
+import { DSARegionTemplate } from '../automation/measuretemplate.js';
 import TableEffects from '../../tables/tableEffects.js';
 import CreatureType from '../automation/creature-type.js';
 import { applyDamage } from '../../hooks/chat_context.js';
@@ -336,7 +336,7 @@ export default class DiceDSA5 {
    * @returns {Array}
    */
   static #gatherSituationalModifiers(existingModifiers, actor, testData) {
-    let situationalModifiers = existingModifiers ||
+    const situationalModifiers = existingModifiers ||
       (actor ? DSA5StatusEffects.getRollModifiers(actor, testData.source) : []);
 
     const { moreModifiers } = testData.extra.options;
@@ -640,7 +640,7 @@ export default class DiceDSA5 {
     }
 
     const baseDescription = _loc(isCrit ? 'CriticalSuccess' : 'CriticalFailure');
-    let successLevel = isCrit ? DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_SUCCESS : DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_FAILURE;
+    const successLevel = isCrit ? DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_SUCCESS : DICE_CONSTANTS.SUCCESS_LEVELS.CRITICAL_FAILURE;
 
     if (game.settings.get('dsa5', 'noConfirmationRoll')) {
       return {
@@ -760,14 +760,14 @@ export default class DiceDSA5 {
   }
 
   static async rollFallingDamage(testData) {
-    let roll = testData.roll;
+    const roll = testData.roll;
     const chars = [];
 
-    for (let res of roll.terms[0].results) {
+    for (const res of roll.terms[0].results) {
       chars.push({ char: DAMAGE, res: res.result, suc: false });
     }
 
-    let result = {
+    const result = {
       rollType: ROLL_TYPES.FALLING_DAMAGE,
       preData: testData,
       modifiers: await this._situationalModifiers(testData),
@@ -780,11 +780,11 @@ export default class DiceDSA5 {
   }
 
   static async #rollRegeneration(testData) {
-    let modifier = await this._situationalModifiers(testData);
-    let roll = testData.roll;
-    let chars = [];
+    const modifier = await this._situationalModifiers(testData);
+    const roll = testData.roll;
+    const chars = [];
 
-    let result = {
+    const result = {
       rollType: ROLL_TYPES.REGENERATE,
       preData: testData,
       modifiers: modifier,
@@ -801,7 +801,7 @@ export default class DiceDSA5 {
     const isSick = actor.effects.some((x) => x.statuses.has('sick'));
     if (isSick) {
       this._appendSituationalModifiers(testData, _loc('CONDITION.sick'), '*0');
-      for (let k of attrs) {
+      for (const k of attrs) {
         chars.push({ char: k, res: 0, die: 'd6' });
         result[k] = 0;
         index += 2;
@@ -809,7 +809,7 @@ export default class DiceDSA5 {
     } else {
       const modifierLoc = _loc('Modifier');
       const regenerationLoc = _loc('regenerate');
-      for (let k of attrs) {
+      for (const k of attrs) {
         this._appendSituationalModifiers(testData, _loc(`LocalizedIDs.regeneration${k}`), AdvantageRulesDSA5.vantageStep(actor, `LocalizedIDs.regeneration${k}`), k);
         this._appendSituationalModifiers(
           testData,
@@ -856,8 +856,8 @@ export default class DiceDSA5 {
   }
 
   static async rollStatus(testData) {
-    let roll = testData.roll || (await new Roll('1d20').evaluate());
-    let result = await this._rollSingleD20(
+    const roll = testData.roll || (await new Roll('1d20').evaluate());
+    const result = await this._rollSingleD20(
       roll,
       testData.source.system.max,
       testData.extra.statusId,
@@ -885,9 +885,9 @@ export default class DiceDSA5 {
   }
 
   static async rollAttribute(testData) {
-    let roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
+    const roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
     this._appendSituationalModifiers(testData, _loc('Difficulty'), testData.testDifficulty);
-    let result = await this._rollSingleD20(
+    const result = await this._rollSingleD20(
       roll,
       testData.source.system.value,
       testData.extra.characteristicId,
@@ -922,15 +922,15 @@ export default class DiceDSA5 {
   }
 
   static async rollDamage(testData) {
-    let modifiers = await this._situationalModifiers(testData);
-    let chars = [];
+    const modifiers = await this._situationalModifiers(testData);
+    const chars = [];
 
-    let roll = testData.roll;
-    let damage = roll.total + modifiers;
+    const roll = testData.roll;
+    const damage = roll.total + modifiers;
 
-    for (let k of roll.terms) {
+    for (const k of roll.terms) {
       if (k instanceof foundry.dice.terms.Die || k.class == 'Die') {
-        for (let l of k.results)
+        for (const l of k.results)
           chars.push({
             char: testData.mode,
             res: l.result,
@@ -974,7 +974,7 @@ export default class DiceDSA5 {
     }
 
     const values = await Promise.all(modifierPromises);
-    let [pos, neg] = values.reduce((total, value) => {
+    const [pos, neg] = values.reduce((total, value) => {
       if (value < 0) {
         total[1] += value;
       } else {
@@ -1050,12 +1050,12 @@ export default class DiceDSA5 {
   }
 
   static async rollCombatTrait(testData) {
-    let roll = testData.roll || (await new Roll('1d20').evaluate());
-    let source = testData.source; //.system == undefined ? testData.source : testData.source.system
+    const roll = testData.roll || (await new Roll('1d20').evaluate());
+    const source = testData.source; //.system == undefined ? testData.source : testData.source.system
     const isMelee = source.system.traitType.value == 'meleeAttack';
     const isAttack = testData.mode == ATTACK;
     if (isMelee) {
-      let weapon = {
+      const weapon = {
         system: {
           combatskill: { value: '-' },
           reach: { value: source.system.reach.value },
@@ -1064,7 +1064,7 @@ export default class DiceDSA5 {
 
       this._appendSituationalModifiers(testData, _loc('opposingWeaponSize'), this._compareWeaponReach(weapon, testData));
     }
-    let result = await this._rollSingleD20(
+    const result = await this._rollSingleD20(
       roll,
       isAttack ? Number(source.system.at.value) : Number(source.system.pa),
       testData.mode,
@@ -1076,7 +1076,7 @@ export default class DiceDSA5 {
 
     await this.getDuplicatusRoll(result, testData);
 
-    let success = result.successLevel > 0;
+    const success = result.successLevel > 0;
 
     await this.detailedWeaponResult(result, testData, source);
 
@@ -1165,7 +1165,7 @@ export default class DiceDSA5 {
     let bonusDmg = 0;
     let baseDmgBonus = 0;
 
-    for (let val of testData.situationalModifiers) {
+    for (const val of testData.situationalModifiers) {
       if (val.armorPen) armorPen.push(val.armorPen);
 
       if (val.damageBonus) {
@@ -1208,9 +1208,9 @@ export default class DiceDSA5 {
     let damage = damageRoll.total;
     let weaponroll = 0;
 
-    for (let k of damageRoll.terms) {
+    for (const k of damageRoll.terms) {
       if (k instanceof foundry.dice.terms.Die || k.class == 'Die') {
-        for (let l of k.results) {
+        for (const l of k.results) {
           const discarded = !!l.discarded;
           if (!discarded) weaponroll += Number(l.result);
 
@@ -1236,7 +1236,7 @@ export default class DiceDSA5 {
         damageBonusDescription.baseDmgBonus.push(_loc('weaponModifier') + ' ' + weaponBonus);
       }
 
-      for (let x of testData.situationalModifiers) {
+      for (const x of testData.situationalModifiers) {
         if (x.damageBonus) {
           const isMultiplier = /^\*/.test(x.damageBonus);
           let value = isMultiplier ? x.damageBonus.replace(/\*/, '') : Number(x.damageBonus) * (x.step || 1);
@@ -1377,14 +1377,14 @@ export default class DiceDSA5 {
   }
 
   static async rollWeapon(testData) {
-    let roll = testData.roll || (await new Roll('1d20').evaluate());
+    const roll = testData.roll || (await new Roll('1d20').evaluate());
     let weapon;
 
-    let source = testData.source;
+    const source = testData.source;
     const combatskill = source.system.combatskill.value;
     const actor = this.#actorFromTestData(testData);
 
-    let skill = CombatskillData._calculateCombatSkillValues(
+    const skill = CombatskillData._calculateCombatSkillValues(
       actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill),
       actor.system,
       {
@@ -1402,7 +1402,7 @@ export default class DiceDSA5 {
     } else {
       weapon = Actordsa5._prepareRangeWeapon(source, [], [skill], actor);
     }
-    let result = await this._rollSingleD20(
+    const result = await this._rollSingleD20(
       roll,
       weapon[testData.mode],
       testData.mode,
@@ -1433,8 +1433,8 @@ export default class DiceDSA5 {
 
   static _weaponBotchCritEffect(source, key, actor) {
     const result = [];
-    for (let effect of source.effects) {
-      for (let change of effect.changes) {
+    for (const effect of source.effects) {
+      for (const change of effect.system?.changes || []) {
         if (change.key == key) {
           if (change.value == 'description') {
             result.push(effect.description);
@@ -1511,10 +1511,10 @@ export default class DiceDSA5 {
   }
 
   static async rollCombatskill(testData) {
-    let roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
+    const roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
     const actor = this.#actorFromTestData(testData);
-    let source = CombatskillData._calculateCombatSkillValues(testData.source, actor.system);
-    let result = await this._rollSingleD20(
+    const source = CombatskillData._calculateCombatSkillValues(testData.source, actor.system);
+    const result = await this._rollSingleD20(
       roll,
       source.system[testData.mode].value,
       testData.mode,
@@ -1661,9 +1661,9 @@ export default class DiceDSA5 {
     const effectString = source.system.effect ? source.system.effect.value : undefined;
     const result = [];
     if (effectString) {
-      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z \(\)]+$/;
+      const regex = /^[a-z]+\|[öäüÖÄÜa-zA-z ()]+$/;
 
-      for (let k of effectString.split(';')) {
+      for (const k of effectString.split(';')) {
         if (regex.test(k.trim())) {
           const split = k.split('|').map((x) => x.trim());
           if (split[0] == 'condition') {
@@ -1750,13 +1750,13 @@ export default class DiceDSA5 {
   }
 
   static async rollSpell(testData) {
-    let res = await this._rollThreeD20(testData);
+    const res = await this._rollThreeD20(testData);
     const isClerical = [CEREMONY, LITURGY].includes(testData.source.type);
     res.rollType = testData.source.type;
     const actor = this.#actorFromTestData(testData);
     res.preData.calculatedSpellModifiers.finalcost = res.preData.calculatedSpellModifiers.cost;
     if (res.successLevel >= 2) {
-      let extraFps = (await new Roll('1d6').evaluate()).total;
+      const extraFps = (await new Roll('1d6').evaluate()).total;
       res.description = res.description + ', ' + _loc('additionalFPs') + ' ' + extraFps;
       res.result += extraFps;
       res.qualityStep = Math.min(game.settings.get('dsa5', 'capQSat'), Math.ceil(res.result / 3));
@@ -1769,21 +1769,21 @@ export default class DiceDSA5 {
       if (testData.source.system.effectFormula.value != '') {
         const replaceQS = new RegExp(`(QL|QS|${_loc('CHARAbbrev.QS')})`, 'g');
         let formula = DiceDSA5.replaceDieLocalization(testData.source.system.effectFormula.value.replaceAll(replaceQS, res.qualityStep));
-        let armorPen = [];
-        for (let mod of testData.situationalModifiers) {
+        const armorPen = [];
+        for (const mod of testData.situationalModifiers) {
           if (mod.armorPen) armorPen.push(mod.armorPen);
         }
         if (/(,|;)/.test(formula)) formula = formula.split(/[,;]/)[res.qualityStep - 1];
 
-        let rollEffect = testData.damageRoll
+        const rollEffect = testData.damageRoll
           ? testData.damageRoll
           : await DiceDSA5.manualRolls(await new Roll(formula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options);
 
         this._addRollDiceSoNice(testData, rollEffect, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
         res['calculatedEffectFormula'] = formula;
-        for (let k of rollEffect.terms) {
+        for (const k of rollEffect.terms) {
           if (k instanceof foundry.dice.terms.Die || k.class == 'Die')
-            for (let l of k.results)
+            for (const l of k.results)
               res['characteristics'].push({
                 char: 'effect',
                 res: l.result,
@@ -1820,33 +1820,33 @@ export default class DiceDSA5 {
   }
 
   static async _rollThreeD20(testData) {
-    let roll = testData.roll ? (testData.roll instanceof Roll ? testData.roll : Roll.fromData(testData.roll)) : await new Roll('1d20+1d20+1d20').evaluate();
+    const roll = testData.roll ? (testData.roll instanceof Roll ? testData.roll : Roll.fromData(testData.roll)) : await new Roll('1d20+1d20+1d20').evaluate();
     let description = [];
     let successLevel = 0;
     const actor = this.#actorFromTestData(testData);
 
     this._appendSituationalModifiers(testData, _loc('Difficulty'), testData.testDifficulty);
-    let modifiers = await this._situationalModifiers(testData);
+    const modifiers = await this._situationalModifiers(testData);
 
     let fws = Number(testData.source.system.talentValue.value) + testData.advancedModifiers.fws + (await this._situationalModifiers(testData, 'FW'));
     const pcms = this._situationalPartCheckModifiers(testData, DICE_CONSTANTS.MODIFIER_TYPES.TPM);
 
-    let tar = [1, 2, 3].map(
+    const tar = [1, 2, 3].map(
       (x) => actor.system.characteristics[testData.source.system[`characteristic${x}`].value].value + modifiers + testData.advancedModifiers.chars[x - 1] + pcms[x - 1],
     );
-    let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
+    const res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
 
     if (testData.routine) fws = Math.round(fws / 2);
-    else for (let k of res) if (k > 0) fws -= k;
+    else for (const k of res) if (k > 0) fws -= k;
 
-    let crit = actor.system.skillModifiers.crit;
+    const crit = actor.system.skillModifiers.crit;
     let botch = actor.system.skillModifiers.botch;
     if ([SPELL, RITUAL].includes(testData.source.type) && AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.wildMagic')) botch = 19;
 
     if (testData.source.type == SKILL && AdvantageRulesDSA5.hasVantage(actor, `${_loc('LocalizedIDs.incompetent')} (${testData.source.name})`, false)) {
-      let reroll = await new Roll('1d20').evaluate();
-      let indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0);
-      let oldValue = roll.terms[indexOfMinValue * 2].total;
+      const reroll = await new Roll('1d20').evaluate();
+      const indexOfMinValue = res.reduce((iMin, x, i, arr) => (x < arr[iMin] ? i : iMin), 0);
+      const oldValue = roll.terms[indexOfMinValue * 2].total;
       fws += Math.max(res[indexOfMinValue], 0);
       fws -= Math.max(0, reroll.total - tar[indexOfMinValue]);
       roll.editRollAtIndex([{ index: indexOfMinValue, val: reroll.total }]);
@@ -1908,7 +1908,7 @@ export default class DiceDSA5 {
   }
 
   static async rollTalent(testData) {
-    let res = await this._rollThreeD20(testData);
+    const res = await this._rollThreeD20(testData);
     res.rollType = 'talent';
     return res;
   }
@@ -1952,24 +1952,24 @@ export default class DiceDSA5 {
   }
 
   static async rollItem(testData) {
-    let roll = testData.roll || (await new Roll('1d20+1d20+1d20').evaluate());
+    const roll = testData.roll || (await new Roll('1d20+1d20+1d20').evaluate());
     let description = [];
-    let modifier = await this._situationalModifiers(testData);
+    const modifier = await this._situationalModifiers(testData);
     let fws = Number(testData.source.system.step.value);
-    let tar = [1, 2, 3].map((x) => 10 + Number(testData.source.system.step.value) + modifier);
-    let res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
-    for (let k of res) {
+    const tar = [1, 2, 3].map((x) => 10 + Number(testData.source.system.step.value) + modifier);
+    const res = [0, 1, 2].map((x) => roll.terms[x * 2].results[0].result - tar[x]);
+    for (const k of res) {
       if (k > 0) fws -= k;
     }
 
-    let botch = 20;
+    const botch = 20;
 
     const successLevel = DiceDSA5.get3D20SuccessLevel(roll, fws, botch);
     description.push(DiceDSA5.getSuccessDescription(successLevel));
 
     description = description.join(', ');
 
-    let result = {
+    const result = {
       result: fws,
       characteristics: [0, 1, 2].map((x) => {
         return {
@@ -1991,14 +1991,14 @@ export default class DiceDSA5 {
     };
     switch (testData.source.type) {
       case ROLL_TYPES.POISON:
-        let dur = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
-        let effect = testData.source.system.effect.value.split(' / ').map((x) => x.trim());
+        const dur = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
+        const effect = testData.source.system.effect.value.split(' / ').map((x) => x.trim());
         result.duration = dur.length > 1 ? (result.successLevel > 0 ? dur[0] : dur[1]) : dur[0];
         result.effect = effect.length > 1 ? (result.successLevel > 0 ? effect[0] : effect[1]) : effect[0];
         break;
       case ROLL_TYPES.DISEASE:
-        let dmg = testData.source.system.damage.value.split(' / ').map((x) => x.trim());
-        let duration = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
+        const dmg = testData.source.system.damage.value.split(' / ').map((x) => x.trim());
+        const duration = testData.source.system.duration.value.split(' / ').map((x) => x.trim());
         result.damageeffect = dmg.length > 1 ? (result.successLevel > 0 ? dmg[0] : dmg[1]) : dmg[0];
         result.duration = duration.length > 1 ? (result.successLevel > 0 ? duration[0] : duration[1]) : duration[0];
         break;
@@ -2012,7 +2012,7 @@ export default class DiceDSA5 {
 
   static _compareWeaponReach(weapon, testData) {
     //TODO move this to roll dialog
-    let circumvent = testData.situationalModifiers.find((x) => x.name == _loc('LocalizedIDs.circumvent'));
+    const circumvent = testData.situationalModifiers.find((x) => x.name == _loc('LocalizedIDs.circumvent'));
     const attacker = DSA5.meleeRangesArray.indexOf(weapon.system.reach.value);
     const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize);
     if (circumvent && defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2;
@@ -2119,7 +2119,7 @@ export default class DiceDSA5 {
 
     const hasAreaTemplate = testData.successLevel > 0 && preData.source.system.target && preData.source.system.target.type in game.dsa5.config.areaTargetTypes;
 
-    let chatData = {
+    const chatData = {
       title: chatOptions.title,
       immuneTo,
       testData,
@@ -2214,13 +2214,13 @@ export default class DiceDSA5 {
   }
 
   static async _itemRoll(ev) {
-    let messageId = $(ev.currentTarget).parents('.message').attr('data-message-id'),
+    const messageId = $(ev.currentTarget).parents('.message').attr('data-message-id'),
       message = game.messages.get(messageId),
       speaker = message.speaker,
       category = ev.currentTarget.dataset.type,
       name = ev.currentTarget.dataset.name;
 
-    let actor = DSA5_Utility.getSpeaker(speaker);
+    const actor = DSA5_Utility.getSpeaker(speaker);
 
     if (actor) {
       const source = actor.items.find((x) => x.name == name && x.type == category);
@@ -2256,12 +2256,12 @@ export default class DiceDSA5 {
   }
 
   static async _rollEdit(ev) {
-    let input = $(ev.currentTarget),
+    const input = $(ev.currentTarget),
       messageId = input.parents('.message').attr('data-message-id'),
       message = game.messages.get(messageId);
 
-    let data = message.flags.data;
-    let newTestData = data.preData;
+    const data = message.flags.data;
+    const newTestData = data.preData;
 
     if (newTestData.extra.options.cheat) delete newTestData.extra.options.cheat;
     let index;
@@ -2269,14 +2269,14 @@ export default class DiceDSA5 {
     switch (input.attr('data-edit-type')) {
       case 'roll':
         index = input.attr('data-edit-id');
-        let newValue = Number(input.val());
+        const newValue = Number(input.val());
 
         if (newTestData.roll.terms.length > index * 2) {
-          let newRoll = Roll.fromData(newTestData.roll);
+          const newRoll = Roll.fromData(newTestData.roll);
           newRoll.editRollAtIndex([{ index, val: newValue }]);
           newTestData.roll = newRoll;
         } else {
-          let oldDamageRoll = Roll.fromData(data.postData.damageRoll);
+          const oldDamageRoll = Roll.fromData(data.postData.damageRoll);
           index = index - newTestData.roll.terms.filter((x) => x.results).length;
           oldDamageRoll.editRollAtIndex([{ index, val: newValue }]);
           newTestData.damageRoll = oldDamageRoll;
@@ -2286,7 +2286,7 @@ export default class DiceDSA5 {
         index = newTestData.situationalModifiers.findIndex((x) => x.name == _loc('chatEdit'));
         if (index > 0) newTestData.situationalModifiers.splice(index, 1);
 
-        let newVal = {
+        const newVal = {
           name: _loc('chatEdit'),
           value: Number(input.val()) - (await this._situationalModifiers(newTestData)),
         };
@@ -2296,7 +2296,7 @@ export default class DiceDSA5 {
 
     if (data.postData.damageRoll && !newTestData.damageRoll) newTestData.damageRoll = data.postData.damageRoll;
 
-    let chatOptions = {
+    const chatOptions = {
       template: data.template,
       messageMode: data.messageMode,
       title: data.title,
@@ -2332,7 +2332,7 @@ export default class DiceDSA5 {
     let i18nkey;
     if (ev.currentTarget.dataset.target == 'target') {
       i18nkey = 'TT.applyEffectTargets';
-      for (let target of game.user.targets) targets.push(target.document.texture.src);
+      for (const target of game.user.targets) targets.push(target.document.texture.src);
     } else {
       i18nkey = 'TT.applyEffectCaster';
       const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
@@ -2370,7 +2370,7 @@ export default class DiceDSA5 {
   static async chatListeners(html) {
     html.on('click', '.expand-mods', (event) => {
       event.preventDefault();
-      let elem = $(event.currentTarget);
+      const elem = $(event.currentTarget);
       elem.find('i').toggleClass('fa-minus fa-plus');
       elem.siblings('ul,div').fadeToggle();
     });
@@ -2399,14 +2399,14 @@ export default class DiceDSA5 {
         await TableEffects.applyEffect(id, mode);
       });
     });
-    html.on('click', '.placeTemplate', async (ev) => MeasuredTemplateDSA.placeTemplateFromChat(ev));
+    html.on('click', '.placeTemplate', async (ev) => DSARegionTemplate.placeTemplateFromChat(ev));
     html.on('click', '.message-delete', (ev) => {
-      let message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
-      let targeted = message.flags.unopposeData;
+      const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
+      const targeted = message.flags.unopposeData;
 
       if (!targeted) return;
 
-      let target = canvas.tokens.get(message.flags.unopposeData.targetSpeaker.token);
+      const target = canvas.tokens.get(message.flags.unopposeData.targetSpeaker.token);
       OpposedDsa5.clearOpposed(target.actor);
     });
     html.on('click', '.resistEffect', (ev) => DSAActiveEffectConfig.resistEffect(ev));

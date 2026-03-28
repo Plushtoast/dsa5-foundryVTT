@@ -1,4 +1,3 @@
-import Actordsa5 from '../actor/actor-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
@@ -85,12 +84,12 @@ export default class DSA5SpellDialog extends DialogShared {
     const mods = [];
     const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
     this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers);
-    for (let k of parent.find('.specAbs.active')) {
+    for (const k of parent.find('.specAbs.active')) {
       const item = await fromUuid(k.dataset.uuid);
       if (!item) continue;
 
-      for (let ef of item.effects) {
-        for (let change of ef.changes) {
+      for (const ef of item.effects) {
+        for (const change of ef.system.changes) {
           if (DSA5SpellDialog.rollChanges.includes(change.key)) {
             let name = item.name.split(' - ');
             const typeName = _loc(`MODS.${change.key}`);
@@ -101,7 +100,7 @@ export default class DSA5SpellDialog extends DialogShared {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
             ef.apply(this.dialogData.renderData.rollModifiersPrepared, change);
-          } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+          } else if (change.key == 'system.effectFormula.value' && change.type === 'add') {
             source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
               return x + change.value
             }).join(',');
@@ -125,7 +124,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const rollModifiers = duplicate(DSA5SpellDialog.rollModifiers);
     const tt = `${type}RollModifiers`;
     if (actor.system[tt]) {
-      for (let key of Object.keys(actor.system[tt])) {
+      for (const key of Object.keys(actor.system[tt])) {
         rollModifiers[key].mod += Number(actor.system[tt][key]?.mod ?? 0);
       }
     }
@@ -136,15 +135,15 @@ export default class DSA5SpellDialog extends DialogShared {
     const parent = html;
     const source = duplicate(this.dialogData.source);
     RuleChaos.ensureNumber(source);
-    let castingTime = parent.find('.castingTime');
-    let aspcost = parent.find('.aspcost');
-    let reach = parent.find('.reach');
-    let maintainCost = parent.find('.maintainCost');
+    const castingTime = parent.find('.castingTime');
+    const aspcost = parent.find('.aspcost');
+    const reach = parent.find('.reach');
+    const maintainCost = parent.find('.maintainCost');
 
-    let bigCasts = parent.find('.ritual').length > 0;
+    const bigCasts = parent.find('.ritual').length > 0;
     await this.applyTransformations(source, parent);
 
-    let maxMods = parent.find('.maxMods');
+    const maxMods = parent.find('.maxMods');
     if (parent.find('.spellModifier:checked').length > Number(maxMods.text())) {
       if (event) event.currentTarget.checked = false;
       maxMods.addClass('emphasize');
@@ -154,7 +153,7 @@ export default class DSA5SpellDialog extends DialogShared {
       return;
     }
 
-    for (let key of Object.keys(this.dialogData.renderData.rollModifiersPrepared)) {
+    for (const key of Object.keys(this.dialogData.renderData.rollModifiersPrepared)) {
       const val = this.dialogData.renderData.rollModifiersPrepared[key].mod;
       html.find(`.${key}Label`).text(`(${val})`);
       html.find(`#${key}`).val(val);
@@ -173,9 +172,9 @@ export default class DSA5SpellDialog extends DialogShared {
       }
     }
 
-    let baseAsp = source.system.AsPCost.value;
-    let baseReach = source.system.range.value;
-    let baseCastingTime = source.system.castingTime.value;
+    const baseAsp = source.system.AsPCost.value;
+    const baseReach = source.system.range.value;
+    const baseCastingTime = source.system.castingTime.value;
 
     let newPosition = baseAsp;
     let newMaintainCost = source.system.maintainCost.value;
@@ -186,7 +185,7 @@ export default class DSA5SpellDialog extends DialogShared {
       const factor = element.dataset.cost < 0 ? 0.5 : 2;
       newPosition = newPosition * factor;
       if (newMaintainCost != '' && newMaintainCost != undefined) {
-        let maintains = String(newMaintainCost).split(' ');
+        const maintains = String(newMaintainCost).split(' ');
         maintains[0] = Math.max(Number(maintains[0]) * factor);
         newMaintainCost = maintains.join(' ');
       }
@@ -204,9 +203,9 @@ export default class DSA5SpellDialog extends DialogShared {
     newPosition = baseCastingTime;
     parent.find('.spellModifier[data-casting-time]:checked').each(function (index, element) {
       if (bigCasts) {
-        let ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
+        const ind = DSA5SpellDialog.bigTimes.indexOf(Number(newPosition));
         if (ind != undefined) {
-          let newIndex = ind + (element.value > 0 ? 1 : -1);
+          const newIndex = ind + (element.value > 0 ? 1 : -1);
           if (newIndex < DSA5SpellDialog.bigTimes.length && newIndex >= 0) {
             newPosition = DSA5SpellDialog.bigTimes[newIndex];
           } else {
@@ -241,7 +240,7 @@ export default class DSA5SpellDialog extends DialogShared {
         reach.text('4 ' + _loc('step'));
         mod += Number(element.value);
       } else {
-        let val = baseReach.split(' ');
+        const val = baseReach.split(' ');
         newReach = Number(val[0]);
         if (isNaN(newReach)) {
           if (event) event.currentTarget.checked = false;
@@ -273,7 +272,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const fw = fwBase + fwDialog + (await DiceDSA5._situationalModifiers(data, 'FW'));
 
     const maintainedSpells = Number(html.find('[name=maintainedSpells]').val()) || 0;
-    let mod =
+    const mod =
       (await DiceDSA5._situationalModifiers(data)) +
       html
         .find('input.spellModifier:checked')
@@ -297,9 +296,9 @@ export default class DSA5SpellDialog extends DialogShared {
     });
 
     html.find('.variableBaseCost').on('change', (ev) => {
-      let parent = $(ev.currentTarget).parents('.skill-test');
-      let oldVal = parent.find('.aspcost').attr('data-base');
-      let newVal = $(ev.currentTarget).val();
+      const parent = $(ev.currentTarget).parents('.skill-test');
+      const oldVal = parent.find('.aspcost').attr('data-base');
+      const newVal = $(ev.currentTarget).val();
       parent.find('.aspcost').attr('data-base', newVal);
       parent.find('.aspcost').text((Number(parent.find('.aspcost').text()) * newVal) / oldVal);
     });

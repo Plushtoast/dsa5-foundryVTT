@@ -39,5 +39,5 @@ export class ItemFactory {
      */
     static setupSubclasses(classes) {
         game.dsa5.config.ItemSubclasses = new Map(Object.entries(classes));
-    } 
+    }
 }

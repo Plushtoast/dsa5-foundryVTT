@@ -13,6 +13,7 @@ import { tinyNotification } from '../system/helpers/view_helper.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import { DSAAura } from '../system/automation/aura.js';
 import CreatureType from '../system/automation/creature-type.js';
 import Riding from '../system/automation/riding.js';
 import APTracker from '../system/orwell/ap-tracker.js';
@@ -87,14 +88,14 @@ export default class Actordsa5 extends Actor {
   }
 
   static async _onCreateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       await Actordsa5.postUpdateConditions(doc);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       await Actordsa5.postUpdateConditions(doc);
     }
     return super._onUpdateOperation(documents, operation, user);
@@ -169,9 +170,9 @@ export default class Actordsa5 extends Actor {
     const changes = this.collectActorEffectChanges();
     this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);
     changes.sort((a, b) => a.priority - b.priority);
-    for (let change of changes) {
+    for (const change of changes) {
       if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
-      const result = change.effect.apply(this, change);
+      const result = DSAActiveEffect.applyChange(this, change);
       Object.assign(overrides, result);
     }
 
@@ -205,10 +206,10 @@ export default class Actordsa5 extends Actor {
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
-          ...e.changes.map(c => {
+          ...e.system.changes.map(c => {
             c = foundry.utils.duplicate(c);
             c.effect = e;
-            c.priority = c.priority || c.mode * 10;
+            c.priority = c.priority || (CONST.ACTIVE_EFFECT_CHANGE_TYPES[c.type] ?? 0);
             return c;
           })
         );
@@ -222,7 +223,7 @@ export default class Actordsa5 extends Actor {
   }
 
   collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages) {
-    for (let item of this.items) {
+    for (const item of this.items) {
       for (const e of item.effects) {
         const delayedData = e.system?.delayed;
         const isDelayed = !!delayedData?.enabled;
@@ -250,10 +251,10 @@ export default class Actordsa5 extends Actor {
 
         for (let i = 0; i < multiply; i++) {
           changes.push(
-            ...e.changes.map(c => {
+            ...e.system.changes.map(c => {
               c = foundry.utils.duplicate(c);
               c.effect = e;
-              c.priority = c.priority || c.mode * 10;
+              c.priority = c.priority || (CONST.ACTIVE_EFFECT_CHANGE_TYPES[c.type] ?? 0);
               return c;
             })
           );
@@ -376,7 +377,7 @@ export default class Actordsa5 extends Actor {
       for (const effect of armorCopy.armor.effects) {
         if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
 
-        for (const change of effect.changes) {
+        for (const change of effect.system.changes) {
           if (change.key !== 'self.armorVulnerability') continue;
 
           const adaptions = change.value.split(/[,;]/);
@@ -448,30 +449,28 @@ export default class Actordsa5 extends Actor {
     };
   }
 
-  drawAuras(force = false) {
-    for (const token of this.getActiveTokens()) {
-      token.drawAuras(force);
-    }
-  }
-
   _onCreateDescendantDocuments(...args) {
     super._onCreateDescendantDocuments(...args);
-    this.drawAuras();
+    if (args[1] == 'effects') this.#syncEmanations();
   }
 
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
     const force =
       args[1] == 'effects' &&
-      args[3].some((x) => {
-        return ['system.aura.auraRadius', 'system.aura.borderColor', 'system.aura.disposition', 'system.aura.fillColor', 'system.aura.borderThickness'].some((y) => hasProperty(x, y));
-      });
-    this.drawAuras(force);
+      args[3].some((x) => hasProperty(x, 'system.aura'));
+    if (force) this.#syncEmanations();
   }
 
   _onDeleteDescendantDocuments(...args) {
-    super._onCreateDescendantDocuments(...args);
-    this.drawAuras();
+    super._onDeleteDescendantDocuments(...args);
+    if (args[1] == 'effects') this.#syncEmanations();
+  }
+
+  #syncEmanations() {
+    for (const token of this.getActiveTokens()) {
+      DSAAura.ensureEmanations(token);
+    }
   }
 
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
@@ -870,7 +869,7 @@ export default class Actordsa5 extends Actor {
     if (containers.has(elem._id)) {
       elem.children = [];
 
-      for (let child of containers.get(elem._id)) {
+      for (const child of containers.get(elem._id)) {
         elem.children.push(child);
         if (containers.has(child._id)) {
           this._setBagContent(child, containers);
@@ -1040,11 +1039,11 @@ export default class Actordsa5 extends Actor {
 
   tokenScrollingText(texts) {
     const tokens = this.isToken ? [this.token?.object] : this.getActiveTokens(true);
-    for (let t of tokens) {
+    for (const t of tokens) {
       if (!t) continue;
 
       let index = 0;
-      for (let k of texts) {
+      for (const k of texts) {
         canvas.interface.createScrollingText(t.center, k.value, {
           anchor: index,
           direction: k.value > 0 ? 2 : 1,
@@ -1075,7 +1074,7 @@ export default class Actordsa5 extends Actor {
     if (game.combat?.isBrawling) statusText.temporaryLeP = 0xfc2a8f;
 
     const scrolls = [];
-    for (let key of Object.keys(statusText)) {
+    for (const key of Object.keys(statusText)) {
       const value = this._containsChangedAttribute(data, `system.status.${key}.value`);
       if (value !== false)
         scrolls.push({
@@ -1232,8 +1231,8 @@ export default class Actordsa5 extends Actor {
   }
 
   _setupFallingHeight(options, tokenId) {
-    let title = _loc('fallingDamage');
-    let testData = {
+    const title = _loc('fallingDamage');
+    const testData = {
       source: {
         type: 'fallingDamage',
       },
@@ -1336,11 +1335,11 @@ export default class Actordsa5 extends Actor {
   }
 
   setupCharacteristic(characteristicId, options = {}, tokenId) {
-    let char = duplicate(this.system.characteristics[characteristicId]);
-    let title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + _loc('Test');
+    const char = duplicate(this.system.characteristics[characteristicId]);
+    const title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + _loc('Test');
 
     char.attr = characteristicId;
-    let testData = {
+    const testData = {
       opposable: false,
       source: {
         type: 'char',
@@ -1353,7 +1352,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/characteristic-dialog.hbs',
       data: {
@@ -1370,7 +1369,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
+    const cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1483,7 +1482,7 @@ export default class Actordsa5 extends Actor {
     const dup = duplicate(item);
     const value = getProperty(item, `flags.dsa5.alternateAttacks.${id}`);
     const data = foundry.utils.flattenObject(value);
-    for (let key of Object.keys(data)) {
+    for (const key of Object.keys(data)) {
       if (this.skipAlternateWeaponKeys.has(data[key]) || data[key] == null || data[key] == undefined) delete data[key];
     }
     mergeObject(dup, data);
@@ -1499,7 +1498,7 @@ export default class Actordsa5 extends Actor {
 
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
-    let update = {};
+    const update = {};
 
     if (!data.img) update.img = 'icons/svg/mystery-man-black.svg';
 
@@ -1783,7 +1782,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {
-    let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
+    const skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     item.calculatedRange = item.system.reach.value;
 
     let currentAmmo;
@@ -1793,7 +1792,7 @@ export default class Actordsa5 extends Actor {
       if (item.system.ammunitiongroup.value != '-') {
         item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
 
-        for (let am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`;
+        for (const am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`;
 
         currentAmmo = item.ammo.find((x) => x._id == item.system.currentAmmo.value);
         if (currentAmmo) {
@@ -1818,7 +1817,7 @@ export default class Actordsa5 extends Actor {
 
       if (isBaseWeapon) {
         item.subweapons = {};
-        for (let key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
+        for (const key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
           const dup = this.buildSubweapon(item, key);
           const done = this._prepareRangeWeapon(dup, ammunitions, combatskills, actor, false);
           item.subweapons[key] = done;
@@ -1952,7 +1951,7 @@ export default class Actordsa5 extends Actor {
       testData.extra.ammoDecreased = true;
 
       if (testData.extra.ammo._id) {
-        let ammoUpdate = { _id: testData.extra.ammo._id };
+        const ammoUpdate = { _id: testData.extra.ammo._id };
         if (testData.extra.ammo.system.ammunitiongroup.value == 'mag') {
           if (testData.extra.ammo.system.mag.value <= 0) {
             testData.extra.ammo.system.quantity.value--;
@@ -1999,7 +1998,7 @@ export default class Actordsa5 extends Actor {
 
   async basicTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
-    let result = await DiceDSA5.rollTest(testData);
+    const result = await DiceDSA5.rollTest(testData);
 
     if (testData.extra.options.other) {
       if (!result.other) result.other = [];
@@ -2060,8 +2059,8 @@ export default class Actordsa5 extends Actor {
       effect.name = _loc(effect.name);
       effect.system.description = _loc(effect.system.description || effect.name);
 
-      if (effect.changes) {
-        effect.changes = effect.changes.map((change) => {
+      if (effect.system?.changes) {
+        effect.system.changes = effect.system.changes.map((change) => {
           if (/^system\.condition\./.test(change.key)) {
             change.value = value;
           }
@@ -2113,7 +2112,7 @@ export default class Actordsa5 extends Actor {
   async markDead(dead) {
     const tokens = this.getActiveTokens();
 
-    for (let token of tokens) {
+    for (const token of tokens) {
       if (token.combatant) await token.combatant.update({ defeated: dead });
     }
   }

@@ -236,7 +236,7 @@ export default class Riding {
       img: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       system: {
         description: _loc('RIDING.ridingDescription'),
-        changes: [{ key: 'system.status.dodge.gearmodifier', mode: 2, value: -2 }],
+        changes: [{ key: 'system.status.dodge.gearmodifier', type: 'add', value: -2 }],
       },
     };
   }
@@ -355,10 +355,10 @@ export default class Riding {
   }
 
   static speedKeys = {
-    0: { key: 'system.status.speed.multiplier', mode: 5, value: 0 },
-    '-4': { key: 'system.status.speed.initial', mode: 5, value: 4 },
-    '-5000': { key: 'system.status.speed.multiplier', mode: 5, value: 0.66 },
-    '-8': { key: 'system.status.speed.multiplier', mode: 5, value: 1 },
+    0: { key: 'system.status.speed.multiplier', type: 'override', value: 0 },
+    '-4': { key: 'system.status.speed.initial', type: 'override', value: 4 },
+    '-5000': { key: 'system.status.speed.multiplier', type: 'override', value: 0.66 },
+    '-8': { key: 'system.status.speed.multiplier', type: 'override', value: 1 },
   };
 
   static getHorseSpeed(horse) {

@@ -142,23 +142,14 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     };
   }
 
-  // Format time as "formatRemaining"
-  static async formatRemaining(calendar, components, options) {
-    const searchParts = ['year', 'month', 'day', 'hour', 'minute'];
-
-    for(const search of searchParts) {
-      if(components[search] > 0) return `> ${components[search]} ${calendar.translate(search)}`;
-    }
-
-    if (components.second) {
-      if(game.combat) {
-        const rounds = Math.floor(components.second / CONFIG.time.roundTime);
-        return `> ${rounds} ${_loc('COMBAT.DURATION.ROUNDS.' + (rounds !== 1 ? 'many' : 'one'))}`;
-      }
-      return `> ${components.second} ${calendar.translate('second')}`;
-    }
-
-    return "?"
+  // WORKAROUND for Foundry V14 core bug: timeToComponents returns dayOfMonth,
+  // dayOfWeek, leapYear which are not valid Intl.DurationFormat fields.
+  // formatDuration appends 's' to all keys, producing e.g. dayOfWeeks → RangeError.
+  // Remove once core filters non-duration keys in CalendarData.formatDuration.
+  static formatDuration(calendar, components, options = {}) {
+    const VALID_DURATION_KEYS = new Set(["year", "month", "week", "day", "hour", "minute", "second"]);
+    const filtered = Object.fromEntries(Object.entries(components).filter(([key]) => VALID_DURATION_KEYS.has(key)));
+    return super.formatDuration(calendar, filtered, options);
   }
 
   static async formatSeason(calendar, components, options) {

@@ -57,7 +57,7 @@ export default class EffectDropdownBuilder {
     /**
      * Builds the array of dropdown options
      * @param {ActiveEffect} [document] - The active effect document for context
-     * @returns {Array<{name: string, val: string, mode: number, ph: string}>}
+     * @returns {Array<{name: string, val: string, type: string, ph: string}>}
      * @private
      */
     static _buildDropdownOptions(document = null) {
@@ -94,37 +94,37 @@ export default class EffectDropdownBuilder {
             {
                 name: _loc('protection'),
                 val: 'system.totalArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: _loc('liturgyArmor'),
                 val: 'system.liturgyArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${_loc('resistanceModifier')} (${_loc('condition')})`,
                 val: 'system.resistances.effects',
-                mode: 0,
+                type: 'custom',
                 ph: 'inpain 1',
             },
             {
                 name: `${_loc('threshold')} (${_loc('condition')})`,
                 val: 'system.thresholds.effects',
-                mode: 0,
+                type: 'custom',
                 ph: 'inpain 1',
             },
             {
                 name: _loc('spellArmor'),
                 val: 'system.spellArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: _loc('carrycapacity'),
                 val: 'system.carryModifier',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
         ];
@@ -151,61 +151,61 @@ export default class EffectDropdownBuilder {
             {
                 name: `${skill} - ${FW}`,
                 val: 'system.skillModifiers.FW',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${FP}`,
                 val: 'system.skillModifiers.FP',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${FP} (${postRoll})`,
                 val: 'system.skillModifiers.postRoll.FP',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${stepValue}`,
                 val: 'system.skillModifiers.step',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${QS}`,
                 val: 'system.skillModifiers.QL',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${QS} (${postRoll})`,
                 val: 'system.skillModifiers.postRoll.QL',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${reroll} (${postRoll})`,
                 val: 'system.skillModifiers.postRoll.reroll',
-                mode: 0,
+                type: 'custom',
                 ph: `${_loc('LocalizedIDs.perception')} 1`,
             },
             {
                 name: `${skill} - ${partChecks}`,
                 val: 'system.skillModifiers.TPM',
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
             {
                 name: `${skill} - ${_loc('MODS.global')}`,
                 val: 'system.skillModifiers.global',
-                mode: 0,
+                type: 'custom',
                 ph: '1',
             },
             {
                 name: `${skill} - ${compensation}`,
                 val: `system.skillModifiers.CMP`,
-                mode: 0,
+                type: 'custom',
                 ph: demo,
             },
         ];
@@ -220,37 +220,37 @@ export default class EffectDropdownBuilder {
                 {
                     name: `${modelName} - ${FW}`,
                     val: `system.skillModifiers.${model}.FW`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
                 {
                     name: `${modelName} - ${FP}`,
                     val: `system.skillModifiers.${model}.FP`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
                 {
                     name: `${modelName} - ${stepValue}`,
                     val: `system.skillModifiers.${model}.step`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
                 {
                     name: `${modelName} - ${QS}`,
                     val: `system.skillModifiers.${model}.QL`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
                 {
                     name: `${modelName} - ${partChecks}`,
                     val: `system.skillModifiers.${model}.TPM`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
                 {
                     name: `${modelName} - ${compensation}`,
                     val: `system.skillModifiers.${model}.CMP`,
-                    mode: 0,
+                    type: 'custom',
                     ph: demo,
                 },
             );
@@ -281,43 +281,43 @@ export default class EffectDropdownBuilder {
             {
                 name: `${closeCombat} - ${AT}`,
                 val: 'system.meleeStats.attack',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${closeCombat} - ${PA}`,
                 val: 'system.meleeStats.parry',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${closeCombat} - ${critSuccess}`,
                 val: 'system.meleeStats.crit',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${closeCombat} - ${critSuccess} (${PA})`,
                 val: 'system.meleeStats.critPA',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${closeCombat} - ${critSuccess} (${AT})`,
                 val: 'system.meleeStats.critAT',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${closeCombat} - ${damage}`,
                 val: 'system.meleeStats.damage',
-                mode: 2,
+                type: 'add',
                 ph: '+1d6',
             },
             {
                 name: `${closeCombat} - ${defenseMalus}`,
                 val: 'system.meleeStats.defenseMalus',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
 
@@ -325,25 +325,25 @@ export default class EffectDropdownBuilder {
             {
                 name: `${rangeCombat} - ${AT}`,
                 val: 'system.rangeStats.attack',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${rangeCombat} - ${critSuccess}`,
                 val: 'system.rangeStats.crit',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${rangeCombat} - ${damage}`,
                 val: 'system.rangeStats.damage',
-                mode: 2,
+                type: 'add',
                 ph: '+1d6',
             },
             {
                 name: `${rangeCombat} - ${defenseMalus}`,
                 val: 'system.rangeStats.defenseMalus',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
 
@@ -351,13 +351,13 @@ export default class EffectDropdownBuilder {
             {
                 name: `${miracle} - ${AT}`,
                 val: 'system.miracle.attack',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${miracle} - ${PA}`,
                 val: 'system.miracle.parry',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
 
@@ -365,31 +365,31 @@ export default class EffectDropdownBuilder {
             {
                 name: `${combatskill} - ${AT}`,
                 val: 'system.skillModifiers.combat.attack',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
             {
                 name: `${combatskill} - ${PA}`,
                 val: 'system.skillModifiers.combat.parry',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
             {
                 name: `${combatskill} - ${_loc('KTW')}`,
                 val: 'system.skillModifiers.combat.step',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
             {
                 name: `${combatskill} - ${damage}`,
                 val: 'system.skillModifiers.combat.damage',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
             {
                 name: `${combatskill} - ${_loc('damageThreshold')}`,
                 val: 'system.skillModifiers.combat.damageThreshold',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
 
@@ -397,7 +397,7 @@ export default class EffectDropdownBuilder {
             {
                 name: `${_loc('vulnerability')} - ${combatskill}`,
                 val: 'system.vulnerabilities.combatskill',
-                mode: 0,
+                type: 'custom',
                 ph: csdemo,
             },
 
@@ -405,7 +405,7 @@ export default class EffectDropdownBuilder {
             {
                 name: _loc('MODS.creatureBonus'),
                 val: 'system.creatureBonus',
-                mode: 0,
+                type: 'custom',
                 ph: `${_loc('CONJURATION.elemental')} 1`,
             },
         ];
@@ -419,7 +419,7 @@ export default class EffectDropdownBuilder {
                 combatOptions.push({
                     name: `${modelName} - ${_loc(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
                     val: `system.${model}RollModifiers.${k}`,
-                    mode: 2,
+                    type: 'add',
                     ph: '1',
                 });
             }
@@ -447,19 +447,19 @@ export default class EffectDropdownBuilder {
             {
                 name: `${combatReg} - ${wounds}`,
                 val: 'system.repeatingEffects.startOfRound.wounds',
-                mode: 0,
+                type: 'custom',
                 ph: '1d6',
             },
             {
                 name: `${combatReg} - ${astralEnergy}`,
                 val: 'system.repeatingEffects.startOfRound.astralenergy',
-                mode: 0,
+                type: 'custom',
                 ph: '1d6',
             },
             {
                 name: `${combatReg} - ${karmaEnergy}`,
                 val: 'system.repeatingEffects.startOfRound.karmaenergy',
-                mode: 0,
+                type: 'custom',
                 ph: '1d6',
             },
 
@@ -467,37 +467,37 @@ export default class EffectDropdownBuilder {
             {
                 name: `${regenerate} - ${wounds}`,
                 val: 'system.status.regeneration.LePgearmodifier',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${regenerate} - ${astralEnergy}`,
                 val: 'system.status.regeneration.AsPgearmodifier',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${regenerate} - ${karmaEnergy}`,
                 val: 'system.status.regeneration.KaPgearmodifier',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${regenerate} (${advanced}) - ${wounds}`,
                 val: 'system.status.regeneration.LePConditional',
-                mode: 0,
+                type: 'custom',
                 ph: conditionalHint,
             },
             {
                 name: `${regenerate} (${advanced}) - ${astralEnergy}`,
                 val: 'system.status.regeneration.AsPConditional',
-                mode: 0,
+                type: 'custom',
                 ph: conditionalHint,
             },
             {
                 name: `${regenerate} (${advanced}) - ${karmaEnergy}`,
                 val: 'system.status.regeneration.KaPConditional',
-                mode: 0,
+                type: 'custom',
                 ph: conditionalHint,
             },
         ];
@@ -524,18 +524,18 @@ export default class EffectDropdownBuilder {
 
         const options = [
             // Base costs
-            { name: KaPCost, val: 'system.kapModifier', mode: 2, ph: '1' },
-            { name: AsPCost, val: 'system.aspModifier', mode: 2, ph: '1' },
+            { name: KaPCost, val: 'system.kapModifier', type: 'add', ph: '1' },
+            { name: AsPCost, val: 'system.aspModifier', type: 'add', ph: '1' },
             {
                 name: `${permanentCost} ${_loc('CHARAbbrev.AsP')}`,
                 val: 'system.status.astralenergy.permanentGear',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${permanentCost} ${_loc('CHARAbbrev.KaP')}`,
                 val: 'system.status.karmaenergy.permanentGear',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
 
@@ -543,31 +543,31 @@ export default class EffectDropdownBuilder {
             {
                 name: `${spell} - ${damage}`,
                 val: 'system.spellStats.damage',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${liturgy} - ${damage}`,
                 val: 'system.liturgyStats.damage',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: foreign,
                 val: 'system.spellStats.foreign',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${spell} - ${foreign}`,
                 val: 'system.spellStats.foreignritual',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: `${ritual} - ${foreign}`,
                 val: 'system.spellStats.foreignspell',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
 
@@ -575,25 +575,25 @@ export default class EffectDropdownBuilder {
             {
                 name: `${feature} - ${AsPCost}`,
                 val: 'system.skillModifiers.feature.AsPCost',
-                mode: 0,
+                type: 'custom',
                 ph: featureHint,
             },
             {
                 name: `${advanced} - ${AsPCost}`,
                 val: 'system.skillModifiers.conditional.AsPCost',
-                mode: 0,
+                type: 'custom',
                 ph: descriptor,
             },
             {
                 name: `${feature} - ${KaPCost}`,
                 val: 'system.skillModifiers.feature.KaPCost',
-                mode: 0,
+                type: 'custom',
                 ph: featureHint,
             },
             {
                 name: `${advanced} - ${KaPCost}`,
                 val: 'system.skillModifiers.conditional.KaPCost',
-                mode: 0,
+                type: 'custom',
                 ph: descriptor,
             },
         ];
@@ -607,7 +607,7 @@ export default class EffectDropdownBuilder {
                 options.push({
                     name: `${_loc(k)} (${modelName})`,
                     val: `system.status.${k}.${model}resist`,
-                    mode: 2,
+                    type: 'add',
                     ph: '1',
                 });
             }
@@ -619,13 +619,13 @@ export default class EffectDropdownBuilder {
                     {
                         name: `${modelName} - ${loc}`,
                         val: `system.${model}RollModifiers.${k}.mod`,
-                        mode: 2,
+                        type: 'add',
                         ph: '1',
                     },
                     {
                         name: `${modelName} - ${loc} - ${advanced}`,
                         val: `system.${model}RollModifiers.${k}.custom`,
-                        mode: 0,
+                        type: 'custom',
                         ph: descriptor,
                     },
                 );
@@ -648,7 +648,7 @@ export default class EffectDropdownBuilder {
             options.push({
                 name: _loc(`CHAR.${k.toUpperCase()}`),
                 val: `system.characteristics.${k}.gearmodifier`,
-                mode: 2,
+                type: 'add',
                 ph: '1',
             });
         }
@@ -658,7 +658,7 @@ export default class EffectDropdownBuilder {
             options.push({
                 name: _loc(k),
                 val: `system.status.${k}.gearmodifier`,
-                mode: 2,
+                type: 'add',
                 ph: '1',
             });
         }
@@ -668,31 +668,31 @@ export default class EffectDropdownBuilder {
             {
                 name: _loc('MODS.sight'),
                 val: 'system.sightModifier.value',
-                mode: 2,
+                type: 'add',
                 ph: '-1',
             },
             {
                 name: _loc('MODS.sightMax'),
                 val: 'system.sightModifier.maxLevel',
-                mode: 5,
+                type: 'override',
                 ph: '4',
             },
             {
                 name: `${_loc('LocalizedIDs.immuneTo')} ${_loc('condition')}`,
                 val: 'system.immunities',
-                mode: 2,
+                type: 'add',
                 ph: 'feared',
             },
             {
                 name: _loc('temperature.heatProtection'),
                 val: 'system.temperature.heatProtection',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
                 name: _loc('temperature.coldProtection'),
                 val: 'system.temperature.coldProtection',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
         );
@@ -713,7 +713,7 @@ export default class EffectDropdownBuilder {
                 options.push({
                     name: _loc(effect.name),
                     val: `system.condition.${effect.id}`,
-                    mode: 2,
+                    type: 'add',
                     ph: '1',
                 });
             }
@@ -737,7 +737,7 @@ export default class EffectDropdownBuilder {
             options.push({
                 name: _loc('CustomActiveEffects.armor.vulnerability'),
                 val: 'self.armorVulnerability',
-                mode: 0,
+                type: 'custom',
                 ph: 'Swords 5',
             });
         }
@@ -756,7 +756,7 @@ export default class EffectDropdownBuilder {
                 options.push({
                     name: `${modelName} - ${mode}`,
                     val: `self.situational.${k}`,
-                    mode: 0,
+                    type: 'custom',
                     ph: '1',
                 });
             }
@@ -766,19 +766,19 @@ export default class EffectDropdownBuilder {
                 {
                     name: `${maneuver} - ${_loc('CHAR.attack')}`,
                     val: 'self.maneuver.atbonus',
-                    mode: 0,
+                    type: 'custom',
                     ph: `${maneuverExample} 1`,
                 },
                 {
                     name: `${maneuver} - ${_loc('CHAR.parry')}`,
                     val: 'self.maneuver.pabonus',
-                    mode: 0,
+                    type: 'custom',
                     ph: `${maneuverExample} 1`,
                 },
                 {
                     name: `${maneuver} - ${_loc('CHAR.damage')}`,
                     val: 'self.maneuver.tpbonus',
-                    mode: 0,
+                    type: 'custom',
                     ph: `${maneuverExample} 1`,
                 },
             );
@@ -796,13 +796,13 @@ export default class EffectDropdownBuilder {
     static _generateDropdownHTML(options) {
         // Validate options
         for (const option of options) {
-            if (!option.ph || option.mode === undefined) {
+            if (!option.ph || option.type === undefined) {
                 console.warn('Invalid dropdown option:', option);
             }
         }
 
         const optionStrings = options.map(
-            (option) => `<option value="${option.val}" data-mode="${option.mode}" data-ph="${option.ph}">${option.name}</option>`
+            (option) => `<option value="${option.val}" data-type="${option.type}" data-ph="${option.ph}">${option.name}</option>`
         );
 
         return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;

@@ -105,7 +105,7 @@ export default class Itemdsa5 extends Item {
    */
   static async create(data, options) {
     if (Array.isArray(data)) {
-      for (let d of data) {
+      for (const d of data) {
         this.defaultIcon(d);
       }
     } else {
@@ -405,7 +405,7 @@ export default class Itemdsa5 extends Item {
    * @private
    */
   static async _updateActorConditions(documents) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.actor) {
         await Actordsa5.postUpdateConditions(doc.actor);
       }
@@ -561,7 +561,7 @@ export default class Itemdsa5 extends Item {
    */
   async itemTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
-    let result = await DiceDSA5.rollTest(testData);
+    const result = await DiceDSA5.rollTest(testData);
 
     result.postFunction = 'itemTest';
 
@@ -657,18 +657,18 @@ class SpellItemDSA5 extends Itemdsa5 {
   static async applyExtensions(source, extensions, actor) {
     RuleChaos.ensureNumber(source);
     const rollModifiers = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
-    for (let extension of extensions) {
+    for (const extension of extensions) {
       const item = fromUuidSync(extension.uuid);
       if (!item) continue;
 
-      for (let ef of item.effects) {
-        for (let change of ef.changes) {
+      for (const ef of item.effects) {
+        for (const change of ef.system.changes) {
           if (DSA5SpellDialog.rollChanges.includes(change.key)) continue;
           if (rollModifiers.includes(change.key)) continue;
 
           if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
-          } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+          } else if (change.key == 'system.effectFormula.value' && change.type === 'add') {
             source.system.effectFormula.value = source.system.effectFormula.value
               .split(',')
               .map((x) => {
@@ -685,7 +685,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
   static getSpecAbModifiers(html) {
     const res = [];
-    for (let k of html.find('.specAbs.active')) {
+    for (const k of html.find('.specAbs.active')) {
       res.push({
         name: k.dataset.name,
         title: k.dataset.tooltip,
@@ -866,7 +866,7 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
 
     let timeModifier = 0;
     const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(_loc('LocalizedIDs.assumeTradition')));
-    let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
+    const assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
     const calendar = game.time.calendar;
 
     if (assumeTradition && calendar?.constructor?.isDSAcompatible) {
@@ -1154,7 +1154,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
   static async checkAmmunitionState(item, testData, actor, mode) {
     let hasAmmo = true;
     if (mode != ITEM_CONSTANTS.COMBAT_MODES.DAMAGE) {
-      let itemData = item.system;
+      const itemData = item.system;
       if (itemData.ammunitiongroup.value == 'infinite') {
         //Dont count ammo
       } else if (itemData.ammunitiongroup.value == '-') {

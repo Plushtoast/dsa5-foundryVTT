@@ -37,7 +37,7 @@ import DSAActiveEffect from './status/dsa_active_effects.js';
 import EquipmentDamage from './system/automation/equipment-damage.js';
 import DidYouKnow from './system/helpers/didyouknow.js';
 import MerchantSheetDSA5 from './actor/merchant-sheet.js';
-import { MeasuredTemplateDSA } from './system/automation/measuretemplate.js';
+import { DSARegionTemplate } from './system/automation/measuretemplate.js';
 import RequestRoll from './system/rolls/request-roll.js';
 import Riding from './system/automation/riding.js';
 import RuleChaos from './system/rules/rule_chaos.js';
@@ -62,6 +62,8 @@ import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
+import { DSAAuraRegionBehavior } from './data/regionbehaviors/aura.js';
+import { DSAZoneRegionBehavior } from './data/regionbehaviors/zone.js';
 import { DSACalendarEntry } from './data/journal/dsacalendar.js';
 import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
@@ -100,7 +102,7 @@ Hooks.once('init', () => {
       APTracker,
       MoneyTracker,
       DidYouKnow,
-      MeasuredTemplateDSA,
+      DSARegionTemplate,
       Riding,
       RuleChaos,
       Trade,
@@ -153,7 +155,9 @@ Hooks.once('init', () => {
       Combat: CombatDataModels,
       Combatant: CombatantDataModels,
       RegionBehavior: {
-        DSATrap: DSATrapRegionBehavior
+        DSATrap: DSATrapRegionBehavior,
+        DSAAura: DSAAuraRegionBehavior,
+        DSAZone: DSAZoneRegionBehavior,
       },
       JournalEntryPage: {
         dsacalendar: DSACalendarEntry,
@@ -188,6 +192,10 @@ Hooks.once('init', () => {
   CONFIG.Token.movement.defaultSpeed = 16;
   CONFIG.RegionBehavior.dataModels.DSATrap = DSATrapRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
+  CONFIG.RegionBehavior.dataModels.DSAAura = DSAAuraRegionBehavior;
+  CONFIG.RegionBehavior.typeIcons.DSAAura = 'fas fa-circle-radiation';
+  CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;
+  CONFIG.RegionBehavior.typeIcons.DSAZone = 'fas fa-bullseye';
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
   CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;

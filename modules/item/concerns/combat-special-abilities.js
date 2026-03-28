@@ -91,7 +91,7 @@ export class CombatSpecialAbilities {
         const effectChanges = {};
         for (const effect of source.effects || []) {
             if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
-            for (const change of effect.changes) {
+            for (const change of effect.system?.changes || []) {
                 if (!change.key.startsWith('self.maneuver.')) continue;
                 const parsed = DSA5_Utility.parseAbilityString(change.value);
                 if (parsed.name.endsWith('-')) {

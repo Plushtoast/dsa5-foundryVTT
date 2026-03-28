@@ -1491,6 +1491,7 @@
     "TYPES.Actor.npc": "Nichtspielercharakter",
     "TYPES.Actor.creature": "Kreatur",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
+    "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "TYPES.JournalEntryPage.dsaquestlog": "Questlog",
@@ -1877,6 +1878,10 @@
             "tools": {
                 "label": "Werkzeuge",
                 "hint": "Die Werkzeuge, die zum Entschärfen der Falle benötigt werden. Z.B. Dietriche, Kletterhaken oder spezielle Werkzeuge."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt automatisch Effekte dieser Falle, wenn ein Token die Region verlässt."
             }
         }
     },
@@ -1945,6 +1950,10 @@
         "hideOnToken": "Am Token verstecken",
         "hidePlayers": "Vor Spielern verstecken",
         "isAura": "Aura",
+        "auraColor": "Aurafarbe",
+        "auraHidden": "Region ausblenden",
+        "excludeSelf": "Selbst ausschließen",
+        "ignoreWalls": "Wände ignorieren",
         "radius": "Radius",
         "disposition": "Disposition",
         "applyTarget": "Effekt (Ziel)",
@@ -2178,6 +2187,43 @@
     "LocalizedSpecies": {
         "Zwerg": "Dwarf",
         "Elf": "Elf"
+    },
+    "REGIONBEHAVIOR_DSAZone": {
+        "MODES": {
+            "whileInZone": "Solange in Zone",
+            "once": "Einmalig beim Betreten",
+            "recurring": "Jede Runde"
+        },
+        "FIELDS": {
+            "messageId": {
+                "label": "Chat-Nachricht",
+                "hint": "Die Chat-Nachricht, die den anzuwendenden Effekt enthält."
+            },
+            "mode": {
+                "label": "Modus",
+                "hint": "Wie der Zoneneffekt auf Token angewendet wird."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt den Effekt automatisch, wenn ein Token die Zone verlässt."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAAura": {
+        "FIELDS": {
+            "effectUuid": {
+                "label": "Effekt UUID",
+                "hint": "Die UUID des aktiven Effekts, der diese Aura definiert."
+            },
+            "disposition": {
+                "label": "Gesinnung",
+                "hint": "Welche Token-Gesinnungen von dieser Aura betroffen sind (2 = alle)."
+            },
+            "ignoreWalls": {
+                "label": "Wände ignorieren",
+                "hint": "Wenn aktiviert, durchdringt die Aura Wände."
+            }
+        }
     },
     "SKILL_CHECK_MODIFIERS": {
         "GROUPS": {

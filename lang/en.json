@@ -1872,6 +1872,7 @@
     "TYPES.Actor.npc": "Non Player Character",
     "TYPES.Actor.creature": "Creature",
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
+    "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "TYPES.JournalEntryPage.dsaquestlog": "Questlog",
@@ -2036,6 +2037,47 @@
             "tools": {
                 "label": "Tools",
                 "hint": "The tools required to disarm the trap, e.g. lockpicks, climbing gear, or special tools."
+            },
+            "removeOnExit": {
+                "label": "Remove on Exit",
+                "hint": "Automatically remove effects applied by this trap when a token leaves the region."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAZone": {
+        "MODES": {
+            "whileInZone": "While in Zone",
+            "once": "Once on Enter",
+            "recurring": "Each Round"
+        },
+        "FIELDS": {
+            "messageId": {
+                "label": "Chat Message",
+                "hint": "The chat message containing the effect to apply."
+            },
+            "mode": {
+                "label": "Mode",
+                "hint": "How the zone effect is applied to tokens."
+            },
+            "removeOnExit": {
+                "label": "Remove on Exit",
+                "hint": "Automatically remove the effect when a token leaves the zone."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAAura": {
+        "FIELDS": {
+            "effectUuid": {
+                "label": "Effect UUID",
+                "hint": "The UUID of the active effect that defines this aura."
+            },
+            "disposition": {
+                "label": "Disposition",
+                "hint": "Which token dispositions this aura affects (2 = all)."
+            },
+            "ignoreWalls": {
+                "label": "Ignore Walls",
+                "hint": "If enabled, the aura passes through walls."
             }
         }
     },
@@ -2195,6 +2237,10 @@
         "hideOnToken": "Hide on Token",
         "hidePlayers": "Hide for players",
         "isAura": "Aura",
+        "auraColor": "Aura Color",
+        "auraHidden": "Hide Region",
+        "excludeSelf": "Exclude Self",
+        "ignoreWalls": "Ignore Walls",
         "radius": "Radius",
         "disposition": "Disposition",
         "applyTarget": "Effect (Target)",

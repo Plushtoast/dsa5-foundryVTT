@@ -154,8 +154,8 @@ export class CombatSystem {
             x.type === 'combatskill' && x.name === source.system.combatskill.value);
         if (!combatskill) return;
 
-        for (let ef of combatskill.effects) {
-            for (let change of ef.changes) {
+        for (const ef of combatskill.effects) {
+            for (const change of ef.system.changes) {
                 switch (change.key) {
                     case 'system.rangeStats.defenseMalus':
                     case 'system.meleeStats.defenseMalus':
@@ -316,8 +316,8 @@ export class CombatSystem {
         } else {
             mountedOptions = duplicate(DSA5.mountedRangeOptions);
         }
-        let finalMountedOptions = {};
-        for (let key of Object.keys(mountedOptions)) {
+        const finalMountedOptions = {};
+        for (const key of Object.keys(mountedOptions)) {
             finalMountedOptions[`${_loc('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
         }
         CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
@@ -387,10 +387,10 @@ export class CombatSystem {
    * @returns {void}
    */
     static addWeaponModifiers(situationalModifiers, source, mode) {
-        for (let effect of source.effects || []) {
+        for (const effect of source.effects || []) {
             if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
 
-            for (let change of effect.changes) {
+            for (const change of effect.system?.changes || []) {
                 if (change.key === `self.situational.${mode}`) {
                     const type = { damage: 'dmg' }[mode] || '';
                     const data = `${change.value}`.split(' ');

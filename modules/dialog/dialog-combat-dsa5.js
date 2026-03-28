@@ -90,10 +90,10 @@ export default class DSA5CombatDialog extends DialogShared {
   };
 
   static setData(actor, type, testData, renderData) {
-    let rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
+    const rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
     rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode);
     if (renderData.rangeOptions) {
-      for (let key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
+      for (const key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
     }
 
     const flattendRollModifiers = foundry.utils.flattenObject(rollModifiers);
@@ -102,16 +102,16 @@ export default class DSA5CombatDialog extends DialogShared {
     if (actor.system[tt]) {
       const flattenedActorData = foundry.utils.flattenObject(foundry.utils.duplicate(actor.system[tt]));
 
-      for (let key of Object.keys(flattendRollModifiers)) flattendRollModifiers[key] += Number(flattenedActorData[key]) || 0;
+      for (const key of Object.keys(flattendRollModifiers)) flattendRollModifiers[key] += Number(flattenedActorData[key]) || 0;
     }
 
     for (const effect of testData.source.effects || []) {
       if (effect.disabled) continue;
 
-      for (const change of effect.changes) {
+      for (const change of effect.system?.changes || []) {
         if (!change.key.startsWith('self.')) continue;
 
-        for (let key of Object.keys(flattendRollModifiers)) if (change.key == `self.${key}`) flattendRollModifiers[key] += Number(change.value) || 0;
+        for (const key of Object.keys(flattendRollModifiers)) if (change.key == `self.${key}`) flattendRollModifiers[key] += Number(change.value) || 0;
       }
     }
 
@@ -173,14 +173,14 @@ export default class DSA5CombatDialog extends DialogShared {
     await super._onRender(context, options);
 
     const html = $(this.element);
-    let specAbs = html.find('.specAbs');
+    const specAbs = html.find('.specAbs');
     specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
       this.setCombatSpecTooltip(el);
       if (el.getElementsByClassName('hovermenu').length == 0) {
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.classList.add('hovermenu');
-        let post = document.createElement('i');
+        const post = document.createElement('i');
         post.classList.add('fas', 'fa-comment');
         post.dataset.tooltip = 'SHEET.PostItem';
         post.addEventListener('mousedown', this._postItem, false);
@@ -189,7 +189,7 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     });
     specAbs.on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
+      const e = ev.toElement || ev.relatedTarget;
       if (e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
@@ -242,7 +242,7 @@ export default class DSA5CombatDialog extends DialogShared {
     });
     html.find('.opportunityAttack').on('change', (ev) => {
       if ($(ev.currentTarget).is(':checked')) {
-        for (let k of html.find('.specAbs')) {
+        for (const k of html.find('.specAbs')) {
           $(k).removeClass('active').attr('data-step', 0).find('.step').text('');
         }
       }
@@ -478,7 +478,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (actor) {
         const combatskill = source.system.combatskill.value;
         let weapon;
-        let skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
+        const skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
           step: this.syncSituationalModifiers(testData, 'step'),
           [this.dialogData.mode]: this.syncSituationalModifiers(testData, this.dialogData.mode),
         });
@@ -637,7 +637,6 @@ export default class DSA5CombatDialog extends DialogShared {
       if (!exists) {
         testData.source.effects.push({
           _id: modeTranslated,
-          changes: [],
           disabled: false,
           duration: {},
           icon: 'icons/svg/aura.svg',
@@ -654,6 +653,9 @@ export default class DSA5CombatDialog extends DialogShared {
               args0: 'unconscious',
               args1: '',
             },
+          },
+          system: {
+            changes: [],
           },
         });
       }
@@ -961,7 +963,7 @@ export default class DSA5CombatDialog extends DialogShared {
   }
 
   static attackOfOpportunity(situationalModifiers, formData) {
-    let value = Number(formData.opportunityAttack) || 0;
+    const value = Number(formData.opportunityAttack) || 0;
     if (value) {
       situationalModifiers.push({
         name: _loc('MODS.opportunityAttack'),

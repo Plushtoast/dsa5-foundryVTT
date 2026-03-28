@@ -98,7 +98,7 @@ export class DSAToken extends Token {
   };
 
   async drawAuras(force = false) {
-    await DSAAura.drawAuras(this, force);
+    await DSAAura.ensureEmanations(this);
   };
 
   _onClickLeft2(event) {

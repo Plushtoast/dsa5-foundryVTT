@@ -25,10 +25,10 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.offensiveImprovement',
         descr: 'CONJURATION.offensiveImprovementDescr',
         changes: [
-          { key: 'system.meleeStats.attack', mode: 2, value: 2 },
-          { key: 'system.meleeStats.damage', mode: 2, value: 4 },
-          { key: 'system.rangeStats.attack', mode: 2, value: 2 },
-          { key: 'system.rangeStats.damage', mode: 2, value: 4 },
+          { key: 'system.meleeStats.attack', type: 'add', value: 2 },
+          { key: 'system.meleeStats.damage', type: 'add', value: 4 },
+          { key: 'system.rangeStats.attack', type: 'add', value: 2 },
+          { key: 'system.rangeStats.damage', type: 'add', value: 4 },
         ],
       },
       {
@@ -36,9 +36,9 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.defensiveImprovement',
         descr: 'CONJURATION.defensiveImprovementDescr',
         changes: [
-          { key: 'system.meleeStats.parry', mode: 2, value: 2 },
-          { key: 'system.totalArmor', mode: 2, value: 2 },
-          { key: 'system.status.wounds.gearmodifier', mode: 2, value: 10 },
+          { key: 'system.meleeStats.parry', type: 'add', value: 2 },
+          { key: 'system.totalArmor', type: 'add', value: 2 },
+          { key: 'system.status.wounds.gearmodifier', type: 'add', value: 10 },
         ],
       },
       {
@@ -46,8 +46,8 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.speedImprovement',
         descr: 'CONJURATION.speedImprovementDescr',
         changes: [
-          { key: 'system.status.speed.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.status.dodge.gearmodifier', mode: 2, value: 2 },
+          { key: 'system.status.speed.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.status.dodge.gearmodifier', type: 'add', value: 2 },
         ],
       },
       {
@@ -62,8 +62,8 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.resistanceImprovement',
         descr: 'CONJURATION.resistanceImprovementDescr',
         changes: [
-          { key: 'system.status.soulpower.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.status.toughness.gearmodifier', mode: 2, value: 2 },
+          { key: 'system.status.soulpower.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.status.toughness.gearmodifier', type: 'add', value: 2 },
         ],
       },
       {
@@ -71,10 +71,10 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.mentalImprovement',
         descr: 'CONJURATION.mentalImprovementDescr',
         changes: [
-          { key: 'system.characteristics.mu.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.kl.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.in.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.ch.gearmodifier', mode: 2, value: 2 },
+          { key: 'system.characteristics.mu.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.kl.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.in.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.ch.gearmodifier', type: 'add', value: 2 },
         ],
       },
       {
@@ -82,10 +82,10 @@ export default class PlayerMenu extends DefaultAppv2 {
         name: 'CONJURATION.physicalImprovement',
         descr: 'CONJURATION.physicalImprovementDescr',
         changes: [
-          { key: 'system.characteristics.ff.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.ge.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.ko.gearmodifier', mode: 2, value: 2 },
-          { key: 'system.characteristics.kk.gearmodifier', mode: 2, value: 2 },
+          { key: 'system.characteristics.ff.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.ge.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.ko.gearmodifier', type: 'add', value: 2 },
+          { key: 'system.characteristics.kk.gearmodifier', type: 'add', value: 2 },
         ],
       },
     ];
@@ -674,7 +674,6 @@ class ConjurationRequest extends DefaultAppv2 {
 
     for (let modifier of this.creationData.modifiers) {
       this.conjuration.effects.push({
-        changes: modifier.changes,
         system: {
           description: `${_loc('PLAYER.conjuration')} ${_loc('extensions')}`,
           visibility: {

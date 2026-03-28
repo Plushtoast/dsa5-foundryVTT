@@ -1,7 +1,7 @@
 import DSA5StatusEffects from '../status/status_effects.js';
 import DSA5 from '../config/config-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
-import { RollDialogBuilder } from "../dialog/dialog-builder.js";
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 const { mergeObject, getProperty } = foundry.utils;
 export class ItemDialogBuilder extends RollDialogBuilder {
     /**

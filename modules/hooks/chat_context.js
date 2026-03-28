@@ -331,7 +331,9 @@ class ActionHandler {
           payType,
         },
       },
-      changes: [],
+      system: {
+        changes: [],
+      },
       duration: {},
     };
   }

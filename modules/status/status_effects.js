@@ -117,23 +117,7 @@ export default class DSA5StatusEffects {
     effectData.pips = [];
 
     const duration = sourceEffect.duration;
-    if (duration.units === 'seconds' && typeof duration.value === 'number') {
-      let timeRemaining;
-
-      if (sourceEffect.start && Number.isFinite(duration.seconds) && game.time.calendar instanceof game.dsa5.apps.WorldCalendar) {
-        const endTime = sourceEffect.start.time + duration.seconds;
-        if (endTime > game.time.worldTime) {
-          const components = game.time.calendar.difference(endTime);
-          timeRemaining = await game.time.calendar.format(components, 'formatRemaining');
-        }
-      }
-
-      if (timeRemaining) {
-        effectData.pips.push({
-          content: `<i class="fas fa-clock"></i> ${timeRemaining}`
-        });
-      }
-    } else if (typeof duration.value === 'number') {
+    if (typeof duration.value === 'number' && Number.isFinite(duration.remaining) && duration.remaining > 0 && duration.label) {
       effectData.pips.push({
         content: `<i class="fas fa-clock"></i> ${duration.label}`
       });
@@ -172,7 +156,7 @@ export default class DSA5StatusEffects {
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
     if (!effect) return _loc('DSAError.noEffectFound');
 
-    let existing = this.hasCondition(target, effect.id);
+    const existing = this.hasCondition(target, effect.id);
 
     if (existing && existing.system.condition.value == null) return existing;
     else if (existing) return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto, effect);
@@ -194,7 +178,7 @@ export default class DSA5StatusEffects {
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
     if (!effect) return _loc('DSAError.noEffectFound');
 
-    let existing = this.hasCondition(target, effect.id);
+    const existing = this.hasCondition(target, effect.id);
 
     if (existing && existing.system.condition.value == null) {
       if (target.token) target = target.token.actor;
@@ -217,7 +201,7 @@ export default class DSA5StatusEffects {
     }
     if (!res && target.documentName == 'Actor') {
       const types = CreatureType.detectCreatureType(target);
-      for (let type of types) {
+      for (const type of types) {
         if (type.ignoredCondition(effect.id)) {
           res = {
             name: `${target.name} (${type.getName()})`,
@@ -286,7 +270,7 @@ export default class DSA5StatusEffects {
 
     (game.dsa5.config.statusEffectClasses[effect.id] || DSA5StatusEffects).levelDependentEffects(effect, update);
 
-    let result = await actor.createEmbeddedDocuments('ActiveEffect', [update]);
+    const result = await actor.createEmbeddedDocuments('ActiveEffect', [update]);
     delete effect.id;
     return result;
   }
@@ -371,7 +355,7 @@ export default class DSA5StatusEffects {
 
   static ModifierIsSelected(item, options = {}, actor, coreID) {
     const types = CreatureType.detectCreatureType(actor);
-    for (let type of types) {
+    for (const type of types) {
        if (type.ignoredCondition(coreID)) {
           return false;
        }
@@ -388,7 +372,7 @@ export default class DSA5StatusEffects {
     const result = [];
     const finishedCoreIds = [];
 
-    for (let [key, val] of Object.entries(actor.system.condition)) {
+    for (const [key, val] of Object.entries(actor.system.condition)) {
       if (val) {
         const ef = duplicate(DSA5.statusEffects.find((x) => x.id == key));
 
@@ -634,11 +618,12 @@ class ThirstEffect extends DSA5StatusEffects {
 
   static levelDependentEffects(existing, update) {
     const stackValue = update.system?.condition?.value || 0;
-    update.changes = {
+    update.system ??= {};
+    update.system.changes = {
       1: [],
-      2: [{ key: 'system.condition.stunned', mode: 2, value: 1 / 2 }],
-      3: [{ key: 'system.condition.stunned', mode: 2, value: 2 / 3 }],
-      4: [{ key: 'system.condition.stunned', mode: 2, value: 3 / 4 }],
+      2: [{ key: 'system.condition.stunned', type: 'add', value: 1 / 2 }],
+      3: [{ key: 'system.condition.stunned', type: 'add', value: 2 / 3 }],
+      4: [{ key: 'system.condition.stunned', type: 'add', value: 3 / 4 }],
     }[stackValue];
   }
 }
@@ -646,22 +631,23 @@ class ThirstEffect extends DSA5StatusEffects {
 class HeatEffect extends DSA5StatusEffects {
   static levelDependentEffects(existing, update) {
     const stackValue = update.system?.condition?.value || 0;
-    update.changes = {
+    update.system ??= {};
+    update.system.changes = {
       1: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
       ],
       2: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 / 2 },
       ],
       3: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 2 / 3 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 2 / 3 },
       ],
       4: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 / 2 },
       ],
     }[stackValue];
   }
@@ -670,22 +656,23 @@ class HeatEffect extends DSA5StatusEffects {
 class ColdEffect extends DSA5StatusEffects {
   static levelDependentEffects(existing, update) {
     const stackValue = update.system?.condition?.value || 0;
-    update.changes = {
+    update.system ??= {};
+    update.system.changes = {
       1: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 },
       ],
       2: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 / 2 },
       ],
       3: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 2 / 3 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 2 / 3 },
       ],
       4: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 / 2 },
       ],
     }[stackValue];
   }

@@ -7,21 +7,21 @@ export default class DSAActiveEffect extends ActiveEffect {
   static migrationConfig = {
     advancedFunction: { path: 'advancedFunction', type: 'number' },
     successEffect: { path: 'successEffect', type: 'number' },
-    args0: { path: 'macroArgs.args0', type: 'string' },
-    args1: { path: 'macroArgs.args1', type: 'string' },
-    args2: { path: 'macroArgs.args2', type: 'string' },
-    args3: { path: 'macroArgs.args3', type: 'string' },
-    args4: { path: 'macroArgs.args4', type: 'string' },
+    args0: { path: 'macroArgs.conditionId', type: 'string' },
+    args1: { path: 'macroArgs.conditionValue', type: 'string' },
+    args2: { path: 'macroArgs.args2', type: 'removeOnly' },
+    args3: { path: 'macroArgs.macro', type: 'string' },
+    args4: { path: 'macroArgs.creatureLinks', type: 'string' },
     customDuration: { path: 'customDuration', type: 'string' },
     specStep: { path: 'specStep', type: 'number' },
     applyToOwner: { path: 'applyToOwner', type: 'boolean' },
     isAura: { path: 'aura.isAura', type: 'boolean' },
     auraRadius: { path: 'aura.auraRadius', type: 'string' },
     borderColor: { path: 'aura.borderColor', type: 'string' },
-    fillColor: { path: 'aura.fillColor', type: 'string' },
-    borderThickness: { path: 'aura.borderThickness', type: 'number' },
+    fillColor: { path: 'aura.fillColor', type: 'removeOnly' },
+    borderThickness: { path: 'aura.borderThickness', type: 'removeOnly' },
     disposition: { path: 'aura.disposition', type: 'number' },
-    templateSource: { path: 'aura.templateSource', type: 'string' },
+    templateSource: { path: 'aura.templateSource', type: 'removeOnly' },
     onDelayed: { path: 'macroArgs.onDelayed', type: 'string' },
     onRemove: { path: 'macroArgs.onRemove', type: 'string' },
     resistRoll: { path: 'resistRoll', type: 'string' },
@@ -39,13 +39,14 @@ export default class DSAActiveEffect extends ActiveEffect {
     removeMessage: { path: 'removeMessage', type: 'string' },
   };
 
-  apply(actor, change) {
-    if (this.isDepleted()) return {};
+  static applyChange(targetDoc, change, options = {}) {
+    const effect = change.effect;
+    if (effect?.isDepleted?.()) return {};
 
     if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
-      const modifiedItems = this._getModifiedItems(actor, change);
+      const modifiedItems = effect._getModifiedItems(targetDoc, change);
 
-      for (let item of modifiedItems.items) {
+      for (const item of modifiedItems.items) {
         if (!item.overrides) item.overrides = {};
         const overrides = foundry.utils.flattenObject(item.overrides);
         const newChange = {
@@ -53,19 +54,20 @@ export default class DSAActiveEffect extends ActiveEffect {
           key: modifiedItems.key,
           value: modifiedItems.value,
         };
-        const result = super.apply(item, newChange);
+        const result = super.applyChange(item, newChange, options);
         Object.assign(overrides, result);
         item.overrides = foundry.utils.expandObject(overrides);
       }
+      return {};
     } else {
       if (DSAActiveEffect.deprecatedDataRegex.test(change.key)) {
         const msg = _loc('DSAError.ActiveEffectDataChange', {
-          name: actor.name,
+          name: targetDoc.name,
         });
         console.error(msg);
         change.key = change.key.replace(DSAActiveEffect.deprecatedDataRegex, 'system.');
       }
-      return super.apply(actor, change);
+      return super.applyChange(targetDoc, change, options);
     }
   }
 
@@ -86,10 +88,10 @@ export default class DSAActiveEffect extends ActiveEffect {
 
     switch (currentType) {
       case 'Array': {
-        let newElems = [];
+        const newElems = [];
         const source = change.effect.name;
-        for (let elem of `${change.value}`.split(/[;,]+/)) {
-          let vals = elem.split(' ');
+        for (const elem of `${change.value}`.split(/[;,]+/)) {
+          const vals = elem.split(' ');
           const value = vals.pop();
           const target = vals.join(' ');
           newElems.push({
@@ -252,21 +254,21 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   static async _onCreateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onUpdateOperation(documents, operation, user);
   }
 
   static async _onDeleteOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onDeleteOperation(documents, operation, user);
@@ -377,6 +379,12 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
       }
     }
+
+    // NOTE: mode → type and top-level changes → system.changes migration is
+    // handled by BaseActiveEffect.migrateData (via super.migrateData) using
+    // _addDataFieldMigration which works safely on sealed source objects.
+    // Do NOT duplicate that migration here — the source may be non-extensible
+    // when called from EmbeddedCollectionField.clean during parent cleaning.
 
     // Migrate legacy flat delayed fields into the nested delayed schema.
     // Old shape examples:

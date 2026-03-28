@@ -1,6 +1,6 @@
 import DSATriggers from '../../system/automation/triggers.js';
 
-const { BooleanField, FilePathField, NumberField, HTMLField, StringField, SchemaField, ObjectField } = foundry.data.fields;
+const { BooleanField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
 
 export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectTypeDataModel {
   static ADVANTAGE_TYPES = {
@@ -36,16 +36,25 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     [DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.ROLL_DIALOG_RENDER]: 'ActiveEffects.advancedFunctions.rollDialogRender',
   };
 
+  static DISPOSITION_ALL = 2;
+
+  static DISPOSITION_CHOICES = Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
+    (obj, [key, value]) => {
+      obj[value] = `TOKEN.DISPOSITION.${key}`;
+      return obj;
+    },
+    { [this.DISPOSITION_ALL]: 'all' },
+  );
+
   static defineSchema() {
     const schema = super.defineSchema();
     schema.advancedFunction = new NumberField({ initial: 0, choices: this.ADVANCED_FUNCTION_TYPES });
     schema.equipmentAdvantage = new NumberField({ initial: 0, choices: this.ADVANTAGE_TYPES });
     schema.macroArgs = new SchemaField({
-      args0: new StringField(),
-      args1: new StringField(),
-      args2: new StringField(),
-      args3: new StringField(),
-      args4: new StringField(),
+      conditionId: new StringField(), // was args0
+      conditionValue: new StringField(), // was args1
+      macro: new StringField(), // was args3
+      creatureLinks: new StringField(), // was args4
       onDelayed: new StringField(),
       onRemove: new StringField(),
     });
@@ -63,11 +72,11 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     schema.aura = new SchemaField({
       isAura: new BooleanField({ initial: false }),
       auraRadius: new StringField(),
-      borderColor: new StringField(),
-      fillColor: new StringField(),
-      borderThickness: new NumberField({ initial: 3 }),
-      disposition: new NumberField({ initial: 2 }),
-      templateSource: new StringField(),
+      borderColor: new StringField({ label: "ActiveEffects.auraColor" }),
+      hidden: new BooleanField({ initial: true }),
+      disposition: new NumberField({ initial: this.DISPOSITION_ALL, choices: this.DISPOSITION_CHOICES }),
+      excludeSelf: new BooleanField({ initial: true }),
+      ignoreWalls: new BooleanField({ initial: false }),
     });
     schema.charges = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),
@@ -90,8 +99,4 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     schema.successEffect = new NumberField({ initial: 0, choices: this.SUCCESS_EFFECT_TYPES });
     return schema;
   }
-
-  /*static _migrateData(source) {
-    super._migrateData(source);
-  }*/
 }

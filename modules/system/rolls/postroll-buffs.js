@@ -244,7 +244,7 @@ export default class PostRollBuffs {
       let fp = 0;
       let qs = 0;
       let rerollDice = 0;
-      for (const change of effect.changes || []) {
+      for (const change of effect.system?.changes || []) {
         const isRerollKey = change?.key === POST_ROLL_KEYS.REROLL;
         if (change?.key !== POST_ROLL_KEYS.FP && change?.key !== POST_ROLL_KEYS.QL && !isRerollKey) continue;
         // FP/QS apply only on successful rolls; rerolls are allowed on failed rolls too.

@@ -21,7 +21,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.inpain', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.inpain', type: 'add', value: 1 }],
     },
   },
   {
@@ -106,7 +106,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 3,
       },
-      changes: [{ key: 'system.condition.burning', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.burning', type: 'add', value: 1 }],
     },
   },
   {
@@ -134,7 +134,7 @@ DSA5.statusEffects = [
       changes: [
       {
         key: 'system.skillModifiers.step',
-        mode: 0,
+        type: 'custom',
         value: 'Kraftakt 2;Feat of Strength 2',
       },
     ],
@@ -166,7 +166,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.encumbered', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.encumbered', type: 'add', value: 1 }],
     },
   },
   {
@@ -179,7 +179,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.stunned', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.stunned', type: 'add', value: 1 }],
     },
   },
   {
@@ -192,7 +192,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.raptured', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.raptured', type: 'add', value: 1 }],
     },
   },
   {
@@ -205,7 +205,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.feared', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.feared', type: 'add', value: 1 }],
     },
   },
   {
@@ -218,7 +218,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.paralysed', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.paralysed', type: 'add', value: 1 }],
     },
   },
   {
@@ -231,7 +231,7 @@ DSA5.statusEffects = [
         value: 1,
         max: 4,
       },
-      changes: [{ key: 'system.condition.confused', mode: 2, value: 1 }],
+      changes: [{ key: 'system.condition.confused', type: 'add', value: 1 }],
     },
   },
   {
@@ -240,7 +240,7 @@ DSA5.statusEffects = [
     img: 'icons/svg/terror.svg',
     system: {
       description: 'CONDITIONDESCRIPTION.minorSpirits',
-      changes: [{ key: 'system.skillModifiers.global', mode: 0, value: -1 }],
+      changes: [{ key: 'system.skillModifiers.global', type: 'custom', value: -1 }],
     },    
     duration: { value: 600, units: 'seconds' },
   },
@@ -528,10 +528,11 @@ DSA5.traditionArtifacts = {
 };
 
 DSA5.areaTargetTypes = {
-  cube: 'rect',
-  line: 'ray',
+  cube: 'rectangle',
+  line: 'line',
   sphere: 'circle',
   cone: 'cone',
+  ring: 'ring',
 };
 
 DSA5.regnerationCampLocations = {

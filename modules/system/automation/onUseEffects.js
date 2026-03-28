@@ -79,7 +79,9 @@ export default class OnUseEffect {
     return {
       name,
       icon: 'icons/svg/aura.svg',
-      changes,
+      system: {
+        changes,
+      },
       duration,
       flags: {
         dsa5: {

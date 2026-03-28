@@ -167,7 +167,9 @@
                     "description",
                     "gmdescription"
                 ]
-            }
+            },
+            "DSAAura": {},
+            "DSAZone": {}
         },
         "Combatant": {
             "dsacombatant": {}
