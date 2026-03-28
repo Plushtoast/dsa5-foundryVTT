@@ -55,7 +55,9 @@
                 <input id="{{rootId}}-fv-questlog" type="checkbox" name="questlog" class="settingChange" data-setting-name="calendarFeatureVisibility" {{checked featureVisibility.questlog}}>
             </div>
         </fieldset>
+    </div>
 
+    <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
         <fieldset>
             <legend>{{localize 'CALENDAR.DSA.playerDateVisibility.label'}}</legend>
             <p class="hint">{{localize 'CALENDAR.DSA.playerDateVisibility.hint'}}</p>
@@ -70,9 +72,7 @@
                 </div>
             </div>
         </fieldset>
-    </div>
 
-    <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
         <fieldset>
             <legend class="flexrow">{{localize 'MASTER.automation'}} <button type="button" class="icon noBorder fas fa-rotate" data-action="resetAutomation" data-tooltip="dsacalendar.reset"></button></legend>
             <div class="form-group">
