@@ -13,6 +13,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -184,10 +185,10 @@ export function connectSocket() {
       case 'hideResistButton':
         break;
       case 'requestShapeshift':
-        game.dsa5.config.hooks.shapeshift.constructor.onRequestShapeshift(data.payload);
+        ShapeshiftWizard.onRequestShapeshift(data.payload);
         break
       case 'requestRestoreShape':
-        game.dsa5.config.hooks.shapeshift.constructor.onRestoreShape(data.payload);
+        ShapeshiftWizard.onRestoreShape(data.payload);
         break
       case 'reduceGroupSchip':
         FateRolls.reduceGroupSchip();

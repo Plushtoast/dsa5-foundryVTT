@@ -1876,37 +1876,33 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async creatureDrop(item) {
-    if (game.dsa5.config.hooks.shapeshift) {
-      new foundry.applications.api.DialogV2({
-        window: {
-          title: _loc('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: _loc('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+      },
+      content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
+      buttons: [
+        {
+          action: 'shapeshift',
+          icon: 'fas fa-paw',
+          label: 'CONDITION.shapeshift',
+          callback: () => {
+            const shapeshift = game.dsa5.config.hooks.shapeshift;
+            shapeshift.setShapeshift(this.actor, item);
+            shapeshift.render(true);
+          },
         },
-        content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
-        buttons: [
-          {
-            action: 'shapeshift',
-            icon: 'fas fa-paw',
-            label: 'CONDITION.shapeshift',
-            callback: () => {
-              const shapeshift = game.dsa5.config.hooks.shapeshift;
-              shapeshift.setShapeshift(this.actor, item);
-              shapeshift.render(true);
-            },
+        {
+          action: 'horse',
+          icon: 'fas fa-horse',
+          label: 'RIDING.horse',
+          default: true,
+          callback: () => {
+            Riding.setHorse(this.actor, item, this.token);
           },
-          {
-            action: 'horse',
-            icon: 'fas fa-horse',
-            label: 'RIDING.horse',
-            default: true,
-            callback: () => {
-              Riding.setHorse(this.actor, item, this.token);
-            },
-          },
-        ],
-      }).render(true);
-    } else {
-      Riding.setHorse(this.actor, item, this.token);
-    }
+        },
+      ],
+    }).render(true);
   }
 
   async _manageDragItems(item, typeClass) {
