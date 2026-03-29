@@ -403,7 +403,9 @@
     "creatureClass": "Type",
     "conjuringDifficulty": "Summoning dif.",
     "camplocation": "Campsite",
+    "calculatedAttributes": "Calculated Attributes",
     "carrycapacity": "Carrying Capacity",
+    "characteristics": "Base Characteristics",
     "chatEdit": "Manual correction",
     "Details": "Details",
     "dart": "Dart",
@@ -1067,6 +1069,8 @@
         "generalTab": "General"
     },
     "MODS": {
+        "otherCombat": "Other",
+        "otherModifiers": "Other Modifiers",
         "partChecks": "Part of skill check modifier",
         "attackFromBehind": "Attack from behind",
         "opportunityAttack": "Attack of Opportunity",
@@ -2296,6 +2300,20 @@
             "seconds": "Seconds",
             "name": "Effectname",
             "overwrite": "Overwrite standard name"
+        },
+        "wizardEffect": "Effect",
+        "wizardExpertMode": "Switch to expert mode",
+        "wizardSimpleMode": "Switch to simple mode",
+        "wizardAllCategories": "All",
+        "wizardCategories": {
+            "protection": "Protection & Defense",
+            "attributes": "Attributes",
+            "skills": "Skills",
+            "combat": "Combat",
+            "magic": "Magic & Faith",
+            "regeneration": "Regeneration",
+            "conditions": "Conditions",
+            "weapon": "Weapon / Armor"
         }
     },
     "LocalizedIDs": {

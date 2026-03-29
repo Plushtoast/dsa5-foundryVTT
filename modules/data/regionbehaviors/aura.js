@@ -27,6 +27,8 @@ export class DSAAuraRegionBehavior extends DSARegionBehaviorBase {
     if (!token.actor) return;
     if (!this.validDisposition(token, this.disposition)) return;
 
+    if (token.actor.effects.some(e => e.origin === this.parent.uuid)) return;
+
     const effect = await fromUuid(this.effectUuid);
     if (!effect) return;
 
@@ -34,6 +36,12 @@ export class DSAAuraRegionBehavior extends DSARegionBehaviorBase {
     delete data._id;
     delete data.system?.aura?.isAura;
     data.name = `${effect.name} (Aura)`;
+
+    // Ensure duration.value is a valid integer or null for v14 schema
+    if (data.duration) {
+      const v = data.duration.value;
+      data.duration.value = (v != null && Number.isFinite(Number(v))) ? Math.round(Number(v)) : null;
+    }
 
     const sourceActor = effect.parent;
     const testData = { qualityStep: 0 };

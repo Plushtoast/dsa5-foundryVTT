@@ -1021,11 +1021,11 @@ export class AddEffectDialog extends DefaultAppv2 {
             const form = button.form.elements;
             const options = {};
 
-            let duration = Number(form.duration.value) || 0;
-            if (form.unit.value == 'seconds') duration = Math.round(duration / CONFIG.time.roundTime);
+            const duration = Number(form.duration.value) || 0;
+            const unit = form.unit.value;
 
             const label = form.effectname.value;
-            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration));
+            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration, unit));
             if (label) options.name = label;
 
             await callback(id, options);

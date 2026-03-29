@@ -213,6 +213,10 @@ body {
   }
 }
 
+.inlineCodeMirror {
+  min-height: unset;
+}
+
 .hovermenu {
   display: inline-block;
   position: absolute;

@@ -1,6 +1,6 @@
 import DSATriggers from '../../system/automation/triggers.js';
 
-const { BooleanField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
+const { BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
 
 export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectTypeDataModel {
   static ADVANTAGE_TYPES = {
@@ -72,7 +72,7 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     schema.aura = new SchemaField({
       isAura: new BooleanField({ initial: false }),
       auraRadius: new StringField(),
-      borderColor: new StringField({ label: "ActiveEffects.auraColor" }),
+      borderColor: new ColorField({ label: "ActiveEffects.auraColor" }),
       hidden: new BooleanField({ initial: true }),
       disposition: new NumberField({ initial: this.DISPOSITION_ALL, choices: this.DISPOSITION_CHOICES }),
       excludeSelf: new BooleanField({ initial: true }),

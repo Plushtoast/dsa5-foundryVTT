@@ -325,7 +325,9 @@
     "consumable": "Verbrauchsgegenstand",
     "conjuringDifficulty": "Anrufungsschw.",
     "camplocation": "Lagerplatz",
+    "calculatedAttributes": "Berechnete Attribute",
     "carrycapacity": "Tragekraft",
+    "characteristics": "Basiseigenschaften",
     "chatEdit": "Manuelle Korrektur",
     "Details": "Details",
     "damage": "Trefferpunkte",
@@ -799,6 +801,8 @@
         "noHeros": "Keine Helden ausgewählt. Weise deinen Spielern Helden zu oder ziehe wichtige Charaktere per Drag and Drop auf das Meistermenü."
     },
     "MODS": {
+        "otherCombat": "Sonstige",
+        "otherModifiers": "Sonstige Modifikatoren",
         "partChecks": "Teilprobenmodifikator",
         "attackFromBehind": "Angriff von Hinten",
         "opportunityAttack": "Passierschlag",
@@ -2009,6 +2013,20 @@
             "seconds": "Sekunden",
             "name": "Effektname",
             "overwrite": "Standardnamen überschreiben"
+        },
+        "wizardEffect": "Effekt",
+        "wizardExpertMode": "Zum Expertenmodus wechseln",
+        "wizardSimpleMode": "Zum einfachen Modus wechseln",
+        "wizardAllCategories": "Alle",
+        "wizardCategories": {
+            "protection": "Schutz & Verteidigung",
+            "attributes": "Eigenschaften",
+            "skills": "Talente",
+            "combat": "Kampf",
+            "magic": "Magie & Glaube",
+            "regeneration": "Regeneration",
+            "conditions": "Zustände",
+            "weapon": "Waffe / Rüstung"
         }
     },
     "CustomActiveEffects": {

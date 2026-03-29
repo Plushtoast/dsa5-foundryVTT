@@ -95,26 +95,15 @@ export default class RuleChaos {
 
   static obfuscateDropData(item, obfuscations) {
     if (obfuscations) {
-      for (let section of obfuscations) mergeObject(item, { system: { obfuscation: { [section]: true } } });
+      for (const section of obfuscations) mergeObject(item, { system: { obfuscation: { [section]: true } } });
     }
   }
 
-  static _buildDuration(rounds) {
-    const update = {
-      duration: {
-        value: rounds,
-        units: 'rounds',
-      },
-      start: {
-        time: game.time.worldTime,
-      },
+  static _buildDuration(value, units = 'rounds') {
+    return {
+      duration: { value, units },
+      start: ActiveEffect.getEffectStart(),
     };
-    if (game.combat) {
-      update.start.combat = game.combat.id;
-      update.start.round = game.combat.round;
-      update.start.turn = game.combat.turn;
-    }
-    return update;
   }
 
   static async calcBleeding(ev) {
@@ -163,7 +152,7 @@ export default class RuleChaos {
   }
 
   static magicalImprovement(actor, creationData) {
-    for (let item of actor.items) {
+    for (const item of actor.items) {
       if (['ritual', 'spell'].includes(item.type)) {
         item.system.talentValue.value += 4;
       }

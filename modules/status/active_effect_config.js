@@ -75,6 +75,8 @@ Hooks.once('i18nInit', () => {
 
 export default class DSAActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
+  wizardMode = true;
+  wizardCategory = null;
   static macroIndexes = [
     DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
     DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.POST_ROLL,
@@ -118,6 +120,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     position: {
       width: 600,
     },
+    actions: {
+      toggleWizardMode: this.#toggleWizardMode,
+      filterWizardCategory: this.#filterWizardCategory,
+    },
   };
 
   static PARTS = {
@@ -143,6 +149,41 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     },
   };
 
+  get #showAdvancedTab() {
+    return this.document.parent?.documentName === 'Item';
+  }
+
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if (group === 'sheet' && !this.#showAdvancedTab) {
+      delete tabs.advanced;
+      const tabKeys = Object.keys(tabs);
+      if (!tabKeys.some((k) => tabs[k].active) && tabKeys.length) {
+        tabs[tabKeys[0]].active = true;
+        tabs[tabKeys[0]].cssClass = 'active';
+      }
+    }
+    return tabs;
+  }
+
+  static #toggleWizardMode() {
+    this.wizardMode = !this.wizardMode;
+    this.wizardCategory = null;
+    this.render({ parts: ['changes'] });
+  }
+
+  static #filterWizardCategory(ev, target) {
+    const category = target.dataset.category || null;
+    this.wizardCategory = this.wizardCategory === category ? null : category;
+    this.render({ parts: ['changes'] });
+  }
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (!this.#showAdvancedTab) delete parts.advanced;
+    return parts;
+  }
+
   static async callMacro(packName, name, actor, item, qs, args = {}) {
     return await callMacro(packName, name, actor, item, qs, args);
   }
@@ -166,15 +207,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         value: orig.value ?? orig.seconds ?? orig.rounds ?? null,
         units: orig.units ?? (orig.rounds ? 'rounds' : 'seconds'),
       };
-      if (duration.units === 'seconds' && typeof duration.value === 'number') {
-        duration.value = Math.round(duration.value / CONFIG.time.roundTime);
-        duration.units = 'rounds';
-      }
-      const start = { time: game.time.worldTime };
-      if (game.combat) {
-        start.round = game.combat.round;
-        start.turn = game.combat.turn;
-      }
+      const start = ActiveEffect.getEffectStart();
       const updateData = { duration, start };
       if (effect.system.changes.length || effect.statuses.size) {
         this.startDelayedEffect(updateData, effect);
@@ -260,7 +293,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         const changePhases = Object.fromEntries(
           Object.entries(ActiveEffect.CHANGE_PHASES).map(([phase, { label }]) => [phase, _loc(label)]),
         );
-        mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases });
+        const wizardMode = this.wizardMode;
+        const wizardCategory = this.wizardCategory;
+        const wizardCategories = wizardMode ? EffectDropdownBuilder.getWizardCategories(this.document) : [];
+        mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases, wizardMode, wizardCategory, wizardCategories });
         break;
       }
       case 'advanced':
@@ -338,6 +374,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       html.find('[data-tab="details"] .editor').replaceWith(`<p>${_loc(this.document.description)}</p>`);
     }
 
+    if (this.wizardMode) {
+      this.#initWizardDropdowns(html);
+    } else {
+      this.#initExpertDropdowns(html);
+    }
+  }
+
+  #initExpertDropdowns(html) {
     const dropDown = EffectDropdownBuilder.buildDropdownMenu(this.document);
     html.find('.changes .ol .key').append(dropDown);
     html
@@ -354,6 +398,35 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       });
     html.find('.select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
+    });
+  }
+
+  #initWizardDropdowns(html) {
+    const groupedMenu = EffectDropdownBuilder.buildGroupedDropdownMenu(this.document, this.wizardCategory);
+    html.find('.changes .ol .wizardKey').each((i, el) => {
+      const $el = $(el);
+      const hiddenInput = $el.find('input[type="hidden"]');
+      const currentKey = hiddenInput.val();
+
+      const $wrapper = $('<div class="wizardSelectWrapper"></div>');
+      $wrapper.append(groupedMenu);
+      $el.prepend($wrapper);
+
+      const $select = $wrapper.find('.wizardMenu');
+      if (currentKey) $select.val(currentKey);
+
+      $select
+        .select2({ width: '100%', dropdownAutoWidth: true })
+        .on('change', (ev) => {
+          const $sel = $(ev.currentTarget);
+          const val = $sel.val();
+          hiddenInput.val(val);
+          const $opt = $sel.find('option:selected');
+          const row = $sel.closest('.row-section');
+          row.find('input[name$=".type"]').val($opt.attr('data-type') || 'add');
+          row.find('.value input').attr('placeholder', $opt.attr('data-ph') || '');
+          $sel.trigger('blur');
+        });
     });
   }
 
@@ -683,7 +756,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           if (qsDuration && qsDuration !== '-') calcTime = Number(qsDuration);
         }
         ef.duration = ef.duration || {};
-        ef.duration.value = calcTime;
+        ef.duration.value = Math.round(calcTime);
         ef.duration.units = 'seconds';
       }
     }
@@ -705,7 +778,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         const dur = duration.replace(regEx, '').trim();
         const time = await DiceDSA5._stringToRoll(dur);
         if (isNaN(time)) break;
-        return { value: time * seconds, units: 'seconds' };
+        return { value: Math.round(time * seconds), units: 'seconds' };
       }
     } catch (e) {
       console.error(`Could not parse duration '${duration}'`, e);

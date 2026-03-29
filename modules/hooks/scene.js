@@ -58,11 +58,7 @@ export default function () {
   Hooks.on('preCreateActiveEffect', function (doc, createData, options, userId) {
     if (doc.parent.documentName != 'Actor') return;
 
-    let update = {
-      start: {
-        time: game.time.worldTime,
-      },
-    };
+    const update = {};
 
     const onDelayed = createData.system?.macroArgs?.onDelayed;
     if (onDelayed) {
@@ -77,17 +73,12 @@ export default function () {
       });
     }
 
-    if (!game.combat) {
-      doc.updateSource(update);
-      return;
+    // Ensure duration.value is a valid integer for v14 schema (source data may contain floats from formulas)
+    const durVal = update.duration?.value ?? createData.duration?.value;
+    if (durVal != null && !Number.isInteger(durVal)) {
+      update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
     }
 
-    update.start.combat = game.combat.id;
-    update.start.round = game.combat.round;
-    update.start.turn = game.combat.turn;
-    if (doc.duration.units === 'seconds' && typeof doc.duration.value === 'number') {
-      update.duration = { value: Math.round(doc.duration.value / CONFIG.time.roundTime), units: 'rounds' };
-    }
-    doc.updateSource(update);
+    if (Object.keys(update).length) doc.updateSource(update);
   });
 }
