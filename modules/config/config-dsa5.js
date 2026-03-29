@@ -181,6 +181,7 @@ DSA5.statusEffects = [
       },
       changes: [{ key: 'system.condition.stunned', type: 'add', value: 1 }],
     },
+    duration: { value: 10800, units: 'seconds' },
   },
   {
     id: 'raptured',
@@ -194,6 +195,7 @@ DSA5.statusEffects = [
       },
       changes: [{ key: 'system.condition.raptured', type: 'add', value: 1 }],
     },
+    duration: { value: 3600, units: 'seconds' },
   },
   {
     id: 'feared',
@@ -207,6 +209,7 @@ DSA5.statusEffects = [
       },
       changes: [{ key: 'system.condition.feared', type: 'add', value: 1 }],
     },
+    duration: { value: 300, units: 'seconds' },
   },
   {
     id: 'paralysed',
@@ -220,6 +223,7 @@ DSA5.statusEffects = [
       },
       changes: [{ key: 'system.condition.paralysed', type: 'add', value: 1 }],
     },
+    duration: { value: 3600, units: 'seconds' },
   },
   {
     id: 'confused',
@@ -233,6 +237,7 @@ DSA5.statusEffects = [
       },
       changes: [{ key: 'system.condition.confused', type: 'add', value: 1 }],
     },
+    duration: { value: 3600, units: 'seconds' },
   },
   {
     id: 'minorSpirits',

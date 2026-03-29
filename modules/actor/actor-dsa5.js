@@ -240,7 +240,7 @@ export default class Actordsa5 extends Actor {
         let multiply = 1;
 
         apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
-        multiply = this.getEffectMultiplier(item);
+        multiply = item.system.effectMultiplier;
 
         const advancedFunction = e.system.advancedFunction;
         if (Object.prototype.hasOwnProperty.call(this.dsatriggers, advancedFunction)) {
@@ -312,18 +312,6 @@ export default class Actordsa5 extends Actor {
 
       default:
         return true;
-    }
-  }
-
-  getEffectMultiplier(item) {
-    switch (item.type) {
-      case 'trait':
-      case 'specialability':
-      case 'advantage':
-      case 'disadvantage':
-        return Number(item.system.step?.value) || 1;
-      default:
-        return 1;
     }
   }
 
@@ -2078,6 +2066,74 @@ export default class Actordsa5 extends Actor {
     }
 
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
+  }
+
+  async onUpdateEffectDurations(effects, event, context) {
+    if (!DSA5_Utility.isActiveGM()) return;
+
+    const toDelete = [];
+
+    for (const effect of effects) {
+      const remaining = effect.duration.remaining;
+      if (remaining > 0 || remaining === Infinity) continue;
+      if (!effect.isExpiryEvent(event, context)) continue;
+
+      const condition = effect.system?.condition;
+      const isLeveledCondition = condition?.max != null && condition?.value != null && condition.value >= 1;
+
+      if (isLeveledCondition) {
+        const durationSeconds = effect.duration.seconds;
+        if (!durationSeconds || durationSeconds <= 0) {
+          toDelete.push(effect.id);
+          continue;
+        }
+
+        const elapsed = game.time.worldTime - effect.start.time;
+        const intervals = Math.max(1, Math.floor(elapsed / durationSeconds));
+        const levelsToRemove = Math.min(intervals, condition.value);
+        const newValue = condition.value - levelsToRemove;
+
+        if (newValue >= 1) {
+          const max = Number(condition.max ?? 4);
+          const manualToRemove = Math.min(condition.manual || 0, levelsToRemove);
+          const newManual = (condition.manual || 0) - manualToRemove;
+          const autoToRemove = Math.min(condition.auto || 0, levelsToRemove - manualToRemove);
+          const newAuto = (condition.auto || 0) - autoToRemove;
+
+          const update = {
+            system: { condition: { auto: newAuto, manual: newManual, value: Math.min(max, newManual + newAuto) } },
+            start: { time: game.time.worldTime },
+          };
+
+          const statusId = [...effect.statuses][0];
+          (game.dsa5.config.statusEffectClasses[statusId] || DSA5StatusEffects).levelDependentEffects(effect, update);
+
+          await effect.update(update);
+          ActiveEffect.registry.add(effect);
+
+          this._notifyConditionDecay(effect, newValue);
+        } else {
+          toDelete.push(effect.id);
+        }
+      } else {
+        toDelete.push(effect.id);
+      }
+    }
+
+    if (toDelete.length) {
+      await this.deleteEmbeddedDocuments('ActiveEffect', toDelete);
+    }
+  }
+
+  _notifyConditionDecay(effect, newLevel) {
+    if (!game.settings.get('dsa5', 'notifyOnFadingEffects')) return;
+
+    const msg = game.i18n.format('CHATNOTIFICATION.conditionDecay', {
+      effect: effect.name,
+      actor: this.link,
+      level: newLevel,
+    });
+    ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
   }
 
   async initResistPainRoll(effect) {

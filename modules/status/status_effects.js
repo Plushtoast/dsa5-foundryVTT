@@ -118,8 +118,12 @@ export default class DSA5StatusEffects {
 
     const duration = sourceEffect.duration;
     if (typeof duration.value === 'number' && Number.isFinite(duration.remaining) && duration.remaining > 0 && duration.label) {
+      const condition = sourceEffect.system?.condition;
+      const isDecayable = condition?.max != null && condition?.value != null && condition.value > 1;
+      const icon = isDecayable ? 'fa-arrow-down' : 'fa-clock';
+      const prefix = isDecayable ? '−1 ' : '';
       effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${duration.label}`
+        content: `<i class="fas ${icon}"></i> ${prefix}${duration.label}`
       });
     }
 

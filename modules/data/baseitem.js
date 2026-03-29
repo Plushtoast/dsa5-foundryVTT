@@ -25,6 +25,10 @@ export class ItemDataModel extends DSADataModel {
     return this.parent?.actor || null;
   }
 
+  get effectMultiplier() {
+    return 1;
+  }
+
   /**
    * Prepares domain attributes for display
    * @returns {string|null} Formatted HTML for domain attributes

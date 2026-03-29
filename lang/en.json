@@ -1757,6 +1757,7 @@
     },
     "CHATNOTIFICATION": {
         "fadingEffect": "The effect <b>{effect}</b> has been removed from {actor}.",
+        "conditionDecay": "<b>{effect}</b> on {actor} decreased to level {level}.",
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",

@@ -176,6 +176,10 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     if (cost) item.AEpayable = true;
   }
 
+  get effectMultiplier() {
+    return Number(this.step?.value) || 1;
+  }
+
   advanceCost() {
     return SpecialabilityRulesDSA5.stepXPCost(this, this.step.value)
   }

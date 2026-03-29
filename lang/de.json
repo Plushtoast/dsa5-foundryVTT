@@ -1309,6 +1309,7 @@
     },
     "CHATNOTIFICATION": {
         "fadingEffect": "Der Effekt <b>{effect}</b> wurde von {actor} entfernt.",
+        "conditionDecay": "<b>{effect}</b> bei {actor} auf Stufe {level} gesunken.",
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",

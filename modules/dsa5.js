@@ -46,8 +46,7 @@ import { clickableAbility, tabSlider, tinyNotification } from './system/helpers/
 import CareerWizard from './wizards/career_wizard.js';
 import SpeciesWizard from './wizards/species_wizard.js';
 import CultureWizard from './wizards/culture_wizard.js';
-import { ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from './dialog/dialog-react.js';
-import DialogReactDSA5 from './dialog/dialog-react.js';
+import { DialogReactDSA5, ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from './dialog/dialog-react.js';
 import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effect_config.js';
 import APTracker from './system/orwell/ap-tracker.js';
@@ -186,7 +185,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
   CONFIG.ActiveEffect.dataModels.base = ActiveEffectDataModels.base;
-  CONFIG.ActiveEffect.expiryAction = 'delete';
+  CONFIG.ActiveEffect.expiryAction = null;
   CONFIG.Token.objectClass = DSAToken;
   CONFIG.Token.documentClass = DSATokenDocument;
   CONFIG.Token.rulerClass = DSATokenRuler;
