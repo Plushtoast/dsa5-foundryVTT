@@ -14,6 +14,23 @@
         </div>
         {{/if}}
     </div>
+    {{#if actionPips}}
+    <div class="action-pips flexrow">
+        <div class="pip free-action {{#if actionPips.freeAction.used}}depleted{{/if}}"
+            data-action="toggleFreeAction"
+            data-tooltip-html="{{actionPips.freeAction.tooltip}}">
+        </div>
+        {{#each actionPips.baseActions}}
+        <div class="pip base-action {{#if used}}depleted{{/if}} {{#if overuse}}overuse{{/if}}"
+            data-tooltip-html="{{tooltip}}">
+        </div>
+        {{/each}}
+        <div class="pip movement-pip {{#if actionPips.movement.exceeded}}exceeded{{/if}} {{#if actionPips.movement.costsBaseAction}}costs-action{{/if}}"
+            data-tooltip-html="{{actionPips.movement.tooltip}}"
+            style="--move-pct: {{actionPips.movement.percent}}%">
+        </div>
+    </div>
+    {{/if}}
     <div class="hotbar-avatar-container flexrow">
         <img class="hotbar-avatar flex0 {{turnClass}}" data-category="actorSummary" src="{{actorImg}}" style="{{avatarStyle}}" />
         {{#each weapons}}

@@ -52,7 +52,7 @@
                     {{#if (and initiative isOwner)}}
                     <a class="aggroButton specImg" data-action="aggroButton" data-tooltip="attacktest"></a> {{else if isOwner}}
                     <button type="button" class="combatant-control roll" data-action="rollInitiative"
-                    data-tooltip="COMBATANT.InitiativeRoll" aria-label="{{ localize "COMBATANT.InitiativeRoll" }}"
+                    data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
                     {{/if}}
                 </div>

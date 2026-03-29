@@ -1093,6 +1093,8 @@
         "armor": "Armor modifier",
         "range": "Range multiplier",
         "creatureBonus": "Bonus damage (creature)",
+        "bonusActions": "Bonus Actions",
+        "actionCostMod": "Action Cost Modifier",
         "armorPen": "Armor penetration",
         "sight": "Sight modifier",
         "sightMax": "Sight modifier incl. Level 4",
@@ -2981,7 +2983,11 @@
         "noDefenses": "Defense count",
         "ongoing": "Ongoing actions",
         "waitInit": "Wait",
-        "actionHint": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>"
+        "actionHint": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>",
+        "baseActionPipHint": "Action ({used}/{total}). Attack, Ranged attack, Draw weapon, Cast spell…",
+        "freeActionPipHint": "Free Action. Call a phrase, Drop item, Stand up, Turn around…",
+        "movementPipHint": "Movement: {used}/{max} Schritt. Beyond speed costs one action.",
+        "overusePipHint": "Extra action – exceeds your action budget this round!"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",

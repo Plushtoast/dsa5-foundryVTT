@@ -39,7 +39,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     actions: {
       categoryFilter: this.#filterCategory,
       weapon: this.#onRollWeapon,
-      collapseBar: this.#onCollapse
+      collapseBar: this.#onCollapse,
+      toggleFreeAction: this.#onToggleFreeAction,
     },
   };
 
@@ -410,6 +411,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     target.classList.toggle('fa-chevron-up', this.collapseBar);
     target.classList.toggle('fa-chevron-down', !this.collapseBar);
     this.element.classList.toggle('collapsedBar');
+  }
+
+  static #onToggleFreeAction(ev, target) {
+    if (!game.combat || !this.actor) return;
+
+    const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
+    const speaker = { token: token?.id, actor: this.actor.id };
+    game.combat.toggleFreeAction(speaker);
   }
 
   static async #onRollWeapon(ev, target) {
@@ -922,6 +931,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
+
+    if (context.turnClass === 'myRound') {
+      const combatant = token?.combatant;
+      context.actionPips = this.#prepareActionPips(combatant, token);
+    }
   }
 
   #buildAvatarStyle(config) {
@@ -954,6 +968,70 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         label: _loc('CHAR.KAP'),
       },
     }
+  }
+
+  #prepareActionPips(combatant, token) {
+    if (!combatant) return undefined;
+
+    const actor = combatant.actor;
+    // Creatures may have actionCount > 1; characters always get 1
+    const creatureActions = Math.max(Number(actor?.system.actionCount?.value) || 1, 1);
+    const bonusActions = Number(actor?.system.combat?.bonusActions) || 0;
+    const totalActions = creatureActions + bonusActions;
+    const actionsUsed = combatant.system.actionsUsed || 0;
+    const freeActionUsed = !!combatant.system.freeActionUsed;
+
+    // Movement derived from movementHistory at render time
+    const tokenObj = token?.object;
+    let distance = 0;
+    if (tokenObj && token.movementHistory?.length) {
+      try {
+        distance = tokenObj.measureMovementPath(token.movementHistory).distance;
+      } catch { /* token may not be on canvas */ }
+    }
+    const speed = actor?.speedByMovementType?.('walk') || 0;
+    const moved = distance > 0;
+    const movementCostsAction = distance > speed;
+
+    // Free action: consumed by any movement up to GS, or manually toggled
+    const freeAction = {
+      used: freeActionUsed || moved,
+      tooltip: _loc('COMBATTRACKER.freeActionPipHint'),
+    };
+
+    // Base actions: build pip array; show overuse pips if used > total
+    const baseActions = [];
+    const displayCount = Math.max(totalActions, actionsUsed);
+    for (let i = 0; i < displayCount; i++) {
+      const used = i < actionsUsed;
+      const overuse = i >= totalActions;
+      let tooltip;
+      if (overuse) {
+        tooltip = _loc('COMBATTRACKER.overusePipHint');
+      } else {
+        tooltip = _loc('COMBATTRACKER.baseActionPipHint').replace('{used}', actionsUsed).replace('{total}', totalActions);
+      }
+      baseActions.push({ used, overuse, tooltip });
+    }
+
+    // Movement bar: 0..GS = free, GS..2*GS = costs base action, >2*GS = exceeded
+    const maxMovement = speed * 2;
+    const percent = maxMovement > 0 ? Math.min(100, Math.round(distance / maxMovement * 100)) : 0;
+    const exceeded = maxMovement > 0 && distance > maxMovement;
+    const movementTooltip = _loc('COMBATTRACKER.movementPipHint')
+      .replace('{used}', Math.round(distance))
+      .replace('{max}', maxMovement);
+
+    const movement = {
+      total: maxMovement,
+      used: Math.round(distance),
+      percent,
+      exceeded,
+      costsBaseAction: movementCostsAction,
+      tooltip: movementTooltip,
+    };
+
+    return { baseActions, freeAction, movement };
   }
 
   #weaponPositions(context) {

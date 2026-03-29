@@ -283,6 +283,8 @@ export default class EffectDropdownBuilder {
                 options: [
                     { name: `${_loc('vulnerability')} - ${combatskill}`, val: 'system.vulnerabilities.combatskill', type: 'custom', ph: csdemo },
                     { name: _loc('MODS.creatureBonus'), val: 'system.creatureBonus', type: 'custom', ph: `${_loc('CONJURATION.elemental')} 1` },
+                    { name: _loc('MODS.bonusActions'), val: 'system.combat.bonusActions', type: 'add', ph: '1' },
+                    { name: _loc('MODS.actionCostMod'), val: 'system.combat.actionCostMod', type: 'add', ph: '-1' },
                 ],
             },
         ];

@@ -78,6 +78,10 @@ export default class DiceDSA5 {
       await this.updateDefenseCount(testData);
     }
 
+    if (mode === ATTACK) {
+      await this.consumeAction(testData);
+    }
+
     return mode === DAMAGE
       ? this.rollDamage(testData)
       : this.rollCombatTrait(testData);
@@ -93,6 +97,10 @@ export default class DiceDSA5 {
 
     if (mode === PARRY) {
       await this.updateDefenseCount(testData);
+    }
+
+    if (mode === ATTACK) {
+      await this.consumeAction(testData);
     }
 
     return mode === DAMAGE
@@ -1750,6 +1758,7 @@ export default class DiceDSA5 {
   }
 
   static async rollSpell(testData) {
+    await this.consumeAction(testData);
     const res = await this._rollThreeD20(testData);
     const isClerical = [CEREMONY, LITURGY].includes(testData.source.type);
     res.rollType = testData.source.type;
@@ -2008,6 +2017,16 @@ export default class DiceDSA5 {
 
   static async updateDefenseCount(testData) {
     if (game.combat && !testData.fateUsed) await game.combat.updateDefenseCount(testData.extra.speaker);
+  }
+
+  static async consumeAction(testData, cost = 1) {
+    if (!game.combat || testData.fateUsed) return;
+
+    const costMod = Number(testData.extra?.actor?.system?.combat?.actionCostMod) || 0;
+    const effectiveCost = Math.max(0, cost + costMod);
+    if (effectiveCost <= 0) return;
+
+    await game.combat.updateActionCount(testData.extra.speaker, effectiveCost);
   }
 
   static _compareWeaponReach(weapon, testData) {

@@ -57,7 +57,7 @@ export default class DSA5Combat extends Combat {
 
       await this.update({ 'system.unarmEveryone': unarmEveryone })
 
-      for (let x of this.combatants) {
+      for (const x of this.combatants) {
         if (!x.actor) return {};
 
         const change = await x.brawlingChange();
@@ -72,7 +72,7 @@ export default class DSA5Combat extends Combat {
         DSA5Combat.brawlStart();
       }
     } else {
-      for (let x of this.combatants) {
+      for (const x of this.combatants) {
         if (!x.actor) return {};
 
         const change = await x.undoBrawlingChange();
@@ -129,8 +129,8 @@ export default class DSA5Combat extends Combat {
 
   async clearRoundState() {
     if (game.user.isGM) {
-      for (let k of this.turns) {
-        await k.update({ 'system.defenseCount': 0, "system.roundInitiative": -1 });
+      for (const k of this.turns) {
+        await k.update({ 'system.defenseCount': 0, 'system.roundInitiative': -1, 'system.actionsUsed': 0, 'system.freeActionUsed': false, 'system.movementActionConsumed': false });
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -190,6 +190,73 @@ export default class DSA5Combat extends Combat {
           speaker,
         },
       });
+    }
+  }
+
+  async updateActionCount(speaker, cost = 1) {
+    if (game.user.isGM) {
+      const comb = this.getCombatantFromActor(speaker);
+      if (comb) {
+        await comb.update({ 'system.actionsUsed': (comb.system.actionsUsed || 0) + cost });
+      }
+    } else {
+      await game.socket.emit('system.dsa5', {
+        type: 'updateActionCount',
+        payload: { speaker, cost },
+      });
+    }
+  }
+
+  async toggleFreeAction(speaker) {
+    if (game.user.isGM) {
+      const comb = this.getCombatantFromActor(speaker);
+      if (comb) {
+        await comb.update({ 'system.freeActionUsed': !comb.system.freeActionUsed });
+      }
+    } else {
+      await game.socket.emit('system.dsa5', {
+        type: 'toggleFreeAction',
+        payload: { speaker },
+      });
+    }
+  }
+
+  async handleMovementCost(tokenDoc) {
+    const combatant = this.combatants.find(c => c.tokenId === tokenDoc.id);
+    if (!combatant) return;
+
+    const tokenObj = tokenDoc.object;
+    let distance = 0;
+    if (tokenObj && tokenDoc.movementHistory?.length) {
+      try {
+        distance = tokenObj.measureMovementPath(tokenDoc.movementHistory).distance;
+      } catch { return; }
+    }
+    if (distance <= 0) return;
+
+    const updates = {};
+
+    // Any movement consumes the free action
+    if (!combatant.system.freeActionUsed) {
+      updates['system.freeActionUsed'] = true;
+    }
+
+    // Movement beyond GS additionally consumes one base action
+    const speed = combatant.actor?.speedByMovementType?.('walk') || 0;
+    if (speed > 0 && distance > speed && !combatant.system.movementActionConsumed) {
+      updates['system.actionsUsed'] = (combatant.system.actionsUsed || 0) + 1;
+      updates['system.movementActionConsumed'] = true;
+    }
+
+    if (Object.keys(updates).length) {
+      if (game.user.isGM) {
+        await combatant.update(updates);
+      } else {
+        await game.socket.emit('system.dsa5', {
+          type: 'handleMovementCost',
+          payload: { tokenId: tokenDoc.id },
+        });
+      }
     }
   }
 }

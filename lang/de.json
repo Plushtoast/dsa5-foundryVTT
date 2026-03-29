@@ -825,6 +825,8 @@
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
         "creatureBonus": "Bonusschaden (Kreatur)",
+        "bonusActions": "Zusätzliche Aktionen",
+        "actionCostMod": "Aktionskostenmodifikator",
         "armorPen": "Rüstungsdurchdringung",
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
@@ -3007,7 +3009,11 @@
         "noDefenses": "Anzahl Verteidigungen",
         "ongoing": "Laufende Handlungen",
         "waitInit": "Zurückstellen",
-        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>"
+        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>",
+        "baseActionPipHint": "Aktion ({used}/{total}). Attacke, Fernkampfangriff, Waffe ziehen, Zauber wirken…",
+        "freeActionPipHint": "Freie Aktion. Kurzen Satz rufen, Gegenstand fallen lassen, Aufstehen, Umdrehen…",
+        "movementPipHint": "Bewegung: {used}/{max} Schritt. Über GS hinaus kostet eine Aktion.",
+        "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!"
     },
     "CHATFATE": {
         "fatepointUsed": "Das Schicksal ändert sich",

@@ -92,8 +92,17 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(actor.id);
     });
 
-    Hooks.on('updateToken', (scene, token, updates) => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(token.actor?.id);
+    Hooks.on('updateToken', (tokenDoc, changed, options) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('recordToken', (tokenDoc) => {
+      if (game.combat) game.combat.handleMovementCost(tokenDoc);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('updateCombatant', (combatant, changes) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(combatant.actor?.id);
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
