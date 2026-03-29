@@ -5,6 +5,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import TransactionSummaryService from '../system/payment/transaction-summary.js';
 import { DefaultAppv2 } from './baseapp.js';
+import { fetchBagItems } from '../hooks/itemDrop.js';
 const { mergeObject, randomID } = foundry.utils;
 
 export class Trade extends DefaultAppv2 {
@@ -83,7 +84,7 @@ export class Trade extends DefaultAppv2 {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const tradeFriend = DSA5_Utility.getSpeaker(this.tradeData.sourceId);
-    let inventory = tradeFriend.prepareItems({ details: [] });
+    const inventory = tradeFriend.prepareItems({ details: [] });
 
     inventory.inventory['money'] = {
       items: inventory.money.coins.map((x) => {
@@ -94,8 +95,8 @@ export class Trade extends DefaultAppv2 {
       dataType: 'money',
     };
 
-    for (let section of Object.values(inventory.inventory)) {
-      for (let item of section.items) {
+    for (const section of Object.values(inventory.inventory)) {
+      for (const item of section.items) {
         if (this.tradeData.offer[item._id]) {
           item.system.quantity.value -= this.tradeData.offer[item._id].system.quantity.value;
         }
@@ -112,7 +113,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   static findTradeApp(id) {
-    for (const [appId, app] of Array.from(foundry.applications.instances)) {
+    for (const [_appId, app] of Array.from(foundry.applications.instances)) {
       if (app instanceof Trade && app?.tradeData?.id === id) {
         return app;
       }
@@ -167,14 +168,20 @@ export class Trade extends DefaultAppv2 {
     const actor = DSA5_Utility.getSpeaker(this.tradeData.sourceId);
     const item = actor.items.get(id);
 
-    let amount = ev.ctrlKey ? 10 : 1;
-    let isStopTrade = ev.currentTarget.dataset.stopTrade;
+    const amount = ev.ctrlKey ? 10 : 1;
+    const isStopTrade = ev.currentTarget.dataset.stopTrade;
     let availableCount = isStopTrade ? this.tradeData.offer[id].system.quantity.value : item.system.quantity.value;
     if (item) {
       if (isStopTrade) {
         this.tradeData.offer[id].system.quantity.value -= Math.min(amount, availableCount);
         if (this.tradeData.offer[id].system.quantity.value <= 0) {
           delete this.tradeData.offer[id];
+          // Remove bag children from offer when bag is removed
+          if (item.system.isBagWithContents) {
+            for (const child of fetchBagItems(item, actor)) {
+              delete this.tradeData.offer[child.id];
+            }
+          }
         }
         this.offerChanged();
         this.render();
@@ -188,6 +195,14 @@ export class Trade extends DefaultAppv2 {
 
         if (availableCount > 0) {
           this.tradeData.offer[id].system.quantity.value += Math.min(amount, availableCount);
+          // Auto-include bag children in the offer
+          if (item.system.isBagWithContents) {
+            for (const child of fetchBagItems(item, actor)) {
+              if (!this.tradeData.offer[child.id]) {
+                this.tradeData.offer[child.id] = child.toObject();
+              }
+            }
+          }
           this.offerChanged();
           this.render();
         }
@@ -304,7 +319,7 @@ export class Trade extends DefaultAppv2 {
   static async modifyActor(actor, toRemove, toAdd) {
     const removeIds = [];
     const updateItems = [];
-    for (let id of Object.keys(toRemove)) {
+    for (const id of Object.keys(toRemove)) {
       const item = actor.items.get(id);
       if (item) {
         if (item.system.quantity.value <= toRemove[id].system.quantity.value && item.type != 'money') {
@@ -321,8 +336,75 @@ export class Trade extends DefaultAppv2 {
     await actor.deleteEmbeddedDocuments('Item', removeIds, { render: false });
     await actor.updateEmbeddedDocuments('Item', updateItems, { render: false });
 
+    const addItems = Object.values(toAdd);
+    const addById = new Map(Object.entries(toAdd));
+    const bagIds = new Set();
+    const childOfBag = new Set();
+
+    for (const [id, item] of addById) {
+      if (item.type === 'equipment' && item.system?.equipmentType?.value === 'bags') {
+        const hasChildren = addItems.some((other) => other._id !== item._id && other.system?.parent_id == id);
+        if (hasChildren) bagIds.add(id);
+      }
+    }
+
+    if (bagIds.size > 0) {
+      for (const item of addItems) {
+        if (!bagIds.has(item._id) && item.system?.parent_id && bagIds.has(item.system.parent_id)) {
+          childOfBag.add(item._id);
+        }
+        if (bagIds.has(item._id) && item.system?.parent_id && bagIds.has(item.system.parent_id)) {
+          childOfBag.add(item._id);
+        }
+      }
+    }
+
+    const idMap = new Map();
     const receivedItems = [];
-    for (let item of Object.values(toAdd)) {
+
+    if (bagIds.size > 0) {
+      const bagsToCreate = addItems.filter((item) => bagIds.has(item._id));
+      const remaining = [...bagsToCreate];
+      const created = new Set();
+      while (remaining.length > 0) {
+        const batch = remaining.filter((b) => !b.system.parent_id || !bagIds.has(b.system.parent_id) || created.has(b.system.parent_id));
+        if (batch.length === 0) break; // prevent infinite loop
+        for (const bag of batch) {
+          const copy = foundry.utils.duplicate(bag);
+          const newParentId = idMap.get(copy.system.parent_id);
+          if (newParentId) copy.system.parent_id = newParentId;
+          if (copy.system.worn?.value) copy.system.worn.value = false;
+          const oldId = copy._id;
+          delete copy._id;
+          const [createdBag] = await actor.createEmbeddedDocuments('Item', [copy], { render: false });
+          idMap.set(oldId, createdBag.id);
+          created.add(oldId);
+          receivedItems.push({ item: createdBag, quantity: Number(bag.system?.quantity?.value) || 0 });
+          remaining.splice(remaining.indexOf(bag), 1);
+        }
+      }
+
+      const children = addItems.filter((item) => childOfBag.has(item._id) && !bagIds.has(item._id));
+      if (children.length > 0) {
+        const copies = children.map((item) => {
+          const copy = foundry.utils.duplicate(item);
+          const newParentId = idMap.get(copy.system.parent_id);
+          if (newParentId) copy.system.parent_id = newParentId;
+          if (copy.system.worn?.value) copy.system.worn.value = false;
+          delete copy._id;
+          return copy;
+        });
+        const createdChildren = await actor.createEmbeddedDocuments('Item', copies, { render: false });
+        for (let idx = 0; idx < children.length; idx++) {
+          idMap.set(children[idx]._id, createdChildren[idx].id);
+          receivedItems.push({ item: createdChildren[idx], quantity: Number(children[idx].system?.quantity?.value) || 0 });
+        }
+      }
+    }
+
+    for (const item of addItems) {
+      if (bagIds.has(item._id) || childOfBag.has(item._id)) continue;
+
       const targetItem = await actor.sheet._manageDragItems(item, item.type);
       const resolvedItem = targetItem || actor.items.find((existing) => Itemdsa5.areEquals?.(item, existing)) || actor.items.find((existing) => existing.name === item.name && existing.type === item.type);
       receivedItems.push({

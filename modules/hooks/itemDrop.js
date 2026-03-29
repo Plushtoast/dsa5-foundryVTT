@@ -9,8 +9,8 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
   const isBag = formOptions.isBag?.value;
 
   if (game.user.isGM) {
-    let items = await game.dsa5.apps.DSA5_Utility.allMoneyItems();
-    let folder = await DSA5_Utility.getFolderForType('Actor', null, 'Dropped Items');
+    const items = await game.dsa5.apps.DSA5_Utility.allMoneyItems();
+    const folder = await DSA5_Utility.getFolderForType('Actor', null, 'Dropped Items');
     const userIds = game.users.filter((x) => !x.isGM).map((x) => x.id);
 
     const ownership = userIds.reduce(
@@ -98,9 +98,9 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
   }
 };
 
-function fetchBagItems(item, sourceActor) {
+export function fetchBagItems(item, sourceActor) {
   const bagItems = [];
-  for (let i of sourceActor.items) {
+  for (const i of sourceActor.items) {
     if (i.system.parent_id == item.id) {
       bagItems.push(i);
       if (i.system.isBagWithContents) {
@@ -110,6 +110,90 @@ function fetchBagItems(item, sourceActor) {
     }
   }
   return bagItems;
+}
+
+/**
+ * Collect bag item objects grouped by depth level for ordered creation.
+ * Returns { bagData, childrenByDepth } where childrenByDepth is a Map<depth, itemData[]>.
+ */
+function collectBagContentsGrouped(bagItemData, sourceActor) {
+  const childrenByDepth = new Map();
+
+  function collect(parentId, depth) {
+    const children = [];
+    for (const i of sourceActor.items) {
+      if (i.system.parent_id == parentId) {
+        const obj = i.toObject();
+        children.push(obj);
+        if (!childrenByDepth.has(depth)) childrenByDepth.set(depth, []);
+        childrenByDepth.get(depth).push(obj);
+        if (i.system.isBagWithContents) {
+          collect(i.id, depth + 1);
+        }
+      }
+    }
+    return children;
+  }
+
+  collect(bagItemData._id || bagItemData.id, 1);
+  return childrenByDepth;
+}
+
+/**
+ * Transfer a bag with all its contents from one actor to another,
+ * remapping parent_id references so the bag hierarchy is preserved.
+ * @param {Actor} sourceActor - The actor to take the bag from
+ * @param {Actor} targetActor - The actor to give the bag to
+ * @param {Object} bagItemData - The bag item as plain object data
+ * @returns {Promise<Object>} The created bag item on the target actor
+ */
+export async function transferBagWithContents(sourceActor, targetActor, bagItemData) {
+  const { duplicate } = foundry.utils;
+
+  // Collect all children grouped by depth for ordered processing
+  const childrenByDepth = collectBagContentsGrouped(bagItemData, sourceActor);
+  const allChildren = [...childrenByDepth.values()].flat();
+
+  // Track old ID -> new ID mappings for parent_id remapping
+  const idMap = new Map();
+
+  // Create the bag itself on the target
+  const bagCopy = duplicate(bagItemData);
+  bagCopy.system.parent_id = bagCopy.system.parent_id || '';
+  if (bagCopy.system.worn?.value) bagCopy.system.worn.value = false;
+  delete bagCopy._id;
+
+  const [createdBag] = await targetActor.createEmbeddedDocuments('Item', [bagCopy], { render: false });
+  idMap.set(bagItemData._id || bagItemData.id, createdBag.id);
+
+  // Create children depth by depth so parent bags exist before their children
+  const depths = [...childrenByDepth.keys()].sort((a, b) => a - b);
+  for (const depth of depths) {
+    const items = childrenByDepth.get(depth);
+    const copies = items.map((item) => {
+      const copy = duplicate(item);
+      // Remap parent_id using the id map
+      const newParentId = idMap.get(copy.system.parent_id);
+      if (newParentId) copy.system.parent_id = newParentId;
+      if (copy.system.worn?.value) copy.system.worn.value = false;
+      delete copy._id;
+      return copy;
+    });
+    const created = await targetActor.createEmbeddedDocuments('Item', copies, { render: false });
+    // Record new IDs for any sub-bags at this depth
+    for (let idx = 0; idx < items.length; idx++) {
+      idMap.set(items[idx]._id, created[idx].id);
+    }
+  }
+
+  // Delete bag + all children from source
+  const deleteIds = [bagItemData._id || bagItemData.id, ...allChildren.map((c) => c._id)].filter(Boolean);
+  const existingIds = deleteIds.filter((id) => sourceActor.items.has(id));
+  if (existingIds.length > 0) {
+    await sourceActor.deleteEmbeddedDocuments('Item', existingIds, { render: false });
+  }
+
+  return createdBag;
 }
 
 const handleItemDrop = async (canvas, data) => {
@@ -145,7 +229,7 @@ const handleGroupDrop = async (canvas, data) => {
   let count = 0;
   const gridSize = canvas.grid.size;
   const rowLength = Math.ceil(Math.sqrt(data.ids.length));
-  for (let id of data.ids) {
+  for (const id of data.ids) {
     const actor = game.actors.get(id);
     if (!actor) continue;
 

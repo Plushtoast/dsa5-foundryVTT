@@ -9,6 +9,7 @@ import TransactionSummaryService from '../../system/payment/transaction-summary.
 import { InventoryBulkActionHelper } from '../../system/helpers/inventory-bulk-action.js';
 import { DefaultAppv2 } from '../baseapp.js';
 import { ItemFactory } from '../../item/item-factory.js';
+import { fetchBagItems, transferBagWithContents } from '../../hooks/itemDrop.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -125,7 +126,7 @@ export const MerchantSheetMixin = (superclass) =>
 
         if (toKeep) {
           let hasAnyActive;
-          for (let tab of Object.keys(tabs)) {
+          for (const tab of Object.keys(tabs)) {
             if (!toKeep.has(tab)) {
               delete tabs[tab];
               continue;
@@ -163,7 +164,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     async allowMerchant(ids, allow) {
-      let curPermissions = duplicate(this.actor.ownership);
+      const curPermissions = duplicate(this.actor.ownership);
       const newPerm = allow ? 1 : 0;
       for (const id of ids) {
         curPermissions[id] = newPerm;
@@ -204,14 +205,14 @@ export const MerchantSheetMixin = (superclass) =>
 
     static _itemExternalEdit(ev, target) {
       ev.preventDefault();
-      let itemId = this._getItemId(target);
+      const itemId = this._getItemId(target);
       const item = this.getTradeFriend().items.get(itemId);
       item.sheet.render(true);
     }
 
     static async _toggleTradeLock(ev, target) {
       const itemId = this._getItemId(target);
-      let item = this.actor.items.get(itemId);
+      const item = this.actor.items.get(itemId);
       this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.tradeLocked': !item.system.tradeLocked }]);
     }
 
@@ -236,9 +237,9 @@ export const MerchantSheetMixin = (superclass) =>
       const updates = [];
       const rule = this.filterRule(target);
       let newValue;
-      for (let item of this.actor.items) {
+      for (const item of this.actor.items) {
         if (rule(item)) {
-          let upd = item.toObject();
+          const upd = item.toObject();
           if (newValue === undefined) newValue = !upd.system.tradeLocked;
 
           upd.system.tradeLocked = newValue;
@@ -264,9 +265,9 @@ export const MerchantSheetMixin = (superclass) =>
     static async changeAmountAllItems(ev, target) {
       const updates = [];
       const rule = this.filterRule(target);
-      for (let item of this.actor.items) {
+      for (const item of this.actor.items) {
         if (rule(item)) {
-          let upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value } } };
+          const upd = { _id: item.id, system: { quantity: { value: item.system.quantity.value } } };
           RuleChaos.increment(ev, upd, 'system.quantity.value', 0);
           updates.push(upd);
         }
@@ -312,17 +313,30 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static transferTokenData(tokenData) {
-      let id = { actor: tokenData.id };
+      const id = { actor: tokenData.id };
       if (tokenData.token) id['token'] = tokenData.token.id;
 
       return id;
     }
 
     static async finishTransaction(source, target, price, itemId, buy, amount) {
-      const item = source.items.get(itemId).toObject();
+      const sourceItem = source.items.get(itemId);
+      const item = sourceItem.toObject();
       if (Number(item.system.quantity.value) > 0) {
         amount = Math.min(Number(item.system.quantity.value), amount);
-        let totalPrice = Number(price) * amount
+        let totalPrice = Number(price) * amount;
+
+        const isBagWithContents = item.type === 'equipment' && getProperty(item, 'system.equipmentType.value') === 'bags'
+          && source.items.some((i) => i.system.parent_id == itemId);
+
+        // Sum up prices of bag contents for merchant transactions
+        if (isBagWithContents && !this.noNeedToPay(target, source, `${totalPrice}`)) {
+          const children = fetchBagItems(sourceItem, source);
+          for (const child of children) {
+            totalPrice += DSA5_Utility.itemPrice(child) * (child.system.quantity?.value || 1);
+          }
+        }
+
         price = `${totalPrice}`;
 
         const noNeedToPay = this.noNeedToPay(target, source, price);
@@ -331,16 +345,26 @@ export const MerchantSheetMixin = (superclass) =>
           if (getProperty(item.system, 'worn.value')) item.system.worn.value = false;
 
           if (buy) {
-            const res = await this.updateTargetTransaction(target, item, amount, source, price);
-            await this.updateSourceTransaction(source, target, item, price, itemId, amount);
+            let res;
+            if (isBagWithContents) {
+              res = await transferBagWithContents(source, target, item);
+            } else {
+              res = await this.updateTargetTransaction(target, item, amount, source, price);
+              await this.updateSourceTransaction(source, target, item, price, itemId, amount);
+            }
             await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res);
             await this.selfDestruction(source);
 
             await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
             await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
           } else {
-            await this.updateSourceTransaction(source, target, item, price, itemId, amount);
-            const res = await this.updateTargetTransaction(target, item, amount, source, price);
+            let res;
+            if (isBagWithContents) {
+              res = await transferBagWithContents(source, target, item);
+            } else {
+              await this.updateSourceTransaction(source, target, item, price, itemId, amount);
+              res = await this.updateTargetTransaction(target, item, amount, source, price);
+            }
             await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res);
 
             await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
@@ -538,20 +562,20 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     hideEmptyCategories(inventory) {
-      for (const key of Object.keys(inventory)) {
-        inventory[key].show = inventory[key].items.length && inventory[key].items.some(x => !x.system.tradeLocked)
+      for (const value of Object.values(inventory)) {
+        value.show = value.items.length && value.items.some(x => !x.system.tradeLocked)
       }
     }
 
     filterWornEquipment(data) {
-      for (const [key, value] of Object.entries(data.prepare.inventory)) {
+      for (const value of Object.values(data.prepare.inventory)) {
         value.items = value.items.filter((x) => !getProperty(x.system, 'worn.value'));
       }
     }
 
     prepareStorage(data) {
       if (data.merchantType == 'merchant') {
-        for (const [key, value] of Object.entries(data.prepare.inventory)) {
+        for (const value of Object.values(data.prepare.inventory)) {
           for (const item of value.items) {
             item.defaultPrice = this.getItemPrice(item);
             item.calculatedPrice =
@@ -561,7 +585,7 @@ export const MerchantSheetMixin = (superclass) =>
           }
         }
       } else if (data.merchantType == 'loot') {
-        for (const [key, value] of Object.entries(data.prepare.inventory)) {
+        for (const value of Object.values(data.prepare.inventory)) {
           for (const item of value.items) {
             item.calculatedPrice = this.getItemPrice(item);
           }
@@ -583,14 +607,14 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     prepareTradeFriend(data) {
-      let friend = this.getTradeFriend();
+      const friend = this.getTradeFriend();
       if (friend) {
-        let tradeData = friend.prepareItems({ details: [] });
-        let factor =
+        const tradeData = friend.prepareItems({ details: [] });
+        const factor =
           this.actor.system.merchant.merchantType == 'loot'
             ? 1
             : (this.actor.system.merchant.buyingFactor || 1) * (getProperty(this.actor.system, `merchant.factors.buyingFactor.${game.user.id}`) || 1);
-        let inventory = this.prepareSellPrices(tradeData.inventory, factor);
+        const inventory = this.prepareSellPrices(tradeData.inventory, factor);
         this.hideEmptyCategories(inventory);
 
         if (data.merchantType == 'loot') {
@@ -623,7 +647,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     prepareSellPrices(inventory, factor) {
-      for (const [key, value] of Object.entries(inventory)) {
+      for (const value of Object.values(inventory)) {
         for (const item of value.items) {
           item.calculatedPrice = Number(parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2));
         }

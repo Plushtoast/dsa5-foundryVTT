@@ -16,7 +16,7 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import Riding from '../system/automation/riding.js';
 import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
-import { RangeSelectDialog } from '../hooks/itemDrop.js';
+import { RangeSelectDialog, transferBagWithContents } from '../hooks/itemDrop.js';
 import DSA5Payment from '../system/payment/payment.js';
 import { TradeOptions } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
@@ -289,7 +289,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.collapsedBoxes = [];
     this.openDetails = [];
     const boxes = html.find('.ch-collapse i');
-    for (let box of boxes) {
+    for (const box of boxes) {
       this.collapsedBoxes.push($(box).attr('class'));
     }
     for (const detail of html.find('.expandDetails.shown')) {
@@ -319,7 +319,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   cleanTabs(tabs) {
     if (this.constructor.LIMITEDPARTS && this.showLimited()) {
-      for (let key of Object.keys(tabs)) {
+      for (const key of Object.keys(tabs)) {
         if (!['main', 'notes'].includes(key)) {
           delete tabs[key];
         }
@@ -459,9 +459,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _handleAggregatedProbe(ev, target) {
     const itemId = this._getItemId(target);
-    let aggregated = this.actor.items.get(itemId).toObject();
+    const aggregated = this.actor.items.get(itemId).toObject();
     const attr = aggregated.system.talent[`value${target.dataset.which}`];
-    let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
+    const skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
     let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
     if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
       infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
@@ -761,7 +761,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static async _skillSelect(ev, target) {
     const itemId = this._getItemId(target);
-    let skill = this.actor.items.get(itemId);
+    const skill = this.actor.items.get(itemId);
 
     if (ev.button == 0) {
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
@@ -780,7 +780,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _statusCreate(ev, target) {
-    let menu = $(target).siblings('.statusEffectMenu').find('ul');
+    const menu = $(target).siblings('.statusEffectMenu').find('ul');
     menu.fadeIn('fast', () => {
       menu.find('input').trigger('focus');
     });
@@ -864,7 +864,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     const lz = Number(item.system.castingTime.modified);
-    let update = {
+    const update = {
       _id: itemId
     }
     if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
@@ -946,7 +946,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _quantityClick(ev, target) {
     const itemId = this._getItemId(target);
-    let item = this.actor.items.get(itemId);
+    const item = this.actor.items.get(itemId);
     const update = { _id: itemId, system: { quantity: { value: item.system.quantity.value } } };
     RuleChaos.increment(ev, update, 'system.quantity.value', 0);
     this.actor.updateEmbeddedDocuments('Item', [update]);
@@ -1060,7 +1060,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     tabSlider(html);
 
     const autoSizings = html.find('.autosizing input')
-    for (let el of autoSizings) {
+    for (const el of autoSizings) {
       const chars = (el.value.length || el.placeholder.length) + 1;
       el.setAttribute('style', `width: ${chars}ch;`);
     }
@@ -1102,7 +1102,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     html.find('.cards .item').on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
+      const e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
@@ -1112,7 +1112,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.actorDrag').each(function (i, cond) {
       cond.setAttribute('draggable', true);
       cond.addEventListener('dragstart', (ev) => {
-        let dataTransfer = {
+        const dataTransfer = {
           type: 'Actor',
           uuid,
         };
@@ -1270,7 +1270,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         label: 'SHEET.Dropdown',
         icon: "<i class='fas fa-chevron-down'></i>",
         onClick: () => {
-          $(this.element).find(`[data-item-id=\"${item.id}\"] .expandDetails:first`).toggleClass('shown');
+          $(this.element).find(`[data-item-id="${item.id}"] .expandDetails:first`).toggleClass('shown');
         },
       },
       {
@@ -1526,7 +1526,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _bindKeepFieldsEnabled(html) {
     if (!this.isEditable) {
       const keepFields = html.find('.keepFieldsEnabled');
-      for (let k of keepFields) {
+      for (const k of keepFields) {
         const attr = k.dataset.attr;
         const name = k.dataset.name;
         $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
@@ -1673,7 +1673,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!this.isEditable) return;
 
     const itemId = this._getItemId(target);
-    let item = this.actor.items.get(itemId);
+    const item = this.actor.items.get(itemId);
     this._itemDeleteDialog(item);
   }
 
@@ -1727,8 +1727,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addMoney(item) {
-    let money = duplicate(this.actor.items.filter((i) => i.type == 'money'));
-    let moneyItem = money.find((i) => i.name == item.name);
+    const money = duplicate(this.actor.items.filter((i) => i.type == 'money'));
+    const moneyItem = money.find((i) => i.name == item.name);
 
     if (moneyItem) {
       moneyItem.system.quantity.value += item.system.quantity.value;
@@ -1773,10 +1773,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _handleSpellExtension(item) {
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) {
       item = duplicate(item);
-      let spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
+      const spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
       if (!spell) {
         ui.notifications.error(
           _loc('DSAError.noSpellForExtension', {
@@ -1792,7 +1792,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           });
           return;
         }
-        let apCost = item.system.APValue.value;
+        const apCost = item.system.APValue.value;
         if (await this.actor.checkEnoughXP(apCost)) {
           await this._updateAPs(apCost, {}, { render: false });
           const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
@@ -1803,7 +1803,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addSpellOrLiturgy(item) {
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     let apCost;
     item = duplicate(item);
     if (!res) {
@@ -1835,7 +1835,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _addLoot(item) {
     item = duplicate(item);
-    let res = this.actor.items.find((i) => ItemFactory.areEquals(item, i));
+    const res = this.actor.items.find((i) => ItemFactory.areEquals(item, i));
     if (!res) {
       if (this.tabGroups.sheet == 'combat' && item.system.worn) item.system.worn.value = true;
 
@@ -1865,7 +1865,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addFullPack(item) {
-    let docs = await game.packs.get(item.name).getDocuments();
+    const docs = await game.packs.get(item.name).getDocuments();
     let newAppls = docs.filter((x) => !this.actor.items.find((y) => y.type == x.type && y.name == x.name));
     if (item.onlyType) newAppls = newAppls.filter((x) => x.type == item.onlyType);
 
@@ -1993,11 +1993,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _handleLookup(item) {
-    let lookup = await DSA5_Utility.findAnyItem(item.items);
+    const lookup = await DSA5_Utility.findAnyItem(item.items);
     if (lookup) {
-      for (let thing of item.items) {
+      for (const thing of item.items) {
         if (thing.count) {
-          let elem = lookup.find((x) => x.name == thing.name && x.type == thing.type);
+          const elem = lookup.find((x) => x.name == thing.name && x.type == thing.type);
           if (elem) {
             elem.system.quantity.value = thing.count;
             if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
@@ -2026,12 +2026,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _handleApplication(item) {
     item = duplicate(item);
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) await this.actor.createEmbeddedDocuments('Item', [item]);
   }
 
   async _handleRemoveSourceOnDrop(item) {
-    let sourceActor = item.parent;
+    const sourceActor = item.parent;
 
     if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments('Item', [item._id]);
   }
@@ -2116,10 +2116,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         );
         DSA5SoundEffect.playMoneySound();
       }
-      await this._onDropItemCreate(itemData);
+
+      const sourceActor = item.parent;
+      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      if (isBagWithContents) {
+        await transferBagWithContents(sourceActor, this.actor, itemData);
+      } else {
+        await this._onDropItemCreate(itemData);
+      }
     }
 
-    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) await this._handleRemoveSourceOnDrop(item);
+    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) {
+      const sourceActor = item.parent;
+      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      if (!isBagWithContents) await this._handleRemoveSourceOnDrop(item);
+    }
   }
 
   _itemHasPrice(data) {

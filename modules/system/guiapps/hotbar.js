@@ -136,7 +136,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const li = event.currentTarget;
     if (!li) return;
 
-    let category = li.closest('.hSection').dataset.category;
+    const category = li.closest('.hSection').dataset.category;
     if (!category) {
       return;
     }
@@ -528,7 +528,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         case 'meleeweapon':
         case 'rangeweapon': {
           const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor) || [];
-          for (let entry of entries) {
+          for (const entry of entries) {
             if (!x.system.worn.value) entry.cssClass = 'unequipped';
             groups.attacks.push(entry);
           }
@@ -543,7 +543,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
       if (x.getFlag('dsa5', 'enchantments')) {
         if (!groups.skills.enchantment) groups.skills.enchantment = [];
-        for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
+        for (const enchantment of x.getFlag('dsa5', 'enchantments')) {
           groups.skills.enchantment.push(this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
         }
       }
@@ -677,7 +677,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #generateFilterCategories(groups) {
     const filterCategories = [];
 
-    for (let key of Object.keys(groups.skills)) {
+    for (const key of Object.keys(groups.skills)) {
       const i18nkey = `TYPES.Item.${key}`;
       filterCategories.push({
         key,
@@ -714,7 +714,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         { subfunction: 'sharedEffect' }
       );
 
-      for (let token of canvas.tokens.controlled) {
+      for (const token of canvas.tokens.controlled) {
         const tokenEffects = token.actor
           ? (await token.actor.actorEffects()).map((x) => x.name)
           : [];
