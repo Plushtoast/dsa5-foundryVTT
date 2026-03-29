@@ -38,13 +38,13 @@
                     <div class="combatant-controls flexrow">
                         {{#if ../user.isGM}}
                         <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
-                        data-action="toggleHidden" data-tooltip="COMBAT.ToggleVis"
-                        aria-label="{{ localize "COMBAT.ToggleVis" }}"></button>
+                        data-action="toggleHidden" data-tooltip="COMBATANT.ToggleVis"
+                        aria-label="{{ localize "COMBATANT.ToggleVis" }}"></button>
                     </div>
                     <div class="combatant-controls flexrow">
                         <button type="button" class="inline-control combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
-                        data-action="toggleDefeated" data-tooltip="COMBAT.ToggleDead"
-                        aria-label="{{ localize "COMBAT.ToggleDead" }}"></button>
+                        data-action="toggleDefeated" data-tooltip="COMBATANT.ToggleDead"
+                        aria-label="{{ localize "COMBATANT.ToggleDead" }}"></button>
                         {{/if}}
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                     {{#if (and initiative isOwner)}}
                     <a class="aggroButton specImg" data-action="aggroButton" data-tooltip="attacktest"></a> {{else if isOwner}}
                     <button type="button" class="combatant-control roll" data-action="rollInitiative"
-                    data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
+                    data-tooltip="COMBATANT.InitiativeRoll" aria-label="{{ localize "COMBATANT.InitiativeRoll" }}"
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
                     {{/if}}
                 </div>
