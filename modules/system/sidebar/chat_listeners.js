@@ -49,7 +49,7 @@ export default class DSA5ChatListeners {
     const effect = CONFIG.statusEffects.find((x) => x.id == id);
     if (!effect) return;
 
-    const description = effect.system?.description || effect.description || effect.name;
+    const description = effect.description || effect.name;
     const msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.img}"/>${_loc(effect.name)}</h2></a><p>${_loc(description)}</p>`;
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }

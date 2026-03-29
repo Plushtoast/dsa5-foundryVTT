@@ -2058,7 +2058,7 @@ export default class Actordsa5 extends Actor {
       effect = duplicate(statusEffect);
 
       effect.name = _loc(effect.name);
-      effect.system.description = _loc(effect.system.description || effect.name);
+      effect.description = _loc(effect.description || effect.name);
 
       if (effect.system?.changes) {
         effect.system.changes = effect.system.changes.map((change) => {

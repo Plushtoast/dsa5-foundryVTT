@@ -26,7 +26,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     onRemove: { path: 'macroArgs.onRemove', type: 'string' },
     resistRoll: { path: 'resistRoll', type: 'string' },
     charges: { path: 'charges', type: 'charges' },
-    description: { path: 'description', type: 'string' },
+    description: { path: 'description', type: 'string', topLevel: true },
     value: { path: 'condition.value', type: 'nullableNumber' },
     max: { path: 'condition.max', type: 'nullableNumber' },
     auto: { path: 'condition.auto', type: 'number' },
@@ -425,6 +425,11 @@ export default class DSAActiveEffect extends ActiveEffect {
       if (system?.source !== undefined) delete system.source;
     }
 
+    if (source.system?.description) {
+      if (!source.description) source.description = source.system.description;
+      delete source.system.description;
+    }
+
     if (!source.flags?.dsa5) return super.migrateData(source);
 
     const flags = source.flags.dsa5;
@@ -472,7 +477,11 @@ export default class DSAActiveEffect extends ActiveEffect {
           migratedValue = rawValue;
       }
 
-      setProperty(source, `system.${config.path}`, migratedValue);
+      if (config.topLevel) {
+        source[config.path] = migratedValue;
+      } else {
+        setProperty(source, `system.${config.path}`, migratedValue);
+      }
       delete flags[key];
     }
 

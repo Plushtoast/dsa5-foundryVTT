@@ -82,7 +82,6 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),
     });
-    schema.description = new StringField();
     schema.condition = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),

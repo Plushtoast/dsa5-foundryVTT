@@ -7,16 +7,14 @@ DSA5.statusEffects = [
     img: 'icons/svg/skull.svg',
     id: 'dead',
     name: 'CONDITION.defeated',
-    system: {
-      description: 'CONDITIONDESCRIPTION.defeated',
-    },
+    description: 'CONDITIONDESCRIPTION.defeated',
   },
   {
     id: 'inpain',
     name: 'CONDITION.inpain',
     img: 'icons/svg/blood.svg',
+    description: 'CONDITIONDESCRIPTION.inpain',
     system: {
-      description: 'CONDITIONDESCRIPTION.inpain',
       condition: {
         value: 1,
         max: 4,
@@ -28,80 +26,62 @@ DSA5.statusEffects = [
     id: 'prone',
     name: 'CONDITION.prone',
     img: 'icons/svg/falling.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.prone',
-    },
+    description: 'CONDITIONDESCRIPTION.prone',
   },
   {
     id: 'unconscious',
     name: 'CONDITION.unconscious',
     img: 'icons/svg/unconscious.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.unconscious',
-    },
+    description: 'CONDITIONDESCRIPTION.unconscious',
   },
   {
     id: 'rooted',
     name: 'CONDITION.rooted',
     img: 'icons/svg/net.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.rooted',
-    },
+    description: 'CONDITIONDESCRIPTION.rooted',
   },
   {
     id: 'fixated',
     name: 'CONDITION.fixated',
     img: 'icons/svg/padlock.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.fixated',
-    },
+    description: 'CONDITIONDESCRIPTION.fixated',
   },
   {
     id: 'surprised',
     name: 'CONDITION.surprised',
     img: 'icons/svg/hazard.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.surprised',
-    },
+    description: 'CONDITIONDESCRIPTION.surprised',
   },
   {
     id: 'blind',
     name: 'CONDITION.blind',
     img: 'icons/svg/blind.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.blind',
-    },
+    description: 'CONDITIONDESCRIPTION.blind',
   },
   {
     id: 'poisoned',
     name: 'CONDITION.poisoned',
     img: 'icons/svg/poison.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.poisoned',
-    },
+    description: 'CONDITIONDESCRIPTION.poisoned',
   },
   {
     id: 'sick',
     name: 'CONDITION.sick',
     img: 'icons/svg/biohazard.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.sick',
-    },
+    description: 'CONDITIONDESCRIPTION.sick',
   },
   {
     id: 'deaf',
     name: 'CONDITION.deaf',
     img: 'icons/svg/deaf.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.deaf',
-    },
+    description: 'CONDITIONDESCRIPTION.deaf',
   },
   {
     id: 'burning',
     name: 'CONDITION.burning',
     img: 'icons/svg/fire.svg',
+    description: 'CONDITIONDESCRIPTION.burning',
     system: {
-      description: 'CONDITIONDESCRIPTION.burning',
       condition: {
         value: 1,
         max: 3,
@@ -113,24 +93,20 @@ DSA5.statusEffects = [
     id: 'invisible',
     name: 'CONDITION.invisible',
     img: 'icons/svg/circle.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.invisible',
-    },
+    description: 'CONDITIONDESCRIPTION.invisible',
   },
   {
     id: 'constricted',
     name: 'CONDITION.constricted',
     img: 'icons/svg/cave.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.constricted',
-    },
+    description: 'CONDITIONDESCRIPTION.constricted',
   },
   {
     id: 'bloodrush',
     name: 'CONDITION.bloodrush',
     img: 'icons/svg/bones.svg',
+    description: 'CONDITIONDESCRIPTION.bloodrush',
     system: {
-      description: 'CONDITIONDESCRIPTION.bloodrush',
       changes: [
       {
         key: 'system.skillModifiers.step',
@@ -144,24 +120,20 @@ DSA5.statusEffects = [
     id: 'mute',
     name: 'CONDITION.mute',
     img: 'icons/svg/silenced.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.mute',
-    },
+    description: 'CONDITIONDESCRIPTION.mute',
   },
   {
     id: 'incapacitated',
     name: 'CONDITION.incapacitated',
     img: 'icons/svg/sleep.svg',
-    system: {
-      description: 'CONDITIONDESCRIPTION.incapacitated',
-    },
+    description: 'CONDITIONDESCRIPTION.incapacitated',
   },
   {
     id: 'encumbered',
     name: 'CONDITION.encumbered',
     img: 'icons/svg/anchor.svg',
+    description: 'CONDITIONDESCRIPTION.encumbered',
     system: {
-      description: 'CONDITIONDESCRIPTION.encumbered',
       condition: {
         value: 1,
         max: 4,
@@ -173,8 +145,8 @@ DSA5.statusEffects = [
     id: 'stunned',
     name: 'CONDITION.stunned',
     img: 'icons/svg/daze.svg',
+    description: 'CONDITIONDESCRIPTION.stunned',
     system: {
-      description: 'CONDITIONDESCRIPTION.stunned',
       condition: {
         value: 1,
         max: 4,
@@ -187,8 +159,8 @@ DSA5.statusEffects = [
     id: 'raptured',
     name: 'CONDITION.raptured',
     img: 'icons/svg/ice-aura.svg',   
+    description: 'CONDITIONDESCRIPTION.raptured',
     system: {
-      description: 'CONDITIONDESCRIPTION.raptured',
       condition: {
         value: 1,
         max: 4,
@@ -201,8 +173,8 @@ DSA5.statusEffects = [
     id: 'feared',
     name: 'CONDITION.feared',
     img: 'icons/svg/terror.svg',
+    description: 'CONDITIONDESCRIPTION.feared',
     system: {
-      description: 'CONDITIONDESCRIPTION.feared',
       condition: {
         value: 1,
         max: 4,
@@ -215,8 +187,8 @@ DSA5.statusEffects = [
     id: 'paralysed',
     name: 'CONDITION.paralysed',
     img: 'icons/svg/paralysis.svg',
+    description: 'CONDITIONDESCRIPTION.paralysed',
     system: {
-      description: 'CONDITIONDESCRIPTION.paralysed',
       condition: {
         value: 1,
         max: 4,
@@ -229,8 +201,8 @@ DSA5.statusEffects = [
     id: 'confused',
     name: 'CONDITION.confused',
     img: 'icons/svg/stoned.svg',
+    description: 'CONDITIONDESCRIPTION.confused',
     system: {
-      description: 'CONDITIONDESCRIPTION.confused',
       condition: {
         value: 1,
         max: 4,
@@ -243,8 +215,8 @@ DSA5.statusEffects = [
     id: 'minorSpirits',
     name: 'CONDITION.minorSpirits',
     img: 'icons/svg/terror.svg',
+    description: 'CONDITIONDESCRIPTION.minorSpirits',
     system: {
-      description: 'CONDITIONDESCRIPTION.minorSpirits',
       changes: [{ key: 'system.skillModifiers.global', type: 'custom', value: -1 }],
     },    
     duration: { value: 600, units: 'seconds' },
@@ -253,8 +225,8 @@ DSA5.statusEffects = [
     id: 'services',
     name: 'PLAYER.services',
     img: 'icons/svg/aura.svg',
+    description: 'CONDITIONDESCRIPTION.services',
     system: {
-      description: 'CONDITIONDESCRIPTION.services',
       condition: {
         value: 1,
         max: 500,

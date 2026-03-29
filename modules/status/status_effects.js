@@ -31,8 +31,8 @@ export default class DSA5StatusEffects {
       id: 'locked',
       name: lock,
       img: 'icons/svg/padlock.svg',
+      description: lock,
       system: {
-        description: lock,
         visibility: {
           hidePlayers: true,
         },
@@ -48,9 +48,7 @@ export default class DSA5StatusEffects {
       name,
       img: 'icons/svg/aura.svg',
       origin: owner.uuid,
-      system: {
-        description,
-      },
+      description,
     });
     const sheet = effect[0]?.sheet;
 
