@@ -1101,29 +1101,29 @@
         "impossibleWeapon": "{weapon} not usable",
         "notSuitableWeapon": "{weapon} not suitable",
         "RangeMod": {
-            "short": "Close ({fk} to RC, {tp} DP)",
-            "medium": "Medium ({fk} to RC, {tp} DP)",
-            "long": "Far ({fk} to RC, {tp} DP)",
-            "rangesense": "Far ({fk} to RC, {tp} DP)",
-            "extreme": "Extreme ({fk} to RC, {tp} DP)"
+            "short": "Close [{fk} to RC, {tp} DP]",
+            "medium": "Medium [{fk} to RC, {tp} DP]",
+            "long": "Far [{fk} to RC, {tp} DP]",
+            "rangesense": "Far [{fk} to RC, {tp} DP]",
+            "extreme": "Extreme [{fk} to RC, {tp} DP]"
         },
         "RangeSize": {
-            "tiny": "Tiny ({f})",
-            "small": "Small ({f})",
-            "average": "Medium ({f})",
-            "big": "Large ({f})",
-            "giant": "Huge ({f})"
+            "tiny": "Tiny [{f}]",
+            "small": "Small [{f}]",
+            "average": "Medium [{f}]",
+            "big": "Large [{f}]",
+            "giant": "Huge [{f}]"
         },
         "aimOptions": {
-            "0": "Unaimed ({f})",
-            "1": "Aim 1 action ({f})",
-            "2": "Aim 2 actions ({f})"
+            "0": "Unaimed [{f}]",
+            "1": "Aim 1 action [{f}]",
+            "2": "Aim 2 actions [{f}]"
         },
         "waterOptions": {
-            "0": "No restriction ({f})",
-            "1": "Up to waist ({f})",
-            "2": "Up to shoulder ({f})",
-            "3": "Bottomless water ({f})"
+            "0": "No restriction [{f}]",
+            "1": "Up to waist [{f}]",
+            "2": "Up to shoulder [{f}]",
+            "3": "Bottomless water [{f}]"
         }
     },
     "wrongGrip": {
@@ -1709,21 +1709,21 @@
         "AutoSizeHint": "The token size will be defined by the actor's size category."
     },
     "VisionDisruption": {
-        "step0": "Clear sight",
+        "step0": "Clear sight [0]",
         "step1": "Slight impairment [-2]",
         "step2": "Shape [-4]",
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
     },
     "SkillVisionDisruption": {
-        "step0": "Clear sight",
+        "step0": "Clear sight [0]",
         "step1": "Slight impairment [-1]",
         "step2": "Shape [-2]",
         "step3": "Barely shape [-3]",
         "step4": "Invisible [-4]"
     },
     "meleeVisionDisruption": {
-        "0": "Clear Sight",
+        "0": "Clear Sight [0]",
         "1": "Slight impairment [-1]",
         "2": "Shape [-2]",
         "3": "Barely shape [-3]",
@@ -2194,7 +2194,7 @@
     "MELEESIZE": {
         "tiny": "Tiny [-4]",
         "small": "Small [0]",
-        "average": "Medium",
+        "average": "Medium [0]",
         "big": "Large [0]",
         "giant": "Huge [0]"
     },
@@ -2621,12 +2621,12 @@
         "noGMOnline": "No GM is currently online to approve this request."
     },
     "rangeMovementOptions": {
-        "STATIONARY": "motionless (+2)",
-        "SLOW": "moving slowly (+-0)",
-        "FAST": "moving quickly (-2)",
-        "SHOOTERMOVING": "walking (-2)",
-        "SHOOTERRUNNING": "running (-4)",
-        "SHOOTERSTATIONARY": "stationary (+-0)"
+        "STATIONARY": "motionless [+2]",
+        "SLOW": "moving slowly [0]",
+        "FAST": "moving quickly [-2]",
+        "SHOOTERMOVING": "walking [-2]",
+        "SHOOTERRUNNING": "running [-4]",
+        "SHOOTERSTATIONARY": "stationary [0]"
     },
     "mountedRangeOptions": {
         "STATIONARY": "standing still",
@@ -2636,13 +2636,13 @@
     },
     "regnerationCampLocations": {
         "normal": "Normal",
-        "bad": "Poor campsite (-1)",
-        "good": "Good accomodations (+1)"
+        "bad": "Poor campsite [-1]",
+        "good": "Good accomodations [+1]"
     },
     "regenerationInterruptOptions": {
-        "small": "Small - Watch/Disturbance (-1)",
-        "big": "Lengthy - sentry duty/ambush (-2)",
-        "none": "None (+-0)"
+        "small": "Small - Watch/Disturbance [-1]",
+        "big": "Lengthy - sentry duty/ambush [-2]",
+        "none": "None [0]"
     },
     "CHATCONTEXT": {
         "Reroll": "Repeat roll (1 FtP)",
