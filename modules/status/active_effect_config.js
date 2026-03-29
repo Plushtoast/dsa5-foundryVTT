@@ -216,11 +216,6 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
   }
 
-  async checkTimesUpInstalled() {
-    const isInstalled = DSA5_Utility.moduleEnabled('times-up');
-    if (!isInstalled && game.user.isGM) ui.notifications.warn('DSAError.shouldTimesUp', { localize: true });
-    return isInstalled;
-  }
 
   async _updateObject(event, formData) {
     // If the charges inputs are left empty, Foundry often persists them as empty strings.
@@ -360,7 +355,6 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     html.find('.select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
-    this.checkTimesUpInstalled();
   }
 
   getStatusEffects() {

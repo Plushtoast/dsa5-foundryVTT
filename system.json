@@ -22,11 +22,7 @@
         "styles/css/select2.min.css",
         "styles/css/dsa5.css"
     ],
-    "relationships": {
-		"recommends": [
-			{ "id": "times-up", "type": "module" }
-		]
-	},
+    "relationships": {},
     "packs": [
         {
             "name": "skills",

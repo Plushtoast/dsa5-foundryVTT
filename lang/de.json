@@ -1494,7 +1494,7 @@
     "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
-    "TYPES.JournalEntryPage.dsaquestlog": "Questlog",
+    "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
     "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "npc": "Nichtspielercharakter",
@@ -1608,7 +1608,7 @@
         }
     },
     "DSAQUESTLOG": {
-        "title": "Questlog",
+        "title": "Aufträge",
         "summary": "Zusammenfassung",
         "objectives": "Ziele",
         "timeline": "Zeitverlauf",
@@ -1616,16 +1616,16 @@
         "startDate": "Beginn",
         "targetDate": "Ziel",
         "completionDate": "Beendet",
-        "createQuest": "Quest-Eintrag erstellen",
-        "defaultJournalName": "Questlog",
-        "newEntryPlaceholder": "Neue Quest",
+        "createQuest": "Auftrag erstellen",
+        "defaultJournalName": "Aufträge",
+        "newEntryPlaceholder": "Neuer Auftrag",
         "newObjectivePlaceholder": "Neues Ziel",
-        "SelectQuest": "Quest auswählen",
+        "SelectQuest": "Auftrag auswählen",
         "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
-        "emptyTitle": "Noch keine Quests",
-        "emptyHint": "Erstelle oder registriere ein Questlog-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
-        "showInQuestlog": "Im Questlog anzeigen",
-        "showInQuestlogHint": "Die Quest-Einträge sind im Questlog-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
+        "emptyTitle": "Noch keine Aufträge",
+        "emptyHint": "Erstelle oder registriere ein Auftrags-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
+        "showInQuestlog": "In Aufträgen anzeigen",
+        "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
         "addObjective": "Ziel hinzufügen",
         "addLinkedPage": "Verknüpfte Seite hinzufügen",
         "playerOwners": "Zugewiesene Spieler",
@@ -1635,10 +1635,10 @@
         "ungrouped": "Unsortiert",
         "toggleObjectiveDone": "Zielabschluss umschalten",
         "toggleVisibility": "Spielersichtbarkeit umschalten",
-        "showQuestlogJournal": "Questlog-Journal anzeigen",
+        "showQuestlogJournal": "Auftrags-Journal anzeigen",
         "journals": {
-            "label": "Questlog-Journale",
-            "hint": "Wähle Journale mit Questlog-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+            "label": "Auftrags-Journale",
+            "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
         },
         "AUDIENCE": {
             "0": "Gruppe",
@@ -1650,8 +1650,8 @@
             "1": "Beendet"
         },
         "PRIORITY": {
-            "0": "Hauptquest",
-            "1": "Nebenquest",
+            "0": "Hauptauftrag",
+            "1": "Nebenauftrag",
             "2": "Persönlich"
         },
         "FIELDS": {
@@ -2353,7 +2353,6 @@
         "elementNotOwned": "Dir fehlt die Erlaubnis, um das Element zu bearbeiten.",
         "canNotEditInCompendium": "Diese Funktion steht in Kompendien nicht zur Verfügung. Importiere den Eintrag in die Welt, um ihn zu bearbeiten.",
         "noEffectFound": "Der Effekt konnte nicht gefunden werden.",
-        "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
         "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",

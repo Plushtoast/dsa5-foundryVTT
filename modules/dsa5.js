@@ -186,6 +186,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
   CONFIG.ActiveEffect.dataModels.base = ActiveEffectDataModels.base;
+  CONFIG.ActiveEffect.expiryAction = 'delete';
   CONFIG.Token.objectClass = DSAToken;
   CONFIG.Token.documentClass = DSATokenDocument;
   CONFIG.Token.rulerClass = DSATokenRuler;
