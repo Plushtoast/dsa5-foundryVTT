@@ -28,6 +28,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { FateRolls } from './concerns/faterolls.js';
+import { RaptureTracker } from './concerns/rapture-tracker.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
@@ -1089,6 +1090,16 @@ export default class Actordsa5 extends Actor {
       APTracker.track(this, { type: 'sum', previous, next: apSum }, apSum - previous);
     }
 
+    if (this.system.isPriest) {
+      const newKap = this._containsChangedAttribute(data, 'system.status.karmaenergy.value');
+      if (newKap !== false) {
+        const kapDelta = this.system.status.karmaenergy.value - newKap;
+        if (kapDelta > 0) {
+          RaptureTracker.accumulate(this, kapDelta);
+        }
+      }
+    }
+
     return super._preUpdate(data, options, user);
   }
 
@@ -2077,6 +2088,11 @@ export default class Actordsa5 extends Actor {
       const remaining = effect.duration.remaining;
       if (remaining > 0 || remaining === Infinity) continue;
       if (!effect.isExpiryEvent(event, context)) continue;
+
+      if (RaptureTracker.isTracker(effect)) {
+        await RaptureTracker.pruneTracker(this, effect);
+        continue;
+      }
 
       const condition = effect.system?.condition;
       const isLeveledCondition = condition?.max != null && condition?.value != null && condition.value >= 1;

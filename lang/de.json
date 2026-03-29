@@ -3064,6 +3064,10 @@
         "minorSpirits": "Lästige Mindergeister",
         "defeated": "Besiegt"
     },
+    "RAPTURE": {
+        "kapTracker": "KaP-Zähler (Entrückung)",
+        "kapTrackerDescription": "Erfasst den Karmapunkte-Verbrauch über ein rollendes 24-Stunden-Fenster. Für je 10 ausgegebene KaP wird eine Stufe Entrückung ausgelöst (max. 4)."
+    },
     "MERCHANT": {
         "buy": "Kaufen",
         "sell": "Verkaufen",

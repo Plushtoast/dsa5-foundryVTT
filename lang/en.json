@@ -3045,6 +3045,10 @@
         "minorSpirits": "Annoyed by Minor Spirits",
         "defeated": "Defeated"
     },
+    "RAPTURE": {
+        "kapTracker": "KaP Tracker (Rapture)",
+        "kapTrackerDescription": "Tracks Karma Point expenditure over a rolling 24-hour window. Every 10 KaP spent triggers one level of Rapture (max 4)."
+    },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Sub category",
         "0": "Basic Maneuver",
