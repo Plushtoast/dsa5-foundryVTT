@@ -262,7 +262,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         const changePriorities = Object.fromEntries(
           Object.entries(ActiveEffect.CHANGE_TYPES).map(([type, { defaultPriority }]) => [type, defaultPriority]),
         );
-        mergeObject(partContext, { changeFields, changeTypes, changePriorities });
+        const changePhases = Object.fromEntries(
+          Object.entries(ActiveEffect.CHANGE_PHASES).map(([phase, { label }]) => [phase, _loc(label)]),
+        );
+        mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases });
         break;
       }
       case 'advanced':

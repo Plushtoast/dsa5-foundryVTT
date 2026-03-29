@@ -1,6 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
-import DSA5Dialog from '../dialog/dialog-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
@@ -226,7 +225,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       }
     }).bind(this.element);
 
-    for (let app of this.subApps) {
+    for (const app of this.subApps) {
       app._onRender(html);
     }
   }
@@ -256,7 +255,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       const pack = game.packs.get(rule.pack);
       if (!pack) return ui.notifications.warn('DSAError.notFound', { format: { category: 'Pack', name: rule.pack }, localize: true });
       const docs = await pack.getDocuments({ name: rule.name });
-      for (let doc of docs) {
+      for (const doc of docs) {
         doc.sheet.render(true);
       }
     };
@@ -272,7 +271,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       });
 
     const modifiers = [];
-    for (let sel of this.conjurationData.selectedIds) {
+    for (const sel of this.conjurationData.selectedIds) {
       modifiers.push(this.conjurationData.modifiers[this.conjurationData.conjurationType].find((x) => x.id == sel));
     }
     const payload = {
@@ -408,7 +407,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    for (let app of this.subApps) {
+    for (const app of this.subApps) {
       parts[app.tabName] = app.part;
     }
     return parts;
@@ -451,7 +450,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       }
       this.render(true);
     } else {
-      for (let app of this.subApps) {
+      for (const app of this.subApps) {
         const res = await app._onDrop(data);
         if (res === true) break;
       }
@@ -464,8 +463,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       const entitiesToSearch = [_loc('LocalizedIDs.all'), this.conjurationData.conjurationTypes[this.conjurationData.conjurationType]];
       const items = await Promise.all((await game.dsa5.itemLibrary.getCategoryItems('trait', false, true)));
 
-      let entitySet = new Set();
-      let packageSet = new Set();
+      const entitySet = new Set();
+      const packageSet = new Set();
       for (const x of items) {
         if (x.system.distribution && entitiesToSearch.some((y) => x.system.distribution.includes(y))) {
           if (x.system.traitType.value == 'entity' && !entitySet.has(x.name)) {
@@ -518,13 +517,13 @@ export default class PlayerMenu extends DefaultAppv2 {
       const missingConjurationSkills = requiredSkills.filter((x) => !conjurationskills.some((y) => y.name == x));
 
       let hasMighty = false;
-      for (let skill of conjurationskills) {
+      for (const skill of conjurationskills) {
         skill.hasMighty = this.actor.items.find((x) => x.name == `${skill.name} - ${_loc('CONJURATION.powerfulCreature')}`);
         hasMighty ||= skill.hasMighty;
       }
       const conjurationModifiers = this.conjurationData.modifiers[this.conjurationData.conjurationType];
       const max = hasMighty ? 2 : 1;
-      for (let mod of conjurationModifiers) {
+      for (const mod of conjurationModifiers) {
         mod.max = max;
         mod.count = this.conjurationData.selectedIds.filter((x) => x == mod.id).length;
       }
@@ -533,7 +532,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
       if (moreModifiers) {
         moreModifiers = duplicate(moreModifiers);
-        for (let item of moreModifiers) {
+        for (const item of moreModifiers) {
           item.options = item.options.map((x) => {
             x.label = `${x.name} (${x.val})`;
             return x;
@@ -580,7 +579,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
-    for (let app of this.subApps) {
+    for (const app of this.subApps) {
       app.addTab(tabs, this.tabGroups.sheet, group);
     }
     return tabs
@@ -672,7 +671,7 @@ class ConjurationRequest extends DefaultAppv2 {
     this.conjuration.folder = folder.id;
     if (!this.conjuration.effects) this.conjuration.effects = [];
 
-    for (let modifier of this.creationData.modifiers) {
+    for (const modifier of this.creationData.modifiers) {
       this.conjuration.effects.push({
         system: {
           description: `${_loc('PLAYER.conjuration')} ${_loc('extensions')}`,
@@ -739,9 +738,9 @@ class ConjurationRequest extends DefaultAppv2 {
     const itemsToAdd = [...entityAbilities, ...entityPackages].filter((x) => !this.conjuration.items.find((y) => y.type == x.type && x.name == y.name));
     await this.actor.createEmbeddedDocuments('Item', itemsToAdd);
 
-    for (let item of entityPackages) await TraitRulesDSA5.traitAdded(this.actor, item);
+    for (const item of entityPackages) await TraitRulesDSA5.traitAdded(this.actor, item);
 
-    for (let item of entityAbilities) await TraitRulesDSA5.traitAdded(this.actor, item);
+    for (const item of entityAbilities) await TraitRulesDSA5.traitAdded(this.actor, item);
 
     await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max, });
 
@@ -778,7 +777,7 @@ class ConjurationRequest extends DefaultAppv2 {
   _dragStart(ev) {
     ev.stopPropagation();
     const a = ev.currentTarget;
-    let dragData = { type: 'Actor', uuid: a.dataset.uuid };
+    const dragData = { type: 'Actor', uuid: a.dataset.uuid };
     ev.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 

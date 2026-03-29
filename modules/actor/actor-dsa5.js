@@ -131,6 +131,15 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  prepareBaseData() {
+    super.prepareBaseData();
+    this.dsatriggers = {
+      [DSATriggers.EVENTS.POST_ROLL]: {},
+      [DSATriggers.EVENTS.POST_OPPOSED]: {},
+      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
+    };
+  }
+
   speedByMovementType(movementType) {
     switch (movementType) {
       case 'fly':
@@ -141,22 +150,16 @@ export default class Actordsa5 extends Actor {
     return this.system.status.speed.max;
   }
 
-  applyActiveEffects() {
+  applyActiveEffects(phase) {
+    this._completedActiveEffectPhases.add(phase);
+    this.tokenActiveEffectChanges ??= {};
+    this.tokenActiveEffectChanges[phase] = [];
+
+    // DSA applies all effects in the "initial" phase (before prepareDerivedData).
+    // The "final" phase is intentionally empty.
+    if (phase !== 'initial') return;
+
     const overrides = {};
-    this.statuses ??= new Set();
-    this.auras = [];
-
-    const specialStatuses = new Map();
-    for (const statusId of Object.values(CONFIG.specialStatusEffects)) {
-      specialStatuses.set(statusId, this.statuses.has(statusId));
-    }
-    this.statuses.clear();
-
-    this.dsatriggers = {
-      [DSATriggers.EVENTS.POST_ROLL]: {},
-      [DSATriggers.EVENTS.POST_OPPOSED]: {},
-      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
-    };
 
     const appliedArtifacts = this.items
       .filter(x =>
@@ -170,23 +173,32 @@ export default class Actordsa5 extends Actor {
     const changes = this.collectActorEffectChanges();
     this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);
     changes.sort((a, b) => a.priority - b.priority);
+
+    const ActiveEffectImpl = foundry.documents.ActiveEffect.implementation;
+    ActiveEffectImpl._shimChanges(changes);
+
+    // Separate token-targeted changes
+    const tokenChanges = [];
+    const actorChanges = [];
     for (const change of changes) {
       if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
-      const result = DSAActiveEffect.applyChange(this, change);
-      Object.assign(overrides, result);
-    }
-
-    this.overrides = expandObject(overrides);
-
-    let tokens;
-    for (const [statusId, wasActive] of specialStatuses) {
-      const isActive = this.statuses.has(statusId);
-      if (isActive === wasActive) continue;
-      tokens ??= this.getActiveTokens();
-      for (const token of tokens) {
-        token._onApplyStatusEffect(statusId, isActive);
+      if (change.key.startsWith('token.')) {
+        change.key = change.key.slice(6);
+        tokenChanges.push(change);
+      } else {
+        actorChanges.push(change);
       }
     }
+    this.tokenActiveEffectChanges['initial'] = tokenChanges;
+
+    // Apply actor changes
+    const replacementData = this.getRollData();
+    for (const change of actorChanges) {
+      const result = DSAActiveEffect.applyChange(this, change, { replacementData });
+      if (foundry.utils.isPlainObject(result)) Object.assign(overrides, result);
+    }
+
+    foundry.utils.mergeObject(this.overrides, expandObject(overrides));
   }
 
   collectActorEffectChanges() {
@@ -206,12 +218,7 @@ export default class Actordsa5 extends Actor {
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
-          ...e.system.changes.map(c => {
-            c = foundry.utils.duplicate(c);
-            c.effect = e;
-            c.priority = c.priority || (CONST.ACTIVE_EFFECT_CHANGE_TYPES[c.type] ?? 0);
-            return c;
-          })
+          ...e.system.changes.map(c => ({ ...c, effect: e }))
         );
       }
 
@@ -251,12 +258,7 @@ export default class Actordsa5 extends Actor {
 
         for (let i = 0; i < multiply; i++) {
           changes.push(
-            ...e.system.changes.map(c => {
-              c = foundry.utils.duplicate(c);
-              c.effect = e;
-              c.priority = c.priority || (CONST.ACTIVE_EFFECT_CHANGE_TYPES[c.type] ?? 0);
-              return c;
-            })
+            ...e.system.changes.map(c => ({ ...c, effect: e }))
           );
         }
 

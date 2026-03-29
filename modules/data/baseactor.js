@@ -85,7 +85,7 @@ export class ActorDataModel extends DSADataModel {
     }
 
     // Initialize gear modifiers for characteristics
-    for (let ch of Object.values(this.characteristics)) {
+    for (const ch of Object.values(this.characteristics)) {
       ch.gearmodifier = 0;
     }
   }
@@ -294,7 +294,7 @@ export class ActorDataModel extends DSADataModel {
       let bagweight = 0;
       if (!elem.system.worn.value && topLevel) totalWeight -= elem.system.preparedWeight;
 
-      for (let child of containers.get(elem._id)) {
+      for (const child of containers.get(elem._id)) {
         child.system.preparedWeight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
 
         if (containers.has(child._id)) {
@@ -657,10 +657,10 @@ export class ActorDataModel extends DSADataModel {
     const effect = item.system.effect.value;
     if (!effect) return;
 
-    for (let mod of `${effect}`.split(/,|;/).map(x => x.trim())) {
-      let vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
+    for (const mod of `${effect}`.split(/,|;/).map(x => x.trim())) {
+      const vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
       if (vals.length == 2 && !isNaN(vals[0])) {
-        let elem = {
+        const elem = {
           value: Number(vals[0]) * (item.system.step ? Number(item.system.step.value) || 1 : 1),
           source: item.name,
           type: item.type,
@@ -681,7 +681,7 @@ export class ActorDataModel extends DSADataModel {
 
     if (armorCompensation > armorEncumbrance) {
       const modKeys = [_loc('CHARAbbrev.GS'), _loc('CHARAbbrev.INI')];
-      for (let modkey of modKeys) {
+      for (const modkey of modKeys) {
         if (!itemModifiers[modkey]) continue;
         itemModifiers[modkey] = itemModifiers[modkey].filter(x => x.type != 'armor');
       }
@@ -692,7 +692,7 @@ export class ActorDataModel extends DSADataModel {
     this.itemModifiers = {};
 
     for (const key of Object.keys(itemModifiers)) {
-      let shortCut = DSA5.knownShortcuts[key.toLowerCase()];
+      const shortCut = DSA5.knownShortcuts[key.toLowerCase()];
       if (shortCut) {
         const modSum = itemModifiers[key].reduce((prev, cur) => prev + cur.value, 0);
 

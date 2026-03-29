@@ -36,7 +36,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async findCompendiumItem(name, types) {
-    for (let type of types) {
+    for (const type of types) {
       //todo make sure this loads the right thing e.g. armory instead of core
       let result = await game.dsa5.itemLibrary.findCompendiumItem(name, type);
       result = result.find((x) => x.name == name && x.type == type && x.system);
@@ -49,7 +49,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   _parseAttributes(attr, splitter = ',') {
     const result = [];
     const splstr = _loc('combatskillcountdivider') + ':';
-    for (let k of attr.split(splitter)) {
+    for (const k of attr.split(splitter)) {
       if (k.includes(splstr)) {
         const vals = k.split(':');
         result.push({
@@ -62,7 +62,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   filterTabs(data) {
-    for(let tab of Object.keys(data.tabs)) {
+    for(const tab of Object.keys(data.tabs)) {
       if(!data[data.tabs[tab].id]) delete data.tabs[tab]
     }
   }
@@ -72,7 +72,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
 
     return await Promise.all(
       value.split(', ').map(async (x) => {
-        let parsed = DSA5_Utility.parseAbilityString(x.trim());
+        const parsed = DSA5_Utility.parseAbilityString(x.trim());
         let item = await this.findCompendiumItem(parsed.original, types);
         if (!item) {
           item = await this.findCompendiumItem(parsed.name, types);
@@ -119,7 +119,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
         }
         item.replaceName = parsed.original;
         item.step = parsed.step;
-        let actorHasItem = this.actor.items.find((y) => types.includes(y.type) && y.name == parsed.original) != undefined;
+        const actorHasItem = this.actor.items.find((y) => types.includes(y.type) && y.name == parsed.original) != undefined;
         item.disabled = actorHasItem || item.notFound || item.APunparseable;
         if (actorHasItem) item.tooltip = _loc('YouAlreadyHaveit');
         return item;
@@ -129,10 +129,10 @@ export default class WizardDSA5 extends DefaultAppv2 {
 
   mergeLevels(itemsToAdd, item, keyMax) {
     let merged = false;
-    let existing = itemsToAdd.find((x) => x.name == item.name && x.type == item.type);
+    const existing = itemsToAdd.find((x) => x.name == item.name && x.type == item.type);
     if (existing) {
       merged = true;
-      let level = Number(getProperty(item, 'system.step.value'));
+      const level = Number(getProperty(item, 'system.step.value'));
       if (level) {
         existing.system.step.value = Math.min((existing.system.step.value += level), existing.system[keyMax].value);
       }
@@ -143,14 +143,14 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async addSelections(elems, render = true) {
-    let itemsToAdd = [];
+    const itemsToAdd = [];
 
-    for (let k of elems) {
+    for (const k of elems) {
       const val = $(k).val();
       if (val == '') continue;
 
       let item = (await fromUuid($(k).val())).toObject();
-      let parsed = DSA5_Utility.parseAbilityString(item.name);
+      const parsed = DSA5_Utility.parseAbilityString(item.name);
       item.name = $(k).attr('name');
 
       switch (item.type) {
@@ -179,7 +179,7 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async fixPreviousCosts(previous, toFix) {
-    for (let item of toFix) {
+    for (const item of toFix) {
       const hasFixable = previous.find((x) => x.type == item.type && x.name == item.name);
 
       if (hasFixable) item.apCost -= hasFixable.apCost;
@@ -220,10 +220,10 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   async updateSkill(skills, itemType, factor = 1, bonus = true) {
-    let itemsToUpdate = [];
-    for (let skill of skills) {
-      let parsed = DSA5_Utility.parseAbilityString(skill.trim());
-      let res = this.actor.items.find((i) => {
+    const itemsToUpdate = [];
+    for (const skill of skills) {
+      const parsed = DSA5_Utility.parseAbilityString(skill.trim());
+      const res = this.actor.items.find((i) => {
         return i.type == itemType && i.name == parsed.name;
       });
       if (res) {
@@ -246,16 +246,16 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   _validateInput(parent, app = this) {
-    let regex = /^exclusive_/;
-    for (let tab of parent.find('.tab')) {
+    const regex = /^exclusive_/;
+    for (const tab of parent.find('.tab')) {
       const tb = $(tab);
-      let exclusives = new Set();
-      for (let k of tb.find('.exclusive')) {
+      const exclusives = new Set();
+      for (const k of tb.find('.exclusive')) {
         exclusives.add(k.className.split(/\s+/).filter((x) => regex.test(x))[0]);
       }
-      for (let k of exclusives) {
-        let choice = tb.find('.allowedCount_' + k.split('_')[1]);
-        let allowed = Number(choice.attr('data-count'));
+      for (const k of exclusives) {
+        const choice = tb.find('.allowedCount_' + k.split('_')[1]);
+        const allowed = Number(choice.attr('data-count'));
         if (tb.find(`.${k}:checked`).length != allowed) {
           this._showInputValidation(choice, tb, app);
           return false;
@@ -304,17 +304,17 @@ export default class WizardDSA5 extends DefaultAppv2 {
     };
     const showItem = html.find('.show-item');
     showItem.on('click', async (ev) => {
-      let itemId = ev.currentTarget.dataset.uuid;
+      const itemId = ev.currentTarget.dataset.uuid;
       const item = await fromUuid(itemId);
       item.sheet.render(true);
     });
     showItem.attr('draggable', true).on('dragstart', (event) => itemDragStart(event));
 
     html.find('.exclusive').on('change', (ev) => {
-      let parent = $(ev.currentTarget).closest('.tab');
-      let sel = $(ev.currentTarget).attr('data-sel');
-      let maxDomElem = parent.find(`.allowedCount_${sel}`);
-      let maxSelections = Number(maxDomElem.attr('data-count'));
+      const parent = $(ev.currentTarget).closest('.tab');
+      const sel = $(ev.currentTarget).attr('data-sel');
+      const maxDomElem = parent.find(`.allowedCount_${sel}`);
+      const maxSelections = Number(maxDomElem.attr('data-count'));
       if (parent.find(`.exclusive_${sel}:checked`).length > maxSelections) {
         ev.currentTarget.checked = false;
         WizardDSA5.flashElem(maxDomElem);

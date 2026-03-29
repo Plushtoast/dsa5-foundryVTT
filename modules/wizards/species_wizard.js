@@ -29,13 +29,13 @@ export default class SpeciesWizard extends WizardDSA5 {
   wizardListeners(html) {
     super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
-      let parent = $(ev.currentTarget).closest('.content');
+      const parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
 
       parent.find('.optional:checked').each(function () {
         apCost += Number($(this).attr('data-cost'));
       });
-      let elem = parent.find('.apCost');
+      const elem = parent.find('.apCost');
       elem.text(apCost);
       WizardDSA5.flashElem(elem, 'emphasize2');
     });
@@ -44,7 +44,7 @@ export default class SpeciesWizard extends WizardDSA5 {
   async _toGroups(input, categories, previous) {
     const groups = await Promise.all(
       input.split('\n').map(async (x) => {
-        let vals = x.split(':');
+        const vals = x.split(':');
         let elem;
         if (vals.length > 1) {
           elem = {
@@ -106,13 +106,13 @@ export default class SpeciesWizard extends WizardDSA5 {
   async updateCharacter(parent, app = this) {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
-    let apCost = Number(parent.find('.apCost').text());
+    const apCost = Number(parent.find('.apCost').text());
     if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.species.value, 'species'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
     }
 
-    let update = {
+    const update = {
       'system.details.species.value': this.species.name,
       'system.status.speed.initial': this.species.system.baseValues.speed.value,
       'system.status.soulpower.initial': this.species.system.baseValues.soulpower.value,
@@ -121,8 +121,8 @@ export default class SpeciesWizard extends WizardDSA5 {
       'system.status.wounds.value': this.species.system.baseValues.wounds.value + this.actor.system.characteristics['ko'].value * 2,
     };
 
-    let attributeChoices = [];
-    for (let k of parent.find('.exclusive:checked')) {
+    const attributeChoices = [];
+    for (const k of parent.find('.exclusive:checked')) {
       attributeChoices.push($(k).val());
     }
 
@@ -130,7 +130,7 @@ export default class SpeciesWizard extends WizardDSA5 {
       update[`system.characteristics.${k}.species`] = 0;
     });
 
-    for (let attr of this.species.system.attributeChange.value.split(',').concat(attributeChoices)) {
+    for (const attr of this.species.system.attributeChange.value.split(',').concat(attributeChoices)) {
       if (attr.includes(_loc('combatskillcountdivider') + ':') || attr == '') continue;
 
       const attrs = attr.trim().split(' ');

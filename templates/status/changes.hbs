@@ -3,6 +3,7 @@
         <div class="col fourty">{{localize "EFFECT.FIELDS.changes.element.key.label"}}</div>
         <div class="col five center">{{localize "EFFECT.FIELDS.changes.element.type.label"}}</div>
         <div class="col third center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
+        <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.phase.label"}}</div>
         <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.priority.label"}}</div>
         <div class="col ten center"><a data-action="addChange"><i class="fa-regular fa-square-plus"></i></a></div>
     </header>
@@ -18,6 +19,9 @@
             </div>
             <div class="col third center value">
                 {{formInput changeFields.value name=(concat "system.changes." i ".value") value=change.value}}
+            </div>
+            <div class="col ten center phase">
+                {{formInput changeFields.phase name=(concat "system.changes." i ".phase") value=change.phase choices=@root.changePhases}}
             </div>
             <div class="col ten center priority">
                 {{formInput changeFields.priority name=(concat "system.changes." i ".priority") value=change.priority
