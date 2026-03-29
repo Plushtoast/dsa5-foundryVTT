@@ -2011,13 +2011,14 @@ export default class DiceDSA5 {
   }
 
   static _compareWeaponReach(weapon, testData) {
-    //TODO move this to roll dialog
     const circumvent = testData.situationalModifiers.find((x) => x.name == _loc('LocalizedIDs.circumvent'));
-    const attacker = DSA5.meleeRangesArray.indexOf(weapon.system.reach.value);
-    const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize);
-    if (circumvent && defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2;
+    if (circumvent) {
+      const attacker = DSA5.meleeRangesArray.indexOf(weapon.system.reach.value);
+      const defender = DSA5.meleeRangesArray.indexOf(testData.opposingWeaponSize);
+      if (defender > attacker) circumvent.value = Math.min(circumvent.step, defender - attacker) * 2;
+    }
 
-    return Math.min(0, attacker - defender) * 2;
+    return DSA5.weaponReachModifiers[weapon.system.reach.value]?.[testData.opposingWeaponSize] ?? 0;
   }
 
   /**

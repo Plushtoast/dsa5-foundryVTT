@@ -56,7 +56,9 @@
                 <label>{{localize "opposingWeaponSize"}}</label>
                 <div class="form-fields">
                     <select name="weaponsize">
-                        {{selectOptions weaponSizes selected=targetWeaponSize localize=true}}
+                        {{#each weaponReachOptions as |opt|}}
+                        <option value="{{opt.key}}" {{#if opt.selected}}selected{{/if}}>{{localize opt.label}} [{{opt.mod}}]</option>
+                        {{/each}}
                     </select>
                 </div>
             </div>

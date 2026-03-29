@@ -761,6 +761,12 @@ export default class DSA5CombatDialog extends DialogShared {
     return getProperty(DSA5.narrowSpaceModifiers, `weapon${testData.source.system.reach.value}.${mode}`) || 0;
   }
 
+  static getWeaponReachModifier(source, opposingWeaponSize) {
+    const attackerReach = source.system?.reach?.value || 'short';
+    const defenderReach = opposingWeaponSize || 'short';
+    return DSA5.weaponReachModifiers[attackerReach]?.[defenderReach] ?? 0;
+  }
+
   static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
     this._resolveDefault(testData, cardOptions, html, options);
 
@@ -797,6 +803,10 @@ export default class DSA5CombatDialog extends DialogShared {
       {
         name: _loc('MODS.advantageousPosition'),
         value: Number(data.advantageousPosition) || 0,
+      },
+      {
+        name: _loc('opposingWeaponSize'),
+        value: attackerIsSwarm ? 0 : DSA5CombatDialog.getWeaponReachModifier(testData.source, data.weaponsize),
       },
       {
         name: _loc('sizeCategory'),

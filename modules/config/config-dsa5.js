@@ -738,6 +738,12 @@ DSA5.meleeRanges = {
   long: 'Range-long',
 };
 
+DSA5.weaponReachModifiers = {
+  short:  { short: 0, medium: -2, long: -4 },
+  medium: { short: 0, medium: 0,  long: -2 },
+  long:   { short: 0, medium: 0,  long: 0  },
+};
+
 DSA5.weapontypes = {
   0: 'TYPES.Item.meleeweapon',
   1: 'TYPES.Item.rangeweapon',

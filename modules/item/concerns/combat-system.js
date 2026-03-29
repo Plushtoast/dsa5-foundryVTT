@@ -233,9 +233,17 @@ export class CombatSystem {
             });
         }
         CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
+        const attackerReach = source.system?.reach?.value || 'short';
+        const weaponReachOptions = Object.entries(DSA5.meleeRanges).map(([key, label]) => ({
+            key,
+            label,
+            mod: DSA5.weaponReachModifiers[attackerReach]?.[key] ?? 0,
+            selected: key === targetWeaponSize,
+        }));
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),
             weaponSizes: DSA5.meleeRanges,
+            weaponReachOptions,
             melee: true,
             showAttack: true,
             targetWeaponSize,
