@@ -23,7 +23,7 @@ export default class DSA5Payment {
       return canPay;
     }
 
-    let money = this._getPaidmoney(moneyString, showChatMessage);
+    const money = this._getPaidmoney(moneyString, showChatMessage);
     if (!money) {
       return {
         success: false,
@@ -32,9 +32,9 @@ export default class DSA5Payment {
       };
     }
 
-    let actorsMoney = this._actorsMoney(actor);
+    const actorsMoney = this._actorsMoney(actor);
     await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
-    let msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
+    const msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
     if (showChatMessage) {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
@@ -58,8 +58,8 @@ export default class DSA5Payment {
   }
 
   static async canPay(actor, moneyString, silent) {
-    let money = this._getPaymoney(moneyString);
-    let result = { success: false, msg: '', money: money };
+    const money = this._getPaymoney(moneyString);
+    const result = { success: false, msg: '', money: money };
 
     if (money) {
       result.actorsMoney = this._actorsMoney(actor);
@@ -97,21 +97,21 @@ export default class DSA5Payment {
   }
 
   static async createGetPaidChatMessage(moneyString, whisper = undefined) {
-    let money = this._getPaidmoney(moneyString);
+    const money = this._getPaidmoney(moneyString);
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${_loc('PAYMENT.wage')}</b></p><p>${_loc('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${_loc('PAYMENT.getPaidButton')}</button></div>`;
+      const msg = `<p><b>${_loc('PAYMENT.wage')}</b></p><p>${_loc('PAYMENT.getPaidSum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="1" data-amount="${money}">${_loc('PAYMENT.getPaidButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
 
   static async createPayChatMessage(moneyString, whisper = undefined) {
-    let money = this._getPaymoney(moneyString);
+    const money = this._getPaymoney(moneyString);
 
     if (money) {
       const whisp = whisper ? ` (${whisper})` : '';
-      let msg = `<p><b>${_loc('PAYMENT.bill')}</b></p>${_loc('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${_loc('PAYMENT.payButton')}</button></div>`;
+      const msg = `<p><b>${_loc('PAYMENT.bill')}</b></p>${_loc('PAYMENT.paySum', { amount: await DSA5Payment._moneyToString(money) })}${whisp}</p><div class="flexrow"><button class="payButton" data-pay="0" data-amount="${money}">${_loc('PAYMENT.payButton')}</button></div>`;
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
     }
   }
@@ -138,11 +138,11 @@ export default class DSA5Payment {
   }
 
   static _getPaidmoney(moneyString, announceError = true) {
-    let money = this._parseMoneyString(moneyString);
+    const money = this._parseMoneyString(moneyString);
 
     if (!money) {
       if (announceError) {
-        let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.getPaidexample')}</i></p>`;
+        const msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.getPaidexample')}</i></p>`;
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       }
       return false;
@@ -151,11 +151,11 @@ export default class DSA5Payment {
   }
 
   static _getPaymoney(moneyString, announceError = true) {
-    let money = this._parseMoneyString(moneyString);
+    const money = this._parseMoneyString(moneyString);
 
     if (!money) {
       if (announceError) {
-        let msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.payexample')}</i></p>`;
+        const msg = `<p><b>${_loc('PAYMENT.error')}</b></p><p><i>${_loc('PAYMENT.payexample')}</i></p>`;
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
       }
       return false;
@@ -200,8 +200,8 @@ export default class DSA5Payment {
 
     const res = [];
     let remainingSum = money;
-    for (let currency of availableCurrencies) {
-      let amount = Math.floor(remainingSum / currency.system.price.value);
+    for (const currency of availableCurrencies) {
+      const amount = Math.floor(remainingSum / currency.system.price.value);
       res.push({
         name: currency.name,
         amount,
@@ -263,7 +263,7 @@ export default class DSA5Payment {
     const coins = await DSA5Payment._moneyToCoins(newSum, money);
     const update = [];
     let oldSum = 0;
-    for (let m of money) {
+    for (const m of money) {
       oldSum += m.system.quantity.value * m.system.price.value;
       const coin = coins.find((x) => x.name == m.name);
       if (coin == undefined) continue;

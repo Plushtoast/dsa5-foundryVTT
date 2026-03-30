@@ -1,7 +1,6 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { conditionsMatcher } from '../../hooks/texteditor.js';
-import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
 import { ItemFactory } from '../../item/item-factory.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
@@ -265,11 +264,11 @@ export default class DSA5_Utility {
   }
 
   static async callAsyncHooks(hook, args) {
-    for (let func of DSA5.asyncHooks[hook]) await func(...args);
+    for (const func of DSA5.asyncHooks[hook]) await func(...args);
   }
 
   static chatDataSetup(content, modeOverride, forceWhisper, forceWhisperIDs) {
-    let chatData = {
+    const chatData = {
       user: game.user.id,
       messageMode: modeOverride || game.settings.get('core', 'messageMode'),
       content,
@@ -298,11 +297,11 @@ export default class DSA5_Utility {
     if (speaker.emptyActor) return this.emptyActor(12, 'Alrik', speaker.emptyActor);
 
     if (!actor && canvas.tokens) {
-      let token = canvas.tokens.get(speaker.token);
+      const token = canvas.tokens.get(speaker.token);
       if (token) actor = token.actor;
     }
     if (!actor) {
-      let scene = game.scenes.get(speaker.scene);
+      const scene = game.scenes.get(speaker.scene);
       try {
         if (scene) actor = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', speaker.token))?.actor;
       } catch (error) {
@@ -366,11 +365,11 @@ export default class DSA5_Utility {
   }
 
   static async findAnyItem(lookup) {
-    let results = [];
-    let names = lookup.map((x) => x.name);
-    let types = lookup.map((x) => x.type);
-    for (let k of game.items.contents) {
-      let index = names.indexOf(k.name);
+    const results = [];
+    const names = lookup.map((x) => x.name);
+    const types = lookup.map((x) => x.type);
+    for (const k of game.items.contents) {
+      const index = names.indexOf(k.name);
       if (index >= 0 && types[index] == k.type) {
         names.splice(index, 1);
         types.splice(index, 1);
@@ -388,12 +387,12 @@ export default class DSA5_Utility {
         return a.localeCompare(b);
       });
 
-      for (let pack of sortedPacks) {
-        let p = game.packs.get(pack);
+      for (const pack of sortedPacks) {
+        const p = game.packs.get(pack);
         if (p.documentName == 'Item' && (game.user.isGM || p.visible)) {
           await p.getDocuments({ name__in: names, type__in: types }).then((content) => {
-            for (let k of content) {
-              let index = names.indexOf(k.name);
+            for (const k of content) {
+              const index = names.indexOf(k.name);
               if (index >= 0 && types[index] == k.type) {
                 names.splice(index, 1);
                 types.splice(index, 1);

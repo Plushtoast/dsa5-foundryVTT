@@ -73,10 +73,10 @@ export class DSAToken extends Token {
         bg.drawRoundedRect(effect.x + 1, effect.y + 1, w - 2, w - 2, 2);
 
         if (effect.counter > 1 && !effect.counterDrawn) {
-          let textEffect = game.dsa5.config.effectTextStyle;
-          let color = game.settings.get('dsa5', 'statusEffectCounterColor');
+          const textEffect = game.dsa5.config.effectTextStyle;
+          const color = game.settings.get('dsa5', 'statusEffectCounterColor');
           textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : '#000000';
-          let text = this.effects.addChild(new foundry.canvas.containers.PreciseText(effect.counter, textEffect));
+          const text = this.effects.addChild(new foundry.canvas.containers.PreciseText(effect.counter, textEffect));
           text.x = effect.x;
           text.y = effect.y;
           text.isCounter = true;

@@ -10,13 +10,13 @@ const { NEEDS_MIGRATION_VERSION } = DSA5;
 export function setupConfiguration() {
   const moneyChoices = () => {
     const moneyChoices = {};
-    for (let pack of game.packs) {
+    for (const pack of game.packs) {
       if (pack.metadata.type == 'Item' && pack.index.some((x) => x.type == 'money')) moneyChoices[pack.metadata.id] = pack.metadata.id;
     }
     return moneyChoices;
   };
   const styles = duplicate(DSA5.styles);
-  for (let key of Object.keys(styles)) {
+  for (const key of Object.keys(styles)) {
     styles[key] = _loc(styles[key]);
   }
   const settings = {
@@ -906,7 +906,7 @@ const exportSetting = (form) => {
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;
 
-    let keys = key[0].split('.');
+    const keys = key[0].split('.');
     const scope = keys.shift();
     const setting = keys.join('.');
 
@@ -925,7 +925,7 @@ const importSettings = async (form) => {
     const availableKeys = Array.from(game.settings.settings).map((x) => x[0]);
     for (const key of Object.keys(json)) {
       if (availableKeys.includes(key)) {
-        let keys = key.split('.');
+        const keys = key.split('.');
         const scope = keys.shift();
         const setting = keys.join('.');
         await game.settings.set(scope, setting, json[key]);

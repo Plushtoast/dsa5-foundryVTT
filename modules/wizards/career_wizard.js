@@ -47,9 +47,9 @@ export default class CareerWizard extends WizardDSA5 {
   wizardListeners(html) {
     super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
-      let parent = $(ev.currentTarget).closest('.content');
+      const parent = $(ev.currentTarget).closest('.content');
       if ($(ev.currentTarget).hasClass('exclusiveTricks')) {
-        let maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit'));
+        const maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit'));
         if (parent.find('.exclusiveTricks:checked').length > maxSelections) {
           ev.currentTarget.checked = false;
           WizardDSA5.flashElem(parent.find('.maxTricks'));
@@ -64,7 +64,7 @@ export default class CareerWizard extends WizardDSA5 {
         const name = $(this).attr('name');
         let found = false;
 
-        for (let [key, reg] of Object.entries(CareerWizard.abilityExceptions)) {
+        for (const [key, reg] of Object.entries(CareerWizard.abilityExceptions)) {
           if (reg.test(name)) {
             if (!mins[key] || optionalCost < mins[key]) {
               mins[key] = optionalCost;
@@ -76,21 +76,21 @@ export default class CareerWizard extends WizardDSA5 {
 
         if (!found) apCost += optionalCost;
       });
-      for (let min of Object.values(mins)) {
+      for (const min of Object.values(mins)) {
         apCost += min;
       }
       parent.find('.attributes:checked').each(function () {
         apCost += Number($(this).attr('data-cost'));
       });
-      let elem = parent.find('.apCost');
+      const elem = parent.find('.apCost');
       elem.text(apCost);
       WizardDSA5.flashElem(elem, 'emphasize2');
     });
   }
 
   _validateInput(parent, app = this) {
-    let choice = parent.find('.maxTricks');
-    let allowed = Number(choice.attr('data-spelltricklimit')) || 0;
+    const choice = parent.find('.maxTricks');
+    const allowed = Number(choice.attr('data-spelltricklimit')) || 0;
     if (parent.find('.exclusiveTricks:checked').length != allowed) {
       this._showInputValidation(choice, parent, app);
       return false;
@@ -125,12 +125,12 @@ export default class CareerWizard extends WizardDSA5 {
     const mins = {};
     let reqCost = 0;
 
-    for (let req of requirements) {
+    for (const req of requirements) {
       if (req.disabled) continue;
 
       let found = false;
 
-      for (let [key, reg] of Object.entries(CareerWizard.abilityExceptions)) {
+      for (const [key, reg] of Object.entries(CareerWizard.abilityExceptions)) {
         if (reg.test(req.name)) {
           if (!mins[key] || req.apCost < mins[key]) {
             mins[key] = req.apCost;
@@ -143,7 +143,7 @@ export default class CareerWizard extends WizardDSA5 {
       if (!found) reqCost += req.apCost || 0;
     }
 
-    for (let min of Object.values(mins)) {
+    for (const min of Object.values(mins)) {
       reqCost += min;
     }
 
@@ -199,15 +199,15 @@ export default class CareerWizard extends WizardDSA5 {
   async setAbility(value, types, choices = []) {
     if (value.trim() == '') return;
 
-    let itemsToCreate = [];
-    let itemsToUpdate = [];
+    const itemsToCreate = [];
+    const itemsToUpdate = [];
 
     const selectionString = _loc('combatskillcountdivider') + ':';
 
-    for (let k of value.split(',').concat(choices)) {
+    for (const k of value.split(',').concat(choices)) {
       if (k.includes(selectionString) || k == '') continue;
 
-      let parsed = DSA5_Utility.parseAbilityString(k.trim());
+      const parsed = DSA5_Utility.parseAbilityString(k.trim());
       let item = this.actor.items.find((x) => types.includes(x.type) && x.name == parsed.original);
       if (item) {
         item = duplicate(item);
@@ -250,9 +250,9 @@ export default class CareerWizard extends WizardDSA5 {
   }
 
   async addBlessing(blessings, type) {
-    let itemsToCreate = [];
-    for (let k of blessings) {
-      let name = k.trim();
+    const itemsToCreate = [];
+    for (const k of blessings) {
+      const name = k.trim();
       if (name == '') continue;
       let item = this.actor.items.find((x) => type == x.type && x.name == name);
       if (!item) {
@@ -278,7 +278,7 @@ export default class CareerWizard extends WizardDSA5 {
 
   getExclusiveChoices(parent, cssClass) {
     const choices = [];
-    for (let k of parent.find(`${cssClass}.exclusive:checked`)) {
+    for (const k of parent.find(`${cssClass}.exclusive:checked`)) {
       choices.push($(k).val());
     }
     return choices;
@@ -287,7 +287,7 @@ export default class CareerWizard extends WizardDSA5 {
   async updateCharacter(parent, app = this) {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
-    let apCost = Number(parent.find('.apCost').text());
+    const apCost = Number(parent.find('.apCost').text());
     if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.career.value, 'career'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
@@ -298,7 +298,7 @@ export default class CareerWizard extends WizardDSA5 {
       'system.freeLanguagePoints.value': this.career.system.languagePoints.value,
       'system.freeLanguagePoints.used': Math.min(this._spendLanguagePoints(), Number(this.career.system.languagePoints.value)),
     };
-    for (let k of parent.find('.attributes')) {
+    for (const k of parent.find('.attributes')) {
       let attr = $(k).attr('data-attribute').toLowerCase();
       attr = game.dsa5.config.knownShortcuts[attr.toLowerCase()][1];
       if (Number(this.actor.system.characteristics[attr].initial) + Number(this.actor.system.characteristics[attr].advances) < Number($(k).val())) {

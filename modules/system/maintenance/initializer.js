@@ -4,7 +4,7 @@ const { getProperty } = foundry.utils;
 
 export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   constructor(title, content, module, lang = '', options = {}) {
-    let data = {
+    const data = {
       window: {
         title,
       },
@@ -45,10 +45,10 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async initNotes(entry, journs, finishedIds) {
-    let journHead = await this.getFolderForType('JournalEntry');
-    for (let n of entry.notes) {
+    const journHead = await this.getFolderForType('JournalEntry');
+    for (const n of entry.notes) {
       try {
-        let journ = journs.find((x) => x.flags.dsa5.initId == n.entryId);
+        const journ = journs.find((x) => x.flags.dsa5.initId == n.entryId);
         if (!finishedIds.has(journ._id)) {
           const parent = getProperty(journ, 'flags.dsa5.parent');
           let parenthead = journHead;
@@ -60,12 +60,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
           journ.folder = parenthead.id;
 
-          let existingJourn = game.journal.find((x) => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId);
+          const existingJourn = game.journal.find((x) => x.name == journ.name && x.folder?.id == parenthead.id && x.flags.dsa5.initId == n.entryId);
           if (existingJourn) {
             await existingJourn.update(journ);
             finishedIds.set(journ._id, existingJourn.id);
           } else {
-            let createdEntries = await JournalEntry.create(journ);
+            const createdEntries = await JournalEntry.create(journ);
             finishedIds.set(journ._id, createdEntries.id);
           }
         }
@@ -78,23 +78,23 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async initScenes(json, onlyScenes = undefined) {
-    let head = await this.getFolderForType('Scene');
-    let scene = game.packs.get(json.scenes);
+    const head = await this.getFolderForType('Scene');
+    const scene = game.packs.get(json.scenes);
     let entries = (await scene.getDocuments()).map((x) => x.toObject());
-    let journal = game.packs.get(json.journal);
-    let journs = journal ? (await journal.getDocuments()).map((x) => x.toObject()) : [];
-    let scenesToCreate = [];
-    let scenesToUpdate = [];
-    let finishedIds = new Map();
+    const journal = game.packs.get(json.journal);
+    const journs = journal ? (await journal.getDocuments()).map((x) => x.toObject()) : [];
+    const scenesToCreate = [];
+    const scenesToUpdate = [];
+    const finishedIds = new Map();
     let resetAll = false;
 
     if (onlyScenes) {
       entries = entries.filter((x) => onlyScenes.includes(x.name));
     }
 
-    for (let entry of entries) {
+    for (const entry of entries) {
       let resetScene = resetAll;
-      let found = game.scenes.find((x) => x.name == entry.name && x.folder?.id == head.id);
+      const found = game.scenes.find((x) => x.name == entry.name && x.folder?.id == head.id);
       if (!resetAll && found) {
         try {
           [resetScene, resetAll] = await foundry.applications.api.DialogV2.wait({
@@ -142,19 +142,19 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
         scenesToUpdate.push(entry);
       }
     }
-    let createdEntries = await Scene.create(scenesToCreate, {
+    const createdEntries = await Scene.create(scenesToCreate, {
       dsaInit: true,
       keepId: true,
     });
-    for (let entry of createdEntries) {
+    for (const entry of createdEntries) {
       this.scenes[entry.name] = entry;
       const thumb = await entry.createThumbnail();
       await entry.update({ thumb: thumb.thumb });
     }
     //await Scene.update(scenesToUpdate)
     //TODO this does not properly update walls?
-    for (let entry of scenesToUpdate) {
-      let scene = game.scenes.get(entry._id);
+    for (const entry of scenesToUpdate) {
+      const scene = game.scenes.get(entry._id);
       await scene.update(entry);
       this.scenes[entry.name] = game.scenes.get(entry._id);
     }
@@ -177,7 +177,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
 
   async initialize() {
     this.lock = true;
-    let initButton = $(this.element).find('[data-action="initialize"]');
+    const initButton = $(this.element).find('[data-action="initialize"]');
     initButton.prepend('<i class="fas fa-spinner fa-spin"></i>');
     let bookData = {};
     try {
@@ -213,22 +213,22 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
     }
 
     const json = await this.loadJson();
-    let foldersToCreate = json.folders;
+    const foldersToCreate = json.folders;
     if (foldersToCreate) {
-      let head = await this.getFolderForType('JournalEntry');
-      let headReplace = json.folders[0].name;
+      const head = await this.getFolderForType('JournalEntry');
+      const headReplace = json.folders[0].name;
       if (head) {
         this.folders[head.name] = head;
         json.folders.shift();
       }
       let createdFolders = await Folder.create(foldersToCreate);
       if (!Array.isArray(createdFolders)) createdFolders = [createdFolders];
-      for (let folder of createdFolders) this.folders[folder.name] = folder;
+      for (const folder of createdFolders) this.folders[folder.name] = folder;
 
       const updates = [];
-      for (let folder in this.folders) {
+      for (const folder in this.folders) {
         const flag = this.folders[folder].getFlag('dsa5', 'parent');
-        let parent = flag == headReplace ? _loc(`${this.moduleScope}.name`) : flag;
+        const parent = flag == headReplace ? _loc(`${this.moduleScope}.name`) : flag;
         if (parent) {
           updates.push({
             _id: this.folders[folder].id,
@@ -239,12 +239,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       await Folder.updateDocuments(updates);
     }
     if (json.items && json.items.length > 0) {
-      let head = await this.getFolderForType('Item');
-      let itemsToCreate = [];
-      let itemsToUpdate = [];
-      for (let k of json.items) {
+      const head = await this.getFolderForType('Item');
+      const itemsToCreate = [];
+      const itemsToUpdate = [];
+      for (const k of json.items) {
         k.folder = head.id;
-        let existingItem = game.items.find((x) => x.name == k.name && x.folder?.id == head.id);
+        const existingItem = game.items.find((x) => x.name == k.name && x.folder?.id == head.id);
         if (existingItem) {
           k._id = existingItem.id;
           itemsToUpdate.push(k);
@@ -256,14 +256,14 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       await Itemdsa5.updateDocuments(itemsToUpdate);
     }
     if (json.playlists) {
-      let head = await this.getFolderForType('Playlist');
-      let itemsToCreate = [];
-      let itemsToUpdate = [];
-      let playlist = game.packs.get(json.playlists);
-      let entries = (await playlist.getDocuments()).map((x) => x.toObject());
-      for (let k of entries) {
+      const head = await this.getFolderForType('Playlist');
+      const itemsToCreate = [];
+      const itemsToUpdate = [];
+      const playlist = game.packs.get(json.playlists);
+      const entries = (await playlist.getDocuments()).map((x) => x.toObject());
+      for (const k of entries) {
         k.folder = head.id;
-        let existingItem = game.playlists.find((x) => x.name == k.name && x.folder?.id == head.id);
+        const existingItem = game.playlists.find((x) => x.name == k.name && x.folder?.id == head.id);
         if (existingItem) {
           k._id = existingItem._id;
           itemsToUpdate.push(k);
@@ -279,12 +279,12 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       await this.initScenes(json);
     }
     if (json.actors) {
-      let head = await this.getFolderForType('Actor');
-      let actor = game.packs.get(json.actors);
-      let entries = (await actor.getDocuments()).map((x) => x.toObject());
-      let entriesToCreate = [];
-      let entriesToUpdate = [];
-      let actorFolders = new Map();
+      const head = await this.getFolderForType('Actor');
+      const actor = game.packs.get(json.actors);
+      const entries = (await actor.getDocuments()).map((x) => x.toObject());
+      const entriesToCreate = [];
+      const entriesToUpdate = [];
+      const actorFolders = new Map();
       let sort = 0;
       if (getProperty(bookData, 'chapters')) {
         for (const chapter of bookData.chapters) {
@@ -305,13 +305,13 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
           }
         }
       }
-      for (let entry of entries) {
+      for (const entry of entries) {
         const parentFolder = actorFolders.has(entry.name) ? await this.getFolderForType('Actor', head.id, actorFolders.get(entry.name)) : head;
 
         entry.folder = parentFolder.id;
         if (entry._id) delete entry._id;
 
-        let existingActor = game.actors.find((x) => x.name == entry.name && [head.id, parentFolder.id].includes(x.folder?.id));
+        const existingActor = game.actors.find((x) => x.name == entry.name && [head.id, parentFolder.id].includes(x.folder?.id));
         if (existingActor) {
           entry._id = existingActor.id;
           await existingActor.deleteEmbeddedDocuments(
@@ -323,10 +323,10 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
           entriesToCreate.push(entry);
         }
       }
-      let createdEntries = await Actor.create(entriesToCreate);
+      const createdEntries = await Actor.create(entriesToCreate);
 
       await Actor.updateDocuments(entriesToUpdate);
-      for (let entry of createdEntries) {
+      for (const entry of createdEntries) {
         this.actors[entry.name] = entry;
       }
     }

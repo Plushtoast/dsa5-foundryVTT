@@ -36,7 +36,7 @@ export default class TestSuite {
         Actor: game.actors,
        }[documentType].filter((x) => x.folder?.id == folder.id);
 
-      for (let item of items) {
+      for (const item of items) {
         item.sheet.close({animate: false});
       }
     }
@@ -48,12 +48,12 @@ export default class TestSuite {
         Actor: game.actors,
        }[documentType]
 
-      for (let item of items) {
+      for (const item of items) {
         console.log("Rendering", item.name, item.uuid)
         await item.sheet.render({ force: true, animate: false});
 
         if (renderEmbedded && documentType == 'Actor') {
-          for(let emb of item.items) {
+          for(const emb of item.items) {
             console.log("Rendering embedded", emb.name, item.name, emb.uuid)
             await emb.sheet.render({ force: true, animate: false});
             await emb.sheet.close({animate: false});
@@ -69,7 +69,7 @@ export default class TestSuite {
         Actor: game.actors,
        }[documentType];
 
-      for (let item of items) {        
+      for (const item of items) {        
         item.sheet.close({animate: false});
       }
     }
@@ -98,22 +98,22 @@ export default class TestSuite {
     };
     const templateJson = templateJsonPath ? await foundry.utils.fetchJsonWithTimeout(templateJsonPath) : null;
 
-    for (let documentName of ['Item', 'Actor']) {
-      for (let type of types[documentName]) {
+    for (const documentName of ['Item', 'Actor']) {
+      for (const type of types[documentName]) {
         if (!game.dsa5.dataModels[documentName][type]) {
           console.error(`No model for ${type}`);
         }
       }
 
       if (templateJson) {
-        for (let type of templateJson[documentName].types) {
+        for (const type of templateJson[documentName].types) {
           if (!game.dsa5.dataModels[documentName][type]) {
             console.error(`No template model for ${type}`);
           }
 
           let objectFromTemplate = {};
 
-          for (let temp of templateJson[documentName][type].templates || []) {
+          for (const temp of templateJson[documentName][type].templates || []) {
             objectFromTemplate = foundry.utils.mergeObject(objectFromTemplate, templateJson[documentName].templates[temp]);
           }
           const objectFromTemplateWithoutTemplates = foundry.utils.duplicate(templateJson[documentName][type]);

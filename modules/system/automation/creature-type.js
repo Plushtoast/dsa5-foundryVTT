@@ -69,7 +69,7 @@ export default class CreatureType {
       case 'poison':
       case 'disease': {
         const immunityName = _loc('LocalizedIDs.immuneTo') + ' (' + testData.preData.source.name + ')';
-        for (let target of game.user.targets) {
+        for (const target of game.user.targets) {
           const actor = target.actor;
           const immunity = actor.items.find((x) => x.name == immunityName && x.type == 'advantage');
           if (immunity) {
@@ -81,7 +81,7 @@ export default class CreatureType {
             });
           } else {
             const types = CreatureType.detectCreatureType(target.actor);
-            for (let type of types) {
+            for (const type of types) {
               if (type[`${testData.preData.source.type}Immunity`]) {
                 immuneTo.push({
                   name: testData.preData.source.name,
@@ -97,13 +97,13 @@ export default class CreatureType {
       }
       case 'spell':
       case 'ritual': {
-        for (let target of game.user.targets) {
+        for (const target of game.user.targets) {
           const types = CreatureType.detectCreatureType(target.actor);
           const features = testData.preData.source.system.feature.split(',').map((x) => x.trim());
 
           let found = false;
-          for (let type of types) {
-            for (let feature of features) {
+          for (const type of types) {
+            for (const feature of features) {
               if (type.spellImmunities.includes(feature)) {
                 immuneTo.push({
                   name: testData.preData.source.name,
@@ -138,10 +138,10 @@ export default class CreatureType {
   static addCreatureTypeModifiers(actorData, source, situationalModifiers, attacker) {
     const creatureTypes = CreatureType.detectCreatureType(actorData);
     const isSpell = ['spell', 'ceremony', 'liturgy', 'ritual'].includes(source.type);
-    for (let k of creatureTypes) {
+    for (const k of creatureTypes) {
       const modifiers = k.damageModifier(source);
       if (isSpell) {
-        for (let mod of modifiers) {
+        for (const mod of modifiers) {
           mod.armorPen = k.spellResistanceModifier(actorData);
         }
       }
@@ -181,7 +181,7 @@ export default class CreatureType {
     const bonusModifiers = [];
     const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
     const mods = getProperty(attacker, 'system.creatureBonus');
-    for (let mod of mods) {
+    for (const mod of mods) {
       if (creatureClass.indexOf(mod.target) >= 0) bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true));
     }
     return bonusModifiers;
@@ -362,7 +362,7 @@ class GhostType extends CreatureType {
 
       if (specificGods) return super.damageModifier(attackItem);
 
-      let regex = this.attributesRegex(attackItem);
+      const regex = this.attributesRegex(attackItem);
 
       if (regex.test(CreatureType.clerical)) return CreatureType.buildDamageMod(CreatureType.clerical, '*0.5');
       if (regex.test(CreatureType.magical)) return CreatureType.buildDamageMod(CreatureType.magical, '*0.5');

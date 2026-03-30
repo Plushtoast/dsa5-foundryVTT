@@ -25,7 +25,7 @@ export function setEnrichers() {
   const payRegex = /(-|\+)?\d+(\.\d+)?/;
   const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/;
   const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
-  const replaceRegex2 = /[\[\]]/g;
+  const replaceRegex2 = /[[]]/g;
   const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
     Pay: _loc('PAYMENT.payButton'),
@@ -34,8 +34,8 @@ export function setEnrichers() {
   };
 
   if (!DSA5.statusRegex) {
-    let effects = DSA5.statusEffects.map((x) => _loc(x.name).toLowerCase());
-    let keywords = ['status', 'condition', 'level', 'levels'].map((x) => _loc(x)).join('|');
+    const effects = DSA5.statusEffects.map((x) => _loc(x.name).toLowerCase());
+    const keywords = ['status', 'condition', 'level', 'levels'].map((x) => _loc(x)).join('|');
     DSA5.statusRegex = {
       effects: effects,
       regex: new RegExp(`(${keywords}) (${effects.join('|')})`, 'gi'),
@@ -44,7 +44,7 @@ export function setEnrichers() {
 
   CONFIG.TextEditor.enrichers.push(
     {
-      pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß\(\)&; -]+})?/g,
+      pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
@@ -52,7 +52,7 @@ export function setEnrichers() {
         const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
         const skill = str.replace(mod, '').replace(optionRegex, '').match(replaceRegex)[0].replace(replaceRegex2, '').trim();
-        let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]\{\}]/g, '') : skill;
+        let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]{}]/g, '') : skill;
 
         if (json.attrs) {
           customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
@@ -64,12 +64,12 @@ export function setEnrichers() {
       },
     },
     {
-      pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß\(\)&; -0-9]+})?/g,
+      pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
         const mod = Number(str.match(payRegex)[0]);
-        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '') : payStrings[type];
+        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : payStrings[type];
         return $(
           `<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
         )[0];
@@ -82,9 +82,9 @@ export function setEnrichers() {
       },
     },
     {
-      pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -\.0-9]+\]/g,
+      pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -.0-9]+\]/g,
       enricher: async (match, options) => {
-        let uuid = match[0].match(innerRegex)[0].slice(1);
+        const uuid = match[0].match(innerRegex)[0].slice(1);
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
@@ -103,7 +103,7 @@ export function setEnrichers() {
       },
     },
     {
-      pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'\(\)„“:,’ -\.0-9›‹áâïîëßôñûé\/]+\]({[a-zA-Z=]+})?/g,
+      pattern: /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'()„“:,’ -.0-9›‹áâïîëßôñûé/]+\]({[a-zA-Z=]+})?/g,
       enricher: async (match, options) => {
         const uuid = match[0].match(innerRegex)[0].slice(1);
         let document;
@@ -126,9 +126,9 @@ export function setEnrichers() {
         if (!document) return $('<a class="content-link broken"><i class="fas fa-unlink"></i></a>')[0];
 
         const str = match[0];
-        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[\{\}]/g, '') : '';
+        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : '';
 
-        let customOptions = {};
+        const customOptions = {};
         if (customText) {
           for (const el of customText.split(' ')) {
             const parts = el.split('=');
@@ -159,7 +159,7 @@ export function setEnrichers() {
 
   const basePrimer = TextEditor._primeCompendiums;
   TextEditor._primeCompendiums = async function (text) {
-    const rgx = /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'\(\)„“:,’ -\.0-9›‹âïîëßôñûé\/]+\]/g;
+    const rgx = /@EmbedItem\[[a-zA-ZöüäÖÜÄÔ&ë;'()„“:,’ -.0-9›‹âïîëßôñûé/]+\]/g;
     const packs = new Map();
     for (const t of text) {
       for (const [match] of t.textContent.matchAll(rgx)) {

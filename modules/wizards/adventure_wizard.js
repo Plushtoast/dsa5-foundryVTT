@@ -245,7 +245,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     html.on('click', '.show-item', async (ev) => {
       //TODO maybe try to open imported character
-      let itemId = ev.currentTarget.dataset.uuid;
+      const itemId = ev.currentTarget.dataset.uuid;
       const item = await fromUuid(itemId);
       item.sheet.render(true);
     });
@@ -253,7 +253,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
     html.on('mousedown', '.chapter img', (ev) => {
-      let name = this.book.id;
+      const name = this.book.id;
       if (ev.button == 2)
         game.dsa5.apps.DSA5_Utility.showArtwork({
           name,
@@ -278,15 +278,15 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static async _movePage(ev, target) {
     const dir = target.dataset.direction;
     let { journals, targetindex } = await this.getPagy(this.selectedChapter, this.selectedSubChapter);
-    let flattenedChapters = [];
+    const flattenedChapters = [];
 
-    for (let chap of this.bookData.chapters) {
-      for (let sub of chap.content) {
+    for (const chap of this.bookData.chapters) {
+      for (const sub of chap.content) {
         flattenedChapters.push(sub.name);
       }
     }
 
-    let curChapterIndex = flattenedChapters.findIndex((x) => x == this.selectedChapter);
+    const curChapterIndex = flattenedChapters.findIndex((x) => x == this.selectedChapter);
     this.bookData.chapters.findIndex((x) => x.name == this.selectedChapter);
 
     if (dir == 'next') targetindex++;
@@ -308,7 +308,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     if (['prep', 'foundryUsage'].includes(this.selectedChapter)) return;
 
-    let journal = journals[targetindex];
+    const journal = journals[targetindex];
 
     if (journal) {
       await this.loadJournalById(journal.id);
@@ -331,7 +331,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   async resaveBreadCrumbs(target) {
     const breadcrumbs = {};
-    for (let elem of target.getElementsByTagName('div')) {
+    for (const elem of target.getElementsByTagName('div')) {
       breadcrumbs[elem.dataset.uuid] = elem.innerText;
     }
     await game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
@@ -346,7 +346,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     const markers = [];
     const boundingRect = html.find('> div')[0].getBoundingClientRect();
-    for (let finding of findings) {
+    for (const finding of findings) {
       const bounding = finding.getBoundingClientRect();
       markers.push(`<div class="marker" style="top:${((bounding.top - boundingRect.top) / boundingRect.height) * 100}%"></div>`);
     }
@@ -458,7 +458,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.content = journal.id;
     let content = '';
     const pageTocs = [];
-    for (let page of journal.pages) {
+    for (const page of journal.pages) {
       const sheet = journal.sheet.getPageSheet(page.id);
       let view
       let pageContent
@@ -602,10 +602,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   async prefillActors(chapter) {
     if (!chapter.actors) return [];
 
-    let result = [];
+    const result = [];
     const head = await game.folders.contents.find((x) => x.name == _loc(`${this.bookData.moduleName}.name`) && x.type == 'Actor' && x.folder == null);
     const folderids = head ? await game.folders.contents.filter((x) => x.type == 'Actor' && x.folder?.id == head.id).map((x) => x.id) : undefined;
-    for (let k of chapter.actors) {
+    for (const k of chapter.actors) {
       let actor = folderids?.length ? game.actors.contents.find((x) => x.name == k && folderids.includes(x.folder?.id)) : undefined;
       let pack = undefined;
       let id = actor?.id;
@@ -635,7 +635,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static async _showSzene(ev, target) {
     const name = target.dataset.id;
     const mode = target.dataset.mode;
-    let scene = game.scenes.contents.find((x) => x.name == name);
+    const scene = game.scenes.contents.find((x) => x.name == name);
     if (!scene)
       return ui.notifications.error('DSAError.sceneNotInitialized', {
         localize: true,
@@ -662,19 +662,19 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       }
       if (this.selectedChapter) {
         if (this.selectedChapter == 'prep') {
-          let info = {
+          const info = {
             initDescr: _loc(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: _loc('importDefault') }),
           };
 
-          let modules = this.bookData.modules;
-          for (let k of modules) k.enabled = this.moduleEnabled(k.id);
+          const modules = this.bookData.modules;
+          for (const k of modules) k.enabled = this.moduleEnabled(k.id);
 
           return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_preparation.hbs', { modules, info });
         } else if (this.selectedChapter == 'foundryUsage') {
           return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_foundry.hbs');
         }
 
-        let chapter = this.bookData.chapters.find((x) => x.name == this.selectedType).content.find((x) => x.id == this.selectedChapter);
+        const chapter = this.bookData.chapters.find((x) => x.name == this.selectedType).content.find((x) => x.id == this.selectedChapter);
         const subChapters = this.getSubChapters();
         if (chapter.scenes || chapter.actors || subChapters.length == 0) {
           return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.hbs', {
@@ -733,12 +733,12 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   async getToc() {
-    let chapters = [];
+    const chapters = [];
     if (this.book) {
       chapters.push(...duplicate(this.bookData.chapters));
       if (this.selectedChapter) {
         let chapter;
-        for (let k of chapters) {
+        for (const k of chapters) {
           chapter = k.content.find((x) => x.id == this.selectedChapter);
           if (chapter) break;
         }
@@ -809,7 +809,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   async pinJournal(uuid, name = undefined) {
-    let breadcrumbs = this.readBreadCrumbs();
+    const breadcrumbs = this.readBreadCrumbs();
     if (!name) name = (await fromUuid(uuid))?.name || '';
     breadcrumbs[uuid] = name;
     game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
@@ -817,7 +817,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   unpinJournal(uuid) {
-    let breadcrumbs = this.readBreadCrumbs();
+    const breadcrumbs = this.readBreadCrumbs();
     delete breadcrumbs[uuid];
     game.settings.set('dsa5', `breadcrumbs_${game.world.id}`, JSON.stringify(breadcrumbs));
     this.render(true);

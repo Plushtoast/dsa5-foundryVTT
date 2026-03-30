@@ -51,7 +51,7 @@ export default function () {
     const toRemove = game.i18n.lang == 'de' ? 'en' : 'de';
     const packsToRemove = game.packs.filter((p) => getProperty(p.metadata, 'flags.dsalang') == toRemove);
 
-    for (let pack of packsToRemove) {
+    for (const pack of packsToRemove) {
       const id = pack.metadata.id;
       game.packs.delete(id);
       game.data.packs = game.data.packs.filter((x) => x.id != id);
@@ -77,7 +77,7 @@ export default function () {
     if (game.user.isGM) return;
 
     const jHtml = $(html);
-    for (let act of app.options.collection.filter((x) => x.isMerchant() && x.system.merchant.hidePlayer)) {
+    for (const act of app.options.collection.filter((x) => x.isMerchant() && x.system.merchant.hidePlayer)) {
       jHtml.find(`[data-entry-id="${act.id}"]`).remove();
     }
   });

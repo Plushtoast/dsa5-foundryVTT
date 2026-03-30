@@ -32,7 +32,7 @@ export default class DPS {
   }
 
   static inDistance(toToken) {
-    for (let token of canvas.scene.tokens) {
+    for (const token of canvas.scene.tokens) {
       if (token.isOwner && DPS.rangeFinder(toToken, token.object).tileDistance <= 2) return true;
     }
     return false;
@@ -122,7 +122,7 @@ export default class DPS {
     if (!DPS.isEnabled || !tokenSource) return 1;
 
     let maxDist = {};
-    for (let target of game.user.targets) {
+    for (const target of game.user.targets) {
       const dist = DPS.rangeFinder(tokenSource, target);
       if ((maxDist.distanceSum || 0) < dist.distanceSum) maxDist = dist;
     }

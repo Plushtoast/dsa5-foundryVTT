@@ -30,7 +30,7 @@ function clickableAbilities(a, b) {
           if (index == 0 && isSubsection) return `<b>${elems}</b>`;
 
           return (
-            `<span class=\"searchableAbility\" data-category="${b}">` +
+            `<span class="searchableAbility" data-category="${b}">` +
             elems
               .split(',')
               .map((x) => `<a data-action="searchableAbility">${x}</a>`)
@@ -52,7 +52,7 @@ function clickableActorItems(actor, list, rankPath, maxPath) {
       .join(', ');
   } else if (rankPath) {
     const res = [];
-    for (let item of list) {
+    for (const item of list) {
       const level = getProperty(item.system, rankPath);
       if (level) {
         res.push(`<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`);

@@ -16,7 +16,7 @@ export default class DSATables {
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
     const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
-    for (let tableResult of tableResults) {
+    for (const tableResult of tableResults) {
       const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
       const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
       const title = `${_loc('TABLENAMES.' + dataset.table)}`;
@@ -58,10 +58,10 @@ export default class DSATables {
   }
 
   static async buildEffects(tableResult, hasEffect) {
-    let effects = [];
+    const effects = [];
     if (hasEffect && hasEffect.resistEffect) {
       const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail];
-      for (let fail of failEffects) {
+      for (const fail of failEffects) {
         const ef = OnUseEffect.effectBaseDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || {});
         if (fail.systemEffect) {
           //todo add duration

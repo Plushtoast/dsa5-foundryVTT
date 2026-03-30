@@ -40,7 +40,7 @@ export default class DSATriggers {
     if (!game.user.can('MACRO_SCRIPT')) {
       ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     } else {
-      for (let [key, value] of Object.entries(actor.dsatriggers[type])) {
+      for (const [key, value] of Object.entries(actor.dsatriggers[type])) {
         const source = actor.items.get(key);
         const ef = source.effects.get(value);
         const macro = ef.system.macroArgs.macro;
@@ -76,7 +76,7 @@ export default class DSATriggers {
     const triggerMap = actor?.dsatriggers?.[type];
     if (!triggerMap) return collected;
 
-    for (let [key, value] of Object.entries(triggerMap)) {
+    for (const [key, value] of Object.entries(triggerMap)) {
       const source = actor.items.get(key);
       const ef = source?.effects?.get(value);
       const macro = ef?.system?.macroArgs?.macro;

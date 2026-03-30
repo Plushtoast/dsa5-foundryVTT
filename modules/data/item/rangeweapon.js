@@ -13,7 +13,7 @@ import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
 const { getProperty, setProperty } = foundry.utils;
 
-const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
+const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
 export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static defineSchema() {
@@ -59,7 +59,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static chatData(data, name) {
-    let res = [
+    const res = [
       { key: 'damage', val: data.damage.value },
       { key: 'TYPES.Item.combatskill', val: data.combatskill.value },
       { key: 'reach', val: data.reach.value },

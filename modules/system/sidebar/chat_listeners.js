@@ -55,7 +55,7 @@ export default class DSA5ChatListeners {
   }
 
   static getHelp() {
-    let msg =
+    const msg =
       DSA5.helpContent
         .map(
           (x) => `<h4>${_loc(`HELP.${x.name}`)}</h4>

@@ -134,7 +134,7 @@ export default function () {
       const basnum = `${rolls[0].number}`.split('.')[0];
       const tooltip = `${_loc('baseValue')}: ${basnum}, ${_loc('randomValue')}: ${rolls.at(-3).values[0]}")}`;
       const dies = [];
-      for (let term of rolls) {
+      for (const term of rolls) {
         if (term.faces && term.faces == 6) {
           for (let i = 0; i < term.number; i++) {
             dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`);
@@ -161,9 +161,9 @@ export default function () {
 
 function embeddedDragStart(ev) {
   const messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
-  let message = game.messages.get(messageId);
+  const message = game.messages.get(messageId);
   const item = message.getFlag('dsa5', 'embeddedItem');
-  let dataTransfer = {
+  const dataTransfer = {
     type: 'Item',
     data: item,
   };

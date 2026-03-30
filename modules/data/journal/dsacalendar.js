@@ -61,7 +61,7 @@ export class DSACalendarEntry extends JournalListDataModel {
         }, overrides);
     }
     async _preUpdate(changed, options, user) {
-        for (let key of Object.keys(changed.system?.calendarentries || {})) {
+        for (const key of Object.keys(changed.system?.calendarentries || {})) {
             this.#recalculateDay(changed.system.calendarentries[key]);
         }
         await super._preUpdate(changed, options, user);

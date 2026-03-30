@@ -3,12 +3,12 @@ import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
-const { getProperty } = foundry.utils;
+
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogReactDSA5 extends Select2Dialog {
   static async showDialog(startMessage) {
-    let fun = this.callbackResult;
+    const fun = this.callbackResult;
     new DialogReactDSA5({
       window: { title: 'Unopposed' },
       content: await this.getTemplate(startMessage),
@@ -33,7 +33,7 @@ export default class DialogReactDSA5 extends Select2Dialog {
   static getTargetActor(message) {
     if (!canvas.tokens) return {};
 
-    let speaker = message.flags.unopposeData.targetSpeaker;
+    const speaker = message.flags.unopposeData.targetSpeaker;
     const actor = DSA5_Utility.getSpeaker(speaker);
 
     if (!actor) {
@@ -58,7 +58,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     const attackMessage = game.messages.get(startMessage.flags.unopposeData.attackMessageId);
     const source = attackMessage.flags.data.preData.source;
     const item = source.name;
-    let items = (await DSA5_Utility.allSkillsList()).map((k) => {
+    const items = (await DSA5_Utility.allSkillsList()).map((k) => {
       return { name: k, id: k };
     });
     items.unshift({
@@ -136,7 +136,7 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
 
-    for (let item of this.actor.items) {
+    for (const item of this.actor.items) {
       if (types.includes(item.type) && item.system.worn.value == true) {
         const preparedItem =
           item.type == 'meleeweapon'
@@ -149,7 +149,7 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
           value: preparedItem.attack,
           item: preparedItem,
         });
-        for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
+        for (const [key, value] of Object.entries(preparedItem.subweapons || {})) {
           data.items.push({
             name: value.name,
             id: item.name,
@@ -337,7 +337,7 @@ export class ReactToAttackDialog extends ActAttackDialog {
     const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
-    let items = [
+    const items = [
       {
         name: _loc('doNothing'),
         id: 'doNothing',
@@ -360,9 +360,9 @@ export class ReactToAttackDialog extends ActAttackDialog {
     let defenses = 0;
     let sizeNotification = '';
     if (actor) {
-      let types = ['meleeweapon'];
+      const types = ['meleeweapon'];
 
-      for (let x of actor.items) {
+      for (const x of actor.items) {
         if (types.includes(x.type) && x.system.worn.value == true) {
           const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor);
           items.push({

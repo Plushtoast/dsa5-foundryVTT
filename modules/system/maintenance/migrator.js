@@ -22,7 +22,7 @@ async function announceChangelog(json) {
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
     console.log('Configuring default token settings');
-    let defaultToken = game.settings.get('core', 'prototypeTokenOverrides');
+    const defaultToken = game.settings.get('core', 'prototypeTokenOverrides');
 
     defaultToken.base.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
     defaultToken.base.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
@@ -55,7 +55,7 @@ async function migrateDSA(currentVersion, migrationVersion) {
 }
 
 async function migratTo24() {
-  for (let actor of game.actors) {
+  for (const actor of game.actors) {
     const removeEffects = actor.effects.filter((x) => ['inpain', 'encumbered'].includes(x.getFlag('core', 'statusId')));
 
     if (removeEffects.length)
@@ -98,7 +98,7 @@ export async function showWelcomeApp() {
 
 function betaWarning(version, version_specific = '', indef = false) {
   const indefMsg = indef ? `Foundry v${version} is still in development and so is TDE/DSA.` : 'TDE/DSA is still in development.';
-  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
+  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues" target="_blank">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 

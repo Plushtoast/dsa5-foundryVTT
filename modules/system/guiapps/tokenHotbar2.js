@@ -457,7 +457,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async handleSharedEffect(ev) {
-    for (let token of canvas.tokens.controlled) {
+    for (const token of canvas.tokens.controlled) {
       const actor = token.actor;
       const tokenId = token.id;
       const id = actor.effects.find((x) => x.name == ev.currentTarget.dataset.name)?.id;
@@ -541,7 +541,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     let gmMode = false;
     if (actor) {
       const moreSkills = [];
-      let moreSpells = [];
+      const moreSpells = [];
       const isRiding = Riding.isRiding(actor);
       const rideName = _loc('LocalizedIDs.riding');
 
@@ -690,7 +690,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       } else if (canvas.tokens.controlled.length > 1) {
         let sharedEffects = await game.dsa5.apps.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
-        for (let token of canvas.tokens.controlled) {
+        for (const token of canvas.tokens.controlled) {
           const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
           sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
@@ -892,7 +892,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     ev.stopPropagation();
     const search = this.searching.toLowerCase();
     tinyNotification(search);
-    let btns = $(ev.currentTarget).find('.subbuttons li');
+    const btns = $(ev.currentTarget).find('.subbuttons li');
     btns.find('.dsahidden').removeClass('dsahidden');
     btns
       .filter(function () {
@@ -1061,7 +1061,7 @@ export class AddEffectDialog extends DefaultAppv2 {
     } else if (isCustomEffect) {
       ui.notifications.error('DSAError.customEffect', { localize: true });
     } else {
-      for (let token of canvas.tokens.controlled) {
+      for (const token of canvas.tokens.controlled) {
         await token.actor.addTimedCondition(id, 1, false, false, options);
       }
     }

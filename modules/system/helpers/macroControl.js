@@ -12,7 +12,7 @@ export default class MacroDSA5 {
   }
 
   static weaponLessMacroId(char, actorId) {
-    let actor = game.actors.get(actorId);
+    const actor = game.actors.get(actorId);
     this.runWeaponless(actor, char);
   }
 
@@ -29,8 +29,8 @@ export default class MacroDSA5 {
   }
 
   static itemMacroById(actorId, itemName, itemType, bypassData) {
-    let actor = game.actors.get(actorId);
-    let item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
+    const actor = game.actors.get(actorId);
+    const item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
     this.runItem(actor, item, itemName, bypassData);
   }
 
@@ -40,12 +40,12 @@ export default class MacroDSA5 {
     if (speaker.token) actor = game.actors.tokens[speaker.token];
     if (!actor) actor = game.actors.get(speaker.actor);
 
-    let item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
+    const item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
     this.runItem(actor, item, itemName, bypassData, speaker.token);
   }
 
   static charMacroById(char, actorId) {
-    let actor = game.actors.get(actorId);
+    const actor = game.actors.get(actorId);
     this.runChar(actor, char);
   }
 
@@ -60,7 +60,7 @@ export default class MacroDSA5 {
 
   static runWeaponless(actor, char, tokenId) {
     if (!actor) return ui.notifications.error('DSAError.MacroItemMissing', { localize: true, format: { item: char } });
-    let characteristic = char.split('Weaponless')[0];
+    const characteristic = char.split('Weaponless')[0];
     actor.setupWeaponless(characteristic, {}, tokenId).then((setupData) => {
       actor.basicTest(setupData);
     });

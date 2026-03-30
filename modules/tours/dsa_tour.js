@@ -13,13 +13,13 @@ export default class DSATour extends foundry.nue.Tour {
   static async travelAgency() {
     const lang = game.i18n.lang == 'de' ? 'de' : 'en';
     console.log('Adding DSA/TDE Tours');
-    for (let tour of this.tours) {
+    for (const tour of this.tours) {
       const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace('/lang/', `/${lang}/`)}.json`);
       game.tours.register(obj.config.module, obj.id, obj);
     }
     if (!game.user.isGM) return;
 
-    for (let tour of this.gmTours) {
+    for (const tour of this.gmTours) {
       const obj = await game.dsa5.apps.DSATour.fromJSON(`${tour.replace('/lang/', `/${lang}/`)}.json`);
       game.tours.register(obj.config.module, obj.id, obj);
     }

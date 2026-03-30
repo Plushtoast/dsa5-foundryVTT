@@ -178,7 +178,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
         if (!game.user.isGM) return;
         if (entry.type === 1) return;
         entry.contacts = {};
-        for (let [uuid, hero] of heros) {
+        for (const [uuid, hero] of heros) {
             if (entry.actor_uuid && entry.actor_uuid === uuid) continue;
             const slugified_uuid = uuid.replaceAll('.', '_');
             const exists = entry.socialContact[slugified_uuid];

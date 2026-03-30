@@ -63,7 +63,7 @@ export default class DSA5SpellDialog extends DialogShared {
                 modified = Number(dlg.find('.castingTime').text()) - 1;
                 reloadUpdate['system.castingTime.modified'] = modified;
               }
-              const res = await actor.items.get(testData.source._id).update(reloadUpdate);
+              await actor.items.get(testData.source._id).update(reloadUpdate);
               const infoMsg = _loc('SPELL.isReloading', {
                 actor: actor.token?.name || actor.prototypeToken.name,
                 item: testData.source.name,

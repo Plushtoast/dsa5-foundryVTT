@@ -4,14 +4,14 @@ export function svgAutoFit(elem, width = 320, height = 40) {
     viewBox: `0 0 ${width} ${height}`,
   });
   const text = elem.find('text')[0];
-  let bbox = text.getBBox();
-  let textWidth = bbox.width;
-  let textHeight = bbox.height;
-  let scaleX = width / textWidth;
-  let scaleY = height / textHeight;
-  let scale = Math.min(scaleX, scaleY);
-  let centerX = width / 2 - (textWidth * scale) / 2 - bbox.x * scale;
-  let centerY = height / 2 - (textHeight * scale) / 2 - bbox.y * scale;
+  const bbox = text.getBBox();
+  const textWidth = bbox.width;
+  const textHeight = bbox.height;
+  const scaleX = width / textWidth;
+  const scaleY = height / textHeight;
+  const scale = Math.min(scaleX, scaleY);
+  const centerX = width / 2 - (textWidth * scale) / 2 - bbox.x * scale;
+  const centerY = height / 2 - (textHeight * scale) / 2 - bbox.y * scale;
   if (isFinite(scale)) {
     text.setAttribute("transform", `matrix(${scale}, 0, 0, ${scale}, ${centerX}, ${centerY})`);
   }
@@ -33,7 +33,7 @@ export async function itemFromDrop(dragData, actorId, toObject = true) {
   } else {
     item = await fromUuid(dragData.uuid);
   }
-  let typeClass = item?.type;
+  const typeClass = item?.type;
 
   if (toObject) {
     item = item.toObject();
@@ -50,9 +50,9 @@ export function slist(html, target, callback, itemTag = 'div') {
 
   target.classList.add('slist');
 
-  let items = target.querySelectorAll(itemTag),
-    current = null;
-  for (let i of items) {
+  const items = target.querySelectorAll(itemTag);
+  let current = null;
+  for (const i of items) {
     i.draggable = true;
 
     i.addEventListener('dragstart', function (ev) {
@@ -101,8 +101,8 @@ export function tinyNotification(message) {
 }
 
 function IconVisibility(html, menu, btnLeft, btnRight) {
-  let scrollLeftValue = Math.ceil(menu.scrollLeft);
-  let scrollableWidth = menu.scrollWidth - menu.clientWidth;
+  const scrollLeftValue = Math.ceil(menu.scrollLeft);
+  const scrollableWidth = menu.scrollWidth - menu.clientWidth;
 
   btnLeft.style.display = scrollLeftValue > 0 ? 'flex' : 'none';
   btnRight.style.display = scrollableWidth > scrollLeftValue ? 'flex' : 'none';
@@ -138,7 +138,7 @@ export async function clickableAbility(target) {
     return await renderFoundLibraryDocument(await findJournalEntry(search));
   }
 
-  for (let category of categories) {
+  for (const category of categories) {
     const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
     const res = items.find((x) => x.name == search);
     if (res) {
@@ -148,7 +148,7 @@ export async function clickableAbility(target) {
   if (/\(/.test(search)) {
     search = search.split('(')[0].trim() + ' ()';
 
-    for (let category of categories) {
+    for (const category of categories) {
       const items = await game.dsa5.itemLibrary.findCompendiumItem(search, category);
       const res = items.find((x) => x.name == search);
       if (res) {
@@ -176,7 +176,7 @@ function columnLayout(html) {
 export function resizeListener(html) {
   //observer html for widtht ch
   const observer = new ResizeObserver((entries) => {
-    for (let entry of entries) {
+    for (const entry of entries) {
       if (entry.contentRect.width > 0) {
         columnLayout(html);
       }
@@ -188,7 +188,7 @@ export function resizeListener(html) {
 export function tabSlider(html) {
   const sliders = html.find('.navWrapper');
 
-  for (let slider of sliders) {
+  for (const slider of sliders) {
     const btnLeft = slider.querySelector('.left-btn');
     const btnRight = slider.querySelector('.right-btn');
     const menu = slider.querySelector('.sheet-tabs');

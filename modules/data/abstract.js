@@ -57,14 +57,14 @@ export class DSADataModel extends foundry.abstract.TypeDataModel {
     return a;
   }
 
-  static cleanData(source, options) {
-    this._cleanData(source, options);
-    return super.cleanData(source, options);
+  static cleanData(source, options, _state) {
+    this._cleanData(source, options, _state);
+    return super.cleanData(source, options, _state);
   }
 
-  static _cleanData(source, options) {
+  static _cleanData(source, options, _state) {
     for (const template of this._schemaTemplates) {
-      template._cleanData(source, options);
+      template._cleanData(source, options, _state);
     }
   }
 

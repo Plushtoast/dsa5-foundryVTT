@@ -105,8 +105,8 @@ export default class OpposedDsa5 {
    * @returns {void}
    */
   static async redoUndefended(message) {
-    let startMessage = game.messages.get(message.flags.data.unopposedStartMessage);
-    startmessage.flags.unopposeData.attackMessageId = message.id;
+    const startMessage = game.messages.get(message.flags.data.unopposedStartMessage);
+    startMessage.flags.unopposeData.attackMessageId = message.id;
     this.resolveUndefended(startMessage);
   }
 
@@ -193,15 +193,15 @@ export default class OpposedDsa5 {
 
     if (testResult.successLevel > 0 || isDamageRoll) {
       const attackOfOpportunity = message.flags.data.preData.attackOfOpportunity;
-      let unopposedButton = attackOfOpportunity
+      const unopposedButton = attackOfOpportunity
         ? ''
         : `<div class="flexrow"><button class="unopposed-button small-button chat-button-target" data-target="true">${_loc('Unopposed')}</button></div>`;
-      let startMessagesList = [];
+      const startMessagesList = [];
 
       for (const target of game.user.targets) {
         if (target.actor) {
           const content = `${OpposedDsa5.opposeMessage(attacker, target, false)} ${unopposedButton}`;
-          let startMessage = await ChatMessage.create({
+          const startMessage = await ChatMessage.create({
             user: game.user.id,
             content,
             speaker: message.speaker,
@@ -283,9 +283,9 @@ export default class OpposedDsa5 {
    * @todo Check if this method is still needed in current implementation
    */
   static async changeStartMessage(message) {
-    for (let startMessageId of message.flags.data.startMessagesList) {
-      let startMessage = game.messages.get(startMessageId);
-      let data = startMessage.flags.unopposeData;
+    for (const startMessageId of message.flags.data.startMessagesList) {
+      const startMessage = game.messages.get(startMessageId);
+      const data = startMessage.flags.unopposeData;
 
       game.socket.emit('system.dsa5', {
         type: 'target',
@@ -314,9 +314,9 @@ export default class OpposedDsa5 {
   static resolveFinalMessage(message) {
     let attacker, defender;
     if (message.flags.data.defenderMessage) {
-      for (let msg of message.flags.data.defenderMessage) {
+      for (const msg of message.flags.data.defenderMessage) {
         attacker = OpposedDsa5.getMessageDude(message);
-        let defenderMessage = game.messages.get(msg);
+        const defenderMessage = game.messages.get(msg);
         defender = OpposedDsa5.getMessageDude(defenderMessage);
         this.completeOpposedProcess(attacker, defender, {
           blind: message.blind,
@@ -325,7 +325,7 @@ export default class OpposedDsa5 {
       }
     } else {
       defender = OpposedDsa5.getMessageDude(message);
-      let attackerMessage = game.messages.get(message.flags.data.attackerMessage);
+      const attackerMessage = game.messages.get(message.flags.data.attackerMessage);
       attacker = OpposedDsa5.getMessageDude(attackerMessage);
       this.completeOpposedProcess(attacker, defender, {
         blind: message.blind,
@@ -341,7 +341,7 @@ export default class OpposedDsa5 {
    * @returns {CombatantData} Formatted combatant data for opposed test
    */
   static getMessageDude(message) {
-    let res = {
+    const res = {
       speaker: message.speaker,
       testResult: mergeObject(message.flags.data.postData, {
         source: message.flags.data.preData.source,
@@ -432,11 +432,11 @@ export default class OpposedDsa5 {
         str.push(_loc('CHAR.PARRY'));
       }
 
-      for (let st of str) {
+      for (const st of str) {
         items.push({ name: `${item.name} (${st})` }, { name: st });
       }
       items.push(item);
-      for (let it of items) {
+      for (const it of items) {
         const result = await AutomatedAnimations.playAnimation(attackerToken, it, { targets, hitTargets, playOnMiss: true });
         if (result) break;
       }
@@ -494,10 +494,10 @@ export default class OpposedDsa5 {
    * @returns {Promise<void>}
    */
   static async _handleReaction(ev) {
-    let messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
-    let message = game.messages.get(messageId);
-    let attackMessage = game.messages.get(message.flags.unopposeData.attackMessageId);
-    let source = attackMessage.flags.data.preData.source;
+    const messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
+    const message = game.messages.get(messageId);
+    const attackMessage = game.messages.get(message.flags.unopposeData.attackMessageId);
+    const source = attackMessage.flags.data.preData.source;
     switch (source.type) {
       case 'skill':
         ReactToSkillDialog.showDialog(message);
@@ -529,7 +529,7 @@ export default class OpposedDsa5 {
   static async hideReactionButton(startMessageId) {
     if (startMessageId) {
       if (game.user.isGM) {
-        let startMessage = game.messages.get(startMessageId);
+        const startMessage = game.messages.get(startMessageId);
         let query = $(startMessage.content);
         query.find('button.unopposed-button').remove();
         query = $('<div></div>').append(query);
@@ -593,7 +593,7 @@ export default class OpposedDsa5 {
    * @returns {Promise<OpposedTestResult>} The complete opposed test result
    */
   static async evaluateOpposedTest(attackerTest, defenderTest, options = {}) {
-    let opposeResult = {};
+    const opposeResult = {};
 
     opposeResult.other = [];
     if (options.additionalInfo) opposeResult.other.push(options.additionalInfo);
@@ -792,9 +792,9 @@ export default class OpposedDsa5 {
 
     const transformed = DSAActiveEffectConfig.applyRollTransformation(actor, options, DSATriggers.EVENTS.DAMAGE_TRANSFORMATION).options;
     armor = transformed.armor;
-    let damage = transformed.damage;
+    const damage = transformed.damage;
 
-    let multipliers = [];
+    const multipliers = [];
     let armorMod = 0;
     const aPen = attackerTest.armorPen || [];
     for (const mod of aPen) {
@@ -802,7 +802,7 @@ export default class OpposedDsa5 {
       else armorMod += Number(mod);
     }
     let spellArmor = 0;
-    let liturgyArmor = 0;
+    const liturgyArmor = 0;
 
     if (['spell', 'ritual'].includes(attackerTest.source.type)) spellArmor += actor.system.spellArmor || 0;
     else if (['liturgy', 'ceremony'].includes(attackerTest.source.type)) spellArmor += actor.system.liturgyArmor || 0;
@@ -859,7 +859,7 @@ export default class OpposedDsa5 {
    * @returns {void} Modifies opposeResult in place with formatted text and image
    */
   static formatOpposedResult(opposeResult, attacker, defender) {
-    let str = opposeResult.differenceSL ? 'winsFP' : 'wins';
+    const str = opposeResult.differenceSL ? 'winsFP' : 'wins';
     if (opposeResult.winner == 'attacker') {
       opposeResult.result = _loc('OPPOSED.' + str, {
         winner: attacker.alias,
@@ -891,7 +891,7 @@ export default class OpposedDsa5 {
    * @returns {void}
    */
   static rerenderMessagesWithModifiers(opposeResult, attacker, defender) {
-    let attackerMessage = game.messages.get(attacker.messageId);
+    const attackerMessage = game.messages.get(attacker.messageId);
     this.showDamage(attackerMessage, opposeResult.winner != 'attacker');
   }
 
@@ -970,10 +970,10 @@ export default class OpposedDsa5 {
    * @returns {Promise<void>}
    */
   static async resolveUndefended(startMessage, additionalInfo = '') {
-    let unopposeData = startMessage.flags.unopposeData;
+    const unopposeData = startMessage.flags.unopposeData;
 
-    let attackMessage = game.messages.get(unopposeData.attackMessageId);
-    let attacker = {
+    const attackMessage = game.messages.get(unopposeData.attackMessageId);
+    const attacker = {
       speaker: attackMessage.speaker,
       testResult: attackMessage.flags.data.postData,
       messageId: unopposeData.attackMessageId,
@@ -982,8 +982,8 @@ export default class OpposedDsa5 {
 
     OpposedDsa5.combine_effects(attacker, attackMessage.flags.data.preData);
 
-    let target = canvas.tokens.get(unopposeData.targetSpeaker.token);
-    let defender = {
+    const target = canvas.tokens.get(unopposeData.targetSpeaker.token);
+    const defender = {
       speaker: unopposeData.targetSpeaker,
       testResult: {
         actor: target.actor,

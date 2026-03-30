@@ -749,8 +749,8 @@ class Enchantable extends ItemSheetdsa5 {
   };
 
   static _togglePermanent(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
-    for (let ench of enchantments) {
+    const { id, enchantments } = this.enchantMentId(target);
+    for (const ench of enchantments) {
       if (ench.id == id) {
         ench.permanent = !ench.permanent;
         break;
@@ -760,24 +760,24 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   static _toggleCharge(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.toggleChargedState(id, enchantments);
   }
 
   static _enchRoll(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.rollEnchantment(id, enchantments);
   }
 
   static _enchDelete(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.deleteEnchantment(id, enchantments);
   }
 
   static async _enchShow(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
-    let enchantment = enchantments.find((x) => x.id == id);
-    let item = await this.getSpell(enchantment);
+    const { id, enchantments } = this.enchantMentId(target);
+    const enchantment = enchantments.find((x) => x.id == id);
+    const item = await this.getSpell(enchantment);
 
     if (item) item.sheet.render(true);
   }
@@ -819,11 +819,11 @@ class Enchantable extends ItemSheetdsa5 {
     const html = $(this.element);
 
     html.find('.ench-fw').on('change', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev.currentTarget);
-      let fw = Number(ev.currentTarget.value);
+      const { id, enchantments } = this.enchantMentId(ev.currentTarget);
+      const fw = Number(ev.currentTarget.value);
       if (!fw) return;
 
-      for (let ench of enchantments) {
+      for (const ench of enchantments) {
         if (ench.id == id) {
           ench.fw = fw;
           break;
@@ -877,7 +877,7 @@ class Enchantable extends ItemSheetdsa5 {
         localize: true,
       });
 
-    for (let dragData of dragDataArray) {
+    for (const dragData of dragDataArray) {
       const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
       if (['spell', 'liturgy', 'ceremony', 'ritual'].includes(typeClass)) {
         if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: _loc('TYPES.Item.spell') }, localize: true });
@@ -942,7 +942,7 @@ class Enchantable extends ItemSheetdsa5 {
         permanent: false,
         actorId: dragData.actorId,
       };
-      let update = { flags: { dsa5: { poison } } };
+      const update = { flags: { dsa5: { poison } } };
       if (this.item.actor) {
         if (this.item.actor.uuid != item.actor?.uuid) {
           const proceed = await foundry.applications.api.DialogV2.confirm({
@@ -965,7 +965,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   toggleChargedState(id, enchantments) {
-    for (let ench of enchantments) {
+    for (const ench of enchantments) {
       if (ench.id == id) {
         ench.charged = ench.talisman && ench.permanent ? true : !ench.charged;
         break;
@@ -1029,7 +1029,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   deleteEnchantment(id, enchantments) {
-    let enchantment = enchantments.findIndex((x) => x.id == id);
+    const enchantment = enchantments.findIndex((x) => x.id == id);
     enchantments.splice(enchantment, 1);
     this.item.update({ flags: { dsa5: { enchantments } } });
   }
@@ -1052,7 +1052,7 @@ class Enchantable extends ItemSheetdsa5 {
       itemLibrary.findCompendiumItem;
       const cats = enchantment.talisman ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
 
-      for (let cat of cats) {
+      for (const cat of cats) {
         item = await game.dsa5.itemLibrary.findCompendiumItem(enchantment.name, cat);
         item = item.find((x) => x.name == enchantment.name && x.type == cat && x.system);
 
@@ -1218,10 +1218,10 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
   }
 
   async breakOverflow(data, parent) {
-    let elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.hbs', data));
+    const elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.hbs', data));
 
-    let top = parent.offset().top + 52;
-    let left = parent.offset().left - 75;
+    const top = parent.offset().top + 52;
+    const left = parent.offset().left - 75;
     elm.appendTo($('body'));
     elm.css({
       position: 'absolute',
@@ -1240,7 +1240,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     const slots = html.find('.slot');
     slots.on('mouseenter', async (ev) => {
       const item = $(ev.currentTarget);
-      let elm = await this.breakOverflow(
+      const elm = await this.breakOverflow(
         {
           name: ev.currentTarget.dataset.name,
           weight: ev.currentTarget.dataset.weight,
@@ -1256,8 +1256,8 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     });
 
     slots.on('mousedown', async (ev) => {
-      let itemId = ev.currentTarget.dataset.itemId;
-      let item = this.actor.items.get(itemId);
+      const itemId = ev.currentTarget.dataset.itemId;
+      const item = this.actor.items.get(itemId);
 
       if (ev.button == 0) item.sheet.render(true);
       else if (ev.button == 2) {
@@ -1735,7 +1735,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   }
 
   static _editExtension(ev, target) {
-    let itemId = this._getItemId(target);
+    const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     item.sheet.render(true);
   }
@@ -1749,7 +1749,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   }
 
   async _cleverDeleteItem(itemId) {
-    let item = this.actor.items.find((x) => x.id == itemId);
+    const item = this.actor.items.find((x) => x.id == itemId);
     await this.actor._updateAPs(-1 * item.system.APValue.value, {}, { render: false });
     await this.actor.deleteEmbeddedDocuments('Item', [itemId]);
     await APTracker.track(this.actor, { type: 'item', item, state: -1 }, apCost);

@@ -96,7 +96,7 @@ export default class Riding {
     if (!canvas?.tokens?.documentCollection) return;
 
     const horseIds = horse.getActiveTokens().map((x) => x.id);
-    for (let token of Array.from(canvas.tokens.documentCollection)) {
+    for (const token of Array.from(canvas.tokens.documentCollection)) {
       if (horseIds.includes(token.getFlag('dsa5', 'horseTokenId'))) {
         if (newSpeed != token.actor.system.status.speed.max) {
           token.actor.prepareData();
@@ -134,7 +134,7 @@ export default class Riding {
 
     const tokenUpdates = [];
     if (value == 0) {
-      for (let token of actor.getActiveTokens()) {
+      for (const token of actor.getActiveTokens()) {
         tokenUpdates.push({
           _id: token.document.id,
           'flags.dsa5.horseTokenId': _del,
@@ -145,14 +145,14 @@ export default class Riding {
     } else {
       const horse = this.getHorse(actor);
       let horseTokenId;
-      for (let horseToken of horse.getActiveTokens()) {
+      for (const horseToken of horse.getActiveTokens()) {
         tokenUpdates.push({
           _id: horseToken.document.id,
           'flags.dsa5.horseTokenId': _del,
         });
         horseTokenId = horseToken.document.id;
       }
-      for (let token of actor.getActiveTokens()) {
+      for (const token of actor.getActiveTokens()) {
         tokenUpdates.push({
           _id: token.document.id,
           elevation: Math.max(0, (token.document.elevation ?? 0) + 1),

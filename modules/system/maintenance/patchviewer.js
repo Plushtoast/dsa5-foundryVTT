@@ -1,7 +1,6 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { tabSlider } from '../helpers/view_helper.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import DSA5 from '../../config/config-dsa5.js';
 import DSATour from '../../tours/dsa_tour.js';
 import DidYouKnow from '../helpers/didyouknow.js';
 import ModuleDetailsDataLoader from './module_details_loader.js';
@@ -509,7 +508,7 @@ export class PatchViewer extends DefaultAppv2 {
 
     async _prepareContext(_options) {
         const data = await super._prepareContext(_options);
-        let version = this.json['notes'][this.json['notes'].length - 1];
+        const version = this.json['notes'][this.json['notes'].length - 1];
         const patchName = this.json['default'].replace(/VERSION/g, version.version);
 
         const lang = game.i18n.lang;

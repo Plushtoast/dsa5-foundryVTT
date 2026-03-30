@@ -154,7 +154,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const selected = game.settings.get('dsa5', 'selectedActors');
     const tracked = game.settings.get('dsa5', 'trackedActors');
     const final = {};
-    for (let key of Object.keys(selected)) {
+    for (const key of Object.keys(selected)) {
       if (tracked.actors?.includes(key)) final[key] = selected[key];
     }
     return final;
@@ -257,12 +257,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     });
     html.find('.selectAll').on('change', (ev) => this._selectAll(ev, html));
     html.find('.heroSelector').on('click', (ev) => ev.stopPropagation());
-    let deletehand = (ev) => this._deleteHero(ev);
+    const deletehand = (ev) => this._deleteHero(ev);
     html.find('.hero').on('mouseenter', (ev) => {
       if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.classList.add('hovermenu');
-        let del = document.createElement('i');
+        const del = document.createElement('i');
         del.classList.add('fas', 'fa-times');
         del.dataset.tooltip = 'SHEET.DeleteItem';
         del.addEventListener('click', deletehand, false);
@@ -271,7 +271,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       }
     });
     html.find('.hero').on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
+      const e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
@@ -293,14 +293,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       game.settings.set('dsa5', 'attackFromBehindAngle', Number(ev.currentTarget.value));
     });
 
-    for (let elem of this.randomCreation) {
+    for (const elem of this.randomCreation) {
       elem.activateListeners(html);
     }
     slist(html, '.heros', this.updateHeroOrder.bind(this), '.hero');
     html.find('.hero').on('dragstart', (event) => {
       event.stopPropagation();
       const a = event.currentTarget;
-      let dragData = { type: 'Actor', uuid: a.dataset.uuid };
+      const dragData = { type: 'Actor', uuid: a.dataset.uuid };
       event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
     });
 
@@ -321,7 +321,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     } else {
       ids = this.selectedIDs();
     }
-    let dragData = { type: 'GroupDrop', ids };
+    const dragData = { type: 'GroupDrop', ids };
     ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 
@@ -350,7 +350,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
   async updateHeroOrder(target) {
     const actors = [];
-    for (let elem of target.querySelectorAll('.hero')) {
+    for (const elem of target.querySelectorAll('.hero')) {
       actors.push(elem.dataset.id);
     }
     await this.setTrackedHeros(actors);
@@ -533,7 +533,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async rollRandomPlayer(withMisfortune) {
-    let probabilities = {};
+    const probabilities = {};
     let counter = 1;
     const selected = this.getSelectedActors();
     const anythingselected = Object.values(selected).filter((x) => x).length != 0;
@@ -721,7 +721,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   selectedIDs() {
-    let ids = [];
+    const ids = [];
     const selected = this.getSelectedActors();
     for (const [key, value] of Object.entries(selected)) {
       if (value && game.actors.has(key)) ids.push(key);
@@ -922,12 +922,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       x.content = new Set(x.content);
       return x;
     });
-    for (let hero of this.heros) {
-      let newHero = duplicate(hero);
+    for (const hero of this.heros) {
+      const newHero = duplicate(hero);
       const disadvantages = [];
       const advantages = [];
       const purse = [];
-      for (let x of hero.items) {
+      for (const x of hero.items) {
         switch (x.type) {
           case 'disadvantage':
             disadvantages.push({ name: x.name, uuid: x.uuid });

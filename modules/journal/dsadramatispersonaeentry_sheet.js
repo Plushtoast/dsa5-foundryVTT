@@ -45,7 +45,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     async _prepareEntries(context, options) {
         if (this.isView) {
             const heros = await DSAPersonaEntry.getHeros();
-            for (let key of Object.keys(context.sortedEntries)) {
+            for (const key of Object.keys(context.sortedEntries)) {
                 const entry = context.sortedEntries[key];
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);
             }

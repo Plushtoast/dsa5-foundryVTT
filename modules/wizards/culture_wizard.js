@@ -29,12 +29,12 @@ export default class CultureWizard extends WizardDSA5 {
   wizardListeners(html) {
     super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
-      let parent = $(ev.currentTarget).closest('.content');
+      const parent = $(ev.currentTarget).closest('.content');
       let apCost = Number(parent.attr('data-cost'));
       parent.find('.optional:checked').each(function () {
         apCost += Number($(this).attr('data-cost'));
       });
-      let elem = parent.find('.apCost');
+      const elem = parent.find('.apCost');
       elem.text(apCost);
       WizardDSA5.flashElem(elem, 'emphasize2');
     });
@@ -42,9 +42,9 @@ export default class CultureWizard extends WizardDSA5 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    let advantages = await this.parseToItem(this.culture.system.recommendedAdvantages.value, ['advantage']);
-    let disadvantages = await this.parseToItem(this.culture.system.recommendedDisadvantages.value, ['disadvantage']);
-    let writings =
+    const advantages = await this.parseToItem(this.culture.system.recommendedAdvantages.value, ['advantage']);
+    const disadvantages = await this.parseToItem(this.culture.system.recommendedDisadvantages.value, ['disadvantage']);
+    const writings =
       this.culture.system.writing.value == ''
         ? []
         : await this.parseToItem(
@@ -54,7 +54,7 @@ export default class CultureWizard extends WizardDSA5 {
               .join(', '),
             ['specialability'],
           );
-    let languages =
+    const languages =
       this.culture.system.language.value == ''
         ? []
         : await this.parseToItem(
@@ -65,7 +65,7 @@ export default class CultureWizard extends WizardDSA5 {
             ['specialability'],
           );
 
-    let baseCost = Number(this.culture.system.APValue.value);
+    const baseCost = Number(this.culture.system.APValue.value);
     mergeObject(data, {
       culture: this.culture,
       description: _loc('WIZARD.culturedescr', {
@@ -115,13 +115,13 @@ export default class CultureWizard extends WizardDSA5 {
   async updateCharacter(parent, app = this) {
     parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
 
-    let apCost = Number(parent.find('.apCost').text());
+    const apCost = Number(parent.find('.apCost').text());
     if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.culture.value, 'culture'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
       return;
     }
 
-    let update = { 'system.details.culture.value': this.culture.name };
+    const update = { 'system.details.culture.value': this.culture.name };
 
     let localKnowledge = await this.findCompendiumItem(`${_loc('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
     if (localKnowledge) {

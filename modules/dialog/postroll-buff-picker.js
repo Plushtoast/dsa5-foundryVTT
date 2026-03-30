@@ -1,4 +1,3 @@
-import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 export class PostRollBuffPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     id: 'dsa-postroll-buff-picker',

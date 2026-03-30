@@ -79,7 +79,7 @@ class AdvancedSearchDocument extends SearchDocument {
     const object = super.toSearchableObject(item, item.documentName)
 
     const attrs = ADVANCEDFILTERS[subcategory] || [];
-    for (let attr of attrs) {
+    for (const attr of attrs) {
       object[attr.attr] = attr.attr.split('.').reduce((prev, cure) => {
         return prev[cure] === undefined ? {} : prev[cure];
       }, item.system);
@@ -262,7 +262,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.candidateUuidsBySubcategory = {}
     this.detailEnrichmentInFlight = {}
 
-    for (let className of this.systemConfiguration.documentNames) {
+    for (const className of this.systemConfiguration.documentNames) {
       const fields = this.systemConfiguration.getSearchFields(className, undefined, this.fullTextSearch).index
 
       this.indexes[className] = {
@@ -382,7 +382,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         })
       }
     }
-    for (let key of Object.keys(this.models)) {
+    for (const key of Object.keys(this.models)) {
       this.models[key].sort((a, b) => a.label.localeCompare(b.label))
     }
   }
@@ -404,14 +404,14 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async setAdvancedFilters(category = 'none', subcategory = 'none') {
-    for (let key in this.models) {
-      for (let subkey of this.models[key]) {
+    for (const key in this.models) {
+      for (const subkey of this.models[key]) {
         subkey.selected = false;
       }
     }
     const html = $(this.element)
     html.find('.filter[type="checkbox"]').prop('checked', false);
-    let templ = await this.buildDetailFilter('none', 'none')
+    const templ = await this.buildDetailFilter('none', 'none')
     html.find('.advancedSearch .advancedSearchContent').html(templ);
   }
 
@@ -450,7 +450,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       tag: [category],
     };
 
-    let result = await this.flattenedResults(this.indexes.Item, search, query);
+    const result = await this.flattenedResults(this.indexes.Item, search, query);
     let items = result.map(x => this._getStoredObject(this.indexes.Item, x));
 
     if (filterCompendium) {
@@ -583,7 +583,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async findEquipmentItemDetailed(search, category, filterCompendium = true) {
     await this.buildDetailFilter('Item', category);
 
-    let indexWrapper = this.detailFilter[category];
+    const indexWrapper = this.detailFilter[category];
 
     let result = await this.executeAdvancedFilter(search.search || '', indexWrapper, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || [], 0);
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
@@ -686,7 +686,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   intersectionObserved(entries, observer) {
-    for (let entry of entries) {
+    for (const entry of entries) {
       if (entry.isIntersecting) {
         const uuid = entry.target.dataset.uuid
         this.renderBrowseItem(uuid).then(html => {
@@ -708,7 +708,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (items.length > 0) {
       const observer = this.getObserver(category)
 
-      for (let item of items) observer.observe(item)
+      for (const item of items) observer.observe(item)
     }
   }
 
@@ -815,9 +815,9 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   subcategoryFields(subcategory) {
-    let field = ['name', 'type'];
+    const field = ['name', 'type'];
     const attrs = ADVANCEDFILTERS[subcategory] || [];
-    for (let attr of attrs) {
+    for (const attr of attrs) {
       field.push(attr.attr);
     }
     return field;
@@ -1165,13 +1165,13 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   _tearDown(options) {
     super._tearDown(options);
-    for (let key in this.indexes) {
+    for (const key in this.indexes) {
       if (this.indexes[key].observer) {
         this.indexes[key].observer.disconnect();
         this.indexes[key].observer = undefined;
       }
     }
-    for (let key in this.detailFilter) {
+    for (const key in this.detailFilter) {
       if (this.detailFilter[key].observer) {
         this.detailFilter[key].observer.disconnect();
         this.detailFilter[key].observer = undefined;

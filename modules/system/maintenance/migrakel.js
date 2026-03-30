@@ -42,8 +42,8 @@ export default class Migrakel {
   }
 
   static async refreshStatusEffects(actor) {
-    let removeEffects = [];
-    for (let i of actor.effects) {
+    const removeEffects = [];
+    for (const i of actor.effects) {
       if (i.origin) {
         removeEffects.push(i.id);
       }
@@ -53,14 +53,14 @@ export default class Migrakel {
 
   static async updateVals(actor, condition, updater) {
     const itemLibrary = game.dsa5.itemLibrary;
-    let itemsToDelete = [];
-    let itemsToCreate = [];
-    let containersIDs = new Map();
+    const itemsToDelete = [];
+    const itemsToCreate = [];
+    const containersIDs = new Map();
     await this.refreshStatusEffects(actor);
     if (condition({ type: 'equipment' })) {
       const bagsToDelete = [];
       const bagsToCreate = [];
-      for (let item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
+      for (const item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
         let find = await itemLibrary.findCompendiumItem(item.name, item.type);
         if (find.length > 0) {
           find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -81,7 +81,7 @@ export default class Migrakel {
       await actor.deleteEmbeddedDocuments('Item', bagsToDelete);
     }
 
-    for (let item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
+    for (const item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
       let find = await itemLibrary.findCompendiumItem(item.name, item.type);
       if (find.length > 0) {
         find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -138,7 +138,7 @@ export default class Migrakel {
     const res = preChoice ?? (await this.showDialog(_loc('Migrakel.abilities')));
     if (res) {
       const updator = (find) => {
-        let update = {
+        const update = {
           effects: find.effects.toObject(),
         };
         if (['specialability', 'advantage', 'disadvantage', 'trait'].includes(find.type)) {
@@ -229,11 +229,11 @@ export default class Migrakel {
   static async updateGear(actor, preChoice = undefined) {
     const choice = preChoice ?? (await this.showDialog(_loc('Migrakel.gear')));
     if (choice) {
-      let condition = (x) => {
+      const condition = (x) => {
         return ['meleeweapon', 'armor', 'rangeweapon', 'equipment', 'poison', 'disease', 'consumable', 'ammunition'].includes(x.type);
       };
-      let updator = (find) => {
-        let update = {
+      const updator = (find) => {
+        const update = {
           img: find.img,
           effects: find.effects.toObject(),
         };

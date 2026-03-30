@@ -116,7 +116,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static chatData(data, name) {
-    let res = [
+    const res = [
       { key: 'damage', val: data.damage.value },
       { key: 'atmod', val: data.atmod.value },
       { key: 'pamod', val: data.pamod.value },

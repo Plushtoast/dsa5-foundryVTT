@@ -188,8 +188,7 @@ export default class TableEffects {
   static async selfAttack(args, mode, targets, source) {
     const { hasTargets, finalTargets } = this.evaluateTargetArg(args, targets);
 
-    if (source) {
-    }
+    //if (source) { }
   }
 
   static async selfDamage(args, mode, targets, source) {

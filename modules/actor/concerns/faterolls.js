@@ -43,7 +43,7 @@ export class FateRolls {
         newRoll.dice.forEach(die => die.options.colorset = this.DICE_COLOR_BLACK);
         await DiceDSA5.showDiceSoNice(newRoll, newTestData.messageMode);
         await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-        newTestData.damageRoll = duplicate(newRoll);
+        newTestData.damageRoll = foundry.utils.duplicate(newRoll);
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_DAMAGE_REROLL}`]: true });
         await this.#reduceSchips(actor, schipsource);

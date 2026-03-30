@@ -2,6 +2,7 @@ import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import InformationQueryService from '../queries/information-query.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -37,13 +38,13 @@ export default class RequestRoll {
   }
 
   static async editGroupCheckRoll(messageId, result, target, type) {
-    let message = await game.messages.get(messageId);
+    const message = await game.messages.get(messageId);
     const data = message.flags.gc;
     const isCrit = result.result.successLevel > 1;
     const critMultiplier = isCrit ? 2 : 1;
     data.botched = data.botched || result.result.successLevel < -1;
     const actor = DSA5_Utility.getSpeaker(result.result.speaker);
-    let update = {
+    const update = {
       messageId: result.result.messageId,
       actor: actor.name,
       qs: (result.result.qualityStep || 0) * critMultiplier,
@@ -51,7 +52,7 @@ export default class RequestRoll {
       target,
       type,
     };
-    let index = data.results.findIndex((x) => x.messageId == update.messageId);
+    const index = data.results.findIndex((x) => x.messageId == update.messageId);
     if (index >= 0) {
       data.results[index] = update;
     } else {
@@ -101,7 +102,7 @@ export default class RequestRoll {
         return a + b.qs;
       }, 0);
       data.failed = failed;
-      for (let optn of data.rollOptions) {
+      for (const optn of data.rollOptions) {
         optn.calculatedModifier = optn.modifier - failed;
       }
       data.openRolls = data.maxRolls - data.results.length;
@@ -131,7 +132,7 @@ export default class RequestRoll {
       `data-modifier="${modifier}"`,
       'data-tooltip="TT.requestRoll"',
     ]
-    for (let key of Object.keys(datasetOptions)) {
+    for (const key of Object.keys(datasetOptions)) {
       moreDataSet.push(`data-options-${key}="${datasetOptions[key]}"`)
     }
     let msg = _loc('CHATNOTIFICATION.requestRoll', {
@@ -161,7 +162,7 @@ export default class RequestRoll {
     };
     mergeObject(data, configuration);
     const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
-    let chatData = DSA5_Utility.chatDataSetup(content, modeOverride, undefined, forceWhisperIDs);
+    const chatData = DSA5_Utility.chatDataSetup(content, modeOverride, undefined, forceWhisperIDs);
     chatData.flags = { gc: data };
     if (datasetOptions) {
       chatData.flags.gc.datasetOptions = datasetOptions;
@@ -174,7 +175,7 @@ export default class RequestRoll {
     const content = await renderTemplate('systems/dsa5/templates/dialog/addgroupcheckskill.hbs', {
       skills: DSA5ChatAutoCompletion.skills.filter((x) => x.type == 'skill').sort((x, y) => x.name.localeCompare(y.name)),
     });
-    let data = {
+    const data = {
       window: { title: 'HELP.groupcheck' },
       content,
       buttons: [
@@ -294,7 +295,7 @@ export default class RequestRoll {
         recipients,
       },
     };
-    let skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
+    const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
     actor.setupSkill(skill, optns, tokenId).then(async (setupData) => {
       setupData.testData.opposable = false;
       const res = await actor.basicTest(setupData);

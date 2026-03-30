@@ -30,7 +30,7 @@ export default class RollMemory {
   }
 
   getPath(speaker, source, mode) {
-    let subMod = mode || '';
+    const subMod = mode || '';
     const itemId = source._id || source.type;
     return speaker.token ? `tokens.${speaker.token || speaker.actor}.${itemId}${subMod}` : `actors.${speaker.actor}.${itemId}${subMod}`;
   }
@@ -45,16 +45,16 @@ export default class RollMemory {
   }
 
   formDataSerialize(html) {
-    let form = html.find('form');
-    let object = {};
+    const form = html.find('form');
+    const object = {};
     form.find('select').each(function () {
-      let key = $(this).attr('name');
+      const key = $(this).attr('name');
       if (RollMemory.wantedKeys.includes(key)) {
         object[key] = $(this).val();
       }
     });
     form.find('input[type="checkbox"]').each(function () {
-      let key = $(this).attr('name');
+      const key = $(this).attr('name');
       if (RollMemory.wantedKeys.includes(key)) {
         object[key] = this.checked;
       }
