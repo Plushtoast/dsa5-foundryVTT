@@ -201,7 +201,22 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
   static toggleCondition(ev, target) {
     const condKey = $(target).parents('.statusEffect').attr('data-id');
     const ef = this.item.effects.get(condKey);
+    if (this.isEffectDisabledBySetting(ef)) {
+      ui.notifications.info(_loc('DSASETTINGS.enableWeaponAdvantagesHint'));
+      return;
+    }
     ef.update({ disabled: !ef.disabled });
+  }
+
+  isEffectDisabledBySetting(effect) {
+    return !!(effect?.system?.equipmentAdvantage && !game.settings.get('dsa5', 'enableWeaponAdvantages'));
+  }
+
+  _decorateSheetEffect(effect) {
+    const disabledBySetting = this.isEffectDisabledBySetting(effect);
+    effect.disabledBySetting = disabledBySetting;
+    effect.sheetDisabled = effect.disabled || disabledBySetting;
+    return effect;
   }
 
   #lockOverrides(html) {
@@ -278,13 +293,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       if (!this.isEditable && customPrice) data.customPrice = customPrice;
     }
 
-    data.conditions = this.item.effects;
-
-    if (!game.user.isGM)
-      data.conditions = data.conditions.filter((e) => {
-        return !e.system?.visibility?.hidePlayers;
-      });
-
     data.enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
     data.armorAndWeaponDamage = game.settings.get('dsa5', 'armorAndWeaponDamage');
     data.isGM = game.user.isGM;
@@ -293,6 +301,12 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
 
     await this.item.system.getSheetData(data);
+
+    data.conditions = Array.from(data.conditions || this.item.effects)
+      .filter((effect) => game.user.isGM || !effect.system?.visibility?.hidePlayers)
+      .map((effect) => this._decorateSheetEffect(effect));
+
+    data.transferedConditions = Array.from(data.transferedConditions || []).map((effect) => this._decorateSheetEffect(effect));
 
     return data;
   }

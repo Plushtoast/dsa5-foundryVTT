@@ -325,6 +325,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         }, {});
 
         const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
+        const enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
 
         mergeObject(partContext, {
           advancedFunctions,
@@ -333,6 +334,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           macroIndexes: DSAActiveEffectConfig.macroIndexes,
           messageReceivers,
           canWeaponAdvantages,
+          enableWeaponAdvantages,
           equipmentAdvantageOptions: {
             1: `AdvantageRuleItems.${itemType}.1`,
             2: `AdvantageRuleItems.${itemType}.2`,
@@ -668,7 +670,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
 
     const sourceActor = attacker;
-    let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !x.system.applyToOwner);
+    let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(
+      (effect) => {
+        if (effect.disabled) return false;
+        if (effect.system.applyToOwner) return false;
+        if (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage) return false;
+        return true;
+      },
+    );
 
     if (hasSuccessEffects) effects = effects.filter((x) => x.system.successEffect == testData.qualityStep || !x.system.successEffect);
     if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
