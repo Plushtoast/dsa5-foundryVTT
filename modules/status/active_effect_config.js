@@ -629,28 +629,63 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const actor = DSA5_Utility.getSpeaker(target);
     if (actor) {
       const skill = actor.items.find((x) => x.type == 'skill' && x.name == data.skill);
-      actor.setupSkill(skill, { modifier: data.mod }, data.token).then(async (setupData) => {
+      const options = {
+        modifier: data.mod,
+        postFunction: {
+          functionName: 'game.dsa5.apps.DSAActiveEffectConfig.postResistEffect',
+          token: data.token,
+          actorId: data.actor,
+          scene: canvas.id,
+          systemEffect: data.systemEffect,
+          SystemEffect: data.SystemEffect,
+          message: data.message,
+          mode: data.mode,
+          effect: data.effect,
+        },
+      };
+      actor.setupSkill(skill, options, data.token).then(async (setupData) => {
         setupData.testData.opposable = false;
         const res = await actor.basicTest(setupData);
-        const availableQs = res.result.qualityStep || 0;
-        //this.automatedAnimation(res.result.successLevel);
-
-        if (availableQs < 1) {
-          if (data.systemEffect) {
-            const level = / \d$/.test(data.SystemEffect) ? Number(data.SystemEffect.slice(-1)) : 1;
-            const actualEffect = data.systemEffect.replace(/ \d$/, '');
-            await actor.addCondition(actualEffect, level);
-          } else {
-            await this.applyEffect(data.message, data.mode, [target], {
-              effectIds: [data.effect],
-              skipResistRolls: true,
-            });
-          }
-        }
+        DSAActiveEffectConfig.applyResistResult(res, data, target, actor);
       });
     } else {
       console.warn('Actor not found for resist roll.');
     }
+  }
+
+  static async applyResistResult(res, data, target, actor) {
+    const availableQs = res.result.qualityStep || 0;
+    if (availableQs < 1) {
+      if (data.systemEffect) {
+        const level = / \d$/.test(data.SystemEffect) ? Number(data.SystemEffect.slice(-1)) : 1;
+        const actualEffect = data.systemEffect.replace(/ \d$/, '');
+        await actor.addCondition(actualEffect, level);
+      } else {
+        await DSAActiveEffectConfig.applyEffect(data.message, data.mode, [target], {
+          effectIds: [data.effect],
+          skipResistRolls: true,
+        });
+      }
+    }
+  }
+
+  static async postResistEffect(postFunction, result) {
+    const target = { token: postFunction.token, actor: postFunction.actorId, scene: postFunction.scene };
+    const actor = DSA5_Utility.getSpeaker(target);
+    if (!actor) return;
+
+    const availableQs = result.result.qualityStep || 0;
+    if (postFunction.systemEffect) {
+      const actualEffect = postFunction.systemEffect.replace(/ \d$/, '');
+      const level = / \d$/.test(postFunction.SystemEffect) ? Number(postFunction.SystemEffect.slice(-1)) : 1;
+      // Remove the first-pass condition before re-evaluating
+      await actor.removeCondition(actualEffect, level);
+      if (availableQs < 1) {
+        await actor.addCondition(actualEffect, level);
+      }
+    }
+    // Non-systemEffect active effects cannot be cleanly reversed;
+    // first-pass effects remain and are not duplicated on reroll.
   }
 
   static async applyEffect(id, mode, targets, options = {}) {

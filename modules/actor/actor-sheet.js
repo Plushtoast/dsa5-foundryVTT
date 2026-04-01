@@ -457,51 +457,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     items[0].sheet.render(true);
   }
 
-  static _handleAggregatedProbe(ev, target) {
+  static async _handleAggregatedProbe(ev, target) {
     const itemId = this._getItemId(target);
-    const aggregated = this.actor.items.get(itemId).toObject();
-    const attr = aggregated.system.talent[`value${target.dataset.which}`];
-    const skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
-    let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
-    if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
-      infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    } else {
-      const options = {
-        moreModifiers: [
-          {
-            name: _loc('failedTests'),
-            value: -1 * aggregated.system.previousFailedTests.value,
-            selected: true,
-          },
-          {
-            name: _loc('Modifier'),
-            value: aggregated.system.baseModifier,
-            selected: true,
-          },
-        ],
-      };
-      this.actor.setupSkill(skill, options, this.getTokenId())
-        .then((setupData) => {
-          this.actor.basicTest(setupData).then((res) => {
-            if (res.result.successLevel > 0) {
-              aggregated.system.cummulatedQS.value = res.result.qualityStep + aggregated.system.cummulatedQS.value;
-              aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value);
-            } else {
-              aggregated.system.previousFailedTests.value += 1;
-            }
-            aggregated.system.usedTestCount.value += 1;
-            this.actor.updateEmbeddedDocuments('Item', [aggregated]).then(() => {
-              const updated = this.actor.items.get(itemId);
-              updated.postItem();
+    const aggregated = this.actor.items.get(itemId);
+    if (!aggregated) return;
 
-              if (aggregated.system.cummulatedQS.value >= 10) {
-                updated.sheet.postFinishedItem();
-              }
-            });
-          });
-        });
-    }
+    await aggregated.rollAggregatedProbe(target.dataset.which, this.getTokenId());
   }
 
   async consumeItem(item) {

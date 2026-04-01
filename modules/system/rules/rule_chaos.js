@@ -111,35 +111,54 @@ export default class RuleChaos {
     if (!actor) return;
 
     const skill = actor.items.find((i) => i.name == _loc('LocalizedIDs.selfControl') && i.type == 'skill');
-    actor.setupSkill(skill, {}, data.token).then(async (setupData) => {
+    const options = {
+      postFunction: {
+        functionName: 'game.dsa5.apps.RuleChaos.postCalcBleeding',
+        speaker: { actor: actor.id, token: data.token, scene: canvas.scene ? canvas.scene.id : null },
+      },
+    };
+    actor.setupSkill(skill, options, data.token).then(async (setupData) => {
       const result = await actor.basicTest(setupData);
-
-      if (result.result.successLevel < 2) {
-        const qs = result.result.qualityStep || 0;
-        let duration = 7;
-        if (result.result.successLevel == 1) {
-          duration -= Number(qs);
-        } else if (result.successLevel < 1) {
-          duration += duration;
-        }
-        const existing = actor.hasCondition('bleeding');
-        const durationUpdate = RuleChaos._buildDuration(duration);
-
-        if (existing) {
-          const remaining = game.combat ? (existing.start?.round || 1) + (existing.duration.value || 0) - game.combat.round : (existing.duration.value || 0);
-          if (duration > remaining) await existing.update(durationUpdate);
-        } else {
-          const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));
-          mergeObject(bleeding, durationUpdate);
-          await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
-          await ChatMessage.create(
-            DSA5_Utility.chatDataSetup(
-              _loc('CHATNOTIFICATION.gotBleeding', { actor: actor.name }),
-            ),
-          );
-        }
-      }
+      await RuleChaos.applyBleedingResult(result.result, actor);
     });
+  }
+
+  static async applyBleedingResult(rollResult, actor) {
+    if (rollResult.successLevel >= 2) {
+      const existing = actor.hasCondition('bleeding');
+      if (existing) await actor.removeCondition('bleeding');
+      return;
+    }
+
+    const qs = rollResult.qualityStep || 0;
+    let duration = 7;
+    if (rollResult.successLevel == 1) {
+      duration -= Number(qs);
+    } else if (rollResult.successLevel < 1) {
+      duration += duration;
+    }
+    const existing = actor.hasCondition('bleeding');
+    const durationUpdate = RuleChaos._buildDuration(duration);
+
+    if (existing) {
+      await existing.update(durationUpdate);
+    } else {
+      const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));
+      mergeObject(bleeding, durationUpdate);
+      await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
+      await ChatMessage.create(
+        DSA5_Utility.chatDataSetup(
+          _loc('CHATNOTIFICATION.gotBleeding', { actor: actor.name }),
+        ),
+      );
+    }
+  }
+
+  static async postCalcBleeding(postFunction, result) {
+    const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
+    if (!actor) return;
+
+    await RuleChaos.applyBleedingResult(result.result, actor);
   }
 
   static increment(ev, item, path, limit = undefined) {

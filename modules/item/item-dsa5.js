@@ -293,6 +293,7 @@ export default class Itemdsa5 extends Item {
    */
   static setupSubClasses() {
     ItemFactory.setupSubclasses({
+      aggregatedTest: AggregatedTestItemDSA5,
       ritual: RitualItemDSA5,
       spell: SpellItemDSA5,
       liturgy: LiturgyItemDSA5,
@@ -468,6 +469,10 @@ export default class Itemdsa5 extends Item {
     return ItemFactory.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId);
   }
 
+  async rollAggregatedProbe(which, tokenId) {
+    return await ItemFactory.getSubClass(this.type).rollAggregatedProbe(this, which, tokenId);
+  }
+
   static async _createUseChatMessage(item, actor, tokenId, effect, options = {}) {
     const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
       item,
@@ -586,6 +591,91 @@ export default class Itemdsa5 extends Item {
    */
   async postItem() {
     this.system.constructor._postItem(this);
+  }
+}
+
+class AggregatedTestItemDSA5 extends Itemdsa5 {
+  static async rollAggregatedProbe(item, which, tokenId) {
+    const actor = item.actor;
+    if (!actor) return;
+
+    const attr = item.system.talent[`value${which}`];
+    const skill = actor.items.find((entry) => entry.name == attr && entry.type == 'skill');
+    let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
+
+    if (item.system.usedTestCount.value >= item.system.allowedTestCount.value) {
+      infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
+      await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+      return;
+    }
+
+    if (!skill) return;
+
+    const postFunction = {
+      functionName: "game.dsa5.entities.Itemdsa5.getSubClass('aggregatedTest').updateAggregatedTest",
+      aggregatedItemId: item.id,
+      previousCummulatedQS: item.system.cummulatedQS.value,
+      previousFailedTests: item.system.previousFailedTests.value,
+      previousUsedTestCount: item.system.usedTestCount.value,
+      speaker: {
+        token: tokenId,
+        actor: actor.id,
+        scene: canvas.scene?.id,
+      },
+    };
+
+    const setupData = await actor.setupSkill(
+      skill,
+      {
+        moreModifiers: [
+          {
+            name: _loc('failedTests'),
+            value: -1 * item.system.previousFailedTests.value,
+            selected: true,
+          },
+          {
+            name: _loc('Modifier'),
+            value: item.system.baseModifier,
+            selected: true,
+          },
+        ],
+        postFunction,
+      },
+      tokenId,
+    );
+
+    const res = await actor.basicTest(setupData);
+    await this.updateAggregatedTest(postFunction, res);
+  }
+
+  static async updateAggregatedTest(postFunction, testResult, source) {
+    const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
+    if (!actor) return;
+
+    const item = actor.items.get(postFunction.aggregatedItemId);
+    if (!item) return;
+
+    const aggregated = item.toObject();
+    aggregated.system.cummulatedQS.value = postFunction.previousCummulatedQS;
+    aggregated.system.previousFailedTests.value = postFunction.previousFailedTests;
+    aggregated.system.usedTestCount.value = postFunction.previousUsedTestCount;
+
+    const result = testResult.result;
+    if (result.successLevel > 0) {
+      aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value + result.qualityStep);
+    } else {
+      aggregated.system.previousFailedTests.value += 1;
+    }
+    aggregated.system.usedTestCount.value += 1;
+
+    await actor.updateEmbeddedDocuments('Item', [aggregated]);
+
+    const updated = actor.items.get(postFunction.aggregatedItemId);
+    await updated.postItem();
+
+    if (aggregated.system.cummulatedQS.value >= 10) {
+      await updated.sheet?.postFinishedItem();
+    }
   }
 }
 

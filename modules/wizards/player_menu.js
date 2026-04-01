@@ -173,11 +173,26 @@ export default class PlayerMenu extends DefaultAppv2 {
       }
     }
 
-    this.actor.setupSkill(skill, { moreModifiers, subtitle: ` (${this.conjuration.name})` }, undefined).then(async (setupData) => {
+    const options = {
+      moreModifiers,
+      subtitle: ` (${this.conjuration.name})`,
+      postFunction: {
+        functionName: 'game.dsa5.apps.playerMenu.postConjurationRoll',
+      },
+    };
+    this.actor.setupSkill(skill, options, undefined).then(async (setupData) => {
       const res = await this.actor.basicTest(setupData);
       this.conjurationData.qs = res.result.qualityStep || 0;
       this.render(true);
     });
+  }
+
+  postConjurationRoll(postFunction, result) {
+    const menu = game.dsa5.apps.playerMenu;
+    if (menu) {
+      menu.conjurationData.qs = result.result.qualityStep || 0;
+      menu.render(true);
+    }
   }
 
   async _onRender(context, options) {
