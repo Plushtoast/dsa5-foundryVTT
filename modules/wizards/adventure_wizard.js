@@ -6,7 +6,7 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5 from '../config/config-dsa5.js';
 import { slist } from '../system/helpers/view_helper.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
-import FlexSearch from "../../libs/flexsearch.bundle.module.min.js"
+import FlexSearch from '../../libs/flexsearch.bundle.module.min.js';
 
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -364,30 +364,34 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         let result = [];
         if (this.fulltextsearch) {
           if (!this.journalIndex) {
-
             this.journalIndex = new FlexSearch.Document({
-              tokenize: "full",
+              tokenize: 'full',
               cache: true,
               document: {
-                id: "id",
+                id: 'id',
                 store: true,
-                index: ['name', 'data']
-              }
-            })
+                index: ['name', 'data'],
+              },
+            });
             for (const journal of this.journals) {
               await this.journalIndex.add(new JournalSearch(journal).toObject());
             }
           }
           const query = {
-            index: ['name', 'data']
-          }
-          result = (await this.journalIndex.searchAsync(val, query)).map(x => x.result).flat().map(x => this.journalIndex.get(x))
+            index: ['name', 'data'],
+          };
+          result = (await this.journalIndex.searchAsync(val, query))
+            .map((x) => x.result)
+            .flat()
+            .map((x) => this.journalIndex.get(x));
         } else {
           result = this.journals.filter((x) => {
             return x.name.toLowerCase().trim().indexOf(val) != -1;
           });
         }
-        result = result.map((x) => `<li><button type="button" data-jid="${x.id}" data-action="subChapter" class="subChapter"><i class="fas fa-caret-right"></i>${x.name}</button></li>`);
+        result = result.map(
+          (x) => `<li><button type="button" data-jid="${x.id}" data-action="subChapter" class="subChapter"><i class="fas fa-caret-right"></i>${x.name}</button></li>`,
+        );
 
         html.find('.tocContent').html(`<ul>${result.join('\n')}</ul>`);
       } else {
@@ -404,14 +408,18 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   async showSearchResults(pageContent) {
     if (this.searchString) {
-      const html = document.createElement("div");
+      const html = document.createElement('div');
       html.innerHTML = $(pageContent).html();
-      await TextEditor._applyCustomEnrichers({
-        pattern: new RegExp(this.searchString, 'ig'),
-        enricher: (match, options) => {
-          return $(`<span class="searchMatch">${match[0]}</span>`)[0];
-        }
-      }, BookWizard.#getTextNodes(html), {});
+      await TextEditor._applyCustomEnrichers(
+        {
+          pattern: new RegExp(this.searchString, 'ig'),
+          enricher: (match, options) => {
+            return $(`<span class="searchMatch">${match[0]}</span>`)[0];
+          },
+        },
+        BookWizard.#getTextNodes(html),
+        {},
+      );
       return html.innerHTML;
     } else {
       return $(pageContent).html();
@@ -445,13 +453,13 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     headings.sort((a, b) => a.order - b.order);
 
-    const minLevel = Math.min(...headings.map(node => node.level));
+    const minLevel = Math.min(...headings.map((node) => node.level));
     headings = headings.reduce((arr, { text, level, slug, element }) => {
       if (element) element.dataset.anchor = slug;
       if (level < minLevel + 2) arr.push({ text, slug, level: level - minLevel + 2 });
       return arr;
     }, []);
-    return await foundry.applications.handlebars.renderTemplate("templates/journal/toc.hbs", { headings });
+    return await foundry.applications.handlebars.renderTemplate('templates/journal/toc.hbs', { headings });
   }
 
   async renderContent(journal) {
@@ -460,17 +468,21 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     const pageTocs = [];
     for (const page of journal.pages) {
       const sheet = journal.sheet.getPageSheet(page.id);
-      let view
-      let pageContent
+      let view;
+      let pageContent;
+      let shiftFirstTocHeading = false;
       const pageName = page.name.replace(/ Text$/gi, '');
       const equalName = journal.name == pageName;
 
       if (sheet.isV2) {
         const oldShow = sheet.page?.title?.show;
-        if (oldShow != undefined) sheet.page.title.show = !equalName;
+        if (oldShow != undefined) {
+          shiftFirstTocHeading = !equalName;
+          sheet.page.title.show = shiftFirstTocHeading;
+        }
         await sheet.render(true);
-        view = sheet.element
-        pageContent = view
+        view = sheet.element;
+        pageContent = view;
 
         if (oldShow != undefined) sheet.page.title.show = oldShow;
       } else {
@@ -480,7 +492,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       }
 
       const pageToc = JournalEntryPage.implementation.buildTOC(view);
-      pageTocs.push(await this._renderHeadings(pageToc, equalName));
+      pageTocs.push(await this._renderHeadings(pageToc, shiftFirstTocHeading));
 
       pageContent = await this.showSearchResults(pageContent);
 
@@ -707,10 +719,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     return game.user.isGM
       ? books
       : books
-        .filter((x) => x.visible == undefined || x.visible)
-        .sort((a, b) => {
-          return a.id.localeCompare(b.id);
-        });
+          .filter((x) => x.visible == undefined || x.visible)
+          .sort((a, b) => {
+            return a.id.localeCompare(b.id);
+          });
   }
 
   getSubChapters() {
