@@ -2085,10 +2085,8 @@ export default class Actordsa5 extends Actor {
     const toDelete = [];
 
     for (const effect of effects) {
-      // TODO this seems to be a core bug and must be effect.duration.expired later when fixed
-      const elapsed = game.time.worldTime - effect.start.time;
-      console.log(elapsed, effect.duration.seconds, effect.name);
-      if (elapsed < effect.duration.seconds) continue;
+      const effectFinished = effect.duration?.expired || ((effect.duration?.remaining ?? Infinity) <= 0);
+      if (!effectFinished) continue;
       if (!effect.isExpiryEvent(event, context)) continue;
 
       if (RaptureTracker.isTracker(effect)) {
