@@ -68,7 +68,7 @@ export default class OpposedDsa5 {
     if (actor.flags.oppose) {
       // DEFEND - Actor is responding to an attack
       OpposedDsa5.answerOpposedTest(actor, message, testResult, preData);
-    } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage) {
+    } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage && !message.flags.data.startMessagesList) {
       // ATTACK - Actor is initiating an attack against targets
       OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     } else if (message.flags.data.defenderMessage || message.flags.data.attackerMessage) {
@@ -565,9 +565,21 @@ export default class OpposedDsa5 {
     this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
     Hooks.call('finishOpposedTest', attacker, defender, opposedResult, options);
     await this.finishOpposedTestHookAsync(attacker, defender, opposedResult, options);
-    this.playAutomatedJBA2(attacker, defender, opposedResult);
-    await this.renderOpposedResult(opposedResult, options);
-    await this.hideReactionButton(options.startMessageId);
+    await DSA5_Utility.callAsyncHooks('postProcessOpposedResult', [attacker, defender, opposedResult, options]);
+    if (!options.skipAnimations) this.playAutomatedJBA2(attacker, defender, opposedResult);
+    const opposedMeta = {
+      attackerMessageId: attacker.messageId,
+      defenderMessageId: defender.messageId,
+      startMessageId: options.startMessageId,
+      kind: 'opposed-result',
+    };
+    const rerenderMessage = options.rerenderMessage || this.findOpposedResultMessage(opposedMeta);
+    const resultMessage = await this.renderOpposedResult(opposedResult, {
+      ...options,
+      opposedMeta,
+    }, rerenderMessage);
+    await this.storeOpposedResultMessageLink(opposedMeta, resultMessage);
+    if (!options.skipHideReactionButton) await this.hideReactionButton(options.startMessageId);
 
     return opposedResult;
   }
@@ -582,6 +594,108 @@ export default class OpposedDsa5 {
    * @returns {Promise<void>}
    */
   static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) { }
+
+  static async rerenderOpposedResultMessage(resultMessage) {
+    if (!resultMessage) return;
+
+    const opposedMeta = getProperty(resultMessage, 'flags.dsa5.opposedMeta');
+    if (!opposedMeta?.attackerMessageId) return;
+
+    const attackerMessage = game.messages.get(opposedMeta.attackerMessageId);
+    if (!attackerMessage) return;
+
+    const attacker = OpposedDsa5.getMessageDude(attackerMessage);
+    const defender = this.getOpposedDefender(opposedMeta);
+    if (!defender) return;
+
+    const options = {
+      blind: resultMessage.blind,
+      whisper: resultMessage.whisper,
+      startMessageId: opposedMeta.startMessageId,
+      skipAnimations: true,
+      skipHideReactionButton: true,
+      rerenderMessage: resultMessage,
+    };
+
+    const opposedResult = await this.evaluateOpposedTest(attacker.testResult, defender.testResult, options);
+    this.formatOpposedResult(opposedResult, attacker.speaker, defender.speaker);
+    this.rerenderMessagesWithModifiers(opposedResult, attacker, defender);
+    Hooks.call('finishOpposedTest', attacker, defender, opposedResult, options);
+    await this.finishOpposedTestHookAsync(attacker, defender, opposedResult, options);
+    await DSA5_Utility.callAsyncHooks('postProcessOpposedResult', [attacker, defender, opposedResult, options]);
+
+    return await this.renderOpposedResult(opposedResult, {
+      ...options,
+      opposedMeta: {
+        attackerMessageId: attacker.messageId,
+        defenderMessageId: defender.messageId,
+        startMessageId: opposedMeta.startMessageId,
+        kind: 'opposed-result',
+      },
+    }, resultMessage);
+  }
+
+  static getOpposedDefender(opposedMeta = {}) {
+    if (opposedMeta.defenderMessageId) {
+      const defenderMessage = game.messages.get(opposedMeta.defenderMessageId);
+      if (!defenderMessage) return null;
+      return OpposedDsa5.getMessageDude(defenderMessage);
+    }
+
+    if (!opposedMeta.startMessageId) return null;
+
+    const startMessage = game.messages.get(opposedMeta.startMessageId);
+    const unopposeData = startMessage?.flags?.unopposeData;
+    if (!unopposeData?.targetSpeaker?.token) return null;
+
+    const target = canvas.tokens.get(unopposeData.targetSpeaker.token);
+    return {
+      speaker: unopposeData.targetSpeaker,
+      testResult: {
+        actor: target?.actor,
+        speaker: {
+          token: unopposeData.targetSpeaker.token,
+        },
+      },
+    };
+  }
+
+  static async storeOpposedResultMessageLink(opposedMeta = {}, resultMessage) {
+    if (!resultMessage?.id) return;
+
+    if (opposedMeta.defenderMessageId) {
+      const defenderMessage = game.messages.get(opposedMeta.defenderMessageId);
+      if (defenderMessage && getProperty(defenderMessage, 'flags.dsa5.opposedResultMessageId') !== resultMessage.id) {
+        await defenderMessage.update({ 'flags.dsa5.opposedResultMessageId': resultMessage.id });
+      }
+      return;
+    }
+
+    if (opposedMeta.startMessageId) {
+      const startMessage = game.messages.get(opposedMeta.startMessageId);
+      if (startMessage && getProperty(startMessage, 'flags.dsa5.opposedResultMessageId') !== resultMessage.id) {
+        await startMessage.update({ 'flags.dsa5.opposedResultMessageId': resultMessage.id });
+      }
+    }
+  }
+
+  static findOpposedResultMessage(opposedMeta = {}) {
+    const linkedMessageId = opposedMeta.defenderMessageId
+      ? getProperty(game.messages.get(opposedMeta.defenderMessageId), 'flags.dsa5.opposedResultMessageId')
+      : getProperty(game.messages.get(opposedMeta.startMessageId), 'flags.dsa5.opposedResultMessageId');
+
+    if (!linkedMessageId) return null;
+
+    const resultMessage = game.messages.get(linkedMessageId);
+    if (!resultMessage) return null;
+
+    const currentMeta = getProperty(resultMessage, 'flags.dsa5.opposedMeta');
+    if (currentMeta?.attackerMessageId !== opposedMeta.attackerMessageId) return null;
+    if (opposedMeta.defenderMessageId && currentMeta?.defenderMessageId !== opposedMeta.defenderMessageId) return null;
+    if (!opposedMeta.defenderMessageId && opposedMeta.startMessageId && currentMeta?.startMessageId !== opposedMeta.startMessageId) return null;
+
+    return resultMessage;
+  }
 
   /**
    * Evaluates the outcome of an opposed test between attacker and defender
@@ -906,19 +1020,26 @@ export default class OpposedDsa5 {
    * @param {string} [options.startMessageId] - ID of the starting message
    * @returns {Promise<void>}
    */
-  static async renderOpposedResult(formattedOpposeResult, options = {}) {
+  static async renderOpposedResult(formattedOpposeResult, options = {}, rerenderMessage = null) {
     const hideConfig = game.settings.get('dsa5', 'hideOpposedDamageSelect');
     formattedOpposeResult.hideData = { value: [1, 2].includes(hideConfig) };
     formattedOpposeResult.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     formattedOpposeResult.isBrawling = game.combat?.isBrawling;
 
     const content = await renderTemplate('systems/dsa5/templates/chat/roll/opposed-result.hbs', formattedOpposeResult);
+    const opposedMeta = {
+      ...(getProperty(rerenderMessage, 'flags.dsa5.opposedMeta') || {}),
+      ...(options.opposedMeta || {}),
+    };
     const chatOptions = {
       user: game.user.id,
       content,
       flags: {
         opposeData: formattedOpposeResult,
         hideData: { value: formattedOpposeResult.hideData.value },
+        dsa5: {
+          opposedMeta,
+        },
       },
       whisper: hideConfig > 1 ? [] : options.whisper,
       blind: options.blind,
@@ -927,7 +1048,18 @@ export default class OpposedDsa5 {
     // does this do anything? does not work with v13 aymore
     // if (options.target) chatOptions['flags.startMessageId'] = options.startMessageId;
 
-    await ChatMessage.create(chatOptions);
+    if (!rerenderMessage) {
+      return await ChatMessage.create(chatOptions);
+    }
+
+    const newMsg = await rerenderMessage.update({
+      content: chatOptions.content,
+      'flags.opposeData': formattedOpposeResult,
+      'flags.hideData': { value: formattedOpposeResult.hideData.value },
+      'flags.dsa5.opposedMeta': opposedMeta,
+    });
+    ui.chat.updateMessage(newMsg);
+    return newMsg;
   }
 
   /**
