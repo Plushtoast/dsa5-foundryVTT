@@ -220,6 +220,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         const source = delayedData.source;
 
         const macroEffect = duplicate(delayedData.macroEffect);
+        macroEffect.system ||= {};
+        macroEffect.system.macroArgs ||= {};
         delete macroEffect.system?.macroArgs?.onDelayed;
         macroEffect.system.delayed = { enabled: false };
         macroEffect.duration = duration;
@@ -478,17 +480,22 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       if (ef.origin) delete ef.origin;
       if (origin) ef.origin = origin;
 
-      const specStep = Number(ef.system.specStep) || 0;
+      const effectSystem = (ef.system ??= {});
+      effectSystem.aura ??= {};
+      effectSystem.macroArgs ??= {};
+      effectSystem.changes ??= [];
+
+      const specStep = Number(effectSystem.specStep) || 0;
       try {
-        const customEf = Number(ef.system.advancedFunction);
-        const qs = Math.min(testData.qualityStep || 0, 6);
-        const resistRoll = ef.system.resistRoll;
-        const isAura = ef.system.aura.isAura;
+        const customEf = Number(effectSystem.advancedFunction);
+        const qs = Math.min(testData?.qualityStep || 0, 6);
+        const resistRoll = effectSystem.resistRoll;
+        const isAura = !!effectSystem.aura.isAura;
 
         if (isAura) {
-          const radius = `${ef.system.aura.auraRadius || 1}`.replace(/q(l|s)/i, qs);
+          const radius = `${effectSystem.aura.auraRadius || 1}`.replace(/q(l|s)/i, qs);
           const evaluatedRadius = (await new Roll(radius).evaluate()).total;
-          ef.system.aura.auraRadius = evaluatedRadius;
+          effectSystem.aura.auraRadius = evaluatedRadius;
         }
 
         if (resistRoll && !skipResistRolls) {
@@ -505,7 +512,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           effectApplied = true;
           if (!effectNames.has(ef.name)) effectNames.add(ef.name);
 
-          const onDelayed = ef.system.macroArgs.onDelayed;
+          const onDelayed = effectSystem.macroArgs.onDelayed;
 
           const delayedData = {
             duration: {
@@ -520,19 +527,19 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             },
           };
 
-          let isEffectWithChange = (ef.system?.changes?.length > 0) || (isAura && !customEf);
+          let isEffectWithChange = effectSystem.changes.length > 0 || (isAura && !customEf);
 
           if (customEf) {
             switch (customEf) {
               case 1: //Systemeffekt
                 {
-                  let value = `${ef.system.macroArgs.conditionValue}` || '1';
+                  let value = `${effectSystem.macroArgs.conditionValue}` || '1';
                   if (/,/.test(value)) {
                     value = Number(value.split(',')[qs - 1]);
                   } else {
                     value = Number(value.replace(_loc('CHARAbbrev.QS'), qs));
                   }
-                  const effectId = ef.system.macroArgs.conditionId;
+                  const effectId = effectSystem.macroArgs.conditionId;
                   const effectName = _loc(`CONDITION.${effectId}`);
                   const effectData = {
                     name: `${source.name} (${effectName})`,
@@ -549,6 +556,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                 } else {
                   if (onDelayed) {
                     const copy = duplicate(ef);
+                    copy.system ||= {};
                     copy.system.changes = [];
                     isEffectWithChange = true;
                     mergeObject(ef, {
@@ -558,7 +566,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                           sourceActor: sourceActor?.id,
                           source: source,
                           initialTestData: {
-                            qualityStep: testData.qualityStep,
+                            qualityStep: testData?.qualityStep || 0,
                           },
                         },
                       },
@@ -566,7 +574,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                   } else {
                     //try {
                       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-                      const command = ef.system.macroArgs.macro;
+                      const command = effectSystem.macroArgs.macro;
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
                       await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs, options);
                     /*} catch (err) {
@@ -579,7 +587,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                 break;
               case 3: // Creature Link
                 {
-                  const creatures = (ef.system.macroArgs.creatureLinks || '')
+                  const creatures = (effectSystem.macroArgs.creatureLinks || '')
                     .split(',')
                     .map((x) => `@Compendium[${x.trim().replace(/@Compendium\[|\]/g, '')}]`)
                     .join(' ');
@@ -745,7 +753,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       effects.push(...specEffects);
     }
 
-    const parsed = await DSAActiveEffectConfig.parseDurationValue(source.system?.duration?.value, testData.qualityStep);
+    const durationValue = testData.duration ?? source.system?.duration?.value;
+    const parsed = await DSAActiveEffectConfig.parseDurationValue(durationValue, testData.qualityStep);
     if (parsed.value !== undefined) {
       for (const ef of effects) {
         let calcTime = parsed.value;
