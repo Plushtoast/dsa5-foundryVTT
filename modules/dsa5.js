@@ -72,6 +72,7 @@ import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
+import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
 //import { DAGTalentTree } from './actor/dag/dag_talent_tree.js';
 
 Hooks.once('init', () => {
@@ -222,6 +223,7 @@ Hooks.once('init', () => {
   PaymentRequestService.register();
   TransactionSummaryService.register();
   InformationQueryService.register();
+  DSA5ProseMirrorIntegration.register();
 });
 
 initHooks();

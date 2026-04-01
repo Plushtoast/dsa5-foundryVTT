@@ -221,6 +221,15 @@
         "book": "Buch",
         "automat": "Automat"
     },
+    "PROSEMIRROR": {
+        "DSAStyles": {
+            "Title": "DSA-Stile",
+            "Maskfield": "Meisterbox",
+            "Chatpaperfield": "Papiernotiz",
+            "Citefield": "Zitatblock",
+            "DSAList": "DSA-Liste"
+        }
+    },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
     "APValue": "AP-Wert",

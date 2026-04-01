@@ -1948,36 +1948,41 @@ export default class Actordsa5 extends Actor {
   }
 
   async consumeAmmunition(testData) {
-    if (testData.extra.ammo && !testData.extra.ammoDecreased) {
+    const hasTrackedAmmo = testData.extra.ammo && !testData.extra.ammoDecreased;
+    if (hasTrackedAmmo) {
       testData.extra.ammoDecreased = true;
 
-      if (testData.extra.ammo._id) {
-        const ammoUpdate = { _id: testData.extra.ammo._id };
-        if (testData.extra.ammo.system.ammunitiongroup.value == 'mag') {
-          if (testData.extra.ammo.system.mag.value <= 0) {
-            testData.extra.ammo.system.quantity.value--;
-            ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
-            ammoUpdate['system.mag.value'] = testData.extra.ammo.system.mag.max - 1;
-          } else {
-            ammoUpdate['system.mag.value'] = testData.extra.ammo.system.mag.value - 1;
-          }
+      if (!testData.extra.ammo._id) return;
+
+      const ammo = testData.extra.ammo;
+      const ammoUpdate = { _id: ammo._id };
+
+      if (ammo.system.ammunitiongroup.value == 'mag') {
+        if (ammo.system.mag.value <= 0) {
+          ammo.system.quantity.value--;
+          ammoUpdate['system.quantity.value'] = ammo.system.quantity.value;
+          ammoUpdate['system.mag.value'] = ammo.system.mag.max - 1;
         } else {
-          testData.extra.ammo.system.quantity.value--;
-          ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
+          ammoUpdate['system.mag.value'] = ammo.system.mag.value - 1;
         }
-        await this.updateEmbeddedDocuments('Item', [
-          ammoUpdate,
-          {
-            _id: testData.source._id,
-            'system.reloadTime.progress': 0,
-            'system.aimTime.progress': 0,
-          },
-        ]);
+      } else {
+        ammo.system.quantity.value--;
+        ammoUpdate['system.quantity.value'] = ammo.system.quantity.value;
       }
-    } else if (
-      (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) &&
-      !testData.extra.ammoDecreased
-    ) {
+
+      await this.updateEmbeddedDocuments('Item', [
+        ammoUpdate,
+        {
+          _id: testData.source._id,
+          'system.reloadTime.progress': 0,
+          'system.aimTime.progress': 0,
+        },
+      ]);
+      return;
+    }
+
+    const isRangeAttack = testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack');
+    if (isRangeAttack && !testData.extra.ammoDecreased) {
       testData.extra.ammoDecreased = true;
       await this.updateEmbeddedDocuments('Item', [
         {
@@ -1986,7 +1991,10 @@ export default class Actordsa5 extends Actor {
           'system.aimTime.progress': 0,
         },
       ]);
-    } else if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
+      return;
+    }
+
+    if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: testData.source._id,

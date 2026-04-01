@@ -196,6 +196,15 @@
         "book": "Book",
         "automat": "Automaton"
     },
+    "PROSEMIRROR": {
+        "DSAStyles": {
+            "Title": "DSA Styles",
+            "Maskfield": "Master Box",
+            "Chatpaperfield": "Paper Note",
+            "Citefield": "Quote Block",
+            "DSAList": "DSA List"
+        }
+    },
     "PLANT": {
         "healing": "Medicinal herbs",
         "poison": "Poisonous plants",
