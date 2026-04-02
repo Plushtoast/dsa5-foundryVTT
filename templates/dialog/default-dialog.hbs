@@ -19,18 +19,5 @@
     <label>{{localize 'DIALOG.MessageMode'}}</label>
     {{> systems/dsa5/templates/dialog/parts/message-mode.hbs messageMode=messageMode}}
   </div>
-  {{#if hasSituationalModifiers}}
-    <div class='modifiers form-group'>
-      <label>{{localize 'DIALOG.SituationalModifiers'}}</label>
-      <div class="form-fields">
-        <select name='situationalModifiers' multiple>
-          {{#each situationalModifiers as |mod t|}}
-          <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" data-effect-id="{{mod.effectId}}" data-effect-uuid="{{mod.effectUuid}}" value="{{mod.value}}" {{#if mod.selected}}selected{{/if}}>
-            {{localize mod.name}} [{{mod.value}}]
-          </option>
-          {{/each}}
-        </select>
-      </div>
-    </div>
-  {{/if}}
+  {{> systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs}}
 </div>

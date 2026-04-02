@@ -13,6 +13,7 @@ import * as migrateWorld from '../system/maintenance/migrator.js';
 import * as initScene from './scene.js';
 import * as initKeybindings from './keybindings.js';
 import * as rollExtensions from '../system/rolls/dsarolls.js';
+import '../system/helpers/situational-modifiers-widget.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -102,6 +103,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/parts/message-mode.hbs',
     'systems/dsa5/templates/chat/payment/batch-request.hbs',
     'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
+    'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);

@@ -26,9 +26,9 @@ import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { FateRolls } from './concerns/faterolls.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
@@ -1364,7 +1364,7 @@ export default class Actordsa5 extends Actor {
       callback: (html, options = {}) => {
         cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-        testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+        testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
       },

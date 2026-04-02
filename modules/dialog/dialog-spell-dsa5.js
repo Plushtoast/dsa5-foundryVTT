@@ -5,7 +5,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 
-import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -79,8 +79,8 @@ export default class DSA5SpellDialog extends DialogShared {
   }
 
   async applyTransformations(source, parent) {
-    const sit = parent.find('[name="situationalModifiers"]');
-    sit.find('option[data-extension="1"]').remove();
+    const widget = this.getSituationalModifiersWidget(parent);
+    const baseModifiers = widget?.getModifiers().filter((modifier) => !modifier.extension) || [];
     const mods = [];
     const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
     this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers);
@@ -94,8 +94,14 @@ export default class DSA5SpellDialog extends DialogShared {
             let name = item.name.split(' - ');
             const typeName = _loc(`MODS.${change.key}`);
             name = `${name[1] || name[0]}`;
-            const tooltip = `${typeName}: ${change.value}<br/>${_loc('spellextension')}: ${name}`;
-            mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="${change.key}" value="${change.value}">${name} - ${typeName}</option>`);
+            mods.push({
+              extension: true,
+              selected: true,
+              name: `${name} - ${typeName}`,
+              source: _loc('spellextension'),
+              type: change.key,
+              value: /^-?\d+(?:\.\d+)?$/.test(String(change.value)) ? Number(change.value) : change.value,
+            });
           } else if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
@@ -114,10 +120,15 @@ export default class DSA5SpellDialog extends DialogShared {
     if (extensionMod) {
       const typeName = _loc(`ABBR.modifiers`);
       const ext = _loc('spellextension');
-      const tooltip = `${typeName}: ${extensionMod}<br/>${ext}`;
-      mods.push(`<option data-extension="1" selected="" data-tooltip="${tooltip}" data-type="" value="${extensionMod}">${ext} - ${typeName}</option>`);
+      mods.push({
+        extension: true,
+        selected: true,
+        name: `${ext} - ${typeName}`,
+        source: ext,
+        value: extensionMod,
+      });
     }
-    sit.append(mods.join(''));
+    widget?.setModifiers([...baseModifiers, ...mods]);
   }
 
   static setData(actor, type, renderData) {
@@ -265,7 +276,7 @@ export default class DSA5SpellDialog extends DialogShared {
 
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
-    data.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    data.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
 
     const fwBase = Number(this.dialogData.source.system.talentValue.value) || 0;
     const fwDialog = Number(data.fw) || 0;

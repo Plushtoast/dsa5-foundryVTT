@@ -70,19 +70,7 @@
             <label>{{localize "badEnvironment"}} (x 0.5)</label>
             <input type="checkbox" name="badEnvironment" value="1">
         </div>
-        {{#if situationalModifiers.length}}
-        <div class="modifiers form-group">
-            <label>{{localize "DIALOG.SituationalModifiers"}}</label>
-            <select name="situationalModifiers" multiple>
-                {{#each situationalModifiers as |mod t|}}
-                <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" data-effect-id="{{mod.effectId}}" data-effect-uuid="{{mod.effectUuid}}" value="{{mod.value}}" {{#if
-                    mod.selected}}selected{{/if}}>
-                    {{localize mod.name}} [{{mod.value}} {{mod.type}}]
-                </option>
-                {{/each}}
-            </select>
-        </div>
-        {{/if}}
+        {{> systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs}}
 
         {{#if (or showAspModifier showKapModifier)}}
         <div class="form-group">

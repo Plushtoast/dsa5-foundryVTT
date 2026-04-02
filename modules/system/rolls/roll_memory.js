@@ -1,4 +1,5 @@
 import DPS from '../automation/derepositioningsystem.js';
+import { SituationalModifiersWidget } from '../helpers/situational-modifiers-widget.js';
 const { setProperty, getProperty } = foundry.utils;
 
 export default class RollMemory {
@@ -69,14 +70,10 @@ export default class RollMemory {
       });
     });
 
-    html.find('[name="situationalModifiers"] option').each(function () {
-      if (!object.situationalModifiers) object.situationalModifiers = [];
-
-      object.situationalModifiers.push({
-        name: $(this).text().trim(),
-        selected: this.selected,
-      });
-    });
+    const situationalModifiers = SituationalModifiersWidget.getStoredModifiers(html);
+    if (situationalModifiers.length > 0) {
+      object.situationalModifiers = situationalModifiers;
+    }
 
     return object;
   }

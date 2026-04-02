@@ -1,7 +1,7 @@
 import DSA5 from "../config/config-dsa5.js";
 import { RollDialogBuilder } from "../dialog/dialog-builder.js";
-import { ModifierCalculator } from "../item/concerns/modifier-calculator.js";
 import DSA5StatusEffects from "../status/status_effects.js";
+import { SituationalModifiersWidget } from "../system/helpers/situational-modifiers-widget.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import { RegenerationModifiers } from "./concerns/regeneration-modifiers.js";
 const { mergeObject, getProperty } = foundry.utils;
@@ -28,7 +28,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 modifier: options.modifier || 0,
             },
             callback: (html, options = {}) => {
-                testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+                testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
                 cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
                 testData.situationalModifiers.push(
                     {

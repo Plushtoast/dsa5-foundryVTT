@@ -14,6 +14,7 @@ import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import SpecialabilityData from '../data/item/specialability.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -248,7 +249,6 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     });
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
-    html.find('.modifiers option').on('mousedown', (ev) => this.calculateModifier(ev));
     html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
     let targets = this.readTargets();
@@ -274,7 +274,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const mode = ev.button === 0 ? 'attack' : 'parry';
     const item = actor.items.get(this.dialogData.source._id);
     const html = $(this.element);
-    const htmlMods = html.find('[name=situationalModifiers]');
+    const widget = this.getSituationalModifiersWidget(html);
 
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode });
     const cls = ItemFactory.getSubClass(item.type);
@@ -303,36 +303,8 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     }
 
-    if (situationalModifiers.length > 0) {
-      if (htmlMods.length === 0) {
-        const modBox = `<div class="modifiers form-group">
-          <label>${_loc('DIALOG.SituationalModifiers')}</label>
-          <select name="situationalModifiers" multiple />
-        </div>`;
-        html.find('[name=messageMode]').parent().after(modBox);
-        this.position.height += 86;
-        this.setPosition(this.position);
-      }
-
-      const options = situationalModifiers.map(mod =>
-        `<option value="${mod.value}" 
-           data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
-           ${mod.type ? ` data-type="${mod.type}"` : ''}
-           ${mod.specAbId ? ` data-spec-ab-id="${mod.specAbId}"` : ''}
-           ${mod.armorPen ? ` data-armor-pen="${mod.armorPen}"` : ''}
-           ${mod.effectId ? ` data-effect-id="${mod.effectId}"` : ''}
-           ${mod.effectUuid ? ` data-effect-uuid="${mod.effectUuid}"` : ''}
-           ${mod.selected ? ' selected' : ''}>
-           ${mod.name} [${mod.value}]
-        </option>`
-      ).join('');
-
-      html.find('.modifiers select').html(options);
-    } else if (htmlMods.length > 0) {
-      htmlMods.parent().remove();
-      this.position.height -= 86;
-      this.setPosition(this.position);
-    }
+    widget?.setModifiers(situationalModifiers);
+    this.setPosition({ height: 'auto' });
   }
 
   changeSpecAbVariant(ev) {
@@ -957,7 +929,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static _resolveDefault(testData, cardOptions, html, options) {
     cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
-    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     mergeObject(testData.extra.options, options);
   }
 

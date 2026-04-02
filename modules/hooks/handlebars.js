@@ -3,21 +3,6 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 
 const { getProperty } = foundry.utils;
 
-const modifierTypes = {
-  '': 'Modifier',
-  defenseMalus: 'MODS.defenseMalus',
-  FW: 'MODS.FW',
-  KaPCost: 'CHAR.KaPCost',
-  AsPCost: 'CHAR.AsPCost',
-  FP: 'MODS.FP',
-  QL: 'MODS.QS',
-  dmg: 'MODS.damage',
-  damageBonus: 'MODS.damage',
-  armorPen: 'MODS.armorPen',
-  TPM: 'MODS.partChecks',
-  CMP: 'MODS.compensation'
-};
-
 function clickableAbilities(a, b) {
   return a
     .split(/\n/g)
@@ -145,14 +130,6 @@ export default function () {
       return a.system.characteristics[b][c];
     },
     hasElem: (a, b) => a.some((x) => b == x),
-    situationalTooltip: (mod) => {
-      const key = _loc(modifierTypes[mod.type] || 'Modifier');
-      let res = `${mod.name}<br/>${key}: ${mod.value}`;
-      if (mod.source) {
-        res += `<br/>${_loc('source')}: ${mod.source}`;
-      }
-      return res;
-    },
     grouped_each: (every, context, options) => {
       let out = '',
         subcontext = [],

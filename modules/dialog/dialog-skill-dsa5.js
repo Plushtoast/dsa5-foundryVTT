@@ -4,8 +4,7 @@ import DialogShared from './dialog-shared.js';
 import DSA5 from '../config/config-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
-import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
-import { ValueWidget } from '../system/helpers/valuewidget.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
@@ -73,14 +72,6 @@ export default class DSA5SkillDialog extends DialogShared {
     this.rememberFormData();
     html.on('mousedown', '.quantity-click', (ev) => this.rememberFormData(ev));
 
-    html.find('.modifiers option').on('mousedown', (ev) => {
-      this.rememberFormData(ev);
-    });
-
-    html.find('.vwidget').each((i, elem) => {
-      new ValueWidget(elem)
-    });
-
     html.find('[data-action="toggleSection"]').on('click', (ev) => {
       this.#toggleSection(ev, ev.currentTarget);
     });
@@ -89,7 +80,7 @@ export default class DSA5SkillDialog extends DialogShared {
   rememberFormData(ev) {
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
-    data.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    data.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     this.calculateRoutine(data);
   }
 

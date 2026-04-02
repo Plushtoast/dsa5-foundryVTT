@@ -1,5 +1,7 @@
 import RuleChaos from '../system/rules/rule_chaos.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import { ValueWidget } from '../system/helpers/valuewidget.js';
 
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
@@ -7,6 +9,23 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogShared extends foundry.applications.api.DialogV2 {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
+
+  initializeWidgets(html) {
+    html.find('.vwidget').each((i, elem) => {
+      if (!elem.querySelector('.vw-controls')) new ValueWidget(elem);
+    });
+
+    html.find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
+      const modifiers = this.dialogData?.renderData?.[SituationalModifiersWidget.NAME];
+      if (modifiers !== undefined) {
+        elem.setModifiers(foundry.utils.duplicate(modifiers));
+      }
+    });
+  }
+
+  getSituationalModifiersWidget(root = this.element) {
+    return SituationalModifiersWidget.getWidget(root);
+  }
 
   recallSettings(speaker, source, mode, renderData) {
     this.recallData = game.dsa5.memory.recall(speaker, source, mode);
@@ -150,13 +169,9 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
 
+    this.initializeWidgets(html);
     await this.prepareFormRecall($(this.element));
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html.find('.modifiers option').on('mousedown', (ev) => {
-      ev.preventDefault();
-      $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
-      return false;
-    });
     html.on('click', '.rollTarget', (ev) => this.removeTarget(ev));
     html.on('click', '.addTarget', (ev) => this.addTarget(ev));
     html.find('.window-content form').addClass('scrollable');
@@ -176,6 +191,9 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
       clearInterval(this.checkTargets);
       this.checkTargets = null;
     }
+    $(this.element).find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
+      elem[SituationalModifiersWidget.INSTANCE_KEY]?.destroy();
+    });
     return super._tearDown(options);
   }
 
@@ -189,6 +207,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
           elem.addClass('active').attr('data-step', spec.step);
           elem.find('.step').text(DialogShared.roman[spec.step]);
         }
+      } else if (key === 'situationalModifiers') {
+        this.getSituationalModifiersWidget(html)?.setModifiers(value);
       } else {
         const elem = html.find(`[name="${key}"]`);
 

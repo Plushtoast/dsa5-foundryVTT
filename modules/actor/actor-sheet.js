@@ -1973,6 +1973,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       //    await this._manageDragItems(thing, thing.type)
       //}
     } else {
+      const thing = item.items?.[0] || item;
       ui.notifications.error(
         'DSAError.notFound', { localize: true, format: {
           category: thing.type,

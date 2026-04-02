@@ -21,6 +21,7 @@ import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -690,7 +691,7 @@ class MoneyItemDSA5 extends Itemdsa5 {
 class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
-    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
     const formData = new foundry.applications.ux.FormDataExtended(form).object;
     testData.calculatedSpellModifiers = {
@@ -995,7 +996,7 @@ class CombatskillDSA5 extends Itemdsa5 {
     const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
     dialogOptions.callback = (html, options = {}) => {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
-      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+      testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       mergeObject(testData.extra.options, options);
       return { testData, cardOptions };
     }
@@ -1370,7 +1371,7 @@ class SkillItemDSA5 extends Itemdsa5 {
       const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
       const formData = new foundry.applications.ux.FormDataExtended(form).object;
       testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+      testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       testData.situationalModifiers.push(
         ModifierCalculator.parseValueType(_loc('sight'), formData.vision || 0),
       );

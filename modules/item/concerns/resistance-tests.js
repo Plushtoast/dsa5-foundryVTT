@@ -5,6 +5,7 @@ import Actordsa5 from '../../actor/actor-dsa5.js';
 import { ModifierCalculator } from './modifier-calculator.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { SituationalModifiersWidget } from '../../system/helpers/situational-modifiers-widget.js';
 const { mergeObject } = foundry.utils;
 /**
  * Handles resistance test functionality for diseases and poisons
@@ -77,7 +78,7 @@ export class ResistanceTests {
       data,
       callback: (html, options = {}) => {
         cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
-        testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+        testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
         testData.situationalModifiers.push(
           {
             name: _loc('zkModifier'),
