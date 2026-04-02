@@ -1020,7 +1020,8 @@ export default class OpposedDsa5 {
     if (attacker.testResult.ammo) attacker.testResult.source.effects.push(...attacker.testResult.ammo.effects);
 
     const triggerIds = testData.situationalModifiers.reduce((acc, x) => {
-      if (x.specAbId) acc.push(x.specAbId);
+      const id = x.ref?.id;
+      if (id) acc.push(id);
       return acc;
     }, []);
     if (!triggerIds.length) return;

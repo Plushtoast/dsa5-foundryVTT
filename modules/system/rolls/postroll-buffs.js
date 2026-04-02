@@ -188,8 +188,7 @@ export default class PostRollBuffs {
         value: match.fp,
         type: 'postRoll',
         source: match.effectName,
-        effectUuid: match.effectUuid,
-        effectId: match.effectId,
+        ref: { uuid: match.effectUuid, id: match.effectId },
       });
     }
     if (match.qs) {
@@ -198,8 +197,7 @@ export default class PostRollBuffs {
         value: match.qs,
         type: 'postRoll',
         source: match.effectName,
-        effectUuid: match.effectUuid,
-        effectId: match.effectId,
+        ref: { uuid: match.effectUuid, id: match.effectId },
       });
     }
   }

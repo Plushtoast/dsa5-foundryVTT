@@ -99,8 +99,7 @@ export default class DSAActiveEffect extends ActiveEffect {
             value,
             target,
             item: change.effect.parent?.name,
-            effectId: change.effect.id,
-            effectUuid: change.effect.uuid,
+            ref: { uuid: change.effect.uuid, id: change.effect.id },
           });
         }
         update = currentValue.concat(newElems);

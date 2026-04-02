@@ -14,8 +14,7 @@ export class SpellModifiers {
               value: modifier.value,
               source: modifier.item,
               type,
-              effectId: modifier.effectId,
-              effectUuid: modifier.effectUuid,
+              ref: modifier.ref || null,
             }))
         );
       }
@@ -27,8 +26,7 @@ export class SpellModifiers {
             value: modifier.value,
             source: modifier.source,
             type,
-            effectId: modifier.effectId,
-            effectUuid: modifier.effectUuid,
+            ref: modifier.ref || null,
           }))
         );
       }

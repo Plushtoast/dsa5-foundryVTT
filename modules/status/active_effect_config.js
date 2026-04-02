@@ -781,7 +781,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
   static async _parseEffectDuration(source, testData, preData, attacker) {
     const specAbIds = (preData.situationalModifiers || []).reduce((acc, s) => {
-      if (s.specAbId) acc[s.specAbId] = s.step;
+      const id = s.ref?.id;
+      if (id && s.step !== undefined) acc[id] = s.step;
       return acc;
     }, {});
     const specKeys = new Set(Object.keys(specAbIds));

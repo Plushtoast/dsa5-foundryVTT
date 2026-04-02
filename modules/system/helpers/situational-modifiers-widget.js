@@ -1,6 +1,7 @@
 import DSA5 from '../../config/config-dsa5.js';
+import { SituationalModifier } from './situational-modifier.js';
 
-const { duplicate, escapeHTML } = foundry.utils;
+const { escapeHTML } = foundry.utils;
 
 export class SituationalModifiersWidget extends HTMLDivElement {
   static NAME = 'situationalModifiers';
@@ -67,12 +68,6 @@ export class SituationalModifiersWidget extends HTMLDivElement {
     }
 
     return modifier.value;
-  }
-
-  static stripInternalFields(modifier) {
-    const result = duplicate(modifier);
-    delete result._defaultSelected;
-    return result;
   }
 
   static formatSignedValue(value) {
@@ -156,47 +151,15 @@ export class SituationalModifiersWidget extends HTMLDivElement {
     this.actor = actor || null;
   }
 
-  static getSourceIdentifiers(modifier) {
-    return [modifier.sourceId, modifier.itemId, modifier._id].filter(Boolean);
-  }
-
-  static canResolveDeferredDetails(item) {
-    return !!item && this.deferredDetailTypes.has(item.type);
-  }
-
   hasDeferredDetails(modifier) {
-    if (modifier.specAbId || modifier.effectUuid || modifier.effectId) return true;
-    if (!this.actor) return false;
+    if (modifier.hasRef) return true;
+    if (!this.actor || !modifier.source) return false;
 
-    const sourceIdentifiers = SituationalModifiersWidget.getSourceIdentifiers(modifier);
-    if (sourceIdentifiers.length) {
-      return sourceIdentifiers.some((sourceId) => SituationalModifiersWidget.canResolveDeferredDetails(this.actor.items.get(sourceId)));
-    }
-
-    if (!modifier.source) return false;
-
-    return this.actor.items.some((item) => modifier.source === item.name && SituationalModifiersWidget.canResolveDeferredDetails(item));
-  }
-
-  getTooltipCacheKey(modifier) {
-    return JSON.stringify([
-      this.actor?.uuid || '',
-      modifier.specAbId || '',
-      modifier.sourceId || '',
-      modifier.itemId || '',
-      modifier._id || '',
-      modifier.effectUuid || '',
-      modifier.effectId || '',
-      modifier.source || '',
-      modifier.name || '',
-      modifier.type || '',
-      modifier.value || '',
-      modifier.damageBonus || '',
-    ]);
+    return this.actor.items.some((item) => modifier.source === item.name && SituationalModifiersWidget.deferredDetailTypes.has(item.type));
   }
 
   getTitleText(modifier) {
-    const title = SituationalModifiersWidget.displayName(modifier.name);
+    const title = modifier.displayName(this.actor);
     return modifier._defaultSelected !== modifier.selected ? `${title} *` : title;
   }
 
@@ -207,7 +170,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   buildLinkedDetailsBlock(modifier) {
     if (!this.hasDeferredDetails(modifier)) return '';
 
-    const cached = this.tooltipCache.get(this.getTooltipCacheKey(modifier));
+    const cached = this.tooltipCache.get(modifier.cacheId);
     if (cached?.state === 'loaded' && cached.body) {
       return `<div class="modifier-linked-preview"><div class="modifier-linked-body">${cached.body}</div></div>`;
     }
@@ -253,19 +216,12 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   async resolveLinkedItem(modifier) {
     if (!this.actor) return null;
 
-    if (modifier.specAbId) {
-      const item = this.actor.items.get(modifier.specAbId);
-      if (SituationalModifiersWidget.canResolveDeferredDetails(item)) return item;
-    }
-
-    for (const sourceId of SituationalModifiersWidget.getSourceIdentifiers(modifier)) {
-      const item = this.actor.items.get(sourceId);
-      if (SituationalModifiersWidget.canResolveDeferredDetails(item)) return item;
-    }
+    const doc = modifier.resolve(this.actor);
+    if (doc && SituationalModifiersWidget.deferredDetailTypes.has(doc.type)) return doc;
 
     if (!modifier.source) return null;
 
-    return this.actor.items.find((item) => modifier.source === item.name && SituationalModifiersWidget.canResolveDeferredDetails(item)) || null;
+    return this.actor.items.find((item) => modifier.source === item.name && SituationalModifiersWidget.deferredDetailTypes.has(item.type)) || null;
   }
 
   async resolveLinkedItemDetails(modifier) {
@@ -292,10 +248,14 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   async resolveLinkedEffectDetails(modifier) {
     let effect = null;
 
-    if (modifier.effectUuid) {
-      effect = await fromUuid(modifier.effectUuid);
-    } else if (this.actor && modifier.effectId) {
-      effect = this.actor.effects?.get(modifier.effectId) || null;
+    if (modifier.ref?.uuid) {
+      const doc = await fromUuid(modifier.ref.uuid);
+      if (doc?.documentName === 'ActiveEffect') effect = doc;
+    }
+
+    if (!effect && modifier.ref?.id && this.actor) {
+      const doc = this.actor.effects?.get(modifier.ref.id);
+      if (doc) effect = doc;
     }
 
     if (!effect) return null;
@@ -315,53 +275,26 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   async ensureTooltipDetails(target, modifier) {
     if (!this.hasDeferredDetails(modifier)) return;
 
-    const cacheKey = this.getTooltipCacheKey(modifier);
-    const cached = this.tooltipCache.get(cacheKey);
+    const cached = this.tooltipCache.get(modifier.cacheId);
     if (cached?.state === 'loaded' || cached?.state === 'empty' || cached?.state === 'error' || cached?.promise) return;
 
     const loading = { state: 'loading' };
-    this.tooltipCache.set(cacheKey, loading);
+    this.tooltipCache.set(modifier.cacheId, loading);
     this.applyTooltip(target, modifier);
     this.refreshActiveTooltip(target);
 
     loading.promise = this.resolveLinkedDetails(modifier)
       .then((details) => {
-        if (details?.body) this.tooltipCache.set(cacheKey, { state: 'loaded', ...details });
-        else this.tooltipCache.set(cacheKey, { state: 'empty' });
+        if (details?.body) this.tooltipCache.set(modifier.cacheId, { state: 'loaded', ...details });
+        else this.tooltipCache.set(modifier.cacheId, { state: 'empty' });
       })
       .catch(() => {
-        this.tooltipCache.set(cacheKey, { state: 'error' });
+        this.tooltipCache.set(modifier.cacheId, { state: 'error' });
       })
       .finally(() => {
         this.applyTooltip(target, modifier);
         this.refreshActiveTooltip(target);
       });
-  }
-
-  static normalizeModifier(modifier = {}) {
-    const normalized = duplicate(modifier);
-    normalized.name ??= '';
-    normalized.selected = normalized.selected !== false;
-    normalized._defaultSelected ??= normalized.selected;
-
-    if (normalized.type === 'dmg' && normalized.damageBonus !== undefined && (normalized.value === undefined || Number(normalized.value) === 0)) {
-      normalized.value = normalized.damageBonus;
-    }
-
-    if (typeof normalized.value === 'string') {
-      const trimmed = normalized.value.trim();
-      if (trimmed !== '' && /^-?\d+(?:\.\d+)?$/.test(trimmed)) {
-        normalized.value = Number(trimmed);
-      }
-    }
-
-    if (normalized.value === undefined) normalized.value = 0;
-
-    return normalized;
-  }
-
-  static normalizeModifiers(modifiers = []) {
-    return modifiers.map((modifier) => this.normalizeModifier(modifier));
   }
 
   static renderFormGroup({
@@ -497,14 +430,14 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   }
 
   getModifiers() {
-    return this.modifiers.map((modifier) => SituationalModifiersWidget.stripInternalFields(modifier));
+    return this.modifiers.map((modifier) => modifier.toObject());
   }
 
   getSelectedModifiers() {
     return this.modifiers
       .filter((modifier) => modifier.selected)
       .map((modifier) => {
-        const result = SituationalModifiersWidget.stripInternalFields(modifier);
+        const result = modifier.toObject();
         if (result.type === 'dmg') {
           result.damageBonus = result.value;
           result.value = 0;
@@ -515,26 +448,26 @@ export class SituationalModifiersWidget extends HTMLDivElement {
 
   setModifiers(modifiers = []) {
     this.ensureInitialized();
-    this.modifiers = SituationalModifiersWidget.normalizeModifiers(modifiers);
+    this.modifiers = SituationalModifier.fromArray(modifiers);
     this.refresh();
   }
 
   addModifier(modifier) {
     this.ensureInitialized();
-    this.modifiers.push(SituationalModifiersWidget.normalizeModifier(modifier));
+    this.modifiers.push(SituationalModifier.from(modifier));
     this.refresh();
   }
 
   updateModifier(predicateOrId, patch) {
     const predicate = typeof predicateOrId === 'function'
       ? predicateOrId
-      : (modifier) => modifier.effectUuid === predicateOrId || modifier.effectId === predicateOrId || modifier.name === predicateOrId;
+      : (modifier) => modifier.ref?.uuid === predicateOrId || modifier.ref?.id === predicateOrId || modifier.name === predicateOrId;
 
     let changed = false;
     this.modifiers = this.modifiers.map((modifier) => {
       if (!predicate(modifier)) return modifier;
       changed = true;
-      return SituationalModifiersWidget.normalizeModifier({ ...modifier, ...patch });
+      return SituationalModifier.from(Object.assign({}, modifier, patch));
     });
 
     if (changed) this.refresh();
@@ -543,7 +476,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   removeModifier(predicateOrId) {
     const predicate = typeof predicateOrId === 'function'
       ? predicateOrId
-      : (modifier) => modifier.effectUuid === predicateOrId || modifier.effectId === predicateOrId || modifier.name === predicateOrId;
+      : (modifier) => modifier.ref?.uuid === predicateOrId || modifier.ref?.id === predicateOrId || modifier.name === predicateOrId;
 
     const next = this.modifiers.filter((modifier) => !predicate(modifier));
     if (next.length === this.modifiers.length) return;
@@ -562,12 +495,11 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       option.dataset.index = String(index);
       this.applyTooltip(option, modifier);
       if (modifier.type) option.dataset.type = modifier.type;
-      if (modifier.specAbId) option.dataset.specAbId = modifier.specAbId;
+      if (modifier.ref?.uuid) option.dataset.refUuid = modifier.ref.uuid;
+      if (modifier.ref?.id) option.dataset.refId = modifier.ref.id;
       if (modifier.armorPen) option.dataset.armorPen = modifier.armorPen;
-      if (modifier.effectId) option.dataset.effectId = modifier.effectId;
-      if (modifier.effectUuid) option.dataset.effectUuid = modifier.effectUuid;
       if (modifier.extension) option.dataset.extension = '1';
-      option.textContent = `${SituationalModifiersWidget.displayName(modifier.name)} [${SituationalModifiersWidget.getOptionChangeText(modifier)}]`;
+      option.textContent = `${modifier.displayName(this.actor)} [${SituationalModifiersWidget.getOptionChangeText(modifier)}]`;
       this.select.appendChild(option);
     });
 

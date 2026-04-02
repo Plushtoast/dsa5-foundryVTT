@@ -1905,14 +1905,13 @@ export default class Actordsa5 extends Actor {
     for (const mod of mods) {
       if (!mod || mod.selected === false) continue;
 
-      if (mod.effectUuid) {
-        effectUuids.add(mod.effectUuid);
+      if (mod.ref?.uuid) {
+        effectUuids.add(mod.ref.uuid);
         continue;
       }
 
-      // Fallback: some dialog paths may only provide an effect id.
-      if (mod.effectId) {
-        const effect = this.effects?.get?.(mod.effectId);
+      if (mod.ref?.id) {
+        const effect = this.effects?.get?.(mod.ref.id);
         if (effect?.uuid) effectUuids.add(effect.uuid);
       }
     }

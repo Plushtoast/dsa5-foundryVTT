@@ -230,7 +230,7 @@ export default class Itemdsa5 extends Item {
    *   - {string} damageBonus - Damage bonus string
    *   - {number} dmmalus - Defense malus value
    *   - {number} step - Step value from dataset
-   *   - {string} specAbId - Special ability ID
+   *   - {Object} ref - Reference object { id } pointing to the special ability
    *   - {string} [type] - Modifier type (optional)
    *   - {Object} flatValues - Flat values object
    */
@@ -261,7 +261,7 @@ export default class Itemdsa5 extends Item {
         damageBonus: dataset.tpbonus,
         dmmalus: Number(dataset.dmmalus) * step + (flatValues.dmmalus || 0),
         step,
-        specAbId: dataset.id,
+        ref: { id: dataset.id },
         type: modifier.type,
         flatValues
       });
@@ -822,8 +822,7 @@ class SpellItemDSA5 extends Itemdsa5 {
               value: f.value,
               type,
               source: f.source,
-              effectId: f.effectId || null,
-              effectUuid: f.effectUuid || null,
+              ref: f.ref || null,
             };
           }),
       );
@@ -836,8 +835,7 @@ class SpellItemDSA5 extends Itemdsa5 {
           value: f.value,
           source: f.source,
           type: cost,
-          effectId: f.effectId || null,
-          effectUuid: f.effectUuid || null,
+          ref: f.ref || null,
         };
       }),
     );
@@ -1204,7 +1202,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             name: `${currentAmmo.name} - ${_loc('atmod')}`,
             value: currentAmmo.system.atmod,
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           });
         }
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
@@ -1213,7 +1211,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
             type: 'dmg',
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           };
           if (currentAmmo.system.armorMod) dmgMod.armorPen = currentAmmo.system.armorMod;
 
@@ -1225,7 +1223,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
             value: 1,
             type: 'effect',
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           });
         }
       }

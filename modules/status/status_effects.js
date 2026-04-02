@@ -419,8 +419,7 @@ export default class DSA5StatusEffects {
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, coreId),
             source,
-            effectId: ef.id,
-            effectUuid: ef.uuid,
+            ref: { uuid: ef.uuid, id: ef.id },
           });
         }
       }

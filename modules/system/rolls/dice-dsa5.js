@@ -2110,13 +2110,13 @@ export default class DiceDSA5 {
     }
 
     const modifiers = pre.situationalModifiers || testData?.situationalModifiers || [];
-    const specAbIds = modifiers.filter(m => m?.specAbId).map(m => m.specAbId);
+    const refIds = modifiers.filter(m => m?.ref?.id).map(m => m.ref.id);
 
-    if (specAbIds.length > 0) {
+    if (refIds.length > 0) {
       const actor = DSA5_Utility.getSpeaker(pre.extra?.speaker || testData.extra?.speaker);
       if (!actor) return false;
 
-      return specAbIds.some(i => actor.items.get(i)?.effects?.size > 0);
+      return refIds.some(i => actor.items.get(i)?.effects?.size > 0);
     }
 
     return false;
