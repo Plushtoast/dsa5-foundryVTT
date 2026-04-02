@@ -1,4 +1,6 @@
-const { duplicate } = foundry.utils;
+import DSA5 from '../../config/config-dsa5.js';
+
+const { duplicate, escapeHTML } = foundry.utils;
 
 export class SituationalModifiersWidget extends HTMLDivElement {
   static NAME = 'situationalModifiers';
@@ -26,11 +28,28 @@ export class SituationalModifiersWidget extends HTMLDivElement {
     CMP: 'MODS.compensation',
   };
 
+  static modifierTypeAbbreviations = {
+    defenseMalus: 'CHARAbbrev.defenseMalus',
+    FW: 'CHARAbbrev.FW',
+    KaPCost: 'CHARAbbrev.KaPCost',
+    AsPCost: 'CHARAbbrev.AsPCost',
+    FP: 'CHARAbbrev.FP',
+    QL: 'CHARAbbrev.QL',
+    dmg: 'CHARAbbrev.damage',
+    damageBonus: 'CHARAbbrev.damage',
+    TPM: 'CHARAbbrev.TPM',
+    CMP: 'CHARAbbrev.CMP',
+  };
+
+  static deferredDetailTypes = new Set(['specialability', 'advantage', 'disadvantage', ...DSA5.equipmentCategories]);
+
   constructor() {
     super();
     this.name = SituationalModifiersWidget.NAME;
+    this.actor = null;
     this.modifiers = [];
     this.select = null;
+    this.tooltipCache = new Map();
     this.#isInitialized = false;
     this[SituationalModifiersWidget.INSTANCE_KEY] = this;
   }
@@ -42,22 +61,288 @@ export class SituationalModifiersWidget extends HTMLDivElement {
     return name;
   }
 
-  static buildTooltip(modifier) {
-    const key = _loc(this.modifierTypes[modifier.type] || 'Modifier');
-    const value = modifier.type === 'dmg' && modifier.damageBonus !== undefined && Number(modifier.value) === 0 ? modifier.damageBonus : modifier.value;
-    let result = `${this.displayName(modifier.name)}<br/>${key}: ${value}`;
-
-    if (modifier.source) {
-      result += `<br/>${_loc('source')}: ${modifier.source}`;
+  static formatModifierValue(modifier) {
+    if (modifier.type === 'dmg' && modifier.damageBonus !== undefined && Number(modifier.value) === 0) {
+      return modifier.damageBonus;
     }
 
+    return modifier.value;
+  }
+
+  static stripInternalFields(modifier) {
+    const result = duplicate(modifier);
+    delete result._defaultSelected;
     return result;
+  }
+
+  static formatSignedValue(value) {
+    const numericValue = typeof value === 'number'
+      ? value
+      : (typeof value === 'string' && /^-?\d+$/.test(value.trim()) ? Number(value.trim()) : null);
+
+    if (numericValue !== null && Number.isFinite(numericValue)) {
+      return String(Handlebars.helpers.numberFormat(numericValue, {
+        hash: {
+          decimals: 0,
+          sign: true,
+        },
+      }));
+    }
+
+    if (typeof value === 'string') {
+      return value.trim();
+    }
+
+    return String(value);
+  }
+
+  static getDirection(value) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      if (value > 0) return 'positive';
+      if (value < 0) return 'negative';
+      return 'neutral';
+    }
+
+    if (typeof value === 'string' && /^-?\d+$/.test(value.trim())) {
+      const numeric = Number(value);
+      if (numeric > 0) return 'positive';
+      if (numeric < 0) return 'negative';
+    }
+
+    return 'neutral';
+  }
+
+  static getModifierIcon(modifier, direction) {
+    return {
+      positive: 'fa-arrow-up',
+      negative: 'fa-arrow-down',
+      neutral: 'fa-minus',
+    }[direction];
+  }
+
+  static getModifierTypeLabel(modifier, { abbreviated = false } = {}) {
+    if (!modifier.type) return '';
+
+    if (abbreviated) {
+      const abbreviationKey = this.modifierTypeAbbreviations[modifier.type];
+      return abbreviationKey ? _loc(abbreviationKey) : modifier.type;
+    }
+
+    return _loc(this.modifierTypes[modifier.type] || 'Modifier');
+  }
+
+  static getOptionChangeText(modifier) {
+    const signedValue = this.formatSignedValue(this.formatModifierValue(modifier));
+    const typeLabel = this.getModifierTypeLabel(modifier, { abbreviated: true });
+    return typeLabel ? `${signedValue} ${typeLabel}` : signedValue;
+  }
+
+  static describeImpact(modifier) {
+    const typeLabel = this.getModifierTypeLabel(modifier);
+    const rawValue = this.formatModifierValue(modifier);
+    const direction = this.getDirection(rawValue);
+    const signedValue = this.formatSignedValue(rawValue);
+    const effectText = modifier.type ? `${signedValue} ${typeLabel}` : signedValue;
+
+    return {
+      direction,
+      directionIcon: this.getModifierIcon(modifier, direction),
+      effectText,
+      sourceText: modifier.source || '',
+    };
+  }
+
+  setContext({ actor } = {}) {
+    this.actor = actor || null;
+  }
+
+  static getSourceIdentifiers(modifier) {
+    return [modifier.sourceId, modifier.itemId, modifier._id].filter(Boolean);
+  }
+
+  static canResolveDeferredDetails(item) {
+    return !!item && this.deferredDetailTypes.has(item.type);
+  }
+
+  hasDeferredDetails(modifier) {
+    if (modifier.specAbId || modifier.effectUuid || modifier.effectId) return true;
+    if (!this.actor) return false;
+
+    const sourceIdentifiers = SituationalModifiersWidget.getSourceIdentifiers(modifier);
+    if (sourceIdentifiers.length) {
+      return sourceIdentifiers.some((sourceId) => SituationalModifiersWidget.canResolveDeferredDetails(this.actor.items.get(sourceId)));
+    }
+
+    if (!modifier.source) return false;
+
+    return this.actor.items.some((item) => modifier.source === item.name && SituationalModifiersWidget.canResolveDeferredDetails(item));
+  }
+
+  getTooltipCacheKey(modifier) {
+    return JSON.stringify([
+      this.actor?.uuid || '',
+      modifier.specAbId || '',
+      modifier.sourceId || '',
+      modifier.itemId || '',
+      modifier._id || '',
+      modifier.effectUuid || '',
+      modifier.effectId || '',
+      modifier.source || '',
+      modifier.name || '',
+      modifier.type || '',
+      modifier.value || '',
+      modifier.damageBonus || '',
+    ]);
+  }
+
+  getTitleText(modifier) {
+    const title = SituationalModifiersWidget.displayName(modifier.name);
+    return modifier._defaultSelected !== modifier.selected ? `${title} *` : title;
+  }
+
+  getSelectionStateIcon(modifier) {
+    return modifier.selected ? 'fa-toggle-on' : 'fa-toggle-off';
+  }
+
+  buildLinkedDetailsBlock(modifier) {
+    if (!this.hasDeferredDetails(modifier)) return '';
+
+    const cached = this.tooltipCache.get(this.getTooltipCacheKey(modifier));
+    if (cached?.state === 'loaded' && cached.body) {
+      return `<div class="modifier-linked-preview"><div class="modifier-linked-body">${cached.body}</div></div>`;
+    }
+
+    if (cached?.state === 'empty' || cached?.state === 'error') return '';
+
+    return `<div class="modifier-linked-preview loading"><div><span><i class="fas fa-spinner fa-spin"></i></span></div></div>`;
+  }
+
+  buildTooltip(modifier) {
+    const impact = SituationalModifiersWidget.describeImpact(modifier);
+    const sourcePill = impact.sourceText
+      ? `<span class="modifier-pill modifier-source"><span class="modifier-pill-label">${escapeHTML(`${_loc('source')}:`)}</span>${escapeHTML(impact.sourceText)}</span>`
+      : '';
+
+    return `<div class="itemTooltip situationalModifierTooltip">
+        <h1><span class="modifier-header-state ${modifier.selected ? 'active' : 'inactive'}"><i class="fas ${this.getSelectionStateIcon(modifier)}"></i></span><span>${escapeHTML(this.getTitleText(modifier))}</span></h1>
+        <div class="modifier-pills">
+            <span class="modifier-pill modifier-impact ${impact.direction}">
+                <span class="modifier-pill-label">${escapeHTML(`${_loc('effect')}:`)}</span>
+                <i class="fas ${impact.directionIcon}"></i> ${escapeHTML(impact.effectText)}
+            </span>
+            ${sourcePill}
+        </div>${this.buildLinkedDetailsBlock(modifier)}</div>`;
+  }
+
+  applyTooltip(target, modifier) {
+    delete target.dataset.tooltip;
+    target.dataset.tooltipHtml = this.buildTooltip(modifier);
+    target.dataset.tooltipClass = 'dsatooltip';
+  }
+
+  refreshActiveTooltip(target) {
+    if (!target?.ownerDocument?.body?.contains(target)) return;
+    if (game.tooltip?.element !== target) return;
+
+    game.tooltip.activate(target, {
+      html: target.dataset.tooltipHtml,
+      cssClass: target.dataset.tooltipClass,
+    });
+  }
+
+  async resolveLinkedItem(modifier) {
+    if (!this.actor) return null;
+
+    if (modifier.specAbId) {
+      const item = this.actor.items.get(modifier.specAbId);
+      if (SituationalModifiersWidget.canResolveDeferredDetails(item)) return item;
+    }
+
+    for (const sourceId of SituationalModifiersWidget.getSourceIdentifiers(modifier)) {
+      const item = this.actor.items.get(sourceId);
+      if (SituationalModifiersWidget.canResolveDeferredDetails(item)) return item;
+    }
+
+    if (!modifier.source) return null;
+
+    return this.actor.items.find((item) => modifier.source === item.name && SituationalModifiersWidget.canResolveDeferredDetails(item)) || null;
+  }
+
+  async resolveLinkedItemDetails(modifier) {
+    const item = await this.resolveLinkedItem(modifier);
+    if (!item) return null;
+
+    const rawText = {
+      specialability: item.system.rule?.value,
+      advantage: item.system.description?.value,
+      disadvantage: item.system.description?.value,
+      equipment: item.system.effect?.value,
+      meleeweapon: item.system.effect?.value,
+      rangeweapon: item.system.effect?.value,
+      armor: item.system.effect?.value,
+    }[item.type];
+
+    if (!rawText) return null;
+
+    return {
+        body: await foundry.applications.ux.TextEditor.implementation.enrichHTML(rawText, { secrets: item.isOwner }),
+    };
+  }
+
+  async resolveLinkedEffectDetails(modifier) {
+    let effect = null;
+
+    if (modifier.effectUuid) {
+      effect = await fromUuid(modifier.effectUuid);
+    } else if (this.actor && modifier.effectId) {
+      effect = this.actor.effects?.get(modifier.effectId) || null;
+    }
+
+    if (!effect) return null;
+
+    const rawText = game.i18n.has(effect.description) ? _loc(effect.description) : effect.description;
+    if (!rawText) return null;
+
+    return {
+        body: await foundry.applications.ux.TextEditor.implementation.enrichHTML(rawText, { secrets: this.actor?.isOwner ?? false }),
+    };
+  }
+
+  async resolveLinkedDetails(modifier) {
+    return (await this.resolveLinkedItemDetails(modifier)) || (await this.resolveLinkedEffectDetails(modifier));
+  }
+
+  async ensureTooltipDetails(target, modifier) {
+    if (!this.hasDeferredDetails(modifier)) return;
+
+    const cacheKey = this.getTooltipCacheKey(modifier);
+    const cached = this.tooltipCache.get(cacheKey);
+    if (cached?.state === 'loaded' || cached?.state === 'empty' || cached?.state === 'error' || cached?.promise) return;
+
+    const loading = { state: 'loading' };
+    this.tooltipCache.set(cacheKey, loading);
+    this.applyTooltip(target, modifier);
+    this.refreshActiveTooltip(target);
+
+    loading.promise = this.resolveLinkedDetails(modifier)
+      .then((details) => {
+        if (details?.body) this.tooltipCache.set(cacheKey, { state: 'loaded', ...details });
+        else this.tooltipCache.set(cacheKey, { state: 'empty' });
+      })
+      .catch(() => {
+        this.tooltipCache.set(cacheKey, { state: 'error' });
+      })
+      .finally(() => {
+        this.applyTooltip(target, modifier);
+        this.refreshActiveTooltip(target);
+      });
   }
 
   static normalizeModifier(modifier = {}) {
     const normalized = duplicate(modifier);
     normalized.name ??= '';
     normalized.selected = normalized.selected !== false;
+    normalized._defaultSelected ??= normalized.selected;
 
     if (normalized.type === 'dmg' && normalized.damageBonus !== undefined && (normalized.value === undefined || Number(normalized.value) === 0)) {
       normalized.value = normalized.damageBonus;
@@ -162,6 +447,16 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   bindEvents() {
     if (!this.select) return;
 
+    this.select.addEventListener('mouseover', (event) => {
+      if (event.target.tagName !== 'OPTION') return;
+
+      const index = Number(event.target.dataset.index);
+      const modifier = this.modifiers[index];
+      if (!modifier) return;
+
+      this.ensureTooltipDetails(event.target, modifier);
+    });
+
     this.select.addEventListener('mousedown', (event) => {
       if (event.target.tagName !== 'OPTION') return;
 
@@ -173,7 +468,8 @@ export class SituationalModifiersWidget extends HTMLDivElement {
 
       modifier.selected = !modifier.selected;
       event.target.selected = modifier.selected;
-      event.target.dataset.tooltip = SituationalModifiersWidget.buildTooltip(modifier);
+      this.applyTooltip(event.target, modifier);
+        this.refreshActiveTooltip(event.target);
       this.dispatchChange();
     });
   }
@@ -201,14 +497,14 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   }
 
   getModifiers() {
-    return duplicate(this.modifiers);
+    return this.modifiers.map((modifier) => SituationalModifiersWidget.stripInternalFields(modifier));
   }
 
   getSelectedModifiers() {
     return this.modifiers
       .filter((modifier) => modifier.selected)
       .map((modifier) => {
-        const result = duplicate(modifier);
+        const result = SituationalModifiersWidget.stripInternalFields(modifier);
         if (result.type === 'dmg') {
           result.damageBonus = result.value;
           result.value = 0;
@@ -264,14 +560,14 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       option.value = modifier.value;
       option.selected = !!modifier.selected;
       option.dataset.index = String(index);
-      option.dataset.tooltip = SituationalModifiersWidget.buildTooltip(modifier);
+      this.applyTooltip(option, modifier);
       if (modifier.type) option.dataset.type = modifier.type;
       if (modifier.specAbId) option.dataset.specAbId = modifier.specAbId;
       if (modifier.armorPen) option.dataset.armorPen = modifier.armorPen;
       if (modifier.effectId) option.dataset.effectId = modifier.effectId;
       if (modifier.effectUuid) option.dataset.effectUuid = modifier.effectUuid;
       if (modifier.extension) option.dataset.extension = '1';
-      option.textContent = `${SituationalModifiersWidget.displayName(modifier.name)} [${modifier.value}]`;
+      option.textContent = `${SituationalModifiersWidget.displayName(modifier.name)} [${SituationalModifiersWidget.getOptionChangeText(modifier)}]`;
       this.select.appendChild(option);
     });
 
@@ -280,7 +576,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
 
   refreshTooltips() {
     Array.from(this.select.options).forEach((option, index) => {
-      option.dataset.tooltip = SituationalModifiersWidget.buildTooltip(this.modifiers[index]);
+      this.applyTooltip(option, this.modifiers[index]);
     });
   }
 
@@ -292,6 +588,8 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   }
 
   destroy() {
+    this.tooltipCache.clear();
+    this.actor = null;
     delete this[SituationalModifiersWidget.INSTANCE_KEY];
   }
 }

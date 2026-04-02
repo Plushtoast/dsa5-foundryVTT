@@ -16,6 +16,10 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     });
 
     html.find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
+      elem.setContext({
+        actor: DSA5_Utility.getSpeaker(this.dialogData?.speaker),
+      });
+
       const modifiers = this.dialogData?.renderData?.[SituationalModifiersWidget.NAME];
       if (modifiers !== undefined) {
         elem.setModifiers(foundry.utils.duplicate(modifiers));
