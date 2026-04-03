@@ -102,6 +102,8 @@ export class GlobalToolTipHandler {
     }
 
     static async _actorSummaryTooltip(data, actor) {
+        if (!actor || (!game.user.isGM && !actor.isOwner)) return;
+
         const attributes = [
             { label: _loc('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
             { label: _loc('speed'), value: actor.system.status.speed.max, icon: 'fas fa-running' },
