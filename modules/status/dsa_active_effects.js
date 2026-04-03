@@ -1,5 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-const { setProperty, getType, isPlainObject } = foundry.utils;
+const { setProperty, getType, isPlainObject, hasProperty } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
@@ -129,6 +129,16 @@ export default class DSAActiveEffect extends ActiveEffect {
       return false;
 
     return true;
+  }
+
+  static auraNeedsSync(effect, changed = {}, { parentChanged = false } = {}) {
+    if (!effect?.system?.aura?.isAura) return false;
+
+    if (parentChanged) {
+      return hasProperty(changed, 'system.worn.value') || hasProperty(changed, 'system.worn.wearable');
+    }
+
+    return hasProperty(changed, 'system.aura') || hasProperty(changed, 'disabled');
   }
 
   hasCharges() {

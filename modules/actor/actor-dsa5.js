@@ -31,7 +31,7 @@ import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
-const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
+const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class Actordsa5 extends Actor {
@@ -447,9 +447,13 @@ export default class Actordsa5 extends Actor {
 
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
+    const [documents = [], type, , updates = []] = args;
     const force =
-      args[1] == 'effects' &&
-      args[3].some((x) => hasProperty(x, 'system.aura'));
+      (type == 'effects' && documents.some((effect, index) => DSAActiveEffect.auraNeedsSync(effect, updates[index]))) ||
+      (type == 'items' &&
+        documents.some((item, index) =>
+          item.effects.some((effect) => DSAActiveEffect.auraNeedsSync(effect, updates[index], { parentChanged: true }))
+        ));
     if (force) this.#syncEmanations();
   }
 
