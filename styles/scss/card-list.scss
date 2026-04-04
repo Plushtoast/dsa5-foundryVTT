@@ -43,41 +43,11 @@
       }
     }
 
-    &:has(input[type="radio"]:checked) {
-      border: 3px solid #10b981;      
-      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
-      position: relative;
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-      }
-      
-      &::before {
-        content: "✓";
-        position: absolute;
-        top: 4px;
-        right: 8px;
-        color: #10b981;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 1;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      label {
-        color: #10b981;
-        
-        span {
-          font-weight: 700;
-          text-decoration: underline;
-        }
+    &.selected {
+      box-shadow: inset 0px 0px 10px 5px rgba(188, 136, 111, 0.8);
+
+      label span {
+        font-weight: 700;
       }
     }
 

@@ -19,6 +19,7 @@ import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
 import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
+import { ItemCreateDialog } from './item-create-dialog.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
@@ -116,108 +117,8 @@ export default class Itemdsa5 extends Item {
   }
 
   /* @override */
-  static async createDialog(data = {}, createOptions = {}, { folders, types, template, context, ...dialogOptions } = {}) {
-    const applicationOptions = {
-      top: "position", left: "position", width: "position", height: "position", scale: "position", zIndex: "position",
-      title: "window", id: "", classes: "", jQuery: ""
-    };
-
-    for (const [k, v] of Object.entries(createOptions)) {
-      if (k in applicationOptions) {
-        foundry.utils.logCompatibilityWarning("The ClientDocument.createDialog signature has changed. "
-          + "It now accepts database operation options in its second parameter, "
-          + "and options for DialogV2.prompt in its third parameter.", { since: 13, until: 15, once: true });
-        const dialogOption = applicationOptions[k];
-        if (dialogOption) foundry.utils.setProperty(dialogOptions, `${dialogOption}.${k}`, v);
-        else dialogOptions[k] = v;
-        delete createOptions[k];
-      }
-    }
-
-    const { parent, pack } = createOptions;
-    const cls = this.implementation;
-
-    // Identify allowed types
-    const documentTypes = [];
-    let defaultType = CONFIG[this.documentName]?.defaultType;
-    let defaultTypeAllowed = false;
-    let hasTypes = false;
-    if (this.TYPES.length > 1) {
-      if (types?.length === 0) throw new Error("The array of sub-types to restrict to must not be empty");
-
-      // Register supported types
-      for (const type of this.TYPES) {
-        if (type === CONST.BASE_DOCUMENT_TYPE) continue;
-        if (types && !types.includes(type)) continue;
-        let label = CONFIG[this.documentName]?.typeLabels?.[type];
-        label = label && game.i18n.has(label) ? _loc(label) : type;
-        documentTypes.push({
-          value: type,
-          label,
-          img: ITEM_CONSTANTS.DEFAULT_IMAGES[type]
-        });
-        if (type === defaultType) defaultTypeAllowed = true;
-      }
-      if (!documentTypes.length) throw new Error("No document types were permitted to be created");
-
-      if (!defaultTypeAllowed) defaultType = documentTypes[0].value;
-      // Sort alphabetically
-      documentTypes.sort((a, b) => a.label.localeCompare(b.label, game.i18n.lang));
-      hasTypes = true;
-    }
-
-    // Identify destination collection
-    let collection;
-    if (!parent) {
-      if (pack) collection = game.packs.get(pack);
-      else collection = game.collections.get(this.documentName);
-    }
-
-    // Collect data
-    folders ??= collection?._formatFolderSelectOptions() ?? [];
-    const label = _loc(this.metadata.label);
-    const title = _loc("DOCUMENT.Create", { type: label });
-    const type = data.type || defaultType;
-
-    // Render the document creation form
-    template ??= "systems/dsa5/templates/items/document-create.hbs";
-    const html = await foundry.applications.handlebars.renderTemplate(template, {
-      folders, hasTypes, type,
-      name: data.name || "",
-      defaultName: cls.defaultName({ type, parent, pack }),
-      folder: data.folder,
-      hasFolders: folders.length >= 1,
-      types: documentTypes,
-      ...context
-    });
-    const content = document.createElement("div");
-    content.innerHTML = html;
-
-    // Render the confirmation dialog window
-    return foundry.applications.api.DialogV2.prompt(foundry.utils.mergeObject({
-      content,
-      window: { title }, // FIXME: double localization
-      render: (event, dialog) => {
-        if (!hasTypes) return;
-        dialog.element.querySelectorAll('[name="type"]').forEach(input => {
-          input.addEventListener("change", e => {
-            const nameInput = dialog.element.querySelector('[name="name"]');
-            nameInput.placeholder = cls.defaultName({ type: e.target.value, parent, pack });
-          });
-        });
-      },
-      position: { width: 400, height: 600 },
-      ok: {
-        label: title, // FIXME: double localization
-        callback: (event, button) => {
-          const fd = new foundry.applications.ux.FormDataExtended(button.form);
-          foundry.utils.mergeObject(data, fd.object);
-          if (!data.folder) delete data.folder;
-          if (!data.name?.trim()) data.name = cls.defaultName({ type: data.type, parent, pack });
-          return cls.create(data, { renderSheet: true, ...createOptions });
-        }
-      }
-    }, dialogOptions));
+  static async createDialog(data = {}, createOptions = {}, { folders, types, template, context, ...dialogOptions } = {}, renderOptions = {}) {
+    return ItemCreateDialog.wait(this, data, createOptions, { folders, types, template, context, ...dialogOptions }, renderOptions);
   }
 
   /**
