@@ -1,0 +1,141 @@
+<div class='tab scrollable {{tabs.members.cssClass}}' data-tab='members' data-group='{{tabs.members.group}}'>
+
+  {{#if groupCoins.length}}
+  <div class="row-section flexAlignCenter gap10px">
+    <b>{{localize 'GROUP.sharedPurse'}}</b>
+    <div class="flexrow actor-purse-content flexAlignCenter wrap">
+      {{#each groupCoins as |coin|}}
+      <div class='number-input item position-relative' data-item-id='{{coin._id}}'
+        data-tooltip="{{localize coin.name}}">
+        <i style="background-image: url('{{coin.img}}')"></i>
+        <input class='group-money-change' type='number' value='{{coin.quantity}}' />
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+
+  <div class="col ten flexAlignEnd flexrow table-title lineheight">
+    <button type="button" class="icon fas fa-dice noBorder dsadesignbutton" data-action="rollAllBlind"
+      data-tooltip="CHAT.MODES.blind"></button>
+    <button type="button" class="icon fas fa-bed noBorder dsadesignbutton" data-action="rollRegeneration"
+      data-tooltip="regenerate"></button>
+    <button type="button" class="icon fas fa-shuffle noBorder dsadesignbutton" data-action="randomMember"
+      data-tooltip="MASTER.randomPlayer"></button>
+    <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
+    <button type="button" class="icon fas fa-trophy noBorder dsadesignbutton" data-action="awardAP"
+      data-tooltip="MASTER.awardXP"></button>
+    <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
+    <button type="button" class="icon fas fa-piggy-bank noBorder dsadesignbutton" data-action="groupGetPaid"
+      data-tooltip="PAYMENT.wage"></button>
+    <button type="button" class="icon fas fa-coins noBorder dsadesignbutton" data-action="groupPayment"
+      data-tooltip="MASTER.payTT"></button>
+  </div>
+
+  {{#each members as |hero|}}
+  <div class='row-section skills hero tableOdd wrap' data-member-key='{{hero.key}}' data-uuid='{{hero.uuid}}'
+    data-id='{{hero.id}}'>
+    <div class='row-section col'>
+      <div class='col ten'>
+        <img src='{{hero.img}}' height='50px' />
+      </div>
+      <div class='col fourty'>
+        <a data-action='heroLink'>{{hero.name}}</a>
+        {{#if hero.ownerName}}
+          <span class="badgePip" style="background-color: {{hero.ownerColor}}; color: #fff; font-size: 0.7em;">{{hero.ownerName}}</span>
+        {{/if}}
+        <div class='flexrow'>
+          {{#each hero.schips as |item i|}}
+          <a data-action='heroSchip' class='tiny schip {{item.cssClass}}' data-val='{{item.value}}'></a>
+          {{/each}}
+        </div>
+      </div>
+      <div class='col fourty barRight ellipsis'>
+        <div class='healthbar bar-wounds barLeft solo' data-tooltip="wounds">
+          <div class='bar decolorizeFilter LeP'
+            style='--a: {{hero.system.status.wounds.value}}; --b: {{hero.system.status.wounds.max}}'>
+          </div>
+          <div class='barLabel'>
+            <span>{{hero.system.status.wounds.value}}</span> / <span>{{hero.system.status.wounds.max}}</span>
+          </div>
+        </div>
+        {{#if hero.system.isMage}}
+        <div class='healthbar bar-astralenergy barRight solo' data-tooltip="astralenergy">
+          <div class='bar decolorizeFilter AsP'
+            style='--a: {{hero.system.status.astralenergy.value}}; --b: {{hero.system.status.astralenergy.max}}'>
+          </div>
+          <div class='barLabel'>
+            <span>{{hero.system.status.astralenergy.value}}</span> /
+            <span>{{hero.system.status.astralenergy.max}}</span>
+          </div>
+        </div>
+        {{/if}}
+        {{#if hero.system.isPriest}}
+        <div class='healthbar bar-karmaenergy barRight solo' data-tooltip="karmaenergy">
+          <div class='bar decolorizeFilter KaP'
+            style='--a: {{hero.system.status.karmaenergy.value}}; --b: {{hero.system.status.karmaenergy.max}}'>
+          </div>
+          <div class='barLabel'>
+            <span>{{hero.system.status.karmaenergy.value}}</span> / <span>{{hero.system.status.karmaenergy.max}}</span>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      <div class='col ten flexrow flexAlignEnd'>
+        {{#if @root.isGM}}
+        <button type="button" class="icon fas fa-ellipsis-vertical noBorder dsadesignbutton" data-action='heroContextMenu'
+          data-tooltip='JOURNAL.ActionShow'>
+        </button>
+        {{/if}}
+      </div>
+    </div>
+    <div class='row-section col'>
+      <div class='col flexrow wrap gap2px'>
+        {{#if (eq hero.type 'creature')}}
+        {{#if hero.system.creatureClass}}
+        <span class='badgePip'>{{hero.system.creatureClass}}</span>
+        {{/if}}
+        {{else}}
+        {{#if hero.system.details.species}}
+        <span class='badgePip'>{{hero.system.details.species}}</span>
+        {{/if}}
+        {{#if hero.system.details.culture}}
+        <span class='badgePip'>{{hero.system.details.culture}}</span>
+        {{/if}}
+        {{#if hero.system.details.career}}
+        <span class='badgePip'>{{hero.system.details.career}}</span>
+        {{/if}}
+        {{/if}}
+      </div>
+      <div class="flexrow col">
+        <div class='col flex0 flexrow gap10px flexAlignEnd'>
+          {{#each hero.coins as |coin|}}
+          <div data-tooltip="{{coin.name}}" class="flex0 flexrow gap5px flexAlignEnd"
+            style="min-width: 30px;flex-wrap: nowrap;"><img src="{{coin.img}}" width="14" height="14" class="flex0" />
+            {{coin.quantity}}
+          </div>
+          {{/each}}
+          <div class="flexAlignEnd">{{localize 'Experience'}}:
+            {{hero.system.details.experience.spent}}/{{hero.system.details.experience.total}}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='row-section wrap col'>
+      {{#if hero.vantages.length}}
+      <div class='col row-section wrap cards'>
+        {{#each hero.vantages as |ad|}}
+        <div class='item'>
+          <a data-action="openItem" data-uuid="{{ad.uuid}}">{{ad.name}}{{roman ad.step ad.max}}</a>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+  </div>
+  {{/each}}
+  <div class="droparea">
+    {{localize 'GROUP.dropMembersHint'}}
+  </div>
+</div>

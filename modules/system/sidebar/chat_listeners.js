@@ -4,7 +4,6 @@ import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
 import ChatCommandService from './chat_command_service.js';
-import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -139,9 +138,8 @@ export default class DSA5ChatListeners {
         icon: 'fas fa-bolt',
         onClick: () =>
           ChatCommandService.openSkillModifierDialog('HELP.quickAbility', {
-            onSubmit: (name, modifier) => {
-              const skillEntry = DSA5ChatAutoCompletion.skills.find((x) => x.name === name);
-              if (skillEntry) ChatCommandService.speakerAbilityRoll(name, skillEntry.type);
+            onSubmit: (name, type, modifier) => {
+              if (type) ChatCommandService.speakerAbilityRoll(name, type);
             },
           }),
       },
@@ -152,7 +150,7 @@ export default class DSA5ChatListeners {
         icon: 'fas fa-dice',
         onClick: () =>
           ChatCommandService.openSkillModifierDialog('HELP.request', {
-            onSubmit: (name, modifier) => ChatCommandService.requestRoll(name, modifier),
+            onSubmit: (name, type, modifier) => ChatCommandService.requestRoll(name, modifier),
           }),
       },
       { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },
@@ -162,7 +160,7 @@ export default class DSA5ChatListeners {
         onClick: () =>
           ChatCommandService.openSkillModifierDialog('HELP.groupcheck', {
             filterFn: (x) => x.type === 'skill',
-            onSubmit: (name, modifier) => ChatCommandService.groupCheck(name, modifier),
+            onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
           }),
       },
     ];

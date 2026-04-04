@@ -1,0 +1,55 @@
+<div>
+  <div class="flexrow wrap">
+    <div class="flexgrow-0">
+      <div class="avatar-container">
+        <div>
+          <img src='{{document.img}}' alt='Avatar' class='avatar-image' data-action='editImage' data-edit="img" />
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class='sheet-header'>
+        <div class='charname headerInput flexrow'>
+          <h3 class="headerName ellipsis">{{formInput fields.name value=document.name placeholder=(localize 'Name')}}</h3>
+          {{#if isGM}}
+            <button type="button" class="icon fas fa-star{{#unless isPrimaryParty}}-half-stroke{{/unless}} flexAlignEnd dsadesignbutton noBorder" data-action="setPrimaryParty" data-tooltip="GROUP.setPrimaryParty"></button>
+            <button type="button" class="icon fas fa-users-cog flexAlignEnd dsadesignbutton noBorder" data-action="shareOwnership" data-tooltip="GROUP.shareOwnership"></button>
+          {{/if}}
+          <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>
+        </div>
+        <div class="headerbadgeflex headerInput">
+          <span class="tag" data-tooltip="{{localize 'GROUP.memberCount'}}">
+            <i class="fas fa-users"></i> {{memberCount}}
+          </span>
+          {{#each travelSpeeds as |spd mode|}}
+            <span class="tag" data-tooltip="{{localize (concat 'locationTypes.' mode)}}">
+              <i class="fas {{spd.icon}}"></i> {{numberFormat spd.meilen decimals=1}} {{localize 'GROUP.meilenPerHour'}}
+            </span>
+          {{/each}}
+          {{#if isPrimaryParty}}
+            <span class="tag highlight" data-tooltip="{{localize 'GROUP.primaryParty'}}">
+              <i class="fas fa-star"></i> {{localize 'GROUP.primaryParty'}}
+            </span>
+          {{/if}}
+        </div>
+        {{#if isGM}}
+        <div class="headerbadgeflex headerInput flexAlignCenter">
+          {{#each characteristics as |ch|}}
+          <a class="group-attr-icon" data-action="requestAttributeRoll" data-attr="{{ch.key}}" data-tooltip="{{ch.name}}"><b>{{ch.abbr}}</b></a>
+          {{/each}}
+        </div>
+        <div class="headerbadgeflex headerInput flexAlignCenter">
+          <span data-tooltip="groupFatePoints"><b>{{{localize 'CHARAbbrev.groupFatePoints'}}}</b></span>
+          <span class="flexrow flexAlignCenter">
+            {{#each groupSchips as |item|}}
+            <a class="schip groupschip {{item.cssClass}}" data-action="changeGroupSchip" data-val="{{item.value}}"></a>
+            {{/each}}
+          </span>
+          <a data-action="addGroupSchipCount" data-value="-1" data-tooltip="SHEET.removeSchip"><i class="fas fa-minus"></i></a>
+          <a data-action="addGroupSchipCount" data-value="1" data-tooltip="SHEET.addSchip"><i class="fas fa-plus"></i></a>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

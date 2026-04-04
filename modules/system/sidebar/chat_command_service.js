@@ -52,7 +52,8 @@ export default class ChatCommandService {
             const form = $(button.form);
             const name = form.find('[name="skill"]').val();
             const modifier = Number(form.find('[name="modifier"]').val()) || 0;
-            if (onSubmit) onSubmit(name, modifier);
+            const type = skills.find((s) => s.name === name)?.type || 'skill';
+            if (onSubmit) onSubmit(name, type, modifier);
           },
         },
         { action: 'cancel', icon: 'fas fa-times', label: 'cancel' },

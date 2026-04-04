@@ -532,6 +532,13 @@ DSA5.merchantTypes = {
   epic: 'MERCHANT.typeEpic',
 };
 
+DSA5.locationTypes = {
+  foot: 'locationTypes.foot',
+  vehicle: 'locationTypes.vehicle',
+  river: 'locationTypes.river',
+  sea: 'locationTypes.sea',
+};
+
 DSA5.targetMovementOptions = {
   0: 'rangeMovementOptions.SLOW',
   '-2': 'rangeMovementOptions.FAST',

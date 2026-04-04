@@ -1450,6 +1450,24 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       });
     }
 
+    if (DSA5.equipmentCategories.has(item.type)) {
+      const actor = this.actor;
+      options.push({
+        label: 'GROUP.passToGroup',
+        icon: "<i class='fas fa-arrow-right-to-bracket fa-fw'></i>",
+        visible: () => {
+          const partyUuid = game.settings.get('dsa5', 'primaryParty');
+          if (!partyUuid) return false;
+          const party = fromUuidSync(partyUuid);
+          if (!party?.system?.actors) return false;
+          return party.system.actors.has(actor);
+        },
+        onClick: () => {
+          import('./group-sheet.js').then((m) => m.default.passItemToGroup(actor, item));
+        },
+      });
+    }
+
     return options;
   }
 

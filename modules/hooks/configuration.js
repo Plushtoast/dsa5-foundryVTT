@@ -860,6 +860,13 @@ export function setupConfiguration() {
       config: false,
       default: {},
       type: Object,
+    },
+    primaryParty: {
+      name: 'primaryParty',
+      scope: 'world',
+      config: false,
+      default: '',
+      type: String,
     }
   };
   for (const [key, value] of Object.entries(settings)) {

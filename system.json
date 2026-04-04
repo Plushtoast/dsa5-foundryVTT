@@ -198,6 +198,12 @@
                     "details.notes.value",
                     "details.biography.value"
                 ]
+            },
+            "group": {
+                "htmlFields": [
+                    "details.biography",
+                    "details.notes"
+                ]
             }
         },
         "Item": {

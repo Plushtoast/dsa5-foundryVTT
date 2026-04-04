@@ -187,22 +187,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.getExp(this.selectedIDs());
   }
 
-  static _getExp(ev, target) {
-    ev.stopPropagation();
-    this.getExp([this.getID(target)]);
-  }
-
   static _getPaidAll(ev, target) {
     this.doPayment(this.selectedIDs(), false);
   }
 
   static _payAll(ev, target) {
     this.doPayment(this.selectedIDs(), true);
-  }
-
-  static _getPaid(ev, target) {
-    ev.stopPropagation();
-    this.doPayment([this.getID(target)], false);
   }
 
   static async _actorItem(ev, target) {
@@ -212,18 +202,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     document.sheet.render(true);
   }
 
-  static _pay(ev, target) {
-    ev.stopPropagation();
-    this.doPayment([this.getID(target)], true);
-  }
-
   static _rollAll(ev, target) {
     this.rollAbility(this.selectedIDs());
-  }
-
-  static _rollChar(ev, target) {
-    ev.stopPropagation();
-    this.rollAbility([this.getID(target)]);
   }
 
   static _expandHero(ev, target) {
@@ -234,6 +214,104 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   static _heroLink(ev, target) {
     ev.stopPropagation();
     game.actors.get(this.getID(target)).sheet.render(true);
+  }
+
+  static _heroActions(ev, target) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const actorId = this.getID(target);
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+
+    const menuItems = [
+      {
+        label: _loc('CHAT.MODES.blind'),
+        icon: '<i class="fas fa-dice"></i>',
+        onClick: () => this.rollAbility([actorId]),
+      },
+      {
+        label: _loc('PAYMENT.wage'),
+        icon: '<i class="fas fa-piggy-bank"></i>',
+        onClick: () => this.doPayment([actorId], false),
+      },
+      {
+        label: _loc('MASTER.payTT'),
+        icon: '<i class="fas fa-coins"></i>',
+        onClick: () => this.doPayment([actorId], true),
+      },
+      {
+        label: _loc('MASTER.awardXP'),
+        icon: '<i class="fas fa-trophy"></i>',
+        onClick: () => this.getExp([actorId]),
+      },
+      {
+        label: _loc('SHEET.DeleteItem'),
+        icon: '<i class="fas fa-times"></i>',
+        onClick: () => this._deleteHeroById(actorId),
+      },
+    ];
+
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
+    menu.render(target, { animate: true });
+  }
+
+  static _headerActions(ev, target) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const menuItems = [
+      {
+        label: _loc('CHAT.MODES.blind'),
+        icon: '<i class="fas fa-dice"></i>',
+        onClick: () => this.rollAbility(this.selectedIDs()),
+      },
+      {
+        label: _loc('PAYMENT.wage'),
+        icon: '<i class="fas fa-piggy-bank"></i>',
+        onClick: () => this.doPayment(this.selectedIDs(), false),
+      },
+      {
+        label: _loc('MASTER.payTT'),
+        icon: '<i class="fas fa-coins"></i>',
+        onClick: () => this.doPayment(this.selectedIDs(), true),
+      },
+      {
+        label: _loc('MASTER.awardXP'),
+        icon: '<i class="fas fa-trophy"></i>',
+        onClick: () => this.getExp(this.selectedIDs()),
+      },
+      {
+        label: _loc('HELP.groupcheck'),
+        icon: '<i class="fas fa-users-cog"></i>',
+        onClick: () => this.doGroupCheck(),
+      },
+    ];
+
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
+    menu.render(target, { animate: true });
+  }
+
+  static async _openPartySheet() {
+    const partyId = game.settings.get('dsa5', 'primaryParty');
+    let party = partyId ? fromUuidSync(partyId) : null;
+
+    if (!party) {
+      const trackedActors = game.settings.get('dsa5', 'trackedActors');
+      const actorIds = trackedActors.actors || [];
+      const actors = game.actors.filter((a) => actorIds.includes(a.id) && a.type !== 'group');
+      if (!actors.length) {
+        ui.notifications.warn('GROUP.noMembers', { localize: true });
+        return;
+      }
+
+      party = await Actor.create({ name: _loc('GROUP.members'), type: 'group' });
+      for (const actor of actors) {
+        await party.system.addMember(actor);
+      }
+      await game.settings.set('dsa5', 'primaryParty', party.uuid);
+    }
+
+    party.sheet.render(true);
   }
 
   async _onRender(context, options) {
@@ -257,25 +335,6 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     });
     html.find('.selectAll').on('change', (ev) => this._selectAll(ev, html));
     html.find('.heroSelector').on('click', (ev) => ev.stopPropagation());
-    const deletehand = (ev) => this._deleteHero(ev);
-    html.find('.hero').on('mouseenter', (ev) => {
-      if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-        const div = document.createElement('div');
-        div.classList.add('hovermenu');
-        const del = document.createElement('i');
-        del.classList.add('fas', 'fa-times');
-        del.dataset.tooltip = 'SHEET.DeleteItem';
-        del.addEventListener('click', deletehand, false);
-        div.appendChild(del);
-        ev.currentTarget.appendChild(div);
-      }
-    });
-    html.find('.hero').on('mouseleave', (ev) => {
-      const e = ev.toElement || ev.relatedTarget;
-      if (!e || e.parentNode == this || e == this) return;
-
-      ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
-    });
     html.find('.editFolder').on('change', async (ev) => this._editFolder(ev));
     html.find('.changeSetting').on('change', async (ev) => {
       await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked);
@@ -325,22 +384,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 
-  async _selectAll(ev, html) {
-    ev.stopPropagation();
-    let selector = '.heroSelector';
-    if (ev.currentTarget.dataset.folder) selector = `[data-id="${ev.currentTarget.dataset.folder}"] .heroSelector`;
-
-    const allHeros = html.find(selector);
-    allHeros.prop('checked', $(ev.currentTarget).is(':checked'));
-    allHeros.on('change');
-  }
-
-  async _deleteHero(ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-    const toRemove = $(ev.currentTarget).closest('.hero').attr('data-id');
+  async _deleteHeroById(actorId) {
     const actors = game.settings.get('dsa5', 'trackedActors').actors || [];
-    const index = actors.indexOf(toRemove);
+    const index = actors.indexOf(actorId);
     if (index > -1) {
       actors.splice(index, 1);
       await this.setTrackedHeros(actors);
@@ -520,15 +566,15 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _randomPlayer(ev, target) {
-    const heros = $(this.element).find('.hero');
     const result = await this.rollRandomPlayer(ev.button == 2);
 
-    $(target).find('i').addClass('fa-spin');
-    heros.removeClass('victim');
+    const icon = target.querySelector('i') || target;
+    icon.classList.add('fa-spin');
+    this.element.querySelectorAll('.hero').forEach((el) => el.classList.remove('victim'));
 
     setTimeout(() => {
-      $(this.element).find(`.hero[data-id="${result}"]`).addClass('victim');
-      $(target).find('i').removeClass('fa-spin');
+      this.element.querySelector(`.hero[data-id="${result}"]`)?.classList.add('victim');
+      icon.classList.remove('fa-spin');
     }, 500);
   }
 
@@ -824,24 +870,19 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       addGlobalMod: this._addGlobalMod,
       removeGlobalMod: this._removeGlobalMod,
       editGlobalMod: this._editGlobalMod,
-      rollChar: this._rollChar,
-      rollAll: this._rollAll,
-      pay: this._pay,
+      heroActions: this._heroActions,
       actorItem: this._actorItem,
-      getPaid: this._getPaid,
       resetSightThresholds: this._resetSightThresholds,
-      payAll: this._payAll,
-      getPaidAll: this._getPaidAll,
-      exp: this._getExp,
-      expAll: this._expAll,
       requestRoll: this._requestRoll,
       addGroupSchip: this._changeGroupSchipCount,
       groupschip: this._changeGroupSchip,
       addFolder: this._createFolder,
+      headerActions: this._headerActions,
       heroschip: this._heroschip,
       groupcheck: this._groupCheck,
       expandHero: this._expandHero,
       randomPlayer: { handler: this._randomPlayer, buttons: [0, 2] },
+      openPartySheet: this._openPartySheet,
     }
   };
 

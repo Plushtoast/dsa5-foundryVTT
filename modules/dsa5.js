@@ -68,12 +68,14 @@ import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
 import { ItemFactory } from './item/item-factory.js';
 import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
+import GroupAPI from './actor/group-api.js';
+import TokenScatter from './animation/token-scatter.js';
 import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
-//import { DAGTalentTree } from './actor/dag/dag_talent_tree.js';
+import { ITEM_CONSTANTS } from './config/item-constants.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -102,6 +104,7 @@ Hooks.once('init', () => {
       APTracker,
       MoneyTracker,
       DidYouKnow,
+      GroupAPI,
       DSARegionTemplate,
       Riding,
       RuleChaos,
@@ -112,6 +115,9 @@ Hooks.once('init', () => {
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,
       //DAGTalentTree,
+    },
+    animation: {      
+      TokenScatter,
     },
     entities: {
       Actordsa5,
@@ -168,6 +174,7 @@ Hooks.once('init', () => {
       }
     },
     config: DSA5,
+    ITEM_CONSTANTS,
     TestSuite,
     memory: new RollMemory()
   };

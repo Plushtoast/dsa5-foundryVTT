@@ -27,6 +27,7 @@ import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.j
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
 import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
+import GroupActorSheet from '../actor/group-sheet.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
@@ -115,6 +116,7 @@ Hooks.once('init', () => {
     { sheetClass: MerchantSheetDSA5, types: ['npc'] },
     { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
     { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
+    { sheetClass: GroupActorSheet, types: ['group'], makeDefault: true },
   ];
 
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {

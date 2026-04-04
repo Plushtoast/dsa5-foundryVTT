@@ -42,6 +42,11 @@ export default class Actordsa5 extends Actor {
   static async create(data, options) {
     if (Array.isArray(data) || data.items) return await super.create(data, options);
 
+    if (data.type === 'group') {
+      data.items = await DSA5_Utility.allMoneyItems();
+      return await super.create(data, options);
+    }
+
     data.items = [].concat(...(await Promise.all([DSA5_Utility.allSkills(), DSA5_Utility.allCombatSkills(), DSA5_Utility.allMoneyItems()])));
 
     if (data.type != 'character') mergeObject(data, { system: { status: { fatePoints: { current: 0, value: 0 } } } });
@@ -62,6 +67,7 @@ export default class Actordsa5 extends Actor {
 
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
+    if (!actor.system.status?.wounds) return;
 
     const data = actor.system;
     const isMerchant = actor.isMerchant();
@@ -447,7 +453,7 @@ export default class Actordsa5 extends Actor {
 
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
-    const [documents = [], type, , updates = []] = args;
+    const [, type, documents = [], updates = []] = args;
     const force =
       (type == 'effects' && documents.some((effect, index) => DSAActiveEffect.auraNeedsSync(effect, updates[index]))) ||
       (type == 'items' &&

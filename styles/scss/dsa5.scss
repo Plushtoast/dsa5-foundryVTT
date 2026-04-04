@@ -420,6 +420,22 @@ table.infoTable {
     flex-wrap: wrap;
     --input-height: 1.2rem;
 
+    .group-attr-icon {
+      font-size: 0.7rem;
+      padding: 1px 3px;
+      border-radius: 3px;
+      background-color: var(--oddColor);
+      border: 1px solid var(--dsadesign1);
+      color: var(--dsadesign1);
+      cursor: pointer;
+      line-height: 1;
+
+      &:hover {
+        background-color: var(--dsadesign1);
+        color: white;
+      }
+    }
+
     button,
     .headerbadge,
     input {
@@ -2117,6 +2133,13 @@ input[type='search'] {
   position: relative;
   background: #4e46468a;
   margin-bottom: 4px;
+
+  &.solo {
+    border-radius: 10px;
+    border-width: 2px;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .regenContainer {
@@ -5454,6 +5477,7 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+@include meta.load-css('theme.scss');
 @include meta.load-css('personae.scss');
 @include meta.load-css('patchviewer.scss');
 @include meta.load-css('inittracker.scss');
