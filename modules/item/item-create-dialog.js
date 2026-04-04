@@ -1,7 +1,7 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 
-const { deepClone, getProperty, mergeObject, setProperty } = foundry.utils;
+const { deepClone, getProperty, mergeObject } = foundry.utils;
 
 export class ItemCreateDialog extends DefaultAppv2 {
   #resolve;
@@ -29,42 +29,9 @@ export class ItemCreateDialog extends DefaultAppv2 {
   };
 
   static async wait(documentClass, data = {}, createOptions = {}, dialogOptions = {}, renderOptions = {}) {
-    const { createOptions: normalizedCreateOptions, dialogOptions: normalizedDialogOptions } = this.#normalizeOptions(createOptions, dialogOptions);
-
     return await new Promise((resolve) => {
-      new this(documentClass, data, normalizedCreateOptions, normalizedDialogOptions, resolve, renderOptions).render(true);
+      new this(documentClass, data, createOptions, dialogOptions, resolve, renderOptions).render(true);
     });
-  }
-
-  static #normalizeOptions(createOptions = {}, dialogOptions = {}) {
-    const normalizedCreateOptions = deepClone(createOptions);
-    const normalizedDialogOptions = deepClone(dialogOptions);
-    const applicationOptions = {
-      top: 'position', left: 'position', width: 'position', height: 'position', scale: 'position', zIndex: 'position',
-      title: 'window', id: '', classes: '', jQuery: '',
-    };
-
-    for (const [key, value] of Object.entries(normalizedCreateOptions)) {
-      if (!(key in applicationOptions)) continue;
-
-      foundry.utils.logCompatibilityWarning('The ClientDocument.createDialog signature has changed. '
-        + 'It now accepts database operation options in its second parameter, '
-        + 'and options for DialogV2.prompt in its third parameter.', { since: 13, until: 15, once: true });
-
-      const dialogPath = applicationOptions[key];
-      if (dialogPath) setProperty(normalizedDialogOptions, `${dialogPath}.${key}`, value);
-      else normalizedDialogOptions[key] = value;
-      delete normalizedCreateOptions[key];
-    }
-
-    if (typeof normalizedDialogOptions.classes === 'string') {
-      normalizedDialogOptions.classes = normalizedDialogOptions.classes.split(/\s+/).filter(Boolean);
-    }
-
-    return {
-      createOptions: normalizedCreateOptions,
-      dialogOptions: normalizedDialogOptions,
-    };
   }
 
   constructor(documentClass, data, createOptions, dialogOptions, resolve, renderOptions = {}) {
