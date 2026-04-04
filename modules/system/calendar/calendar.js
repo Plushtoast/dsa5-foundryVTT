@@ -13,10 +13,12 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
   ];
 
   static prepare() {
-    Hooks.call('registerCalendars', this.availableCalendars);
+    Hooks.call('registerCalendars', this.availableCalendars, this);
   }
 
   static monthImage(index) {
+    const calendar = this.selectedCalendar();
+    if (calendar?.config?.monthIconPath) return calendar.config.monthIconPath(index);
     return `systems/dsa5/icons/months/${this.months[index]}.webp`;
   }
 
@@ -24,10 +26,22 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const selectedCalendar = this.selectedCalendar();
     if (selectedCalendar) {
       CONFIG.time.worldCalendarConfig = selectedCalendar.config;
-      CONFIG.time.worldCalendarClass = this;
+      CONFIG.time.worldCalendarClass = selectedCalendar.calendarClass || this;
+
+      if (selectedCalendar.formatters) {
+        Object.assign(CONFIG.time.formatters ??= {}, selectedCalendar.formatters);
+      }
     }
     CONFIG.time.roundTime = 5;
     CONFIG.time.turnTime = 0;
+  }
+
+  static displayYear(components) {
+    return { year: components.year, suffix: CONFIG.time.worldCalendarConfig.years.yearSuffix };
+  }
+
+  static internalYear(displayYear, dayOfYear) {
+    return displayYear;
   }
 
   translate(key, basicKey = false, returnNothingIfMissing = false) {
@@ -140,16 +154,6 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       s: components.second.toString().padStart(2, '0'),
       holiday: await game.dsa5.apps.CalendarPicker.constructor.findHolidays(components) || null,
     };
-  }
-
-  // WORKAROUND for Foundry V14 core bug: timeToComponents returns dayOfMonth,
-  // dayOfWeek, leapYear which are not valid Intl.DurationFormat fields.
-  // formatDuration appends 's' to all keys, producing e.g. dayOfWeeks → RangeError.
-  // Remove once core filters non-duration keys in CalendarData.formatDuration.
-  static formatDuration(calendar, components, options = {}) {
-    const VALID_DURATION_KEYS = new Set(["year", "month", "week", "day", "hour", "minute", "second"]);
-    const filtered = Object.fromEntries(Object.entries(components).filter(([key]) => VALID_DURATION_KEYS.has(key)));
-    return super.formatDuration(calendar, filtered, options);
   }
 
   static async formatSeason(calendar, components, options) {

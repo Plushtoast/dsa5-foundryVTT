@@ -8,4 +8,14 @@
         opacity: 0.6;
         font-style: italic;
     }
+
+    .dsa-grid {
+        --grid-min: 40px;
+        --grid-max: 80px;
+        --grid-repeat: auto-fit;
+        display: grid;
+        grid-template-columns: repeat(var(--grid-repeat), minmax(var(--grid-min), var(--grid-max)));
+        gap: 0.75rem;
+        align-items: stretch;
+    }
 }

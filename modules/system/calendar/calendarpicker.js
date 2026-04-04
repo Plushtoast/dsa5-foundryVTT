@@ -444,6 +444,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     if (!context.components) context.components = this.actualTimeComponents();
 
+    const calendarClass = CONFIG.time.worldCalendarClass || DSAWorldCalendar;
+    const yearInfo = calendarClass.displayYear(context.components);
+    context.displayYear = yearInfo.year;
+    context.yearSuffix = calendar.translate(yearInfo.suffix);
     context.isGM = game.user.isGM;
     context.hasDateChanges = this.#temporaryTime !== null && this.#temporaryTime !== game.time.worldTime;
     context.worldCalendarConfig = CONFIG.time.worldCalendarConfig;
@@ -471,6 +475,9 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const components = new foundry.applications.ux.FormDataExtended(form).object;
     const currentComponents = this.actualTimeComponents();
+    const calendarClass = CONFIG.time.worldCalendarClass || DSAWorldCalendar;
+    components.year = calendarClass.internalYear(components.year, currentComponents.day);
+
     components.month = currentComponents.month;
     components.day = Math.min(currentComponents.day, game.time.calendar.months.values[components.month].days - 1);
     for (let m = 0; m < components.month; m++) {

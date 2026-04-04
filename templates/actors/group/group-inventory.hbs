@@ -46,9 +46,9 @@
           </div>          
         </legend>
         {{#if loc.coins.length}}
-        <div class="flexrow flexAlignCenter gap5px">
+        <div class="flexrow lineheight flexAlignCenter gap5px">
           {{#each loc.coins as |coin|}}
-            <span data-tooltip="{{coin.name}}"><img src="{{coin.img}}" width="14" height="14" /> {{coin.quantity}}</span>
+            <div data-tooltip="{{coin.name}}" class="flex0" style="min-width:50px"><img src="{{coin.img}}" style="display:inline-block" width="14" height="14" /> {{coin.quantity}}</div>
           {{/each}}
         </div>
         {{/if}}
