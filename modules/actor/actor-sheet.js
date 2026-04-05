@@ -1791,7 +1791,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         case 'liturgy':
         case 'ceremony':
         case 'ritual':
-          apCost = DSA5_Utility._calculateAdvCost(0, item.system.StF.value, 0);
+          apCost = 0;
+          for (let i = 0; i <= (Number(item.system.talentValue.value) || 0); i++) {
+            apCost += DSA5_Utility._calculateAdvCost(i, item.system.StF.value, 0);
+          }
           break;
         case 'blessing':
         case 'magictrick':

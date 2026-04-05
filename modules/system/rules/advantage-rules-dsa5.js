@@ -65,7 +65,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
           xpCost,
         );
       }
-    } else if (await actor.checkEnoughXP((xpCost = Number(item.system.APValue.value.split(';').map((x) => x.trim())[0])))) {
+    } else if (await actor.checkEnoughXP((xpCost = AdvantageRulesDSA5.calcAPCostSum(item)))) {
       await AdvantageRulesDSA5.vantageAdded(actor, item);
       xpCost = this.addSingularVantages(actor, item, xpCost);
       await actor._updateAPs(xpCost, {}, { render: false });

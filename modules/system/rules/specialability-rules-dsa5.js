@@ -68,7 +68,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         );
       }
     } else {
-      const xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, item.system.APValue.value.split(';').map((x) => x.trim())[0], false);
+      const xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, SpecialabilityRulesDSA5.calcAPCostSum(item), false);
       if (await actor.checkEnoughXP(xpCost)) {
         await SpecialabilityRulesDSA5.abilityAdded(actor, item);
         await actor._updateAPs(xpCost, {}, { render: false });
