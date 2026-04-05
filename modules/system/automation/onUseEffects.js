@@ -1,6 +1,7 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -11,7 +12,53 @@ export default class OnUseEffect {
     this.item = item;
   }
 
-  async callMacro(packName, name, args = {}) {
+  static buildExecutionOptions(event, options = {}) {
+    const executionOptions = { ...options };
+
+    if (event?.button === 2 && !executionOptions.messageMode) executionOptions.messageMode = DICE_CONSTANTS.CHAT_MODES.GM;
+    if (!executionOptions.triggeredBy) executionOptions.triggeredBy = event ? 'click' : 'system';
+
+    return executionOptions;
+  }
+
+  static normalizeExecutionOptions(actionOrOptions = undefined) {
+    if (typeof actionOrOptions === 'string' || actionOrOptions === undefined) {
+      return {
+        actionId: actionOrOptions,
+      };
+    }
+
+    return { ...actionOrOptions };
+  }
+
+  static buildMacroArgs(options = {}) {
+    const args = {
+      execution: {
+        triggeredBy: options.triggeredBy || 'system',
+        temporaryMessageMode: Boolean(options.messageMode),
+      },
+    };
+
+    if (options.actionId) args.execution.actionId = options.actionId;
+    if (options.messageMode) args.messageMode = options.messageMode;
+
+    return args;
+  }
+
+  static chatDataSetup(content, args = {}) {
+    return DSA5_Utility.chatDataSetup(content, args?.messageMode);
+  }
+
+  chatDataSetup(content, args = undefined) {
+    return OnUseEffect.chatDataSetup(content, args || this.currentOnUseArgs || {});
+  }
+
+  async createChatMessage(content, args = undefined) {
+    return await ChatMessage.create(this.chatDataSetup(content, args));
+  }
+
+  async callMacro(packName, name, args = undefined) {
+    args = foundry.utils.deepClone(args || this.currentOnUseArgs || {});
     const pack = game.packs.get(packName);
     let documents = await pack?.getDocuments({ name });
     if (!documents || !documents.length) {
@@ -34,7 +81,7 @@ export default class OnUseEffect {
               ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
             `,
           );
-          result.ret = await fn2.call(this, args, this.item.actor);
+          result.ret = await fn2.call(this, args, this.item.actor, this.item);
         } catch (err) {
           ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
@@ -47,40 +94,63 @@ export default class OnUseEffect {
     return result;
   }
 
-  async executeOnUseEffect(actionId = undefined) {
+  async executeOnUseEffect(actionOrOptions = undefined) {
     if (!this.item.actor) return;
 
     if (!game.user.can('MACRO_SCRIPT')) {
       return ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     }
 
-    const action = await this.resolveOnUseAction(actionId);
+    const options = OnUseEffect.normalizeExecutionOptions(actionOrOptions);
+    const action = await this.resolveOnUseAction(options);
     if (!action) return;
 
+    options.actionId = action.id;
+    const args = OnUseEffect.buildMacroArgs(options);
     const macro = action.macro;
+    const previousArgs = this.currentOnUseArgs;
+    this.currentOnUseArgs = args;
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fn = new AsyncFunction('item', 'actor', macro);
-      await fn.call(this, this.item, this.item.actor);
+      const fn = new AsyncFunction('args', 'item', 'actor', macro);
+      await fn.call(this, args, this.item, this.item.actor);
     } catch (err) {
-      ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
-      console.error(err);
-      console.warn(err.stack);
+      try {
+        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+        const fn2 = new AsyncFunction(
+          'args',
+          'item',
+          'actor',
+          ` const that = this;
+              ${macro.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
+            `,
+        );
+        await fn2.call(this, args, this.item, this.item.actor);
+      } catch (fallbackErr) {
+        ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
+        console.error(fallbackErr);
+        console.warn(fallbackErr.stack);
+      }
+    } finally {
+      this.currentOnUseArgs = previousArgs;
     }
   }
 
-  async resolveOnUseAction(actionId = undefined) {
+  async resolveOnUseAction(options = {}) {
     const actions = OnUseEffect.getExecutableActions(this.item);
     if (!actions.length) return null;
-    if (actionId) return actions.find((action) => action.id === actionId) || null;
+    if (options.actionId) return actions.find((action) => action.id === options.actionId) || null;
     if (actions.length === 1) return actions[0];
 
-    const selectedActionId = await this.selectOnUseAction(actions);
-    if (!selectedActionId) return null;
-    return actions.find((action) => action.id === selectedActionId) || null;
+    const selection = await this.selectOnUseAction(actions, options);
+    if (!selection) return null;
+
+    if (selection.messageMode && !options.messageMode) options.messageMode = selection.messageMode;
+    options.actionId = selection.actionId;
+    return actions.find((action) => action.id === selection.actionId) || null;
   }
 
-  async selectOnUseAction(actions) {
+  async selectOnUseAction(actions, options = {}) {
     const content = await renderTemplate('systems/dsa5/templates/dialog/on-use-action-picker.hbs', {
       actions,
       item: this.item,
@@ -104,8 +174,21 @@ export default class OnUseEffect {
         for (const button of dialog.element.querySelectorAll('[data-action-id]')) {
           button.addEventListener('click', async (event) => {
             event.preventDefault();
-            const selectedActionId = button.dataset.actionId;
-            await dialog.options.submit?.(selectedActionId, dialog);
+            const selection = {
+              actionId: button.dataset.actionId,
+              messageMode: options.messageMode,
+            };
+            await dialog.options.submit?.(selection, dialog);
+            await dialog.close({ submitted: true });
+          });
+
+          button.addEventListener('contextmenu', async (event) => {
+            event.preventDefault();
+            const selection = {
+              actionId: button.dataset.actionId,
+              messageMode: DICE_CONSTANTS.CHAT_MODES.GM,
+            };
+            await dialog.options.submit?.(selection, dialog);
             await dialog.close({ submitted: true });
           });
         }

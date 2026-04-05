@@ -1526,7 +1526,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _onMacroUseItem(ev, target) {
     const item = this.actor.items.get(this._getItemId(target));
     const onUse = new OnUseEffect(item);
-    await onUse.executeOnUseEffect();
+    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
   }
 
   static async _payAeSpecialAbilityCost(ev, target) {

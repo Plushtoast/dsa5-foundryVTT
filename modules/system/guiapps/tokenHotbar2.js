@@ -401,7 +401,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   async handleOnUse(ev, actor, id, tokenId) {
     const item = actor.items.get(id);
     const onUse = new OnUseEffect(item);
-    await onUse.executeOnUseEffect();
+    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
   }
 
   async handleEnchantment(ev, actor, id, tokenId) {

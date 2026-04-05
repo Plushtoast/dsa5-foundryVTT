@@ -53,10 +53,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       addOnUseAction: this.addOnUseAction,
       editOnUseAction: this.editOnUseAction,
       deleteOnUseAction: this.deleteOnUseAction,
-      headerOnUseEffect: function () {
-        const onUse = new OnUseEffect(this.item);
-        onUse.executeOnUseEffect();
-      },
       rolleffect: function () {
         this.setupEffect();
       },
@@ -65,6 +61,13 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     ownerActions: {
       _advanceStep: this.advanceWrapper,
       _refundStep: this.advanceWrapper,
+      headerOnUseEffect: {
+        handler: async function (ev) {
+          const onUse = new OnUseEffect(this.item);
+          await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+        },
+        buttons: [0, 2],
+      },
       statusAdd: function () {
         DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
       },

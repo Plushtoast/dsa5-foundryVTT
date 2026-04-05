@@ -4,7 +4,7 @@ import DSA5StatusEffects from "../status/status_effects.js";
 import { SituationalModifiersWidget } from "../system/helpers/situational-modifiers-widget.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import { RegenerationModifiers } from "./concerns/regeneration-modifiers.js";
-const { mergeObject, getProperty } = foundry.utils;
+const { mergeObject } = foundry.utils;
 export class ActorDialogBuilder extends RollDialogBuilder {
     static createRegenerationDialog(statusId, options, tokenId, actor) {
         const title = _loc('regenerationTest');
@@ -43,7 +43,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 testData.regenerationFactor = html.find('[name="badEnvironment"]').is(':checked') ? 0.5 : 1;
                 const attrs = ['LeP', 'KaP', 'AsP'];
                 const update = {};
-                for (let k of attrs) {
+                for (const k of attrs) {
                     testData[`${k}Modifier`] = Number(html.find(`[name="${k}Modifier"]`).val() || 0);
                     testData[`regeneration${k}`] = Number(actor.system.status.regeneration[`${k}max`]);
                     const regenerate = html.find(`[name="regenerate${k}"]`).is(':checked') ? 1 : 0;
