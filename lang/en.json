@@ -2549,7 +2549,9 @@
         "keepToken": "Keep token",
         "calculateLeP": "Proportional LP",
         "userRequest": "{name} wants to shapeshift {source} into {target}. Please confirm.",
-        "requestToGm": "Request to confirm shapeshift sent to GM."
+        "requestToGm": "Request to confirm shapeshift sent to GM.",
+        "noSourceActor": "No source actor was provided for shapeshifting.",
+        "noTargetActor": "No target actor was provided for shapeshifting."
     },
     "DSAError": {
         "invalidSkinCombination": "The current TDE version only supports the <b>DSA5 Immersive</b> skin in light mode.<br/>Use any other combination at your own risk (and report issues on Github).<br/>Do you want to set the default skin now?",

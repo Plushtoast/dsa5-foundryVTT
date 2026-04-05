@@ -36,20 +36,20 @@
         <legend>{{localize 'attributes'}}</legend>
         {{#each characteristics_mental as |item i|}}
         <div class="flexrow">
-            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item}}"
-                name="system.characteristics.{{item}}" value="source" checked>
-            <label class="center">{{localize (concatUp 'CHAR.' item)}}</label>
-            <input type="radio" class="center" id="characteristics_target_{{item}}"
-                name="system.characteristics.{{item}}" value="target">
+            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item.label}}"
+                name="system.characteristics.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+            <label class="center">{{localize (concatUp 'CHAR.' item.label)}}</label>
+            <input type="radio" class="center" id="characteristics_target_{{item.label}}"
+                name="system.characteristics.{{item.label}}" value="target" {{#unless item.selected}}checked{{/unless}}>
         </div>
         {{/each}}
         {{#each characteristics_physical as |item i|}}
         <div class="flexrow">
-            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item}}"
-                name="system.characteristics.{{item}}" value="source">
-            <label class="center">{{localize (concatUp 'CHAR.' item)}}</label>
-            <input type="radio" class="center" id="characteristics_target_{{item}}"
-                name="system.characteristics.{{item}}" value="target" checked>
+            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item.label}}"
+                name="system.characteristics.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+            <label class="center">{{localize (concatUp 'CHAR.' item.label)}}</label>
+            <input type="radio" class="center" id="characteristics_target_{{item.label}}"
+                name="system.characteristics.{{item.label}}" value="target" {{#unless item.selected}}checked{{/unless}}>
         </div>
         {{/each}}
     </fieldset>
@@ -91,27 +91,27 @@
         <div class="row-section wrap gap10px">
             <div class="col fourty form-group">
                 <label for="{{partId}}_calculateLeP">{{localize "Shapeshift.calculateLeP"}}</label>
-                <input type="checkbox" id="{{partId}}_calculateLeP" name="calculateLeP" value="true" checked>
+                <input type="checkbox" id="{{partId}}_calculateLeP" name="calculateLeP" value="true" {{checked calculateLeP}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_takeAdvantages">{{localize "Shapeshift.takeVantages"}}</label>
-                <input type="checkbox" id="{{partId}}_takeAdvantages" name="takeAdvantages" value="true" checked>
+                <input type="checkbox" id="{{partId}}_takeAdvantages" name="takeAdvantages" value="true" {{checked takeAdvantages}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_takeSkills">{{localize "Shapeshift.takeSkills"}}</label>
-                <input type="checkbox" id="{{partId}}_takeSkills" name="takeSkills" value="true" checked>
+                <input type="checkbox" id="{{partId}}_takeSkills" name="takeSkills" value="true" {{checked takeSkills}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_takeSpecAbs">{{localize "Shapeshift.takeSpecAbs"}}</label>
-                <input type="checkbox" id="{{partId}}_takeSpecAbs" name="takeSpecAbs" value="true">
+                <input type="checkbox" id="{{partId}}_takeSpecAbs" name="takeSpecAbs" value="true" {{checked takeSpecAbs}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_takeSpells">{{localize "Shapeshift.takeSpells"}}</label>
-                <input type="checkbox" id="{{partId}}_takeSpells" name="takeSpells" value="true">
+                <input type="checkbox" id="{{partId}}_takeSpells" name="takeSpells" value="true" {{checked takeSpells}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_takeLiturgies">{{localize "Shapeshift.takeLiturgies"}}</label>
-                <input type="checkbox" id="{{partId}}_takeLiturgies" name="takeLiturgies" value="true">
+                <input type="checkbox" id="{{partId}}_takeLiturgies" name="takeLiturgies" value="true" {{checked takeLiturgies}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_keepVision">{{localize "Shapeshift.keepVision"}}</label>
@@ -119,11 +119,11 @@
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_keepToken">{{localize "Shapeshift.keepToken"}}</label>
-                <input type="checkbox" id="{{partId}}_keepToken" name="keepToken" value="true">
+                <input type="checkbox" id="{{partId}}_keepToken" name="keepToken" value="true" {{checked keepToken}}>
             </div>
             <div class="col fourty form-group">
                 <label for="{{partId}}_keepItems">{{localize "Shapeshift.keepItems"}}</label>
-                <input type="checkbox" id="{{partId}}_keepItems" name="keepItems" value="true">
+                <input type="checkbox" id="{{partId}}_keepItems" name="keepItems" value="true" {{checked keepItems}}>
             </div>
             <div class="col fourty">
 

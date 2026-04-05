@@ -7,6 +7,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
     constructor(app) {
         super(app)
         this.updating = false
+        this.formPreset = {}
     }
 
     static DEFAULT_OPTIONS = {
@@ -34,45 +35,107 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         }
     }
 
-    async setShapeshift(source, target) {
+    static buildDefaultFormState(source) {
+        return {
+            radios: {
+                'system.characteristics.mu': 'source',
+                'system.characteristics.kl': 'source',
+                'system.characteristics.in': 'source',
+                'system.characteristics.ch': 'source',
+                'system.characteristics.ff': 'target',
+                'system.characteristics.ge': 'target',
+                'system.characteristics.ko': 'target',
+                'system.characteristics.kk': 'target',
+                'system.status.wounds': 'source',
+                'system.status.karmaenergy': 'target',
+                'system.status.astralenergy': 'target',
+                'system.status.toughness': 'target',
+                'system.status.soulpower': 'source',
+                body: 'target',
+                social: 'source',
+                knowledge: 'source',
+                trade: 'source',
+                nature: 'source',
+            },
+            checkboxes: {
+                calculateLeP: true,
+                takeAdvantages: true,
+                takeSkills: true,
+                takeSpecAbs: false,
+                takeSpells: false,
+                takeLiturgies: false,
+                keepVision: !source?.isToken,
+                keepToken: false,
+                keepItems: false,
+            },
+        }
+    }
+
+    static buildFormState(source, formPreset = {}) {
+        const state = deepClone(this.buildDefaultFormState(source))
+        mergeObject(state, formPreset || {})
+        if (typeof state.checkboxes.keepVision === 'undefined') {
+            state.checkboxes.keepVision = !source?.isToken
+        }
+        return state
+    }
+
+    async setShapeshift(source, target, formPreset = {}) {
         this.source = source
         this.target = target
+        this.formPreset = deepClone(formPreset || {})
     }
 
     async _prepareContext(_options) {
         const data = await super._prepareContext(_options);
+        const formState = ShapeshiftWizard.buildFormState(this.source, this.formPreset)
         mergeObject(data, {
             source: this.source,
             target: this.target,
-            keepVision: !this.source.isToken,
+            keepVision: !!formState.checkboxes.keepVision,
+            keepItems: !!formState.checkboxes.keepItems,
+            keepToken: !!formState.checkboxes.keepToken,
+            calculateLeP: !!formState.checkboxes.calculateLeP,
+            takeAdvantages: !!formState.checkboxes.takeAdvantages,
+            takeSkills: !!formState.checkboxes.takeSkills,
+            takeSpecAbs: !!formState.checkboxes.takeSpecAbs,
+            takeSpells: !!formState.checkboxes.takeSpells,
+            takeLiturgies: !!formState.checkboxes.takeLiturgies,
             characteristics_mental: ["mu", "kl", "in", "ch"],
             characteristics_physical: ["ff", "ge", "ko", "kk"],
             status: [{
                 label: "wounds",
-                selected: true
+                selected: formState.radios['system.status.wounds'] !== 'target'
             }, {
                 label: "karmaenergy",
-                selected: false
+                selected: formState.radios['system.status.karmaenergy'] !== 'target'
             }, {
                 label: "astralenergy",
-                selected: false
+                selected: formState.radios['system.status.astralenergy'] !== 'target'
             }],
             secondaryAttributes: [{
                 label: "toughness",
-                selected: false
+                selected: formState.radios['system.status.toughness'] !== 'target'
             }, {
                 label: "soulpower",
-                selected: true
+                selected: formState.radios['system.status.soulpower'] !== 'target'
             }],
             skillGroups: Object.entries(game.dsa5.config.skillGroups).map(([key, value]) => {
                 return {
                     label: value,
                     key,
-                    selected: true
+                    selected: formState.radios[key] !== 'target'
                 }
             })
         })
-        data.skillGroups.find(x => x.key == "body").selected = false
+        data.characteristics_mental = data.characteristics_mental.map((label) => ({
+            label,
+            selected: formState.radios[`system.characteristics.${label}`] !== 'target'
+        }))
+        data.characteristics_physical = data.characteristics_physical.map((label) => ({
+            label,
+            selected: formState.radios[`system.characteristics.${label}`] !== 'target'
+        }))
         return data
     }
 
@@ -81,11 +144,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             name: _loc("CONDITION.shapeshift"),
             img: "icons/svg/pawprint.svg",
             statuses: ["shapeshift"],
+            description: _loc("CONDITIONDESCRIPTION.shapeshift"),
             flags: {
                 dsa5: {
-                    originalActor: source.id,
-                    value: null,
-                    description: _loc("CONDITIONDESCRIPTION.shapeshift"),
+                    originalActor: source.id,                    
                     proportional
                 }
             }

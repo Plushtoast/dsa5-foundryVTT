@@ -2417,7 +2417,9 @@
         "options": "Optionen",
         "calculateLeP": "Anteilige LeP",
         "userRequest": "{name} möchte {source} in {target} verwandeln. Bitte bestätigen.",
-        "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet."
+        "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet.",
+        "noSourceActor": "Für die Gestaltwandlung wurde kein Quellakteur übergeben.",
+        "noTargetActor": "Für die Gestaltwandlung wurde kein Zielakteur übergeben."
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",

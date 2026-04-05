@@ -1865,11 +1865,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           action: 'shapeshift',
           icon: 'fas fa-paw',
           label: 'CONDITION.shapeshift',
-          callback: () => {
-            const shapeshift = game.dsa5.config.hooks.shapeshift;
-            shapeshift.setShapeshift(this.actor, item);
-            shapeshift.render(true);
-          },
+          callback: () => game.dsa5.apps.ShapeshiftingAPI.open({ sourceActor: this.actor, targetActor: item }),
         },
         {
           action: 'horse',
