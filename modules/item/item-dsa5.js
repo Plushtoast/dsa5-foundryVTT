@@ -24,6 +24,7 @@ import { ItemCreateDialog } from './item-create-dialog.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1316,11 +1317,12 @@ class SkillItemDSA5 extends Itemdsa5 {
     data.focusRuleModifiers = modifierData;
   }
 
-  static setupDialog(ev, options, skill, actor, tokenId) {
+  static async setupDialog(ev, options, skill, actor, tokenId) {
     const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createSkillDialog(skill, actor, tokenId, options);
 
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, skill);
     this.prepareFocusRuleModifiers(dialogOptions.data, actor, skill);
+    await PersonaeSocialContactService.appendModifierForSkill(dialogOptions.data.situationalModifiers, { skill, actor });
 
     dialogOptions.callback = (html, options = {}) => {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();

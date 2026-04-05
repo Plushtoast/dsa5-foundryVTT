@@ -2189,6 +2189,10 @@
                 "tooltip": "Active party addresses a topic that the passive party shares or wants to fulfill.",
                 "label": "Common Interest"
             },
+            "socialContact": {
+                "tooltip": "Uses the social contact level stored in Dramatis Personae for the active party and the currently targeted actor.",
+                "label": "Social Contact"
+            },
             "enemyImage": {
                 "tooltip": "Active party corresponds to an enemy image of the passive party (e.g. Middenlanders trying to convince Orcs).",
                 "label": "Enemy Image"

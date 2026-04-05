@@ -1,7 +1,6 @@
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
-import Actordsa5 from '../../actor/actor-dsa5.js';
 import { ModifierCalculator } from './modifier-calculator.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';

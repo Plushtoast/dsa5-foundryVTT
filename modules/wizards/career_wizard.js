@@ -14,8 +14,8 @@ export default class CareerWizard extends WizardDSA5 {
 
   static get abilityExceptions() {
     return {
-      principles: new RegExp(`^${_loc('LocalizedIDs.principles')} \\\(`),
-      obligations: new RegExp(`^${_loc('LocalizedIDs.obligations')} \\\(`),
+      principles: new RegExp(`^${_loc('LocalizedIDs.principles')} \\(`),
+      obligations: new RegExp(`^${_loc('LocalizedIDs.obligations')} \\(`),
     };
   }
 

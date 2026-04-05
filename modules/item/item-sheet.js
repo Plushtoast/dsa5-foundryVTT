@@ -747,7 +747,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   }
 
   async dropCreation(dragData) {
-    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined);
+    const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined);
     if (!DSA5.equipmentCategories.has(typeClass)) return;
 
     this.item.setFlag('dsa5', 'embeddedItem', item);
@@ -912,7 +912,7 @@ class Enchantable extends ItemSheetdsa5 {
       });
 
     for (const dragData of dragDataArray) {
-      const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
+      const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined, false);
       if (['spell', 'liturgy', 'ceremony', 'ritual'].includes(typeClass)) {
         if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: _loc('TYPES.Item.spell') }, localize: true });
 
@@ -967,7 +967,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   async _poison(dragData) {
-    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
+    const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined, false);
     if (typeClass == 'poison') {
       const poison = {
         name: item.name,

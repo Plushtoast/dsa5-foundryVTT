@@ -2323,6 +2323,10 @@
                 "tooltip": "Aktive Partei spricht Thema an, das die passive Partei genauso sieht/erfüllen will.",
                 "label": "Gemeinsames Interesse"
             },
+            "socialContact": {
+                "tooltip": "Verwendet die in Dramatis Personae hinterlegte Einstellungsstufe zwischen aktiver Partei und aktuell ausgewähltem Ziel.",
+                "label": "Einstellungsstufe"
+            },
             "enemyImage": {
                 "tooltip": "Aktive Partei entspricht einem Feindbild der passiven Partei (z. B. Mittelreicher, die Orks überzeugen wollen).",
                 "label": "Feindbild"

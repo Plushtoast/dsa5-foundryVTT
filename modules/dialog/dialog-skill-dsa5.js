@@ -4,6 +4,7 @@ import DialogShared from './dialog-shared.js';
 import DSA5 from '../config/config-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
+import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { mergeObject } = foundry.utils;
 
@@ -11,6 +12,19 @@ export default class DSA5SkillDialog extends DialogShared {
   #toggleSection(ev, target) {
     const section = target.dataset.toggle;
     this.element.querySelector(`[data-section='${section}']`).classList.toggle('dsahidden');
+  }
+
+  async refreshPersonaeSocialContactModifier(root = this.element) {
+    const widget = this.getSituationalModifiersWidget(root);
+    if (!widget) return;
+
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    const changed = await PersonaeSocialContactService.refreshWidget(widget, {
+      skill: this.dialogData.source,
+      actor,
+    });
+
+    if (changed) this.rememberFormData();
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
@@ -65,10 +79,15 @@ export default class DSA5SkillDialog extends DialogShared {
     let targets = this.readTargets();
     // not great
     const that = this;
-    this.checkTargets = setInterval(function () {
+    this.checkTargets = setInterval(async function () {
+      const previousTargets = JSON.stringify(targets);
       targets = that.compareTargets(html, targets);
+      if (previousTargets !== JSON.stringify(targets)) {
+        await that.refreshPersonaeSocialContactModifier(html);
+      }
     }, 500);
 
+    await this.refreshPersonaeSocialContactModifier(html);
     this.rememberFormData();
     html.on('mousedown', '.quantity-click', (ev) => this.rememberFormData(ev));
 

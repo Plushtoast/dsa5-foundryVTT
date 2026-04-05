@@ -69,7 +69,7 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
 
   static async _onTreatPain(event, target) {
     const names = [];
-    for (let actor of this.targets) {
+    for (const actor of this.targets) {
       if (!actor) continue;
 
       names.push(actor.name);
@@ -112,7 +112,7 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
 
     const names = [];
 
-    for (let actor of this.targets) {
+    for (const actor of this.targets) {
       if (!actor) continue;
 
       const currentTemp = actor.system.status.regeneration.LePTemp || 0;

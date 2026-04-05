@@ -1,11 +1,9 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5Payment from '../system/payment/payment.js';
 import PaymentRequestService from '../system/payment/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
-import { delay, slist, tabSlider } from '../system/helpers/view_helper.js';
+import { slist, tabSlider } from '../system/helpers/view_helper.js';
 import PlayerMenu from './player_menu.js';
-import RequestRoll from '../system/rolls/request-roll.js';
 import DialogShared from '../dialog/dialog-shared.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
