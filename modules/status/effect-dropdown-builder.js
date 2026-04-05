@@ -38,14 +38,14 @@ export default class EffectDropdownBuilder {
                     return g.subgroups.filter((s) => s.options.length).map((s) => {
                         const sorted = s.options.sort((a, b) => a.name.localeCompare(b.name));
                         const opts = sorted
-                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-ph="${o.ph}">${o.name}</option>`)
+                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
                             .join('\n');
                         return `<optgroup label="${s.sub}">${opts}</optgroup>`;
                     });
                 }
                 const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
                 const opts = allOpts
-                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-ph="${o.ph}">${o.name}</option>`)
+                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
                     .join('\n');
                 return [`<optgroup label="${g.label}">${opts}</optgroup>`];
             })
@@ -431,6 +431,15 @@ export default class EffectDropdownBuilder {
             ph: '1',
         }));
 
+        const finalValueNote = _loc('ActiveEffects.noteNoDerivedAttributes');
+        const finalValueOpts = Object.keys(DSA5.characteristics).map((k) => ({
+            name: `${_loc(`CHAR.${k.toUpperCase()}`)} (${finalValueNote})`,
+            val: `system.characteristics.${k}.value`,
+            type: 'add',
+            phase: 'final',
+            ph: '1',
+        }));
+
         const calcOpts = DSA5.gearModifyableCalculatedAttributes.map((k) => ({
             name: _loc(k),
             val: `system.status.${k}.gearmodifier`,
@@ -440,6 +449,7 @@ export default class EffectDropdownBuilder {
 
         return [
             { sub: _loc('characteristics'), options: baseOpts },
+            { sub: `${_loc('characteristics')} (${finalValueNote})`, options: finalValueOpts },
             { sub: _loc('calculatedAttributes'), options: calcOpts },
             {
                 sub: _loc('MODS.otherModifiers'),
@@ -525,7 +535,7 @@ export default class EffectDropdownBuilder {
         }
 
         const optionStrings = options.map(
-            (option) => `<option value="${option.val}" data-type="${option.type}" data-ph="${option.ph}">${option.name}</option>`
+            (option) => `<option value="${option.val}" data-type="${option.type}" data-phase="${option.phase || 'initial'}" data-ph="${option.ph}">${option.name}</option>`
         );
 
         return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;

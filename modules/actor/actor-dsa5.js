@@ -162,10 +162,6 @@ export default class Actordsa5 extends Actor {
     this.tokenActiveEffectChanges ??= {};
     this.tokenActiveEffectChanges[phase] = [];
 
-    // DSA applies all effects in the "initial" phase (before prepareDerivedData).
-    // The "final" phase is intentionally empty.
-    if (phase !== 'initial') return;
-
     const overrides = {};
 
     const appliedArtifacts = this.items
@@ -177,8 +173,8 @@ export default class Actordsa5 extends Actor {
       .map(x => x.system.artifact);
 
     const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
-    const changes = this.collectActorEffectChanges();
-    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);
+    const changes = this.collectActorEffectChanges(phase);
+    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase);
     changes.sort((a, b) => a.priority - b.priority);
 
     const ActiveEffectImpl = foundry.documents.ActiveEffect.implementation;
@@ -196,7 +192,7 @@ export default class Actordsa5 extends Actor {
         actorChanges.push(change);
       }
     }
-    this.tokenActiveEffectChanges['initial'] = tokenChanges;
+    this.tokenActiveEffectChanges[phase] = tokenChanges;
 
     // Apply actor changes
     const replacementData = this.getRollData();
@@ -208,7 +204,7 @@ export default class Actordsa5 extends Actor {
     foundry.utils.mergeObject(this.overrides, expandObject(overrides));
   }
 
-  collectActorEffectChanges() {
+  collectActorEffectChanges(phase) {
     const changes = [];
 
     for (const e of this.effects) {
@@ -225,18 +221,22 @@ export default class Actordsa5 extends Actor {
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
-          ...e.system.changes.map(c => ({ ...c, effect: e }))
+          ...e.system.changes
+            .filter(c => (c.phase || 'initial') === phase)
+            .map(c => ({ ...c, effect: e }))
         );
       }
 
-      for (const statusId of e.statuses) {
-        this.statuses.add(statusId);
+      if (phase === 'initial') {
+        for (const statusId of e.statuses) {
+          this.statuses.add(statusId);
+        }
       }
     }
     return changes;
   }
 
-  collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages) {
+  collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase) {
     for (const item of this.items) {
       for (const e of item.effects) {
         const delayedData = e.system?.delayed;
@@ -265,12 +265,16 @@ export default class Actordsa5 extends Actor {
 
         for (let i = 0; i < multiply; i++) {
           changes.push(
-            ...e.system.changes.map(c => ({ ...c, effect: e }))
+            ...e.system.changes
+              .filter(c => (c.phase || 'initial') === phase)
+              .map(c => ({ ...c, effect: e }))
           );
         }
 
-        for (const statusId of e.statuses) {
-          this.statuses.add(statusId);
+        if (phase === 'initial') {
+          for (const statusId of e.statuses) {
+            this.statuses.add(statusId);
+          }
         }
       }
     }

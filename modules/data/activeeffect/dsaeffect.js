@@ -48,15 +48,15 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
 
   static defineSchema() {
     const schema = super.defineSchema();
-    schema.advancedFunction = new NumberField({ initial: 0, choices: this.ADVANCED_FUNCTION_TYPES });
-    schema.equipmentAdvantage = new NumberField({ initial: 0, choices: this.ADVANTAGE_TYPES });
+    schema.advancedFunction = new NumberField({ initial: 0, choices: this.ADVANCED_FUNCTION_TYPES, hint: 'ActiveEffects.hints.advancedFunction' });
+    schema.equipmentAdvantage = new NumberField({ initial: 0, choices: this.ADVANTAGE_TYPES, hint: 'ActiveEffects.hints.equipmentAdvantage' });
     schema.macroArgs = new SchemaField({
-      conditionId: new StringField(), // was args0
-      conditionValue: new StringField(), // was args1
-      macro: new StringField(), // was args3
-      creatureLinks: new StringField(), // was args4
-      onDelayed: new StringField(),
-      onRemove: new StringField(),
+      conditionId: new StringField({ hint: 'ActiveEffects.hints.conditionId' }), // was args0
+      conditionValue: new StringField({ hint: 'ActiveEffects.hints.conditionValue' }), // was args1
+      macro: new StringField({ hint: 'ActiveEffects.hints.macro' }), // was args3
+      creatureLinks: new StringField({ hint: 'ActiveEffects.hints.creatureLinks' }), // was args4
+      onDelayed: new StringField({ hint: 'ActiveEffects.hints.onDelayed' }),
+      onRemove: new StringField({ hint: 'ActiveEffects.hints.onRemove' }),
     });
     schema.delayed = new SchemaField({
       enabled: new BooleanField({ initial: false }),
@@ -66,22 +66,22 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
       sourceActor: new StringField(),
       source: new ObjectField(),
     });
-    schema.customDuration = new StringField();
+    schema.customDuration = new StringField({ hint: 'ActiveEffects.hints.customDuration' });
     schema.specStep = new NumberField({ initial: 0 });
-    schema.applyToOwner = new BooleanField({ initial: false });
+    schema.applyToOwner = new BooleanField({ initial: false, hint: 'ActiveEffects.applyToOwnerHint' });
     schema.aura = new SchemaField({
-      isAura: new BooleanField({ initial: false }),
-      auraRadius: new StringField(),
-      borderColor: new ColorField({ label: "ActiveEffects.auraColor" }),
-      hidden: new BooleanField({ initial: true }),
-      disposition: new NumberField({ initial: this.DISPOSITION_ALL, choices: this.DISPOSITION_CHOICES }),
-      excludeSelf: new BooleanField({ initial: true }),
-      ignoreWalls: new BooleanField({ initial: false }),
+      isAura: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.isAura' }),
+      auraRadius: new StringField({ hint: 'ActiveEffects.hints.radius' }),
+      borderColor: new ColorField({ label: "ActiveEffects.auraColor", hint: 'ActiveEffects.hints.auraColor' }),
+      hidden: new BooleanField({ initial: true, hint: 'ActiveEffects.hints.auraHidden' }),
+      disposition: new NumberField({ initial: this.DISPOSITION_ALL, choices: this.DISPOSITION_CHOICES, hint: 'ActiveEffects.hints.disposition' }),
+      excludeSelf: new BooleanField({ initial: true, hint: 'ActiveEffects.hints.excludeSelf' }),
+      ignoreWalls: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.ignoreWalls' }),
     });
     schema.charges = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),
-    });
+    }, { hint: 'ActiveEffects.hints.charges' });
     schema.condition = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),
@@ -90,12 +90,12 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     });
     schema.horseSpeed = new NumberField({ nullable: true, initial: null });
     schema.visibility = new SchemaField({
-      hideOnToken: new BooleanField({ initial: false }),
-      hidePlayers: new BooleanField({ initial: false }),
+      hideOnToken: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.hideOnToken' }),
+      hidePlayers: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.hidePlayers' }),
     });
-    schema.removeMessage = new StringField();
-    schema.resistRoll = new StringField();
-    schema.successEffect = new NumberField({ initial: 0, choices: this.SUCCESS_EFFECT_TYPES });
+    schema.removeMessage = new StringField({ hint: 'ActiveEffects.hints.removeMessage' });
+    schema.resistRoll = new StringField({ hint: 'ActiveEffects.hints.resistRoll' });
+    schema.successEffect = new NumberField({ initial: 0, choices: this.SUCCESS_EFFECT_TYPES, hint: 'ActiveEffects.hints.successEffect' });
     return schema;
   }
 }

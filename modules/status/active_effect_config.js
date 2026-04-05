@@ -396,8 +396,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         elem.siblings('input').val(elem.val());
         const parent = elem.closest('.row-section');
         const data = elem.find('option:selected');
+        const exampleValue = data.attr('data-ph') || '';
         parent.find('.type select').val(data.attr('data-type'));
-        parent.find('.value input').attr('placeholder', data.attr('data-ph'));
+        parent.find('.phase select').val(data.attr('data-phase') || 'initial');
+        parent.find('.value input').val(exampleValue).attr('placeholder', '');
         elem.trigger('blur');
       });
     html.find('.select2').each((i, el) => {
@@ -426,9 +428,11 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           const val = $sel.val();
           hiddenInput.val(val);
           const $opt = $sel.find('option:selected');
+          const exampleValue = $opt.attr('data-ph') || '';
           const row = $sel.closest('.row-section');
           row.find('input[name$=".type"]').val($opt.attr('data-type') || 'add');
-          row.find('.value input').attr('placeholder', $opt.attr('data-ph') || '');
+          row.find('input[name$=".phase"]').val($opt.attr('data-phase') || 'initial');
+          row.find('.value input').val(exampleValue).attr('placeholder', '');
           $sel.trigger('blur');
         });
     });

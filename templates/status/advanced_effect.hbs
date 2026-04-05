@@ -32,6 +32,7 @@
             <span class="sep">/</span>
             {{formInput document.system.schema.fields.charges.fields.max value=document.system.charges.max min=0 step=1 placeholder=(localize 'max')}}
         </div>
+        <p class="hint">{{localize document.system.schema.fields.charges.hint}}</p>
     </div>
     {{#if advancedFunctions}}
     {{formGroup document.system.schema.fields.customDuration value=document.system.customDuration label="duration" localize=true}}
@@ -49,6 +50,7 @@
             {{else}}
                 <p class="input-text">{{#if document.system.macroArgs.onRemove}}{{document.system.macroArgs.onRemove}}{{else}} - {{/if}}</p>
             {{/if}}
-        </div>        
+        </div>
+        <p class="hint">{{localize document.system.schema.fields.macroArgs.fields.onRemove.hint}}</p>
     </div>
 </section>
