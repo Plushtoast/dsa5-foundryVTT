@@ -2,6 +2,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import DSAActiveEffect from '../status/dsa_active_effects.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
@@ -493,6 +494,36 @@ export default class Itemdsa5 extends Item {
    */
   async postItem() {
     this.system.constructor._postItem(this);
+  }
+
+  prepareDerivedData() {
+    super.prepareDerivedData();
+    if (!this.actor) this.applyActiveEffects();
+  }
+
+  applyActiveEffects() {
+    this.overrides = {};
+    const changes = [];
+
+    for (const effect of this.effects) {
+      const delayedData = effect.system?.delayed;
+      const isDelayed = !!delayedData?.enabled;
+      if (effect.disabled || !effect.transfer || isDelayed) continue;
+
+      const multiply = this.system.effectMultiplier || 1;
+      for (let i = 0; i < multiply; i++) {
+        changes.push(...effect.system.changes.map((change) => ({ ...change, effect })));
+      }
+    }
+
+    changes.sort((left, right) => left.priority - right.priority);
+    foundry.documents.ActiveEffect.implementation._shimChanges(changes);
+
+    const replacementData = this.getRollData();
+    for (const change of changes) {
+      if (!change.key) continue;
+      DSAActiveEffect.applyChange(this, change, { replacementData });
+    }
   }
 }
 
