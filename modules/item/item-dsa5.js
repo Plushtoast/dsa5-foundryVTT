@@ -25,7 +25,7 @@ import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 
-const { getProperty, mergeObject, duplicate } = foundry.utils;
+const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 // ===== TYPE DEFINITIONS =====
@@ -78,6 +78,32 @@ const { SPELL, LITURGY, CEREMONY, RITUAL, SKILL } = ITEM_CONSTANTS.TEST_TYPES;
 export default class Itemdsa5 extends Item {
   /** @type {string} Default icon path for items without specific icons */
   static DEFAULT_ICON = ITEM_CONSTANTS.DEFAULT_ICON_PATH;
+
+  static supportsOnUseActions(type) {
+    return !!CONFIG.Item.dataModels?.[type]?.implementsOnUseEffect;
+  }
+
+  static migrateData(source) {
+    const migrated = super.migrateData(source);
+    const legacyOnUseEffect = getProperty(migrated, 'flags.dsa5.onUseEffect');
+    const currentActions = getProperty(migrated, 'system.onUseActions') || {};
+
+    if (this.supportsOnUseActions(migrated.type) && typeof legacyOnUseEffect === 'string' && legacyOnUseEffect.trim() !== '' && Object.keys(currentActions).length === 0) {
+      setProperty(migrated, 'system.onUseActions', {
+        [randomID()]: {
+          name: migrated.name || '',
+          img: migrated.img || '',
+          macro: legacyOnUseEffect,
+        },
+      });
+    }
+
+    if (getProperty(migrated, 'flags.dsa5.onUseEffect') !== undefined) {
+      delete migrated.flags.dsa5.onUseEffect;
+    }
+
+    return migrated;
+  }
 
   /**
    * Set default icon for item data
@@ -1024,7 +1050,7 @@ class PlantItemDSA5 extends Itemdsa5 {
 
     await this._applyItemUseActiveEffect(item);
 
-    if (item.getFlag('dsa5', 'onUseEffect')) {
+    if (OnUseEffect.hasOnUseEffect(item)) {
       await new OnUseEffect(item).executeOnUseEffect();
     }
 

@@ -79,6 +79,13 @@ export default class EffectDropdownBuilder {
             .map(({ key, label, icon }) => ({ key, label, icon }));
     }
 
+    static supportsWizardChanges(document = null, changes = []) {
+        if (!changes?.length) return true;
+
+        const supportedKeys = new Set(this._buildDropdownOptions(document).map((option) => option.val));
+        return changes.every((change) => !change?.key || supportedKeys.has(change.key));
+    }
+
     /**
      * Builds the dropdown menu HTML for effect key selection
      * @param {ActiveEffect} [document] - The active effect document for context-specific options

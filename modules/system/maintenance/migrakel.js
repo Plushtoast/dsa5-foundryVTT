@@ -218,10 +218,10 @@ export default class Migrakel {
   }
 
   static updateMacro(update, find) {
-    const onUseEffect = find.getFlag('dsa5', 'onUseEffect');
-    if (onUseEffect) {
+    const onUseActions = foundry.utils.deepClone(find.system.onUseActions || {});
+    if (Object.keys(onUseActions).length > 0) {
       mergeObject(update, {
-        flags: { dsa5: { onUseEffect } },
+        system: { onUseActions },
       });
     }
   }

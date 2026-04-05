@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import EncumbranceTemplate from './templates/encumbrance.js';
@@ -9,7 +10,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       region: new StringField({ initial: '', label: 'PLANT.region' }),

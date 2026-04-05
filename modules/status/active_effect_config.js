@@ -167,7 +167,12 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   }
 
   static #toggleWizardMode() {
-    this.wizardMode = !this.wizardMode;
+    if (this.wizardMode) {
+      this.wizardMode = false;
+    } else {
+      this.wizardMode = EffectDropdownBuilder.supportsWizardChanges(this.document, this.document.system.changes);
+    }
+
     this.wizardCategory = null;
     this.render({ parts: ['changes'] });
   }
@@ -182,6 +187,15 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const parts = super._configureRenderParts(options);
     if (!this.#showAdvancedTab) delete parts.advanced;
     return parts;
+  }
+
+  #ensureValidWizardMode() {
+    if (this.wizardMode && !EffectDropdownBuilder.supportsWizardChanges(this.document, this.document.system.changes)) {
+      this.wizardMode = false;
+      this.wizardCategory = null;
+    }
+
+    return this.wizardMode;
   }
 
   static async callMacro(packName, name, actor, item, qs, args = {}) {
@@ -280,6 +294,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const document = this.document;
     switch (partId) {
       case 'changes': {
+        this.#ensureValidWizardMode();
         const effect = document;
         const changeFields = effect.system.schema.fields.changes.element.fields;
         const changeTypes = Object.entries(ActiveEffect.CHANGE_TYPES)

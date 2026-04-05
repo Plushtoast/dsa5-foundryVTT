@@ -578,7 +578,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             );
           }
 
-          if (x.getFlag('dsa5', 'onUseEffect')) {
+          if (OnUseEffect.hasOnUseEffect(x)) {
             onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }
@@ -609,7 +609,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             else moreSpells.push(this._actionEntry(x, 'spell filterable'));
           }
 
-          if (x.getFlag('dsa5', 'onUseEffect')) {
+          if (OnUseEffect.hasOnUseEffect(x)) {
             onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }

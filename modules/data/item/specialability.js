@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
@@ -8,7 +9,7 @@ import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
+export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
   static COMBAT_SKILL_TYPES = {
     BASEMANEUVER: 0,
     SPECIALMANEUVER: 1,

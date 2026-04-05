@@ -7,6 +7,14 @@ import { ItemFactory } from '../item/item-factory.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class ItemDataModel extends DSADataModel {
+  static get implementsOnUseEffect() {
+    return false;
+  }
+
+  get implementsOnUseEffect() {
+    return false;
+  }
+
   /**
    * @async
    * @param {Object} data - The data to prepare for the sheet
@@ -191,12 +199,13 @@ export class ItemDataModel extends DSADataModel {
   }
 
   /**
-   * Set onUseEffect flag on item
+   * Set prepared on-use action state on item
    * @param {Object} item - The item to process
    * @private
    */
   _setOnUseEffect(item) {
-    item.OnUseEffect = !!foundry.utils.getProperty(item, 'flags.dsa5.onUseEffect');
+    const actions = Object.values(foundry.utils.getProperty(item, 'system.onUseActions') || {});
+    item.OnUseEffect = actions.some((action) => (action?.macro || '').trim() !== '');
   }
 
   /**

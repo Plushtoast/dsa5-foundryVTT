@@ -2,6 +2,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 const { duplicate } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 // TODO DEPRECATE the socketed actions to queries
 
@@ -14,12 +15,12 @@ export default class OnUseEffect {
     const pack = game.packs.get(packName);
     let documents = await pack?.getDocuments({ name });
     if (!documents || !documents.length) {
-      for (let pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
+      for (const pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
         documents = await pack.getDocuments({ name });
         if (documents?.length) break;
       }
     }
-    let result = {};
+    const result = {};
     if (documents?.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       try {
@@ -46,14 +47,17 @@ export default class OnUseEffect {
     return result;
   }
 
-  async executeOnUseEffect() {
+  async executeOnUseEffect(actionId = undefined) {
     if (!this.item.actor) return;
 
     if (!game.user.can('MACRO_SCRIPT')) {
       return ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
     }
 
-    const macro = OnUseEffect.getOnUseEffect(this.item);
+    const action = await this.resolveOnUseAction(actionId);
+    if (!action) return;
+
+    const macro = action.macro;
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       const fn = new AsyncFunction('item', 'actor', macro);
@@ -65,8 +69,72 @@ export default class OnUseEffect {
     }
   }
 
-  static getOnUseEffect(item) {
-    return item.getFlag('dsa5', 'onUseEffect');
+  async resolveOnUseAction(actionId = undefined) {
+    const actions = OnUseEffect.getExecutableActions(this.item);
+    if (!actions.length) return null;
+    if (actionId) return actions.find((action) => action.id === actionId) || null;
+    if (actions.length === 1) return actions[0];
+
+    const selectedActionId = await this.selectOnUseAction(actions);
+    if (!selectedActionId) return null;
+    return actions.find((action) => action.id === selectedActionId) || null;
+  }
+
+  async selectOnUseAction(actions) {
+    const content = await renderTemplate('systems/dsa5/templates/dialog/on-use-action-picker.hbs', {
+      actions,
+      item: this.item,
+    });
+
+    return foundry.applications.api.DialogV2.wait({
+      window: {
+        title: 'SHEET.onUseEffect'
+      },
+      content,
+      buttons: [
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'cancel',
+          default: true,
+          callback: () => null,
+        },
+      ],
+      render: (_event, dialog) => {
+        for (const button of dialog.element.querySelectorAll('[data-action-id]')) {
+          button.addEventListener('click', async (event) => {
+            event.preventDefault();
+            const selectedActionId = button.dataset.actionId;
+            await dialog.options.submit?.(selectedActionId, dialog);
+            await dialog.close({ submitted: true });
+          });
+        }
+      },
+    });
+  }
+
+  static getOnUseActions(item) {
+    if (!item?.system?.implementsOnUseEffect) return [];
+
+    return Object.entries(foundry.utils.getProperty(item, 'system.onUseActions') || {}).map(([id, action]) => ({
+      id,
+      name: action?.name || item.name,
+      img: action?.img || item.img,
+      macro: action?.macro || '',
+    }));
+  }
+
+  static getExecutableActions(item) {
+    return this.getOnUseActions(item).filter((action) => action.macro.trim() !== '');
+  }
+
+  static hasOnUseEffect(item) {
+    return this.getExecutableActions(item).length > 0;
+  }
+
+  static getOnUseEffect(item, actionId = undefined) {
+    if (actionId) return this.getExecutableActions(item).find((action) => action.id === actionId)?.macro || '';
+    return this.getExecutableActions(item)[0]?.macro || '';
   }
 
   async automatedAnimation(successLevel, options = {}) {
@@ -105,7 +173,7 @@ export default class OnUseEffect {
       }
 
       const names = [];
-      for (let actor of actors) {
+      for (const actor of actors) {
         if (systemCon) await actor.addCondition(data, 1, false, false);
         else await actor.addCondition(data);
 
@@ -139,7 +207,7 @@ export default class OnUseEffect {
   async socketedRemoveCondition(targets, coreId, amount = 1) {
     if (game.user.isGM) {
       const names = [];
-      for (let target of targets) {
+      for (const target of targets) {
         const token = canvas.tokens.get(target);
         if (token.actor) {
           await token.actor.removeCondition(coreId, amount, false);
@@ -164,7 +232,7 @@ export default class OnUseEffect {
 
   async socketedActorTransformation(targets, update) {
     if (game.user.isGM) {
-      for (let target of targets) {
+      for (const target of targets) {
         const token = canvas.tokens.get(target);
         if (token.actor) {
           await token.actor.update(update);
@@ -192,7 +260,7 @@ export default class OnUseEffect {
       }
 
       const names = [];
-      for (let target of targets) {
+      for (const target of targets) {
         const token = canvas.tokens.get(target);
         if (token.actor) {
           if (systemCon) await token.actor.addCondition(data, 1, false, false);

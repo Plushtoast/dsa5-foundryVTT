@@ -50,6 +50,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       showItemHead: function () {
         this.item.postItem();
       },
+      addOnUseAction: this.addOnUseAction,
+      editOnUseAction: this.editOnUseAction,
+      deleteOnUseAction: this.deleteOnUseAction,
       headerOnUseEffect: function () {
         const onUse = new OnUseEffect(this.item);
         onUse.executeOnUseEffect();
@@ -74,7 +77,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
         label: 'SHEET.onUseEffect',
         action: 'headerOnUseEffect',
         visible: function () {
-          return this.actor && OnUseEffect.getOnUseEffect(this.item);
+          return this.actor && OnUseEffect.hasOnUseEffect(this.item);
         },
       },
       {
@@ -298,7 +301,8 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     data.isGM = game.user.isGM;
     data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'description.value'), { secrets: this.item.isOwner });
     data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner });
-    data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
+    data.canOnUseEffect = this.isEditable && this.item.system.implementsOnUseEffect && (game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'));
+    data.onUseActions = OnUseEffect.getOnUseActions(this.item);
 
     await this.item.system.getSheetData(data);
 
@@ -311,24 +315,40 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     return data;
   }
 
+  static async addOnUseAction() {
+    await this.item.system.createOnUseAction();
+  }
+
+  static async editOnUseAction(_event, target) {
+    await this.item.system.editOnUseAction(target.dataset.id);
+  }
+
+  static async deleteOnUseAction(_event, target) {
+    await this.item.system.removeOnUseAction(target.dataset.id);
+  }
+
   _advancable() {
     return false;
   }
 
   async _handleDrop(dragData) {
+    if (!this.item.system.implementsOnUseEffect) return;
     if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
 
+    let code;
     if (dragData.type == 'Macro') {
       const item = await fromUuid(dragData.uuid);
       if (!item) return;
       if (!item.pack) return ui.notifications.info('DSAError.onlyCompendiumSpells', { format: { element: '"Macro"' }, localize: true });
 
-      const code = `this.callMacro("${item.pack}", "${item.name}")`
-      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+      code = `this.callMacro("${item.pack}", "${item.name}")`;
     } else if (dragData.type == 'DSALight') {
-      const code = `game.dsa5.apps.LightDialog.applyVisionOrLight(true, "${dragData.key}", actor.getActiveTokens(), item.name)`
-      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+      code = `game.dsa5.apps.LightDialog.applyVisionOrLight(true, "${dragData.key}", actor.getActiveTokens(), item.name)`;
     }
+
+    if (!code) return;
+
+    await this.item.system.addOnUseAction({ macro: code });
   }
 
   async _onDrop(event) {
@@ -1466,7 +1486,7 @@ class RangeweaponSheet extends WeaponSheetDSA5 {
 
 class BlessingSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
+    return this.actor && !OnUseEffect.hasOnUseEffect(this.item);
   }
 
   async setupEffect() {
@@ -1575,7 +1595,7 @@ class DiseaseSheetDSA5 extends WithEffectsSheet {
 
 class MagictrickSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
+    return this.actor && !OnUseEffect.hasOnUseEffect(this.item);
   }
 
   async setupEffect() {
@@ -1764,9 +1784,10 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
 
   async _cleverDeleteItem(itemId) {
     const item = this.actor.items.find((x) => x.id == itemId);
-    await this.actor._updateAPs(-1 * item.system.APValue.value, {}, { render: false });
+    const xpCost = (Number(item.system.APValue.value) || 0) * -1;
+    await this.actor._updateAPs(xpCost, {}, { render: false });
     await this.actor.deleteEmbeddedDocuments('Item', [itemId]);
-    await APTracker.track(this.actor, { type: 'item', item, state: -1 }, apCost);
+    await APTracker.track(this.actor, { type: 'item', item, state: -1 }, xpCost);
   }
 }
 

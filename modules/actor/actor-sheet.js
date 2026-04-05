@@ -1406,7 +1406,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       {
         label: 'SHEET.onUseEffect',
         icon: "<i class='fas fa-dice-six fa-fw'></i>",
-        visible: () => getProperty(item, 'flags.dsa5.onUseEffect'),
+        visible: () => OnUseEffect.hasOnUseEffect(item),
         onClick: () => new OnUseEffect(item).executeOnUseEffect(),
       },
       {

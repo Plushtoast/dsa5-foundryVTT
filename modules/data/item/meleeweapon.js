@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
@@ -19,7 +20,7 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
   static NOT_TWO_HANDED_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons']);
 

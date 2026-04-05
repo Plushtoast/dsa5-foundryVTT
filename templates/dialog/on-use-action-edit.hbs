@@ -1,0 +1,20 @@
+<div class="standard-form">
+    <div class="form-group">
+        <label>{{localize 'SHEET.onUseActionName'}}</label>
+        <div class="form-fields">
+            <input type="text" name="name" value="{{action.name}}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'SHEET.onUseActionImage'}}</label>
+        <div class="form-fields">
+            <input type="text" name="img" value="{{action.img}}" />
+        </div>
+    </div>
+    <div class="form-group stacked">
+        <label>{{localize 'SHEET.onUseActionMacro'}}</label>
+        <div class="form-fields">
+            <code-mirror language="javascript" indent="2" name="macro" data-tooltip="ActiveEffects.placeholder.onUseEffect">{{~action.macro~}}</code-mirror>
+        </div>
+    </div>
+</div>

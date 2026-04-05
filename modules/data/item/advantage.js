@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import APValueTemplate from './templates/apvalue.js';
 import MaxTemplate from './templates/max.js';
@@ -7,7 +8,7 @@ import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class AdvantageData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
+export default class AdvantageData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({

@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
@@ -6,7 +7,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { NumberField, StringField } = foundry.data.fields;
 
-export default class BookData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
+export default class BookData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       author: new StringField({ initial: '', label: 'BOOKITEM.author' }),

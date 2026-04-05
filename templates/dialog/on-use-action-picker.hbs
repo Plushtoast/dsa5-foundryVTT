@@ -1,0 +1,10 @@
+<div class="standard-form dsa5">
+    <div class="row-section wrap gap5px dsa-5grid" style="--grid-min:88px;--grid-max:1fr;">
+        {{#each actions as |action|}}
+        <button type="button" class="dsadesignbutton" data-action-id="{{action.id}}" data-tooltip="{{action.name}}">
+            <img src="{{action.img}}" style="width:48px;height:48px;object-fit:contain;" />
+            <span>{{action.name}}</span>
+        </button>
+        {{/each}}
+    </div>
+</div>

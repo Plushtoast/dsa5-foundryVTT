@@ -1,5 +1,6 @@
 import TokenHotbar2 from './tokenHotbar2.js';
 import Riding from '../automation/riding.js';
+import OnUseEffect from '../automation/onUseEffects.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import RuleChaos from '../rules/rule_chaos.js';
@@ -538,7 +539,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
       }
 
-      if (x.getFlag('dsa5', 'onUseEffect')) {
+      if (OnUseEffect.hasOnUseEffect(x)) {
         this.#pushSkill(groups, x.type, this.tokenHotbar?._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
       }
       if (x.getFlag('dsa5', 'enchantments')) {
