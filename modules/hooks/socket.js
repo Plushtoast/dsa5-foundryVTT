@@ -14,6 +14,7 @@ import MoneyTracker from '../system/orwell/money-tracker.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
+import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -195,6 +196,9 @@ export function connectSocket() {
         break;
       case 'summonCreature':
         PlayerMenu.createConjuration(data.payload);
+        break;
+      case 'summonCreatureMacro':
+        SummoningExecutor.execute(data.payload);
         break;
       default:
         console.warn(`Unhandled socket data type ${data.type}`);

@@ -76,6 +76,7 @@ import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
 import { ITEM_CONSTANTS } from './config/item-constants.js';
+import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -114,6 +115,7 @@ Hooks.once('init', () => {
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,
+      SummoningAPI,
       //DAGTalentTree,
     },
     animation: {      

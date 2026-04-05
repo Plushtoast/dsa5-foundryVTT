@@ -1760,6 +1760,7 @@ export default class DiceDSA5 {
   static async rollSpell(testData) {
     await this.consumeAction(testData);
     const res = await this._rollThreeD20(testData);
+    Hooks.call('dsa5.postProcessSpellResult', res, testData);
     const isClerical = [CEREMONY, LITURGY].includes(testData.source.type);
     res.rollType = testData.source.type;
     const actor = this.#actorFromTestData(testData);
@@ -2124,6 +2125,12 @@ export default class DiceDSA5 {
 
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
     const previousOther = rerenderMessage ? getProperty(rerenderMessage, 'flags.data.postData.other') : undefined;
+    const previousData = rerenderMessage ? getProperty(rerenderMessage, 'flags.data') || {} : {};
+    const preservedRerenderData = {};
+    for (const key of ['attackerMessage', 'defenderMessage', 'unopposedStartMessage', 'startMessagesList', 'originalTargets', 'isOpposedTest']) {
+      const value = chatOptions[key] ?? previousData[key];
+      if (value !== undefined) preservedRerenderData[key] = value;
+    }
     const applyEffect = this.addApplyEffectData(testData);
     const immuneTo = CreatureType.checkImmunity(testData);
     const preData = deepClone(testData.preData);
@@ -2138,6 +2145,7 @@ export default class DiceDSA5 {
     if (preData.damageRoll instanceof Roll) preData.damageRoll = preData.damageRoll.toJSON();
 
     const hasAreaTemplate = testData.successLevel > 0 && preData.source.system.target && preData.source.system.target.type in game.dsa5.config.areaTargetTypes;
+    const hasSummonCreature = testData.successLevel > 0 && (preData.source.effects || []).some(e => e.system?.advancedFunction === 3 && e.system?.macroArgs?.creatureLinks);
 
     const chatData = {
       title: chatOptions.title,
@@ -2149,6 +2157,7 @@ export default class DiceDSA5 {
       modifierList: preData.situationalModifiers.filter((x) => x.value != 0),
       applyEffect,
       hasAreaTemplate,
+      hasSummonCreature,
       showDamageToGear: await EquipmentDamage.showDamageToGear(preData, testData),
     };
 
@@ -2179,11 +2188,12 @@ export default class DiceDSA5 {
     mergeObject(chatOptions, {
       flags: {
         data: {
+          ...preservedRerenderData,
           preData,
           postData: testData,
           template: chatOptions.template,
           messageMode: chatOptions.messageMode,
-          isOpposedTest: chatOptions.isOpposedTest,
+          isOpposedTest: chatOptions.isOpposedTest ?? preservedRerenderData.isOpposedTest,
           title: chatOptions.title,
           hideData: { value: chatData.hideData.value },
           hideDamage: chatData.hideDamage,
@@ -2420,6 +2430,32 @@ export default class DiceDSA5 {
       });
     });
     html.on('click', '.placeTemplate', async (ev) => DSARegionTemplate.placeTemplateFromChat(ev));
+    html.on('click', '.summonCreature', async (ev) => {
+      DiceDSA5.wrapLock(ev, async (ev, elem) => {
+        const id = elem.parents('.message').attr('data-message-id');
+        const message = game.messages.get(id);
+        const source = message.flags.data.preData.source;
+        const speaker = message.speaker;
+        const summoner = DSA5_Utility.getSpeaker(speaker) || DSA5_Utility.getSpeaker(getProperty(message.flags, 'data.preData.extra.speaker'));
+        if (!summoner) return;
+
+        const { SummoningAPI } = await import('../../wizards/summoning/summoning_api.js');
+        for (const ef of (source.effects || [])) {
+          if (ef.system?.advancedFunction !== 3 || !ef.system?.macroArgs?.creatureLinks) continue;
+          const links = ef.system.macroArgs.creatureLinks.split(',').filter(Boolean);
+          for (const link of links) {
+            const uuid = link.trim().replace(/@Compendium\[|\]/g, '');
+            await SummoningAPI.summon({
+              summoner,
+              creatureUuid: uuid,
+              count: 1,
+              placement: "caster",
+              preset: "default",
+            });
+          }
+        }
+      });
+    });
     html.on('click', '.message-delete', (ev) => {
       const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
       const targeted = message.flags.unopposeData;

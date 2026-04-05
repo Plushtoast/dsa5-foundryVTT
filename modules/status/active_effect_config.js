@@ -589,8 +589,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                 break;
               case 3: // Creature Link
                 {
-                  const creatures = (effectSystem.macroArgs.creatureLinks || '')
-                    .split(',')
+                  const links = (effectSystem.macroArgs.creatureLinks || '').split(',').filter(Boolean);
+                  const creatures = links
                     .map((x) => `@Compendium[${x.trim().replace(/@Compendium\[|\]/g, '')}]`)
                     .join(' ');
                   msg += `<p><b>${_loc('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;

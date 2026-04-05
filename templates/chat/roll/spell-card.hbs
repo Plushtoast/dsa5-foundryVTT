@@ -41,7 +41,7 @@
         {{/each}}
     </div>
     {{/if}}
-    {{#if (or hasAreaTemplate applyEffect)}}
+    {{#if (or hasAreaTemplate applyEffect hasSummonCreature)}}
     <div class="row-section" style="margin-top:10px">
         {{#if applyEffect}}
         <div class="col two center">
@@ -54,6 +54,11 @@
         {{#if hasAreaTemplate}}
         <div class="col two center">
             <button class="placeTemplate selfButton" data-tooltip="TT.placeTemplate">{{localize 'AoE'}}</button>
+        </div>
+        {{/if}}
+        {{#if hasSummonCreature}}
+        <div class="col two center">
+            <button class="summonCreature selfButton" data-tooltip="CONJURATION.finalizeTooltip">{{localize 'ActiveEffects.advancedFunctions.creature'}}</button>
         </div>
         {{/if}}
     </div>

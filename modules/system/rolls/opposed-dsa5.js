@@ -611,6 +611,7 @@ export default class OpposedDsa5 {
    */
   static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) { }
 
+  /*
   static async rerenderOpposedResultMessage(resultMessage) {
     if (!resultMessage) return;
 
@@ -634,6 +635,7 @@ export default class OpposedDsa5 {
       rerenderMessage: resultMessage,
     });
   }
+  */
 
   static getOpposedDefender(opposedMeta = {}) {
     if (opposedMeta.defenderMessageId) {
