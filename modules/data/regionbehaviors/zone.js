@@ -56,7 +56,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
         break;
       case CONST.REGION_EVENTS.TOKEN_ROUND_START:
         if (this.mode === DSAZoneRegionBehavior.MODE_RECURRING && DSA5_Utility.isActiveGM()) {
-          await this.#applyZoneEffect(token);
+          await this.#applyZoneEffect(token, this.buildMacroRegionEvent(event));
         }
         break;
     }
@@ -76,7 +76,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
       if (!DSA5_Utility.isActiveGM()) return;
       if (this.mode === DSAZoneRegionBehavior.MODE_ONCE && this.#hasExistingEffect(token)) return;
 
-      await this.#applyZoneEffect(token);
+      await this.#applyZoneEffect(token, this.buildMacroRegionEvent(event));
     }
   }
 
@@ -92,7 +92,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
     await resumeMovement?.();
   }
 
-  async #applyZoneEffect(token) {
+  async #applyZoneEffect(token, regionEvent = undefined) {
     const messageId = this.messageId;
     if (!messageId) return;
 
@@ -103,7 +103,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
       messageId,
       'target',
       [{ token: token.id, actor: token.actor.id, scene: canvas.scene.id }],
-      { origin: this.parent.uuid },
+      { origin: this.parent.uuid, regionEvent },
     );
   }
 }

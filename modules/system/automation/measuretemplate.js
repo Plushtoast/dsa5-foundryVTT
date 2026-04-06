@@ -47,12 +47,25 @@ export class DSARegionTemplate {
     const targets = this.acquireTargetsFromRegion(region);
 
     if (targets.length) {
+      const regionEvent = {
+        source: 'spellTemplate',
+        name: 'templatePlaced',
+        trigger: 'templatePlaced',
+        hasMovement: false,
+        userId: game.user.id,
+        regionUuid: region.uuid,
+        behaviorUuid: region.behaviors.contents[0]?.uuid ?? null,
+        tokenUuid: null,
+        actorUuid: null,
+      };
+
       await DSAActiveEffectConfig.applyEffect(id, 'target',
         targets.map(a => ({
           token: a.token?.id,
           actor: a.id,
           scene: canvas.scene.id,
-        }))
+        })),
+        { regionEvent }
       );
     }
 

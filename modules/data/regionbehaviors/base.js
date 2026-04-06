@@ -3,6 +3,37 @@ import DSAActiveEffectDataModel from '../activeeffect/dsaeffect.js';
 export class DSARegionBehaviorBase extends foundry.data.regionBehaviors.RegionBehaviorType {
 
   /**
+   * Build a socket-safe region event payload for advanced effect macros.
+   *
+   * `trigger` normalizes movement-driven enter/exit events to move-in/move-out so
+   * macros can distinguish animated movement from activation or boundary changes.
+   *
+   * @param {foundry.documents.types.RegionEvent} event
+   * @returns {object}
+   */
+  buildMacroRegionEvent(event) {
+    const token = event.data?.token;
+    const rawName = event.name ?? null;
+    const hasMovement = !!event.data?.movement;
+
+    let trigger = rawName;
+    if (hasMovement && rawName === CONST.REGION_EVENTS.TOKEN_ENTER) trigger = CONST.REGION_EVENTS.TOKEN_MOVE_IN;
+    else if (hasMovement && rawName === CONST.REGION_EVENTS.TOKEN_EXIT) trigger = CONST.REGION_EVENTS.TOKEN_MOVE_OUT;
+
+    return {
+      source: 'region',
+      name: rawName,
+      trigger,
+      hasMovement,
+      userId: event.user?.id ?? null,
+      regionUuid: event.region?.uuid ?? this.parent?.parent?.uuid ?? null,
+      behaviorUuid: this.parent?.uuid ?? null,
+      tokenUuid: token?.uuid ?? null,
+      actorUuid: token?.actor?.uuid ?? null,
+    };
+  }
+
+  /**
    * Remove active effects applied by this behavior from a token.
    * @param {TokenDocument} token
    */

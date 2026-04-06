@@ -2380,7 +2380,7 @@
             "onRemove": "JavaScript macro executed when this effect is removed."
         },
         "placeholder": {
-            "macros": "Macros have access to the following variables:<br>actor - The targeted actor<br>testData - All data for the current check<br>source - The source of the macro",
+            "macros": "Macros have access to the following variables:<br>actor - The targeted actor<br>testData - All data for the current check<br>source - The source of the macro<br>options - Additional execution context; region-based effects expose options.regionEvent with the current trigger",
             "armorPostprocess": "Armor transformations have access to the following variables:<br>actor - The targeted actor<br>armor - The armor of the target<br>source - The source of the macro",
             "onRemove": "Macro is executed on removal of the effect in an actor.<br>Variables:<br>actor - The actor",
             "onUseEffect": "Macro for on use effect of the item.<br>Variables:<br>args - Execution args including optional messageMode<br>actor - The actor<br>item - The item<br><br>Use `await this.createChatMessage(content, args)` or `ChatMessage.create(this.chatDataSetup(content, args))` to respect GM-only right-click usage.",

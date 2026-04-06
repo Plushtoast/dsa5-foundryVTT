@@ -49,7 +49,10 @@ export class DSAAuraRegionBehavior extends DSARegionBehaviorBase {
     const resumeMovement = movement ? token.pauseMovement() : undefined;
     await DSAActiveEffectConfig.applyAdvancedFunction(
       token.actor, [data], { name: effect.name }, testData, sourceActor,
-      { origin: this.parent.uuid }
+      {
+        origin: this.parent.uuid,
+        regionEvent: this.buildMacroRegionEvent(event),
+      }
     );
     await resumeMovement?.();
   }
