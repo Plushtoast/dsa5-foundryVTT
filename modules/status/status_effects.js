@@ -1,6 +1,7 @@
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 const { duplicate, getProperty, expandObject } = foundry.utils;
@@ -144,9 +145,10 @@ export default class DSA5StatusEffects {
       });
     }
 
-    if (sourceEffect.flags?.dsa5?.maintain) {
+    const { cost, payType } = MaintainedEffects.getMetadata(sourceEffect);
+    if (cost != null && payType) {
       effectData.pips.push({
-        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${sourceEffect.flags?.dsa5?.maintain} ${_loc(`CHARAbbrev.${sourceEffect.flags?.dsa5?.payType}`)}`
+        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${cost} ${_loc(`CHARAbbrev.${payType}`)}`
       });
     }
   }

@@ -1,6 +1,7 @@
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
 import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 
@@ -8,7 +9,7 @@ const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 async function callMacro(packName, name, actor, item, qs, args = {}) {
-  const result = {};
+  const result = args.result || {};
   if (!game.user.can('MACRO_SCRIPT')) {
     ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
   } else {
@@ -200,6 +201,14 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
   static async callMacro(packName, name, actor, item, qs, args = {}) {
     return await callMacro(packName, name, actor, item, qs, args);
+  }
+
+  static async registerMaintainedParentEffect(messageId, parentEffectUuid) {
+    return await MaintainedEffects.registerOnMessage(messageId, { parentUuid: parentEffectUuid });
+  }
+
+  static async registerMaintainedTargetEffects(messageId, targetEffectUuids = []) {
+    return await MaintainedEffects.registerOnMessage(messageId, { targetUuids: targetEffectUuids });
   }
 
   static async startDelayedEffect({ duration, start }, effect) {
@@ -596,8 +605,31 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                     //try {
                       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
                       const command = effectSystem.macroArgs.macro;
+                      options.maintenance ??= {};
+                      options.maintenance.createdEffectUuids = DSA5_Utility.dedup(
+                        options.maintenance.createdEffectUuids || [],
+                      );
+                      const macroCallResults = [];
+                      const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
+                        const macroArgs = args || {};
+                        if (options.maintenance.parentEffectUuid) {
+                          macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
+                        }
+                        const resultPromise = callMacro(packName, name, macroActor, macroItem, macroQs, macroArgs);
+                        macroCallResults.push(resultPromise);
+                        return resultPromise;
+                      };
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
-                      await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs, options);
+                      await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                      const macroResults = await Promise.all(macroCallResults);
+                      const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
+                        macroResults,
+                        options.maintenance.createdEffectUuids || [],
+                      );
+                      options.maintenance.createdEffectUuids = maintainedTargetUuids;
+                      if (options.messageId && maintainedTargetUuids.length) {
+                        await MaintainedEffects.registerOnMessage(options.messageId, { targetUuids: maintainedTargetUuids });
+                      }
                     /*} catch (err) {
                       ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                       console.error(err);
@@ -712,6 +744,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const source = message.flags.data.preData.source;
     const testData = message.flags.data.postData;
     const speaker = message.speaker;
+    const maintenanceParentEffectUuid = MaintainedEffects.getParentUuid(message);
 
     const hasSuccessEffects = ['poison', 'disease'].includes(source.type);
 
@@ -754,7 +787,15 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           source,
           testData,
           sourceActor,
-          { ...options, skipResistRolls: options.skipResistRolls || false },
+          {
+            ...options,
+            messageId: id,
+            skipResistRolls: options.skipResistRolls || false,
+            maintenance: {
+              parentEffectUuid: maintenanceParentEffectUuid,
+              createdEffectUuids: [],
+            },
+          },
         );
         if (effectApplied) {
           const appliedEffect = _loc('ActiveEffects.appliedEffect', {

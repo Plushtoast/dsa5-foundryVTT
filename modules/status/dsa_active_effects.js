@@ -26,6 +26,8 @@ export default class DSAActiveEffect extends ActiveEffect {
     onRemove: { path: 'macroArgs.onRemove', type: 'string' },
     resistRoll: { path: 'resistRoll', type: 'string' },
     charges: { path: 'charges', type: 'charges' },
+    maintain: { path: 'maintenance.cost', type: 'nullableNumber' },
+    payType: { path: 'maintenance.payType', type: 'string' },
     description: { path: 'description', type: 'string', topLevel: true },
     value: { path: 'condition.value', type: 'nullableNumber' },
     max: { path: 'condition.max', type: 'nullableNumber' },

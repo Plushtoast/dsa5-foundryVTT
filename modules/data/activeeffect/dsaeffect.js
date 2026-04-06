@@ -1,6 +1,6 @@
 import DSATriggers from '../../system/automation/triggers.js';
 
-const { BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
+const { ArrayField, BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
 
 export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectTypeDataModel {
   static ADVANTAGE_TYPES = {
@@ -82,6 +82,11 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),
     }, { hint: 'ActiveEffects.hints.charges' });
+    schema.maintenance = new SchemaField({
+      cost: new NumberField({ nullable: true, initial: null }),
+      payType: new StringField({ initial: '' }),
+      links: new ArrayField(new StringField({ required: true }), { initial: [] }),
+    });
     schema.condition = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),
       max: new NumberField({ nullable: true, initial: null }),

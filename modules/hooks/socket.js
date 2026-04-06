@@ -11,6 +11,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
@@ -86,6 +87,9 @@ export function connectSocket() {
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
+        break;
+      case 'deleteEffectsByUuid':
+        MaintainedEffects.deleteByUuid(data.payload?.uuids || []);
         break;
       case 'deleteMsg':
         game.messages.get(data.payload.id).delete();

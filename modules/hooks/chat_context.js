@@ -1,5 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 
 import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
@@ -287,7 +288,7 @@ class ActionHandler {
     const manaApplied = await actor.applyMana(calculatedSpellModifiers.finalcost, payType);
 
     if (maintain && maintain !== '0' && manaApplied && cardData.postData.successLevel > 0) {
-      await ActionHandler.handleMaintainEffect(actor, maintain, cardData.preData.source.name, payType);
+      await MaintainedEffects.createForMessage(message.id, actor, maintain, cardData.preData.source.name, payType);
     }
 
     await updateMessageWithCheckmark(
@@ -296,68 +297,6 @@ class ActionHandler {
       /<span class="costCheck">/,
       '<span class="costCheck"><i class="fas fa-check" style="float:right"></i>'
     );
-  }
-
-  static async handleMaintainEffect(actor, maintain, name, payType) {
-    try {
-      const cost = maintain.match(/^\d{1,3}/)?.[0];
-      if (!cost) return;
-
-      let duration = maintain.replace(/^\d{1,3}/, '').match(/\d{1,3}/);
-      duration = duration ? Number(duration[0]) || 1 : 1;
-
-      const effect = ActionHandler.createMaintainEffect(name, maintain, cost, payType);
-      const seconds = ActionHandler.calculateDuration(maintain, duration);
-
-      if (seconds) {
-        effect.duration.value = seconds;
-        effect.duration.units = 'seconds';
-      }
-
-      await actor.addCondition(effect);
-    } catch (error) {
-      console.error(`Could not parse duration '${maintain}' of '${name}'`, error);
-    }
-  }
-
-  static createMaintainEffect(name, maintain, cost, payType) {
-    return {
-      name: `${name} (${_loc('maintainCost')})`,
-      img: 'icons/svg/daze.svg',
-      flags: {
-        dsa5: {
-          description: maintain,
-          maintain: cost,
-          payType,
-        },
-      },
-      system: {
-        changes: [],
-      },
-      duration: {},
-    };
-  }
-
-  static calculateDuration(maintain, duration) {
-    const timeUnits = [
-      { key: 'DSAREGEXmaintain.seconds', seconds: 1 },
-      { key: 'DSAREGEXmaintain.combatRounds', seconds: 5 },
-      { key: 'DSAREGEXmaintain.minutes', seconds: 60 },
-      { key: 'DSAREGEXmaintain.hours', seconds: 3600 },
-      { key: 'DSAREGEXmaintain.days', seconds: 3600 * 24 },
-      { key: 'DSAREGEXmaintain.weeks', seconds: 3600 * 24 * 7 },
-      { key: 'DSAREGEXmaintain.months', seconds: 3600 * 24 * 30 },
-      { key: 'DSAREGEXmaintain.years', seconds: 3600 * 24 * 350 },
-    ];
-
-    for (const unit of timeUnits) {
-      const regex = new RegExp(_loc(unit.key), 'gi');
-      if (regex.test(maintain)) {
-        return duration * unit.seconds;
-      }
-    }
-
-    return null;
   }
 
   static async applyHealing(li) {

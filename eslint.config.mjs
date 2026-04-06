@@ -3,23 +3,23 @@ import prettierConfig from "eslint-config-prettier";
 import globals from "globals";
 
 const nonJSPaths = [
-  "bundle/*",
-  "devTemp/*",
-  "docs/*",
-  "fonts/*",
-  "icons/*",
-  "lang/*",
-  "lazy/*",
-  "libs/*",
-  "packs/*",
-  "styles/*",
-  "templates/*",
-  "test/*",
-  "tools/*",
-  "node_modules/*",
-  "modules/tables/source/*",
-  "modules/tours/en/*",
-  "modules/tours/de/*"
+  "bundle/**",
+  "devTemp/**",
+  "docs/**",
+  "fonts/**",
+  "icons/**",
+  "lang/**",
+  "lazy/**",
+  "libs/**",
+  "packs/**",
+  "styles/**",
+  "templates/**",
+  "test/**",
+  "tools/**",
+  "node_modules/**",
+  "modules/tables/source/**",
+  "modules/tours/en/**",
+  "modules/tours/de/**"
 ];
 
 /** Foundry VTT globals provided at runtime. */

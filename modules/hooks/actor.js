@@ -1,5 +1,6 @@
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
@@ -13,59 +14,8 @@ export default function () {
 
     const actor = effect.parent;
     if (actor && actor.documentName == 'Actor') {
-      if (getProperty(effect, 'flags.dsa5.maintain')) {
-        const effectsToRemove = [effect._id];
-        const searchEffect = effect.name.replace('(' + _loc('maintainCost') + ')', '').trim();
-        const relatedEffects = actor.effects.filter((x) => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id);
-        let content = `<p>${_loc('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
-        if (relatedEffects) {
-          content += `<p>${_loc('DIALOG.dependentMaintainEffects')}</p>`;
-          content += relatedEffects
-            .map(
-              (x) =>
-                `<div class="form-group"><label for="rel${x.id}">${x.name}</label><div class="form-fields"><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" id="rel${x.id}" name="rel${x.id}"/></div></div>`,
-            )
-            .join('');
-        }
-        new foundry.applications.api.DialogV2({
-          window: {
-            title: effect.name,
-          },
-          content,
-          buttons: [
-            {
-              action: 'yes',
-              icon: 'fa fa-check',
-              label: 'HELP.pay',
-              default: true,
-              callback: async () => {
-                const paid = await actor.applyMana(Number(getProperty(effect, 'flags.dsa5.maintain')), getProperty(effect, 'flags.dsa5.payType'));
-                if (paid) {
-                  const start = {
-                    time: game.time.worldTime,
-                  };
-                  if (game.combat) {
-                    start.round = game.combat.round;
-                    start.turn = game.combat.turn;
-                  }
-                  actor.updateEmbeddedDocuments('ActiveEffect', [{ _id: effect._id, start }]);
-                }
-              },
-            },
-            {
-              action: 'delete',
-              icon: 'fas fa-trash',
-              label: 'delete',
-              callback: (event, button, dialog) => {
-                for (const it of button.form.elements) {
-                  if (it.classList.contains('effectRemoveSelector')) effectsToRemove.push(it.value);
-                }
-                actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove, { noHook: true, butOnRemove: true });
-
-              },
-            },
-          ],
-        }).render(true);
+      if (MaintainedEffects.isMaintained(effect)) {
+        void MaintainedEffects.promptDelete(effect);
         return false;
       }
     }

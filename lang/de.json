@@ -2040,7 +2040,7 @@
             "macros": "Macros können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>testData - All Daten für die aktuelle Probe<br>source - Die Quelle des Macros",
             "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>options.armor - Die Rüstungs des Ziels<br>options.attackItem - Die Quelle des Macros",
             "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.<br>Variablen:<br>actor - Der Akteur",
-            "onUseEffect": "Macro für die Benutzung des Items.<br>Variablen:<br>actor - Der Akteur<br>item - Der Gegenstand",
+            "onUseEffect": "Macro für die Benutzung des Items.<br>Variablen:<br>args - Ausführungsdaten inklusive optionalem messageMode<br>actor - Der Akteur<br>item - Der Gegenstand<br><br>Verwende `await this.createChatMessage(content, args)` oder `ChatMessage.create(this.chatDataSetup(content, args))`, damit der GM-only-Rechtsklick korrekt beachtet wird.",
             "effectname": "z.B. um Ursache anzugeben"
         },
         "advancedFunctions": {

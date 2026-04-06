@@ -185,7 +185,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     const targetCombatant = game.combat.combatants.get(targetId);
 
     const roundInitiative = targetCombatant.properInitiative;
-    let update = {};
+    const update = {};
     if (event.ctrlKey) {
       update.initiative = roundInitiative + 0.00001;
       update.system = {
@@ -296,7 +296,7 @@ class RepeatingEffectsHelper {
   static async startOfRound(combat) {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    for (let turn of combat.turns) {
+    for (const turn of combat.turns) {
       if (!turn.defeated) {
         if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
         if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
