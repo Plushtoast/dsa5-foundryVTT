@@ -1,8 +1,9 @@
 import DSATriggers from '../../system/automation/triggers.js';
+import { onUseActionsField, OnUseActionMixin } from '../shared/onuse-action-schema.js';
 
 const { ArrayField, BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
 
-export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectTypeDataModel {
+export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.data.ActiveEffectTypeDataModel) {
   static ADVANTAGE_TYPES = {
     0: '-',
     1: 'TYPES.Item.advantage',
@@ -101,6 +102,7 @@ export default class DSAActiveEffectDataModel extends foundry.data.ActiveEffectT
     schema.removeMessage = new StringField({ hint: 'ActiveEffects.hints.removeMessage' });
     schema.resistRoll = new StringField({ hint: 'ActiveEffects.hints.resistRoll' });
     schema.successEffect = new NumberField({ initial: 0, choices: this.SUCCESS_EFFECT_TYPES, hint: 'ActiveEffects.hints.successEffect' });
+    schema.onUseActions = onUseActionsField();
     return schema;
   }
 }

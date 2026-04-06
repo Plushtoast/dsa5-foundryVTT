@@ -23,7 +23,7 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     }
 
     if (documents.length) {
-      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'args', documents[0].command);
       try {
         args.result = result;
@@ -129,6 +129,9 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     actions: {
       toggleWizardMode: this.#toggleWizardMode,
       filterWizardCategory: this.#filterWizardCategory,
+      addOnUseAction: this.#addOnUseAction,
+      editOnUseAction: this.#editOnUseAction,
+      deleteOnUseAction: this.#deleteOnUseAction,
     },
   };
 
@@ -156,7 +159,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   };
 
   get #showAdvancedTab() {
-    return this.document.parent?.documentName === 'Item';
+    return true;
   }
 
   _prepareTabs(group) {
@@ -187,6 +190,18 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const category = target.dataset.category || null;
     this.wizardCategory = this.wizardCategory === category ? null : category;
     this.render({ parts: ['changes'] });
+  }
+
+  static async #addOnUseAction() {
+    await this.document.system.createOnUseAction();
+  }
+
+  static async #editOnUseAction(ev, target) {
+    await this.document.system.editOnUseAction(target.dataset.id);
+  }
+
+  static async #deleteOnUseAction(ev, target) {
+    await this.document.system.removeOnUseAction(target.dataset.id);
   }
 
   _configureRenderParts(options) {
@@ -267,7 +282,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
-          const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+          const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
           await fn.call(this, effect, actor);
         } catch (err) {
@@ -330,48 +345,59 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases, wizardMode, wizardCategory, wizardCategories });
         break;
       }
-      case 'advanced':
-        const itemType = document.parent.type;
-        const item = document.parent;
-        const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value));
-        const isCombatSpecAb = ['specialability'].includes(itemType) && item.system.category.value == 'Combat';
-        const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType);
-        const effectConfigs = {
-          hasSpellEffects: isWeapon || isCombatSpecAb || ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
-          hasDamageTransformation: hasVantages || (isCombatSpecAb && item.system.category.sub != 4),
-          hasArmorTransformation: hasVantages,
-          hasTriggerEffects: ['specialability'].includes(itemType),
-          hasSuccessEffects: ['poison', 'disease'].includes(itemType),
-        };
-        const advancedFunctions = DSAActiveEffectConfig.buildAdvancedFunctions(effectConfigs);
-        const advancedFunctionChoices = advancedFunctions.reduce((obj, e) => {
-          obj[e.index] = e.name;
-          return obj;
-        }, {});
+      case 'advanced': {
+        const isItemEffect = document.parent?.documentName === 'Item';
+        const onUseActions = OnUseEffect.getOnUseActions(document);
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
           obj[e] = `ActiveEffects.messageReceivers.${e}`;
           return obj;
         }, {});
 
-        const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
-        const enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
+        if (isItemEffect) {
+          const itemType = document.parent.type;
+          const item = document.parent;
+          const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value));
+          const isCombatSpecAb = ['specialability'].includes(itemType) && item.system.category.value == 'Combat';
+          const hasVantages = ['ammunition', 'meleeweapon', 'rangeweapon'].includes(itemType);
+          const effectConfigs = {
+            hasSpellEffects: isWeapon || isCombatSpecAb || ['spell', 'liturgy', 'ritual', 'skill', 'ceremony', 'consumable', 'poison', 'disease', 'ammunition'].includes(itemType),
+            hasDamageTransformation: hasVantages || (isCombatSpecAb && item.system.category.sub != 4),
+            hasArmorTransformation: hasVantages,
+            hasTriggerEffects: ['specialability'].includes(itemType),
+            hasSuccessEffects: ['poison', 'disease'].includes(itemType),
+          };
+          const advancedFunctions = DSAActiveEffectConfig.buildAdvancedFunctions(effectConfigs);
+          const advancedFunctionChoices = advancedFunctions.reduce((obj, e) => {
+            obj[e.index] = e.name;
+            return obj;
+          }, {});
+
+          const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
+          const enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
+
+          mergeObject(partContext, {
+            advancedFunctions,
+            advancedFunctionChoices,
+            effectConfigs,
+            macroIndexes: DSAActiveEffectConfig.macroIndexes,
+            canWeaponAdvantages,
+            enableWeaponAdvantages,
+            equipmentAdvantageOptions: {
+              1: `AdvantageRuleItems.${itemType}.1`,
+              2: `AdvantageRuleItems.${itemType}.2`,
+            },
+            isWeapon,
+          });
+        }
 
         mergeObject(partContext, {
-          advancedFunctions,
-          advancedFunctionChoices,
-          effectConfigs,
-          macroIndexes: DSAActiveEffectConfig.macroIndexes,
+          isItemEffect,
+          onUseActions,
           messageReceivers,
-          canWeaponAdvantages,
-          enableWeaponAdvantages,
-          equipmentAdvantageOptions: {
-            1: `AdvantageRuleItems.${itemType}.1`,
-            2: `AdvantageRuleItems.${itemType}.2`,
-          },
           config: this.getConfig(),
-          isWeapon,
         });
         break;
+      }
     }
     return partContext;
   }
@@ -485,7 +511,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
-              const syncFunction = Object.getPrototypeOf(function () {}).constructor;
+              const syncFunction = Object.getPrototypeOf(function () { }).constructor;
               const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', ef.system.macroArgs.macro);
               fn.call(this, ef, callMacro, actor, msg, source, options);
             } catch (err) {
@@ -608,34 +634,34 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                     });
                   } else {
                     //try {
-                      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-                      const command = effectSystem.macroArgs.macro;
-                      options.maintenance ??= {};
-                      options.maintenance.createdEffectUuids = DSA5_Utility.dedup(
-                        options.maintenance.createdEffectUuids || [],
-                      );
-                      const macroCallResults = [];
-                      const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
-                        const macroArgs = args || {};
-                        if (options.maintenance.parentEffectUuid) {
-                          macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
-                        }
-                        const resultPromise = callMacro(packName, name, macroActor, macroItem, macroQs, macroArgs);
-                        macroCallResults.push(resultPromise);
-                        return resultPromise;
-                      };
-                      const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
-                      await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
-                      const macroResults = await Promise.all(macroCallResults);
-                      msg += macroResults.map((result) => collectResultMessage(result)).join('');
-                      const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
-                        macroResults,
-                        options.maintenance.createdEffectUuids || [],
-                      );
-                      options.maintenance.createdEffectUuids = maintainedTargetUuids;
-                      if (options.messageId && maintainedTargetUuids.length) {
-                        await MaintainedEffects.registerOnMessage(options.messageId, { targetUuids: maintainedTargetUuids });
+                    const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
+                    const command = effectSystem.macroArgs.macro;
+                    options.maintenance ??= {};
+                    options.maintenance.createdEffectUuids = DSA5_Utility.dedup(
+                      options.maintenance.createdEffectUuids || [],
+                    );
+                    const macroCallResults = [];
+                    const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
+                      const macroArgs = args || {};
+                      if (options.maintenance.parentEffectUuid) {
+                        macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
                       }
+                      const resultPromise = callMacro(packName, name, macroActor, macroItem, macroQs, macroArgs);
+                      macroCallResults.push(resultPromise);
+                      return resultPromise;
+                    };
+                    const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
+                    await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                    const macroResults = await Promise.all(macroCallResults);
+                    msg += macroResults.map((result) => collectResultMessage(result)).join('');
+                    const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
+                      macroResults,
+                      options.maintenance.createdEffectUuids || [],
+                    );
+                    options.maintenance.createdEffectUuids = maintainedTargetUuids;
+                    if (options.messageId && maintainedTargetUuids.length) {
+                      await MaintainedEffects.registerOnMessage(options.messageId, { targetUuids: maintainedTargetUuids });
+                    }
                     /*} catch (err) {
                       ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
                       console.error(err);
@@ -776,7 +802,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
     let actors = [];
     if (mode == 'self') {
-      if (attacker) actors.push(parent_source_attacker ||attacker);
+      if (attacker) actors.push(parent_source_attacker || attacker);
     } else {
       if (targets) actors = targets.map((x) => DSA5_Utility.getSpeaker(x));
       else if (game.user.targets.size) {

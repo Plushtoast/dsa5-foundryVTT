@@ -50,6 +50,14 @@ export default function () {
       const command = `(await fromUuid('${data.uuid}')).sheet.render(true)`;
 
       return createHotBarMacro(command, elem.name, elem.img, slot);
+    } else if (data.type == 'ActiveEffect') {
+      const effect = fromUuidSync(data.uuid);
+      if (!effect) return;
+      const command = `{
+        const effect = await fromUuid('${data.uuid}');
+        if (effect) new game.dsa5.apps.OnUseEffect(effect).executeOnUseEffect();
+      }`;
+      return createHotBarMacro(command, effect.name, effect.img, slot);
     }
   });
 }

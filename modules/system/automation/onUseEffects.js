@@ -8,8 +8,19 @@ const { renderTemplate } = foundry.applications.handlebars;
 // TODO DEPRECATE the socketed actions to queries
 
 export default class OnUseEffect {
-  constructor(item) {
-    this.item = item;
+  constructor(document) {
+    if (document instanceof ActiveEffect) {
+      this.effect = document;
+      this.item = null;
+      this.actor = document.parent instanceof Actor
+        ? document.parent
+        : document.parent?.parent ?? null;
+    } else {
+      this.item = document;
+      this.effect = null;
+      this.actor = document?.actor ?? null;
+    }
+    this.sourceDocument = document;
   }
 
   static buildExecutionOptions(event, options = {}) {
@@ -72,16 +83,16 @@ export default class OnUseEffect {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       try {
         args.result = result;
-        const fn = new AsyncFunction('args', 'actor', 'item', documents[0].command);
-        result.ret = await fn.call(this, args, this.item.actor, this.item);
+        const fn = new AsyncFunction('args', 'actor', 'item', 'effect', documents[0].command);
+        result.ret = await fn.call(this, args, this.actor, this.item, this.effect);
       } catch (err) {
         //Todo passing multiple scopes kind of fails
         try {
-          const fn2 = new AsyncFunction('args', 'actor', 'item', ` const that = this;
+          const fn2 = new AsyncFunction('args', 'actor', 'item', 'effect', ` const that = this;
               ${documents[0].command.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
             `,
           );
-          result.ret = await fn2.call(this, args, this.item.actor, this.item);
+          result.ret = await fn2.call(this, args, this.actor, this.item, this.effect);
         } catch (err) {
           ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
@@ -95,7 +106,7 @@ export default class OnUseEffect {
   }
 
   async executeOnUseEffect(actionOrOptions = undefined) {
-    if (!this.item.actor) return;
+    if (!this.actor) return;
 
     if (!game.user.can('MACRO_SCRIPT')) {
       return ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
@@ -112,8 +123,8 @@ export default class OnUseEffect {
     this.currentOnUseArgs = args;
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      const fn = new AsyncFunction('args', 'item', 'actor', macro);
-      await fn.call(this, args, this.item, this.item.actor);
+      const fn = new AsyncFunction('args', 'item', 'actor', 'effect', macro);
+      await fn.call(this, args, this.item ?? this.effect, this.actor, this.effect);
     } catch (err) {
       try {
         const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
@@ -121,11 +132,12 @@ export default class OnUseEffect {
           'args',
           'item',
           'actor',
+          'effect',
           ` const that = this;
               ${macro.replace(/(?=[ |(|{]+)?this\./g, 'that.')}
             `,
         );
-        await fn2.call(this, args, this.item, this.item.actor);
+        await fn2.call(this, args, this.item ?? this.effect, this.actor, this.effect);
       } catch (fallbackErr) {
         ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(fallbackErr);
@@ -137,7 +149,7 @@ export default class OnUseEffect {
   }
 
   async resolveOnUseAction(options = {}) {
-    const actions = OnUseEffect.getExecutableActions(this.item);
+    const actions = OnUseEffect.getExecutableActions(this.sourceDocument);
     if (!actions.length) return null;
     if (options.actionId) return actions.find((action) => action.id === options.actionId) || null;
     if (actions.length === 1) return actions[0];
@@ -153,7 +165,7 @@ export default class OnUseEffect {
   async selectOnUseAction(actions, options = {}) {
     const content = await renderTemplate('systems/dsa5/templates/dialog/on-use-action-picker.hbs', {
       actions,
-      item: this.item,
+      item: this.sourceDocument,
     });
 
     return foundry.applications.api.DialogV2.wait({
@@ -196,13 +208,15 @@ export default class OnUseEffect {
     });
   }
 
-  static getOnUseActions(item) {
-    if (!item?.system?.implementsOnUseEffect) return [];
+  static getOnUseActions(document) {
+    const actions = document?.system?.onUseActions;
+    if (!actions) return [];
+    if (document?.system?.implementsOnUseEffect === false) return [];
 
-    return Object.entries(foundry.utils.getProperty(item, 'system.onUseActions') || {}).map(([id, action]) => ({
+    return Object.entries(actions).map(([id, action]) => ({
       id,
-      name: action?.name || item.name,
-      img: action?.img || item.img,
+      name: action?.name || document.name,
+      img: action?.img || document.img,
       macro: action?.macro || '',
     }));
   }

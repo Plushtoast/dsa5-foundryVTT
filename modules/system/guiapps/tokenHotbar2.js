@@ -400,8 +400,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleOnUse(ev, actor, id, tokenId) {
     const item = actor.items.get(id);
-    const onUse = new OnUseEffect(item);
-    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+    if (item) {
+      const onUse = new OnUseEffect(item);
+      return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+    }
+    const effect = actor.effects.get(id);
+    if (effect) {
+      const onUse = new OnUseEffect(effect);
+      return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+    }
   }
 
   async handleEnchantment(ev, actor, id, tokenId) {
@@ -483,6 +490,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
         this.handleSharedEffect(ev);
         break;
       case 'onUse':
+      case 'onUseEffect':
         this.handleOnUse(ev, actor, id, tokenId);
         break;
       case 'gm':
@@ -623,6 +631,13 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       }
 
       onUse = onUsages.pop();
+
+      for (const ef of actor.effects) {
+        if (OnUseEffect.hasOnUseEffect(ef)) {
+          onUsages.push(this._actionEntry(ef, 'onUse', { subfunction: 'onUseEffect' }));
+        }
+      }
+      if (!onUse && onUsages.length) onUse = onUsages.pop();
 
       items.functions = this._functionEntries();
 

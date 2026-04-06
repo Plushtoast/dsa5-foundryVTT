@@ -1255,7 +1255,20 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getStatusEffectContextOptions(effect, item) {
-    return [
+    const options = [];
+
+    if (OnUseEffect.hasOnUseEffect(effect)) {
+      options.push({
+        label: 'SHEET.onUseEffect',
+        icon: "<i class='fas fa-dice-six'></i>",
+        onClick: () => {
+          const onUse = new OnUseEffect(effect);
+          onUse.executeOnUseEffect();
+        }
+      });
+    }
+
+    options.push(
       {
         label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit'></i>",
@@ -1272,7 +1285,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         visible: !!item,
         onClick: () => item.sheet.render(true)
       }
-    ]
+    );
+
+    return options;
   }
 
   _getWeaponItemContextOptions(item) {

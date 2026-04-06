@@ -1,43 +1,65 @@
-<section class="tab scrollable  {{tabs.advanced.cssClass}}" data-group="sheet" data-tab="advanced" data-application-part="advanced">
-    {{formGroup document.system.schema.fields.visibility.fields.hideOnToken value=document.system.visibility.hideOnToken label="ActiveEffects.hideOnToken" localize=true}}
-    {{formGroup document.system.schema.fields.visibility.fields.hidePlayers value=document.system.visibility.hidePlayers label="ActiveEffects.hidePlayers" localize=true}}
+<section class="tab scrollable  {{tabs.advanced.cssClass}}" data-group="sheet" data-tab="advanced"
+    data-application-part="advanced">
+    {{formGroup document.system.schema.fields.visibility.fields.hideOnToken value=document.system.visibility.hideOnToken
+    label="ActiveEffects.hideOnToken" localize=true}}
+    {{formGroup document.system.schema.fields.visibility.fields.hidePlayers value=document.system.visibility.hidePlayers
+    label="ActiveEffects.hidePlayers" localize=true}}
+    {{#if isItemEffect}}
     {{#if effectConfigs.hasSuccessEffects}}
-    {{formGroup document.system.schema.fields.successEffect value=document.system.successEffect label="ActiveEffects.apply" localize=true}}
-    {{formGroup document.system.schema.fields.macroArgs.fields.onDelayed value=document.system.macroArgs.onDelayed label="ActiveEffects.onDelayed" localize=true units="ActiveEffects.dialog.seconds"}}
+    {{formGroup document.system.schema.fields.successEffect value=document.system.successEffect
+    label="ActiveEffects.apply" localize=true}}
+    {{formGroup document.system.schema.fields.macroArgs.fields.onDelayed value=document.system.macroArgs.onDelayed
+    label="ActiveEffects.onDelayed" localize=true units="ActiveEffects.dialog.seconds"}}
     {{/if}}
     <div class="auraBox paddingBox{{#if document.system.aura.isAura}} groupbox{{/if}}">
-        {{formGroup document.system.schema.fields.aura.fields.isAura value=document.system.aura.isAura label="ActiveEffects.isAura" localize=true}}
-        
+        {{formGroup document.system.schema.fields.aura.fields.isAura value=document.system.aura.isAura
+        label="ActiveEffects.isAura" localize=true}}
+
         <div class="auraDetails{{#unless document.system.aura.isAura}} dsahidden{{/unless}}">
-            {{formGroup document.system.schema.fields.aura.fields.disposition value=document.system.aura.disposition label="ActiveEffects.disposition" localize=true}}
-            {{formGroup document.system.schema.fields.aura.fields.auraRadius value=document.system.aura.auraRadius label="ActiveEffects.radius" localize=true}}
-            {{formGroup document.system.schema.fields.aura.fields.borderColor value=document.system.aura.borderColor label="ActiveEffects.auraColor" localize=true}}
-            {{formGroup document.system.schema.fields.aura.fields.hidden value=document.system.aura.hidden label="ActiveEffects.auraHidden" localize=true}}
-            {{formGroup document.system.schema.fields.aura.fields.excludeSelf value=document.system.aura.excludeSelf label="ActiveEffects.excludeSelf" localize=true}}
-            {{formGroup document.system.schema.fields.aura.fields.ignoreWalls value=document.system.aura.ignoreWalls label="ActiveEffects.ignoreWalls" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.disposition value=document.system.aura.disposition
+            label="ActiveEffects.disposition" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.auraRadius value=document.system.aura.auraRadius
+            label="ActiveEffects.radius" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.borderColor value=document.system.aura.borderColor
+            label="ActiveEffects.auraColor" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.hidden value=document.system.aura.hidden
+            label="ActiveEffects.auraHidden" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.excludeSelf value=document.system.aura.excludeSelf
+            label="ActiveEffects.excludeSelf" localize=true}}
+            {{formGroup document.system.schema.fields.aura.fields.ignoreWalls value=document.system.aura.ignoreWalls
+            label="ActiveEffects.ignoreWalls" localize=true}}
         </div>
     </div>
     {{#if isWeapon}}
-    {{formGroup document.system.schema.fields.applyToOwner value=document.system.applyToOwner label="ActiveEffects.applyToOwner" localize=true}}
+    {{formGroup document.system.schema.fields.applyToOwner value=document.system.applyToOwner
+    label="ActiveEffects.applyToOwner" localize=true}}
     {{/if}}
     {{#if (and canWeaponAdvantages enableWeaponAdvantages)}}
-    {{formGroup document.system.schema.fields.equipmentAdvantage value=document.system.equipmentAdvantage label="DSASETTINGS.enableWeaponAdvantages" localize=true choices=equipmentAdvantageOptions}}
+    {{formGroup document.system.schema.fields.equipmentAdvantage value=document.system.equipmentAdvantage
+    label="DSASETTINGS.enableWeaponAdvantages" localize=true choices=equipmentAdvantageOptions}}
     {{/if}}
-    {{formGroup document.system.schema.fields.removeMessage value=document.system.removeMessage label="DSASETTINGS.notifyOnFadingEffects" localize=true choices=messageReceivers}}
+    {{/if}}
+    {{formGroup document.system.schema.fields.removeMessage value=document.system.removeMessage
+    label="DSASETTINGS.notifyOnFadingEffects" localize=true choices=messageReceivers}}
 
     <div class="form-group">
         <label>{{localize 'charges'}}</label>
         <div class="form-fields">
-            {{formInput document.system.schema.fields.charges.fields.value value=document.system.charges.value min=0 step=1}}
+            {{formInput document.system.schema.fields.charges.fields.value value=document.system.charges.value min=0
+            step=1}}
             <span class="sep">/</span>
-            {{formInput document.system.schema.fields.charges.fields.max value=document.system.charges.max min=0 step=1 placeholder=(localize 'max')}}
+            {{formInput document.system.schema.fields.charges.fields.max value=document.system.charges.max min=0 step=1
+            placeholder=(localize 'max')}}
         </div>
         <p class="hint">{{localize document.system.schema.fields.charges.hint}}</p>
     </div>
     {{#if advancedFunctions}}
-    {{formGroup document.system.schema.fields.customDuration value=document.system.customDuration label="duration" localize=true}}
-    {{formGroup document.system.schema.fields.advancedFunction value=document.system.advancedFunction label="ActiveEffects.custom" localize=true choices=advancedFunctionChoices}}
-    {{formGroup document.system.schema.fields.resistRoll value=document.system.resistRoll label="ActiveEffects.resistRoll" localize=true placeholder=(concat (localize 'LocalizedIDs.perception') " -2")}}
+    {{formGroup document.system.schema.fields.customDuration value=document.system.customDuration label="duration"
+    localize=true}}
+    {{formGroup document.system.schema.fields.advancedFunction value=document.system.advancedFunction
+    label="ActiveEffects.custom" localize=true choices=advancedFunctionChoices}}
+    {{formGroup document.system.schema.fields.resistRoll value=document.system.resistRoll
+    label="ActiveEffects.resistRoll" localize=true placeholder=(concat (localize 'LocalizedIDs.perception') " -2")}}
     <div class="advancedFunctions">
         {{> systems/dsa5/templates/status/advanced_functions.hbs}}
     </div>
@@ -46,11 +68,41 @@
         <label>{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label>
         <div class="form-fields height100">
             {{#if config.canEditMacros}}
-                <code-mirror language="javascript" indent="2" name="system.macroArgs.onRemove" data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.system.macroArgs.onRemove~}}</code-mirror>
+            <code-mirror language="javascript" indent="2" name="system.macroArgs.onRemove"
+                data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.system.macroArgs.onRemove~}}</code-mirror>
             {{else}}
-                <p class="input-text">{{#if document.system.macroArgs.onRemove}}{{document.system.macroArgs.onRemove}}{{else}} - {{/if}}</p>
+            <p class="input-text">{{#if
+                document.system.macroArgs.onRemove}}{{document.system.macroArgs.onRemove}}{{else}} - {{/if}}</p>
             {{/if}}
         </div>
         <p class="hint">{{localize document.system.schema.fields.macroArgs.fields.onRemove.hint}}</p>
+    </div>
+    <div class="row-section wrap margin-top">
+        <div class="col row-section skills table-title lineheight">
+            <div class="col ten"></div>
+            <div class="col eighty">{{localize 'SHEET.onUseActions'}}</div>
+            <div class="col ten flexrow">
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="addOnUseAction"
+                    data-tooltip="SHEET.addOnUseAction"></button>
+            </div>
+        </div>
+        {{#each onUseActions as |action|}}
+        <div class="row-section col skills statusEffect margin-top" data-on-use-action-id="{{action.id}}">
+            <div class="col ten">
+                <img src="{{action.img}}" data-tooltip="{{action.name}}" />
+            </div>
+            <div class="col seventy">
+                <span>{{action.name}}</span>
+            </div>
+            <div class="col ten right">
+                <a data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"><i
+                        class="fa fa-edit"></i></a>
+            </div>
+            <div class="col ten right">
+                <a data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"><i
+                        class="fa fa-trash"></i></a>
+            </div>
+        </div>
+        {{/each}}
     </div>
 </section>

@@ -224,10 +224,17 @@
             {{#each transferedConditions as |item i|}}
             <div class="row-section morph skills col statusEffect" data-item-id="{{item.parent.id}}" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}"{{/if}} {{{ifThen item.disabled 'style="opacity:0.5;"' ''}}}>
                 <div class="status-img col ten effectConfig">
-                    <img src="{{item.img}}" /> 
+                    <img src="{{item.img}}" />
                 </div>
-                <div class="col sixty ellipsis">
-                    <a data-action="conditionEdit" class="gTooltip" data-category="effect" data-uuid="{{item.uuid}}" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
+                <div class="col sixty flexcol">
+                    <div class="ellipsis">
+                        <a data-action="conditionEdit" class="gTooltip" data-category="effect" data-uuid="{{item.uuid}}" data-locked="true" data-id="{{item._id}}">{{localize item.name}}</a>
+                    </div>
+                    <small class="flexrow gap2px ellipsis">
+                        {{#each item.pips as |pip|}}
+                        <small class="smallBoxItem flex0 gTooltip" data-category="{{pip.category}}" data-id="{{pip.id}}">{{{pip.content}}}</small>
+                        {{/each}}
+                    </small>
                 </div>
                 <div class="col five center">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
