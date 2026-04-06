@@ -520,6 +520,7 @@
     "Failure": "Failure",
     "familiar": "Familiar",
     "feature": "Property",
+    "magicalActionKind": "Magical action",
     "failedTests": "Failed tests",
     "flight": "Flight",
     "force": "Force",
@@ -991,6 +992,7 @@
             },
             "spell": {
                 "distribution.value": "Witch...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Living creatures...",
                 "feature": "Clairvoyance..."
             },
@@ -1000,6 +1002,7 @@
             },
             "ritual": {
                 "distribution.value": "Witch...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Living creatures...",
                 "feature": "Clairvoyance..."
             },
@@ -2419,6 +2422,22 @@
             "conditions": "Conditions",
             "weapon": "Weapon / Armor"
         }
+    },
+    "MAGICALACTION": {
+        "none": "-",
+        "animistenkraefte": "Animistenkräfte",
+        "bannzeichen": "Bannzeichen",
+        "elfenlieder": "Elfenlieder",
+        "geodenritual": "Geodenritual",
+        "goblinrituale": "Goblinrituale",
+        "herrschaftsritual": "Herrschaftsritual",
+        "hexenflueche": "Hexenflüche",
+        "schelmenstreiche": "Schelmenstreiche",
+        "verzerrte_elfenlieder": "Verzerrte Elfenlieder",
+        "zaubermelodien": "Zaubermelodien",
+        "zauberrunen": "Zauberrunen",
+        "zaubertaenze": "Zaubertänze",
+        "zibiljarituale": "Zibiljarituale"
     },
     "LocalizedIDs": {
         "combatInWater": "Underwater Combat",

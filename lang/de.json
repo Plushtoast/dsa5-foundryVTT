@@ -385,6 +385,7 @@
     "waitingInfo": "Rechts-<i class=\"fas fa-computer-mouse\"></i> um jetzt zu handeln.",
     "familiar": "Vertraute",
     "feature": "Merkmal",
+    "magicalActionKind": "Magische Handlung",
     "failedTests": "Gescheiterte Proben",
     "flight": "Flucht",
     "force": "Erzwingen",
@@ -674,6 +675,7 @@
             },
             "spell": {
                 "distribution.value": "Hexen...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Lebewesen...",
                 "feature": "Hellsicht..."
             },
@@ -683,6 +685,7 @@
             },
             "ritual": {
                 "distribution.value": "Hexen...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Lebewesen...",
                 "feature": "Hellsicht..."
             },
@@ -2100,6 +2103,22 @@
     "ReverseSpellRanges": {
         "berühren": "touch",
         "selbst": "self"
+    },
+    "MAGICALACTION": {
+        "none": "-",
+        "animistenkraefte": "Animistenkräfte",
+        "bannzeichen": "Bannzeichen",
+        "elfenlieder": "Elfenlieder",
+        "geodenritual": "Geodenritual",
+        "goblinrituale": "Goblinrituale",
+        "herrschaftsritual": "Herrschaftsritual",
+        "hexenflueche": "Hexenflüche",
+        "schelmenstreiche": "Schelmenstreiche",
+        "verzerrte_elfenlieder": "Verzerrte Elfenlieder",
+        "zaubermelodien": "Zaubermelodien",
+        "zauberrunen": "Zauberrunen",
+        "zaubertaenze": "Zaubertänze",
+        "zibiljarituale": "Zibiljarituale"
     },
     "LocalizedAbilityModifiers": {
         "at": "at",

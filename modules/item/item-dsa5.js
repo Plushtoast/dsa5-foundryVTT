@@ -8,11 +8,11 @@ import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
-import CreatureType from '../system/automation/creature-type.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
+import CreatureType from '../system/automation/creature-type.js';
 import { ModifierCalculator } from './concerns/modifier-calculator.js';
 import { CombatSystem } from './concerns/combat-system.js';
 import { ItemFactory } from './item-factory.js';
@@ -25,6 +25,7 @@ import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
+import createBaseMagicalActionItemDSA5 from './magical-actions/base-magical-action-item.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -59,17 +60,15 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 // ===== CONSTANTS =====
 
-/** @constant {Object<string, string>} Actor types */
-const ACTOR_TYPES = {
-  CHARACTER: 'character',
-  NPC: 'npc',
-  CREATURE: 'creature'
-};
-
 /** @constant {string} Opposition indicator for chat titles */
 const OPPOSED_SUFFIX = ' - ';
 
-const { SPELL, LITURGY, CEREMONY, RITUAL, SKILL } = ITEM_CONSTANTS.TEST_TYPES;
+const { SPELL, RITUAL, LITURGY, CEREMONY, SKILL } = ITEM_CONSTANTS.TEST_TYPES;
+
+const ACTOR_TYPES = {
+  CHARACTER: 'character',
+  NPC: 'npc',
+};
 
 /**
  * DSA5 Item class extending Foundry VTT's base Item class
@@ -647,7 +646,9 @@ class MoneyItemDSA5 extends Itemdsa5 {
   }
 }
 
-class SpellItemDSA5 extends Itemdsa5 {
+const BaseMagicalActionItemDSA5 = createBaseMagicalActionItemDSA5(Itemdsa5);
+
+class SpellItemDSA5 extends BaseMagicalActionItemDSA5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
     testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
@@ -802,15 +803,6 @@ class SpellItemDSA5 extends Itemdsa5 {
     return res;
   }
 
-  /**
-   * Apply foreign spell modifier if enabled and applicable
-   * @static
-   * @param {Object} actor - Actor casting the spell
-   * @param {Object} source - Spell item being cast
-   * @param {Array<Object>} situationalModifiers - Array to add modifiers to
-   * @param {Object} data - Data object to modify with foreign spell status
-   * @returns {void}
-   */
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
     const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
     const applicableSpellTypes = [SPELL, RITUAL];
@@ -819,7 +811,6 @@ class SpellItemDSA5 extends Itemdsa5 {
       !enabledActorTypes.includes(actor.type) ||
       !applicableSpellTypes.includes(source.type)) return;
 
-    // TODO: Sync tradition identifiers in the underlying data instead of relying on display-label normalization here.
     const traditionLabel = _loc('tradition');
     const distributions = DSA5_Utility.cleanTraditionTokens(source.system.distribution.value, traditionLabel);
     const fromActorTraditions = DSA5_Utility.cleanTraditionTokens(actor.system.tradition.magical, traditionLabel);
@@ -836,9 +827,9 @@ class SpellItemDSA5 extends Itemdsa5 {
 
     if (data.isForeign) {
       situationalModifiers.push({
-      name: _loc('DSASETTINGS.enableForeignSpellModifer'),
-      value: -2 + modOffset,
-      selected: true,
+        name: _loc('DSASETTINGS.enableForeignSpellModifer'),
+        value: -2 + modOffset,
+        selected: true,
       });
     }
   }

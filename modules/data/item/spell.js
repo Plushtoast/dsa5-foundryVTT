@@ -2,13 +2,14 @@ import DescriptionTemplate from './templates/description.js';
 import { ItemDataModel } from '../baseitem.js';
 import SpellTemplate from './templates/spell.js';
 import BasicSpellTemplate from './templates/basicspell.js';
+import MagicalActionTemplate from './templates/magicalaction.js';
 import AoeTemplate from './templates/aoe.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import SkillTemplate from './templates/skill.js';
 
 const { StringField } = foundry.data.fields;
 
-export default class SpellData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SkillTemplate, SpellTemplate, BasicSpellTemplate) {
+export default class SpellData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SkillTemplate, SpellTemplate, BasicSpellTemplate, MagicalActionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       feature: new StringField({ initial: '', label: 'feature' }),

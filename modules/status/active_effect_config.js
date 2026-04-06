@@ -5,11 +5,11 @@ import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
 import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 
-const { mergeObject, getProperty, duplicate } = foundry.utils;
+const { mergeObject, getProperty, duplicate, isPlainObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 async function callMacro(packName, name, actor, item, qs, args = {}) {
-  const result = args.result || {};
+  const result = isPlainObject(args.result) ? args.result : {};
   if (!game.user.can('MACRO_SCRIPT')) {
     ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
   } else {
@@ -38,7 +38,12 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
       ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
     }
   }
+  if (isPlainObject(args.result) && args.result !== result) mergeObject(result, args.result);
   return result;
+}
+
+function collectResultMessage(result) {
+  return result?.msg ?? result?.msgOut ?? '';
 }
 
 Hooks.once('i18nInit', () => {
@@ -622,6 +627,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
                       await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
                       const macroResults = await Promise.all(macroCallResults);
+                      msg += macroResults.map((result) => collectResultMessage(result)).join('');
                       const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
                         macroResults,
                         options.maintenance.createdEffectUuids || [],

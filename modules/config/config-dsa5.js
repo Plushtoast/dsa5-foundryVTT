@@ -773,6 +773,23 @@ DSA5.magicResistanceModifiers = {
   ZK: 'toughness',
 };
 
+DSA5.magicalActionKinds = {
+  '': 'MAGICALACTION.none',
+  animistenkraefte: 'MAGICALACTION.animistenkraefte',
+  bannzeichen: 'MAGICALACTION.bannzeichen',
+  elfenlieder: 'MAGICALACTION.elfenlieder',
+  geodenritual: 'MAGICALACTION.geodenritual',
+  goblinrituale: 'MAGICALACTION.goblinrituale',
+  herrschaftsritual: 'MAGICALACTION.herrschaftsritual',
+  hexenflueche: 'MAGICALACTION.hexenflueche',
+  schelmenstreiche: 'MAGICALACTION.schelmenstreiche',
+  verzerrte_elfenlieder: 'MAGICALACTION.verzerrte_elfenlieder',
+  zaubermelodien: 'MAGICALACTION.zaubermelodien',
+  zauberrunen: 'MAGICALACTION.zauberrunen',
+  zaubertaenze: 'MAGICALACTION.zaubertaenze',
+  zibiljarituale: 'MAGICALACTION.zibiljarituale',
+};
+
 DSA5.impossibleWeaponsForWater = new Set(['Chain Weapons', 'Blowpipes', 'Bows', 'Crossbows', 'Slingshots', 'Throwing Weapons']);
 DSA5.goodWeaponsForWater = new Set(['Daggers', 'Fencing Weapons', 'Polearms']);
 

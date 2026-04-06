@@ -206,6 +206,7 @@ Hooks.once('ready', () => {
         },
         { label: 'targetCategory', attr: 'targetCategory.value', type: 'text' },
         { label: 'distribution', attr: 'distribution.value', type: 'text' },
+        { label: 'magicalActionKind', attr: 'magicalActionKind.value', type: 'select', options: DSA5.magicalActionKinds },
         { label: 'feature', attr: 'feature', type: 'text' },
       ],
       ritual: [
@@ -217,6 +218,7 @@ Hooks.once('ready', () => {
         },
         { label: 'targetCategory', attr: 'targetCategory.value', type: 'text' },
         { label: 'distribution', attr: 'distribution.value', type: 'text' },
+        { label: 'magicalActionKind', attr: 'magicalActionKind.value', type: 'select', options: DSA5.magicalActionKinds },
         { label: 'feature', attr: 'feature', type: 'text' },
       ],
       ceremony: [
