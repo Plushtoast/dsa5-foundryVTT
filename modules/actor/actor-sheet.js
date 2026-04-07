@@ -57,18 +57,44 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async render(options = {}, _options = {}) {
-    this._saveCollapsed();
-    const result = await super.render(options, _options);
-    this._setCollapsed();
-
-    if (this.currentFocus) {
-      $(this.element)
-        .find('[data-item-id="' + this.currentFocus + '"] input')
-        .trigger('focus')
-        .trigger('select');
-      this.currentFocus = null;
+    if (this.element) {
+      this.openDetails = Array.from(this.element.querySelectorAll('.expandDetails.shown'), el => el.closest('.item')?.dataset.itemId).filter(Boolean);
     }
-    return result;
+    return await super.render(options, _options);
+  }
+
+  _preSyncPartState(partId, newElement, priorElement, state) {
+    super._preSyncPartState(partId, newElement, priorElement, state);
+
+    const focus = priorElement.querySelector(':focus');
+    const itemRow = focus?.closest('[data-item-id]');
+    if (itemRow) state.focusItemId = itemRow.dataset.itemId;
+
+    state.collapsedBoxes = Array.from(priorElement.querySelectorAll('.ch-collapse i'), el => el.getAttribute('class'));
+    state.openDetails = Array.from(priorElement.querySelectorAll('.expandDetails.shown'), el => el.closest('.item')?.dataset.itemId).filter(Boolean);
+  }
+
+  _syncPartState(partId, newElement, priorElement, state) {
+    super._syncPartState(partId, newElement, priorElement, state);
+
+    if (state.focusItemId) {
+      const input = newElement.querySelector(`[data-item-id="${state.focusItemId}"] input`);
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+
+    if (state.collapsedBoxes?.length) {
+      const boxes = newElement.querySelectorAll('.ch-collapse i');
+      for (let i = 0; i < boxes.length; i++) {
+        if (!state.collapsedBoxes[i]) continue;
+        boxes[i].setAttribute('class', state.collapsedBoxes[i]);
+        if (state.collapsedBoxes[i].includes('fa-angle-down')) {
+          boxes[i].closest('.groupbox')?.querySelector('.row-section:nth-child(2)')?.style.setProperty('display', 'none');
+        }
+      }
+    }
   }
 
   static LIMITEDPARTS = {
@@ -281,32 +307,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       return foundry.utils.deepClone(this.constructor.LIMITEDPARTS);
     }
     return super._configureRenderParts(options);
-  }
-
-  _saveCollapsed() {
-    if (this.element === null) return;
-
-    const html = $(this.element);
-    this.collapsedBoxes = [];
-    this.openDetails = [];
-    const boxes = html.find('.ch-collapse i');
-    for (const box of boxes) {
-      this.collapsedBoxes.push($(box).attr('class'));
-    }
-    for (const detail of html.find('.expandDetails.shown')) {
-      this.openDetails.push($(detail).closest('.item').attr('data-item-id'));
-    }
-  }
-
-  _setCollapsed() {
-    const html = $(this.element);
-    if (!this.collapsedBoxes) return;
-
-    const boxes = html.find('.ch-collapse i');
-    for (let i = 0; i < boxes.length; i++) {
-      $(boxes[i]).attr('class', this.collapsedBoxes[i]);
-      if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf('fa-angle-down') != -1) $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide();
-    }
   }
 
   _prepareTabs(group) {
@@ -1039,9 +1039,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
     html.find('[data-action="advanceWrapper"]').on('mouseenter', this._onHoverCost.bind(this));
     html.find('.chat-condition').on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
-    html.find('.money-change, .skill-advances').on('focusin', (ev) => {
-      this.currentFocus = ev.currentTarget.closest('[data-item-id]').dataset.itemId;
-    });
+
 
     const deletehand = (ev) => this._deleteItem(ev.currentTarget);
 
