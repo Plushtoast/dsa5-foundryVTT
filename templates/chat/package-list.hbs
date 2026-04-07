@@ -1,0 +1,9 @@
+<div class="package-list">
+  {{#each packages}}
+    <div class="row-section gap2px lineheight">
+      <button type="button" draggable="true" class="package-drag chatButton col sixty" data-uuid="{{uuid}}"><i class="lineheight fas fa-box"></i>{{name}}</button>
+      <button type="button" class="noBorder dsadesignbutton center col ten showPackage" data-uuid="{{uuid}}"><i class="fas fa-info" data-tooltip="{{localize 'ITEMPACKAGE.content'}}"></i></button>
+      <button class="col third payButton" data-pay="0" data-amount="{{price}}" data-tooltip="{{localize 'PAYMENT.payButton'}} ({{localize 'Money-S'}})">{{price}}</button>
+    </div>
+  {{/each}}
+</div>

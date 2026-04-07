@@ -9,6 +9,7 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
 
 import { TrapState } from '../chatmessage/trap_state.js';
+import ItempackageData from '../data/item/itempackage.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
@@ -27,6 +28,7 @@ export default function () {
     game.dsa5.autoComplete.chatListeners(html);
 
     DSA5ChatListeners.chatListeners(html);
+    ItempackageData.chatListeners(html);
   });
 
   Hooks.on('renderChatInput', applyNotificationListeners);
@@ -41,6 +43,7 @@ export default function () {
     DSA5Payment.chatListeners(chatNotifications);
     PaymentRequestService.chatListeners(chatNotifications);
     DSA5ChatListeners.chatListeners(chatNotifications);
+    ItempackageData.chatListeners(chatNotifications);
 
     Hooks.call('dsa5ApplyNotificationListeners', chatNotifications);
     Hooks.off('renderChatInput', applyNotificationListeners);
@@ -101,7 +104,7 @@ export default function () {
 
   Hooks.on('chatMessage', (html, content, msg) => {
     const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
-    let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables)(?:\s|$)/i);
+    let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages)(?:\s|$)/i);
     cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {
       case '/pay': {
@@ -124,6 +127,9 @@ export default function () {
         return false;
       case '/tables':
         DSA5ChatListeners.showTables();
+        return false;
+      case '/packages':
+        ItempackageData.postPackagesChatCard();
         return false;
     }
   });

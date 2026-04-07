@@ -171,7 +171,7 @@ export default class GroupData extends ActorDataModel {
     for (const mode of Object.keys(DEFAULT_SPEEDS)) {
       const schema = this.travel.speed[mode];
       const assignedLoc = locationByMode[mode];
-      let base = mode === 'foot' ? footBase : (assignedLoc ? assignedLoc.speed : schema.initial);
+      const base = mode === 'foot' ? footBase : (assignedLoc ? assignedLoc.speed : schema.initial);
 
       let max = base + (schema.modifier || 0);
       if (forcedPct > 0) max = Math.floor(max * (1 + forcedPct / 100));
@@ -277,7 +277,7 @@ export default class GroupData extends ActorDataModel {
   }
 
   async removeLocation(key) {
-    await this.parent.update({ [`system.locations.-=${key}`]: null });
+    await this.parent.update({ [`system.locations.${key}`]: _del });
   }
 
   async setLocationType(key, type) {

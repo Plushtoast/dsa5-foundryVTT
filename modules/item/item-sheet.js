@@ -14,12 +14,11 @@ import RequestRoll from '../system/rolls/request-roll.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
 
-import { DragMixin } from '../actor/mixins/drag_mixin.js';
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
-export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
+export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2)) {
   _processFormData(event, form, formData) {
     const data = super._processFormData(event, form, formData);
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
@@ -146,6 +145,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       { sheetClass: SkillSheet, types: ['skill'] },
       { sheetClass: TraitSheet, types: ['trait'] },
       { sheetClass: EffectWrapperSheet, types: ['effectwrapper'] },
+      { sheetClass: ItempackageSheet, types: ['itempackage'] },
     ];
     sheets.forEach(({ sheetClass, types }) => {
       foundry.documents.collections.Items.registerSheet('dsa5', sheetClass, { makeDefault: true, types });
@@ -485,6 +485,10 @@ class NoEffectsEquipmentSheet extends ItemSheetdsa5 {
     },
   };
 
+  async _onDropActiveEffect() {
+    return null;
+  }
+
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     delete tabs.effects;
@@ -509,10 +513,54 @@ class NoEffectsSheet extends ItemSheetdsa5 {
     },
   };
 
+  async _onDropActiveEffect() {
+    return null;
+  }
+
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     delete tabs.effects;
     return tabs;
+  }
+}
+
+class ItempackageSheet extends NoEffectsSheet {
+  static DEFAULT_OPTIONS = {
+    position: {
+      width: 600,
+    },
+    actions: {
+      addPackageItem: this.#addPackageItem,
+      deletePackageItem: this.#deletePackageItem,
+      showPackageContents: this.#showPackageContents,
+    },
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.packageItems = this.item.system.items;
+    data.itemFields = this.item.system.schema.fields.items.element.fields;
+    data.equipmentCategories = Object.fromEntries([...DSA5.equipmentCategories].map(c => [c, _loc(`TYPES.Item.${c}`)]));
+    return data;
+  }
+
+  static #addPackageItem() {
+    this.item.system.addItem();
+  }
+
+  static #deletePackageItem(_event, target) {
+    this.item.system.removeItem(target.dataset.key);
+  }
+
+  static #showPackageContents() {
+    this.item.system.showContents();
+  }
+
+  async _handleDrop(dragData) {
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (!DSA5.equipmentCategories.has(typeClass)) return;
+
+    this.item.system.addItem(item.name, typeClass, 1, 0, item.system?.price?.value ?? 0);
   }
 }
 

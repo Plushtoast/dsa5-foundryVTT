@@ -1415,7 +1415,9 @@
         "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)",
         "groupcheck": "Gruppenprobe",
         "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)",
-        "payDrag": "Bezahlen bei Drag & Drop"
+        "payDrag": "Bezahlen bei Drag & Drop",
+        "packages": "Ausrüstungspakete",
+        "descrpackages": "Zeigt alle verfügbaren Ausrüstungspakete."
     },
     "WEAPON": {
         "loading": "Ladestatus: {status}",
@@ -1518,6 +1520,7 @@
     "TYPES.Item.spellextension": "Zauber/Liturgieerweiterung",
     "TYPES.Item.application": "Anwendungsgebiet",
     "TYPES.Item.effectwrapper": "Effektcontainer",
+    "TYPES.Item.itempackage": "Ausrüstungspaket",
     "TYPES.Item.patron": "Patron",
     "TYPES.Actor.character": "Charakter",
     "TYPES.Actor.npc": "Nichtspielercharakter",
@@ -2552,6 +2555,13 @@
         "wrongConstellation": "Unpassende Konstellation (-1)",
         "rightClothes": "Passende Kleidung (+1)",
         "rightEquipment": "Passende Gerätschaften (+1)"
+    },
+    "ITEMPACKAGE": {
+        "items": "Paketinhalte",
+        "addItem": "Gegenstand hinzufügen",
+        "content": "Paketinhalt",
+        "noneAvailable": "Keine Ausrüstungspakete in Kompendien gefunden.",
+        "dropHint": "Ausrüstungsgegenstände hierher ziehen, um sie zum Paket hinzuzufügen."
     },
     "PAYMENT": {
         "pay": "<b>{actor}</b> bezahlt seine/ihre Schulden von {amount}.",

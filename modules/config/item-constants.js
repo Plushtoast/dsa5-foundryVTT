@@ -10,6 +10,7 @@ export const ITEM_CONSTANTS = {
     meleeweapon: 'systems/dsa5/icons/categories/Meleeweapon.webp',
     rangeweapon: 'systems/dsa5/icons/categories/Rangeweapon.webp',
     equipment: 'systems/dsa5/icons/categories/Equipment.webp',
+    itempackage: 'systems/dsa5/icons/categories/Equipment.webp',
     consumable: 'systems/dsa5/icons/categories/consumable.webp',
     liturgy: 'systems/dsa5/icons/categories/Liturgy.webp',
     spell: 'systems/dsa5/icons/categories/Spell.webp',

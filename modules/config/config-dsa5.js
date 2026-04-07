@@ -679,6 +679,11 @@ DSA5.helpContent = [
     command: '/gc',
     example: '/gc',
   },
+  {
+    name: 'packages',
+    command: '/packages',
+    example: '/packages',
+  },
 ];
 
 DSA5.ceremonyTimeModifiers = {

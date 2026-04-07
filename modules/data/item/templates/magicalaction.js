@@ -9,6 +9,7 @@ export default class MagicalActionTemplate extends DSADataModel {
       magicalActionKind: new SchemaField({
         value: new StringField({
           initial: '',
+          blank: true,
           label: 'magicalActionKind',
           choices: DSA5.magicalActionKinds,
         }),

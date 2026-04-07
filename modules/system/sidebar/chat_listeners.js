@@ -4,6 +4,7 @@ import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
 import ChatCommandService from './chat_command_service.js';
+import ItempackageData from '../../data/item/itempackage.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -145,6 +146,7 @@ export default class DSA5ChatListeners {
       },
       { label: _loc('HELP.conditions'), icon: 'fas fa-biohazard', onClick: () => DSA5ChatListeners.showConditions() },
       { label: _loc('HELP.tables'), icon: 'fas fa-table', onClick: () => DSA5ChatListeners.showTables() },
+      { label: _loc('HELP.packages'), icon: 'fas fa-box', onClick: () => ItempackageData.postPackagesChatCard() },
       {
         label: _loc('HELP.request'),
         icon: 'fas fa-dice',

@@ -1908,7 +1908,9 @@
         "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)",
         "groupcheck": "Group Check",
         "descrgroupcheck": "Request a Group Check. (tab + number = with modifier)",
-        "payDrag": "Pay on Drag & Drop"
+        "payDrag": "Pay on Drag & Drop",
+        "packages": "Equipment Packages",
+        "descrpackages": "Lists all available equipment packages."
     },
     "TYPES.Combat.dsacombat": "Combat (TDE)",
     "TYPES.Combatant.dsacombatant": "Combatant (TDE)",
@@ -1944,6 +1946,7 @@
     "TYPES.Item.essence": "Influence",
     "TYPES.Item.imprint": "Personality Trait",
     "TYPES.Item.effectwrapper": "Effect container",
+    "TYPES.Item.itempackage": "Equipment Package",
     "TYPES.Item.demonmark": "Demon Mark",
     "TYPES.Item.consumable": "Consumable",
     "TYPES.Item.spellextension": "Spell/Liturgyextension",
@@ -2693,6 +2696,13 @@
         "wrongConstellation": "Improper constellation (-1)",
         "rightClothes": "Appropriate clothing (+1)",
         "rightEquipment": "Proper tools (+1)"
+    },
+    "ITEMPACKAGE": {
+        "items": "Package Items",
+        "addItem": "Add Item",
+        "content": "Package Content",
+        "noneAvailable": "No equipment packages found in any compendium.",
+        "dropHint": "Drop equipment items here to add them to the package."
     },
     "PAYMENT": {
         "pay": "<b>{actor}</b> pays his/her debts of {amount}.",

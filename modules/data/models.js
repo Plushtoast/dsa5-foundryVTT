@@ -18,6 +18,7 @@ import EquipmentData from './item/equipment.js';
 import EssenceData from './item/essence.js';
 import ImprintData from './item/imprint.js';
 import InformationData from './item/information.js';
+import ItempackageData from './item/itempackage.js';
 import LiturgyData from './item/liturgy.js';
 import MagicalsignData from './item/magicalsign.js';
 import MagictrickData from './item/magictrick.js';
@@ -67,6 +68,7 @@ export const itemModels = {
     essence: EssenceData,
     imprint: ImprintData,
     information: InformationData,
+    itempackage: ItempackageData,
     liturgy: LiturgyData,
     magicalsign: MagicalsignData,
     magictrick: MagictrickData,

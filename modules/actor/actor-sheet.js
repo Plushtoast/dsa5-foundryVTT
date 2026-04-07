@@ -30,6 +30,7 @@ import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import ItempackageData from '../data/item/itempackage.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -1941,6 +1942,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       case 'spellextension':
         await this._handleSpellExtension(item);
         break;
+      case 'itempackage':
+        await this._addItemPackage(item);
+        break;
       case 'creature':
         this.creatureDrop(item);
         break;
@@ -1981,35 +1985,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     );
   }
 
-  async _handleLookup(item) {
-    const lookup = await DSA5_Utility.findAnyItem(item.items);
-    if (lookup) {
-      for (const thing of item.items) {
-        if (thing.count) {
-          const elem = lookup.find((x) => x.name == thing.name && x.type == thing.type);
-          if (elem) {
-            elem.system.quantity.value = thing.count;
-            if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
-          } else {
-            ui.notifications.warn(
-              'DSAError.notFound', { localize: true, format: {
-                category: thing.type,
-                name: thing.name,
-              }});
-          }
-        }
-      }
-      //we should improve that so it stacks items
-      await this.actor.createEmbeddedDocuments('Item', lookup);
-      //for (let thing of lookup) {
-      //    await this._manageDragItems(thing, thing.type)
-      //}
+  async _addItemPackage(item) {
+    const resolved = await ItempackageData.resolvePackage(item);
+    if (resolved.length) {
+      await this.actor.createEmbeddedDocuments('Item', resolved);
     } else {
-      const thing = item.items?.[0] || item;
       ui.notifications.error(
         'DSAError.notFound', { localize: true, format: {
-          category: thing.type,
-          name: thing.name,
+          category: 'itempackage',
+          name: item.name,
         }});
     }
   }
@@ -2048,6 +2032,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _onDropItem(event, item) {
+    if (item.type === 'itempackage') {
+      await this._addItemPackage(item);
+      return;
+    }
+
     const itemData = item.toObject();
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);

@@ -446,6 +446,12 @@
                     "description.value",
                     "gmdescription.value"
                 ]
+            },
+            "itempackage": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
             }
         }
     },
