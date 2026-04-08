@@ -1,0 +1,22 @@
+<li
+  class='combatant actor directory-item row-section query-actor-row{{#if actor.isActiveCharacter}} user-character{{/if}}'
+  data-actor-id='{{actor.id}}'
+  data-actor-name='{{actor.name}}'
+  data-actor-meta='{{actor.meta}}'
+>
+  <div class='combatant-advanced col five'>
+    <img class='token-image' data-tooltip='{{actor.name}}' src='{{actor.img}}' style='height:100%' />
+  </div>
+  <div class='token-name flexrow flexAlignCenter col seventy'>
+    <div>
+      <h4>{{actor.name}}</h4>
+      {{#if actor.meta}}
+        <div class='very-small'>{{actor.meta}}</div>
+      {{/if}}
+    </div>
+  </div>
+  <div class='col ten center'>
+    <input type='checkbox' class='query-actor-selector' name='queryActor' value='{{actor.id}}'
+      {{#if actor.preselected}}checked{{/if}} />
+  </div>
+</li>

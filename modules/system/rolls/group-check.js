@@ -1,13 +1,11 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import InformationQueryService from '../queries/information-query.js';
-import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
-export default class RequestRoll {
+export default class GroupCheck {
   static async requestGC(category, name, messageId, modifier = 0) {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
@@ -18,7 +16,7 @@ export default class RequestRoll {
       modifier,
       postFunction: {
         cummulative: messageId,
-        functionName: 'game.dsa5.apps.RequestRoll.autoEditGroupCheckRoll',
+        functionName: 'game.dsa5.apps.GroupCheck.autoEditGroupCheckRoll',
       },
     };
     switch (category) {
@@ -28,13 +26,13 @@ export default class RequestRoll {
         const skill = actor.items.find((i) => i.name == name && i.type == category);
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
           const result = await actor.basicTest(setupData);
-          await RequestRoll.editGroupCheckRoll(messageId, result, name, category);
+          await GroupCheck.editGroupCheckRoll(messageId, result, name, category);
         });
     }
   }
 
   static async autoEditGroupCheckRoll(postFunction, result, source) {
-    await RequestRoll.editGroupCheckRoll(postFunction.cummulative, result, source.name, source.type);
+    await GroupCheck.editGroupCheckRoll(postFunction.cummulative, result, source.name, source.type);
   }
 
   static async editGroupCheckRoll(messageId, result, target, type) {
@@ -58,39 +56,7 @@ export default class RequestRoll {
     } else {
       data.results.push(update);
     }
-    RequestRoll.rerenderGC(message, data);
-  }
-
-  static async requestRoll(category, name, modifier = 0, options = {}) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-
-    if (actor) {
-      if (game.canvas.ready) game.user._onUpdateTokenTargets([]);
-
-      options.modifier = modifier;
-
-      switch (category) {
-        case 'attribute':
-          const characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => _loc(game.dsa5.config.characteristics[key]) == name);
-          actor.setupCharacteristic(characteristic, options, tokenId).then((setupData) => {
-            actor.basicTest(setupData);
-          });
-          break;
-        case 'regeneration':
-          actor.setupRegeneration('regenerate', options, tokenId).then((setupData) => {
-            actor.basicTest(setupData);
-          });
-          break;
-        case 'fallingDamage':
-          actor.setupFallingDamage(options, tokenId);
-          break;
-        default:
-          const skill = actor.items.find((i) => i.name == name && i.type == category);
-          actor.setupSkill(skill, options, tokenId).then((setupData) => {
-            actor.basicTest(setupData);
-          });
-      }
-    }
+    GroupCheck.rerenderGC(message, data);
   }
 
   static async rerenderGC(message, data) {
@@ -192,7 +158,7 @@ export default class RequestRoll {
               modifier: dlg.find('[name="modifier"]').val(),
               target: dlg.find('[name="skill"]').val(),
             });
-            RequestRoll.rerenderGC(message, data);
+            GroupCheck.rerenderGC(message, data);
           },
         },
         {
@@ -211,7 +177,7 @@ export default class RequestRoll {
     const message = game.messages.get(elem.parents('.message').attr('data-message-id'));
     const data = message.flags.gc;
     data.results.splice(index, 1);
-    RequestRoll.rerenderGC(message, data);
+    GroupCheck.rerenderGC(message, data);
   }
 
   static removeSkillFromGC(ev) {
@@ -220,7 +186,7 @@ export default class RequestRoll {
     const data = message.flags.gc;
     data.rollOptions = data.rollOptions.filter((x) => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name));
     data.results = data.results.filter((x) => !(x.type == ev.currentTarget.dataset.type && x.target == ev.currentTarget.dataset.name));
-    RequestRoll.rerenderGC(message, data);
+    GroupCheck.rerenderGC(message, data);
   }
 
   static async editGC(ev) {
@@ -236,108 +202,17 @@ export default class RequestRoll {
     } else {
       data[ev.currentTarget.dataset.field] = Number(elem.val());
     }
-    RequestRoll.rerenderGC(message, data);
-  }
-
-  static async updateInformationRoll(postFunction, result, source) {
-    const msg = [];
-    const item = await fromUuid(postFunction.uuid);
-    const availableQs = result.result.qualityStep || 0;
-
-    for (let i = 1; i <= availableQs; i++) {
-      const qs = `qs${i}`;
-      if (item.system[qs]) msg.push(item.system[qs]);
-    }
-
-    if (result.result.successLevel > 1 && item.system.crit) {
-      msg.push(item.system.crit);
-    } else if (result.result.successLevel < -1 && item.system.botch) {
-      msg.push(item.system.botch);
-    } else if (item.system.fail && !availableQs) {
-      msg.push(item.system.fail);
-    }
-
-    if (msg.length > 0) {
-      await Promise.all(
-        msg.map(async (x) => {
-          const enriched = await TextEditor.enrichHTML(x, {});
-          return enriched;
-        }),
-      );
-      msg.unshift(`<p><b>${item.name}</b></p>`);
-
-      const chatData = DSA5_Utility.chatDataSetup(msg.join(''));
-      if (postFunction.recipients.length) chatData['whisper'] = postFunction.recipients;
-
-      ChatMessage.create(chatData);
-    }
-  }
-
-  static async informationRequestRoll(ev) {
-    const modifier = ev.currentTarget.dataset.mod;
-    const uuid = ev.currentTarget.dataset.uuid;
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-    if (!actor) return;
-
-    const recipientsTarget = game.settings.get('dsa5', 'informationDistribution');
-    let recipients = [];
-    if (recipientsTarget == 1) {
-      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-      recipients.push(game.user.id);
-    } else if (recipientsTarget == 2) {
-      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-    }
-    const optns = {
-      modifier,
-      postFunction: {
-        functionName: 'game.dsa5.apps.RequestRoll.updateInformationRoll',
-        uuid,
-        recipients,
-      },
-    };
-    const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
-    actor.setupSkill(skill, optns, tokenId).then(async (setupData) => {
-      setupData.testData.opposable = false;
-      const res = await actor.basicTest(setupData);
-      this.updateInformationRoll(optns.postFunction, res);
-    });
+    GroupCheck.rerenderGC(message, data);
   }
 
   static chatListeners(html) {
-    html.on('change', '.editGC', (ev) => RequestRoll.editGC(ev));
-    html.on('mousedown', '.request-roll', (ev) => {
-      const elem = ev.currentTarget.dataset;
-      const options = {};
-
-      if (ev.button == 2) {
-        let checks = 0;
-        const msg = $(ev.currentTarget).closest('.chat-message');
-
-        const intervalId = setInterval(function () {
-          //workaround
-          checks++;
-
-          const elem = msg.find('nav');
-          if (elem.length > 0) {
-            elem.remove();
-            clearInterval(intervalId);
-          }
-
-          if (checks >= 20) clearInterval(intervalId);
-        }, 10);
-        options.messageMode = DICE_CONSTANTS.CHAT_MODES.BLIND;
-      }
-
-      RequestRoll.requestRoll(elem.type, elem.name, Number(elem.modifier) || 0, options);
-    });
+    html.on('change', '.editGC', (ev) => GroupCheck.editGC(ev));
     html.on('click', '.request-gc', (ev) => {
       const elem = ev.currentTarget.dataset;
-      RequestRoll.requestGC(elem.type, elem.name, $(ev.currentTarget).parents('.message').attr('data-message-id'), Number(elem.modifier) || 0);
+      GroupCheck.requestGC(elem.type, elem.name, $(ev.currentTarget).parents('.message').attr('data-message-id'), Number(elem.modifier) || 0);
     });
-    html.on('click', '.removeGC', (ev) => RequestRoll.removeGCEntry(ev));
-    html.on('click', '.removeSkillFromGC', (ev) => RequestRoll.removeSkillFromGC(ev));
-    html.on('click', '.addSkillToGC', (ev) => RequestRoll.addSkillToGC(ev));
-    html.on('click', '.informationRequestRoll', (ev) => RequestRoll.informationRequestRoll(ev));
-    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
+    html.on('click', '.removeGC', (ev) => GroupCheck.removeGCEntry(ev));
+    html.on('click', '.removeSkillFromGC', (ev) => GroupCheck.removeSkillFromGC(ev));
+    html.on('click', '.addSkillToGC', (ev) => GroupCheck.addSkillToGC(ev));
   }
 }

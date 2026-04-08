@@ -1,5 +1,6 @@
 import DSA5ChatListeners from '../sidebar/chat_listeners.js';
-import RequestRoll from '../rolls/request-roll.js';
+import GroupCheck from '../rolls/group-check.js';
+import RollRequestService from '../queries/roll-request.js';
 
 export default class MacroDSA5 {
   static weaponLessMacro(char) {
@@ -17,11 +18,11 @@ export default class MacroDSA5 {
   }
 
   static requestRoll(skill, modifier = 0) {
-    RequestRoll.showRQMessage(skill, modifier);
+    RollRequestService.requestRoll(skill, modifier);
   }
 
   static requestGC(skill, modifier = 0, options = {}) {
-    RequestRoll.showGCMessage(skill, modifier, options);
+    GroupCheck.showGCMessage(skill, modifier, options);
   }
 
   static rollCh(skill, options = {}) {

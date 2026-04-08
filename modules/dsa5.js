@@ -14,9 +14,10 @@ import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';
 import DSA5ChatListeners from './system/sidebar/chat_listeners.js';
 import DSA5Payment from './system/payment/payment.js';
 import QueryOrchestrator from './system/queries/query-orchestrator.js';
-import PaymentRequestService from './system/payment/payment-requests.js';
+import PaymentRequestService from './system/queries/payment-requests.js';
 import TransactionSummaryService from './system/payment/transaction-summary.js';
 import InformationQueryService from './system/queries/information-query.js';
+import RollRequestService from './system/queries/roll-request.js';
 import { DSA5CombatTracker } from './combat/combat_tracker.js';
 import DSA5Combat from './combat/combat.js';
 import DSA5Combatant from './combat/combatant.js';
@@ -38,7 +39,7 @@ import EquipmentDamage from './system/automation/equipment-damage.js';
 import DidYouKnow from './system/helpers/didyouknow.js';
 import MerchantSheetDSA5 from './actor/merchant-sheet.js';
 import { DSARegionTemplate } from './system/automation/measuretemplate.js';
-import RequestRoll from './system/rolls/request-roll.js';
+import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
 import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
@@ -87,9 +88,6 @@ Hooks.once('init', () => {
       DSA5Initializer,
       DSA5ChatListeners,
       DSA5Payment,
-      QueryOrchestrator,
-      PaymentRequestService,
-      TransactionSummaryService,
       SpecialabilityRulesDSA5,
       AdvantageRulesDSA5,
       Migrakel,
@@ -98,7 +96,7 @@ Hooks.once('init', () => {
       DPS,
       DSATables,
       DSA5SoundEffect,
-      RequestRoll,
+      GroupCheck,
       DiceDSA5,
       DSATour,
       OpposeDSA,
@@ -119,6 +117,13 @@ Hooks.once('init', () => {
       SummoningAPI,
       ShapeshiftingAPI,
       //DAGTalentTree,
+    },
+    queries: {
+      QueryOrchestrator,
+      PaymentRequestService,
+      TransactionSummaryService,
+      InformationQueryService,
+      RollRequestService,
     },
     animation: {      
       TokenScatter,
@@ -234,6 +239,7 @@ Hooks.once('init', () => {
   PaymentRequestService.register();
   TransactionSummaryService.register();
   InformationQueryService.register();
+  RollRequestService.register();
   DSA5ProseMirrorIntegration.register();
 });
 

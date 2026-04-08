@@ -1,0 +1,42 @@
+<div class="dsa5 roll-request-card">
+  <h4>{{title}}</h4>
+  <p><b>{{skillName}}</b>{{#if modifierLabel}} ({{modifierLabel}}){{/if}}</p>
+
+  {{#if recipients.length}}
+    {{#each recipients}}
+      <div class="row-section tableOdd roll-request-row" data-actor-id="{{actorId}}" data-status="{{status}}">
+        <div class="col two">
+          <div class="flexrow flexAlignCenter">
+            <b class="ellipsis">{{actorName}}</b>
+          </div>
+          {{#if designatedUserName}}
+            <div class="very-small">{{designatedUserName}}</div>
+          {{/if}}
+        </div>
+        <div class="col five flexrow flexAlignEnd gap2px">
+          <span class="icon noBorder roll-request-indicator {{colorClass}}" data-tooltip="{{label}}" aria-label="{{label}}">
+            <i class="fas {{icon}}"></i>
+          </span>
+          {{#if hasResultDetails}}
+            <span class="icon noBorder roll-request-indicator icon-gray" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          {{/if}}
+        </div>
+        {{#if canRoll}}
+          <div class="col roll-request-roll">
+            <button type="button" class="roll-request-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize "ROLLREQUEST.rollAction"}}" aria-label="{{localize "ROLLREQUEST.rollAction"}}"></button>
+          </div>
+        {{/if}}
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="very-small">{{localize "DSAQUERIES.NOTIFICATIONS.noActors"}}</p>
+  {{/if}}
+
+  {{#unless finalized}}
+    <div class="roll-request-gm flexrow gap5px margin-top">
+      <button type="button" class="roll-request-action" data-action="finalize" data-tooltip="{{localize "DSAQUERIES.COMMANDS.finalize"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.finalize"}}"><i class="fas fa-check"></i></button>
+    </div>
+  {{/unless}}
+</div>

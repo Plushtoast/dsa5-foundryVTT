@@ -13,7 +13,8 @@ import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import EquipmentDamage from '../automation/equipment-damage.js';
 import EquipmentDamageDialog from '../../dialog/dialog-equipmentdamage.js';
 import DSATables from '../../tables/dsatables.js';
-import RequestRoll from './request-roll.js';
+import GroupCheck from './group-check.js';
+import InformationQueryService from '../queries/information-query.js';
 import { DSARegionTemplate } from '../automation/measuretemplate.js';
 import TableEffects from '../../tables/tableEffects.js';
 import CreatureType from '../automation/creature-type.js';
@@ -38,7 +39,7 @@ export default class DiceDSA5 {
    * @returns {Promise<Object>} Roll results
    */
   static async rollTest(testData) {
-    const { source, mode } = testData;
+    const { source } = testData;
     const { type } = source;
 
     // Use a lookup table for better performance and maintainability
@@ -123,7 +124,7 @@ export default class DiceDSA5 {
 
     const d3dColors = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration;
     const actor = this.#actorFromTestData(testData);
-    const { source, mode } = testData;
+    const { source } = testData;
     const { type } = source;
 
     // Dice roll configuration lookup
@@ -2399,7 +2400,6 @@ export default class DiceDSA5 {
 
   static async chatListeners(html) {
     html.on('click', '.expand-mods', (event) => {
-      event.preventDefault();
       const elem = $(event.currentTarget);
       elem.find('i').toggleClass('fa-minus fa-plus');
       elem.siblings('ul,div').fadeToggle();
@@ -2467,6 +2467,7 @@ export default class DiceDSA5 {
     });
     html.on('click', '.resistEffect', (ev) => DSAActiveEffectConfig.resistEffect(ev));
     html.on('click', '.resistPain', (ev) => DiceDSA5.rollResistPain(ev));
-    RequestRoll.chatListeners(html);
+    GroupCheck.chatListeners(html);
+    InformationQueryService.chatListeners(html);
   }
 }

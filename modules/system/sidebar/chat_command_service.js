@@ -1,7 +1,7 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5Payment from '../payment/payment.js';
-import PaymentRequestService from '../payment/payment-requests.js';
-import RequestRoll from '../rolls/request-roll.js';
+import PaymentRequestService from '../queries/payment-requests.js';
+import GroupCheck from '../rolls/group-check.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 import Select2Dialog from '../../dialog/select2Dialog.js';
 
@@ -89,7 +89,7 @@ export default class ChatCommandService {
             if (!moneyString) return;
 
             if (game.user.isGM) {
-              PaymentRequestService.createRequest({ mode, amount: moneyString, description, actors: PaymentRequestService.activeCharacterActors(), source: 'chatCommand' });
+              PaymentRequestService.createRequest({ mode, amount: moneyString, description });
             } else {
               const actor = DSA5_Utility.getSpeaker(ChatMessage.getSpeaker());
               if (mode === 'pay') DSA5Payment.payMoney(actor, moneyString);
@@ -102,20 +102,16 @@ export default class ChatCommandService {
     }).render(true);
   }
 
-  static requestRoll(name, modifier) {
-    RequestRoll.showRQMessage(name, modifier);
-  }
-
   static groupCheck(name, modifier) {
-    RequestRoll.showGCMessage(name, modifier);
+    GroupCheck.showGCMessage(name, modifier);
   }
 
-  static speakerAbilityRoll(name, type) {
+  static speakerAbilityRoll(name, type, options = {}) {
     const speaker = ChatMessage.getSpeaker();
     let actor = speaker.token ? game.actors.tokens[speaker.token] : null;
     if (!actor) actor = game.actors.get(speaker.actor);
     if (!actor) return ui.notifications.error('DSAError.noProperActor', { localize: true });
 
-    ChatCommandService.executeAbilityRoll(actor, name, type, speaker.token);
+    ChatCommandService.executeAbilityRoll(actor, name, type, speaker.token, options);
   }
 }

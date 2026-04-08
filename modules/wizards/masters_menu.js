@@ -1,11 +1,13 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import PaymentRequestService from '../system/payment/payment-requests.js';
+import PaymentRequestService from '../system/queries/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { slist, tabSlider } from '../system/helpers/view_helper.js';
 import PlayerMenu from './player_menu.js';
 import DialogShared from '../dialog/dialog-shared.js';
+import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
+import RollRequestService from '../system/queries/roll-request.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
@@ -607,26 +609,25 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async doPayment(ids, pay, amount = 0) {
-    const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
+    const preselected = new Set(ids);
+    const actors = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: preselected.has(a.id) }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
-      tracked,
-      text: _loc(
-        _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', {
-          heros: _loc('MASTER.theGroup'),
-        }),
-      ),
+      text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = (dlg) => {
-      const number = dlg.find('.input-text').val();
-      if (!isNaN(number)) {
-        const actors = [];
-        dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)));
-        PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors, source: 'mastersMenu' });
-      }
-    };
-    this.buildDialog(_loc(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback);
+
+    ActorPickerDialog.open({
+      actors,
+      title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
+      header,
+      callback: ({ actorIds, form }) => {
+        const number = form.querySelector('.input-text')?.value;
+        if (!isNaN(number)) {
+          const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors: selected });
+        }
+      },
+    });
   }
 
   async getPaid(ids) {
@@ -634,29 +635,29 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async getExp(ids, amount = 0) {
-    const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
-      tracked,
+    const preselected = new Set(ids);
+    const actors = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: preselected.has(a.id) }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
-      text: _loc(
-        _loc('MASTER.awardXPText', {
-          heros: _loc('MASTER.theGroup'),
-        }),
-      ),
+      text: _loc('MASTER.awardXPText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = async (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const familiarXP = Math.max(1, Math.round(number * 0.25));
-      const petXP = Math.max(1, Math.round(number * 0.1));
-      const heros = [];
-      const familiars = [];
-      const pets = [];
-      const actors = [];
-      dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)));
 
-      if (!isNaN(number)) {
-        for (const actor of actors) {
+    ActorPickerDialog.open({
+      actors,
+      title: 'MASTER.awardXP',
+      header,
+      callback: async ({ actorIds, form }) => {
+        const number = Number(form.querySelector('.input-text')?.value);
+        if (isNaN(number)) return;
+
+        const familiarXP = Math.max(1, Math.round(number * 0.25));
+        const petXP = Math.max(1, Math.round(number * 0.1));
+        const heros = [];
+        const familiars = [];
+        const pets = [];
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+
+        for (const actor of selected) {
           let xpBonus = number;
           if (actor.system.isFamiliar) {
             xpBonus = familiarXP;
@@ -698,9 +699,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         if (message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join('</p><p>')}</p>`));
 
         if (this.rendered) this.render(true);
-      }
-    };
-    this.buildDialog(_loc('MASTER.awardXP'), template, callback);
+      },
+    });
   }
 
   getNames(actors) {
@@ -798,18 +798,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const skillRollCategories = ['attribute', 'skill', 'regeneration'];
     if (!skillRollCategories.includes(type)) return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount,
-      text: _loc('MASTER.doRequestRoll', { skill }),
-    });
-    const callback = (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const [skill, type] = this.lastSkill.split('|');
-      if (!skillRollCategories.includes(type)) return;
-
-      ChatCommandService.requestRoll(skill, number);
-    };
-    this.buildDialog(_loc('HELP.request'), template, callback);
+    RollRequestService.requestRoll(skill, amount);
   }
 
   rollAbility(actorIds) {

@@ -4,6 +4,7 @@ import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
 import ChatCommandService from './chat_command_service.js';
+import RollRequestService from '../queries/roll-request.js';
 import ItempackageData from '../../data/item/itempackage.js';
 
 const { duplicate } = foundry.utils;
@@ -152,7 +153,7 @@ export default class DSA5ChatListeners {
         icon: 'fas fa-dice',
         onClick: () =>
           ChatCommandService.openSkillModifierDialog('HELP.request', {
-            onSubmit: (name, type, modifier) => ChatCommandService.requestRoll(name, modifier),
+            onSubmit: (name, type, modifier) => RollRequestService.requestRoll(name, modifier),
           }),
       },
       { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },

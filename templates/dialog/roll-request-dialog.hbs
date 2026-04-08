@@ -1,0 +1,16 @@
+<div class='row-section lineheight'>
+  <div class='col fourty table-title'><label>{{localize 'skill'}}</label></div>
+  <div class='col sixty'>
+    <select name='skill' class='select2' style='width:100%;'>
+      {{#each skills}}
+        <option value='{{value}}' {{#if selected}}selected{{/if}}>{{label}}</option>
+      {{/each}}
+    </select>
+  </div>
+</div>
+<div class='row-section lineheight'>
+  <div class='col fourty table-title'><label>{{localize 'Modifier'}}</label></div>
+  <div class='col sixty'><input name='modifier' class='quantity-click' type='Number' value='{{modifier}}' /></div>
+</div>
+<hr/>
+<label><b>{{localize 'ROLLREQUEST.selectActors'}}</b></label>

@@ -10,7 +10,7 @@ import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ItemSheetObfuscation } from './mixins/obfuscatemixin.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
-import RequestRoll from '../system/rolls/request-roll.js';
+import GroupCheck from '../system/rolls/group-check.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
 
@@ -766,7 +766,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
       rollOptions,
     };
 
-    RequestRoll.showGCMessage(rollOptions[0].target, 0, data);
+    GroupCheck.showGCMessage(rollOptions[0].target, 0, data);
   }
 
   static async _postFinishedItemWrapper(event, target) {

@@ -537,7 +537,6 @@ export default class OpposedDsa5 {
    */
   static async chatListeners(html) {
     html.on('click', '.unopposed-button', (event) => {
-      event.preventDefault();
       this._handleReaction(event);
     });
   }

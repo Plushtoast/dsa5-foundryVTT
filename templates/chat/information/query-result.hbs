@@ -5,11 +5,11 @@
     </div>
   </div>
   {{#if (eq status "pending")}}
-  <p><i class="fas fa-spinner fa-spin"></i> {{localize "DSAQUERIES.pending"}}</p>
+  <p><i class="fas fa-spinner fa-spin"></i> {{localize "DSAQUERIES.INFORMATIONREQUEST.pending"}}</p>
   {{else if (eq status "approved")}}
-  <p><i class="fas fa-check icon-green"></i> {{localize "DSAQUERIES.approved"}}</p>
+  <p><i class="fas fa-check icon-green"></i> {{localize "DSAQUERIES.INFORMATIONREQUEST.approved"}}</p>
   {{else if (eq status "rejected")}}
-  <p><i class="fas fa-times icon-red"></i> {{localize "DSAQUERIES.rejected"}}</p>
+  <p><i class="fas fa-times icon-red"></i> {{localize "DSAQUERIES.INFORMATIONREQUEST.rejected"}}</p>
   {{/if}}
   <p>{{actorName}} — {{skillName}} ({{localize "CHARAbbrev.QS"}} {{rolledQS}})</p>
 </div>

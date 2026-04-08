@@ -81,14 +81,14 @@ export default class InformationQueryService {
     try {
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
-          title: `${_loc('DSAQUERIES.knowledgeCheck')}: ${item.name}`,
+          title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${item.name}`,
         },
         content,
         buttons: [
           {
             action: 'approve',
             icon: 'fa fa-check',
-            label: 'DSAQUERIES.approve',
+            label: 'DSAQUERIES.COMMANDS.approve',
             default: true,
             callback: (_event, button) => {
               const form = button.form || button.closest('form');
@@ -159,7 +159,7 @@ export default class InformationQueryService {
   static async createInformationQuery(result, uuid, item) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
-      ui.notifications.warn(_loc('DSAQUERIES.noGMOnline'));
+      ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
       return;
     }
 
@@ -217,7 +217,7 @@ export default class InformationQueryService {
 
     const gmOnline = game.users.some((user) => user.active && user.isGM);
     if (!gmOnline) {
-      ui.notifications.warn(_loc('DSAQUERIES.noGMOnline'));
+      ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
       return;
     }
 
@@ -238,5 +238,74 @@ export default class InformationQueryService {
     const result = await actor.basicTest(setupData);
 
     await this.createInformationQuery(result, uuid, item);
+  }
+
+  static async informationRequestRoll(ev) {
+    const modifier = ev.currentTarget.dataset.mod;
+    const uuid = ev.currentTarget.dataset.uuid;
+    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
+    if (!actor) return;
+
+    const recipientsTarget = game.settings.get('dsa5', 'informationDistribution');
+    let recipients = [];
+    if (recipientsTarget == 1) {
+      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
+      recipients.push(game.user.id);
+    } else if (recipientsTarget == 2) {
+      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
+    }
+    const optns = {
+      modifier,
+      postFunction: {
+        functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
+        uuid,
+        recipients,
+      },
+    };
+    const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
+    actor.setupSkill(skill, optns, tokenId).then(async (setupData) => {
+      setupData.testData.opposable = false;
+      const res = await actor.basicTest(setupData);
+      this.postInformationRoll(optns.postFunction, res);
+    });
+  }
+
+  static async postInformationRoll(postFunction, result, source) {
+    const msg = [];
+    const item = await fromUuid(postFunction.uuid);
+    const availableQs = result.result.qualityStep || 0;
+
+    for (let i = 1; i <= availableQs; i++) {
+      const qs = `qs${i}`;
+      if (item.system[qs]) msg.push(item.system[qs]);
+    }
+
+    if (result.result.successLevel > 1 && item.system.crit) {
+      msg.push(item.system.crit);
+    } else if (result.result.successLevel < -1 && item.system.botch) {
+      msg.push(item.system.botch);
+    } else if (item.system.fail && !availableQs) {
+      msg.push(item.system.fail);
+    }
+
+    if (msg.length > 0) {
+      await Promise.all(
+        msg.map(async (x) => {
+          const enriched = await TextEditor.enrichHTML(x, {});
+          return enriched;
+        }),
+      );
+      msg.unshift(`<p><b>${item.name}</b></p>`);
+
+      const chatData = DSA5_Utility.chatDataSetup(msg.join(''));
+      if (postFunction.recipients.length) chatData['whisper'] = postFunction.recipients;
+
+      ChatMessage.create(chatData);
+    }
+  }
+
+  static chatListeners(html) {
+    html.on('click', '.informationRequestRoll', (ev) => InformationQueryService.informationRequestRoll(ev));
+    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
   }
 }

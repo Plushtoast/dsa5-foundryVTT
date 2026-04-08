@@ -1,6 +1,6 @@
 import PlayerMenu from '../wizards/player_menu.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
-import RequestRoll from '../system/rolls/request-roll.js';
+import GroupCheck from '../system/rolls/group-check.js';
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
@@ -101,7 +101,7 @@ export function connectSocket() {
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
+        GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTrackerId':
         APTracker.receiveSocketEvent(data);

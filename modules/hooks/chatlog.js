@@ -1,7 +1,8 @@
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5Payment from '../system/payment/payment.js';
-import PaymentRequestService from '../system/payment/payment-requests.js';
+import PaymentRequestService from '../system/queries/payment-requests.js';
+import RollRequestService from '../system/queries/roll-request.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
@@ -21,6 +22,7 @@ export default function () {
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
     PaymentRequestService.chatListeners(html);
+    RollRequestService.chatListeners(html);
     TrapState.chatListeners(html);
 
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
@@ -42,6 +44,7 @@ export default function () {
     DiceDSA5.chatListeners(chatNotifications);
     DSA5Payment.chatListeners(chatNotifications);
     PaymentRequestService.chatListeners(chatNotifications);
+    RollRequestService.chatListeners(chatNotifications);
     DSA5ChatListeners.chatListeners(chatNotifications);
     ItempackageData.chatListeners(chatNotifications);
 
@@ -89,6 +92,8 @@ export default function () {
     } else {
       html.find('.chat-button-player').remove();
     }
+
+    RollRequestService.handleRenderMessage(msg, html);
     if (game.settings.get('dsa5', 'expandChatModifierlist')) {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });
@@ -109,13 +114,13 @@ export default function () {
     switch (cmd) {
       case '/pay': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'pay', amount: moneyString, description, actors: PaymentRequestService.activeCharacterActors(), source: 'chatCommand' });
+        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'pay', amount: moneyString, description });
         else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }
       case '/getPaid': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'getPaid', amount: moneyString, description, actors: PaymentRequestService.activeCharacterActors(), source: 'chatCommand' });
+        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'getPaid', amount: moneyString, description });
         else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }

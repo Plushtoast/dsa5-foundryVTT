@@ -2,7 +2,7 @@ import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 import { ChatMessageState } from "./chatmessage_state.js";
 
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
-import RequestRoll from "../system/rolls/request-roll.js";
+import GroupCheck from "../system/rolls/group-check.js";
 import { ITEM_CONSTANTS } from "../config/item-constants.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
 const { renderTemplate } = foundry.applications.handlebars;
@@ -123,7 +123,7 @@ export class TrapState extends ChatMessageState {
                     label: 'REGIONBEHAVIOR_DSATrap.search',
                     default: true,
                     callback: (event, button, dialog) => {
-                        RequestRoll.showRQMessage(skill, behavior.system.stealth + 1, customLabel, options);
+                        GroupCheck.showRQMessage(skill, behavior.system.stealth + 1, customLabel, options);
                     },
                 },
                 {
@@ -131,7 +131,7 @@ export class TrapState extends ChatMessageState {
                     icon: 'fa fa-eye',
                     label: 'REGIONBEHAVIOR_DSATrap.notice',
                     callback: (event, button, dialog) => {
-                        RequestRoll.showRQMessage(skill, behavior.system.stealth, customLabel, options);
+                        GroupCheck.showRQMessage(skill, behavior.system.stealth, customLabel, options);
                     },
                 }
             ]
@@ -197,9 +197,9 @@ export class TrapState extends ChatMessageState {
         });
 
         if (behavior.system.complexity > 1) {
-            RequestRoll.showGCMessage(skill, behavior.system.difficulty, {}, options);
-        } else {
-            RequestRoll.showRQMessage(skill, behavior.system.difficulty, customLabel, options);
+            GroupCheck.showGCMessage(skill, behavior.system.difficulty, {}, options);
+          } else {
+            GroupCheck.showRQMessage(skill, behavior.system.difficulty, customLabel, options);
         }
     }
 

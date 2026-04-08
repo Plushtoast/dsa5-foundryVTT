@@ -1,9 +1,10 @@
 import DSA5ChatListeners from './chat_listeners.js';
-import RequestRoll from '../rolls/request-roll.js';
+import GroupCheck from '../rolls/group-check.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
 import InformationQueryService from '../queries/information-query.js';
 import ChatCommandService from './chat_command_service.js';
+import RollRequestService from '../queries/roll-request.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -466,7 +467,7 @@ export default class DSA5ChatAutoCompletion {
   _quickRQ(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    ChatCommandService.requestRoll(target.textContent, modifier);
+    RollRequestService.requestRoll(target.textContent, modifier);
   }
 
   _quickPA(target, actor, tokenId) {
@@ -549,8 +550,9 @@ export default class DSA5ChatAutoCompletion {
 
   static bindRollCommands(html) {
     html.on('click', '.request-roll', (ev) => {
-      const { name, modifier, label } = ev.currentTarget.dataset;
-      RequestRoll.showRQMessage(name, Number(modifier) || 0, label);
+      const { name, modifier } = ev.currentTarget.dataset;
+      const label = ev.currentTarget.textContent.trim();
+      RollRequestService.requestRoll(name, Number(modifier) || 0, label !== name ? label : undefined);
       ev.stopPropagation();
       return false;
     });
@@ -574,7 +576,7 @@ export default class DSA5ChatAutoCompletion {
     });
 
     html.on('click', '.request-GC', (ev) => {
-      RequestRoll.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0);
+      GroupCheck.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0);
       ev.stopPropagation();
       return false;
     });

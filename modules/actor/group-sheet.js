@@ -3,11 +3,12 @@ import GroupAPI from './group-api.js';
 import GroupData from '../data/actor/group.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
 import { DSACalendarEntry } from '../data/journal/dsacalendar.js';
-import PaymentRequestService from '../system/payment/payment-requests.js';
-import DialogShared from '../dialog/dialog-shared.js';
+import PaymentRequestService from '../system/queries/payment-requests.js';
+import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
+import RollRequestService from '../system/queries/roll-request.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
@@ -592,27 +593,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     ChatCommandService.groupCheck(skill, 0);
   }
 
-  static async #requestSkillRoll(event, target) {
+  static #requestSkillRoll(event, target) {
     const skill = target.closest('[data-skill]')?.dataset.skill;
     if (!skill) return;
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount: 0,
-      text: _loc('MASTER.doRequestRoll', { skill }),
-    });
-    new DialogShared({
-      window: { title: _loc('HELP.request') },
-      content: template,
-      buttons: [
-        {
-          action: 'yes', icon: 'fa fa-check', label: 'yes',
-          callback: (event, button) => {
-            const modifier = Number($(button.form).find('.input-text').val()) || 0;
-            ChatCommandService.requestRoll(skill, modifier);
-          },
-        },
-        { action: 'no', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+    RollRequestService.requestRoll(skill, 0);
   }
 
   static async #createEventsJournal() {
@@ -637,88 +621,72 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async doGroupPayment(actors, pay, amount = 0) {
-    const tracked = actors.map((a) => ({ id: a.id, name: a.name }));
-    const ids = actors.map((a) => a.id);
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
+    const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
-      tracked,
-      text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', {
-        heros: _loc('MASTER.theGroup'),
-      }),
+      text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = (dlg) => {
-      const number = dlg.find('.input-text').val();
-      if (!isNaN(number)) {
-        const selected = [];
-        dlg.find('.heroSelector:checked').each((i, elem) => selected.push(game.actors.get(elem.value)));
-        PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors: selected, source: 'groupSheet' });
-      }
-    };
-    new DialogShared({
-      window: { title: _loc(pay ? 'MASTER.payTT' : 'PAYMENT.payButton') },
-      content: template,
-      buttons: [
-        { action: 'yes', icon: 'fa fa-check', label: 'yes', callback: (event, button) => callback($(button.form)) },
-        { action: 'no', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+
+    ActorPickerDialog.open({
+      actors: actorEntries,
+      title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
+      header,
+      callback: ({ actorIds, form }) => {
+        const number = form.querySelector('.input-text')?.value;
+        if (!isNaN(number)) {
+          const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors: selected });
+        }
+      },
+    });
   }
 
   static async doGroupAwardAP(actors, amount = 0) {
-    const tracked = actors.map((a) => ({ id: a.id, name: a.name }));
-    const ids = actors.map((a) => a.id);
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
-      tracked,
+    const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
-      text: _loc('MASTER.awardXPText', {
-        heros: _loc('MASTER.theGroup'),
-      }),
+      text: _loc('MASTER.awardXPText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = async (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      if (isNaN(number)) return;
 
-      const familiarXP = Math.max(1, Math.round(number * 0.25));
-      const petXP = Math.max(1, Math.round(number * 0.1));
-      const heros = [];
-      const familiars = [];
-      const pets = [];
-      const selected = [];
-      dlg.find('.heroSelector:checked').each((i, elem) => selected.push(game.actors.get(elem.value)));
+    ActorPickerDialog.open({
+      actors: actorEntries,
+      title: 'MASTER.awardXP',
+      header,
+      callback: async ({ actorIds, form }) => {
+        const number = Number(form.querySelector('.input-text')?.value);
+        if (isNaN(number)) return;
 
-      for (const actor of selected) {
-        let xpBonus = number;
-        if (actor.system.isFamiliar) {
-          xpBonus = familiarXP;
-          familiars.push(actor);
-        } else if (actor.system.isPet) {
-          xpBonus = petXP;
-          pets.push(actor);
-        } else {
-          heros.push(actor);
+        const familiarXP = Math.max(1, Math.round(number * 0.25));
+        const petXP = Math.max(1, Math.round(number * 0.1));
+        const heros = [];
+        const familiars = [];
+        const pets = [];
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+
+        for (const actor of selected) {
+          let xpBonus = number;
+          if (actor.system.isFamiliar) {
+            xpBonus = familiarXP;
+            familiars.push(actor);
+          } else if (actor.system.isPet) {
+            xpBonus = petXP;
+            pets.push(actor);
+          } else {
+            heros.push(actor);
+          }
+          await actor.update({
+            'system.details.experience.total': actor.system.details.experience.total + xpBonus,
+          });
         }
-        await actor.update({
-          'system.details.experience.total': actor.system.details.experience.total + xpBonus,
-        });
-      }
 
-      const message = [];
-      if (heros.length > 0) message.push(_loc('MASTER.xpMessage', { heros: heros.map((x) => x.name).join(', '), number }));
-      if (familiars.length > 0) message.push(_loc('MASTER.xpMessage', { heros: familiars.map((x) => x.name).join(', '), number: familiarXP }));
-      if (pets.length > 0) message.push(_loc('MASTER.xpMessage', { heros: pets.map((x) => x.name).join(', '), number: petXP }));
+        const message = [];
+        if (heros.length > 0) message.push(_loc('MASTER.xpMessage', { heros: heros.map((x) => x.name).join(', '), number }));
+        if (familiars.length > 0) message.push(_loc('MASTER.xpMessage', { heros: familiars.map((x) => x.name).join(', '), number: familiarXP }));
+        if (pets.length > 0) message.push(_loc('MASTER.xpMessage', { heros: pets.map((x) => x.name).join(', '), number: petXP }));
 
-      if (message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join('</p><p>')}</p>`));
-    };
-    new DialogShared({
-      window: { title: _loc('MASTER.awardXP') },
-      content: template,
-      buttons: [
-        { action: 'yes', icon: 'fa fa-check', label: 'yes', callback: async (event, button) => callback($(button.form)) },
-        { action: 'no', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+        if (message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join('</p><p>')}</p>`));
+      },
+    });
   }
 
   static #setPrimaryParty() {
@@ -993,31 +961,14 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static #rollRegeneration(event, target) {
-    ChatCommandService.requestRoll(_loc('regenerate'), 0);
+    RollRequestService.requestRoll(_loc('regenerate'), 0);
   }
 
-  static async #requestAttributeRoll(event, target) {
+  static #requestAttributeRoll(event, target) {
     const attr = target.dataset.attr;
     if (!attr) return;
     const name = _loc(game.dsa5.config.characteristics[attr]);
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount: 0,
-      text: _loc('MASTER.doRequestRoll', { skill: name }),
-    });
-    new DialogShared({
-      window: { title: _loc('HELP.request') },
-      content: template,
-      buttons: [
-        {
-          action: 'yes', icon: 'fa fa-check', label: 'yes',
-          callback: (event, button) => {
-            const modifier = Number($(button.form).find('.input-text').val()) || 0;
-            ChatCommandService.requestRoll(name, modifier);
-          },
-        },
-        { action: 'no', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+    RollRequestService.requestRoll(name, 0);
   }
 
   async _prepareAbilities() {
