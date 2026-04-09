@@ -2,9 +2,6 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
-
-const { getProperty } = foundry.utils;
 
 /**
  * Utility class for building dropdown menus for Active Effect configurations
@@ -23,6 +20,64 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _cacheInvalidated = true;
+
+    /**
+     * Builds a grouped dropdown menu HTML with optgroups for wizard mode
+     * @param {ActiveEffect} [document] - The active effect document for context-specific options
+     * @returns {string} HTML string containing the grouped dropdown
+     */
+    static buildGroupedDropdownMenu(document = null, categoryFilter = null) {
+        const groups = this._getGroupDefinitions(document);
+
+        const filtered = categoryFilter ? groups.filter((g) => g.key === categoryFilter) : groups;
+
+        const optgroupStrings = filtered
+            .filter((g) => g.subgroups.some((s) => s.options.length))
+            .flatMap((g) => {
+                if (categoryFilter) {
+                    return g.subgroups.filter((s) => s.options.length).map((s) => {
+                        const sorted = s.options.sort((a, b) => a.name.localeCompare(b.name));
+                        const opts = sorted
+                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-ph="${o.ph}">${o.name}</option>`)
+                            .join('\n');
+                        return `<optgroup label="${s.sub}">${opts}</optgroup>`;
+                    });
+                }
+                const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
+                const opts = allOpts
+                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-ph="${o.ph}">${o.name}</option>`)
+                    .join('\n');
+                return [`<optgroup label="${g.label}">${opts}</optgroup>`];
+            })
+            .join('\n');
+
+        return `<select class="wizardMenu"><option value="">-</option>${optgroupStrings}</select>`;
+    }
+
+    static _getGroupDefinitions(document = null) {
+        const groups = [
+            { key: 'protection', icon: 'fa-solid fa-shield-halved', label: _loc('ActiveEffects.wizardCategories.protection'), subgroups: this._getBaseOptions() },
+            { key: 'attributes', icon: 'fa-solid fa-chart-bar', label: _loc('ActiveEffects.wizardCategories.attributes'), subgroups: this._getCharacteristicOptions() },
+            { key: 'skills', icon: 'fa-solid fa-graduation-cap', label: _loc('ActiveEffects.wizardCategories.skills'), subgroups: this._getSkillOptions() },
+            { key: 'combat', icon: 'fa-solid fa-swords', label: _loc('ActiveEffects.wizardCategories.combat'), subgroups: this._getCombatOptions() },
+            { key: 'magic', icon: 'fa-solid fa-hat-wizard', label: _loc('ActiveEffects.wizardCategories.magic'), subgroups: this._getSpellLiturgyOptions() },
+            { key: 'regeneration', icon: 'fa-solid fa-heart-pulse', label: _loc('ActiveEffects.wizardCategories.regeneration'), subgroups: this._getRegenerationOptions() },
+            { key: 'conditions', icon: 'fa-solid fa-face-dizzy', label: _loc('ActiveEffects.wizardCategories.conditions'), subgroups: this._getStatusEffectOptions() },
+        ];
+        if (document) {
+            const weaponSubs = this._getWeaponSpecificOptions(document);
+            if (weaponSubs.some((s) => s.options.length)) {
+                groups.push({ key: 'weapon', icon: 'fa-solid fa-axe-battle', label: _loc('ActiveEffects.wizardCategories.weapon'), subgroups: weaponSubs });
+            }
+        }
+        return groups;
+    }
+
+    static getWizardCategories(document = null) {
+        return this._getGroupDefinitions(document)
+            .filter((g) => g.subgroups.some((s) => s.options.length))
+            .map(({ key, label, icon }) => ({ key, label, icon }));
+    }
 
     /**
      * Builds the dropdown menu HTML for effect key selection
@@ -58,30 +113,12 @@ export default class EffectDropdownBuilder {
     /**
      * Builds the array of dropdown options
      * @param {ActiveEffect} [document] - The active effect document for context
-     * @returns {Array<{name: string, val: string, mode: number, ph: string}>}
+     * @returns {Array<{name: string, val: string, type: string, ph: string}>}
      * @private
      */
     static _buildDropdownOptions(document = null) {
-        const options = [];
-
-        options.push(...this._getBaseOptions());
-
-        options.push(...this._getSkillOptions());
-
-        options.push(...this._getCombatOptions());
-
-        options.push(...this._getRegenerationOptions());
-
-        options.push(...this._getSpellLiturgyOptions());
-
-        options.push(...this._getCharacteristicOptions());
-
-        options.push(...this._getStatusEffectOptions());
-
-        if (document) {
-            options.push(...this._getWeaponSpecificOptions(document));
-        }
-
+        const groups = this._getGroupDefinitions(document);
+        const options = groups.flatMap((g) => g.subgroups.flatMap((s) => s.options));
         return options.sort((a, b) => a.name.localeCompare(b.name));
     }
 
@@ -91,44 +128,44 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getBaseOptions() {
-        return [
+        return [{ sub: _loc('ActiveEffects.wizardCategories.protection'), options: [
             {
-                name: localize('protection'),
+                name: _loc('protection'),
                 val: 'system.totalArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
-                name: localize('liturgyArmor'),
+                name: _loc('liturgyArmor'),
                 val: 'system.liturgyArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
-                name: `${localize('resistanceModifier')} (${localize('condition')})`,
+                name: `${_loc('resistanceModifier')} (${_loc('condition')})`,
                 val: 'system.resistances.effects',
-                mode: 0,
+                type: 'custom',
                 ph: 'inpain 1',
             },
             {
-                name: `${localize('threshold')} (${localize('condition')})`,
+                name: `${_loc('threshold')} (${_loc('condition')})`,
                 val: 'system.thresholds.effects',
-                mode: 0,
+                type: 'custom',
                 ph: 'inpain 1',
             },
             {
-                name: localize('spellArmor'),
+                name: _loc('spellArmor'),
                 val: 'system.spellArmor',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
             {
-                name: localize('carrycapacity'),
+                name: _loc('carrycapacity'),
                 val: 'system.carryModifier',
-                mode: 2,
+                type: 'add',
                 ph: '1',
             },
-        ];
+        ]}];
     }
 
     /**
@@ -137,127 +174,52 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSkillOptions() {
-        const FW = localize('MODS.FW');
-        const skill = localize('TYPES.Item.skill');
-        const FP = localize('MODS.FP');
-        const stepValue = localize('stepValue');
-        const QS = localize('MODS.QS');
-        const postRoll = localize('MODS.postRoll');
-        const reroll = localize('MODS.reroll');
-        const partChecks = localize('MODS.partChecks');
-        const compensation = localize('MODS.compensation');
-        const demo = `${localize('LocalizedIDs.perception')} 1`;
+        const FW = _loc('MODS.FW');
+        const skill = _loc('TYPES.Item.skill');
+        const FP = _loc('MODS.FP');
+        const stepValue = _loc('stepValue');
+        const QS = _loc('MODS.QS');
+        const postRoll = _loc('MODS.postRoll');
+        const reroll = _loc('MODS.reroll');
+        const partChecks = _loc('MODS.partChecks');
+        const compensation = _loc('MODS.compensation');
+        const demo = `${_loc('LocalizedIDs.perception')} 1`;
 
-        const skillOptions = [
-            {
-                name: `${skill} - ${FW}`,
-                val: 'system.skillModifiers.FW',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${FP}`,
-                val: 'system.skillModifiers.FP',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${FP} (${postRoll})`,
-                val: 'system.skillModifiers.postRoll.FP',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${stepValue}`,
-                val: 'system.skillModifiers.step',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${QS}`,
-                val: 'system.skillModifiers.QL',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${QS} (${postRoll})`,
-                val: 'system.skillModifiers.postRoll.QL',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${reroll} (${postRoll})`,
-                val: 'system.skillModifiers.postRoll.reroll',
-                mode: 0,
-                ph: `${localize('LocalizedIDs.perception')} 1`,
-            },
-            {
-                name: `${skill} - ${partChecks}`,
-                val: 'system.skillModifiers.TPM',
-                mode: 0,
-                ph: demo,
-            },
-            {
-                name: `${skill} - ${localize('MODS.global')}`,
-                val: 'system.skillModifiers.global',
-                mode: 0,
-                ph: '1',
-            },
-            {
-                name: `${skill} - ${compensation}`,
-                val: `system.skillModifiers.CMP`,
-                mode: 0,
-                ph: demo,
-            },
-        ];
+        const subgroups = [{
+            sub: _loc('MODS.global'),
+            options: [
+                { name: `${skill} - ${FW}`, val: 'system.skillModifiers.FW', type: 'custom', ph: demo },
+                { name: `${skill} - ${FP}`, val: 'system.skillModifiers.FP', type: 'custom', ph: demo },
+                { name: `${skill} - ${FP} (${postRoll})`, val: 'system.skillModifiers.postRoll.FP', type: 'custom', ph: demo },
+                { name: `${skill} - ${stepValue}`, val: 'system.skillModifiers.step', type: 'custom', ph: demo },
+                { name: `${skill} - ${QS}`, val: 'system.skillModifiers.QL', type: 'custom', ph: demo },
+                { name: `${skill} - ${QS} (${postRoll})`, val: 'system.skillModifiers.postRoll.QL', type: 'custom', ph: demo },
+                { name: `${skill} - ${reroll} (${postRoll})`, val: 'system.skillModifiers.postRoll.reroll', type: 'custom', ph: demo },
+                { name: `${skill} - ${partChecks}`, val: 'system.skillModifiers.TPM', type: 'custom', ph: demo },
+                { name: `${skill} - ${_loc('MODS.global')}`, val: 'system.skillModifiers.global', type: 'custom', ph: '1' },
+                { name: `${skill} - ${compensation}`, val: 'system.skillModifiers.CMP', type: 'custom', ph: demo },
+            ],
+        }];
 
-        // Add model-specific skill options
         const models = ['liturgy', 'ceremony', 'spell', 'ritual', 'skill', 'feature'];
         for (const model of models) {
             const key = model === 'skill' ? 'skillglobal' : model;
-            const modelName = localize(key);
+            const modelName = _loc(key);
 
-            skillOptions.push(
-                {
-                    name: `${modelName} - ${FW}`,
-                    val: `system.skillModifiers.${model}.FW`,
-                    mode: 0,
-                    ph: demo,
-                },
-                {
-                    name: `${modelName} - ${FP}`,
-                    val: `system.skillModifiers.${model}.FP`,
-                    mode: 0,
-                    ph: demo,
-                },
-                {
-                    name: `${modelName} - ${stepValue}`,
-                    val: `system.skillModifiers.${model}.step`,
-                    mode: 0,
-                    ph: demo,
-                },
-                {
-                    name: `${modelName} - ${QS}`,
-                    val: `system.skillModifiers.${model}.QL`,
-                    mode: 0,
-                    ph: demo,
-                },
-                {
-                    name: `${modelName} - ${partChecks}`,
-                    val: `system.skillModifiers.${model}.TPM`,
-                    mode: 0,
-                    ph: demo,
-                },
-                {
-                    name: `${modelName} - ${compensation}`,
-                    val: `system.skillModifiers.${model}.CMP`,
-                    mode: 0,
-                    ph: demo,
-                },
-            );
+            subgroups.push({
+                sub: modelName,
+                options: [
+                    { name: `${modelName} - ${FW}`, val: `system.skillModifiers.${model}.FW`, type: 'custom', ph: demo },
+                    { name: `${modelName} - ${FP}`, val: `system.skillModifiers.${model}.FP`, type: 'custom', ph: demo },
+                    { name: `${modelName} - ${stepValue}`, val: `system.skillModifiers.${model}.step`, type: 'custom', ph: demo },
+                    { name: `${modelName} - ${QS}`, val: `system.skillModifiers.${model}.QL`, type: 'custom', ph: demo },
+                    { name: `${modelName} - ${partChecks}`, val: `system.skillModifiers.${model}.TPM`, type: 'custom', ph: demo },
+                    { name: `${modelName} - ${compensation}`, val: `system.skillModifiers.${model}.CMP`, type: 'custom', ph: demo },
+                ],
+            });
         }
 
-        return skillOptions;
+        return subgroups;
     }
 
     /**
@@ -266,167 +228,80 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getCombatOptions() {
-        const closeCombat = localize('closeCombatAttacks');
-        const rangeCombat = localize('rangeCombatAttacks');
-        const miracle = localize('LocalizedIDs.miracle');
-        const csdemo = `${localize('LocalizedIDs.wrestle')} 1`;
-        const combatskill = localize('TYPES.Item.combatskill');
-        const critSuccess = localize('CriticalSuccess');
-        const AT = localize('CHARAbbrev.AT');
-        const PA = localize('CHARAbbrev.PA');
-        const damage = localize('CHARAbbrev.damage');
-        const defenseMalus = localize('MODS.defenseMalus');
+        const closeCombat = _loc('closeCombatAttacks');
+        const rangeCombat = _loc('rangeCombatAttacks');
+        const miracle = _loc('LocalizedIDs.miracle');
+        const csdemo = `${_loc('LocalizedIDs.wrestle')} 1`;
+        const combatskill = _loc('TYPES.Item.combatskill');
+        const critSuccess = _loc('CriticalSuccess');
+        const AT = _loc('CHARAbbrev.AT');
+        const PA = _loc('CHARAbbrev.PA');
+        const damage = _loc('CHARAbbrev.damage');
+        const defenseMalus = _loc('MODS.defenseMalus');
 
-        const combatOptions = [
-            // Close combat options
+        const subgroups = [
             {
-                name: `${closeCombat} - ${AT}`,
-                val: 'system.meleeStats.attack',
-                mode: 2,
-                ph: '1',
+                sub: closeCombat,
+                options: [
+                    { name: `${closeCombat} - ${AT}`, val: 'system.meleeStats.attack', type: 'add', ph: '1' },
+                    { name: `${closeCombat} - ${PA}`, val: 'system.meleeStats.parry', type: 'add', ph: '1' },
+                    { name: `${closeCombat} - ${critSuccess}`, val: 'system.meleeStats.crit', type: 'add', ph: '1' },
+                    { name: `${closeCombat} - ${critSuccess} (${PA})`, val: 'system.meleeStats.critPA', type: 'add', ph: '1' },
+                    { name: `${closeCombat} - ${critSuccess} (${AT})`, val: 'system.meleeStats.critAT', type: 'add', ph: '1' },
+                    { name: `${closeCombat} - ${damage}`, val: 'system.meleeStats.damage', type: 'add', ph: '+1d6' },
+                    { name: `${closeCombat} - ${defenseMalus}`, val: 'system.meleeStats.defenseMalus', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${closeCombat} - ${PA}`,
-                val: 'system.meleeStats.parry',
-                mode: 2,
-                ph: '1',
+                sub: rangeCombat,
+                options: [
+                    { name: `${rangeCombat} - ${AT}`, val: 'system.rangeStats.attack', type: 'add', ph: '1' },
+                    { name: `${rangeCombat} - ${critSuccess}`, val: 'system.rangeStats.crit', type: 'add', ph: '1' },
+                    { name: `${rangeCombat} - ${damage}`, val: 'system.rangeStats.damage', type: 'add', ph: '+1d6' },
+                    { name: `${rangeCombat} - ${defenseMalus}`, val: 'system.rangeStats.defenseMalus', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${closeCombat} - ${critSuccess}`,
-                val: 'system.meleeStats.crit',
-                mode: 2,
-                ph: '1',
+                sub: miracle,
+                options: [
+                    { name: `${miracle} - ${AT}`, val: 'system.miracle.attack', type: 'add', ph: '1' },
+                    { name: `${miracle} - ${PA}`, val: 'system.miracle.parry', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${closeCombat} - ${critSuccess} (${PA})`,
-                val: 'system.meleeStats.critPA',
-                mode: 2,
-                ph: '1',
+                sub: combatskill,
+                options: [
+                    { name: `${combatskill} - ${AT}`, val: 'system.skillModifiers.combat.attack', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${PA}`, val: 'system.skillModifiers.combat.parry', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${_loc('KTW')}`, val: 'system.skillModifiers.combat.step', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${damage}`, val: 'system.skillModifiers.combat.damage', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${_loc('damageThreshold')}`, val: 'system.skillModifiers.combat.damageThreshold', type: 'custom', ph: csdemo },
+                ],
             },
             {
-                name: `${closeCombat} - ${critSuccess} (${AT})`,
-                val: 'system.meleeStats.critAT',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${closeCombat} - ${damage}`,
-                val: 'system.meleeStats.damage',
-                mode: 2,
-                ph: '+1d6',
-            },
-            {
-                name: `${closeCombat} - ${defenseMalus}`,
-                val: 'system.meleeStats.defenseMalus',
-                mode: 2,
-                ph: '1',
-            },
-
-            // Range combat options
-            {
-                name: `${rangeCombat} - ${AT}`,
-                val: 'system.rangeStats.attack',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${rangeCombat} - ${critSuccess}`,
-                val: 'system.rangeStats.crit',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${rangeCombat} - ${damage}`,
-                val: 'system.rangeStats.damage',
-                mode: 2,
-                ph: '+1d6',
-            },
-            {
-                name: `${rangeCombat} - ${defenseMalus}`,
-                val: 'system.rangeStats.defenseMalus',
-                mode: 2,
-                ph: '1',
-            },
-
-            // Miracle options
-            {
-                name: `${miracle} - ${AT}`,
-                val: 'system.miracle.attack',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${miracle} - ${PA}`,
-                val: 'system.miracle.parry',
-                mode: 2,
-                ph: '1',
-            },
-
-            // Combat skill options
-            {
-                name: `${combatskill} - ${AT}`,
-                val: 'system.skillModifiers.combat.attack',
-                mode: 0,
-                ph: csdemo,
-            },
-            {
-                name: `${combatskill} - ${PA}`,
-                val: 'system.skillModifiers.combat.parry',
-                mode: 0,
-                ph: csdemo,
-            },
-            {
-                name: `${combatskill} - ${localize('KTW')}`,
-                val: 'system.skillModifiers.combat.step',
-                mode: 0,
-                ph: csdemo,
-            },
-            {
-                name: `${combatskill} - ${damage}`,
-                val: 'system.skillModifiers.combat.damage',
-                mode: 0,
-                ph: csdemo,
-            },
-            {
-                name: `${combatskill} - ${localize('damageThreshold')}`,
-                val: 'system.skillModifiers.combat.damageThreshold',
-                mode: 0,
-                ph: csdemo,
-            },
-
-            // Vulnerability
-            {
-                name: `${localize('vulnerability')} - ${combatskill}`,
-                val: 'system.vulnerabilities.combatskill',
-                mode: 0,
-                ph: csdemo,
-            },
-
-            // Creature bonus
-            {
-                name: localize('MODS.creatureBonus'),
-                val: 'system.creatureBonus',
-                mode: 0,
-                ph: `${localize('CONJURATION.elemental')} 1`,
+                sub: _loc('MODS.otherCombat'),
+                options: [
+                    { name: `${_loc('vulnerability')} - ${combatskill}`, val: 'system.vulnerabilities.combatskill', type: 'custom', ph: csdemo },
+                    { name: _loc('MODS.creatureBonus'), val: 'system.creatureBonus', type: 'custom', ph: `${_loc('CONJURATION.elemental')} 1` },
+                    { name: _loc('MODS.bonusActions'), val: 'system.combat.bonusActions', type: 'add', ph: '1' },
+                    { name: _loc('MODS.actionCostMod'), val: 'system.combat.actionCostMod', type: 'add', ph: '-1' },
+                ],
             },
         ];
 
-        // Add weapon-specific combat modifiers
         for (const model of ['meleeweapon', 'rangeweapon']) {
             const modelName = DSA5_Utility.categoryLocalization(model);
             const modifiers = foundry.utils.flattenObject(DSA5CombatDialog[`${model}RollModifiers`]);
-
-            for (const k of Object.keys(modifiers)) {
-                combatOptions.push({
-                    name: `${modelName} - ${localize(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
-                    val: `system.${model}RollModifiers.${k}`,
-                    mode: 2,
-                    ph: '1',
-                });
-            }
+            const opts = Object.keys(modifiers).map((k) => ({
+                name: `${modelName} - ${_loc(`MODS.${k.replace(/\.[a-z]+$/, '')}`)}`,
+                val: `system.${model}RollModifiers.${k}`,
+                type: 'add',
+                ph: '1',
+            }));
+            subgroups.push({ sub: modelName, options: opts });
         }
 
-        return combatOptions;
+        return subgroups;
     }
 
     /**
@@ -435,71 +310,38 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getRegenerationOptions() {
-        const regenerate = localize('regenerate');
-        const combatReg = `${regenerate} (${localize('CHARAbbrev.CR')})`;
-        const wounds = localize('wounds');
-        const astralEnergy = localize('astralenergy');
-        const karmaEnergy = localize('karmaenergy');
-        const advanced = localize('advanced');
-        const conditionalHint = `${localize('Description')} 1`;
+        const regenerate = _loc('regenerate');
+        const combatReg = `${regenerate} (${_loc('CHARAbbrev.CR')})`;
+        const wounds = _loc('wounds');
+        const astralEnergy = _loc('astralenergy');
+        const karmaEnergy = _loc('karmaenergy');
+        const advanced = _loc('advanced');
+        const conditionalHint = `${_loc('Description')} 1`;
 
         return [
-            // Combat regeneration
             {
-                name: `${combatReg} - ${wounds}`,
-                val: 'system.repeatingEffects.startOfRound.wounds',
-                mode: 0,
-                ph: '1d6',
+                sub: combatReg,
+                options: [
+                    { name: `${combatReg} - ${wounds}`, val: 'system.repeatingEffects.startOfRound.wounds', type: 'custom', ph: '1d6' },
+                    { name: `${combatReg} - ${astralEnergy}`, val: 'system.repeatingEffects.startOfRound.astralenergy', type: 'custom', ph: '1d6' },
+                    { name: `${combatReg} - ${karmaEnergy}`, val: 'system.repeatingEffects.startOfRound.karmaenergy', type: 'custom', ph: '1d6' },
+                ],
             },
             {
-                name: `${combatReg} - ${astralEnergy}`,
-                val: 'system.repeatingEffects.startOfRound.astralenergy',
-                mode: 0,
-                ph: '1d6',
+                sub: regenerate,
+                options: [
+                    { name: `${regenerate} - ${wounds}`, val: 'system.status.regeneration.LePgearmodifier', type: 'add', ph: '1' },
+                    { name: `${regenerate} - ${astralEnergy}`, val: 'system.status.regeneration.AsPgearmodifier', type: 'add', ph: '1' },
+                    { name: `${regenerate} - ${karmaEnergy}`, val: 'system.status.regeneration.KaPgearmodifier', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${combatReg} - ${karmaEnergy}`,
-                val: 'system.repeatingEffects.startOfRound.karmaenergy',
-                mode: 0,
-                ph: '1d6',
-            },
-
-            // Regular regeneration
-            {
-                name: `${regenerate} - ${wounds}`,
-                val: 'system.status.regeneration.LePgearmodifier',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${regenerate} - ${astralEnergy}`,
-                val: 'system.status.regeneration.AsPgearmodifier',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${regenerate} - ${karmaEnergy}`,
-                val: 'system.status.regeneration.KaPgearmodifier',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${regenerate} (${advanced}) - ${wounds}`,
-                val: 'system.status.regeneration.LePConditional',
-                mode: 0,
-                ph: conditionalHint,
-            },
-            {
-                name: `${regenerate} (${advanced}) - ${astralEnergy}`,
-                val: 'system.status.regeneration.AsPConditional',
-                mode: 0,
-                ph: conditionalHint,
-            },
-            {
-                name: `${regenerate} (${advanced}) - ${karmaEnergy}`,
-                val: 'system.status.regeneration.KaPConditional',
-                mode: 0,
-                ph: conditionalHint,
+                sub: `${regenerate} (${advanced})`,
+                options: [
+                    { name: `${regenerate} (${advanced}) - ${wounds}`, val: 'system.status.regeneration.LePConditional', type: 'custom', ph: conditionalHint },
+                    { name: `${regenerate} (${advanced}) - ${astralEnergy}`, val: 'system.status.regeneration.AsPConditional', type: 'custom', ph: conditionalHint },
+                    { name: `${regenerate} (${advanced}) - ${karmaEnergy}`, val: 'system.status.regeneration.KaPConditional', type: 'custom', ph: conditionalHint },
+                ],
             },
         ];
     }
@@ -510,130 +352,70 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getSpellLiturgyOptions() {
-        const AsPCost = localize('AsPCost');
-        const KaPCost = localize('KaPCost');
-        const permanentCost = localize('permanentCost');
-        const featureHint = `${localize('Healing')} 1`;
-        const descriptor = `${localize('Description')} 1`;
-        const advanced = localize('advanced');
-        const feature = localize('feature');
-        const damage = localize('damage');
-        const foreign = localize('DSASETTINGS.enableForeignSpellModifer');
-        const spell = localize('TYPES.Item.spell');
-        const ritual = localize('TYPES.Item.ritual');
-        const liturgy = localize('TYPES.Item.liturgy');
+        const AsPCost = _loc('AsPCost');
+        const KaPCost = _loc('KaPCost');
+        const permanentCost = _loc('permanentCost');
+        const featureHint = `${_loc('Healing')} 1`;
+        const descriptor = `${_loc('Description')} 1`;
+        const advanced = _loc('advanced');
+        const feature = _loc('feature');
+        const damage = _loc('damage');
+        const foreign = _loc('DSASETTINGS.enableForeignSpellModifer');
+        const spell = _loc('TYPES.Item.spell');
+        const ritual = _loc('TYPES.Item.ritual');
+        const liturgy = _loc('TYPES.Item.liturgy');
 
-        const options = [
-            // Base costs
-            { name: KaPCost, val: 'system.kapModifier', mode: 2, ph: '1' },
-            { name: AsPCost, val: 'system.aspModifier', mode: 2, ph: '1' },
+        const subgroups = [
             {
-                name: `${permanentCost} ${localize('CHARAbbrev.AsP')}`,
-                val: 'system.status.astralenergy.permanentGear',
-                mode: 2,
-                ph: '1',
+                sub: _loc('cost'),
+                options: [
+                    { name: KaPCost, val: 'system.kapModifier', type: 'add', ph: '1' },
+                    { name: AsPCost, val: 'system.aspModifier', type: 'add', ph: '1' },
+                    { name: `${permanentCost} ${_loc('CHARAbbrev.AsP')}`, val: 'system.status.astralenergy.permanentGear', type: 'add', ph: '1' },
+                    { name: `${permanentCost} ${_loc('CHARAbbrev.KaP')}`, val: 'system.status.karmaenergy.permanentGear', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${permanentCost} ${localize('CHARAbbrev.KaP')}`,
-                val: 'system.status.karmaenergy.permanentGear',
-                mode: 2,
-                ph: '1',
-            },
-
-            // Spell/Liturgy damage
-            {
-                name: `${spell} - ${damage}`,
-                val: 'system.spellStats.damage',
-                mode: 2,
-                ph: '1',
+                sub: `${damage} & ${foreign}`,
+                options: [
+                    { name: `${spell} - ${damage}`, val: 'system.spellStats.damage', type: 'add', ph: '1' },
+                    { name: `${liturgy} - ${damage}`, val: 'system.liturgyStats.damage', type: 'add', ph: '1' },
+                    { name: foreign, val: 'system.spellStats.foreign', type: 'add', ph: '1' },
+                    { name: `${spell} - ${foreign}`, val: 'system.spellStats.foreignritual', type: 'add', ph: '1' },
+                    { name: `${ritual} - ${foreign}`, val: 'system.spellStats.foreignspell', type: 'add', ph: '1' },
+                ],
             },
             {
-                name: `${liturgy} - ${damage}`,
-                val: 'system.liturgyStats.damage',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: foreign,
-                val: 'system.spellStats.foreign',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${spell} - ${foreign}`,
-                val: 'system.spellStats.foreignritual',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: `${ritual} - ${foreign}`,
-                val: 'system.spellStats.foreignspell',
-                mode: 2,
-                ph: '1',
-            },
-
-            // Feature costs
-            {
-                name: `${feature} - ${AsPCost}`,
-                val: 'system.skillModifiers.feature.AsPCost',
-                mode: 0,
-                ph: featureHint,
-            },
-            {
-                name: `${advanced} - ${AsPCost}`,
-                val: 'system.skillModifiers.conditional.AsPCost',
-                mode: 0,
-                ph: descriptor,
-            },
-            {
-                name: `${feature} - ${KaPCost}`,
-                val: 'system.skillModifiers.feature.KaPCost',
-                mode: 0,
-                ph: featureHint,
-            },
-            {
-                name: `${advanced} - ${KaPCost}`,
-                val: 'system.skillModifiers.conditional.KaPCost',
-                mode: 0,
-                ph: descriptor,
+                sub: `${feature} / ${advanced}`,
+                options: [
+                    { name: `${feature} - ${AsPCost}`, val: 'system.skillModifiers.feature.AsPCost', type: 'custom', ph: featureHint },
+                    { name: `${advanced} - ${AsPCost}`, val: 'system.skillModifiers.conditional.AsPCost', type: 'custom', ph: descriptor },
+                    { name: `${feature} - ${KaPCost}`, val: 'system.skillModifiers.feature.KaPCost', type: 'custom', ph: featureHint },
+                    { name: `${advanced} - ${KaPCost}`, val: 'system.skillModifiers.conditional.KaPCost', type: 'custom', ph: descriptor },
+                ],
             },
         ];
 
-        // Add spell/liturgy roll modifiers
         for (const model of ['spell', 'liturgy', 'ceremony', 'ritual']) {
             const modelName = DSA5_Utility.categoryLocalization(model);
+            const opts = [];
 
-            // Resistance options
             for (const k of ['soulpower', 'toughness']) {
-                options.push({
-                    name: `${localize(k)} (${modelName})`,
-                    val: `system.status.${k}.${model}resist`,
-                    mode: 2,
-                    ph: '1',
-                });
+                opts.push({ name: `${_loc(k)} (${modelName})`, val: `system.status.${k}.${model}resist`, type: 'add', ph: '1' });
             }
 
-            // Roll modifiers
             for (const k of Object.keys(DSA5SpellDialog.rollModifiers)) {
-                const loc = localize(k.replace('Spell', ''));
-                options.push(
-                    {
-                        name: `${modelName} - ${loc}`,
-                        val: `system.${model}RollModifiers.${k}.mod`,
-                        mode: 2,
-                        ph: '1',
-                    },
-                    {
-                        name: `${modelName} - ${loc} - ${advanced}`,
-                        val: `system.${model}RollModifiers.${k}.custom`,
-                        mode: 0,
-                        ph: descriptor,
-                    },
+                const loc = _loc(k.replace('Spell', ''));
+                opts.push(
+                    { name: `${modelName} - ${loc}`, val: `system.${model}RollModifiers.${k}.mod`, type: 'add', ph: '1' },
+                    { name: `${modelName} - ${loc} - ${advanced}`, val: `system.${model}RollModifiers.${k}.custom`, type: 'custom', ph: descriptor },
                 );
             }
+
+            subgroups.push({ sub: modelName, options: opts });
         }
 
-        return options;
+        return subgroups;
     }
 
     /**
@@ -642,63 +424,34 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getCharacteristicOptions() {
-        const options = [];
+        const baseOpts = Object.keys(DSA5.characteristics).map((k) => ({
+            name: _loc(`CHAR.${k.toUpperCase()}`),
+            val: `system.characteristics.${k}.gearmodifier`,
+            type: 'add',
+            ph: '1',
+        }));
 
-        // Base characteristics
-        for (const k of Object.keys(DSA5.characteristics)) {
-            options.push({
-                name: localize(`CHAR.${k.toUpperCase()}`),
-                val: `system.characteristics.${k}.gearmodifier`,
-                mode: 2,
-                ph: '1',
-            });
-        }
+        const calcOpts = DSA5.gearModifyableCalculatedAttributes.map((k) => ({
+            name: _loc(k),
+            val: `system.status.${k}.gearmodifier`,
+            type: 'add',
+            ph: '1',
+        }));
 
-        // Calculated attributes
-        for (const k of DSA5.gearModifyableCalculatedAttributes) {
-            options.push({
-                name: localize(k),
-                val: `system.status.${k}.gearmodifier`,
-                mode: 2,
-                ph: '1',
-            });
-        }
-
-        // Special modifiers
-        options.push(
+        return [
+            { sub: _loc('characteristics'), options: baseOpts },
+            { sub: _loc('calculatedAttributes'), options: calcOpts },
             {
-                name: localize('MODS.sight'),
-                val: 'system.sightModifier.value',
-                mode: 2,
-                ph: '-1',
+                sub: _loc('MODS.otherModifiers'),
+                options: [
+                    { name: _loc('MODS.sight'), val: 'system.sightModifier.value', type: 'add', ph: '-1' },
+                    { name: _loc('MODS.sightMax'), val: 'system.sightModifier.maxLevel', type: 'override', ph: '4' },
+                    { name: `${_loc('LocalizedIDs.immuneTo')} ${_loc('condition')}`, val: 'system.immunities', type: 'add', ph: 'feared' },
+                    { name: _loc('temperature.heatProtection'), val: 'system.temperature.heatProtection', type: 'add', ph: '1' },
+                    { name: _loc('temperature.coldProtection'), val: 'system.temperature.coldProtection', type: 'add', ph: '1' },
+                ],
             },
-            {
-                name: localize('MODS.sightMax'),
-                val: 'system.sightModifier.maxLevel',
-                mode: 5,
-                ph: '4',
-            },
-            {
-                name: `${localize('LocalizedIDs.immuneTo')} ${localize('condition')}`,
-                val: 'system.immunities',
-                mode: 2,
-                ph: 'feared',
-            },
-            {
-                name: localize('temperature.heatProtection'),
-                val: 'system.temperature.heatProtection',
-                mode: 2,
-                ph: '1',
-            },
-            {
-                name: localize('temperature.coldProtection'),
-                val: 'system.temperature.coldProtection',
-                mode: 2,
-                ph: '1',
-            },
-        );
-
-        return options;
+        ];
     }
 
     /**
@@ -707,20 +460,11 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getStatusEffectOptions() {
-        const options = [];
+        const options = CONFIG.statusEffects
+            .filter((e) => e.system?.condition?.max)
+            .map((e) => ({ name: _loc(e.name), val: `system.condition.${e.id}`, type: 'add', ph: '1' }));
 
-        for (const effect of CONFIG.statusEffects) {
-            if (getProperty(effect, 'flags.dsa5.max')) {
-                options.push({
-                    name: localize(effect.name),
-                    val: `system.condition.${effect.id}`,
-                    mode: 2,
-                    ph: '1',
-                });
-            }
-        }
-
-        return options;
+        return [{ sub: _loc('ActiveEffects.wizardCategories.conditions'), options }];
     }
 
     /**
@@ -730,62 +474,40 @@ export default class EffectDropdownBuilder {
      * @private
      */
     static _getWeaponSpecificOptions(document) {
-        const options = [];
+        const subgroups = [];
         const parentType = document.parent?.type;
 
-        // Armor-specific options
         if (parentType === 'armor') {
-            options.push({
-                name: localize('CustomActiveEffects.armor.vulnerability'),
-                val: 'self.armorVulnerability',
-                mode: 0,
-                ph: 'Swords 5',
+            subgroups.push({
+                sub: _loc('armor'),
+                options: [
+                    { name: _loc('CustomActiveEffects.armor.vulnerability'), val: 'self.armorVulnerability', type: 'custom', ph: 'Swords 5' },
+                ],
             });
         }
 
-        // Weapon-specific options
         if (['meleeweapon', 'rangeweapon'].includes(parentType)) {
             const modelName = DSA5_Utility.categoryLocalization(parentType);
-            const maneuver = localize('combatmaneuver');
-            const maneuverExample = localize('LocalizedIDs.weaponThrow');
+            const maneuver = _loc('combatmaneuver');
+            const maneuverExample = _loc('LocalizedIDs.weaponThrow');
 
-            // Situational modifiers
-            for (const k of ['attack', 'parry', 'damage']) {
-                if (k === 'parry' && parentType === 'rangeweapon') continue;
+            const situational = ['attack', 'parry', 'damage']
+                .filter((k) => !(k === 'parry' && parentType === 'rangeweapon'))
+                .map((k) => ({ name: `${modelName} - ${_loc(`CHAR.${k.toUpperCase()}`)}`, val: `self.situational.${k}`, type: 'custom', ph: '1' }));
 
-                const mode = localize(`CHAR.${k.toUpperCase()}`);
-                options.push({
-                    name: `${modelName} - ${mode}`,
-                    val: `self.situational.${k}`,
-                    mode: 0,
-                    ph: '1',
-                });
-            }
+            subgroups.push({ sub: modelName, options: situational });
 
-            // Maneuver modifiers
-            options.push(
-                {
-                    name: `${maneuver} - ${localize('CHAR.attack')}`,
-                    val: 'self.maneuver.atbonus',
-                    mode: 0,
-                    ph: `${maneuverExample} 1`,
-                },
-                {
-                    name: `${maneuver} - ${localize('CHAR.parry')}`,
-                    val: 'self.maneuver.pabonus',
-                    mode: 0,
-                    ph: `${maneuverExample} 1`,
-                },
-                {
-                    name: `${maneuver} - ${localize('CHAR.damage')}`,
-                    val: 'self.maneuver.tpbonus',
-                    mode: 0,
-                    ph: `${maneuverExample} 1`,
-                },
-            );
+            subgroups.push({
+                sub: maneuver,
+                options: [
+                    { name: `${maneuver} - ${_loc('CHAR.attack')}`, val: 'self.maneuver.atbonus', type: 'custom', ph: `${maneuverExample} 1` },
+                    { name: `${maneuver} - ${_loc('CHAR.parry')}`, val: 'self.maneuver.pabonus', type: 'custom', ph: `${maneuverExample} 1` },
+                    { name: `${maneuver} - ${_loc('CHAR.damage')}`, val: 'self.maneuver.tpbonus', type: 'custom', ph: `${maneuverExample} 1` },
+                ],
+            });
         }
 
-        return options;
+        return subgroups;
     }
 
     /**
@@ -797,13 +519,13 @@ export default class EffectDropdownBuilder {
     static _generateDropdownHTML(options) {
         // Validate options
         for (const option of options) {
-            if (!option.ph || option.mode === undefined) {
+            if (!option.ph || option.type === undefined) {
                 console.warn('Invalid dropdown option:', option);
             }
         }
 
         const optionStrings = options.map(
-            (option) => `<option value="${option.val}" data-mode="${option.mode}" data-ph="${option.ph}">${option.name}</option>`
+            (option) => `<option value="${option.val}" data-type="${option.type}" data-ph="${option.ph}">${option.name}</option>`
         );
 
         return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;

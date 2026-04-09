@@ -1,0 +1,49 @@
+<form>
+    <p>{{localize 'DSAJOURNALTARGET.hint'}}</p>
+    <div class="form-group">
+        <label>{{localize 'DSAJOURNALTARGET.targetMode'}}</label>
+        <div class="form-fields">
+            <select name="mode">
+                {{#if hasExistingPages}}
+                <option value="existing-page">{{localize 'DSAJOURNALTARGET.addToExistingPage'}}</option>
+                {{/if}}
+                {{#if hasExistingJournals}}
+                <option value="new-page">{{localize 'DSAJOURNALTARGET.addToNewPage'}}</option>
+                {{/if}}
+                <option value="new-journal">{{localize 'DSAJOURNALTARGET.addToNewJournal'}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="existing-page">
+        <label>{{localize 'DSAJOURNALTARGET.selectPage'}}</label>
+        <div class="form-fields">
+            <select name="pageUuid">
+                {{#each pages}}
+                <option value="{{this.value}}">{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-page">
+        <label>{{localize 'DSAJOURNALTARGET.selectJournal'}}</label>
+        <div class="form-fields">
+            <select name="journalUuid">
+                {{#each journals}}
+                <option value="{{this.value}}">{{this.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-page,new-journal">
+        <label>{{localize 'DSAJOURNALTARGET.pageName'}}</label>
+        <div class="form-fields">
+            <input type="text" name="pageName" value="{{defaultName}}">
+        </div>
+    </div>
+    <div class="form-group personae-target-group" data-mode="new-journal">
+        <label>{{localize 'DSAJOURNALTARGET.journalName'}}</label>
+        <div class="form-fields">
+            <input type="text" name="journalName" value="{{defaultName}}">
+        </div>
+    </div>
+</form>

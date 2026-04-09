@@ -12,7 +12,7 @@ export function connectTokenRing() {
         spritesheet: 'systems/dsa5/icons/tokenring/texture_blankbg.json',
       },
     ];
-    for (let config of configs) {
+    for (const config of configs) {
       tokenring.addConfig(config.id, new foundry.canvas.placeables.tokens.DynamicRingData(config));
     }
   });

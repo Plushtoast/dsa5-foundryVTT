@@ -3,7 +3,8 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
-import { localize } from '../helpers/localizer.js';
+import ChatCommandService from './chat_command_service.js';
+
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -19,8 +20,13 @@ export default class DSA5ChatListeners {
     });
 
     const helpButton = $(`<button type="button" class="ui-control icon fas fa-question" data-tooltip="HELP.showHelp" aria-label="Help"></button>`);
-    helpButton.on('click', () => DSA5ChatListeners.getHelp());
     html.find('.control-buttons').prepend(helpButton);
+    new foundry.applications.ux.ContextMenu(html[0], '.fa-question', [], {
+      eventName: 'click',
+      onOpen: DSA5ChatListeners._onHelpContextMenu,
+      jQuery: false,
+      fixed: true,
+    });
     html.on('click', '.showPatchViewer', () => showPatchViewer());
     html.on('click', '.functionswitch', (ev) => RuleChaos[ev.currentTarget.dataset.function](ev));
     html.on('click', '.panToToken', (ev) => DSA5ChatListeners.panToToken(ev));
@@ -39,28 +45,31 @@ export default class DSA5ChatListeners {
   }
 
   static postStatus(id) {
-    let effect = CONFIG.statusEffects.find((x) => x.id == id);
-    let msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.img}"/>${localize(effect.name)}</h2></a><p>${localize(effect.description)}</p>`;
+    const effect = CONFIG.statusEffects.find((x) => x.id == id);
+    if (!effect) return;
+
+    const description = effect.description || effect.name;
+    const msg = `<h2><a class="chat-condition chatButton" data-id="${id}"><img class="sender-image" style="background-color:black;margin-right: 8px;" src="${effect.img}"/>${_loc(effect.name)}</h2></a><p>${_loc(description)}</p>`;
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
   static getHelp() {
-    let msg =
+    const msg =
       DSA5.helpContent
         .map(
-          (x) => `<h4>${localize(`HELP.${x.name}`)}</h4>
-            <p><b>${localize('HELP.command')}</b>: ${x.command}</p>
-            <p><b>${localize('HELP.example')}</b>: ${x.example}</p>
-            <p><b>${localize('Description')}</b>: ${localize(`HELP.descr${x.name}`)}</p>`,
+          (x) => `<h4>${_loc(`HELP.${x.name}`)}</h4>
+            <p><b>${_loc('HELP.command')}</b>: ${x.command}</p>
+            <p><b>${_loc('HELP.example')}</b>: ${x.example}</p>
+            <p><b>${_loc('Description')}</b>: ${_loc(`HELP.descr${x.name}`)}</p>`,
         )
-        .join('') + `<p>${localize('HELP.default')}</p>`;
+        .join('') + `<p>${_loc('HELP.default')}</p>`;
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
   static showConditions() {
     const effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
-        x.name = localize(x.name);
+        x.name = _loc(x.name);
         return x;
       })
       .sort((a, b) => {
@@ -74,7 +83,6 @@ export default class DSA5ChatListeners {
     let attrs = 12;
     let json = {};
     if (target) {
-      target = target.get(0);
       skill = await DSA5_Utility.skillByName(skill || target.textContent);
       if (target.dataset.attrs) attrs = target.dataset.attrs.split('|');
       if (target.dataset.json) json = JSON.parse(decodeURIComponent(target.dataset.json));
@@ -118,5 +126,43 @@ export default class DSA5ChatListeners {
   static async showTables() {
     const msg = await renderTemplate('systems/dsa5/templates/tables/systemtables.hbs', { tables: DSA5.systemTables });
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+  }
+
+  static _onHelpContextMenu() {
+    ui.context.menuItems = [
+      { label: _loc('HELP.showHelp'), icon: 'fas fa-question', onClick: () => DSA5ChatListeners.getHelp() },
+      { label: _loc('HELP.pay'), icon: 'fas fa-coins', onClick: () => ChatCommandService.openPaymentDialog('pay') },
+      { label: _loc('HELP.getPaid'), icon: 'fas fa-hand-holding-usd', onClick: () => ChatCommandService.openPaymentDialog('getPaid') },
+      {
+        label: _loc('HELP.quickAbility'),
+        icon: 'fas fa-bolt',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.quickAbility', {
+            onSubmit: (name, type, modifier) => {
+              if (type) ChatCommandService.speakerAbilityRoll(name, type);
+            },
+          }),
+      },
+      { label: _loc('HELP.conditions'), icon: 'fas fa-biohazard', onClick: () => DSA5ChatListeners.showConditions() },
+      { label: _loc('HELP.tables'), icon: 'fas fa-table', onClick: () => DSA5ChatListeners.showTables() },
+      {
+        label: _loc('HELP.request'),
+        icon: 'fas fa-dice',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.request', {
+            onSubmit: (name, type, modifier) => ChatCommandService.requestRoll(name, modifier),
+          }),
+      },
+      { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },
+      {
+        label: _loc('HELP.groupcheck'),
+        icon: 'fas fa-users',
+        onClick: () =>
+          ChatCommandService.openSkillModifierDialog('HELP.groupcheck', {
+            filterFn: (x) => x.type === 'skill',
+            onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
+          }),
+      },
+    ];
   }
 }

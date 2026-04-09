@@ -2,27 +2,28 @@ import DSA5ChatListeners from './chat_listeners.js';
 import RequestRoll from '../rolls/request-roll.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
-import { localize } from '../helpers/localizer.js';
+import InformationQueryService from '../queries/information-query.js';
+import ChatCommandService from './chat_command_service.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
   static cmds = ['sk', 'at', 'pa', 'sp', 'li', 'rq', 'gc', 'w', 'ch'];
   static KEY = {
-    UP: 38,
-    DOWN: 40,
-    ENTER: 13,
-    TAB: 9,
-    ESC: 27
+    UP: 'ArrowUp',
+    DOWN: 'ArrowDown',
+    ENTER: 'Enter',
+    TAB: 'Tab',
+    ESC: 'Escape'
   };
 
   constructor() {
     this.filtering = false;
     this.combatConstants = {
-      dodge: localize('dodge'),
-      parryWeaponless: localize('parryWeaponless'),
-      attackWeaponless: localize('attackWeaponless'),
+      dodge: _loc('dodge'),
+      parryWeaponless: _loc('parryWeaponless'),
+      attackWeaponless: _loc('attackWeaponless'),
     };
-    
+
     this.initializeSkills();
   }
 
@@ -30,23 +31,23 @@ export default class DSA5ChatAutoCompletion {
     if (DSA5ChatAutoCompletion.skills.length === 0) {
       try {
         const skillItems = await DSA5_Utility.allSkills();
-        
+
         const skillOptions = skillItems.map(x => ({ 
           name: x.name, 
           type: 'skill' 
         }));
-        
+
         const attributeOptions = Object.values(game.dsa5.config.characteristics)
           .map(x => ({ 
-            name: localize(x), 
+            name: _loc(x), 
             type: 'attribute' 
           }));
-        
+
         const specialOptions = [
-          { name: localize('regenerate'), type: 'regeneration' },
-          { name: localize('fallingDamage'), type: 'fallingDamage' }
+          { name: _loc('regenerate'), type: 'regeneration' },
+          { name: _loc('fallingDamage'), type: 'fallingDamage' }
         ];
-        
+
         DSA5ChatAutoCompletion.skills = [
           ...skillOptions,
           ...attributeOptions,
@@ -66,22 +67,31 @@ export default class DSA5ChatAutoCompletion {
     const chatInput = document.querySelector('.chat-input');
     chatInput.addEventListener('keyup', this._parseInput.bind(this));
 
-    $(document.querySelector('#chat-notifications .chat-input')).on('blur', (ev) => {      
-      if ($(ev.relatedTarget).closest('.quickfind').length || $(ev.relatedTarget).closest('.quick-item').length || $(ev.relatedTarget).hasClass('quick-item')) return;
+    const blurHandler = (ev) => {
+      const related = ev.relatedTarget;
+      if (related?.closest('.quickfind') || related?.closest('.quick-item') || related?.classList.contains('quick-item')) return;
       this._closeQuickfind(ev);
-    });
+    };
+
+    chatInput.addEventListener('focusout', blurHandler);
+
+    const notificationInput = document.querySelector('#chat-notifications .chat-input');
+    if (notificationInput && notificationInput !== chatInput) {
+      notificationInput.addEventListener('focusout', blurHandler);
+    }
   }
 
   _parseInput(ev) {
-    const val = ev.target.value;
-    const keyCode = ev.which;
+    const pmDiv = ev.currentTarget.querySelector('.ProseMirror') ?? ev.target;
+    const val = pmDiv.textContent;
+    const key = ev.key;
 
     if (this.filtering && [DSA5ChatAutoCompletion.KEY.UP, DSA5ChatAutoCompletion.KEY.DOWN, 
-                          DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(keyCode)) {
+                          DSA5ChatAutoCompletion.KEY.ENTER, DSA5ChatAutoCompletion.KEY.TAB].includes(key)) {
       return this._navigateQuickFind(ev);
     }
 
-    if (keyCode === DSA5ChatAutoCompletion.KEY.ESC) {
+    if (key === DSA5ChatAutoCompletion.KEY.ESC) {
       this._closeQuickfind(ev);
       return false;
     }
@@ -109,25 +119,48 @@ export default class DSA5ChatAutoCompletion {
 
   _completeCurrentEntry(target) {
     const container = this.getContainer(target);
-    const chatbox = container.find('.chat-input');
-    const cmdText = chatbox.val().split(' ')[0];
+    const cmdText = this._getChatInputText(container).split(' ')[0];
 
     let newVal = cmdText + ' ';
     if (/^\/w$/i.test(cmdText)) {
-      newVal += `[${target.text()}] `;
+      newVal += `[${target.textContent}] `;
     } else {
-      newVal += target.text();
+      newVal += target.textContent;
     }
 
-    chatbox.val(newVal);
+    this._setChatInputText(container, newVal);
+  }
+
+  _getChatInputText(container) {
+    const pmDiv = container?.querySelector('.chat-input .ProseMirror');
+    return pmDiv?.textContent?.trim() ?? '';
+  }
+
+  _setChatInputText(container, text) {
+    const pmDiv = container?.querySelector('.chat-input .ProseMirror');
+    if (!pmDiv) return;
+    const p = pmDiv.querySelector('p');
+    if (!p) return;
+    pmDiv.focus();
+    if (text) {
+      p.textContent = text;
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(p);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } else {
+      p.innerHTML = '<br>';
+    }
   }
 
   getContainer(target) {
-    let element = target.closest('.chat-form');
-    if (!element || !element.length) {
+    let element = target?.closest?.('.chat-form');
+    if (!element) {
       element = document.querySelector('#chat-notifications');
     }
-    return $(element);
+    return element;
   }
 
   isChatNotifications(target) {
@@ -136,14 +169,17 @@ export default class DSA5ChatAutoCompletion {
 
   _closeQuickfind(ev) {
     this.filtering = false;
-    this.getContainer(ev.currentTarget).find('.quickfind').remove();
+    const container = this.getContainer(ev.currentTarget ?? ev.target);
+    container?.querySelector('.quickfind')?.remove();
   }
 
   _filterW(search, ev) {
+    if (/\[.*\]/.test(search)) return;
+
     const result = game.users.contents
       .filter(user => user.active && user.name.toLowerCase().includes(search))
       .map(user => ({ name: user.name, type: 'user' }));
-    
+
     this._setFilteredList(result, 'W', ev);
   }
 
@@ -153,7 +189,7 @@ export default class DSA5ChatAutoCompletion {
 
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
-    
+
     const itemResults = actor.items
       .filter(item => {
         return (
@@ -164,11 +200,11 @@ export default class DSA5ChatAutoCompletion {
       })
       .slice(0, 5)
       .map(item => ({ name: item.name, type: 'item' }));
-    
+
     const specialAttacks = [
       { name: this.combatConstants.attackWeaponless, type: 'item' }
     ].filter(x => x.name.toLowerCase().includes(search));
-    
+
     const result = [...itemResults, ...specialAttacks];
     this._setFilteredList(result, 'AT', ev);
   }
@@ -185,12 +221,12 @@ export default class DSA5ChatAutoCompletion {
       )
       .slice(0, 5)
       .map(item => ({ name: item.name, type: 'item' }));
-    
+
     const specialDefenses = [
       { name: this.combatConstants.dodge, type: 'item' },
       { name: this.combatConstants.parryWeaponless, type: 'item' },
     ].filter(x => x.name.toLowerCase().includes(search));
-    
+
     const result = [...wornMeleeWeapons, ...specialDefenses];
     this._setFilteredList(result, 'PA', ev);
   }
@@ -206,7 +242,7 @@ export default class DSA5ChatAutoCompletion {
       )
       .slice(0, 5)
       .map(item => ({ name: item.name, type: 'item' }));
-    
+
     this._setFilteredList(result, 'SP', ev);
   }
 
@@ -221,14 +257,14 @@ export default class DSA5ChatAutoCompletion {
       )
       .slice(0, 5)
       .map(item => ({ name: item.name, type: 'item' }));
-    
+
     this._setFilteredList(result, 'LI', ev);
   }
 
   _setFilteredList(result, cmd, ev) {
     if (!result.length) {
       result.push({
-        name: localize('DSAError.noMatch'),
+        name: _loc('DSAError.noMatch'),
         type: 'none',
       });
     }
@@ -237,21 +273,21 @@ export default class DSA5ChatAutoCompletion {
 
   _getSkills(search, type) {
     search = search.replace(/(-|\+)?\d+/g, '').trim();
-    
+
     const result = DSA5ChatAutoCompletion.skills
       .filter(skill => 
         skill.name.toLowerCase().includes(search) && 
         (type === undefined || type === skill.type)
       )
       .slice(0, 5);
-    
+
     if (!result.length) {
       result.push({
-        name: localize('DSAError.noMatch'),
+        name: _loc('DSAError.noMatch'),
         type: 'none',
       });
     }
-    
+
     return result;
   }
 
@@ -272,26 +308,30 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _setList(result, cmd, ev) {
-    const html = $(
-      `<div class="quickfind dsalist"><ul>${
-        result.map(x => `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`).join('')
-      }</ul></div>`
-    );
+    const listHTML = result.map(x => 
+      `<li data-type="${x.type}" data-category="${cmd}" class="quick-item">${x.name}</li>`
+    ).join('');
 
-    html.find(`.quick-item:first`).addClass('focus');
-    html.find('.quick-item').on('mousedown', ev => {
-      ev.preventDefault();
-      this._quickSelect($(ev.currentTarget));
+    const template = document.createElement('template');
+    template.innerHTML = `<div class="quickfind dsalist"><ul>${listHTML}</ul></div>`;
+    const html = template.content.firstElementChild;
+
+    html.querySelector('.quick-item')?.classList.add('focus');
+    html.querySelectorAll('.quick-item').forEach(item => {
+      item.addEventListener('mousedown', ev => {
+        ev.preventDefault();
+        this._quickSelect(ev.currentTarget);
+      });
     });
-    
+
     const container = this.getContainer(ev.currentTarget || ev.target);
-    const existing = container.find('.quickfind');
-    
-    if (existing.length) {
+    const existing = container.querySelector('.quickfind');
+
+    if (existing) {
       existing.replaceWith(html);
     } else {
-      if (this.isChatNotifications(container[0])) {
-        container.find('.overflow').after(html);
+      if (this.isChatNotifications(container)) {
+        container.querySelector('.overflow')?.after(html);
       } else {
         container.append(html);
       }      
@@ -301,30 +341,34 @@ export default class DSA5ChatAutoCompletion {
   _navigateQuickFind(ev) {
     if (!this.filtering) return true;
 
-    const container = this.getContainer(ev.currentTarget);
-    const target = container.find('.focus');
+    const container = this.getContainer(ev.currentTarget ?? ev.target);
+    const target = container?.querySelector('.focus');
 
-    if (!target.length) return true;
+    if (!target) return true;
 
-    switch (ev.which) {
-      case DSA5ChatAutoCompletion.KEY.UP:
-        if (target.prev('.quick-item').length) {
-          target.removeClass('focus');
-          target.prev('.quick-item').addClass('focus');
+    switch (ev.key) {
+      case DSA5ChatAutoCompletion.KEY.UP: {
+        const prev = target.previousElementSibling;
+        if (prev?.classList.contains('quick-item')) {
+          target.classList.remove('focus');
+          prev.classList.add('focus');
         }
         ev.preventDefault();
         return false;
+      }
 
-      case DSA5ChatAutoCompletion.KEY.DOWN:
-        if (target.next('.quick-item').length) {
-          target.removeClass('focus');
-          target.next('.quick-item').addClass('focus');
+      case DSA5ChatAutoCompletion.KEY.DOWN: {
+        const next = target.nextElementSibling;
+        if (next?.classList.contains('quick-item')) {
+          target.classList.remove('focus');
+          next.classList.add('focus');
         }
         ev.preventDefault();
         return false;
+      }
 
       case DSA5ChatAutoCompletion.KEY.ENTER:
-        if (target.attr('data-category') !== 'W') {
+        if (target.dataset.category !== 'W') {
           ev.stopPropagation();
           ev.preventDefault();
           this._quickSelect(target);
@@ -346,12 +390,12 @@ export default class DSA5ChatAutoCompletion {
   static _getActor() {
     const speaker = ChatMessage.getSpeaker();
     let actor = null;
-    
+
     //todo sth odd here
     if (speaker.token) {
       actor = game.actors.tokens[speaker.token];
     }
-    
+
     if (!actor) {
       actor = game.actors.get(speaker.actor);
     }
@@ -360,7 +404,7 @@ export default class DSA5ChatAutoCompletion {
       ui.notifications.error('DSAError.noProperActor', { localize: true });
       return {};
     }
-    
+
     return {
       actor,
       tokenId: speaker.token,
@@ -368,8 +412,8 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickSelect(target) {
-    const cmd = target.attr('data-category');
-    
+    const cmd = target.dataset.category;
+
     switch (cmd) {
       case 'NM':
       case 'GC':
@@ -379,6 +423,7 @@ export default class DSA5ChatAutoCompletion {
         break;
       case 'W':
         this._completeCurrentEntry(target);
+        this._closeQuickfind({ currentTarget: target, target });
         break;
       default:
         const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
@@ -395,56 +440,37 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickSK(target, actor, tokenId) {
-    const type = target.attr('data-type');
-    const text = target.text();
-    
-    switch (type) {
-      case 'skill':
-        const skill = actor.items.find(i => i.name === text && i.type === 'skill');
-        if (skill) {
-          actor.setupSkill(skill, {}, tokenId)
-            .then(setupData => actor.basicTest(setupData));
-        }
-        break;
-      case 'attribute':
-        const characteristic = Object.keys(game.dsa5.config.characteristics)
-          .find(key => localize(game.dsa5.config.characteristics[key]) === text);
-        actor.setupCharacteristic(characteristic, {}, tokenId)
-          .then(setupData => actor.basicTest(setupData));
-        break;
-      case 'regeneration':
-        actor.setupRegeneration('regenerate', {}, tokenId)
-          .then(setupData => actor.basicTest(setupData));
-        break;
-    }
+    const type = target.dataset.type;
+    const text = target.textContent;
+    ChatCommandService.executeAbilityRoll(actor, text, type, tokenId);
   }
 
   _resetChatAutoCompletion(target) {
     const container = this.getContainer(target);
-    container.find('.chat-input').val('');
-    container.find('.quickfind').remove();
+    this._setChatInputText(container, '');
+    container.querySelector('.quickfind')?.remove();
   }
 
   getNumberFromChat(target) {
     const container = this.getContainer(target);
-    const val = container.find('.chat-input').val();
+    const val = this._getChatInputText(container);
     return Number(val.match(/(-|\+)?\d+/g)) || 0;
   }
 
   _quickGC(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showGCMessage(target.text(), modifier);
+    ChatCommandService.groupCheck(target.textContent, modifier);
   }
 
   _quickRQ(target) {
     const modifier = this.getNumberFromChat(target);
     this._resetChatAutoCompletion(target);
-    RequestRoll.showRQMessage(target.text(), modifier);
+    ChatCommandService.requestRoll(target.textContent, modifier);
   }
 
   _quickPA(target, actor, tokenId) {
-    const text = target.text();
+    const text = target.textContent;
 
     if (this.combatConstants.dodge === text) {
       actor.setupDodge({}, tokenId)
@@ -456,7 +482,7 @@ export default class DSA5ChatAutoCompletion {
       const weapon = actor.items.find(item => 
         item.type === 'meleeweapon' && item.name === text
       );
-      
+
       if (weapon) {
         actor.setupWeapon(weapon, 'parry', {}, tokenId)
           .then(setupData => actor.basicTest(setupData));
@@ -465,19 +491,19 @@ export default class DSA5ChatAutoCompletion {
   }
 
   _quickAT(target, actor, tokenId) {
-    const text = target.text();
-    
+    const text = target.textContent;
+
     if (this.combatConstants.attackWeaponless === text) {
       actor.setupWeaponless('attack', {}, tokenId)
         .then(setupData => actor.basicTest(setupData));
       return;
     }
-    
+
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
-    
+
     let item = actor.items.find(i => types.includes(i.type) && i.name === text);
-    
+
     if (!item) {
       item = actor.items.find(i => 
         i.type === 'trait' && 
@@ -495,9 +521,9 @@ export default class DSA5ChatAutoCompletion {
   _quickSP(target, actor, tokenId) {
     const types = ['ritual', 'spell'];
     const spell = actor.items.find(item => 
-      types.includes(item.type) && item.name === target.text()
+      types.includes(item.type) && item.name === target.textContent
     );
-    
+
     if (spell) {
       actor.setupSpell(spell, {}, tokenId)
         .then(setupData => actor.basicTest(setupData));
@@ -507,9 +533,9 @@ export default class DSA5ChatAutoCompletion {
   _quickLI(target, actor, tokenId) {
     const types = ['liturgy', 'ceremony'];
     const liturgy = actor.items.find(item => 
-      types.includes(item.type) && item.name === target.text()
+      types.includes(item.type) && item.name === target.textContent
     );
-    
+
     if (liturgy) {
       actor.setupSpell(liturgy, {}, tokenId)
         .then(setupData => actor.basicTest(setupData));
@@ -554,7 +580,7 @@ export default class DSA5ChatAutoCompletion {
     });
 
     html.on('click', '.request-CH', (ev) => {
-      DSA5ChatListeners.check3D20($(ev.currentTarget), ev.currentTarget.dataset.name, { 
+      DSA5ChatListeners.check3D20(ev.currentTarget, ev.currentTarget.dataset.name, { 
         modifier: Number(ev.currentTarget.dataset.modifier) || 0 
       });
       ev.stopPropagation();
@@ -579,6 +605,8 @@ export default class DSA5ChatAutoCompletion {
       master.getExp(master.selectedIDs(), ev.currentTarget.dataset.modifier);
     });
 
+    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
+
     const itemDragStart = (event) => {
       event.stopPropagation();
       const { type, uuid } = event.currentTarget.dataset;
@@ -595,7 +623,7 @@ export default class DSA5ChatAutoCompletion {
       const item = await fromUuid(ev.currentTarget.dataset.uuid);
       item.sheet.render(true);
     });
-    
+
     showItems.attr('draggable', true).on('dragstart', itemDragStart);
 
     html.on('click', '.actorEmbeddedAbility', async (ev) => {

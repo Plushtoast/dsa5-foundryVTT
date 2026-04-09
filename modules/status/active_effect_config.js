@@ -1,21 +1,21 @@
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
-import DSATriggers from '../system/automation/triggers.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
-import { localize } from '../system/helpers/localizer.js';
-const { mergeObject, getProperty, duplicate, setProperty } = foundry.utils;
+import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
+
+const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 async function callMacro(packName, name, actor, item, qs, args = {}) {
-  let result = {};
+  const result = {};
   if (!game.user.can('MACRO_SCRIPT')) {
     ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
   } else {
     const pack = game.packs.get(packName);
     let documents = await pack?.getDocuments({ name });
     if (!documents || !documents.length) {
-      for (let pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
+      for (const pack of game.packs.filter((x) => x.documentName == 'Macro' && /\(internal\)/.test(x.metadata.label))) {
         documents = await pack.getDocuments({ name });
         if (documents.length) break;
       }
@@ -43,31 +43,31 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
 Hooks.once('i18nInit', () => {
   DSAActiveEffectConfig.effectDurationRegexes = [
     {
-      regEx: new RegExp(localize('DSAREGEX.combatRounds'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.combatRounds'), 'i'),
       seconds: 5,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.minutes'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.minutes'), 'i'),
       seconds: 60,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.hours'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.hours'), 'i'),
       seconds: 3600,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.days'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.days'), 'i'),
       seconds: 3600 * 24,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.weeks'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.weeks'), 'i'),
       seconds: 3600 * 24 * 7,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.months'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.months'), 'i'),
       seconds: 3600 * 24 * 30,
     },
     {
-      regEx: new RegExp(localize('DSAREGEX.years'), 'i'),
+      regEx: new RegExp(_loc('DSAREGEX.years'), 'i'),
       seconds: 3600 * 24 * 350,
     },
   ];
@@ -75,7 +75,43 @@ Hooks.once('i18nInit', () => {
 
 export default class DSAActiveEffectConfig extends foundry.applications.sheets.ActiveEffectConfig {
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
-  static macroIndexes = [2, 6, 7, 8];
+  wizardMode = true;
+  wizardCategory = null;
+  static macroIndexes = [
+    DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
+    DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.POST_ROLL,
+    DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.POST_OPPOSED,
+    DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.ROLL_DIALOG_RENDER,
+  ];
+
+  static buildAdvancedFunctions(effectConfigs) {
+    const allowed = new Set();
+
+    if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.NONE);
+    }
+    if (effectConfigs.hasSpellEffects) {
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.SYSTEM_EFFECT);
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO);
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.CREATURE);
+    }
+    if (effectConfigs.hasDamageTransformation) {
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.DAMAGE_TRANSFORMATION);
+    }
+    if (effectConfigs.hasArmorTransformation) {
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.ARMOR_TRANSFORMATION);
+    }
+    if (effectConfigs.hasTriggerEffects) {
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.POST_ROLL);
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.POST_OPPOSED);
+      allowed.add(DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.ROLL_DIALOG_RENDER);
+    }
+
+    return Object.entries(DSAActiveEffectDataModel.ADVANCED_FUNCTION_TYPES)
+      .map(([index, name]) => ({ index: Number(index), name }))
+      .filter((entry) => allowed.has(entry.index))
+      .sort((a, b) => a.index - b.index);
+  }
 
   static DEFAULT_OPTIONS = {
     window: {
@@ -83,6 +119,10 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     },
     position: {
       width: 600,
+    },
+    actions: {
+      toggleWizardMode: this.#toggleWizardMode,
+      filterWizardCategory: this.#filterWizardCategory,
     },
   };
 
@@ -109,47 +149,83 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     },
   };
 
+  get #showAdvancedTab() {
+    return this.document.parent?.documentName === 'Item';
+  }
+
+  _prepareTabs(group) {
+    const tabs = super._prepareTabs(group);
+    if (group === 'sheet' && !this.#showAdvancedTab) {
+      delete tabs.advanced;
+      const tabKeys = Object.keys(tabs);
+      if (!tabKeys.some((k) => tabs[k].active) && tabKeys.length) {
+        tabs[tabKeys[0]].active = true;
+        tabs[tabKeys[0]].cssClass = 'active';
+      }
+    }
+    return tabs;
+  }
+
+  static #toggleWizardMode() {
+    this.wizardMode = !this.wizardMode;
+    this.wizardCategory = null;
+    this.render({ parts: ['changes'] });
+  }
+
+  static #filterWizardCategory(ev, target) {
+    const category = target.dataset.category || null;
+    this.wizardCategory = this.wizardCategory === category ? null : category;
+    this.render({ parts: ['changes'] });
+  }
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (!this.#showAdvancedTab) delete parts.advanced;
+    return parts;
+  }
+
   static async callMacro(packName, name, actor, item, qs, args = {}) {
     return await callMacro(packName, name, actor, item, qs, args);
   }
 
-  static async startDelayedEffect(duration, effect) {
+  static async startDelayedEffect({ duration, start }, effect) {
     effect.update({
-      'system.delayed': false,
+      'system.delayed.enabled': false,
       duration,
-      'flags.dsa5.-=onDelayed': null,
+      start,
+      'system.macroArgs.onDelayed': '',
     });
   }
 
   static onDelayedEffect(actor, effect) {
     let continueDeletion = true;
-    if (effect.system.delayed) {
-      const duration = effect.system?.originalDuration || {
-        seconds: '',
-        rounds: '',
+    const delayedData = effect.system?.delayed;
+    const isDelayed = !!delayedData?.enabled;
+    if (isDelayed) {
+      const orig = delayedData?.originalDuration || {};
+      const duration = {
+        value: orig.value ?? orig.seconds ?? orig.rounds ?? null,
+        units: orig.units ?? (orig.rounds ? 'rounds' : 'seconds'),
       };
-      mergeObject(duration, {
-        startRound: game.combat?.round,
-        startTurn: game.combat?.turn,
-        startTime: game.time.worldTime,
-      });
-      if (!duration.rounds && duration.seconds) {
-        duration.rounds = Number(duration.seconds) / 5;
-      }
-      if (effect.changes.length || effect.statuses.size) {
-        this.startDelayedEffect(duration, effect);
+      const start = ActiveEffect.getEffectStart();
+      const updateData = { duration, start };
+      if (effect.system.changes.length || effect.statuses.size) {
+        this.startDelayedEffect(updateData, effect);
         continueDeletion = false;
       }
 
-      if (effect.system.macroEffect) {
-        const testData = effect.system.initialTestData;
-        const sourceActor = game.actors.get(effect.system.sourceActor);
-        const source = effect.system.source;
+      if (delayedData?.macroEffect) {
+        const testData = delayedData.initialTestData;
+        const sourceActor = game.actors.get(delayedData.sourceActor);
+        const source = delayedData.source;
 
-        const macroEffect = duplicate(effect.system.macroEffect);
-        delete macroEffect.flags.dsa5?.onDelayed;
-        macroEffect.system.delayed = false;
+        const macroEffect = duplicate(delayedData.macroEffect);
+        macroEffect.system ||= {};
+        macroEffect.system.macroArgs ||= {};
+        delete macroEffect.system?.macroArgs?.onDelayed;
+        macroEffect.system.delayed = { enabled: false };
         macroEffect.duration = duration;
+        macroEffect.start = start;
         this.applyAdvancedFunction(actor, [macroEffect], source, testData, sourceActor);
       }
     }
@@ -157,7 +233,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   }
 
   static async onEffectRemove(actor, effect) {
-    const onRemoveMacro = getProperty(effect, 'flags.dsa5.onRemove');
+    const onRemoveMacro = effect.system?.macroArgs?.onRemove;
     if (onRemoveMacro) {
       if (!game.user.can('MACRO_SCRIPT')) {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
@@ -175,29 +251,24 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
   }
 
-  async checkTimesUpInstalled() {
-    const isInstalled = DSA5_Utility.moduleEnabled('times-up');
-    if (!isInstalled && game.user.isGM) ui.notifications.warn('DSAError.shouldTimesUp', { localize: true });
-    return isInstalled;
-  }
 
   async _updateObject(event, formData) {
     // If the charges inputs are left empty, Foundry often persists them as empty strings.
     // Number("") === 0 would incorrectly mark the effect as depleted and prevent it from applying.
-    const valueRaw = formData?.['flags.dsa5.charges.value'];
-    const maxRaw = formData?.['flags.dsa5.charges.max'];
+    const valueRaw = formData?.['system.charges.value'];
+    const maxRaw = formData?.['system.charges.max'];
 
     const isEmpty = (v) => v === '' || v === null || v === undefined;
 
     // If current charges are empty, we consider charges "not configured" and remove the flag entirely.
     // (Max without a current value is not meaningful for depletion, and would still cause gating.)
     if (isEmpty(valueRaw)) {
-      delete formData['flags.dsa5.charges.value'];
-      delete formData['flags.dsa5.charges.max'];
-      formData['flags.dsa5.-=charges'] = null;
+      delete formData['system.charges.value'];
+      delete formData['system.charges.max'];
+      formData['system.charges'] = _del;
     } else if (isEmpty(maxRaw)) {
       // Allow "current" without "max".
-      delete formData['flags.dsa5.charges.max'];
+      delete formData['system.charges.max'];
     }
 
     return super._updateObject(event, formData);
@@ -208,9 +279,29 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
     const document = this.document;
     switch (partId) {
+      case 'changes': {
+        const effect = document;
+        const changeFields = effect.system.schema.fields.changes.element.fields;
+        const changeTypes = Object.entries(ActiveEffect.CHANGE_TYPES)
+          .map(([type, { label }]) => ({ type, label: _loc(label) }))
+          .sort((a, b) => a.label.localeCompare(b.label, game.i18n.lang))
+          .reduce((types, { type, label }) => {
+            types[type] = label;
+            return types;
+          }, {});
+        const changePriorities = Object.fromEntries(
+          Object.entries(ActiveEffect.CHANGE_TYPES).map(([type, { defaultPriority }]) => [type, defaultPriority]),
+        );
+        const changePhases = Object.fromEntries(
+          Object.entries(ActiveEffect.CHANGE_PHASES).map(([phase, { label }]) => [phase, _loc(label)]),
+        );
+        const wizardMode = this.wizardMode;
+        const wizardCategory = this.wizardCategory;
+        const wizardCategories = wizardMode ? EffectDropdownBuilder.getWizardCategories(this.document) : [];
+        mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases, wizardMode, wizardCategory, wizardCategories });
+        break;
+      }
       case 'advanced':
-        let index = 0;
-
         const itemType = document.parent.type;
         const item = document.parent;
         const isWeapon = ['meleeweapon', 'rangeweapon'].includes(itemType) || (itemType == 'trait' && ['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value));
@@ -223,65 +314,33 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           hasTriggerEffects: ['specialability'].includes(itemType),
           hasSuccessEffects: ['poison', 'disease'].includes(itemType),
         };
-
-        let advancedFunctions = [];
-
-        if (effectConfigs.hasSpellEffects || effectConfigs.hasDamageTransformation || effectConfigs.hasTriggerEffects) {
-          advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.none`, index: 0 });
-        }
-
-        if (effectConfigs.hasSpellEffects) {
-          for (let x of ['systemEffect', 'macro', 'creature']) {
-            advancedFunctions.push({ name: `ActiveEffects.advancedFunctions.${x}`, index: (index += 1) });
-          }
-        }
-
-        if (effectConfigs.hasDamageTransformation) {
-          advancedFunctions.push({ name: 'ActiveEffects.advancedFunctions.damagePostprocess', index: DSATriggers.EVENTS.DAMAGE_TRANSFORMATION });
-        }
-
-        if (effectConfigs.hasArmorTransformation) {
-          advancedFunctions.push({ name: 'ActiveEffects.advancedFunctions.armorPostprocess', index: DSATriggers.EVENTS.ARMOR_TRANSFORMATION });
-        }
-        if (effectConfigs.hasTriggerEffects) {
-          advancedFunctions.push(
-            { name: 'ActiveEffects.advancedFunctions.postRoll', index: DSATriggers.EVENTS.POST_ROLL },
-            { name: 'ActiveEffects.advancedFunctions.postOpposed', index: DSATriggers.EVENTS.POST_OPPOSED },
-            { name: 'ActiveEffects.advancedFunctions.rollDialogRender', index: DSATriggers.EVENTS.ROLL_DIALOG_RENDER },
-          );
-        }
+        const advancedFunctions = DSAActiveEffectConfig.buildAdvancedFunctions(effectConfigs);
+        const advancedFunctionChoices = advancedFunctions.reduce((obj, e) => {
+          obj[e.index] = e.name;
+          return obj;
+        }, {});
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
-          obj[e] = localize(`ActiveEffects.messageReceivers.${e}`);
+          obj[e] = `ActiveEffects.messageReceivers.${e}`;
           return obj;
         }, {});
 
-        const applySuccessConditions = {
-          1: 'ActiveEffects.onSuccess',
-          2: 'ActiveEffects.onFailure',
-        };
-
         const canWeaponAdvantages = DSAActiveEffectConfig.AdvantageRuleItems.has(itemType);
+        const enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
 
         mergeObject(partContext, {
           advancedFunctions,
+          advancedFunctionChoices,
           effectConfigs,
           macroIndexes: DSAActiveEffectConfig.macroIndexes,
           messageReceivers,
           canWeaponAdvantages,
+          enableWeaponAdvantages,
           equipmentAdvantageOptions: {
-            1: localize(`AdvantageRuleItems.${itemType}.1`),
-            2: localize(`AdvantageRuleItems.${itemType}.2`),
+            1: `AdvantageRuleItems.${itemType}.1`,
+            2: `AdvantageRuleItems.${itemType}.2`,
           },
-          applySuccessConditions,
           config: this.getConfig(),
           isWeapon,
-          dispositions: Object.entries(CONST.TOKEN_DISPOSITIONS).reduce(
-            (obj, e) => {
-              obj[e[1]] = `TOKEN.DISPOSITION.${e[0]}`;
-              return obj;
-            },
-            { 2: localize('all') },
-          ),
         });
         break;
     }
@@ -299,9 +358,9 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     await super._onRender(context, options);
 
     const html = $(this.element);
-    html.find('.advancedSelector').on('change', (ev) => {
-      let effect = this.document;
-      effect.flags.dsa5.advancedFunction = Number($(ev.currentTarget).val());
+    html.find('[name="system.advancedFunction"]').on('change', (ev) => {
+      const effect = this.document;
+      effect.system.advancedFunction = Number($(ev.currentTarget).val());
 
       renderTemplate('systems/dsa5/templates/status/advanced_functions.hbs', {
         document: this.document,
@@ -311,14 +370,22 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         html.find('.advancedFunctions').html(template);
       });
     });
-    html.find('.auraSelector').on('change', (ev) => {
+    html.find('[name="system.aura.isAura"]').on('change', (ev) => {
       html.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
       html.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
     if (this.document.statuses.size && game.i18n.has(this.document.description)) {
-      html.find('[data-tab="details"] .editor').replaceWith(`<p>${localize(this.document.description)}</p>`);
+      html.find('[data-tab="details"] .editor').replaceWith(`<p>${_loc(this.document.description)}</p>`);
     }
 
+    if (this.wizardMode) {
+      this.#initWizardDropdowns(html);
+    } else {
+      this.#initExpertDropdowns(html);
+    }
+  }
+
+  #initExpertDropdowns(html) {
     const dropDown = EffectDropdownBuilder.buildDropdownMenu(this.document);
     html.find('.changes .ol .key').append(dropDown);
     html
@@ -329,36 +396,64 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
         elem.siblings('input').val(elem.val());
         const parent = elem.closest('.row-section');
         const data = elem.find('option:selected');
-        parent.find('.mode select').val(data.attr('data-mode'));
+        parent.find('.type select').val(data.attr('data-type'));
         parent.find('.value input').attr('placeholder', data.attr('data-ph'));
         elem.trigger('blur');
       });
     html.find('.select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
-    this.checkTimesUpInstalled();
+  }
+
+  #initWizardDropdowns(html) {
+    const groupedMenu = EffectDropdownBuilder.buildGroupedDropdownMenu(this.document, this.wizardCategory);
+    html.find('.changes .ol .wizardKey').each((i, el) => {
+      const $el = $(el);
+      const hiddenInput = $el.find('input[type="hidden"]');
+      const currentKey = hiddenInput.val();
+
+      const $wrapper = $('<div class="wizardSelectWrapper"></div>');
+      $wrapper.append(groupedMenu);
+      $el.prepend($wrapper);
+
+      const $select = $wrapper.find('.wizardMenu');
+      if (currentKey) $select.val(currentKey);
+
+      $select
+        .select2({ width: '100%', dropdownAutoWidth: true })
+        .on('change', (ev) => {
+          const $sel = $(ev.currentTarget);
+          const val = $sel.val();
+          hiddenInput.val(val);
+          const $opt = $sel.find('option:selected');
+          const row = $sel.closest('.row-section');
+          row.find('input[name$=".type"]').val($opt.attr('data-type') || 'add');
+          row.find('.value input').attr('placeholder', $opt.attr('data-ph') || '');
+          $sel.trigger('blur');
+        });
+    });
   }
 
   getStatusEffects() {
     return CONFIG.statusEffects
       .map((x) => {
-        return { id: x.id, name: localize(x.name) };
+        return { id: x.id, name: _loc(x.name) };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   static applyRollTransformation(actor, options, functionID) {
-    let msg = '';
-    let source = options.origin;
+    const msg = '';
+    const source = options.origin;
     for (const ef of source.effects) {
       try {
-        if (Number(getProperty(ef, 'flags.dsa5.advancedFunction')) == functionID) {
+        if (Number(ef.system.advancedFunction) == functionID) {
           if (!game.user.can('MACRO_SCRIPT')) {
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
               const syncFunction = Object.getPrototypeOf(function () {}).constructor;
-              const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', getProperty(ef, 'flags.dsa5.args3'));
+              const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', ef.system.macroArgs.macro);
               fn.call(this, ef, callMacro, actor, msg, source, options);
             } catch (err) {
               ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
@@ -376,7 +471,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
   }
 
   static async applyAdvancedFunction(actor, effects, source, testData, sourceActor, options = {}) {
-    const { skipResistRolls = true } = options;
+    const { skipResistRolls = true, origin } = options;
     let msg = '';
     const resistRolls = [];
     let effectApplied = false;
@@ -385,18 +480,24 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
     for (const ef of effects) {
       if (ef.origin) delete ef.origin;
+      if (origin) ef.origin = origin;
 
-      const specStep = Number(getProperty(ef, 'flags.dsa5.specStep')) || 0;
+      const effectSystem = (ef.system ??= {});
+      effectSystem.aura ??= {};
+      effectSystem.macroArgs ??= {};
+      effectSystem.changes ??= [];
+
+      const specStep = Number(effectSystem.specStep) || 0;
       try {
-        const customEf = Number(getProperty(ef, 'flags.dsa5.advancedFunction'));
-        const qs = Math.min(testData.qualityStep || 0, 6);
-        const resistRoll = getProperty(ef, 'flags.dsa5.resistRoll');
-        const isAura = getProperty(ef, 'flags.dsa5.isAura');
+        const customEf = Number(effectSystem.advancedFunction);
+        const qs = Math.min(testData?.qualityStep || 0, 6);
+        const resistRoll = effectSystem.resistRoll;
+        const isAura = !!effectSystem.aura.isAura;
 
         if (isAura) {
-          const radius = `${getProperty(ef, 'flags.dsa5.auraRadius') || 1}`.replace(/q(l|s)/i, qs);
+          const radius = `${effectSystem.aura.auraRadius || 1}`.replace(/q(l|s)/i, qs);
           const evaluatedRadius = (await new Roll(radius).evaluate()).total;
-          setProperty(ef, 'flags.dsa5.auraRadius', evaluatedRadius);
+          effectSystem.aura.auraRadius = evaluatedRadius;
         }
 
         if (resistRoll && !skipResistRolls) {
@@ -413,32 +514,35 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           effectApplied = true;
           if (!effectNames.has(ef.name)) effectNames.add(ef.name);
 
-          const onDelayed = getProperty(ef, 'flags.dsa5.onDelayed');
+          const onDelayed = effectSystem.macroArgs.onDelayed;
 
           const delayedData = {
             duration: {
-              seconds: onDelayed,
+              value: parseInt(onDelayed) || 0,
+              units: 'seconds',
             },
             system: {
-              delayed: true,
-              originalDuration: ef.duration,
+              delayed: {
+                enabled: true,
+                originalDuration: ef.duration,
+              },
             },
           };
 
-          let isEffectWithChange = (ef.changes && ef.changes.length > 0) || (isAura && !customEf);
+          let isEffectWithChange = effectSystem.changes.length > 0 || (isAura && !customEf);
 
           if (customEf) {
             switch (customEf) {
               case 1: //Systemeffekt
                 {
-                  let value = `${getProperty(ef, 'flags.dsa5.args1')}` || '1';
+                  let value = `${effectSystem.macroArgs.conditionValue}` || '1';
                   if (/,/.test(value)) {
                     value = Number(value.split(',')[qs - 1]);
                   } else {
-                    value = Number(value.replace(localize('CHARAbbrev.QS'), qs));
+                    value = Number(value.replace(_loc('CHARAbbrev.QS'), qs));
                   }
-                  const effectId = getProperty(ef, 'flags.dsa5.args0');
-                  const effectName = localize(`CONDITION.${effectId}`);
+                  const effectId = effectSystem.macroArgs.conditionId;
+                  const effectName = _loc(`CONDITION.${effectId}`);
                   const effectData = {
                     name: `${source.name} (${effectName})`,
                     duration: ef.duration,
@@ -454,22 +558,25 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                 } else {
                   if (onDelayed) {
                     const copy = duplicate(ef);
-                    copy.changes = [];
+                    copy.system ||= {};
+                    copy.system.changes = [];
                     isEffectWithChange = true;
                     mergeObject(ef, {
                       system: {
-                        macroEffect: copy,
-                        sourceActor: sourceActor?.id,
-                        source: source,
-                        initialTestData: {
-                          qualityStep: testData.qualityStep,
+                        delayed: {
+                          macroEffect: copy,
+                          sourceActor: sourceActor?.id,
+                          source: source,
+                          initialTestData: {
+                            qualityStep: testData?.qualityStep || 0,
+                          },
                         },
                       },
                     });
                   } else {
                     //try {
                       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-                      const command = getProperty(ef, 'flags.dsa5.args3');
+                      const command = effectSystem.macroArgs.macro;
                       const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
                       await fn.call(this, ef, actor, callMacro, msg, source, sourceActor, testData, qs, options);
                     /*} catch (err) {
@@ -482,11 +589,11 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
                 break;
               case 3: // Creature Link
                 {
-                  const creatures = (getProperty(ef, 'flags.dsa5.args4') || '')
+                  const creatures = (effectSystem.macroArgs.creatureLinks || '')
                     .split(',')
                     .map((x) => `@Compendium[${x.trim().replace(/@Compendium\[|\]/g, '')}]`)
                     .join(' ');
-                  msg += `<p><b>${localize('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
+                  msg += `<p><b>${_loc('ActiveEffects.advancedFunctions.creature')}</b>:</p><p>${creatures}</p>`;
                 }
                 break;
             }
@@ -494,7 +601,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
           if (isEffectWithChange) {
             if (onDelayed) {
-              delete ef.flags.dsa5.onDelayed;
+              delete ef.system?.macroArgs?.onDelayed;
               mergeObject(ef, delayedData);
             }
 
@@ -522,28 +629,63 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const actor = DSA5_Utility.getSpeaker(target);
     if (actor) {
       const skill = actor.items.find((x) => x.type == 'skill' && x.name == data.skill);
-      actor.setupSkill(skill, { modifier: data.mod }, data.token).then(async (setupData) => {
+      const options = {
+        modifier: data.mod,
+        postFunction: {
+          functionName: 'game.dsa5.apps.DSAActiveEffectConfig.postResistEffect',
+          token: data.token,
+          actorId: data.actor,
+          scene: canvas.id,
+          systemEffect: data.systemEffect,
+          SystemEffect: data.SystemEffect,
+          message: data.message,
+          mode: data.mode,
+          effect: data.effect,
+        },
+      };
+      actor.setupSkill(skill, options, data.token).then(async (setupData) => {
         setupData.testData.opposable = false;
         const res = await actor.basicTest(setupData);
-        const availableQs = res.result.qualityStep || 0;
-        //this.automatedAnimation(res.result.successLevel);
-
-        if (availableQs < 1) {
-          if (data.systemEffect) {
-            const level = / \d$/.test(data.SystemEffect) ? Number(data.SystemEffect.slice(-1)) : 1;
-            const actualEffect = data.systemEffect.replace(/ \d$/, '');
-            await actor.addCondition(actualEffect, level);
-          } else {
-            await this.applyEffect(data.message, data.mode, [target], {
-              effectIds: [data.effect],
-              skipResistRolls: true,
-            });
-          }
-        }
+        DSAActiveEffectConfig.applyResistResult(res, data, target, actor);
       });
     } else {
       console.warn('Actor not found for resist roll.');
     }
+  }
+
+  static async applyResistResult(res, data, target, actor) {
+    const availableQs = res.result.qualityStep || 0;
+    if (availableQs < 1) {
+      if (data.systemEffect) {
+        const level = / \d$/.test(data.SystemEffect) ? Number(data.SystemEffect.slice(-1)) : 1;
+        const actualEffect = data.systemEffect.replace(/ \d$/, '');
+        await actor.addCondition(actualEffect, level);
+      } else {
+        await DSAActiveEffectConfig.applyEffect(data.message, data.mode, [target], {
+          effectIds: [data.effect],
+          skipResistRolls: true,
+        });
+      }
+    }
+  }
+
+  static async postResistEffect(postFunction, result) {
+    const target = { token: postFunction.token, actor: postFunction.actorId, scene: postFunction.scene };
+    const actor = DSA5_Utility.getSpeaker(target);
+    if (!actor) return;
+
+    const availableQs = result.result.qualityStep || 0;
+    if (postFunction.systemEffect) {
+      const actualEffect = postFunction.systemEffect.replace(/ \d$/, '');
+      const level = / \d$/.test(postFunction.SystemEffect) ? Number(postFunction.SystemEffect.slice(-1)) : 1;
+      // Remove the first-pass condition before re-evaluating
+      await actor.removeCondition(actualEffect, level);
+      if (availableQs < 1) {
+        await actor.addCondition(actualEffect, level);
+      }
+    }
+    // Non-systemEffect active effects cannot be cleanly reversed;
+    // first-pass effects remain and are not duplicated on reroll.
   }
 
   static async applyEffect(id, mode, targets, options = {}) {
@@ -563,9 +705,16 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     }
 
     const sourceActor = attacker;
-    let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter((x) => !getProperty(x, 'flags.dsa5.applyToOwner'));
+    let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(
+      (effect) => {
+        if (effect.disabled) return false;
+        if (effect.system.applyToOwner) return false;
+        if (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage) return false;
+        return true;
+      },
+    );
 
-    if (hasSuccessEffects) effects = effects.filter((x) => getProperty(x, 'flags.dsa5.successEffect') == testData.qualityStep || !getProperty(x, 'flags.dsa5.successEffect'));
+    if (hasSuccessEffects) effects = effects.filter((x) => x.system.successEffect == testData.qualityStep || !x.system.successEffect);
     if (options.effectIds) effects = effects.filter((x) => options.effectIds.includes(x._id));
     let actors = [];
     if (mode == 'self') {
@@ -579,7 +728,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
       }
     }
     if (game.user.isGM) {
-      for (let actor of actors) {
+      for (const actor of actors) {
         const { msg, resistRolls, effectApplied, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(
           actor,
           effects,
@@ -589,7 +738,7 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
           { ...options, skipResistRolls: options.skipResistRolls || false },
         );
         if (effectApplied) {
-          const appliedEffect = game.i18n.format('ActiveEffects.appliedEffect', {
+          const appliedEffect = _loc('ActiveEffects.appliedEffect', {
             target: actor.token?.name || actor.name,
             source: effectNames.join(', '),
           });
@@ -632,7 +781,8 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
 
   static async _parseEffectDuration(source, testData, preData, attacker) {
     const specAbIds = (preData.situationalModifiers || []).reduce((acc, s) => {
-      if (s.specAbId) acc[s.specAbId] = s.step;
+      const id = s.ref?.id;
+      if (id && s.step !== undefined) acc[id] = s.step;
       return acc;
     }, {});
     const specKeys = new Set(Object.keys(specAbIds));
@@ -641,37 +791,52 @@ export default class DSAActiveEffectConfig extends foundry.applications.sheets.A
     const effects = source.effects ? duplicate(source.effects) : [];
     for (const spec of specAbs) {
       const specEffects = duplicate(spec).effects || [];
-      specEffects.forEach((ef) => setProperty(ef, 'flags.dsa5.specStep', specAbIds[spec.id]));
+      specEffects.forEach((ef) => {
+        ef.system ??= {};
+        ef.system.specStep = specAbIds[spec.id];
+      });
       effects.push(...specEffects);
     }
 
-    let duration = getProperty(source, 'system.duration.value') || '';
-    duration = duration.replace(/ x /g, ' * ').replaceAll(localize('CHARAbbrev.QS'), `${testData.qualityStep}`);
+    const durationValue = testData.duration ?? source.system?.duration?.value;
+    const parsed = await DSAActiveEffectConfig.parseDurationValue(durationValue, testData.qualityStep);
+    if (parsed.value !== undefined) {
+      for (const ef of effects) {
+        let calcTime = parsed.value;
+        const customDuration = ef.system.customDuration;
+        if (customDuration) {
+          const parts = String(customDuration).split(',').map((p) => p.trim());
+          const qsDuration = parts[testData.qualityStep - 1];
+          if (qsDuration && qsDuration !== '-') calcTime = Number(qsDuration);
+        }
+        ef.duration = ef.duration || {};
+        ef.duration.value = Math.round(calcTime);
+        ef.duration.units = 'seconds';
+      }
+    }
+    return effects;
+  }
 
+  /**
+   * Parse a duration string (e.g. "3 rounds", "QS x 5 minutes") into Foundry duration data.
+   * @param {string} durationStr - The raw duration string from item.system.duration.value
+   * @param {number} qualityStep - The QS to substitute
+   * @returns {Promise<{value?: number, units?: string}>}
+   */
+  static async parseDurationValue(durationStr, qualityStep = 0) {
+    if (!durationStr) return {};
+    const duration = durationStr.replace(/ x /g, ' * ').replaceAll(_loc('CHARAbbrev.QS'), `${qualityStep}`);
     try {
       for (const { regEx, seconds } of DSAActiveEffectConfig.effectDurationRegexes) {
         if (!regEx.test(duration)) continue;
         const dur = duration.replace(regEx, '').trim();
         const time = await DiceDSA5._stringToRoll(dur);
         if (isNaN(time)) break;
-
-        for (const ef of effects) {
-          let calcTime = time * seconds;
-          const customDuration = getProperty(ef, 'flags.dsa5.customDuration');
-          if (customDuration) {
-            const parts = String(customDuration).split(',').map((p) => p.trim());
-            const qsDuration = parts[testData.qualityStep - 1];
-            if (qsDuration && qsDuration !== '-') calcTime = Number(qsDuration);
-          }
-          ef.duration = ef.duration || {};
-          ef.duration.seconds = calcTime;
-          ef.duration.rounds = calcTime / 5;
-        }
-        break;
+        return { value: Math.round(time * seconds), units: 'seconds' };
       }
     } catch (e) {
-      console.error(`Could not parse duration '${duration}' of '${source.name}'`, e);
+      console.error(`Could not parse duration '${duration}'`, e);
     }
-    return effects;
+    return {};
   }
 }

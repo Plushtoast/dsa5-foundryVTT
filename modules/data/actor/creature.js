@@ -66,5 +66,5 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
       source.actionCount.value = Number(actionCount) || 1;
     }
   }
-  
+
 }

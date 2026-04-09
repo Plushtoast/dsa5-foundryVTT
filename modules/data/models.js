@@ -38,11 +38,13 @@ import TrapData from './item/trap.js';
 import CharacterData from './actor/character.js';
 import CreatureData from './actor/creature.js';
 import NPCData from './actor/npc.js';
+import GroupData from './actor/group.js';
 import DSAStringField from './fields/dsa_string_field.js';
 import { ItemDataModel } from './baseitem.js';
 import { ActorDataModel } from './baseactor.js';
 import { DSACombatDataModel } from './combat/dsacombat.js';
 import { DSACombatantDataModel } from './combatant/dsacombatant.js';
+import DSAActiveEffectDataModel from './activeeffect/dsaeffect.js';
 
 export const itemModels = {
     advantage: AdvantageData,
@@ -89,6 +91,7 @@ export const ActorDataModels = {
     character: CharacterData,
     creature: CreatureData,
     npc: NPCData,
+    group: GroupData,
     ActorDataModel
 }
 
@@ -102,4 +105,8 @@ export const CombatDataModels = {
 
 export const CombatantDataModels = {
     dsacombatant: DSACombatantDataModel
+}
+
+export const ActiveEffectDataModels = {
+    base: DSAActiveEffectDataModel
 }

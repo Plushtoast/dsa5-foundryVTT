@@ -45,7 +45,7 @@ export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, 
 
   static chatData(data, name) {
     const hasLocalization = game.i18n.has(`SKILLdescr.${name}`);
-    const description = hasLocalization ? game.i18n.localize(`SKILLdescr.${name}`) : data.description.value;
+    const description = hasLocalization ? _loc(`SKILLdescr.${name}`) : data.description.value;
     return [{ key: 'Description', val: description }];
   }
 }

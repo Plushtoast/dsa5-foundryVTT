@@ -45,7 +45,6 @@ export default class EquipmentData extends ItemDataModel.mixin(DescriptionTempla
     return item
   }
 
-
   get isBagWithContents() {
     return this.actor && this.equipmentType.value == 'bags';
   }

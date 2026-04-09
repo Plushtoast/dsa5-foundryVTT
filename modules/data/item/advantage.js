@@ -29,6 +29,10 @@ export default class AdvantageData extends ItemDataModel.mixin(DescriptionTempla
     return item;
   }
 
+  get effectMultiplier() {
+    return Number(this.step?.value) || 1;
+  }
+
   advanceCost() {
     return AdvantageRulesDSA5.stepXPCost(this, this.step.value);
   }

@@ -1,8 +1,8 @@
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
-import DSA5Payment from '../system/helpers/payment.js';
+import DSA5Payment from '../system/payment/payment.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DSADataModel } from './abstract.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import { ItemFactory } from '../item/item-factory.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -25,6 +25,10 @@ export class ItemDataModel extends DSADataModel {
     return this.parent?.actor || null;
   }
 
+  get effectMultiplier() {
+    return 1;
+  }
+
   /**
    * Prepares domain attributes for display
    * @returns {string|null} Formatted HTML for domain attributes
@@ -32,10 +36,10 @@ export class ItemDataModel extends DSADataModel {
   prepareDomains() {
     const dom = this.effect?.attributes;
     if (!dom) return null;
-    
-    const MAGICAL_REGEX = new RegExp(localize('WEAPON.magical'), 'i');
-    const BLESSED_REGEX = new RegExp(localize('WEAPON.clerical'), 'i');
-    
+
+    const MAGICAL_REGEX = new RegExp(_loc('WEAPON.magical'), 'i');
+    const BLESSED_REGEX = new RegExp(_loc('WEAPON.clerical'), 'i');
+
     return dom
       .split(',')
       .map(x => {
@@ -57,8 +61,8 @@ export class ItemDataModel extends DSADataModel {
    * @returns {string} Formatted HTML line
    */
   static _chatLineHelper({ key, val, localizeVal = false }) {
-    const displayValue = localizeVal ? localize(val) : val;
-    return `<b>${localize(key)}</b>: ${displayValue || '-'}`;
+    const displayValue = localizeVal ? _loc(val) : val;
+    return `<b>${_loc(key)}</b>: ${displayValue || '-'}`;
   }
 
   /**
@@ -95,7 +99,7 @@ export class ItemDataModel extends DSADataModel {
         price = ItemFactory.getSubClass(chatData.type).consumablePrice(chatData);
       }
       const prices = await DSA5Payment._moneyToString(price);
-      properties.push(`<b>${localize('price')}</b>: ${prices}`);
+      properties.push(`<b>${_loc('price')}</b>: ${prices}`);
     }
 
     // Merge properties into chat data
@@ -143,7 +147,7 @@ export class ItemDataModel extends DSADataModel {
       item.structureMax = item.system.structure.max;
       item.structureCurrent = item.system.structure.value;
     }
-    
+
     // Handle enchantment classes
     const enchants = foundry.utils.getProperty(item, 'flags.dsa5.enchantments');
     if (enchants && enchants.length > 0) {
@@ -167,12 +171,12 @@ export class ItemDataModel extends DSADataModel {
    * @param {Object} item - The armor item
    */
   static _processArmorEnchantments(item) {
-    const INI_ABBREV = localize('CHARAbbrev.INI').toLowerCase();
-    const GS_ABBREV = localize('CHARAbbrev.GS').toLowerCase();
-    
+    const INI_ABBREV = _loc('CHARAbbrev.INI').toLowerCase();
+    const GS_ABBREV = _loc('CHARAbbrev.GS').toLowerCase();
+
     for (const mod of item.system.effect.value.split(/,|;/).map(x => x.trim())) {
       const vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
-      
+
       // Skip standard penalties (-1 INI, -1 GS)
       if (vals.length === 2 && 
           [INI_ABBREV, GS_ABBREV].includes(vals[1].toLowerCase()) && 
@@ -242,7 +246,7 @@ export class ItemDataModel extends DSADataModel {
       if (Number(damageMod)) {
         damageTerm += `+${Number(damageMod)}`;
       } else if (damageMod) {
-        item.damageBonusDescription = `, ${damageMod} ${localize('CHARAbbrev.damage')} ${modification.name}`;
+        item.damageBonusDescription = `, ${damageMod} ${_loc('CHARAbbrev.damage')} ${modification.name}`;
       }
     }
 
@@ -267,9 +271,9 @@ export class ItemDataModel extends DSADataModel {
    */
   chatDataToString(name = '') {
     const detailsObfuscated = foundry.utils.getProperty(this, "obfuscation.details");
-    
+
     if (detailsObfuscated) return '';
-    
+
     return this.constructor.chatData(this, name)
       .map(x => this.constructor._chatLineHelper(x))
       .join('<br>');

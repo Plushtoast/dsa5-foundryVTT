@@ -12,6 +12,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
   };
 
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: super.PARTS.header,
     tabs: super.PARTS.tabs,
     main: {

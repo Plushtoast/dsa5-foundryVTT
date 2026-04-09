@@ -1,0 +1,138 @@
+<div data-id='{{key}}' class='standard-form'>
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.quests.element.fields.title.label}}</label>
+    <div class='form-fields gap0px'>
+      {{#if isGM}}
+        <button type='button' data-action='toggleVisibility' data-tooltip='{{document.system.schema.fields.quests.element.fields.visible.label}}' data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
+      {{/if}}
+      {{formInput document.system.schema.fields.quests.element.fields.title value=elem.title name=(concat 'system.quests.' key '.title')}}
+      <button type='button' data-action='removeEntry' data-key='{{key}}' data-tooltip='delete' class='fas icon fa-trash'></button>
+    </div>
+  </div>
+
+  {{formGroup document.system.schema.fields.quests.element.fields.summary value=elem.summary localize=true name=(concat 'system.quests.' key '.summary')}}
+
+  <fieldset>
+    <legend>{{localize 'DSAQUESTLOG.timeline'}}</legend>
+    <div class='form-group'>
+      <label>{{localize 'DSAQUESTLOG.startDate'}}</label>
+      <div class="form-fields">
+        {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.dayOfMonth value=elem.startDate.dayOfMonth name=(concat 'system.quests.' key '.startDate.dayOfMonth')}}
+        {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.month value=elem.startDate.month name=(concat 'system.quests.' key '.startDate.month') choices=availableMonths}}
+        <div class="flexrow">
+          {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.year value=elem.startDate.year name=(concat 'system.quests.' key '.startDate.year')}}
+          <div class='flex0'>{{yearSuffix}}</div>
+        </div>
+      </div>
+    </div>
+    <div class='form-group'>
+      <label>{{localize 'DSAQUESTLOG.targetDate'}}</label>
+      <div class="form-fields">
+        {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.dayOfMonth value=elem.targetDate.dayOfMonth name=(concat 'system.quests.' key '.targetDate.dayOfMonth')}}
+        {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.month value=elem.targetDate.month name=(concat 'system.quests.' key '.targetDate.month') choices=availableMonths}}
+        <div class="flexrow">
+          {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.year value=elem.targetDate.year name=(concat 'system.quests.' key '.targetDate.year')}}
+          <div class='flex0'>{{yearSuffix}}</div>
+        </div>
+      </div>
+    </div>
+    <div class='form-group'>
+      <label>{{localize 'DSAQUESTLOG.completionDate'}}</label>
+      <div class="form-fields">
+        {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.dayOfMonth value=elem.completionDate.dayOfMonth name=(concat 'system.quests.' key '.completionDate.dayOfMonth')}}
+        {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.month value=elem.completionDate.month name=(concat 'system.quests.' key '.completionDate.month') choices=availableMonths}}
+        <div class="flexrow">
+          {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.year value=elem.completionDate.year name=(concat 'system.quests.' key '.completionDate.year')}}
+          <div class='flex0'>{{yearSuffix}}</div>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+
+  {{formGroup document.system.schema.fields.quests.element.fields.status value=elem.status localize=true name=(concat 'system.quests.' key '.status')}}
+
+  <div class='flexrow gap5px'>
+    <div class='flex1'>{{formGroup document.system.schema.fields.quests.element.fields.priority value=elem.priority localize=true name=(concat 'system.quests.' key '.priority')}}</div>
+    <div class='flex1'>{{formGroup document.system.schema.fields.quests.element.fields.audience value=elem.audience localize=true name=(concat 'system.quests.' key '.audience')}}</div>
+  </div>
+
+  <div class='flexrow gap5px'>
+    <div class='flex1'>{{formGroup document.system.schema.fields.quests.element.fields.chapter value=elem.chapter localize=true name=(concat 'system.quests.' key '.chapter')}}</div>
+    <div class='flex1'>{{formGroup document.system.schema.fields.quests.element.fields.location value=elem.location localize=true name=(concat 'system.quests.' key '.location')}}</div>
+  </div>
+
+  <div class='flexrow gap5px'>
+    <div class='flex1'>{{formGroup document.system.schema.fields.quests.element.fields.tags value=elem.tags localize=true name=(concat 'system.quests.' key '.tags')}}</div>
+  </div>
+
+  <div class='form-group stacked'>
+    <div class='flexrow'>
+      <span class='label'><b>{{localize 'DSAQUESTLOG.playerOwners'}}</b></span>
+    </div>
+    <div class='form-fields flexrow wrap gap5px quest-player-owners'>
+      {{#each availablePlayers as |player|}}
+        <button
+          type='button'
+          class='detail-action-btn quest-owner-chip {{ifThen player.selected "is-active" ""}}'
+          data-action='togglePlayerOwner'
+          data-key='{{../key}}'
+          data-user-id='{{player.id}}'
+        >
+          <i class='fas {{ifThen player.selected "fa-user-check" "fa-user"}}'></i>
+          <span>{{player.name}}</span>
+        </button>
+      {{/each}}
+    </div>
+  </div>
+
+  {{formGroup document.system.schema.fields.quests.element.fields.pinToTop value=elem.pinToTop localize=true name=(concat 'system.quests.' key '.pinToTop')}}
+
+  <div class='form-group stacked'>
+    <div class='flexrow'>
+      <span class='label'><b>{{localize 'DSAQUESTLOG.objectives'}}</b></span>
+      <button type='button' data-action='addObjective' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addObjective"}}'></button>
+    </div>
+    <div class='form-fields'>
+      <div class="flexcol gap5px">
+      {{#each objectiveEntries as |objective|}}
+        <div class='flexrow'>
+          <button type='button' data-action='toggleObjectiveDone' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{ifThen objective.done "fa-square-check" "fa-square"}}'></button>
+          {{#if ../isGM}}
+            <button type='button' data-action='toggleObjectiveVisibility' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{ifThen objective.visible "fa-eye" "fa-eye-slash"}}'></button>
+          {{/if}}
+          {{formInput ../document.system.schema.fields.quests.element.fields.objectives.element.fields.text value=objective.text name=(concat 'system.quests.' ../key '.objectives.' objective.objectiveKey '.text')}}
+          <button type='button' data-action='removeObjective' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon fa-trash' data-tooltip='delete'></button>
+        </div>
+      {{else}}
+        <div class='small'>{{localize 'DSAQUESTLOG.noObjectives'}}</div>
+      {{/each}}
+      </div>
+    </div>
+  </div>
+
+  <div class='form-group stacked'>
+    <div class='flexrow'>
+      <span class='label'><b>{{localize 'DSAQUESTLOG.linkedPages'}}</b></span>
+      <button type='button' data-action='addLinkedPage' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addLinkedPage"}}'></button>
+    </div>
+    <div class='form-fields'>
+      <div class="flexcol gap5px">
+      {{#each linkedPageEntries as |link|}}
+        <div class='flexrow'>
+          {{formInput ../document.system.schema.fields.quests.element.fields.linkedPages.element.fields.uuid value=link.uuid localize=true name=(concat 'system.quests.' ../key '.linkedPages.' link.linkKey '.uuid')}}
+          <button type='button' data-action='removeLinkedPage' data-key='{{../key}}' data-link-key='{{link.linkKey}}' class='fas icon fa-trash' data-tooltip='delete'></button>
+        </div>
+      {{else}}
+        <div class='small'>{{localize 'DSAQUESTLOG.noLinkedPages'}}</div>
+      {{/each}}
+      </div>
+    </div>
+  </div>
+
+  {{formGroup document.system.schema.fields.quests.element.fields.details value=elem.details localize=true classes='full-height' name=(concat 'system.quests.' key '.details')}}
+
+  {{#if isGM}}
+    {{formGroup document.system.schema.fields.quests.element.fields.gmNotes value=elem.gmNotes localize=true classes='full-height' name=(concat 'system.quests.' key '.gmNotes')}}
+  {{/if}}
+</div>

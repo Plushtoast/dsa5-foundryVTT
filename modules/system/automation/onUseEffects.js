@@ -79,7 +79,9 @@ export default class OnUseEffect {
     return {
       name,
       icon: 'icons/svg/aura.svg',
-      changes,
+      system: {
+        changes,
+      },
       duration,
       flags: {
         dsa5: {
@@ -99,7 +101,7 @@ export default class OnUseEffect {
       const systemCon = typeof data === 'string';
       if (systemCon) {
         data = duplicate(CONFIG.statusEffects.find((e) => e.id == data));
-        data.name = game.i18n.localize(data.name);
+        data.name = _loc(data.name);
       }
 
       const names = [];
@@ -126,7 +128,7 @@ export default class OnUseEffect {
   async createInfoMessage(data, names, added = true) {
     if (names.length) {
       const format = added ? 'ActiveEffects.appliedEffect' : 'ActiveEffects.removedEffect';
-      const infoMsg = game.i18n.format(format, {
+      const infoMsg = _loc(format, {
         source: data.name,
         target: names.join(', '),
       });
@@ -145,7 +147,7 @@ export default class OnUseEffect {
         }
       }
       const data = CONFIG.statusEffects.find((x) => x.id == coreId);
-      data.name = game.i18n.localize(data.name);
+      data.name = _loc(data.name);
       await this.createInfoMessage(data, names, false);
     } else {
       const payload = {
@@ -186,7 +188,7 @@ export default class OnUseEffect {
       const systemCon = typeof data === 'string';
       if (systemCon) {
         data = duplicate(CONFIG.statusEffects.find((e) => e.id == data));
-        data.name = game.i18n.localize(data.name);
+        data.name = _loc(data.name);
       }
 
       const names = [];

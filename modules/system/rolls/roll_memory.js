@@ -1,4 +1,5 @@
 import DPS from '../automation/derepositioningsystem.js';
+import { SituationalModifiersWidget } from '../helpers/situational-modifiers-widget.js';
 const { setProperty, getProperty } = foundry.utils;
 
 export default class RollMemory {
@@ -30,7 +31,7 @@ export default class RollMemory {
   }
 
   getPath(speaker, source, mode) {
-    let subMod = mode || '';
+    const subMod = mode || '';
     const itemId = source._id || source.type;
     return speaker.token ? `tokens.${speaker.token || speaker.actor}.${itemId}${subMod}` : `actors.${speaker.actor}.${itemId}${subMod}`;
   }
@@ -45,16 +46,16 @@ export default class RollMemory {
   }
 
   formDataSerialize(html) {
-    let form = html.find('form');
-    let object = {};
+    const form = html.find('form');
+    const object = {};
     form.find('select').each(function () {
-      let key = $(this).attr('name');
+      const key = $(this).attr('name');
       if (RollMemory.wantedKeys.includes(key)) {
         object[key] = $(this).val();
       }
     });
     form.find('input[type="checkbox"]').each(function () {
-      let key = $(this).attr('name');
+      const key = $(this).attr('name');
       if (RollMemory.wantedKeys.includes(key)) {
         object[key] = this.checked;
       }
@@ -69,14 +70,10 @@ export default class RollMemory {
       });
     });
 
-    html.find('[name="situationalModifiers"] option').each(function () {
-      if (!object.situationalModifiers) object.situationalModifiers = [];
-
-      object.situationalModifiers.push({
-        name: $(this).text().trim(),
-        selected: this.selected,
-      });
-    });
+    const situationalModifiers = SituationalModifiersWidget.getStoredModifiers(html);
+    if (situationalModifiers.length > 0) {
+      object.situationalModifiers = situationalModifiers;
+    }
 
     return object;
   }

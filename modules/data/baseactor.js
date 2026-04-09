@@ -8,7 +8,6 @@ import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import CreatureType from '../system/automation/creature-type.js';
 import SpecialabilityData from './item/specialability.js';
-import { localize } from '../system/helpers/localizer.js';
 
 const { SKILL, SPELL, LITURGY, CEREMONY, RITUAL } = ITEM_CONSTANTS.TEST_TYPES;
 
@@ -20,14 +19,14 @@ export class ActorDataModel extends DSADataModel {
 
   static get familiarString() {
     if (this._familiarString === null) {
-      this._familiarString = localize('LocalizedIDs.familiar');
+      this._familiarString = _loc('LocalizedIDs.familiar');
     }
     return this._familiarString;
   }
 
   static get petString() {
     if (this._petString === null) {
-      this._petString = localize('LocalizedIDs.companion');
+      this._petString = _loc('LocalizedIDs.companion');
     }
     return this._petString;
   }
@@ -86,7 +85,7 @@ export class ActorDataModel extends DSADataModel {
     }
 
     // Initialize gear modifiers for characteristics
-    for (let ch of Object.values(this.characteristics)) {
+    for (const ch of Object.values(this.characteristics)) {
       ch.gearmodifier = 0;
     }
   }
@@ -218,7 +217,7 @@ export class ActorDataModel extends DSADataModel {
       this._applyConditionsAndMovement(this);
     } catch (error) {
       console.error(`Error preparing actor data for ${this.parent.name}:`, error);
-      ui.notifications.error(game.i18n.format('DSAError.PreparationError', { name: this.parent.name }) + error.message);
+      ui.notifications.error(_loc('DSAError.PreparationError', { name: this.parent.name }) + error.message);
     }
   }
 
@@ -295,7 +294,7 @@ export class ActorDataModel extends DSADataModel {
       let bagweight = 0;
       if (!elem.system.worn.value && topLevel) totalWeight -= elem.system.preparedWeight;
 
-      for (let child of containers.get(elem._id)) {
+      for (const child of containers.get(elem._id)) {
         child.system.preparedWeight = Number(parseFloat((child.system.weight.value * child.system.quantity.value).toFixed(3)));
 
         if (containers.has(child._id)) {
@@ -569,7 +568,7 @@ export class ActorDataModel extends DSADataModel {
 
     const paralysis = this.parent.hasCondition('paralysed');
     if (paralysis) {
-      input = Math.round(input * (1 - paralysis.flags.dsa5.value * 0.25));
+      input = Math.round(input * (1 - (paralysis.system?.condition?.value || 0) * 0.25));
     }
 
     if (groundOnly && this.parent.hasCondition('prone')) {
@@ -658,10 +657,10 @@ export class ActorDataModel extends DSADataModel {
     const effect = item.system.effect.value;
     if (!effect) return;
 
-    for (let mod of `${effect}`.split(/,|;/).map(x => x.trim())) {
-      let vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
+    for (const mod of `${effect}`.split(/,|;/).map(x => x.trim())) {
+      const vals = mod.replace(/(\s+)/g, ' ').trim().split(' ');
       if (vals.length == 2 && !isNaN(vals[0])) {
-        let elem = {
+        const elem = {
           value: Number(vals[0]) * (item.system.step ? Number(item.system.step.value) || 1 : 1),
           source: item.name,
           type: item.type,
@@ -681,8 +680,8 @@ export class ActorDataModel extends DSADataModel {
     const armorEncumbrance = wornArmors.reduce((sum, x) => sum + Number(x.system.encumbrance.value), 0);
 
     if (armorCompensation > armorEncumbrance) {
-      const modKeys = [localize('CHARAbbrev.GS'), localize('CHARAbbrev.INI')];
-      for (let modkey of modKeys) {
+      const modKeys = [_loc('CHARAbbrev.GS'), _loc('CHARAbbrev.INI')];
+      for (const modkey of modKeys) {
         if (!itemModifiers[modkey]) continue;
         itemModifiers[modkey] = itemModifiers[modkey].filter(x => x.type != 'armor');
       }
@@ -693,7 +692,7 @@ export class ActorDataModel extends DSADataModel {
     this.itemModifiers = {};
 
     for (const key of Object.keys(itemModifiers)) {
-      let shortCut = DSA5.knownShortcuts[key.toLowerCase()];
+      const shortCut = DSA5.knownShortcuts[key.toLowerCase()];
       if (shortCut) {
         const modSum = itemModifiers[key].reduce((prev, cur) => prev + cur.value, 0);
 

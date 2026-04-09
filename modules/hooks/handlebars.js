@@ -1,22 +1,7 @@
 import DSA5 from '../config/config-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
-const { getProperty } = foundry.utils;
 
-const modifierTypes = {
-  '': 'Modifier',
-  defenseMalus: 'MODS.defenseMalus',
-  FW: 'MODS.FW',
-  KaPCost: 'CHAR.KaPCost',
-  AsPCost: 'CHAR.AsPCost',
-  FP: 'MODS.FP',
-  QL: 'MODS.QS',
-  dmg: 'MODS.damage',
-  damageBonus: 'MODS.damage',
-  armorPen: 'MODS.armorPen',
-  TPM: 'MODS.partChecks',
-  CMP: 'MODS.compensation'
-};
+const { getProperty } = foundry.utils;
 
 function clickableAbilities(a, b) {
   return a
@@ -30,7 +15,7 @@ function clickableAbilities(a, b) {
           if (index == 0 && isSubsection) return `<b>${elems}</b>`;
 
           return (
-            `<span class=\"searchableAbility\" data-category="${b}">` +
+            `<span class="searchableAbility" data-category="${b}">` +
             elems
               .split(',')
               .map((x) => `<a data-action="searchableAbility">${x}</a>`)
@@ -52,7 +37,7 @@ function clickableActorItems(actor, list, rankPath, maxPath) {
       .join(', ');
   } else if (rankPath) {
     const res = [];
-    for (let item of list) {
+    for (const item of list) {
       const level = getProperty(item.system, rankPath);
       if (level) {
         res.push(`<span class="actorEmbeddedAbility" data-actor="${actor.uuid}" data-id="${item._id}"><a>${item.name} ${level}</a></span>`);
@@ -99,13 +84,13 @@ export default function () {
     joinStr: (a, b) => b.join(a),
     itemPrice: (a) => DSA5_Utility.itemPrice(a),
     specAbSubCat: (a) => {
-      return localize(`COMBATSKILLCATEGORY.${a}`);
+      return _loc(`COMBATSKILLCATEGORY.${a}`);
     },
     attrName: (a) => DSA5_Utility.attributeLocalization(a),
     attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
     diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
     clickableAbilities: (a, b) => clickableAbilities(a, b),
-    traitName: (a) => localize(DSA5.traitCategories[a]),
+    traitName: (a) => _loc(DSA5.traitCategories[a]),
     consumableQL: (a) => a.system.QLList.split('\n')[Number(a.system.QL) - 1],
     clickableActorItems: (a, b, c, d) => clickableActorItems(a, b, c, d),
     clickableSection: (a, b, c, d) => clickableSection(a, b, c, d),
@@ -123,15 +108,15 @@ export default function () {
     },
     hasLocalization: (a, b) => {
       const val = a.string || a;
-      return game.i18n.has(val) ? localize(val) : b || '';
+      return game.i18n.has(val) ? _loc(val) : b || '';
     },
     successEffect: (a, parent) => {
-      const sucEf = getProperty(a, 'flags.dsa5.successEffect');
-      if (sucEf == 1) return ` (${localize('ActiveEffects.onSuccess')})`;
-      if (sucEf == 2) return ` (${localize('ActiveEffects.onFailure')})`;
+      const sucEf = a.system?.successEffect;
+      if (sucEf == 1) return ` (${_loc('ActiveEffects.onSuccess')})`;
+      if (sucEf == 2) return ` (${_loc('ActiveEffects.onFailure')})`;
 
       const advantageEffect = a.system.equipmentAdvantage;
-      if (advantageEffect) return ` (${localize(`AdvantageRuleItems.${parent?.type}.${advantageEffect}`)})`;
+      if (advantageEffect) return ` (${_loc(`AdvantageRuleItems.${parent?.type}.${advantageEffect}`)})`;
 
       return '';
     },
@@ -145,14 +130,6 @@ export default function () {
       return a.system.characteristics[b][c];
     },
     hasElem: (a, b) => a.some((x) => b == x),
-    situationalTooltip: (mod) => {
-      const key = localize(modifierTypes[mod.type] || 'Modifier');
-      let res = `${mod.name}<br/>${key}: ${mod.value}`;
-      if (mod.source) {
-        res += `<br/>${localize('source')}: ${mod.source}`;
-      }
-      return res;
-    },
     grouped_each: (every, context, options) => {
       let out = '',
         subcontext = [],
@@ -170,7 +147,7 @@ export default function () {
       return out;
     },
     plantify: (a) => {
-      return localize(`PLANT.avLevels.${a || 0}`);
+      return _loc(`PLANT.avLevels.${a || 0}`);
     },
     oddLength: (x) => {
       return x.length % 2 == 1;

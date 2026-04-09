@@ -2,7 +2,7 @@ const { getProperty, mergeObject } = foundry.utils;
 
 export default function () {
   Hooks.on('preCreateScene', function (doc, createData, options, userId) {
-    if (!createData.grid?.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') } });
+    if (!createData.grid?.units) doc.updateSource({ grid: { units: _loc('gridUnits') } });
 
     if (!createData.backgroundColor) {
       doc.updateSource({ backgroundColor: '#000000' });
@@ -13,7 +13,7 @@ export default function () {
         window: {
           title: 'DIALOG.warning',
         },
-        content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
+        content: `<p>${createData.name}</p><p>${_loc('DSAError.mapsViaJournalbrowser')}</p>`,
         buttons: [
           {
             action: 'yes',
@@ -58,33 +58,27 @@ export default function () {
   Hooks.on('preCreateActiveEffect', function (doc, createData, options, userId) {
     if (doc.parent.documentName != 'Actor') return;
 
-    let update = {
-      duration: {
-        startTime: game.time.worldTime,
-      },
-    };
+    const update = {};
 
-    if (createData.flags?.dsa5?.onDelayed) {
+    const onDelayed = createData.system?.macroArgs?.onDelayed;
+    if (onDelayed) {
       mergeObject(update, {
-        duration: { seconds: createData.flags.dsa5.onDelayed },
+        duration: { value: parseInt(onDelayed) || 0, units: 'seconds' },
         system: {
-          delayed: true,
-          originalDuration: createData.duration,
+          delayed: {
+            enabled: true,
+            originalDuration: createData.duration,
+          },
         },
       });
     }
 
-    if (!game.combat) {
-      doc.updateSource(update);
-      return;
+    // Ensure duration.value is a valid integer for v14 schema (source data may contain floats from formulas)
+    const durVal = update.duration?.value ?? createData.duration?.value;
+    if (durVal != null && !Number.isInteger(durVal)) {
+      update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
     }
 
-    update.duration.combat = game.combat.id;
-    update.duration.startRound = game.combat.round;
-    update.duration.startTurn = game.combat.turn;
-    if (!doc.duration.rounds && doc.duration.seconds) {
-      update.duration.rounds = doc.duration.seconds / 5;
-    }
-    doc.updateSource(update);
+    if (Object.keys(update).length) doc.updateSource(update);
   });
 }

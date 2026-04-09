@@ -2,11 +2,9 @@ export class SpellModifiers {
   static get(actor, name, sourceType) {
     const result = [];
     const keys = ['FP', 'step', 'QL', 'TPM', 'FW', 'CMP'];
-    
     for (const key of keys) {
       const type = key === 'step' ? '' : key;
       const modifiers = actor.system.skillModifiers[key];
-      
       if (Array.isArray(modifiers)) {
         result.push(
           ...modifiers
@@ -16,12 +14,10 @@ export class SpellModifiers {
               value: modifier.value,
               source: modifier.item,
               type,
-              effectId: modifier.effectId,
-              effectUuid: modifier.effectUuid,
+              ref: modifier.ref || null,
             }))
         );
       }
-      
       const sourceModifiers = actor.system.skillModifiers[sourceType]?.[key];
       if (Array.isArray(sourceModifiers)) {
         result.push(
@@ -30,13 +26,11 @@ export class SpellModifiers {
             value: modifier.value,
             source: modifier.source,
             type,
-            effectId: modifier.effectId,
-            effectUuid: modifier.effectUuid,
+            ref: modifier.ref || null,
           }))
         );
       }
     }
-    
     return result;
   }
 }

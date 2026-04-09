@@ -13,7 +13,7 @@ export default class MerchantTemplate extends DSADataModel {
     5: 'GARADAN.5',
     6: 'GARADAN.6',
   };
-  
+
   static defineSchema() {
     return {
       merchant: new SchemaField({

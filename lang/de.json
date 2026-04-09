@@ -157,11 +157,12 @@
     },
 
     "DIALOG": {
-        "RollMode": "Würfelmodus",
+        "MessageMode": "Würfelmodus",
         "deleteConfirmation": "Löschen bestätigen",
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
+        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "ItemRequiresAdoption": "Eintrag anpassen",
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
@@ -179,11 +180,11 @@
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele",
         "addTarget": "Ziel hinzufügen",
-        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
+        "selectSupernaturalAction": "Bitte wähle Zauber oder Liturgie.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
@@ -219,6 +220,15 @@
         "food": "Lebensmittel",
         "book": "Buch",
         "automat": "Automat"
+    },
+    "PROSEMIRROR": {
+        "DSAStyles": {
+            "Title": "DSA-Stile",
+            "Maskfield": "Meisterbox",
+            "Chatpaperfield": "Papiernotiz",
+            "Citefield": "Zitatblock",
+            "DSAList": "DSA-Liste"
+        }
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
@@ -324,7 +334,9 @@
     "consumable": "Verbrauchsgegenstand",
     "conjuringDifficulty": "Anrufungsschw.",
     "camplocation": "Lagerplatz",
+    "calculatedAttributes": "Berechnete Attribute",
     "carrycapacity": "Tragekraft",
+    "characteristics": "Basiseigenschaften",
     "chatEdit": "Manuelle Korrektur",
     "Details": "Details",
     "damage": "Trefferpunkte",
@@ -766,7 +778,9 @@
         "creation": "Herstellung",
         "services": "Dienste",
         "finalize": "Fertigstellen",
-        "material": "Material"
+        "material": "Material",
+        "selectActor": "Akteur auswählen",
+        "noActorHint": "Ziehe einen Akteur hierhin oder wähle einen unten aus."
     },
     "MASTER": {
         "automation": "Automatisierung",
@@ -796,6 +810,8 @@
         "noHeros": "Keine Helden ausgewählt. Weise deinen Spielern Helden zu oder ziehe wichtige Charaktere per Drag and Drop auf das Meistermenü."
     },
     "MODS": {
+        "otherCombat": "Sonstige",
+        "otherModifiers": "Sonstige Modifikatoren",
         "partChecks": "Teilprobenmodifikator",
         "attackFromBehind": "Angriff von Hinten",
         "opportunityAttack": "Passierschlag",
@@ -818,6 +834,8 @@
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
         "creatureBonus": "Bonusschaden (Kreatur)",
+        "bonusActions": "Zusätzliche Aktionen",
+        "actionCostMod": "Aktionskostenmodifikator",
         "armorPen": "Rüstungsdurchdringung",
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
@@ -826,29 +844,29 @@
         "impossibleWeapon": "{weapon} nicht einsetzbar",
         "notSuitableWeapon": "{weapon} nicht geeignet",
         "RangeMod": {
-            "short": "Nah ({fk} auf FK, {tp} TP)",
-            "medium": "Mittel ({fk} auf FK, {tp} TP)",
-            "long": "Weit ({fk} auf FK, {tp} TP)",
-            "rangesense": "Weit ({fk} auf FK, {tp} TP)",
-            "extreme": "Extrem ({fk} auf FK, {tp} TP)"
+            "short": "Nah [{fk} auf FK, {tp} TP]",
+            "medium": "Mittel [{fk} auf FK, {tp} TP]",
+            "long": "Weit [{fk} auf FK, {tp} TP]",
+            "rangesense": "Weit [{fk} auf FK, {tp} TP]",
+            "extreme": "Extrem [{fk} auf FK, {tp} TP]"
         },
         "RangeSize": {
-            "tiny": "Winzig ({f})",
-            "small": "Klein ({f})",
-            "average": "Mittel ({f})",
-            "big": "Groß ({f})",
-            "giant": "Riesig ({f})"
+            "tiny": "Winzig [{f}]",
+            "small": "Klein [{f}]",
+            "average": "Mittel [{f}]",
+            "big": "Groß [{f}]",
+            "giant": "Riesig [{f}]"
         },
         "aimOptions": {
-            "0": "Ungezielt ({f})",
-            "1": "1 Aktion zielen ({f})",
-            "2": "2 Aktionen zielen ({f})"
+            "0": "Ungezielt [{f}]",
+            "1": "1 Aktion zielen [{f}]",
+            "2": "2 Aktionen zielen [{f}]"
         },
         "waterOptions": {
-            "0": "Keine Einschränkung ({f})",
-            "1": "Bis zur Hüfte ({f})",
-            "2": "Bis zur Schulter ({f})",
-            "3": "Bodenloses Wasser ({f})"
+            "0": "Keine Einschränkung [{f}]",
+            "1": "Bis zur Hüfte [{f}]",
+            "2": "Bis zur Schulter [{f}]",
+            "3": "Bodenloses Wasser [{f}]"
         }
     },
     "WIZARD": {
@@ -872,7 +890,8 @@
         "masterMenu": "Öffne das Spielleitermenü",
         "journalBrowser": "Öffne den Journalbrowser",
         "library": "Öffne die Bibliothek",
-        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)"
+        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)",
+        "openGroupSheet": "Öffne das Gruppenblatt der Hauptgruppe"
     },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
@@ -1156,7 +1175,9 @@
         "paidPAsP": "Ausgegebene permanente AsP/KaP",
         "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP",
         "NoApplicationsAdded": "Keine Anwendungsgebiete zum Charakter hinzugefügt.",
-        "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen."
+        "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen.",
+        "removeSchip": "Schicksalspunkt entfernen",
+        "addSchip": "Schicksalspunkt hinzufügen"
     },
     "DSA5HOTBARCONFIG": {
         "manager": "Hotbar Manager",
@@ -1278,21 +1299,21 @@
         "AutoSizeHint": "Die Tokengröße wird anhand der Größenkategorie des Akteurs definiert."
     },
     "VisionDisruption": {
-        "step0": "Klare Sicht",
+        "step0": "Klare Sicht [0]",
         "step1": "Leichte Störung [-2]",
         "step2": "Silhouette [-4]",
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
     },
     "SkillVisionDisruption": {
-        "step0": "Klare Sicht",
+        "step0": "Klare Sicht [0]",
         "step1": "Leichte Störung [-1]",
         "step2": "Silhouette [-2]",
         "step3": "Schemen [-3]",
         "step4": "Unsichtbar [-4]"
     },
     "meleeVisionDisruption": {
-        "0": "Klare Sicht",
+        "0": "Klare Sicht [0]",
         "1": "Leichte Störung [-1]",
         "2": "Silhouette [-2]",
         "3": "Schemen [-3]",
@@ -1300,6 +1321,7 @@
     },
     "CHATNOTIFICATION": {
         "fadingEffect": "Der Effekt <b>{effect}</b> wurde von {actor} entfernt.",
+        "conditionDecay": "<b>{effect}</b> bei {actor} auf Stufe {level} gesunken.",
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
@@ -1487,19 +1509,38 @@
     "TYPES.Actor.character": "Charakter",
     "TYPES.Actor.npc": "Nichtspielercharakter",
     "TYPES.Actor.creature": "Kreatur",
+    "TYPES.Actor.group": "Gruppe",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
+    "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
     "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "DSAJOURNALTARGET": {
+        "dialogTitle": "Neuer Eintrag",
+        "hint": "Wähle aus, wo der neue Eintrag gespeichert werden soll.",
+        "addToExistingPage": "Bestehende Seite",
+        "addToNewPage": "Neue Seite",
+        "addToNewJournal": "Neues Journal",
+        "targetMode": "Ziel",
+        "selectPage": "Seite",
+        "selectJournal": "Journal",
+        "pageName": "Seitenname",
+        "journalName": "Journalname",
+        "targetCreationFailed": "Das Ziel konnte nicht erstellt werden."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "ImportantPersons": "Dramatis Personae",
         "copyActorDescription": "Akteurbeschreibung vom Original kopieren",
         "bestiary": "Bestiarium",
         "Add": "Person/Kreatur hinzufügen",
+        "addActor": "Zu Dramatis Personae hinzufügen",
+        "addActorFromDirectory": "Zu Dramatis Personae hinzufügen",
+        "actorAlreadyExists": "{actor} ist bereits in Dramatis Personae auf der Seite {page} im Journal {journal} enthalten.",
         "UnknownFaction": "Unbekannte Fraktion",
         "selectJournal": "Journal auswählen",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
@@ -1586,10 +1627,127 @@
             }
         }
     },
+    "DSAQUESTLOG": {
+        "title": "Aufträge",
+        "summary": "Zusammenfassung",
+        "objectives": "Ziele",
+        "timeline": "Zeitverlauf",
+        "linkedPages": "Verknüpfte Seiten",
+        "startDate": "Beginn",
+        "targetDate": "Ziel",
+        "completionDate": "Beendet",
+        "createQuest": "Auftrag erstellen",
+        "defaultJournalName": "Aufträge",
+        "newEntryPlaceholder": "Neuer Auftrag",
+        "newObjectivePlaceholder": "Neues Ziel",
+        "SelectQuest": "Auftrag auswählen",
+        "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
+        "emptyTitle": "Noch keine Aufträge",
+        "emptyHint": "Erstelle oder registriere ein Auftrags-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
+        "showInQuestlog": "In Aufträgen anzeigen",
+        "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
+        "addObjective": "Ziel hinzufügen",
+        "addLinkedPage": "Verknüpfte Seite hinzufügen",
+        "playerOwners": "Zugewiesene Spieler",
+        "noObjectives": "Noch keine Ziele.",
+        "noLinkedPages": "Keine verknüpften Seiten.",
+        "missingLink": "Fehlt",
+        "ungrouped": "Unsortiert",
+        "toggleObjectiveDone": "Zielabschluss umschalten",
+        "toggleVisibility": "Spielersichtbarkeit umschalten",
+        "showQuestlogJournal": "Auftrags-Journal anzeigen",
+        "journals": {
+            "label": "Auftrags-Journale",
+            "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        },
+        "AUDIENCE": {
+            "0": "Gruppe",
+            "1": "Ausgewählte Spieler",
+            "2": "Nur SL"
+        },
+        "STATUS": {
+            "0": "Offen",
+            "1": "Beendet"
+        },
+        "PRIORITY": {
+            "0": "Hauptauftrag",
+            "1": "Nebenauftrag",
+            "2": "Persönlich"
+        },
+        "FIELDS": {
+            "quests": {
+                "title": {
+                    "label": "Titel"
+                },
+                "summary": {
+                    "label": "Zusammenfassung"
+                },
+                "details": {
+                    "label": "Details"
+                },
+                "gmNotes": {
+                    "label": "SL-Notizen"
+                },
+                "status": {
+                    "label": "Zustand"
+                },
+                "priority": {
+                    "label": "Priorität"
+                },
+                "audience": {
+                    "label": "Sichtbarkeit"
+                },
+                "playerOwners": {
+                    "label": "Zugewiesene Spieler"
+                },
+                "visible": {
+                    "label": "Für Spieler sichtbar"
+                },
+                "pinToTop": {
+                    "label": "Oben anheften"
+                },
+                "chapter": {
+                    "label": "Kapitel / Gruppe"
+                },
+                "location": {
+                    "label": "Ort"
+                },
+                "tags": {
+                    "label": "Stichworte"
+                },
+                "createdAtWorldTime": {
+                    "label": "Erstellt"
+                },
+                "updatedAtWorldTime": {
+                    "label": "Aktualisiert"
+                },
+                "objectives": {
+                    "text": {
+                        "label": "Ziel"
+                    },
+                    "done": {
+                        "label": "Erledigt"
+                    },
+                    "visible": {
+                        "label": "Für Spieler sichtbar"
+                    }
+                },
+                "linkedPages": {
+                    "uuid": {
+                        "label": "UUID der Journalseite",
+                        "hint": "Verknüpfe die UUID einer Journalseite."
+                    }
+                }
+            }
+        }
+    },
     "dsacalendar": {
         "SelectEntry": "Wähle einen Eintrag",
         "SelectEntryHint": "Zeige Ereignisse und besondere Tage.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "createEvent": "Kalendereintrag erstellen",
+        "defaultJournalName": "Kalender",
+        "newEntryPlaceholder": "Neuer Eintrag",
         "nextMonth": "Nächster Monat",
         "previousMonth": "Vorheriger Monat",
         "confirmDateChange": "Datum übernehmen",
@@ -1740,6 +1898,10 @@
             "tools": {
                 "label": "Werkzeuge",
                 "hint": "Die Werkzeuge, die zum Entschärfen der Falle benötigt werden. Z.B. Dietriche, Kletterhaken oder spezielle Werkzeuge."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt automatisch Effekte dieser Falle, wenn ein Token die Region verlässt."
             }
         }
     },
@@ -1780,8 +1942,8 @@
     },
     "MELEESIZE": {
         "tiny": "Winzig [-4]",
-        "small": "Klein [-0]",
-        "average": "Mittel",
+        "small": "Klein [0]",
+        "average": "Mittel [0]",
         "big": "Groß [0]",
         "giant": "Riesig [0]"
     },
@@ -1808,6 +1970,10 @@
         "hideOnToken": "Am Token verstecken",
         "hidePlayers": "Vor Spielern verstecken",
         "isAura": "Aura",
+        "auraColor": "Aurafarbe",
+        "auraHidden": "Region ausblenden",
+        "excludeSelf": "Selbst ausschließen",
+        "ignoreWalls": "Wände ignorieren",
         "radius": "Radius",
         "disposition": "Disposition",
         "applyTarget": "Effekt (Ziel)",
@@ -1863,6 +2029,20 @@
             "seconds": "Sekunden",
             "name": "Effektname",
             "overwrite": "Standardnamen überschreiben"
+        },
+        "wizardEffect": "Effekt",
+        "wizardExpertMode": "Zum Expertenmodus wechseln",
+        "wizardSimpleMode": "Zum einfachen Modus wechseln",
+        "wizardAllCategories": "Alle",
+        "wizardCategories": {
+            "protection": "Schutz & Verteidigung",
+            "attributes": "Eigenschaften",
+            "skills": "Talente",
+            "combat": "Kampf",
+            "magic": "Magie & Glaube",
+            "regeneration": "Regeneration",
+            "conditions": "Zustände",
+            "weapon": "Waffe / Rüstung"
         }
     },
     "CustomActiveEffects": {
@@ -2042,6 +2222,43 @@
         "Zwerg": "Dwarf",
         "Elf": "Elf"
     },
+    "REGIONBEHAVIOR_DSAZone": {
+        "MODES": {
+            "whileInZone": "Solange in Zone",
+            "once": "Einmalig beim Betreten",
+            "recurring": "Jede Runde"
+        },
+        "FIELDS": {
+            "messageId": {
+                "label": "Chat-Nachricht",
+                "hint": "Die Chat-Nachricht, die den anzuwendenden Effekt enthält."
+            },
+            "mode": {
+                "label": "Modus",
+                "hint": "Wie der Zoneneffekt auf Token angewendet wird."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt den Effekt automatisch, wenn ein Token die Zone verlässt."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAAura": {
+        "FIELDS": {
+            "effectUuid": {
+                "label": "Effekt UUID",
+                "hint": "Die UUID des aktiven Effekts, der diese Aura definiert."
+            },
+            "disposition": {
+                "label": "Gesinnung",
+                "hint": "Welche Token-Gesinnungen von dieser Aura betroffen sind (2 = alle)."
+            },
+            "ignoreWalls": {
+                "label": "Wände ignorieren",
+                "hint": "Wenn aktiviert, durchdringt die Aura Wände."
+            }
+        }
+    },
     "SKILL_CHECK_MODIFIERS": {
         "GROUPS": {
             "socialconflict": "Sozialer Konflikt"
@@ -2134,6 +2351,7 @@
         "NotEnoughFate": "Nicht genug Schicksalspunkte",
         "noSpellForExtension": "{category} {name} für Zauber-/Liturgieerweiterung {extension} nicht vorhanden.",
         "NotEnoughCharges": "Nicht genug Ladungen",
+        "NotEnoughItems": "Kein Exemplar dieses Gegenstands mehr zum Verbrauchen vorhanden",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
@@ -2158,6 +2376,7 @@
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur {element} aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
+        "noEnchantmentForExtension": "Keine passende Verzauberung für diese Zaubererweiterung gefunden.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
@@ -2168,7 +2387,6 @@
         "elementNotOwned": "Dir fehlt die Erlaubnis, um das Element zu bearbeiten.",
         "canNotEditInCompendium": "Diese Funktion steht in Kompendien nicht zur Verfügung. Importiere den Eintrag in die Welt, um ihn zu bearbeiten.",
         "noEffectFound": "Der Effekt konnte nicht gefunden werden.",
-        "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
         "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",
@@ -2291,15 +2509,48 @@
         "noActor": "Dein Charakter wurde nicht gefunden",
         "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
         "cannotpay": "<b>{actor}</b> kann seine/ihre Schulden von {amount} nicht bezahlen.",
-        "default": "Standard"
+        "default": "Standard",
+        "requestTitlePay": "Zahlung einsammeln",
+        "requestTitleGetPaid": "Zahlung auszahlen",
+        "requestDeclined": "Anfrage abgelehnt.",
+        "requestExecutedByGM": "Vom Spielleiter manuell ausgeführt.",
+        "requestQueryFailed": "Die Anfrage konnte nicht zugestellt oder abgeschlossen werden.",
+        "requestResend": "Erneut senden",
+        "requestExecute": "Ausführen",
+        "requestRemove": "Entfernen",
+        "requestAddActor": "Akteur hinzufügen",
+        "requestFinalize": "Abschließen",
+        "requestNoActors": "Für diese Anfrage sind keine Akteure verfügbar.",
+        "requestNoAvailableActors": "Es können keine weiteren Akteure hinzugefügt werden.",
+        "requestPromptPay": "{actor} soll {amount} bezahlen.",
+        "requestPromptGetPaid": "{actor} soll {amount} erhalten.",
+        "statusPending": "Offen",
+        "statusAccepted": "Erledigt",
+        "statusRejected": "Abgelehnt",
+        "statusFailed": "Fehlgeschlagen",
+        "statusSkipped": "Übersprungen",
+        "statusOffline": "Offline",
+        "statusUnowned": "Manuell",
+        "statusOfflineInfo": "Es ist aktuell kein aktiver zuständiger Benutzer verfügbar.",
+        "statusUnownedInfo": "Es gibt keinen nicht-GM Besitzer. Bitte per GM-Aktion lösen.",
+        "summaryMerchantTitle": "Handel",
+        "summaryTradeTitle": "Tausch"
+    },
+    "DSAQUERIES": {
+        "knowledgeCheck": "Wissensprobe",
+        "approve": "Genehmigen",
+        "pending": "Warte auf SL-Genehmigung...",
+        "approved": "Genehmigt",
+        "rejected": "Abgelehnt",
+        "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen."
     },
     "rangeMovementOptions": {
-        "STATIONARY": "steht still (+2)",
-        "SLOW": "bewegt sich leicht (+-0)",
-        "FAST": "bewegt sich schnell (-2)",
-        "SHOOTERMOVING": "geht (-2)",
-        "SHOOTERRUNNING": "rennt (-4)",
-        "SHOOTERSTATIONARY": "ist stationär (+-0)"
+        "STATIONARY": "steht still [+2]",
+        "SLOW": "bewegt sich leicht [0]",
+        "FAST": "bewegt sich schnell [-2]",
+        "SHOOTERMOVING": "geht [-2]",
+        "SHOOTERRUNNING": "rennt [-4]",
+        "SHOOTERSTATIONARY": "ist stationär [0]"
     },
     "mountedRangeOptions": {
         "STATIONARY": "steht",
@@ -2309,13 +2560,13 @@
     },
     "regnerationCampLocations": {
         "normal": "Normal",
-        "bad": "Schlechter Lagerplatz (-1)",
-        "good": "Gute Unterkunft (+1)"
+        "bad": "Schlechter Lagerplatz [-1]",
+        "good": "Gute Unterkunft [+1]"
     },
     "regenerationInterruptOptions": {
-        "small": "Klein - Wache/Ruhestörung (-1)",
-        "big": "Groß - Überfall/Hundswache (-2)",
-        "none": "Keine (+-0)"
+        "small": "Klein - Wache/Ruhestörung [-1]",
+        "big": "Groß - Überfall/Hundswache [-2]",
+        "none": "Keine [0]"
     },
     "CHATCONTEXT": {
         "Reroll": "Wurf wiederholen (1 Schip)",
@@ -2533,7 +2784,19 @@
             },
             "config": "Einstellungen",
             "events": "Ereignisse",
-            "calendar": "Kalender"
+            "calendar": "Kalender",
+            "featureVisibility": {
+                "label": "Spieler Funktionssichtbarkeit",
+                "hint": "Wähle welche Kalenderfunktionen für Spieler sichtbar sind. Spielleiter haben immer Zugriff auf alle Funktionen."
+            },
+            "playerDateVisibility": {
+                "label": "Spieler Datumsanzeige",
+                "hint": "Wähle wie Datum und Uhrzeit im Kalender-Widget für Spieler angezeigt werden.",
+                "mode": "Anzeigemodus",
+                "exact": "Genaue Uhrzeit",
+                "roughTime": "Ungefähre Tageszeit",
+                "dateOnly": "Nur Datum"
+            }
         }
     },
     "DSASETTINGS": {
@@ -2760,7 +3023,11 @@
         "noDefenses": "Anzahl Verteidigungen",
         "ongoing": "Laufende Handlungen",
         "waitInit": "Zurückstellen",
-        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>"
+        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>",
+        "baseActionPipHint": "Aktion ({used}/{total}). Attacke, Fernkampfangriff, Waffe ziehen, Zauber wirken…",
+        "freeActionPipHint": "Freie Aktion. Kurzen Satz rufen, Gegenstand fallen lassen, Aufstehen, Umdrehen…",
+        "movementPipHint": "Bewegung: {used}/{max} Schritt. Über GS hinaus kostet eine Aktion.",
+        "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!"
     },
     "CHATFATE": {
         "fatepointUsed": "Das Schicksal ändert sich",
@@ -2810,6 +3077,10 @@
         "minorSpirits": "Lästige Mindergeister",
         "defeated": "Besiegt"
     },
+    "RAPTURE": {
+        "kapTracker": "KaP-Zähler (Entrückung)",
+        "kapTrackerDescription": "Erfasst den Karmapunkte-Verbrauch über ein rollendes 24-Stunden-Fenster. Für je 10 ausgegebene KaP wird eine Stufe Entrückung ausgelöst (max. 4)."
+    },
     "MERCHANT": {
         "buy": "Kaufen",
         "sell": "Verkaufen",
@@ -2849,6 +3120,67 @@
         "yourOffer": "Dein Angebot",
         "otherOffer": "Angebot des Handelspartners",
         "accept": "Akzeptieren"
+    },
+    "GROUP": {
+        "members": "Mitglieder",
+        "skills": "Talente",
+        "inventory": "Inventar",
+        "travel": "Reise",
+        "notes": "Notizen",
+        "addMember": "Mitglied hinzufügen",
+        "addLocation": "Depot hinzufügen",
+        "depotHint": "Ein Depot ist ein gemeinsames Inventar für die Gruppe. Es kann eine Truhe, ein Fahrzeug, eine Spielerbasis, einen Begleiter mit Vorräten oder einen anderen geteilten Behälter darstellen.",
+        "removeLocation": "Depot entfernen",
+        "openLocationSheet": "Depotbogen öffnen",
+        "forcedMarch": "Gewaltmarsch",
+        "sharedPurse": "Gruppenkasse",
+        "createEventsJournal": "Ereignisjournal erstellen",
+        "dropMemberHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",
+        "noMembers": "Noch keine Mitglieder. Ziehe Akteure auf diesen Bogen um sie hinzuzufügen.",
+        "noLocations": "Noch keine Depots. Ziehe einen Fahrzeug-, Händler- oder Schatzakteur hierher.",
+        "locked": "Gesperrt",
+        "unlocked": "Entsperrt",
+        "takeItem": "Gegenstand nehmen",
+        "passToGroup": "An Gruppendepot übergeben",
+        "selectLocation": "Depot auswählen",
+        "locationLocked": "Dieses Depot ist gesperrt.",
+        "setPrimaryParty": "Als Hauptgruppe festlegen",
+        "locationOnly": "Nur Händler- oder Schatzakteure können als Depots hinzugefügt werden.",
+        "noGroupInGroup": "Ein Gruppenakteur kann nicht als Mitglied einer anderen Gruppe hinzugefügt werden.",
+        "alreadyMember": "Dieser Akteur ist bereits Mitglied der Gruppe.",
+        "schritt": "Schritt",
+        "meilenPerHour": "Meilen/h",
+        "camp": "Lager",
+        "dropLocationsHint": "Einen Fahrzeug-, H\u00e4ndler- oder Schatzakteur hierher ziehen um ihn als Depot hinzuzuf\u00fcgen.",
+        "dropMembersHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzuf\u00fcgen.",
+        "memberCount": "Mitglieder",
+        "noSkills": "Keine Talente verf\u00fcgbar. F\u00fcge zuerst Mitglieder zur Gruppe hinzu.",
+        "openFullSheet": "Vollst\u00e4ndigen Bogen \u00f6ffnen",
+        "primaryParty": "Hauptgruppe",
+        "travelMode": "Reisemodus",
+        "speedPerMode": "Geschwindigkeit je Modus",
+        "shareOwnership": "Besitz mit allen Spielern teilen",
+        "ownershipShared": "Besitz mit allen Spielern geteilt.",
+        "openGroupSheet": "Gruppenblatt",
+        "tradeWithDepot": "Handel mit Depot"
+    },
+    "locationTypes": {
+        "foot": "Zu Fuß",
+        "vehicle": "Fahrzeug",
+        "river": "Flussschiff",
+        "sea": "Seeschiff"
+    },
+    "INVENTORYBULK": {
+        "title": "Inventaraktionen",
+        "delete": "Inventar entfernen",
+        "deleteConfirm": "Alle Inventargegenstände von {name} entfernen?",
+        "dropGround": "Inventar auf den Boden legen",
+        "dropGroundConfirm": "Alle Inventargegenstände von {name} auf den Boden legen?",
+        "dropBag": "Inventar in einen Beutel legen",
+        "dropBagConfirm": "Alle Inventargegenstände von {name} in einen Beutel auf dem Akteur legen?",
+        "dropPileName": "Habseligkeiten von {name}",
+        "noItems": "Keine Inventargegenstände vorhanden",
+        "requiresToken": "Für diese Aktion braucht der Akteur einen aktiven Token in der aktuellen Szene."
     },
     "GARADAN": {
         "1": "Bauer",
@@ -3019,9 +3351,25 @@
                     "wiki": "Zum Wiki",
                     "videos": "VTTom-Videos"
                 },
-                "cta": "Details & Kaufen",
+                "details": "Inhalte anzeigen",
+                "cta": "Im Shop öffnen",
                 "ctaOwned": "Bereits gekauft",
                 "owned": "Im Besitz"
+            },
+            "moduleDetails": {
+                "windowTitle": "Moduldetails",
+                "storeLink": "Shopseite öffnen",
+                "overallAutomation": "Automatisierungsgrad",
+                "specialFeatures": "Besondere Hinweise",
+                "badgesLabel": "Hinweise",
+                "tagsLabel": "Tags",
+                "note": "Diese Liste ist nur ein Auszug. Module enthalten in der Regel zusätzliche Inhalte, die hier nicht erfasst werden. Ein Häkchen oder das Fehlen eines Häkchens beschreibt nur den verfolgten Automatisierungsstatus, und Einträge können trotzdem teilweise automatisiert sein.",
+                "unavailableTitle": "Keine Details verfügbar",
+                "unavailableText": "Für dieses Modul ist aktuell kein erzeugter Detaildatensatz verfügbar.",
+                "entryNotFound": "Kein Bibliothekseintrag für {name} gefunden.",
+                "automatedTooltip": "Automatisiert",
+                "notAutomatedTooltip": "Manuell",
+                "searchEmpty": "Keine Einträge entsprechen der aktuellen Suche."
             }
         }
     }

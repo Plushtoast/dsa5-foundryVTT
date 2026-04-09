@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry13%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
+![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry14%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
 
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
@@ -13,7 +13,7 @@ In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
 
 
 ```
-https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry13/system.json
+https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry14/system.json
 ```
 
 ## Roadmap
@@ -113,6 +113,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2644/dsa5-aventurische-ruestkammer-ii-fuer-foundry-vtt" title="Aventurische Rüstkammer II">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp" alt="Aventurische Rüstkammer II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/4088" title="Kaiser Retos Waffenkammer">
+        <img src="https://www.f-shop.de/media/image/28/f3/35/ESD048_0_0999.jpg" alt="Kaiser Retos Waffenkammer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">

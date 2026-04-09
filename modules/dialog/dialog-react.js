@@ -3,13 +3,12 @@ import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
-const { getProperty } = foundry.utils;
+
 const { renderTemplate } = foundry.applications.handlebars;
-import { localize } from '../system/helpers/localizer.js';
 
 export default class DialogReactDSA5 extends Select2Dialog {
   static async showDialog(startMessage) {
-    let fun = this.callbackResult;
+    const fun = this.callbackResult;
     new DialogReactDSA5({
       window: { title: 'Unopposed' },
       content: await this.getTemplate(startMessage),
@@ -34,7 +33,7 @@ export default class DialogReactDSA5 extends Select2Dialog {
   static getTargetActor(message) {
     if (!canvas.tokens) return {};
 
-    let speaker = message.flags.unopposeData.targetSpeaker;
+    const speaker = message.flags.unopposeData.targetSpeaker;
     const actor = DSA5_Utility.getSpeaker(speaker);
 
     if (!actor) {
@@ -59,11 +58,11 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     const attackMessage = game.messages.get(startMessage.flags.unopposeData.attackMessageId);
     const source = attackMessage.flags.data.preData.source;
     const item = source.name;
-    let items = (await DSA5_Utility.allSkillsList()).map((k) => {
+    const items = (await DSA5_Utility.allSkillsList()).map((k) => {
       return { name: k, id: k };
     });
     items.unshift({
-      name: localize('doNothing'),
+      name: _loc('doNothing'),
       id: 'doNothing',
     });
     return renderTemplate('systems/dsa5/templates/dialog/dialog-act.hbs', {
@@ -122,12 +121,12 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    const wrestle = localize('LocalizedIDs.wrestle')
+    const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = this.actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), this.actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
     data.items = [
       {
-        name: localize('attackWeaponless'),
+        name: _loc('attackWeaponless'),
         id: 'attackWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.attack.value,
@@ -137,7 +136,7 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
 
-    for (let item of this.actor.items) {
+    for (const item of this.actor.items) {
       if (types.includes(item.type) && item.system.worn.value == true) {
         const preparedItem =
           item.type == 'meleeweapon'
@@ -150,7 +149,7 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
           value: preparedItem.attack,
           item: preparedItem,
         });
-        for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
+        for (const [key, value] of Object.entries(preparedItem.subweapons || {})) {
           data.items.push({
             name: value.name,
             id: item.name,
@@ -169,6 +168,16 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         });
       }
     }
+
+    const hasMagicEntries = this.actor.items.some((x) => ['spell', 'liturgy'].includes(x.type));
+    if (hasMagicEntries) {
+      data.items.push({
+        name: ActCastSpellDialog.getActionLabel(this.actor),
+        id: 'castSpell',
+        special: 'castSpell',
+        img: 'systems/dsa5/icons/categories/ability_magical.webp',
+      });
+    }
     data.dieClass = 'die-mu'
     data.title = 'DIALOG.selectAction'
     return data;
@@ -178,7 +187,9 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const actor = dialog.actor;
     const tokenId = dialog.tokenId;
 
-    if ('attackWeaponless' == dataset.value) {
+    if ('castSpell' == dataset.special) {
+      ActCastSpellDialog.showDialog(actor, tokenId);
+    } else if ('attackWeaponless' == dataset.value) {
       actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
@@ -196,6 +207,93 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         });
       }
     }
+  }
+}
+
+export class ActCastSpellDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static async showDialog(actor, tokenId) {
+    new ActCastSpellDialog(actor, tokenId).render(true);
+  }
+
+  static getActionLabel(actor) {
+    const spellLabel = _loc('TYPES.Item.spell');
+    const liturgyLabel = _loc('TYPES.Item.liturgy');
+
+    if (actor.system.isMage && actor.system.isPriest) return `${spellLabel}/${liturgyLabel}`;
+    if (actor.system.isMage) return spellLabel;
+    if (actor.system.isPriest) return liturgyLabel;
+    return _loc('DIALOG.selectSupernaturalAction');
+  }
+
+  static prepareMagicSelectionEntry(item) {
+    const entry = item.toObject();
+    const preparedCastingTime = Number(entry.system.castingTime.modified) || Number(entry.system.castingTime.value) || 0;
+    const castingProgress = Number(entry.system.castingTime.progress) || 0;
+    const isOngoing = preparedCastingTime > 1 && castingProgress > 0;
+
+    entry.progressLabel = isOngoing ? `${castingProgress}/${preparedCastingTime}` : '';
+    entry.isOngoing = isOngoing;
+    entry.ongoingClass = isOngoing ? 'emphasize2' : '';
+    return entry;
+  }
+
+  static DEFAULT_OPTIONS = {
+    window: { title: 'DIALOG.selectSupernaturalAction' },
+    position: {
+      width: 760,
+      height: 'auto'
+    },
+    actions: {
+      spellSelect: this._spellSelect
+    }
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/dialog-act-spell-selection.hbs',
+    },
+  };
+
+  constructor(actor, tokenId) {
+    super();
+    this.actor = actor;
+    this.tokenId = tokenId;
+  }
+
+  static _spellSelect(event, target) {
+    this.callbackResult(target.dataset, this);
+    this.close();
+  }
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const spells = [];
+    const liturgies = [];
+
+    for (const item of this.actor.items) {
+      if (item.type == 'spell') spells.push(this.constructor.prepareMagicSelectionEntry(item));
+      else if (item.type == 'liturgy') liturgies.push(this.constructor.prepareMagicSelectionEntry(item));
+    }
+
+    spells.sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
+    liturgies.sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
+
+    data.title = 'DIALOG.selectSupernaturalAction';
+    data.spells = spells;
+    data.liturgies = liturgies;
+    data.hasSpells = spells.length > 0;
+    data.hasLiturgies = liturgies.length > 0;
+    data.emptyMessage = 'DIALOG.noSelection';
+    return data;
+  }
+
+  callbackResult(dataset, dialog) {
+    const item = dialog.actor.items.get(dataset.itemId);
+    if (!item) return;
+
+    dialog.actor.setupSpell(item, {}, dialog.tokenId).then((setupData) => {
+      dialog.actor.basicTest(setupData);
+    });
   }
 }
 
@@ -236,23 +334,23 @@ export class ReactToAttackDialog extends ActAttackDialog {
   async _prepareContext(_options) {
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(this.startMessage);
     const attackActor = ReactToAttackDialog.getAttackActor(this.startMessage);
-    const wrestle = localize('LocalizedIDs.wrestle')
+    const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
-    let items = [
+    const items = [
       {
-        name: localize('doNothing'),
+        name: _loc('doNothing'),
         id: 'doNothing',
         img: 'systems/dsa5/icons/categories/disease.webp',
       },
       {
-        name: localize('dodge'),
+        name: _loc('dodge'),
         id: 'dodge',
         img: 'systems/dsa5/icons/categories/Dodge.webp',
         value: actor.system.status.dodge.max,
       },
       {
-        name: localize('parryWeaponless'),
+        name: _loc('parryWeaponless'),
         id: 'parryWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.parry.value,
@@ -262,9 +360,9 @@ export class ReactToAttackDialog extends ActAttackDialog {
     let defenses = 0;
     let sizeNotification = '';
     if (actor) {
-      let types = ['meleeweapon'];
+      const types = ['meleeweapon'];
 
-      for (let x of actor.items) {
+      for (const x of actor.items) {
         if (types.includes(x.type) && x.system.worn.value == true) {
           const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor);
           items.push({

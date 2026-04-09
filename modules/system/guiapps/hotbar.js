@@ -7,7 +7,6 @@ import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
-import { localize } from '../helpers/localizer.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
@@ -40,7 +39,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     actions: {
       categoryFilter: this.#filterCategory,
       weapon: this.#onRollWeapon,
-      collapseBar: this.#onCollapse
+      collapseBar: this.#onCollapse,
+      toggleFreeAction: this.#onToggleFreeAction,
     },
   };
 
@@ -136,7 +136,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const li = event.currentTarget;
     if (!li) return;
 
-    let category = li.closest('.hSection').dataset.category;
+    const category = li.closest('.hSection').dataset.category;
     if (!category) {
       return;
     }
@@ -331,7 +331,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   updateDarknessSlider(value) {
-    this.slider.setValue(value * 100);
+    this.slider?.setValue(value * 100);
   }
 
   onSliderChanged(value) {
@@ -363,8 +363,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #addContextColor() {
-    const parryText = ` ${localize('CHAR.PARRY')}`;
-    const attackText = ` ${localize('CHAR.ATTACK')}`;
+    const parryText = ` ${_loc('CHAR.PARRY')}`;
+    const attackText = ` ${_loc('CHAR.ATTACK')}`;
 
     for (const slot of this.slots) {
       const mac = slot.macro;
@@ -413,6 +413,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.element.classList.toggle('collapsedBar');
   }
 
+  static #onToggleFreeAction(ev, target) {
+    if (!game.combat || !this.actor) return;
+
+    const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
+    const speaker = { token: token?.id, actor: this.actor.id };
+    game.combat.toggleFreeAction(speaker);
+  }
+
   static async #onRollWeapon(ev, target) {
     const { id, subweapon } = target.dataset;
 
@@ -444,7 +452,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         break;
     }
   }
-
 
   filterSections(ev, html) {
     this.searching = this.searching || '';
@@ -521,7 +528,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         case 'meleeweapon':
         case 'rangeweapon': {
           const entries = this.tokenHotbar?._combatEntry(x, combatskills, actor) || [];
-          for (let entry of entries) {
+          for (const entry of entries) {
             if (!x.system.worn.value) entry.cssClass = 'unequipped';
             groups.attacks.push(entry);
           }
@@ -536,7 +543,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
       if (x.getFlag('dsa5', 'enchantments')) {
         if (!groups.skills.enchantment) groups.skills.enchantment = [];
-        for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
+        for (const enchantment of x.getFlag('dsa5', 'enchantments')) {
           groups.skills.enchantment.push(this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
         }
       }
@@ -670,13 +677,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #generateFilterCategories(groups) {
     const filterCategories = [];
 
-    for (let key of Object.keys(groups.skills)) {
+    for (const key of Object.keys(groups.skills)) {
       const i18nkey = `TYPES.Item.${key}`;
       filterCategories.push({
         key,
         tooltip: game.i18n.has(i18nkey)
-          ? localize(i18nkey)
-          : localize(DSA5Hotbar.FALLBACK_NAMES[key]),
+          ? _loc(i18nkey)
+          : _loc(DSA5Hotbar.FALLBACK_NAMES[key]),
         img: ITEM_CONSTANTS.DEFAULT_IMAGES[key] || DSA5Hotbar.FALLBACK_ICONS[key],
       });
     }
@@ -688,7 +695,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       );
       filterCategories.unshift({
         key: 'attacks',
-        tooltip: localize('Combat'),
+        tooltip: _loc('Combat'),
         img: 'systems/dsa5/icons/categories/Meleeweapon.webp',
       });
     }
@@ -707,7 +714,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         { subfunction: 'sharedEffect' }
       );
 
-      for (let token of canvas.tokens.controlled) {
+      for (const token of canvas.tokens.controlled) {
         const tokenEffects = token.actor
           ? (await token.actor.actorEffects()).map((x) => x.name)
           : [];
@@ -723,7 +730,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #conditionAddEffect(effects) {
-    const label = localize('CONDITION.add');
+    const label = _loc('CONDITION.add');
     effects.unshift({
       name: 'CONDITION.add',
       id: '',
@@ -809,47 +816,47 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #onConfigContext() {
     const options = [
       {
-        name: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
+        label: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
         icon: game.audio.globalMute ? "<i class='fa-solid fa-volume-xmark'></i>" : "<i class='fa-solid fa-volume'></i>",
-        callback: () => {
+        onClick: () => {
           game.audio.globalMute = !game.audio.globalMute;
           this._updateToggles();
         }
       },
       {
-        name: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
+        label: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
         icon: this.locked ? "<i class='fa-solid fa-unlock'></i>" : "<i class='fa-solid fa-lock'></i>",
-        callback: async () => {
+        onClick: async () => {
           await game.settings.set("core", "hotbarLock", !this.locked, { render: false });
           this._updateToggles();
         }
       },
       {
-        name: 'SHEET.Configure',
+        label: 'SHEET.Configure',
         icon: "<i class='fa-solid fa-edit'></i>",
-        condition: () => !!this.actor,
-        callback: () => {
+        visible: () => !!this.actor,
+        onClick: () => {
           this.#toggleEditMode();
         }
       },
       {
-        name: 'DSA5HOTBARCONFIG.manager',
+        label: 'DSA5HOTBARCONFIG.manager',
         icon: "<i class='fa-solid fa-bars-sort'></i>",
-        condition: () => !!this.actor,
-        callback: () => {
+        visible: () => !!this.actor,
+        onClick: () => {
           new HotbarSortManager(this.actor).render(true);
         }
       },
       {
-        name: 'HOTBAR.CLEAR',
+        label: 'HOTBAR.CLEAR',
         icon: "<i class='fa-solid fa-trash'></i>",
-        callback: async () => {
+        onClick: async () => {
           const proceed = await foundry.applications.api.DialogV2.confirm({
             window: {
               title: "HOTBAR.CLEAR",
               icon: "fa-solid fa-trash"
             },
-            content: localize("HOTBAR.CLEAR_CONFIRM"),
+            content: _loc("HOTBAR.CLEAR_CONFIRM"),
             modal: true
           });
           if (proceed) await game.user.update({ hotbar: {} }, { recursive: false, diff: false, noHook: true });
@@ -881,13 +888,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       if (isOffHand) return this.actor.canEquipWeaponOffHand(i);
       return true;
     });
-    const equip = localize(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
+    const equip = _loc(isOffHand ? 'SHEET.EquipItemOffHand' : 'SHEET.EquipItem');
     const options = equipableWeapons.reduce((acc, w) => {
       if (weapon?.id === w.id) return acc;
       acc.push({
-        name: `${equip}: ${w.name}`,
+        label: `${equip}: ${w.name}`,
         icon: "<i class='fa-solid fa-swords'></i>",
-        callback: async () => {
+        onClick: async () => {
           await this.actor.equipWeaponToHand(w.id, { hand: isOffHand ? 'offhand' : 'main', equip: true });
         },
       });
@@ -924,6 +931,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
+
+    if (context.turnClass === 'myRound') {
+      const combatant = token?.combatant;
+      context.actionPips = this.#prepareActionPips(combatant, token);
+    }
   }
 
   #buildAvatarStyle(config) {
@@ -943,19 +955,83 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       LeP: {
         value: this.actor.system.status.wounds.value,
         max: this.actor.system.status.wounds.max,
-        label: localize('CHAR.LEP'),
+        label: _loc('CHAR.LEP'),
       },
       AsP: {
         value: this.actor.system.status.astralenergy.value,
         max: this.actor.system.status.astralenergy.max,
-        label: localize('CHAR.ASP'),
+        label: _loc('CHAR.ASP'),
       },
       KaP: {
         value: this.actor.system.status.karmaenergy.value,
         max: this.actor.system.status.karmaenergy.max,
-        label: localize('CHAR.KAP'),
+        label: _loc('CHAR.KAP'),
       },
     }
+  }
+
+  #prepareActionPips(combatant, token) {
+    if (!combatant) return undefined;
+
+    const actor = combatant.actor;
+    // Creatures may have actionCount > 1; characters always get 1
+    const creatureActions = Math.max(Number(actor?.system.actionCount?.value) || 1, 1);
+    const bonusActions = Number(actor?.system.combat?.bonusActions) || 0;
+    const totalActions = creatureActions + bonusActions;
+    const actionsUsed = combatant.system.actionsUsed || 0;
+    const freeActionUsed = !!combatant.system.freeActionUsed;
+
+    // Movement derived from movementHistory at render time
+    const tokenObj = token?.object;
+    let distance = 0;
+    if (tokenObj && token.movementHistory?.length) {
+      try {
+        distance = tokenObj.measureMovementPath(token.movementHistory).distance;
+      } catch { /* token may not be on canvas */ }
+    }
+    const speed = actor?.speedByMovementType?.('walk') || 0;
+    const moved = distance > 0;
+    const movementCostsAction = distance > speed;
+
+    // Free action: consumed by any movement up to GS, or manually toggled
+    const freeAction = {
+      used: freeActionUsed || moved,
+      tooltip: _loc('COMBATTRACKER.freeActionPipHint'),
+    };
+
+    // Base actions: build pip array; show overuse pips if used > total
+    const baseActions = [];
+    const displayCount = Math.max(totalActions, actionsUsed);
+    for (let i = 0; i < displayCount; i++) {
+      const used = i < actionsUsed;
+      const overuse = i >= totalActions;
+      let tooltip;
+      if (overuse) {
+        tooltip = _loc('COMBATTRACKER.overusePipHint');
+      } else {
+        tooltip = _loc('COMBATTRACKER.baseActionPipHint').replace('{used}', actionsUsed).replace('{total}', totalActions);
+      }
+      baseActions.push({ used, overuse, tooltip });
+    }
+
+    // Movement bar: 0..GS = free, GS..2*GS = costs base action, >2*GS = exceeded
+    const maxMovement = speed * 2;
+    const percent = maxMovement > 0 ? Math.min(100, Math.round(distance / maxMovement * 100)) : 0;
+    const exceeded = maxMovement > 0 && distance > maxMovement;
+    const movementTooltip = _loc('COMBATTRACKER.movementPipHint')
+      .replace('{used}', Math.round(distance))
+      .replace('{max}', maxMovement);
+
+    const movement = {
+      total: maxMovement,
+      used: Math.round(distance),
+      percent,
+      exceeded,
+      costsBaseAction: movementCostsAction,
+      tooltip: movementTooltip,
+    };
+
+    return { baseActions, freeAction, movement };
   }
 
   #weaponPositions(context) {
@@ -991,7 +1067,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (this.editMode && false) {
       while (positionIndex < DSA5Hotbar.WEAPON_POSITIONS.length) {
         positions.push({
-          weapon: { name: localize('attackWeaponless') },
+          weapon: { name: _loc('attackWeaponless') },
           style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++],
           isEmpty: true
         });
@@ -1004,7 +1080,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #addHumanoidWeapon(positions, humanoidWeapons, startIndex) {
     let positionIndex = startIndex;
     const emptyHands = {
-      name: localize('attackWeaponless'),
+      name: _loc('attackWeaponless'),
     }
 
     const offHandWeapons = [];
@@ -1081,7 +1157,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #getAllMacros() {
     const hotbar = game.user?.hotbar ?? {};
-    const emptyLabel = localize('HOTBAR.EMPTY');
+    const emptyLabel = _loc('HOTBAR.EMPTY');
     return Array.from({ length: 50 }, (_, i) => {
       const key = i + 1;
       const id = hotbar[key] ?? '';

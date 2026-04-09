@@ -1,0 +1,52 @@
+<div class="dsa5 payment-request-card">
+  <h4>{{title}}</h4>
+  <p><b>{{{amount}}}</b></p>
+  {{#if description}}
+    <p><i>{{description}}</i></p>
+  {{/if}}
+
+  {{#if recipients.length}}
+    {{#each recipients}}
+      <div class="row-section tableOdd">
+        <div class="col two">
+          <div class="flexrow flexAlignCenter">
+            <b class="ellipsis">{{actorName}}</b>
+          </div>
+          {{#if designatedUserName}}
+            <div class="very-small">{{designatedUserName}}</div>
+          {{/if}}
+        </div>
+        <div class="col five flexrow flexAlignEnd gap2px">
+          <span class="button icon noBorder payment-request-indicator {{statusIconClass}}" data-tooltip="{{statusTooltip}}" aria-label="{{statusTooltip}}">
+            <i class="fas {{statusIcon}}"></i>
+          </span>
+          {{#if hasResultDetails}}
+            <span class="button icon noBorder payment-request-indicator icon-gray" data-tooltip-html="{{resultTooltipHtml}}" aria-label="{{resultTooltip}}">
+              <i class="fas fa-info-circle"></i>
+            </span>
+          {{/if}}
+        </div>
+        <div class="col third right payment-request-gm flexrow flexAlignEnd">
+          {{#if canResend}}
+            <button type="button" class="payment-request-action icon fas fa-rotate-right" data-action="resend" data-actor-id="{{actorId}}" data-tooltip="{{localize "PAYMENT.requestResend"}}" aria-label="{{localize "PAYMENT.requestResend"}}"></button>
+          {{/if}}
+          {{#if canExecute}}
+            <button type="button" class="payment-request-action icon fas fa-coins" data-action="execute" data-actor-id="{{actorId}}" data-tooltip="{{localize "PAYMENT.requestExecute"}}" aria-label="{{localize "PAYMENT.requestExecute"}}"></button>
+          {{/if}}
+          {{#if canRemove}}
+            <button type="button" class="payment-request-action icon fas fa-trash" data-action="remove" data-actor-id="{{actorId}}" data-tooltip="{{localize "PAYMENT.requestRemove"}}" aria-label="{{localize "PAYMENT.requestRemove"}}"></button>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="very-small">{{localize "PAYMENT.requestNoActors"}}</p>
+  {{/if}}
+
+  {{#unless finalized}}
+    <div class="payment-request-gm flexrow gap5px margin-top">
+      <button type="button" class="payment-request-action" data-action="add" data-tooltip="{{localize "PAYMENT.requestAddActor"}}" aria-label="{{localize "PAYMENT.requestAddActor"}}"><i class="fas fa-plus"></i></button>
+      <button type="button" class="payment-request-action" data-action="finalize" data-tooltip="{{localize "PAYMENT.requestFinalize"}}" aria-label="{{localize "PAYMENT.requestFinalize"}}"><i class="fas fa-check"></i></button>
+    </div>
+  {{/unless}}
+</div>

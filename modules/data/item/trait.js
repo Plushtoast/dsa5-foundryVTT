@@ -50,6 +50,10 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
     });
   }
 
+  get effectMultiplier() {
+    return Number(this.step?.value) || 1;
+  }
+
   async getSheetData(data) {
     data.ranges = DSA5.meleeRanges;
   }

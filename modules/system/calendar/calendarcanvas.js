@@ -250,13 +250,18 @@ export class CalendarCanvas {
         const calendar = game.time.calendar;
         const components = this.parent.actualTimeComponents();
         const daysPerYear = calendar.days.daysPerYear;
+        this.canvasStrategy = CONFIG.time.worldCalendarConfig?.canvasStrategy || {};
 
         // Calculate seasons
         const seasons = this._calculateSeasons(calendar, daysPerYear);
 
+        const monthNameKey = this.canvasStrategy.monthLabels === 'abbreviation' ? 'abbreviation' : 'name';
+
         this.calendarData = {
-            months: this._getLocalizedArray(calendar.months.values, calendar.translationPrefix),
-            weekdays: this._getLocalizedArray(calendar.days.values, calendar.translationPrefix),
+            months: this._getLocalizedArray(calendar.months.values, calendar.translationPrefix, monthNameKey),
+            weekdays: this.canvasStrategy.weekdayRing !== false
+                ? this._getLocalizedArray(calendar.days.values, calendar.translationPrefix)
+                : [],
             currentMonth: components.month,
             currentDay: components.dayOfMonth,
             currentWeekday: components.dayOfWeek,
@@ -268,12 +273,14 @@ export class CalendarCanvas {
 
         // Rotate arrays to start with current elements
         this.calendarData.months = this._rotateArray(this.calendarData.months, this.calendarData.currentMonth);
-        this.calendarData.weekdays = this._rotateArray(this.calendarData.weekdays, this.calendarData.currentWeekday);
+        if (this.calendarData.weekdays.length) {
+            this.calendarData.weekdays = this._rotateArray(this.calendarData.weekdays, this.calendarData.currentWeekday);
+        }
         this.calendarData.moons = this._rotateArray(this.calendarData.moons, components.moon?.phase?.index || 0);
     }
 
-    _getLocalizedArray(values, translationPrefix) {
-        return values.map(item => game.i18n.localize(`${translationPrefix}.${item.name}`));
+    _getLocalizedArray(values, translationPrefix, nameKey = 'name') {
+        return values.map(item => _loc(`${translationPrefix}.${item[nameKey]}`));
     }
 
     _calculateSeasons(calendar, daysPerYear) {
@@ -347,13 +354,15 @@ export class CalendarCanvas {
         this.precalculated.angleOffsets = {
             month: Math.PI / months.length,
             day: Math.PI / daysInMonth,
-            weekday: Math.PI / weekdays.length
+            weekday: weekdays.length ? Math.PI / weekdays.length : 0
         };
 
         // Precalculate all positions at once
         this.precalculated.monthAngles = this._calculateMonthAngles(months.length);
         this.precalculated.dayAngles = this._calculateDayAngles(daysInMonth);
-        this.precalculated.weekdayAngles = this._calculateWeekdayAngles(weekdays.length);
+        if (weekdays.length) {
+            this.precalculated.weekdayAngles = this._calculateWeekdayAngles(weekdays.length);
+        }
         this.precalculated.seasonAngles = this._calculateSeasonAngles();
         this.precalculated.moonAngles = this._calculateMoonAngles(this.calendarData.moons.length);
 
@@ -389,11 +398,13 @@ export class CalendarCanvas {
         }
 
         // Generate weekday hit detection
-        const weekdayCount = this.calendarData.weekdays.length;
-        const weekdayStep = TWO_PI / weekdayCount;
-        for (let i = 0; i < SEGMENTS; i++) {
-            const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.weekday;
-            this.hitDetectionLookup.weekday[i] = Math.floor(angle / weekdayStep) % weekdayCount;
+        if (this.calendarData.weekdays.length) {
+            const weekdayCount = this.calendarData.weekdays.length;
+            const weekdayStep = TWO_PI / weekdayCount;
+            for (let i = 0; i < SEGMENTS; i++) {
+                const angle = (i / SEGMENTS) * TWO_PI + angleOffsets.weekday;
+                this.hitDetectionLookup.weekday[i] = Math.floor(angle / weekdayStep) % weekdayCount;
+            }
         }
     }
 
@@ -537,7 +548,9 @@ export class CalendarCanvas {
         this._drawSeasons();
         this._drawMonths();
         this._drawMoonPhase();
-        this._drawWeekdays();
+        if (this.canvasStrategy.weekdayRing !== false) {
+            this._drawWeekdays();
+        }
         this._drawDays();
     }
 
@@ -675,9 +688,14 @@ export class CalendarCanvas {
         const borderConfigs = [
             { radius: this.RADIUS.OUTER_FRAME, color: this.COLORS.BORDER_OUTER, width: 2 },
             { radius: this.RADIUS.DAYS, color: this.COLORS.BORDER_INNER, width: 1 },
-            { radius: this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 },
-            { radius: this.RADIUS.WEEKDAYS - this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 }
         ];
+
+        if (this.canvasStrategy.weekdayRing !== false) {
+            borderConfigs.push(
+                { radius: this.RADIUS.WEEKDAYS + this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 },
+                { radius: this.RADIUS.WEEKDAYS - this.AREASIZES.FIFTEEN, color: this.COLORS.BORDER_INNER, width: 1 }
+            );
+        }
 
         for (const config of borderConfigs) {
             borders.lineStyle(config.width, config.color);
@@ -720,6 +738,11 @@ export class CalendarCanvas {
         this.containers.months.addChild(monthTextsContainer);
         this.containers.monthSprites.addChild(spriteContainer);
 
+        const textureMatcher = this.canvasStrategy.textureMatcher || this.textureMatcher;
+        const monthFontSize = months.length > 20
+            ? Math.round(this.FONT_STYLE.MONTHS.fontSize * 0.7)
+            : this.FONT_STYLE.MONTHS.fontSize;
+
         // Create all month texts and sprites in a single pass
         for (let i = 0; i < months.length; i++) {
             const { x, y, angle, originalIndex } = this.precalculated.monthAngles[i];
@@ -727,6 +750,7 @@ export class CalendarCanvas {
             const isCurrentMonth = originalIndex === this.calendarData.currentMonth;
             const style = {
                 ...this.FONT_STYLE.MONTHS,
+                fontSize: monthFontSize,
                 fill: isCurrentMonth ? this.COLORS.TEXT_HIGHLIGHT : this.COLORS.TEXT_NORMAL
             };
 
@@ -738,8 +762,8 @@ export class CalendarCanvas {
             text.originalIndex = originalIndex;
 
             // Create sprite if texture exists
-            if (this.spritesheet && this.textureMatcher[originalIndex]) {
-                const monthSprite = new PIXI.Sprite(this.spritesheet[this.textureMatcher[originalIndex]]);
+            if (this.spritesheet && textureMatcher[originalIndex]) {
+                const monthSprite = new PIXI.Sprite(this.spritesheet[textureMatcher[originalIndex]]);
                 monthSprite.anchor.set(0.5);
                 const radiusOffset = this.RADIUS.OUTER - this.AREASIZES.HUNDRED;
                 monthSprite.position.set(
@@ -1037,7 +1061,7 @@ export class CalendarCanvas {
             return { type: 'day', index: this.hitDetectionLookup.day[angleDegrees] };
         }
 
-        if (Math.abs(distance - hitRegions.weekday.center) <= hitRegions.weekday.tolerance) {
+        if (this.canvasStrategy.weekdayRing !== false && Math.abs(distance - hitRegions.weekday.center) <= hitRegions.weekday.tolerance) {
             return { type: 'weekday', index: this.hitDetectionLookup.weekday[angleDegrees] };
         }
 

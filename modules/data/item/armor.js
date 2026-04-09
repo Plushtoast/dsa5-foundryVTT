@@ -51,7 +51,7 @@ export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, 
   }
 
   static chatData(data, name) {
-    let properties = [
+    const properties = [
       { key: 'protection', val: data.protection.value },
       { key: 'encumbrance', val: data.encumbrance.value },
     ];

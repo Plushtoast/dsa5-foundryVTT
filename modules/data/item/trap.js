@@ -64,7 +64,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
         shape.radiusY = value * gridSize;
         break;
       case 'cone':
-        ui.notifications.warn(game.i18n.localize("Cone templates are currently not supported"));
+        ui.notifications.warn("Cone templates are currently not supported");
         return;
       default:
         return;

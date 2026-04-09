@@ -1,5 +1,6 @@
 export class VerticalSlider {
     SLIDERHEIGHT = 5;
+    _updateFrame = null;
 
     constructor(container, identifier, { min = 0, max = 100, value = 50, onChange = null } = {}) {
         this.container = container;
@@ -63,11 +64,21 @@ export class VerticalSlider {
     }
 
     _updateUI() {
+        const trackHeight = this.track.clientHeight || this.track.getBoundingClientRect().height;
+        if (!trackHeight) {
+            if (this._updateFrame) cancelAnimationFrame(this._updateFrame);
+            this._updateFrame = requestAnimationFrame(() => {
+                this._updateFrame = null;
+                this._updateUI();
+            });
+            return;
+        }
+
         const pct = (this.value - this.min) / (this.max - this.min);
-        const pos = pct * this.track.clientHeight - this.SLIDERHEIGHT;
+        const pos = pct * trackHeight - this.SLIDERHEIGHT;
         
         this.thumb.style.bottom = `${pos}px`;
-        this.fill.style.height = `${pos}px`;
+        this.fill.style.height = `${pct * trackHeight}px`;
     }
 
     setValue(val) {

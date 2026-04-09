@@ -1,0 +1,84 @@
+<div class='tab scrollable gap0px {{tabs.skills.cssClass}}' data-tab='skills' data-group='{{tabs.skills.group}}'>
+
+  <div class="row-section wrap skills table-header searchbox">
+    <div class="col morph lineheight searchbox-spacer">
+    </div>
+    <div class="col morph row-section">
+      <div class="col ten center lineheight">
+        <i class="fas fa-search"></i>
+      </div>
+      <div class="col eighty lineheight searchbox-input">
+        <input type="search" class="skillSearch" placeholder="{{localize 'searchTalents'}}" />
+      </div>
+    </div>
+  </div>
+
+  <div class="row-section wrap allSkills showAll">
+    <div class="col morph">
+      {{#each skillCategories.left as |skills category|}}
+        <div class="row-section skills table-header lineheight {{category}}" style="margin-top:10px;">
+          <div class="skill-cat col two">
+            {{localize (concat "SKILL." category)}}
+          </div>
+        </div>
+        <div class="row-section skills table-title">
+          <div class="col two">{{localize "TYPES.Item.skill"}}</div>
+          <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+          <div class="col four center"></div>
+        </div>
+        {{#each skills as |skill|}}
+          <div class="row-section wrap skills lineheight tableOdd item"
+               data-skill="{{skill.name}}"
+               data-tooltip-html="{{skill.tooltipHtml}}">
+            <div class="skill-name col two">
+              <span class="talentName">{{skill.name}}</span>
+            </div>
+            <div class="skill-value col five center">
+              <b>{{skill.min}}/{{skill.best.value}}</b>
+            </div>
+            <div class="col four flexrow">
+              <button type="button" class="icon fas fa-users-cog noBorder dsadesignbutton" data-action="rollGroupCheck" data-skill="{{skill.name}}" data-tooltip="{{localize 'HELP.groupcheck'}}"></button>
+              <button type="button" class="icon fas fa-dice noBorder dsadesignbutton" data-action="requestSkillRoll" data-skill="{{skill.name}}" data-tooltip="{{localize 'HELP.request'}}"></button>
+            </div>
+          </div>
+        {{/each}}
+      {{/each}}
+    </div>
+    <div class="col morph">
+      {{#each skillCategories.right as |skills category|}}
+        <div class="row-section skills table-header lineheight {{category}}" style="margin-top:10px;">
+          <div class="skill-cat col two">
+            {{localize (concat "SKILL." category)}}
+          </div>
+        </div>
+        <div class="row-section skills table-title">
+          <div class="col two">{{localize "TYPES.Item.skill"}}</div>
+          <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+          <div class="col four center"></div>
+        </div>
+        {{#each skills as |skill|}}
+          <div class="row-section wrap skills lineheight tableOdd item"
+               data-skill="{{skill.name}}"
+               data-tooltip-html="{{skill.tooltipHtml}}">
+            <div class="skill-name col two">
+              <span class="talentName">{{skill.name}}</span>
+            </div>
+            <div class="skill-value col five center">
+              <b>{{skill.min}}/{{skill.best.value}}</b>
+            </div>
+            <div class="col four flexrow">
+              <button type="button" class="icon fas fa-users-cog noBorder dsadesignbutton" data-action="rollGroupCheck" data-skill="{{skill.name}}" data-tooltip="{{localize 'HELP.groupcheck'}}"></button>
+              <button type="button" class="icon fas fa-dice noBorder dsadesignbutton" data-action="requestSkillRoll" data-skill="{{skill.name}}" data-tooltip="{{localize 'HELP.request'}}"></button>
+            </div>
+          </div>
+        {{/each}}
+      {{/each}}
+    </div>
+  </div>
+
+  {{#unless groupSkills.length}}
+    <div class="notification info">
+      {{localize 'GROUP.noSkills'}}
+    </div>
+  {{/unless}}
+</div>

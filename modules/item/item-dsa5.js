@@ -5,12 +5,13 @@ import DSA5StatusEffects from '../status/status_effects.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import DSA5 from '../config/config-dsa5.js';
 import ItemRulesDSA5 from '../system/rules/item-rules-dsa5.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import CreatureType from '../system/automation/creature-type.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
+import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ModifierCalculator } from './concerns/modifier-calculator.js';
 import { CombatSystem } from './concerns/combat-system.js';
 import { ItemFactory } from './item-factory.js';
@@ -18,9 +19,11 @@ import { CombatSpecialAbilities } from './concerns/combat-special-abilities.js';
 import { MiracleModifiers } from './concerns/miracle-modifiers.js';
 import { ResistanceTests } from './concerns/resistance-tests.js';
 import { ItemEquality } from './concerns/item-equality.js';
+import { ItemCreateDialog } from './item-create-dialog.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
-import { localize, format } from '../system/helpers/localizer.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -104,7 +107,7 @@ export default class Itemdsa5 extends Item {
    */
   static async create(data, options) {
     if (Array.isArray(data)) {
-      for (let d of data) {
+      for (const d of data) {
         this.defaultIcon(d);
       }
     } else {
@@ -114,108 +117,8 @@ export default class Itemdsa5 extends Item {
   }
 
   /* @override */
-  static async createDialog(data = {}, createOptions = {}, { folders, types, template, context, ...dialogOptions } = {}) {
-    const applicationOptions = {
-      top: "position", left: "position", width: "position", height: "position", scale: "position", zIndex: "position",
-      title: "window", id: "", classes: "", jQuery: ""
-    };
-
-    for (const [k, v] of Object.entries(createOptions)) {
-      if (k in applicationOptions) {
-        foundry.utils.logCompatibilityWarning("The ClientDocument.createDialog signature has changed. "
-          + "It now accepts database operation options in its second parameter, "
-          + "and options for DialogV2.prompt in its third parameter.", { since: 13, until: 15, once: true });
-        const dialogOption = applicationOptions[k];
-        if (dialogOption) foundry.utils.setProperty(dialogOptions, `${dialogOption}.${k}`, v);
-        else dialogOptions[k] = v;
-        delete createOptions[k];
-      }
-    }
-
-    const { parent, pack } = createOptions;
-    const cls = this.implementation;
-
-    // Identify allowed types
-    const documentTypes = [];
-    let defaultType = CONFIG[this.documentName]?.defaultType;
-    let defaultTypeAllowed = false;
-    let hasTypes = false;
-    if (this.TYPES.length > 1) {
-      if (types?.length === 0) throw new Error("The array of sub-types to restrict to must not be empty");
-
-      // Register supported types
-      for (const type of this.TYPES) {
-        if (type === CONST.BASE_DOCUMENT_TYPE) continue;
-        if (types && !types.includes(type)) continue;
-        let label = CONFIG[this.documentName]?.typeLabels?.[type];
-        label = label && game.i18n.has(label) ? localize(label) : type;
-        documentTypes.push({
-          value: type,
-          label,
-          img: ITEM_CONSTANTS.DEFAULT_IMAGES[type]
-        });
-        if (type === defaultType) defaultTypeAllowed = true;
-      }
-      if (!documentTypes.length) throw new Error("No document types were permitted to be created");
-
-      if (!defaultTypeAllowed) defaultType = documentTypes[0].value;
-      // Sort alphabetically
-      documentTypes.sort((a, b) => a.label.localeCompare(b.label, game.i18n.lang));
-      hasTypes = true;
-    }
-
-    // Identify destination collection
-    let collection;
-    if (!parent) {
-      if (pack) collection = game.packs.get(pack);
-      else collection = game.collections.get(this.documentName);
-    }
-
-    // Collect data
-    folders ??= collection?._formatFolderSelectOptions() ?? [];
-    const label = localize(this.metadata.label);
-    const title = format("DOCUMENT.Create", { type: label });
-    const type = data.type || defaultType;
-
-    // Render the document creation form
-    template ??= "systems/dsa5/templates/items/document-create.hbs";
-    const html = await foundry.applications.handlebars.renderTemplate(template, {
-      folders, hasTypes, type,
-      name: data.name || "",
-      defaultName: cls.defaultName({ type, parent, pack }),
-      folder: data.folder,
-      hasFolders: folders.length >= 1,
-      types: documentTypes,
-      ...context
-    });
-    const content = document.createElement("div");
-    content.innerHTML = html;
-
-    // Render the confirmation dialog window
-    return foundry.applications.api.DialogV2.prompt(foundry.utils.mergeObject({
-      content,
-      window: { title }, // FIXME: double localization
-      render: (event, dialog) => {
-        if (!hasTypes) return;
-        dialog.element.querySelectorAll('[name="type"]').forEach(input => {
-          input.addEventListener("change", e => {
-            const nameInput = dialog.element.querySelector('[name="name"]');
-            nameInput.placeholder = cls.defaultName({ type: e.target.value, parent, pack });
-          });
-        });
-      },
-      position: { width: 400, height: 600 },
-      ok: {
-        label: title, // FIXME: double localization
-        callback: (event, button) => {
-          const fd = new foundry.applications.ux.FormDataExtended(button.form);
-          foundry.utils.mergeObject(data, fd.object);
-          if (!data.folder) delete data.folder;
-          if (!data.name?.trim()) data.name = cls.defaultName({ type: data.type, parent, pack });
-          return cls.create(data, { renderSheet: true, ...createOptions });
-        }
-      }
-    }, dialogOptions));
+  static async createDialog(data = {}, createOptions = {}, { folders, types, template, context, ...dialogOptions } = {}, renderOptions = {}) {
+    return ItemCreateDialog.wait(this, data, createOptions, { folders, types, template, context, ...dialogOptions }, renderOptions);
   }
 
   /**
@@ -228,7 +131,7 @@ export default class Itemdsa5 extends Item {
    *   - {string} damageBonus - Damage bonus string
    *   - {number} dmmalus - Defense malus value
    *   - {number} step - Step value from dataset
-   *   - {string} specAbId - Special ability ID
+   *   - {Object} ref - Reference object { id } pointing to the special ability
    *   - {string} [type] - Modifier type (optional)
    *   - {Object} flatValues - Flat values object
    */
@@ -259,7 +162,7 @@ export default class Itemdsa5 extends Item {
         damageBonus: dataset.tpbonus,
         dmmalus: Number(dataset.dmmalus) * step + (flatValues.dmmalus || 0),
         step,
-        specAbId: dataset.id,
+        ref: { id: dataset.id },
         type: modifier.type,
         flatValues
       });
@@ -292,6 +195,7 @@ export default class Itemdsa5 extends Item {
    */
   static setupSubClasses() {
     ItemFactory.setupSubclasses({
+      aggregatedTest: AggregatedTestItemDSA5,
       ritual: RitualItemDSA5,
       spell: SpellItemDSA5,
       liturgy: LiturgyItemDSA5,
@@ -300,6 +204,7 @@ export default class Itemdsa5 extends Item {
       disease: DiseaseItemDSA5,
       poison: PoisonItemDSA5,
       money: MoneyItemDSA5,
+      plant: PlantItemDSA5,
       rangeweapon: RangeweaponItemDSA5,
       meleeweapon: MeleeweaponDSA5,
       combatskill: CombatskillDSA5,
@@ -403,7 +308,7 @@ export default class Itemdsa5 extends Item {
    * @private
    */
   static async _updateActorConditions(documents) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.actor) {
         await Actordsa5.postUpdateConditions(doc.actor);
       }
@@ -439,7 +344,6 @@ export default class Itemdsa5 extends Item {
     source.system.characteristic3.value = ch3;
   }
 
-
   // ===== DIALOG AND TESTING =====
 
   /**
@@ -465,6 +369,48 @@ export default class Itemdsa5 extends Item {
    */
   setupEffect(ev, options = {}, tokenId) {
     return ItemFactory.getSubClass(this.type).setupDialog(ev, options, this, this.parent, tokenId);
+  }
+
+  async rollAggregatedProbe(which, tokenId) {
+    return await ItemFactory.getSubClass(this.type).rollAggregatedProbe(this, which, tokenId);
+  }
+
+  static async _createUseChatMessage(item, actor, tokenId, effect, options = {}) {
+    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
+      item,
+      effect,
+      applyEffect: options.applyEffect,
+      hasAreaTemplate: options.hasAreaTemplate,
+    });
+
+    const chatOptions = DSA5_Utility.chatDataSetup(msg);
+    chatOptions['flags.data'] = {
+      preData: {
+        source: item.toObject(),
+        extra: {
+          speaker: ItemDialogBuilder.buildSpeaker(actor, tokenId),
+        },
+      },
+    };
+
+    if (options.postData) {
+      chatOptions['flags.data'].postData = options.postData;
+    }
+
+    await ChatMessage.create(chatOptions);
+  }
+
+  static async _applyItemUseActiveEffect(source, testData = {}) {
+    const effects = source.effects.toObject();
+    if (!effects.length) return;
+
+    const { msg, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(source.actor, effects, source, testData, source.actor);
+
+    const infoMsg = `${_loc('ActiveEffects.appliedEffect', {
+      target: source.actor.token?.name || source.actor.name,
+      source: effectNames.join(', '),
+    })} ${msg || ''}`;
+    ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
   }
 
   /**
@@ -522,13 +468,13 @@ export default class Itemdsa5 extends Item {
    */
   async itemTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
-    let result = await DiceDSA5.rollTest(testData);
+    const result = await DiceDSA5.rollTest(testData);
 
     result.postFunction = 'itemTest';
 
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
-      const opposed = OPPOSED_SUFFIX + localize('Opposed');
+      const opposed = OPPOSED_SUFFIX + _loc('Opposed');
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) {
         cardOptions.title += opposed;
       }
@@ -550,6 +496,91 @@ export default class Itemdsa5 extends Item {
   }
 }
 
+class AggregatedTestItemDSA5 extends Itemdsa5 {
+  static async rollAggregatedProbe(item, which, tokenId) {
+    const actor = item.actor;
+    if (!actor) return;
+
+    const attr = item.system.talent[`value${which}`];
+    const skill = actor.items.find((entry) => entry.name == attr && entry.type == 'skill');
+    let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
+
+    if (item.system.usedTestCount.value >= item.system.allowedTestCount.value) {
+      infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
+      await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+      return;
+    }
+
+    if (!skill) return;
+
+    const postFunction = {
+      functionName: "game.dsa5.entities.Itemdsa5.getSubClass('aggregatedTest').updateAggregatedTest",
+      aggregatedItemId: item.id,
+      previousCummulatedQS: item.system.cummulatedQS.value,
+      previousFailedTests: item.system.previousFailedTests.value,
+      previousUsedTestCount: item.system.usedTestCount.value,
+      speaker: {
+        token: tokenId,
+        actor: actor.id,
+        scene: canvas.scene?.id,
+      },
+    };
+
+    const setupData = await actor.setupSkill(
+      skill,
+      {
+        moreModifiers: [
+          {
+            name: _loc('failedTests'),
+            value: -1 * item.system.previousFailedTests.value,
+            selected: true,
+          },
+          {
+            name: _loc('Modifier'),
+            value: item.system.baseModifier,
+            selected: true,
+          },
+        ],
+        postFunction,
+      },
+      tokenId,
+    );
+
+    const res = await actor.basicTest(setupData);
+    await this.updateAggregatedTest(postFunction, res);
+  }
+
+  static async updateAggregatedTest(postFunction, testResult, source) {
+    const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
+    if (!actor) return;
+
+    const item = actor.items.get(postFunction.aggregatedItemId);
+    if (!item) return;
+
+    const aggregated = item.toObject();
+    aggregated.system.cummulatedQS.value = postFunction.previousCummulatedQS;
+    aggregated.system.previousFailedTests.value = postFunction.previousFailedTests;
+    aggregated.system.usedTestCount.value = postFunction.previousUsedTestCount;
+
+    const result = testResult.result;
+    if (result.successLevel > 0) {
+      aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value + result.qualityStep);
+    } else {
+      aggregated.system.previousFailedTests.value += 1;
+    }
+    aggregated.system.usedTestCount.value += 1;
+
+    await actor.updateEmbeddedDocuments('Item', [aggregated]);
+
+    const updated = actor.items.get(postFunction.aggregatedItemId);
+    await updated.postItem();
+
+    if (aggregated.system.cummulatedQS.value >= 10) {
+      await updated.sheet?.postFinishedItem();
+    }
+  }
+}
+
 class WeaponItemDSA5 extends Itemdsa5 { }
 
 class MoneyItemDSA5 extends Itemdsa5 {
@@ -561,7 +592,7 @@ class MoneyItemDSA5 extends Itemdsa5 {
 class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
-    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
     const formData = new foundry.applications.ux.FormDataExtended(form).object;
     testData.calculatedSpellModifiers = {
@@ -571,37 +602,37 @@ class SpellItemDSA5 extends Itemdsa5 {
       maintainCost: html.find('.maintainCost').text(),
     };
     testData.situationalModifiers.push(
-      ModifierCalculator.parseValueType(localize('sight'), formData.vision || 0),
+      ModifierCalculator.parseValueType(_loc('sight'), formData.vision || 0),
       {
-        name: localize('removeGesture'),
+        name: _loc('removeGesture'),
         value: Number(formData.removeGesture) || 0,
       },
       {
-        name: localize('removeFormula'),
+        name: _loc('removeFormula'),
         value: Number(formData.removeFormula) || 0,
       },
       {
-        name: localize('castingTime'),
+        name: _loc('castingTime'),
         value: html.find('.castingTime').data('mod'),
       },
       {
-        name: localize('cost'),
+        name: _loc('cost'),
         value: html.find('.aspcost').data('mod'),
       },
       {
-        name: localize('reach'),
+        name: _loc('reach'),
         value: html.find('.reach').data('mod'),
       },
       {
-        name: localize('zkModifier'),
+        name: _loc('zkModifier'),
         value: formData.zkModifier || 0,
       },
       {
-        name: localize('skModifier'),
+        name: _loc('skModifier'),
         value: formData.skModifier || 0,
       },
       {
-        name: localize('maintainedSpells'),
+        name: _loc('maintainedSpells'),
         value: formData.maintainedSpells * -1,
       },
     );
@@ -618,18 +649,18 @@ class SpellItemDSA5 extends Itemdsa5 {
   static async applyExtensions(source, extensions, actor) {
     RuleChaos.ensureNumber(source);
     const rollModifiers = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
-    for (let extension of extensions) {
+    for (const extension of extensions) {
       const item = fromUuidSync(extension.uuid);
       if (!item) continue;
 
-      for (let ef of item.effects) {
-        for (let change of ef.changes) {
+      for (const ef of item.effects) {
+        for (const change of ef.system.changes) {
           if (DSA5SpellDialog.rollChanges.includes(change.key)) continue;
           if (rollModifiers.includes(change.key)) continue;
 
           if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
-          } else if (change.key == 'system.effectFormula.value' && change.mode == 2) {
+          } else if (change.key == 'system.effectFormula.value' && change.type === 'add') {
             source.system.effectFormula.value = source.system.effectFormula.value
               .split(',')
               .map((x) => {
@@ -646,7 +677,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
   static getSpecAbModifiers(html) {
     const res = [];
-    for (let k of html.find('.specAbs.active')) {
+    for (const k of html.find('.specAbs.active')) {
       res.push({
         name: k.dataset.name,
         title: k.dataset.tooltip,
@@ -660,7 +691,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     const res = [];
     if (source.system.effectFormula.value)
       res.push({
-        name: localize('MODS.defenseMalus'),
+        name: _loc('MODS.defenseMalus'),
         value: ITEM_CONSTANTS.RANGE_DEFENSE_MALUS,
         type: 'defenseMalus',
         selected: true,
@@ -692,8 +723,7 @@ class SpellItemDSA5 extends Itemdsa5 {
               value: f.value,
               type,
               source: f.source,
-              effectId: f.effectId || null,
-              effectUuid: f.effectUuid || null,
+              ref: f.ref || null,
             };
           }),
       );
@@ -706,8 +736,7 @@ class SpellItemDSA5 extends Itemdsa5 {
           value: f.value,
           source: f.source,
           type: cost,
-          effectId: f.effectId || null,
-          effectUuid: f.effectUuid || null,
+          ref: f.ref || null,
         };
       }),
     );
@@ -732,31 +761,24 @@ class SpellItemDSA5 extends Itemdsa5 {
       !enabledActorTypes.includes(actor.type) ||
       !applicableSpellTypes.includes(source.type)) return;
 
-    const traditionLabel = localize('tradition');
-    const clean = (s = '') => s
-      .toString()
-      .replace(/[()]/g, '')
-      .replace(new RegExp(traditionLabel, 'gi'), '')
-      .split(',')
-      .map(x => x.trim().toLowerCase())
-      .filter(Boolean);
-
-    const distributions = clean(source.system.distribution.value);
-    const fromActorTraditions = clean(actor.system.tradition.magical);
+    // TODO: Sync tradition identifiers in the underlying data instead of relying on display-label normalization here.
+    const traditionLabel = _loc('tradition');
+    const distributions = DSA5_Utility.cleanTraditionTokens(source.system.distribution.value, traditionLabel);
+    const fromActorTraditions = DSA5_Utility.cleanTraditionTokens(actor.system.tradition.magical, traditionLabel);
     const fromSpecials = actor.items
       .filter(i => i.type === 'specialability' && i.name.startsWith(traditionLabel))
       .map(i => i.name)
-      .flatMap(clean);
+      .flatMap((name) => DSA5_Utility.cleanTraditionTokens(name, traditionLabel));
 
-    const traditionsSet = new Set([...fromActorTraditions, ...fromSpecials, localize('general').toLowerCase()]);
+    const ownTraditions = [...fromActorTraditions, ...fromSpecials, _loc('general').toLowerCase()];
 
-    data.isForeign = !distributions.some(d => traditionsSet.has(d));
+    data.isForeign = !DSA5_Utility.hasMatchingTradition(distributions, ownTraditions);
 
     const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
 
     if (data.isForeign) {
       situationalModifiers.push({
-      name: localize('DSASETTINGS.enableForeignSpellModifer'),
+      name: _loc('DSASETTINGS.enableForeignSpellModifer'),
       value: -2 + modOffset,
       selected: true,
       });
@@ -797,7 +819,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, spell);
 
     dialogOptions.callback = async (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       await this.getCallbackData(testData, html, actor);
       mergeObject(testData.extra.options, options);
       testData.hideSpellDetails = game.settings.get('dsa5', 'hideSpellDetails');
@@ -815,15 +837,15 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     super.getCallbackData(testData, html, actor);
     testData.situationalModifiers.push(
       {
-        name: localize('CEREMONYMODIFIER.artefact'),
+        name: _loc('CEREMONYMODIFIER.artefact'),
         value: html.find('[name="artefactUsage"]').is(':checked') ? 1 : 0,
       },
       {
-        name: localize('place'),
+        name: _loc('place'),
         value: html.find('[name="placeModifier"]').val(),
       },
       {
-        name: localize('time'),
+        name: _loc('time'),
         value: html.find('[name="timeModifier"]').val(),
       },
     );
@@ -833,8 +855,8 @@ class CeremonyItemDSA5 extends LiturgyItemDSA5 {
     super.getSituationalModifiers(situationalModifiers, actor, data, source);
 
     let timeModifier = 0;
-    const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(localize('LocalizedIDs.assumeTradition')));
-    let assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
+    const traditionItem = actor.items.find(x => x.type == "specialability" && x.name.startsWith(_loc('LocalizedIDs.assumeTradition')));
+    const assumeTradition = (traditionItem?.name || actor.system.tradition.clerical)?.toLowerCase() || '';
     const calendar = game.time.calendar;
 
     if (assumeTradition && calendar?.constructor?.isDSAcompatible) {
@@ -872,8 +894,8 @@ class CombatskillDSA5 extends Itemdsa5 {
   static setupDialog(ev, options, item, actor, tokenId) {
     const { dialogOptions, testData, cardOptions } = ItemDialogBuilder.createCombatDialog(item, actor, tokenId, options);
     dialogOptions.callback = (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
+      testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       mergeObject(testData.extra.options, options);
       return { testData, cardOptions };
     }
@@ -912,11 +934,6 @@ class ConsumableItemDSA extends Itemdsa5 {
     const newQuantity = item.system.charges <= 1 ? item.system.quantity.value - 1 : item.system.quantity.value;
 
     const effect = DSA5_Utility.replaceDies(item.system.QLList.split('\n')[item.system.QL - 1], false);
-    const msg = await renderTemplate('systems/dsa5/templates/chat/consumable-used.hbs', {
-      item,
-      effect,
-      hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
-    });
     if (newQuantity == 0) {
       await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
     } else {
@@ -926,41 +943,15 @@ class ConsumableItemDSA extends Itemdsa5 {
       });
     }
 
-    const chatOptions = DSA5_Utility.chatDataSetup(msg);
-    chatOptions['flags.data'] = {
-      preData: {
-        source: item.toObject(),
-        extra: {
-          speaker: ItemDialogBuilder.buildSpeaker(actor, tokenId),
-        },
-      },
+    await this._createUseChatMessage(item, actor, tokenId, effect, {
+      hasAreaTemplate: item.system.target && item.system.target.type in DSA5.areaTargetTypes,
       postData: {
         qualityStep: item.system.QL,
       },
-    };
-    await ChatMessage.create(chatOptions);
-    await this._applyActiveEffect(item);
-  }
-
-  static async _applyActiveEffect(source) {
-    let effects = source.effects.toObject();
-    if (effects.length > 0) {
-      const { msg, resistRolls, effectNames } = await DSAActiveEffectConfig.applyAdvancedFunction(
-        source.actor,
-        effects,
-        source,
-        {
-          qualityStep: source.system.QL,
-        },
-        source.actor,
-      );
-
-      const infoMsg = `${format('ActiveEffects.appliedEffect', {
-        target: source.actor.token?.name || source.actor.name,
-        source: effectNames.join(', '),
-      })} ${msg || ''}`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    }
+    });
+    await this._applyItemUseActiveEffect(item, {
+      qualityStep: item.system.QL,
+    });
   }
 
   static async combineItem(item1, item2, actor, render = true) {
@@ -977,6 +968,40 @@ class ConsumableItemDSA extends Itemdsa5 {
     item1.system.charges = newCharges;
     return await actor.updateEmbeddedDocuments('Item', [item1], { render });
   }
+}
+
+class PlantItemDSA5 extends Itemdsa5 {
+  static async setupDialog(ev, options, item, actor, tokenId) {
+    if (!item.isOwned) return;
+
+    const quantity = Number(item.system.quantity.value) || 0;
+    if (quantity <= 0) {
+      ui.notifications.error('DSAError.NotEnoughItems', { localize: true });
+      return;
+    }
+
+    const newQuantity = quantity - 1;
+    const effect = item.system.effect || '';
+    if (newQuantity > 0) {
+      await item.update({ 'system.quantity.value': newQuantity });
+    }
+
+    await this._createUseChatMessage(item, actor, tokenId, effect, {
+      applyEffect: item.effects.length > 0,
+      hasAreaTemplate: false,
+    });
+
+    await this._applyItemUseActiveEffect(item);
+
+    if (item.getFlag('dsa5', 'onUseEffect')) {
+      await new OnUseEffect(item).executeOnUseEffect();
+    }
+
+    if (newQuantity <= 0) {
+      await item.actor.deleteEmbeddedDocuments('Item', [item.id]);
+    }
+  }
+
 }
 
 class DiseaseItemDSA5 extends Itemdsa5 {
@@ -1023,7 +1048,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, DSA5_Utility.toObjectIfPossible(item));
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;
-    dialogOptions.data.defenseCountString = format('defenseCount', { malus: multipleDefenseValue });
+    dialogOptions.data.defenseCountString = _loc('defenseCount', { malus: multipleDefenseValue });
     this.getSituationalModifiers(dialogOptions.data.situationalModifiers, actor, dialogOptions.data, item);
 
     dialogOptions.callback = (html, options = {}) => {
@@ -1075,19 +1100,19 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
       if (currentAmmo) {
         if (currentAmmo.system.atmod) {
           situationalModifiers.push({
-            name: `${currentAmmo.name} - ${localize('atmod')}`,
+            name: `${currentAmmo.name} - ${_loc('atmod')}`,
             value: currentAmmo.system.atmod,
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           });
         }
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
           const dmgMod = {
-            name: `${currentAmmo.name} - ${localize('MODS.damage')}`,
+            name: `${currentAmmo.name} - ${_loc('MODS.damage')}`,
             value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
             type: 'dmg',
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           };
           if (currentAmmo.system.armorMod) dmgMod.armorPen = currentAmmo.system.armorMod;
 
@@ -1095,11 +1120,11 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         }
         if (currentAmmo.effects.length) {
           situationalModifiers.push({
-            name: `${currentAmmo.name} - ${localize('TYPES.Item.ammunition')}`,
+            name: `${currentAmmo.name} - ${_loc('TYPES.Item.ammunition')}`,
             value: 1,
             type: 'effect',
             selected: true,
-            specAbId: source.system.currentAmmo.value,
+            ref: { id: source.system.currentAmmo.value },
           });
         }
       }
@@ -1119,7 +1144,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
   static async checkAmmunitionState(item, testData, actor, mode) {
     let hasAmmo = true;
     if (mode != ITEM_CONSTANTS.COMBAT_MODES.DAMAGE) {
-      let itemData = item.system;
+      const itemData = item.system;
       if (itemData.ammunitiongroup.value == 'infinite') {
         //Dont count ammo
       } else if (itemData.ammunitiongroup.value == '-') {
@@ -1167,19 +1192,19 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     super.getCallbackData(testData, html, actor);
     testData.situationalModifiers.push(
       {
-        name: localize('RITUALMODIFIER.rightClothes'),
+        name: _loc('RITUALMODIFIER.rightClothes'),
         value: html.find('[name="rightClothes"]').is(':checked') ? 1 : 0,
       },
       {
-        name: localize('RITUALMODIFIER.rightEquipment'),
+        name: _loc('RITUALMODIFIER.rightEquipment'),
         value: html.find('[name="rightEquipment"]').is(':checked') ? 1 : 0,
       },
       {
-        name: localize('place'),
+        name: _loc('place'),
         value: html.find('[name="placeModifier"]').val(),
       },
       {
-        name: localize('time'),
+        name: _loc('time'),
         value: html.find('[name="timeModifier"]').val(),
       },
     );
@@ -1226,7 +1251,7 @@ class SkillItemDSA5 extends Itemdsa5 {
   }
 
   static prepareFocusRuleModifiers(data, actor, skill) {
-    const reverseLookUp = localize(`LocalizedSkills.${skill.name}`);
+    const reverseLookUp = _loc(`LocalizedSkills.${skill.name}`);
     const modifierData = game.dsa5.config.SKILL[reverseLookUp];
 
     if (!modifierData) return;
@@ -1241,13 +1266,13 @@ class SkillItemDSA5 extends Itemdsa5 {
     this.prepareFocusRuleModifiers(dialogOptions.data, actor, skill);
 
     dialogOptions.callback = (html, options = {}) => {
-      cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+      cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       const form = html[0].tagName == 'FORM' ? html[0] : html.find('form')[0];
       const formData = new foundry.applications.ux.FormDataExtended(form).object;
       testData.testDifficulty = DSA5.skillDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-      testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+      testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       testData.situationalModifiers.push(
-        ModifierCalculator.parseValueType(localize('sight'), formData.vision || 0),
+        ModifierCalculator.parseValueType(_loc('sight'), formData.vision || 0),
       );
       testData.advancedModifiers = {
         chars: [0, 1, 2].map((x) => Number(html.find(`[name="ch${x}"]`).val())),
@@ -1287,7 +1312,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
 
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(actor, item.toObject());
     dialogOptions.data.multipleDefenseValue = multipleDefenseValue;
-    dialogOptions.data.defenseCountString = format('defenseCount', {
+    dialogOptions.data.defenseCountString = _loc('defenseCount', {
       malus: multipleDefenseValue,
     });
 

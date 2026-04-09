@@ -18,7 +18,7 @@ export default class DialogActorConfig extends DefaultAppv2 {
   };
 
   get title() {
-    return `${game.i18n.localize('Migrakel.Migration')} - ${this.actor.name}`;
+    return `${_loc('Migrakel.Migration')} - ${this.actor.name}`;
   }
 
   constructor(actor, options) {
@@ -32,17 +32,17 @@ export default class DialogActorConfig extends DefaultAppv2 {
 
     const fnct = target.dataset.target;
     this.lock = true;
-    
+
     const spinner = document.createElement('i');
     spinner.className = 'fas fa-spinner fa-spin';
     target.prepend(spinner);
-    
+
     await Migrakel[fnct](this.actor);
-    
+
     if (spinner.parentNode) {
       spinner.parentNode.removeChild(spinner);
     }
-    
+
     this.lock = false;
   }
 }

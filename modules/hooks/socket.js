@@ -1,7 +1,7 @@
 import PlayerMenu from '../wizards/player_menu.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import RequestRoll from '../system/rolls/request-roll.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import { dropToGround } from './itemDrop.js';
@@ -13,6 +13,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -21,16 +22,16 @@ export function connectSocket() {
         DSA5Combat.brawlStart(2000, false);
         return;
       case 'hideDeletedSheet':
-        let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
+        const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
         MerchantSheetDSA5.hideDeletedSheet(target);
         return;
       case 'refreshSheets':
-        for (let app of Object.values(ui.windows)) {
+        for (const app of Object.values(ui.windows)) {
           if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
         }
-        for (let sheet of data.payload.sheets) {
+        for (const sheet of data.payload.sheets) {
           if (!sheet.sheetId) continue;
-          let app = foundry.applications.instances.get(sheet.sheetId);
+          const app = foundry.applications.instances.get(sheet.sheetId);
           if (app && app.rendered) {
             app.render(true);
           }
@@ -74,8 +75,8 @@ export function connectSocket() {
         break;
       case 'target':
         {
-          let scene = game.scenes.get(data.payload.scene);
-          let token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
+          const scene = game.scenes.get(data.payload.scene);
+          const token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
           token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
         }
         break;
@@ -117,10 +118,22 @@ export function connectSocket() {
       case 'updateDefenseCount':
         if (game.combat) game.combat.updateDefenseCount(data.payload.speaker);
         break;
+      case 'updateActionCount':
+        if (game.combat) game.combat.updateActionCount(data.payload.speaker, data.payload.cost);
+        break;
+      case 'toggleFreeAction':
+        if (game.combat) game.combat.toggleFreeAction(data.payload.speaker);
+        break;
+      case 'handleMovementCost':
+        if (game.combat) {
+          const movTokenDoc = canvas.scene?.tokens?.get(data.payload.tokenId);
+          if (movTokenDoc) game.combat.handleMovementCost(movTokenDoc);
+        }
+        break;
       case 'trade':
         {
-          let source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
-          let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
+          const source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
+          const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
           MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount);
         }
         break;
@@ -160,7 +173,7 @@ export function connectSocket() {
         break;
       case 'itemDrop':
         {
-          let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
+          const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
             dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
           });
@@ -172,10 +185,10 @@ export function connectSocket() {
       case 'hideResistButton':
         break;
       case 'requestShapeshift':
-        game.dsa5.config.hooks.shapeshift.constructor.onRequestShapeshift(data.payload);
+        ShapeshiftWizard.onRequestShapeshift(data.payload);
         break
       case 'requestRestoreShape':
-        game.dsa5.config.hooks.shapeshift.constructor.onRestoreShape(data.payload);
+        ShapeshiftWizard.onRestoreShape(data.payload);
         break
       case 'reduceGroupSchip':
         FateRolls.reduceGroupSchip();

@@ -1,16 +1,5 @@
 <div class='tab scrollable standard-form {{tabs.personae.cssClass}}' data-tab='personae' data-group='{{tabs.personae.group}}'>
     <div class="fullScreenPadded dark-theme personae-container">
-        <div class="personae-header">
-            <h2 class="section-title"></h2>
-            {{#if isGM}}
-            <div class="personae-controls">
-                <button type="button" class="add-persona" data-action="newPersona">
-                    <i class="fas fa-plus"></i> {{localize "PERSONAE.Add"}}
-                </button>
-            </div>
-            {{/if}}
-        </div>
-
         <div class="personae-two-column">
             <div class="personae-list-column">
                 <div class="personae-list-header">
@@ -22,9 +11,14 @@
                             {{localize "PERSONAE.bestiary"}}
                         </button>
                     </div>
-                    <div class="list-search">
-                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
-                        <i class="fas fa-search"></i>
+                    <div class="personae-list-toolbar flexrow">
+                        <div class="list-search flex1">
+                            <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
+                            <i class="fas fa-search"></i>
+                        </div>
+                        {{#if isGM}}
+                        <button type="button" class="icon fas fa-plus list-add-button" data-action="newPersona" data-tooltip="{{localize 'PERSONAE.Add'}}"></button>
+                        {{/if}}
                     </div>
                 </div>
                 

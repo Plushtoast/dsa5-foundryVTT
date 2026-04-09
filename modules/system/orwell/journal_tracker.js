@@ -19,7 +19,7 @@ export default class JournalTracker {
                 await this.addEntry(page, actor, description, cost);
             } else {
                 if (!hasActiveGM) {
-                    ui.notifications?.warn(game.i18n.localize('TRACKER.requiresGM'));
+                    ui.notifications?.warn(_loc('TRACKER.requiresGM'));
                     return;
                 }
                 const payload = {
@@ -53,7 +53,7 @@ export default class JournalTracker {
     }
 
     static async createJournal(actor) {
-        const folder = await DSA5_Utility.getFolderForType('JournalEntry', null, game.i18n.localize(this.config.journalName));
+        const folder = await DSA5_Utility.getFolderForType('JournalEntry', null, _loc(this.config.journalName));
 
         let journal = game.journal.find((e) => foundry.utils.getProperty(e.flags, `dsa5.${this.config.flagName}`) == actor.id);
 
@@ -88,7 +88,7 @@ export default class JournalTracker {
         if (!page) {
             let pageName = name;
             if (journal.pages.some((x) => x.name === pageName)) {
-                pageName = `${name} (${game.i18n.localize(this.config.journalName)})`;
+                pageName = `${name} (${_loc(this.config.journalName)})`;
             }
             page = (
                 await journal.createEmbeddedDocuments('JournalEntryPage', [

@@ -1,0 +1,137 @@
+<form class="scrollable flexcol gap10px">
+    <div>
+        <h1>{{localize "Shapeshift.title"}}</h1>
+        <p>{{{localize "Shapeshift.description" source=source.name target=target.name}}}</p>
+    </div>
+    
+
+    <hr />
+
+
+    <div class="row-section">
+        <div class="col fourty center">
+            {{source.name}}
+        </div>
+        <div class="col five center">
+        </div>
+        <div class="col fourty center">
+            {{target.name}}
+        </div>
+    </div>
+    
+    <div class="row-section">
+        <div class="col fourty center">
+            <img height="100" class="centerMargin" src="{{source.img}}" data-tooltip="{{source.name}}" />
+        </div>
+        <div class="col five center">
+            <i class="fas fa-4x fa-people-arrows" style="line-height:100px;"></i>
+        </div>
+        <div class="col fourty center">
+            <img height="100" class="centerMargin" src="{{target.img}}" data-tooltip="{{target.name}}" />
+        </div>
+
+
+    </div>
+    <fieldset>
+        <legend>{{localize 'attributes'}}</legend>
+        {{#each characteristics_mental as |item i|}}
+        <div class="flexrow">
+            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item}}"
+                name="system.characteristics.{{item}}" value="source" checked>
+            <label class="center">{{localize (concatUp 'CHAR.' item)}}</label>
+            <input type="radio" class="center" id="characteristics_target_{{item}}"
+                name="system.characteristics.{{item}}" value="target">
+        </div>
+        {{/each}}
+        {{#each characteristics_physical as |item i|}}
+        <div class="flexrow">
+            <input type="radio" data-group="characteristic" class="center" id="characteristics_source_{{item}}"
+                name="system.characteristics.{{item}}" value="source">
+            <label class="center">{{localize (concatUp 'CHAR.' item)}}</label>
+            <input type="radio" class="center" id="characteristics_target_{{item}}"
+                name="system.characteristics.{{item}}" value="target" checked>
+        </div>
+        {{/each}}
+    </fieldset>
+    <fieldset>
+        <legend>{{localize 'derivedStats'}}</legend>
+        {{#each status as |item i|}}
+        <div class="flexrow">
+            <input type="radio" data-group="status" class="center" id="status_source_{{item.label}}"
+                name="system.status.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+            <label class="center">{{localize item.label}}</label>
+            <input type="radio" class="center" id="status_target_{{item.label}}" name="system.status.{{item.label}}"
+                value="target" {{#unless item.selected}}checked{{/unless}}>
+        </div>
+        {{/each}}
+        {{#each secondaryAttributes as |item i|}}
+        <div class="flexrow">
+            <input type="radio" data-group="secondary" class="center" id="status_source_{{item.label}}"
+                name="system.status.{{item.label}}" value="source" {{#if item.selected}}checked{{/if}}>
+            <label class="center">{{localize item.label}}</label>
+            <input type="radio" class="center" id="status_target_{{item.label}}" name="system.status.{{item.label}}"
+                value="target" {{#unless item.selected}}checked{{/unless}}>
+        </div>
+        {{/each}}
+    </fieldset>
+    <fieldset>
+        <legend>{{localize 'skills'}}</legend>
+        {{#each skillGroups as |item i|}}
+        <div class="flexrow">
+            <input type="radio" data-group="talents" class="center" id="talents_source_{{item.label}}"
+                name="{{item.key}}" value="source" {{#if item.selected}}checked{{/if}}>
+            <label class="center">{{localize item.label}}</label>
+            <input type="radio" class="center" id="talents_target_{{item.label}}" name="{{item.key}}" value="target"
+                {{#unless item.selected}}checked{{/unless}}>
+        </div>
+        {{/each}}
+    </fieldset>
+    <fieldset>
+        <legend>{{localize 'Shapeshift.options'}}</legend>
+        <div class="row-section wrap gap10px">
+            <div class="col fourty form-group">
+                <label for="{{partId}}_calculateLeP">{{localize "Shapeshift.calculateLeP"}}</label>
+                <input type="checkbox" id="{{partId}}_calculateLeP" name="calculateLeP" value="true" checked>
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_takeAdvantages">{{localize "Shapeshift.takeVantages"}}</label>
+                <input type="checkbox" id="{{partId}}_takeAdvantages" name="takeAdvantages" value="true" checked>
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_takeSkills">{{localize "Shapeshift.takeSkills"}}</label>
+                <input type="checkbox" id="{{partId}}_takeSkills" name="takeSkills" value="true" checked>
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_takeSpecAbs">{{localize "Shapeshift.takeSpecAbs"}}</label>
+                <input type="checkbox" id="{{partId}}_takeSpecAbs" name="takeSpecAbs" value="true">
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_takeSpells">{{localize "Shapeshift.takeSpells"}}</label>
+                <input type="checkbox" id="{{partId}}_takeSpells" name="takeSpells" value="true">
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_takeLiturgies">{{localize "Shapeshift.takeLiturgies"}}</label>
+                <input type="checkbox" id="{{partId}}_takeLiturgies" name="takeLiturgies" value="true">
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_keepVision">{{localize "Shapeshift.keepVision"}}</label>
+                <input type="checkbox" id="{{partId}}_keepVision" name="keepVision" value="true" {{checked keepVision}}>
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_keepToken">{{localize "Shapeshift.keepToken"}}</label>
+                <input type="checkbox" id="{{partId}}_keepToken" name="keepToken" value="true">
+            </div>
+            <div class="col fourty form-group">
+                <label for="{{partId}}_keepItems">{{localize "Shapeshift.keepItems"}}</label>
+                <input type="checkbox" id="{{partId}}_keepItems" name="keepItems" value="true">
+            </div>
+            <div class="col fourty">
+
+            </div>
+        </div>
+    </fieldset>
+    <div class="flexrow">
+        <button data-action="ok" type="button"><i class="fas fa-check"></i> {{localize 'ok'}}</button>
+        <button data-action="cancel" type="button"><i class="fas fa-close"></i> {{localize 'cancel'}}</button>
+    </div>
+</form>

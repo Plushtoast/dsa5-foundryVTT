@@ -47,6 +47,15 @@ export default function () {
     onDown: async () => (await SelectUserDialog.getDialog()).render(true),
     restricted: true,
   });
+  game.keybindings.register('dsa5', 'openGroupSheet', {
+    name: 'GROUP.openGroupSheet',
+    hint: 'KEYBINDINGS.openGroupSheet',
+    editable: [],
+    onDown: () => {
+      const partyUuid = game.settings.get('dsa5', 'primaryParty');
+      if (partyUuid) fromUuidSync(partyUuid)?.sheet?.render(true);
+    },
+  });
 }
 
 const combatTurn = (mode) => {

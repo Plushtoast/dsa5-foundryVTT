@@ -11,8 +11,9 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import { isTwoHandedWeapon } from '../system/helpers/weapon_hands.js';
 import { tinyNotification } from '../system/helpers/view_helper.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import { DSAAura } from '../system/automation/aura.js';
 import CreatureType from '../system/automation/creature-type.js';
 import Riding from '../system/automation/riding.js';
 import APTracker from '../system/orwell/ap-tracker.js';
@@ -25,11 +26,12 @@ import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { FateRolls } from './concerns/faterolls.js';
-import { localize, format } from '../system/helpers/localizer.js';
+import { RaptureTracker } from './concerns/rapture-tracker.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+
 import SpecialabilityData from '../data/item/specialability.js';
-const { getProperty, mergeObject, duplicate, hasProperty, setProperty, expandObject } = foundry.utils;
+const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class Actordsa5 extends Actor {
@@ -39,6 +41,11 @@ export default class Actordsa5 extends Actor {
 
   static async create(data, options) {
     if (Array.isArray(data) || data.items) return await super.create(data, options);
+
+    if (data.type === 'group') {
+      data.items = await DSA5_Utility.allMoneyItems();
+      return await super.create(data, options);
+    }
 
     data.items = [].concat(...(await Promise.all([DSA5_Utility.allSkills(), DSA5_Utility.allCombatSkills(), DSA5_Utility.allMoneyItems()])));
 
@@ -50,7 +57,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static async deferredEffectAddition(effect, actor, target) {
-    const current = actor.effects.find((x) => x.statuses.has(effect))?.flags.dsa5.auto || 0;
+    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
     const isChange = current != target;
     const attr = `changing${effect}`;
     actor[attr] = isChange;
@@ -60,6 +67,7 @@ export default class Actordsa5 extends Actor {
 
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
+    if (!actor.system.status?.wounds) return;
 
     const data = actor.system;
     const isMerchant = actor.isMerchant();
@@ -87,14 +95,14 @@ export default class Actordsa5 extends Actor {
   }
 
   static async _onCreateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       await Actordsa5.postUpdateConditions(doc);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       await Actordsa5.postUpdateConditions(doc);
     }
     return super._onUpdateOperation(documents, operation, user);
@@ -130,6 +138,15 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  prepareBaseData() {
+    super.prepareBaseData();
+    this.dsatriggers = {
+      [DSATriggers.EVENTS.POST_ROLL]: {},
+      [DSATriggers.EVENTS.POST_OPPOSED]: {},
+      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
+    };
+  }
+
   speedByMovementType(movementType) {
     switch (movementType) {
       case 'fly':
@@ -140,22 +157,16 @@ export default class Actordsa5 extends Actor {
     return this.system.status.speed.max;
   }
 
-  applyActiveEffects() {
+  applyActiveEffects(phase) {
+    this._completedActiveEffectPhases.add(phase);
+    this.tokenActiveEffectChanges ??= {};
+    this.tokenActiveEffectChanges[phase] = [];
+
+    // DSA applies all effects in the "initial" phase (before prepareDerivedData).
+    // The "final" phase is intentionally empty.
+    if (phase !== 'initial') return;
+
     const overrides = {};
-    this.statuses ??= new Set();
-    this.auras = [];
-
-    const specialStatuses = new Map();
-    for (const statusId of Object.values(CONFIG.specialStatusEffects)) {
-      specialStatuses.set(statusId, this.statuses.has(statusId));
-    }
-    this.statuses.clear();
-
-    this.dsatriggers = {
-      [DSATriggers.EVENTS.POST_ROLL]: {},
-      [DSATriggers.EVENTS.POST_OPPOSED]: {},
-      [DSATriggers.EVENTS.ROLL_DIALOG_RENDER]: {}
-    };
 
     const appliedArtifacts = this.items
       .filter(x =>
@@ -169,46 +180,52 @@ export default class Actordsa5 extends Actor {
     const changes = this.collectActorEffectChanges();
     this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages);
     changes.sort((a, b) => a.priority - b.priority);
-    for (let change of changes) {
+
+    const ActiveEffectImpl = foundry.documents.ActiveEffect.implementation;
+    ActiveEffectImpl._shimChanges(changes);
+
+    // Separate token-targeted changes
+    const tokenChanges = [];
+    const actorChanges = [];
+    for (const change of changes) {
       if (!change.key || Actordsa5.selfRegex.test(change.key)) continue;
-      const result = change.effect.apply(this, change);
-      Object.assign(overrides, result);
-    }
-
-    this.overrides = expandObject(overrides);
-
-    let tokens;
-    for (const [statusId, wasActive] of specialStatuses) {
-      const isActive = this.statuses.has(statusId);
-      if (isActive === wasActive) continue;
-      tokens ??= this.getActiveTokens();
-      for (const token of tokens) {
-        token._onApplyStatusEffect(statusId, isActive);
+      if (change.key.startsWith('token.')) {
+        change.key = change.key.slice(6);
+        tokenChanges.push(change);
+      } else {
+        actorChanges.push(change);
       }
     }
+    this.tokenActiveEffectChanges['initial'] = tokenChanges;
+
+    // Apply actor changes
+    const replacementData = this.getRollData();
+    for (const change of actorChanges) {
+      const result = DSAActiveEffect.applyChange(this, change, { replacementData });
+      if (foundry.utils.isPlainObject(result)) Object.assign(overrides, result);
+    }
+
+    foundry.utils.mergeObject(this.overrides, expandObject(overrides));
   }
 
   collectActorEffectChanges() {
     const changes = [];
 
     for (const e of this.effects) {
-      if (e.disabled || e.system.delayed) continue;
+      const delayedData = e.system?.delayed;
+      const isDelayed = !!delayedData?.enabled;
+      if (e.disabled || isDelayed) continue;
 
-      if (getProperty(e, 'flags.dsa5.isAura')) {
+      if (e.system.aura.isAura) {
         this.auras.push(e.uuid);
         continue;
       }
 
-      const multiply = Number(e.getFlag('dsa5', 'value')) || 1;
+      const multiply = Number(e.system.condition.value) || 1;
 
       for (let i = 0; i < multiply; i++) {
         changes.push(
-          ...e.changes.map(c => {
-            c = foundry.utils.duplicate(c);
-            c.effect = e;
-            c.priority = c.priority || c.mode * 10;
-            return c;
-          })
+          ...e.system.changes.map(c => ({ ...c, effect: e }))
         );
       }
 
@@ -220,24 +237,26 @@ export default class Actordsa5 extends Actor {
   }
 
   collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages) {
-    for (let item of this.items) {
+    for (const item of this.items) {
       for (const e of item.effects) {
-        if (e.disabled || !e.transfer || e.system.delayed) continue;
+        const delayedData = e.system?.delayed;
+        const isDelayed = !!delayedData?.enabled;
+        if (e.disabled || !e.transfer || isDelayed) continue;
 
         let apply = true;
         let multiply = 1;
 
         apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
-        multiply = this.getEffectMultiplier(item);
+        multiply = item.system.effectMultiplier;
 
-        const advancedFunction = getProperty(e, 'flags.dsa5.advancedFunction');
+        const advancedFunction = e.system.advancedFunction;
         if (Object.prototype.hasOwnProperty.call(this.dsatriggers, advancedFunction)) {
           this.dsatriggers[advancedFunction][item.id] = e.id;
         }
 
         e.notApplicable = !apply;
 
-        if (apply && getProperty(e, 'flags.dsa5.isAura')) {
+        if (apply && e.system.aura.isAura) {
           this.auras.push(e.uuid);
           continue;
         }
@@ -246,12 +265,7 @@ export default class Actordsa5 extends Actor {
 
         for (let i = 0; i < multiply; i++) {
           changes.push(
-            ...e.changes.map(c => {
-              c = foundry.utils.duplicate(c);
-              c.effect = e;
-              c.priority = c.priority || c.mode * 10;
-              return c;
-            })
+            ...e.system.changes.map(c => ({ ...c, effect: e }))
           );
         }
 
@@ -267,7 +281,7 @@ export default class Actordsa5 extends Actor {
       case 'meleeweapon':
       case 'rangeweapon':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
-        return item.system.worn.value && effect.getFlag('dsa5', 'applyToOwner');
+        return item.system.worn.value && effect.system.applyToOwner;
 
       case 'armor':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
@@ -277,7 +291,7 @@ export default class Actordsa5 extends Actor {
         return !item.system.worn.wearable || (item.system.worn.wearable && item.system.worn.value);
 
       case 'trait':
-        return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.getFlag('dsa5', 'applyToOwner');
+        return !['meleeAttack', 'rangeAttack'].includes(item.system.traitType.value) || effect.system.applyToOwner;
 
       case 'ammunition':
       case 'plant':
@@ -308,18 +322,6 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  getEffectMultiplier(item) {
-    switch (item.type) {
-      case 'trait':
-      case 'specialability':
-      case 'advantage':
-      case 'disadvantage':
-        return Number(item.system.step?.value) || 1;
-      default:
-        return 1;
-    }
-  }
-
   getCombatEffectSkillModifier(name, mode) {
     const result = [];
     const keys = ['step', mode];
@@ -330,7 +332,7 @@ export default class Actordsa5 extends Actor {
           .filter((x) => x.target == name)
           .map((f) => {
             return {
-              name: `${f.target || f.source} - ${localize(`CHAR.${k.toUpperCase()}`)}`,
+              name: `${f.target || f.source} - ${_loc(`CHAR.${k.toUpperCase()}`)}`,
               value: f.value,
               source: f.source,
               type: k,
@@ -372,7 +374,7 @@ export default class Actordsa5 extends Actor {
       for (const effect of armorCopy.armor.effects) {
         if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
 
-        for (const change of effect.changes) {
+        for (const change of effect.system.changes) {
           if (change.key !== 'self.armorVulnerability') continue;
 
           const adaptions = change.value.split(/[,;]/);
@@ -444,30 +446,32 @@ export default class Actordsa5 extends Actor {
     };
   }
 
-  drawAuras(force = false) {
-    for (const token of this.getActiveTokens()) {
-      token.drawAuras(force);
-    }
-  }
-
   _onCreateDescendantDocuments(...args) {
     super._onCreateDescendantDocuments(...args);
-    this.drawAuras();
+    if (args[1] == 'effects') this.#syncEmanations();
   }
 
   _onUpdateDescendantDocuments(...args) {
     super._onUpdateDescendantDocuments(...args);
+    const [, type, documents = [], updates = []] = args;
     const force =
-      args[1] == 'effects' &&
-      args[3].some((x) => {
-        return ['flags.dsa5.auraRadius', 'flags.dsa5.borderColor', 'flags.dsa5.disposition', 'flags.dsa5.fillColor', 'flags.dsa5.borderThickness'].some((y) => hasProperty(x, y));
-      });
-    this.drawAuras(force);
+      (type == 'effects' && documents.some((effect, index) => DSAActiveEffect.auraNeedsSync(effect, updates[index]))) ||
+      (type == 'items' &&
+        documents.some((item, index) =>
+          item.effects.some((effect) => DSAActiveEffect.auraNeedsSync(effect, updates[index], { parentChanged: true }))
+        ));
+    if (force) this.#syncEmanations();
   }
 
   _onDeleteDescendantDocuments(...args) {
-    super._onCreateDescendantDocuments(...args);
-    this.drawAuras();
+    super._onDeleteDescendantDocuments(...args);
+    if (args[1] == 'effects') this.#syncEmanations();
+  }
+
+  #syncEmanations() {
+    for (const token of this.getActiveTokens()) {
+      DSAAura.ensureEmanations(token);
+    }
   }
 
   async modifyTokenAttribute(attribute, value, isDelta = false, isBar = true) {
@@ -733,12 +737,11 @@ export default class Actordsa5 extends Actor {
           findspell.extensions = exts.join(', ');
         } else {
           ui.notifications.warn(
-            format('DSAError.noSpellForExtension', {
+            'DSAError.noSpellForExtension', { localize: true, format: {
               name: spell,
               category: DSA5_Utility.categoryLocalization(category),
               extension: exts.join(','),
-            })
-          );
+            }});
         }
       }
     }
@@ -784,7 +787,7 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    const wrestle = localize('LocalizedIDs.wrestle');
+    const wrestle = _loc('LocalizedIDs.wrestle');
     const brawling = combatskills.find(x => x.name === wrestle);
 
     //todo check if these still need to be returned
@@ -792,7 +795,7 @@ export default class Actordsa5 extends Actor {
     const carrycapacity = this.system.carrycapacity;
     const encumbrance = this.system.condition?.encumbered || 0;
     let moneyWeight = this.system.moneyWeight || 0;
-    moneyWeight = moneyWeight > 0 ? `<br>${localize('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
+    moneyWeight = moneyWeight > 0 ? `<br>${_loc('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
 
     return {
       totalWeight,
@@ -808,7 +811,7 @@ export default class Actordsa5 extends Actor {
       },
       encumbrance,
       carrycapacity,
-      encumbranceTooltip: format('encumbranceTooltip', {
+      encumbranceTooltip: _loc('encumbranceTooltip', {
         totalWeight,
         carrycapacity,
         encumbrance,
@@ -867,7 +870,7 @@ export default class Actordsa5 extends Actor {
     if (containers.has(elem._id)) {
       elem.children = [];
 
-      for (let child of containers.get(elem._id)) {
+      for (const child of containers.get(elem._id)) {
         elem.children.push(child);
         if (containers.has(child._id)) {
           this._setBagContent(child, containers);
@@ -893,7 +896,7 @@ export default class Actordsa5 extends Actor {
         const ap = Number(APValue);
         dataUpdate['system.details.experience.spent'] = Number(this.system.details.experience.spent) + ap;
         await this.update(dataUpdate, options);
-        const msg = format(ap > 0 ? 'advancementCost' : 'refundCost', { cost: Math.abs(ap) });
+        const msg = _loc(ap > 0 ? 'advancementCost' : 'refundCost', { cost: Math.abs(ap) });
         tinyNotification(msg);
       } else {
         ui.notifications.error('DSAError.APUpdateError', { localize: true });
@@ -961,8 +964,8 @@ export default class Actordsa5 extends Actor {
   }
 
   throwMelee(item, tokenId) {
-    const throwingWeapons = localize('LocalizedIDs.Throwing Weapons');
-    const localizedCT = localize(`LocalizedCTs.${item.system.combatskill.value}`);
+    const throwingWeapons = _loc('LocalizedIDs.Throwing Weapons');
+    const localizedCT = _loc(`LocalizedCTs.${item.system.combatskill.value}`);
 
     const validWeaponTypes = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
     const hasWeaponThrow = validWeaponTypes.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.weaponThrow');
@@ -1002,17 +1005,17 @@ export default class Actordsa5 extends Actor {
 
   setupWeaponless(statusId, options = {}, tokenId) {
     const attributes = [];
-    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(localize('magical'));
-    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(localize('blessed'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(_loc('magical'));
+    if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(_loc('blessed'));
 
     const weaponData = mergeObject(
       {
-        name: localize(`${statusId}Weaponless`),
+        name: _loc(`${statusId}Weaponless`),
         type: 'meleeweapon',
         effects: [],
         system: {
           combatskill: {
-            value: localize('LocalizedIDs.wrestle'),
+            value: _loc('LocalizedIDs.wrestle'),
           },
           effect: {
             attributes: attributes.join(', '),
@@ -1037,11 +1040,11 @@ export default class Actordsa5 extends Actor {
 
   tokenScrollingText(texts) {
     const tokens = this.isToken ? [this.token?.object] : this.getActiveTokens(true);
-    for (let t of tokens) {
+    for (const t of tokens) {
       if (!t) continue;
 
       let index = 0;
-      for (let k of texts) {
+      for (const k of texts) {
         canvas.interface.createScrollingText(t.center, k.value, {
           anchor: index,
           direction: k.value > 0 ? 2 : 1,
@@ -1072,7 +1075,7 @@ export default class Actordsa5 extends Actor {
     if (game.combat?.isBrawling) statusText.temporaryLeP = 0xfc2a8f;
 
     const scrolls = [];
-    for (let key of Object.keys(statusText)) {
+    for (const key of Object.keys(statusText)) {
       const value = this._containsChangedAttribute(data, `system.status.${key}.value`);
       if (value !== false)
         scrolls.push({
@@ -1097,6 +1100,16 @@ export default class Actordsa5 extends Actor {
       APTracker.track(this, { type: 'sum', previous, next: apSum }, apSum - previous);
     }
 
+    if (this.system.isPriest) {
+      const newKap = this._containsChangedAttribute(data, 'system.status.karmaenergy.value');
+      if (newKap !== false) {
+        const kapDelta = this.system.status.karmaenergy.value - newKap;
+        if (kapDelta > 0) {
+          RaptureTracker.accumulate(this, kapDelta);
+        }
+      }
+    }
+
     return super._preUpdate(data, options, user);
   }
 
@@ -1113,7 +1126,7 @@ export default class Actordsa5 extends Actor {
 
     if (options.msg) {
       const renderedRoll = await roll.render();
-      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${format(options.msg, { name: this.name })}</p>${renderedRoll}`));
+      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${_loc(options.msg, { name: this.name })}</p>${renderedRoll}`));
     }
   }
 
@@ -1182,8 +1195,8 @@ export default class Actordsa5 extends Actor {
   }
 
   setupFallingDamage(options, tokenId) {
-    const name = localize('fallingDamage');
-    const skill = this.items.find((x) => x.type == 'skill' && x.name == localize('LocalizedIDs.bodyControl')).toObject();
+    const name = _loc('fallingDamage');
+    const skill = this.items.find((x) => x.type == 'skill' && x.name == _loc('LocalizedIDs.bodyControl')).toObject();
     const optns = {
       subtitle: ` (${name})`,
       postFunction: {
@@ -1229,8 +1242,8 @@ export default class Actordsa5 extends Actor {
   }
 
   _setupFallingHeight(options, tokenId) {
-    let title = localize('fallingDamage');
-    let testData = {
+    const title = _loc('fallingDamage');
+    const testData = {
       source: {
         type: 'fallingDamage',
       },
@@ -1246,7 +1259,7 @@ export default class Actordsa5 extends Actor {
       title,
       template: 'systems/dsa5/templates/dialog/fallingdamage-dialog.hbs',
       data: {
-        rollMode: options.rollMode,
+        messageMode: options.messageMode,
         situationalModifiers,
         fallingFloorOptions: DSA5.fallingConditions,
         modifier: options.modifier || 0,
@@ -1254,11 +1267,11 @@ export default class Actordsa5 extends Actor {
       callback: (html, options = {}) => {
         testData.situationalModifiers = [
           {
-            name: localize('fallingFloor'),
+            name: _loc('fallingFloor'),
             value: html.find('[name="fallingFloor"]').val(),
           },
         ];
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.fallingHeight = html.find('[name="testModifier"]').val();
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
@@ -1293,7 +1306,7 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    const toSearch = [localize(statusId), localize('LocalizedIDs.wrestle')];
+    const toSearch = [_loc(statusId), _loc('LocalizedIDs.wrestle')];
     const combatskills = [
       ...CombatSpecialAbilities.build(this, ['Combat'], toSearch, 'parry', testData.source),
       ...CombatSpecialAbilities.build(this, ['animal'], undefined, 'parry', testData.source),
@@ -1303,7 +1316,7 @@ export default class Actordsa5 extends Actor {
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
     const data = {
-      rollMode: options.rollMode,
+      messageMode: options.messageMode,
       combatSpecAbs: combatskills,
       showDefense: true,
       situationalModifiers,
@@ -1312,7 +1325,7 @@ export default class Actordsa5 extends Actor {
       isDodge: true,
     };
     const dialogOptions = {
-      title: `${localize(statusId)} ${localize('Test')}`,
+      title: `${_loc(statusId)} ${_loc('Test')}`,
       template: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
       data,
       callback: (html, options = {}) => {
@@ -1333,11 +1346,11 @@ export default class Actordsa5 extends Actor {
   }
 
   setupCharacteristic(characteristicId, options = {}, tokenId) {
-    let char = duplicate(this.system.characteristics[characteristicId]);
-    let title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + localize('Test');
+    const char = duplicate(this.system.characteristics[characteristicId]);
+    const title = DSA5_Utility.attributeLocalization(characteristicId) + ' ' + _loc('Test');
 
     char.attr = characteristicId;
-    let testData = {
+    const testData = {
       opposable: false,
       source: {
         type: 'char',
@@ -1350,24 +1363,24 @@ export default class Actordsa5 extends Actor {
       },
     };
 
-    let dialogOptions = {
+    const dialogOptions = {
       title,
       template: 'systems/dsa5/templates/dialog/characteristic-dialog.hbs',
       data: {
-        rollMode: options.rollMode,
+        messageMode: options.messageMode,
         difficultyLabels: DSA5.attributeDifficultyLabels,
         modifier: options.modifier || 0,
       },
       callback: (html, options = {}) => {
-        cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
+        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
         testData.testDifficulty = DSA5.attributeDifficultyModifiers[html.find('[name="testDifficulty"]').val()];
-        testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+        testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
       },
     };
 
-    let cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
+    const cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/characteristic-card.hbs', title, tokenId, this);
 
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
   }
@@ -1378,7 +1391,7 @@ export default class Actordsa5 extends Actor {
     if (!skill) {
       if (isBaseWeapon) {
         ui.notifications.error(
-          format('DSAError.unknownCombatSkill', {
+          _loc('DSAError.unknownCombatSkill', {
             skill: item.system.combatskill.value,
             item: item.name,
           })
@@ -1415,16 +1428,16 @@ export default class Actordsa5 extends Actor {
         gripDamageMod = 1;
       } else {
         item.system.reach.value = 'medium';
-        const localizedCT = localize(`LocalizedCTs.${item.system.combatskill.value}`);
+        const localizedCT = _loc(`LocalizedCTs.${item.system.combatskill.value}`);
 
         if (['Two-Handed Impact Weapons', 'Two-Handed Swords'].includes(localizedCT)) {
           item.parry -= 3;
-          const bastardRegex = new RegExp(localize('wrongGrip.wrongGripBastardRegex'));
+          const bastardRegex = new RegExp(_loc('wrongGrip.wrongGripBastardRegex'));
 
           if (bastardRegex.test(item.name)) {
             gripDamageMod = -2;
           } else {
-            const oneHanded = localize('wrongGrip.oneHanded');
+            const oneHanded = _loc('wrongGrip.oneHanded');
             item.gripDamageText = ` (${oneHanded} * 0.5)`;
             item.dmgMultipliers ||= [];
             DSA5_Utility.pushOnlyIfUnique(item.dmgMultipliers, { name: oneHanded, val: '0.5' });
@@ -1480,7 +1493,7 @@ export default class Actordsa5 extends Actor {
     const dup = duplicate(item);
     const value = getProperty(item, `flags.dsa5.alternateAttacks.${id}`);
     const data = foundry.utils.flattenObject(value);
-    for (let key of Object.keys(data)) {
+    for (const key of Object.keys(data)) {
       if (this.skipAlternateWeaponKeys.has(data[key]) || data[key] == null || data[key] == undefined) delete data[key];
     }
     mergeObject(dup, data);
@@ -1496,7 +1509,7 @@ export default class Actordsa5 extends Actor {
 
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
-    let update = {};
+    const update = {};
 
     if (!data.img) update.img = 'icons/svg/mystery-man-black.svg';
 
@@ -1620,7 +1633,7 @@ export default class Actordsa5 extends Actor {
     if (!item) return;
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
 
-    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    const ignoreHandLimits = this.system.config.ignoreWeaponHandLimits;
 
     if (ignoreHandLimits) {
       if (!equip) {
@@ -1691,6 +1704,7 @@ export default class Actordsa5 extends Actor {
     // Ensure the weapon is marked equipped and on the correct hand.
     updates.push({ _id: itemId, 'system.worn.value': true, 'system.worn.offHand': targetHand === 'offhand' });
 
+    console.log(updates)
     await this.updateEmbeddedDocuments('Item', updates);
     item.system.itemEquippedMessage();
   }
@@ -1752,14 +1766,14 @@ export default class Actordsa5 extends Actor {
   static calcLZ(item, actor) {
     let factor = 1;
     let modifier = 0;
-    if (item.system.combatskill.value == localize('LocalizedIDs.Throwing Weapons')) modifier = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.quickdraw') * -1;
+    if (item.system.combatskill.value == _loc('LocalizedIDs.Throwing Weapons')) modifier = SpecialabilityRulesDSA5.abilityStep(actor, 'LocalizedIDs.quickdraw') * -1;
     else if (
-      item.system.combatskill.value == localize('LocalizedIDs.Crossbows') &&
-      SpecialabilityRulesDSA5.hasAbility(actor, `${localize('LocalizedIDs.quickload')} (${localize('LocalizedIDs.Crossbows')})`, false)
+      item.system.combatskill.value == _loc('LocalizedIDs.Crossbows') &&
+      SpecialabilityRulesDSA5.hasAbility(actor, `${_loc('LocalizedIDs.quickload')} (${_loc('LocalizedIDs.Crossbows')})`, false)
     )
       factor = 0.5;
     else {
-      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${localize('LocalizedIDs.quickload')} (${localize(item.system.combatskill.value)})`, false) * -1;
+      modifier = SpecialabilityRulesDSA5.abilityStep(actor, `${_loc('LocalizedIDs.quickload')} (${_loc(item.system.combatskill.value)})`, false) * -1;
     }
 
     let reloadTime = `${item.system.reloadTime.value}`.split('/');
@@ -1779,7 +1793,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {
-    let skill = combatskills.find((i) => i.name == item.system.combatskill.value);
+    const skill = combatskills.find((i) => i.name == item.system.combatskill.value);
     item.calculatedRange = item.system.reach.value;
 
     let currentAmmo;
@@ -1789,7 +1803,7 @@ export default class Actordsa5 extends Actor {
       if (item.system.ammunitiongroup.value != '-') {
         item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
 
-        for (let am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`;
+        for (const am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`;
 
         currentAmmo = item.ammo.find((x) => x._id == item.system.currentAmmo.value);
         if (currentAmmo) {
@@ -1814,7 +1828,7 @@ export default class Actordsa5 extends Actor {
 
       if (isBaseWeapon) {
         item.subweapons = {};
-        for (let key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
+        for (const key of Object.keys(getProperty(item, 'flags.dsa5.alternateAttacks') || {})) {
           const dup = this.buildSubweapon(item, key);
           const done = this._prepareRangeWeapon(dup, ammunitions, combatskills, actor, false);
           item.subweapons[key] = done;
@@ -1825,7 +1839,7 @@ export default class Actordsa5 extends Actor {
     } else {
       if (isBaseWeapon)
         ui.notifications.error(
-          format('DSAError.unknownCombatSkill', {
+          _loc('DSAError.unknownCombatSkill', {
             skill: item.system.combatskill.value,
             item: item.name,
           }),
@@ -1864,7 +1878,7 @@ export default class Actordsa5 extends Actor {
 
       this.removeCondition(statusId, 1, false);
     } else {
-      if (!existing || Number.isNumeric(getProperty(existing, 'flags.dsa5.value'))) {
+      if (!existing || Number.isNumeric(existing.system?.condition?.value)) {
 
         await this.addCondition(statusId, 1, false, false);
       } else {
@@ -1878,8 +1892,8 @@ export default class Actordsa5 extends Actor {
   async payMiracles(testData) {
     if (!testData.extra.miraclePaid) {
       testData.extra.miraclePaid = true;
-      const miracleMight = localize('LocalizedIDs.miracleMight');
-      const miracle = localize('LocalizedIDs.miracle');
+      const miracleMight = _loc('LocalizedIDs.miracleMight');
+      const miracle = _loc('LocalizedIDs.miracle');
       const hasMiracleMight = testData.situationalModifiers.some((x) => x.name.trim() == miracleMight);
       const hasMiracle = testData.situationalModifiers.some((x) => x.name.trim() == miracle);
       const cost = hasMiracleMight ? 6 : hasMiracle ? 4 : 0;
@@ -1901,14 +1915,13 @@ export default class Actordsa5 extends Actor {
     for (const mod of mods) {
       if (!mod || mod.selected === false) continue;
 
-      if (mod.effectUuid) {
-        effectUuids.add(mod.effectUuid);
+      if (mod.ref?.uuid) {
+        effectUuids.add(mod.ref.uuid);
         continue;
       }
 
-      // Fallback: some dialog paths may only provide an effect id.
-      if (mod.effectId) {
-        const effect = this.effects?.get?.(mod.effectId);
+      if (mod.ref?.id) {
+        const effect = this.effects?.get?.(mod.ref.id);
         if (effect?.uuid) effectUuids.add(effect.uuid);
       }
     }
@@ -1932,7 +1945,7 @@ export default class Actordsa5 extends Actor {
     await Promise.all(uuids.map(async (uuid) => {
       try {
         const effect = await fromUuid(uuid);
-        const charges = effect?.getFlag?.('dsa5', 'charges');
+        const charges = effect?.system?.charges;
         const value = Number(charges?.value);
         if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
         if (effect.disabled) return;
@@ -1944,36 +1957,41 @@ export default class Actordsa5 extends Actor {
   }
 
   async consumeAmmunition(testData) {
-    if (testData.extra.ammo && !testData.extra.ammoDecreased) {
+    const hasTrackedAmmo = testData.extra.ammo && !testData.extra.ammoDecreased;
+    if (hasTrackedAmmo) {
       testData.extra.ammoDecreased = true;
 
-      if (testData.extra.ammo._id) {
-        let ammoUpdate = { _id: testData.extra.ammo._id };
-        if (testData.extra.ammo.system.ammunitiongroup.value == 'mag') {
-          if (testData.extra.ammo.system.mag.value <= 0) {
-            testData.extra.ammo.system.quantity.value--;
-            ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
-            ammoUpdate['system.mag.value'] = testData.extra.ammo.system.mag.max - 1;
-          } else {
-            ammoUpdate['system.mag.value'] = testData.extra.ammo.system.mag.value - 1;
-          }
+      if (!testData.extra.ammo._id) return;
+
+      const ammo = testData.extra.ammo;
+      const ammoUpdate = { _id: ammo._id };
+
+      if (ammo.system.ammunitiongroup.value == 'mag') {
+        if (ammo.system.mag.value <= 0) {
+          ammo.system.quantity.value--;
+          ammoUpdate['system.quantity.value'] = ammo.system.quantity.value;
+          ammoUpdate['system.mag.value'] = ammo.system.mag.max - 1;
         } else {
-          testData.extra.ammo.system.quantity.value--;
-          ammoUpdate['system.quantity.value'] = testData.extra.ammo.system.quantity.value;
+          ammoUpdate['system.mag.value'] = ammo.system.mag.value - 1;
         }
-        await this.updateEmbeddedDocuments('Item', [
-          ammoUpdate,
-          {
-            _id: testData.source._id,
-            'system.reloadTime.progress': 0,
-            'system.aimTime.progress': 0,
-          },
-        ]);
+      } else {
+        ammo.system.quantity.value--;
+        ammoUpdate['system.quantity.value'] = ammo.system.quantity.value;
       }
-    } else if (
-      (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) &&
-      !testData.extra.ammoDecreased
-    ) {
+
+      await this.updateEmbeddedDocuments('Item', [
+        ammoUpdate,
+        {
+          _id: testData.source._id,
+          'system.reloadTime.progress': 0,
+          'system.aimTime.progress': 0,
+        },
+      ]);
+      return;
+    }
+
+    const isRangeAttack = testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack');
+    if (isRangeAttack && !testData.extra.ammoDecreased) {
       testData.extra.ammoDecreased = true;
       await this.updateEmbeddedDocuments('Item', [
         {
@@ -1982,7 +2000,10 @@ export default class Actordsa5 extends Actor {
           'system.aimTime.progress': 0,
         },
       ]);
-    } else if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
+      return;
+    }
+
+    if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: testData.source._id,
@@ -1995,7 +2016,7 @@ export default class Actordsa5 extends Actor {
 
   async basicTest({ testData, cardOptions }, options = {}) {
     testData = await DiceDSA5.rollDices(testData, cardOptions);
-    let result = await DiceDSA5.rollTest(testData);
+    const result = await DiceDSA5.rollTest(testData);
 
     if (testData.extra.options.other) {
       if (!result.other) result.other = [];
@@ -2006,7 +2027,7 @@ export default class Actordsa5 extends Actor {
 
     if (game.user.targets.size) {
       cardOptions.isOpposedTest = testData.opposable;
-      const opposed = ` - ${localize('Opposed')}`;
+      const opposed = ` - ${_loc('Opposed')}`;
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) cardOptions.title += opposed;
     }
 
@@ -2053,11 +2074,11 @@ export default class Actordsa5 extends Actor {
 
       effect = duplicate(statusEffect);
 
-      effect.name = localize(effect.name);
-      effect.flags.dsa5.description = localize(effect.name);
+      effect.name = _loc(effect.name);
+      effect.description = _loc(effect.description || effect.name);
 
-      if (effect.changes) {
-        effect.changes = effect.changes.map((change) => {
+      if (effect.system?.changes) {
+        effect.system.changes = effect.system.changes.map((change) => {
           if (/^system\.condition\./.test(change.key)) {
             change.value = value;
           }
@@ -2067,15 +2088,85 @@ export default class Actordsa5 extends Actor {
 
       effect.statuses = [effect.id];
 
-      delete effect.description;
-      delete effect.flags.dsa5.value;
-      delete effect.flags.dsa5.max;
       delete effect.id;
 
       mergeObject(effect, options);
     }
 
     return await DSA5StatusEffects.addCondition(this, effect, value, absolute, auto);
+  }
+
+  async onUpdateEffectDurations(effects, event, context) {
+    if (!DSA5_Utility.isActiveGM()) return;
+
+    const toDelete = [];
+
+    for (const effect of effects) {
+      const effectFinished = effect.duration?.expired || ((effect.duration?.remaining ?? Infinity) <= 0);
+      if (!effectFinished) continue;
+      if (!effect.isExpiryEvent(event, context)) continue;
+
+      if (RaptureTracker.isTracker(effect)) {
+        await RaptureTracker.pruneTracker(this, effect);
+        continue;
+      }
+
+      const condition = effect.system?.condition;
+      const isLeveledCondition = condition?.max != null && condition?.value != null && condition.value >= 1;
+
+      if (isLeveledCondition) {
+        const durationSeconds = effect.duration.seconds;
+        if (!durationSeconds || durationSeconds <= 0) {
+          toDelete.push(effect.id);
+          continue;
+        }
+
+        const elapsed = game.time.worldTime - effect.start.time;
+        const intervals = Math.max(1, Math.floor(elapsed / durationSeconds));
+        const levelsToRemove = Math.min(intervals, condition.value);
+        const newValue = condition.value - levelsToRemove;
+
+        if (newValue >= 1) {
+          const max = Number(condition.max ?? 4);
+          const manualToRemove = Math.min(condition.manual || 0, levelsToRemove);
+          const newManual = (condition.manual || 0) - manualToRemove;
+          const autoToRemove = Math.min(condition.auto || 0, levelsToRemove - manualToRemove);
+          const newAuto = (condition.auto || 0) - autoToRemove;
+
+          const update = {
+            system: { condition: { auto: newAuto, manual: newManual, value: Math.min(max, newManual + newAuto) } },
+            start: { time: game.time.worldTime },
+          };
+
+          const statusId = [...effect.statuses][0];
+          (game.dsa5.config.statusEffectClasses[statusId] || DSA5StatusEffects).levelDependentEffects(effect, update);
+
+          await effect.update(update);
+          ActiveEffect.registry.add(effect);
+
+          this._notifyConditionDecay(effect, newValue);
+        } else {
+          toDelete.push(effect.id);
+        }
+      } else {
+        toDelete.push(effect.id);
+      }
+    }
+
+    if (toDelete.length) {
+      await this.deleteEmbeddedDocuments('ActiveEffect', toDelete);
+    }
+  }
+
+  _notifyConditionDecay(effect, newLevel) {
+    if (!game.settings.get('dsa5', 'notifyOnFadingEffects')) return;
+
+    const msg = game.i18n.format('CHATNOTIFICATION.conditionDecay', {
+      effect: effect.name,
+      actor: this.link,
+      level: newLevel,
+    });
+    ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
   }
 
   async initResistPainRoll(effect) {
@@ -2093,8 +2184,8 @@ export default class Actordsa5 extends Actor {
   }
 
   async finishResistPainRoll() {
-    const skill = this.items.find((x) => x.name == localize('LocalizedIDs.selfControl') && x.type == 'skill');
-    const setupData = await this.setupSkill(skill, { subtitle: ` (${localize('ActiveEffects.resistRoll')})` }, this.token?.id);
+    const skill = this.items.find((x) => x.name == _loc('LocalizedIDs.selfControl') && x.type == 'skill');
+    const setupData = await this.setupSkill(skill, { subtitle: ` (${_loc('ActiveEffects.resistRoll')})` }, this.token?.id);
     const res = await this.basicTest(setupData);
     const ql = res.result.successLevel || 0;
 
@@ -2112,7 +2203,7 @@ export default class Actordsa5 extends Actor {
   async markDead(dead) {
     const tokens = this.getActiveTokens();
 
-    for (let token of tokens) {
+    for (const token of tokens) {
       if (token.combatant) await token.combatant.update({ defeated: dead });
     }
   }

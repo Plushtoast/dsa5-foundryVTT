@@ -1,9 +1,10 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { tabSlider } from '../helpers/view_helper.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import DSA5 from '../../config/config-dsa5.js';
 import DSATour from '../../tours/dsa_tour.js';
 import DidYouKnow from '../helpers/didyouknow.js';
+import ModuleDetailsDataLoader from './module_details_loader.js';
+import ModuleDetailsApp from './module_details_app.js';
 const { mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -13,6 +14,7 @@ export class PatchViewer extends DefaultAppv2 {
     #lastQuery = '';
     #lastRegex = null;
     #carouselTimers = [];
+    #moduleLookup = new Map();
 
     constructor(json, app, { initialTab } = {}) {
         super(app);
@@ -49,6 +51,7 @@ export class PatchViewer extends DefaultAppv2 {
             openLibrary: this.#openLibrary,
             openJournalBrowser: this.#openJournalBrowser,
             nextTip: this.#nextTip,
+            openModuleDetails: this.#openModuleDetails,
         }
     };
 
@@ -386,7 +389,7 @@ export class PatchViewer extends DefaultAppv2 {
             iconEl.className = `welcome-app-header__icon ${config.icon}`;
         }
         if (versionEl) {
-            versionEl.textContent = game.i18n.localize(config.title);
+            versionEl.textContent = _loc(config.title);
         }
     }
 
@@ -505,10 +508,8 @@ export class PatchViewer extends DefaultAppv2 {
 
     async _prepareContext(_options) {
         const data = await super._prepareContext(_options);
-        let version = this.json['notes'][this.json['notes'].length - 1];
+        const version = this.json['notes'][this.json['notes'].length - 1];
         const patchName = this.json['default'].replace(/VERSION/g, version.version);
-        let msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
 
         const lang = game.i18n.lang;
         const curVersion = await this.fetchVersions([version]);
@@ -553,8 +554,8 @@ export class PatchViewer extends DefaultAppv2 {
         const videoGuides = (cfg.videoGuides[lang] ?? cfg.videoGuides['en']).map(v => ({
             url: `https://www.youtube.com/watch?v=${v.id}`,
             thumb: `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`,
-            title: game.i18n.localize(v.titleKey),
-            desc: game.i18n.localize(v.descKey),
+            title: _loc(v.titleKey),
+            desc: _loc(v.descKey),
         }));
 
         const moduleCards = cfg.moduleCards.map(c => {
@@ -567,11 +568,11 @@ export class PatchViewer extends DefaultAppv2 {
             return {
                 href,
                 image: c.image ?? '',
-                title: game.i18n.localize(c.titleKey),
-                desc: game.i18n.localize(c.descKey),
-                category: c.categoryKey ? game.i18n.localize(c.categoryKey) : '',
+                title: _loc(c.titleKey),
+                desc: _loc(c.descKey),
+                category: c.categoryKey ? _loc(c.categoryKey) : '',
                 free: c.free ?? false,
-                freeLabel: c.free ? game.i18n.localize('DSA5.welcomeApp.beginnerModules.free') : '',
+                freeLabel: c.free ? _loc('DSA5.welcomeApp.beginnerModules.free') : '',
                 external: c.external ?? false,
                 icon: c.icon ?? '',
                 action: c.action ?? '',
@@ -581,20 +582,20 @@ export class PatchViewer extends DefaultAppv2 {
 
         const gettingStartedSteps = cfg.gettingStartedSteps.map(s => ({
             icon: s.icon,
-            text: game.i18n.localize(s.textKey),
+            text: _loc(s.textKey),
         }));
 
         const welcomeLinks = cfg.links.map(l => ({
             href: l.href ?? resolve(l.hrefKey) ?? '',
             icon: l.icon,
-            label: l.label ?? game.i18n.localize(l.labelKey),
+            label: l.label ?? _loc(l.labelKey),
         }));
 
         const starterHints = cfg.starterHints.map(h => ({
             shortcut: h.shortcut ?? '',
             icon: h.icon,
-            title: game.i18n.localize(h.titleKey),
-            desc: game.i18n.localize(h.descKey),
+            title: _loc(h.titleKey),
+            desc: _loc(h.descKey),
             action: h.action ?? '',
         }));
 
@@ -603,17 +604,17 @@ export class PatchViewer extends DefaultAppv2 {
             image: 'systems/dsa5/icons/modules/vttom.webp',
             title: 'VTTom',
             titleIcon: 'fa-brands fa-youtube',
-            desc: game.i18n.localize('DSA5.welcomeApp.vttom.desc'),
-            cta: game.i18n.localize('DSA5.welcomeApp.vttom.cta'),
+            desc: _loc('DSA5.welcomeApp.vttom.desc'),
+            cta: _loc('DSA5.welcomeApp.vttom.cta'),
             ctaIcon: 'fa-solid fa-external-link',
             isLink: true,
         } : {
             href: '',
             image: 'systems/dsa5/icons/splashen.webp',
-            title: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonTitle'),
+            title: _loc('DSA5.welcomeApp.vttom.comingSoonTitle'),
             titleIcon: 'fa-solid fa-video',
-            desc: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonDesc'),
-            cta: game.i18n.localize('DSA5.welcomeApp.vttom.comingSoonCta'),
+            desc: _loc('DSA5.welcomeApp.vttom.comingSoonDesc'),
+            cta: _loc('DSA5.welcomeApp.vttom.comingSoonCta'),
             ctaIcon: 'fa-solid fa-clock',
             isLink: false,
         };
@@ -622,6 +623,7 @@ export class PatchViewer extends DefaultAppv2 {
     }
 
     #prepareModules(modules) {
+        this.#moduleLookup = new Map();
         for (const [categoryIndex, category] of (modules.categories ?? []).entries()) {
             const baseSlug = category.name ?? `category-${categoryIndex}`;
             category.slug = baseSlug.slugify();
@@ -638,6 +640,9 @@ export class PatchViewer extends DefaultAppv2 {
                     .map((value) => foundry.applications.ux.SearchFilter.cleanQuery(String(value)))
                     .filter(Boolean);
                 item.filterString = item.filters.join('|');
+                if (item.id) {
+                    this.#moduleLookup.set(item.id, item);
+                }
                 return item;
             }) ?? [];
         }
@@ -734,6 +739,26 @@ export class PatchViewer extends DefaultAppv2 {
 
     static #openJournalBrowser() {
         game.dsa5.apps.journalBrowser.render(true);
+    }
+
+    static async #openModuleDetails(event, target) {
+        const moduleId = target?.dataset?.moduleId;
+        if (!moduleId) return;
+
+        const moduleData = this.#moduleLookup.get(moduleId);
+        try {
+            const payload = await ModuleDetailsDataLoader.loadData();
+            if (!payload?.modules?.[moduleId]) {
+                ui.notifications.warn('DSA5.patchViewer.moduleDetails.unavailableText', { localize: true });
+                return;
+            }
+        } catch (error) {
+            console.error('DSA5 | Failed to load module details dataset', error);
+            ui.notifications.warn('DSA5.patchViewer.moduleDetails.unavailableText', { localize: true });
+            return;
+        }
+
+        new ModuleDetailsApp(moduleId, moduleData).render(true);
     }
 
     static async #nextTip() {

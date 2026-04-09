@@ -35,6 +35,7 @@ export const ITEM_CONSTANTS = {
     abilitylanguage: 'systems/dsa5/icons/categories/Ability_Language.webp',
     abilitystaff: 'systems/dsa5/icons/categories/ability_staff.webp',
     abilityceremonial: 'systems/dsa5/icons/categories/ability_ceremonial.webp',
+    abilityhomunculus: 'systems/dsa5/icons/categories/homunculus.webp',
     abilityanimal: 'systems/dsa5/icons/categories/ability_animal.webp',
     abilitysecret: 'systems/dsa5/icons/categories/secret.webp',
     trait: 'systems/dsa5/icons/categories/trait.webp',
@@ -62,28 +63,24 @@ export const ITEM_CONSTANTS = {
     book: 'systems/dsa5/icons/backgrounds/library.webp',
     trap: 'systems/dsa5/icons/categories/trap.webp',
   },
-
   VALUE_PATTERNS: [
     /(=)?[+-]\d([+-]\d)?/,
     /(=)?\d[dDwW]\d/,
     /=\d+/,
     /\*\d(\.\d)*/
   ],
-
   COMBAT_MODES: {
     ATTACK: 'attack',
     PARRY: 'parry',
     DAMAGE: 'damage',
     DODGE: 'dodge'
   },
-
   COMBAT_BONUS: {
     ATTACK: 'atbonus',
     PARRY: 'pabonus',
     DAMAGE: 'tpbonus',
     DEFENSE_MALUS: 'dmmalus'
   },
-
   TEMPLATE_PATHS: {
     SPELL_DIALOG: 'systems/dsa5/templates/dialog/spell-enhanced-dialog.hbs',
     LITURGY_DIALOG: 'systems/dsa5/templates/dialog/liturgy-enhanced-dialog.hbs',
@@ -91,9 +88,7 @@ export const ITEM_CONSTANTS = {
     COMBAT_DIALOG: 'systems/dsa5/templates/dialog/combatskill-enhanced-dialog.hbs',
     POISON_DIALOG: 'systems/dsa5/templates/dialog/poison-dialog.hbs'
   },
-
   RANGE_DEFENSE_MALUS: -4,
-
   TEST_TYPES: {
     SKILL: 'skill',
     SPELL: 'spell',

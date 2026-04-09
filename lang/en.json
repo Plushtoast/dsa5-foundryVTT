@@ -132,7 +132,7 @@
         "daylight": "Daylight"
     },
     "DIALOG": {
-        "RollMode": "Rollmode",
+        "MessageMode": "Message mode",
         "DeleteItem": "Remove entry?",
         "deleteConfirmation": "Confirm removal",
         "SituationalModifiers": "Situational\nModifiers",
@@ -159,6 +159,7 @@
         "setTargetToUserHint": "Transfer currently targeted tokens to user.",
         "setTargetToUser": "Set player target",
         "noLoggedinUser": "No user logged in/available.",
+        "selectSupernaturalAction": "Choose spell or liturgy.",
         "selectGroupCheckSkill": "Chose another talent for the cumulative group check.",
         "updateMaintainSpell": "Pay for a new interval or end the effect for {actor}?",
         "dependentMaintainEffects": "Dependent effects (delete too)",
@@ -194,6 +195,15 @@
         "food": "Food",
         "book": "Book",
         "automat": "Automaton"
+    },
+    "PROSEMIRROR": {
+        "DSAStyles": {
+            "Title": "DSA Styles",
+            "Maskfield": "Master Box",
+            "Chatpaperfield": "Paper Note",
+            "Citefield": "Quote Block",
+            "DSAList": "DSA List"
+        }
     },
     "PLANT": {
         "healing": "Medicinal herbs",
@@ -268,6 +278,67 @@
         "otherOffer": "Offer of the trading partner",
         "accept": "Accept"
     },
+    "GROUP": {
+        "members": "Members",
+        "skills": "Skills",
+        "inventory": "Inventory",
+        "travel": "Travel",
+        "notes": "Notes",
+        "addMember": "Add Member",
+        "addLocation": "Add Depot",
+        "depotHint": "A depot is a shared inventory for the group. It can represent a storage chest, a vehicle, a player base, a companion carrying supplies, or any other shared container.",
+        "removeLocation": "Remove Depot",
+        "openLocationSheet": "Open Depot Sheet",
+        "forcedMarch": "Forced March",
+        "sharedPurse": "Shared Purse",
+        "createEventsJournal": "Create Events Journal",
+        "dropMemberHint": "Drop a character, NPC or creature here to add it to the group.",
+        "noMembers": "No members yet. Drag actors onto this sheet to add them.",
+        "noLocations": "No depots yet. Drag a vehicle, merchant, or loot actor to add one.",
+        "locked": "Locked",
+        "unlocked": "Unlocked",
+        "takeItem": "Take Item",
+        "passToGroup": "Pass to Group Depot",
+        "selectLocation": "Select Depot",
+        "locationLocked": "This depot is locked.",
+        "setPrimaryParty": "Set as Primary Party",
+        "locationOnly": "Only merchant or loot actors can be added as depots.",
+        "noGroupInGroup": "A group actor cannot be added as a member of another group.",
+        "alreadyMember": "This actor is already a member of the group.",
+        "schritt": "Schritt",
+        "meilenPerHour": "mi./h",
+        "camp": "Camp",
+        "dropLocationsHint": "Drop a vehicle, merchant, or loot actor here to add it as a depot.",
+        "dropMembersHint": "Drop a character, NPC or creature here to add it to the group.",
+        "memberCount": "Members",
+        "noSkills": "No skills available. Add members to the group first.",
+        "openFullSheet": "Open Full Sheet",
+        "primaryParty": "Primary Party",
+        "travelMode": "Travel Mode",
+        "speedPerMode": "Speed by Mode",
+        "shareOwnership": "Share Ownership with All Players",
+        "ownershipShared": "Ownership shared with all players.",
+        "openGroupSheet": "Group Sheet",
+        "tradeWithDepot": "Trade with Depot"
+    },
+    "locationTypes": {
+        "foot": "On Foot",
+        "vehicle": "Vehicle",
+        "river": "River Vessel",
+        "sea": "Sea Vessel"
+    },
+    "INVENTORYBULK": {
+        "title": "Inventory actions",
+        "delete": "Delete inventory",
+        "deleteConfirm": "Remove all inventory items from {name}?",
+        "dropGround": "Drop inventory to the ground",
+        "dropGroundConfirm": "Drop all inventory items from {name} onto the ground?",
+        "dropBag": "Place inventory in a bag",
+        "dropBagConfirm": "Place all inventory items from {name} into a bag on the actor?",
+        "dropPileName": "{name}'s belongings",
+        "noItems": "No inventory items available",
+        "requiresToken": "This actor needs an active token in the current scene to drop inventory."
+    },
     "GARADAN": {
         "1": "Pawn",
         "2": "Knight",
@@ -285,7 +356,8 @@
         "masterMenu": "Open the Master's Menu",
         "journalBrowser": "Open the journal browser",
         "library": "Open the library",
-        "attack": "Open the attack dialog for the current actor or player"
+        "attack": "Open the attack dialog for the current actor or player",
+        "openGroupSheet": "Open the primary group sheet"
     },
     "advanced": "Advanced",
     "requiredFW": "Required SR",
@@ -390,7 +462,9 @@
     "creatureClass": "Type",
     "conjuringDifficulty": "Summoning dif.",
     "camplocation": "Campsite",
+    "calculatedAttributes": "Calculated Attributes",
     "carrycapacity": "Carrying Capacity",
+    "characteristics": "Base Characteristics",
     "chatEdit": "Manual correction",
     "Details": "Details",
     "dart": "Dart",
@@ -828,6 +902,18 @@
             "config": "Configuration",
             "events": "Events",
             "calendar": "Calendar",
+            "featureVisibility": {
+                "label": "Player Feature Visibility",
+                "hint": "Choose which calendar features are visible to players. GMs always have access to all features."
+            },
+            "playerDateVisibility": {
+                "label": "Player Date Display",
+                "hint": "Choose how the date and time are displayed in the calendar widget for players.",
+                "mode": "Display Mode",
+                "exact": "Exact time",
+                "roughTime": "Rough time of day",
+                "dateOnly": "Date only"
+            },
             "dayTimes": {
                 "dawn": "Dawn",
                 "morning": "Morning",
@@ -993,7 +1079,9 @@
         "creation": "Production",
         "services": "Services",
         "finalize": "Finalize",
-        "material": "Material"
+        "material": "Material",
+        "selectActor": "Select Actor",
+        "noActorHint": "Drag an actor here or select one below."
     },
     "MASTER": {
         "automation": "Automation",
@@ -1040,6 +1128,8 @@
         "generalTab": "General"
     },
     "MODS": {
+        "otherCombat": "Other",
+        "otherModifiers": "Other Modifiers",
         "partChecks": "Part of skill check modifier",
         "attackFromBehind": "Attack from behind",
         "opportunityAttack": "Attack of Opportunity",
@@ -1062,6 +1152,8 @@
         "armor": "Armor modifier",
         "range": "Range multiplier",
         "creatureBonus": "Bonus damage (creature)",
+        "bonusActions": "Bonus Actions",
+        "actionCostMod": "Action Cost Modifier",
         "armorPen": "Armor penetration",
         "sight": "Sight modifier",
         "sightMax": "Sight modifier incl. Level 4",
@@ -1070,29 +1162,29 @@
         "impossibleWeapon": "{weapon} not usable",
         "notSuitableWeapon": "{weapon} not suitable",
         "RangeMod": {
-            "short": "Close ({fk} to RC, {tp} DP)",
-            "medium": "Medium ({fk} to RC, {tp} DP)",
-            "long": "Far ({fk} to RC, {tp} DP)",
-            "rangesense": "Far ({fk} to RC, {tp} DP)",
-            "extreme": "Extreme ({fk} to RC, {tp} DP)"
+            "short": "Close [{fk} to RC, {tp} DP]",
+            "medium": "Medium [{fk} to RC, {tp} DP]",
+            "long": "Far [{fk} to RC, {tp} DP]",
+            "rangesense": "Far [{fk} to RC, {tp} DP]",
+            "extreme": "Extreme [{fk} to RC, {tp} DP]"
         },
         "RangeSize": {
-            "tiny": "Tiny ({f})",
-            "small": "Small ({f})",
-            "average": "Medium ({f})",
-            "big": "Large ({f})",
-            "giant": "Huge ({f})"
+            "tiny": "Tiny [{f}]",
+            "small": "Small [{f}]",
+            "average": "Medium [{f}]",
+            "big": "Large [{f}]",
+            "giant": "Huge [{f}]"
         },
         "aimOptions": {
-            "0": "Unaimed ({f})",
-            "1": "Aim 1 action ({f})",
-            "2": "Aim 2 actions ({f})"
+            "0": "Unaimed [{f}]",
+            "1": "Aim 1 action [{f}]",
+            "2": "Aim 2 actions [{f}]"
         },
         "waterOptions": {
-            "0": "No restriction ({f})",
-            "1": "Up to waist ({f})",
-            "2": "Up to shoulder ({f})",
-            "3": "Bottomless water ({f})"
+            "0": "No restriction [{f}]",
+            "1": "Up to waist [{f}]",
+            "2": "Up to shoulder [{f}]",
+            "3": "Bottomless water [{f}]"
         }
     },
     "wrongGrip": {
@@ -1325,7 +1417,9 @@
         "paidPAsP": "Paid permanent AsP/KaP",
         "rebuyPAsP": "Rebought permanent AsP/KaP",
         "NoApplicationsAdded": "No applications added to the character.",
-        "startDraggig": "You can add items like abilities, equipment, weapons, professions, species, culture and conditions to the sheet by drag & drop."
+        "startDraggig": "You can add items like abilities, equipment, weapons, professions, species, culture and conditions to the sheet by drag & drop.",
+        "removeSchip": "Remove fate point",
+        "addSchip": "Add fate point"
     },
     "DSA5HOTBARCONFIG": {
         "manager": "Hotbar Manager",
@@ -1394,12 +1488,28 @@
         "ql": "Quality of the tavern",
         "addNow": "Add to inventory now?"
     },
+    "DSAJOURNALTARGET": {
+        "dialogTitle": "New entry",
+        "hint": "Choose where the new entry should be stored.",
+        "addToExistingPage": "Existing page",
+        "addToNewPage": "New page",
+        "addToNewJournal": "New journal",
+        "targetMode": "Target",
+        "selectPage": "Page",
+        "selectJournal": "Journal",
+        "pageName": "Page name",
+        "journalName": "Journal name",
+        "targetCreationFailed": "The target could not be created."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "copyActorDescription": "Copy actor description from original actor",
         "ImportantPersons": "Dramatis Personae",
         "bestiary": "Bestiarium",
         "Add": "Person/Kreatur hinzufügen",
+        "addActor": "Add to Dramatis Personae",
+        "addActorFromDirectory": "Add to Dramatis Personae",
+        "actorAlreadyExists": "{actor} is already included in Dramatis Personae on page {page} in journal {journal}.",
         "UnknownFaction": "Unbekannte Fraktion",
         "selectJournal": "Journal auswählen",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
@@ -1486,6 +1596,120 @@
             }
         }
     },
+    "DSAQUESTLOG": {
+        "title": "Quests",
+        "summary": "Summary",
+        "objectives": "Objectives",
+        "timeline": "Timeline",
+        "linkedPages": "Linked Pages",
+        "startDate": "Start",
+        "targetDate": "Target",
+        "completionDate": "Ended",
+        "createQuest": "Create quest entry",
+        "defaultJournalName": "Quests",
+        "newEntryPlaceholder": "New Quest",
+        "newObjectivePlaceholder": "New Objective",
+        "SelectQuest": "Choose a quest",
+        "SelectQuestHint": "Show objectives, notes, and related references for the current adventure.",
+        "emptyTitle": "No quests yet",
+        "emptyHint": "Create or register a quest journal to track adventure progress here.",
+        "showInQuestlog": "Show in quests",
+        "showInQuestlogHint": "The quest entries will be available in the quests tab of the calendar picker according to their visibility.",
+        "addObjective": "Add objective",
+        "addLinkedPage": "Add linked page",
+        "playerOwners": "Assigned players",
+        "noObjectives": "No objectives yet.",
+        "noLinkedPages": "No linked pages.",
+        "missingLink": "Missing",
+        "ungrouped": "Unsorted",
+        "toggleObjectiveDone": "Toggle objective completion",
+        "toggleVisibility": "Toggle player visibility",
+        "showQuestlogJournal": "Show quest journal",
+        "journals": {
+            "label": "Quest Journals",
+            "hint": "Select journals with quest entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)"
+        },
+        "AUDIENCE": {
+            "0": "Party",
+            "1": "Selected players",
+            "2": "GM only"
+        },
+        "STATUS": {
+            "0": "Open",
+            "1": "Ended"
+        },
+        "PRIORITY": {
+            "0": "Main Quest",
+            "1": "Side Quest",
+            "2": "Personal"
+        },
+        "FIELDS": {
+            "quests": {
+                "title": {
+                    "label": "Title"
+                },
+                "summary": {
+                    "label": "Summary"
+                },
+                "details": {
+                    "label": "Details"
+                },
+                "gmNotes": {
+                    "label": "GM Notes"
+                },
+                "status": {
+                    "label": "State"
+                },
+                "priority": {
+                    "label": "Priority"
+                },
+                "audience": {
+                    "label": "Audience"
+                },
+                "playerOwners": {
+                    "label": "Assigned players"
+                },
+                "visible": {
+                    "label": "Visible to Players"
+                },
+                "pinToTop": {
+                    "label": "Pin to top"
+                },
+                "chapter": {
+                    "label": "Chapter / Group"
+                },
+                "location": {
+                    "label": "Location"
+                },
+                "tags": {
+                    "label": "Tags"
+                },
+                "createdAtWorldTime": {
+                    "label": "Created"
+                },
+                "updatedAtWorldTime": {
+                    "label": "Updated"
+                },
+                "objectives": {
+                    "text": {
+                        "label": "Objective"
+                    },
+                    "done": {
+                        "label": "Completed"
+                    },
+                    "visible": {
+                        "label": "Visible to Players"
+                    }
+                },
+                "linkedPages": {
+                    "uuid": {
+                        "label": "Page UUID",
+                        "hint": "Link a journal entry page UUID."
+                    }
+                }
+            }
+        }
+    },
     "BOOKITEM": {
         "author": "Author",
         "category": "Art",
@@ -1548,21 +1772,21 @@
         "AutoSizeHint": "The token size will be defined by the actor's size category."
     },
     "VisionDisruption": {
-        "step0": "Clear sight",
+        "step0": "Clear sight [0]",
         "step1": "Slight impairment [-2]",
         "step2": "Shape [-4]",
         "step3": "Barely shape [-6]",
         "step4": "Invisible [Lucky hit]"
     },
     "SkillVisionDisruption": {
-        "step0": "Clear sight",
+        "step0": "Clear sight [0]",
         "step1": "Slight impairment [-1]",
         "step2": "Shape [-2]",
         "step3": "Barely shape [-3]",
         "step4": "Invisible [-4]"
     },
     "meleeVisionDisruption": {
-        "0": "Clear Sight",
+        "0": "Clear Sight [0]",
         "1": "Slight impairment [-1]",
         "2": "Shape [-2]",
         "3": "Barely shape [-3]",
@@ -1594,6 +1818,7 @@
     },
     "CHATNOTIFICATION": {
         "fadingEffect": "The effect <b>{effect}</b> has been removed from {actor}.",
+        "conditionDecay": "<b>{effect}</b> on {actor} decreased to level {level}.",
         "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
         "unableReroll": "Die {die} rolled again because of Incompetence ({oldVal}/{newVal})",
         "requestRoll": "{user} requests a roll in {item}",
@@ -1714,9 +1939,12 @@
     "TYPES.Actor.character": "Character",
     "TYPES.Actor.npc": "Non Player Character",
     "TYPES.Actor.creature": "Creature",
+    "TYPES.Actor.group": "Group",
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
+    "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaquestlog": "Quest",
     "TYPES.JournalEntryPage.dsaaptracker": "AP Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
     "npc": "Non Player Character",
@@ -1725,6 +1953,9 @@
         "SelectEntry": "Choose an entry",
         "SelectEntryHint": "Show events and special days.",
         "NoPersonsInList": "No persons in the list",
+        "createEvent": "Create calendar event",
+        "defaultJournalName": "Calendar",
+        "newEntryPlaceholder": "New Event",
         "nextMonth": "Next month",
         "reset": "Reset",
         "previousMonth": "Previous month",
@@ -1875,6 +2106,47 @@
             "tools": {
                 "label": "Tools",
                 "hint": "The tools required to disarm the trap, e.g. lockpicks, climbing gear, or special tools."
+            },
+            "removeOnExit": {
+                "label": "Remove on Exit",
+                "hint": "Automatically remove effects applied by this trap when a token leaves the region."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAZone": {
+        "MODES": {
+            "whileInZone": "While in Zone",
+            "once": "Once on Enter",
+            "recurring": "Each Round"
+        },
+        "FIELDS": {
+            "messageId": {
+                "label": "Chat Message",
+                "hint": "The chat message containing the effect to apply."
+            },
+            "mode": {
+                "label": "Mode",
+                "hint": "How the zone effect is applied to tokens."
+            },
+            "removeOnExit": {
+                "label": "Remove on Exit",
+                "hint": "Automatically remove the effect when a token leaves the zone."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAAura": {
+        "FIELDS": {
+            "effectUuid": {
+                "label": "Effect UUID",
+                "hint": "The UUID of the active effect that defines this aura."
+            },
+            "disposition": {
+                "label": "Disposition",
+                "hint": "Which token dispositions this aura affects (2 = all)."
+            },
+            "ignoreWalls": {
+                "label": "Ignore Walls",
+                "hint": "If enabled, the aura passes through walls."
             }
         }
     },
@@ -1987,7 +2259,7 @@
     "MELEESIZE": {
         "tiny": "Tiny [-4]",
         "small": "Small [0]",
-        "average": "Medium",
+        "average": "Medium [0]",
         "big": "Large [0]",
         "giant": "Huge [0]"
     },
@@ -2034,6 +2306,10 @@
         "hideOnToken": "Hide on Token",
         "hidePlayers": "Hide for players",
         "isAura": "Aura",
+        "auraColor": "Aura Color",
+        "auraHidden": "Hide Region",
+        "excludeSelf": "Exclude Self",
+        "ignoreWalls": "Ignore Walls",
         "radius": "Radius",
         "disposition": "Disposition",
         "applyTarget": "Effect (Target)",
@@ -2089,6 +2365,20 @@
             "seconds": "Seconds",
             "name": "Effectname",
             "overwrite": "Overwrite standard name"
+        },
+        "wizardEffect": "Effect",
+        "wizardExpertMode": "Switch to expert mode",
+        "wizardSimpleMode": "Switch to simple mode",
+        "wizardAllCategories": "All",
+        "wizardCategories": {
+            "protection": "Protection & Defense",
+            "attributes": "Attributes",
+            "skills": "Skills",
+            "combat": "Combat",
+            "magic": "Magic & Faith",
+            "regeneration": "Regeneration",
+            "conditions": "Conditions",
+            "weapon": "Weapon / Armor"
         }
     },
     "LocalizedIDs": {
@@ -2276,6 +2566,7 @@
         "NotEnoughKaP": "Not enough Karma Points",
         "NotEnoughFate": "Not enough fate points",
         "NotEnoughCharges": "Not enough charges",
+        "NotEnoughItems": "No remaining item to consume",
         "AdvanceMaximumReached": "Max advancements already reached",
         "notFound": "{category} {name} not found",
         "itemNotFound": "This entry was not found in the database. Please create it manually.",
@@ -2300,6 +2591,7 @@
         "tooManyEnchants": "An item can only contain 7 enchantments",
         "onlyCompendiumSpells": "Only {element} from compendiums can be used",
         "enchantmentNotFound": "Referenced spell not found",
+        "noEnchantmentForExtension": "No matching enchantment found for this spell extension.",
         "noBreakingResistance": "No Breaking Point Rating found for {item}.",
         "noBreakingStructure": "{name} has no accepted max structure value.",
         "noConjurationActive": "No actor to summon active (drag and drop)",
@@ -2310,7 +2602,6 @@
         "elementNotOwned": "You do not have permission to edit the element.",
         "canNotEditInCompendium": "This function is not available in compendiums. Import the element into the world to edit it.",
         "noEffectFound": "The effect could not be found.",
-        "shouldTimesUp": "The module Times-Up is required for automatically expiring effects.",
         "requiresModule": "This function requires the module {module}.",
         "wrongLanguage": "Your language setting does not match the predefined setting ({lang}). Do you want to change this?",
         "noVictim": "No targets marked. Effect is transferred to self.",
@@ -2359,15 +2650,48 @@
         "noActor": "Your character could not be found",
         "onlyActors": "Only players can receive/pay money. Maybe no character has been assigned to you.",
         "cannotpay": "<b>{actor}</b> can not pay his/her debts of {amount}.",
-        "default": "Standard"
+        "default": "Standard",
+        "requestTitlePay": "Collect Payment",
+        "requestTitleGetPaid": "Distribute Payment",
+        "requestDeclined": "Request declined.",
+        "requestExecutedByGM": "Resolved manually by the GM.",
+        "requestQueryFailed": "The request could not be delivered or completed.",
+        "requestResend": "Resend",
+        "requestExecute": "Execute",
+        "requestRemove": "Remove",
+        "requestAddActor": "Add actor",
+        "requestFinalize": "Finalize",
+        "requestNoActors": "No actors are available for this request.",
+        "requestNoAvailableActors": "No more actors can be added.",
+        "requestPromptPay": "{actor} should pay {amount}.",
+        "requestPromptGetPaid": "{actor} should receive {amount}.",
+        "statusPending": "Pending",
+        "statusAccepted": "Accepted",
+        "statusRejected": "Rejected",
+        "statusFailed": "Failed",
+        "statusSkipped": "Skipped",
+        "statusOffline": "Offline",
+        "statusUnowned": "Manual",
+        "statusOfflineInfo": "No active designated user is currently available.",
+        "statusUnownedInfo": "No non-GM owner is available. Resolve via GM fallback.",
+        "summaryMerchantTitle": "Trade",
+        "summaryTradeTitle": "Exchange"
+    },
+    "DSAQUERIES": {
+        "knowledgeCheck": "Knowledge Check",
+        "approve": "Approve",
+        "pending": "Awaiting GM approval...",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "noGMOnline": "No GM is currently online to approve this request."
     },
     "rangeMovementOptions": {
-        "STATIONARY": "motionless (+2)",
-        "SLOW": "moving slowly (+-0)",
-        "FAST": "moving quickly (-2)",
-        "SHOOTERMOVING": "walking (-2)",
-        "SHOOTERRUNNING": "running (-4)",
-        "SHOOTERSTATIONARY": "stationary (+-0)"
+        "STATIONARY": "motionless [+2]",
+        "SLOW": "moving slowly [0]",
+        "FAST": "moving quickly [-2]",
+        "SHOOTERMOVING": "walking [-2]",
+        "SHOOTERRUNNING": "running [-4]",
+        "SHOOTERSTATIONARY": "stationary [0]"
     },
     "mountedRangeOptions": {
         "STATIONARY": "standing still",
@@ -2377,13 +2701,13 @@
     },
     "regnerationCampLocations": {
         "normal": "Normal",
-        "bad": "Poor campsite (-1)",
-        "good": "Good accomodations (+1)"
+        "bad": "Poor campsite [-1]",
+        "good": "Good accomodations [+1]"
     },
     "regenerationInterruptOptions": {
-        "small": "Small - Watch/Disturbance (-1)",
-        "big": "Lengthy - sentry duty/ambush (-2)",
-        "none": "None (+-0)"
+        "small": "Small - Watch/Disturbance [-1]",
+        "big": "Lengthy - sentry duty/ambush [-2]",
+        "none": "None [0]"
     },
     "CHATCONTEXT": {
         "Reroll": "Repeat roll (1 FtP)",
@@ -2722,7 +3046,11 @@
         "noDefenses": "Defense count",
         "ongoing": "Ongoing actions",
         "waitInit": "Wait",
-        "actionHint": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>"
+        "actionHint": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>",
+        "baseActionPipHint": "Action ({used}/{total}). Attack, Ranged attack, Draw weapon, Cast spell…",
+        "freeActionPipHint": "Free Action. Call a phrase, Drop item, Stand up, Turn around…",
+        "movementPipHint": "Movement: {used}/{max} Schritt. Beyond speed costs one action.",
+        "overusePipHint": "Extra action – exceeds your action budget this round!"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Improve Attack",
@@ -2778,6 +3106,10 @@
         "add": "Add condition",
         "minorSpirits": "Annoyed by Minor Spirits",
         "defeated": "Defeated"
+    },
+    "RAPTURE": {
+        "kapTracker": "KaP Tracker (Rapture)",
+        "kapTrackerDescription": "Tracks Karma Point expenditure over a rolling 24-hour window. Every 10 KaP spent triggers one level of Rapture (max 4)."
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Sub category",
@@ -3019,9 +3351,25 @@
                     "wiki": "Open the wiki",
                     "videos": "VTTom videos"
                 },
-                "cta": "View & Buy",
+                "details": "Show contents",
+                "cta": "Open store",
                 "ctaOwned": "Already Owned",
                 "owned": "Owned"
+            },
+            "moduleDetails": {
+                "windowTitle": "Module Details",
+                "storeLink": "Open store page",
+                "overallAutomation": "Automation coverage",
+                "specialFeatures": "Special features",
+                "badgesLabel": "Highlights",
+                "tagsLabel": "Tags",
+                "note": "This list is only an excerpt. Modules usually contain additional content that is not tracked here. A checkmark or the absence of one only reflects tracked automation status, and entries may still be partially automated.",
+                "unavailableTitle": "Details unavailable",
+                "unavailableText": "No generated detail dataset is available for this module right now.",
+                "entryNotFound": "No library entry found for {name}.",
+                "automatedTooltip": "Automated",
+                "notAutomatedTooltip": "Manual",
+                "searchEmpty": "No entries match the current search."
             }
         }
     }

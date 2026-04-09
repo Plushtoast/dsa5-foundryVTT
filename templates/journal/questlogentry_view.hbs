@@ -1,0 +1,99 @@
+<div class='scrollable standard-form'>
+  {{#each sortedEntries as |quest|}}
+    <div class='persona-detail-view detailbox margin-top'>
+      <div class='persona-detail-header flexrow gap10px'>
+        <div class='persona-detail-title'>
+          <h1 class='questlog-detail-name'>{{quest.title}}</h1>
+          <p class='persona-detail-subtitle'>{{quest.statusName}}{{#if quest.chapter}} • {{quest.chapter}}{{/if}}{{#if quest.location}} • {{quest.location}}{{/if}}</p>
+          <div class='questlog-badge-row'>
+            {{#each quest.preparedAudienceBadges}}
+              <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
+            {{/each}}
+          </div>
+          {{#each quest.preparedTags}}
+            <span class='persona-detail-type'>{{this}}</span>
+          {{/each}}
+        </div>
+        <div class='flexrow gap5px questlog-detail-aside flex0'>
+          {{#if quest.timelineBadges.length}}
+            <div class='flexcol questlog-timeline-column'>
+              {{#each quest.timelineBadges}}
+                <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
+                  <i class='fas {{icon}}'></i>
+                  <span>{{value}}</span>
+                </span>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if @root.isGM}}
+            <div class='persona-detail-actions flex0'>
+              <button type='button' class='detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'>
+                <i class='fas fa-eye{{ifThen quest.visible "" "-slash"}}'></i>
+              </button>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+      <div class='persona-detail-content'>
+        {{#if quest.preparedSummary}}
+          <div class='detail-section'>
+            <h3 class='section-title'>{{localize 'DSAQUESTLOG.summary'}}</h3>
+            <div class='description-text'>{{quest.preparedSummary}}</div>
+          </div>
+        {{/if}}
+
+        {{#if quest.totalObjectives}}
+          <div class='detail-section'>
+            <h3 class='section-title'>{{localize 'DSAQUESTLOG.objectives'}} <span class='small'>{{quest.progressText}}</span></h3>
+            <div class='questlog-objective-list'>
+              {{#each quest.preparedObjectives}}
+                <div class='questlog-objective-card{{ifThen done " is-done" ""}} flexrow'>
+                  <div class='questlog-objective-main'>
+                    <div class='questlog-objective-line'>
+                      <span class='questlog-objective-icon'><i class='fas {{ifThen done "fa-check-circle" "fa-circle"}}'></i></span>
+                      <span>{{text}}</span>
+                    </div>
+                  </div>
+                  {{#if @root.isGM}}
+                    <button type='button' class='icon fas {{ifThen done "fa-arrow-rotate-left" "fa-check"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleObjectiveDone"}}' data-action='toggleObjectiveDone' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
+                    </button>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+
+        {{#if quest.preparedLinkedPages.length}}
+          <div class='detail-section'>
+            <h3 class='section-title'>{{localize 'DSAQUESTLOG.linkedPages'}}</h3>
+            <div class='section-content questlog-link-list'>
+              {{#each quest.preparedLinkedPages}}
+                <div class='persona-list-item questlog-link-card'>
+                  <div class='persona-list-info'>
+                    <h5 class='persona-list-name'>{{label}}</h5>
+                    {{#if subtitle}}<div class='persona-list-meta'><span class='persona-type'>{{subtitle}}</span></div>{{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+
+        <div class='detail-section'>
+          <h3 class='section-title'>{{localize 'Description'}}</h3>
+          <div class='description-text'>{{{quest.preparedDetails}}}</div>
+        </div>
+
+        {{#if @root.isGM}}
+          {{#if quest.preparedGMNotes}}
+            <div class='detail-section'>
+              <h3 class='section-title'>{{localize 'GM Notes'}}</h3>
+              <div class='description-text'>{{{quest.preparedGMNotes}}}</div>
+            </div>
+          {{/if}}
+        {{/if}}
+      </div>
+    </div>
+  {{/each}}
+</div>

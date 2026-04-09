@@ -2,12 +2,9 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 import DSA5 from '../config/config-dsa5.js';
-import Actordsa5 from '../actor/actor-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DPS from '../system/automation/derepositioningsystem.js';
-import { RollDialogBuilder } from './dialog-builder.js';
-import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
-import { ValueWidget } from '../system/helpers/valuewidget.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5SkillDialog extends DialogShared {
@@ -15,7 +12,6 @@ export default class DSA5SkillDialog extends DialogShared {
     const section = target.dataset.toggle;
     this.element.querySelector(`[data-section='${section}']`).classList.toggle('dsahidden');
   }
-
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
@@ -48,7 +44,7 @@ export default class DSA5SkillDialog extends DialogShared {
           });
           resolve(dialogOptions.callback(html));
         },
-      
+
       });
     return buttons;
   }
@@ -76,14 +72,6 @@ export default class DSA5SkillDialog extends DialogShared {
     this.rememberFormData();
     html.on('mousedown', '.quantity-click', (ev) => this.rememberFormData(ev));
 
-    html.find('.modifiers option').on('mousedown', (ev) => {
-      this.rememberFormData(ev);
-    });
-
-    html.find('.vwidget').each((i, elem) => {
-      new ValueWidget(elem)
-    });
-
     html.find('[data-action="toggleSection"]').on('click', (ev) => {
       this.#toggleSection(ev, ev.currentTarget);
     });
@@ -92,7 +80,7 @@ export default class DSA5SkillDialog extends DialogShared {
   rememberFormData(ev) {
     const html = $(this.element);
     const data = new foundry.applications.ux.FormDataExtended(html.find('form')[0]).object;
-    data.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    data.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     this.calculateRoutine(data);
   }
 
@@ -121,11 +109,11 @@ export default class DSA5SkillDialog extends DialogShared {
     const enoughFw = fw >= requiredFw;
     const canRoutine = routineAllowed && enoughFw;
 
-    const routineLabel = game.i18n.localize('ROLL.routine');
+    const routineLabel = _loc('ROLL.routine');
     routineButton.prop('disabled', !canRoutine);
     routineButton.html(
       canRoutine
-        ? `${routineLabel} (${game.i18n.localize('CHARAbbrev.FW')} ${Math.round(fw / 2)})`
+        ? `${routineLabel} (${_loc('CHARAbbrev.FW')} ${Math.round(fw / 2)})`
         : routineLabel
     );
 

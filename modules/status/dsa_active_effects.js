@@ -1,24 +1,52 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-const { getProperty, setProperty, getType } = foundry.utils;
+const { setProperty, getType, isPlainObject, hasProperty } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
   static deprecatedDataRegex = /^data\./;
+  static migrationConfig = {
+    advancedFunction: { path: 'advancedFunction', type: 'number' },
+    successEffect: { path: 'successEffect', type: 'number' },
+    args0: { path: 'macroArgs.conditionId', type: 'string' },
+    args1: { path: 'macroArgs.conditionValue', type: 'string' },
+    args2: { path: 'macroArgs.args2', type: 'removeOnly' },
+    args3: { path: 'macroArgs.macro', type: 'string' },
+    args4: { path: 'macroArgs.creatureLinks', type: 'string' },
+    customDuration: { path: 'customDuration', type: 'string' },
+    specStep: { path: 'specStep', type: 'number' },
+    applyToOwner: { path: 'applyToOwner', type: 'boolean' },
+    isAura: { path: 'aura.isAura', type: 'boolean' },
+    auraRadius: { path: 'aura.auraRadius', type: 'string' },
+    borderColor: { path: 'aura.borderColor', type: 'string' },
+    fillColor: { path: 'aura.fillColor', type: 'removeOnly' },
+    borderThickness: { path: 'aura.borderThickness', type: 'removeOnly' },
+    disposition: { path: 'aura.disposition', type: 'number' },
+    templateSource: { path: 'aura.templateSource', type: 'removeOnly' },
+    onDelayed: { path: 'macroArgs.onDelayed', type: 'string' },
+    onRemove: { path: 'macroArgs.onRemove', type: 'string' },
+    resistRoll: { path: 'resistRoll', type: 'string' },
+    charges: { path: 'charges', type: 'charges' },
+    description: { path: 'description', type: 'string', topLevel: true },
+    value: { path: 'condition.value', type: 'nullableNumber' },
+    max: { path: 'condition.max', type: 'nullableNumber' },
+    auto: { path: 'condition.auto', type: 'number' },
+    manual: { path: 'condition.manual', type: 'number' },
+    horseSpeed: { path: 'horseSpeed', type: 'nullableNumber' },
+    hideOnToken: { path: 'visibility.hideOnToken', type: 'boolean' },
+    hidePlayers: { path: 'visibility.hidePlayers', type: 'boolean' },
+    editable: { path: 'editable', type: 'removeOnly' },
+    custom: { path: 'custom', type: 'removeOnly' },
+    removeMessage: { path: 'removeMessage', type: 'string' },
+  };
 
-  static _parseChargeNumber(raw) {
-    // Empty number inputs come through as ""; treat that as "no charges configured".
-    if (raw === '' || raw === null || raw === undefined) return null;
-    const value = Number(raw);
-    return Number.isFinite(value) ? value : null;
-  }
-
-  apply(actor, change) {
-    if (this.isDepleted()) return {};
+  static applyChange(targetDoc, change, options = {}) {
+    const effect = change.effect;
+    if (effect?.isDepleted?.()) return {};
 
     if (DSAActiveEffect.itemChangeRegex.test(change.key)) {
-      const modifiedItems = this._getModifiedItems(actor, change);
+      const modifiedItems = effect._getModifiedItems(targetDoc, change);
 
-      for (let item of modifiedItems.items) {
+      for (const item of modifiedItems.items) {
         if (!item.overrides) item.overrides = {};
         const overrides = foundry.utils.flattenObject(item.overrides);
         const newChange = {
@@ -26,54 +54,109 @@ export default class DSAActiveEffect extends ActiveEffect {
           key: modifiedItems.key,
           value: modifiedItems.value,
         };
-        const result = super.apply(item, newChange);
+        const result = super.applyChange(item, newChange, options);
         Object.assign(overrides, result);
         item.overrides = foundry.utils.expandObject(overrides);
       }
+      return {};
     } else {
       if (DSAActiveEffect.deprecatedDataRegex.test(change.key)) {
-        const msg = game.i18n.format('DSAError.ActiveEffectDataChange', {
-          name: actor.name,
+        const msg = _loc('DSAError.ActiveEffectDataChange', {
+          name: targetDoc.name,
         });
         console.error(msg);
         change.key = change.key.replace(DSAActiveEffect.deprecatedDataRegex, 'system.');
       }
-      return super.apply(actor, change);
+      return super.applyChange(targetDoc, change, options);
     }
   }
 
-  static realyRealyEnabled(effect) {
-    const charges = effect?.getFlag?.('dsa5', 'charges');
-    if (charges) {
-      const value = this._parseChargeNumber(charges.value);
-      if (value !== null && value <= 0) return false;
+  static _applyChangeCustom(targetDoc, change, current, delta, changes) {
+    const update = this._applyCustomEffect(targetDoc, change, current, delta);
+    if (update !== null) {
+      changes[change.key] = update;
+      return;
     }
 
-    // Actor-owned effects usually have transfer=false but are still applicable.
-    // Item-owned effects require transfer=true to be applied to an actor.
+    return super._applyChangeCustom(targetDoc, change, current, delta, changes);
+  }
+
+  static _applyCustomEffect(targetDoc, change, current) {
+    const currentValue = current || null;
+    const currentType = getType(currentValue);
+    let update = null;
+
+    switch (currentType) {
+      case 'Array': {
+        const newElems = [];
+        const source = change.effect.name;
+        for (const elem of `${change.value}`.split(/[;,]+/)) {
+          const vals = elem.split(' ');
+          const value = vals.pop();
+          const target = vals.join(' ');
+          newElems.push({
+            source,
+            value,
+            target,
+            item: change.effect.parent?.name,
+            ref: { uuid: change.effect.uuid, id: change.effect.id },
+          });
+        }
+        update = currentValue.concat(newElems);
+        break;
+      }
+    }
+
+    return update;
+  }
+
+  static realyRealyEnabled(effect) {
+    const charges = effect?.system?.charges;
+    if (charges) {
+      if (Number.isFinite(charges.value) && charges.value <= 0) return false;
+    }
+
+    const delayedData = effect.system?.delayed;
+    const isDelayed = !!delayedData?.enabled;
+
     const isActorEffect = effect?.parent?.documentName === 'Actor';
-    if (effect.disabled || (!isActorEffect && !effect.transfer) || effect.system.delayed || (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)) return false;
+    if (
+      effect.disabled ||
+      (!isActorEffect && !effect.transfer) ||
+      isDelayed ||
+      (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage)
+    )
+      return false;
 
     return true;
   }
 
+  static auraNeedsSync(effect, changed = {}, { parentChanged = false } = {}) {
+    if (!effect?.system?.aura?.isAura) return false;
+
+    if (parentChanged) {
+      return hasProperty(changed, 'system.worn.value') || hasProperty(changed, 'system.worn.wearable');
+    }
+
+    return hasProperty(changed, 'system.aura') || hasProperty(changed, 'disabled');
+  }
+
   hasCharges() {
-    const charges = this.getFlag('dsa5', 'charges');
+    const charges = this.system?.charges;
     if (!charges) return false;
-    return this.constructor._parseChargeNumber(charges.value) !== null;
+    return Number.isFinite(charges.value);
   }
 
   getChargeData() {
-    const charges = this.getFlag('dsa5', 'charges');
+    const charges = this.system?.charges;
     if (!charges) return null;
 
-    const value = this.constructor._parseChargeNumber(charges.value);
-    const max = this.constructor._parseChargeNumber(charges.max);
-    if (value === null) return null;
+    const value = charges.value;
+    if (!Number.isFinite(value)) return null;
 
     return {
       value: Math.max(0, value),
-      max: max === null ? null : Math.max(0, max),
+      max: Number.isFinite(charges.max) ? Math.max(0, charges.max) : null,
     };
   }
 
@@ -98,12 +181,12 @@ export default class DSAActiveEffect extends ActiveEffect {
     const speaker = options?.speaker;
     const extraHtml = typeof options?.chatExtraHtml === 'string' ? options.chatExtraHtml : '';
 
-    const effectName = this.name || this.label || game.i18n.localize('ActiveEffects.custom');
+    const effectName = this.name || this.label || _loc('ActiveEffects.custom');
     const max = charges.max;
     const maxSuffix = max === null ? '' : `/${max}`;
     const changeValueDisplay = `${oldValue}${maxSuffix} <i class="fas fa-arrow-right"></i> ${newValue}${maxSuffix}`;
 
-    const actor = this.parent?.documentName === 'Actor' ? this.parent : (this.parent?.documentName === 'Item' ? this.parent?.parent : null);
+    const actor = this.parent?.documentName === 'Actor' ? this.parent : this.parent?.documentName === 'Item' ? this.parent?.parent : null;
     const resolvedSpeaker = speaker || ChatMessage.getSpeaker({ actor });
 
     if (newValue <= 0) {
@@ -112,12 +195,12 @@ export default class DSAActiveEffect extends ActiveEffect {
       if (this.parent?.documentName === 'Item') {
         await this.update({
           disabled: true,
-          'flags.dsa5.charges.value': 0,
+          'system.charges.value': 0,
         });
 
         if (shouldCreateChatMessage) {
-          const chargeLabel = game.i18n.localize('charges');
-          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDisabled');
+          const chargeLabel = _loc('charges');
+          const description = _loc('ActiveEffects.chargesChatDepletedDisabled');
           const content = `
           <div class="dsa5 chat-card item-card">
             <header class="card-header media">
@@ -136,8 +219,8 @@ export default class DSAActiveEffect extends ActiveEffect {
         }
       } else {
         if (shouldCreateChatMessage) {
-          const chargeLabel = game.i18n.localize('charges');
-          const description = game.i18n.localize('ActiveEffects.chargesChatDepletedDeleted');
+          const chargeLabel = _loc('charges');
+          const description = _loc('ActiveEffects.chargesChatDepletedDeleted');
           const content = `
           <div class="dsa5 chat-card item-card">
             <header class="card-header media">
@@ -159,13 +242,11 @@ export default class DSAActiveEffect extends ActiveEffect {
       return;
     }
 
-    await this.update({
-      'flags.dsa5.charges.value': newValue,
-    });
+    await this.update({ 'system.charges.value': newValue });
 
     if (shouldCreateChatMessage) {
-      const chargeLabel = game.i18n.localize('charges');
-      const description = game.i18n.localize('ActiveEffects.chargesChatConsumed');
+      const chargeLabel = _loc('charges');
+      const description = _loc('ActiveEffects.chargesChatConsumed');
       const content = `
       <div class="dsa5 chat-card item-card">
         <header class="card-header media">
@@ -177,36 +258,33 @@ export default class DSAActiveEffect extends ActiveEffect {
           <p><b>${chargeLabel}:</b> ${changeValueDisplay}</p>
         </div>
       </div>`;
-      await ChatMessage.create({
-        content,
-        speaker: resolvedSpeaker,
-      });
+      await ChatMessage.create({ content, speaker: resolvedSpeaker });
     }
   }
 
   static async _onCreateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onUpdateOperation(documents, operation, user);
   }
 
   static async _onDeleteOperation(documents, operation, user) {
-    for (let doc of documents) {
+    for (const doc of documents) {
       if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onDeleteOperation(documents, operation, user);
   }
 
   isVisibleEffect() {
-    return !this.disabled && !this.notApplicable && (game.user.isGM || !this.getFlag('dsa5', 'hidePlayers')) && !this.getFlag('dsa5', 'hideOnToken');
+    return !this.disabled && !this.notApplicable && (game.user.isGM || !this.system?.visibility?.hidePlayers) && !this.system?.visibility?.hideOnToken;
   }
 
   _displayScrollingStatus(enabled) {
@@ -224,7 +302,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     const [type, itemName, ...keyParts] = change.key.replace(/^@/, '').split('.');
     const key = keyParts.join('.');
     const { value } = change;
-    
+
     if (itemName === 'self') {
       return { items: [this.parent], key, value };
     }
@@ -234,10 +312,10 @@ export default class DSAActiveEffect extends ActiveEffect {
     }
 
     const normalizedType = type.toLowerCase();
-    const items = actor.items.filter(item => {
+    const items = actor.items.filter((item) => {
       if (item.type !== normalizedType) return false;
       if (item.id === itemName) return true;
-      
+
       try {
         const rgx = new RegExp(itemName, 'i');
         return rgx.test(item.name);
@@ -282,35 +360,146 @@ export default class DSAActiveEffect extends ActiveEffect {
     super._preDelete(options, user);
     //this._clearModifiedItems();
   }
-}
 
-const applyCustomEffect = (elem, change) => {
-  const current = getProperty(elem, change.key) || null;
-  const ct = getType(current);
-  let update = null;
-  switch (ct) {
-    case 'Array':
-      let newElems = [];
-      const source = change.effect.name;
-      for (let elem of `${change.value}`.split(/[;,]+/)) {
-        let vals = elem.split(' ');
-        const value = vals.pop();
-        const target = vals.join(' ');
-        newElems.push({
-          source,
-          value,
-          target,
-          item: change.effect.parent?.name,
-          effectId: change.effect.id,
-          effectUuid: change.effect.uuid,
-        });
+  static migrateData(source) {
+    // Migrate legacy duration fields to v14 schema (start + duration.value/units).
+    // Replicates Foundry core #migrateDuration and start migration so the
+    // backward-compat shims (removed in v16) are never triggered.
+    const duration = source.duration;
+    if (isPlainObject(duration)) {
+      // Migrate start timing data out of duration
+      if (Object.hasOwn(duration, 'startTime') && !Object.hasOwn(source, 'start')) {
+        source.start = typeof duration.startTime === 'number' ? {} : null;
+        if (source.start) {
+          if (duration.combat !== undefined) { source.start.combat = duration.combat; delete duration.combat; }
+          if (duration.startRound !== undefined) { source.start.round = duration.startRound; delete duration.startRound; }
+          if (duration.startTime !== undefined) { source.start.time = duration.startTime; delete duration.startTime; }
+          if (duration.startTurn !== undefined) { source.start.turn = duration.startTurn; delete duration.startTurn; }
+        }
       }
-      update = current.concat(newElems);
-  }
-  if (update !== null) setProperty(elem, change.key, update);
-  return update;
-};
+      // Migrate legacy duration.rounds/turns/seconds → duration.value + duration.units
+      for (const unit of ['rounds', 'turns', 'seconds']) {
+        const hasRealProperty = Object.hasOwn(duration, unit) && !Object.getOwnPropertyDescriptor(duration, unit)?.get;
+        if (hasRealProperty && typeof duration[unit] === 'number') {
+          if (!Object.hasOwn(duration, 'value')) duration.value = duration[unit];
+          if (!Object.hasOwn(duration, 'units')) duration.units = unit;
+          delete duration[unit];
+          break;
+        }
+      }
+    }
 
-Hooks.on('applyActiveEffect', (actor, change) => {
-  return applyCustomEffect(actor, change);
-});
+    // NOTE: mode → type and top-level changes → system.changes migration is
+    // handled by BaseActiveEffect.migrateData (via super.migrateData) using
+    // _addDataFieldMigration which works safely on sealed source objects.
+    // Do NOT duplicate that migration here — the source may be non-extensible
+    // when called from EmbeddedCollectionField.clean during parent cleaning.
+
+    // Migrate legacy flat delayed fields into the nested delayed schema.
+    // Old shape examples:
+    // - system.delayed: true|false
+    // - system.originalDuration
+    // - system.macroEffect
+    // - system.initialTestData
+    // - system.sourceActor
+    // - system.source
+    const system = source.system;
+    const legacyDelayed = system?.delayed;
+    const hasLegacyDelayedEnabled = typeof legacyDelayed === 'boolean';
+    const hasLegacyDelayedPayload =
+      system?.originalDuration !== undefined ||
+      system?.macroEffect !== undefined ||
+      system?.initialTestData !== undefined ||
+      system?.sourceActor !== undefined ||
+      system?.source !== undefined;
+
+    if (hasLegacyDelayedEnabled || hasLegacyDelayedPayload) {
+      const delayed = {
+        ...(typeof legacyDelayed === 'object' && legacyDelayed ? legacyDelayed : {}),
+      };
+
+      if (hasLegacyDelayedEnabled && delayed.enabled === undefined) delayed.enabled = legacyDelayed;
+      if (system?.originalDuration !== undefined && delayed.originalDuration === undefined) delayed.originalDuration = system.originalDuration;
+      if (system?.macroEffect !== undefined && delayed.macroEffect === undefined) delayed.macroEffect = system.macroEffect;
+      if (system?.initialTestData !== undefined && delayed.initialTestData === undefined) delayed.initialTestData = system.initialTestData;
+      if (system?.sourceActor !== undefined && delayed.sourceActor === undefined) delayed.sourceActor = system.sourceActor;
+      if (system?.source !== undefined && delayed.source === undefined) delayed.source = system.source;
+
+      setProperty(source, 'system.delayed', delayed);
+
+      if (system?.originalDuration !== undefined) delete system.originalDuration;
+      if (system?.macroEffect !== undefined) delete system.macroEffect;
+      if (system?.initialTestData !== undefined) delete system.initialTestData;
+      if (system?.sourceActor !== undefined) delete system.sourceActor;
+      if (system?.source !== undefined) delete system.source;
+    }
+
+    if (source.system?.description) {
+      if (!source.description) source.description = source.system.description;
+      delete source.system.description;
+    }
+
+    if (!source.flags?.dsa5) return super.migrateData(source);
+
+    const flags = source.flags.dsa5;
+
+    for (const key of Object.keys(flags)) {
+      const config = this.migrationConfig[key];
+      if (!config) continue;
+
+      const rawValue = flags[key];
+      let migratedValue;
+
+      switch (config.type) {
+        case 'number': {
+          const value = Number(rawValue);
+          migratedValue = Number.isFinite(value) ? value : 0;
+          break;
+        }
+        case 'nullableNumber': {
+          if (rawValue === null || rawValue === undefined || rawValue === '') {
+            migratedValue = null;
+          } else {
+            const value = Number(rawValue);
+            migratedValue = Number.isFinite(value) ? value : null;
+          }
+          break;
+        }
+        case 'boolean':
+          migratedValue = !!rawValue;
+          break;
+        case 'charges': {
+          const parsedValue = rawValue?.value;
+          const parsedMax = rawValue?.max;
+          const value = parsedValue === '' || parsedValue === null || parsedValue === undefined ? null : Number(parsedValue);
+          const max = parsedMax === '' || parsedMax === null || parsedMax === undefined ? null : Number(parsedMax);
+          migratedValue = {
+            value: Number.isFinite(value) ? value : null,
+            max: Number.isFinite(max) ? max : null,
+          };
+          break;
+        }
+        case 'removeOnly':
+          delete flags[key];
+          continue;
+        default:
+          migratedValue = rawValue;
+      }
+
+      if (config.topLevel) {
+        source[config.path] = migratedValue;
+      } else {
+        setProperty(source, `system.${config.path}`, migratedValue);
+      }
+      delete flags[key];
+    }
+
+    const remainingKeys = Object.keys(flags);
+    if (remainingKeys.length > 0) {
+      console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
+    } else {
+      delete source.flags.dsa5;
+    }
+    return super.migrateData(source);
+  }
+}

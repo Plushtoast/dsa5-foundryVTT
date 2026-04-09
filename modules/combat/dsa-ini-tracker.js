@@ -216,6 +216,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const combatantId = ev.currentTarget.dataset.combatantId;
     const combatant = game.combat.combatants.get(combatantId);
     if (!combatant?.actor) return;
+    if (!game.user.isGM && !combatant.actor.isOwner) return;
 
     GlobalToolTipHandler.handleTooltip(ev, combatant.actor);
   }

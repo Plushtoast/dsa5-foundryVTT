@@ -4,9 +4,9 @@ import Riding from '../automation/riding.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tinyNotification } from '../helpers/view_helper.js';
-import DSA5Payment from '../helpers/payment.js';
+import DSA5Payment from '../payment/payment.js';
+import PaymentRequestService from '../payment/payment-requests.js';
 import { Trade } from '../../actor/trade.js';
-import { localize } from '../helpers/localizer.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { ItemDataModel } from '../../data/baseitem.js';
@@ -14,6 +14,8 @@ import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
+import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -36,8 +38,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     super(options);
     this.searching = '';
 
-    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => localize(`LocalizedIDs.${x}`));
-    TokenHotbar2.defaultSkills = new Set([localize('LocalizedIDs.perception')]);
+    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => _loc(`LocalizedIDs.${x}`));
+    TokenHotbar2.defaultSkills = new Set([_loc('LocalizedIDs.perception')]);
 
     if (game.user.isGM) {
       this.callbackFunctions = {};
@@ -70,6 +72,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           abbrev: '',
           subfunction: 'gm',
         },
+        {
+          name: 'dsacalendar.createEvent',
+          disabled: setting.createCalendarEvent,
+          iconClass: 'fas fa-calendar-day',
+          id: DSACalendarEntry.HOTBAR_ID,
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
       ];
     }
 
@@ -81,8 +92,17 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(actor.id);
     });
 
-    Hooks.on('updateToken', (scene, token, updates) => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(token.actor?.id);
+    Hooks.on('updateToken', (tokenDoc, changed, options) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('recordToken', (tokenDoc) => {
+      if (game.combat) game.combat.handleMovementCost(tokenDoc);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('updateCombatant', (combatant, changes) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(combatant.actor?.id);
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
@@ -208,7 +228,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const darkness = Number(ev.currentTarget.value);
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': darkness }, { animateDarkness: 3000 });
 
-    tinyNotification(`${localize('MASTER.darkness')} ${darkness}`);
+    tinyNotification(`${_loc('MASTER.darkness')} ${darkness}`);
   }
 
   async _onRender(context, options) {
@@ -299,7 +319,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleSkillRoll(ev, actor, id, tokenId, subweapon = undefined) {
     const options = {};
-    if (ev.button == 2) options.rollMode = 'blindroll';
+    if (ev.button == 2) options.messageMode = DICE_CONSTANTS.CHAT_MODES.BLIND;
 
     if ('rideLoyaltyID' == id) {
       Riding.rollLoyalty(actor, options);
@@ -348,11 +368,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             });
             break;
           case 'consumable':
+          case 'plant':
             const proceed = await foundry.applications.api.DialogV2.confirm({
               window: {
-                title: localize('SHEET.ConsumeItem') + ': ' + result.name,
+                title: _loc('SHEET.ConsumeItem') + ': ' + result.name,
               },
-              content: localize('SHEET.ConsumeItem') + ': ' + result.name,
+              content: _loc('SHEET.ConsumeItem') + ': ' + result.name,
               rejectClose: false,
               modal: true,
             });
@@ -399,6 +420,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'masterMenu':
         DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
         break;
+      case DSACalendarEntry.HOTBAR_ID:
+        DSACalendarEntry.startCreation(null, game.time.calendar.timeToComponents(game.time.worldTime));
+        break;
       case 'payMoney':
         this.payMoney(ev);
         break;
@@ -414,9 +438,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const money = `${$(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val()}`;
 
     if (ev.button == 2) {
-      DSA5Payment.createGetPaidChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'getPaid', amount: money, actors: PaymentRequestService.activeCharacterActors(), source: 'tokenHotbar' });
     } else {
-      DSA5Payment.createPayChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'pay', amount: money, actors: PaymentRequestService.activeCharacterActors(), source: 'tokenHotbar' });
     }
   }
 
@@ -433,7 +457,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async handleSharedEffect(ev) {
-    for (let token of canvas.tokens.controlled) {
+    for (const token of canvas.tokens.controlled) {
       const actor = token.actor;
       const tokenId = token.id;
       const id = actor.effects.find((x) => x.name == ev.currentTarget.dataset.name)?.id;
@@ -517,9 +541,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     let gmMode = false;
     if (actor) {
       const moreSkills = [];
-      let moreSpells = [];
+      const moreSpells = [];
       const isRiding = Riding.isRiding(actor);
-      const rideName = localize('LocalizedIDs.riding');
+      const rideName = _loc('LocalizedIDs.riding');
 
       effects = await this._effectEntries(actor);
       if (game.combat) {
@@ -651,7 +675,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
 
     if (this.showEffects) {
-      const label = localize('CONDITION.add');
+      const label = _loc('CONDITION.add');
       const effect = {
         name: 'CONDITION.add',
         id: '',
@@ -666,7 +690,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       } else if (canvas.tokens.controlled.length > 1) {
         let sharedEffects = await game.dsa5.apps.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
-        for (let token of canvas.tokens.controlled) {
+        for (const token of canvas.tokens.controlled) {
           const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
           sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
@@ -703,7 +727,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _functionEntries() {
-    const trade = localize('MERCHANT.exchangeWithTarget');
+    const trade = _loc('MERCHANT.exchangeWithTarget');
     return [
       {
         name: trade,
@@ -717,10 +741,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _brawlEntry(combatskills) {
-    const brawl = combatskills.find((x) => x.name == localize('LocalizedIDs.wrestle'));
+    const brawl = combatskills.find((x) => x.name == _loc('LocalizedIDs.wrestle'));
     if (brawl) {
       return {
-        name: localize('attackWeaponless'),
+        name: _loc('attackWeaponless'),
         id: 'attackWeaponless',
         icon: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         attack: brawl.system.attack.value,
@@ -839,7 +863,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async _effectEntries(actor, options = {}) {
     return (await actor.actorEffects()).map((x) => {
-      const level = x.getFlag('dsa5', 'value') || '';
+      const level = x.system.condition.value || '';
       const name = level ? `${x.name} (${level})` : x.name;
       return {
         name: name,
@@ -868,7 +892,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     ev.stopPropagation();
     const search = this.searching.toLowerCase();
     tinyNotification(search);
-    let btns = $(ev.currentTarget).find('.subbuttons li');
+    const btns = $(ev.currentTarget).find('.subbuttons li');
     btns.find('.dsahidden').removeClass('dsahidden');
     btns
       .filter(function () {
@@ -935,9 +959,9 @@ export class AddEffectDialog extends DefaultAppv2 {
     data.effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
         return {
-          name: localize(x.name),
+          name: _loc(x.name),
           img: x.img,
-          description: localize(x.description),
+          description: _loc(x.description),
           id: x.id,
         };
       })
@@ -1006,11 +1030,11 @@ export class AddEffectDialog extends DefaultAppv2 {
             const form = button.form.elements;
             const options = {};
 
-            let duration = Number(form.duration.value) || 0;
-            if (form.unit.value == 'seconds') duration = Math.round(duration / 5);
+            const duration = Number(form.duration.value) || 0;
+            const unit = form.unit.value;
 
             const label = form.effectname.value;
-            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration));
+            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration, unit));
             if (label) options.name = label;
 
             await callback(id, options);
@@ -1037,7 +1061,7 @@ export class AddEffectDialog extends DefaultAppv2 {
     } else if (isCustomEffect) {
       ui.notifications.error('DSAError.customEffect', { localize: true });
     } else {
-      for (let token of canvas.tokens.controlled) {
+      for (const token of canvas.tokens.controlled) {
         await token.actor.addTimedCondition(id, 1, false, false, options);
       }
     }

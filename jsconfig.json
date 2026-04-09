@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "target": "ES2024",
+        "checkJs": false,
+        "noEmit": true,
+        "strict": false,
+        "lib": [
+            "ES2024",
+            "DOM",
+            "DOM.Iterable"
+        ]
+    },
+    "include": [
+        "modules/**/*.js"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*",
+        "bundle/**"
+    ]
+}

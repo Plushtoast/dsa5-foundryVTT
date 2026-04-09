@@ -40,7 +40,7 @@ export class RollDialogBuilder {
 
     static _setupCardOptions(template, title, tokenId, actor) {
         const token = game.canvas?.tokens?.get(tokenId);
-        let cardOptions = {
+        const cardOptions = {
             speaker: {
                 alias: token ? token.name : actor.prototypeToken.name,
                 actor: actor.id,
@@ -57,7 +57,7 @@ export class RollDialogBuilder {
             cardOptions.speaker.scene = canvas.scene.id;
             cardOptions.flags.img.src = actor.token.texture.src;
         } else {
-            let speaker = ChatMessage.getSpeaker();
+            const speaker = ChatMessage.getSpeaker();
             if (speaker.actor == actor.id) {
                 cardOptions.speaker.alias = speaker.alias;
                 cardOptions.speaker.token = speaker.token;

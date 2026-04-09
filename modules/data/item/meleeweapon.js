@@ -12,13 +12,12 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
-import { localize } from '../../system/helpers/localizer.js';
+
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
 const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
-
 
 export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
@@ -80,12 +79,12 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
     data.isShield = RuleChaos.isShield(data.document);
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.weaponStabilities[localize(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
     foundry.utils.mergeObject(data, this.getGripInfo());
     if (this.actor) {
       const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
       data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
-      data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(localize(`LocalizedCTs.${data.document.system.combatskill.value}`));
+      data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(_loc(`LocalizedCTs.${data.document.system.combatskill.value}`));
     }
   }
 
@@ -95,11 +94,11 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     if (!twoHanded) {
       wrongGripHint = 'wrongGrip.wieldTwo';
     } else {
-      const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
+      const localizedCT = _loc(`LocalizedCTs.${this.combatskill.value}`);
       switch (localizedCT) {
         case 'Two-Handed Impact Weapons':
         case 'Two-Handed Swords':
-          const reg = new RegExp(localize('wrongGrip.wrongGripBastardRegex'));
+          const reg = new RegExp(_loc('wrongGrip.wrongGripBastardRegex'));
           if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.wieldOneBastard';
           else wrongGripHint = 'wrongGrip.wieldOneSwordBlunt';
 
@@ -117,7 +116,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static chatData(data, name) {
-    let res = [
+    const res = [
       { key: 'damage', val: data.damage.value },
       { key: 'atmod', val: data.atmod.value },
       { key: 'pamod', val: data.pamod.value },
@@ -141,34 +140,34 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   getContextOptions() {
     const options = [];
-    const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
+    const localizedCT = _loc(`LocalizedCTs.${this.combatskill.value}`);
     if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localizedCT)) {
       options.push({
-        name: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
+        label: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
         icon: "<i class='fas fa-comment fa-hand'></i>",
-        callback: () => this.swapNumberWeaponHands(),
+        onClick: () => this.swapNumberWeaponHands(),
       });
     }
 
     const hasWeaponThrow = MeleeweaponData.THROWABLE_WEAPON_TYPES.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this.parent.actor, 'LocalizedIDs.weaponThrow');
-    const throwLabel = `${localize('TYPES.Item.rangeweapon')} ${localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
+    const throwLabel = `${_loc('TYPES.Item.rangeweapon')} ${_loc('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${_loc('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
     options.push(
       {
-        name: throwLabel,
+        label: throwLabel,
         icon: "<i class='fas fa-trowel'></i>",
-        callback: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
+        onClick: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
       },
       {
-        name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
+        label: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => this.reEquipItem(),
+        onClick: () => this.reEquipItem(),
       },
     );
     return options;
   }
 
   async swapNumberWeaponHands() {
-    if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localize(`LocalizedCTs.${this.combatskill.value}`))) {
+    if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(_loc(`LocalizedCTs.${this.combatskill.value}`))) {
       await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
       this.itemEquippedMessage();
     }
@@ -190,7 +189,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
     const wielded = RuleChaos.isWieldedTwohanded(this.parent);
     if (this.parent.actor && game.combat) {
-      const texts = [{ value: game.i18n.format(wielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
+      const texts = [{ value: _loc(wielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
       this.parent.actor.tokenScrollingText(texts);
     }
   }

@@ -1,14 +1,19 @@
 import { DSACalendarEntry } from "../data/journal/dsacalendar.js";
-import SelectJournal from "./select_journal.js";
+import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
 
-export class DSACalendarEntrySheet extends SelectJournal {
+export class DSACalendarEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'calendarentries';
+    static settingName = DSACalendarEntry.SETTING_NAME;
     static DEFAULT_OPTIONS = {
         position: {
             width: 1000,
             height: 700
         },
     };
+
+    static sortEntryPairs([, a], [, b]) {
+        return a.from.year - b.from.year || a.from.day - b.from.day;
+    }
 
     static EDIT_PARTS = {
         header: super.EDIT_PARTS.header,
@@ -30,58 +35,24 @@ export class DSACalendarEntrySheet extends SelectJournal {
         },
     };
 
-    async _prepareContext(options) {
-        const context = await super._prepareContext(options);
+    async _prepareEntries(context, options) {
         const calendar = game.time.calendar;
-
-        const entries = Object.entries(foundry.utils.duplicate(this.document.system.calendarentries))
-            .filter(([key, value]) => value.visible || game.user.isGM)
-            .sort(([, a], [, b]) => {
-                return a.from.year - b.from.year || a.from.day - b.from.day;
-            });
-        context.sortedEntries = Object.fromEntries(entries);
         context.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-        for (let key of Object.keys(context.sortedEntries)) {
+        for (const key of Object.keys(context.sortedEntries)) {
             const entry = context.sortedEntries[key];
             await DSACalendarEntry.prepareCalendarEntry(entry);
         }
-        if (!this.isView) {
-            if (options.currentKey)
-                this.currentKey = options.currentKey;
-
-            if (this.currentKey && context.sortedEntries[this.currentKey]) {
-                context.currentKey = this.currentKey;
-                context.detailHTML = await this.renderDetail(this.currentKey);
-            }
-        }
-        context.isRegistered = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME).activated.some(x => x.uuid == this.document.parent.uuid);
-        context.isGM = game.user.isGM;
-        return context;
     }
 
     #getLocalizedArray(values, translationPrefix) {
         return values.map((item, index) => {
-            return { label: game.i18n.localize(`${translationPrefix}.${item.name}`), value: index };
+            return { label: _loc(`${translationPrefix}.${item.name}`), value: index };
         });
     }
 
-    async _onRender(context, options) {
-        await super._onRender(context, options);
-
-        const showInCalendar = this.element.querySelector('.showInCalendar');
-        if (showInCalendar) {
-            showInCalendar.addEventListener('change', (event) => {
-                const isChecked = event.target.checked;
-                const settings = game.settings.get('dsa5', DSACalendarEntry.SETTING_NAME);
-                if (isChecked) {
-                    settings.activated.push({ uuid: this.document.parent.uuid, name: this.document.parent.name });
-                } else {
-                    settings.activated = settings.activated.filter(x => x.uuid !== this.document.parent.uuid);
-                }
-                game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
-                game.settings.set('dsa5', DSACalendarEntry.SETTING_NAME, settings);
-            });
-        }
+    async _afterRegistrationChange() {
+        game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
+        await game.dsa5?.apps?.CalendarPicker?.refreshParts?.(['events', 'config']);
     }
 
     static buildTOC(html, { includeElement = true } = {}) {
@@ -123,15 +94,7 @@ export class DSACalendarEntrySheet extends SelectJournal {
         await this.document.update({
             system: {
                 calendarentries: {
-                    [id]: {
-                        title: 'New Entry',
-                        from: {
-                            dayOfMonth: components.dayOfMonth + 1,
-                            month: components.month,
-                            year: components.year
-                        },
-                        category: 0
-                    }
+                    [id]: DSACalendarEntry.createEntryData(components)
                 }
             }
         })

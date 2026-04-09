@@ -1,0 +1,20 @@
+<fieldset>
+    <legend>{{localize title}}</legend>
+    <div class="form-group">
+        <label>{{localize label}}</label>
+        <div class="form-fields">
+            <div class="journalPickerContainer"></div>
+            <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="{{setting}}"></button>
+        </div>
+        <p class="hint">{{{localize hint}}}</p>
+    </div>
+    <div class="row-section wrap">
+        {{#if journals.activated.length }}
+            {{#each journals.activated}}
+                <a class="smallBoxItem" data-action="removeJournal" data-setting="{{../setting}}" data-uuid="{{uuid}}">{{name}}</a>
+            {{/each}}
+        {{else}}
+            <div class="smallBoxItem">-</div>
+        {{/if}}
+    </div>
+</fieldset>

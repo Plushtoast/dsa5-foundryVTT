@@ -1,11 +1,56 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSATriggers from '../system/automation/triggers.js';
-
 /**
  * Provides a burger-menu for roll dialogs and a hook/trigger-based way to add actions.
  */
 export class RollDialogExtensions {
   static BURGER_SELECTOR = '.dsa5-roll-ability-menu';
+
+  static #normalizeMenuItem(item, dialogState) {
+    if (!item || typeof item !== 'object') return null;
+    const handler = item.onClick ?? item.callback;
+    if (typeof handler !== 'function') return null;
+
+    const visible =
+      typeof item.visible === 'function'
+        ? (...args) => {
+            try {
+              return item.visible(dialogState, ...args);
+            } catch (err) {
+              console.error(err);
+              return false;
+            }
+          }
+        : item.visible;
+    const legacyVisible =
+      visible !== undefined
+        ? visible
+        : typeof item.condition === 'function'
+          ? (...args) => {
+              try {
+                return item.condition(dialogState, ...args);
+              } catch (err) {
+                console.error(err);
+                return false;
+              }
+            }
+          : item.condition;
+
+    return {
+      ...item,
+      label: item.label ?? item.name,
+      visible: legacyVisible,
+      onClick: async (...args) => {
+        try {
+          console.debug('DSA5 roll-dialog action invoked', { label: item.label ?? item.name });
+          return await handler(dialogState, ...args);
+        } catch (err) {
+          ui.notifications.error('There was an error in your roll-dialog action. See the console (F12) for details');
+          console.error(err);
+        }
+      },
+    };
+  }
 
   static #getFormData(dialog) {
     try {
@@ -16,12 +61,10 @@ export class RollDialogExtensions {
       return {};
     }
   }
-
   static async getDialogState(dialog) {
     const dialogData = dialog?.dialogData ?? {};
     const speaker = dialogData.speaker ?? dialogData.renderData?.speaker ?? null;
     const actor = speaker ? DSA5_Utility.getSpeaker(speaker) : null;
-
     return {
       dialog,
       actor,
@@ -34,93 +77,45 @@ export class RollDialogExtensions {
       formData: this.#getFormData(dialog),
     };
   }
-
   static async getContextOptions(dialog) {
     const dialogState = await this.getDialogState(dialog);
     const actor = dialogState.actor;
     const menuItems = [];
-
-    // 1) Trigger-based contributions (Special Ability / ActiveEffect macros)
     if (actor?.dsatriggers?.[DSATriggers.EVENTS.ROLL_DIALOG_RENDER]) {
       const data = { dialogState, menuItems: [] };
       const fromTriggers = await DSATriggers.collectMacros(actor, dialogState.testData, DSATriggers.EVENTS.ROLL_DIALOG_RENDER, data);
       for (const item of fromTriggers) menuItems.push(item);
     }
-
-    // 2) Hook-based contributions (modules, system features)
     Hooks.call('dsa5.getRollDialogContextOptions', dialogState, menuItems);
-
-    // Normalize/validate
     const normalized = [];
     for (const item of menuItems) {
-      if (!item || typeof item !== 'object') continue;
-      if (typeof item.callback !== 'function') continue;
-
-      const wrappedCondition =
-        typeof item.condition === 'function'
-          ? (...args) => {
-              try {
-                return item.condition(dialogState, ...args);
-              } catch (err) {
-                console.error(err);
-                return false;
-              }
-            }
-          : item.condition;
-
-      // Adapt callback signature to ContextMenu signature and always pass dialogState.
-      normalized.push({
-        ...item,
-        condition: wrappedCondition,
-        callback: async (...args) => {
-          try {
-            console.debug('DSA5 roll-dialog action invoked', { name: item.name });
-            return await item.callback(dialogState, ...args);
-          } catch (err) {
-            ui.notifications.error('There was an error in your roll-dialog action. See the console (F12) for details');
-            console.error(err);
-          }
-        },
-      });
+      const normalizedItem = this.#normalizeMenuItem(item, dialogState);
+      if (normalizedItem) normalized.push(normalizedItem);
     }
-
     return { dialogState, menuItems: normalized };
   }
-
   static async bindBurgerMenu(dialog) {
     const root = dialog?.element;
     if (!root) return;
-
     const footer = root.querySelector('.form-footer');
     if (!footer) return;
 
-    // We intentionally do NOT register this as a DialogV2 button action, because
-    // DialogV2 closes after clicking any button. This is a plain UI control.
     let buttonEl = root.querySelector(this.BURGER_SELECTOR);
     if (!buttonEl) {
       const referenceButton = footer.querySelector('button');
-
       buttonEl = document.createElement('button');
       buttonEl.type = 'button';
       buttonEl.className = referenceButton?.className || 'dialog-button';
       buttonEl.classList.add('dsa5-roll-ability-menu');
       buttonEl.innerText = '☰';
-
-      // Insert first
       footer.appendChild(buttonEl);
     }
-
-    // Ensure last button and non-growing flex item.
     footer.appendChild(buttonEl);
     buttonEl.style.flex = '0 0 auto';
-
-    // Hidden by default; will be shown when options exist.
     buttonEl.classList.add('dsahidden');
-
     const updateCacheAndVisibility = async () => {
       try {
         const { menuItems, dialogState } = await this.getContextOptions(dialog);
-        // Cache for synchronous ContextMenu open (ContextMenu does not await async onOpen)
         dialog._dsa5RollDialogMenuItems = menuItems;
         dialog._dsa5RollDialogState = dialogState;
         buttonEl.classList.toggle('dsahidden', menuItems.length === 0);
@@ -131,11 +126,7 @@ export class RollDialogExtensions {
         buttonEl.classList.add('dsahidden');
       }
     };
-
     await updateCacheAndVisibility();
-
-    // Bind a Foundry ContextMenu that opens on click.
-    // We follow the existing system patterns (e.g. hotbar config menu).
     new foundry.applications.ux.ContextMenu(root, this.BURGER_SELECTOR, [], {
       onOpen: () => {
         ui.context.menuItems = dialog._dsa5RollDialogMenuItems || [];
@@ -144,9 +135,6 @@ export class RollDialogExtensions {
       fixed: true,
       eventName: 'click',
     });
-
-    // Keep visibility in sync when the dialog inputs change.
-    // (Cheap and safe: recalculates only the count, no UI changes.)
     root.addEventListener(
       'change',
       () => {

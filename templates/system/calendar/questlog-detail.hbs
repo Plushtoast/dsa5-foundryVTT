@@ -1,0 +1,107 @@
+<div class='persona-detail-view'>
+    <div class='persona-detail-header'>
+        <div class='persona-detail-title'>
+            <h1 class='questlog-detail-name'>{{title}}</h1>
+            <p class='persona-detail-subtitle'>{{statusName}}{{#if chapter}} • {{chapter}}{{/if}}{{#if location}} • {{location}}{{/if}}</p>
+            <div class='questlog-badge-row'>
+                {{#each preparedAudienceBadges}}
+                    <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
+                {{/each}}
+            </div>
+            {{#each preparedTags}}
+                <span class='persona-detail-type'>{{this}}</span>
+            {{/each}}
+        </div>
+        <div class='flexrow gap5px questlog-detail-aside'>
+            {{#if timelineBadges.length}}
+                <div class='flexcol questlog-timeline-column'>
+                    {{#each timelineBadges}}
+                        <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
+                            <i class='fas {{icon}}'></i>
+                            <span>{{value}}</span>
+                        </span>
+                    {{/each}}
+                </div>
+            {{/if}}
+            {{#if isGM}}
+            <div class='persona-detail-actions flex0'>
+                <button type='button' class='detail-action-btn edit-btn' data-tooltip='SHEET.EditItem' data-action='editQuest' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'>
+                    <i class='fas fa-edit'></i>
+                </button>
+                <button type='button' class='detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.showQuestlogJournal"}}' data-action='openQuestReference' data-uuid='{{uuid}}'>
+                    <i class='fas fa-book-open'></i>
+                </button>
+                <button type='button' class='detail-action-btn delete-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleQuestVisibility' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'>
+                    <i class='fas fa-eye{{ifThen visible "" "-slash"}}'></i>
+                </button>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+
+    <div class='persona-detail-content'>
+        {{#if preparedSummary}}
+            <div class='detail-section'>
+                <h3 class='section-title'>{{localize 'DSAQUESTLOG.summary'}}</h3>
+                <div class='description-text'>{{preparedSummary}}</div>
+            </div>
+        {{/if}}
+
+        {{#if totalObjectives}}
+            <div class='detail-section'>
+                <h3 class='section-title'>{{localize 'DSAQUESTLOG.objectives'}} <span class='small'>{{progressText}}</span></h3>
+                <div class='questlog-objective-list'>
+                    {{#each preparedObjectives}}
+                        <div class='questlog-objective-card{{ifThen done " is-done" ""}} flexrow'>
+                            <div class='questlog-objective-main'>
+                                <div class='questlog-objective-line'>
+                                    <span class='questlog-objective-icon'><i class='fas {{ifThen done "fa-check-circle" "fa-circle"}}'></i></span>
+                                    <span>{{text}}</span>
+                                </div>
+                            </div>
+                            {{#if ../isGM}}
+                                <button type='button' class='icon fas {{ifThen done "fa-arrow-rotate-left" "fa-check"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleObjectiveDone"}}' data-action='toggleQuestObjectiveDone' data-quest-uuid='{{../uuid}}' data-quest-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
+                                </button>
+                            {{/if}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{/if}}
+
+        {{#if preparedLinkedPages.length}}
+            <div class='detail-section'>
+                <h3 class='section-title'>{{localize 'DSAQUESTLOG.linkedPages'}}</h3>
+                <div class='section-content questlog-link-list'>
+                    {{#each preparedLinkedPages}}
+                        <div class='persona-list-item questlog-link-card'>
+                            <div class='persona-list-info'>
+                                <h5 class='persona-list-name'>{{label}}</h5>
+                                {{#if subtitle}}<div class='persona-list-meta'><span class='persona-type'>{{subtitle}}</span></div>{{/if}}
+                            </div>
+                            {{#unless missing}}
+                                <button type='button' class='detail-action-btn sheet-btn' data-action='openQuestReference' data-uuid='{{uuid}}'>
+                                    <i class='fas fa-file'></i>
+                                </button>
+                            {{/unless}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{/if}}
+
+        <div class='detail-section'>
+            <h3 class='section-title'>{{localize 'Description'}}</h3>
+            <div class='description-text'>{{{preparedDetails}}}</div>
+        </div>
+
+        {{#if isGM}}
+            {{#if preparedGMNotes}}
+                <div class='detail-section'>
+                    <h3 class='section-title'>{{localize 'GM Notes'}}</h3>
+                    <div class='description-text'>{{{preparedGMNotes}}}</div>
+                </div>
+            {{/if}}
+        {{/if}}
+    </div>
+</div>

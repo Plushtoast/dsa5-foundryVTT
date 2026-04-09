@@ -5,15 +5,15 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 function addThirdBarToHUD(html, actor, app) {
   if (actor.system.isPriest && actor.system.isMage) {
-    let currentKaP = actor.system.status.karmaenergy.value;
-    let attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`;
+    const currentKaP = actor.system.status.karmaenergy.value;
+    const attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`;
     html.find('.col.middle').prepend(attrBar);
     html.find('.bar3 input').on('change', async (ev) => {
       const input = ev.currentTarget;
       let strVal = input.value.trim();
-      let isDelta = strVal.startsWith('+') || strVal.startsWith('-');
+      const isDelta = strVal.startsWith('+') || strVal.startsWith('-');
       if (strVal.startsWith('=')) strVal = strVal.slice(1);
-      let value = Number(strVal);
+      const value = Number(strVal);
       const current = input.name.split('.').reduce((o, i) => o[i], actor);
       await actor.update({
         [input.name]: isDelta ? current + value : value,
@@ -124,7 +124,7 @@ async function splitSwarm(actor, token) {
 async function combineSwarm(actor, token) {
   let swarmSum = 0;
   let lepSum = 0;
-  for (let token of canvas.tokens.controlled) {
+  for (const token of canvas.tokens.controlled) {
     swarmSum += Number(token.actor.system.swarm?.count) || 1;
     lepSum += Number(token.actor.system.status.wounds.value);
   }
@@ -185,9 +185,9 @@ export default function () {
       const anchor = html.find(anchorSelector).closest('.form-group');
       const elem = $(`
         <div class="form-group">
-          <label>${game.i18n.localize(labelKey)}</label>
+          <label>${_loc(labelKey)}</label>
           <input type="checkbox" class="config-checkbox" ${value ? 'checked' : ''}>
-          <p class="hint">${game.i18n.localize(hintKey)}</p>
+          <p class="hint">${_loc(hintKey)}</p>
         </div>
       `);
       anchor.after(elem);

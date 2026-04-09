@@ -62,7 +62,7 @@ export async function increaseFontSize(element) {
 function setOuterFontSize(element) {
   const index = game.settings.get('dsa5', 'journalFontSizeIndex');
   const size = DSA5.journalFontSizes[index - 1] || 14;
-  tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size }));
+  tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size }));
   element.css('fontSize', `${size}px`);
 }
 
@@ -94,7 +94,7 @@ class FontPicker extends foundry.applications.api.HandlebarsApplicationMixin(fou
     if (newSize == "-1") {
       await game.settings.set('dsa5', 'journalFontSizeIndex', 0);
       this.connected_element.css('fontSize', '');
-      tinyNotification(game.i18n.format('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
+      tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
     } else {
       const newIndex = DSA5.journalFontSizes.findIndex((x) => x == newSize);
       await game.settings.set('dsa5', 'journalFontSizeIndex', newIndex);

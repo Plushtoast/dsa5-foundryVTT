@@ -10,11 +10,9 @@ export class ValueWidget {
         this.updateUI();
     }
 
-
     clamp(val) {
         return Math.clamp(val, this.min, this.max);
     }
-
 
     render() {
         this.container.innerHTML = `
@@ -45,11 +43,9 @@ export class ValueWidget {
             this.setValue(this.value - 1);
         });
 
-
         this.btnIncrease.addEventListener('click', () => {
             this.setValue(this.value + 1);
         });
-
 
         this.input.addEventListener('input', () => {
             this.setValue(Number(this.input.value) || 0);
