@@ -1879,6 +1879,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
       buttons: [
         {
+          action: 'companion',
+          icon: 'fas fa-handshake',
+          label: 'SHEET.AnimalCompanion',
+          callback: () => {
+            CompanionHandler.setCompanion(this, item.uuid);
+          },
+        },
+        {
           action: 'shapeshift',
           icon: 'fas fa-paw',
           label: 'CONDITION.shapeshift',
