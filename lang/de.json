@@ -2120,7 +2120,11 @@
         "zaubermelodien": "Zaubermelodien",
         "zauberrunen": "Zauberrunen",
         "zaubertaenze": "Zaubertänze",
-        "zibiljarituale": "Zibiljarituale"
+        "zibiljarituale": "Zibiljarituale",
+        "elfenliederSupport": "Elfenlied-Unterstützung",
+        "elfenliederModifier": "Elfenlied (Singen/Musizieren)",
+        "chooseSupportSkill": "Wähle die Unterstützungsfertigkeit.",
+        "noSupportSkill": "Dieser Charakter hat weder Singen noch Musizieren."
     },
     "LocalizedAbilityModifiers": {
         "at": "at",
@@ -2245,7 +2249,9 @@
         "servantOre": "Diener des Erzes",
         "immuneTo": "Immunität gegen",
         "enemySense": "Feindgespür",
-        "winhallStyle": "Winhall-Stil"
+        "winhallStyle": "Winhall-Stil",
+        "singing": "Singen",
+        "music": "Musizieren"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
@@ -2930,6 +2936,8 @@
         "clearTargets": "Ziel löschen nach Angriff",
         "hideRegenerationToOwner": "Regeneration (KR) verstecken",
         "hideRegenerationToOwnerHint": "Automatische Regeneration und wiederkehrende Effekte (Brennend, Blutend) in Kampfrunden nur dem Besitzer des Tokens anzeigen",
+        "magischeHandlungen": "Magische Handlungen",
+        "magischeHandlungenHint": "Beim Zaubern Restriktionen von Magischen Handlungen automatisch anwenden",
         "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",

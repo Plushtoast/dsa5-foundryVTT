@@ -2439,7 +2439,11 @@
         "zaubermelodien": "Zaubermelodien",
         "zauberrunen": "Zauberrunen",
         "zaubertaenze": "Zaubertänze",
-        "zibiljarituale": "Zibiljarituale"
+        "zibiljarituale": "Zibiljarituale",
+        "elfenliederSupport": "Elven Song Support",
+        "elfenliederModifier": "Elven Song (Singing/Music)",
+        "chooseSupportSkill": "Choose the support skill.",
+        "noSupportSkill": "This character has neither Singing nor Music."
     },
     "LocalizedIDs": {
         "combatInWater": "Underwater Combat",
@@ -2558,7 +2562,9 @@
         "servantOre": "tbd",
         "immuneTo": "Immunity to",
         "enemySense": "Enemy Sense",
-        "winhallStyle": "Winhall Style"
+        "winhallStyle": "Winhall Style",
+        "singing": "Singing",
+        "music": "Music"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",
@@ -2905,6 +2911,8 @@
         "capQSatHint": "Restrict the max achievable quality level.",
         "hideRegenerationToOwner": "Hide regeneration (CR)",
         "hideRegenerationToOwnerHint": "Show automatic regeneration and recurring effects (burning, bleeding) in combat rounds only to token owners",
+        "magischeHandlungen": "Magical actions",
+        "magischeHandlungenHint": "Automatically apply magical action restrictions while casting.",
         "talentModifierEnabled": "Skill modifiers activated",
         "talentModifierEnabledHint": "Skill modifiers are selected by default in the roll window",
         "noConfirmationRoll": "No confirmation roll",

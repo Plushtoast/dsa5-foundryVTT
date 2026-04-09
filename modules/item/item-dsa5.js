@@ -25,7 +25,6 @@ import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
-import createBaseMagicalActionItemDSA5 from './magical-actions/base-magical-action-item.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -646,9 +645,7 @@ class MoneyItemDSA5 extends Itemdsa5 {
   }
 }
 
-const BaseMagicalActionItemDSA5 = createBaseMagicalActionItemDSA5(Itemdsa5);
-
-class SpellItemDSA5 extends BaseMagicalActionItemDSA5 {
+class SpellItemDSA5 extends Itemdsa5 {
   static async getCallbackData(testData, html, actor) {
     testData.testDifficulty = 0;
     testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
@@ -1265,6 +1262,7 @@ class RitualItemDSA5 extends SpellItemDSA5 {
     mergeObject(data, {
       isRitual: true,
       locationModifiers: DSA5.ritualLocationModifiers,
+      showRightClothes: true,
       timeModifier: 0,
       timeModifiers: DSA5.ritualTimeModifiers,
     });

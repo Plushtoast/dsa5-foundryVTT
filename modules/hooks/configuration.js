@@ -780,6 +780,14 @@ export function setupConfiguration() {
       default: true,
       type: Boolean,
     },
+    magischeHandlungen: {
+      name: 'DSASETTINGS.magischeHandlungen',
+      hint: 'DSASETTINGS.magischeHandlungenHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
     indexDescription: {
       name: 'DSASETTINGS.indexDescription',
       scope: 'client',
