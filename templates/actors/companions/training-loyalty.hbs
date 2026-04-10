@@ -1,0 +1,24 @@
+<div class="tab scrollable training-content-body training-tab-wrapper {{tabs.loyalty.cssClass}}" data-tab="loyalty" data-group="{{tabs.loyalty.group}}">
+    <div class="training-info-box">
+        <p class="training-info-text">
+            {{localize 'SHEET.LoyaltyImprovementText'}}
+        </p>
+    </div>
+
+    <div class="loyalty-center-box">
+        {{#if loyaltyUnlocked}}
+            <div class="skills loyalty-skill-box">
+                <a class="talentName loyalty-name" data-action="itemEdit" data-item-id="{{loyaltyItem.id}}">{{localize 'LocalizedIDs.loyalty'}}</a>
+                <div class="loyalty-input-row">
+                    <a class="advance icon fas fa-minus flex0 loyalty-advance-btn" data-action="refundLoyalty"></a>
+                    <input class="companion-skill-advances loyalty-input" type="number" value="{{loyaltyItem.system.talentValue.value}}" readonly>
+                    <a class="advance icon fas fa-plus flex0 loyalty-advance-btn" data-action="advanceLoyalty"></a>
+                </div>
+            </div>
+        {{else}}
+            <button type="button" class="dsadesignbutton loyalty-roll-btn" data-action="rollTierkunde">
+                <i class="fas fa-dice-d20 loyalty-roll-icon"></i> {{localize buttonLabel}}
+            </button>
+        {{/if}}
+    </div>
+</div>

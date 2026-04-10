@@ -66,6 +66,33 @@ export default class DSA5_Utility {
       .map(doc => doc.toObject());
   }
 
+  static async collectIndexedCompendiumEntries({
+    documentName,
+    fields = [],
+    packFilter = () => true,
+    filterEntry = () => true,
+    mapEntry = entry => entry,
+  }) {
+    const results = [];
+
+    for (const pack of game.packs.filter(pack => pack.documentName === documentName && packFilter(pack))) {
+      const index = await pack.getIndex({ fields });
+      const documentCache = new Map();
+      const getDocument = async (id) => {
+        if (!documentCache.has(id)) documentCache.set(id, pack.getDocument(id));
+        return await documentCache.get(id);
+      };
+
+      for (const entry of index) {
+        const context = { pack, getDocument };
+        if (!(await filterEntry(entry, context))) continue;
+        results.push(await mapEntry(entry, context));
+      }
+    }
+
+    return results;
+  }
+
   static moduleEnabled(id) {
     const module = game.modules.get(id);
     return module?.active ?? false;

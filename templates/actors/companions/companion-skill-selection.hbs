@@ -1,0 +1,33 @@
+<div class="skill-selection-container">
+    
+    <div class="skill-selection-info-box">
+        <p class="skill-selection-info-text">
+            {{localize 'SHEET.SkillSelectionIntro' name=companion.name}}
+        </p>
+    </div>
+
+    <div class="skill-selection-categories">
+        {{#each categories as |cat|}}
+        {{#if cat.items.length}}
+        <legend class="table-title lineheight">{{localize cat.label}}</legend>
+        <div class="skill-selection-grid">
+            {{#each cat.items as |item|}}
+            <div class="slot primary skill-drag skill-selection-slot skill-selection-drag-slot" draggable="true" data-action="openItemSheet" data-item-id="{{item.id}}" data-tooltip="{{item.name}} ({{localize 'SHEET.OpenItemSheet'}})" style="background: url('{{item.img}}') center/cover;"></div>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{/each}}
+    </div>
+
+    <legend class="table-title lineheight">{{localize 'SHEET.Hotbar'}}</legend>
+    <div class="companion-hotbar skill-selection-hotbar-box">
+        {{#each hotbarRows as |row|}}
+        <div class="skill-selection-hotbar-row">
+            {{#each row as |slot|}}
+            <div class="slot primary hotbar-slot skill-selection-slot skill-selection-hotbar-slot" data-index="{{slot.index}}" {{#if slot.item}}data-action="hotbarSlotAction" data-item-id="{{slot.item.id}}" data-tooltip="{{slot.item.name}}<br><i>{{localize 'SHEET.RemoveFromHotbar'}}</i>"{{/if}} style="background: {{#if slot.item}}url('{{slot.item.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}};">
+            </div>
+            {{/each}}
+        </div>
+        {{/each}}
+    </div>
+</div>

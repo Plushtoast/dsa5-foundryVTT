@@ -30,6 +30,7 @@ import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -202,6 +203,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
       conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
       rollAnySkill: this._rollAnySkill,
+      ...CompanionHandler.getSheetActions(),
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
@@ -227,6 +229,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
       unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
+      ...CompanionHandler.getOwnerSheetActions(),
     },
     form: {
       submitOnChange: true,
@@ -313,9 +316,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const tabs = super._prepareTabs(group);
     if (!this.actor.system.isMage) delete tabs.magic;
     if (!this.actor.system.isPriest) delete tabs.religion;
+    CompanionHandler.prepareTabVisibility(this.actor, tabs);
 
     this.cleanTabs(tabs);
     return tabs;
+  }
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) await CompanionHandler.prepareCompanionPartContext(this, context);
+    return context;
+  }
+
+  _attachPartListeners(partId, element, options) {
+    super._attachPartListeners(partId, element, options);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) CompanionHandler.attachCompanionPartListeners(this, element);
   }
 
   cleanTabs(tabs) {

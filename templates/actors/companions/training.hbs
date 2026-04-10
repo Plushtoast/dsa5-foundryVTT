@@ -1,0 +1,25 @@
+<div class="companion-training-header">
+    <div class="species-header">
+        <img src="{{currentSpeciesImg}}" data-action="toggleSpeciesSelector" class="species-img" title="{{localize 'SHEET.SpeciesChangeHint'}}">
+        <div>
+            <span class="species-title">{{#if currentSpecies}}{{localize "SHEET.SpeciesDetected" species=currentSpecies}}{{else}}{{localize "SHEET.SpeciesUnknown"}}{{/if}}</span><br>
+            <span class="species-hint">{{localize 'SHEET.SpeciesChangeHint'}}</span>
+        </div>
+    </div>
+
+    <div id="speciesSelector" class="species-selector-box" style="display: none;">
+        {{#each speciesData as |speciesList groupName|}}
+            <h4 class="species-group-name">{{groupName}}</h4>
+            <div class="species-grid">
+                {{#each speciesList}}
+                    <div data-action="selectSpecies" data-species="{{this.name}}" class="species-item" title="{{this.name}}">
+                        <img src="{{this.img}}" class="species-item-img">
+                        <span class="species-item-name">
+                            {{this.name}}
+                        </span>
+                    </div>
+                {{/each}}
+            </div>
+        {{/each}}
+    </div>
+</div>

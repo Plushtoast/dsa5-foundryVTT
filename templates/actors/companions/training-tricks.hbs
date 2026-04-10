@@ -1,0 +1,119 @@
+<div class="tab scrollable training-content-body training-tab-wrapper {{tabs.tricks.cssClass}}" data-tab="tricks" data-group="{{tabs.tricks.group}}">
+    {{#if isMaxReached}}
+        <div class="training-info-box">
+            <p class="training-info-text small margin-bottom">
+                {{#if isWild}}{{localize "SHEET.TrickLimitWild" currentTricks=currentTrickCount maxTricks=maxTricks}}{{else}}{{localize "SHEET.TrickLimitDomesticated" currentTricks=currentTrickCount maxTricks=maxTricks}}{{/if}}
+            </p>
+
+            {{#if knownTricks.length}}
+                <div class="known-tricks-box">
+                    <p class="known-tricks-title">{{localize 'SHEET.KnownTricks' name=companion.name}}</p>
+                    <div class="known-tricks-grid">
+                        {{#each knownTricks}}
+                            <div class="known-tricks-item">{{{this.link}}}</div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/if}}
+
+            <p class="training-info-text darkred center">
+                {{localize 'SHEET.MaxTricksReached' name=companion.name}}
+            </p>
+        </div>
+    {{else}}
+        <div class="training-info-box">
+            <p class="training-info-text small margin-bottom">
+                {{#if isWild}}{{localize "SHEET.TrickLimitWild" currentTricks=currentTrickCount maxTricks=maxTricks}}{{else}}{{localize "SHEET.TrickLimitDomesticated" currentTricks=currentTrickCount maxTricks=maxTricks}}{{/if}}
+            </p>
+
+            {{#if knownTricks.length}}
+                <div class="known-tricks-box">
+                    <p class="known-tricks-title">{{localize 'SHEET.KnownTricks' name=companion.name}}</p>
+                    <div class="known-tricks-grid">
+                        {{#each knownTricks}}
+                            <div class="known-tricks-item">{{{this.link}}}</div>
+                        {{/each}}
+                    </div>
+                </div>
+                <hr class="training-divider">
+            {{/if}}
+
+            <p class="training-info-text margin-bottom">
+                {{localize 'SHEET.TrickIntro'}}
+            </p>
+
+            <p class="training-info-text margin-bottom">
+                {{#if isWild}}
+                    {{localize 'SHEET.TrickWild'}}
+                {{else}}
+                    {{localize 'SHEET.TrickDomesticated'}}
+                {{/if}}
+            </p>
+
+            <p class="training-info-text">
+                {{localize 'SHEET.TrickModifier'}}
+            </p>
+        </div>
+
+        <div class="training-grid-wrapper">
+            <div class="training-grid-2col">
+                <div>
+                    <h4 class="training-col-header">
+                        {{localize 'SHEET.AvailableTricks'}}
+                    </h4>
+                    <div class="training-list-container">
+                        {{#each availableTricks}}
+                            <div class="trick-container training-item-container">
+                                <div class="training-item-header">
+                                    <div class="training-item-left">
+                                        <i class="fas fa-chevron-right training-item-arrow" data-action="toggleTrickDetails"></i>
+                                        <a class="content-link training-item-link" data-action="openTrick" data-uuid="{{this.uuid}}"><i class="fas fa-suitcase"></i> {{this.name}}</a>
+                                    </div>
+                                    {{#if this.isTraining}}
+                                        <button type="button" class="dsadesignbutton training-btn-disabled" disabled title="{{localize 'SHEET.InTrainingTooltip'}}">
+                                            <i class="fas fa-hourglass-half training-btn-icon"></i> {{localize 'SHEET.InTraining'}}
+                                        </button>
+                                    {{else}}
+                                        <button type="button" class="dsadesignbutton training-btn-action" data-action="teachTrick" data-trick="{{this.name}}">
+                                            <i class="fas fa-paw training-btn-icon"></i> {{localize 'SHEET.TeachTrickBtn'}}
+                                        </button>
+                                    {{/if}}
+                                </div>
+                                <div class="trick-details training-item-details">
+                                    {{localize "SHEET.Requirements"}}: {{this.reqText}}
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#unless availableTricks.length}}
+                            <p class="training-empty-state">{{localize 'SHEET.NoTricksAvailable'}}</p>
+                        {{/unless}}
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="training-col-header">
+                        {{localize 'SHEET.UnavailableTricks'}}
+                    </h4>
+                    <div class="training-list-container">
+                        {{#each unavailableTricks}}
+                            <div class="trick-container training-item-container unavailable">
+                                <div class="training-item-header">
+                                    <div class="training-item-left">
+                                        <i class="fas fa-chevron-right training-item-arrow" data-action="toggleTrickDetails"></i>
+                                        <a class="content-link training-item-link unavailable" data-action="openTrick" data-uuid="{{this.uuid}}"><i class="fas fa-suitcase"></i> {{this.name}}</a>
+                                    </div>
+                                </div>
+                                <div class="trick-details training-item-details unavailable">
+                                    {{localize "SHEET.Requirements"}}: {{this.reqText}}
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#unless unavailableTricks.length}}
+                            <p class="training-empty-state">Keine Tricks in dieser Kategorie.</p>
+                        {{/unless}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+</div>

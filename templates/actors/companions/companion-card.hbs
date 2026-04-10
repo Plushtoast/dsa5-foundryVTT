@@ -1,0 +1,354 @@
+<div class="smallHeader item companion-header-ui" data-uuid="{{this.uuid}}" draggable="true">
+
+    {{!-- Buttons oben rechts --}}
+    <div class="companion-header-actions">
+        <a class="button icon fas {{#if this.prepareCompanion.isExpanded}}fa-minimize{{else}}fa-maximize{{/if}} dsadesignbutton noBorder"
+            data-action="toggleCompanionDetails" data-tooltip="TT.collapseHeader"></a>
+        <a class="button icon fas fa-unlink dsadesignbutton noBorder" data-action="removeCompanion"
+            data-uuid="{{this.uuid}}" data-tooltip="{{localize 'SHEET.RemoveCompanion'}}"></a>
+    </div>
+
+    <div class="flexrow wrap companion-align-center">
+
+        {{!-- LINKER BEREICH: Avatar --}}
+        <div class="companion-avatar" data-action="openCompanion" data-uuid="{{this.uuid}}"
+            data-tooltip="{{localize 'SHEET.OpenCompanionSheet'}}">
+            <img src="{{this.img}}" alt="{{this.name}}" class="avatar-image companion-avatar-img">
+        </div>
+
+        {{!-- RECHTER BEREICH: Name, Attribute und Leisten --}}
+        <div class="companion-flex-1">
+            <div class="sheet-header">
+                <div class="charname flexrow companion-charname-row">
+                    <h3 class="headerName ellipsis companion-header-name">
+                        <a class="content-link companion-content-link" data-uuid="{{this.uuid}}">{{this.name}}</a>
+
+                        {{!-- Anzeige des Icons für Domestiziert/Wild mit Wechsel-Funktion --}}
+                        {{#if this.prepareCompanion.showNatureIcon}}
+                        <div class="nature-toggle-container companion-nature-container" data-uuid="{{this.uuid}}"
+                            data-is-domesticated="{{this.prepareCompanion.isDomesticated}}">
+                            <i class="fa-solid {{this.prepareCompanion.natureIcon}} companion-icon-black"
+                                data-tooltip="{{localize this.prepareCompanion.natureTooltip}}"></i>
+                            <i class="fa-solid fa-chevron-right toggle-nature-arrow companion-nature-arrow"
+                                data-action="toggleNatureOptions"></i>
+                            <div class="nature-options companion-nature-options">
+                                <i class="fa-solid {{this.prepareCompanion.otherNatureIcon}} change-nature-btn companion-nature-change"
+                                    data-action="changeCompanionNature"
+                                    data-tooltip="{{localize this.prepareCompanion.otherNatureTooltip}}"></i>
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        {{!-- Anzeige des Flask-Icons für Homunculi --}}
+                        {{#if this.prepareCompanion.isHomunculus}}
+                        <i class="fa-solid fa-flask companion-icon-black"
+                            data-tooltip="{{localize 'SHEET.Homunculus'}}"></i>
+                        {{/if}}
+
+                        {{!-- Anzeige des Besen-Icons für Vertraute --}}
+                        {{#if this.prepareCompanion.isFamiliar}}
+                        <i class="fa-solid fa-broom companion-icon-black"
+                            data-tooltip="{{localize 'SHEET.Familiar'}}"></i>
+                        {{/if}}
+                    </h3>
+                </div>
+
+                {{!-- Attribute --}}
+                <div class="flexrow attributesHeader companion-attributes-header">
+                    <div class="col flexcol companion-col-nopad">
+                        <div class="flexrow charBtns">
+                            <div class="col flexrow companion-attributes-row">
+                                {{#each this.system.characteristics as |char key|}}
+                                <div class="center flexrow attribibcard companion-attrib-card">
+                                    <div>
+                                        <div class="d20 die-{{key}} companion-attrib-val">{{char.value}}</div>
+                                    </div>
+                                    <div class="companion-attrib-lbl">{{key}}</div>
+                                </div>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{!-- Lebensleisten --}}
+                <div class="row-section companion-row-section">
+                    <div
+                        class="col flexrow regenContainer {{this.prepareCompanion.containerClass}} companion-regen-container">
+                        <div class="healthbar bar-wounds barLeft {{this.prepareCompanion.lepClass}} companion-healthbar"
+                            data-tooltip="wounds">
+                            <div class="bar decolorizeFilter LeP"
+                                style="--a: {{this.system.status.wounds.value}}; --b: {{this.system.status.wounds.max}};">
+                            </div>
+                            <div class="barLabel">{{this.system.status.wounds.value}} /
+                                {{this.system.status.wounds.max}}</div>
+                        </div>
+                        <button type="button" data-action="companionRegeneration" data-uuid="{{this.uuid}}"
+                            class="fas fa-moon icon item dsadesignbutton noBorder"
+                            data-tooltip="regenerate"></button>
+                    </div>
+
+                    {{#if this.prepareCompanion.hasPrayers}}
+                    <div class="col {{this.prepareCompanion.containerClass}}">
+                        <div class="healthbar bar-karmaenergy barRight {{#if this.prepareCompanion.hasSpells}}middle{{/if}}"
+                            data-tooltip="karmaenergy">
+                            <div class="barLabel">{{this.system.status.karmaenergy.value}} /
+                                {{this.system.status.karmaenergy.max}}</div>
+                            <div class="bar decolorizeFilter KaP"
+                                style="--a: {{this.system.status.karmaenergy.value}}; --b: {{this.system.status.karmaenergy.max}};">
+                            </div>
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{#if this.prepareCompanion.hasSpells}}
+                    <div class="col {{this.prepareCompanion.containerClass}}">
+                        <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
+                            <div class="barLabel">{{this.system.status.astralenergy.value}} /
+                                {{this.system.status.astralenergy.max}}</div>
+                            <div class="bar decolorizeFilter AsP"
+                                style="--a: {{this.system.status.astralenergy.value}}; --b: {{this.system.status.astralenergy.max}};">
+                            </div>
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{#if this.prepareCompanion.hasNone}}
+                    <div class="col-bar-spacer col two companion-spacer-hidden"></div>
+                    {{/if}}
+                </div>
+
+                {{!-- Effekte --}}
+                <div class="companion-details companion-details-wrapper"
+                    style="{{#unless this.prepareCompanion.isExpanded}}display: none;{{/unless}}">
+                    <div class="row-section companion-effects-row">
+                        <div class="col flexrow regenContainer fourty companion-effects-container">
+                            <div class="healthbar bar-wounds barLeft companion-effects-placeholder"></div>
+                            <div class="companion-effects-list-wrapper">
+                                {{#if this.prepareCompanion.hasEffects}}
+                                <ul class="companion-effects-list">
+                                    {{#each this.prepareCompanion.effects}}
+                                    <li class="companion-effect-icon" data-action="companionEffect" data-effect-id="{{this.id}}"
+                                        data-tooltip="{{this.name}}">
+                                        <div class="companion-effect-img"
+                                            style="background-image:url('{{this.img}}');"></div>
+                                        {{#if this.value}}
+                                        <div class="companion-effect-badge">
+                                            {{this.value}}
+                                        </div>
+                                        {{/if}}
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="col fourty companion-spacer-hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- Loyalität und Ausbildung --}}
+    <div class="companion-details companion-details-bottom"
+        style="{{#unless this.prepareCompanion.isExpanded}}display: none;{{/unless}}">
+        {{#if this.prepareCompanion.loyalty}}
+        <div class="row-section item companion-loyalty-row" data-item-id="{{this.prepareCompanion.loyalty.id}}"
+            draggable="true">
+
+            {{!-- LINKE SEITE: WÜRFELSTYLING --}}
+            <div class="skills companion-loyalty-skills">
+
+                {{!-- Obere Reihe (Kompaktes Eingabefeld) --}}
+                <div class="companion-loyalty-top-row">
+                    {{#if this.prepareCompanion.isHomunculus}}
+                    <a class="talentName" data-action="companionItemEdit"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "SHEET.Fast-Talk"}}</a>
+                    {{else}}
+                    <a class="talentName companion-talent-name" data-action="companionItemEdit"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "SHEET.Loyalty"}}</a>
+                    {{/if}}
+                    <input class="companion-skill-advances" type="number"
+                        value="{{this.prepareCompanion.loyalty.value}}"
+                        data-item-id="{{this.prepareCompanion.loyalty.id}}"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}" />
+                </div>
+
+                {{!-- Untere Reihe (Großer Würfel-Button 45px) --}}
+                <div class="companion-loyalty-bottom-row">
+                    <button type="button" data-action="companionSkillSelect"
+                        class="noBorder dsadesignbutton skill-props companion-dice-btn"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">
+                        {{#if this.prepareCompanion.isHomunculus}}
+                        <span class="d20 diet-mu">{{localize 'CHARAbbrev.MU'}}</span>
+                        <span class="d20 diet-in">{{localize 'CHARAbbrev.IN'}}</span>
+                        <span class="d20 diet-ch">{{localize 'CHARAbbrev.CH'}}</span>
+                        {{else}}
+                        <span
+                            class="d20 diet-{{this.prepareCompanion.loyalty.char1}}">{{this.prepareCompanion.loyalty.char1}}</span>
+                        <span
+                            class="d20 diet-{{this.prepareCompanion.loyalty.char2}}">{{this.prepareCompanion.loyalty.char2}}</span>
+                        <span
+                            class="d20 diet-{{this.prepareCompanion.loyalty.char3}}">{{this.prepareCompanion.loyalty.char3}}</span>
+                        {{/if}}
+                    </button>
+                </div>
+            </div>
+
+            {{!-- MITTE: DIE NEUE HOTBAR (14 Slots in 2 Reihen) --}}
+            <div class="companion-hotbar">
+
+                {{!-- Obere Reihe (7 Slots) --}}
+                <div class="companion-hotbar-row">
+                    {{#each this.prepareCompanion.hotbarRow1 as |slot|}}
+                    <div class="slot primary companion-hotbar-slot" {{#if slot}}data-action="executeCompanionSkill"
+                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}"
+                        data-tooltip-class="dsa5 dsatooltip" {{/if}}
+                        style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
+                    </div>
+                    {{/each}}
+                </div>
+
+                {{!-- Untere Reihe (7 Slots) --}}
+                <div class="companion-hotbar-row">
+                    {{#each this.prepareCompanion.hotbarRow2 as |slot|}}
+                    <div class="slot primary companion-hotbar-slot" {{#if slot}}data-action="executeCompanionSkill"
+                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}"
+                        data-tooltip-class="dsa5 dsatooltip" {{/if}}
+                        style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
+                    </div>
+                    {{/each}}
+                </div>
+
+            </div>
+
+            {{!-- RECHTE SEITE: Icons (35x35) --}}
+            <div class="companion-right-icons">
+
+                {{!-- Obere Reihe --}}
+                <div class="companion-right-icons-row">
+                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="openSkillSelection"
+                        data-tooltip="SHEET.SkillSelection">
+                        <i class="fa-solid fa-book-bookmark companion-icon-black-18"></i>
+                    </a>
+
+                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleHotbarControl"
+                        data-tooltip="{{localize 'SHEET.controlViaHotbar'}}">
+                        <i
+                            class="{{#if this.prepareCompanion.isHotbarControlled}}fa-solid{{else}}fa-regular{{/if}} fa-eye companion-icon-black-18"></i>
+                    </a>
+                </div>
+
+                {{!-- Untere Reihe (Knochen / Pferd) --}}
+                <div
+                    class="companion-right-icons-row-bottom {{#if this.prepareCompanion.isMountPossible}}mount-possible{{/if}}">
+                    {{#unless this.prepareCompanion.isHomunculus}}
+                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="trainCompanion"
+                        data-tooltip="{{localize 'SHEET.train'}}">
+                        <i class="fa-solid fa-bone companion-icon-black-18"></i>
+                    </a>
+
+                    {{#if this.prepareCompanion.isMountPossible}}
+                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleMount"
+                        data-tooltip="{{#if this.prepareCompanion.isMountActive}}{{localize 'SHEET.removeMount'}}{{else}}{{localize 'SHEET.useAsMount'}}{{/if}}">
+                        <i
+                            class="fa-solid fa-horse companion-icon-black-18 companion-icon-horse {{#if this.prepareCompanion.isMountActive}}mount-active{{/if}}"></i>
+                    </a>
+                    {{/if}}
+                    {{/unless}}
+                </div>
+
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if this.prepareCompanion.trainingTests.length}}
+        <div class="actor-aggregated-tests groupbox companion-aggregated-group">
+
+            <div class="row-section table-title lineheight">
+                <div class="title-type col fifteen">
+                    {{localize "SHEET.Training"}}
+                </div>
+                <div class="col ten center">{{localize "probe"}}</div>
+                <div class="col ten center">{{localize "interval"}}</div>
+                <div class="col ten center">{{localize "probes"}}</div>
+                <div class="col ten center">{{localize "status"}}</div>
+                <div class="col center companion-ap-cost">
+                    {{localize "SHEET.Abenteuerpunktekosten"}}
+                </div>
+                <div class="col fifteen center flexAlignCenter flexrow"></div>
+            </div>
+
+            <div class="row-section wrap inventory" style="margin-bottom: 0;">
+                {{#each this.prepareCompanion.trainingTests as |test|}}
+                <div class="actor-aggregated-test-item-wrapper col item" data-item-id="{{test.item._id}}">
+                    <div class="actor-aggregated-test-item row-section skills lineheight companion-training-row">
+
+                        <div class="actor-aggregated-test-name col fifteen centerCell withContext">
+                            <a class="item-edit" data-action="editAggregatedTest"
+                                data-item-id="{{test.item._id}}">{{test.shortName}}</a>
+                        </div>
+
+                        <div class="actor-aggregated-test col ten center centerCell companion-center-flex">
+                            {{#if test.item.system.talent.value}}
+                            <a class="talent-1-roll" data-action="rollCompanionAggregatedProbe"
+                                data-item-id="{{test.item._id}}" data-which="">
+                                <div class="d20 die-attack"></div>
+                            </a>
+                            {{/if}}
+                        </div>
+
+                        <div class="actor-aggregated-test-intervall col ten center centerCell">
+                            <div class="centerMargin">{{test.item.system.interval.value}}</div>
+                        </div>
+
+                        <div class="actor-aggregated-tests-used col ten center centerCell">
+                            <div class="centerMargin">{{test.item.system.usedTestCount.value}} /
+                                {{test.item.system.allowedTestCount.value}}</div>
+                        </div>
+
+                        <div class="actor-aggregated-test-qs col ten center centerCell">
+                            <div class="centerMargin">{{test.item.system.cummulatedQS.value}} / 10</div>
+                        </div>
+
+                        <div class="actor-aggregated-test-ap col center centerCell companion-ap-cost">
+                            <div class="centerMargin">{{test.apCost}}</div>
+                        </div>
+
+                        <div class="actor-aggregated-test-action col fifteen very-small center centerCell flexrow"
+                            style="padding: 0 5px;">
+                            <div class="companion-action-container">
+
+                                {{#if test.isCompleted}}
+                                <button type="button" class="dsadesignbutton very-small companion-finish-btn"
+                                    data-action="finishTrickTraining" data-item-id="{{test.item._id}}"
+                                    data-companion-uuid="{{../uuid}}">
+                                    {{localize "SHEET.Finish"}}
+                                </button>
+                                {{else}}
+                                <button type="button" class="dsadesignbutton very-small companion-finish-btn"
+                                    disabled>
+                                    {{localize "SHEET.Finish"}}
+                                </button>
+                                {{/if}}
+
+                                {{!-- Mülleimer-Button --}}
+                                <button type="button"
+                                    class="dsadesignbutton noBorder very-small companion-trash-btn"
+                                    data-action="deleteAggregatedTest" data-item-id="{{test.item._id}}"
+                                    data-tooltip="{{localize 'SHEET.CancelAggregatedProbe'}}">
+                                    <i class="fa-solid fa-trash companion-trash-icon"></i>
+                                </button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>

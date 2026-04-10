@@ -1,0 +1,12 @@
+<div class="tab scrollable gap0px companion-tab-content" data-tab="companion" data-group="sheet"
+    data-application-part="companion">
+
+    {{> "systems/dsa5/templates/actors/parts/horse.hbs"}}
+
+    {{#each companionSections}}
+    <div class="groupbox">
+        <legend class="table-title lineheight">{{localize label}}</legend>
+        {{#each contents}}{{> "systems/dsa5/templates/actors/companions/companion-card.hbs"}}{{/each}}
+    </div>
+    {{/each}}
+</div>

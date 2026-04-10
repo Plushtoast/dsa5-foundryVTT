@@ -2,8 +2,11 @@ import ActorSheetDsa5 from './actor-sheet.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
+import CompanionHandler from './companions/companion-handler-class.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
+  static OWNER_TAB_ID = 'owner';
+
   static DEFAULT_OPTIONS = {
     classes: ['creature-sheet'],
   };
@@ -36,12 +39,15 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
+    owner: CompanionHandler.getOwnerPart(),
     status: super.PARTS.status,
     notes: {
       template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
       scrollable: ['']
     }
   }
+
+  static TABS = CompanionHandler.withSheetTab(super.TABS, CompanionHandler.getOwnerTab());
 
   static LIMITEDPARTS = {
     sheet: super.PARTS.sheet,
@@ -83,6 +89,21 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     if (itemData.type == 'trait') return this._addTrait(itemData);
 
     return super._onDropItemCreate(itemData);
+  }
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === this.constructor.OWNER_TAB_ID) {
+      await CompanionHandler.prepareOwnerPartContext(this, context);
+    }
+    return context;
+  }
+
+  _attachPartListeners(partId, element, options) {
+    super._attachPartListeners(partId, element, options);
+    if (partId === this.constructor.OWNER_TAB_ID) {
+      CompanionHandler.attachOwnerPartListeners(this, element);
+    }
   }
 
   async _onRender(context, options) {

@@ -11,6 +11,7 @@ import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
+import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -101,6 +102,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
 
     html.find('.hotbar-avatar').on('dblclick', () => this.actor.sheet.render(true));
+
+    CompanionHotbar.attachListeners(this.element);
 
     new foundry.applications.ux.DragDrop.implementation({
       dragSelector: ".wiggle-animation",
@@ -317,6 +320,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
+
+    CompanionHotbar.registerHooks();
 
     new foundry.applications.ux.ContextMenu(this.element, '[data-action="weapon"]', [], {
       onOpen: this.#onWeaponContext.bind(this),
@@ -803,6 +808,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     this.prepareActorContext(context);
+    await CompanionHotbar.prepareContext(context, this.actor);
 
     return context;
   }

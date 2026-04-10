@@ -108,6 +108,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/chat/payment/batch-request.hbs',
     'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
     'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
+    'systems/dsa5/templates/system/hud/companion-hotbar.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);

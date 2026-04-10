@@ -108,24 +108,19 @@ export default class ItempackageData extends ItemDataModel.mixin(DescriptionTemp
 
   static async collectAvailablePackages() {
     const seen = new Set();
-    const packages = [];
-
-    for (const pack of game.packs) {
-      if (pack.documentName !== 'Item') continue;
-
-      const index = await pack.getIndex({ fields: ['system.price.value', 'type'] });
-      for (const entry of index) {
-        if (entry.type !== 'itempackage') continue;
-        if (seen.has(entry.name)) continue;
-
+    const packages = await DSA5_Utility.collectIndexedCompendiumEntries({
+      documentName: 'Item',
+      fields: ['name', 'system.price.value', 'type'],
+      filterEntry: (entry) => entry.type === 'itempackage' && !seen.has(entry.name),
+      mapEntry: (entry, { pack }) => {
         seen.add(entry.name);
-        packages.push({
+        return {
           name: entry.name,
           uuid: `Compendium.${pack.collection}.${entry._id}`,
           price: entry.system?.price?.value ?? 0,
-        });
-      }
-    }
+        };
+      },
+    });
 
     packages.sort((a, b) => a.name.localeCompare(b.name));
     return packages;
