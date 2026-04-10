@@ -46,7 +46,7 @@ export default class CompanionHotbar {
         ownerUuid: ownerActor.uuid,
         isControllingPet: true,
         img: ownerActor.img,
-        tooltip: _loc('SHEET.ControlActor', { name: ownerActor.name }),
+        tooltip: _loc('COMPANIONS.Hotbar.ControlActor', { name: ownerActor.name }),
         statusIcon: ICON_CONTROL,
       };
     } else {
@@ -56,25 +56,28 @@ export default class CompanionHotbar {
         isControllingPet: false,
         img: petActor.img,
         tooltip: petOnScene
-          ? _loc('SHEET.ControlActor', { name: petActor.name })
-          : _loc('SHEET.SummonActor', { name: petActor.name }),
+          ? _loc('COMPANIONS.Hotbar.ControlActor', { name: petActor.name })
+          : _loc('COMPANIONS.Hotbar.SummonActor', { name: petActor.name }),
         statusIcon: petOnScene ? ICON_CONTROL : ICON_SUMMON,
       };
     }
   }
 
   /**
-   * Bind event listeners on the companion hotbar icon.
-   * @param {HTMLElement} element - The hotbar root element
+   * Handle click on the companion hotbar icon.
+   * @param {PointerEvent} ev
+   * @param {HTMLElement} target - The icon element with data-action
    */
-  static attachListeners(element) {
-    const icon = element.querySelector('.companion-hotbar-icon');
-    if (!icon) return;
+  static async onClick(ev, target) {
+    ev.preventDefault();
+    if (target.dataset.isSpawning === 'true') return;
 
-    const statusOverlay = icon.querySelector('.status-icon');
-    icon.addEventListener('mouseenter', () => { if (statusOverlay) statusOverlay.style.opacity = '1'; });
-    icon.addEventListener('mouseleave', () => { if (statusOverlay) statusOverlay.style.opacity = '0'; });
-    icon.addEventListener('click', (ev) => CompanionHotbar.#onClick(ev, icon));
+    const isControllingPet = target.dataset.isControllingPet === 'true';
+    if (isControllingPet) {
+      await CompanionHotbar.#switchToOwner(target.dataset.ownerUuid);
+    } else {
+      await CompanionHotbar.#switchToPetOrSummon(target);
+    }
   }
 
   /**
@@ -95,8 +98,8 @@ export default class CompanionHotbar {
     }
 
     icon.setAttribute('data-tooltip', petOnScene
-      ? _loc('SHEET.ControlActor', { name: petActor.name })
-      : _loc('SHEET.SummonActor', { name: petActor.name }),
+      ? _loc('COMPANIONS.Hotbar.ControlActor', { name: petActor.name })
+      : _loc('COMPANIONS.Hotbar.SummonActor', { name: petActor.name }),
     );
   }
 
@@ -122,17 +125,7 @@ export default class CompanionHotbar {
     return owners.length > 0 ? fromUuid(owners[0]) : null;
   }
 
-  static async #onClick(ev, icon) {
-    ev.preventDefault();
-    if (icon.dataset.isSpawning === 'true') return;
 
-    const isControllingPet = icon.dataset.isControllingPet === 'true';
-    if (isControllingPet) {
-      await CompanionHotbar.#switchToOwner(icon.dataset.ownerUuid);
-    } else {
-      await CompanionHotbar.#switchToPetOrSummon(icon);
-    }
-  }
 
   static async #switchToOwner(ownerUuid) {
     const ownerActor = await fromUuid(ownerUuid);
@@ -168,7 +161,7 @@ export default class CompanionHotbar {
       const spawnY = ownerTokens[0].y;
       const tokenData = await petActor.getTokenDocument({ x: spawnX, y: spawnY });
       await canvas.scene.createEmbeddedDocuments('Token', [tokenData]);
-      ui.notifications.info(_loc('SHEET.ActorSummoned', { name: petActor.name }));
+      ui.notifications.info(_loc('COMPANIONS.Notification.ActorSummoned', { name: petActor.name }));
     } finally {
       icon.dataset.isSpawning = 'false';
     }

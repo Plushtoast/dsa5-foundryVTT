@@ -140,6 +140,10 @@
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s;
+
+    .companion-nature-container:hover & {
+        opacity: 1;
+    }
 }
 
 .companion-nature-options {

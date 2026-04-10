@@ -33,7 +33,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             refundLoyalty: this.#refundLoyalty,
         },
         window: {
-            title: "SHEET.Training",
+            title: "COMPANIONS.Training.label",
             icon: "fas fa-paw",
             resizable: true,
             contentClasses: ["companion-training-container", "training-container"],
@@ -68,16 +68,16 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     static TABS = {
         sheet: {
             tabs: [
-                { id: 'loyalty', label: 'SHEET.Loyalty' },
-                { id: 'tricks', label: 'SHEET.Tricks' },
-                { id: 'training', label: 'SHEET.TrainingTabName' }
+                { id: 'loyalty', label: 'COMPANIONS.Loyalty.label' },
+                { id: 'tricks', label: 'COMPANIONS.Trick.label' },
+                { id: 'training', label: 'COMPANIONS.Training.TabName' }
             ],
             initial: 'loyalty'
         }
     };
 
     get title() {
-        return `${_loc("SHEET.Training")}: ${this.companion.name}`;
+        return `${_loc("COMPANIONS.Training.label")}: ${this.companion.name}`;
     }
 
     static #ensureTraitCatalogs() {
@@ -162,6 +162,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     static async finishTraining(ownerActor, target) {
+        await CompanionConfig.ensureLoaded();
         const itemId = target.dataset.itemId;
         const compUuid = target.dataset.companionUuid;
 
@@ -169,7 +170,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const compActor = await fromUuid(compUuid);
         if (!testItem || !compActor) return;
 
-        const trInd = _loc("SHEET.TrainingModuleIndicator") || "(Ausbildungsaufsatz):";
+        const trInd = _loc("COMPANIONS.Training.ModuleIndicator") || "(Ausbildungsaufsatz):";;
         const isTraining = testItem.name.includes("(Ausbildungsaufsatz):") || testItem.name.includes(trInd);
 
         let itemName = testItem.name;
@@ -213,20 +214,20 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
             const maxTricks = Math.round(klValue / 2) + trainingBonus;
             if (knownTrickNames.size >= maxTricks && !freeTricksSet.has(itemName)) {
-                ui.notifications.warn(_loc("SHEET.MaxTricksReached", { name: compActor.name }));
+                ui.notifications.warn(_loc("COMPANIONS.Notification.MaxTricksReached", { name: compActor.name }));
                 return;
             }
         }
 
         const trickUuid = testItem.getFlag('dsa5', 'trainingTrickUuid');
         if (!trickUuid) {
-            ui.notifications.warn(_loc("SHEET.TrickNotFound"));
+            ui.notifications.warn(_loc("COMPANIONS.Trick.NotFound"));
             return;
         }
 
         const trickItem = await fromUuid(trickUuid);
         if (!trickItem) {
-            ui.notifications.warn(_loc("SHEET.TrickNotFound"));
+            ui.notifications.warn(_loc("COMPANIONS.Trick.NotFound"));
             return;
         }
 
@@ -235,18 +236,18 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const spentAP = compActor.system.details.experience.spent || 0;
 
         if ((totalAP - spentAP) < apCost) {
-            ui.notifications.warn(_loc("SHEET.NotEnoughPetAP", { name: compActor.name, cost: apCost }));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.NotEnoughPetAP", { name: compActor.name, cost: apCost }));
             return;
         }
 
-        await compActor.update({ "system.details.experience.spent": spentAP + apCost });
-        await compActor.createEmbeddedDocuments('Item', [trickItem.toObject()]);
+        await compActor.update({ "system.details.experience.spent": spentAP + apCost }, { render: false });
+        await compActor.createEmbeddedDocuments('Item', [trickItem.toObject()], { render: false });
         await testItem.delete();
 
         if (isTraining) {
-            ui.notifications.info(_loc("SHEET.TrainingModuleFinished", { trainingName: itemName, petName: compActor.name }));
+            ui.notifications.info(_loc("COMPANIONS.Training.ModuleFinished", { trainingName: itemName, petName: compActor.name }));
         } else {
-            ui.notifications.info(_loc("SHEET.TrainingFinished", { trickName: itemName, petName: compActor.name }));
+            ui.notifications.info(_loc("COMPANIONS.Training.Finished", { trickName: itemName, petName: compActor.name }));
         }
 
         if (!isTraining) return;
@@ -283,17 +284,18 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         if (tricksToAdd.length > 0) {
             await compActor.createEmbeddedDocuments('Item', tricksToAdd);
-            ui.notifications.info(_loc("SHEET.AutoLearnedTricks", { name: compActor.name, tricks: addedTrickNames.join(', ') }));
+            ui.notifications.info(_loc("COMPANIONS.Notification.AutoLearnedTricks", { name: compActor.name, tricks: addedTrickNames.join(', ') }));
         }
     }
 
     async _prepareContext(options) {
+        await CompanionConfig.ensureLoaded();
         const context = await super._prepareContext(options);
         context.loyaltyUnlocked = this.loyaltyUnlocked;
         context.companion = this.companion;
         
         // --- 1. Grundstatus (Vertraute, Wild, Domestiziert) ---
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         context.isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
         
         const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
@@ -325,7 +327,6 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const klValue = this.companion.system.characteristics.kl.value || 0;
         const baseTricks = Math.round(klValue / 2);
         
-        const tr = (key) => _loc(`TRAINING.${key}`);
         const trainingTricks = CompanionConfig.trainingTricks;
 
         // Gratis-Tricks des Tiers durch Ausbildungen?
@@ -365,7 +366,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         // --- 4. Ausbildungs-Limit prüfen ---
         let trainingCount = 0;
-        const reittierName = tr("Reittier") || "Reittier";
+        const reittierName = CompanionConfig.trainingNames.Reittier;
         knownTrainingItems.forEach(t => {
             // Reittier zählt nicht gegen das Limit
             if (!t.name.includes(reittierName) && !t.name.includes("Reittier")) {
@@ -378,8 +379,8 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 		
         const allTricks = await this.constructor.getAllTricks();
         const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const tricksLabel = _loc("SHEET.Tricks");
-        const noReqsLabel = _loc("SHEET.NoRequirements");
+        const tricksLabel = _loc("COMPANIONS.Trick.label");
+        const noReqsLabel = _loc("COMPANIONS.Trick.NoRequirements");
 
         context.loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
         const currentLoyalty = context.loyaltyItem ? context.loyaltyItem.system.talentValue.value : 0;
@@ -408,8 +409,8 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             const reqText = reqTextArray.length > 0 ? reqTextArray.join(" | ") : noReqsLabel;
             
             // --- Prüfen, ob die Probe schon beim Helden liegt ---
-            const expectedWildName = _loc("SHEET.WildAnimalTraining", {petName: this.companion.name, trickName: t.name});
-            const expectedDomName = _loc("SHEET.AnimalTraining", {petName: this.companion.name, trickName: t.name});
+            const expectedWildName = _loc("COMPANIONS.Trick.WildAnimalTraining", {petName: this.companion.name, trickName: t.name});
+            const expectedDomName = _loc("COMPANIONS.Trick.AnimalTraining", {petName: this.companion.name, trickName: t.name});
             const isTraining = trainingItems.some(i => i.name === expectedWildName || i.name === expectedDomName);
             const trickData = { name: t.name, uuid: t.uuid, reqText: reqText, isTraining: isTraining };
 
@@ -463,7 +464,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
                 if (knownTrainingNames.includes(tData.name)) continue; 
                 
                 // Prüfen, ob die Probe schon beim Helden liegt
-                const expectedName = _loc("SHEET.TrainingTestName", {petName: this.companion.name, trainingName: tData.name});
+                const expectedName = _loc("COMPANIONS.Training.TestName", {petName: this.companion.name, trainingName: tData.name});
                 const isTraining = trainingItems.some(i => i.name === expectedName);
                 
                 context.availableTrainings.push({
@@ -477,7 +478,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         context.availableTrainings.sort((a, b) => a.name.localeCompare(b.name));
 
         // --- 3. Regel-Booleans setzen ---
-        context.isMountPossible = possibleTrainingNames.includes(_loc("TRAINING.Reittier"));
+        context.isMountPossible = possibleTrainingNames.includes(CompanionConfig.trainingNames.Reittier);
         
         return context;
     }
@@ -502,7 +503,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         if (!tabName) return super._onClickTab(event);
         if (tabName === 'tricks' && this.#isTricksTabBlocked()) {
             event.preventDefault();
-            ui.notifications.warn(_loc("SHEET.TrickNotPossible"));
+            ui.notifications.warn(_loc("COMPANIONS.Trick.NotPossible"));
             return;
         }
 
@@ -523,7 +524,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         if (event.type === 'contextmenu' || event.button === 2) {
             await this.companion.unsetFlag('dsa5', 'species');
-            ui.notifications.info(_loc("SHEET.SpeciesRemoved", {name: this.companion.name}));
+            ui.notifications.info(_loc("COMPANIONS.Notification.SpeciesRemoved", {name: this.companion.name}));
             await this._refreshSheets();
             return;
         }
@@ -561,15 +562,15 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         event.preventDefault();
         const trickName = target.dataset.trick;
 
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
         const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
         const isWild = !isFamiliar && this.companion.items.some(i => i.type === 'information' && i.name === zoologyWildName);
 
         const itemName = isWild
-            ? _loc("SHEET.WildAnimalTraining", {petName: this.companion.name, trickName})
-            : _loc("SHEET.AnimalTraining", {petName: this.companion.name, trickName});
-        const interval = isWild ? _loc("SHEET.IntervalTwoDays") : _loc("SHEET.IntervalOneDay");
+            ? _loc("COMPANIONS.Trick.WildAnimalTraining", {petName: this.companion.name, trickName})
+            : _loc("COMPANIONS.Trick.AnimalTraining", {petName: this.companion.name, trickName});
+        const interval = isWild ? _loc("COMPANIONS.Interval.TwoDays") : _loc("COMPANIONS.Interval.OneDay");
         const allowedTestCount = isWild ? 5 : 7;
 
         let trickMod = 0;
@@ -584,7 +585,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         if (isFamiliar) trickMod += 2;
 
-        const zoologyTalent = _loc("SHEET.Zoology");
+        const zoologyTalent = _loc("LocalizedIDs.Zoology");
         const allTricks = await this.getAllTricks();
         const trickData = allTricks.find(t => t.name === trickName);
         const apCost = trickData ? trickData.apCost : "?";
@@ -611,7 +612,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         };
 
         await this.actor.createEmbeddedDocuments("Item", [itemData]);
-        ui.notifications.info(_loc("SHEET.ItemAdded", {item: itemName, actor: this.actor.name}));
+        ui.notifications.info(_loc("COMPANIONS.Notification.ItemAdded", {item: itemName, actor: this.actor.name}));
 
         this.changeTab('tricks', 'sheet');
         this.render({ force: true });
@@ -621,7 +622,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         event.preventDefault();
         const trainingName = target.dataset.training;
 
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
 
         let trainingMod = 0;
@@ -636,10 +637,10 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         if (isFamiliar) trainingMod += 2;
 
-        const itemName = _loc("SHEET.TrainingTestName", {petName: this.companion.name, trainingName});
-        const interval = _loc("SHEET.IntervalOneMonth");
+        const itemName = _loc("COMPANIONS.Training.TestName", {petName: this.companion.name, trainingName});
+        const interval = _loc("COMPANIONS.Interval.OneMonth");
         const allowedTestCount = 7;
-        const zoologyTalent = _loc("SHEET.Zoology");
+        const zoologyTalent = _loc("LocalizedIDs.Zoology");
 
         const allTrainings = await this.getAllTrainings();
         const trainingData = allTrainings.find(t => t.name === trainingName);
@@ -667,7 +668,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         };
 
         await this.actor.createEmbeddedDocuments("Item", [itemData]);
-        ui.notifications.info(_loc("SHEET.ItemAdded", {item: itemName, actor: this.actor.name}));
+        ui.notifications.info(_loc("COMPANIONS.Notification.ItemAdded", {item: itemName, actor: this.actor.name}));
 
         this.changeTab('training', 'sheet');
         this.render({ force: true });
@@ -686,11 +687,11 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const skillItem = this.actor.items.find(i => i.type === "skill" && i.name === tierkundeName);
 
         if (!skillItem) {
-            ui.notifications.warn(_loc("SHEET.MissingTalent", {talent: tierkundeName}));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.MissingTalent", {talent: tierkundeName}));
             return;
         }
 
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
 
         const options = {};
@@ -727,12 +728,10 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const totalAP = this.actor.system.details.experience.total;
         if (totalAP - currentAP < cost) return;
 
-        const scrollPos = this.#getParentSheetScrollPosition();
-        await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW + 1 }]);
+        await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW + 1 }], { render: false });
         await this.actor.update({ "system.details.experience.spent": currentAP + cost });
 
         await this.render({ force: true });
-        this.#restoreParentSheetScrollPosition(scrollPos);
     }
 
     static async #refundLoyalty(event) {
@@ -746,13 +745,10 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         const refundedCost = DSA5.advancementCosts.B[currentFW - 1];
         const currentAP = this.actor.system.details.experience.spent;
-        const scrollPos = this.#getParentSheetScrollPosition();
-
-        await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW - 1 }]);
+        await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW - 1 }], { render: false });
         await this.actor.update({ "system.details.experience.spent": Math.max(0, currentAP - refundedCost) });
 
         await this.render({ force: true });
-        this.#restoreParentSheetScrollPosition(scrollPos);
     }
 
     static #editItem(event, target) {
@@ -761,18 +757,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         if (item) item.sheet.render(true);
     }
 
-    #getParentSheetScrollPosition() {
-        const tab = this.parentSheet?.element?.[0]?.querySelector('.tab[data-tab="companion"]');
-        return tab ? tab.scrollTop : 0;
-    }
 
-    #restoreParentSheetScrollPosition(scrollPos) {
-        setTimeout(() => {
-            const newTab = this.parentSheet?.rendered ? this.parentSheet.element[0].querySelector('.tab[data-tab="companion"]') : null;
-            if (newTab) newTab.scrollTop = scrollPos;
-            this.bringToTop();
-        }, 150);
-    }
 
     #isTricksTabBlocked() {
         const currentSpecies = this.companion.getFlag('dsa5', 'species');
@@ -787,12 +772,12 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     #getTrainingTabBlockMessage() {
-        const abrichterName = _loc("SHEET.AnimalTrainer");
+        const abrichterName = _loc("COMPANIONS.Training.AnimalTrainer");
         const hasAbrichter = this.actor.items.some(i => i.type === 'specialability' && i.name === abrichterName);
-        if (!hasAbrichter) return _loc("SHEET.AnimalTrainingWarning");
+        if (!hasAbrichter) return _loc("COMPANIONS.Notification.AnimalTrainingWarning");
 
         const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
         const isWild = !isFamiliar && this.companion.items.some(i => i.type === 'information' && i.name === zoologyWildName);
         if (!isWild) return null;
@@ -800,7 +785,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const loyaltyName = _loc("LocalizedIDs.loyalty");
         const loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
         const loyaltyValue = loyaltyItem ? loyaltyItem.system.talentValue.value : 0;
-        return loyaltyValue < 10 ? _loc("SHEET.WildAnimalLoyaltyWarning") : null;
+        return loyaltyValue < 10 ? _loc("COMPANIONS.Notification.WildAnimalLoyaltyWarning") : null;
     }
 }
 

@@ -472,9 +472,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
   }
 
-  async executeQuickButton(ev) {
+  async executeQuickButton(ev, target) {
     const { actor, tokenId } = resolveHotbarActorContext();
-    const { id, subfunction, subweapon } = ev.currentTarget.dataset;
+    const { id, subfunction, subweapon } = (target || ev.currentTarget).dataset;
 
     switch (subfunction) {
       case 'trade':

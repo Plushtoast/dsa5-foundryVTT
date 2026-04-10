@@ -8,11 +8,11 @@ export default class CompanionHandler {
     static COMPANION_TAB_ID = 'companion';
 
     static getCompanionTab() {
-        return { id: this.COMPANION_TAB_ID, label: 'SHEET.Companion', icon: 'fas fa-paw' };
+        return { id: this.COMPANION_TAB_ID, label: 'COMPANIONS.Companion', icon: 'fas fa-paw' };
     }
 
     static getOwnerTab() {
-        return { id: 'owner', label: 'SHEET.Owner', icon: 'fas fa-user-friends' };
+        return { id: 'owner', label: 'COMPANIONS.Owner', icon: 'fas fa-user-friends' };
     }
 
     static getCompanionPart() {
@@ -89,16 +89,16 @@ export default class CompanionHandler {
         if (!droppedActor) return false;
 
         if (!droppedActor.prototypeToken.actorLink) {
-            ui.notifications.warn(_loc("SHEET.TokenLinkWarning"));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.TokenLinkWarning"));
             return false;
         }
 
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = droppedActor.items.some(i => i.type === 'trait' && i.name === familiarName);
         let owners = droppedActor.getFlag('dsa5', 'owners') || [];
 
         if (isFamiliar && owners.length >= 1 && !owners.includes(sheet.actor.uuid)) {
-            ui.notifications.warn(_loc("SHEET.FamiliarOwnerWarning"));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.FamiliarOwnerWarning"));
             return false;
         }
 
@@ -126,7 +126,7 @@ export default class CompanionHandler {
             await droppedActor.update({ "flags.dsa5.owners": owners }, { render: false });
         }
 
-        const isHomunculus = droppedActor.items.some(i => i.type === 'trait' && i.name === _loc("SHEET.HomunculusCreation"));
+        const isHomunculus = droppedActor.items.some(i => i.type === 'trait' && i.name === _loc("COMPANIONS.HomunculusCreation"));
 
         if (!isHomunculus) {
             const loyaltyName = _loc("LocalizedIDs.loyalty");
@@ -146,13 +146,13 @@ export default class CompanionHandler {
                     loyaltyItemData.system.talentValue.value = initialLoyalty;
                     await droppedActor.createEmbeddedDocuments("Item", [loyaltyItemData]);
 
-                    ui.notifications.info(_loc("SHEET.LoyaltyAdded", {
+                    ui.notifications.info(_loc("COMPANIONS.Loyalty.Added", {
                         name: droppedActor.name,
                         talent: loyaltyName,
                         val: initialLoyalty
                     }));
                 } else {
-                    ui.notifications.warn(_loc("SHEET.LoyaltyNotFound", {
+                    ui.notifications.warn(_loc("COMPANIONS.Loyalty.NotFound", {
                         talent: loyaltyName
                     }));
                 }
@@ -167,7 +167,7 @@ export default class CompanionHandler {
         }
 
         // --- Eigenschaft "Begleiter" für Wildtiere und domestizierte Tiere ---
-        const companionTraitName = _loc("SHEET.CompanionTrait");
+        const companionTraitName = _loc("LocalizedIDs.companion");
 
         if (!isFamiliar && !isHomunculus) {
             const hasCompanionTrait = droppedActor.items.some(i => i.type === 'trait' && i.name === companionTraitName);
@@ -180,7 +180,7 @@ export default class CompanionHandler {
                 };
 
                 await droppedActor.createEmbeddedDocuments("Item", [traitData]);
-                ui.notifications.info(_loc("SHEET.CompanionAdded", { name: droppedActor.name }));
+                ui.notifications.info(_loc("COMPANIONS.Notification.CompanionAdded", { name: droppedActor.name }));
             }
         }
 
@@ -192,26 +192,6 @@ export default class CompanionHandler {
 
         return true;
     }
-
-    // --- Tier-Bogen öffnen und Besitzer-Bogen schließen ---
-    static async openCompanion(sheet, ev, target) {
-        const uuid = target.dataset.uuid || target.closest('[data-uuid]')?.dataset.uuid;
-        if (!uuid) return;
-        const actor = await fromUuid(uuid);
-
-        if (actor) {
-            await actor.sheet.render(true, { focus: true });
-
-            setTimeout(() => {
-                if (actor.sheet.changeTab) {
-                    actor.sheet.changeTab('owner', 'sheet');
-                }
-            }, 50);
-        }
-    }
-
-
-
     static async handleCompanionRegeneration(sheet, ev, target) {
         const uuid = target.dataset.uuid;
         if (!uuid) return;
@@ -220,7 +200,7 @@ export default class CompanionHandler {
             const setup = await actor.setupRegeneration("regenerate", {});
             if (setup) await actor.basicTest(setup);
         } else {
-            ui.notifications.warn(_loc("SHEET.NoPermissionRegeneration"));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.NoPermissionRegeneration"));
         }
     }
 
@@ -242,7 +222,7 @@ export default class CompanionHandler {
 
             // ---  Trait "Begleiter" entfernen, wenn das Tier keine Besitzer mehr hat ---
             if (owners.length === 0) {
-                const companionTraitName = _loc("SHEET.CompanionTrait");
+                const companionTraitName = _loc("LocalizedIDs.companion");
                 const companionTraits = droppedActor.items.filter(i => i.type === 'trait' && i.name === companionTraitName).map(i => i.id);
 
                 if (companionTraits.length > 0) {
@@ -262,8 +242,7 @@ export default class CompanionHandler {
 
     static getSheetActions() {
         return {
-            openOwnerSheet: this._openOwnerSheetAction,
-            openCompanion: this._openCompanionAction,
+            openLinkedSheet: this._openLinkedSheetAction,
             toggleNatureOptions: this._toggleNatureOptionsAction,
             toggleCompanionDetails: this._toggleCompanionDetailsAction,
         };
@@ -273,7 +252,6 @@ export default class CompanionHandler {
         return {
             changeCompanionNature: this._changeCompanionNatureAction,
             companionEffect: { handler: this._companionEffectAction, buttons: [0, 2] },
-            deleteAggregatedTest: this._deleteAggregatedTestAction,
             rollCompanionAggregatedProbe: this._rollCompanionAggregatedProbeAction,
             removeCompanion: this._removeCompanionAction,
             openSkillSelection: this._openSkillSelectionAction,
@@ -309,29 +287,29 @@ export default class CompanionHandler {
         const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
         const loyaltyName = _loc("LocalizedIDs.loyalty");
 
-        const dialogText = _loc("SHEET.loyaltyChangeText", { name: compActor.name });
+        const dialogText = _loc("COMPANIONS.Loyalty.changeText", { name: compActor.name });
         const newLoyaltyValue = isCurrentlyDomesticated ? 0 : 4;
 
         new foundry.applications.api.DialogV2({
             window: {
-                title: "SHEET.loyaltyChangeTitle",
+                title: "COMPANIONS.Loyalty.changeTitle",
             },
             content: `<p>${dialogText}</p>`,
             buttons: [
                 {
                     action: 'accept',
-                    label: _loc("SHEET.Accept"),
+                    label: _loc("ok"),
                     icon: 'fas fa-check',
                     default: true,
                     callback: async () => {
                         if (isCurrentlyDomesticated) {
                             const domItems = compActor.items.filter(i => i.type === 'information' && i.name === zoologyDomName).map(i => i.id);
-                            await compActor.deleteEmbeddedDocuments('Item', domItems);
-                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyWildName, type: 'information' }]);
+                            await compActor.deleteEmbeddedDocuments('Item', domItems, { render: false });
+                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyWildName, type: 'information' }], { render: false });
                         } else {
                             const wildItems = compActor.items.filter(i => i.type === 'information' && i.name === zoologyWildName).map(i => i.id);
-                            await compActor.deleteEmbeddedDocuments('Item', wildItems);
-                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyDomName, type: 'information' }]);
+                            await compActor.deleteEmbeddedDocuments('Item', wildItems, { render: false });
+                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyDomName, type: 'information' }], { render: false });
                         }
 
                         const loyaltyItem = compActor.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
@@ -340,14 +318,16 @@ export default class CompanionHandler {
                                 _id: loyaltyItem.id,
                                 'system.talentValue.value': newLoyaltyValue,
                             }]);
+                        } else {
+                            compActor.sheet?.render();
                         }
 
-                        this.render(true);
+                        this.render();
                     },
                 },
                 {
                     action: 'decline',
-                    label: _loc("SHEET.Decline"),
+                    label: _loc("cancel"),
                     icon: 'fas fa-times',
                     callback: () => {
                         container.querySelector('.nature-options').style.display = 'none';
@@ -382,41 +362,17 @@ export default class CompanionHandler {
     static _warnIfNotPetOwner(compActor) {
         if (compActor?.isOwner) return false;
         if (compActor) {
-            ui.notifications.warn(_loc("SHEET.NotPetOwner", { name: compActor.name }));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.NotPetOwner", { name: compActor.name }));
         }
         return true;
     }
 
-    static async _openOwnerSheetAction(_ev, target) {
-        const ownerActor = await CompanionHandler._resolveActor(target);
-        if (!ownerActor) return;
+    static async _openLinkedSheetAction(_ev, target) {
+        const actor = await CompanionHandler._resolveActor(target);
+        if (!actor) return;
 
-        await ownerActor.sheet.render(true, { focus: true });
-
-        setTimeout(() => {
-            if (ownerActor.sheet.changeTab) {
-                ownerActor.sheet.changeTab('companion', 'sheet');
-            }
-        }, 50);
-
+        await actor.sheet.render(true, { focus: true, tab: { sheet: target.dataset.tab } });
         this.close();
-    }
-
-    static async _deleteAggregatedTestAction(_ev, target) {
-        const itemId = target.dataset.itemId;
-        const testItem = this.actor.items.get(itemId);
-        if (!testItem) return;
-
-        const confirmed = await foundry.applications.api.DialogV2.confirm({
-            window: { title: _loc("SHEET.CancelProbe") },
-            content: _loc("SHEET.CancelProbeText", { name: testItem.name }),
-            modal: true,
-        });
-
-        if (!confirmed) return;
-
-        await testItem.delete();
-        ui.notifications.info(_loc("SHEET.ProbeCanceled", { name: testItem.name }));
     }
 
     static async _rollCompanionAggregatedProbeAction(_ev, target) {
@@ -462,12 +418,6 @@ export default class CompanionHandler {
             updated.sheet.postFinishedItem();
         }
     }
-
-    static async _openCompanionAction(ev, target) {
-        await CompanionHandler.openCompanion(this, ev, target);
-        this.close();
-    }
-
     static async _removeCompanionAction(ev, target) {
         await CompanionHandler.removeCompanion(this, ev, target);
     }
@@ -500,7 +450,7 @@ export default class CompanionHandler {
 
             await fn.call(item, item, compActor, token, speaker);
         } catch (err) {
-            ui.notifications.error(_loc("SHEET.MacroError", { name: item.name, error: err.message }));
+            ui.notifications.error(_loc("COMPANIONS.Notification.MacroError", { name: item.name, error: err.message }));
             console.error(err);
         }
     }
@@ -510,15 +460,15 @@ export default class CompanionHandler {
         if (!compActor || CompanionHandler._warnIfNotPetOwner(compActor)) return;
 
         const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
-        const abrichterName = _loc("SHEET.AnimalTrainer");
-        const familiarName = _loc("SHEET.FamiliarTrait");
+        const abrichterName = _loc("COMPANIONS.Training.AnimalTrainer");
+        const familiarName = _loc("LocalizedIDs.familiar");
 
         const isFamiliar = compActor.items.some(i => i.type === 'trait' && i.name === familiarName);
         const isWild = !isFamiliar && compActor.items.some(i => i.type === 'information' && i.name === zoologyWildName);
         const hasAbrichter = this.actor.items.some(i => i.type === 'specialability' && i.name === abrichterName);
 
         if (isWild && !hasAbrichter) {
-            ui.notifications.warn(_loc("SHEET.WildAnimalTrainerWarning"));
+            ui.notifications.warn(_loc("COMPANIONS.Notification.WildAnimalTrainerWarning"));
             return;
         }
 
@@ -530,6 +480,7 @@ export default class CompanionHandler {
     }
 
     static async _toggleMountAction(_ev, target) {
+        await CompanionConfig.ensureLoaded();
         const compActor = await CompanionHandler._resolveActor(target.closest('.companion-header-ui'));
         if (!compActor || CompanionHandler._warnIfNotPetOwner(compActor)) return;
 
@@ -569,7 +520,7 @@ export default class CompanionHandler {
 
             if (ridingEffect) {
                 const knownTrainings = compActor.items.filter(i => i.type === 'trait' && i.system?.traitType?.value === 'training');
-                const reittierStr = _loc("TRAINING.Reittier") || "Reittier";
+                const reittierStr = CompanionConfig.trainingNames.Reittier;
                 const hasReittier = knownTrainings.some(t => t.name.includes(reittierStr));
 
                 let effectValue = 0;
@@ -628,9 +579,7 @@ export default class CompanionHandler {
 
         const rollerTokenId = compActor.getActiveTokens()[0]?.id || null;
         const setupData = await compActor.setupSkill(skillItem, {}, rollerTokenId);
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const persuasionName = _loc("SHEET.Fast-Talk");
-        const isLoyaltyRoll = skillItem.name === persuasionName || skillItem.name === loyaltyName;
+        const isLoyaltyRoll = skillItem.name === _loc("LocalizedIDs.Fast-Talk") || skillItem.name === _loc("LocalizedIDs.loyalty");
 
         const testResult = await compActor.basicTest(setupData);
         if (!isLoyaltyRoll || !testResult?.result) return;
@@ -642,51 +591,32 @@ export default class CompanionHandler {
         const isBotch = res.isBotch || res.successLevel <= -2 || desc.includes('patzer') || desc.includes('schrecklich') || desc.includes('missgeschick');
         const isFail = res.successLevel < 0 || desc.includes('misserfolg') || desc.includes('fehlschlag') || isBotch;
 
-        let loyaltyChanged = false;
-        let newLoyalty = skillItem.system.talentValue.value;
         const chatMessages = [];
 
         if (isCrit || isBotch) {
-            const roll = await new Roll('1d3+1').evaluate({ async: true });
-            const change = roll.total;
+            const change = (await new Roll('1d3+1').evaluate()).total;
 
             if (isCrit) {
-                newLoyalty += change;
-                chatMessages.push(_loc("SHEET.LoyaltyCritGain", { name: compActor.name, change }));
+                await skillItem.update({ 'system.talentValue.value': skillItem.system.talentValue.value + change });
+                chatMessages.push(_loc("COMPANIONS.Loyalty.CritGain", { name: compActor.name, change }));
             } else {
-                newLoyalty = Math.max(0, newLoyalty - change);
-                chatMessages.push(_loc("SHEET.LoyaltyBotchLoss", { name: compActor.name, change }));
+                await skillItem.update({ 'system.talentValue.value': Math.max(0, skillItem.system.talentValue.value - change) });
+                chatMessages.push(_loc("COMPANIONS.Loyalty.BotchLoss", { name: compActor.name, change }));
             }
-            loyaltyChanged = true;
         }
 
-        const familiarName = _loc("SHEET.FamiliarTrait");
-        const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
-
-        const isFamiliar = compActor.items.some(i => i.type === 'trait' && i.name === familiarName);
-        const isWild = !isFamiliar && compActor.items.some(i => i.type === 'information' && i.name === zoologyWildName);
+        const isFamiliar = compActor.items.some(i => i.type === 'trait' && i.name === _loc("LocalizedIDs.familiar"));
+        const isWild = !isFamiliar && compActor.items.some(i => i.type === 'information' && i.name === _loc("LocalizedIDs.zoologyWild"));
 
         if (isWild && isFail) {
-            const wildRoll = await new Roll('1d6').evaluate({ async: true });
-            const d6 = wildRoll.total;
-            let wildMsg = '';
+            const d6 = (await new Roll('1d6').evaluate()).total;
 
-            if (d6 === 1) wildMsg = _loc("SHEET.WildFail1", { name: compActor.name });
-            else if (d6 === 2) wildMsg = _loc("SHEET.WildFail2", { name: compActor.name });
-            else if (d6 >= 3 && d6 <= 5) {
-                const krRoll = await new Roll('1d6').evaluate({ async: true });
-                wildMsg = _loc("SHEET.WildFail35", { name: compActor.name, kr: krRoll.total });
-            } else if (d6 === 6) {
-                const krRoll = await new Roll('1d6').evaluate({ async: true });
-                wildMsg = _loc("SHEET.WildFail6", { name: compActor.name, kr: krRoll.total });
+            if (d6 <= 2) {
+                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6}`, { name: compActor.name }));
+            } else {
+                const kr = (await new Roll('1d6').evaluate()).total;
+                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6 === 6 ? '6' : '35'}`, { name: compActor.name, kr }));
             }
-
-            chatMessages.push(wildMsg);
-        }
-
-        if (loyaltyChanged) {
-            await skillItem.update({ 'system.talentValue.value': newLoyalty });
-            setTimeout(() => this.render(false), 150);
         }
 
         if (chatMessages.length > 0) {
@@ -728,181 +658,168 @@ export default class CompanionHandler {
         const companionUuids = actor.getFlag('dsa5', 'companions') || [];
         sheetData.hasCompanions = companionUuids.length > 0;
 
-        const familiars = [];
-        const groupCompanions = [];
-        const regularCompanions = [];
+        if (sheetData.hasCompanions) await CompanionConfig.ensureLoaded();
+
+        const sections = { familiar: [], group: [], regular: [] };
 
         if (sheetData.hasCompanions) {
-            const familiarName = _loc("SHEET.FamiliarTrait");
-            const homunculusName = _loc("SHEET.HomunculusCreation");
-            const zoologyDom = _loc("LocalizedIDs.zoologyDomesticated");
-            const hotbarCompUuid = actor.getFlag('dsa5', 'hotbarCompanion');
-            const persuasionName = _loc("SHEET.Fast-Talk");
-            const loyaltyName = _loc("LocalizedIDs.loyalty");
             const trickIndicator = "(Trick):";
-            const trainingIndicator = _loc("SHEET.TrainingModuleIndicator");
-            const trainingPrefix = _loc("SHEET.TrainingShortPrefix");
-            const trickPrefix = _loc("SHEET.TrickShortPrefix");
-            const reittierStr = _loc("TRAINING.Reittier") || "Reittier";
-            const spellTypes = new Set(['spell', 'ritual', 'magictrick', 'magicalsign']);
-            const prayerTypes = new Set(['liturgy', 'ceremony', 'blessing']);
-            const persuasionSkill = actor.items.find(i => i.type === 'skill' && i.name === persuasionName) || null;
+            const trainingIndicator = _loc("COMPANIONS.Training.ModuleIndicator");
+            const ctx = {
+                familiarName: _loc("LocalizedIDs.familiar"),
+                homunculusName: _loc("COMPANIONS.HomunculusCreation"),
+                zoologyDom: _loc("LocalizedIDs.zoologyDomesticated"),
+                hotbarCompUuid: actor.getFlag('dsa5', 'hotbarCompanion'),
+                loyaltyName: _loc("LocalizedIDs.loyalty"),
+                trainingIndicator,
+                trainingPrefix: _loc("COMPANIONS.Training.ShortPrefix"),
+                trickIndicator,
+                trickPrefix: _loc("COMPANIONS.Trick.ShortPrefix"),
+                reittierStr: CompanionConfig.trainingNames.Reittier,
+                spellTypes: new Set(['spell', 'ritual', 'magictrick', 'magicalsign']),
+                prayerTypes: new Set(['liturgy', 'ceremony', 'blessing']),
+                persuasionSkill: actor.items.find(i => i.type === 'skill' && i.name === _loc("LocalizedIDs.Fast-Talk")) || null,
+                actor,
+            };
+
             const companions = (await Promise.all(companionUuids.map(cUuid => fromUuid(cUuid)))).filter(Boolean);
             const companionTestsByUuid = new Map(companions.map(comp => [comp.uuid, []]));
             const relevantTests = actor.items.filter(i => i.type === 'aggregatedTest' && (i.name.includes(trickIndicator) || i.name.includes(trainingIndicator)));
 
             for (const test of relevantTests) {
-                for (const comp of companions) {
-                    if (!test.name.includes(comp.name)) continue;
+                const comp = companions.find(c => test.name.includes(c.name));
+                if (!comp) continue;
 
-                    const isTraining = test.name.includes(trainingIndicator);
-                    let shortName = test.name;
+                const isTraining = test.name.includes(trainingIndicator);
+                const [indicator, prefix] = isTraining
+                    ? [trainingIndicator, ctx.trainingPrefix]
+                    : [trickIndicator, ctx.trickPrefix];
+                const parts = test.name.split(indicator);
+                const shortName = parts.length > 1 ? `${prefix} ${parts[1].trim()}` : test.name;
 
-                    if (isTraining) {
-                        const parts = test.name.split(trainingIndicator);
-                        if (parts.length > 1) shortName = `${trainingPrefix} ${parts[1].trim()}`;
-                    } else {
-                        const parts = test.name.split(trickIndicator);
-                        if (parts.length > 1) shortName = `${trickPrefix} ${parts[1].trim()}`;
-                    }
-
-                    companionTestsByUuid.get(comp.uuid).push({
-                        item: test,
-                        shortName,
-                        isCompleted: (test.system.cummulatedQS?.value || 0) >= 10,
-                        apCost: test.getFlag('dsa5', 'trainingApCost') || '?',
-                        isTraining,
-                    });
-                }
+                companionTestsByUuid.get(comp.uuid).push({
+                    item: test,
+                    shortName,
+                    isCompleted: (test.system.cummulatedQS?.value || 0) >= 10,
+                    apCost: test.getFlag('dsa5', 'trainingApCost') || '?',
+                    isTraining,
+                });
             }
 
             for (const comp of companions) {
-                const owners = comp.getFlag('dsa5', 'owners') || [];
-                let isDomesticated = false;
-                let isFamiliar = false;
-                let isHomunculus = false;
-                let hasSpells = false;
-                let hasPrayers = false;
-                let loyaltyItem = null;
-
-                for (const item of comp.items) {
-                    if (!isDomesticated && item.type === 'information' && item.name === zoologyDom) isDomesticated = true;
-                    if (!isFamiliar && item.type === 'trait' && item.name === familiarName) isFamiliar = true;
-                    if (!isHomunculus && item.type === 'trait' && item.name === homunculusName) isHomunculus = true;
-                    if (!hasSpells && spellTypes.has(item.type)) hasSpells = true;
-                    if (!hasPrayers && prayerTypes.has(item.type)) hasPrayers = true;
-                    if (!loyaltyItem && item.type === 'skill' && item.name.startsWith(loyaltyName)) loyaltyItem = item;
-                }
-
-                if (isFamiliar || isHomunculus) hasSpells = true;
-
-                const loyaltyData = isHomunculus
-                    ? (persuasionSkill ? {
-                        id: persuasionSkill.id,
-                        actorUuid: actor.uuid,
-                        value: persuasionSkill.system.talentValue.value,
-                        char1: 'mu',
-                        char2: 'in',
-                        char3: 'ch',
-                    } : null)
-                    : (loyaltyItem ? {
-                        id: loyaltyItem.id,
-                        actorUuid: comp.uuid,
-                        value: loyaltyItem.system.talentValue.value,
-                        char1: loyaltyItem.system.characteristic1.value,
-                        char2: loyaltyItem.system.characteristic2.value,
-                        char3: loyaltyItem.system.characteristic3.value,
-                    } : null);
-
-                const rawEffects = comp.effects ? (typeof comp.effects.values === 'function' ? Array.from(comp.effects.values()) : comp.effects) : [];
-                const activeEffects = rawEffects.map(e => {
-                    const img = e.img || e.icon || (e.texture ? e.texture.src : null) || 'icons/svg/aura.svg';
-                    let name = e.name || e.label;
-                    if (!name && e.statuses) name = (typeof e.statuses.size !== 'undefined') ? Array.from(e.statuses)[0] : e.statuses[0];
-
-                    return {
-                        id: e.id || e._id,
-                        img,
-                        name: name || _loc('SHEET.Effect'),
-                        value: e.flags?.dsa5?.value,
-                        disabled: e.disabled === true,
-                    };
-                }).filter(e => e.disabled === false);
-
-                const companionTests = companionTestsByUuid.get(comp.uuid);
-                companionTests.sort((a, b) => {
-                    if (a.isTraining && !b.isTraining) return -1;
-                    if (!a.isTraining && b.isTraining) return 1;
-                    return a.shortName.localeCompare(b.shortName);
-                });
-
-                const savedHotbar = comp.getFlag('dsa5', 'skillHotbar') || Array(14).fill(null);
-                const hotbarItems = savedHotbar.map(itemId => {
-                    if (!itemId) return null;
-                    const item = comp.items.get(itemId);
-                    if (!item) return null;
-
-                    return {
-                        id: item.id,
-                        name: item.name,
-                        img: item.img,
-                        tooltip: `<div class='itemTooltip'><h1>${item.name}</h1>${item.system.description?.value || ''}</div>`,
-                    };
-                });
-
-                let isMountPossible = false;
-                const currentSpecies = comp.getFlag('dsa5', 'species');
-                if (!currentSpecies) {
-                    isMountPossible = true;
-                } else {
-                    for (const group of Object.values(CompanionHandler.COMPANION_SPECIES_DATA)) {
-                        if (group[currentSpecies]?.trainingModules) {
-                            if (group[currentSpecies].trainingModules.includes(reittierStr)) isMountPossible = true;
-                            break;
-                        }
-                    }
-                }
-
-                comp.prepareCompanion = {
-                    hasSpells,
-                    hasPrayers,
-                    hasNone: !hasSpells && !hasPrayers,
-                    containerClass: (hasSpells && hasPrayers) ? 'third' : 'fourty',
-                    lepClass: (hasSpells || hasPrayers) ? '' : 'soloBar',
-                    loyalty: loyaltyData,
-                    effects: activeEffects,
-                    natureIcon: isDomesticated ? 'fa-house-chimney' : 'fa-mountain-sun',
-                    natureTooltip: isDomesticated ? 'SHEET.domesticatedAnimal' : 'SHEET.wildAnimal',
-                    otherNatureIcon: isDomesticated ? 'fa-mountain-sun' : 'fa-house-chimney',
-                    otherNatureTooltip: isDomesticated ? 'SHEET.wildAnimal' : 'SHEET.domesticatedAnimal',
-                    isDomesticated,
-                    isMountPossible,
-                    isMountActive: actor.system.horse?.actorId === comp.id && actor.system.horse?.isRiding === 1,
-                    isHotbarControlled: comp.uuid === hotbarCompUuid,
-                    isFamiliar,
-                    isHomunculus,
-                    showNatureIcon: !isFamiliar && !isHomunculus,
-                    isExpanded: CompanionHandler.expandedCompanions.has(comp.uuid),
-                    hasEffects: activeEffects.length > 0,
-                    hotbarItems,
-                    hotbarRow1: hotbarItems.slice(0, 7),
-                    hotbarRow2: hotbarItems.slice(7, 14),
-                    trainingTests: companionTests,
-                };
-
-                if (isFamiliar || isHomunculus) familiars.push(comp);
-                else if (owners.length > 1) groupCompanions.push(comp);
-                else regularCompanions.push(comp);
+                const type = CompanionHandler.#prepareOneCompanion(comp, actor, ctx, companionTestsByUuid);
+                sections[type].push(comp);
             }
         }
 
         sheetData.companionSections = [
-            { label: 'SHEET.Familiar', contents: familiars },
-            { label: 'SHEET.AnimalCompanion', contents: regularCompanions },
-            { label: 'SHEET.GroupCompanion', contents: groupCompanions },
-            { label: 'SHEET.SummonedCreatures', contents: [] },
+            { label: 'familiar', contents: sections.familiar },
+            { label: 'SHEET.AnimalCompanion', contents: sections.regular },
+            { label: 'COMPANIONS.Group.Companion', contents: sections.group },
+            { label: 'COMPANIONS.Group.SummonedCreatures', contents: [] },
         ];
+    }
 
+    static #prepareOneCompanion(comp, actor, ctx, companionTestsByUuid) {
+        let isDomesticated = false;
+        let isFamiliar = false;
+        let isHomunculus = false;
+        let hasSpells = false;
+        let hasPrayers = false;
+        let loyaltyItem = null;
+
+        for (const item of comp.items) {
+            if (!isDomesticated && item.type === 'information' && item.name === ctx.zoologyDom) isDomesticated = true;
+            if (!isFamiliar && item.type === 'trait' && item.name === ctx.familiarName) isFamiliar = true;
+            if (!isHomunculus && item.type === 'trait' && item.name === ctx.homunculusName) isHomunculus = true;
+            if (!hasSpells && ctx.spellTypes.has(item.type)) hasSpells = true;
+            if (!hasPrayers && ctx.prayerTypes.has(item.type)) hasPrayers = true;
+            if (!loyaltyItem && item.type === 'skill' && item.name.startsWith(ctx.loyaltyName)) loyaltyItem = item;
+        }
+
+        if (isFamiliar || isHomunculus) hasSpells = true;
+
+        const loyaltyData = isHomunculus
+            ? (ctx.persuasionSkill ? {
+                id: ctx.persuasionSkill.id,
+                actorUuid: actor.uuid,
+                value: ctx.persuasionSkill.system.talentValue.value,
+                char1: 'mu',
+                char2: 'in',
+                char3: 'ch',
+            } : null)
+            : (loyaltyItem ? {
+                id: loyaltyItem.id,
+                actorUuid: comp.uuid,
+                value: loyaltyItem.system.talentValue.value,
+                char1: loyaltyItem.system.characteristic1.value,
+                char2: loyaltyItem.system.characteristic2.value,
+                char3: loyaltyItem.system.characteristic3.value,
+            } : null);
+
+        const activeEffects = Array.from(comp.effects).filter(e => !e.disabled).map(e => ({
+            id: e.id,
+            img: e.img || 'icons/svg/aura.svg',
+            name: e.name || _loc('SHEET.Effect'),
+            value: e.flags?.dsa5?.value,
+        }));
+
+        const companionTests = companionTestsByUuid.get(comp.uuid);
+        companionTests.sort((a, b) =>
+            a.isTraining !== b.isTraining ? (a.isTraining ? -1 : 1) : a.shortName.localeCompare(b.shortName)
+        );
+
+        const savedHotbar = comp.getFlag('dsa5', 'skillHotbar') || Array(14).fill(null);
+        const hotbarItems = savedHotbar.map(itemId => {
+            if (!itemId) return null;
+            const item = comp.items.get(itemId);
+            if (!item) return null;
+
+            return {
+                id: item.id,
+                name: item.name,
+                img: item.img,
+                tooltip: `<div class='itemTooltip'><h1>${item.name}</h1>${item.system.description?.value || ''}</div>`,
+            };
+        });
+
+        const currentSpecies = comp.getFlag('dsa5', 'species');
+        const isMountPossible = !currentSpecies
+            || !!Object.values(CompanionHandler.COMPANION_SPECIES_DATA).find(
+                group => group[currentSpecies]?.trainingModules?.includes(ctx.reittierStr)
+            );
+
+        comp.prepareCompanion = {
+            hasSpells,
+            hasPrayers,
+            hasNone: !hasSpells && !hasPrayers,
+            containerClass: (hasSpells && hasPrayers) ? 'third' : 'fourty',
+            lepClass: (hasSpells || hasPrayers) ? '' : 'soloBar',
+            loyalty: loyaltyData,
+            effects: activeEffects,
+            natureIcon: isDomesticated ? 'fa-house-chimney' : 'fa-mountain-sun',
+            natureTooltip: isDomesticated ? 'COMPANIONS.domesticatedAnimal' : 'COMPANIONS.wildAnimal',
+            otherNatureIcon: isDomesticated ? 'fa-mountain-sun' : 'fa-house-chimney',
+            otherNatureTooltip: isDomesticated ? 'COMPANIONS.wildAnimal' : 'COMPANIONS.domesticatedAnimal',
+            isDomesticated,
+            isMountPossible,
+            isMountActive: actor.system.horse?.actorId === comp.id && actor.system.horse?.isRiding === 1,
+            isHotbarControlled: comp.uuid === ctx.hotbarCompUuid,
+            isFamiliar,
+            isHomunculus,
+            showNatureIcon: !isFamiliar && !isHomunculus,
+            isExpanded: CompanionHandler.expandedCompanions.has(comp.uuid),
+            hasEffects: activeEffects.length > 0,
+            hotbarItems,
+            hotbarRow1: hotbarItems.slice(0, 7),
+            hotbarRow2: hotbarItems.slice(7, 14),
+            trainingTests: companionTests,
+        };
+
+        const owners = comp.getFlag('dsa5', 'owners') || [];
+        if (isFamiliar || isHomunculus) return 'familiar';
+        if (owners.length > 1) return 'group';
+        return 'regular';
     }
 
     static async prepareOwnersData(actor, sheetData) {
@@ -911,17 +828,6 @@ export default class CompanionHandler {
     }
 
     static activateListeners(sheet, html, actor) {
-
-        // ---  Hover-Effekt ---
-        html.querySelectorAll('.nature-toggle-container').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                el.querySelector('.toggle-nature-arrow').style.opacity = '1';
-            });
-            el.addEventListener('mouseleave', () => {
-                el.querySelector('.toggle-nature-arrow').style.opacity = '0';
-            });
-        });
-
         html.querySelectorAll('.companion-skill-advances').forEach(el => {
             el.addEventListener('change', async ev => {
                 ev.preventDefault();

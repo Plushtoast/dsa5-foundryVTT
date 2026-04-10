@@ -6,7 +6,7 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
         this.actor = actor;       
         this.companion = companion; 
         this.parentSheet = options.parentSheet; 
-        this.options.window.title = `${_loc("SHEET.SkillSelection")}: ${this.companion.name}`;
+        this.options.window.title = `${_loc("COMPANIONS.SkillSelection.label")}: ${this.companion.name}`;
     }
 
     static DEFAULT_OPTIONS = {
@@ -17,7 +17,7 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
             hotbarSlotAction: { handler: this.#onHotbarSlotAction, buttons: [0, 2] }
         },
         window: {
-            title: "SHEET.SkillSelection",
+            title: "COMPANIONS.SkillSelection.label",
             resizable: true,
         },
         position: { width: 450, height: 650 }
@@ -36,45 +36,36 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
         const savedHotbar = this._getHotbar();
         const savedHotbarIds = new Set(savedHotbar.filter(Boolean));
         const hotbarItems = new Map();
-        const categories = {
-            familiarAbilities: [],
-            homunculusAbilities: [],
-            tricks: [],
-            animalSpecialAbilities: []
+
+        context.categories = [
+            { label: 'COMPANIONS.SkillSelection.FamiliarAbilities', items: [] },
+            { label: 'COMPANIONS.SkillSelection.HomunculusAbilities', items: [] },
+            { label: 'COMPANIONS.Trick.label', items: [] },
+            { label: 'specialAbilities', items: [] }
+        ];
+
+        const categoryMap = {
+            'trait:familiar': context.categories[0],
+            'specialability:homunculus': context.categories[1],
+            'trait:trick': context.categories[2],
+            'specialability:animal': context.categories[3],
         };
 
         for (const item of this.companion.items) {
             if (savedHotbarIds.has(item.id)) hotbarItems.set(item.id, item);
 
-            if (item.type === 'trait') {
-                const traitType = item.system?.traitType?.value;
-                if (traitType === 'familiar') categories.familiarAbilities.push(item);
-                else if (traitType === 'trick') categories.tricks.push(item);
-                continue;
-            }
-
-            if (item.type === 'specialability') {
-                const category = item.system?.category?.value;
-                if (category === 'homunculus') categories.homunculusAbilities.push(item);
-                else if (category === 'animal') categories.animalSpecialAbilities.push(item);
-            }
+            const subType = item.type === 'trait' ? item.system?.traitType?.value : item.system?.category?.value;
+            categoryMap[`${item.type}:${subType}`]?.items.push(item);
         }
 
-        context.categories = [
-            { label: 'SHEET.FamiliarAbilities', items: categories.familiarAbilities },
-            { label: 'SHEET.HomunculusAbilities', items: categories.homunculusAbilities },
-            { label: 'SHEET.Tricks', items: categories.tricks },
-            { label: 'SHEET.AnimalSpecialAbilities', items: categories.animalSpecialAbilities }
-        ];
-
-        context.hotbar = savedHotbar.map((itemId, idx) => {
-            return {
-                index: idx,
+        context.hotbarRows = [[], []];
+        for (let i = 0; i < savedHotbar.length; i++) {
+            const itemId = savedHotbar[i];
+            context.hotbarRows[i < 7 ? 0 : 1].push({
+                index: i,
                 item: itemId ? hotbarItems.get(itemId) ?? null : null
-            };
-        });
-
-        context.hotbarRows = [context.hotbar.slice(0, 7), context.hotbar.slice(7, 14)];
+            });
+        }
 
         return context;
     }

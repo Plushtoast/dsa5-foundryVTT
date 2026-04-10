@@ -43,6 +43,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       weapon: this.#onRollWeapon,
       collapseBar: this.#onCollapse,
       toggleFreeAction: this.#onToggleFreeAction,
+      quickButton: { handler: this.#quickButton, buttons: [0, 2] },
+      companionClick: this.#companionClick,
     },
   };
 
@@ -94,16 +96,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     html.find('.sections').on('pointerout', filterOff);
     html.find('.primary,.weapon,[data-category="plain"],.hotbar-avatar').on('pointerover', (ev) => this.#betterTooltip(ev));
 
-    // This can not got to actions at the moment, because event is not handled properly
-    html.find('[data-action="quickButton"]').on('mousedown', (ev) => this.#quickButton(ev));
-
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
 
     html.find('#macro-list, .skillItems').on('wheel', e => this.#onWheel(e));
 
     html.find('.hotbar-avatar').on('dblclick', () => this.actor.sheet.render(true));
-
-    CompanionHotbar.attachListeners(this.element);
 
     new foundry.applications.ux.DragDrop.implementation({
       dragSelector: ".wiggle-animation",
@@ -363,9 +360,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
   }
 
-  async #quickButton(ev, target) {
+  static async #quickButton(ev, target) {
     game.tooltip.deactivate();
-    await this.tokenHotbar.executeQuickButton(ev);
+    await this.tokenHotbar.executeQuickButton(ev, target);
+  }
+
+  static async #companionClick(ev, target) {
+    await CompanionHotbar.onClick(ev, target);
   }
 
   #addContextColor() {
@@ -1071,7 +1072,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     positionIndex += this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
 
     //TODO add weapon editing later
-    if (this.editMode && false) {
+    /*if (this.editMode && false) {
       while (positionIndex < DSA5Hotbar.WEAPON_POSITIONS.length) {
         positions.push({
           weapon: { name: _loc('attackWeaponless') },
@@ -1079,7 +1080,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           isEmpty: true
         });
       }
-    }
+    }*/
 
     return positions;
   }

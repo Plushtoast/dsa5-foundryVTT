@@ -5,14 +5,14 @@
         <a class="button icon fas {{#if this.prepareCompanion.isExpanded}}fa-minimize{{else}}fa-maximize{{/if}} dsadesignbutton noBorder"
             data-action="toggleCompanionDetails" data-tooltip="TT.collapseHeader"></a>
         <a class="button icon fas fa-unlink dsadesignbutton noBorder" data-action="removeCompanion"
-            data-uuid="{{this.uuid}}" data-tooltip="{{localize 'SHEET.RemoveCompanion'}}"></a>
+            data-uuid="{{this.uuid}}" data-tooltip="{{localize 'COMPANIONS.RemoveCompanion'}}"></a>
     </div>
 
     <div class="flexrow wrap companion-align-center">
 
         {{!-- LINKER BEREICH: Avatar --}}
-        <div class="companion-avatar" data-action="openCompanion" data-uuid="{{this.uuid}}"
-            data-tooltip="{{localize 'SHEET.OpenCompanionSheet'}}">
+        <div class="companion-avatar" data-action="openLinkedSheet" data-uuid="{{this.uuid}}" data-tab="owner"
+            data-tooltip="{{localize 'COMPANIONS.OpenCompanionSheet'}}">
             <img src="{{this.img}}" alt="{{this.name}}" class="avatar-image companion-avatar-img">
         </div>
 
@@ -42,13 +42,13 @@
                         {{!-- Anzeige des Flask-Icons für Homunculi --}}
                         {{#if this.prepareCompanion.isHomunculus}}
                         <i class="fa-solid fa-flask companion-icon-black"
-                            data-tooltip="{{localize 'SHEET.Homunculus'}}"></i>
+                            data-tooltip="{{localize 'COMPANIONS.Homunculus'}}"></i>
                         {{/if}}
 
                         {{!-- Anzeige des Besen-Icons für Vertraute --}}
                         {{#if this.prepareCompanion.isFamiliar}}
                         <i class="fa-solid fa-broom companion-icon-black"
-                            data-tooltip="{{localize 'SHEET.Familiar'}}"></i>
+                            data-tooltip="{{localize 'familiar'}}"></i>
                         {{/if}}
                     </h3>
                 </div>
@@ -164,10 +164,10 @@
                 <div class="companion-loyalty-top-row">
                     {{#if this.prepareCompanion.isHomunculus}}
                     <a class="talentName" data-action="companionItemEdit"
-                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "SHEET.Fast-Talk"}}</a>
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "LocalizedIDs.Fast-Talk"}}</a>
                     {{else}}
                     <a class="talentName companion-talent-name" data-action="companionItemEdit"
-                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "SHEET.Loyalty"}}</a>
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "COMPANIONS.Loyalty.label"}}</a>
                     {{/if}}
                     <input class="companion-skill-advances" type="number"
                         value="{{this.prepareCompanion.loyalty.value}}"
@@ -229,12 +229,12 @@
                 {{!-- Obere Reihe --}}
                 <div class="companion-right-icons-row">
                     <a class="dsadesignbutton noBorder companion-icon-btn" data-action="openSkillSelection"
-                        data-tooltip="SHEET.SkillSelection">
+                        data-tooltip="COMPANIONS.SkillSelection.label">
                         <i class="fa-solid fa-book-bookmark companion-icon-black-18"></i>
                     </a>
 
                     <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleHotbarControl"
-                        data-tooltip="{{localize 'SHEET.controlViaHotbar'}}">
+                        data-tooltip="{{localize 'COMPANIONS.controlViaHotbar'}}">
                         <i
                             class="{{#if this.prepareCompanion.isHotbarControlled}}fa-solid{{else}}fa-regular{{/if}} fa-eye companion-icon-black-18"></i>
                     </a>
@@ -245,13 +245,13 @@
                     class="companion-right-icons-row-bottom {{#if this.prepareCompanion.isMountPossible}}mount-possible{{/if}}">
                     {{#unless this.prepareCompanion.isHomunculus}}
                     <a class="dsadesignbutton noBorder companion-icon-btn" data-action="trainCompanion"
-                        data-tooltip="{{localize 'SHEET.train'}}">
+                        data-tooltip="{{localize 'COMPANIONS.train'}}">
                         <i class="fa-solid fa-bone companion-icon-black-18"></i>
                     </a>
 
                     {{#if this.prepareCompanion.isMountPossible}}
                     <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleMount"
-                        data-tooltip="{{#if this.prepareCompanion.isMountActive}}{{localize 'SHEET.removeMount'}}{{else}}{{localize 'SHEET.useAsMount'}}{{/if}}">
+                        data-tooltip="{{#if this.prepareCompanion.isMountActive}}{{localize 'COMPANIONS.removeMount'}}{{else}}{{localize 'COMPANIONS.useAsMount'}}{{/if}}">
                         <i
                             class="fa-solid fa-horse companion-icon-black-18 companion-icon-horse {{#if this.prepareCompanion.isMountActive}}mount-active{{/if}}"></i>
                     </a>
@@ -268,14 +268,14 @@
 
             <div class="row-section table-title lineheight">
                 <div class="title-type col fifteen">
-                    {{localize "SHEET.Training"}}
+                    {{localize "COMPANIONS.Training.label"}}
                 </div>
                 <div class="col ten center">{{localize "probe"}}</div>
                 <div class="col ten center">{{localize "interval"}}</div>
                 <div class="col ten center">{{localize "probes"}}</div>
                 <div class="col ten center">{{localize "status"}}</div>
                 <div class="col center companion-ap-cost">
-                    {{localize "SHEET.Abenteuerpunktekosten"}}
+                    {{localize "COMPANIONS.Abenteuerpunktekosten"}}
                 </div>
                 <div class="col fifteen center flexAlignCenter flexrow"></div>
             </div>
@@ -324,20 +324,20 @@
                                 <button type="button" class="dsadesignbutton very-small companion-finish-btn"
                                     data-action="finishTrickTraining" data-item-id="{{test.item._id}}"
                                     data-companion-uuid="{{../uuid}}">
-                                    {{localize "SHEET.Finish"}}
+                                    {{localize "COMPANIONS.Finish"}}
                                 </button>
                                 {{else}}
                                 <button type="button" class="dsadesignbutton very-small companion-finish-btn"
                                     disabled>
-                                    {{localize "SHEET.Finish"}}
+                                    {{localize "COMPANIONS.Finish"}}
                                 </button>
                                 {{/if}}
 
                                 {{!-- Mülleimer-Button --}}
                                 <button type="button"
                                     class="dsadesignbutton noBorder very-small companion-trash-btn"
-                                    data-action="deleteAggregatedTest" data-item-id="{{test.item._id}}"
-                                    data-tooltip="{{localize 'SHEET.CancelAggregatedProbe'}}">
+                                    data-action="deleteItem" data-item-id="{{test.item._id}}"
+                                    data-tooltip="{{localize 'cancel'}}">
                                     <i class="fa-solid fa-trash companion-trash-icon"></i>
                                 </button>
 
