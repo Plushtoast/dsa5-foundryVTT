@@ -2,13 +2,14 @@
 
     {{!-- Buttons oben rechts --}}
     <div class="companion-header-actions">
-        <a class="button icon fas {{#if this.prepareCompanion.isExpanded}}fa-minimize{{else}}fa-maximize{{/if}} dsadesignbutton noBorder"
-            data-action="toggleCompanionDetails" data-tooltip="TT.collapseHeader"></a>
-        <a class="button icon fas fa-unlink dsadesignbutton noBorder" data-action="removeCompanion"
-            data-uuid="{{this.uuid}}" data-tooltip="{{localize 'COMPANIONS.RemoveCompanion'}}"></a>
+        <button type="button" class="button icon fas fa-right-left dsadesignbutton noBorder"
+            data-action="tradeWithCompanion" data-uuid="{{this.uuid}}"
+            data-tooltip="{{localize 'COMPANIONS.TradeWithCompanion'}}"></button>
+        <button type="button" class="button icon fas fa-unlink dsadesignbutton noBorder" data-action="removeCompanion"
+            data-uuid="{{this.uuid}}" data-tooltip="{{localize 'COMPANIONS.RemoveCompanion'}}"></button>
     </div>
 
-    <div class="flexrow wrap companion-align-center">
+    <div class="flexrow wrap">
 
         {{!-- LINKER BEREICH: Avatar --}}
         <div class="companion-avatar" data-action="openLinkedSheet" data-uuid="{{this.uuid}}" data-tab="owner"
@@ -17,11 +18,11 @@
         </div>
 
         {{!-- RECHTER BEREICH: Name, Attribute und Leisten --}}
-        <div class="companion-flex-1">
+        <div class="flex1">
             <div class="sheet-header">
                 <div class="charname flexrow companion-charname-row">
                     <h3 class="headerName ellipsis companion-header-name">
-                        <a class="content-link companion-content-link" data-uuid="{{this.uuid}}">{{this.name}}</a>
+                        <a class="content-link noBorder" data-link data-uuid="{{this.uuid}}">{{this.name}}</a>
 
                         {{!-- Anzeige des Icons für Domestiziert/Wild mit Wechsel-Funktion --}}
                         {{#if this.prepareCompanion.showNatureIcon}}
@@ -55,7 +56,7 @@
 
                 {{!-- Attribute --}}
                 <div class="flexrow attributesHeader companion-attributes-header">
-                    <div class="col flexcol companion-col-nopad">
+                    <div class="col flexcol">
                         <div class="flexrow charBtns">
                             <div class="col flexrow companion-attributes-row">
                                 {{#each this.system.characteristics as |char key|}}
@@ -114,13 +115,12 @@
                     {{/if}}
 
                     {{#if this.prepareCompanion.hasNone}}
-                    <div class="col-bar-spacer col two companion-spacer-hidden"></div>
+                    <div class="col-bar-spacer col two"></div>
                     {{/if}}
                 </div>
 
                 {{!-- Effekte --}}
-                <div class="companion-details companion-details-wrapper"
-                    style="{{#unless this.prepareCompanion.isExpanded}}display: none;{{/unless}}">
+                <div class="companion-details companion-details-wrapper">
                     <div class="row-section companion-effects-row">
                         <div class="col flexrow regenContainer fourty companion-effects-container">
                             <div class="healthbar bar-wounds barLeft companion-effects-placeholder"></div>
@@ -128,7 +128,7 @@
                                 {{#if this.prepareCompanion.hasEffects}}
                                 <ul class="companion-effects-list">
                                     {{#each this.prepareCompanion.effects}}
-                                    <li class="companion-effect-icon" data-action="companionEffect" data-effect-id="{{this.id}}"
+                                    <li class="companion-effect-icon dsadesignbutton button" data-action="companionEffect" data-effect-id="{{this.id}}"
                                         data-tooltip="{{this.name}}">
                                         <div class="companion-effect-img"
                                             style="background-image:url('{{this.img}}');"></div>
@@ -151,8 +151,7 @@
     </div>
 
     {{!-- Loyalität und Ausbildung --}}
-    <div class="companion-details companion-details-bottom"
-        style="{{#unless this.prepareCompanion.isExpanded}}display: none;{{/unless}}">
+    <div class="companion-details companion-details-bottom">
         {{#if this.prepareCompanion.loyalty}}
         <div class="row-section item companion-loyalty-row" data-item-id="{{this.prepareCompanion.loyalty.id}}"
             draggable="true">
@@ -163,11 +162,11 @@
                 {{!-- Obere Reihe (Kompaktes Eingabefeld) --}}
                 <div class="companion-loyalty-top-row">
                     {{#if this.prepareCompanion.isHomunculus}}
-                    <a class="talentName" data-action="companionItemEdit"
-                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "LocalizedIDs.Fast-Talk"}}</a>
+                    <button type="button" class="talentName" data-action="companionItemEdit"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "LocalizedIDs.Fast-Talk"}}</button>
                     {{else}}
-                    <a class="talentName companion-talent-name" data-action="companionItemEdit"
-                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "COMPANIONS.Loyalty.label"}}</a>
+                    <button type="button" class="talentName companion-talent-name" data-action="companionItemEdit"
+                        data-actor-uuid="{{this.prepareCompanion.loyalty.actorUuid}}">{{localize "COMPANIONS.Loyalty.label"}}</button>
                     {{/if}}
                     <input class="companion-skill-advances" type="number"
                         value="{{this.prepareCompanion.loyalty.value}}"
@@ -202,7 +201,7 @@
                 {{!-- Obere Reihe (7 Slots) --}}
                 <div class="companion-hotbar-row">
                     {{#each this.prepareCompanion.hotbarRow1 as |slot|}}
-                    <div class="slot primary companion-hotbar-slot" {{#if slot}}data-action="executeCompanionSkill"
+                    <div class="slot primary companion-slot" {{#if slot}}data-action="executeCompanionSkill"
                         data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}"
                         data-tooltip-class="dsa5 dsatooltip" {{/if}}
                         style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
@@ -213,7 +212,7 @@
                 {{!-- Untere Reihe (7 Slots) --}}
                 <div class="companion-hotbar-row">
                     {{#each this.prepareCompanion.hotbarRow2 as |slot|}}
-                    <div class="slot primary companion-hotbar-slot" {{#if slot}}data-action="executeCompanionSkill"
+                    <div class="slot primary companion-slot" {{#if slot}}data-action="executeCompanionSkill"
                         data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}"
                         data-tooltip-class="dsa5 dsatooltip" {{/if}}
                         style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
@@ -228,117 +227,112 @@
 
                 {{!-- Obere Reihe --}}
                 <div class="companion-right-icons-row">
-                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="openSkillSelection"
+                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn" data-action="openSkillSelection"
                         data-tooltip="COMPANIONS.SkillSelection.label">
                         <i class="fa-solid fa-book-bookmark companion-icon-black-18"></i>
-                    </a>
+                    </button>
 
-                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleHotbarControl"
+                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleHotbarControl"
                         data-tooltip="{{localize 'COMPANIONS.controlViaHotbar'}}">
                         <i
                             class="{{#if this.prepareCompanion.isHotbarControlled}}fa-solid{{else}}fa-regular{{/if}} fa-eye companion-icon-black-18"></i>
-                    </a>
+                    </button>
                 </div>
 
                 {{!-- Untere Reihe (Knochen / Pferd) --}}
                 <div
-                    class="companion-right-icons-row-bottom {{#if this.prepareCompanion.isMountPossible}}mount-possible{{/if}}">
-                    {{#unless this.prepareCompanion.isHomunculus}}
-                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="trainCompanion"
+                    class="companion-right-icons-row bottom {{#if this.prepareCompanion.isMountPossible}}mount-possible{{/if}}">
+                    {{#if this.prepareCompanion.isTrainable}}
+                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn" data-action="trainCompanion"
                         data-tooltip="{{localize 'COMPANIONS.train'}}">
                         <i class="fa-solid fa-bone companion-icon-black-18"></i>
-                    </a>
+                    </button>
 
                     {{#if this.prepareCompanion.isMountPossible}}
-                    <a class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleMount"
+                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleMount"
                         data-tooltip="{{#if this.prepareCompanion.isMountActive}}{{localize 'COMPANIONS.removeMount'}}{{else}}{{localize 'COMPANIONS.useAsMount'}}{{/if}}">
                         <i
-                            class="fa-solid fa-horse companion-icon-black-18 companion-icon-horse {{#if this.prepareCompanion.isMountActive}}mount-active{{/if}}"></i>
-                    </a>
+                            class="fa-solid fa-horse companion-icon-black-18 {{#if this.prepareCompanion.isMountActive}}fa-rotate-180{{/if}}"></i>
+                    </button>
                     {{/if}}
-                    {{/unless}}
+                    {{/if}}
                 </div>
 
             </div>
         </div>
+        {{else}}
+        <div class="droparea">{{localize "COMPANIONS.Loyalty.missingHint"}}</div>
         {{/if}}
 
         {{#if this.prepareCompanion.trainingTests.length}}
-        <div class="actor-aggregated-tests groupbox companion-aggregated-group">
+        <div class="actor-aggregated-tests groupbox">
 
             <div class="row-section table-title lineheight">
-                <div class="title-type col fifteen">
+                <div class="title-type col third">
                     {{localize "COMPANIONS.Training.label"}}
                 </div>
                 <div class="col ten center">{{localize "probe"}}</div>
                 <div class="col ten center">{{localize "interval"}}</div>
                 <div class="col ten center">{{localize "probes"}}</div>
                 <div class="col ten center">{{localize "status"}}</div>
-                <div class="col center companion-ap-cost">
-                    {{localize "COMPANIONS.Abenteuerpunktekosten"}}
-                </div>
+                <div class="col center fifteen">{{localize "APValue"}}</div>
                 <div class="col fifteen center flexAlignCenter flexrow"></div>
             </div>
 
             <div class="row-section wrap inventory" style="margin-bottom: 0;">
                 {{#each this.prepareCompanion.trainingTests as |test|}}
                 <div class="actor-aggregated-test-item-wrapper col item" data-item-id="{{test.item._id}}">
-                    <div class="actor-aggregated-test-item row-section skills lineheight companion-training-row">
+                    <div class="actor-aggregated-test-item row-section skills lineheight noBorder">
 
-                        <div class="actor-aggregated-test-name col fifteen centerCell withContext">
-                            <a class="item-edit" data-action="editAggregatedTest"
-                                data-item-id="{{test.item._id}}">{{test.shortName}}</a>
+                        <div class="actor-aggregated-test-name col third withContext flexrow">
+                            <button type="button" data-action="editAggregatedTest"
+                                data-item-id="{{test.item._id}}">{{test.shortName}}</button>
                         </div>
 
-                        <div class="actor-aggregated-test col ten center centerCell companion-center-flex">
+                        <div class="actor-aggregated-test col ten flexrow flexAlignCenter">
                             {{#if test.item.system.talent.value}}
-                            <a class="talent-1-roll" data-action="rollCompanionAggregatedProbe"
+                            <button type="button" class="flex0" data-action="rollAggregatedProbe"
                                 data-item-id="{{test.item._id}}" data-which="">
                                 <div class="d20 die-attack"></div>
-                            </a>
+                            </button>
                             {{/if}}
                         </div>
 
-                        <div class="actor-aggregated-test-intervall col ten center centerCell">
-                            <div class="centerMargin">{{test.item.system.interval.value}}</div>
+                        <div class="actor-aggregated-test-intervall col ten flexAlignCenter flexrow">
+                            {{test.item.system.interval.value}}
                         </div>
 
-                        <div class="actor-aggregated-tests-used col ten center centerCell">
-                            <div class="centerMargin">{{test.item.system.usedTestCount.value}} /
-                                {{test.item.system.allowedTestCount.value}}</div>
+                        <div class="actor-aggregated-tests-used col ten flexAlignCenter flexrow">
+                            {{test.item.system.usedTestCount.value}} /
+                            {{test.item.system.allowedTestCount.value}}
                         </div>
 
-                        <div class="actor-aggregated-test-qs col ten center centerCell">
-                            <div class="centerMargin">{{test.item.system.cummulatedQS.value}} / 10</div>
+                        <div class="actor-aggregated-test-qs col ten flexAlignCenter flexrow">
+                            {{test.item.system.cummulatedQS.value}} / 10
                         </div>
 
-                        <div class="actor-aggregated-test-ap col center centerCell companion-ap-cost">
-                            <div class="centerMargin">{{test.apCost}}</div>
+                        <div class="actor-aggregated-test-ap col fifteen flexAlignCenter flexrow">
+                            {{test.apCost}}
                         </div>
 
-                        <div class="actor-aggregated-test-action col fifteen very-small center centerCell flexrow"
-                            style="padding: 0 5px;">
-                            <div class="companion-action-container">
+                        <div class="actor-aggregated-test-action col fifteen center centerCell flexrow">
+                            <div class="flexrow gap5px flexAlignEnd">
 
                                 {{#if test.isCompleted}}
-                                <button type="button" class="dsadesignbutton very-small companion-finish-btn"
+                                <button type="button" class="dsadesignbutton icon fas fa-check"
                                     data-action="finishTrickTraining" data-item-id="{{test.item._id}}"
-                                    data-companion-uuid="{{../uuid}}">
-                                    {{localize "COMPANIONS.Finish"}}
+                                    data-companion-uuid="{{../uuid}}" data-tooltip="COMPANIONS.Finish">
                                 </button>
                                 {{else}}
-                                <button type="button" class="dsadesignbutton very-small companion-finish-btn"
-                                    disabled>
-                                    {{localize "COMPANIONS.Finish"}}
+                                <button type="button" class="dsadesignbutton icon fas fa-hourglass-half" 
+                                    disabled data-tooltip="COMPANIONS.Finish">
                                 </button>
                                 {{/if}}
 
-                                {{!-- Mülleimer-Button --}}
                                 <button type="button"
-                                    class="dsadesignbutton noBorder very-small companion-trash-btn"
+                                    class="dsadesignbutton noBorder icon fa-solid fa-trash"
                                     data-action="deleteItem" data-item-id="{{test.item._id}}"
                                     data-tooltip="{{localize 'cancel'}}">
-                                    <i class="fa-solid fa-trash companion-trash-icon"></i>
                                 </button>
 
                             </div>

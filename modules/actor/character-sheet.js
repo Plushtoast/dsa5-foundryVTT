@@ -2,7 +2,6 @@ import ActorSheetDsa5 from './actor-sheet.js';
 import CultureWizard from '../wizards/culture_wizard.js';
 import CareerWizard from '../wizards/career_wizard.js';
 import SpeciesWizard from '../wizards/species_wizard.js';
-import CompanionHandler from './companions/companion-handler-class.js';
 
 export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
@@ -29,12 +28,11 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
-    companion: CompanionHandler.getCompanionPart(),
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: super.PARTS.notes,
   }
 
-  static TABS = CompanionHandler.withSheetTab(super.TABS, CompanionHandler.getCompanionTab());
 
   async _manageDragItems(item, typeClass) {
     switch (typeClass) {

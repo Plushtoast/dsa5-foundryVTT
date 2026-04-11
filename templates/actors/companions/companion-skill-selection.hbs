@@ -1,7 +1,7 @@
 <div class="skill-selection-container">
     
-    <div class="skill-selection-info-box">
-        <p class="skill-selection-info-text">
+    <div class="dsa-info-box">
+        <p class="dsa-info-text">
             {{localize 'COMPANIONS.SkillSelection.Intro' name=companion.name}}
         </p>
     </div>
@@ -12,7 +12,7 @@
         <legend class="table-title lineheight">{{localize cat.label}}</legend>
         <div class="skill-selection-grid">
             {{#each cat.items as |item|}}
-            <div class="slot primary skill-drag skill-selection-slot skill-selection-drag-slot" draggable="true" data-action="openItemSheet" data-item-id="{{item.id}}" data-tooltip="{{item.name}} ({{localize 'COMPANIONS.SkillSelection.OpenItemSheet'}})" style="background: url('{{item.img}}') center/cover;"></div>
+            <div class="slot primary skill-drag companion-slot skill-selection-drag-slot" draggable="true" data-action="openItemSheet" data-item-id="{{item.id}}" data-tooltip="{{item.name}} ({{localize 'COMPANIONS.SkillSelection.OpenItemSheet'}})" style="background: url('{{item.img}}') center/cover;"></div>
             {{/each}}
         </div>
         {{/if}}
@@ -24,7 +24,7 @@
         {{#each hotbarRows as |row|}}
         <div class="skill-selection-hotbar-row">
             {{#each row as |slot|}}
-            <div class="slot primary hotbar-slot skill-selection-slot skill-selection-hotbar-slot" data-index="{{slot.index}}" {{#if slot.item}}data-action="hotbarSlotAction" data-item-id="{{slot.item.id}}" data-tooltip="{{slot.item.name}}<br><i>{{localize 'COMPANIONS.SkillSelection.RemoveFromHotbar'}}</i>"{{/if}} style="background: {{#if slot.item}}url('{{slot.item.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}};">
+            <div class="slot primary hotbar-slot companion-slot skill-selection-hotbar-slot" data-index="{{slot.index}}" {{#if slot.item}}data-action="hotbarSlotAction" data-item-id="{{slot.item.id}}" data-tooltip="{{slot.item.name}}<br><i>{{localize 'COMPANIONS.SkillSelection.RemoveFromHotbar'}}</i>"{{/if}} style="background: {{#if slot.item}}url('{{slot.item.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}};">
             </div>
             {{/each}}
         </div>

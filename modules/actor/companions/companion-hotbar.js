@@ -2,7 +2,6 @@ const ICON_CONTROL = 'fa-arrows-to-eye';
 const ICON_SUMMON = 'fa-bell';
 
 export default class CompanionHotbar {
-
   /**
    * Resolve the companion relationship for the current hotbar actor.
    * @param {Actor} actor - The hotbar's active actor
@@ -11,7 +10,7 @@ export default class CompanionHotbar {
   static async resolveCompanion(actor) {
     if (!actor) return null;
 
-    const petUuid = actor.getFlag('dsa5', 'hotbarCompanion');
+    const petUuid = Object.values(actor.system.companions || {}).find(c => c.hotbar)?.uuid;
     if (petUuid) {
       const petActor = await fromUuid(petUuid);
       return petActor ? { petActor, ownerActor: actor, isControllingPet: false } : null;
@@ -20,7 +19,7 @@ export default class CompanionHotbar {
     const ownerChar = game.user.character ?? await CompanionHotbar.#resolveOwner(actor);
     if (!ownerChar) return null;
 
-    const ownerPetUuid = ownerChar.getFlag('dsa5', 'hotbarCompanion');
+    const ownerPetUuid = Object.values(ownerChar.system.companions || {}).find(c => c.hotbar)?.uuid;
     if (ownerPetUuid === actor.uuid) {
       return { petActor: actor, ownerActor: ownerChar, isControllingPet: true };
     }
@@ -69,7 +68,6 @@ export default class CompanionHotbar {
    * @param {HTMLElement} target - The icon element with data-action
    */
   static async onClick(ev, target) {
-    ev.preventDefault();
     if (target.dataset.isSpawning === 'true') return;
 
     const isControllingPet = target.dataset.isControllingPet === 'true';
@@ -80,10 +78,6 @@ export default class CompanionHotbar {
     }
   }
 
-  /**
-   * Update the companion icon status without a full re-render.
-   * Called on token create/delete/canvasReady.
-   */
   static refreshStatus() {
     const icon = ui.hotbar?.element?.querySelector('.companion-hotbar-icon');
     if (!icon || icon.dataset.isControllingPet === 'true') return;
@@ -103,9 +97,6 @@ export default class CompanionHotbar {
     );
   }
 
-  /**
-   * Register token/canvas hooks for lightweight status updates.
-   */
   static registerHooks() {
     const onTokenChange = (tokenDoc) => {
       const icon = ui.hotbar?.element?.querySelector('.companion-hotbar-icon');
@@ -118,14 +109,10 @@ export default class CompanionHotbar {
     Hooks.on('canvasReady', () => CompanionHotbar.refreshStatus());
   }
 
-  // ---- Private ----
-
   static async #resolveOwner(actor) {
-    const owners = actor.getFlag('dsa5', 'owners') || [];
+    const owners = actor.system.companionData?.owners || [];
     return owners.length > 0 ? fromUuid(owners[0]) : null;
   }
-
-
 
   static async #switchToOwner(ownerUuid) {
     const ownerActor = await fromUuid(ownerUuid);
@@ -133,9 +120,9 @@ export default class CompanionHotbar {
 
     const tokens = ownerActor.getActiveTokens();
     if (tokens.length > 0) {
-      tokens[0].control({ releaseOthers: true });
-      canvas.animatePan({ x: tokens[0].x, y: tokens[0].y });
+      await CompanionHotbar.#focusToken(tokens[0]);
     } else {
+      ui.notifications.warn(_loc('COMPANIONS.Notification.NoActorOnMap', { name: ownerActor.name }));
       ownerActor.sheet.render(true, { focus: true });
     }
   }
@@ -146,25 +133,39 @@ export default class CompanionHotbar {
 
     const petTokens = petActor.getActiveTokens();
     if (petTokens.length > 0) {
-      petTokens[0].control({ releaseOthers: true });
-      canvas.animatePan({ x: petTokens[0].x, y: petTokens[0].y });
+      await CompanionHotbar.#focusToken(petTokens[0]);
       return;
     }
 
     const ownerActor = await fromUuid(icon.dataset.ownerUuid);
     const ownerTokens = ownerActor?.getActiveTokens() || [];
-    if (ownerTokens.length === 0) return;
+    if (ownerTokens.length === 0) {
+      ui.notifications.warn(_loc('COMPANIONS.Notification.NoOwnerOrPetOnMap', {
+        owner: ownerActor?.name ?? '',
+        pet: petActor.name,
+      }));
+      return;
+    }
 
     icon.dataset.isSpawning = 'true';
     try {
       const spawnX = ownerTokens[0].x + (canvas.grid?.size || 50);
       const spawnY = ownerTokens[0].y;
       const tokenData = await petActor.getTokenDocument({ x: spawnX, y: spawnY });
-      await canvas.scene.createEmbeddedDocuments('Token', [tokenData]);
+      const [createdToken] = await canvas.scene.createEmbeddedDocuments('Token', [tokenData]);
+      if (createdToken) {
+        await CompanionHotbar.#focusToken(createdToken);
+      }
       ui.notifications.info(_loc('COMPANIONS.Notification.ActorSummoned', { name: petActor.name }));
     } finally {
       icon.dataset.isSpawning = 'false';
     }
+  }
+
+  static async #focusToken(tokenLike) {
+    const tokenObject = tokenLike?.object ?? tokenLike;
+    tokenObject?.control?.({ releaseOthers: true });
+    await canvas.animatePan({ x: tokenLike.x, y: tokenLike.y });
   }
 }
 

@@ -23,7 +23,7 @@ export default {
             'Zornbrechter Bluthund': { trickMod: '-1', trainingMod: '-1', trainingModules: ['Kampftier', 'Wachtier', 'Zugtier'] },
         },
         Katzen: {
-            'Al\u2019Anfaner': { trickMod: '-1', trainingMod: '-2', trainingModules: ['Jagdtier', 'Kampftier', 'Zirkustier'] },
+            "Al'Anfaner": { trickMod: '-1', trainingMod: '-2', trainingModules: ['Jagdtier', 'Kampftier', 'Zirkustier'] },
             Aranier: { trickMod: '-1', trainingMod: '-3', trainingModules: ['Kampftier', 'Renntier', 'Zirkustier'] },
             Burgenkatz: { trickMod: '0', trainingMod: '-1', trainingModules: ['Kampftier', 'Zirkustier'] },
             'Cha ay Zhamorrah': { trickMod: '-2', trainingMod: '-4', trainingModules: ['Kampftier', 'Zirkustier'] },

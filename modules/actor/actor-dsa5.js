@@ -453,6 +453,7 @@ export default class Actordsa5 extends Actor {
   _onCreateDescendantDocuments(...args) {
     super._onCreateDescendantDocuments(...args);
     if (args[1] == 'effects') this.#syncEmanations();
+    this.#renderCompanionOwnerSheets();
   }
 
   _onUpdateDescendantDocuments(...args) {
@@ -465,11 +466,30 @@ export default class Actordsa5 extends Actor {
           item.effects.some((effect) => DSAActiveEffect.auraNeedsSync(effect, updates[index], { parentChanged: true }))
         ));
     if (force) this.#syncEmanations();
+    this.#renderCompanionOwnerSheets();
   }
 
   _onDeleteDescendantDocuments(...args) {
     super._onDeleteDescendantDocuments(...args);
     if (args[1] == 'effects') this.#syncEmanations();
+    this.#renderCompanionOwnerSheets();
+  }
+
+  _onUpdate(changed, options, userId) {
+    super._onUpdate(changed, options, userId);
+    this.#renderCompanionOwnerSheets();
+  }
+
+  #renderCompanionOwnerSheets() {
+    const owners = this.system.companionData?.owners;
+    if (!owners?.length) return;
+
+    for (const ownerUuid of owners) {
+      const ownerActor = fromUuidSync(ownerUuid);
+      if (ownerActor?.sheet?.rendered) {
+        ownerActor.sheet.render();
+      }
+    }
   }
 
   #syncEmanations() {
@@ -867,7 +887,7 @@ export default class Actordsa5 extends Actor {
   }
 
   isSwarm() {
-    return this.system.swarm.count > 1 && !this.prototypeToken.actorLink;
+    return (this.system.swarm?.count ?? 0) > 1 && !this.prototypeToken.actorLink;
   }
 
   _setBagContent(elem, containers) {
@@ -885,6 +905,10 @@ export default class Actordsa5 extends Actor {
 
   isMerchant() {
     return ['merchant', 'loot'].includes(getProperty(this, 'system.merchant.merchantType'));
+  }
+
+  get hasTokenHotbar() {
+    return this.type !== 'group' && !['epic', 'loot'].includes(this.system.merchant?.merchantType);
   }
 
   _itemPreparationError(item, error) {

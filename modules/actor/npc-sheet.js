@@ -22,6 +22,7 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs'],
     },
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: super.PARTS.notes,
   };

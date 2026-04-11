@@ -4,7 +4,7 @@ export default class TokenScatter {
 
   static scatterPositions(cx, cy, count, gridSize) {
     const positions = [];
-    const radius = Math.ceil(Math.sqrt(count)) * gridSize;
+    const radius = gridSize;
 
     for (let i = 0; i < count; i++) {
       const angle = ((2 * Math.PI) / count) * i + (Math.random() - 0.5) * 0.4;

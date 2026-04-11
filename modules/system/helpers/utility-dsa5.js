@@ -112,7 +112,10 @@ export default class DSA5_Utility {
   }
 
   static calcTokenSize(actorData, data) {
-    const tokenSize = game.dsa5.config.tokenSizeCategories[actorData.system.status.size.value];
+    const sizeValue = actorData.system.status?.size?.value;
+    if (sizeValue == null) return;
+
+    const tokenSize = game.dsa5.config.tokenSizeCategories[sizeValue];
     if (!tokenSize) return;
 
     if (tokenSize < 1) {

@@ -775,7 +775,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     let activeSection;
 
     if (actor) {
-      if (!['epic', 'loot'].includes(getProperty(actor.system.merchant.merchantType))) {
+      if (actor.hasTokenHotbar) {
         activeSection = this.activeSection;
         effects = await this.tokenHotbar?._effectEntries(actor) || [];
         this.#conditionAddEffect(effects);
@@ -934,8 +934,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       context.avatarStyle = '';
     }
 
-    context.resources = this.#prepareResources(context);
-    context.weapons = this.#weaponPositions(context);
+    context.resources = this.actor.hasTokenHotbar ? this.#prepareResources(context) : undefined;
+    context.weapons = this.actor.hasTokenHotbar ? this.#weaponPositions(context) : [];
     const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';

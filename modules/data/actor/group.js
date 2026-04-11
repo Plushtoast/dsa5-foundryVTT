@@ -58,6 +58,10 @@ export default class GroupData extends ActorDataModel {
 
   prepareBaseData() {
     this.parent.auras = [];
+    this.merchant = { merchantType: "none" };
+    this.status = {
+      speed: { max: 0, airMax: 0, waterMax: 0 },
+    };
   }
 
   prepareDerivedData() {
@@ -189,6 +193,9 @@ export default class GroupData extends ActorDataModel {
     }
 
     this.travelSpeeds = modes;
+
+    const activeMode = Object.keys(locationByMode)[0];
+    this.status.speed.max = modes[activeMode]?.max ?? modes.foot.max;
   }
 
   _computeGroupSkills() {

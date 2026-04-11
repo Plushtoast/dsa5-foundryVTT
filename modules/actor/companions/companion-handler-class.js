@@ -1,62 +1,20 @@
 import Riding from '../../system/automation/riding.js';
+import OnUseEffect from '../../system/automation/onUseEffects.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import CompanionConfig from './companion-config.js';
 import { CompanionTrainingApp } from './companion-training-app.js';
 import { CompanionSkillSelectionApp } from './companion-skill-selection-app.js';
+import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
+import { Trade } from '../trade.js';
 
 export default class CompanionHandler {
     static COMPANION_TAB_ID = 'companion';
 
-    static getCompanionTab() {
-        return { id: this.COMPANION_TAB_ID, label: 'COMPANIONS.Companion', icon: 'fas fa-paw' };
-    }
-
-    static getOwnerTab() {
-        return { id: 'owner', label: 'COMPANIONS.Owner', icon: 'fas fa-user-friends' };
-    }
-
-    static getCompanionPart() {
-        return {
-            template: 'systems/dsa5/templates/actors/companions/actor-companion.hbs',
-            scrollable: [''],
-            templates: [
-                'systems/dsa5/templates/actors/parts/horse.hbs',
-                'systems/dsa5/templates/actors/companions/companion-card.hbs',
-            ],
-        };
-    }
-
-    static getOwnerPart() {
-        return {
-            template: 'systems/dsa5/templates/actors/companions/actor-owner.hbs',
-            scrollable: [''],
-        };
-    }
-
-    static withSheetTab(baseTabs, tab, insertBefore = 'notes') {
-        const tabs = foundry.utils.deepClone(baseTabs || {});
-        tabs.sheet ??= { tabs: [], initial: tab.id };
-        tabs.sheet.tabs ??= [];
-
-        if (!tabs.sheet.tabs.some((entry) => entry.id === tab.id)) {
-            const insertIndex = tabs.sheet.tabs.findIndex((entry) => entry.id === insertBefore);
-            if (insertIndex === -1) tabs.sheet.tabs.push({ ...tab });
-            else tabs.sheet.tabs.splice(insertIndex, 0, { ...tab });
-        }
-
-        return tabs;
-    }
-
     static prepareTabVisibility(actor, tabs) {
-        const ownerTabId = this.getOwnerTab().id;
-        if (tabs[ownerTabId] && !this.shouldShowOwnerTab(actor)) {
-            delete tabs[ownerTabId];
+        if (actor.type === 'creature' && !actor.system.companionData?.owners?.length) {
+            delete tabs[this.COMPANION_TAB_ID];
         }
         return tabs;
-    }
-
-    static shouldShowOwnerTab(actor) {
-        return (actor.getFlag('dsa5', 'owners') || []).length > 0;
     }
 
     static async prepareCompanionPartContext(sheet, context) {
@@ -70,32 +28,47 @@ export default class CompanionHandler {
     }
 
     static attachCompanionPartListeners(sheet, element) {
-        this.activateListeners(sheet, element, sheet.actor);
+        element.querySelectorAll('.companion-skill-advances').forEach(el => {
+            el.addEventListener('change', async ev => {
+                ev.preventDefault();
+                const input = ev.currentTarget;
+                const compActor = await fromUuid(input.dataset.actorUuid);
+                if (compActor) {
+                    await compActor.updateEmbeddedDocuments('Item', [{
+                        _id: input.dataset.itemId,
+                        'system.talentValue.value': Number(input.value)
+                    }]);
+                }
+            });
+        });
     }
 
-    static attachOwnerPartListeners(sheet, element) {
-        this.activateListeners(sheet, element, sheet.actor);
-    }
+    static attachOwnerPartListeners(sheet, element) {}
 
-    static expandedCompanions = new Set();
-
-    // --- Dynamische Datenstruktur mit Lokalisierung ---
     static get COMPANION_SPECIES_DATA() {
         return CompanionConfig.companionSpeciesData;
     }
 
     static async setCompanion(sheet, uuid) {
+        await CompanionConfig.ensureLoaded();
         const droppedActor = await fromUuid(uuid);
         if (!droppedActor) return false;
 
         if (!droppedActor.prototypeToken.actorLink) {
-            ui.notifications.warn(_loc("COMPANIONS.Notification.TokenLinkWarning"));
-            return false;
+            const fix = await foundry.applications.api.DialogV2.confirm({
+                window: { title: _loc("COMPANIONS.Notification.TokenLinkWarning") },
+                content: _loc("COMPANIONS.Notification.TokenLinkExplanation", { name: droppedActor.name }),
+                yes: { label: _loc("COMPANIONS.Notification.TokenLinkEnableBtn"), icon: 'fas fa-link' },
+                no: { label: _loc('cancel'), icon: 'fas fa-times' },
+                rejectClose: false,
+            });
+            if (!fix) return false;
+            await droppedActor.update({ 'prototypeToken.actorLink': true });
         }
 
         const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = droppedActor.items.some(i => i.type === 'trait' && i.name === familiarName);
-        let owners = droppedActor.getFlag('dsa5', 'owners') || [];
+        const owners = [...droppedActor.system.companionData.owners];
 
         if (isFamiliar && owners.length >= 1 && !owners.includes(sheet.actor.uuid)) {
             ui.notifications.warn(_loc("COMPANIONS.Notification.FamiliarOwnerWarning"));
@@ -110,20 +83,17 @@ export default class CompanionHandler {
             }
         }
 
-        if (detectedSpecies && !droppedActor.getFlag('dsa5', 'species')) {
-            await droppedActor.setFlag('dsa5', 'species', detectedSpecies);
+        if (detectedSpecies && !droppedActor.system.companionData.species) {
+            await droppedActor.update({ 'system.companionData.species': detectedSpecies }, { render: false });
         }
 
-        const currentTab = sheet.tabGroups?.sheet;
-        let companions = sheet.actor.getFlag('dsa5', 'companions') || [];
-        if (!companions.includes(uuid)) {
-            companions = [...companions, uuid];
-            await sheet.actor.update({ "flags.dsa5.companions": companions }, { render: false });
+        if (!sheet.actor.system.companions[droppedActor.id]) {
+            await sheet.actor.update({ [`system.companions.${droppedActor.id}`]: { uuid } }, { render: false });
         }
 
         if (!owners.includes(sheet.actor.uuid)) {
-            owners = [...owners, sheet.actor.uuid];
-            await droppedActor.update({ "flags.dsa5.owners": owners }, { render: false });
+            owners.push(sheet.actor.uuid);
+            await droppedActor.update({ 'system.companionData.owners': owners }, { render: false });
         }
 
         const isHomunculus = droppedActor.items.some(i => i.type === 'trait' && i.name === _loc("COMPANIONS.HomunculusCreation"));
@@ -184,67 +154,13 @@ export default class CompanionHandler {
             }
         }
 
-        await sheet.render({ force: true });
-
-        if (currentTab && sheet.tabGroups?.sheet !== currentTab) {
-            sheet.changeTab(currentTab, 'sheet');
-        }
-
         return true;
-    }
-    static async handleCompanionRegeneration(sheet, ev, target) {
-        const uuid = target.dataset.uuid;
-        if (!uuid) return;
-        const actor = await fromUuid(uuid);
-        if (actor && actor.isOwner) {
-            const setup = await actor.setupRegeneration("regenerate", {});
-            if (setup) await actor.basicTest(setup);
-        } else {
-            ui.notifications.warn(_loc("COMPANIONS.Notification.NoPermissionRegeneration"));
-        }
-    }
-
-    static async removeCompanion(sheet, ev, target) {
-        const btn = target.closest('[data-uuid]');
-        const uuid = btn ? btn.dataset.uuid : null;
-        if (!uuid) return;
-
-        const currentTab = sheet.tabGroups?.sheet;
-        let companions = sheet.actor.getFlag('dsa5', 'companions') || [];
-        companions = companions.filter(c => c !== uuid);
-        await sheet.actor.update({ "flags.dsa5.companions": companions }, { render: false });
-
-        const droppedActor = await fromUuid(uuid);
-        if (droppedActor) {
-            let owners = droppedActor.getFlag('dsa5', 'owners') || [];
-            owners = owners.filter(o => o !== sheet.actor.uuid);
-            await droppedActor.update({ "flags.dsa5.owners": owners }, { render: false });
-
-            // ---  Trait "Begleiter" entfernen, wenn das Tier keine Besitzer mehr hat ---
-            if (owners.length === 0) {
-                const companionTraitName = _loc("LocalizedIDs.companion");
-                const companionTraits = droppedActor.items.filter(i => i.type === 'trait' && i.name === companionTraitName).map(i => i.id);
-
-                if (companionTraits.length > 0) {
-                    await droppedActor.deleteEmbeddedDocuments("Item", companionTraits);
-                }
-            }
-        }
-
-        await sheet.render({ force: true });
-
-        if (currentTab === 'companion' || currentTab === 'owner') {
-            sheet.changeTab('main', 'sheet');
-        } else if (currentTab) {
-            sheet.changeTab(currentTab, 'sheet');
-        }
     }
 
     static getSheetActions() {
         return {
             openLinkedSheet: this._openLinkedSheetAction,
             toggleNatureOptions: this._toggleNatureOptionsAction,
-            toggleCompanionDetails: this._toggleCompanionDetailsAction,
         };
     }
 
@@ -252,7 +168,6 @@ export default class CompanionHandler {
         return {
             changeCompanionNature: this._changeCompanionNatureAction,
             companionEffect: { handler: this._companionEffectAction, buttons: [0, 2] },
-            rollCompanionAggregatedProbe: this._rollCompanionAggregatedProbeAction,
             removeCompanion: this._removeCompanionAction,
             openSkillSelection: this._openSkillSelectionAction,
             executeCompanionSkill: this._executeCompanionSkillAction,
@@ -264,6 +179,7 @@ export default class CompanionHandler {
             editAggregatedTest: this._editAggregatedTestAction,
             companionSkillSelect: this._companionSkillSelectAction,
             companionItemEdit: this._companionItemEditAction,
+            tradeWithCompanion: this._tradeWithCompanionAction,
         };
     }
 
@@ -272,7 +188,7 @@ export default class CompanionHandler {
         const optionsDiv = container?.querySelector('.nature-options');
         if (!container || !optionsDiv) return;
 
-        $(optionsDiv).fadeToggle(150);
+        optionsDiv.hidden = !optionsDiv.hidden;
         target.classList.toggle('fa-chevron-right');
         target.classList.toggle('fa-chevron-left');
     }
@@ -283,36 +199,29 @@ export default class CompanionHandler {
         if (!container || !compActor || CompanionHandler._warnIfNotPetOwner(compActor)) return;
 
         const isCurrentlyDomesticated = container.dataset.isDomesticated === 'true';
-        const zoologyDomName = _loc("LocalizedIDs.zoologyDomesticated");
-        const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-
-        const dialogText = _loc("COMPANIONS.Loyalty.changeText", { name: compActor.name });
         const newLoyaltyValue = isCurrentlyDomesticated ? 0 : 4;
+        const currentNatureName = _loc(isCurrentlyDomesticated ? 'LocalizedIDs.zoologyDomesticated' : 'LocalizedIDs.zoologyWild');
+        const nextNatureName = _loc(isCurrentlyDomesticated ? 'LocalizedIDs.zoologyWild' : 'LocalizedIDs.zoologyDomesticated');
 
         new foundry.applications.api.DialogV2({
             window: {
                 title: "COMPANIONS.Loyalty.changeTitle",
             },
-            content: `<p>${dialogText}</p>`,
+            content: `<p>${_loc("COMPANIONS.Loyalty.changeText", { name: compActor.name })}</p>`,
             buttons: [
                 {
                     action: 'accept',
-                    label: _loc("ok"),
+                    label: 'ok',
                     icon: 'fas fa-check',
                     default: true,
                     callback: async () => {
-                        if (isCurrentlyDomesticated) {
-                            const domItems = compActor.items.filter(i => i.type === 'information' && i.name === zoologyDomName).map(i => i.id);
-                            await compActor.deleteEmbeddedDocuments('Item', domItems, { render: false });
-                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyWildName, type: 'information' }], { render: false });
-                        } else {
-                            const wildItems = compActor.items.filter(i => i.type === 'information' && i.name === zoologyWildName).map(i => i.id);
-                            await compActor.deleteEmbeddedDocuments('Item', wildItems, { render: false });
-                            await compActor.createEmbeddedDocuments('Item', [{ name: zoologyDomName, type: 'information' }], { render: false });
-                        }
+                        const currentNatureItems = compActor.items
+                            .filter(i => i.type === 'information' && i.name === currentNatureName)
+                            .map(i => i.id);
+                        await compActor.deleteEmbeddedDocuments('Item', currentNatureItems, { render: false });
+                        await compActor.createEmbeddedDocuments('Item', [{ name: nextNatureName, type: 'information' }], { render: false });
 
-                        const loyaltyItem = compActor.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+                        const loyaltyItem = compActor.items.find(i => i.type === 'skill' && i.name.startsWith(_loc('LocalizedIDs.loyalty')));
                         if (loyaltyItem) {
                             await compActor.updateEmbeddedDocuments('Item', [{
                                 _id: loyaltyItem.id,
@@ -321,16 +230,14 @@ export default class CompanionHandler {
                         } else {
                             compActor.sheet?.render();
                         }
-
-                        this.render();
                     },
                 },
                 {
                     action: 'decline',
-                    label: _loc("cancel"),
+                    label: 'cancel',
                     icon: 'fas fa-times',
                     callback: () => {
-                        container.querySelector('.nature-options').style.display = 'none';
+                        container.querySelector('.nature-options').hidden = true;
                         container.querySelector('.toggle-nature-arrow').classList.replace('fa-chevron-left', 'fa-chevron-right');
                     },
                 },
@@ -346,12 +253,7 @@ export default class CompanionHandler {
         const effect = compActor.effects.get(effectId);
         if (!effect) return;
 
-        if (ev.button === 2) {
-            await effect.delete();
-            return;
-        }
-
-        effect.sheet.render(true);
+        ev.button === 2 ? await effect.delete() : effect.sheet.render(true);
     }
 
     static async _resolveActor(target, datasetKey = 'uuid') {
@@ -361,9 +263,7 @@ export default class CompanionHandler {
 
     static _warnIfNotPetOwner(compActor) {
         if (compActor?.isOwner) return false;
-        if (compActor) {
-            ui.notifications.warn(_loc("COMPANIONS.Notification.NotPetOwner", { name: compActor.name }));
-        }
+        ui.notifications.warn(_loc("COMPANIONS.Notification.NotPetOwner", { name: compActor?.name }));
         return true;
     }
 
@@ -375,51 +275,40 @@ export default class CompanionHandler {
         this.close();
     }
 
-    static async _rollCompanionAggregatedProbeAction(_ev, target) {
-        const itemId = target.dataset.itemId;
-        const aggregatedItem = this.actor.items.get(itemId);
-        if (!aggregatedItem) return;
-
-        const aggregated = aggregatedItem.toObject();
-        const which = target.dataset.which || "";
-        const attr = aggregated.system.talent[`value${which}`];
-        const skill = this.actor.items.find(i => i.name === attr && i.type === 'skill');
-
-        let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
-
-        if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
-            infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
-            ChatMessage.create(game.dsa5.apps.DSA5_Utility.chatDataSetup(infoMsg));
-            return;
+    static async _removeCompanionAction(_ev, target) {
+        const removedActor = await CompanionHandler._resolveActor(target);
+        const removeId = removedActor?.id;
+        if (removeId) {
+            await this.actor.update({ [`system.companions.${removeId}`]: _del }, { render: false });
         }
 
-        const options = {
-            moreModifiers: [
-                { name: _loc('failedTests'), value: -1 * aggregated.system.previousFailedTests.value, selected: true },
-                { name: _loc('Modifier'), value: aggregated.system.baseModifier, selected: true },
-            ],
-        };
+        if (removedActor) {
+            const owners = removedActor.system.companionData.owners.filter(o => o !== this.actor.uuid);
 
-        const tokenId = this.getTokenId();
-        const setupData = await this.actor.setupSkill(skill, options, tokenId);
-        const res = await this.actor.basicTest(setupData);
+            if (owners.length === 0) {
+                const companionTraitName = _loc("LocalizedIDs.companion");
+                const companionTraits = removedActor.items.filter(i => i.type === 'trait' && i.name === companionTraitName).map(i => i.id);
 
-        if (res.result.successLevel > 0) {
-            aggregated.system.cummulatedQS.value = Math.min(10, res.result.qualityStep + aggregated.system.cummulatedQS.value);
-        } else {
-            aggregated.system.previousFailedTests.value += 1;
+                await removedActor.update({ 'system.companionData.owners': owners }, { render: false });
+                if (companionTraits.length > 0) {
+                    await removedActor.deleteEmbeddedDocuments("Item", companionTraits);
+                }
+            } else {
+                await removedActor.update({ 'system.companionData.owners': owners });
+            }
         }
-        aggregated.system.usedTestCount.value += 1;
 
-        await this.actor.updateEmbeddedDocuments('Item', [aggregated]);
-        const updated = this.actor.items.get(itemId);
-        updated.postItem();
-        if (aggregated.system.cummulatedQS.value >= 10) {
-            updated.sheet.postFinishedItem();
-        }
+        this.render({ force: true });
     }
-    static async _removeCompanionAction(ev, target) {
-        await CompanionHandler.removeCompanion(this, ev, target);
+
+    static async _tradeWithCompanionAction(_ev, target) {
+        const compActor = await CompanionHandler._resolveActor(target);
+        if (!compActor) return;
+
+        const sourceId = RollDialogBuilder.buildSpeaker(this.actor, this.actor.token?.id);
+        const targetId = RollDialogBuilder.buildSpeaker(compActor, compActor.token?.id);
+        const app = new Trade(sourceId, targetId);
+        app.startTrade();
     }
 
     static async _openSkillSelectionAction(_ev, target) {
@@ -429,7 +318,7 @@ export default class CompanionHandler {
         new CompanionSkillSelectionApp(this.actor, compActor, { parentSheet: this }).render(true);
     }
 
-    static async _executeCompanionSkillAction(_ev, target) {
+    static async _executeCompanionSkillAction(ev, target) {
         const compActor = await CompanionHandler._resolveActor(target.closest('.companion-header-ui'));
         const itemId = target.dataset.itemId;
         if (!compActor || !itemId) return;
@@ -437,22 +326,8 @@ export default class CompanionHandler {
         const item = compActor.items.get(itemId);
         if (!item) return;
 
-        const macroCode = item.getFlag('dsa5', 'onUseEffect');
-        if (!macroCode) return;
-
-        try {
-            const tokenId = compActor.getActiveTokens()[0]?.id || null;
-            const token = canvas.tokens.get(tokenId);
-            const speaker = ChatMessage.getSpeaker({ actor: compActor, token });
-
-            const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
-            const fn = new AsyncFunction('item', 'actor', 'token', 'speaker', macroCode);
-
-            await fn.call(item, item, compActor, token, speaker);
-        } catch (err) {
-            ui.notifications.error(_loc("COMPANIONS.Notification.MacroError", { name: item.name, error: err.message }));
-            console.error(err);
-        }
+        const onUse = new OnUseEffect(item);
+        await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
     }
 
     static async _trainCompanionAction(_ev, target) {
@@ -475,73 +350,24 @@ export default class CompanionHandler {
         new CompanionTrainingApp(this.actor, compActor, { parentSheet: this }).render(true);
     }
 
-    static async _companionRegenerationAction(ev, target) {
-        await CompanionHandler.handleCompanionRegeneration(this, ev, target);
+    static async _companionRegenerationAction(_ev, target) {
+        const actor = await CompanionHandler._resolveActor(target);
+        if (!actor || !actor.isOwner) {
+            ui.notifications.warn(_loc("COMPANIONS.Notification.NoPermissionRegeneration"));
+            return;
+        }
+        const setup = await actor.setupRegeneration("regenerate", {});
+        if (setup) await actor.basicTest(setup);
     }
 
     static async _toggleMountAction(_ev, target) {
-        await CompanionConfig.ensureLoaded();
         const compActor = await CompanionHandler._resolveActor(target.closest('.companion-header-ui'));
         if (!compActor || CompanionHandler._warnIfNotPetOwner(compActor)) return;
 
         const isCurrentlyRiding = this.actor.system.horse?.actorId === compActor.id && this.actor.system.horse?.isRiding === 1;
 
-        if (isCurrentlyRiding) {
-            await compActor.setFlag('dsa5', 'isMountActive', false);
-
-            if (typeof Riding !== 'undefined') {
-                await Riding.clearMount(this.actor);
-            } else {
-                await this.actor.update({
-                    "system.horse.isRiding": 0,
-                    "system.horse.actorId": "",
-                    "system.horse.actorLink": false,
-                    "system.horse.token": {},
-                });
-            }
-
-            return;
-        }
-
-        await compActor.setFlag('dsa5', 'isMountActive', true);
-
-        if (typeof Riding !== 'undefined') {
-            await this.actor.update({
-                "system.horse.isRiding": Riding.probablyDriving(compActor),
-                "system.horse.actorId": compActor.id,
-                "system.horse.actorLink": compActor.prototypeToken?.actorLink ?? true,
-            });
-
-            await Riding.addRidingCondition(this.actor);
-
-            const ridingName = _loc('RIDING.riding');
-            const ridingDesc = _loc('RIDING.ridingDescription');
-            const ridingEffect = this.actor.effects.find(e => e.name === ridingName || e.flags?.dsa5?.description === ridingDesc);
-
-            if (ridingEffect) {
-                const knownTrainings = compActor.items.filter(i => i.type === 'trait' && i.system?.traitType?.value === 'training');
-                const reittierStr = CompanionConfig.trainingNames.Reittier;
-                const hasReittier = knownTrainings.some(t => t.name.includes(reittierStr));
-
-                let effectValue = 0;
-                if (!hasReittier) effectValue = -1;
-                else if (knownTrainings.length >= 2) effectValue = 1;
-
-                if (effectValue !== 0) {
-                    const newChanges = foundry.utils.duplicate(ridingEffect.changes);
-                    const ridingSkillName = _loc("LocalizedIDs.riding") || "Reiten";
-
-                    if (!newChanges.some(c => c.key === 'system.skillModifiers.step' && c.value.includes(ridingSkillName))) {
-                        newChanges.push({
-                            key: 'system.skillModifiers.step',
-                            mode: 0,
-                            value: `${ridingSkillName} ${effectValue}`,
-                        });
-                        await ridingEffect.update({ changes: newChanges });
-                    }
-                }
-            }
-        }
+        if (isCurrentlyRiding) await Riding.clearMount(this.actor);
+        else await Riding.setHorse(this.actor, compActor);
     }
 
     static async _toggleHotbarControlAction(_ev, target) {
@@ -550,14 +376,17 @@ export default class CompanionHandler {
         if (!compActor) return;
         if (CompanionHandler._warnIfNotPetOwner(compActor)) return;
 
-        const newUuid = card.dataset.uuid;
-        const currentUuid = this.actor.getFlag('dsa5', 'hotbarCompanion');
+        const compId = card.dataset.uuid && (await fromUuid(card.dataset.uuid))?.id;
+        if (!compId) return;
 
-        if (currentUuid === newUuid) {
-            await this.actor.unsetFlag('dsa5', 'hotbarCompanion');
-        } else {
-            await this.actor.setFlag('dsa5', 'hotbarCompanion', newUuid);
-        }
+        const entry = this.actor.system.companions[compId];
+        if (!entry) return;
+
+        const updates = { [`system.companions.${compId}.hotbar`]: !entry.hotbar };
+        const oldHotbarId = Object.entries(this.actor.system.companions).find(([id, c]) => c.hotbar && id !== compId)?.[0];
+        if (oldHotbarId) updates[`system.companions.${oldHotbarId}.hotbar`] = false;
+
+        await this.actor.update(updates);
     }
 
     static async _finishTrickTrainingAction(_ev, target) {
@@ -581,22 +410,15 @@ export default class CompanionHandler {
         const setupData = await compActor.setupSkill(skillItem, {}, rollerTokenId);
         const isLoyaltyRoll = skillItem.name === _loc("LocalizedIDs.Fast-Talk") || skillItem.name === _loc("LocalizedIDs.loyalty");
 
-        const testResult = await compActor.basicTest(setupData);
-        if (!isLoyaltyRoll || !testResult?.result) return;
-
-        const res = testResult.result;
-        const desc = (res.description || '').toLowerCase();
-
-        const isCrit = res.isCrit || res.successLevel >= 2 || desc.includes('kritisch') || desc.includes('spektakulär');
-        const isBotch = res.isBotch || res.successLevel <= -2 || desc.includes('patzer') || desc.includes('schrecklich') || desc.includes('missgeschick');
-        const isFail = res.successLevel < 0 || desc.includes('misserfolg') || desc.includes('fehlschlag') || isBotch;
+        const { result } = await compActor.basicTest(setupData);
+        if (!isLoyaltyRoll || !result) return;
 
         const chatMessages = [];
 
-        if (isCrit || isBotch) {
+        if (result.successLevel >= 2 || result.successLevel <= -2) {
             const change = (await new Roll('1d3+1').evaluate()).total;
 
-            if (isCrit) {
+            if (result.successLevel >= 2) {
                 await skillItem.update({ 'system.talentValue.value': skillItem.system.talentValue.value + change });
                 chatMessages.push(_loc("COMPANIONS.Loyalty.CritGain", { name: compActor.name, change }));
             } else {
@@ -608,7 +430,7 @@ export default class CompanionHandler {
         const isFamiliar = compActor.items.some(i => i.type === 'trait' && i.name === _loc("LocalizedIDs.familiar"));
         const isWild = !isFamiliar && compActor.items.some(i => i.type === 'information' && i.name === _loc("LocalizedIDs.zoologyWild"));
 
-        if (isWild && isFail) {
+        if (isWild && result.successLevel < 0) {
             const d6 = (await new Roll('1d6').evaluate()).total;
 
             if (d6 <= 2) {
@@ -636,31 +458,14 @@ export default class CompanionHandler {
         if (item) item.sheet.render(true);
     }
 
-    static _toggleCompanionDetailsAction(_ev, target) {
-        const card = target.closest('.companion-header-ui');
-        const uuid = card?.dataset.uuid;
-        const details = card?.querySelectorAll('.companion-details');
-        if (!uuid || !details?.length) return;
-
-        $(details).slideToggle(200);
-
-        if (CompanionHandler.expandedCompanions.has(uuid)) {
-            CompanionHandler.expandedCompanions.delete(uuid);
-        } else {
-            CompanionHandler.expandedCompanions.add(uuid);
-        }
-
-        target.classList.toggle('fa-minimize');
-        target.classList.toggle('fa-maximize');
-    }
 
     static async prepareCompanionsData(actor, sheetData) {
-        const companionUuids = actor.getFlag('dsa5', 'companions') || [];
+        const companionUuids = Object.values(actor.system.companions).map(c => c.uuid);
         sheetData.hasCompanions = companionUuids.length > 0;
 
         if (sheetData.hasCompanions) await CompanionConfig.ensureLoaded();
 
-        const sections = { familiar: [], group: [], regular: [] };
+        const sections = { familiar: [], group: [], regular: [], summoned: [] };
 
         if (sheetData.hasCompanions) {
             const trickIndicator = "(Trick):";
@@ -669,7 +474,7 @@ export default class CompanionHandler {
                 familiarName: _loc("LocalizedIDs.familiar"),
                 homunculusName: _loc("COMPANIONS.HomunculusCreation"),
                 zoologyDom: _loc("LocalizedIDs.zoologyDomesticated"),
-                hotbarCompUuid: actor.getFlag('dsa5', 'hotbarCompanion'),
+                hotbarCompUuid: Object.values(actor.system.companions).find(c => c.hotbar)?.uuid,
                 loyaltyName: _loc("LocalizedIDs.loyalty"),
                 trainingIndicator,
                 trainingPrefix: _loc("COMPANIONS.Training.ShortPrefix"),
@@ -716,7 +521,7 @@ export default class CompanionHandler {
             { label: 'familiar', contents: sections.familiar },
             { label: 'SHEET.AnimalCompanion', contents: sections.regular },
             { label: 'COMPANIONS.Group.Companion', contents: sections.group },
-            { label: 'COMPANIONS.Group.SummonedCreatures', contents: [] },
+            { label: 'COMPANIONS.Group.SummonedCreatures', contents: sections.summoned },
         ];
     }
 
@@ -761,7 +566,7 @@ export default class CompanionHandler {
             id: e.id,
             img: e.img || 'icons/svg/aura.svg',
             name: e.name || _loc('SHEET.Effect'),
-            value: e.flags?.dsa5?.value,
+            value: e.system?.condition?.value,
         }));
 
         const companionTests = companionTestsByUuid.get(comp.uuid);
@@ -769,7 +574,7 @@ export default class CompanionHandler {
             a.isTraining !== b.isTraining ? (a.isTraining ? -1 : 1) : a.shortName.localeCompare(b.shortName)
         );
 
-        const savedHotbar = comp.getFlag('dsa5', 'skillHotbar') || Array(14).fill(null);
+        const savedHotbar = comp.system.companionData.skillHotbar;
         const hotbarItems = savedHotbar.map(itemId => {
             if (!itemId) return null;
             const item = comp.items.get(itemId);
@@ -783,11 +588,14 @@ export default class CompanionHandler {
             };
         });
 
-        const currentSpecies = comp.getFlag('dsa5', 'species');
+        const currentSpecies = comp.system.companionData.species;
         const isMountPossible = !currentSpecies
             || !!Object.values(CompanionHandler.COMPANION_SPECIES_DATA).find(
                 group => group[currentSpecies]?.trainingModules?.includes(ctx.reittierStr)
             );
+
+        const owners = comp.system.companionData.owners;
+        const isSummoned = !isFamiliar && !isHomunculus && owners.length <= 1 && loyaltyItem && /\(.*\)/.test(loyaltyItem.name);
 
         comp.prepareCompanion = {
             hasSpells,
@@ -807,8 +615,9 @@ export default class CompanionHandler {
             isHotbarControlled: comp.uuid === ctx.hotbarCompUuid,
             isFamiliar,
             isHomunculus,
-            showNatureIcon: !isFamiliar && !isHomunculus,
-            isExpanded: CompanionHandler.expandedCompanions.has(comp.uuid),
+            isSummoned,
+            showNatureIcon: !isFamiliar && !isHomunculus && !isSummoned,
+            isTrainable: !isHomunculus && !isSummoned,
             hasEffects: activeEffects.length > 0,
             hotbarItems,
             hotbarRow1: hotbarItems.slice(0, 7),
@@ -816,31 +625,14 @@ export default class CompanionHandler {
             trainingTests: companionTests,
         };
 
-        const owners = comp.getFlag('dsa5', 'owners') || [];
         if (isFamiliar || isHomunculus) return 'familiar';
         if (owners.length > 1) return 'group';
+        if (isSummoned) return 'summoned';
         return 'regular';
     }
 
     static async prepareOwnersData(actor, sheetData) {
-        const ownerUuids = actor.getFlag('dsa5', 'owners') || [];
+        const ownerUuids = actor.system.companionData.owners;
         sheetData.petOwners = (await Promise.all(ownerUuids.map(ownerUuid => fromUuid(ownerUuid)))).filter(Boolean);
     }
-
-    static activateListeners(sheet, html, actor) {
-        html.querySelectorAll('.companion-skill-advances').forEach(el => {
-            el.addEventListener('change', async ev => {
-                ev.preventDefault();
-                const input = ev.currentTarget;
-                const compActor = await fromUuid(input.dataset.actorUuid);
-                if (compActor) {
-                    await compActor.updateEmbeddedDocuments('Item', [{
-                        _id: input.dataset.itemId,
-                        'system.talentValue.value': Number(input.value)
-                    }]);
-                }
-            });
-        });
-    }
 }
-

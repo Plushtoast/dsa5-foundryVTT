@@ -47,7 +47,24 @@ export class Trade extends DefaultAppv2 {
     };
   }
 
+  get selfTrade() {
+    const source = DSA5_Utility.getSpeaker(this.tradeData.sourceId);
+    const target = DSA5_Utility.getSpeaker(this.tradeData.targetId);
+    if (!source?.isOwner || !target?.isOwner) return false;
+
+    for (const user of game.users) {
+      if (user.id === game.user.id) continue;
+      if (user.character?.id === source.id || user.character?.id === target.id) return false;
+    }
+    return true;
+  }
+
   async startTrade() {
+    if (this.selfTrade) {
+      this.position.width = 1200;
+      this.render(true);
+      return;
+    }
     game.socket.emit('system.dsa5', {
       type: 'startTrade',
       payload: {
@@ -109,6 +126,34 @@ export class Trade extends DefaultAppv2 {
       tradeFriend,
       inventory,
     });
+
+    if (this.selfTrade) {
+      const targetActor = DSA5_Utility.getSpeaker(this.tradeData.targetId);
+      const targetInventory = targetActor.prepareItems({ details: [] });
+
+      targetInventory.inventory['money'] = {
+        items: targetInventory.money.coins.map((x) => {
+          x.name = _loc(x.name);
+          return x;
+        }),
+        show: true,
+        dataType: 'money',
+      };
+
+      for (const section of Object.values(targetInventory.inventory)) {
+        for (const item of section.items) {
+          if (this.tradeData.offered[item._id]) {
+            item.system.quantity.value -= this.tradeData.offered[item._id].system.quantity.value;
+          }
+        }
+      }
+
+      data.targetInventory = targetInventory;
+    }
+
+    data.selfTrade = this.selfTrade;
+    data.colClass = this.selfTrade ? 'four' : 'third';
+
     return data;
   }
 
@@ -122,7 +167,7 @@ export class Trade extends DefaultAppv2 {
   }
 
   async close(options = {}) {
-    if (!options.skipSocket) {
+    if (!options.skipSocket && !this.selfTrade) {
       game.socket.emit('system.dsa5', {
         type: 'tradeCanceled',
         payload: {
@@ -145,7 +190,13 @@ export class Trade extends DefaultAppv2 {
     await super._onRender(context, options);
     const html = $(this.element);
     html.find('.trade').on('click', (ev) => this._offerItem(ev));
-    html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
+
+    if (this.selfTrade) {
+      html.find('.tradeTarget').on('click', (ev) => this._offerTargetItem(ev));
+      html.find('.completeSelfTrade').on('click', () => this.completeSelfTrade());
+    } else {
+      html.find('.acceptTrade').on('click', (ev) => this.acceptTrade(ev));
+    }
 
     this.#gearSearch ??= new foundry.applications.ux.SearchFilter({
       inputSelector: ".gearSearch",
@@ -212,7 +263,67 @@ export class Trade extends DefaultAppv2 {
     }
   }
 
+  _offerTargetItem(ev) {
+    const id = ev.currentTarget.dataset.itemId;
+    const actor = DSA5_Utility.getSpeaker(this.tradeData.targetId);
+    const item = actor.items.get(id);
+
+    const amount = ev.ctrlKey ? 10 : 1;
+    const isStopTrade = ev.currentTarget.dataset.stopTrade;
+    let availableCount = isStopTrade ? this.tradeData.offered[id].system.quantity.value : item.system.quantity.value;
+    if (item) {
+      if (isStopTrade) {
+        this.tradeData.offered[id].system.quantity.value -= Math.min(amount, availableCount);
+        if (this.tradeData.offered[id].system.quantity.value <= 0) {
+          delete this.tradeData.offered[id];
+          if (item.system.isBagWithContents) {
+            for (const child of fetchBagItems(item, actor)) {
+              delete this.tradeData.offered[child.id];
+            }
+          }
+        }
+        this.render();
+      } else {
+        if (this.tradeData.offered[id]) {
+          availableCount -= this.tradeData.offered[id].system.quantity.value;
+        } else {
+          this.tradeData.offered[id] = item.toObject();
+          this.tradeData.offered[id].system.quantity.value = 0;
+        }
+
+        if (availableCount > 0) {
+          this.tradeData.offered[id].system.quantity.value += Math.min(amount, availableCount);
+          if (item.system.isBagWithContents) {
+            for (const child of fetchBagItems(item, actor)) {
+              if (!this.tradeData.offered[child.id]) {
+                this.tradeData.offered[child.id] = child.toObject();
+              }
+            }
+          }
+          this.render();
+        }
+      }
+
+      DSA5SoundEffect.playMoneySound();
+    }
+  }
+
+  async completeSelfTrade() {
+    if (DSA5_Utility.isActiveGM()) {
+      await Trade.updateData(this.tradeData);
+    } else {
+      game.socket.emit('system.dsa5', {
+        type: 'selfTradeFinish',
+        payload: { tradeData: this.tradeData },
+      });
+    }
+    DSA5SoundEffect.playMoneySound();
+    this.close({ skipSocket: true });
+  }
+
   async offerChanged() {
+    if (this.selfTrade) return;
+
     game.socket.emit('system.dsa5', {
       type: 'receiveOfferedItems',
       payload: {
@@ -309,6 +420,9 @@ export class Trade extends DefaultAppv2 {
 
     const sourceReceived = await this.modifyActor(source, tradeData.offer, tradeData.offered);
     const targetReceived = await this.modifyActor(target, tradeData.offered, tradeData.offer);
+
+    source.sheet?.render();
+    target.sheet?.render();
 
     return [
       { actorName: source.name, items: sourceReceived },
@@ -460,6 +574,11 @@ export class Trade extends DefaultAppv2 {
         return true;
       case 'tradeFinished':
         this.tradeWasFinished(data);
+        return true;
+      case 'selfTradeFinish':
+        if (DSA5_Utility.isActiveGM()) {
+          this.updateData(data.payload.tradeData);
+        }
         return true;
     }
   }

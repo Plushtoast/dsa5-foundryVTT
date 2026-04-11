@@ -23,7 +23,7 @@ export default {
             'Zornbrecht Bloodhound': { trickMod: '-1', trainingMod: '-1', trainingModules: ['Combat Animal', 'Guard Animal', 'Draft Animal'] },
         },
         Cats: {
-            'Al\u2019Anfan': { trickMod: '-1', trainingMod: '-2', trainingModules: ['Hunting Animal', 'Combat Animal', 'Circus Animal'] },
+            "Al'Anfan": { trickMod: '-1', trainingMod: '-2', trainingModules: ['Hunting Animal', 'Combat Animal', 'Circus Animal'] },
             Aranian: { trickMod: '-1', trainingMod: '-3', trainingModules: ['Combat Animal', 'Racing Animal', 'Circus Animal'] },
             'Castle Cat': { trickMod: '0', trainingMod: '-1', trainingModules: ['Combat Animal', 'Circus Animal'] },
             'Cha ay Zhamorrah': { trickMod: '-2', trainingMod: '-4', trainingModules: ['Combat Animal', 'Circus Animal'] },

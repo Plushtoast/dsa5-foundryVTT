@@ -2151,6 +2151,7 @@
         "mute": "Stumm",
         "alchemy": "Alchimie",
         "riding": "Reiten",
+        "riderTraining": "Reittier",
         "ruggedFighter": "Zäher Hund",
         "sensitiveToPain": "Zerbrechlich",
         "fragileAnimal": "Zerbrechliches Tier",
@@ -3220,7 +3221,8 @@
         "priceMod": "Grundpreis / Modifizierter Preis (Doppel-<i class=\"fas fa-computer-mouse\"></i> für eigenen Preis)",
         "yourOffer": "Dein Angebot",
         "otherOffer": "Angebot des Handelspartners",
-        "accept": "Akzeptieren"
+        "accept": "Akzeptieren",
+        "completeTrade": "Handel abschließen"
     },
     "GROUP": {
         "members": "Mitglieder",
@@ -3475,10 +3477,10 @@
         }
     },
     "COMPANIONS": {
-        "Abenteuerpunktekosten": "Abenteuerpunktekosten",
         "Companion": "Begleiter",
         "controlViaHotbar": "Begleiter über Hotbar steuern",
         "domesticatedAnimal": "Domestiziertes Tier",
+        "dropHint": "Eine Kreatur hierher ziehen, um sie als Begleiter hinzuzufügen.",
         "Finish": "Abschließen",
         "Group": {
             "Companion": "Gruppentiergefährten",
@@ -3504,6 +3506,7 @@
             "CritGain": "{name} hat einen kritischen Erfolg erzielt! Die Loyalität steigt um {change} Punkte.",
             "ImprovementText": "Der FW in Loyalität kann nur verbessert werden, wenn eine Erfolgsprobe auf Tierkunde gelingt. Die Heldin muss sich dazu täglich mehrere Stunden (etwa 1 LeH) intensiv mit dem Tier beschäftigen. Sie kann die Probe bei Misslingen wie üblich wiederholen. Gelingt die Probe, so kann die Heldin AP zum Steigern des Loyalitätswerts ausgeben (nicht das Tier).",
             "label": "Loyalität",
+            "missingHint": "Diese Kreatur besitzt nicht das Talent Loyalität. Füge es hinzu, um die Begleiterdetails zu aktivieren.",
             "NotFound": "Das Talent '{talent}' konnte in keinem Kompendium gefunden werden und wurde daher nicht hinzugefügt."
         },
         "Notification": {
@@ -3516,11 +3519,15 @@
             "MacroError": "Fehler im Makro von {name}: {error}",
             "MaxTricksReached": "{name} hat damit die maximal mögliche Anzahl an Tricks erlernt.",
             "MissingTalent": "Dein Charakter besitzt das Talent '{talent}' nicht.",
+            "NoActorOnMap": "{name} ist nicht auf der Karte.",
+            "NoOwnerOrPetOnMap": "Weder {owner} noch {pet} sind auf der Karte.",
             "NoPermissionRegeneration": "Du hast keine Berechtigung, die Regeneration für diesen Akteur zu würfeln.",
             "NotEnoughPetAP": "{name} hat nicht genügend AP für diesen Trick. Es werden {cost} AP benötigt.",
             "NotPetOwner": "Du bist nicht der Besitzer von {name} und kannst diese Aktion nicht ausführen.",
             "SpeciesRemoved": "{name} ist nun keiner spezifischen Tierart mehr zugeordnet.",
             "TokenLinkWarning": "Aktion abgebrochen: Der Begleiter muss in den Token-Einstellungen 'Mit Akteur verbinden' aktiviert haben!",
+            "TokenLinkExplanation": "<p><b>{name}</b> hat <i>Mit Akteur verbinden</i> nicht aktiviert.</p><p><b>Verbunden</b> — Jeder Token auf der Karte verweist auf denselben Akteur. Änderungen an Lebenspunkten, Zuständen usw. wirken sich auf alle Token und den Charakterbogen gleichermaßen aus.</p><p><b>Nicht verbunden</b> — Jeder auf der Karte platzierte Token ist eine unabhängige Kopie. Änderungen an einem Token haben keinen Einfluss auf andere oder den Basis-Akteur.</p><p>Begleiter sollten normalerweise <b>verbunden</b> sein, damit der Begleitertab die korrekten, aktuellen Werte anzeigt.</p>",
+            "TokenLinkEnableBtn": "Verbinden & Hinzufügen",
             "WildAnimalLoyaltyWarning": "Wildtiere benötigen für die Dressur einen Loyalitätswert von 10 oder höher.",
             "WildAnimalTrainerWarning": "Für das Dressieren von Wildtieren benötigt man die Sonderfertigkeit Abrichter."
         },
@@ -3528,6 +3535,7 @@
         "Owner": "Besitzer",
         "RemoveCompanion": "Begleiter entfernen",
         "removeMount": "Als Reittier abwählen",
+        "TradeWithCompanion": "Handeln mit Begleiter",
         "SkillSelection": {
             "FamiliarAbilities": "Vertrautentierfähigkeiten",
             "HomunculusAbilities": "Homunculusfähigkeiten",
@@ -3535,6 +3543,11 @@
             "label": "Fähigkeitenauswahl",
             "OpenItemSheet": "Links-<i class=\"fas fa-computer-mouse\"></i>: Item öffnen",
             "RemoveFromHotbar": "Rechts-<i class=\"fas fa-computer-mouse\"></i>: Aus Leiste entfernen"
+        },
+        "Species": {
+            "TrainingMod": "Dressurmodifikator",
+            "TrainingModules": "Mögliche Ausbildungsaufsätze",
+            "TrickMod": "Trickmodifikator"
         },
         "train": "Ausbilden",
         "Training": {
@@ -3555,9 +3568,8 @@
             "NoLearned": "Noch keine Ausbildungsaufsätze erlernt.",
             "ProbeRule": "Um einem Tier einen Ausbildungsaufsatz zu verleihen, muss der Heldin eine Sammelprobe auf Tierkunde, 1 Monat, 7 Versuche gelingen. Der Modifikator für die Probe hängt vor der Tierart ab.",
             "ShortPrefix": "Ausbildung:",
-            "SpeciesChangeHint": "Links-<i class=\"fas fa-computer-mouse\"></i>: Tierart anpassen\nRechts-<i class=\"fas fa-computer-mouse\"></i>: Tierart entfernen",
-            "SpeciesDetected": "Bei dem Tierbegleiter handelt es sich um eine/n {species}.",
-            "SpeciesUnknown": "Die Tierart konnte nicht automatisch bestimmt werden.",
+            "RemoveSpecies": "Tierart entfernen",
+            "SpeciesChangeHint": "Tierart anpassen",
             "Tab": "Ausbildung",
             "TabName": "Ausbildung",
             "TeachBtn": "Ausbilden",

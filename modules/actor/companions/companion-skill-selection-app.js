@@ -11,7 +11,7 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
 
     static DEFAULT_OPTIONS = {
         id: "companion-skill-selection",
-        classes: ["dsa5", "sheet"],
+        classes: ["dsa5", "sheet", "dsa5-companion"],
         actions: {
             openItemSheet: this.#openItemSheet,
             hotbarSlotAction: { handler: this.#onHotbarSlotAction, buttons: [0, 2] }
@@ -71,7 +71,7 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
     }
 
     _getHotbar() {
-        return this.companion.getFlag('dsa5', 'skillHotbar') || Array(14).fill(null);
+        return this.companion.system.companionData.skillHotbar;
     }
 
     _canDragStart() {
@@ -110,13 +110,8 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
         const hotbar = this._getHotbar();
         hotbar[index] = data.id;
 
-        await this.companion.setFlag('dsa5', 'skillHotbar', hotbar);
-        await this._refreshSheets();
-    }
-
-    async _refreshSheets() {
+        await this.companion.update({ 'system.companionData.skillHotbar': hotbar });
         this.render({ force: true });
-        if (this.parentSheet?.rendered) this.parentSheet.render({ force: true });
     }
 
     _showItemSheet(target) {
@@ -137,8 +132,8 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
             if (!hotbar[index]) return;
 
             hotbar[index] = null;
-            await this.companion.setFlag('dsa5', 'skillHotbar', hotbar);
-            await this._refreshSheets();
+            await this.companion.update({ 'system.companionData.skillHotbar': hotbar });
+            this.render({ force: true });
             return;
         }
 

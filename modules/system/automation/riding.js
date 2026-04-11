@@ -44,11 +44,11 @@ export default class Riding {
   }
 
   static isRiding(actor) {
-    return actor.system.horse.isRiding > 0;
+    return (actor.system.horse?.isRiding ?? 0) > 0;
   }
 
   static isDriving(actor) {
-    return actor.system.horse.isRiding > 1;
+    return (actor.system.horse?.isRiding ?? 0) > 1;
   }
 
   static probablyDriving(horse) {
@@ -161,7 +161,7 @@ export default class Riding {
       }
 
       //TODO might need to create or search token?
-      await this.addRidingCondition(actor);
+      await this.addRidingCondition(actor, horse);
     }
     await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates, {
       noHooks: true,
@@ -173,8 +173,8 @@ export default class Riding {
     return actor.effects.find((x) => x.name == ridingLabel);
   }
 
-  static async addRidingCondition(actor) {
-    if (!this.getRidingCondition(actor)) await actor.addCondition(this.ridingCondition());
+  static async addRidingCondition(actor, horse) {
+    if (!this.getRidingCondition(actor)) await actor.addCondition(this.ridingCondition(horse));
   }
 
   static async removeRidingCondition(actor) {
@@ -230,13 +230,28 @@ export default class Riding {
     await this.removeRidingCondition(actor);
   }
 
-  static ridingCondition() {
+  static ridingCondition(horse) {
+    const changes = [{ key: 'system.status.dodge.gearmodifier', type: 'add', value: -2 }];
+
+    if (horse) {
+      const trainings = horse.items.filter(i => i.type === 'trait' && i.system?.traitType?.value === 'training');
+      const hasRiderTraining = trainings.some(t => t.name.includes(_loc('LocalizedIDs.riderTraining')));
+
+      let effectValue = 0;
+      if (!hasRiderTraining) effectValue = -1;
+      else if (trainings.length >= 2) effectValue = 1;
+
+      if (effectValue !== 0) {
+        changes.push({ key: 'system.skillModifiers.step', mode: 0, value: `${_loc('LocalizedIDs.riding')} ${effectValue}` });
+      }
+    }
+
     return {
       name: _loc('RIDING.riding'),
       img: 'systems/dsa5/icons/thirdparty/horse-head.svg',
       system: {
         description: _loc('RIDING.ridingDescription'),
-        changes: [{ key: 'system.status.dodge.gearmodifier', type: 'add', value: -2 }],
+        changes,
       },
     };
   }
@@ -301,7 +316,7 @@ export default class Riding {
         noHooks: true,
       });
     }
-    await this.addRidingCondition(rider);
+    await this.addRidingCondition(rider, horse);
   }
 
   static adaptTokenSize(riderTokenDocument, horseTokenDocument) {
@@ -351,7 +366,7 @@ export default class Riding {
     mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document));
     await rider.actor.update(actorUpdate);
     await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, 'flags.dsa5.horseTokenId': _del }], { noHooks: true });
-    await this.addRidingCondition(rider.actor);
+    await this.addRidingCondition(rider.actor, horse.actor);
   }
 
   static speedKeys = {

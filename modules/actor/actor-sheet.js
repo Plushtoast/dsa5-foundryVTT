@@ -157,6 +157,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
       scrollable: [''],
     },
+    companion: {
+      template: 'systems/dsa5/templates/actors/companions/actor-companion.hbs',
+      scrollable: [''],
+      templates: [
+        'systems/dsa5/templates/actors/parts/horse.hbs',
+        'systems/dsa5/templates/actors/companions/companion-card.hbs',
+      ],
+    },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
       scrollable: [''],
@@ -295,6 +303,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         { id: 'main', label: 'attributes', img: 'systems/dsa5/icons/categories/DSA-Auge.webp' },
         { id: 'inventory', label: 'TYPES.Item.equipment', img: 'systems/dsa5/icons/categories/Equipment.webp' },
         { id: 'status', label: 'status', img: 'systems/dsa5/icons/categories/ability_ceremonial.webp' },
+        { id: 'companion', label: 'COMPANIONS.Companion', icon: 'fas fa-paw' },
         { id: 'notes', label: 'Notes', img: 'systems/dsa5/icons/categories/Ability_Language.webp' },
       ],
       initial: 'skills',
@@ -324,13 +333,21 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _preparePartContext(partId, context, options) {
     context = await super._preparePartContext(partId, context, options);
-    if (partId === CompanionHandler.COMPANION_TAB_ID) await CompanionHandler.prepareCompanionPartContext(this, context);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) await this.prepareCompanionTab(context);
     return context;
+  }
+
+  async prepareCompanionTab(context) {
+    await CompanionHandler.prepareCompanionPartContext(this, context);
   }
 
   _attachPartListeners(partId, element, options) {
     super._attachPartListeners(partId, element, options);
-    if (partId === CompanionHandler.COMPANION_TAB_ID) CompanionHandler.attachCompanionPartListeners(this, element);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) this.attachCompanionTabListeners(element);
+  }
+
+  attachCompanionTabListeners(element) {
+    CompanionHandler.attachCompanionPartListeners(this, element);
   }
 
   cleanTabs(tabs) {
@@ -1682,6 +1699,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
+    if (!item) return;
     this._itemDeleteDialog(item);
   }
 

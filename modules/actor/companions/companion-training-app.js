@@ -1,9 +1,11 @@
 import CompanionConfig from './companion-config.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import APTracker from '../../system/orwell/ap-tracker.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const { TextEditor } = foundry.applications.ux;
 
 export class CompanionTrainingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     static #traitCatalogsPromise = null;
@@ -19,9 +21,10 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
     static DEFAULT_OPTIONS = {
         id: "companion-training",
-        classes: ["dsa5", "sheet", "companion-training"],
+        classes: ["dsa5", "sheet", "companion-training", "dsa5-companion"],
         actions: {
-            toggleSpeciesSelector: { handler: this.#onSpeciesSelectorAction, buttons: [0, 2] },
+            toggleSpeciesSelector: this.#onSpeciesSelectorAction,
+            removeSpecies: this.#removeSpecies,
             selectSpecies: this.#selectSpecies,
             itemEdit: this.#editItem,
             toggleTrickDetails: this.#toggleTrickDetails,
@@ -36,7 +39,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             title: "COMPANIONS.Training.label",
             icon: "fas fa-paw",
             resizable: true,
-            contentClasses: ["companion-training-container", "training-container"],
+            contentClasses: ["companion-training-container", "gap5px"],
         },
         position: {
             width: 650,
@@ -145,13 +148,23 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             imageMap.set(entry.name, entry.img);
         }
 
+        const pipClass = (val) => {
+            const n = Number(val);
+            if (Number.isNaN(n)) return 'pip-neutral';
+            return n > 0 ? 'pip-positive' : n < 0 ? 'pip-negative' : 'pip-neutral';
+        };
+
         const enrichedData = {};
         for (const [group, speciesDict] of Object.entries(CompanionConfig.companionSpeciesData)) {
             enrichedData[group] = [];
             for (const [speciesName, speciesInfo] of Object.entries(speciesDict)) {
                 enrichedData[group].push({
                     name: speciesName,
-                    modifier: speciesInfo.trickMod,
+                    trickMod: speciesInfo.trickMod,
+                    trainingMod: speciesInfo.trainingMod,
+                    trickModClass: pipClass(speciesInfo.trickMod),
+                    trainingModClass: pipClass(speciesInfo.trainingMod),
+                    trainingModules: speciesInfo.trainingModules || [],
                     img: imageMap.get(speciesName) || 'icons/svg/mystery-man-black.svg'
                 });
             }
@@ -163,24 +176,15 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
     static async finishTraining(ownerActor, target) {
         await CompanionConfig.ensureLoaded();
-        const itemId = target.dataset.itemId;
-        const compUuid = target.dataset.companionUuid;
 
-        const testItem = ownerActor.items.get(itemId);
-        const compActor = await fromUuid(compUuid);
+        const testItem = ownerActor.items.get(target.dataset.itemId);
+        const compActor = await fromUuid(target.dataset.companionUuid);
         if (!testItem || !compActor) return;
 
-        const trInd = _loc("COMPANIONS.Training.ModuleIndicator") || "(Ausbildungsaufsatz):";;
-        const isTraining = testItem.name.includes("(Ausbildungsaufsatz):") || testItem.name.includes(trInd);
-
-        let itemName = testItem.name;
-        if (isTraining) {
-            const parts = testItem.name.split(testItem.name.includes(trInd) ? trInd : "(Ausbildungsaufsatz):");
-            if (parts.length > 1) itemName = parts[1].trim();
-        } else {
-            const parts = testItem.name.split("(Trick):");
-            if (parts.length > 1) itemName = parts[1].trim();
-        }
+        const trainingIndicator = _loc("COMPANIONS.Training.ModuleIndicator") || "(Ausbildungsaufsatz):";
+        const isTraining = testItem.name.includes(trainingIndicator);
+        const separator = isTraining ? trainingIndicator : "(Trick):";
+        const itemName = testItem.name.split(separator)[1]?.trim() || testItem.name;
 
         const trainingTricks = CompanionConfig.trainingTricks;
         const knownTrickNames = new Set();
@@ -188,30 +192,21 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         for (const item of compActor.items) {
             if (item.type !== 'trait') continue;
-
             const traitType = item.system?.traitType?.value;
             if (traitType === 'trick') knownTrickNames.add(item.name);
             else if (traitType === 'training') knownTrainingNames.push(item.name);
         }
 
         const freeTricksSet = new Set();
-        knownTrainingNames.forEach(trainingName => {
+        for (const trainingName of knownTrainingNames) {
             for (const [key, tricks] of Object.entries(trainingTricks)) {
-                if (key && trainingName.startsWith(key)) {
-                    tricks.forEach(trick => {
-                        if (trick) freeTricksSet.add(trick);
-                    });
-                }
+                if (key && trainingName.startsWith(key)) tricks.filter(Boolean).forEach(t => freeTricksSet.add(t));
             }
-        });
+        }
 
         if (!isTraining) {
             const klValue = compActor.system.characteristics.kl.value || 0;
-            let trainingBonus = 0;
-            knownTrickNames.forEach(trickName => {
-                if (freeTricksSet.has(trickName)) trainingBonus++;
-            });
-
+            const trainingBonus = [...knownTrickNames].filter(n => freeTricksSet.has(n)).length;
             const maxTricks = Math.round(klValue / 2) + trainingBonus;
             if (knownTrickNames.size >= maxTricks && !freeTricksSet.has(itemName)) {
                 ui.notifications.warn(_loc("COMPANIONS.Notification.MaxTricksReached", { name: compActor.name }));
@@ -219,13 +214,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             }
         }
 
-        const trickUuid = testItem.getFlag('dsa5', 'trainingTrickUuid');
-        if (!trickUuid) {
-            ui.notifications.warn(_loc("COMPANIONS.Trick.NotFound"));
-            return;
-        }
-
-        const trickItem = await fromUuid(trickUuid);
+        const trickItem = await fromUuid(testItem.getFlag('dsa5', 'trainingTrickUuid'));
         if (!trickItem) {
             ui.notifications.warn(_loc("COMPANIONS.Trick.NotFound"));
             return;
@@ -244,42 +233,29 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         await compActor.createEmbeddedDocuments('Item', [trickItem.toObject()], { render: false });
         await testItem.delete();
 
-        if (isTraining) {
-            ui.notifications.info(_loc("COMPANIONS.Training.ModuleFinished", { trainingName: itemName, petName: compActor.name }));
-        } else {
+        if (!isTraining) {
             ui.notifications.info(_loc("COMPANIONS.Training.Finished", { trickName: itemName, petName: compActor.name }));
+            return;
         }
 
-        if (!isTraining) return;
+        ui.notifications.info(_loc("COMPANIONS.Training.ModuleFinished", { trainingName: itemName, petName: compActor.name }));
 
-        let tricksToGrant = [];
-        for (const [key, tricks] of Object.entries(trainingTricks)) {
-            if (key && itemName.startsWith(key)) {
-                tricksToGrant = tricks;
-                break;
-            }
-        }
-
-        if (tricksToGrant.length === 0) return;
+        const grantedTricks = Object.entries(trainingTricks).find(([key]) => key && itemName.startsWith(key))?.[1] || [];
+        if (grantedTricks.length === 0) return;
 
         const allTricks = await this.getAllTricks();
-        const tricksByName = new Map(allTricks.map(trick => [trick.name, trick]));
+        const tricksByName = new Map(allTricks.map(t => [t.name, t]));
         const tricksToAdd = [];
         const addedTrickNames = [];
 
-        for (const trickName of tricksToGrant) {
-            if (!trickName) continue;
-            if (knownTrickNames.has(trickName)) continue;
+        for (const trickName of grantedTricks) {
+            if (!trickName || knownTrickNames.has(trickName)) continue;
 
-            const trickData = tricksByName.get(trickName);
-            if (!trickData) continue;
-
-            const trickDocument = await fromUuid(trickData.uuid);
+            const trickDocument = await fromUuid(tricksByName.get(trickName)?.uuid);
             if (!trickDocument) continue;
 
             tricksToAdd.push(trickDocument.toObject());
             addedTrickNames.push(trickName);
-            knownTrickNames.add(trickName);
         }
 
         if (tricksToAdd.length > 0) {
@@ -305,17 +281,22 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         context.isWild = isActuallyWild && !context.isFamiliar; 
         context.buttonLabel = context.isWild ? "LocalizedIDs.zoologyWild" : "LocalizedIDs.zoologyDomesticated";
         
-        const currentSpecies = this.companion.getFlag('dsa5', 'species');
+        const currentSpecies = this.companion.system.companionData.species;
         context.currentSpecies = currentSpecies;
         
         const speciesData = await this.constructor.getSpeciesDataWithImages();
         context.speciesData = speciesData;
         
         context.currentSpeciesImg = "icons/svg/mystery-man-black.svg";
+        context.currentSpeciesData = null;
         if (currentSpecies) {
             for (const group of Object.values(speciesData)) {
                 const found = group.find(s => s.name === currentSpecies);
-                if (found) { context.currentSpeciesImg = found.img; break; }
+                if (found) {
+                    context.currentSpeciesImg = found.img;
+                    context.currentSpeciesData = found;
+                    break;
+                }
             }
         }
         
@@ -479,16 +460,10 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         // --- 3. Regel-Booleans setzen ---
         context.isMountPossible = possibleTrainingNames.includes(CompanionConfig.trainingNames.Reittier);
+        context.trainingBlockMessage = this.#getTrainingTabBlockMessage();
+        context.tricksBlockMessage = this.#getTricksTabBlockMessage();
         
         return context;
-    }
-	
-	async _refreshSheets() {
-        this.render({ force: true });
-        
-        if (this.parentSheet && this.parentSheet.rendered) {
-            this.parentSheet.render({ force: true });
-        }
     }
 
     _onRender(context, options) {
@@ -496,70 +471,40 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         tabSlider($(this.element));
     }
 
-    _onClickTab(event) {
-        const target = event.target.closest('[data-action="tab"]');
-        const tabName = target?.dataset.tab;
+    static async #onSpeciesSelectorAction() {
+        const selector = this.element.querySelector('#speciesSelector');
+        if (!selector) return;
 
-        if (!tabName) return super._onClickTab(event);
-        if (tabName === 'tricks' && this.#isTricksTabBlocked()) {
-            event.preventDefault();
-            ui.notifications.warn(_loc("COMPANIONS.Trick.NotPossible"));
-            return;
+        const showing = selector.hidden;
+        selector.hidden = !showing;
+        for (const part of ['tabs', 'loyalty', 'tricks', 'training']) {
+            const el = this.element.querySelector(`[data-application-part="${part}"]`);
+            if (el) el.hidden = showing;
         }
-
-        if (tabName === 'training') {
-            const trainingBlockMessage = this.#getTrainingTabBlockMessage();
-            if (trainingBlockMessage) {
-                event.preventDefault();
-                ui.notifications.warn(trainingBlockMessage);
-                return;
-            }
-        }
-
-        super._onClickTab(event);
     }
 
-    static async #onSpeciesSelectorAction(event) {
-        event.preventDefault();
-
-        if (event.type === 'contextmenu' || event.button === 2) {
-            await this.companion.unsetFlag('dsa5', 'species');
-            ui.notifications.info(_loc("COMPANIONS.Notification.SpeciesRemoved", {name: this.companion.name}));
-            await this._refreshSheets();
-            return;
-        }
-
-        const selector = this.element.querySelector('#speciesSelector');
-        if (selector) selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+    static async #removeSpecies() {
+        await this.companion.update({ 'system.companionData.species': null });
+        ui.notifications.info(_loc("COMPANIONS.Notification.SpeciesRemoved", {name: this.companion.name}));
+        this.render({ force: true });
     }
 
     static async #selectSpecies(event, target) {
-        event.preventDefault();
         const newSpecies = target.dataset.species;
-        await this.companion.setFlag('dsa5', 'species', newSpecies);
-        await this._refreshSheets();
+        await this.companion.update({ 'system.companionData.species': newSpecies });
+        this.render({ force: true });
     }
 
     static #toggleTrickDetails(event, target) {
-        event.preventDefault();
         const details = target.closest('.trick-container')?.querySelector('.trick-details');
         if (!details) return;
 
-        const isHidden = details.style.display === 'none' || details.style.display === '';
-        if (isHidden) {
-            details.style.display = 'block';
-            target.classList.remove('fa-chevron-right');
-            target.classList.add('fa-chevron-down');
-            return;
-        }
-
-        details.style.display = 'none';
-        target.classList.remove('fa-chevron-down');
-        target.classList.add('fa-chevron-right');
+        details.hidden = !details.hidden;
+        target.classList.toggle('fa-chevron-right', details.hidden);
+        target.classList.toggle('fa-chevron-down', !details.hidden);
     }
 
     static async #teachTrick(event, target) {
-        event.preventDefault();
         const trickName = target.dataset.trick;
 
         const familiarName = _loc("LocalizedIDs.familiar");
@@ -574,7 +519,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const allowedTestCount = isWild ? 5 : 7;
 
         let trickMod = 0;
-        const currentSpecies = this.companion.getFlag('dsa5', 'species');
+        const currentSpecies = this.companion.system.companionData.species;
         for (const group of Object.values(CompanionConfig.companionSpeciesData)) {
             if (group[currentSpecies]) {
                 const modStr = String(group[currentSpecies].trickMod).replace('–', '-');
@@ -586,7 +531,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         if (isFamiliar) trickMod += 2;
 
         const zoologyTalent = _loc("LocalizedIDs.Zoology");
-        const allTricks = await this.getAllTricks();
+        const allTricks = await this.constructor.getAllTricks();
         const trickData = allTricks.find(t => t.name === trickName);
         const apCost = trickData ? trickData.apCost : "?";
         const trickUuid = trickData ? trickData.uuid : "";
@@ -619,14 +564,12 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     static async #teachTraining(event, target) {
-        event.preventDefault();
         const trainingName = target.dataset.training;
-
         const familiarName = _loc("LocalizedIDs.familiar");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
 
         let trainingMod = 0;
-        const currentSpecies = this.companion.getFlag('dsa5', 'species');
+        const currentSpecies = this.companion.system.companionData.species;
         for (const group of Object.values(CompanionConfig.companionSpeciesData)) {
             if (group[currentSpecies]) {
                 const modStr = String(group[currentSpecies].trainingMod).replace('–', '-');
@@ -642,7 +585,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const allowedTestCount = 7;
         const zoologyTalent = _loc("LocalizedIDs.Zoology");
 
-        const allTrainings = await this.getAllTrainings();
+        const allTrainings = await this.constructor.getAllTrainings();
         const trainingData = allTrainings.find(t => t.name === trainingName);
         const apCost = trainingData ? trainingData.apCost : "?";
         const trainingUuid = trainingData ? trainingData.uuid : "";
@@ -675,15 +618,13 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     static async #openTrick(event, target) {
-        event.preventDefault();
         const uuid = target.dataset.uuid;
         const item = await fromUuid(uuid);
         if (item) item.sheet.render(true);
     }
 
     static async #rollTierkunde(event) {
-        event.preventDefault();
-        const tierkundeName = _loc("LocalizedIDs.animalLore");
+        const tierkundeName = _loc("LocalizedIDs.Zoology");
         const skillItem = this.actor.items.find(i => i.type === "skill" && i.name === tierkundeName);
 
         if (!skillItem) {
@@ -715,76 +656,72 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     static async #advanceLoyalty(event) {
-        event.preventDefault();
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+        const loyaltyItem = this.#findLoyaltyItem();
         if (!loyaltyItem) return;
 
         const currentFW = loyaltyItem.system.talentValue.value;
         const cost = DSA5.advancementCosts.B[currentFW];
         if (cost === undefined) return;
 
-        const currentAP = this.actor.system.details.experience.spent;
-        const totalAP = this.actor.system.details.experience.total;
-        if (totalAP - currentAP < cost) return;
+        if (!(await this.actor.checkEnoughXP(cost))) return;
 
         await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW + 1 }], { render: false });
-        await this.actor.update({ "system.details.experience.spent": currentAP + cost });
+        await this.actor._updateAPs(cost);
+        await APTracker.track(this.actor, { type: 'item', item: loyaltyItem, previous: currentFW, next: currentFW + 1 }, cost);
 
         await this.render({ force: true });
     }
 
     static async #refundLoyalty(event) {
-        event.preventDefault();
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+        const loyaltyItem = this.#findLoyaltyItem();
         if (!loyaltyItem) return;
 
         const currentFW = loyaltyItem.system.talentValue.value;
         if (currentFW <= 0) return;
 
-        const refundedCost = DSA5.advancementCosts.B[currentFW - 1];
-        const currentAP = this.actor.system.details.experience.spent;
+        const cost = DSA5.advancementCosts.B[currentFW - 1] * -1;
         await this.companion.updateEmbeddedDocuments("Item", [{ _id: loyaltyItem.id, "system.talentValue.value": currentFW - 1 }], { render: false });
-        await this.actor.update({ "system.details.experience.spent": Math.max(0, currentAP - refundedCost) });
+        await this.actor._updateAPs(cost);
+        await APTracker.track(this.actor, { type: 'item', item: loyaltyItem, previous: currentFW, next: currentFW - 1 }, cost);
 
         await this.render({ force: true });
     }
 
+    #findLoyaltyItem() {
+        const loyaltyName = _loc("LocalizedIDs.loyalty");
+        return this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+    }
+
     static #editItem(event, target) {
-        event.preventDefault();
         const item = this.companion.items.get(target.dataset.itemId);
         if (item) item.sheet.render(true);
     }
 
-
-
-    #isTricksTabBlocked() {
-        const currentSpecies = this.companion.getFlag('dsa5', 'species');
+    #getTricksTabBlockMessage() {
+        const currentSpecies = this.companion.system.companionData.species;
 
         for (const speciesDict of Object.values(CompanionConfig.companionSpeciesData)) {
             if (speciesDict[currentSpecies]?.trickMod === '*') {
-                return true;
+                return _loc("COMPANIONS.Trick.NotPossible");
             }
         }
 
-        return false;
+        return null;
     }
 
     #getTrainingTabBlockMessage() {
-        const abrichterName = _loc("COMPANIONS.Training.AnimalTrainer");
-        const hasAbrichter = this.actor.items.some(i => i.type === 'specialability' && i.name === abrichterName);
-        if (!hasAbrichter) return _loc("COMPANIONS.Notification.AnimalTrainingWarning");
+        const trainerName = _loc("COMPANIONS.Training.AnimalTrainer");
+        if (!this.actor.items.some(i => i.type === 'specialability' && i.name === trainerName))
+            return _loc("COMPANIONS.Notification.AnimalTrainingWarning");
 
-        const zoologyWildName = _loc("LocalizedIDs.zoologyWild");
         const familiarName = _loc("LocalizedIDs.familiar");
+        const wildName = _loc("LocalizedIDs.zoologyWild");
         const isFamiliar = this.companion.items.some(i => i.type === 'trait' && i.name === familiarName);
-        const isWild = !isFamiliar && this.companion.items.some(i => i.type === 'information' && i.name === zoologyWildName);
+        const isWild = !isFamiliar && this.companion.items.some(i => i.type === 'information' && i.name === wildName);
         if (!isWild) return null;
 
         const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
-        const loyaltyValue = loyaltyItem ? loyaltyItem.system.talentValue.value : 0;
+        const loyaltyValue = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName))?.system.talentValue.value ?? 0;
         return loyaltyValue < 10 ? _loc("COMPANIONS.Notification.WildAnimalLoyaltyWarning") : null;
     }
 }

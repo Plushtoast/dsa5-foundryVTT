@@ -1,5 +1,6 @@
 import Riding from '../system/automation/riding.js';
 import { TokenHoverHud } from './actor.js';
+import TokenScatter from '../animation/token-scatter.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -139,6 +140,35 @@ async function combineSwarm(actor, token) {
   await canvas.scene.deleteEmbeddedDocuments('Token', tokensToRemove);
 }
 
+function groupButtons(app, html) {
+  if (!game.user.isGM) return;
+
+  const actor = app.object.actor;
+  if (actor?.type !== 'group') return;
+
+  const token = app.object.document;
+  const deployed = token.flags?.dsa5?.memberTokenIds?.length > 0;
+
+  if (deployed) {
+    html.find('.col.left').prepend(
+      `<button type="button" class="control-icon" data-action="groupReform" data-tooltip="GROUP.reform"><i class="fas fa-compress-arrows-alt" width="36" height="36"></i></button>`
+    );
+    html.find('.control-icon[data-action="groupReform"]').on('click', () => {
+      TokenScatter.reform(token);
+    });
+  } else {
+    const members = [...(actor.system.actors || [])];
+    if (members.length > 0) {
+      html.find('.col.left').prepend(
+        `<button type="button" class="control-icon" data-action="groupDeploy" data-tooltip="GROUP.deploy"><i class="fas fa-expand-arrows-alt" width="36" height="36"></i></button>`
+      );
+      html.find('.control-icon[data-action="groupDeploy"]').on('click', () => {
+        TokenScatter.deploy(token, members);
+      });
+    }
+  }
+}
+
 function setTokenSpeedIndicator(actor, html, data) {
   const speed = actor.speedByMovementType(data.movementAction);
   const movementButton = html.find('button[data-palette="movementActions"][data-action="togglePalette"]')
@@ -160,6 +190,7 @@ export default function () {
     if (actor) {
       addThirdBarToHUD(html, actor, app);
       swarmButtons(app, html, data);
+      groupButtons(app, html);
 
       game.dsa5.apps.LightDialog?.lightHud(html, actor, data);
     }

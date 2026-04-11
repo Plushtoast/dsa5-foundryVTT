@@ -276,7 +276,8 @@
         "priceMod": "Base price / Modified price (Double-<i class=\"fas fa-computer-mouse\"></i> for custom price)",
         "yourOffer": "Your offer",
         "otherOffer": "Offer of the trading partner",
-        "accept": "Accept"
+        "accept": "Accept",
+        "completeTrade": "Complete Trade"
     },
     "GROUP": {
         "members": "Members",
@@ -2466,6 +2467,7 @@
         "mute": "Mute",
         "wrestle": "Brawling",
         "riding": "Riding",
+        "riderTraining": "Mount",
         "lockpick": "Pick Locks",
         "ruggedFighter": "Rugged Fighter",
         "sensitiveToPain": "Sensitive to Pain",
@@ -3476,10 +3478,10 @@
         }
     },
     "COMPANIONS": {
-        "Abenteuerpunktekosten": "Adventure Point Costs",
         "Companion": "Pets",
         "controlViaHotbar": "Control companion via hotbar",
         "domesticatedAnimal": "Domesticated Animal",
+        "dropHint": "Drag & drop an actor here to add it as a companion.",
         "Finish": "Finish",
         "Group": {
             "Companion": "Group Companions",
@@ -3505,6 +3507,7 @@
             "CritGain": "{name} achieved a critical success! Loyalty increases by {change} points.",
             "ImprovementText": "The SR in Loyalty can only be improved if an Animal Lore check is successful. The heroine must spend several hours a day (about 1 LeH) intensely engaging with the animal. She can repeat the check if she fails, as usual. If the check succeeds, the heroine can spend AP to increase the Loyalty value (not the animal).",
             "label": "Loyalty",
+            "missingHint": "This creature does not have the Loyalty talent. Add it to enable companion details.",
             "NotFound": "The talent '{talent}' could not be found in any compendium and was therefore not added."
         },
         "Notification": {
@@ -3517,11 +3520,15 @@
             "MacroError": "Macro error from {name}: {error}",
             "MaxTricksReached": "{name} has now learned the maximum number of tricks possible.",
             "MissingTalent": "Your character does not have the '{talent}' talent.",
+            "NoActorOnMap": "{name} is not on the map.",
+            "NoOwnerOrPetOnMap": "Neither {owner} nor {pet} is on the map.",
             "NoPermissionRegeneration": "You do not have permission to roll regeneration for this actor.",
             "NotEnoughPetAP": "{name} doesn't have enough AP for this trick. {cost} AP are required.",
             "NotPetOwner": "You are not the owner of {name} and cannot perform this action.",
             "SpeciesRemoved": "{name} is no longer assigned to a specific species.",
             "TokenLinkWarning": "Action cancelled: The companion must have 'Link Actor Data' enabled in the token settings!",
+            "TokenLinkExplanation": "<p><b>{name}</b> does not have <i>Link Actor Data</i> enabled.</p><p><b>Linked</b> — Every token on the map references the same actor. Changes to hit points, conditions, etc. are shared across all tokens and the character sheet.</p><p><b>Unlinked</b> — Each token placed on the map is an independent copy. Changes to one token do not affect others or the base actor.</p><p>Companions should usually be <b>linked</b> so that the companion tab shows the correct, up-to-date values.</p>",
+            "TokenLinkEnableBtn": "Enable Link & Add",
             "WildAnimalLoyaltyWarning": "Wild animals require a loyalty value of 10 or higher for training.",
             "WildAnimalTrainerWarning": "To train wild animals, you need the Animal Trainer special ability."
         },
@@ -3529,6 +3536,7 @@
         "Owner": "Owner",
         "RemoveCompanion": "Remove Companion",
         "removeMount": "Remove mount entry",
+        "TradeWithCompanion": "Trade with Companion",
         "SkillSelection": {
             "FamiliarAbilities": "Familiar Abilities",
             "HomunculusAbilities": "Homunculus Abilities",
@@ -3536,6 +3544,11 @@
             "label": "Skill Selection",
             "OpenItemSheet": "Left-<i class=\"fas fa-computer-mouse\"></i>: Open item",
             "RemoveFromHotbar": "Right-<i class=\"fas fa-computer-mouse\"></i>: Remove from hotbar"
+        },
+        "Species": {
+            "TrainingMod": "Training modifier",
+            "TrainingModules": "Possible training modules",
+            "TrickMod": "Trick modifier"
         },
         "train": "Train",
         "Training": {
@@ -3556,9 +3569,8 @@
             "NoLearned": "No training learned yet.",
             "ProbeRule": "In order to give an animal a training module, the heroine must pass an accumulated test in Animal Lore, 1 month, 7 attempts. The modifier for the test depends on the species.",
             "ShortPrefix": "Training:",
-            "SpeciesChangeHint": "Left-<i class=\"fas fa-computer-mouse\"></i>: Change species\nRight-<i class=\"fas fa-computer-mouse\"></i>: Remove species",
-            "SpeciesDetected": "The animal companion is a {species}.",
-            "SpeciesUnknown": "The species could not be automatically determined.",
+            "RemoveSpecies": "Remove species",
+            "SpeciesChangeHint": "Change species",
             "Tab": "Training",
             "TabName": "Training",
             "TeachBtn": "Train",

@@ -1,4 +1,5 @@
 <div class="flex0 actorPart collapsibleBarPart tooltipConnector" data-tooltip-direction="UP">
+    {{#if resources}}
     <div class="flexrow resources">
         <div class="flex0 LeP" data-tooltip-html="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
             {{resources.LeP.value}}/{{resources.LeP.max}}
@@ -14,6 +15,7 @@
         </div>
         {{/if}}
     </div>
+    {{/if}}
     {{#if actionPips}}
     <div class="action-pips flexrow">
         <div class="pip free-action {{#if actionPips.freeAction.used}}depleted{{/if}}"
