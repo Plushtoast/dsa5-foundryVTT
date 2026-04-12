@@ -2,10 +2,13 @@ const { getProperty, mergeObject } = foundry.utils;
 
 export default function () {
   Hooks.on('preCreateScene', function (doc, createData, options, userId) {
-    if (!createData.grid?.units) doc.updateSource({ grid: { units: _loc('gridUnits') } });
+    if (!createData.grid?.units) {
+      doc.updateSource({ grid: { units: _loc('gridUnits') } });
+    }
 
-    if (!createData.backgroundColor) {
-      doc.updateSource({ backgroundColor: '#000000' });
+    const firstLevel = doc.levels.contents[0];
+    if (firstLevel && !createData.backgroundColor && !createData.levels) {
+      firstLevel.updateSource({ background: { color: '#000000' } });
     }
 
     if (!doc.pack && !options.dsaInit && createData.notes?.some((x) => getProperty(x, 'flags.dsa5.initName'))) {

@@ -53,6 +53,11 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     });
   }
 
+  static _cleanData(source, options, _state) {
+    super._cleanData(source, options, _state);
+    if (source.worn) source.worn.value = false;
+  }
+
   async getSheetData(data) {
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();

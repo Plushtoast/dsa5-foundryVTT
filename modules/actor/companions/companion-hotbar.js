@@ -1,5 +1,6 @@
 const ICON_CONTROL = 'fa-arrows-to-eye';
 const ICON_SUMMON = 'fa-bell';
+const POSITION_STYLE = 'left:calc(50% + 40px);top:1px;';
 
 export default class CompanionHotbar {
   /**
@@ -47,6 +48,7 @@ export default class CompanionHotbar {
         img: ownerActor.img,
         tooltip: _loc('COMPANIONS.Hotbar.ControlActor', { name: ownerActor.name }),
         statusIcon: ICON_CONTROL,
+        style: POSITION_STYLE,
       };
     } else {
       context.companion = {
@@ -58,6 +60,7 @@ export default class CompanionHotbar {
           ? _loc('COMPANIONS.Hotbar.ControlActor', { name: petActor.name })
           : _loc('COMPANIONS.Hotbar.SummonActor', { name: petActor.name }),
         statusIcon: petOnScene ? ICON_CONTROL : ICON_SUMMON,
+        style: POSITION_STYLE,
       };
     }
   }

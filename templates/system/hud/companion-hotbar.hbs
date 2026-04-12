@@ -1,15 +1,14 @@
 {{#if companion}}
-<div class="weapon companion-hotbar-icon dsa5-companion"
+<div class="weapon companion-hotbar-icon"
     data-action="companionClick"
     data-uuid="{{companion.uuid}}"
     data-owner-uuid="{{companion.ownerUuid}}"
     data-is-controlling-pet="{{companion.isControllingPet}}"
-    data-tooltip="{{companion.tooltip}}">
-    <div class="companion-hotbar-wrapper">
-        <img src="{{companion.img}}" class="companion-hotbar-image" />
-        <div class="status-icon companion-hotbar-status">
-            <i class="fa-solid {{companion.statusIcon}}"></i>
-        </div>
+    data-tooltip="{{companion.tooltip}}"
+    style="{{companion.style}}">
+    <img src="{{companion.img}}" />
+    <div class="status-icon">
+        <i class="fa-solid {{companion.statusIcon}}"></i>
     </div>
 </div>
 {{/if}}

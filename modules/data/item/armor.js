@@ -38,6 +38,11 @@ export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, Descri
     });
   }
 
+  static _cleanData(source, options, _state) {
+    super._cleanData(source, options, _state);
+    if (source.worn) source.worn.value = false;
+  }
+
   static _migrateData(source) {
     super._migrateData(source);
 

@@ -1,41 +1,5 @@
-.dsa5-companion {
-
-    /* COMPANION HOTBAR ICON STYLES               */
-
-
-    .companion-hotbar-icon {
-        position: absolute;
-        left: calc(50% + 40px);
-        top: 0px;
-        width: 42px;
-        height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 2;
-        cursor: pointer;
-    }
-
-    .companion-hotbar-wrapper {
-        border-radius: 50%;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.5);
-        position: relative;
-    }
-
-    .companion-hotbar-image {
-        border: none;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .companion-hotbar-status {
+.companion-hotbar-icon {
+    .status-icon {
         position: absolute;
         inset: 0;
         display: flex;
@@ -44,16 +8,19 @@
         font-size: 22px;
         background: rgba(0, 0, 0, 0.4);
         color: rgba(0, 0, 0, 0.8);
+        border-radius: 50%;
         opacity: 0;
         transition: opacity 0.2s ease-in-out;
         z-index: 3;
         pointer-events: none;
     }
 
-    .companion-hotbar-icon:hover .companion-hotbar-status {
+    &:hover .status-icon {
         opacity: 1;
     }
+}
 
+.dsa5-companion {
 
     /* COMPANION SHEET TAB STYLES                 */
 
