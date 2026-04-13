@@ -126,12 +126,7 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     });
   }
 
-  static async open({ actors, title = 'DSAQUERIES.COMMANDS.addActor', header = '', callback } = {}) {
-    if (!actors?.length) {
-      ui.notifications.info('DSAQUERIES.NOTIFICATIONS.noAvailableActors', { localize: true });
-      return;
-    }
-
+  static async open({ actors = [], title = 'DSAQUERIES.COMMANDS.addActor', header = '', callback } = {}) {
     const content = await renderTemplate(this.TEMPLATE, { actors, header });
 
     const dialog = new this({

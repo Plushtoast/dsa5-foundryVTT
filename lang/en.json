@@ -320,7 +320,12 @@
         "shareOwnership": "Share Ownership with All Players",
         "ownershipShared": "Ownership shared with all players.",
         "openGroupSheet": "Group Sheet",
-        "tradeWithDepot": "Trade with Depot"
+        "tradeWithDepot": "Trade with Depot",
+        "primaryPartyPrompt": "No primary party is configured yet. Select an existing group sheet or create a new one and set it as the primary party.",
+        "primaryPartySelect": "Existing group sheet",
+        "useExistingGroup": "Use selected group",
+        "createNewGroup": "Create new group",
+        "noExistingGroups": "No existing group sheets available"
     },
     "locationTypes": {
         "foot": "On Foot",
@@ -358,7 +363,7 @@
         "journalBrowser": "Open the journal browser",
         "library": "Open the library",
         "attack": "Open the attack dialog for the current actor or player",
-        "openGroupSheet": "Open the primary group sheet"
+        "openGroupSheet": "Open or assign the primary group sheet"
     },
     "advanced": "Advanced",
     "requiredFW": "Required SR",

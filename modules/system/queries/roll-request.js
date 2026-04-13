@@ -59,8 +59,6 @@ export default class RollRequestService {
         const [selectedName, selectedType] = skillValue.split('|');
         const selectedModifier = Number($form.find('[name="modifier"]').val()) || 0;
 
-        if (!actorIds.length) return;
-
         const actors = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
         this.createRequest({
           category: selectedType,

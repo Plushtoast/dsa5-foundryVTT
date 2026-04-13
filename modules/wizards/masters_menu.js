@@ -8,6 +8,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
+import GroupActorSheet from '../actor/group-sheet.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
@@ -292,26 +293,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _openPartySheet() {
-    const partyId = game.settings.get('dsa5', 'primaryParty');
-    let party = partyId ? fromUuidSync(partyId) : null;
-
-    if (!party) {
-      const trackedActors = game.settings.get('dsa5', 'trackedActors');
-      const actorIds = trackedActors.actors || [];
-      const actors = game.actors.filter((a) => actorIds.includes(a.id) && a.type !== 'group');
-      if (!actors.length) {
-        ui.notifications.warn('GROUP.noMembers', { localize: true });
-        return;
-      }
-
-      party = await Actor.create({ name: _loc('GROUP.members'), type: 'group' });
-      for (const actor of actors) {
-        await party.system.addMember(actor);
-      }
-      await game.settings.set('dsa5', 'primaryParty', party.uuid);
-    }
-
-    party.sheet.render(true);
+    await GroupActorSheet.openPartySheet();
   }
 
   async _onRender(context, options) {

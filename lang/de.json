@@ -895,7 +895,7 @@
         "journalBrowser": "Öffne den Journalbrowser",
         "library": "Öffne die Bibliothek",
         "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)",
-        "openGroupSheet": "Öffne das Gruppenblatt der Hauptgruppe"
+        "openGroupSheet": "Hauptgruppenblatt öffnen oder festlegen"
     },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
@@ -3307,7 +3307,12 @@
         "shareOwnership": "Besitz mit allen Spielern teilen",
         "ownershipShared": "Besitz mit allen Spielern geteilt.",
         "openGroupSheet": "Gruppenblatt",
-        "tradeWithDepot": "Handel mit Depot"
+        "tradeWithDepot": "Handel mit Depot",
+        "primaryPartyPrompt": "Es ist noch keine Hauptgruppe festgelegt. Wähle ein vorhandenes Gruppenblatt aus oder erstelle ein neues und lege es direkt als Hauptgruppe fest.",
+        "primaryPartySelect": "Vorhandenes Gruppenblatt",
+        "useExistingGroup": "Ausgewählte Gruppe verwenden",
+        "createNewGroup": "Neue Gruppe erstellen",
+        "noExistingGroups": "Keine vorhandenen Gruppenblätter verfügbar"
     },
     "locationTypes": {
         "foot": "Zu Fuß",

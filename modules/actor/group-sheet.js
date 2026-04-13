@@ -16,12 +16,94 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
 export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
+  static PRIMARY_PARTY_DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/group-primary-party-dialog.hbs';
+
   static TRAVEL_ICONS = {
     foot: 'fa-person-walking',
     vehicle: 'fa-horse',
     river: 'fa-sailboat',
     sea: 'fa-ship',
   };
+
+  static async openPartySheet() {
+    const party = await this.#resolvePrimaryParty();
+    party?.sheet?.render(true);
+  }
+
+  static async #resolvePrimaryParty() {
+    const partyId = game.settings.get('dsa5', 'primaryParty');
+    const party = partyId ? fromUuidSync(partyId) : null;
+    if (party) return party;
+    if (!game.user.isGM) return null;
+
+    return await this.#promptPrimaryPartySelection();
+  }
+
+  static #availablePartyGroups() {
+    return game.actors.filter((actor) => actor.type === 'group').sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
+  }
+
+  static async #promptPrimaryPartySelection() {
+    const groups = this.#availablePartyGroups();
+    const hasGroups = groups.length > 0;
+    const content = await renderTemplate(this.PRIMARY_PARTY_DIALOG_TEMPLATE, {
+      groups: groups.map((group) => ({ id: group.id, name: group.name })),
+      hasGroups,
+      selectedGroupId: groups[0]?.id ?? '',
+    });
+
+    let result;
+    try {
+      result = await foundry.applications.api.DialogV2.wait({
+        window: {
+          title: _loc('GROUP.openGroupSheet'),
+        },
+        content,
+        buttons: [
+          ...(hasGroups ? [
+            {
+              action: 'select',
+              icon: 'fas fa-users',
+              label: 'GROUP.useExistingGroup',
+              default: true,
+              callback: (_event, button, dialog) => ({
+                action: 'select',
+                groupId: (button.form || dialog.form || dialog.element)?.querySelector('[name="groupId"]')?.value,
+              }),
+            },
+          ] : []),
+          {
+            action: 'create',
+            icon: 'fas fa-plus',
+            label: 'GROUP.createNewGroup',
+            default: !hasGroups,
+            callback: () => ({ action: 'create' }),
+          },
+          {
+            action: 'cancel',
+            icon: 'fas fa-times',
+            label: 'cancel',
+            callback: () => null,
+          },
+        ],
+      });
+    } catch {
+      return null;
+    }
+
+    if (!result) return null;
+
+    let party;
+    if (result.action === 'select') {
+      party = game.actors.get(result.groupId);
+      if (!party) return null;
+    } else {
+      party = await Actor.create({ name: _loc('GROUP.members'), type: 'group' });
+    }
+
+    await game.settings.set('dsa5', 'primaryParty', party.uuid);
+    return party;
+  }
 
   static propertiesToEnrich = [
     { key: 'enrichedBiography', path: 'details.biography' },
@@ -694,10 +776,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     });
   }
 
-  static #setPrimaryParty() {
+  static async #setPrimaryParty() {
     const current = game.settings.get('dsa5', 'primaryParty');
     const newValue = current === this.actor.uuid ? '' : this.actor.uuid;
-    game.settings.set('dsa5', 'primaryParty', newValue);
+    await game.settings.set('dsa5', 'primaryParty', newValue);
     this.render();
   }
 
