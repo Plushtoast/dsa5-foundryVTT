@@ -1543,7 +1543,7 @@ export default class Actordsa5 extends Actor {
 
     if (!data.img) update.img = 'icons/svg/mystery-man-black.svg';
 
-    if (data.type == 'character') {
+    if (['character', 'group'].includes(data.type)) {
       mergeObject(update, {
         prototypeToken: {
           sight: { enabled: true },

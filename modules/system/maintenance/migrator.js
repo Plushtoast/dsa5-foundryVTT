@@ -22,14 +22,22 @@ async function announceChangelog(json) {
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
     console.log('Configuring default token settings');
-    const defaultToken = game.settings.get('core', 'prototypeTokenOverrides');
-
-    defaultToken.base.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.base.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.base.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
-    defaultToken.base.bar1 = { attribute: 'status.wounds' };
-    defaultToken.character.sight.enabled = true;
-    await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);
+    const defaultToken = game.settings.get('core', foundry.data.PrototypeTokenOverrides.SETTING);
+    defaultToken.updateSource({
+      base: {
+        displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+        displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+        disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+        bar1: { attribute: 'status.wounds' },
+      },
+      character: {
+        sight: { enabled: true },
+      },
+      group: {
+        sight: { enabled: true },
+      }
+    })
+    await game.settings.set('core', foundry.data.PrototypeTokenOverrides.SETTING, defaultToken.toObject());
     await game.settings.set('core', 'leftClickRelease', true);
     await game.settings.set('dsa5', 'defaultConfigFinished', true);
     await migrateTo33();
@@ -106,7 +114,9 @@ async function setDefaultSkin() {
   const uiConfig = game.settings.get('core', 'uiConfig');
   const dsaSkin = game.settings.get('dsa5', 'globalStyle');
 
-  const setDefaults = dsaSkin != 'dsa5-immersive' || uiConfig.colorScheme.interface != 'light' || uiConfig.colorScheme.applications != 'light';
+  if (!Object.hasOwn(DSA5.baseStyles ?? {}, dsaSkin)) return;
+
+  const setDefaults = dsaSkin !== 'dsa5-immersive' || uiConfig.colorScheme.interface !== 'light' || uiConfig.colorScheme.applications !== 'light';
   if (!setDefaults) return;
 
   const proceed = await foundry.applications.api.DialogV2.confirm({

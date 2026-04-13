@@ -150,6 +150,7 @@ Hooks.once('init', () => {
 
   ItemSheetdsa5.setupSheets();
 
+  DSA5.baseStyles = { ...DSA5.styles };
   Hooks.call('registerDSAstyle', DSA5.styles);
 
   DSAWorldCalendar.prepare();
