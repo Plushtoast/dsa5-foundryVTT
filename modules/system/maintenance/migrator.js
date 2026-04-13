@@ -92,7 +92,9 @@ async function setDefaultSkin() {
   const uiConfig = game.settings.get('core', 'uiConfig');
   const dsaSkin = game.settings.get('dsa5', 'globalStyle');
 
-  const setDefaults = dsaSkin != 'dsa5-immersive' || uiConfig.colorScheme.interface != 'light' || uiConfig.colorScheme.applications != 'light';
+  if (!Object.hasOwn(DSA5.baseStyles ?? {}, dsaSkin)) return;
+
+  const setDefaults = dsaSkin !== 'dsa5-immersive' || uiConfig.colorScheme.interface !== 'light' || uiConfig.colorScheme.applications !== 'light';
   if (!setDefaults) return;
 
   const proceed = await foundry.applications.api.DialogV2.confirm({
