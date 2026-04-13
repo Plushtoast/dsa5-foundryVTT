@@ -523,14 +523,113 @@ export default class Itemdsa5 extends Item {
 
   prepareDerivedData() {
     super.prepareDerivedData();
+    this.overrides = {};
+    this.applyEnhancementEffects();
     if (!this.actor) this.applyActiveEffects();
   }
 
+  applyEnhancementEffects() {
+    const changes = [];
+    const specialAttributeParts = [];
+
+    for (const effect of this.effects) {
+      if (effect.type !== 'enhancement' || effect.disabled) continue;
+      changes.push(...effect.system.changes.map((change) => ({ ...change, effect })));
+
+      const attrs = effect.system.specialAttributes;
+      if (attrs) {
+        specialAttributeParts.push(
+          ...attrs.split(',').map(s => s.trim()).filter(Boolean)
+        );
+      }
+    }
+
+    if (specialAttributeParts.length) {
+      const existing = (foundry.utils.getProperty(this, 'system.effect.attributes') || '').split(',').map(s => s.trim()).filter(Boolean);
+      for (const attr of specialAttributeParts) {
+        if (!existing.includes(attr)) existing.push(attr);
+      }
+      foundry.utils.setProperty(this, 'system.effect.attributes', existing.join(', '));
+    }
+
+    if (!changes.length) return;
+
+    changes.sort((a, b) => a.priority - b.priority);
+    foundry.documents.ActiveEffect.implementation._shimChanges(changes);
+
+    const replacementData = this.getRollData();
+    for (const change of changes) {
+      if (!change.key) continue;
+
+      if (change.key === 'system.damage.value') {
+        this._applyEnhancementDamage(change);
+        continue;
+      }
+
+      if (change.key === 'system.reach.value' && this.type === 'rangeweapon') {
+        this._applyEnhancementRangeMultiplier(change);
+        continue;
+      }
+
+      const result = DSAActiveEffect.applyChange(this, change, { replacementData });
+      if (foundry.utils.isPlainObject(result)) Object.assign(this.overrides, result);
+
+      if (change.key === 'system.protection.value' && this.type === 'armor') {
+        this._replicateProtectionToZones(change);
+      }
+    }
+  }
+
+  _applyEnhancementDamage(change) {
+    const bonus = Number(change.value) || 0;
+    if (bonus === 0) return;
+
+    const base = foundry.utils.getProperty(this, 'system.damage.value') || '1d6';
+    let result;
+
+    if (/[+-]\d+$/.test(base)) {
+      const match = base.match(/([+-])(\d+)$/);
+      const newNumber = parseInt(match[0]) + bonus;
+      result = base.replace(match[0], '') + (newNumber >= 0 ? '+' : '-') + Math.abs(newNumber);
+    } else {
+      result = base + (bonus >= 0 ? '+' : '-') + Math.abs(bonus);
+    }
+
+    foundry.utils.setProperty(this, 'system.damage.value', result);
+  }
+
+  _applyEnhancementRangeMultiplier(change) {
+    const multiplier = Number(change.value) || 1;
+    if (multiplier === 1) return;
+
+    const base = foundry.utils.getProperty(this, 'system.reach.value') || '';
+    const parts = base.split('/').map(s => s.trim());
+    const result = parts.map(p => {
+      const num = Number(p);
+      return isNaN(num) ? p : Math.round(num * multiplier);
+    }).join('/');
+
+    foundry.utils.setProperty(this, 'system.reach.value', result);
+  }
+
+  _replicateProtectionToZones(change) {
+    const bonus = Number(change.value) || 0;
+    if (bonus === 0) return;
+
+    const zones = ['head', 'leftarm', 'rightarm', 'leftleg', 'rightleg'];
+    for (const zone of zones) {
+      const current = foundry.utils.getProperty(this, `system.protection.${zone}`) || 0;
+      if (current !== 0) {
+        foundry.utils.setProperty(this, `system.protection.${zone}`, current + bonus);
+      }
+    }
+  }
+
   applyActiveEffects() {
-    this.overrides = {};
     const changes = [];
 
     for (const effect of this.effects) {
+      if (effect.type === 'enhancement') continue;
       const delayedData = effect.system?.delayed;
       const isDelayed = !!delayedData?.enabled;
       if (effect.disabled || !effect.transfer || isDelayed) continue;

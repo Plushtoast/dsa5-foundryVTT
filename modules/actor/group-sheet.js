@@ -52,6 +52,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     members: {
       template: 'systems/dsa5/templates/actors/group/group-members.hbs',
       scrollable: [''],
+      templates: [
+        'systems/dsa5/templates/actors/parts/member-card-header.hbs',
+      ],
     },
     skills: {
       template: 'systems/dsa5/templates/actors/group/group-skills.hbs',
@@ -82,6 +85,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       heroLink: this.#heroLink,
       heroSchip: this.#heroSchip,
       heroContextMenu: this.#heroContextMenu,
+      memberContextMenu: this.#heroContextMenu,
+      memberCardLink: this.#heroLink,
       addLocation: this.#addLocation,
       removeLocation: this.#removeLocation,
       openLocationSheet: this.#openLocationSheet,

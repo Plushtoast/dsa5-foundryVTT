@@ -68,6 +68,7 @@ export default class DSA5StatusEffects {
     const isGM = game.user.isGM;
 
     for (const cnd of target.allApplicableEffects()) {
+      if (cnd.type === 'enhancement') continue;
       if (!isGM && cnd.system.visibility.hidePlayers) continue;
       if (cnd.notApplicable) continue;
 

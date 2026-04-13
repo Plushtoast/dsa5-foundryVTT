@@ -1,0 +1,9 @@
+<div class="tab standard-form scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    <div class="margin-top">
+        <div class="row-section">
+            <div class="col {{#unless source.description}}item-box{{/unless}}">
+                {{formInput fields.description value=source.description toggled=true enriched=enrichedDescription}}
+            </div>
+        </div>
+    </div>
+</div>

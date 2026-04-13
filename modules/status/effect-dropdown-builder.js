@@ -547,4 +547,146 @@ export default class EffectDropdownBuilder {
 
         return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;
     }
+
+    // --- Enhancement-specific methods ---
+
+    static _getEnhancementGroupDefinitions(targetType) {
+        const groups = [];
+
+        if (['meleeweapon', 'rangeweapon'].includes(targetType)) {
+            groups.push({
+                key: 'combat',
+                icon: 'fa-solid fa-swords',
+                label: _loc('ActiveEffects.wizardCategories.combat'),
+                subgroups: this._getEnhancementCombatOptions(targetType),
+            });
+        }
+
+        if (targetType === 'armor') {
+            groups.push({
+                key: 'protection',
+                icon: 'fa-solid fa-shield-halved',
+                label: _loc('ActiveEffects.wizardCategories.protection'),
+                subgroups: this._getEnhancementProtectionOptions(),
+            });
+        }
+
+        groups.push({
+            key: 'general',
+            icon: 'fa-solid fa-box',
+            label: _loc('Enhancement.wizardCategories.general'),
+            subgroups: this._getEnhancementGeneralOptions(targetType),
+        });
+
+        return groups.filter((g) => g.subgroups.some((s) => s.options.length));
+    }
+
+    static _getEnhancementCombatOptions(targetType) {
+        const damage = _loc('damage');
+        const crit = _loc('CriticalSuccess');
+        const botch = _loc('CriticalFailure');
+
+        const options = [
+            { name: damage, val: 'system.damage.value', type: 'add', ph: '1' },
+            { name: crit, val: 'system.crit', type: 'add', ph: '-1' },
+            { name: botch, val: 'system.botch', type: 'add', ph: '-1' },
+        ];
+
+        if (targetType === 'meleeweapon') {
+            options.push(
+                { name: _loc('atmod'), val: 'system.atmod.value', type: 'add', ph: '1' },
+                { name: _loc('pamod'), val: 'system.pamod.value', type: 'add', ph: '1' },
+                { name: _loc('damageThreshold'), val: 'system.damageThreshold.value', type: 'add', ph: '1' },
+            );
+        }
+
+        if (targetType === 'rangeweapon') {
+            options.push(
+                { name: _loc('reloadTime'), val: 'system.reloadTime.value', type: 'add', ph: '-1' },
+            );
+        }
+
+        return [{ sub: DSA5_Utility.categoryLocalization(targetType), options }];
+    }
+
+    static _getEnhancementProtectionOptions() {
+        const protection = _loc('protection');
+        return [{
+            sub: protection,
+            options: [
+                { name: protection, val: 'system.protection.value', type: 'add', ph: '1' },
+                { name: _loc('encumbrance'), val: 'system.encumbrance.value', type: 'add', ph: '-1' },
+            ],
+        }];
+    }
+
+    static _getEnhancementGeneralOptions(targetType) {
+        const options = [
+            { name: _loc('price'), val: 'system.price.value', type: 'add', ph: '10' },
+            { name: _loc('Weight'), val: 'system.weight.value', type: 'add', ph: '-0.25' },
+        ];
+
+        if (targetType === 'equipment') {
+            options.push(
+                { name: _loc('carrycapacity'), val: 'system.capacity', type: 'add', ph: '1' },
+            );
+        }
+
+        const hasStructure = ['meleeweapon', 'rangeweapon', 'armor'].includes(targetType);
+        if (hasStructure) {
+            const structure = _loc('structure');
+            options.push(
+                { name: structure, val: 'system.structure.max', type: 'add', ph: '1' },
+            );
+        }
+
+        return [{ sub: _loc('Enhancement.wizardCategories.general'), options }];
+    }
+
+    static buildEnhancementDropdownMenu(targetType) {
+        const groups = this._getEnhancementGroupDefinitions(targetType);
+        const options = groups.flatMap((g) => g.subgroups.flatMap((s) => s.options));
+        options.sort((a, b) => a.name.localeCompare(b.name));
+        return this._generateDropdownHTML(options);
+    }
+
+    static buildEnhancementGroupedDropdownMenu(targetType, categoryFilter = null) {
+        const groups = this._getEnhancementGroupDefinitions(targetType);
+        const filtered = categoryFilter ? groups.filter((g) => g.key === categoryFilter) : groups;
+
+        const optgroupStrings = filtered
+            .filter((g) => g.subgroups.some((s) => s.options.length))
+            .flatMap((g) => {
+                if (categoryFilter) {
+                    return g.subgroups.filter((s) => s.options.length).map((s) => {
+                        const sorted = s.options.sort((a, b) => a.name.localeCompare(b.name));
+                        const opts = sorted
+                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
+                            .join('\n');
+                        return `<optgroup label="${s.sub}">${opts}</optgroup>`;
+                    });
+                }
+                const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
+                const opts = allOpts
+                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
+                    .join('\n');
+                return [`<optgroup label="${g.label}">${opts}</optgroup>`];
+            })
+            .join('\n');
+
+        return `<select class="wizardMenu"><option value="">-</option>${optgroupStrings}</select>`;
+    }
+
+    static getEnhancementWizardCategories(targetType) {
+        return this._getEnhancementGroupDefinitions(targetType)
+            .filter((g) => g.subgroups.some((s) => s.options.length))
+            .map(({ key, label, icon }) => ({ key, label, icon }));
+    }
+
+    static supportsEnhancementWizardChanges(targetType, changes = []) {
+        if (!changes?.length) return true;
+        const groups = this._getEnhancementGroupDefinitions(targetType);
+        const supportedKeys = new Set(groups.flatMap((g) => g.subgroups.flatMap((s) => s.options.map((o) => o.val))));
+        return changes.every((change) => !change?.key || supportedKeys.has(change.key));
+    }
 }

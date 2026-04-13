@@ -11,6 +11,8 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       region: new StringField({ initial: '', label: 'PLANT.region' }),

@@ -46,6 +46,7 @@ import { ActorDataModel } from './baseactor.js';
 import { DSACombatDataModel } from './combat/dsacombat.js';
 import { DSACombatantDataModel } from './combatant/dsacombatant.js';
 import DSAActiveEffectDataModel from './activeeffect/dsaeffect.js';
+import DSAEnhancementEffectDataModel from './activeeffect/enhancement-effect.js';
 
 export const itemModels = {
     advantage: AdvantageData,
@@ -110,5 +111,6 @@ export const CombatantDataModels = {
 }
 
 export const ActiveEffectDataModels = {
-    base: DSAActiveEffectDataModel
+    base: DSAActiveEffectDataModel,
+    enhancement: DSAEnhancementEffectDataModel
 }

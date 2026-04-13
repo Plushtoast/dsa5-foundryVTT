@@ -947,6 +947,12 @@ DSA5.noteIcons = {
   Trail: 'systems/dsa5/icons/thirdparty/trail.svg',
 };
 
+DSA5.enhancementTypes = {
+    material: 'Enhancement.types.material',
+    creationTechnique: 'Enhancement.types.creationTechnique',
+    improvement: 'Enhancement.types.improvement',
+};
+
 DSA5.SKILL = SKILL;
 
 DSA5.NEEDS_MIGRATION_VERSION = 38;

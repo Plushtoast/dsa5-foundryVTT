@@ -168,7 +168,8 @@ export default class CompanionHandler {
         return {
             changeCompanionNature: this._changeCompanionNatureAction,
             companionEffect: { handler: this._companionEffectAction, buttons: [0, 2] },
-            removeCompanion: this._removeCompanionAction,
+            memberContextMenu: this._companionContextMenuAction,
+            memberCardLink: this._companionCardLinkAction,
             openSkillSelection: this._openSkillSelectionAction,
             executeCompanionSkill: this._executeCompanionSkillAction,
             trainCompanion: this._trainCompanionAction,
@@ -179,7 +180,6 @@ export default class CompanionHandler {
             editAggregatedTest: this._editAggregatedTestAction,
             companionSkillSelect: this._companionSkillSelectAction,
             companionItemEdit: this._companionItemEditAction,
-            tradeWithCompanion: this._tradeWithCompanionAction,
         };
     }
 
@@ -273,6 +273,35 @@ export default class CompanionHandler {
 
         await actor.sheet.render(true, { focus: true, tab: { sheet: target.dataset.tab } });
         this.close();
+    }
+
+    static async _companionCardLinkAction(_ev, target) {
+        const actor = await CompanionHandler._resolveActor(target.closest('.companion-header-ui'));
+        if (!actor) return;
+        actor.sheet.render(true, { focus: true });
+    }
+
+    static async _companionContextMenuAction(_ev, target) {
+        const card = target.closest('.companion-header-ui');
+        const compActor = await CompanionHandler._resolveActor(card);
+        if (!compActor) return;
+
+        const app = this;
+        const menu = new foundry.applications.ux.ContextMenu(this.element, '', [
+            {
+                label: _loc('COMPANIONS.TradeWithCompanion'),
+                icon: '<i class="fas fa-hands-holding"></i>',
+                onClick: () => CompanionHandler._tradeWithCompanionAction.call(app, _ev, card),
+            },
+            {
+                label: _loc('SHEET.DeleteItem'),
+                icon: '<i class="fas fa-trash"></i>',
+                onClick: () => CompanionHandler._removeCompanionAction.call(app, _ev, card),
+            },
+        ], { jQuery: false, fixed: true, eventName: 'none' });
+        ui.context?.close();
+        await menu.render(target, { animate: true });
+        ui.context = menu;
     }
 
     static async _removeCompanionAction(_ev, target) {

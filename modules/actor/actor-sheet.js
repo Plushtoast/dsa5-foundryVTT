@@ -163,6 +163,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       templates: [
         'systems/dsa5/templates/actors/parts/horse.hbs',
         'systems/dsa5/templates/actors/companions/companion-card.hbs',
+        'systems/dsa5/templates/actors/parts/member-card-header.hbs',
       ],
     },
     status: {

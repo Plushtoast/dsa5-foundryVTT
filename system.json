@@ -208,12 +208,18 @@
         },
         "Item": {
             "equipment": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "armor": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -226,12 +232,18 @@
                 ]
             },
             "rangeweapon": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "meleeweapon": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -250,12 +262,18 @@
                 ]
             },
             "specialability": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "advantage": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -268,6 +286,9 @@
                 ]
             },
             "trait": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -312,12 +333,18 @@
                 ]
             },
             "blessing": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "magictrick": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -350,12 +377,18 @@
                 ]
             },
             "disease": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "consumable": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value",
@@ -381,6 +414,9 @@
                 ]
             },
             "plant": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value",
@@ -421,18 +457,27 @@
                 ]
             },
             "essence": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "imprint": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "book": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -452,6 +497,13 @@
                     "description.value",
                     "gmdescription.value"
                 ]
+            }
+        },
+        "ActiveEffect": {
+            "enhancement": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                }
             }
         }
     },

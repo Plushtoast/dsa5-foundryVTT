@@ -93,6 +93,20 @@ export default class DSA5_Utility {
     return results;
   }
 
+  static async getEnhancementEffects({ enhancementType, targetType } = {}) {
+    return this.collectIndexedCompendiumEntries({
+      documentName: 'ActiveEffect',
+      fields: ['type', 'system.enhancementType', 'system.targetType'],
+      filterEntry: (entry) => {
+        if (entry.type !== 'enhancement') return false;
+        if (enhancementType && entry.system?.enhancementType !== enhancementType) return false;
+        if (targetType && entry.system?.targetType !== targetType) return false;
+        return true;
+      },
+      mapEntry: (entry, { pack }) => ({ ...entry, pack: pack.collection }),
+    });
+  }
+
   static moduleEnabled(id) {
     const module = game.modules.get(id);
     return module?.active ?? false;

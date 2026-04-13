@@ -112,7 +112,13 @@ export default class DSAActiveEffect extends ActiveEffect {
     return update;
   }
 
+  static isEnhancementEffect(effect) {
+    return effect?.type === 'enhancement';
+  }
+
   static realyRealyEnabled(effect) {
+    if (DSAActiveEffect.isEnhancementEffect(effect)) return false;
+
     const charges = effect?.system?.charges;
     if (charges) {
       if (Number.isFinite(charges.value) && charges.value <= 0) return false;
@@ -266,21 +272,21 @@ export default class DSAActiveEffect extends ActiveEffect {
 
   static async _onCreateOperation(documents, operation, user) {
     for (const doc of documents) {
-      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent?.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onCreateOperation(documents, operation, user);
   }
 
   static async _onUpdateOperation(documents, operation, user) {
     for (const doc of documents) {
-      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent?.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onUpdateOperation(documents, operation, user);
   }
 
   static async _onDeleteOperation(documents, operation, user) {
     for (const doc of documents) {
-      if (doc.parent.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
+      if (doc.parent?.documentName == 'Actor') await Actordsa5.postUpdateConditions(doc.parent);
     }
     return super._onDeleteOperation(documents, operation, user);
   }
@@ -329,6 +335,36 @@ export default class DSAActiveEffect extends ActiveEffect {
     return { items, key, value };
   }
 
+  async _preCreate(data, options, user) {
+    const allowed = await super._preCreate(data, options, user);
+    if (allowed === false) return false;
+
+    if (this.parent?.documentName !== 'Actor') return;
+
+    const update = {};
+
+    const onDelayed = data.system?.macroArgs?.onDelayed;
+    if (onDelayed) {
+      foundry.utils.mergeObject(update, {
+        duration: { value: parseInt(onDelayed) || 0, units: 'seconds' },
+        system: {
+          delayed: {
+            enabled: true,
+            originalDuration: data.duration,
+          },
+        },
+      });
+    }
+
+    // Ensure duration.value is a valid integer for v14 schema (source data may contain floats from formulas)
+    const durVal = update.duration?.value ?? data.duration?.value;
+    if (durVal != null && !Number.isInteger(durVal)) {
+      update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
+    }
+
+    if (Object.keys(update).length) this.updateSource(update);
+  }
+
   async _preUpdate(changed, options, user) {
     await super._preUpdate(changed, options, user);
     //this._clearModifiedItems();
@@ -363,7 +399,7 @@ export default class DSAActiveEffect extends ActiveEffect {
     //this._clearModifiedItems();
   }
 
-  static migrateData(source) {
+  static migrateBaseActiveEffect(source) {
     // Migrate legacy duration fields to v14 schema (start + duration.value/units).
     // Replicates Foundry core #migrateDuration and start migration so the
     // backward-compat shims (removed in v16) are never triggered.
@@ -502,6 +538,14 @@ export default class DSAActiveEffect extends ActiveEffect {
     } else {
       delete source.flags.dsa5;
     }
+    return super.migrateData(source);
+  }
+
+  static migrateData(source) {
+    if (!source?.type || source.type === 'base') {
+      return this.migrateBaseActiveEffect(source);
+    }
+
     return super.migrateData(source);
   }
 }

@@ -1532,6 +1532,9 @@
     "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
     "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
+    "TYPES.ActiveEffect.base": "Effekt",
+    "TYPES.ActiveEffect.enhancement": "Gegenstandsaufwertung",
+    "EFFECT.TABS.actions": "Aktionen",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
     "DSAJOURNALTARGET": {
@@ -2085,6 +2088,40 @@
             "weapon": "Waffe / Rüstung"
         }
     },
+    "Enhancement": {
+        "settings": "Verbesserungseinstellungen",
+        "targetType": "Ziel-Gegenstandstyp",
+        "enhancementType": "Verbesserungstyp",
+        "slotCost": "Platzkosten",
+        "slotsFull": "Keine freien Verbesserungsplätze dieses Typs verfügbar.",
+        "onlyOnItems": "Verbesserungseffekte können nur auf Gegenständen platziert werden.",
+        "wrongTargetType": "Diese Verbesserung passt nicht zum Gegenstandstyp.",
+        "unsupportedItemType": "Dieser Gegenstandstyp unterstützt keine Verbesserungen.",
+        "invalidKeys": "Verbesserungseffekte dürfen nur Systemattribute (system.*-Schlüssel) verändern.",
+        "specialAttributesLabel": "Besondere Eigenschaften",
+        "craftingRollMod": "Probenmodifikator",
+        "craftingTimeMod": "Zeitfaktor",
+        "craftSkill": "Handwerkstalent",
+        "materialCost": "Materialkosten (S)",
+        "types": {
+            "material": "Material",
+            "creationTechnique": "Herstellungstechnik",
+            "improvement": "Verbesserung"
+        },
+        "hints": {
+            "targetType": "Auf welchen Gegenstandstyp diese Verbesserung angewendet werden kann.",
+            "enhancementType": "Bestimmt, welche Platzkategorie diese Verbesserung belegt.",
+            "slotCost": "Anzahl der Plätze, die diese Verbesserung in ihrer Kategorie benötigt.",
+            "craftingRollMod": "Modifikator auf die Herstellungsprobe.",
+            "craftingTimeMod": "Multiplikator auf die Herstellungszeit.",
+            "craftSkill": "Benötigtes Handwerkstalent für die Herstellung.",
+            "materialCost": "Materialkosten in Silbertalern pro Einheit.",
+            "specialAttributes": "Kommagetrennte Attribut-Flags (z.B. magic, rustResistant), die dem Gegenstand hinzugefügt werden."
+        },
+        "wizardCategories": {
+            "general": "Allgemein"
+        }
+    },
     "CustomActiveEffects": {
         "armor": {
             "vulnerability": "Rüstungsanpassung (Kampftechnik)"
@@ -2256,7 +2293,12 @@
         "enemySense": "Feindgespür",
         "winhallStyle": "Winhall-Stil",
         "singing": "Singen",
-        "music": "Musizieren"
+        "music": "Musizieren",
+        "metalworking": "Metallbearbeitung",
+        "woodworking": "Holzbearbeitung",
+        "clothworking": "Stoffbearbeitung",
+        "earthencraft": "Steinbearbeitung",
+        "leatherworking": "Lederbearbeitung"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",

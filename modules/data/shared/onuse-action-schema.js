@@ -1,14 +1,16 @@
-const { SchemaField, StringField, TypedObjectField } = foundry.data.fields;
+const { FilePathField, SchemaField, StringField, TypedObjectField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
 
+export function onUseActionField() {
+  return new SchemaField({
+    name: new StringField({ initial: '', label: 'SHEET.onUseActionName' }),
+    img: new FilePathField({ initial: '', categories: ['IMAGE'], label: 'SHEET.onUseActionImage' }),
+    macro: new StringField({ initial: '' }),
+  });
+}
+
 export function onUseActionsField() {
-  return new TypedObjectField(
-    new SchemaField({
-      name: new StringField({ initial: '' }),
-      img: new StringField({ initial: '' }),
-      macro: new StringField({ initial: '' }),
-    }),
-  );
+  return new TypedObjectField(onUseActionField());
 }
 
 export const OnUseActionMixin = (Base) =>
@@ -54,6 +56,7 @@ export const OnUseActionMixin = (Base) =>
 
     async openOnUseActionDialog(action = undefined) {
       const content = await renderTemplate('systems/dsa5/templates/dialog/on-use-action-edit.hbs', {
+        schema: onUseActionField(),
         action: action || {
           name: this.parent.name,
           img: this.parent.img,
@@ -64,6 +67,7 @@ export const OnUseActionMixin = (Base) =>
       return await foundry.applications.api.DialogV2.input({
         window: {
           title: action ? _loc('SHEET.editOnUseAction') : _loc('SHEET.addOnUseAction'),
+          resizable: true,
         },
         position: {
           width: 520,

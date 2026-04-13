@@ -36,58 +36,18 @@
   {{#each members as |hero|}}
   <div class='row-section skills hero tableOdd wrap' data-member-key='{{hero.key}}' data-uuid='{{hero.uuid}}'
     data-id='{{hero.id}}'>
-    <div class='row-section col'>
-      <div class='col ten'>
-        <img src='{{hero.img}}' height='50px' />
-      </div>
-      <div class='col fourty'>
-        <a data-action='heroLink'>{{hero.name}}</a>
+    {{#> "systems/dsa5/templates/actors/parts/member-card-header.hbs" img=hero.img name=hero.name uuid=hero.uuid status=hero.system.status isMage=hero.system.isMage isPriest=hero.system.isPriest showContextMenu=@root.isGM}}
         {{#if hero.ownerName}}
           <span class="badgePip" style="background-color: {{hero.ownerColor}}; color: #fff; font-size: 0.7em;">{{hero.ownerName}}</span>
         {{/if}}
+    {{/"systems/dsa5/templates/actors/parts/member-card-header.hbs"}}
+    <div class='row-section col'>
+      <div class='col fourty'>
         <div class='flexrow'>
           {{#each hero.schips as |item i|}}
           <a data-action='heroSchip' class='tiny schip {{item.cssClass}}' data-val='{{item.value}}'></a>
           {{/each}}
         </div>
-      </div>
-      <div class='col fourty barRight ellipsis'>
-        <div class='healthbar bar-wounds barLeft solo' data-tooltip="wounds">
-          <div class='bar decolorizeFilter LeP'
-            style='--a: {{hero.system.status.wounds.value}}; --b: {{hero.system.status.wounds.max}}'>
-          </div>
-          <div class='barLabel'>
-            <span>{{hero.system.status.wounds.value}}</span> / <span>{{hero.system.status.wounds.max}}</span>
-          </div>
-        </div>
-        {{#if hero.system.isMage}}
-        <div class='healthbar bar-astralenergy barRight solo' data-tooltip="astralenergy">
-          <div class='bar decolorizeFilter AsP'
-            style='--a: {{hero.system.status.astralenergy.value}}; --b: {{hero.system.status.astralenergy.max}}'>
-          </div>
-          <div class='barLabel'>
-            <span>{{hero.system.status.astralenergy.value}}</span> /
-            <span>{{hero.system.status.astralenergy.max}}</span>
-          </div>
-        </div>
-        {{/if}}
-        {{#if hero.system.isPriest}}
-        <div class='healthbar bar-karmaenergy barRight solo' data-tooltip="karmaenergy">
-          <div class='bar decolorizeFilter KaP'
-            style='--a: {{hero.system.status.karmaenergy.value}}; --b: {{hero.system.status.karmaenergy.max}}'>
-          </div>
-          <div class='barLabel'>
-            <span>{{hero.system.status.karmaenergy.value}}</span> / <span>{{hero.system.status.karmaenergy.max}}</span>
-          </div>
-        </div>
-        {{/if}}
-      </div>
-      <div class='col ten flexrow flexAlignEnd'>
-        {{#if @root.isGM}}
-        <button type="button" class="icon fas fa-ellipsis-vertical noBorder dsadesignbutton" data-action='heroContextMenu'
-          data-tooltip='JOURNAL.ActionShow'>
-        </button>
-        {{/if}}
       </div>
     </div>
     <div class='row-section col'>

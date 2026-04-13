@@ -1964,6 +1964,9 @@
     "TYPES.JournalEntryPage.dsaquestlog": "Quest",
     "TYPES.JournalEntryPage.dsaaptracker": "AP Tracker",
     "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
+    "TYPES.ActiveEffect.base": "Effect",
+    "TYPES.ActiveEffect.enhancement": "Item Enhancement",
+    "EFFECT.TABS.actions": "Actions",
     "npc": "Non Player Character",
     "creature": "Creature",
     "dsacalendar": {
@@ -2427,6 +2430,40 @@
             "weapon": "Weapon / Armor"
         }
     },
+    "Enhancement": {
+        "settings": "Enhancement Settings",
+        "targetType": "Target Item Type",
+        "enhancementType": "Enhancement Type",
+        "slotCost": "Slot Cost",
+        "slotsFull": "No free enhancement slots of this type available.",
+        "onlyOnItems": "Enhancement effects can only be placed on items.",
+        "wrongTargetType": "This enhancement does not match the item type.",
+        "unsupportedItemType": "This item type does not support enhancements.",
+        "invalidKeys": "Enhancement effects may only modify system attributes (system.* keys).",
+        "specialAttributesLabel": "Special Attributes",
+        "craftingRollMod": "Crafting Roll Modifier",
+        "craftingTimeMod": "Time Multiplier",
+        "craftSkill": "Craft Skill",
+        "materialCost": "Material Cost (S)",
+        "types": {
+            "material": "Material",
+            "creationTechnique": "Creation Technique",
+            "improvement": "Improvement"
+        },
+        "hints": {
+            "targetType": "Which item type this enhancement can be applied to.",
+            "enhancementType": "Determines which slot category this enhancement occupies.",
+            "slotCost": "Number of slots this enhancement requires in its category.",
+            "craftingRollMod": "Modifier applied to the crafting check.",
+            "craftingTimeMod": "Multiplier applied to the crafting time.",
+            "craftSkill": "Required craft skill for production.",
+            "materialCost": "Material cost in silver thalers per unit.",
+            "specialAttributes": "Comma-separated attribute flags (e.g. magic, rustResistant) added to the item."
+        },
+        "wizardCategories": {
+            "general": "General"
+        }
+    },
     "MAGICALACTION": {
         "none": "-",
         "animistenkraefte": "Animistenkräfte",
@@ -2571,7 +2608,12 @@
         "enemySense": "Enemy Sense",
         "winhallStyle": "Winhall Style",
         "singing": "Singing",
-        "music": "Music"
+        "music": "Music",
+        "metalworking": "Metalworking",
+        "woodworking": "Woodworking",
+        "clothworking": "Clothworking",
+        "earthencraft": "Earthencraft",
+        "leatherworking": "Leatherworking"
     },
     "LocalizedCTs": {
         "Blowpipes": "Blowpipes",

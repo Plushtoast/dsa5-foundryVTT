@@ -50,6 +50,7 @@ import CultureWizard from './wizards/culture_wizard.js';
 import DialogReactDSA5, { ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from './dialog/dialog-react.js';
 import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effect_config.js';
+import DSAEnhancementEffectConfig from './status/enhancement_effect_config.js';
 import APTracker from './system/orwell/ap-tracker.js';
 import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
@@ -110,6 +111,7 @@ Hooks.once('init', () => {
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,
+      DSAEnhancementEffectConfig,
       OnUseEffect,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
@@ -201,7 +203,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.dataModels = CombatantDataModels;
   CONFIG.Combatant.documentClass = DSA5Combatant;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
-  CONFIG.ActiveEffect.dataModels.base = ActiveEffectDataModels.base;
+  CONFIG.ActiveEffect.dataModels = ActiveEffectDataModels;
   CONFIG.ActiveEffect.expiryAction = null;
   CONFIG.Token.objectClass = DSAToken;
   CONFIG.Token.documentClass = DSATokenDocument;
@@ -240,7 +242,8 @@ Hooks.once('init', () => {
   TransactionSummaryService.register();
   InformationQueryService.register();
   RollRequestService.register();
-  DSA5ProseMirrorIntegration.register();
+  DSA5ProseMirrorIntegration.register()
+
 });
 
 initHooks();

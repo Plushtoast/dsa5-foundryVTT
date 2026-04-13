@@ -1,4 +1,4 @@
-const { getProperty, mergeObject } = foundry.utils;
+const { getProperty } = foundry.utils;
 
 export default function () {
   Hooks.on('preCreateScene', function (doc, createData, options, userId) {
@@ -56,32 +56,5 @@ export default function () {
       }).render(true);
       return false;
     }
-  });
-
-  Hooks.on('preCreateActiveEffect', function (doc, createData, options, userId) {
-    if (doc.parent.documentName != 'Actor') return;
-
-    const update = {};
-
-    const onDelayed = createData.system?.macroArgs?.onDelayed;
-    if (onDelayed) {
-      mergeObject(update, {
-        duration: { value: parseInt(onDelayed) || 0, units: 'seconds' },
-        system: {
-          delayed: {
-            enabled: true,
-            originalDuration: createData.duration,
-          },
-        },
-      });
-    }
-
-    // Ensure duration.value is a valid integer for v14 schema (source data may contain floats from formulas)
-    const durVal = update.duration?.value ?? createData.duration?.value;
-    if (durVal != null && !Number.isInteger(durVal)) {
-      update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
-    }
-
-    if (Object.keys(update).length) doc.updateSource(update);
   });
 }

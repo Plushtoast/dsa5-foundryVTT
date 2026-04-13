@@ -70,6 +70,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       statusAdd: function () {
         DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
       },
+      enhancementAdd: this.addEnhancementEffect,
       conditionEdit: this.editCondition,
       conditionToggle: this.toggleCondition,
     },
@@ -309,9 +310,18 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     await this.item.system.getSheetData(data);
 
-    data.conditions = Array.from(data.conditions || this.item.effects)
-      .filter((effect) => game.user.isGM || !effect.system?.visibility?.hidePlayers)
+    const allEffects = Array.from(data.conditions || this.item.effects)
+      .filter((effect) => game.user.isGM || !effect.system?.visibility?.hidePlayers);
+
+    data.conditions = allEffects
+      .filter((effect) => effect.type !== 'enhancement')
       .map((effect) => this._decorateSheetEffect(effect));
+
+    data.enhancementEffects = allEffects
+      .filter((effect) => effect.type === 'enhancement')
+      .map((effect) => this._decorateSheetEffect(effect));
+
+    data.supportsEnhancements = !!CONFIG.Item.dataModels[this.item.type]?.ENHANCEMENT_SLOT_LIMITS;
 
     data.transferedConditions = Array.from(data.transferedConditions || []).map((effect) => this._decorateSheetEffect(effect));
 
@@ -320,6 +330,16 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
   static async addOnUseAction() {
     await this.item.system.createOnUseAction();
+  }
+
+  static async addEnhancementEffect() {
+    const effects = await this.item.createEmbeddedDocuments('ActiveEffect', [{
+      name: _loc('TYPES.ActiveEffect.enhancement'),
+      type: 'enhancement',
+      img: 'systems/dsa5/icons/talents/Metallbearbeitung.webp',
+      'system.targetType': this.item.type,
+    }]);
+    effects[0]?.sheet?.render(true);
   }
 
   static async editOnUseAction(_event, target) {

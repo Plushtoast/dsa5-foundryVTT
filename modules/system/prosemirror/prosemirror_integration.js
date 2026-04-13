@@ -26,6 +26,19 @@ export default class DSA5ProseMirrorIntegration {
     Hooks.on('getProseMirrorMenuDropDowns', this._addDropDowns.bind(this));
   }
 
+  static _localizeMenuEntry(entry) {
+    const localized = {
+      ...entry,
+      title: game.i18n.localize(entry.title),
+    };
+
+    if (entry.children?.length) {
+      localized.children = entry.children.map((child) => this._localizeMenuEntry(child));
+    }
+
+    return localized;
+  }
+
   static _addDropDowns(menu, items) {
     const formatMenu = items.format;
     const divNode = menu?.schema?.nodes?.div;
@@ -59,10 +72,10 @@ export default class DSA5ProseMirrorIntegration {
       });
     }
 
-    formatMenu.entries.push({
+    formatMenu.entries.push(this._localizeMenuEntry({
       action: 'dsa5-styles',
       title: 'PROSEMIRROR.DSA5Styles.Title',
       children,
-    });
+    }));
   }
 }

@@ -31,52 +31,6 @@
         position: relative;
     }
 
-    .companion-header-actions {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        display: flex;
-        gap: 5px;
-        z-index: 10;
-    }
-
-    .companion-header-actions .button {
-        margin: 0;
-    }
-
-
-    .companion-avatar {
-        cursor: pointer;
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: 15px;
-        width: 120px;
-        height: 120px;
-        flex: 0 0 120px;
-    }
-
-    .companion-avatar-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border: none;
-        background: transparent;
-    }
-
-
-    .companion-charname-row {
-        align-items: center;
-        padding-left: 0;
-        margin-left: 0;
-    }
-
-    .companion-header-name {
-        margin: 0;
-        padding: 0;
-        padding-right: 50px;
-        line-height: 1;
-    }
-
 
     .companion-nature-container {
         display: inline-flex;
@@ -144,21 +98,6 @@
         font-size: 0.7em;
         font-weight: bold;
         text-transform: uppercase;
-    }
-
-    .companion-row-section {
-        margin-top: 10px;
-        margin-left: 0;
-    }
-
-    .companion-regen-container {
-        padding-left: 0;
-        margin-left: 0;
-        align-items: center;
-    }
-
-    .companion-healthbar {
-        margin-left: 0;
     }
 
     .companion-effects-row {

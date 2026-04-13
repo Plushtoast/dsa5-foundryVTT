@@ -239,6 +239,8 @@ export default class Actordsa5 extends Actor {
   collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase) {
     for (const item of this.items) {
       for (const e of item.effects) {
+        if (DSAActiveEffect.isEnhancementEffect(e)) continue;
+
         const delayedData = e.system?.delayed;
         const isDelayed = !!delayedData?.enabled;
         if (e.disabled || !e.transfer || isDelayed) continue;

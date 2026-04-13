@@ -2,13 +2,13 @@
     <div class="form-group">
         <label>{{localize 'SHEET.onUseActionName'}}</label>
         <div class="form-fields">
-            <input type="text" name="name" value="{{action.name}}" />
+            {{formInput schema.fields.name value=action.name name='name'}}
         </div>
     </div>
     <div class="form-group">
         <label>{{localize 'SHEET.onUseActionImage'}}</label>
         <div class="form-fields">
-            <input type="text" name="img" value="{{action.img}}" />
+            {{formInput schema.fields.img value=action.img name='img'}}
         </div>
     </div>
     <div class="form-group stacked">

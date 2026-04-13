@@ -26,6 +26,7 @@ import MastersMenu from '../wizards/masters_menu.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
+import DSAEnhancementEffectConfig from '../status/enhancement_effect_config.js';
 import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
 import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
 import GroupActorSheet from '../actor/group-sheet.js';
@@ -44,6 +45,7 @@ import { DSAQuestLogEntrySheet } from '../journal/dsaquestlogentry_sheet.js';
 import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
 import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
 const { mergeObject } = foundry.utils;
+const { DocumentSheetConfig } = foundry.applications.apps;
 
 export default function () {
   initHandleBars.default();
@@ -109,6 +111,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
     'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
     'systems/dsa5/templates/system/hud/companion-hotbar.hbs',
+    'systems/dsa5/templates/actors/parts/member-card-header.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
@@ -136,11 +139,12 @@ Hooks.once('init', () => {
   ];
 
   journalSheets.forEach(({ sheetClass, types, makeDefault }) => {
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', sheetClass, { types, makeDefault });
+    DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', sheetClass, { types, makeDefault });
   });
 
-  foundry.applications.apps.DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
-  foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
+  DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
+  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { types: ['base'], makeDefault: true });
+  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAEnhancementEffectConfig, { types: ['enhancement'], makeDefault: true });
 
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
@@ -281,7 +285,8 @@ function setupKnownEquipmentModifiers() {
 }
 
 class DaylightIlluminationShader extends foundry.canvas.rendering.shaders.AdaptiveIlluminationShader {
-  static fragmentShader = `
+  static _createFragmentShader() {
+    return `
     ${this.SHADER_HEADER}
     ${this.PERCEIVED_BRIGHTNESS}
 
@@ -290,10 +295,11 @@ class DaylightIlluminationShader extends foundry.canvas.rendering.shaders.Adapti
         ${this.TRANSITION}
 
         // Darkness
-        framebufferColor = max(framebufferColor, colorBackground);
+        finalColor = max(finalColor, computedBackgroundColor);
         // Elevation
         finalColor = mix(finalColor, max(finalColor, smoothstep( 0.1, 1.0, finalColor ) * 10.0), 1.0) * depth;
         // Final
         gl_FragColor = vec4(finalColor, 1.0);
       }`;
+  }
 }
