@@ -30,11 +30,6 @@ export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, De
     });
   }
 
-  static _cleanData(source, options, _state) {
-    super._cleanData(source, options, _state);
-    if (source.worn && !source.worn.wearable) source.worn.value = false;
-  }
-
   async getSheetData(data) {
     data.domains = this.prepareDomains();
   }

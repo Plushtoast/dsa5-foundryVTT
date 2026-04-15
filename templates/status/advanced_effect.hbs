@@ -4,13 +4,6 @@
     label="ActiveEffects.hideOnToken" localize=true}}
     {{formGroup document.system.schema.fields.visibility.fields.hidePlayers value=document.system.visibility.hidePlayers
     label="ActiveEffects.hidePlayers" localize=true}}
-    {{#if isItemEffect}}
-    {{#if effectConfigs.hasSuccessEffects}}
-    {{formGroup document.system.schema.fields.successEffect value=document.system.successEffect
-    label="ActiveEffects.apply" localize=true}}
-    {{formGroup document.system.schema.fields.macroArgs.fields.onDelayed value=document.system.macroArgs.onDelayed
-    label="ActiveEffects.onDelayed" localize=true units="ActiveEffects.dialog.seconds"}}
-    {{/if}}
     <div class="auraBox paddingBox{{#if document.system.aura.isAura}} groupbox{{/if}}">
         {{formGroup document.system.schema.fields.aura.fields.isAura value=document.system.aura.isAura
         label="ActiveEffects.isAura" localize=true}}
@@ -30,6 +23,13 @@
             label="ActiveEffects.ignoreWalls" localize=true}}
         </div>
     </div>
+    {{#if isItemEffect}}
+    {{#if effectConfigs.hasSuccessEffects}}
+    {{formGroup document.system.schema.fields.successEffect value=document.system.successEffect
+    label="ActiveEffects.apply" localize=true}}
+    {{formGroup document.system.schema.fields.macroArgs.fields.onDelayed value=document.system.macroArgs.onDelayed
+    label="ActiveEffects.onDelayed" localize=true units="ActiveEffects.dialog.seconds"}}
+    {{/if}}
     {{#if isWeapon}}
     {{formGroup document.system.schema.fields.applyToOwner value=document.system.applyToOwner
     label="ActiveEffects.applyToOwner" localize=true}}

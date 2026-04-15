@@ -446,6 +446,29 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       });
   }
 
+  applyRememberedSelection(modifiers = []) {
+    this.ensureInitialized();
+
+    const rememberedSelections = new Map();
+    for (const modifier of modifiers) {
+      const key = SituationalModifiersWidget.getMemoryKey(modifier);
+      if (!rememberedSelections.has(key)) rememberedSelections.set(key, []);
+      rememberedSelections.get(key).push(modifier.selected !== false);
+    }
+
+    this.modifiers = this.modifiers.map((modifier) => {
+      const key = SituationalModifiersWidget.getMemoryKey(modifier);
+      const remembered = rememberedSelections.get(key);
+      if (!remembered?.length) return modifier;
+
+      return SituationalModifier.from(Object.assign({}, modifier, {
+        selected: remembered.shift(),
+      }));
+    });
+
+    this.refresh();
+  }
+
   setModifiers(modifiers = []) {
     this.ensureInitialized();
     this.modifiers = SituationalModifier.fromArray(modifiers);
@@ -517,6 +540,18 @@ export class SituationalModifiersWidget extends HTMLDivElement {
     if (!group) return;
 
     group.classList.toggle('dsahidden', this.modifiers.length === 0);
+  }
+
+  static getMemoryKey(modifier) {
+    if (modifier.ref?.uuid) return `uuid:${modifier.ref.uuid}`;
+    if (modifier.ref?.id) return `id:${modifier.ref.id}`;
+
+    return [
+      modifier.name || '',
+      modifier.type || '',
+      modifier.value ?? '',
+      modifier.source || '',
+    ].join('|');
   }
 
   destroy() {

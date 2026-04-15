@@ -76,7 +76,7 @@
                     </div>
                     <small class="flexrow gap2px ellipsis">
                         {{#each item.pips as |pip|}}
-                        <small class="smallBoxItem flex0 gTooltip" data-category="{{pip.category}}" data-id="{{pip.id}}">{{{pip.content}}}</small>
+                        <small class="smallBoxItem flex0 gTooltip" {{#if pip.action}}data-action="{{pip.action}}"{{/if}} data-category="{{pip.category}}" data-id="{{pip.id}}" {{#if pip.uuid}}data-uuid="{{pip.uuid}}"{{/if}}>{{{pip.content}}}</small>
                         {{/each}}
                     </small>
                 </div>
@@ -232,7 +232,7 @@
                     </div>
                     <small class="flexrow gap2px ellipsis">
                         {{#each item.pips as |pip|}}
-                        <small class="smallBoxItem flex0 gTooltip" data-category="{{pip.category}}" data-id="{{pip.id}}">{{{pip.content}}}</small>
+                        <small class="smallBoxItem flex0 gTooltip" {{#if pip.action}}data-action="{{pip.action}}"{{/if}} data-category="{{pip.category}}" data-id="{{pip.id}}" {{#if pip.uuid}}data-uuid="{{pip.uuid}}"{{/if}}>{{{pip.content}}}</small>
                         {{/each}}
                     </small>
                 </div>

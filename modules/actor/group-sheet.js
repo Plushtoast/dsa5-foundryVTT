@@ -56,7 +56,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     try {
       result = await foundry.applications.api.DialogV2.wait({
         window: {
-          title: _loc('GROUP.openGroupSheet'),
+          title: 'GROUP.openGroupSheet',
         },
         content,
         buttons: [
@@ -625,7 +625,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     </form>`;
 
     const name = await foundry.applications.api.DialogV2.prompt({
-      window: { title: _loc('GROUP.addLocation') },
+      window: { title: 'GROUP.addLocation' },
       content,
       ok: {
         label: _loc('ok'),
@@ -893,7 +893,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       const options = unlocked.map((l) => `<option value="${l.key}">${l.name}</option>`).join('');
       const content = `<form><div class="form-group"><label>${_loc('GROUP.selectLocation')}</label><select name="locKey">${options}</select></div></form>`;
       const key = await foundry.applications.api.DialogV2.prompt({
-        window: { title: _loc('GROUP.passToGroup') },
+        window: { title: 'GROUP.passToGroup' },
         content,
         ok: {
           label: _loc('ok'),

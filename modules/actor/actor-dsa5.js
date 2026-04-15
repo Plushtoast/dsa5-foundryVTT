@@ -213,7 +213,7 @@ export default class Actordsa5 extends Actor {
       if (e.disabled || isDelayed) continue;
 
       if (e.system.aura.isAura) {
-        this.auras.push(e.uuid);
+        if (phase === 'initial') this.auras.push(e.uuid);
         continue;
       }
 
@@ -259,7 +259,7 @@ export default class Actordsa5 extends Actor {
         e.notApplicable = !apply;
 
         if (apply && e.system.aura.isAura) {
-          this.auras.push(e.uuid);
+          if (phase === 'initial') this.auras.push(e.uuid);
           continue;
         }
 

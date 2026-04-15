@@ -3,6 +3,10 @@ import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class ActorPickerDialog extends foundry.applications.api.DialogV2 {
+  static #getSelectionMode(element) {
+    return element.querySelector('.query-actor-picker')?.dataset.selectionMode || 'multiple';
+  }
+
   static #buildActorEntry(actor) {
     const { designatedUser } = QueryOrchestrator.resolveDesignatedUser(actor);
     const isActiveCharacter = designatedUser?.character?.id === actor.id;
@@ -59,7 +63,8 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     const html = $(this.element);
     html.find('.select2').select2();
 
-    ActorPickerDialog.#bindActorPickerEvents(this.element);
+    ActorPickerDialog.#bindSearchFilter(this.element);
+    ActorPickerDialog.#bindActorRowEvents(this.element);
     this.#bindDropEvents();
   }
 
@@ -75,7 +80,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     }
   }
 
-  static #bindActorPickerEvents(element) {
+  static #bindSearchFilter(element) {
+    if (element.dataset.actorPickerSearchBound === 'true') return;
+
     const searchFilter = new foundry.applications.ux.SearchFilter({
       inputSelector: 'input.actorsearch[type=search]',
       contentSelector: '.query-actor-list',
@@ -83,14 +90,47 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     });
     searchFilter.bind(element);
 
+    element.dataset.actorPickerSearchBound = 'true';
+  }
+
+  static #syncSelectedState(element) {
+    if (ActorPickerDialog.#getSelectionMode(element) !== 'single') return;
+
     element.querySelectorAll('.query-actor-row').forEach((row) => {
+      const selector = row.querySelector('.query-actor-selector');
+      row.classList.toggle('selected', !!selector?.checked);
+    });
+  }
+
+  static #bindActorRowEvents(element) {
+    const selectionMode = ActorPickerDialog.#getSelectionMode(element);
+
+    element.querySelectorAll('.query-actor-row').forEach((row) => {
+      if (row.dataset.actorPickerBound === 'true') return;
+      row.dataset.actorPickerBound = 'true';
+
       row.addEventListener('click', (event) => {
+        const selector = row.querySelector('.query-actor-selector');
+        if (!selector) return;
+
+        if (selectionMode === 'single') {
+          if (event.target.closest('.query-actor-selector')) return;
+
+          element.querySelectorAll('.query-actor-selector').forEach((input) => {
+            input.checked = false;
+          });
+          selector.checked = true;
+          ActorPickerDialog.#syncSelectedState(element);
+          return;
+        }
+
         if (event.target.closest('.query-actor-selector')) return;
 
-        const checkbox = row.querySelector('.query-actor-selector');
-        if (checkbox) checkbox.checked = !checkbox.checked;
+        selector.checked = !selector.checked;
       });
     });
+
+    ActorPickerDialog.#syncSelectedState(element);
   }
 
   static #getSelectedActorIds(form) {
@@ -118,20 +158,22 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       if (list.querySelector(`[data-actor-id="${actor.id}"]`)) return;
 
       const entry = ActorPickerDialog.#buildActorEntry(actor);
+      const selectionMode = ActorPickerDialog.#getSelectionMode(this.element);
       const fragment = document.createRange().createContextualFragment(
-        await renderTemplate('systems/dsa5/templates/dialog/parts/actor-picker-row.hbs', { actor: entry }),
+        await renderTemplate('systems/dsa5/templates/dialog/parts/actor-picker-row.hbs', { actor: entry, selectionMode }),
       );
       list.appendChild(fragment);
-      ActorPickerDialog.#bindActorPickerEvents(this.element);
+      ActorPickerDialog.#bindActorRowEvents(this.element);
     });
   }
 
-  static async open({ actors = [], title = 'DSAQUERIES.COMMANDS.addActor', header = '', callback } = {}) {
-    const content = await renderTemplate(this.TEMPLATE, { actors, header });
+  static async open({ actors = [], title = 'DSAQUERIES.COMMANDS.addActor', header = '', callback, selectionMode = 'multiple' } = {}) {
+    const content = await renderTemplate(this.TEMPLATE, { actors, header, selectionMode });
 
-    const dialog = new this({
+    const dialogConfig = {
       window: { title },
       content,
+      classes: ['dsa5'],
       buttons: [
         {
           action: 'confirm',
@@ -152,8 +194,13 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
           callback: () => (callback ? undefined : []),
         },
       ],
-    });
+    };
 
-    return callback ? dialog.render(true) : ((await dialog.wait()) ?? []);
+    if (callback) {
+      new this(dialogConfig).render(true);
+      return;
+    }
+
+    return (await this.wait(dialogConfig)) ?? [];
   }
 }

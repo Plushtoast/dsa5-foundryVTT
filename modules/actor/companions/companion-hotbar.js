@@ -112,6 +112,27 @@ export default class CompanionHotbar {
     Hooks.on('canvasReady', () => CompanionHotbar.refreshStatus());
   }
 
+  static async summonCompanion({ petUuid, ownerTokenId, sceneId }) {
+    const scene = game.scenes.get(sceneId) ?? canvas.scene;
+    if (!scene) return null;
+
+    const petActor = await fromUuid(petUuid);
+    if (!petActor) return null;
+
+    const existingToken = scene.tokens.find((tokenDoc) => tokenDoc.actorId === petActor.id);
+    if (existingToken) return existingToken;
+
+    const ownerToken = scene.tokens.get(ownerTokenId);
+    if (!ownerToken) return null;
+
+    const spawnX = ownerToken.x + (scene.grid.size || canvas.grid?.size || 50);
+    const spawnY = ownerToken.y;
+    const tokenData = await petActor.getTokenDocument({ x: spawnX, y: spawnY }, { parent: scene });
+    const [createdToken] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+
+    return createdToken ?? null;
+  }
+
   static async #resolveOwner(actor) {
     const owners = actor.system.companionData?.owners || [];
     return owners.length > 0 ? fromUuid(owners[0]) : null;
@@ -152,14 +173,32 @@ export default class CompanionHotbar {
 
     icon.dataset.isSpawning = 'true';
     try {
-      const spawnX = ownerTokens[0].x + (canvas.grid?.size || 50);
-      const spawnY = ownerTokens[0].y;
-      const tokenData = await petActor.getTokenDocument({ x: spawnX, y: spawnY });
-      const [createdToken] = await canvas.scene.createEmbeddedDocuments('Token', [tokenData]);
-      if (createdToken) {
-        await CompanionHotbar.#focusToken(createdToken);
+      const ownerToken = ownerTokens[0];
+      const payload = {
+        petUuid: petActor.uuid,
+        ownerTokenId: ownerToken.id,
+        sceneId: ownerToken.parent?.id ?? canvas.scene?.id,
+      };
+
+      if (TokenDocument.implementation.canUserCreate(game.user)) {
+        const createdToken = await CompanionHotbar.summonCompanion(payload);
+        if (createdToken) {
+          await CompanionHotbar.#focusToken(createdToken);
+          ui.notifications.info(_loc('COMPANIONS.Notification.ActorSummoned', { name: petActor.name }));
+        }
+        return;
       }
-      ui.notifications.info(_loc('COMPANIONS.Notification.ActorSummoned', { name: petActor.name }));
+
+      if (!game.users.activeGM) {
+        ui.notifications.warn('DSAError.requiresGM', { localize: true });
+        return;
+      }
+
+      game.socket.emit('system.dsa5', {
+        type: 'summonCompanion',
+        payload,
+      });
+      ui.notifications.info('CONJURATION.requestSend', { localize: true });
     } finally {
       icon.dataset.isSpawning = 'false';
     }

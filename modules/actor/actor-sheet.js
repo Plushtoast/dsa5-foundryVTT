@@ -18,7 +18,9 @@ import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
 import { RangeSelectDialog, transferBagWithContents } from '../hooks/itemDrop.js';
 import DSA5Payment from '../system/payment/payment.js';
-import { TradeOptions } from './trade.js';
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
+import { Trade } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
@@ -236,6 +238,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       advanceWrapper: this._advanceWrapper,
       addSpeedCategory: this._addSpeedCategory,
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
+      onUseEffect: { handler: this._onMacroUseEffect, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
       unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
       ...CompanionHandler.getOwnerSheetActions(),
@@ -370,72 +373,46 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  static _itemContextMenu(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { clientX, clientY } = event;
-    target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
-      view: window, bubbles: true, cancelable: true, clientX, clientY
-    }));
-  }
+  #dispatchContextMenu(target, event, options = {}) {
+    if (!target) return;
 
-  static _bulkInventoryContextMenu(event, target) {
     event.preventDefault();
     event.stopPropagation();
 
-    const { clientX, clientY } = event;
-    target.closest('.inventory-bulk-actions-menu').dispatchEvent(
-      new PointerEvent('contextmenu', {
-        view: window,
-        bubbles: true,
-        cancelable: true,
-        clientX,
-        clientY,
-      }),
-    );
-  }
-
-  static _weaponContextMenu(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { clientX, clientY } = event;
-    const weapon = target.closest('.combat-weapon') || target.closest('[data-item-id]')?.querySelector('.combat-weapon');
-    if (!weapon) return;
-    weapon.dispatchEvent(
-      new PointerEvent('contextmenu', {
-        view: window,
-        bubbles: true,
-        cancelable: true,
-        clientX,
-        clientY,
-      }),
-    );
-  }
-
-  static _unequippedWeaponMenu(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { clientX, clientY } = event;
     target.dispatchEvent(
       new PointerEvent('contextmenu', {
         view: window,
         bubbles: true,
         cancelable: true,
-        clientX,
-        clientY,
-        button: 2,
-        buttons: 2,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        ...options,
       }),
     );
   }
 
+  static _itemContextMenu(event, target) {
+    const contextTarget = target.closest('[data-item-id]')?.querySelector('.withContext');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _bulkInventoryContextMenu(event, target) {
+    const contextTarget = target.closest('.inventory-bulk-actions-menu');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _weaponContextMenu(event, target) {
+    const contextTarget = target.closest('.combat-weapon') || target.closest('[data-item-id]')?.querySelector('.combat-weapon');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _unequippedWeaponMenu(event, target) {
+    this.#dispatchContextMenu(target, event, { button: 2, buttons: 2, });
+  }
+
   static #statusContextMenu(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { clientX, clientY } = event;
-    target.closest("[data-id]").querySelector('.effectConfig').dispatchEvent(new PointerEvent("contextmenu", {
-      view: window, bubbles: true, cancelable: true, clientX, clientY
-    }));
+    const contextTarget = target.closest('[data-id]')?.querySelector('.effectConfig');
+    this.#dispatchContextMenu(contextTarget, event);
   }
 
   async _prepareContext(options) {
@@ -1518,8 +1495,23 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return options;
   }
 
-  async _startTrade(item) {
-    new TradeOptions(this.actor).render(true);
+  async _startTrade(_item) {
+    const actors = ActorPickerDialog.buildActorPickerData({
+      actors: game.actors.filter((actor) => actor.hasPlayerOwner && actor.id !== this.actor.id),
+    });
+    const [targetId] = await ActorPickerDialog.open({
+      actors,
+      title: 'MERCHANT.exchange',
+      selectionMode: 'single',
+    });
+    if (!targetId) return;
+
+    const target = game.actors.get(targetId);
+    if (!target) return;
+
+    const sourceSpeaker = RollDialogBuilder.buildSpeaker(this.actor, this.actor.token?.id);
+    const targetSpeaker = RollDialogBuilder.buildSpeaker(target, target.token?.id);
+    new Trade(sourceSpeaker, targetSpeaker).startTrade();
   }
 
   _splitItem(item) {
@@ -1573,6 +1565,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _onMacroUseItem(ev, target) {
     const item = this.actor.items.get(this._getItemId(target));
     const onUse = new OnUseEffect(item);
+    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+  }
+
+  static async _onMacroUseEffect(ev, target) {
+    const effect = await fromUuid(target.dataset.uuid);
+    if (!effect) return;
+
+    const onUse = new OnUseEffect(effect);
     await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
   }
 

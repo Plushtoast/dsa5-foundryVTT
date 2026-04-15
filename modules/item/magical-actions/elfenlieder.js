@@ -44,7 +44,12 @@ export default class ElfenliederAction extends NoModificationsAction {
 
           const label = _loc('MAGICALACTION.elfenliederModifier');
           const modifiers = widget.getModifiers();
-          const modifier = { name: label, value: qs, selected: true, source: _loc('MAGICALACTION.elfenliederSupport') };
+          const modifier = {
+            name: label,
+            value: qs,
+            selected: true,
+            source: _loc('MAGICALACTION.elfenliederSupport'),
+          };
           const updated = modifiers.some((m) => m.name === label)
             ? modifiers.map((m) => (m.name === label ? { ...m, ...modifier } : m))
             : [...modifiers, modifier];
@@ -62,7 +67,7 @@ export default class ElfenliederAction extends NoModificationsAction {
       label: skill.name,
     }));
     const choice = await foundry.applications.api.DialogV2.wait({
-      window: { title: _loc('MAGICALACTION.elfenliederSupport') },
+      window: { title: 'MAGICALACTION.elfenliederSupport' },
       content: `<p>${_loc('MAGICALACTION.chooseSupportSkill')}</p>`,
       buttons,
     });

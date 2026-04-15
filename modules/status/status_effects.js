@@ -157,6 +157,8 @@ export default class DSA5StatusEffects {
 
     if (OnUseEffect.hasOnUseEffect(sourceEffect)) {
       effectData.pips.push({
+        action: 'onUseEffect',
+        uuid: sourceEffect.uuid,
         content: `<i data-tooltip="SHEET.onUseEffect" class="fas fa-dice-six"></i>`
       });
     }

@@ -98,6 +98,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/experienceBox.hbs',
     'systems/dsa5/templates/actors/parts/temperature.hbs',
     'systems/dsa5/templates/actors/parts/temperatureSmall.hbs',
+    'systems/dsa5/templates/dialog/parts/actor-picker-row.hbs',
     'systems/dsa5/templates/dialog/parts/actor-picker-list.hbs',
     'systems/dsa5/templates/items/browse/actor.hbs',
     'systems/dsa5/templates/items/browse/garadan.hbs',

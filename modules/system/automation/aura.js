@@ -15,7 +15,7 @@ export class DSAAura {
     const expectedAuras = token.actor.auras || [];
     const existingRegions = canvas.scene.regions.filter(
       r => r.flags?.dsa5?.auraEffectUuid &&
-           r.attachment?.token === token.document?.id &&
+           r.attachment?.token === token.document &&
            r.shapes?.some(s => s.type === 'emanation')
     );
 
@@ -75,7 +75,7 @@ export class DSAAura {
 
     const toDelete = canvas.scene.regions
       .filter(r => r.flags?.dsa5?.auraEffectUuid &&
-                   r.attachment?.token === tokenDoc.id &&
+                   r.attachment?.token === tokenDoc &&
                    r.shapes?.some(s => s.type === 'emanation'))
       .map(r => r.id);
 

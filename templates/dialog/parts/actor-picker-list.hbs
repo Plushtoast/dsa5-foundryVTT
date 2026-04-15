@@ -1,4 +1,4 @@
-<div class='directory targetChoser query-actor-picker'>
+<div class='directory targetChoser query-actor-picker' data-selection-mode='{{selectionMode}}'>
   <div class='form-group'>
     <div class='form-fields'>
       <input type='search' class='search-input actorsearch' placeholder='{{localize "Book.search"}}' autofocus />
@@ -7,7 +7,7 @@
 
   <ul class='directory-list query-actor-list scrollable'>
     {{#each actors as |actor|}}
-      {{> systems/dsa5/templates/dialog/parts/actor-picker-row.hbs actor=actor}}
+      {{> systems/dsa5/templates/dialog/parts/actor-picker-row.hbs actor=actor selectionMode=../selectionMode}}
     {{/each}}
   </ul>
 </div>

@@ -1,4 +1,3 @@
-import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import Itemdsa5 from '../item/item-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
@@ -581,46 +580,5 @@ export class Trade extends DefaultAppv2 {
         }
         return true;
     }
-  }
-}
-
-export class TradeOptions extends DefaultAppv2 {
-  constructor(actor, options) {
-    super(options);
-    this.actorId = RollDialogBuilder.buildSpeaker(actor, actor.token?.id);
-  }
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.actors = game.actors.filter((x) => x.hasPlayerOwner && x.id != this.actorId.actor);
-    return data;
-  }
-
-  static DEFAULT_OPTIONS = {
-    classes: ['noscrollWizard'],
-    window: {
-      title: 'MERCHANT.exchange',
-      resizable: true,
-    },
-  };
-
-  static PARTS = {    
-    main: {
-      template: 'systems/dsa5/templates/actors/merchant/merchant-tradeoptions.hbs',
-      scrollable: [".scrollable"]
-    }
-  }
-
-  _startTrade(ev) {
-    const target = game.actors.get(ev.currentTarget.dataset.id);
-    const app = new Trade(this.actorId, RollDialogBuilder.buildSpeaker(target, target.token?.id));
-    app.startTrade();
-    this.close();
-  }
-
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-    const html = $(this.element);
-    html.find('.startTrade').on('dblclick', (ev) => this._startTrade(ev));
   }
 }

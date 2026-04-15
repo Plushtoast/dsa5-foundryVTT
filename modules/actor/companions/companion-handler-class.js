@@ -56,7 +56,7 @@ export default class CompanionHandler {
 
         if (!droppedActor.prototypeToken.actorLink) {
             const fix = await foundry.applications.api.DialogV2.confirm({
-                window: { title: _loc("COMPANIONS.Notification.TokenLinkWarning") },
+                window: { title: "COMPANIONS.Notification.TokenLinkWarning" },
                 content: _loc("COMPANIONS.Notification.TokenLinkExplanation", { name: droppedActor.name }),
                 yes: { label: _loc("COMPANIONS.Notification.TokenLinkEnableBtn"), icon: 'fas fa-link' },
                 no: { label: _loc('cancel'), icon: 'fas fa-times' },

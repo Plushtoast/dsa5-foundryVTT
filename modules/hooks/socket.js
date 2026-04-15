@@ -4,6 +4,7 @@ import GroupCheck from '../system/rolls/group-check.js';
 import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
+import CompanionHotbar from '../actor/companions/companion-hotbar.js';
 import { dropToGround } from './itemDrop.js';
 import DSA5 from '../config/config-dsa5.js';
 import { Trade } from '../actor/trade.js';
@@ -183,6 +184,9 @@ export function connectSocket() {
             dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
           });
         }
+        break;
+      case 'summonCompanion':
+        CompanionHotbar.summonCompanion(data.payload);
         break;
       case 'finalizeFoodContribution':
       case 'finalizeidentification':

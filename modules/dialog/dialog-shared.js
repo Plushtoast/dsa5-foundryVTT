@@ -212,7 +212,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
           elem.find('.step').text(DialogShared.roman[spec.step]);
         }
       } else if (key === 'situationalModifiers') {
-        this.getSituationalModifiersWidget(html)?.setModifiers(value);
+        this.getSituationalModifiersWidget(html)?.applyRememberedSelection(value);
       } else {
         const elem = html.find(`[name="${key}"]`);
 

@@ -74,7 +74,7 @@ export default class ChatCommandService {
     </div>`;
 
     new foundry.applications.api.DialogV2({
-      window: { title: _loc(mode === 'pay' ? 'HELP.pay' : 'HELP.getPaid') },
+      window: { title: mode === 'pay' ? 'HELP.pay' : 'HELP.getPaid' },
       content,
       buttons: [
         {
