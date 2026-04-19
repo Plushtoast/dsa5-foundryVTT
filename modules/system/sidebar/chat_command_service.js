@@ -2,7 +2,6 @@ import PaymentRequestService from '../queries/payment-requests.js';
 import GroupCheck from '../rolls/group-check.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
-import Select2Dialog from '../../dialog/select2Dialog.js';
 
 export default class ChatCommandService {
   static executeAbilityRoll(actor, name, type, tokenId, options = {}) {
@@ -23,41 +22,34 @@ export default class ChatCommandService {
     }
   }
 
-  static openSkillModifierDialog(titleKey, { filterFn, onSubmit } = {}) {
+  static openSkillActorDialog(titleKey, { filterFn, actors, onSubmit } = {}) {
     const skills = DSA5ChatAutoCompletion.skills.filter(filterFn || (() => true)).sort((a, b) => a.name.localeCompare(b.name));
     const options = skills.map((s) => `<option value="${s.name}">${s.name}</option>`).join('');
 
-    const content = `<div>
-      <div class='row-section lineheight'>
-        <div class='col fourty table-title'><label>${_loc('Modifier')}</label></div>
-        <div class='col sixty'><input name='modifier' class='quantity-click' type='Number' value='0' /></div>
-      </div>
-      <div class='row-section lineheight'>
+    const header = `<div class='row-section lineheight'>
         <div class='col fourty table-title'><label>${_loc('skill')}</label></div>
         <div class='col sixty'><select name='skill' class='select2' style='width:100%;'>${options}</select></div>
       </div>
-    </div>`;
+      <div class='row-section lineheight'>
+        <div class='col fourty table-title'><label>${_loc('Modifier')}</label></div>
+        <div class='col sixty'><input name='modifier' class='quantity-click' type='Number' value='0' /></div>
+      </div>`;
 
-    new Select2Dialog({
-      window: { title: _loc(titleKey) },
-      content,
-      buttons: [
-        {
-          action: 'ok',
-          icon: 'fa fa-check',
-          label: 'ok',
-          default: true,
-          callback: (event, button) => {
-            const form = $(button.form);
-            const name = form.find('[name="skill"]').val();
-            const modifier = Number(form.find('[name="modifier"]').val()) || 0;
-            const type = skills.find((s) => s.name === name)?.type || 'skill';
-            if (onSubmit) onSubmit(name, type, modifier);
-          },
-        },
-        { action: 'cancel', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+    const actorEntries = actors || ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));
+
+    ActorPickerDialog.open({
+      actors: actorEntries,
+      title: titleKey,
+      header,
+      showSourceToggle: !actors,
+      callback: ({ actorIds, form }) => {
+        const $form = $(form);
+        const name = $form.find('[name="skill"]').val();
+        const modifier = Number($form.find('[name="modifier"]').val()) || 0;
+        const type = skills.find((s) => s.name === name)?.type || 'skill';
+        if (onSubmit) onSubmit(name, type, modifier, actorIds);
+      },
+    });
   }
 
   static async openPaymentDialog(mode) {

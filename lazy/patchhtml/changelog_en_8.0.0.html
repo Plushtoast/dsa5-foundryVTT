@@ -1,0 +1,130 @@
+<h1 id="major-enhancements">Major Enhancements</h1>
+
+<h2 id="shapeshifting">Built-in Shapeshifting with Animated Token Transitions</h2>
+<p>The shapeshifting wizard is now a built-in system feature and no longer requires an addon module to be installed. Dropping a creature onto a character sheet always offers the shapeshift option alongside the mount and new companion option.</p>
+<p>When a shapeshift or shape restoration occurs, the affected token now plays an animated morph transition using the native Foundry v14 <code>TextureTransitionFilter</code>. If the token texture changes, a smooth morph effect bridges the old and new appearance; if the texture stays the same, a swirl animation signals the transformation visually.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/shapeshifting.webp" style="width:100%"/>
+
+<h2 id="payment-requests">Native Payment Requests And Shared Transaction Summaries</h2>
+<p>Payment requests created by GMs can now be bundled into a single shared chat card instead of sending separate prompts for every actor.</p>
+<p>The new flow uses Foundry's native query system instead of a custom socket-based request transport. This means the system can directly hand the payment decision to the designated owning user of each actor and collect the results back into one shared overview card.</p>
+<p>Highlights of the new flow:</p>
+<ul class="dsalist">
+<li>GM <code>/pay</code> and <code>/getPaid</code> requests can target multiple active character actors at once.</li>
+<li>All recipients are tracked inside a single chat card with per-actor status information.</li>
+<li>Requests are sent to the designated actor owner when one is available.</li>
+<li>GM fallback controls remain available on the card for offline, unowned, rejected, or failed requests.</li>
+<li>Merchant and trade notifications now feed into a shared transaction summary card instead of creating fragmented chat output.</li>
+<li>The payment dialog from the chat helper menu, group sheet, and masters menu now shares a single consolidated layout with actor selection and an optional description field.</li>
+</ul>
+<p>This upgrade makes payment handling much easier to follow in multiplayer sessions and aligns the implementation with the current Foundry API.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/payment-requests.webp" style="width:100%"/>
+
+<h2 id="roll-requests">Query-Based Roll Requests</h2>
+<p>GM roll requests for skills, attributes, and regeneration now use the same Foundry query system as payment requests instead of the legacy clickable chat-link flow.</p>
+<p>When a GM triggers a roll request from the masters menu, group sheet, <code>/rq</code> chat command, or a journal enricher, a unified dialog now opens with a searchable skill dropdown prefilled with the originating skill, a modifier input, and actor checkboxes to select which heroes should receive the request.</p>
+<p>Highlights of the new flow:</p>
+<ul class="dsalist">
+<li>One persistent chat card tracks all requested actors with live per-row status updates as results come back.</li>
+<li>Requests are automatically dispatched to the designated actor owner, opening the real roll dialog on their client.</li>
+<li>The card shows detailed result information including quality steps, critical successes, and regeneration values.</li>
+<li>GMs can right-click any pending row on the card for a context menu with resend, roll on behalf, and skip actions.</li>
+<li>A fallback roll button on each row lets players or the GM trigger the roll manually from the card.</li>
+<li>Row actions are automatically hidden for users who have already completed their roll.</li>
+</ul>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/roll-requests.webp" style="width:100%"/>
+
+<h2 id="questlog">Calendar-Integrated Adventure Questlog</h2>
+<p>The calendar/campaign manager now includes a dedicated questlog tab for long-running adventure and campaign tracking, turning the existing calendar surface into a central place for events, dramatis personae, and overarching objectives.</p>
+<p>Questlog entries are stored in dedicated <code>dsaquestlog</code> journal pages and can be registered per journal in the same way as calendar events and Dramatis Personae. Each quest can hold structured summaries, detailed notes, GM-only information, multi-step objectives, and in-world timeline information.</p>
+<p>Highlights of the new questlog flow:</p>
+<ul class="dsalist">
+<li>Adventure journals can expose questlog pages directly inside the calendar picker.</li>
+<li>Quest entries support objective tracking for multi-session story arcs.</li>
+<li>Timeline metadata such as start, target, and completion dates can be stored directly on the quest.</li>
+<li>Quest entries can link back to calendar events and Dramatis Personae entries using stable embedded entry references.</li>
+<li>GMs and players can use the same calendar surface to follow the current state of the adventure instead of splitting information across separate tools.</li>
+</ul>
+<p>This upgrade establishes the questlog as a major campaign-management feature rather than a simple notes list and extends the calendar picker into a broader narrative control center.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="width:100%"/>
+
+<h2 id="scene-regions">Scene Regions Replace Measured Templates</h2>
+<p>Area-of-effect spells and auras now use the native Foundry v14 Scene Region system instead of custom MeasuredTemplate overlays. This brings significant improvements to both spell placement and aura management.</p>
+<p>Spell templates placed from chat cards now use <code>canvas.regions.placeRegion()</code> for interactive placement with live green/red range feedback. Instant-duration spells create ephemeral regions that acquire targets and then disappear; maintained spells create persisted regions that remain visible on the scene until their tracking effect expires. Persistent spell zones automatically include a <code>DSAZoneRegionBehavior</code> that re-applies spell effects when a token enters the zone or at the start of each combat round, supporting recurring damage and ongoing zone effects.</p>
+<p>All spell regions and aura emanations now enforce wall restriction by default, so area effects respect walls and other movement barriers on the scene.</p>
+<p>The ring shape type is now available as an area target option alongside sphere, cone, cube, and line.</p>
+<p>Token auras now use the Region Emanation API (<code>RegionDocument.createTokenEmanation()</code>), which means emanation regions automatically follow token movement without any manual redrawing. Aura effects are applied and removed via native <code>TOKEN_ENTER</code> and <code>TOKEN_EXIT</code> region events through a new <code>DSAAuraRegionBehavior</code> region behavior type, completely replacing the old distance-polling and manual scene-token iteration. Aura effect application now uses the full advanced effect pipeline, supporting resist rolls, system conditions, macros, delayed effects, and creature links.</p>
+<p>The shared <code>DSARegionBehaviorBase</code> base class provides reusable <code>applyEffects()</code>, <code>removeEffects()</code>, <code>validDisposition()</code>, and <code>playSound()</code> methods for all region behavior types, including the existing trap behavior which has been refactored to use the same foundation.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/scene-regions.webp" style="width:100%"/>
+
+<h2 id="group-actor">Group Actor</h2>
+<p>A new "Group" actor type lets GMs and players manage an adventuring party or any collection of characters as a single entity. The group sheet aggregates member stats, skills, inventory, travel, and notes into five dedicated tabs.</p>
+<p><strong>Members tab</strong> mirrors the GameMasterMenu hero display with portrait, schips, LeP/AsP/KaP bars, expandable details (coin icons, clickable advantages/disadvantages, experience), and bulk action buttons for roll requests, payments, and AP awards. Payment and AP award dialogs use the same hero-selection flow as the GameMasterMenu, including familiar and pet XP scaling. Drag and drop actors onto the sheet to add them; groups cannot contain other groups.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-members.webp" style="width:100%"/>
+<p><strong>Skills tab</strong> shows the best skill value per talent across all members. Each skill row offers one-click group checks and roll requests. Skills are grouped by their talent category; a tooltip on each skill row lists all members and their values.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-skills.webp" style="width:100%"/>
+<p><strong>Inventory tab</strong> uses merchant/loot actors as storage locations. Location pills switch between them; dropping a merchant or loot actor onto the sheet links it as a location. A button creates a new loot actor and links it automatically. Item drops to the group sheet are forwarded to the active location.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-inventory.webp" style="width:100%"/>
+<p><strong>Travel tab</strong> calculates effective overland speed from location-based travel modes (on foot, vehicle, river vessel, sea vessel), modifiers, and configurable forced march percentage. Walking speed is automatically derived from the slowest group member. Speed is shown in both Schritt and Meilen (1 Meile = 1000 Schritt). Depot locations (vehicles, ships) can be assigned exclusively to a travel mode; when assigned, the location actor's speed replaces the mode's default value and the location name appears on the speed row. A forced march percentage can be set to increase all mode speeds. The active travel mode is selected on the speed table; effective speed is displayed with a full breakdown.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-travel.webp" style="width:100%"/>
+<p><strong>Notes tab</strong> provides two rich-text fields (biography and notes) and a button to create a calendar event directly in the calendar system.</p>
+<p>The group actor also exposes a <strong>GroupAPI</strong> extension registry that modules can use to add camp helpers, travel utilities, or other custom actions to the group sheet. A <strong>primaryParty</strong> world setting marks one group as the active party; the GameMasterMenu shows an "Open Party Sheet" button when a primary party is configured. The <strong>TokenScatter</strong> utility class provides deploy (scatter member tokens from group token) and reform (converge and delete member tokens) canvas animations.</p>
+
+<h1 id="improvements">Improvements</h1>
+<ul class="dsalist">
+<li><strong>Item Enhancement Effects</strong>: A new <code>enhancement</code> ActiveEffect type allows permanent item modifications such as materials, creation techniques, and improvements to be represented as data-driven effects on equipment items. Enhancement effects carry a reduced schema (enhancement type, slot cost, crafting roll modifier, crafting time multiplier, craft skill, material cost, special attributes, on-use actions) and apply their changes directly to the parent item's attributes during <code>prepareDerivedData()</code>. They are excluded from actor-level effect application and never transfer to the owning actor. Each equipment item type defines slot limits per enhancement category, enforced via a pre-create hook that also validates change keys against a <code>system.*</code> prefix whitelist. The enhancement type dropdown is filtered per target item type so only categories with available slots are offered. A dedicated <code>DSAEnhancementEffectConfig</code> sheet provides a streamlined four-tab UI (description, details, changes, actions) with the shared wizard/expert dropdown infrastructure. Custom apply logic handles dice-string damage arithmetic (e.g. <code>"1d6+2"</code> → <code>"1d6+4"</code>), slash-separated range multipliers, zone armor protection replication, and special attribute flags (magic, rust-resistant, etc.) that are merged into the item's effect attributes. A compendium helper (<code>DSA5_Utility.getEnhancementEffects()</code>) enables indexed lookups of enhancement AEs from compendium packs by target type and enhancement type. The compendium module's crafting calculator now dynamically loads enhancement effects from the compendium instead of using static modifier tables, making the system fully data-driven and extensible.</li>
+<li>Hit zones can now be edited directly on opposed result cards, with damage, zone armor, and wound-resistance buttons updating in place.</li>
+<li>A new public <code>ShapeshiftingAPI</code> now lets macros and modules open the built-in shapeshifting wizard with resolved source/target actors and preset-backed radio defaults.</li>
+<li>The Active Effect configuration's Changes tab now defaults to a wizard mode that groups effect keys by category (Attributes, Combat, Skills, Magic &amp; Faith, Regeneration, Conditions, Protection &amp; Defense, Weapon/Armor) and hides technical fields behind an expert toggle. The categories are presented as optgroups inside a searchable dropdown; selecting an effect auto-fills the key, type, intended phase, and example value. An expert mode toggle in the tab header restores the full column layout at any time.</li>
+<li>Advanced effect macros triggered through DSA aura regions and spell template regions now receive a normalized <code>options.regionEvent</code> payload.</li>
+<li>Payment request handling now relies on package-prefixed native queries such as <code>dsa5.paymentRequest</code> and <code>dsa5.transactionSummary</code>.</li>
+<li>GMs can now create calendar events directly from the master hotbar and from the calendar picker's Events tab.</li>
+<li>Actor directory entries and actor sheet window controls now include a GM action to add an actor directly to Dramatis Personae.</li>
+<li>The primary party group sheet can now be opened directly with the <code>Shift+C</code> keybinding.</li>
+<li>Social-conflict skill dialogs for Persuasion, Seduction, and Fast-Talk now add a Personae-based Social Contact modifier automatically.</li>
+<li>The item creation flow now uses a dedicated application dialog instead of an inline prompt with a built-in search field.</li>
+<li>On-use item macros now live in the item system data as reusable on-use actions instead of a single legacy flag string. Items can define multiple named action entries with their own icon and macro.</li>
+<li>On-use action dialogs now expose their image row as a real image file picker.</li>
+<li>On-use actions are now also available on Active Effects. Effects with on-use actions display a badge on the actor's status tab and can be activated from the status effect context menu or the token hotbar. Active effects can also be dropped onto the macro hotbar to create a quick-access macro.</li>
+<li>On-use actions now support a temporary GM-only activation via right-click.</li>
+<li>Character inventory sheets now include bulk inventory actions for deleting all inventory items, dropping them onto the current scene as loot, or packing everything into a dropped bag.</li>
+<li>Trading an item from the actor sheet now opens the shared searchable actor picker instead of the old bespoke trade-target list.</li>
+<li>ProseMirror editors now include a localized DSA Styles dropdown for quickly wrapping selected content in Master Box, Paper Note, Quote Block, and DSA List containers.</li>
+<li>Ranged weapons in the combat tab now show reach and reload details in an HTML tooltip on the weapon name instead of an expandable detail row.</li>
+<li>The <code>@Info</code> journal enricher now allows players to roll knowledge checks directly. Players see a skill roll button; rolling sends a query to the GM who can approve/adjust which QS information to share.</li>
+<li>GMs can now control which calendar features (calendar, events, personae, questlog) are visible to players via a new feature visibility setting.</li>
+<li><strong>Enchantment Spell Extensions</strong>: Enchantments on items can now carry spell/liturgy extensions. Drag and drop a spell extension from a compendium onto an enchanted item to attach it to the matching enchantment.</li>
+<li><strong>Post-Roll Rerolls</strong>: Active Effects using <code>system.skillModifiers.postRoll.reroll</code> can now permit rerolling up to three dice in a single post-roll reroll activation.</li>
+<li><strong>Native Effect Expiration</strong>: Active effect duration expiration is now handled by Foundry v14's built-in <code>ActiveEffectRegistry</code> instead of the third-party Times-Up module.</li>
+<li><strong>Condition Level Decay</strong>: Leveled conditions with a natural decay rate (Rapture, Stupor, Fear, Paralysis, Confusion) now automatically lose one level per time interval instead of being removed all at once when their duration expires.</li>
+<li><strong>Maintained Cross-Actor Macro Effects</strong>: Maintained spells and rituals can now keep track of macro-created target effects across actors when the macro reports the created ActiveEffect UUID through <code>args.result.maintainedTargets</code>.</li>
+<li><strong>Weapon Reach Modifier Display</strong>: The melee attack dialog now shows the calculated weapon reach modifier next to the opposing weapon size selector and includes it in the dice preview.</li>
+<li><strong>Unified Situational Modifier Widget</strong>: Roll dialogs now use a shared situational modifier widget for skill, combat, spell, regeneration, characteristic, resistance, and falling-damage tests. Situational modifier tooltips now use structured HTML with clearer mechanical effect summaries and lazy-loaded linked rule text.</li>
+<li><strong>Supporting Skill Burger Menu</strong>: Skill test dialogs now include a supporting-skill action in the burger menu. A successful supporting roll applies its bonus directly through the shared situational modifier widget.</li>
+<li><strong>Forbidden Gates (Verbotene Pforten)</strong>: Spellcasters with the Forbidden Gates special ability can now activate it from the burger menu during spell and ritual rolls. The flow prompts for a Self-Control check; on success the caster can split spell costs between AE and LP through an interactive cost distribution dialog, on failure the spell fails automatically and the caster pays half costs.</li>
+<li><strong>Unified Modifier Bracket Formatting</strong>: All modifier values across roll dialogs now consistently use square brackets <code>[value]</code>.</li>
+<li><strong>Bag Transfer With Contents</strong>: Bags (containers) can now be transferred between actors with all their contents intact. Item parent references are automatically remapped so that the bag structure is preserved on the receiving actor.</li>
+<li><strong>Action Economy Pips on Hotbar</strong>: The actor hotbar now displays small action economy pips when a combatant's turn is active. Base action pips (blue) track actions used this turn; a free action pip (green) tracks the free action; and a movement bar shows distance moved versus speed.</li>
+<li><strong>Automatic Rapture Tracking</strong>: Blessed Ones now automatically gain Rapture (Entrückung) levels when spending Karma Points. Every 10 KaP spent within a rolling 24-hour window adds one level of Rapture (up to max 4).</li>
+<li><strong>Alternative Calendar Support</strong>: The calendar system now supports alternative calendars registered by modules, including the Novadi calendar and the Thorwal calendar.</li>
+<li><strong>Magical Action Rule Enforcement</strong>: Spells and rituals with a magical action type now automatically enforce the corresponding rule restrictions in the roll dialog.</li>
+<li><strong>Equipment Packages As First-Class Items</strong>: Equipment packages are now a dedicated <code>itempackage</code> item type. The <code>/packages</code> chat command lists all available equipment packages from all active compendia.</li>
+</ul>
+
+<h1 id="community-contributions">Community Contributions</h1>
+<p>A huge thank you to <strong>Wero</strong> who voluntarily programmed the foundation for a large number of special abilities and features in this release. His contributions include the initial implementations of Forbidden Gates, Supporting Skill Tests, and the groundwork for many more special ability integrations. The amount of time and effort he invested to bring these rule mechanics to life is deeply appreciated — the system would not be where it is today without contributions like his.</p>
+
+<h1 id="bugfixes">Bugfixes</h1>
+<p>We will not list bugfixes anymore. Instead you can find the timeline when what bugfixes has been resolved right here:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix Timeline</a></p>
+<p>On the same board you can also find plans for future enhancements on the system.<br>
+Note that you can also use the search function there.</p>

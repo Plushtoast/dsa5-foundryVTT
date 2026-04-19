@@ -8,14 +8,14 @@
 
   {{#each transfers}}
     <div>
-        <b>{{actorName}}</b>
+        <b>{{actorName}}</b> {{localize "PAYMENT.received"}}
     </div>
     
     {{#if items.length}}
     {{#each items}}
         <div class="row-section tableOdd">
             <div class="col ten">
-                {{quantity}}
+                {{quantity}}x
             </div>
             <div class="col seventy ellipsis">
                 {{{linkHtml}}}

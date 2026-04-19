@@ -322,6 +322,7 @@ export default class GroupData extends ActorDataModel {
       name,
       type: 'npc',
       folder: folder.id,
+      flags: { core: { sheetClass: 'dsa5.MerchantSheetDSA5' } },
       system: {
         merchant: { merchantType },
       },

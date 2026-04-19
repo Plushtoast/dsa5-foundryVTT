@@ -93,7 +93,9 @@
             <div class="col ten"></div>
             <div class="col eighty">{{localize 'SHEET.onUseActions'}}</div>
             <div class="col ten flexrow">
+                {{#if canEditMacros}}
                 <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="addOnUseAction" data-tooltip="SHEET.addOnUseAction"></button>
+                {{/if}}
             </div>
         </div>
         {{#each onUseActions as |action|}}
@@ -104,12 +106,14 @@
             <div class="col seventy">
                 <span>{{action.name}}</span>
             </div>
+            {{#if ../canEditMacros}}
             <div class="col ten right">
                 <a data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"><i class="fa fa-edit"></i></a>
             </div>
             <div class="col ten right">
                 <a data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"><i class="fa fa-trash"></i></a>
             </div>
+            {{/if}}
         </div>
         {{/each}}
     </div>

@@ -28,6 +28,9 @@
           {{#if canGMRoll}}
             <button type="button" class="roll-request-action icon fas fa-dice roll-request-gm" data-action="rollOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}"></button>
           {{/if}}
+          {{#if canGMAction}}
+            <button type="button" class="roll-request-menu icon fas fa-ellipsis-vertical roll-request-gm" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.more"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.more"}}"></button>
+          {{/if}}
         </div>
       </div>
     {{/each}}

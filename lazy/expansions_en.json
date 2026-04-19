@@ -77,6 +77,16 @@
           "badges": ["Bestseller"]
         },
         {
+          "id": "dsa5-bestiary2",
+          "label": "Aventurian Bestiary II",
+          "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2329/tde5-aventurian-bestiary-2-for-foundry-vtt",
+          "image": {
+            "src": "https://www.ulissesf-shop.com/media/image/cd/c5/93/ESD1011_0.jpg"
+          },
+          "description": "The Aventurian Bestiary II module for Foundry VTT presents over 100 threatening creatures, dangerous animals, and supernatural entities including demons, chimeras, and dragons—all fully described with complete stat blocks, full-color illustrations, and ready-to-use tokens for your adventures.",
+          "badges": []
+        },
+        {
           "id": "dsa5-armory",
           "label": "Aventurian Armory",
           "href": "https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry",
@@ -84,6 +94,16 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp"
           },
           "description": "No warrior can do without his weapons, no thief without his burglary tools and no magician without his books. The Aventuria Armory contains descriptions of over 100 useful items of equipment, weapons and armor for traveling heroes and supplements the rules…",
+          "badges": []
+        },
+        {
+          "id": "dsa5-armory2",
+          "label": "Aventurian Armory II",
+          "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2330/tde5-aventurian-armory-2-for-foundry-vtt",
+          "image": {
+            "src": "https://www.ulissesf-shop.com/media/image/91/05/67/ESD1012_0.jpg"
+          },
+          "description": "The Aventurian Armory II contains over 150 descriptions, illustrations, and entries for new equipment, weapons, armor, and helmets for adventurers. In addition, the module includes features for hit zone armor protection ..",
           "badges": []
         }
       ]

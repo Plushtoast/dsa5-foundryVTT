@@ -139,9 +139,12 @@ export default class DSA5ChatListeners {
         label: _loc('HELP.quickAbility'),
         icon: 'fas fa-bolt',
         onClick: () =>
-          ChatCommandService.openSkillModifierDialog('HELP.quickAbility', {
-            onSubmit: (name, type, modifier) => {
-              if (type) ChatCommandService.speakerAbilityRoll(name, type);
+          ChatCommandService.openSkillActorDialog('HELP.quickAbility', {
+            onSubmit: (name, type, modifier, actorIds) => {
+              for (const id of actorIds) {
+                const actor = game.actors.get(id);
+                if (actor) ChatCommandService.executeAbilityRoll(actor, name, type, undefined, { modifier });
+              }
             },
           }),
       },
@@ -151,17 +154,14 @@ export default class DSA5ChatListeners {
       {
         label: _loc('HELP.request'),
         icon: 'fas fa-dice',
-        onClick: () =>
-          ChatCommandService.openSkillModifierDialog('HELP.request', {
-            onSubmit: (name, type, modifier) => RollRequestService.requestRoll(name, modifier),
-          }),
+        onClick: () => RollRequestService.openRequestDialog(),
       },
       { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },
       {
         label: _loc('HELP.groupcheck'),
         icon: 'fas fa-users',
         onClick: () =>
-          ChatCommandService.openSkillModifierDialog('HELP.groupcheck', {
+          ChatCommandService.openSkillActorDialog('HELP.groupcheck', {
             filterFn: (x) => x.type === 'skill',
             onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
           }),

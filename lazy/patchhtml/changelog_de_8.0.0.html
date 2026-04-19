@@ -1,0 +1,129 @@
+<h1 id="wichtige-neuerungen">Wichtige Neuerungen</h1>
+
+<h2 id="gestaltwandlung">Eingebaute Gestaltwandlung mit animierten Token-Übergängen</h2>
+<p>Der Gestaltwandlungs-Assistent ist jetzt eine eingebaute Systemfunktion und benötigt kein Zusatzmodul mehr. Das Fallenlassen einer Kreatur auf einen Heldenbogen bietet immer die Gestaltwandlungs-Option neben der Reittier- und neuen Begleiter-Option an.</p>
+<p>Wenn eine Gestaltwandlung oder Rückverwandlung stattfindet, spielt der betroffene Token jetzt einen animierten Morph-Übergang mit dem nativen Foundry v14 <code>TextureTransitionFilter</code> ab. Wenn sich die Token-Textur ändert, überbrückt ein sanfter Morph-Effekt das alte und neue Aussehen; bleibt die Textur gleich, signalisiert eine Wirbel-Animation die Verwandlung visuell.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/shapeshifting.webp" style="width:100%"/>
+
+<h2 id="zahlungsanfragen">Native Zahlungsanfragen und gemeinsame Transaktionsübersichten</h2>
+<p>Von der Spielleitung erstellte Zahlungsanfragen können jetzt in einer einzigen gemeinsamen Chat-Karte gebündelt werden, anstatt separate Aufforderungen für jeden Akteur zu senden.</p>
+<p>Der neue Ablauf nutzt Foundrys natives Query-System anstelle eines eigenen Socket-basierten Transports. Das bedeutet, das System kann die Zahlungsentscheidung direkt an den zugewiesenen Besitzer jedes Akteurs übergeben und die Ergebnisse in einer gemeinsamen Übersichtskarte zusammenführen.</p>
+<p>Highlights des neuen Ablaufs:</p>
+<ul class="dsalist">
+<li>SL-Befehle <code>/pay</code> und <code>/getPaid</code> können mehrere aktive Heldenakteure gleichzeitig ansprechen.</li>
+<li>Alle Empfänger werden in einer einzelnen Chat-Karte mit akteurspezifischen Statusinformationen verfolgt.</li>
+<li>Anfragen werden an den zugewiesenen Akteurbesitzer gesendet, wenn einer verfügbar ist.</li>
+<li>SL-Fallback-Steuerungen bleiben auf der Karte für offline, unbesessene, abgelehnte oder fehlgeschlagene Anfragen verfügbar.</li>
+<li>Händler- und Handels-Benachrichtigungen fließen jetzt in eine gemeinsame Transaktionsübersichtskarte, statt fragmentierte Chat-Ausgaben zu erzeugen.</li>
+<li>Der Zahlungsdialog aus dem Chat-Helfermenü, dem Gruppenbogen und dem SL-Menü teilt sich jetzt ein einziges konsolidiertes Layout mit Akteurauswahl und optionalem Beschreibungsfeld.</li>
+</ul>
+<p>Dieses Upgrade macht die Zahlungsabwicklung in Mehrspielersitzungen deutlich übersichtlicher und richtet die Implementierung am aktuellen Foundry-API aus.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/payment-requests.webp" style="width:100%"/>
+
+<h2 id="probenanfragen">Query-basierte Probenanfragen</h2>
+<p>SL-Probenanfragen für Talente, Eigenschaften und Regeneration nutzen jetzt dasselbe Foundry-Query-System wie Zahlungsanfragen, anstelle des bisherigen klickbaren Chat-Link-Ablaufs.</p>
+<p>Wenn die Spielleitung eine Probenanfrage aus dem SL-Menü, dem Gruppenbogen, dem <code>/rq</code>-Chatbefehl oder einem Journal-Enricher auslöst, öffnet sich ein einheitlicher Dialog mit einem durchsuchbaren Talent-Dropdown, einem Modifikator-Eingabefeld und Akteur-Checkboxen.</p>
+<p>Highlights des neuen Ablaufs:</p>
+<ul class="dsalist">
+<li>Eine persistente Chat-Karte verfolgt alle angefragten Akteure mit Echtzeit-Statusaktualisierungen pro Zeile.</li>
+<li>Anfragen werden automatisch an den zugewiesenen Akteurbesitzer dispatcht und öffnen den echten Probendialog auf dessen Client.</li>
+<li>Die Karte zeigt detaillierte Ergebnisinformationen inklusive Qualitätsstufen, kritischer Erfolge und Regenerationswerte.</li>
+<li>Die Spielleitung kann per Rechtsklick auf jede ausstehende Zeile ein Kontextmenü mit Erneut-Senden, Stellvertretend-Würfeln und Überspringen-Aktionen aufrufen.</li>
+<li>Ein Fallback-Würfel-Button in jeder Zeile ermöglicht Spielern oder der Spielleitung, den Wurf manuell von der Karte aus auszulösen.</li>
+<li>Zeilen-Aktionen werden automatisch für Nutzer ausgeblendet, die ihren Wurf bereits abgeschlossen haben.</li>
+</ul>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/roll-requests.webp" style="width:100%"/>
+
+<h2 id="questlog">Kalender-integriertes Abenteuer-Questlog</h2>
+<p>Der Kalender-/Kampagnenmanager enthält jetzt einen eigenen Questlog-Reiter für die Langzeit-Verfolgung von Abenteuern und Kampagnen und macht die bestehende Kalender-Oberfläche zu einem zentralen Ort für Ereignisse, Dramatis Personae und übergreifende Ziele.</p>
+<p>Questlog-Einträge werden in dedizierten <code>dsaquestlog</code>-Journalseiten gespeichert und können pro Journal registriert werden, genau wie Kalenderereignisse und Dramatis Personae. Jeder Quest kann strukturierte Zusammenfassungen, detaillierte Notizen, SL-exklusive Informationen, mehrstufige Ziele und In-World-Zeitleisteninformationen enthalten.</p>
+<p>Highlights des neuen Questlog-Ablaufs:</p>
+<ul class="dsalist">
+<li>Abenteuer-Journale können Questlog-Seiten direkt im Kalender-Picker darstellen.</li>
+<li>Quest-Einträge unterstützen Ziel-Tracking für mehrsitzungsübergreifende Handlungsstränge.</li>
+<li>Zeitleisten-Metadaten wie Start-, Ziel- und Abschlussdaten können direkt auf dem Quest gespeichert werden.</li>
+<li>Quest-Einträge können auf Kalenderereignisse und Dramatis-Personae-Einträge über stabile eingebettete Eintragsreferenzen zurückverlinken.</li>
+<li>Spielleitung und Spieler können dieselbe Kalender-Oberfläche nutzen, um den aktuellen Abenteuerstand zu verfolgen.</li>
+</ul>
+<p>Dieses Upgrade etabliert das Questlog als bedeutendes Kampagnenmanagement-Feature und erweitert den Kalender-Picker zu einer umfassenderen narrativen Schaltzentrale.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="width:100%"/>
+
+<h2 id="szenenregionen">Szenenregionen ersetzen Maßschablonen</h2>
+<p>Flächenzauber und Auren nutzen jetzt das native Foundry v14 Szenenregionen-System anstelle eigener MeasuredTemplate-Overlays. Das bringt erhebliche Verbesserungen sowohl bei der Zauberplatzierung als auch bei der Aurenverwaltung.</p>
+<p>Zauberschablonen, die von Chat-Karten platziert werden, nutzen jetzt <code>canvas.regions.placeRegion()</code> für interaktive Platzierung mit Echtzeit-Grün-/Rot-Reichweiten-Feedback. Sofortwirkungszauber erzeugen kurzlebige Regionen, die Ziele erfassen und dann verschwinden; aufrechterhaltene Zauber erzeugen persistente Regionen, die auf der Szene sichtbar bleiben, bis ihr Tracking-Effekt abläuft. Persistente Zauberzonen beinhalten automatisch ein <code>DSAZoneRegionBehavior</code>, das Zaubereffekte erneut anwendet, wenn ein Token die Zone betritt oder zu Beginn jeder Kampfrunde.</p>
+<p>Alle Zauberregionen und Aura-Emanationen erzwingen jetzt standardmäßig Wandbeschränkungen, sodass Flächeneffekte Wände und andere Bewegungsbarrieren auf der Szene respektieren.</p>
+<p>Der Ringform-Typ ist jetzt als Flächenzieloption neben Kugel, Kegel, Würfel und Linie verfügbar.</p>
+<p>Token-Auren nutzen jetzt die Region-Emanation-API (<code>RegionDocument.createTokenEmanation()</code>), was bedeutet, dass Emanationsregionen automatisch der Token-Bewegung folgen. Aura-Effektanwendung nutzt jetzt die volle erweiterte Effekt-Pipeline inklusive Widerstandswürfe, Systemzustände, Makros, verzögerte Effekte und Kreaturen-Links.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/scene-regions.webp" style="width:100%"/>
+
+<h2 id="gruppenakteur">Gruppenakteur</h2>
+<p>Ein neuer „Gruppen"-Akteurtyp ermöglicht Spielleitung und Spielern, eine Abenteurergruppe oder jede Sammlung von Charakteren als einzelne Einheit zu verwalten. Der Gruppenbogen aggregiert Mitglieder-Statistiken, Talente, Inventar, Reise und Notizen in fünf dedizierten Reitern.</p>
+<p><strong>Mitglieder-Reiter</strong> spiegelt die SL-Menü-Heldenanzeige mit Portrait, Schips, LeP/AsP/KaP-Balken, aufklappbaren Details (Münz-Icons, klickbare Vor-/Nachteile, Erfahrung) und Massenaktions-Buttons für Probenanfragen, Zahlungen und AP-Vergaben. Zahlungs- und AP-Vergabedialoge nutzen denselben Heldenauswahl-Ablauf wie das SL-Menü, einschließlich Vertrauten- und Begleittier-AP-Skalierung. Akteure können per Drag-and-Drop auf den Bogen gezogen werden; Gruppen können keine anderen Gruppen enthalten.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-members.webp" style="width:100%"/>
+<p><strong>Talente-Reiter</strong> zeigt den besten Talentwert pro Talent über alle Mitglieder. Jede Talentzeile bietet Ein-Klick-Gruppenproben und Probenanfragen. Talente sind nach Talentkategorie gruppiert; ein Tooltip auf jeder Talentzeile listet alle Mitglieder und ihre Werte auf.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-skills.webp" style="width:100%"/>
+<p><strong>Inventar-Reiter</strong> nutzt Händler-/Beute-Akteure als Lagerorte. Standort-Pillen schalten zwischen ihnen um; das Fallenlassen eines Händler- oder Beute-Akteurs auf den Bogen verknüpft ihn als Standort. Ein Button erstellt einen neuen Beute-Akteur und verknüpft ihn automatisch. Gegenstandsdrops auf den Gruppenbogen werden an den aktiven Standort weitergeleitet.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-inventory.webp" style="width:100%"/>
+<p><strong>Reise-Reiter</strong> berechnet die effektive Überlandgeschwindigkeit aus standortbasierten Reisemodi (zu Fuß, Fahrzeug, Flussschiff, Seeschiff), Modifikatoren und konfigurierbarem Gewaltmarsch-Prozentsatz. Die Gehgeschwindigkeit wird automatisch vom langsamsten Gruppenmitglied abgeleitet. Die Geschwindigkeit wird sowohl in Schritt als auch in Meilen (1 Meile = 1000 Schritt) angezeigt. Depot-Standorte (Fahrzeuge, Schiffe) können exklusiv einem Reisemodus zugewiesen werden; bei Zuweisung ersetzt die Geschwindigkeit des Standort-Akteurs den Standardwert des Modus. Ein Gewaltmarsch-Prozentsatz kann gesetzt werden, um alle Modus-Geschwindigkeiten zu erhöhen.</p>
+<!-- TODO: replace placeholder -->
+<img src="systems/dsa5/lazy/patchimages/8.0.0/group-travel.webp" style="width:100%"/>
+<p><strong>Notizen-Reiter</strong> bietet zwei Rich-Text-Felder (Biografie und Notizen) und einen Button zum direkten Erstellen eines Kalenderereignisses.</p>
+<p>Der Gruppenakteur stellt auch eine <strong>GroupAPI</strong>-Erweiterungsregistrierung bereit, die Module nutzen können, um Lagerhelfer, Reisedienstprogramme oder andere eigene Aktionen zum Gruppenbogen hinzuzufügen. Eine <strong>primaryParty</strong>-Welteinstellung markiert eine Gruppe als aktive Gruppe; das SL-Menü zeigt einen „Gruppenbogen öffnen"-Button, wenn eine Primärgruppe konfiguriert ist. Die <strong>TokenScatter</strong>-Hilfsklasse bietet Entfalten (Mitglieder-Tokens vom Gruppen-Token streuen) und Sammeln (Mitglieder-Tokens konvergieren und löschen) Canvas-Animationen.</p>
+
+<h1 id="verbesserungen">Verbesserungen</h1>
+<ul class="dsalist">
+<li><strong>Gegenstandsverbesserungs-Effekte</strong>: Ein neuer <code>enhancement</code> ActiveEffect-Typ erlaubt permanente Gegenstandsmodifikationen wie Materialien, Herstellungstechniken und Verbesserungen als datengetriebene Effekte auf Ausrüstungsgegenständen. Verbesserungseffekte tragen ein reduziertes Schema (Verbesserungstyp, Slot-Kosten, Herstellungsprobe-Modifikator, Herstellungszeit-Multiplikator, Handwerkstalent, Materialkosten, Spezialattribute, Nutzungsaktionen) und wenden ihre Änderungen direkt auf die Attribute des Elterngegenstands während <code>prepareDerivedData()</code> an. Ein dediziertes <code>DSAEnhancementEffectConfig</code>-Sheet bietet eine schlanke Vier-Reiter-Oberfläche mit der gemeinsamen Assistenten-/Experten-Dropdown-Infrastruktur.</li>
+<li>Trefferzonen können jetzt direkt auf vergleichenden Ergebniskarten bearbeitet werden, wobei Schaden, Zonenpanzerung und Wundwiderstands-Buttons sich an Ort und Stelle aktualisieren.</li>
+<li>Eine neue öffentliche <code>ShapeshiftingAPI</code> ermöglicht es Makros und Modulen, den Gestaltwandlungs-Assistenten mit aufgelösten Akteuren und voreingestellten Standardwerten zu öffnen.</li>
+<li>Der Änderungen-Reiter der Aktiven-Effekt-Konfiguration wechselt jetzt standardmäßig in einen Assistenten-Modus, der Effektschlüssel nach Kategorie gruppiert und technische Felder hinter einem Experten-Toggle verbirgt.</li>
+<li>Erweiterte Effekt-Makros, die über DSA-Aura-Regionen und Zauberschablonen-Regionen ausgelöst werden, erhalten jetzt ein normalisiertes <code>options.regionEvent</code>-Payload.</li>
+<li>Die Handhabung von Zahlungsanfragen basiert jetzt auf paketpräfixierten nativen Queries wie <code>dsa5.paymentRequest</code> und <code>dsa5.transactionSummary</code>.</li>
+<li>Die Spielleitung kann jetzt Kalenderereignisse direkt über die SL-Hotbar und den Kalender-Picker erstellen.</li>
+<li>Akteur-Verzeichniseinträge und Akteur-Sheet-Fenstersteuerungen enthalten jetzt eine SL-Aktion zum direkten Hinzufügen eines Akteurs zu Dramatis Personae.</li>
+<li>Der Gruppenbogen der Primärgruppe kann jetzt direkt mit <code>Shift+C</code> geöffnet werden.</li>
+<li>Soziale-Konflikte-Talentdialoge für Überreden, Betören und Bekehren &amp; Überzeugen fügen jetzt automatisch einen Personae-basierten Sozialkontakt-Modifikator hinzu.</li>
+<li>Der Gegenstandserstellungs-Ablauf nutzt jetzt einen eigenen Anwendungsdialog mit integriertem Suchfeld.</li>
+<li>Nutzungs-Makros auf Gegenständen leben jetzt in den Systemdaten als wiederverwendbare Nutzungsaktionen. Gegenstände können mehrere benannte Aktionseinträge mit eigenem Icon und Makro definieren.</li>
+<li>Nutzungsaktions-Dialoge zeigen ihre Bildzeile jetzt als echten Bild-Datei-Picker an.</li>
+<li>Nutzungsaktionen sind jetzt auch auf Aktiven Effekten verfügbar. Effekte mit Nutzungsaktionen zeigen ein Badge auf dem Status-Reiter und können über das Kontextmenü oder die Token-Hotbar aktiviert werden.</li>
+<li>Nutzungsaktionen unterstützen jetzt eine temporäre SL-exklusive Aktivierung per Rechtsklick.</li>
+<li>Helden-Inventar-Sheets enthalten jetzt Massen-Inventaraktionen zum Löschen, Ablegen als Beute oder Einpacken in eine Tasche.</li>
+<li>Das Handeln eines Gegenstands öffnet jetzt den gemeinsamen durchsuchbaren Akteur-Picker statt der alten Handelsziel-Liste.</li>
+<li>ProseMirror-Editoren enthalten jetzt ein lokalisiertes DSA-Styles-Dropdown für Meisterinfo-Box, Papiernotiz, Zitatblock und DSA-Listen-Container.</li>
+<li>Fernkampfwaffen zeigen Reichweite und Nachlade-Details jetzt in einem HTML-Tooltip auf dem Waffennamen.</li>
+<li>Der <code>@Info</code>-Journal-Enricher ermöglicht Spielern jetzt direkte Wissensproben mit SL-Genehmigungsablauf.</li>
+<li>Die Spielleitung kann jetzt über eine Feature-Sichtbarkeitseinstellung steuern, welche Kalenderfunktionen für Spieler sichtbar sind.</li>
+<li><strong>Verzauberungs-Zaubererweiterungen</strong>: Verzauberungen auf Gegenständen können jetzt Zauber-/Liturgie-Erweiterungen tragen.</li>
+<li><strong>Nachwürfeln nach dem Wurf</strong>: Aktive Effekte mit <code>system.skillModifiers.postRoll.reroll</code> können jetzt das Neuwürfeln von bis zu drei Würfeln erlauben.</li>
+<li><strong>Native Effekt-Ablaufverwaltung</strong>: Die Ablaufverwaltung aktiver Effekte wird jetzt über Foundry v14s integrierte <code>ActiveEffectRegistry</code> gehandhabt.</li>
+<li><strong>Stufenweiser Zustandsabbau</strong>: Gestufte Zustände mit natürlicher Abbaurate verlieren jetzt automatisch eine Stufe pro Zeitintervall statt komplett entfernt zu werden.</li>
+<li><strong>Aufrechterhaltene akteursübergreifende Makro-Effekte</strong>: Aufrechterhaltene Zauber und Rituale können jetzt makroerstellte Zieleffekte über Akteure hinweg verfolgen.</li>
+<li><strong>Waffenreichweite-Modifikator-Anzeige</strong>: Der Nahkampf-Angriffsdialog zeigt jetzt den berechneten Waffenreichweite-Modifikator neben der gegnerischen Waffengrößen-Auswahl an.</li>
+<li><strong>Einheitliches Situativer-Modifikator-Widget</strong>: Probendialoge nutzen jetzt ein gemeinsames situatives Modifikator-Widget für alle Probentypen.</li>
+<li><strong>Unterstützende Talentprobe im Burger-Menü</strong>: Talentprobendialoge enthalten jetzt eine Unterstützungsprobe-Aktion im Burger-Menü.</li>
+<li><strong>Verbotene Pforten</strong>: Zauberwirker mit der Sonderfertigkeit Verbotene Pforten können diese jetzt über das Burger-Menü aktivieren, mit Selbstbeherrschung-Probe und interaktivem Kostenverteilungsdialog.</li>
+<li><strong>Einheitliche Modifikator-Klammer-Formatierung</strong>: Alle Modifikatorwerte in Probendialogen verwenden jetzt einheitlich eckige Klammern <code>[Wert]</code>.</li>
+<li><strong>Taschentransfer mit Inhalt</strong>: Taschen können jetzt zwischen Akteuren mit ihrem gesamten Inhalt übertragen werden.</li>
+<li><strong>Aktionsökonomie-Punkte auf der Hotbar</strong>: Die Akteur-Hotbar zeigt jetzt kleine Aktionsökonomie-Punkte an, wenn der Zug eines Kämpfers aktiv ist.</li>
+<li><strong>Automatische Entrückungs-Verfolgung</strong>: Geweihte erhalten jetzt automatisch Entrückungs-Stufen beim Ausgeben von Karmapunkten (alle 10 KaP innerhalb eines rollierenden 24-Stunden-Fensters).</li>
+<li><strong>Alternative Kalender-Unterstützung</strong>: Das Kalendersystem unterstützt jetzt alternative Kalender, die von Modulen registriert werden (Novadi- und Thorwal-Kalender).</li>
+<li><strong>Magische-Handlungs-Regelerzwingung</strong>: Zauber und Rituale mit magischem Handlungstyp erzwingen jetzt automatisch die entsprechenden Regelbeschränkungen im Probendialog.</li>
+<li><strong>Ausrüstungspakete als erstklassige Gegenstände</strong>: Ausrüstungspakete sind jetzt ein eigener <code>itempackage</code>-Gegenstandstyp. Der <code>/packages</code>-Chatbefehl listet alle verfügbaren Pakete auf.</li>
+</ul>
+
+<h1 id="community-beitraege">Community-Beiträge</h1>
+<p>Ein großes Dankeschön an <strong>Wero</strong>, der freiwillig die Grundlage für eine große Anzahl von Sonderfertigkeiten und Features in dieser Version programmiert hat. Seine Beiträge umfassen die ersten Implementierungen von Verbotene Pforten, Unterstützende Talentproben und die Vorarbeit für viele weitere Sonderfähigkeits-Integrationen. Der enorme Zeit- und Arbeitsaufwand, den er investiert hat, um diese Regelmechaniken zum Leben zu erwecken, wird zutiefst geschätzt — das System wäre ohne Beiträge wie seine nicht dort, wo es heute ist.</p>
+
+<h1 id="fehlerbehebungen">Fehlerbehebungen</h1>
+<p>Wir listen Fehlerbehebungen nicht mehr einzeln auf. Stattdessen findest du die Zeitleiste, wann welche Fehlerbehebungen gelöst wurden, hier:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix-Zeitleiste</a></p>
+<p>Auf demselben Board findest du auch Pläne für zukünftige Verbesserungen am System.<br>
+Beachte, dass du dort auch die Suchfunktion nutzen kannst.</p>

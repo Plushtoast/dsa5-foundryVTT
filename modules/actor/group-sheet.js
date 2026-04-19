@@ -403,7 +403,12 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
     context.locations = system.resolvedLocations.map((loc) => ({
       ...loc,
-      items: loc.actor.items.filter((i) => DSA5.equipmentCategories.has(i.type)),
+      items: loc.actor.items
+        .filter((i) => DSA5.equipmentCategories.has(i.type))
+        .map((i) => {
+          i.calculatedPrice = DSA5_Utility.itemPrice(i);
+          return i;
+        }),
       coins: loc.actor.items
         .filter((i) => i.type === 'money')
         .sort((a, b) => b.system.price.value - a.system.price.value)
@@ -719,7 +724,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       actors: actorEntries,
       title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
       header,
-      showSourceToggle: true,
+      showSourceToggle: actors.length > 1,
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
         const description = form.querySelector('[name="description"]')?.value;
@@ -742,7 +747,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       actors: actorEntries,
       title: 'MASTER.awardXP',
       header,
-      showSourceToggle: true,
+      showSourceToggle: actors.length > 1,
       callback: async ({ actorIds, form }) => {
         const number = Number(form.querySelector('.input-text')?.value);
         if (isNaN(number)) return;
@@ -823,13 +828,16 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     item?.sheet?.render(true);
   }
 
-  static #openLocationItem(event, target) {
-    const el = target.closest('[data-location-key]');
-    const locKey = el?.dataset.locationKey;
-    const itemId = el?.dataset.itemId || target.closest('[data-item-id]')?.dataset.itemId;
-    if (!locKey || !itemId) return;
-    const locActor = this.actor.system.locationActors.get(locKey);
-    locActor?.items.get(itemId)?.sheet?.render(true);
+  static async #openLocationItem(event, target) {
+    const locKey = target.dataset.locationKey || target.closest('[data-location-key]')?.dataset.locationKey;
+    if (locKey) {
+      const loc = this.actor.system.locations[locKey];
+      if (loc?.locked && !game.user.isGM) return;
+    }
+    const uuid = target.dataset.uuid;
+    if (!uuid) return;
+    const item = await fromUuid(uuid);
+    item?.sheet?.render(true);
   }
 
   static async #locationItemContextMenu(event, target) {
@@ -842,14 +850,25 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     const item = locActor?.items.get(itemId);
     if (!item) return;
 
+    const loc = this.actor.system.locations[locKey];
+    const canInteract = game.user.isGM || !loc?.locked;
     const app = this;
-    const items = [
-      {
+    const items = [];
+
+    if (canInteract) {
+      items.push({
+        label: _loc('SHEET.PostItem'),
+        icon: '<i class="fas fa-comment"></i>',
+        onClick: () => item.postItem(),
+      });
+      items.push({
         label: _loc('GROUP.takeItem'),
         icon: '<i class="fas fa-hand-holding"></i>',
         onClick: () => GroupActorSheet.takeLocationItem(app.actor, locKey, itemId),
-      },
-    ];
+      });
+    }
+
+    if (!items.length) return;
 
     const menu = new foundry.applications.ux.ContextMenu(this.element, '', items, { jQuery: false, fixed: true, eventName: 'none' });
     ui.context?.close();
@@ -921,21 +940,37 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     const loc = this.actor.system.locations[locKey];
     if (loc?.locked) return;
 
-    const character = game.user.character;
-    if (!character) {
+    const locActor = this.actor.system.locationActors.get(locKey);
+    if (!locActor) return;
+
+    const ownedMembers = [...this.actor.system.actors].filter((a) => a.isOwner);
+    if (!ownedMembers.length) {
       ui.notifications.warn('DIALOG.noTarget', { localize: true });
       return;
     }
 
-    const locActor = this.actor.system.locationActors.get(locKey);
-    if (!locActor) return;
+    const openMerchant = async (actor) => {
+      if (!locActor.getFlag('core', 'sheetClass')) {
+        await locActor.setFlag('core', 'sheetClass', 'dsa5.MerchantSheetDSA5');
+      }
+      locActor.sheet.setTradeFriend(actor);
+      locActor.sheet.render(true);
+    };
 
-    const { Trade } = await import('./trade.js');
-    const { RollDialogBuilder } = await import('../dialog/dialog-builder.js');
-    const sourceId = RollDialogBuilder.buildSpeaker(character, character.token?.id);
-    const targetId = RollDialogBuilder.buildSpeaker(locActor, locActor.token?.id);
-    const app = new Trade(sourceId, targetId);
-    app.startTrade();
+    if (ownedMembers.length === 1) {
+      openMerchant(ownedMembers[0]);
+    } else {
+      const actorEntries = ActorPickerDialog.buildActorPickerData({ actors: ownedMembers });
+      ActorPickerDialog.open({
+        actors: actorEntries,
+        title: 'GROUP.tradeWithDepot',
+        selectionMode: 'single',
+        callback: ({ actorIds }) => {
+          const actor = game.actors.get(actorIds[0]);
+          if (actor) openMerchant(actor);
+        },
+      });
+    }
   }
 
   static async #groupGetPaid(event, target) {
@@ -1022,30 +1057,40 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async rollBlindForActor(actor) {
-    ChatCommandService.openSkillModifierDialog('CHAT.MODES.blind', {
-      filterFn: (x) => true,
-      onSubmit: (name, type, modifier) => {
-        ChatCommandService.executeAbilityRoll(actor, name, type, undefined, {
-          messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND,
-          subtitle: ` (${actor.name})`,
-          modifier,
-        });
+    const actors = ActorPickerDialog.buildActorPickerData({ actors: [actor] }).map((a) => ({ ...a, preselected: true }));
+    ChatCommandService.openSkillActorDialog('CHAT.MODES.blind', {
+      actors,
+      onSubmit: (name, type, modifier, actorIds) => {
+        for (const id of actorIds) {
+          const a = game.actors.get(id);
+          if (a) {
+            ChatCommandService.executeAbilityRoll(a, name, type, undefined, {
+              messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND,
+              subtitle: ` (${a.name})`,
+              modifier,
+            });
+          }
+        }
       },
     });
   }
 
   static async #rollAllBlind(event, target) {
-    const actors = [...this.actor.system.actors];
-    if (!actors.length) return;
-    ChatCommandService.openSkillModifierDialog('CHAT.MODES.blind', {
-      filterFn: (x) => true,
-      onSubmit: (name, type, modifier) => {
-        for (const actor of actors) {
-          ChatCommandService.executeAbilityRoll(actor, name, type, undefined, {
-            messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND,
-            subtitle: ` (${actor.name})`,
-            modifier,
-          });
+    const groupActors = [...this.actor.system.actors];
+    if (!groupActors.length) return;
+    const actors = ActorPickerDialog.buildActorPickerData({ actors: groupActors }).map((a) => ({ ...a, preselected: true }));
+    ChatCommandService.openSkillActorDialog('CHAT.MODES.blind', {
+      actors,
+      onSubmit: (name, type, modifier, actorIds) => {
+        for (const id of actorIds) {
+          const a = game.actors.get(id);
+          if (a) {
+            ChatCommandService.executeAbilityRoll(a, name, type, undefined, {
+              messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND,
+              subtitle: ` (${a.name})`,
+              modifier,
+            });
+          }
         }
       },
     });

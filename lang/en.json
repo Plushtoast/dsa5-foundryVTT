@@ -2785,7 +2785,8 @@
         "requestPromptPay": "{actor} should pay {amount}.",
         "requestPromptGetPaid": "{actor} should receive {amount}.",
         "summaryMerchantTitle": "Trade",
-        "summaryTradeTitle": "Exchange"
+        "summaryTradeTitle": "Exchange",
+        "received": "received"
     },
     "ROLLREQUEST": {
         "dialogTitle": "Roll Request",
@@ -2815,7 +2816,8 @@
             "remove": "Remove",
             "execute": "Execute",
             "addActor": "Add actor",
-            "approve": "Approve"
+            "approve": "Approve",
+            "more": "More"
         },
         "NOTIFICATIONS": {
             "noActors": "No actors selected.",

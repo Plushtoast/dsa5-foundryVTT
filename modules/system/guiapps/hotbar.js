@@ -824,7 +824,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   #onConfigContext() {
     const options = [
       {
-        label: game.audio.globalMute ? 'HOTBAR.UNMUTE' : 'HOTBAR.MUTE',
+        label: game.audio.globalMute ? 'HOTBAR.ACTIONS.Unmute' : 'HOTBAR.ACTIONS.Mute',
         icon: game.audio.globalMute ? "<i class='fa-solid fa-volume-xmark'></i>" : "<i class='fa-solid fa-volume'></i>",
         onClick: () => {
           game.audio.globalMute = !game.audio.globalMute;
@@ -832,7 +832,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       },
       {
-        label: this.locked ? 'HOTBAR.UNLOCK' : 'HOTBAR.LOCK',
+        label: this.locked ? 'HOTBAR.ACTIONS.Unlock' : 'HOTBAR.ACTIONS.Lock',
         icon: this.locked ? "<i class='fa-solid fa-unlock'></i>" : "<i class='fa-solid fa-lock'></i>",
         onClick: async () => {
           await game.settings.set("core", "hotbarLock", !this.locked, { render: false });
@@ -856,15 +856,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       },
       {
-        label: 'HOTBAR.CLEAR',
+        label: 'HOTBAR.ACTIONS.Clear',
         icon: "<i class='fa-solid fa-trash'></i>",
         onClick: async () => {
           const proceed = await foundry.applications.api.DialogV2.confirm({
             window: {
-              title: "HOTBAR.CLEAR",
+              title: "HOTBAR.ACTIONS.Clear",
               icon: "fa-solid fa-trash"
             },
-            content: _loc("HOTBAR.CLEAR_CONFIRM"),
+            content: _loc("HOTBAR.ClearConfirm"),
             modal: true
           });
           if (proceed) await game.user.update({ hotbar: {} }, { recursive: false, diff: false, noHook: true });

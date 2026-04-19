@@ -4,17 +4,17 @@ export default class DSA5ProseMirrorIntegration {
   static styleBlocks = [
     {
       action: 'maskfield',
-      title: 'PROSEMIRROR.DSA5Styles.Maskfield',
+      title: 'PROSEMIRROR.DSAStyles.Maskfield',
       className: 'maskfield',
     },
     {
       action: 'chatpaperfield',
-      title: 'PROSEMIRROR.DSA5Styles.Chatpaperfield',
+      title: 'PROSEMIRROR.DSAStyles.Chatpaperfield',
       className: 'chatpaperfield',
     },
     {
       action: 'citefield',
-      title: 'PROSEMIRROR.DSA5Styles.Citefield',
+      title: 'PROSEMIRROR.DSAStyles.Citefield',
       className: 'citefield',
     },
   ];
@@ -61,7 +61,7 @@ export default class DSA5ProseMirrorIntegration {
     if (menu.schema.nodes.bullet_list) {
       children.push({
         action: 'dsalist',
-        title: 'PROSEMIRROR.DSA5Styles.DSAList',
+        title: 'PROSEMIRROR.DSAStyles.DSAList',
         node: divNode,
         attrs: { class: 'dsalist' },
         cmd: () => {
@@ -74,7 +74,7 @@ export default class DSA5ProseMirrorIntegration {
 
     formatMenu.entries.push(this._localizeMenuEntry({
       action: 'dsa5-styles',
-      title: 'PROSEMIRROR.DSA5Styles.Title',
+      title: 'PROSEMIRROR.DSAStyles.Title',
       children,
     }));
   }

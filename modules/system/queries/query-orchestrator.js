@@ -179,6 +179,26 @@ export default class QueryOrchestrator {
     });
   }
 
+  static attachRowEllipsisMenu(html, buttonSelector, rowSelector, getMenuItems) {
+    $(html).on('click', buttonSelector, async (event) => {
+      const button = event.currentTarget;
+      const row = button.closest(rowSelector);
+      const actorId = row?.dataset?.actorId;
+      const status = row?.dataset?.status;
+      const messageId = button.closest('.message')?.dataset?.messageId;
+      if (!messageId || !actorId) return;
+
+      const items = getMenuItems(messageId, actorId, status) || [];
+      if (!items.length) return;
+
+      const container = button.closest('.dsa5') || button.closest('.message');
+      const menu = new foundry.applications.ux.ContextMenu(container, '', items, { jQuery: false, fixed: true, eventName: 'none' });
+      ui.context?.close();
+      await menu.render(button, { animate: true });
+      ui.context = menu;
+    });
+  }
+
   static async dispatchToRecipient(userId, queryType, payload, queryOptions = {}) {
     if (!userId) return undefined;
 

@@ -439,6 +439,18 @@
           ]
         },
         {
+          "id": "dsa5-shadowwaterwitch",
+          "label": "Die Hexe vom Schattenwasser",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/5255/dsa5-die-hexe-vom-schattenwasser-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/32/g0/62/a4_cover_vtt_hexe_vom_schattenwasser_exclusive_f-shop-1.jpg"
+          },
+          "description": "Unheimliche Mächte sind in der Grafschaft Heldentrutz am Werk! Menschen werden von Harpyien entführt, die Orks bereiten sich auf einen Kriegszug vor und aus den Wäldern und Sümpfen treten abscheuliche Wesenheiten hervor und verbreiten Angst und Schrecken.",
+          "badges": [
+            "Einsteiger"
+          ]
+        },
+        {
           "id": "dsa5-labyrinthofintrigues",
           "label": "Labyrinth der Intrigen",
           "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt",

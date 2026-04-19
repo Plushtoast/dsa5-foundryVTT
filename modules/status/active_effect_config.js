@@ -617,6 +617,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     let effects = (await this._parseEffectDuration(source, testData, message.flags.data.preData, attacker)).filter(
       (effect) => {
         if (effect.disabled) return false;
+        if (effect.type === 'enhancement') return false;
         if (effect.system.applyToOwner) return false;
         if (!game.settings.get('dsa5', 'enableWeaponAdvantages') && effect.system.equipmentAdvantage) return false;
         return true;

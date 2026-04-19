@@ -341,12 +341,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     } else {
       let result = actor?.items.get(id);
       if (result) {
-        if (ev.originalEvent.ctrlKey) return result.sheet.render(true);
+        if (ev.ctrlKey) return result.sheet.render(true);
 
         switch (result.type) {
           case 'meleeweapon':
           case 'rangeweapon':
-            if (ev.originalEvent.altKey) {
+            if (ev.altKey) {
               if (actor) await actor.equipWeaponToHand(result.id, { equip: false });
               else await result.update({ 'system.worn.value': false });
             } else if (result.system.worn.value) {
@@ -470,7 +470,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const actor = game.actors.get(randomPlayer);
     if (actor) {
       const k = await DSA5_Utility.showArtwork(actor);
-      if (!ev.originalEvent.ctrlKey)
+      if (!ev.ctrlKey)
         setTimeout(() => {
           k.close();
         }, 2000);
@@ -487,6 +487,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async executeQuickButton(ev, target) {
+    if (ev.originalEvent) ev = ev.originalEvent;
+
     const { actor, tokenId } = resolveHotbarActorContext();
     const { id, subfunction, subweapon } = (target || ev.currentTarget).dataset;
 

@@ -423,6 +423,7 @@ export const MerchantSheetMixin = (superclass) =>
         receivedItem: res,
         amount,
         price,
+        buy,
       });
     }
 

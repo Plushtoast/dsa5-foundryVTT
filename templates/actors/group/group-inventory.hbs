@@ -68,24 +68,24 @@
         <div class="row-section wrap rowtable inventory">
           {{#each loc.items as |item|}}
               <div class="col item location-item-row" data-item-id="{{item._id}}" data-location-key="{{../loc.key}}"
-                   data-action="openLocationItem" draggable="true">
+                   draggable="true">
                 <div class="row-section">
                   <div class="col eight image {{item.enchantClass}}">
                     <div class="image" style="background-image: url('{{item.img}}')"></div>
                   </div>
                   <div class="col">
-                    <span class="ellipsis">{{item.name}}</span>
+                    <a class="ellipsis" data-action="openLocationItem" data-uuid="{{item.uuid}}" data-location-key="{{../loc.key}}">{{item.name}}</a>
                   </div>
-                  <div class="col four center">
+                  <div class="col four flexrow flexAlignCenter">
                     {{item.calculatedPrice}}
                   </div>
-                  <div class="col ten center">
+                  <div class="col ten flexrow flexAlignCenter">
                     {{#if item.system.quantity}}
                       {{item.system.quantity.value}}
                     {{/if}}
                   </div>
-                  <div class="col ten flexro">
-                    <button type="button" class="icon fas fa-ellipsis-vertical noBorder dsadesignbutton locationItemContext"
+                  <div class="col ten flexrow">
+                    <button type="button" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton locationItemContext"
                       data-action="locationItemContextMenu" data-location-key="{{../loc.key}}" data-item-id="{{item._id}}"></button>
                   </div>
                 </div>

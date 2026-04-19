@@ -2097,7 +2097,7 @@ export default class DiceDSA5 {
       (source.type === 'trait' && ['rangeAttack', 'meleeAttack'].includes(source.system.traitType.value));
 
     if (successLevel > 0 && isWeaponLike) {
-      if ((source.effects || []).some(e => !e.system.applyToOwner)) return true;
+      if ((source.effects || []).some(e => !e.system.applyToOwner && e.type !== 'enhancement')) return true;
     }
 
     const spellLikeTypes = [SPELL, LITURGY, RITUAL, CEREMONY, 'trait', SKILL];

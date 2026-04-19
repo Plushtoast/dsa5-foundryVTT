@@ -187,6 +187,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp" alt="Das Geheimnis des Drachenritters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/5255/dsa5-die-hexe-vom-schattenwasser-fuer-foundry-vtt">
+        <img src="https://www.f-shop.de/media/image/32/g0/62/a4_cover_vtt_hexe_vom_schattenwasser_exclusive_f-shop-1.jpg" alt="Die Hexe vom Schattenwasser" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt" title="Labyrinth der Intrigen">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp" alt="Labyrinth der Intrigen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>        
@@ -270,8 +273,14 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2152/tde5-aventuria-bestiary-for-foundry" title="Aventurian Bestiary">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp" alt="Aventurian Bestiary" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:210px;">
     </a>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2329/tde5-aventurian-bestiary-2-for-foundry-vtt" title="Aventurian Armory">
+        <img src="https://www.ulissesf-shop.com/media/image/cd/c5/93/ESD1011_0.jpg" alt="Aventurian Bestiary II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>    
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry" title="Aventurian Armory">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2330/tde5-aventurian-armory-2-for-foundry-vtt" title="Aventurian Bestiary">
+        <img src="https://www.ulissesf-shop.com/media/image/91/05/67/ESD1012_0.jpg" alt="Aventurian Armory II" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:210px;">
     </a>
     <h2>Adventures</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Introduction adventure">

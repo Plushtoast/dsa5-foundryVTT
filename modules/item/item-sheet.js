@@ -306,6 +306,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'description.value'), { secrets: this.item.isOwner });
     data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner });
     data.canOnUseEffect = this.isEditable && this.item.system.implementsOnUseEffect && (game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'));
+    data.canEditMacros = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
     data.onUseActions = OnUseEffect.getOnUseActions(this.item);
 
     await this.item.system.getSheetData(data);
@@ -329,6 +330,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   static async addOnUseAction() {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.item.system.createOnUseAction();
   }
 
@@ -343,10 +345,12 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   static async editOnUseAction(_event, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.item.system.editOnUseAction(target.dataset.id);
   }
 
   static async deleteOnUseAction(_event, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.item.system.removeOnUseAction(target.dataset.id);
   }
 

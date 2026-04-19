@@ -2637,7 +2637,8 @@
         "requestPromptPay": "{actor} soll {amount} bezahlen.",
         "requestPromptGetPaid": "{actor} soll {amount} erhalten.",
         "summaryMerchantTitle": "Handel",
-        "summaryTradeTitle": "Tausch"
+        "summaryTradeTitle": "Tausch",
+        "received": "erhalten"
     },
     "ROLLREQUEST": {
         "dialogTitle": "Probenaufforderung",
@@ -2667,7 +2668,8 @@
             "remove": "Entfernen",
             "execute": "Ausführen",
             "addActor": "Akteur hinzufügen",
-            "approve": "Genehmigen"
+            "approve": "Genehmigen",
+            "more": "Mehr"
         },
         "NOTIFICATIONS": {
             "noActors": "Keine Helden ausgewählt.",

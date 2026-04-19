@@ -112,6 +112,7 @@ export default class RollRequestService {
         resultLabel,
         canRoll: !finalized && entry.status === 'pending',
         canGMRoll: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
+        canGMAction: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status),
       };
     });
 
@@ -250,9 +251,11 @@ export default class RollRequestService {
     const isBotch = successLevel < -1;
     const isSuccess = successLevel > 0;
 
+    const status = category === 'regeneration' ? 'success' : isCrit ? 'critical' : isBotch ? 'botch' : isSuccess ? 'success' : 'failure';
+
     return {
       userId: game.user.id,
-      status: isCrit ? 'critical' : isBotch ? 'botch' : isSuccess ? 'success' : 'failure',
+      status,
       resultDetails: {
         qualityStep: result.result?.qualityStep || 0,
         successLevel,
@@ -383,13 +386,13 @@ export default class RollRequestService {
     });
 
     if (game.user.isGM) {
-      QueryOrchestrator.attachRowContextMenu(html, '.roll-request-row[data-actor-id]', (messageId, actorId, status) => {
+      QueryOrchestrator.attachRowEllipsisMenu(html, '.roll-request-menu', '.roll-request-row[data-actor-id]', (messageId, actorId, status) => {
         if (QueryOrchestrator.TERMINAL_STATES.has(status)) return [];
 
         return [
-          { label: _loc('DSAQUERIES.COMMANDS.resend'), icon: 'fas fa-rotate-right', onClick: () => this.resendToActor(messageId, actorId) },
-          { label: _loc('DSAQUERIES.COMMANDS.rollOnBehalf'), icon: 'fas fa-dice', onClick: () => this.rollOnBehalf(messageId, actorId) },
-          { label: _loc('DSAQUERIES.COMMANDS.skip'), icon: 'fas fa-forward', onClick: () => this.skipActor(messageId, actorId) },
+          { label: _loc('DSAQUERIES.COMMANDS.resend'), icon: '<i class="fas fa-rotate-right"></i>', onClick: () => this.resendToActor(messageId, actorId) },
+          { label: _loc('DSAQUERIES.COMMANDS.rollOnBehalf'), icon: '<i class="fas fa-dice"></i>', onClick: () => this.rollOnBehalf(messageId, actorId) },
+          { label: _loc('DSAQUERIES.COMMANDS.skip'), icon: '<i class="fas fa-forward"></i>', onClick: () => this.skipActor(messageId, actorId) },
         ];
       });
     }

@@ -92,7 +92,7 @@ export default class TransactionSummaryService {
     return ['merchant', source.id, target.id].sort().join(':');
   }
 
-  static async recordMerchantTransaction({ source, target, notify, item, receivedItem, amount, price }) {
+  static async recordMerchantTransaction({ source, target, notify, item, receivedItem, amount, price, buy }) {
     const mode = this.notificationMode(notify);
     if (!this.shouldCreateSummary(mode)) return;
 
@@ -105,8 +105,9 @@ export default class TransactionSummaryService {
       timeout: null,
     };
 
+    const receiverName = buy ? source.name : target.name;
     existing.transfers.push({
-      actorName: target.name,
+      actorName: receiverName,
       items: [{ item: receivedItem || item, quantity: amount, totalPrice: price }],
     });
 
@@ -129,6 +130,29 @@ export default class TransactionSummaryService {
     const session = this.#merchantSessions.get(sessionKey);
     if (!session?.transfers?.length) return;
 
+    const byActor = new Map();
+    for (const transfer of session.transfers) {
+      if (!byActor.has(transfer.actorName)) {
+        byActor.set(transfer.actorName, new Map());
+      }
+      const itemMap = byActor.get(transfer.actorName);
+      for (const item of transfer.items) {
+        const name = item.item?.name || '';
+        if (itemMap.has(name)) {
+          const existing = itemMap.get(name);
+          existing.quantity += Number(item.quantity) || 0;
+          existing.totalPrice = String((Number(existing.totalPrice) || 0) + (Number(item.totalPrice) || 0));
+        } else {
+          itemMap.set(name, { ...item, quantity: Number(item.quantity) || 0 });
+        }
+      }
+    }
+
+    const aggregatedTransfers = [];
+    for (const [actorName, itemMap] of byActor) {
+      aggregatedTransfers.push({ actorName, items: [...itemMap.values()] });
+    }
+
     await this.createMessage(
       {
         kind: 'merchant',
@@ -136,7 +160,7 @@ export default class TransactionSummaryService {
         title: _loc('PAYMENT.summaryMerchantTitle'),
         sourceName: session.sourceName,
         targetName: session.targetName,
-        transfers: session.transfers,
+        transfers: aggregatedTransfers,
       },
       this.notificationRecipients(session.notify),
     );

@@ -62,14 +62,17 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
   }
 
   static async #addOnUseAction() {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.document.system.createOnUseAction();
   }
 
   static async #editOnUseAction(ev, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.document.system.editOnUseAction(target.dataset.id);
   }
 
   static async #deleteOnUseAction(ev, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
     await this.document.system.removeOnUseAction(target.dataset.id);
   }
 
@@ -112,7 +115,8 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
       }
       case 'actions': {
         const onUseActions = OnUseEffect.getOnUseActions(this.document);
-        mergeObject(partContext, { onUseActions });
+        const canEditMacros = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
+        mergeObject(partContext, { onUseActions, canEditMacros });
         break;
       }
     }
