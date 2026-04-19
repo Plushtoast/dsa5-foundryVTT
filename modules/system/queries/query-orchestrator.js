@@ -110,6 +110,7 @@ export default class QueryOrchestrator {
       const content = await query.renderMessage(nextState, message);
       await message.update({
         content,
+        timestamp: Date.now(),
         [`flags.dsa5.${query.flagKey}`]: nextState,
       });
     });

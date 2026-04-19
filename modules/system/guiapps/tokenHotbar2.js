@@ -303,9 +303,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
   }
 
-  async handleGMRoll(ev) {
-    const skill = ev.currentTarget.dataset.id;
-    const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
+  async handleGMRoll(ev, target) {
+    const elem = target || ev.currentTarget;
+    const skill = elem.dataset.id;
+    const mod = Math.round($(elem).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
     if (ev.ctrlKey) {
       game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, {
         modifier: mod,
@@ -500,7 +501,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'darkness':
         break;
       case 'skillgm':
-        this.handleGMRoll(ev);
+        this.handleGMRoll(ev, target || ev.currentTarget);
         break;
       case 'enchantment':
         this.handleEnchantment(ev, actor, id, tokenId);

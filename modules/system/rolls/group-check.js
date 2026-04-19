@@ -113,7 +113,8 @@ export default class GroupCheck {
   }
 
   static async showGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
-    const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target).type;
+    await DSA5ChatAutoCompletion.ensureSkills();
+    const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)?.type || 'skill';
     const data = {
       results: [],
       qs: 0,

@@ -29,13 +29,18 @@ export default class DSA5ChatAutoCompletion {
   }
 
   async initializeSkills() {
+    return DSA5ChatAutoCompletion.ensureSkills();
+  }
+
+  static async ensureSkills() {
     if (DSA5ChatAutoCompletion.skills.length === 0) {
       try {
         const skillItems = await DSA5_Utility.allSkills();
 
         const skillOptions = skillItems.map(x => ({ 
           name: x.name, 
-          type: 'skill' 
+          type: 'skill',
+          img: x.img,
         }));
 
         const attributeOptions = Object.values(game.dsa5.config.characteristics)

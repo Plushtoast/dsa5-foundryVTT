@@ -42,7 +42,7 @@ export default class RollRequestService {
 
     const actorData = ActorPickerDialog.buildActorPickerData()
       .filter((a) => a.isPlayerOwned || a.isActiveCharacter)
-      .map((a) => ({ ...a, preselected: a.isActiveCharacter }));
+      .map((a) => ({ ...a, preselected: true }));
 
     const header = await renderTemplate(this.DIALOG_TEMPLATE, {
       skills: skillOptions,
@@ -53,6 +53,7 @@ export default class RollRequestService {
       actors: actorData,
       title: 'ROLLREQUEST.dialogTitle',
       header,
+      showSourceToggle: true,
       callback: ({ actorIds, form }) => {
         const $form = $(form);
         const skillValue = $form.find('[name="skill"]').val();
@@ -99,49 +100,35 @@ export default class RollRequestService {
   static getTemplateData(state) {
     const finalized = state.finalized;
     const modifierLabel = state.modifier > 0 ? `+${state.modifier}` : state.modifier < 0 ? `${state.modifier}` : '';
+    const skillIcon = this.getRequestedIcon(state.category, state.name);
 
     const recipients = state.recipients.map((entry) => {
-      const resultTooltip = this.buildResultTooltip(entry, state.category);
+      const resultLabel = this.buildResultLabel(entry, state.category);
       return {
         ...entry,
         actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
         ...QueryOrchestrator.statusStyle(entry.status),
-        resultTooltip,
-        hasResultDetails: !!resultTooltip,
+        resultLabel,
         canRoll: !finalized && entry.status === 'pending',
+        canGMRoll: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
       };
     });
 
     return {
       isGM: game.user.isGM,
       finalized,
-      title: _loc('ROLLREQUEST.dialogTitle'),
       skillName: state.label || state.name,
+      skillIcon,
       category: state.category,
       modifierLabel,
       recipients,
     };
   }
 
-  static buildResultTooltip(entry, category) {
-    const data = entry.resultDetails;
-    const qs = data?.qualityStep || 0;
-    const byGM = data?.byGM ? ` (${_loc('DSAQUERIES.NOTIFICATIONS.byGM')})` : '';
-    switch (entry.status) {
-      case 'success':
-        if (category === 'regeneration') return this.formatRegenTooltip(data) + byGM;
-        return `${_loc('success')} (${_loc('CHARAbbrev.QS')} ${qs})${byGM}`;
-      case 'critical':
-        if (category === 'regeneration') return this.formatRegenTooltip(data) + byGM;
-        return `${_loc('CriticalSuccess')} (${_loc('CHARAbbrev.QS')} ${qs})${byGM}`;
-      case 'failure':
-        return `${_loc('fail')}${byGM}`;
-      case 'botch':
-        return `${_loc('CriticalFailure')}${byGM}`;
-      default:
-        return '';
-    }
+  static getRequestedIcon(category, name) {
+    if (category !== 'skill') return undefined;
+    return DSA5ChatAutoCompletion.skills.find((entry) => entry.type === 'skill' && entry.name === name)?.img;
   }
 
   static formatRegenTooltip(data) {
@@ -150,6 +137,19 @@ export default class RollRequestService {
     if (data?.AsP != null) parts.push(`AsP: ${data.AsP}`);
     if (data?.KaP != null) parts.push(`KaP: ${data.KaP}`);
     return parts.join(', ') || _loc('success');
+  }
+
+  static buildResultLabel(entry, category) {
+    const data = entry.resultDetails;
+    const qs = data?.qualityStep || 0;
+    switch (entry.status) {
+      case 'success':
+      case 'critical':
+        if (category === 'regeneration') return this.formatRegenTooltip(data);
+        return `${_loc('CHARAbbrev.QS')} ${qs}`;
+      default:
+        return '';
+    }
   }
 
   static async dispatch(messageId) {
@@ -344,18 +344,19 @@ export default class RollRequestService {
     const rollRequest = foundry.utils.getProperty(msg.message, 'flags.dsa5.rollRequest');
     if (!rollRequest) return;
 
-    if (!game.user.isGM) html.find('.roll-request-gm').remove();
+    if (!game.user.isGM) {
+      html.find('.roll-request-gm').remove();
+    }
 
-    html.find('.roll-request-row').each(function () {
-      const row = $(this);
-      const actorId = row.attr('data-actor-id');
-      const recipient = rollRequest.recipients?.find((r) => r.actorId === actorId);
-      if (!recipient) return;
-
-      if (QueryOrchestrator.TERMINAL_STATES.has(recipient.status) || (!game.user.isGM && !game.actors.get(actorId)?.isOwner)) {
-        row.find('.roll-request-roll').remove();
-      }
-    });
+    if (!game.user.isGM) {
+      html.find('.roll-request-row').each(function () {
+        const row = $(this);
+        const actorId = row.attr('data-actor-id');
+        if (!game.actors.get(actorId)?.isOwner) {
+          row.find('.roll-request-action[data-action="roll"]').remove();
+        }
+      });
+    }
   }
 
   static chatListeners(html) {
@@ -369,6 +370,10 @@ export default class RollRequestService {
       switch (action) {
         case 'roll':
           await this.triggerRollFromCard(messageId, actorId);
+          break;
+        case 'rollOnBehalf':
+          if (!game.user.isGM) return;
+          await this.rollOnBehalf(messageId, actorId);
           break;
         case 'finalize':
           if (!game.user.isGM) return;

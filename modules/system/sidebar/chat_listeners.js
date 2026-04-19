@@ -133,8 +133,8 @@ export default class DSA5ChatListeners {
   static _onHelpContextMenu() {
     ui.context.menuItems = [
       { label: _loc('HELP.showHelp'), icon: 'fas fa-question', onClick: () => DSA5ChatListeners.getHelp() },
-      { label: _loc('HELP.pay'), icon: 'fas fa-coins', onClick: () => ChatCommandService.openPaymentDialog('pay') },
-      { label: _loc('HELP.getPaid'), icon: 'fas fa-hand-holding-usd', onClick: () => ChatCommandService.openPaymentDialog('getPaid') },
+      game.user.isGM ? { label: _loc('HELP.pay'), icon: 'fas fa-coins', onClick: () => ChatCommandService.openPaymentDialog('pay') } : null,
+      game.user.isGM ? { label: _loc('HELP.getPaid'), icon: 'fas fa-hand-holding-usd', onClick: () => ChatCommandService.openPaymentDialog('getPaid') } : null,
       {
         label: _loc('HELP.quickAbility'),
         icon: 'fas fa-bolt',
@@ -166,6 +166,6 @@ export default class DSA5ChatListeners {
             onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
           }),
       },
-    ];
+    ].filter(Boolean);
   }
 }

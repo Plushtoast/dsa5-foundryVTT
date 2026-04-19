@@ -2818,20 +2818,25 @@
             "approve": "Approve"
         },
         "NOTIFICATIONS": {
-            "byGM": "by GM",
             "noActors": "No actors selected.",
             "noAvailableActors": "No more actors can be added.",
             "queryFailed": "The request could not be delivered.",
             "declined": "Request declined.",
             "executedByGM": "Resolved manually by the GM.",
-            "noGMOnline": "No GM is currently online to approve this request.",
-            "unownedInfo": "No non-GM owner is available. Resolve via GM fallback."
+            "noGMOnline": "No GM is currently online to approve this request."
         },
         "INFORMATIONREQUEST": {
             "knowledgeCheck": "Knowledge Check",
             "pending": "Awaiting GM approval...",
             "approved": "Approved",
             "rejected": "Rejected"
+        },
+        "ACTORSOURCE": {
+            "group": "Group",
+            "tracked": "Master's Menu",
+            "self": "Player characters",
+            "selectAll": "Select all",
+            "selectNone": "Deselect all"
         }
     },
     "rangeMovementOptions": {

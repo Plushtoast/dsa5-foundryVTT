@@ -56,6 +56,20 @@ export default function () {
     return game.dsa5.autoComplete._navigateQuickFind(event);
   })
 
+  Hooks.on('updateChatMessage', (message, changed) => {
+    if (!getProperty(message, 'flags.dsa5.queryRequest')) return;
+    if (!('timestamp' in changed)) return;
+
+    const log = ui.chat?.element?.querySelector('.chat-log');
+    if (!log) return;
+
+    const li = log.querySelector(`.message[data-message-id="${message.id}"]`);
+    if (!li || li === log.lastElementChild) return;
+
+    log.append(li);
+    if (ui.chat.isAtBottom) ui.chat.scrollBottom();
+  });
+
   Hooks.on('renderChatMessageHTML', (app, html, msg) => {
     html = $(html);
     if (!game.user.isGM) {

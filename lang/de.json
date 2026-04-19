@@ -2670,20 +2670,25 @@
             "approve": "Genehmigen"
         },
         "NOTIFICATIONS": {
-            "byGM": "durch SL",
             "noActors": "Keine Helden ausgewählt.",
             "noAvailableActors": "Es können keine weiteren Akteure hinzugefügt werden.",
             "queryFailed": "Die Anfrage konnte nicht zugestellt werden.",
             "declined": "Anfrage abgelehnt.",
             "executedByGM": "Vom Spielleiter manuell ausgeführt.",
-            "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen.",
-            "unownedInfo": "Es gibt keinen nicht-GM Besitzer. Bitte per GM-Aktion lösen."
+            "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen."
         },
         "INFORMATIONREQUEST": {
             "knowledgeCheck": "Wissensprobe",
             "pending": "Warte auf SL-Genehmigung...",
             "approved": "Genehmigt",
             "rejected": "Abgelehnt"
+        },
+        "ACTORSOURCE": {
+            "group": "Gruppe",
+            "tracked": "Meistermenü",
+            "self": "Spielercharaktere",
+            "selectAll": "Alle auswählen",
+            "selectNone": "Auswahl aufheben"
         }
     },
     "rangeMovementOptions": {

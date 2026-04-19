@@ -1,23 +1,21 @@
 <li
-  class='combatant actor directory-item row-section query-actor-row{{#if actor.isActiveCharacter}} user-character{{/if}}{{#if (eq selectionMode "single")}} selectableRow{{/if}}{{#if actor.preselected}} selected{{/if}}'
+  class='query-actor-row{{#if actor.isActiveCharacter}} user-character{{/if}}{{#if actor.preselected}} selected{{/if}}'
   data-actor-id='{{actor.id}}'
   data-actor-name='{{actor.name}}'
   data-actor-meta='{{actor.meta}}'
 >
-  <div class='combatant-advanced col five'>
-    <img class='token-image' data-tooltip='{{actor.name}}' src='{{actor.img}}' style='height:100%' />
-  </div>
-  <div class='token-name flexcol flexAlignCenter col seventy'>
-    <h4 class="dmargin0">{{actor.name}}</h4>
-    {{#if actor.meta}}
-      <div class='very-small'>{{actor.meta}}</div>
-    {{/if}}
-  </div>
-  {{#if (eq selectionMode "single")}}
-    <input type='radio' class='query-actor-selector dsahidden' name='queryActor' value='{{actor.id}}' {{#if actor.preselected}}checked{{/if}} />
-  {{else}}
-    <div class='col ten center'>
+  <label>
+    <img src='{{actor.img}}' alt='{{actor.name}}' width='36' height='36' />
+    <span class='flexcol'>
+      <span class='ellipsis'>{{actor.name}}</span>
+      {{#if actor.meta}}
+        <span class='very-small ellipsis'>{{actor.meta}}</span>
+      {{/if}}
+    </span>
+    {{#if (eq selectionMode "single")}}
+      <input type='radio' class='query-actor-selector' name='queryActor' value='{{actor.id}}' {{#if actor.preselected}}checked{{/if}} />
+    {{else}}
       <input type='checkbox' class='query-actor-selector' name='queryActor' value='{{actor.id}}' {{#if actor.preselected}}checked{{/if}} />
-    </div>
-  {{/if}}
+    {{/if}}
+  </label>
 </li>

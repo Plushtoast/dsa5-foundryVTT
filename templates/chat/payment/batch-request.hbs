@@ -7,23 +7,19 @@
 
   {{#if recipients.length}}
     {{#each recipients}}
-      <div class="row-section tableOdd payment-request-row" data-actor-id="{{actorId}}" data-status="{{status}}">
-        <div class="col two">
-          <div class="flexrow flexAlignCenter">
-            <b class="ellipsis">{{actorName}}</b>
-          </div>
+      <div class="flexrow flexAlignCenter payment-request-row tableOdd gap5px" data-actor-id="{{actorId}}" data-status="{{status}}">
+        <div class="flexcol" style="flex:1;overflow:hidden;">
+          <b class="ellipsis">{{actorName}}</b>
           {{#if designatedUserName}}
-            <div class="very-small">{{designatedUserName}}</div>
+            <div class="very-small ellipsis">{{designatedUserName}}</div>
           {{/if}}
         </div>
-        <div class="col five flexrow flexAlignEnd gap2px">
-          <span class="button icon noBorder payment-request-indicator {{colorClass}}" data-tooltip="{{label}}" aria-label="{{label}}">
+        <div class="flexrow flexAlignEnd gap2px" style="flex:0 0 auto;">
+          <span class="icon noBorder payment-request-indicator {{colorClass}}" data-tooltip="{{label}}" aria-label="{{label}}">
             <i class="fas {{icon}}"></i>
           </span>
-          {{#if hasResultDetails}}
-            <span class="button icon noBorder payment-request-indicator icon-gray" data-tooltip-html="{{resultTooltipHtml}}" aria-label="{{resultTooltip}}">
-              <i class="fas fa-info-circle"></i>
-            </span>
+          {{#if canGMExecute}}
+            <button type="button" class="payment-request-action icon fas fa-coins payment-request-gm" data-action="execute" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.execute"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.execute"}}"></button>
           {{/if}}
         </div>
       </div>

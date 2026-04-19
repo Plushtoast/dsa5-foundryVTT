@@ -49,15 +49,12 @@ export default class PaymentRequestService {
     const amountString = await DSA5Payment._moneyToString(state.amount);
     const finalized = !!state.finalized;
     const recipients = state.recipients.map((entry) => {
-      const details = entry.resultDetails || (entry.status === 'unowned' ? _loc('DSAQUERIES.NOTIFICATIONS.unownedInfo') : '');
       return {
         ...entry,
         actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
         ...QueryOrchestrator.statusStyle(entry.status),
-        resultTooltip: this.asPlainTooltip(details),
-        resultTooltipHtml: details,
-        hasResultDetails: !!String(details).trim(),
+        canGMExecute: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
       };
     });
 
@@ -69,17 +66,6 @@ export default class PaymentRequestService {
       description: state.description,
       recipients,
     };
-  }
-
-  static asPlainTooltip(value) {
-    if (!value) return '';
-
-    const rawValue = String(value);
-    if (!rawValue.trim()) return '';
-    
-    const element = document.createElement('div');
-    element.innerHTML = rawValue;
-    return element.textContent?.replace(/\s+/g, ' ').trim() || '';
   }
 
   static async dispatch(messageId) {
@@ -289,12 +275,16 @@ export default class PaymentRequestService {
 
       const button = event.currentTarget;
       const action = button.dataset.action;
+      const actorId = button.dataset.actorId;
       const messageId = $(button).closest('.message').attr('data-message-id');
       if (!messageId) return;
 
       switch (action) {
         case 'add':
           await this.openAddActorDialog(messageId);
+          break;
+        case 'execute':
+          if (actorId) await this.executeForActor(messageId, actorId);
           break;
         case 'finalize':
           await this.finalizeRequest(messageId);

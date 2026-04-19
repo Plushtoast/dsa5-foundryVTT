@@ -709,8 +709,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   static async doGroupPayment(actors, pay, amount = 0) {
     const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
-    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
+      description: '',
       text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
 
@@ -718,11 +719,13 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       actors: actorEntries,
       title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
       header,
+      showSourceToggle: true,
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
+        const description = form.querySelector('[name="description"]')?.value;
         if (!isNaN(number)) {
           const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
-          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors: selected });
+          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
         }
       },
     });
@@ -739,6 +742,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       actors: actorEntries,
       title: 'MASTER.awardXP',
       header,
+      showSourceToggle: true,
       callback: async ({ actorIds, form }) => {
         const number = Number(form.querySelector('.input-text')?.value);
         if (isNaN(number)) return;

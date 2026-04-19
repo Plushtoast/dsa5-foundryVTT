@@ -593,8 +593,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   async doPayment(ids, pay, amount = 0) {
     const preselected = new Set(ids);
     const actors = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: preselected.has(a.id) }));
-    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
+      description: '',
       text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
 
@@ -602,11 +603,13 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       actors,
       title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
       header,
+      showSourceToggle: true,
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
+        const description = form.querySelector('[name="description"]')?.value;
         if (!isNaN(number)) {
           const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
-          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, actors: selected });
+          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
         }
       },
     });
@@ -628,6 +631,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       actors,
       title: 'MASTER.awardXP',
       header,
+      showSourceToggle: true,
       callback: async ({ actorIds, form }) => {
         const number = Number(form.querySelector('.input-text')?.value);
         if (isNaN(number)) return;

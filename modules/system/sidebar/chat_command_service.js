@@ -1,7 +1,6 @@
-import DSA5_Utility from '../helpers/utility-dsa5.js';
-import DSA5Payment from '../payment/payment.js';
 import PaymentRequestService from '../queries/payment-requests.js';
 import GroupCheck from '../rolls/group-check.js';
+import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 import Select2Dialog from '../../dialog/select2Dialog.js';
 
@@ -61,45 +60,31 @@ export default class ChatCommandService {
     }).render(true);
   }
 
-  static openPaymentDialog(mode) {
-    const content = `<div>
-      <div class='row-section lineheight'>
-        <div class='col fourty table-title'><label>${_loc('TYPES.Item.money')}</label></div>
-        <div class='col sixty'><input name='amount' type='text' /></div>
-      </div>
-      <div class='row-section lineheight'>
-        <div class='col fourty table-title'><label>${_loc('Description')}</label></div>
-        <div class='col sixty'><input name='description' type='text' /></div>
-      </div>
-    </div>`;
+  static async openPaymentDialog(mode) {
+    if (!game.user.isGM) return;
 
-    new foundry.applications.api.DialogV2({
-      window: { title: mode === 'pay' ? 'HELP.pay' : 'HELP.getPaid' },
-      content,
-      buttons: [
-        {
-          action: 'ok',
-          icon: 'fa fa-check',
-          label: 'ok',
-          default: true,
-          callback: (event, button) => {
-            const form = button.form;
-            const moneyString = form.querySelector('[name="amount"]')?.value;
-            const description = form.querySelector('[name="description"]')?.value;
-            if (!moneyString) return;
+    const pay = mode === 'pay';
+    const actorEntries = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));
+    const header = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
+      amount: '',
+      description: '',
+      text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
+    });
 
-            if (game.user.isGM) {
-              PaymentRequestService.createRequest({ mode, amount: moneyString, description });
-            } else {
-              const actor = DSA5_Utility.getSpeaker(ChatMessage.getSpeaker());
-              if (mode === 'pay') DSA5Payment.payMoney(actor, moneyString);
-              else DSA5Payment.getMoney(actor, moneyString);
-            }
-          },
-        },
-        { action: 'cancel', icon: 'fas fa-times', label: 'cancel' },
-      ],
-    }).render(true);
+    ActorPickerDialog.open({
+      actors: actorEntries,
+      title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
+      header,
+      showSourceToggle: true,
+      callback: ({ actorIds, form }) => {
+        const number = form.querySelector('.input-text')?.value;
+        const description = form.querySelector('[name="description"]')?.value;
+        if (!number) return;
+
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+        PaymentRequestService.createRequest({ mode, amount: number, description, actors: selected });
+      },
+    });
   }
 
   static groupCheck(name, modifier) {
