@@ -1105,13 +1105,16 @@ export default class Actordsa5 extends Actor {
     if (game.combat?.isBrawling) statusText.temporaryLeP = 0xfc2a8f;
 
     const scrolls = [];
+    const changedStatusValues = {};
     for (const key of Object.keys(statusText)) {
       const value = this._containsChangedAttribute(data, `system.status.${key}.value`);
-      if (value !== false)
+      if (value !== false) {
+        changedStatusValues[key] = value;
         scrolls.push({
           value: value - this.system.status[key].value,
           stroke: statusText[key],
         });
+      }
     }
 
     if (scrolls.length) this.tokenScrollingText(scrolls);
@@ -1130,14 +1133,11 @@ export default class Actordsa5 extends Actor {
       APTracker.track(this, { type: 'sum', previous, next: apSum }, apSum - previous);
     }
 
-    if (this.system.isPriest) {
-      const newKap = this._containsChangedAttribute(data, 'system.status.karmaenergy.value');
-      if (newKap !== false) {
-        const kapDelta = this.system.status.karmaenergy.value - newKap;
+    if (this.system.isPriest && changedStatusValues.karmaenergy !== undefined) {
+      const kapDelta = this.system.status.karmaenergy.value - changedStatusValues.karmaenergy;
         if (kapDelta > 0) {
           RaptureTracker.accumulate(this, kapDelta);
         }
-      }
     }
 
     return super._preUpdate(data, options, user);
@@ -2230,11 +2230,7 @@ export default class Actordsa5 extends Actor {
     return DSA5StatusEffects.hasCondition(this, conditionKey);
   }
 
-  async markDead(dead) {
-    const tokens = this.getActiveTokens();
-
-    for (const token of tokens) {
-      if (token.combatant) await token.combatant.update({ defeated: dead });
-    }
+  async markDead(dead = true) {
+    for (const token of this.getActiveTokens()) if (token.combatant) await token.combatant.update({ defeated: dead });
   }
 }

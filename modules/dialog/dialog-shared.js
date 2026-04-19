@@ -10,6 +10,14 @@ const { renderTemplate } = foundry.applications.handlebars;
 export default class DialogShared extends foundry.applications.api.DialogV2 {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
 
+  static debounceRefreshOpenDialogTargets = foundry.utils.debounce(() => {
+    for (const app of foundry.applications.instances.values()) {
+      if (app instanceof DialogShared) {
+        void app.handleTargetTokenChange();
+      }
+    }
+  }, 20);
+
   initializeWidgets(html) {
     html.find('.vwidget').each((i, elem) => {
       if (!elem.querySelector('.vw-controls')) new ValueWidget(elem);
@@ -148,24 +156,62 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   readTargets() {
-    return Array.from(game.user.targets)
-      .filter(target => target.actor)
-      .map(target => ({
+    const targets = [];
+    for (const target of game.user.targets) {
+      if (!target.actor) continue;
+
+      targets.push({
         name: target.actor.name,
         img: target.actor.img,
         id: target.id
-      }));
+      });
+    }
+    return targets;
   }
 
   compareTargets(html, targets) {
     const newTargets = this.readTargets();
+    const changed = JSON.stringify(targets) !== JSON.stringify(newTargets);
 
-    if (JSON.stringify(targets) === JSON.stringify(newTargets)) {
-      return targets;
+    if (!changed) {
+      return {
+        changed,
+        targets,
+      };
     }
 
-    this.updateTargets(html, newTargets);
-    return newTargets;
+    void this.updateTargets(html, newTargets);
+    return {
+      changed,
+      targets: newTargets,
+    };
+  }
+
+  initializeTargetTracking() {
+    this.currentTargets = this.readTargets();
+    return this.currentTargets;
+  }
+
+  async handleTargetTokenChange() {
+    if (!this.element?.isConnected) return false;
+
+    const html = $(this.element);
+    const result = this.compareTargets(html, this.currentTargets ?? this.readTargets());
+    this.currentTargets = result.targets;
+
+    if (result.changed) {
+      await this.onTargetTokenChange(html, result.targets, result);
+    }
+
+    return result.changed;
+  }
+
+  async onTargetTokenChange(_html, _targets, _result) {}
+
+  static registerTargetTokenHook() {
+    Hooks.on('targetToken', () => {
+      this.debounceRefreshOpenDialogTargets();
+    });
   }
 
   async _onRender(context, options) {
@@ -184,6 +230,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
 
     // Ability/extension burger menu (hidden by default)
     await RollDialogExtensions.bindBurgerMenu(this);
+    this.initializeTargetTracking();
   }
 
   async addTarget(ev) {
@@ -191,10 +238,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   _tearDown(options) {
-    if (this.checkTargets) {
-      clearInterval(this.checkTargets);
-      this.checkTargets = null;
-    }
+    this.currentTargets = null;
     $(this.element).find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
       elem[SituationalModifiersWidget.INSTANCE_KEY]?.destroy();
     });

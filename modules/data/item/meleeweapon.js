@@ -83,11 +83,12 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
     foundry.utils.mergeObject(data, this.getGripInfo());
-    if (this.actor) {
-      const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
-      data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
-      data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(_loc(`LocalizedCTs.${data.document.system.combatskill.value}`));
-    }
+    
+    if (!this.actor) return;
+      
+    const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
+    data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
+    data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(_loc(`LocalizedCTs.${data.document.system.combatskill.value}`));    
   }
 
   getGripInfo() {
@@ -169,10 +170,10 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
   }
 
   async swapNumberWeaponHands() {
-    if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(_loc(`LocalizedCTs.${this.combatskill.value}`))) {
-      await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
-      this.itemEquippedMessage();
-    }
+    if (MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(_loc(`LocalizedCTs.${this.combatskill.value}`))) return;
+      
+    await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
+    this.itemEquippedMessage();
   }
 
   async reEquipItem() {

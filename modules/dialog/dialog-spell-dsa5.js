@@ -318,16 +318,12 @@ export default class DSA5SpellDialog extends DialogShared {
     html.on('change', 'input,select', () => this.calculateProbability());
     html.on('mousedown', '.quantity-click', () => this.calculateProbability());
 
-    let targets = this.readTargets();
+    const targets = this.currentTargets ?? this.readTargets();
 
     if (targets.length == 0) {
       this.setRollButtonWarning();
     }
-    // not great
+
     this.calculateProbability();
-    const that = this;
-    this.checkTargets = setInterval(function () {
-      targets = that.compareTargets(html, targets);
-    }, 500);
   }
 }

@@ -27,6 +27,7 @@ import SpecialabilityRulesDSA5 from './system/rules/specialability-rules-dsa5.js
 import AdvantageRulesDSA5 from './system/rules/advantage-rules-dsa5.js';
 import Migrakel from './system/maintenance/migrakel.js';
 import DSA5Dialog from './dialog/dialog-dsa5.js';
+import DialogShared from './dialog/dialog-shared.js';
 import DPS from './system/automation/derepositioningsystem.js';
 import DSATables from './tables/dsatables.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
@@ -242,7 +243,8 @@ Hooks.once('init', () => {
   TransactionSummaryService.register();
   InformationQueryService.register();
   RollRequestService.register();
-  DSA5ProseMirrorIntegration.register()
+  DSA5ProseMirrorIntegration.register();
+  DialogShared.registerTargetTokenHook();
 
 });
 

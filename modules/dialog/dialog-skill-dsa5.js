@@ -64,28 +64,17 @@ export default class DSA5SkillDialog extends DialogShared {
   }
 
   async prepareFormRecall(html) {
-      await super.prepareFormRecall(html);
-      const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-      DPS.lightLevel(actor, html);
+    await super.prepareFormRecall(html);
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    DPS.lightLevel(actor, html);
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
 
-    const html = $(this.element)
+    const html = $(this.element);
 
     html.on('change', 'input,select', (ev) => this.rememberFormData(ev));
-
-    let targets = this.readTargets();
-    // not great
-    const that = this;
-    this.checkTargets = setInterval(async function () {
-      const previousTargets = JSON.stringify(targets);
-      targets = that.compareTargets(html, targets);
-      if (previousTargets !== JSON.stringify(targets)) {
-        await that.refreshPersonaeSocialContactModifier(html);
-      }
-    }, 500);
 
     await this.refreshPersonaeSocialContactModifier(html);
     this.rememberFormData();
@@ -94,6 +83,10 @@ export default class DSA5SkillDialog extends DialogShared {
     html.find('[data-action="toggleSection"]').on('click', (ev) => {
       this.#toggleSection(ev, ev.currentTarget);
     });
+  }
+
+  async onTargetTokenChange(html) {
+    await this.refreshPersonaeSocialContactModifier(html);
   }
 
   rememberFormData(ev) {

@@ -251,12 +251,6 @@ export default class DSA5CombatDialog extends DialogShared {
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
     html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
-    let targets = this.readTargets();
-    // not great
-    const that = this;
-    this.checkTargets = setInterval(function () {
-      targets = that.compareTargets(html, targets);
-    }, 500);
   }
 
   checkCounterAttack(ev) {
