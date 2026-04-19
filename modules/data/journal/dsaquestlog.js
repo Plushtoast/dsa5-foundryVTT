@@ -4,6 +4,7 @@ const { TextEditor } = foundry.applications.ux;
 
 export class DSAQuestLogEntry extends JournalListDataModel {
     static SETTING_NAME = 'questlogJournals';
+    static HOTBAR_ID = 'createQuest';
     static CREATION_CONFIG = {
         pageType: 'dsaquestlog',
         entryCollection: 'quests',

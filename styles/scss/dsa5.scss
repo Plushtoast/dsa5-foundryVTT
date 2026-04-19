@@ -4066,7 +4066,7 @@ select.noAppearance {
       border-radius: 4px;
     }
 
-    .fa {
+    .fa, .fas, .far, .fab {
       font-size: calc(var(--tokenQuickhotsize) - 15px);
       line-height: var(--tokenQuickhotsize);
       text-align: center;

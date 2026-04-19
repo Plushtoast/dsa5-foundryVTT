@@ -16,6 +16,7 @@ import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
+import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -77,6 +78,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           disabled: setting.createCalendarEvent,
           iconClass: 'fas fa-calendar-day',
           id: DSACalendarEntry.HOTBAR_ID,
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
+        {
+          name: 'DSAQUESTLOG.createQuest',
+          disabled: setting.createQuest,
+          iconClass: 'fas fa-scroll',
+          id: DSAQuestLogEntry.HOTBAR_ID,
           cssClass: 'gm',
           abbrev: '',
           subfunction: 'gm',
@@ -430,6 +440,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
         break;
       case DSACalendarEntry.HOTBAR_ID:
         DSACalendarEntry.startCreation(null, game.time.calendar.timeToComponents(game.time.worldTime));
+        break;
+      case DSAQuestLogEntry.HOTBAR_ID:
+        DSAQuestLogEntry.startCreation(null);
         break;
       case 'payMoney':
         this.payMoney(ev);
