@@ -22,6 +22,7 @@ import { applyDamage } from '../../hooks/chat_context.js';
 import DSATriggers from '../automation/triggers.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import CombatskillData from '../../data/item/combatskill.js';
+import ConsumableData from '../../data/item/consumable.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 
@@ -41,6 +42,8 @@ export default class DiceDSA5 {
   static async rollTest(testData) {
     const { source } = testData;
     const { type } = source;
+	const actor = this.#actorFromTestData(testData);
+	await ConsumableData.triggerConsumptions(testData, actor);
 
     // Use a lookup table for better performance and maintainability
     const rollHandlers = {
@@ -320,10 +323,6 @@ export default class DiceDSA5 {
       testData
     );
 
-    // Gather consumable modifiers
-    this._addConsumableModifiers(situationalModifiers, actor, testData);
-
-    // Collect target information
     const targets = this.#collectTargets();
     const attributesList = this.#buildAttributesList();
 
@@ -351,6 +350,8 @@ export default class DiceDSA5 {
   static #gatherSituationalModifiers(existingModifiers, actor, testData) {
     const situationalModifiers = existingModifiers ||
       (actor ? DSA5StatusEffects.getRollModifiers(actor, testData.source) : []);
+
+    ConsumableData.addConsumableModifiers(situationalModifiers, actor, testData);
 
     const { moreModifiers } = testData.extra.options;
     if (moreModifiers) {
@@ -2402,65 +2403,6 @@ export default class DiceDSA5 {
     }, 2000);
   }
 
-  static _addConsumableModifiers(situationalModifiers, actor, testData) {
-      if (!actor) return;
-      
-      const consumables = actor.items.filter(x => x.type == "consumable" && x.system.quantity.value > 0);
-      const targetName = testData.source.name; 
-      const targetType = testData.source.type;
-      const typeLabel = game.i18n.localize("TYPES.Item.consumable");
-
-      for (let item of consumables) {
-          const relevantEffect = item.effects.find(e => {
-              if (e.disabled || e.transfer) return false;
-              return e.changes.some(change => {
-                  const key = change.key;
-                  const val = typeof change.value === "string" ? change.value : String(change.value);
-                  return key.includes(targetName) || val.includes(targetName) || 
-                         (targetType == "spell" && key.includes("spell"));
-              });
-          });
-
-          if (relevantEffect) {
-              let change = relevantEffect.changes.find(c => 
-                  c.key.includes(targetName) || 
-                  (typeof c.value === "string" && c.value.includes(targetName))
-              ) || relevantEffect.changes[0];
-
-              let modType = "";
-              if (change.key.includes(".FP") || change.key.includes("SkillPoints")) modType = "FP";
-              else if (change.key.includes(".QL") || change.key.includes("qualityStep")) modType = "QL";
-              else if (change.key.includes(".FW") || change.key.includes("talentValue")) modType = "FW";
-
-              let numericPart = change.value;
-              if (typeof numericPart === "string" && isNaN(Number(numericPart))) {
-                   const match = String(numericPart).match(/-?\d+/);
-                   if (match) numericPart = match[0];
-              }
-
-              if (!numericPart && numericPart != 0) continue;
-
-              let finalValue = numericPart;
-              switch (parseInt(change.mode)) {
-                  case 1: finalValue = `*${numericPart}`; break; 
-                  case 5: finalValue = `=${numericPart}`; break; 
-                  default: finalValue = Number(numericPart);
-              }
-
-              let displayName = `${typeLabel}: ${item.name}`;
-              if (item.system.QL) displayName += ` (QS ${item.system.QL})`;
-
-              situationalModifiers.push({
-                  name: displayName,
-                  value: finalValue, 
-                  type: modType,       
-                  selected: false,
-                  consumableId: item.id 
-              });
-          }
-      }
-  }
-  
   static async chatListeners(html) {
     html.on('click', '.expand-mods', (event) => {
       const elem = $(event.currentTarget);
