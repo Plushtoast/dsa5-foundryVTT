@@ -1,0 +1,67 @@
+<div class="tab scrollable hotbar-sort-manager-skills flexcol {{tabs.skills.cssClass}}" data-tab="skills" data-group="{{tabs.skills.group}}">
+    <div class="sort-toolbar flexrow flexAlignCenter gap2px">
+        <select class="sort-mode-select">
+            {{#each sortModes as |label key|}}
+            <option value="{{@key}}" {{#if (eq @key ../sortMode)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+        </select>
+        <button type="button" class="sort-btn icon plain flex0 {{#if sortModeChanged}}highlight{{/if}}"
+            data-action="setDefaultSort"
+            data-tooltip="{{localize 'DSA5HOTBARCONFIG.setDefault'}}">
+            <i class="fas fa-thumbtack"></i>
+        </button>
+        {{#each groupToggles as |group|}}
+        <button type="button" class="icon fas {{group.icon}} sort-group-toggle {{group.key}} {{#unless group.active}}inactive{{/unless}}"
+            data-action="toggleGroup" data-group="{{group.key}}"
+            data-tooltip="{{group.label}}">
+        </button>
+        {{/each}}
+        <div class="flex1"></div>
+        <div class="flexrow flexAlignCenter flex1">
+            <i class="fas fa-search flex0"></i>
+            <input type="search" placeholder="{{localize 'Library.search'}}">
+        </div>
+    </div>
+
+    <div class="sort-manager-content">
+        <div class="sort-card-grid">
+            {{#each skills as |skill|}}
+            <div class="sort-card flexcol flexAlignCenter {{skill.group}} {{#if skill.hidden}}sort-hidden{{/if}} {{#if skill.favorite}}sort-favorite{{/if}}"
+                 data-id="{{skill.id}}" data-name="{{skill.name}}" draggable="true">
+                <div class="sort-card-img-wrap">
+                    <img src="{{skill.img}}" class="sort-card-img" alt="">
+                    <div class="sort-card-overlay flexrow">
+                        {{#if (eq ../sortMode 'custom')}}
+                        <span class="sort-card-btn"></span>
+                        {{else}}
+                        <button type="button" class="icon noBorder fas fa-star dsadesignbutton sort-card-btn fav-btn {{#if skill.favorite}}active{{/if}}"
+                            data-action="toggleFavorite"
+                            data-tooltip="{{localize 'DSA5HOTBARCONFIG.favorite'}}">
+                        </button>
+                        {{/if}}
+                        <span class="sort-card-tw">{{skill.tw}}</span>
+                        <button type="button" class="icon noBorder dsadesignbutton fas {{#if skill.hidden}}fa-eye-slash{{else}}fa-eye{{/if}} sort-card-btn vis-btn"
+                            data-action="toggleVisibility"
+                            data-tooltip="{{#if skill.hidden}}{{localize 'DSA5HOTBARCONFIG.showSkill'}}{{else}}{{localize 'DSA5HOTBARCONFIG.hideSkill'}}{{/if}}">
+                        </button>
+                    </div>
+                </div>
+                <span class="sort-card-name ellipsis" data-tooltip="{{skill.name}}">{{skill.name}}</span>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="sort-manager-footer flexrow flexAlignCenter">
+        <button type="button" class="sort-save-btn" data-action="saveSkills" {{#unless isSkillsDirty}}disabled{{/unless}}>
+            <i class="fas fa-save"></i> {{localize "DSA5HOTBARCONFIG.save"}}
+        </button>
+        <div class="flex1"></div>
+        <button type="button" class="sort-btn dsadesignbutton noBorder icon fas fa-undo" data-action="resetOrder"
+            data-tooltip="{{localize 'DSA5HOTBARCONFIG.reset'}}">
+        </button>
+        <button type="button" class="sort-btn dsadesignbutton noBorder icon fas fa-trash" data-action="resetAll"
+            data-tooltip="{{localize 'DSA5HOTBARCONFIG.resetAll'}}">
+        </button>
+    </div>
+</div>

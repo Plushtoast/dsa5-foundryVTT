@@ -69,26 +69,24 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
 
   static async _onTreatPain(event, target) {
     const names = [];
-    for (let actor of this.targets) {
+    for (const actor of this.targets) {
       if (!actor) continue;
 
       names.push(actor.name);
       const ef = {
         name: `${dict.treatPain} (${this.macroData.qs})`,
         img: 'icons/svg/aura.svg',
-        changes: [
-          {
-            key: 'system.resistances.effects',
-            value: `inpain ${this.macroData.qs}`,
-            mode: 0,
-          },
-        ],
-        duration: {},
-        flags: {
-          dsa5: {
-            description: `${dict.treatPain} (${this.macroData.qs})`,
-          },
+        system: {
+          description: `${dict.treatPain} (${this.macroData.qs})`,
+          changes: [
+            {
+              key: 'system.resistances.effects',
+              value: `inpain ${this.macroData.qs}`,
+              type: 'custom',
+            },
+          ],
         },
+        duration: {},
       };
       await actor.addCondition(ef);
     }
@@ -114,7 +112,7 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
 
     const names = [];
 
-    for (let actor of this.targets) {
+    for (const actor of this.targets) {
       if (!actor) continue;
 
       const currentTemp = actor.system.status.regeneration.LePTemp || 0;

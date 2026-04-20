@@ -1,0 +1,25 @@
+<div class="flexcol gap5px">
+  {{{header}}}
+  <div class="flexcol gap5px">
+    <div class="form-group">
+      <label>{{localize "Book.search"}}</label>
+      <div class="form-fields">
+        <input type="search" class="search-input actorsearch" placeholder='{{localize "Book.search"}}' autofocus />
+      </div>
+    </div>
+    <div class="flexrow flexAlignCenter gap5px">
+      {{#if actorSources.length}}
+      <div class="split-button query-actor-source-toggle">
+        {{#each actorSources as |src|}}
+        <button type="button" class="ui-control icon {{src.icon}}" data-action="actorSource" data-source="{{src.key}}" aria-pressed="{{#if @first}}true{{else}}false{{/if}}" data-tooltip="{{localize src.tooltip}}" aria-label="{{localize src.tooltip}}"></button>
+        {{/each}}
+      </div>
+      {{/if}}
+      <div class="flexAlignEnd split-button query-actor-select-toggle" style="margin-left:auto;">
+        <button type="button" class="ui-control icon fa-solid fa-check-double" data-action="selectAll" data-tooltip="{{localize "DSAQUERIES.ACTORSOURCE.selectAll"}}" aria-label="{{localize "DSAQUERIES.ACTORSOURCE.selectAll"}}"></button>
+        <button type="button" class="ui-control icon fa-solid fa-xmark" data-action="selectNone" data-tooltip="{{localize "DSAQUERIES.ACTORSOURCE.selectNone"}}" aria-label="{{localize "DSAQUERIES.ACTORSOURCE.selectNone"}}"></button>
+      </div>
+    </div>
+  </div>
+  {{> systems/dsa5/templates/dialog/parts/actor-picker-list.hbs selectionMode=selectionMode}}
+</div>

@@ -1,0 +1,107 @@
+<div class="tab scrollable training-content-body training-tab-wrapper {{tabs.training.cssClass}}" data-tab="training" data-group="{{tabs.training.group}}">
+    {{#if trainingBlockMessage}}
+        <div class="droparea">{{trainingBlockMessage}}</div>
+    {{else if hasReachedMaxTraining}}
+        <div class="max-training-box">
+            {{localize 'COMPANIONS.Training.MaxReached' petName=companion.name}}
+        </div>
+
+        <div class="known-training-center-box">
+            <h4 class="training-col-header center">
+                {{localize 'COMPANIONS.Training.Known'}}
+            </h4>
+            <div class="flexcol gap5px">
+                {{#each knownTrainings}}
+                    <div class="trick-container training-item-container center">
+                        <a class="content-link training-item-link" data-action="openTrick" data-uuid="{{this.uuid}}">
+                            <i class="fas fa-graduation-cap"></i> {{this.name}}
+                        </a>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    {{else}}
+        <div class="dsa-info-box">
+            <p class="dsa-info-text">
+                {{#if isWild}}
+                    {{localize 'COMPANIONS.Training.WildRule'}}
+                {{else}}
+                    {{localize 'COMPANIONS.Training.DomRule'}}
+                {{/if}}
+            </p>
+
+            <p class="dsa-info-text">
+                {{localize 'COMPANIONS.Training.ProbeRule'}}
+            </p>
+
+            {{#if isMountPossible}}
+            <p class="dsa-info-text">
+                {{localize 'COMPANIONS.Training.MountRule'}}
+            </p>
+            {{/if}}
+
+            {{#if isFamiliar}}
+            <p class="dsa-info-text">
+                {{localize 'COMPANIONS.Training.FamiliarRule'}}
+            </p>
+            {{/if}}
+        </div>
+
+        <div class="training-grid-wrapper">
+            <div class="dsa-grid gap10px" style="--grid-repeat: 2; --grid-max: 1fr">
+                <div>
+                    <h4 class="training-col-header">
+                        {{localize 'COMPANIONS.Training.Known'}}
+                    </h4>
+                    <div class="flexcol gap5px">
+                        {{#each knownTrainings}}
+                            <div class="trick-container training-item-container">
+                                <div class="training-item-header">
+                                    <div class="training-item-left">
+                                        <a class="content-link training-item-link pad-left" data-action="openTrick" data-uuid="{{this.uuid}}">
+                                            <i class="fas fa-graduation-cap"></i> {{this.name}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#unless knownTrainings.length}}
+                            <p class="training-empty-state">{{localize 'COMPANIONS.Training.NoLearned'}}</p>
+                        {{/unless}}
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="training-col-header">
+                        {{localize 'COMPANIONS.Training.Available'}}
+                    </h4>
+                    <div class="flexcol gap5px">
+                        {{#each availableTrainings}}
+                            <div class="trick-container training-item-container">
+                                <div class="training-item-header flexwrap gap5px">
+                                    <div class="training-item-left">
+                                        <a class="content-link training-item-link pad-left" data-action="openTrick" data-uuid="{{this.uuid}}">
+                                            <i class="fas fa-graduation-cap"></i> {{this.name}}
+                                        </a>
+                                    </div>
+                                    {{#if this.isTraining}}
+                                        <button type="button" class="dsadesignbutton training-btn" disabled>
+                                            <i class="fas fa-hourglass-half training-btn-icon"></i> {{localize 'COMPANIONS.Training.InTraining'}}
+                                        </button>
+                                    {{else}}
+                                        <button type="button" class="dsadesignbutton training-btn" data-action="teachTraining" data-training="{{this.name}}">
+                                            <i class="fas fa-paw training-btn-icon"></i> {{localize 'COMPANIONS.Training.TeachBtn'}}
+                                        </button>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#unless availableTrainings.length}}
+                            <p class="training-empty-state">{{localize 'COMPANIONS.Training.NoAvailable'}}</p>
+                        {{/unless}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+</div>

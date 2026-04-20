@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
@@ -7,7 +8,9 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class EquipmentData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate) {
+export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1 };
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       equipmentType: new SchemaField({
@@ -44,7 +47,6 @@ export default class EquipmentData extends ItemDataModel.mixin(DescriptionTempla
     this._setOnUseEffect(item);
     return item
   }
-
 
   get isBagWithContents() {
     return this.actor && this.equipmentType.value == 'bags';

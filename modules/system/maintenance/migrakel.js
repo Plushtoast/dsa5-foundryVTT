@@ -1,5 +1,4 @@
 const { mergeObject, getProperty } = foundry.utils;
-import { localize } from '../helpers/localizer.js';
 
 export default class Migrakel {
   static async showDialog(content, migrateAll = false) {
@@ -43,8 +42,8 @@ export default class Migrakel {
   }
 
   static async refreshStatusEffects(actor) {
-    let removeEffects = [];
-    for (let i of actor.effects) {
+    const removeEffects = [];
+    for (const i of actor.effects) {
       if (i.origin) {
         removeEffects.push(i.id);
       }
@@ -54,14 +53,14 @@ export default class Migrakel {
 
   static async updateVals(actor, condition, updater) {
     const itemLibrary = game.dsa5.itemLibrary;
-    let itemsToDelete = [];
-    let itemsToCreate = [];
-    let containersIDs = new Map();
+    const itemsToDelete = [];
+    const itemsToCreate = [];
+    const containersIDs = new Map();
     await this.refreshStatusEffects(actor);
     if (condition({ type: 'equipment' })) {
       const bagsToDelete = [];
       const bagsToCreate = [];
-      for (let item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
+      for (const item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
         let find = await itemLibrary.findCompendiumItem(item.name, item.type);
         if (find.length > 0) {
           find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -82,7 +81,7 @@ export default class Migrakel {
       await actor.deleteEmbeddedDocuments('Item', bagsToDelete);
     }
 
-    for (let item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
+    for (const item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
       let find = await itemLibrary.findCompendiumItem(item.name, item.type);
       if (find.length > 0) {
         find = find.find((x) => x.name == item.name && x.type == item.type);
@@ -103,9 +102,9 @@ export default class Migrakel {
   }
 
   static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.spells'), true));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.spells'), true));
     const condition = (x) => {
-      return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension'].includes(x.type);
+      return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension', 'blessing'].includes(x.type);
     };
     if (res == 2) {
       const updator = (find) => {
@@ -120,11 +119,14 @@ export default class Migrakel {
         const upd = {
           effects: find.effects.toObject(),
         };
-        if (find.type != 'spellextension')
+        if (!['spellextension', 'blessing'].includes(find.type))
           upd.system = {
             effectFormula: { value: find.system.effectFormula.value },
           };
 
+        if (find.type == 'blessing')  {
+          this.updateMacro(upd, find); 
+        }
         return upd;
       };
       await this.updateVals(actor, condition, updator);
@@ -133,10 +135,10 @@ export default class Migrakel {
   }
 
   static async updateSpecialAbilities(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.abilities')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.abilities')));
     if (res) {
       const updator = (find) => {
-        let update = {
+        const update = {
           effects: find.effects.toObject(),
         };
         if (['specialability', 'advantage', 'disadvantage', 'trait'].includes(find.type)) {
@@ -183,7 +185,7 @@ export default class Migrakel {
   }
 
   static async updateCombatskills(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.cskills')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.cskills')));
     if (res) {
       const updator = (find) => {
         return {
@@ -199,7 +201,7 @@ export default class Migrakel {
   }
 
   static async updateSkills(actor, preChoice = undefined) {
-    const res = preChoice ?? (await this.showDialog(localize('Migrakel.skills')));
+    const res = preChoice ?? (await this.showDialog(_loc('Migrakel.skills')));
     if (res) {
       const condition = (x) => {
         return ['skill'].includes(x.type);
@@ -216,22 +218,22 @@ export default class Migrakel {
   }
 
   static updateMacro(update, find) {
-    const onUseEffect = find.getFlag('dsa5', 'onUseEffect');
-    if (onUseEffect) {
+    const onUseActions = foundry.utils.deepClone(find.system.onUseActions || {});
+    if (Object.keys(onUseActions).length > 0) {
       mergeObject(update, {
-        flags: { dsa5: { onUseEffect } },
+        system: { onUseActions },
       });
     }
   }
 
   static async updateGear(actor, preChoice = undefined) {
-    const choice = preChoice ?? (await this.showDialog(localize('Migrakel.gear')));
+    const choice = preChoice ?? (await this.showDialog(_loc('Migrakel.gear')));
     if (choice) {
-      let condition = (x) => {
+      const condition = (x) => {
         return ['meleeweapon', 'armor', 'rangeweapon', 'equipment', 'poison', 'disease', 'consumable', 'ammunition'].includes(x.type);
       };
-      let updator = (find) => {
-        let update = {
+      const updator = (find) => {
+        const update = {
           img: find.img,
           effects: find.effects.toObject(),
         };
@@ -267,7 +269,7 @@ export default class Migrakel {
         actor.items
           .filter((x) => x.type == 'money')
           .map((x) => {
-            return { _id: x.id, name: localize(x.name) };
+            return { _id: x.id, name: _loc(x.name) };
           }),
       );
     }

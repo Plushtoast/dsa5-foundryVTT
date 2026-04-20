@@ -19,14 +19,13 @@ export class MiracleModifiers {
 
         const bonus = getProperty(actor, `system.miracle.${bonusAttribute}`) || 0;
         const result = [{
-            name: game.i18n.localize('LocalizedIDs.miracle'),
+            name: _loc('LocalizedIDs.miracle'),
             value: 2 + bonus,
             type,
             selected: false,
         }];
-
         const availableKaP = actor.system.status.karmaenergy.max - actor.system.status.karmaenergy.value;
-        const miracleMight = game.i18n.localize('LocalizedIDs.miracleMight');
+        const miracleMight = _loc('LocalizedIDs.miracleMight');
         if (availableKaP >= 6 && SpecialabilityRulesDSA5.hasAbility(actor, miracleMight, false)) {
             result.push({
                 name: miracleMight,
@@ -35,10 +34,8 @@ export class MiracleModifiers {
                 selected: false,
             });
         }
-
         return result;
     }
-
     /**
      * Check if actor can use miracles for the given source
      * @param {Object} actor - Actor object
@@ -46,11 +43,10 @@ export class MiracleModifiers {
      * @returns {boolean} Whether miracles can be used
      */
     static #canUseMiracles(actor, source) {
-        const regex = new RegExp(`${game.i18n.localize('TYPES.Item.combatskill')} `, 'gi');
+        const regex = new RegExp(`${_loc('TYPES.Item.combatskill')} `, 'gi');
         const happyTalents = (getProperty(actor, 'system.happyTalents.value') || '')
             .split(/;|,/)
             .map((x) => x.replace(regex, '').trim());
-        
         return happyTalents.includes(source.name) && actor.system.status.karmaenergy.value >= 4;
     }
 }

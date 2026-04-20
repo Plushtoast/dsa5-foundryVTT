@@ -4,7 +4,6 @@ import DSA5_Utility from "../../../system/helpers/utility-dsa5.js";
 
 const { SchemaField, StringField } = foundry.data.fields;
 
-
 export default class SkillTemplate extends DSADataModel {
     static defineSchema() {
         return {

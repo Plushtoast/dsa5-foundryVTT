@@ -1,17 +1,17 @@
 export default function () {
   Roll.prototype.editRollAtIndex = function (changes) {
-    let results = [];
-    for (let change of changes) {
-      let { index, val } = change;
+    const results = [];
+    for (const change of changes) {
+      const { index, val } = change;
 
       let curindex = 0;
 
-      for (let term of this.terms) {
+      for (const term of this.terms) {
         const isDie = term instanceof foundry.dice.terms.DiceTerm || term.class == 'DiceTerm' || term instanceof foundry.dice.terms.Die || term.class == 'Die';
         const isOperator = term instanceof foundry.dice.terms.OperatorTerm;
         if (isDie || term.faces) {
           if (term.results[index - curindex]) {
-            let oldVal = term.results[index - curindex].result;
+            const oldVal = term.results[index - curindex].result;
             term.results[index - curindex].result = val;
             results.push(oldVal);
           }

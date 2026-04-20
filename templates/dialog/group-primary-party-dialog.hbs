@@ -1,0 +1,15 @@
+<form>
+  <p>{{localize 'GROUP.primaryPartyPrompt'}}</p>
+  {{#if hasGroups}}
+    <div class='form-group'>
+      <label>{{localize 'GROUP.primaryPartySelect'}}</label>
+      <div class='form-fields'>
+        <select name='groupId'>
+          {{selectOptions groups selected=selectedGroupId valueAttr='id' labelAttr='name'}}
+        </select>
+      </div>
+    </div>
+  {{else}}
+    <p class='hint'>{{localize 'GROUP.noExistingGroups'}}</p>
+  {{/if}}
+</form>

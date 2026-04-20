@@ -5,17 +5,39 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
 
+async function fetchPatchNotes() {
+  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
+  return await notes.json();
+}
+
+async function announceChangelog(json) {
+  const version = json?.notes?.[json.notes.length - 1];
+  if (!version?.version) return;
+
+  const patchName = json['default'].replace(/VERSION/g, version.version);
+  const msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
+  await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
+}
+
 async function setupDefaulTokenConfig() {
   if (!game.settings.get('dsa5', 'defaultConfigFinished')) {
     console.log('Configuring default token settings');
-    let defaultToken = game.settings.get('core', 'prototypeTokenOverrides');
-
-    defaultToken.base.displayName = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.base.displayBars = CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER;
-    defaultToken.base.disposition = CONST.TOKEN_DISPOSITIONS.NEUTRAL;
-    defaultToken.base.bar1 = { attribute: 'status.wounds' };
-    defaultToken.character.sight.enabled = true;
-    await game.settings.set('core', 'prototypeTokenOverrides', defaultToken);
+    const defaultToken = game.settings.get('core', foundry.data.PrototypeTokenOverrides.SETTING);
+    defaultToken.updateSource({
+      base: {
+        displayName: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+        displayBars: CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+        disposition: CONST.TOKEN_DISPOSITIONS.NEUTRAL,
+        bar1: { attribute: 'status.wounds' },
+      },
+      character: {
+        sight: { enabled: true },
+      },
+      group: {
+        sight: { enabled: true },
+      }
+    })
+    await game.settings.set('core', foundry.data.PrototypeTokenOverrides.SETTING, defaultToken.toObject());
     await game.settings.set('core', 'leftClickRelease', true);
     await game.settings.set('dsa5', 'defaultConfigFinished', true);
     await migrateTo33();
@@ -23,7 +45,9 @@ async function setupDefaulTokenConfig() {
 }
 
 async function migrateDSA(currentVersion, migrationVersion) {
-  await showPatchViewer();
+  const json = await fetchPatchNotes();
+  await announceChangelog(json);
+  await showPatchViewer(json);
 
   if (currentVersion < 24) {
     await migratTo24();
@@ -39,7 +63,7 @@ async function migrateDSA(currentVersion, migrationVersion) {
 }
 
 async function migratTo24() {
-  for (let actor of game.actors) {
+  for (const actor of game.actors) {
     const removeEffects = actor.effects.filter((x) => ['inpain', 'encumbered'].includes(x.getFlag('core', 'statusId')));
 
     if (removeEffects.length)
@@ -66,16 +90,23 @@ async function migrateTo33() {
   await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
 }
 
-export async function showPatchViewer() {
-  const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
-  const json = await notes.json();
-  const patchViewer = new PatchViewer(json);
+export async function showPatchViewer(json = undefined) {
+  json ??= await fetchPatchNotes();
+  const patchViewer = new PatchViewer(json, undefined, { initialTab: 'newcontent' });
+  patchViewer.render(true);
+}
+
+export async function showWelcomeApp() {
+  if (!PatchViewer.shouldAutoShow()) return;
+  const json = await fetchPatchNotes();
+  const initialTab = PatchViewer.getInitialTab();
+  const patchViewer = new PatchViewer(json, undefined, { initialTab });
   patchViewer.render(true);
 }
 
 function betaWarning(version, version_specific = '', indef = false) {
   const indefMsg = indef ? `Foundry v${version} is still in development and so is TDE/DSA.` : 'TDE/DSA is still in development.';
-  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/issues\" target=\"_blank\">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
+  const msg = `<p>This is the beta version for DSA/TDE for Foundry v${version}. ${indefMsg} You might encounter on or more issues. Please report those on the official <a href="https://github.com/Plushtoast/dsa5-foundryVTT/issues" target="_blank">TDE/DSA Github</a>. Thank you.</p>${version_specific}`;
   ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
 }
 
@@ -83,11 +114,13 @@ async function setDefaultSkin() {
   const uiConfig = game.settings.get('core', 'uiConfig');
   const dsaSkin = game.settings.get('dsa5', 'globalStyle');
 
-  const setDefaults = dsaSkin != 'dsa5-immersive' || uiConfig.colorScheme.interface != 'light' || uiConfig.colorScheme.applications != 'light';
+  if (!Object.hasOwn(DSA5.baseStyles ?? {}, dsaSkin)) return;
+
+  const setDefaults = dsaSkin !== 'dsa5-immersive' || uiConfig.colorScheme.interface !== 'light' || uiConfig.colorScheme.applications !== 'light';
   if (!setDefaults) return;
 
   const proceed = await foundry.applications.api.DialogV2.confirm({
-    content: `<p>${game.i18n.localize('DSAError.invalidSkinCombination')}</p>`,
+    content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
     rejectClose: false,
     modal: true
   });
@@ -125,5 +158,4 @@ export default function migrateWorld() {
     migrateDSA(currentVersion, NEEDS_MIGRATION_VERSION);
   });
 }
-
 

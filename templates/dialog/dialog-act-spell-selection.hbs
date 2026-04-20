@@ -1,0 +1,107 @@
+<div class="selection">
+    <p>{{localize title}}</p>
+
+    {{#if hasSpells}}
+    <div class="groupbox">
+        <div class="row-section wrap inverseRowtable">
+            <div class="col">
+                <div class="row-section skills table-title lineheight">
+                    <div class="title-type col four">
+                        {{localize "spells"}}
+                    </div>
+                    <div class="col zerofive"></div>
+                    <div class="title-test col fifteen center">{{localize "probe"}}</div>
+                    <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                    <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
+                    <div class="col ten center">
+                        <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="col ten center">{{localize "reach"}}</div>
+                    <div class="col ten center">{{localize "status"}}</div>
+                </div>
+            </div>
+            {{#each spells as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <div class="row-section skills lineheight tableOdd rowHover flexAlignCenter selectableRow" data-action="spellSelect" data-item-id="{{item._id}}">
+                    <div class="equipment-item-image col zerofive image">
+                        <div class="image" style="background-image: url('{{item.img}}')"></div>
+                    </div>
+                    <div class="col four">{{item.name}}</div>
+                    <div class="col fifteen center">
+                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
+                    </div>
+                    <div class="col ten center">{{item.system.talentValue.value}}</div>
+                    <div class="col ten center">{{item.system.AsPCost.value}}</div>
+                    <div class="col ten center">{{item.system.castingTime.value}}</div>
+                    <div class="col ten center">{{item.system.range.value}}</div>
+                    <div class="col ten center">
+                        {{#if item.isOngoing}}
+                        <span class="smallBoxItem {{item.ongoingClass}}">{{item.progressLabel}}</span>
+                        {{else}}
+                        -
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if hasLiturgies}}
+    <div class="groupbox">
+        <div class="row-section wrap inverseRowtable">
+            <div class="col">
+                <div class="row-section skills table-title lineheight">
+                    <div class="title-type col four">
+                        {{localize "liturgies"}}
+                    </div>
+                    <div class="col zerofive"></div>
+                    <div class="title-test col fifteen center">{{localize "probe"}}</div>
+                    <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                    <div class="col ten center" data-tooltip="KaPCost">{{localize "cost"}}</div>
+                    <div class="col ten center">
+                        <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="col ten center">{{localize "reach"}}</div>
+                    <div class="col ten center">{{localize "status"}}</div>
+                </div>
+            </div>
+            {{#each liturgies as |item i|}}
+            <div class="col item" data-item-id="{{item._id}}">
+                <div class="row-section skills lineheight tableOdd rowHover flexAlignCenter selectableRow" data-action="spellSelect" data-item-id="{{item._id}}">
+                    <div class="equipment-item-image col zerofive image">
+                        <div class="image" style="background-image: url('{{item.img}}')"></div>
+                    </div>
+                    <div class="col four">{{item.name}}</div>
+                    <div class="col fifteen center">
+                        <span class="d20 diet-{{item.system.characteristic1.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic1.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic2.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic2.value)}}</span>
+                        <span class="d20 diet-{{item.system.characteristic3.value}}">{{localize (concatUp "CHARAbbrev." item.system.characteristic3.value)}}</span>
+                    </div>
+                    <div class="col ten center">{{item.system.talentValue.value}}</div>
+                    <div class="col ten center">{{item.system.AsPCost.value}}</div>
+                    <div class="col ten center">{{item.system.castingTime.value}}</div>
+                    <div class="col ten center">{{item.system.range.value}}</div>
+                    <div class="col ten center">
+                        {{#if item.isOngoing}}
+                        <span class="smallBoxItem {{item.ongoingClass}}">{{item.progressLabel}}</span>
+                        {{else}}
+                        -
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#unless hasSpells}}
+    {{#unless hasLiturgies}}
+    <p>{{localize emptyMessage}}</p>
+    {{/unless}}
+    {{/unless}}
+</div>

@@ -1,6 +1,5 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
-import { localize } from '../../system/helpers/localizer.js';
-
+import { JournalEntryTargetHelper } from "./journalentrytargethelper.js";
 export class PersonaeDramatis {
     static #parent;
     static #lastActiveListType = '0';
@@ -40,11 +39,44 @@ export class PersonaeDramatis {
         newPersona: PersonaeDramatis.newPersona,
     }
 
+    static #findExistingPersona(actorUuid) {
+        if (!actorUuid) return null;
+
+        for (const { journal, page } of JournalEntryTargetHelper.collectTargets('dsapersonaedramatis').pages) {
+            for (const [key, entry] of Object.entries(page.system?.personae || {})) {
+                if (entry?.actor_uuid !== actorUuid) continue;
+                return { journal, page, key, entry };
+            }
+        }
+        return null;
+    }
+
+    static async addActorToPersonae(actor) {
+        if (!game.user.isGM || !actor) return;
+
+        const existing = this.#findExistingPersona(actor.uuid);
+        if (existing) {
+            ui.notifications.error('PERSONAE.actorAlreadyExists', {
+                localize: true,
+                format: {
+                    actor: actor.name,
+                    page: existing.page.name,
+                    journal: existing.journal.name,
+                }
+            });
+            return;
+        }
+
+        await DSAPersonaEntry.startCreation(
+            game.dsa5?.apps?.CalendarPicker,
+            { actor },
+        );
+    }
+
     async _preparePartContext(context, options) {
         const isGM = game.user.isGM;
         const actorSettings = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME) || { activated: [] };
         const activated = actorSettings.activated;
-
         const journals = (await Promise.all(activated.map(async j => {
             try {
                 return await fromUuid(j.uuid);
@@ -53,23 +85,22 @@ export class PersonaeDramatis {
                 return null;
             }
         }))).filter(Boolean);
-
         context.personae = { personae0: [], personae1: [] };
         context.lastActiveListType = PersonaeDramatis.#lastActiveListType;
         const personaeData = { 0: [], 1: [] };
         let foundLastSelectedPersona = null;
-
         for (const journal of journals) {
             for (const page of journal.pages) {
                 if (page.type !== 'dsapersonaedramatis') continue;
+
                 const personae = page.system?.personae;
                 if (!personae) continue;
 
                 const pageUuid = page.uuid;
                 const parentUuid = page.parent?.uuid;
-
                 for (const key in personae) {
                     if (!Object.prototype.hasOwnProperty.call(personae, key)) continue;
+
                     const entry = personae[key];
                     if ((!entry.visible && !isGM) || !entry.actor_uuid) continue;
 
@@ -79,9 +110,7 @@ export class PersonaeDramatis {
                         juuid: parentUuid,
                         dramatisKey: key
                     };
-
                     personaeData[entry.type].push(personaEntry);
-
                     if (PersonaeDramatis.#lastSelectedActor &&
                         pageUuid === PersonaeDramatis.#lastSelectedActor.pageUuid &&
                         key === PersonaeDramatis.#lastSelectedActor.dramatisKey) {
@@ -90,12 +119,10 @@ export class PersonaeDramatis {
                 }
             }
         }
-
         for (const type of ['0', '1']) {
             const grouped = this._groupByFaction(personaeData[type]);
             context.personae[`personae${type}`] = grouped;
         }
-
         context.detailData = null;
         if (foundLastSelectedPersona) {
             try {
@@ -116,10 +143,8 @@ export class PersonaeDramatis {
 
     _groupByFaction(personaeArray) {
         if (!Array.isArray(personaeArray) || personaeArray.length === 0) return [];
-
         const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
-        const unknownFaction = localize("PERSONAE.UnknownFaction");
-
+        const unknownFaction = _loc("PERSONAE.UnknownFaction");
         const groups = new Map();
         for (const persona of personaeArray) {
             const faction = persona.faction || unknownFaction;
@@ -130,17 +155,14 @@ export class PersonaeDramatis {
             }
             bucket.push(persona);
         }
-
         for (const bucket of groups.values()) {
             bucket.sort((a, b) => collator.compare(a?.name || '', b?.name || ''));
         }
-
         const sortedEntries = Array.from(groups.entries()).sort(([fa], [fb]) => {
             if (fa === unknownFaction) return 1;
             if (fb === unknownFaction) return -1;
             return collator.compare(fa, fb);
         });
-
         return sortedEntries.map(([faction, members]) => ({ faction, members }));
     }
 
@@ -149,7 +171,6 @@ export class PersonaeDramatis {
         if (!personaUuid) return;
 
         const page = await fromUuid(personaUuid);
-
         if (!page) return;
 
         return { entry: page?.system.personae?.[personaDramatisKey], page, personaDramatisKey };
@@ -157,14 +178,12 @@ export class PersonaeDramatis {
 
     static async selectActor(event, target) {
         const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-
         if (!entry) return;
 
         PersonaeDramatis.#lastSelectedActor = {
             pageUuid: page.uuid,
             dramatisKey: personaDramatisKey
         };
-
         PersonaeDramatis.updateSelectionUI(target);
         PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey, target);
     }
@@ -172,20 +191,16 @@ export class PersonaeDramatis {
     static updateSelectionUI(clickedElement) {
         const listItem = clickedElement.closest('.persona-list-item');
         const personaeList = listItem.closest('.personae-list');
-
         personaeList.querySelectorAll('.persona-list-item.selected').forEach(item => {
             item.classList.remove('selected');
         });
-
         listItem.classList.add('selected');
     }
 
     static prepareTabs(entry) {
         const activeGroup = PersonaeDramatis.#parent.tabGroups.details || 'description';
-
         const tabs = PersonaeDramatis.TABS.details.tabs.reduce((tabs, tab, index) => {
             if (tab.onlyGM && (!game.user.isGM || entry.type === 1)) return tabs;
-
             tabs[tab.id] = {
                 cssClass: activeGroup === tab.id ? 'active' : '',
                 group: 'details',
@@ -194,7 +209,6 @@ export class PersonaeDramatis {
             }
             return tabs;
         }, {});
-
         if (!tabs[activeGroup]) {
             const firstTab = Object.values(tabs)[0];
             if (firstTab) {
@@ -207,7 +221,6 @@ export class PersonaeDramatis {
         const heros = await DSAPersonaEntry.getHeros();
         await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
         const tabs = PersonaeDramatis.prepareTabs(entry);
-
         return {
             ...entry,
             canChangeRelation: isGM,
@@ -225,7 +238,6 @@ export class PersonaeDramatis {
         const detailData = await PersonaeDramatis.#prepareActorDetailData(entry, page, key, game.user.isGM);
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', detailData);
         detailsContainer.innerHTML = detailHTML;
-
         PersonaeDramatis.#setupDetailListeners(container);
     }
 
@@ -234,7 +246,6 @@ export class PersonaeDramatis {
         const newValue = target.value;
         const { documentUuid } = target.dataset;
         const name = target.name;
-
         if (game.user.isGM) {
             this.updateNotes({ documentUuid, name, newValue });
         } else {
@@ -259,10 +270,9 @@ export class PersonaeDramatis {
         const newValue = target.value;
         const section = target.closest('.relationship-section');
         section.querySelector('.relationship-value').textContent = `${newValue}/9`;
-        section.querySelector('.relationship-label').textContent = localize(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
+        section.querySelector('.relationship-label').textContent = _loc(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
         target.className = target.className.replace(/level-\d+/g, '');
         target.classList.add(`level-${newValue}`);
-
         const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
         if (!page) return;
 
@@ -272,123 +282,57 @@ export class PersonaeDramatis {
 
     static async editActor(event, target, options = {}) {
         const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-
         if (!personaDramatisKey || !page) return;
 
-        if (!options.stay) this.close();
-        page.sheet.render({ force: true, currentKey: personaDramatisKey });
+        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: personaDramatisKey, close: !options.stay });
     }
 
     static async showSheet(event, target, options = {}) {
         const uuid = target.dataset.uuid;
         if (!uuid) return;
-        const actor = await fromUuid(uuid);
-        if (!actor) return;
 
-        if (!options.stay) this.close();
-        actor.sheet.render(true);
+        await PersonaeDramatis.#parent.openDocumentSheet(uuid, { close: !options.stay });
     }
 
     static async newPersona(event, target) {
-        if (!game.user.isGM) return;
-
-        this.close();
-
-        const activatedJournals = game.settings.get('dsa5', DSAPersonaEntry.SETTING_NAME)?.activated || [];
-        if (activatedJournals.length === 0) {
-            const newJournal = await JournalEntry.create({
-                name: localize("PERSONAE.ImportantPersons"), pages: [{
-                    name: localize("PERSONAE.ImportantPersons"), type: "dsapersonaedramatis",
-                }]
-            });
-            settings.activated.push({ uuid: newJournal.id, name: newJournal.name });
-            await game.settings.set('dsa5', DSAPersonaEntry.SETTING_NAME, settings);
-            newJournal.sheet.render(true);
-        } else {
-            let journalID;
-            const content = `<p><div class="form-group">
-                <label>${localize("PERSONAE.selectJournal")}</label>
-                <div class="form-fields">
-                    <select name="journal">
-                ${activatedJournals.map(id => `<option value="${id.uuid}">${id.name}</option>`).join('')}
-                    </select>
-                </div>
-            </div></p>`
-            try {
-                journalID = await foundry.applications.api.DialogV2.wait({
-                    window: {
-                        title: 'PERSONAE.Add',
-                    },
-                    content,
-                    buttons: [
-                        {
-                            action: 'ok',
-                            icon: 'fa fa-check',
-                            label: 'yes',
-                            default: true,
-                            callback: (event, button, dialog) => {
-                                return button.form.elements.journal.value;
-                            },
-                        },
-                        {
-                            action: 'cancel',
-                            icon: 'fas fa-times',
-                            label: 'cancel',
-                            callback: () => {
-                                return false;
-                            },
-                        },
-                    ],
-                });
-            } catch (error) {
-                /* empty */
-            }
-
-            if (!journalID) return;
-
-            const journal = await fromUuid(journalID);
-            if (!journal) return;
-
-            journal.sheet.render(true);
-        }
-    };
+        await DSAPersonaEntry.startCreation(this, {});
+    }
 
     static async toggleVisibility(event, target) {
         const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-
         if (!entry) return;
 
         await page.update({ [`system.personae.${personaDramatisKey}.visible`]: !entry.visible });
         const i = target.querySelector('i');
         i.classList.toggle('fa-eye', !entry.visible);
         i.classList.toggle('fa-eye-slash', entry.visible);
-
         this.element.querySelector('.persona-list-item.selected')?.classList.toggle('invisible', entry.visible);
         this.element.querySelector('.persona-list-item.selected .persona-hidden')?.classList.toggle('dsahidden', !entry.visible);
     }
-
     static switchList(event, target) {
         const listType = target.dataset.listType;
         const personaeList = target.closest('.personae-list-column');
+        PersonaeDramatis.#setActiveList(listType, personaeList, { clearSelection: true });
+    }
+    static #setActiveList(listType, personaeList, { clearSelection = true } = {}) {
+        if (!personaeList) return;
 
         PersonaeDramatis.#lastActiveListType = listType;
-
         personaeList.querySelectorAll('.list-switch-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.listType === listType);
         });
-
         personaeList.querySelectorAll('.list-content').forEach(content => {
             content.classList.toggle('hidden', content.dataset.listType !== listType);
         });
-
         const mainList = personaeList.querySelector('.personae-list');
         if (mainList) {
             mainList.dataset.activeList = listType;
         }
-
-        PersonaeDramatis.clearSelection();
-        PersonaeDramatis.clearDetails(target);
-        PersonaeDramatis.#lastSelectedActor = null;
+        if (clearSelection) {
+            PersonaeDramatis.clearSelection();
+            PersonaeDramatis.clearDetails(personaeList);
+            PersonaeDramatis.#lastSelectedActor = null;
+        }
     }
 
     static clearSelection() {
@@ -404,12 +348,32 @@ export class PersonaeDramatis {
                 <div class="no-selection">
                     <div class="no-selection-content">
                         <i class="fas fa-user-circle"></i>
-                        <h3>${localize("PERSONAE.SelectPersona")}</h3>
-                        <p>${localize("PERSONAE.SelectPersonaHint")}</p>
+                        <h3>${_loc("PERSONAE.SelectPersona")}</h3>
+                        <p>${_loc("PERSONAE.SelectPersonaHint")}</p>
                     </div>
                 </div>
             `;
         }
+    }
+
+    static async #openLinkedPersona(event) {
+        const link = event.target.closest('.content-link, .documentName-link');
+        if (!link) return;
+
+        const { uuid, type } = link.dataset;
+        if (type != 'Actor' || !uuid) return;
+
+        const listItem = PersonaeDramatis.#parent.element.querySelector(`.persona-list-item[data-actor-uuid="${uuid}"]`);
+        if (!listItem) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        const listType = listItem.closest('.list-content')?.dataset.listType;
+        if (listType) {
+            const personaeListColumn = PersonaeDramatis.#parent.element.querySelector('.personae-list-column');
+            PersonaeDramatis.#setActiveList(listType, personaeListColumn, { clearSelection: false });
+        }
+        await PersonaeDramatis.selectActor(event, listItem);
     }
 
     static #setupDetailListeners(element) {
@@ -419,11 +383,13 @@ export class PersonaeDramatis {
         detailsContainer.querySelectorAll('.relationship-slider').forEach(slider => {
             slider.addEventListener('input', async (event) => PersonaeDramatis.updateContactRelationshipLevel(event));
         });
-
         const notesEdit = detailsContainer.querySelector('.notes-edit');
         if (notesEdit) {
             notesEdit.addEventListener('change', PersonaeDramatis.#notesChanged.bind(PersonaeDramatis));
         }
+        detailsContainer.querySelectorAll('.content-link, .documentName-link').forEach(link => {
+            link.addEventListener('click', (event) => PersonaeDramatis.#openLinkedPersona(event));
+        });
     }
 
     onRenderListeners() {
@@ -433,28 +399,23 @@ export class PersonaeDramatis {
             callback: this.#onSearchFilter.bind(this)
         });
         this.#search.bind(this.element);
-
         this.element.addEventListener('click', (event) => {
             const switchBtn = event.target.closest('.list-switch-btn');
             if (switchBtn) {
                 PersonaeDramatis.switchList(event, switchBtn);
             }
         });
-
         PersonaeDramatis.#setupDetailListeners(this.element);
     }
 
     #onSearchFilter(_event, query, rgx, html) {
         const activeList = html.dataset.activeList || '0';
         const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
-
         if (!activeListContent) return;
 
         const factionGroups = activeListContent.querySelectorAll('.faction-group');
-
         factionGroups.forEach(factionGroup => {
             let visibleItemsInFaction = 0;
-
             const personaItems = factionGroup.querySelectorAll('.persona-list-item');
             personaItems.forEach(entry => {
                 if (!query) {
@@ -462,16 +423,13 @@ export class PersonaeDramatis {
                     visibleItemsInFaction++;
                     return;
                 }
-
                 const name = entry.querySelector('.persona-list-name')?.textContent || '';
                 const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
-
-                const isMatch = [name, faction].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+                const tags = entry.dataset.personaTags || '';
+                const isMatch = [name, faction, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 entry.hidden = !isMatch;
-
                 if (isMatch) visibleItemsInFaction++;
             });
-
             factionGroup.hidden = visibleItemsInFaction === 0;
         });
     }

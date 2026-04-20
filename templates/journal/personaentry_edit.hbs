@@ -3,7 +3,7 @@
     <div class='personae-list-column'>
       <div class='personae-list-header'>
         <div class='flexrow'>
-          <div class='list-search'>
+          <div class='list-search flex1'>
             <input type='search' class='search-input actorsearch' placeholder='{{localize "Book.search"}}' value='{{search}}' />
             <i class='fas fa-search'></i>
           </div>
@@ -20,7 +20,7 @@
 
       <div class='personae-list eventscontainer scrollable'>
         {{#each sortedEntries as |persona key|}}
-          <div class='persona-list-item {{ifThen (eq ../currentKey key) 'selected' ''}}' data-persona-uuid='{{uuid}}' data-persona-juuid='{{juuid}}' data-key='{{key}}' data-action='selectEntry'>
+          <div class='persona-list-item{{ifThen persona.visible '' ' invisible'}} {{ifThen (eq ../currentKey key) 'selected' ''}}' data-persona-uuid='{{uuid}}' data-persona-juuid='{{juuid}}' data-key='{{key}}' data-action='selectEntry'>
             <div class='persona-list-image'>
               <img src='{{img}}' alt='{{name}}' />
               {{#if garadanClass}}
@@ -32,7 +32,16 @@
               {{#if subtitle}}
                 <div class='persona-list-meta'>
                   <span class='persona-type'>{{subtitle}}</span>
+                  {{#unless persona.visible}}
+                  <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                  {{/unless}}
                 </div>
+              {{else}}
+                {{#unless persona.visible}}
+                <div class='persona-list-meta'>
+                  <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                </div>
+                {{/unless}}
               {{/if}}
             </div>
             <div class='persona-list-status'>

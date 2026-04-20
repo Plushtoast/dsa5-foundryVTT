@@ -1,0 +1,37 @@
+<div class="dsa5 payment-request-card">
+  <h4>{{title}}</h4>
+  <p><b>{{{amount}}}</b></p>
+  {{#if description}}
+    <p><i>{{description}}</i></p>
+  {{/if}}
+
+  {{#if recipients.length}}
+    {{#each recipients}}
+      <div class="flexrow flexAlignCenter payment-request-row tableOdd gap5px" data-actor-id="{{actorId}}" data-status="{{status}}">
+        <div class="flexcol" style="flex:1;overflow:hidden;">
+          <b class="ellipsis">{{actorName}}</b>
+          {{#if designatedUserName}}
+            <div class="very-small ellipsis">{{designatedUserName}}</div>
+          {{/if}}
+        </div>
+        <div class="flexrow flexAlignEnd gap2px" style="flex:0 0 auto;">
+          <span class="icon noBorder payment-request-indicator {{colorClass}}" data-tooltip="{{label}}" aria-label="{{label}}">
+            <i class="fas {{icon}}"></i>
+          </span>
+          {{#if canGMExecute}}
+            <button type="button" class="payment-request-action icon fas fa-coins payment-request-gm" data-action="execute" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.execute"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.execute"}}"></button>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="very-small">{{localize "DSAQUERIES.NOTIFICATIONS.noActors"}}</p>
+  {{/if}}
+
+  {{#unless finalized}}
+    <div class="payment-request-gm flexrow gap5px margin-top">
+      <button type="button" class="payment-request-action" data-action="add" data-tooltip="{{localize "DSAQUERIES.COMMANDS.addActor"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.addActor"}}"><i class="fas fa-plus"></i></button>
+      <button type="button" class="payment-request-action" data-action="finalize" data-tooltip="{{localize "DSAQUERIES.COMMANDS.finalize"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.finalize"}}"><i class="fas fa-check"></i></button>
+    </div>
+  {{/unless}}
+</div>

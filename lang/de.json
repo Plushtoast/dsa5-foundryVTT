@@ -90,6 +90,7 @@
         "KK": "KK",
         "FW": "FW",
         "STF": "StF",
+        "postRoll": "Nach Wurf",
         "RPR": "RPr",
         "KTW": "KTW",
         "LeP": "LeP",
@@ -155,11 +156,12 @@
         "daylight": "Tageslicht"
     },
     "DIALOG": {
-        "RollMode": "Würfelmodus",
+        "MessageMode": "Würfelmodus",
         "deleteConfirmation": "Löschen bestätigen",
         "DeleteItem": "Eintrag entfernen?",
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
+        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "ItemRequiresAdoption": "Eintrag anpassen",
         "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
@@ -177,15 +179,22 @@
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
         "multipleTarget": "Mehrere Ziele",
         "addTarget": "Ziel hinzufügen",
-        "whichFunction": "Welche Funktion möchtest du anwenden?",
         "onlyInCombatTargets": "Ziele werden nur im Kampf angezeigt.",
         "setTargetToUserHint": "Aktuell markierte Ziele auf den User übertragen.",
         "setTargetToUser": "Spielerziel setzen",
         "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
+        "selectSupernaturalAction": "Bitte wähle Zauber oder Liturgie.",
         "selectGroupCheckSkill": "Wähle ein weiteres Talent für die Gruppensammelprobe.",
         "updateMaintainSpell": "Für {actor} ein neues Interval bezahlen oder den Effekt beenden?",
         "dependentMaintainEffects": "Abhängige Effekte (Ebenfalls löschen)",
-        "temporaryOff": "Vorübergehend deaktivieren"
+        "temporaryOff": "Vorübergehend deaktivieren",
+        "postRollBuffPickerTitle": "Verbesserung anwenden",
+        "postRollBuffPickerHint": "Wähle einen oder mehrere Verbesserungen aus, die angewendet werden sollen.",
+        "postRollBuffPickerEmpty": "Keine passenden Verbesserungen gefunden.",
+        "postRollRerollDice": "Neu würfeln: {count} Würfel",
+        "postRollRerollExclusive": "Neu würfeln kann nicht mit FP/QS-Verbesserungen kombiniert werden.",
+        "postRollRerollMaxDice": "Du kannst höchstens {max} Würfel neu würfeln.",
+        "noSelection": "Nichts ausgewählt."
     },
     "Equipment": {
         "misc": "Allgemein",
@@ -210,6 +219,15 @@
         "food": "Lebensmittel",
         "book": "Buch",
         "automat": "Automat"
+    },
+    "PROSEMIRROR": {
+        "DSAStyles": {
+            "Title": "DSA-Stile",
+            "Maskfield": "Meisterbox",
+            "Chatpaperfield": "Papiernotiz",
+            "Citefield": "Zitatblock",
+            "DSAList": "DSA-Liste"
+        }
     },
     "advanced": "Erweitert",
     "requiredFW": "Benötigter FW",
@@ -315,7 +333,9 @@
     "consumable": "Verbrauchsgegenstand",
     "conjuringDifficulty": "Anrufungsschw.",
     "camplocation": "Lagerplatz",
+    "calculatedAttributes": "Berechnete Attribute",
     "carrycapacity": "Tragekraft",
+    "characteristics": "Basiseigenschaften",
     "chatEdit": "Manuelle Korrektur",
     "Details": "Details",
     "damage": "Trefferpunkte",
@@ -364,6 +384,7 @@
     "waitingInfo": "Rechts-<i class=\"fas fa-computer-mouse\"></i> um jetzt zu handeln.",
     "familiar": "Vertraute",
     "feature": "Merkmal",
+    "magicalActionKind": "Magische Handlung",
     "failedTests": "Gescheiterte Proben",
     "flight": "Flucht",
     "force": "Erzwingen",
@@ -449,6 +470,7 @@
     "Notes": "Notizen",
     "Opposed": "Vergleichsprobe",
     "opposingWeaponSize": "Waffengröße Gegner",
+    "mainHand": "Haupthand",
     "offHand": "Nebenhand",
     "globalConfig": "global",
     "Ongoing": "Laufend",
@@ -652,6 +674,7 @@
             },
             "spell": {
                 "distribution.value": "Hexen...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Lebewesen...",
                 "feature": "Hellsicht..."
             },
@@ -661,6 +684,7 @@
             },
             "ritual": {
                 "distribution.value": "Hexen...",
+                "magicalActionKind.value": "Bannzeichen...",
                 "targetCategory.value": "Lebewesen...",
                 "feature": "Hellsicht..."
             },
@@ -745,6 +769,9 @@
         "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechts-<i class=\"fas fa-computer-mouse\"></i> gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",
         "dragActor": "Kein Akteur aktiv (drag and drop)",
         "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
+        "noSummoner": "Es wurde kein beschwörender Akteur übergeben.",
+        "noPlacementPosition": "Für die Beschwörung konnte keine Platzierungsposition ermittelt werden.",
+        "creatureNotFound": "Kreatur nicht gefunden: {creature}",
         "conjurs": "beschwört",
         "requestSend": "Die Anfrage wurde an den Spielleiter geschickt.",
         "groupSummoning": "Rudelbeschwörung",
@@ -756,7 +783,9 @@
         "creation": "Herstellung",
         "services": "Dienste",
         "finalize": "Fertigstellen",
-        "material": "Material"
+        "material": "Material",
+        "selectActor": "Akteur auswählen",
+        "noActorHint": "Ziehe einen Akteur hierhin oder wähle einen unten aus."
     },
     "MASTER": {
         "automation": "Automatisierung",
@@ -770,7 +799,6 @@
         "payText": "Silber von {heros} einziehen.",
         "xpMessage": "<b>{heros}</b> hat/haben <b>{number}</b> Abenteuerpunkte erhalten.",
         "doGroupCheck": "Modifikator für <b>{skill}</b> Gruppenprobe.",
-        "doRequestRoll": "Modifikator für <b>{skill}</b> Probenaufforderung.",
         "payTT": "Ausnehmen",
         "randomPlayer": "Links-<i class=\"fas fa-computer-mouse\"></i>: Zufälliges Opfer<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: inklusive Pechmagnet",
         "randomGen": "Zuchtgrube",
@@ -786,6 +814,8 @@
         "noHeros": "Keine Helden ausgewählt. Weise deinen Spielern Helden zu oder ziehe wichtige Charaktere per Drag and Drop auf das Meistermenü."
     },
     "MODS": {
+        "otherCombat": "Sonstige",
+        "otherModifiers": "Sonstige Modifikatoren",
         "partChecks": "Teilprobenmodifikator",
         "attackFromBehind": "Angriff von Hinten",
         "opportunityAttack": "Passierschlag",
@@ -800,12 +830,16 @@
         "quickChange": "Ziel schlägt Haken",
         "combatTurmoil": "Schuss ins Kampfgetümmel",
         "QS": "Qualitätsstufenmodifikator",
+        "postRoll": "Nach Wurf",
+        "reroll": "Neu würfeln",
         "damage": "Schadensmodifikator",
         "defenseMalus": "Verteidigungsmalus",
         "global": "Globaler Modifikator",
         "armor": "Rüstungsmodifikator",
         "range": "Reichweitenfaktor",
         "creatureBonus": "Bonusschaden (Kreatur)",
+        "bonusActions": "Zusätzliche Aktionen",
+        "actionCostMod": "Aktionskostenmodifikator",
         "armorPen": "Rüstungsdurchdringung",
         "sight": "Sichtmodifikator",
         "sightMax": "Sichtmodifikator inkl. Stufe 4",
@@ -814,29 +848,29 @@
         "impossibleWeapon": "{weapon} nicht einsetzbar",
         "notSuitableWeapon": "{weapon} nicht geeignet",
         "RangeMod": {
-            "short": "Nah ({fk} auf FK, {tp} TP)",
-            "medium": "Mittel ({fk} auf FK, {tp} TP)",
-            "long": "Weit ({fk} auf FK, {tp} TP)",
-            "rangesense": "Weit ({fk} auf FK, {tp} TP)",
-            "extreme": "Extrem ({fk} auf FK, {tp} TP)"
+            "short": "Nah [{fk} auf FK, {tp} TP]",
+            "medium": "Mittel [{fk} auf FK, {tp} TP]",
+            "long": "Weit [{fk} auf FK, {tp} TP]",
+            "rangesense": "Weit [{fk} auf FK, {tp} TP]",
+            "extreme": "Extrem [{fk} auf FK, {tp} TP]"
         },
         "RangeSize": {
-            "tiny": "Winzig ({f})",
-            "small": "Klein ({f})",
-            "average": "Mittel ({f})",
-            "big": "Groß ({f})",
-            "giant": "Riesig ({f})"
+            "tiny": "Winzig [{f}]",
+            "small": "Klein [{f}]",
+            "average": "Mittel [{f}]",
+            "big": "Groß [{f}]",
+            "giant": "Riesig [{f}]"
         },
         "aimOptions": {
-            "0": "Ungezielt ({f})",
-            "1": "1 Aktion zielen ({f})",
-            "2": "2 Aktionen zielen ({f})"
+            "0": "Ungezielt [{f}]",
+            "1": "1 Aktion zielen [{f}]",
+            "2": "2 Aktionen zielen [{f}]"
         },
         "waterOptions": {
-            "0": "Keine Einschränkung ({f})",
-            "1": "Bis zur Hüfte ({f})",
-            "2": "Bis zur Schulter ({f})",
-            "3": "Bodenloses Wasser ({f})"
+            "0": "Keine Einschränkung [{f}]",
+            "1": "Bis zur Hüfte [{f}]",
+            "2": "Bis zur Schulter [{f}]",
+            "3": "Bodenloses Wasser [{f}]"
         }
     },
     "WIZARD": {
@@ -860,7 +894,8 @@
         "masterMenu": "Öffne das Spielleitermenü",
         "journalBrowser": "Öffne den Journalbrowser",
         "library": "Öffne die Bibliothek",
-        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)"
+        "attack": "Öffne das Angriffsmenü für den aktuellen Token oder Spieler (im Kampf für den aktuellen Akteur)",
+        "openGroupSheet": "Hauptgruppenblatt öffnen oder festlegen"
     },
     "WEAR": {
         "check": "Bruchfaktorprobe ({category})",
@@ -1095,6 +1130,7 @@
     "Money-K": "Kreuzer",
     "WELCOME": "<p><h2>Willkommen zu DSA5<br> für Foundry VTT</h2></p><p>Wir wünschen dir viel Spaß beim Spielen von DSA5.</p><h3>Erste Schritte</h3><p>Für einen einfachen und schnellen Start empfehlen wir das Grundregelmodul in deinem System zu installieren. So kannst du unverzüglich Aventurien erkunden. Wenn du das Grundregelmodul nicht hast, musst du alle Gegenstände, Zauber, Sonderfertigkeiten, Charaktere, etc. selbst anlegen.</p><p>Das Modul kannst du im <a href=\"https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/\" target=\"_blank\">F-Shop/</a> erwerben.</p><p>Für die Charaktererstellung stelle sicher, dass du per Drag and Drop die Spezies auf dein Charakterblatt ziehst (zur Berechnung der Attribute).</p><p>Du kannst auch das kostenlose <a href=\"https://github.com/Plushtoast/dsa5_introduction\" target=\"_blank\">Einsteigermodul</a> installieren, das Karten, vorgefertigte Charaktere und ein kleines Abenteuer beinhaltet.</p><h3>Hilfe</h3><p>Bei Problemen benutze die Hilfe (/help im Chat), besuche den ulisses-dsa Channel im <a target=\"_blank\" href=\"https://discord.gg/foundryvtt\">Foundry Discord</a> oder schau in unserem <a href=\"https://github.com/Plushtoast/dsa5-foundryVTT/wiki\" target=\"_blank\">Wiki</a> oder dem Game Manual (über den Journalbrowser) vorbei.</p><p>Diese Nachricht wird nur einmal angezeigt.</p>",
     "SHEET": {
+        "AnimalCompanion": "Tiergefährte",
         "PostItem": "Im Chat posten",
         "DuplicateItem": "Duplizieren",
         "postAsGroupCheck": "Als Gruppensammelprobe posten",
@@ -1107,6 +1143,10 @@
         "addItem": "Gegenstand erstellen",
         "EquipItem": "Ausrüsten",
         "EquipItemOffHand": "Ausrüsten (Nebenhand)",
+        "IgnoreWeaponHandLimits": "Handbeschränkung ignorieren",
+        "IgnoreWeaponHandLimitsHint": "Handbeschränkung ignorieren (mehrere Waffen gleichzeitig ausrüsten)",
+        "RequiresBothHands": "Benötigt beide Hände",
+        "NoUnequippedWeapons": "Keine weiteren Waffen ausrüstbar",
         "UnEquipItem": "Ausrüstung ablegen",
         "Close": "Schließen",
         "Configure": "Blatt konfigurieren",
@@ -1130,7 +1170,14 @@
         "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
         "panMapNote": "Map Notiz fokussieren",
+        "onUseActions": "Aktionen",
         "onUseEffect": "Gegenstand benutzen/Fähigkeit anwenden",
+        "addOnUseAction": "Aktion hinzufügen",
+        "editOnUseAction": "Aktion bearbeiten",
+        "removeOnUseAction": "Aktion entfernen",
+        "onUseActionName": "Name",
+        "onUseActionImage": "Bild",
+        "onUseActionMacro": "Makro",
         "swapMag": "Magazin tauschen",
         "selectTraditionartifact": "Traditionsartefakt auswählen",
         "deobfuscateItem": "Abschnitt entschleieren",
@@ -1139,7 +1186,37 @@
         "payAECost": "AsP Kosten bezahlen",
         "paidPAsP": "Ausgegebene permanente AsP/KaP",
         "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP",
-        "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen."
+        "NoApplicationsAdded": "Keine Anwendungsgebiete zum Charakter hinzugefügt.",
+        "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen.",
+        "removeSchip": "Schicksalspunkt entfernen",
+        "addSchip": "Schicksalspunkt hinzufügen"
+    },
+    "DSA5HOTBARCONFIG": {
+        "manager": "Hotbar Manager",
+        "sortMode": "Sortierung",
+        "sortModeHint": "Standardsortierung für Talente in der Hotbar",
+        "sortGroupAlpha": "Nach Gruppe (A-Z)",
+        "sortAlpha": "Alphabetisch",
+        "sortValueDesc": "Nach Wert (Hoch → Niedrig)",
+        "sortValueAsc": "Nach Wert (Niedrig → Hoch)",
+        "sortCustom": "Benutzerdefiniert",
+        "save": "Speichern",
+        "setDefault": "Als Standard setzen",
+        "reset": "Sortierung zurücksetzen",
+        "resetAll": "Alle Einstellungen zurücksetzen",
+        "resetAllConfirm": "Bist du sicher, dass du alle Hotbar-Einstellungen (Sortierung, Sichtbarkeit, Favoriten) für diesen Charakter zurücksetzen möchtest?",
+        "hideSkill": "Aus der Hotbar ausblenden",
+        "showSkill": "In der Hotbar anzeigen",
+        "favorite": "Favoriten",
+        "groupVisibility": "Gruppenanzeige umschalten",
+        "tabSkills": "Talente",
+        "tabAvatar": "Avatar",
+        "avatarToken": "Token",
+        "avatarPortrait": "Porträt",
+        "avatarZoom": "Zoom",
+        "avatarReset": "Zurücksetzen",
+        "avatarDragHint": "Ziehen zum Verschieben, Scrollen zum Zoomen",
+        "avatarTabHint": "Wähle ob die Hotbar dein Token-Bild oder Charakterporträt anzeigt. Im Porträtmodus kannst du den Bildausschnitt für den runden Avatarbereich anpassen."
     },
     "traditionArtifacts": {
         "Animistenwaffe": "Animistenwaffe",
@@ -1234,21 +1311,21 @@
         "AutoSizeHint": "Die Tokengröße wird anhand der Größenkategorie des Akteurs definiert."
     },
     "VisionDisruption": {
-        "step0": "Klare Sicht",
+        "step0": "Klare Sicht [0]",
         "step1": "Leichte Störung [-2]",
         "step2": "Silhouette [-4]",
         "step3": "Schemen [-6]",
         "step4": "Unsichtbar [Glückstreffer]"
     },
     "SkillVisionDisruption": {
-        "step0": "Klare Sicht",
+        "step0": "Klare Sicht [0]",
         "step1": "Leichte Störung [-1]",
         "step2": "Silhouette [-2]",
         "step3": "Schemen [-3]",
         "step4": "Unsichtbar [-4]"
     },
     "meleeVisionDisruption": {
-        "0": "Klare Sicht",
+        "0": "Klare Sicht [0]",
         "1": "Leichte Störung [-1]",
         "2": "Silhouette [-2]",
         "3": "Schemen [-3]",
@@ -1256,6 +1333,7 @@
     },
     "CHATNOTIFICATION": {
         "fadingEffect": "Der Effekt <b>{effect}</b> wurde von {actor} entfernt.",
+        "conditionDecay": "<b>{effect}</b> bei {actor} auf Stufe {level} gesunken.",
         "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
         "unableReroll": "Würfel {die} wegen Unfähigkeit erneut geworfen ({oldVal}/{newVal})",
         "requestRoll": "{user} fordert einen Wurf in {item}",
@@ -1336,13 +1414,19 @@
         "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)",
         "groupcheck": "Gruppenprobe",
         "descrgroupcheck": "Fordere eine Gruppenprobe an. (Tab + Zahl = mit Modifikator)",
-        "payDrag": "Bezahlen bei Drag & Drop"
+        "payDrag": "Bezahlen bei Drag & Drop",
+        "packages": "Ausrüstungspakete",
+        "descrpackages": "Zeigt alle verfügbaren Ausrüstungspakete."
     },
     "WEAPON": {
         "loading": "Ladestatus: {status}",
         "loaded": "Geladen",
         "reload": "Nachladen",
         "isReloading": "{actor} läd {item} nach ({status}).",
+        "aim": "Zielen",
+        "aiming": "Zielen ({status})",
+        "aimed": "Gezielt",
+        "isAiming": "{actor} zielt mit {item} ({status}).",
         "improvised": "Improvisierte Waffe",
         "magical": "Magisch",
         "clerical": "Geweiht",
@@ -1391,6 +1475,12 @@
             "0": "nie"
         }
     },
+    "SPECIALABILITYadvancedSF": {
+        "magicalStyle": "Erweiterte Zaubersonderfertigkeit",
+        "clericalStyle": "Erweiterte Liturgiesonderfertigkeit",
+        "generalStyle": "Erweiterte Talentsonderfertigkeit",
+        "Combat": "Erweiterte Kampfsonderfertigkeit"
+    },
     "TYPES.Combat.dsacombat": "Kampf (DSA)",
     "TYPES.Combatant.dsacombatant": "Kämpfer (DSA)",
     "TYPES.Item.book": "Buch",
@@ -1429,21 +1519,46 @@
     "TYPES.Item.spellextension": "Zauber/Liturgieerweiterung",
     "TYPES.Item.application": "Anwendungsgebiet",
     "TYPES.Item.effectwrapper": "Effektcontainer",
+    "TYPES.Item.itempackage": "Ausrüstungspaket",
     "TYPES.Item.patron": "Patron",
     "TYPES.Actor.character": "Charakter",
     "TYPES.Actor.npc": "Nichtspielercharakter",
     "TYPES.Actor.creature": "Kreatur",
+    "TYPES.Actor.group": "Gruppe",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
+    "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
+    "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
+    "TYPES.JournalEntryPage.dsaaptracker": "AP-Tracker",
+    "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
+    "TYPES.ActiveEffect.base": "Effekt",
+    "TYPES.ActiveEffect.enhancement": "Gegenstandsaufwertung",
+    "EFFECT.TABS.actions": "Aktionen",
     "npc": "Nichtspielercharakter",
     "creature": "Kreatur",
+    "DSAJOURNALTARGET": {
+        "dialogTitle": "Neuer Eintrag",
+        "hint": "Wähle aus, wo der neue Eintrag gespeichert werden soll.",
+        "addToExistingPage": "Bestehende Seite",
+        "addToNewPage": "Neue Seite",
+        "addToNewJournal": "Neues Journal",
+        "targetMode": "Ziel",
+        "selectPage": "Seite",
+        "selectJournal": "Journal",
+        "pageName": "Seitenname",
+        "journalName": "Journalname",
+        "targetCreationFailed": "Das Ziel konnte nicht erstellt werden."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "ImportantPersons": "Dramatis Personae",
         "copyActorDescription": "Akteurbeschreibung vom Original kopieren",
         "bestiary": "Bestiarium",
         "Add": "Person/Kreatur hinzufügen",
+        "addActor": "Zu Dramatis Personae hinzufügen",
+        "addActorFromDirectory": "Zu Dramatis Personae hinzufügen",
+        "actorAlreadyExists": "{actor} ist bereits in Dramatis Personae auf der Seite {page} im Journal {journal} enthalten.",
         "UnknownFaction": "Unbekannte Fraktion",
         "selectJournal": "Journal auswählen",
         "SelectPersona": "Wähle eine bekannte Person oder Kreatur",
@@ -1487,7 +1602,7 @@
                     "warning": "Ein Persona Entry muss mit einem Akteur verknüpft sein, um in Bestiarium/Personae Dramatis angezeigt zu werden."
                 },
                 "visible": {
-                    "label": "Sichtbar für Spieler"
+                    "label": "Kompletter Eintrag sichtbar für Spieler"
                 },
                 "faction": {
                     "label": "Fraktion/Typus",
@@ -1530,10 +1645,127 @@
             }
         }
     },
+    "DSAQUESTLOG": {
+        "title": "Aufträge",
+        "summary": "Zusammenfassung",
+        "objectives": "Ziele",
+        "timeline": "Zeitverlauf",
+        "linkedPages": "Verknüpfte Seiten",
+        "startDate": "Beginn",
+        "targetDate": "Ziel",
+        "completionDate": "Beendet",
+        "createQuest": "Auftrag erstellen",
+        "defaultJournalName": "Aufträge",
+        "newEntryPlaceholder": "Neuer Auftrag",
+        "newObjectivePlaceholder": "Neues Ziel",
+        "SelectQuest": "Auftrag auswählen",
+        "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
+        "emptyTitle": "Noch keine Aufträge",
+        "emptyHint": "Erstelle oder registriere ein Auftrags-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
+        "showInQuestlog": "In Aufträgen anzeigen",
+        "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
+        "addObjective": "Ziel hinzufügen",
+        "addLinkedPage": "Verknüpfte Seite hinzufügen",
+        "playerOwners": "Zugewiesene Spieler",
+        "noObjectives": "Noch keine Ziele.",
+        "noLinkedPages": "Keine verknüpften Seiten.",
+        "missingLink": "Fehlt",
+        "ungrouped": "Unsortiert",
+        "toggleObjectiveDone": "Zielabschluss umschalten",
+        "toggleVisibility": "Spielersichtbarkeit umschalten",
+        "showQuestlogJournal": "Auftrags-Journal anzeigen",
+        "journals": {
+            "label": "Auftrags-Journale",
+            "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)"
+        },
+        "AUDIENCE": {
+            "0": "Gruppe",
+            "1": "Ausgewählte Spieler",
+            "2": "Nur SL"
+        },
+        "STATUS": {
+            "0": "Offen",
+            "1": "Beendet"
+        },
+        "PRIORITY": {
+            "0": "Hauptauftrag",
+            "1": "Nebenauftrag",
+            "2": "Persönlich"
+        },
+        "FIELDS": {
+            "quests": {
+                "title": {
+                    "label": "Titel"
+                },
+                "summary": {
+                    "label": "Zusammenfassung"
+                },
+                "details": {
+                    "label": "Details"
+                },
+                "gmNotes": {
+                    "label": "SL-Notizen"
+                },
+                "status": {
+                    "label": "Zustand"
+                },
+                "priority": {
+                    "label": "Priorität"
+                },
+                "audience": {
+                    "label": "Sichtbarkeit"
+                },
+                "playerOwners": {
+                    "label": "Zugewiesene Spieler"
+                },
+                "visible": {
+                    "label": "Für Spieler sichtbar"
+                },
+                "pinToTop": {
+                    "label": "Oben anheften"
+                },
+                "chapter": {
+                    "label": "Kapitel / Gruppe"
+                },
+                "location": {
+                    "label": "Ort"
+                },
+                "tags": {
+                    "label": "Stichworte"
+                },
+                "createdAtWorldTime": {
+                    "label": "Erstellt"
+                },
+                "updatedAtWorldTime": {
+                    "label": "Aktualisiert"
+                },
+                "objectives": {
+                    "text": {
+                        "label": "Ziel"
+                    },
+                    "done": {
+                        "label": "Erledigt"
+                    },
+                    "visible": {
+                        "label": "Für Spieler sichtbar"
+                    }
+                },
+                "linkedPages": {
+                    "uuid": {
+                        "label": "UUID der Journalseite",
+                        "hint": "Verknüpfe die UUID einer Journalseite."
+                    }
+                }
+            }
+        }
+    },
     "dsacalendar": {
         "SelectEntry": "Wähle einen Eintrag",
         "SelectEntryHint": "Zeige Ereignisse und besondere Tage.",
         "NoPersonsInList": "Keine Personen in der Liste",
+        "createEvent": "Kalendereintrag erstellen",
+        "defaultJournalName": "Kalender",
+        "newEntryPlaceholder": "Neuer Eintrag",
         "nextMonth": "Nächster Monat",
         "previousMonth": "Vorheriger Monat",
         "confirmDateChange": "Datum übernehmen",
@@ -1684,6 +1916,10 @@
             "tools": {
                 "label": "Werkzeuge",
                 "hint": "Die Werkzeuge, die zum Entschärfen der Falle benötigt werden. Z.B. Dietriche, Kletterhaken oder spezielle Werkzeuge."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt automatisch Effekte dieser Falle, wenn ein Token die Region verlässt."
             }
         }
     },
@@ -1693,10 +1929,10 @@
         "twoHandedWeapon": "{weapon} beidhändig geführt",
         "oneHandedWeapon": "{weapon} einhändig geführt",
         "wrongGripped": "Einhändig/Beidhändig geführt",
-        "yieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
-        "yieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
-        "yieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
-        "yieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
+        "wieldTwo": "PA -1, TP +1, kann nur während deines Zuges einmal geändert werden",
+        "wieldOnePolearms": "Waffenreichweite mittel, -1 TP, -1 PA",
+        "wieldOneSwordBlunt": "Waffenreichweite mittel, 0.5 * TP, -3 PA",
+        "wieldOneBastard": "Waffenreichweite mittel, -2 TP, -3 PA",
         "wrongGripBastardRegex": "(Anderthalbhänder|Bastardschwert)"
     },
     "UNITS": {
@@ -1724,8 +1960,8 @@
     },
     "MELEESIZE": {
         "tiny": "Winzig [-4]",
-        "small": "Klein [-0]",
-        "average": "Mittel",
+        "small": "Klein [0]",
+        "average": "Mittel [0]",
         "big": "Groß [0]",
         "giant": "Riesig [0]"
     },
@@ -1752,12 +1988,21 @@
         "hideOnToken": "Am Token verstecken",
         "hidePlayers": "Vor Spielern verstecken",
         "isAura": "Aura",
+        "auraColor": "Aurafarbe",
+        "auraHidden": "Region ausblenden",
+        "excludeSelf": "Selbst ausschließen",
+        "ignoreWalls": "Wände ignorieren",
         "radius": "Radius",
         "disposition": "Disposition",
         "applyTarget": "Effekt (Ziel)",
         "applySelf": "Effekt (Selbst)",
         "appliedEffect": "Effekt <b>{source}</b> wurde auf <b>{target}</b> übertragen.",
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
+        "chargesChatConsumed": "Eine Ladung wurde verbraucht.",
+        "chargesChatDepletedDisabled": "Der Effekt ist aufgebraucht und wurde deaktiviert.",
+        "chargesChatDepletedDeleted": "Der Effekt ist aufgebraucht und wurde entfernt.",
+        "chargesChatPostRollImproved": "Probe verbessert: {details}.",
+        "chargesChatPostRollRerolled": "Probe neu gewürfelt: {count} Würfel.",
         "messageReceivers": {
             "gm": "Nur für den Spielleiter",
             "players": "Für alle",
@@ -1775,11 +2020,35 @@
         "resistPain": "Der Schmerz ist überwältigend (Stufe 4). Die Handlungsfähigkeit ist nur über eine Selbstbeherrschungsprobe zu bewahren.",
         "applyToOwner": "Effekt auf Träger übertragen",
         "applyToOwnerHint": "Waffen übertragen ihren Effekt standardmäßig auf das Ziel eines Angriffs. Setze den Haken um den Effekt statt dessen auf den Träger anzuwenden.",
+        "hints": {
+            "hideOnToken": "Verberge das Icon auf dem Token.",
+            "hidePlayers": "Verberge den Effekt vor Spielern, so dass nur der Spielleiter ihn sehen kann.",
+            "successEffect": "Der Effekt hat bei Erfolg oder Misserfolg eine andere Auswirkung.",
+            "onDelayed": "Der Effekt startet mit einer Verzögerung",
+            "isAura": "Dieser Effekt wirkt sich positiv oder negativ als Aura auf die Umgebung aus.",
+            "disposition": "Wähle, welche Token-Gesinnungen von der Aura betroffen sind.",
+            "radius": "Auraradius in Szeneneinheiten (Schritt).",
+            "auraColor": "Farbe der Aura-Region.",
+            "auraHidden": "Verbirgt den Aurabereich, solange er aktiv ist.",
+            "excludeSelf": "Verhindert, dass die Quelle von ihrer eigenen Aura betroffen wird.",
+            "ignoreWalls": "Erlaubt der Aura, Ziele durch Wände hindurch zu beeinflussen.",
+            "equipmentAdvantage": "Kennzeichnet dies als Waffen- oder Rüstungsvorteil, wenn die optionale Regel aktiv ist.",
+            "removeMessage": "Bestimmt, wer eine Benachrichtigung erhält, wenn dieser Effekt endet oder entfernt wird.",
+            "charges": "Lege fest wie oft dieser Effekt angewendet werden kann, bevor er erschöpft ist.",
+            "customDuration": "Bestimme eine eigene Dauer für diesen Effekt abhängig von der QS.",
+            "advancedFunction": "Erweiterte Funktionen erlauben zusätzliche Effekte oder Modifikationen.",
+            "resistRoll": "Gib eine Widerstandsprobe ein, zum Beispiel Sinnesschärfe -2 mit welcher der Effekt abgewehrt werden kann.",
+            "conditionId": "Status oder Zustand, der angewendet wird.",
+            "conditionValue": "Stufe oder Wert für den ausgewählten Status.",
+            "macro": "JavaScript-Makro, das für die ausgewählte erweiterte Funktion ausgeführt wird.",
+            "creatureLinks": "Akteur-Links oder Kompendiums-IDs für Beschwörungs- oder Gestaltwandeleffekte.",
+            "onRemove": "JavaScript-Makro, das beim Entfernen dieses Effekts ausgeführt wird."
+        },
         "placeholder": {
-            "macros": "Macros können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>testData - All Daten für die aktuelle Probe<br>source - Die Quelle des Macros",
+            "macros": "Macros können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>testData - All Daten für die aktuelle Probe<br>source - Die Quelle des Macros<br>options - Zusätzlicher Ausführungskontext; regionbasierte Effekte liefern options.regionEvent mit dem aktuellen Auslöser",
             "armorPostprocess": "Rüstungstransformation können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>options.armor - Die Rüstungs des Ziels<br>options.attackItem - Die Quelle des Macros",
             "onRemove": "Macro wird beim Entfernen des Effekts aus dem Akteur ausgeführt.<br>Variablen:<br>actor - Der Akteur",
-            "onUseEffect": "Macro für die Benutzung des Items.<br>Variablen:<br>actor - Der Akteur<br>item - Der Gegenstand",
+            "onUseEffect": "Macro für die Benutzung des Items.<br>Variablen:<br>args - Ausführungsdaten inklusive optionalem messageMode<br>actor - Der Akteur<br>item - Der Gegenstand<br><br>Verwende `await this.createChatMessage(content, args)` oder `ChatMessage.create(this.chatDataSetup(content, args))`, damit der GM-only-Rechtsklick korrekt beachtet wird.",
             "effectname": "z.B. um Ursache anzugeben"
         },
         "advancedFunctions": {
@@ -1792,7 +2061,8 @@
             "onRemove": "Macro (Effektende)",
             "onUseEffect": "Macro (Benutzung)",
             "postRoll": "Macro (Nach Wurf)",
-            "postOpposed": "Macro (Nach Gegenprobe)"
+            "postOpposed": "Macro (Nach Gegenprobe)",
+            "rollDialogRender": "Würfel-Dialog (Menü)"
         },
         "dialog": {
             "duration": "Effektdauer",
@@ -1801,6 +2071,55 @@
             "seconds": "Sekunden",
             "name": "Effektname",
             "overwrite": "Standardnamen überschreiben"
+        },
+        "wizardEffect": "Effekt",
+        "wizardExpertMode": "Zum Expertenmodus wechseln",
+        "wizardSimpleMode": "Zum einfachen Modus wechseln",
+        "wizardAllCategories": "Alle",
+        "noteNoDerivedAttributes": "keine abgeleiteten Werte",
+        "wizardCategories": {
+            "protection": "Schutz & Verteidigung",
+            "attributes": "Eigenschaften",
+            "skills": "Talente",
+            "combat": "Kampf",
+            "magic": "Magie & Glaube",
+            "regeneration": "Regeneration",
+            "conditions": "Zustände",
+            "weapon": "Waffe / Rüstung"
+        }
+    },
+    "Enhancement": {
+        "settings": "Verbesserungseinstellungen",
+        "targetType": "Ziel-Gegenstandstyp",
+        "enhancementType": "Verbesserungstyp",
+        "slotCost": "Platzkosten",
+        "slotsFull": "Keine freien Verbesserungsplätze dieses Typs verfügbar.",
+        "onlyOnItems": "Verbesserungseffekte können nur auf Gegenständen platziert werden.",
+        "wrongTargetType": "Diese Verbesserung passt nicht zum Gegenstandstyp.",
+        "unsupportedItemType": "Dieser Gegenstandstyp unterstützt keine Verbesserungen.",
+        "invalidKeys": "Verbesserungseffekte dürfen nur Systemattribute (system.*-Schlüssel) verändern.",
+        "specialAttributesLabel": "Besondere Eigenschaften",
+        "craftingRollMod": "Probenmodifikator",
+        "craftingTimeMod": "Zeitfaktor",
+        "craftSkill": "Handwerkstalent",
+        "materialCost": "Materialkosten (S)",
+        "types": {
+            "material": "Material",
+            "creationTechnique": "Herstellungstechnik",
+            "improvement": "Verbesserung"
+        },
+        "hints": {
+            "targetType": "Auf welchen Gegenstandstyp diese Verbesserung angewendet werden kann.",
+            "enhancementType": "Bestimmt, welche Platzkategorie diese Verbesserung belegt.",
+            "slotCost": "Anzahl der Plätze, die diese Verbesserung in ihrer Kategorie benötigt.",
+            "craftingRollMod": "Modifikator auf die Herstellungsprobe.",
+            "craftingTimeMod": "Multiplikator auf die Herstellungszeit.",
+            "craftSkill": "Benötigtes Handwerkstalent für die Herstellung.",
+            "materialCost": "Materialkosten in Silbertalern pro Einheit.",
+            "specialAttributes": "Kommagetrennte Attribut-Flags (z.B. magic, rustResistant), die dem Gegenstand hinzugefügt werden."
+        },
+        "wizardCategories": {
+            "general": "Allgemein"
         }
     },
     "CustomActiveEffects": {
@@ -1824,6 +2143,26 @@
         "berühren": "touch",
         "selbst": "self"
     },
+    "MAGICALACTION": {
+        "none": "-",
+        "animistenkraefte": "Animistenkräfte",
+        "bannzeichen": "Bannzeichen",
+        "elfenlieder": "Elfenlieder",
+        "geodenritual": "Geodenritual",
+        "goblinrituale": "Goblinrituale",
+        "herrschaftsritual": "Herrschaftsritual",
+        "hexenflueche": "Hexenflüche",
+        "schelmenstreiche": "Schelmenstreiche",
+        "verzerrte_elfenlieder": "Verzerrte Elfenlieder",
+        "zaubermelodien": "Zaubermelodien",
+        "zauberrunen": "Zauberrunen",
+        "zaubertaenze": "Zaubertänze",
+        "zibiljarituale": "Zibiljarituale",
+        "elfenliederSupport": "Elfenlied-Unterstützung",
+        "elfenliederModifier": "Elfenlied (Singen/Musizieren)",
+        "chooseSupportSkill": "Wähle die Unterstützungsfertigkeit.",
+        "noSupportSkill": "Dieser Charakter hat weder Singen noch Musizieren."
+    },
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
@@ -1831,6 +2170,10 @@
         "dm": "vm"
     },
     "LocalizedIDs": {
+        "zoologyDomesticated": "Tierkunde (domestizierte Tiere)",
+        "zoologyWild": "Tierkunde (Wildtiere)",
+        "Zoology": "Tierkunde",
+        "Fast-Talk": "Überreden",
         "combatInWater": "Unterwasserkampf",
         "reversalis": "Reversalis",
         "assumeTradition": "Tradition (",
@@ -1845,6 +2188,7 @@
         "mute": "Stumm",
         "alchemy": "Alchimie",
         "riding": "Reiten",
+        "riderTraining": "Reittier",
         "ruggedFighter": "Zäher Hund",
         "sensitiveToPain": "Zerbrechlich",
         "fragileAnimal": "Zerbrechliches Tier",
@@ -1881,7 +2225,6 @@
         "weakAstralBody": "Schwacher Astralkörper",
         "weakKarmicBody": "Schwacher Karmalkörper",
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
-        "boundToArtifact": "Artefaktgebunden",
         "magicalRestriction": "Magische Einschränkung",
         "magicalAttunement": "Magische Einstimmung",
         "traditionWitch": "Tradition (Hexen)",
@@ -1948,7 +2291,14 @@
         "servantOre": "Diener des Erzes",
         "immuneTo": "Immunität gegen",
         "enemySense": "Feindgespür",
-        "winhallStyle": "Winhall-Stil"
+        "winhallStyle": "Winhall-Stil",
+        "singing": "Singen",
+        "music": "Musizieren",
+        "metalworking": "Metallbearbeitung",
+        "woodworking": "Holzbearbeitung",
+        "clothworking": "Stoffbearbeitung",
+        "earthencraft": "Steinbearbeitung",
+        "leatherworking": "Lederbearbeitung"
     },
     "LocalizedCTs": {
         "Blasrohre": "Blowpipes",
@@ -1981,6 +2331,43 @@
         "Zwerg": "Dwarf",
         "Elf": "Elf"
     },
+    "REGIONBEHAVIOR_DSAZone": {
+        "MODES": {
+            "whileInZone": "Solange in Zone",
+            "once": "Einmalig beim Betreten",
+            "recurring": "Jede Runde"
+        },
+        "FIELDS": {
+            "messageId": {
+                "label": "Chat-Nachricht",
+                "hint": "Die Chat-Nachricht, die den anzuwendenden Effekt enthält."
+            },
+            "mode": {
+                "label": "Modus",
+                "hint": "Wie der Zoneneffekt auf Token angewendet wird."
+            },
+            "removeOnExit": {
+                "label": "Beim Verlassen entfernen",
+                "hint": "Entfernt den Effekt automatisch, wenn ein Token die Zone verlässt."
+            }
+        }
+    },
+    "REGIONBEHAVIOR_DSAAura": {
+        "FIELDS": {
+            "effectUuid": {
+                "label": "Effekt UUID",
+                "hint": "Die UUID des aktiven Effekts, der diese Aura definiert."
+            },
+            "disposition": {
+                "label": "Gesinnung",
+                "hint": "Welche Token-Gesinnungen von dieser Aura betroffen sind (2 = alle)."
+            },
+            "ignoreWalls": {
+                "label": "Wände ignorieren",
+                "hint": "Wenn aktiviert, durchdringt die Aura Wände."
+            }
+        }
+    },
     "SKILL_CHECK_MODIFIERS": {
         "GROUPS": {
             "socialconflict": "Sozialer Konflikt"
@@ -2009,6 +2396,10 @@
             "commonInterest": {
                 "tooltip": "Aktive Partei spricht Thema an, das die passive Partei genauso sieht/erfüllen will.",
                 "label": "Gemeinsames Interesse"
+            },
+            "socialContact": {
+                "tooltip": "Verwendet die in Dramatis Personae hinterlegte Einstellungsstufe zwischen aktiver Partei und aktuell ausgewähltem Ziel.",
+                "label": "Einstellungsstufe"
             },
             "enemyImage": {
                 "tooltip": "Aktive Partei entspricht einem Feindbild der passiven Partei (z. B. Mittelreicher, die Orks überzeugen wollen).",
@@ -2073,6 +2464,7 @@
         "NotEnoughFate": "Nicht genug Schicksalspunkte",
         "noSpellForExtension": "{category} {name} für Zauber-/Liturgieerweiterung {extension} nicht vorhanden.",
         "NotEnoughCharges": "Nicht genug Ladungen",
+        "NotEnoughItems": "Kein Exemplar dieses Gegenstands mehr zum Verbrauchen vorhanden",
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "notFound": "{category} {name} nicht gefunden",
         "itemNotFound": "Dieser Eintrag wurde nicht in der Datenbank gefunden, bitte manuell anlegen",
@@ -2097,6 +2489,7 @@
         "tooManyEnchants": "Ein Gegenstand kann nur 7 Verzauberungsladungen beinhalten",
         "onlyCompendiumSpells": "Nur {element} aus Kompendien können verwendet werden",
         "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
+        "noEnchantmentForExtension": "Keine passende Verzauberung für diese Zaubererweiterung gefunden.",
         "noBreakingResistance": "Keinen Bruchfaktorwert für {item} gefunden.",
         "noBreakingStructure": "{name} hat keinen akzeptierten maximalen Strukturwert.",
         "noConjurationActive": "Kein zu beschwörender Akteur aktiv (drag and drop)",
@@ -2104,7 +2497,9 @@
         "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
         "macroNotFound": "Das Macro {name} konnte nicht gefunden werden...sorry.",
         "notOwner": "Du darfst diesen Charakter nicht modifizieren.",
-        "shouldTimesUp": "Für automatische auslaufende Effekte wird das Modul Times-Up benötigt.",
+        "elementNotOwned": "Dir fehlt die Erlaubnis, um das Element zu bearbeiten.",
+        "canNotEditInCompendium": "Diese Funktion steht in Kompendien nicht zur Verfügung. Importiere den Eintrag in die Welt, um ihn zu bearbeiten.",
+        "noEffectFound": "Der Effekt konnte nicht gefunden werden.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
         "wrongLanguage": "Deine Spracheinstellung passt nicht zur vorgegebenen Einstellung ({lang}). Möchtest du die Sprache ändern?",
         "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",
@@ -2132,7 +2527,9 @@
         "options": "Optionen",
         "calculateLeP": "Anteilige LeP",
         "userRequest": "{name} möchte {source} in {target} verwandeln. Bitte bestätigen.",
-        "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet."
+        "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet.",
+        "noSourceActor": "Für die Gestaltwandlung wurde kein Quellakteur übergeben.",
+        "noTargetActor": "Für die Gestaltwandlung wurde kein Zielakteur übergeben."
     },
     "COMBATSKILLCATEGORY": {
         "subcategory": "Subkategorie",
@@ -2181,6 +2578,7 @@
         "lykanthrop": "Lykanthropische Gaben",
         "generalStyle": "Talentstilsonderfertigkeiten",
         "extGeneral": "Erweiterte Talentsonderfertigkeiten",
+        "extCombat": "Erweiterte Kampfstilsonderfertigkeiten",
         "command": "Befehlssonderfertigkeiten",
         "staff": "Traditionsartefakt",
         "pact": "Paktgeschenk",
@@ -2210,6 +2608,13 @@
         "rightClothes": "Passende Kleidung (+1)",
         "rightEquipment": "Passende Gerätschaften (+1)"
     },
+    "ITEMPACKAGE": {
+        "items": "Paketinhalte",
+        "addItem": "Gegenstand hinzufügen",
+        "content": "Paketinhalt",
+        "noneAvailable": "Keine Ausrüstungspakete in Kompendien gefunden.",
+        "dropHint": "Ausrüstungsgegenstände hierher ziehen, um sie zum Paket hinzuzufügen."
+    },
     "PAYMENT": {
         "pay": "<b>{actor}</b> bezahlt seine/ihre Schulden von {amount}.",
         "getPaid": "<b>{actor}</b> erhält seine/ihre Bezahlung von {amount}.",
@@ -2226,15 +2631,75 @@
         "noActor": "Dein Charakter wurde nicht gefunden",
         "onlyActors": "Nur Spieler können bezahlen/bezahlt werden oder dir wurde kein Charakter zugeordnet.",
         "cannotpay": "<b>{actor}</b> kann seine/ihre Schulden von {amount} nicht bezahlen.",
-        "default": "Standard"
+        "default": "Standard",
+        "requestTitlePay": "Zahlung einsammeln",
+        "requestTitleGetPaid": "Zahlung auszahlen",
+        "requestPromptPay": "{actor} soll {amount} bezahlen.",
+        "requestPromptGetPaid": "{actor} soll {amount} erhalten.",
+        "summaryMerchantTitle": "Handel",
+        "summaryTradeTitle": "Tausch",
+        "received": "erhalten"
+    },
+    "ROLLREQUEST": {
+        "dialogTitle": "Probenaufforderung",
+        "selectActors": "Helden auswählen",
+        "rollAction": "Würfeln"
+    },
+    "DSAQUERIES": {
+        "STATUS": {
+            "pending": "Ausstehend",
+            "accepted": "Erledigt",
+            "rejected": "Abgelehnt",
+            "failed": "Fehlgeschlagen",
+            "skipped": "Übersprungen",
+            "unowned": "Kein Besitzer",
+            "success": "Erfolg",
+            "critical": "Kritischer Erfolg",
+            "failure": "Misslungen",
+            "botch": "Patzer",
+            "cancelled": "Abgebrochen",
+            "error": "Fehler"
+        },
+        "COMMANDS": {
+            "finalize": "Abschließen",
+            "resend": "Erneut senden",
+            "skip": "Überspringen",
+            "rollOnBehalf": "Stellvertretend würfeln",
+            "remove": "Entfernen",
+            "execute": "Ausführen",
+            "addActor": "Akteur hinzufügen",
+            "approve": "Genehmigen",
+            "more": "Mehr"
+        },
+        "NOTIFICATIONS": {
+            "noActors": "Keine Helden ausgewählt.",
+            "noAvailableActors": "Es können keine weiteren Akteure hinzugefügt werden.",
+            "queryFailed": "Die Anfrage konnte nicht zugestellt werden.",
+            "declined": "Anfrage abgelehnt.",
+            "executedByGM": "Vom Spielleiter manuell ausgeführt.",
+            "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen."
+        },
+        "INFORMATIONREQUEST": {
+            "knowledgeCheck": "Wissensprobe",
+            "pending": "Warte auf SL-Genehmigung...",
+            "approved": "Genehmigt",
+            "rejected": "Abgelehnt"
+        },
+        "ACTORSOURCE": {
+            "group": "Gruppe",
+            "tracked": "Meistermenü",
+            "self": "Spielercharaktere",
+            "selectAll": "Alle auswählen",
+            "selectNone": "Auswahl aufheben"
+        }
     },
     "rangeMovementOptions": {
-        "STATIONARY": "steht still (+2)",
-        "SLOW": "bewegt sich leicht (+-0)",
-        "FAST": "bewegt sich schnell (-2)",
-        "SHOOTERMOVING": "geht (-2)",
-        "SHOOTERRUNNING": "rennt (-4)",
-        "SHOOTERSTATIONARY": "ist stationär (+-0)"
+        "STATIONARY": "steht still [+2]",
+        "SLOW": "bewegt sich leicht [0]",
+        "FAST": "bewegt sich schnell [-2]",
+        "SHOOTERMOVING": "geht [-2]",
+        "SHOOTERRUNNING": "rennt [-4]",
+        "SHOOTERSTATIONARY": "ist stationär [0]"
     },
     "mountedRangeOptions": {
         "STATIONARY": "steht",
@@ -2244,13 +2709,13 @@
     },
     "regnerationCampLocations": {
         "normal": "Normal",
-        "bad": "Schlechter Lagerplatz (-1)",
-        "good": "Gute Unterkunft (+1)"
+        "bad": "Schlechter Lagerplatz [-1]",
+        "good": "Gute Unterkunft [+1]"
     },
     "regenerationInterruptOptions": {
-        "small": "Klein - Wache/Ruhestörung (-1)",
-        "big": "Groß - Überfall/Hundswache (-2)",
-        "none": "Keine (+-0)"
+        "small": "Klein - Wache/Ruhestörung [-1]",
+        "big": "Groß - Überfall/Hundswache [-2]",
+        "none": "Keine [0]"
     },
     "CHATCONTEXT": {
         "Reroll": "Wurf wiederholen (1 Schip)",
@@ -2267,7 +2732,8 @@
         "ApplyMana": "KaP/AsP Kosten bezahlen",
         "hideData": "Details für Spieler verstecken",
         "showData": "Details für Spieler aufdecken",
-        "improveFate": "Wurf verbessern (1 Schip)"
+        "improveFate": "Wurf verbessern (1 Schip)",
+        "applyDepletableBuffs": "Einmaligen Bonus anwenden"
     },
     "SCHIPSKILLS": {
         "meleeweaponattack": "Attacke verbessern",
@@ -2467,7 +2933,19 @@
             },
             "config": "Einstellungen",
             "events": "Ereignisse",
-            "calendar": "Kalender"
+            "calendar": "Kalender",
+            "featureVisibility": {
+                "label": "Spieler Funktionssichtbarkeit",
+                "hint": "Wähle welche Kalenderfunktionen für Spieler sichtbar sind. Spielleiter haben immer Zugriff auf alle Funktionen."
+            },
+            "playerDateVisibility": {
+                "label": "Spieler Datumsanzeige",
+                "hint": "Wähle wie Datum und Uhrzeit im Kalender-Widget für Spieler angezeigt werden.",
+                "mode": "Anzeigemodus",
+                "exact": "Genaue Uhrzeit",
+                "roughTime": "Ungefähre Tageszeit",
+                "dateOnly": "Nur Datum"
+            }
         }
     },
     "DSASETTINGS": {
@@ -2512,6 +2990,8 @@
         "clearTargets": "Ziel löschen nach Angriff",
         "hideRegenerationToOwner": "Regeneration (KR) verstecken",
         "hideRegenerationToOwnerHint": "Automatische Regeneration und wiederkehrende Effekte (Brennend, Blutend) in Kampfrunden nur dem Besitzer des Tokens anzeigen",
+        "magischeHandlungen": "Magische Handlungen",
+        "magischeHandlungenHint": "Beim Zaubern Restriktionen von Magischen Handlungen automatisch anwenden",
         "clearTargetsHint": "Entfernt die Zielmarkierung nach einer Probe.",
         "allowPhysicalDice": "Wurf mit echten Würfeln",
         "allowPhysicalDiceHint": "Erlaube die Eingabe des Ergebnis von selbst gewürfelten Würfeln",
@@ -2617,7 +3097,75 @@
     "TRACKER": {
         "adventurePoints": "Abenteuerpunkte Historie",
         "money": "Finanzübersicht",
-        "sheetChange": "Charakterblattänderung"
+        "sheetChange": "Charakterblattänderung",
+        "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte.",
+        "FIELDS": {
+            "ap": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "itemUuid": {
+                        "label": "Item-UUID"
+                    },
+                    "itemType": {
+                        "label": "Item-Typ"
+                    },
+                    "itemName": {
+                        "label": "Item-Name"
+                    },
+                    "attr": {
+                        "label": "Attribut"
+                    },
+                    "state": {
+                        "label": "Status"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Kosten"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            },
+            "money": {
+                "entries": {
+                    "created": {
+                        "label": "Erstellt"
+                    },
+                    "type": {
+                        "label": "Typ"
+                    },
+                    "name": {
+                        "label": "Name"
+                    },
+                    "amount": {
+                        "label": "Anzahl"
+                    },
+                    "previous": {
+                        "label": "Vorher"
+                    },
+                    "next": {
+                        "label": "Nachher"
+                    },
+                    "cost": {
+                        "label": "Wert"
+                    },
+                    "total": {
+                        "label": "Gesamt"
+                    }
+                }
+            }
+        }
     },
     "CONTROLS": {
         "targetForUser": "Ziel für Spieler wählen"
@@ -2626,7 +3174,11 @@
         "noDefenses": "Anzahl Verteidigungen",
         "ongoing": "Laufende Handlungen",
         "waitInit": "Zurückstellen",
-        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>"
+        "actionHint": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>",
+        "baseActionPipHint": "Aktion ({used}/{total}). Attacke, Fernkampfangriff, Waffe ziehen, Zauber wirken…",
+        "freeActionPipHint": "Freie Aktion. Kurzen Satz rufen, Gegenstand fallen lassen, Aufstehen, Umdrehen…",
+        "movementPipHint": "Bewegung: {used}/{max} Schritt. Über GS hinaus kostet eine Aktion.",
+        "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!"
     },
     "CHATFATE": {
         "fatepointUsed": "Das Schicksal ändert sich",
@@ -2676,6 +3228,10 @@
         "minorSpirits": "Lästige Mindergeister",
         "defeated": "Besiegt"
     },
+    "RAPTURE": {
+        "kapTracker": "KaP-Zähler (Entrückung)",
+        "kapTrackerDescription": "Erfasst den Karmapunkte-Verbrauch über ein rollendes 24-Stunden-Fenster. Für je 10 ausgegebene KaP wird eine Stufe Entrückung ausgelöst (max. 4)."
+    },
     "MERCHANT": {
         "buy": "Kaufen",
         "sell": "Verkaufen",
@@ -2714,7 +3270,74 @@
         "priceMod": "Grundpreis / Modifizierter Preis (Doppel-<i class=\"fas fa-computer-mouse\"></i> für eigenen Preis)",
         "yourOffer": "Dein Angebot",
         "otherOffer": "Angebot des Handelspartners",
-        "accept": "Akzeptieren"
+        "accept": "Akzeptieren",
+        "completeTrade": "Handel abschließen"
+    },
+    "GROUP": {
+        "members": "Mitglieder",
+        "skills": "Talente",
+        "inventory": "Inventar",
+        "travel": "Reise",
+        "notes": "Notizen",
+        "addMember": "Mitglied hinzufügen",
+        "addLocation": "Depot hinzufügen",
+        "depotHint": "Ein Depot ist ein gemeinsames Inventar für die Gruppe. Es kann eine Truhe, ein Fahrzeug, eine Spielerbasis, einen Begleiter mit Vorräten oder einen anderen geteilten Behälter darstellen.",
+        "removeLocation": "Depot entfernen",
+        "openLocationSheet": "Depotbogen öffnen",
+        "forcedMarch": "Gewaltmarsch",
+        "sharedPurse": "Gruppenkasse",
+        "createEventsJournal": "Ereignisjournal erstellen",
+        "dropMemberHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",
+        "noMembers": "Noch keine Mitglieder. Ziehe Akteure auf diesen Bogen um sie hinzuzufügen.",
+        "noLocations": "Noch keine Depots. Ziehe einen Fahrzeug-, Händler- oder Schatzakteur hierher.",
+        "locked": "Gesperrt",
+        "unlocked": "Entsperrt",
+        "takeItem": "Gegenstand nehmen",
+        "passToGroup": "An Gruppendepot übergeben",
+        "selectLocation": "Depot auswählen",
+        "locationLocked": "Dieses Depot ist gesperrt.",
+        "setPrimaryParty": "Als Hauptgruppe festlegen",
+        "locationOnly": "Nur Händler- oder Schatzakteure können als Depots hinzugefügt werden.",
+        "noGroupInGroup": "Ein Gruppenakteur kann nicht als Mitglied einer anderen Gruppe hinzugefügt werden.",
+        "alreadyMember": "Dieser Akteur ist bereits Mitglied der Gruppe.",
+        "schritt": "Schritt",
+        "meilenPerHour": "Meilen/h",
+        "camp": "Lager",
+        "dropLocationsHint": "Einen Fahrzeug-, Händler- oder Schatzakteur hierher ziehen um ihn als Depot hinzuzufügen.",
+        "dropMembersHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",
+        "memberCount": "Mitglieder",
+        "noSkills": "Keine Talente verfügbar. Füge zuerst Mitglieder zur Gruppe hinzu.",
+        "openFullSheet": "Vollständigen Bogen öffnen",
+        "primaryParty": "Hauptgruppe",
+        "travelMode": "Reisemodus",
+        "speedPerMode": "Geschwindigkeit je Modus",
+        "shareOwnership": "Besitz mit allen Spielern teilen",
+        "ownershipShared": "Besitz mit allen Spielern geteilt.",
+        "openGroupSheet": "Gruppenblatt",
+        "tradeWithDepot": "Handel mit Depot",
+        "primaryPartyPrompt": "Es ist noch keine Hauptgruppe festgelegt. Wähle ein vorhandenes Gruppenblatt aus oder erstelle ein neues und lege es direkt als Hauptgruppe fest.",
+        "primaryPartySelect": "Vorhandenes Gruppenblatt",
+        "useExistingGroup": "Ausgewählte Gruppe verwenden",
+        "createNewGroup": "Neue Gruppe erstellen",
+        "noExistingGroups": "Keine vorhandenen Gruppenblätter verfügbar"
+    },
+    "locationTypes": {
+        "foot": "Zu Fuß",
+        "vehicle": "Fahrzeug",
+        "river": "Flussschiff",
+        "sea": "Seeschiff"
+    },
+    "INVENTORYBULK": {
+        "title": "Inventaraktionen",
+        "delete": "Inventar entfernen",
+        "deleteConfirm": "Alle Inventargegenstände von {name} entfernen?",
+        "dropGround": "Inventar auf den Boden legen",
+        "dropGroundConfirm": "Alle Inventargegenstände von {name} auf den Boden legen?",
+        "dropBag": "Inventar in einen Beutel legen",
+        "dropBagConfirm": "Alle Inventargegenstände von {name} in einen Beutel auf dem Akteur legen?",
+        "dropPileName": "Habseligkeiten von {name}",
+        "noItems": "Keine Inventargegenstände vorhanden",
+        "requiresToken": "Für diese Aktion braucht der Akteur einen aktiven Token in der aktuellen Szene."
     },
     "GARADAN": {
         "1": "Bauer",
@@ -2761,6 +3384,109 @@
         "defeated": "Der Held ist besiegt und auf dem Weg zu Boron."
     },
     "DSA5": {
+        "welcomeApp": {
+            "windowTitle": "Willkommen bei DSA5",
+            "tab": {
+                "welcome": "Willkommen"
+            },
+            "title": "Willkommen bei Das Schwarze Auge",
+            "intro": "Entdecke Aventurien mit dem offiziellen DSA5-System für Foundry VTT. Egal ob erfahrener Meister oder Neuling — hier findest du alles für den Einstieg.",
+            "header": {
+                "welcome": "Willkommen",
+                "store": "Offizielle Module",
+                "news": "Neuigkeiten",
+                "changelog": "Changelog"
+            },
+            "quickStart": {
+                "title": "Schnellstart",
+                "text": "Richte dein Spiel in wenigen Schritten ein.",
+                "browseStore": "Module durchsuchen",
+                "startTour": "Tour starten"
+            },
+            "gameManual": "Spielanleitung",
+            "vttom": {
+                "desc": "VTTom erklärt alles rund um Das Schwarze Auge für Foundry VTT — Tutorials, Changelogs, Modul-Guides und vieles mehr.",
+                "cta": "Zum Kanal"
+            },
+            "gettingStarted": {
+                "title": "Erste Schritte",
+                "subtitle": "Neu bei Das Schwarze Auge für Foundry VTT? Folge diesen Schritten, um dein erstes Spiel einzurichten.",
+                "step1": "Das Grundregelwerk-Modul besorgen — es enthält Archetypen, Spezies, Zauber und alles zum Spielen",
+                "step2": "Die Spielanleitung lesen, um das System in Foundry VTT kennenzulernen",
+                "step3": "Ein Einstiegsabenteuer wählen — das kostenlose Einführungsabenteuer erklärt die Regeln Schritt für Schritt mit vorgefertigten Charakteren",
+                "step4": "Charaktere erstellen — mit Archetypen aus dem Grundmodul oder komplett selbst bauen",
+                "step5": "Spieler einladen, Charaktere zuweisen und losspielen!"
+            },
+            "hints": {
+                "title": "Kurzreferenz",
+                "subtitle": "Nützliche Kürzel und Tipps, um sich schneller im System zurechtzufinden.",
+                "library": "Bibliothek",
+                "libraryDesc": "Drücke L, um die Bibliothek zu öffnen — alle Gegenstände, Zauber, Talente und Ausrüstung zum Ziehen auf Charakterbögen.",
+                "journalBrowser": "Journal-Browser",
+                "journalBrowserDesc": "Drücke J, um den Journal-Browser zu öffnen — enthält die Spielanleitung und alle Inhalte gekaufter Premium-Module.",
+                "charCreation": "Heldenerschaffung",
+                "charCreationDesc": "Ziehe eine Spezies, dann Kultur, dann Profession auf einen Charakterbogen. Oder nutze den Heldengenerator aus dem Grundmodul für eine geführte Erstellung.",
+                "rolling": "Proben würfeln",
+                "rollingDesc": "Klicke auf ein Talent oder eine Eigenschaft auf dem Charakterbogen, um eine Probe zu würfeln. Rechtsklick für Optionen wie Modifikatoren.",
+                "combat": "Kampf",
+                "combatDesc": "Nutze den Kampf-Tracker für Initiative und Rundenabfolge. Markiere Gegner als Ziel vor einem Angriff, um Automatisierungen wie Größen- und Bewaffnungsmodifikatoren zu aktivieren."
+            },
+            "beginnerModules": {
+                "title": "Empfohlen für Einsteiger",
+                "subtitle": "Starte mit diesen kostenlosen oder einsteigerfreundlichen Modulen in Das Schwarze Auge.",
+                "free": "Kostenlos",
+                "introAdventure": "Einführungsabenteuer",
+                "introAdventureDesc": "Ein einfaches Einführungsabenteuer zum Erlernen der Grundlagen.",
+                "witchsDance": "Hexenreigen",
+                "witchsDanceDesc": "Ein kostenloses vollständiges Abenteuer für den Einstieg in DSA5.",
+                "dragonKnight": "Geheimnis des Drachenritters",
+                "dragonKnightDesc": "Eine klassische Einsteiger-Kampagne im Mittelreich.",
+                "coreModule": "Grundregeln",
+                "coreModuleDesc": "Das unverzichtbare Grundwerk — alle Regeln, Talente und mehr für DSA5.",
+                "catAdventure": "Abenteuer",
+                "catCampaign": "Kampagne",
+                "catRules": "Regelwerk",
+                "browseAll": "Alle Module durchsuchen",
+                "browseAllDesc": "Entdecke den vollständigen Katalog offizieller DSA5-Module."
+            },
+            "videos": {
+                "title": "Video-Anleitungen",
+                "whatIsAventuria": "Was ist Aventurien?",
+                "whatIsAvDesc": "Eine kurze Einführung in die Welt Aventuriens und das DSA5-Rollenspiel.",
+                "whoAreTheTwelveGods": "Wer sind die Zwölfgötter?",
+                "whoAreTheTwelveGodsDesc": "Erfahre alles über die Zwölfgötter Aventuriens.",
+                "whatDoINeed": "Was brauche ich für Foundry DSA?",
+                "whatDoINeedDesc": "Welche Module und Vorbereitungen brauchst du für DSA in Foundry VTT."
+            },
+            "links": {
+                "title": "Nützliche Links",
+                "vttInfo": "DSA für VTT"
+            },
+            "dontShowAgain": "Beim Anmelden nicht mehr anzeigen",
+            "parts": {
+                "highlights": {
+                    "title": "Neuigkeiten",
+                    "fullChangelog": "Vollständiges Changelog anzeigen"
+                },
+                "spotlight": {
+                    "title": "Modul-Empfehlung"
+                },
+                "community": {
+                    "title": "Community",
+                    "text": "Tritt der Community bei, melde Fehler oder hilf mit, das System zu verbessern.",
+                    "reportBugs": "Fehler melden"
+                },
+                "gettingStarted": {
+                    "title": "Ressourcen & Tipps",
+                    "text": "Neu bei DSA5 für Foundry VTT? Hier ein paar nützliche Links für den Anfang.",
+                    "checklistTitle": "Schnell-Tipps",
+                    "step1": "Sprache einstellen und Grundmodul installieren",
+                    "step2": "Einen neuen Charakter per Heldenerschaffung erstellen",
+                    "step3": "Ein Abenteuer-Modul importieren oder eigene Szenen anlegen",
+                    "step4": "Spieler einladen und losspielen!"
+                }
+            }
+        },
         "patchViewer": {
             "tab": {
                 "store": "Shop"
@@ -2768,12 +3494,169 @@
             "modules": {
                 "hero": {
                     "subtitle": "Erweitere deinen Spieltisch mit vollständig vorbereiteten offiziellen Abenteuern, Regeln und mehr.",
-                    "cta": "Zum F-Shop"
+                    "cta": "F-Shop"
                 },
-                "cta": "Details & Kaufen",
+                "tocTitle": "Kategorien",
+                "filtersTitle": "Nach Tags filtern",
+                "filtersNotOwned": "Nicht gekauft",
+                "filtersClear": "Filter zurücksetzen",
+                "enNote": "Einige Module sind nur im deutschen F-Shop erhältlich. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Zum deutschen F-Shop</a>. Prüfe die englische Verfügbarkeit hier: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">Englischer F-Shop</a>.",
+                "gettingStarted": {
+                    "title": "Einstieg",
+                    "text": "Starte mit dem Grundmodul und ergänze einsteigerfreundliche oder kostenlose Inhalte für deine ersten Abenteuer.",
+                    "coreCta": "Grundmodul holen",
+                    "wiki": "Zum Wiki",
+                    "videos": "VTTom-Videos"
+                },
+                "details": "Inhalte anzeigen",
+                "cta": "Im Shop öffnen",
                 "ctaOwned": "Bereits gekauft",
-                "owned": "Besitzt"
+                "owned": "Im Besitz"
+            },
+            "moduleDetails": {
+                "windowTitle": "Moduldetails",
+                "storeLink": "Shopseite öffnen",
+                "overallAutomation": "Automatisierungsgrad",
+                "specialFeatures": "Besondere Hinweise",
+                "badgesLabel": "Hinweise",
+                "tagsLabel": "Tags",
+                "note": "Diese Liste ist nur ein Auszug. Module enthalten in der Regel zusätzliche Inhalte, die hier nicht erfasst werden. Ein Häkchen oder das Fehlen eines Häkchens beschreibt nur den verfolgten Automatisierungsstatus, und Einträge können trotzdem teilweise automatisiert sein.",
+                "unavailableTitle": "Keine Details verfügbar",
+                "unavailableText": "Für dieses Modul ist aktuell kein erzeugter Detaildatensatz verfügbar.",
+                "entryNotFound": "Kein Bibliothekseintrag für {name} gefunden.",
+                "automatedTooltip": "Automatisiert",
+                "notAutomatedTooltip": "Manuell",
+                "searchEmpty": "Keine Einträge entsprechen der aktuellen Suche."
             }
+        }
+    },
+    "COMPANIONS": {
+        "Companion": "Begleiter",
+        "controlViaHotbar": "Begleiter über Hotbar steuern",
+        "domesticatedAnimal": "Domestiziertes Tier",
+        "dropHint": "Eine Kreatur hierher ziehen, um sie als Begleiter hinzuzufügen.",
+        "Finish": "Abschließen",
+        "Group": {
+            "Companion": "Gruppentiergefährten",
+            "SummonedCreatures": "Herbeigerufene Wesen"
+        },
+        "Homunculus": "Homunculus",
+        "HomunculusCreation": "Homunculuserschaffung",
+        "Hotbar": {
+            "ControlActor": "{name} steuern",
+            "label": "Hotbar",
+            "SummonActor": "{name} rufen!"
+        },
+        "Interval": {
+            "OneDay": "1 Tag",
+            "OneMonth": "1 Monat",
+            "TwoDays": "2 Tage"
+        },
+        "Loyalty": {
+            "Added": "{name} wurde das Talent '{talent}' mit FW {val} hinzugefügt.",
+            "BotchLoss": "{name} hat gepatzt! Die Loyalität sinkt um {change} Punkte.",
+            "changeText": "Ein domestiziertes Tier hat üblicherweise eine anfängliche Loyalität von 4, ein Wildtier eine von 0.<br><br>Möchtest du den Loyalitätswert von <b>{name}</b> anpassen?",
+            "changeTitle": "Loyalität anpassen",
+            "CritGain": "{name} hat einen kritischen Erfolg erzielt! Die Loyalität steigt um {change} Punkte.",
+            "ImprovementText": "Der FW in Loyalität kann nur verbessert werden, wenn eine Erfolgsprobe auf Tierkunde gelingt. Die Heldin muss sich dazu täglich mehrere Stunden (etwa 1 LeH) intensiv mit dem Tier beschäftigen. Sie kann die Probe bei Misslingen wie üblich wiederholen. Gelingt die Probe, so kann die Heldin AP zum Steigern des Loyalitätswerts ausgeben (nicht das Tier).",
+            "label": "Loyalität",
+            "missingHint": "Diese Kreatur besitzt nicht das Talent Loyalität. Füge es hinzu, um die Begleiterdetails zu aktivieren.",
+            "NotFound": "Das Talent '{talent}' konnte in keinem Kompendium gefunden werden und wurde daher nicht hinzugefügt."
+        },
+        "Notification": {
+            "ActorSummoned": "{name} wurde an deine Seite gerufen!",
+            "AnimalTrainingWarning": "Für das Ausbilden von Tieren benötigt man die Sonderfertigkeit Abrichter.",
+            "AutoLearnedTricks": "{name} hat durch die Ausbildung automatisch folgende Tricks gelernt: {tricks}",
+            "CompanionAdded": "{name} wurde die Eigenschaft 'Begleiter' hinzugefügt.",
+            "FamiliarOwnerWarning": "Ein Vertrautentier kann nur seiner Herrin zugewiesen werden.",
+            "ItemAdded": "{item} wurde zu {actor} hinzugefügt.",
+            "MacroError": "Fehler im Makro von {name}: {error}",
+            "MaxTricksReached": "{name} hat damit die maximal mögliche Anzahl an Tricks erlernt.",
+            "MissingTalent": "Dein Charakter besitzt das Talent '{talent}' nicht.",
+            "NoActorOnMap": "{name} ist nicht auf der Karte.",
+            "NoOwnerOrPetOnMap": "Weder {owner} noch {pet} sind auf der Karte.",
+            "NoPermissionRegeneration": "Du hast keine Berechtigung, die Regeneration für diesen Akteur zu würfeln.",
+            "NotEnoughPetAP": "{name} hat nicht genügend AP für diesen Trick. Es werden {cost} AP benötigt.",
+            "NotPetOwner": "Du bist nicht der Besitzer von {name} und kannst diese Aktion nicht ausführen.",
+            "SpeciesRemoved": "{name} ist nun keiner spezifischen Tierart mehr zugeordnet.",
+            "TokenLinkWarning": "Aktion abgebrochen: Der Begleiter muss in den Token-Einstellungen 'Mit Akteur verbinden' aktiviert haben!",
+            "TokenLinkExplanation": "<p><b>{name}</b> hat <i>Mit Akteur verbinden</i> nicht aktiviert.</p><p><b>Verbunden</b> — Jeder Token auf der Karte verweist auf denselben Akteur. Änderungen an Lebenspunkten, Zuständen usw. wirken sich auf alle Token und den Charakterbogen gleichermaßen aus.</p><p><b>Nicht verbunden</b> — Jeder auf der Karte platzierte Token ist eine unabhängige Kopie. Änderungen an einem Token haben keinen Einfluss auf andere oder den Basis-Akteur.</p><p>Begleiter sollten normalerweise <b>verbunden</b> sein, damit der Begleitertab die korrekten, aktuellen Werte anzeigt.</p>",
+            "TokenLinkEnableBtn": "Verbinden & Hinzufügen",
+            "WildAnimalLoyaltyWarning": "Wildtiere benötigen für die Dressur einen Loyalitätswert von 10 oder höher.",
+            "WildAnimalTrainerWarning": "Für das Dressieren von Wildtieren benötigt man die Sonderfertigkeit Abrichter."
+        },
+        "OpenCompanionSheet": "Begleiter-Bogen öffnen",
+        "Owner": "Besitzer",
+        "RemoveCompanion": "Begleiter entfernen",
+        "removeMount": "Als Reittier abwählen",
+        "TradeWithCompanion": "Handeln mit Begleiter",
+        "SkillSelection": {
+            "FamiliarAbilities": "Vertrautentierfähigkeiten",
+            "HomunculusAbilities": "Homunculusfähigkeiten",
+            "Intro": "Wähle aus, welche Fähigkeiten von {name} im Begleitertab als Schnellzugriff angezeigt werden:",
+            "label": "Fähigkeitenauswahl",
+            "OpenItemSheet": "Links-<i class=\"fas fa-computer-mouse\"></i>: Item öffnen",
+            "RemoveFromHotbar": "Rechts-<i class=\"fas fa-computer-mouse\"></i>: Aus Leiste entfernen"
+        },
+        "Species": {
+            "TrainingMod": "Dressurmodifikator",
+            "TrainingModules": "Mögliche Ausbildungsaufsätze",
+            "TrickMod": "Trickmodifikator"
+        },
+        "train": "Ausbilden",
+        "Training": {
+            "AnimalTrainer": "Abrichter",
+            "Available": "Verfügbare Ausbildungsaufsätze",
+            "DomRule": "Verfügt die Heldin über die Sonderfertigkeit Abrichter kann sie eine langwierige Ausbildung beginnen, damit das Tier einen Ausbildungsaufsatz erhält.",
+            "FamiliarRule": "Vertrautentiere dürfen entgegen der allgemein gültigen Regel mit einem weiteren Ausbildungsaufsatz versehen werden, da sie eine besondere Beziehung zu ihrer Herrin haben und lernwillig sind.",
+            "Finished": "Die Ausbildung wurde erfolgreich abgeschlossen und {trickName} wurde {petName} hinzugefügt.",
+            "InTraining": "Im Training",
+            "InTrainingTooltip": "Du kannst diesen Trick nun im Begleitertab trainieren.",
+            "Known": "Erlernte Ausbildungsaufsätze",
+            "label": "Ausbildung",
+            "MaxReached": "{petName} ist maximal möglich ausgebildet.",
+            "ModuleFinished": "Die Ausbildung wurde erfolgreich abgeschlossen und der Ausbildungsaufsatz {trainingName} wurde {petName} hinzugefügt.",
+            "ModuleIndicator": "(Ausbildungsaufsatz):",
+            "MountRule": "Als Reittiere gelten alle Tiere, die den Ausbildungsaufsatz Reittier erhalten können. Wenn nichts anderes angegeben ist, so wurden die meisten üblichen Reittiere wie Pferde und Kamele so ausgebildet, dass sie diesen Ausbildungsaufsatz bereits erhalten haben. Außerdem ist dieser Ausbildungsaufsatz der einzige, der sich bei Tieren entgegen der grundsätzlichen Regel noch mit einem zweiten Ausbildungsaufsatz kombinieren lässt. So kann ein Pferd z. B. ein Reit- und ein Kampftier sein.",
+            "NoAvailable": "Keine weiteren Ausbildungsaufsätze für diese Tierart verfügbar.",
+            "NoLearned": "Noch keine Ausbildungsaufsätze erlernt.",
+            "ProbeRule": "Um einem Tier einen Ausbildungsaufsatz zu verleihen, muss der Heldin eine Sammelprobe auf Tierkunde, 1 Monat, 7 Versuche gelingen. Der Modifikator für die Probe hängt vor der Tierart ab.",
+            "ShortPrefix": "Ausbildung:",
+            "RemoveSpecies": "Tierart entfernen",
+            "SpeciesChangeHint": "Tierart anpassen",
+            "Tab": "Ausbildung",
+            "TabName": "Ausbildung",
+            "TeachBtn": "Ausbilden",
+            "TestName": "Tierausbildung von {petName} (Ausbildungsaufsatz): {trainingName}",
+            "WildRule": "Wenn die Loyalität eines Wildtieres durch die Dressur einer Heldin mit der Sonderfertigkeit Abrichter einen Wert von 10 erreicht, ist es ihr, und nur ihr, ab diesem Zeitpunkt möglich dem Wildtier einen Ausbildungsaufsatz zu verleihen."
+        },
+        "Trick": {
+            "AnimalTraining": "Tierausbildung von {petName} (Trick): {trickName}",
+            "Available": "Mögliche Tricks",
+            "Domesticated": "Um einem domestizierten Tier einen Trick beizubringen, muss die Heldin eine Sammelprobe auf Tierkunde, 1 Tag, 7 Versuche, bestehen.",
+            "Intro": "Einem Tier einen Trick beizubringen, ist eine deutlich weniger aufwendige Aufgabe als eine Ausbildung.",
+            "Known": "Folgende Tricks beherrscht {name} bereits:",
+            "label": "Tricks",
+            "LimitDomesticated": "Zusätzlich zu den Tricks aus einem Ausbildungsaufsatz kann ein domestiziertes Tier noch bis zu KL/2 weitere Tricks erlernen. Das entspricht aktuell {currentTricks} / {maxTricks} Tricks.",
+            "LimitWild": "Ein Wildtier kann maximal KL/2 Tricks erlernen. Das entspricht aktuell {currentTricks} / {maxTricks} Tricks.",
+            "Modifier": "Der Modifikator für diese Probe ist je nach Tierart unterschiedlich.",
+            "NoAvailable": "Es sind keine Tricks verfügbar.",
+            "NoRequirements": "Keine Voraussetzungen",
+            "NotFound": "Trick konnte im Kompendium nicht gefunden werden.",
+            "NotPossible": "Für dieses Tier nicht möglich.",
+            "ShortPrefix": "Trick:",
+            "TeachBtn": "Trick beibringen",
+            "Unavailable": "Noch nicht mögliche Tricks",
+            "Wild": "Um einem Wildtier einen Trick beizubringen, muss die Heldin eine Sammelprobe auf Tierkunde, 2 Tage, 5 Versuche, bestehen.",
+            "WildAnimalTraining": "Wildtierausbildung von {petName} (Trick): {trickName}"
+        },
+        "useAsMount": "Als Reittier verwenden",
+        "wildAnimal": "Wildtier",
+        "WildFail": {
+            "1": "{name} versucht zu fliehen!",
+            "2": "{name} verweigert den Befehl.",
+            "35": "{name} greift dich für {kr} KR an!",
+            "6": "{name} greift einen Unbeteiligten für {kr} KR an (oder verweigert den Befehl, wenn niemand in der Nähe ist)."
         }
     }
 }

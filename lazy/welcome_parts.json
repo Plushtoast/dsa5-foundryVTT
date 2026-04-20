@@ -1,0 +1,6 @@
+[
+  { "template": "highlights", "weight": 2 },
+  { "template": "module_spotlight", "weight": 1 },
+  { "template": "tips", "weight": 1 },
+  { "template": "getting_started", "weight": 3, "condition": "firstTime" }
+]

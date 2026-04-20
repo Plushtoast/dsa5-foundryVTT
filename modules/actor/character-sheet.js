@@ -12,6 +12,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
   };
 
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: super.PARTS.header,
     tabs: super.PARTS.tabs,
     main: {
@@ -27,9 +28,11 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: super.PARTS.notes,
   }
+
 
   async _manageDragItems(item, typeClass) {
     switch (typeClass) {

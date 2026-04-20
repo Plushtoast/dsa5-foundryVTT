@@ -23,8 +23,10 @@ export class DSAToken extends Token {
             img: 'systems/dsa5/icons/thirdparty/bee.svg',
             id: 'swarm',
             name: 'swarm.name',
-            flags: {
-              dsa5: { value: this.actor.system.swarm?.effectiveCount || 1 },
+            system: {
+              condition: {
+                value: this.actor.system.swarm?.effectiveCount || 1,
+              },
             },
           }),
         );
@@ -37,7 +39,7 @@ export class DSAToken extends Token {
       if (effect.getFlag('core', 'overlay') && !hasOverlay) {
         promises.push(this._drawOverlay(effect.img, effect.tint));
         hasOverlay = true;
-      } else promises.push(this._drawEffect(effect.img, effect.tint, getProperty(effect, 'flags.dsa5.value')));
+      } else promises.push(this._drawEffect(effect.img, effect.tint, effect.system?.condition?.value));
     }
     await Promise.allSettled(promises);
 
@@ -71,10 +73,10 @@ export class DSAToken extends Token {
         bg.drawRoundedRect(effect.x + 1, effect.y + 1, w - 2, w - 2, 2);
 
         if (effect.counter > 1 && !effect.counterDrawn) {
-          let textEffect = game.dsa5.config.effectTextStyle;
-          let color = game.settings.get('dsa5', 'statusEffectCounterColor');
+          const textEffect = game.dsa5.config.effectTextStyle;
+          const color = game.settings.get('dsa5', 'statusEffectCounterColor');
           textEffect._fill = /^#[0-9A-F]+$/.test(color) ? color : '#000000';
-          let text = this.effects.addChild(new foundry.canvas.containers.PreciseText(effect.counter, textEffect));
+          const text = this.effects.addChild(new foundry.canvas.containers.PreciseText(effect.counter, textEffect));
           text.x = effect.x;
           text.y = effect.y;
           text.isCounter = true;
@@ -96,7 +98,7 @@ export class DSAToken extends Token {
   };
 
   async drawAuras(force = false) {
-    await DSAAura.drawAuras(this, force);
+    await DSAAura.ensureEmanations(this);
   };
 
   _onClickLeft2(event) {
@@ -124,7 +126,7 @@ export class DSAToken extends Token {
   }
 
   _getAnimationMovementSpeed(options) {
-    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) return super._getAnimationMovementSpeed(options);
+    if (game.canvas.grid.units != _loc('gridUnits')) return super._getAnimationMovementSpeed(options);
 
     if (this.actor) return this.actor.speedByMovementType(options.action) || 1;
 
@@ -137,7 +139,6 @@ export class DSAToken extends Token {
     return speed * (actionConfig.speedMultiplier ?? 1);
   }
 }
-
 
 export class DSATokenDocument extends TokenDocument {
   _inferMovementAction() {
@@ -186,7 +187,7 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   }
 
   _totalDistanceColor(waypoint) {
-    if (game.canvas.grid.units != game.i18n.localize('gridUnits')) {
+    if (game.canvas.grid.units != _loc('gridUnits')) {
       const user = game.users.get(waypoint.userId);
 
       return user?.color ?? 0x000000
@@ -219,7 +220,6 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     return { width: 4 * scale, color: this._totalDistanceColor(waypoint), alpha: 1 };
   }
 }
-
 
 /*Hooks.on('moveToken', async (token, move, options) => {
   console.log('moveToken', token, move, options);

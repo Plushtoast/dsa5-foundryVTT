@@ -19,7 +19,7 @@ export default class ApplicationData extends ItemDataModel.mixin(DescriptionTemp
 
   static chatData(data, name) {
     const hasLocalization = game.i18n.has(`APPLICATION.${data.skill} - ${name}`);
-    const description = hasLocalization ? game.i18n.localize(`APPLICATION.${data.skill} - ${name}`) : data.description.value;
+    const description = hasLocalization ? _loc(`APPLICATION.${data.skill} - ${name}`) : data.description.value;
     return [{ key: 'Description', val: description }];
   }
 }

@@ -13,7 +13,7 @@
           },
           "description": "Das Schwarze Auge ist ein Fantasy-Rollenspiel, in dem du und deine Freunde die Hauptrollen übernehmen: Bestehe als tapferer Ritter, elfische Waldläuferin oder gelehrter Magier Heldentaten und entdecke mit deinen Gefährten das von vielen Kriegen geschwächte…",
           "badges": [
-            "Bestseller"
+            "Bestseller", "Einsteiger"
           ]
         },
         {
@@ -24,7 +24,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coverde.webp"
           },
           "description": "Aventurische Magie ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Spielarten der Zauberei widmet. Jede beschriebene magische Tradition wird ausführlich vorgestellt, mitsamt ihren Ritualen, Zaubersprüchen und Besonderheiten.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-magic-2",
@@ -54,7 +54,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coverde.webp"
           },
           "description": "Aventurisches Götterwirken ist ein Regelerweiterungsband für DSA5, der sich den aventurischen Geweihten widmet. Alle Geweihten des Zwölfgötterpantheons und der bekanntesten Halbgötter werden ausführlich beschrieben.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-godsofaventuria2",
@@ -74,7 +74,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coverde.webp"
           },
           "description": "Mit dem Aventurischen Kompendium erhältst du zahlreiche neue Optionen für den Kampf und mächtige Kampfstile, die nur den besten Kriegern und Schwertmeistern bekannt sind. Doch nicht nur Krieger kommen auf ihre Kosten, auch alle übrigen Heldentypen können von den Erweiterungsregeln profitieren.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-compendium2",
@@ -104,7 +104,7 @@
           ]
         },
         {
-          "id": "dsa5-aventurian-tavers",
+          "id": "dsa5-aventurian-taverns",
           "label": "Aventurische Tavernen",
           "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt",
           "image": {
@@ -166,7 +166,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coverde.webp"
           },
           "description": "In den Wäldern, Sümpfen und Dschungel Aventuriens lauern furchterregende Kreaturen, die Helden bestenfalls als ihre nächste Mahlzeit betrachten. Durch ihr Gift, messerscharfe Klauen oder ihre schiere Größe stellen…",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-bestiary2",
@@ -186,6 +186,16 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coverde.webp"
           },
           "description": "Kein Krieger kommt ohne seine Waffen, kein Dieb ohne sein Einbruchswerkzeug und kein Magier ohne seine Bücher aus. Die Aventurische Rüstkammer enthält Beschreibungen von über 100 nützlichen Ausrüstungsgegenständen, Waffen und Rüstungen für reisende Helden und…",
+          "badges": []
+        },
+        {
+          "id": "dsa5-retosarmory",
+          "label": "Kaiser Retos Waffenkammer",
+          "href": "https://www.f-shop.de/detail/index/sArticle/4088",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/28/f3/35/ESD048_0_0999.jpg"
+          },
+          "description": "Vollends in Foundry integriert: Das Kaiserlich Garethische Museum für Waffenkunde, nach seinem Stifter meist Kaiser Retos Waffenkammer genannt, ist ein Ort, der Heldenherzen höher schlagen lässt: Immerhin ist das Gebäude voller von einzigartigen Waffen und Rüstungen, …",
           "badges": []
         },
         {
@@ -256,6 +266,16 @@
             "src": "https://www.f-shop.de/media/image/d9/f7/5c/ESD037_0_0999.jpg"
           },
           "description": "Vor Jahrtausenden beherrschten die Achaz unter Führung des Gottdrachen Pyrdacor weite Teile Aventuriens. Heute leben sie in entlegenen Gegenden als Mitglieder kleiner Stämme oder in den verfallenen Ruinen ihrer einst prächtigen Städte.",
+          "badges": []
+        },
+        {
+          "id": "dsa5-scalytyrants",
+          "label": "Geschuppte Tyrannen",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5094/dsa5-geschuppte-tyrannen-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/b8/5d/1b/foundry_cover_geschuppe_ty.jpg"
+          },
+          "description": "Geschuppte Tyrannen ist eine Spielhilfe über die mächtigsten Ungeheuer Aventuriens: die Drachen. Sie sind die Plage ganzer Landstriche, besitzen unermessliche Schätze in ihren Horten und sie zu besiegen ist die Aufgabe wahrer Helden. …",
           "badges": []
         },
         {
@@ -419,6 +439,18 @@
           ]
         },
         {
+          "id": "dsa5-shadowwaterwitch",
+          "label": "Die Hexe vom Schattenwasser",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/5255/dsa5-die-hexe-vom-schattenwasser-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/32/g0/62/a4_cover_vtt_hexe_vom_schattenwasser_exclusive_f-shop-1.jpg"
+          },
+          "description": "Unheimliche Mächte sind in der Grafschaft Heldentrutz am Werk! Menschen werden von Harpyien entführt, die Orks bereiten sich auf einen Kriegszug vor und aus den Wäldern und Sümpfen treten abscheuliche Wesenheiten hervor und verbreiten Angst und Schrecken.",
+          "badges": [
+            "Einsteiger"
+          ]
+        },
+        {
           "id": "dsa5-labyrinthofintrigues",
           "label": "Labyrinth der Intrigen",
           "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt",
@@ -507,6 +539,16 @@
       "name": "Regionalspielhilfen",
       "items": [
         {
+          "id": "dsa5-atlas",
+          "label": "Magna Carta Aventurica",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5142/dsa5-magna-carta-aventurica-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/c0/9d/59/magna_carta_aventurica_cover_vtt-Kopie.jpg"
+          },
+          "description": "Reisen durch Aventurien sind mehr als nur „von A nach B“: Wege müssen gefunden, Etappen geplant und Zeit sowie Wetter im Blick behalten werden. Magna Carta Aventurica macht genau das zum spielbaren Bestandteil eurer Abenteuer. Statt Kartenblättern und Rechenarbeit…",
+          "badges": ["Neu"]
+        },
+        {
           "id": "dsa5-suncoast",
           "label": "Die Sonnenküste",
           "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2684/dsa5-sonnenkueste-bundle-fuer-foundry-vtt",
@@ -574,6 +616,26 @@
             "src": "https://www.f-shop.de/media/image/94/cf/f2/ESD046_0_0999.jpg"
           },
           "description": "In diesem Foundry Modul für das DSA5 Regelwerk wird dir die Winterwacht präsentiert. Die Winterwacht ist die neunte Regionalspielhilfe zur 5.",
+          "badges": []
+        },
+        {
+          "id": "dsa5-wolfsfrost",
+          "label": "Der Wolfsfrost",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5014/dsa5-der-wolfsfrost-regionalspielhilfe-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/82/1e/1e/ESD059_0.jpg"
+          },
+          "description": "In den eisigen Nächten des Hohen Nordens ziehen wandernde Nivesen mit ihren Herden durch die Tundra und Siedler versammeln sich am Feuer in verrauchten Holzhütten. Werden die Schrecken aus der Dunkelheit sie diesmal verschonen? …",
+          "badges": []
+        },
+        {
+          "id": "dsa5-lizardswamps",
+          "label": "Die Echsensümpfe",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5027/dsa5-die-echsensuempfe-regionalspielhilfe-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/74/64/b9/a4_cover_echsensuempfe_vtt.jpg"
+          },
+          "description": "Was schlummert unter der uralten Bibliothek der Hauptstadt Selem? Woher kommt der irre Singsang, der aus dem Morast dringt, und warum reiten Echsenmenschen auf den Rücken riesiger Flugechsen? …",
           "badges": []
         },
         {

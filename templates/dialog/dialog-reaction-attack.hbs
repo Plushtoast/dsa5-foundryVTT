@@ -13,8 +13,14 @@
     <div class="row-section wrap">
         {{#each items as |itm i|}}
         <div class="col two flexrow">
-            <button data-action='reactClick' class="reactClick row-section" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}">
-                <div class="col ten"><span class="{{../dieClass}} d20">{{itm.value}}</span></div>
+            <button data-action='reactClick' class="reactClick row-section" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}" data-special="{{itm.special}}">
+                <div class="col ten">
+                    {{#if itm.value}}
+                    <span class="{{../dieClass}} d20">{{itm.value}}</span>
+                    {{else}}
+                    <i class="fas fa-sparkles"></i>
+                    {{/if}}
+                </div>
                 <img class="col ten" src="{{itm.img}}" />
                 <div class="col eighty">{{itm.name}}{{#if itm.item.system.worn.offHand}}(*){{/if}}</div>
             </button>

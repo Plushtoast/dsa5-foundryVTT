@@ -18,6 +18,7 @@ import EquipmentData from './item/equipment.js';
 import EssenceData from './item/essence.js';
 import ImprintData from './item/imprint.js';
 import InformationData from './item/information.js';
+import ItempackageData from './item/itempackage.js';
 import LiturgyData from './item/liturgy.js';
 import MagicalsignData from './item/magicalsign.js';
 import MagictrickData from './item/magictrick.js';
@@ -38,11 +39,14 @@ import TrapData from './item/trap.js';
 import CharacterData from './actor/character.js';
 import CreatureData from './actor/creature.js';
 import NPCData from './actor/npc.js';
+import GroupData from './actor/group.js';
 import DSAStringField from './fields/dsa_string_field.js';
 import { ItemDataModel } from './baseitem.js';
 import { ActorDataModel } from './baseactor.js';
 import { DSACombatDataModel } from './combat/dsacombat.js';
 import { DSACombatantDataModel } from './combatant/dsacombatant.js';
+import DSAActiveEffectDataModel from './activeeffect/dsaeffect.js';
+import DSAEnhancementEffectDataModel from './activeeffect/enhancement-effect.js';
 
 export const itemModels = {
     advantage: AdvantageData,
@@ -65,6 +69,7 @@ export const itemModels = {
     essence: EssenceData,
     imprint: ImprintData,
     information: InformationData,
+    itempackage: ItempackageData,
     liturgy: LiturgyData,
     magicalsign: MagicalsignData,
     magictrick: MagictrickData,
@@ -89,6 +94,7 @@ export const ActorDataModels = {
     character: CharacterData,
     creature: CreatureData,
     npc: NPCData,
+    group: GroupData,
     ActorDataModel
 }
 
@@ -102,4 +108,9 @@ export const CombatDataModels = {
 
 export const CombatantDataModels = {
     dsacombatant: DSACombatantDataModel
+}
+
+export const ActiveEffectDataModels = {
+    base: DSAActiveEffectDataModel,
+    enhancement: DSAEnhancementEffectDataModel
 }

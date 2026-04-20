@@ -3,9 +3,18 @@
   {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
   {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true}}
   {{formGroup systemFields.category.fields.value value=document.system.category.value localize=true choices=categories sort=true valueAttr='valueAttr' labelAttr='labelAttr'}}
+
+  {{#if document.system.hasAdvancedSF }}
+    {{formGroup systemFields.advancedSF value=document.system.advancedSF localize=true label=document.system.hasAdvancedSF  elementType='textarea'}}
+  {{/if}}
+
+  {{#if document.system.hasStyleSF }}
+    {{formGroup systemFields.styleSF value=document.system.styleSF localize=true label=document.system.hasStyleSF classes='full-height' elementType='textarea'}}
+  {{/if}}
+  
   {{formGroup systemFields.rule.fields.value value=document.system.rule.value localize=true classes='full-height' elementType='textarea'}}
   {{formGroup systemFields.maxRank.fields.value value=document.system.maxRank.value localize=true}} 
-  {{formGroup systemFields.effect.fields.value value=document.system.effect.value localize=true}}  
+  {{formGroup systemFields.effect.fields.value value=document.system.effect.value localize=true}}
 
   {{#if (eq document.system.category.value 'pact')}}
 

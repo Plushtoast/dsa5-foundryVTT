@@ -4,15 +4,19 @@ import Riding from '../automation/riding.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tinyNotification } from '../helpers/view_helper.js';
-import DSA5Payment from '../helpers/payment.js';
+import DSA5Payment from '../payment/payment.js';
+import PaymentRequestService from '../queries/payment-requests.js';
 import { Trade } from '../../actor/trade.js';
-import { localize } from '../helpers/localizer.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { ItemDataModel } from '../../data/baseitem.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
+import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
+import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
+import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 const { getProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -35,8 +39,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     super(options);
     this.searching = '';
 
-    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => localize(`LocalizedIDs.${x}`));
-    TokenHotbar2.defaultSkills = new Set([localize('LocalizedIDs.perception')]);
+    TokenHotbar2.combatSkills = ['selfControl', 'featOfStrength', 'bodyControl', 'perception', 'loyalty'].map((x) => _loc(`LocalizedIDs.${x}`));
+    TokenHotbar2.defaultSkills = new Set([_loc('LocalizedIDs.perception')]);
 
     if (game.user.isGM) {
       this.callbackFunctions = {};
@@ -69,6 +73,24 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           abbrev: '',
           subfunction: 'gm',
         },
+        {
+          name: 'dsacalendar.createEvent',
+          disabled: setting.createCalendarEvent,
+          iconClass: 'fas fa-calendar-day',
+          id: DSACalendarEntry.HOTBAR_ID,
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
+        {
+          name: 'DSAQUESTLOG.createQuest',
+          disabled: setting.createQuest,
+          iconClass: 'fas fa-scroll',
+          id: DSAQuestLogEntry.HOTBAR_ID,
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
       ];
     }
 
@@ -80,8 +102,17 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(actor.id);
     });
 
-    Hooks.on('updateToken', (scene, token, updates) => {
-      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(token.actor?.id);
+    Hooks.on('updateToken', (tokenDoc, changed, options) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('recordToken', (tokenDoc) => {
+      if (game.combat) game.combat.handleMovementCost(tokenDoc);
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(tokenDoc.actor?.id);
+    });
+
+    Hooks.on('updateCombatant', (combatant, changes) => {
+      game.dsa5.apps.tokenHotbar?.updateDSA5Hotbar(combatant.actor?.id);
     });
 
     Hooks.on('updateOwnedItem', (source, item) => {
@@ -207,7 +238,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const darkness = Number(ev.currentTarget.value);
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': darkness }, { animateDarkness: 3000 });
 
-    tinyNotification(`${localize('MASTER.darkness')} ${darkness}`);
+    tinyNotification(`${_loc('MASTER.darkness')} ${darkness}`);
   }
 
   async _onRender(context, options) {
@@ -282,9 +313,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
   }
 
-  async handleGMRoll(ev) {
-    const skill = ev.currentTarget.dataset.id;
-    const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
+  async handleGMRoll(ev, target) {
+    const elem = target || ev.currentTarget;
+    const skill = elem.dataset.id;
+    const mod = Math.round($(elem).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
     if (ev.ctrlKey) {
       game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, {
         modifier: mod,
@@ -298,7 +330,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleSkillRoll(ev, actor, id, tokenId, subweapon = undefined) {
     const options = {};
-    if (ev.button == 2) options.rollMode = 'blindroll';
+    if (ev.button == 2) options.messageMode = DICE_CONSTANTS.CHAT_MODES.BLIND;
 
     if ('rideLoyaltyID' == id) {
       Riding.rollLoyalty(actor, options);
@@ -309,20 +341,25 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     } else {
       let result = actor?.items.get(id);
       if (result) {
-        if (ev.originalEvent.ctrlKey) return result.sheet.render(true);
+        if (ev.ctrlKey) return result.sheet.render(true);
 
         switch (result.type) {
           case 'meleeweapon':
           case 'rangeweapon':
-            if (ev.originalEvent.altKey) {
-              result.update({ 'system.worn.value': false });
+            if (ev.altKey) {
+              if (actor) await actor.equipWeaponToHand(result.id, { equip: false });
+              else await result.update({ 'system.worn.value': false });
             } else if (result.system.worn.value) {
               result = Actordsa5.buildSubweapon(result, subweapon);
               actor.setupWeapon(result, 'attack', options, tokenId).then((setupData) => {
                 actor.basicTest(setupData);
               });
             } else {
-              actor.exclusiveEquipWeapon(result.id, ev.button == 2);
+              const wantsOffHand = ev.button == 2;
+              const canOffHand = wantsOffHand && actor?.canEquipWeaponOffHand(result);
+
+              if (actor) await actor.equipWeaponToHand(result.id, { hand: canOffHand ? 'offhand' : 'auto', equip: true });
+              else await result.update({ 'system.worn.value': true, 'system.worn.offHand': !!canOffHand });
             }
             break;
           case 'trait':
@@ -342,11 +379,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             });
             break;
           case 'consumable':
+          case 'plant':
             const proceed = await foundry.applications.api.DialogV2.confirm({
               window: {
-                title: localize('SHEET.ConsumeItem') + ': ' + result.name,
+                title: _loc('SHEET.ConsumeItem') + ': ' + result.name,
               },
-              content: localize('SHEET.ConsumeItem') + ': ' + result.name,
+              content: _loc('SHEET.ConsumeItem') + ': ' + result.name,
               rejectClose: false,
               modal: true,
             });
@@ -373,8 +411,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   async handleOnUse(ev, actor, id, tokenId) {
     const item = actor.items.get(id);
-    const onUse = new OnUseEffect(item);
-    await onUse.executeOnUseEffect();
+    if (item) {
+      const onUse = new OnUseEffect(item);
+      return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+    }
+    const effect = actor.effects.get(id);
+    if (effect) {
+      const onUse = new OnUseEffect(effect);
+      return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+    }
   }
 
   async handleEnchantment(ev, actor, id, tokenId) {
@@ -393,6 +438,12 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'masterMenu':
         DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
         break;
+      case DSACalendarEntry.HOTBAR_ID:
+        DSACalendarEntry.startCreation(null, game.time.calendar.timeToComponents(game.time.worldTime));
+        break;
+      case DSAQuestLogEntry.HOTBAR_ID:
+        DSAQuestLogEntry.startCreation(null);
+        break;
       case 'payMoney':
         this.payMoney(ev);
         break;
@@ -408,9 +459,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const money = `${$(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val()}`;
 
     if (ev.button == 2) {
-      DSA5Payment.createGetPaidChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'getPaid', amount: money });
     } else {
-      DSA5Payment.createPayChatMessage(money);
+      PaymentRequestService.createRequest({ mode: 'pay', amount: money });
     }
   }
 
@@ -419,7 +470,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const actor = game.actors.get(randomPlayer);
     if (actor) {
       const k = await DSA5_Utility.showArtwork(actor);
-      if (!ev.originalEvent.ctrlKey)
+      if (!ev.ctrlKey)
         setTimeout(() => {
           k.close();
         }, 2000);
@@ -427,7 +478,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async handleSharedEffect(ev) {
-    for (let token of canvas.tokens.controlled) {
+    for (const token of canvas.tokens.controlled) {
       const actor = token.actor;
       const tokenId = token.id;
       const id = actor.effects.find((x) => x.name == ev.currentTarget.dataset.name)?.id;
@@ -435,10 +486,11 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
   }
 
-  async executeQuickButton(ev) {
-    const actor = canvas.tokens.controlled[0]?.actor;
-    const tokenId = canvas.tokens.controlled[0]?.id;
-    const { id, subfunction, subweapon } = ev.currentTarget.dataset;
+  async executeQuickButton(ev, target) {
+    if (ev.originalEvent) ev = ev.originalEvent;
+
+    const { actor, tokenId } = resolveHotbarActorContext();
+    const { id, subfunction, subweapon } = (target || ev.currentTarget).dataset;
 
     switch (subfunction) {
       case 'trade':
@@ -454,6 +506,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
         this.handleSharedEffect(ev);
         break;
       case 'onUse':
+      case 'onUseEffect':
         this.handleOnUse(ev, actor, id, tokenId);
         break;
       case 'gm':
@@ -463,7 +516,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'darkness':
         break;
       case 'skillgm':
-        this.handleGMRoll(ev);
+        this.handleGMRoll(ev, target || ev.currentTarget);
         break;
       case 'enchantment':
         this.handleEnchantment(ev, actor, id, tokenId);
@@ -512,9 +565,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     let gmMode = false;
     if (actor) {
       const moreSkills = [];
-      let moreSpells = [];
+      const moreSpells = [];
       const isRiding = Riding.isRiding(actor);
-      const rideName = localize('LocalizedIDs.riding');
+      const rideName = _loc('LocalizedIDs.riding');
 
       effects = await this._effectEntries(actor);
       if (game.combat) {
@@ -549,7 +602,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             );
           }
 
-          if (x.getFlag('dsa5', 'onUseEffect')) {
+          if (OnUseEffect.hasOnUseEffect(x)) {
             onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }
@@ -580,7 +633,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
             else moreSpells.push(this._actionEntry(x, 'spell filterable'));
           }
 
-          if (x.getFlag('dsa5', 'onUseEffect')) {
+          if (OnUseEffect.hasOnUseEffect(x)) {
             onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
           }
         }
@@ -594,6 +647,13 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       }
 
       onUse = onUsages.pop();
+
+      for (const ef of actor.effects) {
+        if (OnUseEffect.hasOnUseEffect(ef)) {
+          onUsages.push(this._actionEntry(ef, 'onUse', { subfunction: 'onUseEffect' }));
+        }
+      }
+      if (!onUse && onUsages.length) onUse = onUsages.pop();
 
       items.functions = this._functionEntries();
 
@@ -646,7 +706,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     }
 
     if (this.showEffects) {
-      const label = localize('CONDITION.add');
+      const label = _loc('CONDITION.add');
       const effect = {
         name: 'CONDITION.add',
         id: '',
@@ -661,7 +721,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       } else if (canvas.tokens.controlled.length > 1) {
         let sharedEffects = await game.dsa5.apps.tokenHotbar._effectEntries(canvas.tokens.controlled[0].actor, { subfunction: 'sharedEffect' });
 
-        for (let token of canvas.tokens.controlled) {
+        for (const token of canvas.tokens.controlled) {
           const tokenEffects = (await token.actor.actorEffects()).map((x) => x.name);
           sharedEffects = sharedEffects.filter((x) => tokenEffects.includes(x.name));
         }
@@ -698,7 +758,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _functionEntries() {
-    const trade = localize('MERCHANT.exchangeWithTarget');
+    const trade = _loc('MERCHANT.exchangeWithTarget');
     return [
       {
         name: trade,
@@ -712,10 +772,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _brawlEntry(combatskills) {
-    const brawl = combatskills.find((x) => x.name == localize('LocalizedIDs.wrestle'));
+    const brawl = combatskills.find((x) => x.name == _loc('LocalizedIDs.wrestle'));
     if (brawl) {
       return {
-        name: localize('attackWeaponless'),
+        name: _loc('attackWeaponless'),
         id: 'attackWeaponless',
         icon: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         attack: brawl.system.attack.value,
@@ -796,42 +856,45 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     };
   }
 
-  _combatEntry(x, combatskills, actor, options = []) {
+  _combatEntry(x, combatskills, actor, options = {}) {
+    if (combatskills.length == 0) return [];
+
     const preparedItem =
-      x.type == 'meleeweapon' ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor) : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
-    const entries = [
-      {
-        name: x.name,
-        id: x.id,
-        icon: x.img,
-        cssClass: `weapon i${x.id}`,
-        abbrev: x.name[0],
-        attack: preparedItem.attack,
-        damage: preparedItem.damagedie,
-        dadd: preparedItem.damageAdd,
+      x.type === 'meleeweapon'
+        ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor)
+        : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
+
+    const buildEntry = (name, id, img, attack, damagedie, damageAdd, subweapon) => {
+      const entry = {
+        name,
+        id,
+        icon: img,
+        cssClass: `weapon i${id}`,
+        abbrev: name?.[0],
+        attack,
+        damage: damagedie,
+        dadd: damageAdd,
         ...options,
-      },
-    ];
-    for (let [key, value] of Object.entries(preparedItem.subweapons || {})) {
-      entries.push({
-        name: value.name,
-        id: x.id,
-        subweapon: key,
-        icon: x.img,
-        cssClass: `weapon i${x.id}`,
-        abbrev: value.name[0],
-        attack: value.attack,
-        damage: value.damagedie,
-        dadd: value.damageAdd,
-        ...options,
-      });
-    }
+      };
+      if (subweapon) entry.subweapon = subweapon;
+      return entry;
+    };
+
+    const entries = [buildEntry(x.name, x.id, x.img, preparedItem.attack, preparedItem.damagedie, preparedItem.damageAdd)];
+
+    const subweapons = preparedItem.subweapons ?? {};
+    entries.push(
+      ...Object.entries(subweapons).map(([key, value]) =>
+        buildEntry(value.name, x.id, x.img, value.attack, value.damagedie, value.damageAdd, key)
+      )
+    );
+
     return entries;
   }
 
   async _effectEntries(actor, options = {}) {
     return (await actor.actorEffects()).map((x) => {
-      const level = x.getFlag('dsa5', 'value') || '';
+      const level = x.system.condition.value || '';
       const name = level ? `${x.name} (${level})` : x.name;
       return {
         name: name,
@@ -860,7 +923,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     ev.stopPropagation();
     const search = this.searching.toLowerCase();
     tinyNotification(search);
-    let btns = $(ev.currentTarget).find('.subbuttons li');
+    const btns = $(ev.currentTarget).find('.subbuttons li');
     btns.find('.dsahidden').removeClass('dsahidden');
     btns
       .filter(function () {
@@ -892,7 +955,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     const controlled = canvas.tokens.controlled;
     this.showEffects = controlled.length > 0;
-    this.actor = (controlled.length === 1 && controlled[0].actor?.isOwner) ? controlled[0].actor : undefined;
+    this.actor = resolveHotbarActorContext().actor;
 
     await this.render(true, { focus: false });
   }
@@ -927,9 +990,9 @@ export class AddEffectDialog extends DefaultAppv2 {
     data.effects = duplicate(CONFIG.statusEffects)
       .map((x) => {
         return {
-          name: localize(x.name),
+          name: _loc(x.name),
           img: x.img,
-          description: localize(x.description),
+          description: _loc(x.description),
           id: x.id,
         };
       })
@@ -998,11 +1061,11 @@ export class AddEffectDialog extends DefaultAppv2 {
             const form = button.form.elements;
             const options = {};
 
-            let duration = Number(form.duration.value) || 0;
-            if (form.unit.value == 'seconds') duration = Math.round(duration / 5);
+            const duration = Number(form.duration.value) || 0;
+            const unit = form.unit.value;
 
             const label = form.effectname.value;
-            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration));
+            if (duration > 0) mergeObject(options, RuleChaos._buildDuration(duration, unit));
             if (label) options.name = label;
 
             await callback(id, options);
@@ -1029,7 +1092,7 @@ export class AddEffectDialog extends DefaultAppv2 {
     } else if (isCustomEffect) {
       ui.notifications.error('DSAError.customEffect', { localize: true });
     } else {
-      for (let token of canvas.tokens.controlled) {
+      for (const token of canvas.tokens.controlled) {
         await token.actor.addTimedCondition(id, 1, false, false, options);
       }
     }

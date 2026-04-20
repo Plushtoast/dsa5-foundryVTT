@@ -55,10 +55,12 @@ export const DICE_CONSTANTS = {
   },
 
   CHAT_MODES: {
-    ROLL: 'roll',
-    GMROLL: 'gmroll',
-    BLINDROLL: 'blindroll',
-    SELFROLL: 'selfroll'
+    PUBLIC: 'public',
+    GM: 'gm',
+    BLIND: 'blind',
+    SELF: 'self',
+    IC: 'ic',
+    ROLL: 'public'
   },
 
   TEMPLATES: {

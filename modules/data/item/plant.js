@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
@@ -6,7 +7,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 const { NumberField, BooleanField, StringField, SchemaField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;
 
-export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
+export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       price: new SchemaField({
@@ -65,7 +66,7 @@ export default class PlantData extends ItemDataModel.mixin(DescriptionTemplate, 
   }
 
   prepareEmbeddedItemSheet() {
-    const item = super.prepareEmbeddedItemSheet();   
+    const item = super.prepareEmbeddedItemSheet();
     item.system.preparedWeight = this.parent.system.preparedWeight;
     return item;
   }

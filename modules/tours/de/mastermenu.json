@@ -2,6 +2,7 @@
   "title": "Meistermenü",
   "module": "dsa5",
   "id": "tdeMastermenu",
+  "description": "Ein Überblick über die Funktionen des Meistermenüs.",
   "canBeResumed": false,
   "restricted": true,
   "display": true,

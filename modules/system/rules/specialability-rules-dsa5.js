@@ -30,7 +30,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
     if (adoption != null) {
       //Different Apval for multiple same vantages
       if (/,/.test(item.system.APValue.value)) {
-        let name = `${item.name.replace(' ()', '')} (${adoption.name}`;
+        const name = `${item.name.replace(' ()', '')} (${adoption.name}`;
         item.system.APValue.value = item.system.APValue.value.split(',')[actor.items.filter((x) => x.type == item.type && x.name.includes(name)).length].trim();
       }
       SpecialabilityRulesDSA5.simpleAdoption(item, adoption, item.name, DSA5.AbilitiesNeedingAdaption);
@@ -40,12 +40,12 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
       if (adoption.system && adoption.system.StF?.value && /\//.test(item.system.APValue.value))
         item.system.APValue.value = item.system.APValue.value.split('/')[adoption.system.StF.value.charCodeAt(0) - 65].trim();
     }
-    let res = actor.items.find((i) => {
+    const res = actor.items.find((i) => {
       return i.type == typeClass && i.name == item.name;
     });
     if (res) {
-      let vantage = duplicate(res);
-      let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(
+      const vantage = duplicate(res);
+      const xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(
         item,
         actor,
         /;/.test(vantage.system.APValue.value) ? vantage.system.APValue.value.split(';').map((x) => Number(x.trim()))[vantage.system.step.value] : vantage.system.APValue.value,
@@ -68,7 +68,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         );
       }
     } else {
-      let xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, item.system.APValue.value.split(';').map((x) => x.trim())[0], false);
+      const xpCost = await SpecialabilityRulesDSA5.isFreeLanguage(item, actor, SpecialabilityRulesDSA5.calcAPCostSum(item), false);
       if (await actor.checkEnoughXP(xpCost)) {
         await SpecialabilityRulesDSA5.abilityAdded(actor, item);
         await actor._updateAPs(xpCost, {}, { render: false });
@@ -80,14 +80,14 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
   static async refundFreelanguage(item, actor, xpCost, render = true) {
     if (item.system.category.value == 'language' && actor.system.freeLanguagePoints) {
-      let freePoints = Number(actor.system.freeLanguagePoints.value);
-      let languageCost = actor.items
+      const freePoints = Number(actor.system.freeLanguagePoints.value);
+      const languageCost = actor.items
         .filter((x) => x.type == 'specialability' && x.system.category.value == 'language')
         .reduce((a, b) => {
           return a + Number(b.system.step.value) * Number(b.system.APValue.value);
         }, 0);
-      let usedPoints = Math.min(freePoints, languageCost - Number(xpCost));
-      let remainingFreepoints = Math.max(0, freePoints - usedPoints);
+      const usedPoints = Math.min(freePoints, languageCost - Number(xpCost));
+      const remainingFreepoints = Math.max(0, freePoints - usedPoints);
       await actor.update(
         {
           'system.freeLanguagePoints.used': Math.min(freePoints, Number(usedPoints)),
@@ -101,14 +101,14 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
 
   static async isFreeLanguage(item, actor, xpCost, render = true) {
     if (item.system.category.value == 'language' && actor.system.freeLanguagePoints) {
-      let freePoints = Number(actor.system.freeLanguagePoints.value);
-      let languageCost = actor.items
+      const freePoints = Number(actor.system.freeLanguagePoints.value);
+      const languageCost = actor.items
         .filter((x) => x.type == 'specialability' && x.system.category.value == 'language')
         .reduce((a, b) => {
           return a + Number(b.system.step.value) * Number(b.system.APValue.value);
         }, 0);
-      let usedPoints = Math.min(freePoints, languageCost);
-      let remainingFreepoints = Math.max(0, freePoints - usedPoints);
+      const usedPoints = Math.min(freePoints, languageCost);
+      const remainingFreepoints = Math.max(0, freePoints - usedPoints);
       await actor.update(
         {
           'system.freeLanguagePoints.used': Math.min(freePoints, Number(usedPoints) + Number(xpCost)),
@@ -121,7 +121,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
   }
 
   static async needsAdoption(actor, item, typeClass) {
-    let rule = DSA5.AbilitiesNeedingAdaption[item.name];
+    const rule = DSA5.AbilitiesNeedingAdaption[item.name];
     if (rule) {
       let template;
       let callback;
@@ -134,7 +134,7 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
         };
       } else {
         if (rule.items == 'array') {
-          let items = rule.elems.map((x) => {
+          const items = rule.elems.map((x) => {
             return { name: x };
           });
           template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.hbs', { items: items, original: item, area: rule.area });
@@ -144,11 +144,11 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
             SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption);
           };
         } else {
-          let items = actor.items.filter((x) => rule.items.includes(x.type)).sort((a, b) => a.name.localeCompare(b.name));
+          const items = actor.items.filter((x) => rule.items.includes(x.type)).sort((a, b) => a.name.localeCompare(b.name));
           template = await renderTemplate('systems/dsa5/templates/dialog/requires-adoption-dialog.hbs', { items: items, original: item, area: rule.area });
           callback = function (dlg) {
             const value = dlg.entryselection.value;
-            let adoption = items.find((x) => x.name == value);
+            const adoption = items.find((x) => x.name == value);
             adoption.customEntry = dlg.custom?.value || '';
             SpecialabilityRulesDSA5._specialabilityReturnFunction(actor, item, typeClass, adoption);
           };
@@ -179,17 +179,17 @@ export default class SpecialabilityRulesDSA5 extends ItemRulesDSA5 {
   }
 
   static hasAbility(actorData, talent, localize = true) {
-    if(localize) talent = game.i18n.localize(talent);
+    if(localize) talent = _loc(talent);
     return super.hasItem(actorData, talent, ['specialability']);
   }
 
   static abilityStep(actorData, talent, localize = true) {
-    if (localize) talent = game.i18n.localize(talent);
+    if (localize) talent = _loc(talent);
     return super.itemStep(actorData, talent, ['specialability']);
   }
 
   static abilityAsModifier(actor, talent, factor = 1, startsWith = false) {
-    talent = game.i18n.localize(talent);
+    talent = _loc(talent);
     return super.itemAsModifier(actor, talent, factor, ['specialability'], startsWith);
   }
 }

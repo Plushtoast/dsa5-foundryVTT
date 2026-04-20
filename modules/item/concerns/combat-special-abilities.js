@@ -21,21 +21,19 @@ export class CombatSpecialAbilities {
         const isDefense = mode === 'parry';
         const keys = isDefense ? ['pa'] : ['at', 'tp', 'dm'];
         const translatedKeys = Object.fromEntries(
-            keys.map(key => [key, game.i18n.localize(`LocalizedAbilityModifiers.${key}`)])
+            keys.map(key => [key, _loc(`LocalizedAbilityModifiers.${key}`)])
         );
         const validSpecAb = isDefense
             ? vals => vals.pa.some(v => v !== 0)
             : vals => vals.at.some(v => v !== 0) || vals.tp.some(v => v !== 0) || vals.dm.some(v => v !== 0);
-
         return combatSpecAbs.reduce((acc, com) => {
             const effects = ModifierCalculator.parseEffect(getProperty(com.system, path), actor);
             const variantCount = ['', '2', '3'].filter(x => getProperty(com, `system.effect.value${x}`)).length;
             const vals = Object.fromEntries(
                 keys.map(key => [key, effects[translatedKeys[key]] || [0]])
             );
-
             if (validSpecAb(vals) || (!isDefense && com.effects.size > 0)) {
-                const subCategory = game.i18n.localize(SpecialabilityData.combatSkillSubCategories[com.system.category.sub]);
+                const subCategory = _loc(SpecialabilityData.combatSkillSubCategories[com.system.category.sub]);
                 const steps = variantCount > 1 && getProperty(com, 'system.step.canNotMultiply') ? 1 : com.system.step.value;
                 acc.push({
                     name: com.name,
@@ -66,7 +64,7 @@ export class CombatSpecialAbilities {
     static #createSearchFilter(toSearch) {
         if (!toSearch) return () => true;
 
-        const normalizedSearch = [...toSearch, game.i18n.localize('LocalizedIDs.all')].map(x => x.toLowerCase());
+        const normalizedSearch = [...toSearch, _loc('LocalizedIDs.all')].map(x => x.toLowerCase());
         return (item) =>
             item.system.list.value
                 .split(/;|,/)
@@ -91,15 +89,11 @@ export class CombatSpecialAbilities {
         const allowedNames = new Set();
         const forbiddenNames = new Set();
         const effectChanges = {};
-
         for (const effect of source.effects || []) {
             if (!DSAActiveEffect.realyRealyEnabled(effect)) continue;
-            
-            for (const change of effect.changes) {
+            for (const change of effect.system?.changes || []) {
                 if (!change.key.startsWith('self.maneuver.')) continue;
-                
                 const parsed = DSA5_Utility.parseAbilityString(change.value);
-
                 if (parsed.name.endsWith('-')) {
                     forbiddenNames.add(parsed.name.slice(0, -1).trim());
                 } else if (parsed.name.endsWith('+')) {
@@ -112,7 +106,6 @@ export class CombatSpecialAbilities {
                 }
             }
         }
-
         return { allowedNames, forbiddenNames, effectChanges };
     }
 
@@ -149,7 +142,6 @@ export class CombatSpecialAbilities {
         const searchFilter = this.#createSearchFilter(toSearch);
         const brawlingFilter = this.#createBrawlingFilter();
         const { allowedNames, forbiddenNames, effectChanges } = this.#processSourceEffects(source);
-
         const combatSpecAbs = actor.items.filter(item =>
             item.type === 'specialability' &&
             categories.includes(item.system.category.value) &&
@@ -158,7 +150,6 @@ export class CombatSpecialAbilities {
             brawlingFilter(item) &&
             !forbiddenNames.has(item.name)
         );
-
         const result = this.buildDataset(combatSpecAbs, actor, mode);
         return this.#applyEffectChanges(result, effectChanges);
     }

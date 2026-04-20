@@ -1,6 +1,7 @@
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
+import GroupActorSheet from '../actor/group-sheet.js';
 
 export default function () {
   game.keybindings.register('dsa5', 'masterMenu', {
@@ -46,6 +47,12 @@ export default function () {
     editable: [],
     onDown: async () => (await SelectUserDialog.getDialog()).render(true),
     restricted: true,
+  });
+  game.keybindings.register('dsa5', 'openGroupSheet', {
+    name: 'GROUP.openGroupSheet',
+    hint: 'KEYBINDINGS.openGroupSheet',
+    editable: [],
+    onDown: () => GroupActorSheet.openPartySheet(),
   });
 }
 

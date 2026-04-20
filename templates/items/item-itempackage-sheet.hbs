@@ -1,0 +1,40 @@
+<div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}'>
+
+  {{formGroup systemFields.price.fields.value value=document.system.price.value localize=true}}
+
+  <fieldset>
+    <legend class='flexrow gap2px'>{{localize 'ITEMPACKAGE.items'}}
+      <button type='button' class='button icons fas fa-plus dsadesignbutton noBorder' data-action='addPackageItem' data-tooltip='ITEMPACKAGE.addItem'></button></legend>
+
+    <div class='package-items'>
+      <div class='row-section'>
+        <label class='col fourty'>{{localize 'Name'}}</label>
+        <label class='col third'>{{localize 'Category'}}</label>
+        <div class='col third flexrow'>
+          <label>{{localize 'quantity'}}</label>
+          <label>{{localize 'CHARAbbrev.QS'}}</label=>
+          <label></label=>
+        </div>
+
+      </div>
+      {{#each packageItems}}
+        <div class='row-section' data-key='{{@key}}'>
+          <div class='col fourty'>
+            {{formInput @root.itemFields.name name=(concat 'system.items.' @key '.name') value=this.name placeholder=(localize 'name')}}
+          </div>
+          <div class='col third'>
+            {{formInput @root.itemFields.type name=(concat 'system.items.' @key '.type') value=this.type choices=@root.equipmentCategories}}
+          </div>
+          <div class='col third flexrow'>
+            {{formInput @root.itemFields.count name=(concat 'system.items.' @key '.count') value=this.count}}
+            {{formInput @root.itemFields.qs name=(concat 'system.items.' @key '.qs') value=this.qs placeholder='Qs'}}
+            <button type='button' class='icon dsadesignbutton noBorder fas fa-trash' data-action='deletePackageItem' data-key='{{@key}}'></button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    <div class='droparea'>
+      {{localize 'ITEMPACKAGE.dropHint'}}
+    </div>
+  </fieldset>
+</div>

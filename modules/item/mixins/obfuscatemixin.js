@@ -31,12 +31,12 @@ export const ItemSheetObfuscation = (superclass) =>
       const tabs = ['details', 'effects', 'description', 'enchantment'];
       const html = $(this.element);
       let swaptab = false;
-      for (let tab of tabs) {
+      for (const tab of tabs) {
         const ele = html.find(`nav [data-tab="${tab}"]`);
         if (!ele.length) continue;
 
         const invisible = options.tabsinvisible || this.isObfuscated(tab);
-        const tooltip = game.i18n.localize(`SHEET.${invisible ? 'deobfuscateItem' : 'obfuscateItem'}`);
+        const tooltip = _loc(`SHEET.${invisible ? 'deobfuscateItem' : 'obfuscateItem'}`);
         if (game.user.isGM) {
           const sectionName = `obfuscateSection${this.obfuscationCss(tab)}`;
           const existingElem = ele.find(`.${sectionName}`);

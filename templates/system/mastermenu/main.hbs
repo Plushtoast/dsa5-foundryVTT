@@ -8,14 +8,17 @@
             <a class="schip groupschip {{item.cssClass}}" data-action="groupschip" data-val="{{item.value}}"></a>
             {{/each}}
         </div>
-        <div class="col ten center">
-            <a data-action="addGroupSchip" data-value="-1"><i class="fas fa-minus"></i></a>
-            <a data-action="addGroupSchip" data-value="1"><i class="fas fa-plus"></i></a>
+        <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-minus dsadesignbutton noBorder" data-action="addGroupSchip" data-value="-1"></button>
+        </div>
+        <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-plus dsadesignbutton noBorder" data-action="addGroupSchip" data-value="1"></button>
+        </div>
+        <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-users dsadesignbutton noBorder" data-action="openPartySheet" data-tooltip="GROUP.members"></button>
         </div>
     </div>
     <div class="row-section">
-        
-        
         <div class="col third lineheight center">
             <b>{{localize "TYPES.Item.skill"}}</b>
         </div>
@@ -23,32 +26,28 @@
             <select name="data.skill" class="skillSelektor select2" style="width:90%">
                 {{selectOptions abilities selected=lastSkill valueAttr="key" labelAttr="name" sort=true}}
             </select>
-        </div>
-    
-        <div class="col ten lineheight center">
-            <a data-action="requestRoll" data-tooltip="HELP.request"><i class="fas fa-dice-two"></i></a>
+        </div>    
+        <div class="col ten lineheight flexrow">
+            <button type="button" class="icon fas fa-dice-two dsadesignbutton noBorder" data-action="requestRoll" data-tooltip="HELP.request"></button>
         </div>
     </div>
     <div class="row-section skills table-title">
         <div class="col ten">
-            <a class="dragEveryone" data-tooltip="MASTER.dragEveryone"><i class="fas fa-grip-vertical"></i></a>
+            <button type="button" class="icon fas fa-grip-vertical dsadesignbutton noBorder dragEveryone" data-tooltip="MASTER.dragEveryone"></button>
         </div>
-        <div class="col fourty">
-            {{localize 'Name'}} <a data-action="randomPlayer" data-tooltip="MASTER.randomPlayer"><i
-                    class="fas fa-dice-six"></i></a>
+        <div class="col fourty flexrow">
+            {{localize 'Name'}} <button type="button" class="icon fas fa-shuffle dsadesignbutton noBorder" data-action="randomPlayer" data-tooltip="MASTER.randomPlayer"></button>
         </div>
-        <div class="col fifteen">
+        <div class="col third">
         </div>
-        <div class="col ten">
+        <div class="col ten flexrow">
             <input type="checkbox" class="selectAll" name="selectAll" value="1">
         </div>
-        <div class="col four">
-            <a data-action="rollAll" data-tooltip="CHAT.RollBlind"><i class="fas fa-dice"></i></a>
-            <a data-action="getPaidAll" data-tooltip="PAYMENT.wage"><i class="fas fa-piggy-bank"></i></a>
-            <a data-action="payAll" data-tooltip="MASTER.payTT"><i class="fas fa-coins"></i></a>
-            <a data-action="expAll" data-tooltip="MASTER.awardXP"><i class="fas fa-trophy"></i></a>
-            <a data-action="groupcheck" data-tooltip="HELP.groupcheck"><i class="fas fa-users-cog"></i></a>
-            <a data-action="addFolder" data-mode="create" data-tooltip="FOLDER.Create"><i class="fas fa-folder"></i></a>
+        <div class="col zerofive flexAlignEnd flexrow">
+            <button type="button" class="icon fas fa-folder dsadesignbutton noBorder" data-action="addFolder" data-mode="create" data-tooltip="SIDEBAR.ACTIONS.CREATE.Folder"></button>
+        </div>
+        <div class="col zerofive flexAlignEnd flexrow">
+            <button type="button" class="icon fas fa-ellipsis-vertical dsadesignbutton noBorder" data-action="headerActions" data-tooltip="JOURNAL.ActionShow"></button>
         </div>
     </div>
     <div class="heros">
@@ -65,13 +64,13 @@
                     <div class="col two">
                         <input type="text" data-id="{{folder.id}}" class="editFolder" style="border:none;margin:0;padding:0" value="{{folder.name}}"/>
                     </div>
-                    <div class="col fifteen">
+                    <div class="col third">
                     </div>
-                    <div class="col ten">
+                    <div class="col ten flexrow">
                         <input type="checkbox" data-folder="{{folder.id}}" class="selectAll" name="selectAll" value="1">
                     </div>
-                    <div class="col four center">
-                        <a data-action="addFolder" data-id="{{folder.id}}" data-mode="delete" data-tooltip="FOLDER.Remove"><i class="fas fa-trash"></i></a>
+                    <div class="col ten flexrow flexAlignEnd">
+                        <button type="button" class="icon fas fa-trash dsadesignbutton noBorder" data-action="addFolder" data-id="{{folder.id}}" data-mode="delete" data-tooltip="FOLDER.Remove"></button>
                     </div>
                 </div>
             </div>

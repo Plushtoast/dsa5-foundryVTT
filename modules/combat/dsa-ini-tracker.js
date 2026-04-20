@@ -93,7 +93,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    let unRolled = data.turns.some((x) => x.isOwner && !x.initiative && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
+    const unRolled = data.turns.some((x) => x.isOwner && !x.initiative && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
     if (turnsToUse.length) {
       const filteredTurns = [];
 
@@ -216,6 +216,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const combatantId = ev.currentTarget.dataset.combatantId;
     const combatant = game.combat.combatants.get(combatantId);
     if (!combatant?.actor) return;
+    if (!game.user.isGM && !combatant.actor.isOwner) return;
 
     GlobalToolTipHandler.handleTooltip(ev, combatant.actor);
   }

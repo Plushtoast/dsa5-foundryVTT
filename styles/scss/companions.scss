@@ -1,0 +1,719 @@
+.companion-hotbar-icon {
+    .status-icon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        background: rgba(0, 0, 0, 0.4);
+        color: rgba(0, 0, 0, 0.8);
+        border-radius: 50%;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    &:hover .status-icon {
+        opacity: 1;
+    }
+}
+
+.dsa5-companion {
+
+    /* COMPANION SHEET TAB STYLES                 */
+
+    .companion-header-ui {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+
+    .companion-nature-container {
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        margin-left: 8px;
+    }
+
+    .companion-icon-black {
+        font-size: 0.8em;
+        vertical-align: middle;
+        color: black;
+    }
+
+    .companion-nature-arrow {
+        font-size: 0.6em;
+        margin-left: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s;
+
+        .companion-nature-container:hover & {
+            opacity: 1;
+        }
+    }
+
+    .companion-nature-options {
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 2px 4px;
+        margin-left: 4px;
+        z-index: 100;
+        white-space: nowrap;
+    }
+
+    .companion-nature-change {
+        font-size: 0.8em;
+        cursor: pointer;
+        color: black;
+    }
+
+    .companion-attributes-header {
+        margin-top: 5px;
+    }
+
+
+    .companion-attributes-row {
+        min-width: 190px;
+        justify-content: flex-start;
+        gap: 5px;
+        padding-left: 0;
+    }
+
+    .companion-attrib-card {
+        margin-right: 2px;
+    }
+
+    .companion-attrib-val {
+        font-size: 0.9em;
+    }
+
+    .companion-attrib-lbl {
+        font-size: 0.7em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .companion-effects-row {
+        margin-left: 0;
+        border: none;
+        display: flex;
+    }
+
+    .companion-effects-container {
+        padding-left: 0;
+        margin-left: 0;
+        align-items: center;
+        border: none;
+        background: transparent;
+    }
+
+    .companion-effects-placeholder {
+        visibility: hidden;
+        margin-left: 0;
+        pointer-events: none;
+        flex: 1;
+    }
+
+    .companion-effects-list-wrapper {
+        flex: 0 0 30px;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .companion-effects-list {
+        position: absolute;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 8px;
+        white-space: nowrap;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+    }
+
+    .companion-effect-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        cursor: pointer;
+        flex: 0 0 24px;
+        padding: 0;
+        border: none;
+        background: transparent;
+    }
+
+    .companion-effect-img {
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        filter: invert(62%) sepia(91%) saturate(3015%) hue-rotate(15deg) brightness(101%) contrast(106%) drop-shadow(1px 1px 1px white);
+    }
+
+    .companion-effect-badge {
+        position: absolute;
+        bottom: -4px;
+        right: -4px;
+        background: #ff9d00;
+        color: black;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-size: 10px;
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid black;
+        line-height: 12px;
+    }
+
+    .companion-loyalty-row {
+        border: none;
+        display: flex;
+        align-items: center;
+        min-height: 45px;
+        flex-wrap: nowrap;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .companion-loyalty-skills {
+        flex: 0 0 160px;
+        max-width: 160px;
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        gap: 6px;
+    }
+
+    .companion-loyalty-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 45px;
+    }
+
+    .companion-talent-name {
+        font-weight: bold;
+        white-space: nowrap;
+        font-size: 16px;
+    }
+
+    .companion-skill-advances {
+        text-align: center;
+        width: 35px;
+        height: 30px;
+        border-radius: 3px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .companion-loyalty-bottom-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 45px;
+        width: 100%;
+    }
+
+    .companion-dice-btn {
+        text-transform: uppercase;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        height: 45px;
+        padding: 0 15px;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .companion-hotbar {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 0 10px;
+    }
+
+    .companion-hotbar-row {
+        display: flex;
+        gap: 6px;
+        height: 45px;
+    }
+
+    .companion-slot {
+        width: 45px;
+        height: 45px;
+        border: 1px solid var(--color-border-dark-4, rgba(0, 0, 0, 0.5));
+        border-radius: 3px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .companion-right-icons {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        padding-right: 15px;
+        gap: 6px;
+    }
+
+    .companion-right-icons-row {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        height: 45px;
+    }
+
+    .companion-right-icons-row.bottom {
+        justify-content: center;
+        width: 82px;
+    }
+
+    .companion-right-icons-row.bottom.mount-possible {
+        justify-content: flex-end;
+    }
+
+    .companion-icon-btn {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+
+    .companion-icon-black-18 {
+        font-size: 18px;
+        color: black;
+    }
+
+    /* COMPANION TRAINING/TRICKS TAB STYLES       */
+
+    /* Layout & Header */
+
+    .species-img {
+        width: 50px;
+        height: 50px;
+        border: 1px solid var(--dsa-border-color, #000);
+        border-radius: 4px;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Tierart Auswahl Dropdown */
+    .species-selector-box {
+        max-height: 350px;
+        overflow-y: auto;
+        border: 1px solid var(--dsa-border-color);
+        padding: 10px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.05);
+        margin-bottom: 15px;
+    }
+
+    .species-group-name {
+        margin: 10px 0 5px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        font-family: 'Modesto Condensed', sans-serif;
+        font-size: 1.2em;
+    }
+
+
+
+    .species-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 4px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        transition: background 0.2s;
+    }
+
+    .species-item:hover {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* Ersetzt das alte JS onmouseover */
+    .species-item-img {
+        width: 24px;
+        height: 24px;
+        border: none;
+        object-fit: cover;
+        border-radius: 3px;
+    }
+
+    .species-item-name {
+        font-size: 0.85em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .species-item {
+        flex-wrap: wrap;
+
+        .species-item-badges {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            font-size: 0.75em;
+        }
+
+        .species-item-modules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            width: 100%;
+            padding-left: 32px;
+            font-size: 0.7em;
+        }
+    }
+
+    .training-content-body {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .training-tab-wrapper {
+        padding: 15px;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+
+    /* Loyalitäts Tab */
+    .loyalty-center-box {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .loyalty-skill-box {
+        flex: 0 0 120px;
+        max-width: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        gap: 4px;
+    }
+
+    .loyalty-name {
+        font-weight: bold;
+        white-space: nowrap;
+        cursor: pointer;
+        margin-bottom: 2px;
+    }
+
+    .loyalty-input-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .loyalty-advance-btn {
+        cursor: pointer;
+        color: var(--color-text-dark-primary);
+    }
+
+    .loyalty-input {
+        text-align: center;
+        width: 32px;
+        height: 22px;
+        border-radius: 3px;
+        font-weight: bold;
+        pointer-events: none;
+        margin: 0;
+    }
+
+    .loyalty-roll-btn {
+        width: auto;
+        padding: 5px 20px;
+        font-weight: bold;
+    }
+
+    .loyalty-roll-icon {
+        margin-right: 5px;
+    }
+
+    /* Tricks Limit Box */
+    .known-tricks-box {
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    .known-tricks-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+
+
+
+    .known-tricks-item {
+        text-align: center;
+    }
+
+    .training-divider {
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        margin: 0 0 15px 0;
+    }
+
+    /* Listen Grids (Tricks/Trainings) */
+    .training-grid-wrapper {
+        margin-bottom: 15px;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 15px 0;
+    }
+
+
+
+    .training-col-header {
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        font-family: 'Modesto Condensed', sans-serif;
+        font-size: 1.2em;
+    }
+
+    .training-col-header.center {
+        text-align: center;
+        width: 60%;
+    }
+
+
+    .training-list-container.center {
+        width: 60%;
+    }
+
+    /* Listen Items */
+    .training-item-container {
+        border: 1px solid var(--dsa-border-color);
+        border-radius: 3px;
+        background: rgba(0, 0, 0, 0.02);
+        padding: 5px;
+    }
+
+    .training-item-container.center {
+        text-align: center;
+        padding: 8px;
+    }
+
+    .training-item-container.unavailable {
+        opacity: 0.7;
+    }
+
+    .training-item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .training-item-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .training-item-arrow {
+        cursor: pointer;
+        width: 12px;
+        text-align: center;
+    }
+
+    .training-item-link {
+        font-weight: bold;
+        border: none;
+    }
+
+    .training-item-link.unavailable {
+        color: var(--color-text-dark-secondary);
+    }
+
+    .training-item-link.pad-left {
+        padding-left: 10px;
+    }
+
+    /* Item Buttons & Details */
+    .training-btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 140px;
+        padding: 2px 10px;
+        font-weight: bold;
+        font-size: 0.8em;
+        height: 24px;
+        line-height: 1;
+    }
+
+    .training-btn[disabled] {
+        filter: grayscale(1);
+        opacity: 0.7;
+        cursor: not-allowed;
+        border: 1px solid var(--dsa-border-color, #888);
+    }
+
+    .training-btn-icon {
+        width: 16px;
+        text-align: center;
+        margin-right: 5px;
+    }
+
+    .training-item-details {
+        padding: 5px 0 0 20px;
+        font-size: 0.85em;
+        color: gray;
+    }
+
+    .training-item-details.unavailable {
+        color: darkred;
+    }
+
+    .training-empty-state {
+        font-size: 0.85em;
+        color: gray;
+        font-style: italic;
+    }
+
+    /* Spezifische Limit Boxen Training */
+    .max-training-box {
+        text-align: center;
+        font-style: italic;
+        color: darkred;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+        font-weight: bold;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .known-training-center-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    /* COMPANION OWNER TAB STYLES                 */
+
+    .owner-card {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.02);
+        cursor: pointer;
+        transition: background 0.2s ease-in-out;
+    }
+
+    /* Nutzt die Transition für einen weichen Button-Effekt */
+    .owner-card:hover {
+        background: rgba(0, 0, 0, 0.08);
+    }
+
+    .owner-card-img {
+        border: none;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    .owner-card-title {
+        margin: 0;
+        flex-grow: 1;
+    }
+
+    /* COMPANION SKILL SELECTION DIALOG STYLES    */
+
+    /* Haupt-Layout */
+    .skill-selection-container {
+        padding: 10px 15px;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    /* Info-Box oben */
+
+
+    /* Kategorien & Listen */
+    .skill-selection-categories {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 15px;
+    }
+
+    .skill-selection-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 5px 0 15px 0;
+    }
+
+    /* Slots (Basis-Design für Drag & Hotbar) */
+
+
+    .skill-selection-drag-slot {
+        cursor: grab;
+    }
+
+    .skill-selection-hotbar-slot {
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* Hotbar Container unten */
+    .skill-selection-hotbar-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .skill-selection-hotbar-row {
+        display: flex;
+        gap: 6px;
+        height: 45px;
+    }
+
+}
+
+/* .dsa5-companion */

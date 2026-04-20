@@ -1,9 +1,10 @@
 import PlayerMenu from '../wizards/player_menu.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
-import RequestRoll from '../system/rolls/request-roll.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import GroupCheck from '../system/rolls/group-check.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
+import CompanionHotbar from '../actor/companions/companion-hotbar.js';
 import { dropToGround } from './itemDrop.js';
 import DSA5 from '../config/config-dsa5.js';
 import { Trade } from '../actor/trade.js';
@@ -11,8 +12,11 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5Combat from '../combat/combat.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
+import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', (data) => {
@@ -21,16 +25,16 @@ export function connectSocket() {
         DSA5Combat.brawlStart(2000, false);
         return;
       case 'hideDeletedSheet':
-        let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
+        const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
         MerchantSheetDSA5.hideDeletedSheet(target);
         return;
       case 'refreshSheets':
-        for (let app of Object.values(ui.windows)) {
+        for (const app of Object.values(ui.windows)) {
           if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
         }
-        for (let sheet of data.payload.sheets) {
+        for (const sheet of data.payload.sheets) {
           if (!sheet.sheetId) continue;
-          let app = foundry.applications.instances.get(sheet.sheetId);
+          const app = foundry.applications.instances.get(sheet.sheetId);
           if (app && app.rendered) {
             app.render(true);
           }
@@ -46,6 +50,24 @@ export function connectSocket() {
     if (!DSA5_Utility.isActiveGM()) return;
 
     switch (data.type) {
+      case 'consumeEffectCharges':
+        {
+          const effectUuids = data.payload?.effectUuids || [];
+          const amount = data.payload?.amount ?? 1;
+          Promise.all(effectUuids.map(async (uuid) => {
+            try {
+              const effect = await fromUuid(uuid);
+              const charges = effect?.getFlag?.('dsa5', 'charges');
+              const value = Number(charges?.value);
+              if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+              if (effect.disabled) return;
+              await effect.consumeCharges(amount);
+            } catch (e) {
+              console.error('GM socket consumeEffectCharges failed', uuid, e);
+            }
+          }));
+        }
+        break;
       case 'updateKeepField':
         {
           if (DSA5.allowedforeignfields.includes(data.payload.field)) {
@@ -56,8 +78,8 @@ export function connectSocket() {
         break;
       case 'target':
         {
-          let scene = game.scenes.get(data.payload.scene);
-          let token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
+          const scene = game.scenes.get(data.payload.scene);
+          const token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
           token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
         }
         break;
@@ -66,6 +88,9 @@ export function connectSocket() {
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
+        break;
+      case 'deleteEffectsByUuid':
+        MaintainedEffects.deleteByUuid(data.payload?.uuids || []);
         break;
       case 'deleteMsg':
         game.messages.get(data.payload.id).delete();
@@ -77,7 +102,7 @@ export function connectSocket() {
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        RequestRoll.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
+        GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTrackerId':
         APTracker.receiveSocketEvent(data);
@@ -99,10 +124,22 @@ export function connectSocket() {
       case 'updateDefenseCount':
         if (game.combat) game.combat.updateDefenseCount(data.payload.speaker);
         break;
+      case 'updateActionCount':
+        if (game.combat) game.combat.updateActionCount(data.payload.speaker, data.payload.cost);
+        break;
+      case 'toggleFreeAction':
+        if (game.combat) game.combat.toggleFreeAction(data.payload.speaker);
+        break;
+      case 'handleMovementCost':
+        if (game.combat) {
+          const movTokenDoc = canvas.scene?.tokens?.get(data.payload.tokenId);
+          if (movTokenDoc) game.combat.handleMovementCost(movTokenDoc);
+        }
+        break;
       case 'trade':
         {
-          let source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
-          let target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
+          const source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
+          const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
           MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount);
         }
         break;
@@ -142,11 +179,14 @@ export function connectSocket() {
         break;
       case 'itemDrop':
         {
-          let sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
+          const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
             dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
           });
         }
+        break;
+      case 'summonCompanion':
+        CompanionHotbar.summonCompanion(data.payload);
         break;
       case 'finalizeFoodContribution':
       case 'finalizeidentification':
@@ -154,16 +194,19 @@ export function connectSocket() {
       case 'hideResistButton':
         break;
       case 'requestShapeshift':
-        game.dsa5.config.hooks.shapeshift.constructor.onRequestShapeshift(data.payload);
+        ShapeshiftWizard.onRequestShapeshift(data.payload);
         break
       case 'requestRestoreShape':
-        game.dsa5.config.hooks.shapeshift.constructor.onRestoreShape(data.payload);
+        ShapeshiftWizard.onRestoreShape(data.payload);
         break
       case 'reduceGroupSchip':
         FateRolls.reduceGroupSchip();
         break;
       case 'summonCreature':
         PlayerMenu.createConjuration(data.payload);
+        break;
+      case 'summonCreatureMacro':
+        SummoningExecutor.execute(data.payload);
         break;
       default:
         console.warn(`Unhandled socket data type ${data.type}`);

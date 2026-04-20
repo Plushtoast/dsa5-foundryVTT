@@ -13,8 +13,8 @@ import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { localize, format } from '../system/helpers/localizer.js';
 import SpecialabilityData from '../data/item/specialability.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -91,10 +91,10 @@ export default class DSA5CombatDialog extends DialogShared {
   };
 
   static setData(actor, type, testData, renderData) {
-    let rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
+    const rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
     rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode);
     if (renderData.rangeOptions) {
-      for (let key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
+      for (const key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
     }
 
     const flattendRollModifiers = foundry.utils.flattenObject(rollModifiers);
@@ -103,16 +103,16 @@ export default class DSA5CombatDialog extends DialogShared {
     if (actor.system[tt]) {
       const flattenedActorData = foundry.utils.flattenObject(foundry.utils.duplicate(actor.system[tt]));
 
-      for (let key of Object.keys(flattendRollModifiers)) flattendRollModifiers[key] += Number(flattenedActorData[key]) || 0;
+      for (const key of Object.keys(flattendRollModifiers)) flattendRollModifiers[key] += Number(flattenedActorData[key]) || 0;
     }
 
     for (const effect of testData.source.effects || []) {
       if (effect.disabled) continue;
 
-      for (const change of effect.changes) {
+      for (const change of effect.system?.changes || []) {
         if (!change.key.startsWith('self.')) continue;
 
-        for (let key of Object.keys(flattendRollModifiers)) if (change.key == `self.${key}`) flattendRollModifiers[key] += Number(change.value) || 0;
+        for (const key of Object.keys(flattendRollModifiers)) if (change.key == `self.${key}`) flattendRollModifiers[key] += Number(change.value) || 0;
       }
     }
 
@@ -145,7 +145,7 @@ export default class DSA5CombatDialog extends DialogShared {
       }
       if (!value) continue;
 
-      const localizedLabel = localize(label).toUpperCase();
+      const localizedLabel = _loc(label).toUpperCase();
       let tooltipText = `<i class="${icon}"></i> ${localizedLabel}: ${value}`;
 
       const flatKey = `${key}Flat`;
@@ -174,14 +174,14 @@ export default class DSA5CombatDialog extends DialogShared {
     await super._onRender(context, options);
 
     const html = $(this.element);
-    let specAbs = html.find('.specAbs');
+    const specAbs = html.find('.specAbs');
     specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
       this.setCombatSpecTooltip(el);
       if (el.getElementsByClassName('hovermenu').length == 0) {
-        let div = document.createElement('div');
+        const div = document.createElement('div');
         div.classList.add('hovermenu');
-        let post = document.createElement('i');
+        const post = document.createElement('i');
         post.classList.add('fas', 'fa-comment');
         post.dataset.tooltip = 'SHEET.PostItem';
         post.addEventListener('mousedown', this._postItem, false);
@@ -190,7 +190,7 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     });
     specAbs.on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
+      const e = ev.toElement || ev.relatedTarget;
       if (e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
@@ -243,21 +243,14 @@ export default class DSA5CombatDialog extends DialogShared {
     });
     html.find('.opportunityAttack').on('change', (ev) => {
       if ($(ev.currentTarget).is(':checked')) {
-        for (let k of html.find('.specAbs')) {
+        for (const k of html.find('.specAbs')) {
           $(k).removeClass('active').attr('data-step', 0).find('.step').text('');
         }
       }
     });
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
-    html.find('.modifiers option').on('mousedown', (ev) => this.calculateModifier(ev));
     html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
-    let targets = this.readTargets();
-    // not great
-    const that = this;
-    this.checkTargets = setInterval(function () {
-      targets = that.compareTargets(html, targets);
-    }, 500);
   }
 
   checkCounterAttack(ev) {
@@ -266,7 +259,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     if (!actor) return;
 
-    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === localize('LocalizedIDs.counterAttack');
+    const isCounterAttack = actor.items.get(ev.currentTarget.dataset.id)?.name === _loc('LocalizedIDs.counterAttack');
     if (!isCounterAttack) return;
 
     this.dialogData.counterAttack = ev.button === 0;
@@ -275,7 +268,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const mode = ev.button === 0 ? 'attack' : 'parry';
     const item = actor.items.get(this.dialogData.source._id);
     const html = $(this.element);
-    const htmlMods = html.find('[name=situationalModifiers]');
+    const widget = this.getSituationalModifiersWidget(html);
 
     let situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item, { mode });
     const cls = ItemFactory.getSubClass(item.type);
@@ -284,13 +277,13 @@ export default class DSA5CombatDialog extends DialogShared {
     if (mode === 'attack') {
       situationalModifiers = situationalModifiers.filter(x => x.type !== 'defenseMalus');
 
-      const attackStatIndex = situationalModifiers.findIndex(x => x.name === localize('statuseffects'));
+      const attackStatIndex = situationalModifiers.findIndex(x => x.name === _loc('statuseffects'));
       const attackStatEffect = attackStatIndex >= 0 ? situationalModifiers.splice(attackStatIndex, 1)[0] : null;
 
       const defenseModifiers = [];
       cls.getSituationalModifiers(defenseModifiers, actor, { mode: 'parry' }, item);
 
-      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === localize('statuseffects'));
+      const defenseStatIndex = defenseModifiers.findIndex(x => x.name === _loc('statuseffects'));
       const defenseStatEffect = defenseStatIndex >= 0 ? defenseModifiers.splice(defenseStatIndex, 1)[0] : null;
 
       situationalModifiers.unshift(...defenseModifiers);
@@ -304,34 +297,8 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     }
 
-    if (situationalModifiers.length > 0) {
-      if (htmlMods.length === 0) {
-        const modBox = `<div class="modifiers form-group">
-          <label>${localize('DIALOG.SituationalModifiers')}</label>
-          <select name="situationalModifiers" multiple />
-        </div>`;
-        html.find('[name=rollMode]').parent().after(modBox);
-        this.position.height += 86;
-        this.setPosition(this.position);
-      }
-
-      const options = situationalModifiers.map(mod =>
-        `<option value="${mod.value}" 
-           data-tooltip="${Handlebars.helpers.situationalTooltip(mod)}"
-           ${mod.type ? ` data-type="${mod.type}"` : ''}
-           ${mod.specAbId ? ` data-spec-ab-id="${mod.specAbId}"` : ''}
-           ${mod.armorPen ? ` data-armor-pen="${mod.armorPen}"` : ''}
-           ${mod.selected ? ' selected' : ''}>
-           ${mod.name} [${mod.value}]
-        </option>`
-      ).join('');
-
-      html.find('.modifiers select').html(options);
-    } else if (htmlMods.length > 0) {
-      htmlMods.parent().remove();
-      this.position.height -= 86;
-      this.setPosition(this.position);
-    }
+    widget?.setModifiers(situationalModifiers);
+    this.setPosition({ height: 'auto' });
   }
 
   changeSpecAbVariant(ev) {
@@ -362,11 +329,6 @@ export default class DSA5CombatDialog extends DialogShared {
       this.setCombatSpecTooltip(parent);
       this.calculateModifier();
     }
-  }
-
-  async close(options = {}) {
-    clearInterval(this.checkTargets);
-    return await super.close(options);
   }
 
   _postItem(ev) {
@@ -404,7 +366,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
   setMovement(html, targets) {
     if (!DPS.isEnabled) return;
-    if (game.canvas.grid.units != localize('gridUnits')) return;
+    if (game.canvas.grid.units != _loc('gridUnits')) return;
     if (this.dialogData.source.type != 'rangeweapon') return;
 
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
@@ -482,7 +444,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (actor) {
         const combatskill = source.system.combatskill.value;
         let weapon;
-        let skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
+        const skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
           step: this.syncSituationalModifiers(testData, 'step'),
           [this.dialogData.mode]: this.syncSituationalModifiers(testData, this.dialogData.mode),
         });
@@ -515,6 +477,15 @@ export default class DSA5CombatDialog extends DialogShared {
 
   async prepareFormRecall(html) {
     await super.prepareFormRecall(html);
+
+    if (
+      this.dialogData?.source?.type === 'rangeweapon' ||
+      (this.dialogData?.source?.type === 'trait' && this.dialogData.source.system.traitType.value === 'rangeAttack')
+    ) {
+      const aimProgress = Math.clamp(Number(getProperty(this.dialogData.source, 'system.aimTime.progress')) || 0, 0, 2);
+      html.find('[name="aim"]').prop('selectedIndex', aimProgress);
+    }
+
     const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
     DPS.lightLevel(actor, html);
     const isRider = Riding.isRiding(actor);
@@ -545,7 +516,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const aimingMod = Math.min(Number(formData.aim) || 0, 4);
     const sizeMod = Number(formData.size) || 0;
-    const modeTranslated = localize(`DIALOG.${mode}`);
+    const modeTranslated = _loc(`DIALOG.${mode}`);
     const result = [
       {
         name: modeTranslated,
@@ -557,7 +528,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const multiplier = Math.max(1, 4 - dices);
     result.push(
       {
-        name: modeTranslated + ' (' + localize('CHARAbbrev.damage') + ')',
+        name: modeTranslated + ' (' + _loc('CHARAbbrev.damage') + ')',
         damageBonus: tpMod,
         value: 0,
         step: 1,
@@ -591,7 +562,7 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.opposingWeaponSize = opposingWeaponSizeIndex;
 
     const advantageousPositionMod = formData.advantageousPosition ? 2 : 0;
-    const modeTranslated = localize(`DIALOG.${mode}`);
+    const modeTranslated = _loc(`DIALOG.${mode}`);
 
     const baseValue = 10 - advantageousPositionMod - opposingWeaponSizeIndex;
     const result = [{ name: modeTranslated, value: baseValue }];
@@ -602,7 +573,7 @@ export default class DSA5CombatDialog extends DialogShared {
         DSA5.meleeRangesArray.indexOf(getProperty(testData, 'source.system.reach.value'))
       );
 
-      if (!RuleChaos.isYieldedTwohanded(testData.source) && getProperty(testData, 'source.system.worn.wrongGrip')) {
+      if (!RuleChaos.isWieldedTwohanded(testData.source) && getProperty(testData, 'source.system.worn.wrongGrip')) {
         weaponSize = Math.min(weaponSize, 1);
       }
 
@@ -612,7 +583,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
       result.push(
         {
-          name: `${modeTranslated} (${localize('CHARAbbrev.damage')})`,
+          name: `${modeTranslated} (${_loc('CHARAbbrev.damage')})`,
           damageBonus: tpMod,
           value: 0,
           step: 1,
@@ -632,7 +603,6 @@ export default class DSA5CombatDialog extends DialogShared {
       if (!exists) {
         testData.source.effects.push({
           _id: modeTranslated,
-          changes: [],
           disabled: false,
           duration: {},
           icon: 'icons/svg/aura.svg',
@@ -641,7 +611,7 @@ export default class DSA5CombatDialog extends DialogShared {
           flags: {
             dsa5: {
               description: modeTranslated,
-              resistRoll: `${localize('LocalizedIDs.selfControl')} -3`,
+              resistRoll: `${_loc('LocalizedIDs.selfControl')} -3`,
               hideOnToken: false,
               hidePlayers: false,
               customDuration: '',
@@ -649,6 +619,9 @@ export default class DSA5CombatDialog extends DialogShared {
               args0: 'unconscious',
               args1: '',
             },
+          },
+          system: {
+            changes: [],
           },
         });
       }
@@ -681,24 +654,24 @@ export default class DSA5CombatDialog extends DialogShared {
     if (!waterOptions) return [];
 
     const result = [{
-      name: `${localize('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
+      name: `${_loc('MODS.combatInWater')} - ${this._getSelectedText('waterOptions', html)}`,
       value: waterOptions,
     }];
 
     const source = testData.source;
     if (source.type === 'trait' || waterIndex < 2) return result;
 
-    const combatInWater = localize('LocalizedIDs.combatInWater');
+    const combatInWater = _loc('LocalizedIDs.combatInWater');
     const weaponMadeForWater = getProperty(source, 'system.effect.attributes')?.includes(combatInWater);
 
     if (weaponMadeForWater) return result;
 
     const combatskill = source.system.combatskill?.value;
-    const reverseCombatskill = localize(`LocalizedCTs.${combatskill}`);
+    const reverseCombatskill = _loc(`LocalizedCTs.${combatskill}`);
 
     if (DSA5.impossibleWeaponsForWater.has(reverseCombatskill)) {
       result.push({
-        name: `${localize('MODS.combatInWater')} - ${format('MODS.impossibleWeapon', { weapon: combatskill })}`,
+        name: `${_loc('MODS.combatInWater')} - ${_loc('MODS.impossibleWeapon', { weapon: combatskill })}`,
         value: -5000,
       });
       return result;
@@ -716,7 +689,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (damageBonus < 1) {
       result.push({
-        name: `${localize('MODS.combatInWater')} - ${format('MODS.notSuitableWeapon', { weapon: combatskill })}`,
+        name: `${_loc('MODS.combatInWater')} - ${_loc('MODS.notSuitableWeapon', { weapon: combatskill })}`,
         damageBonus: `*${damageBonus}`,
         value: 0,
         step: 1,
@@ -754,6 +727,12 @@ export default class DSA5CombatDialog extends DialogShared {
     return getProperty(DSA5.narrowSpaceModifiers, `weapon${testData.source.system.reach.value}.${mode}`) || 0;
   }
 
+  static getWeaponReachModifier(source, opposingWeaponSize) {
+    const attackerReach = source.system?.reach?.value || 'short';
+    const defenderReach = opposingWeaponSize || 'short';
+    return DSA5.weaponReachModifiers[attackerReach]?.[defenderReach] ?? 0;
+  }
+
   static resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, mode) {
     this._resolveDefault(testData, cardOptions, html, options);
 
@@ -768,39 +747,43 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
 
     const modifiers = [
-      ModifierCalculator.parseValueType(localize('sight'), data.vision || 0),
+      ModifierCalculator.parseValueType(_loc('sight'), data.vision || 0),
       {
-        name: localize('MODS.attackFromBehind'),
+        name: _loc('MODS.attackFromBehind'),
         value: testData.extra.attackFromBehind,
       },
       {
-        name: localize('MODS.damage'),
+        name: _loc('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: format('defenseCount', { malus: multipleDefenseValue }),
+        name: _loc('defenseCount', { malus: multipleDefenseValue }),
         value: (Number(data.defenseCount) || 0) * multipleDefenseValue,
       },
       {
-        name: localize('MODS.wrongHand'),
+        name: _loc('MODS.wrongHand'),
         value: Number(data.wrongHand) || 0,
       },
       {
-        name: localize('MODS.advantageousPosition'),
+        name: _loc('MODS.advantageousPosition'),
         value: Number(data.advantageousPosition) || 0,
       },
       {
-        name: localize('sizeCategory'),
+        name: _loc('opposingWeaponSize'),
+        value: attackerIsSwarm ? 0 : DSA5CombatDialog.getWeaponReachModifier(testData.source, data.weaponsize),
+      },
+      {
+        name: _loc('sizeCategory'),
         value: targetIsSwarm ? 0 : DSA5.meleeSizeModifier[data.size] || 0,
       },
       {
-        name: localize('MODS.narrowSpace'),
+        name: _loc('MODS.narrowSpace'),
         value: Number(data.narrowSpace) || 0,
       },
       {
-        name: localize('MODS.doubleAttack'),
+        name: _loc('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
       ...Itemdsa5.getSpecAbModifiers(html, mode),
@@ -810,7 +793,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     testData.situationalModifiers.push(...modifiers);
 
-    if (testData.situationalModifiers.some(x => x.name === localize('LocalizedIDs.counterAttack'))) {
+    if (testData.situationalModifiers.some(x => x.name === _loc('LocalizedIDs.counterAttack'))) {
       testData.mode = 'attack';
       testData.extra.counterAttack = true;
     }
@@ -834,48 +817,47 @@ export default class DSA5CombatDialog extends DialogShared {
     const mountedOptions = Number(data.mountedOptions) || 0;
     const aim = Math.min(Number(data.aim) || 0, 4);
 
-
     const modifiers = [
       {
-        name: `${localize('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
+        name: `${_loc('MODS.targetMovement')} ${this._getSelectedText('targetMovement', html)}`,
         value: targetMovement,
       },
       {
-        name: `${localize('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
+        name: `${_loc('shooter')} ${this._getSelectedText('shooterMovement', html)}`,
         value: shooterMovement,
       },
       {
-        name: `${localize('mount')} ${this._getSelectedText('mountedOptions', html)}`,
+        name: `${_loc('mount')} ${this._getSelectedText('mountedOptions', html)}`,
         value: mountedOptions,
       },
       {
-        name: localize('MODS.quickChange'),
+        name: _loc('MODS.quickChange'),
         value: quickChange,
       },
       {
-        name: localize('MODS.combatTurmoil'),
+        name: _loc('MODS.combatTurmoil'),
         value: Number(data.combatTurmoil) || 0,
       },
       {
-        name: localize('MODS.aim'),
+        name: _loc('MODS.aim'),
         value: aim,
       },
       {
-        name: localize('MODS.damage'),
+        name: _loc('MODS.damage'),
         damageBonus: data.damageModifier,
         value: 0,
         step: 1,
       },
       {
-        name: localize('sight'),
+        name: _loc('sight'),
         value: Number(data.vision) || 0,
       },
       {
-        name: localize('sizeCategory'),
+        name: _loc('sizeCategory'),
         value: sizeMod,
       },
       {
-        name: localize('distance'),
+        name: _loc('distance'),
         value: Number(rangeMod.attack) || 0,
         damageBonus: Number(rangeMod.damage) || 0,
       },
@@ -899,7 +881,7 @@ export default class DSA5CombatDialog extends DialogShared {
   static _applySharpshooterBonus(testData, actor, formData, modValues) {
     const sharpshooter = actor.items.find(
       item => item.type === 'specialability' &&
-        item.name === localize('LocalizedIDs.sharpshooter')
+        item.name === _loc('LocalizedIDs.sharpshooter')
     );
 
     if (!sharpshooter) return;
@@ -933,15 +915,15 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (sharpshooterBonus > 0) {
       testData.situationalModifiers.push({
-        name: localize('LocalizedIDs.sharpshooter'),
+        name: _loc('LocalizedIDs.sharpshooter'),
         value: sharpshooterBonus,
       });
     }
   }
 
   static _resolveDefault(testData, cardOptions, html, options) {
-    cardOptions.rollMode = html.find('[name="rollMode"]:checked').val();
-    testData.situationalModifiers = ModifierCalculator._parseModifiers(html);
+    cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
+    testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
     mergeObject(testData.extra.options, options);
   }
 
@@ -957,14 +939,14 @@ export default class DSA5CombatDialog extends DialogShared {
   }
 
   static attackOfOpportunity(situationalModifiers, formData) {
-    let value = Number(formData.opportunityAttack) || 0;
+    const value = Number(formData.opportunityAttack) || 0;
     if (value) {
       situationalModifiers.push({
-        name: localize('MODS.opportunityAttack'),
+        name: _loc('MODS.opportunityAttack'),
         value,
       });
-      const enemySense = localize('LocalizedIDs.enemySense');
-      const winhallStyle = localize('LocalizedIDs.winhallStyle');
+      const enemySense = _loc('LocalizedIDs.enemySense');
+      const winhallStyle = _loc('LocalizedIDs.winhallStyle');
       game.user.targets.forEach((target) => {
         for (const item of target.actor?.items || []) {
           if (item.type == 'specialability') {
@@ -995,7 +977,7 @@ export default class DSA5CombatDialog extends DialogShared {
       if (progress < LZ) {
         buttons.push({
           action: 'reloadButton',
-          label: `${localize('WEAPON.reload')} (${progress}/${LZ})`,
+          label: `${_loc('WEAPON.reload')} (${progress}/${LZ})`,
           callback: async () => {
             const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
             await actor.updateEmbeddedDocuments('Item', [
@@ -1004,7 +986,7 @@ export default class DSA5CombatDialog extends DialogShared {
                 'system.reloadTime.progress': progress + 1,
               },
             ]);
-            const infoMsg = format('WEAPON.isReloading', {
+            const infoMsg = _loc('WEAPON.isReloading', {
               actor: actor.token?.name || actor.prototypeToken.name,
               item: testData.source.name,
               status: `${progress + 1}/${LZ}`,
@@ -1013,6 +995,43 @@ export default class DSA5CombatDialog extends DialogShared {
           },
         });
       }
+
+      const loaded = LZ === 0 || progress >= LZ;
+      const aimProgress = Math.clamp(Number(getProperty(testData.source, 'system.aimTime.progress')) || 0, 0, 2);
+      if (loaded && aimProgress < 2) {
+        buttons.push({
+          action: 'aimButton',
+          label: `${_loc('WEAPON.aim')} (${aimProgress}/2)`,
+          callback: async () => {
+            const actor = await DSA5_Utility.getSpeaker(testData.extra.speaker);
+            const weapon = actor?.items?.get(testData.source._id);
+            if (!weapon) return;
+
+            const lz = weapon.type === 'trait' ? Number(weapon.system.reloadTime?.value) || 0 : Actordsa5.calcLZ(weapon, actor);
+            const reloadProgress = Number(weapon.system.reloadTime?.progress) || 0;
+            const loaded = lz === 0 || reloadProgress >= lz;
+            if (!loaded) return;
+
+            const aimProgress = Math.clamp(Number(weapon.system?.aimTime?.progress) || 0, 0, 2);
+            if (aimProgress >= 2) return;
+
+            const newProgress = Math.min(aimProgress + 1, 2);
+            await actor.updateEmbeddedDocuments('Item', [
+              {
+                _id: weapon.id,
+                'system.aimTime.progress': newProgress,
+              },
+            ]);
+
+            const infoMsg = _loc('WEAPON.isAiming', {
+              actor: actor.token?.name || actor.prototypeToken.name,
+              item: weapon.name,
+              status: `${newProgress}/2`,
+            });
+            await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+          },
+        });
+      }      
     }
     return buttons;
   }

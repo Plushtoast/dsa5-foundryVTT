@@ -1,5 +1,15 @@
-export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
+import { JournalListDataModel } from './journallistdatamodel.js';
+
+export class DSACalendarEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarJournals';
+    static HOTBAR_ID = 'createCalendarEvent';
+    static CREATION_CONFIG = {
+        pageType: 'dsacalendar',
+        entryCollection: 'calendarentries',
+        defaultName: 'dsacalendar.defaultJournalName',
+        dialogTitle: 'dsacalendar.createEvent',
+        refreshParts: ['events', 'config'],
+    };
 
     static CATEGORY_CHOICES = {
         0: "dsacalendar.CATEGORIES.general",
@@ -8,7 +18,6 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         3: "dsacalendar.CATEGORIES.historical",
         4: "dsacalendar.CATEGORIES.milestones"
     }
-
     static CATEGORY_COLORS = {
         0: "#0b93bdff",
         1: "#920b0bff",
@@ -16,7 +25,6 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         3: "#149b1bff",
         4: "#bd5b00ff"
     };
-
     static CATEGORY_ICONS = {
         0: "fas fa-calendar",
         1: "fas fa-holly-berry",
@@ -24,7 +32,6 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
         3: "fas fa-history",
         4: "fas fa-star"
     }
-
     static defineSchema() {
         const { TypedObjectField, SchemaField, StringField, NumberField, BooleanField, HTMLField } = foundry.data.fields;
         return {
@@ -41,30 +48,32 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
                 to: new SchemaField({
                     dayOfMonth: new NumberField({ required: false, min: 1, step: 1 }),
                 }),
-                category: new NumberField({ required: true, initial: 0, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
+                category: new NumberField({ required: true, initial: 2, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
                 visible: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
-                recurring: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
+                recurring: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
             })),
         };
     }
-
+    static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
+        return foundry.utils.mergeObject({
+            title: _loc('dsacalendar.newEntryPlaceholder'),
+            from: this.createDateSnapshot(dateContext, { includeDay: true }),
+        }, overrides);
+    }
     async _preUpdate(changed, options, user) {
-        for (let key of Object.keys(changed.system?.calendarentries || {})) {
+        for (const key of Object.keys(changed.system?.calendarentries || {})) {
             this.#recalculateDay(changed.system.calendarentries[key]);
         }
         await super._preUpdate(changed, options, user);
     }
-
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
         game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
     }
-
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
         game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
     }
-
     static async prepareCalendarEntry(entry) {
         const calendar = game.time.calendar;
         const month = calendar.months.values[entry.from.month];
@@ -73,30 +82,27 @@ export class DSACalendarEntry extends foundry.abstract.TypeDataModel {
             year: entry.from.year,
         });
         const convertedComponents = calendar.timeToComponents(converted);
-        const dayOfWeek = calendar.days.values[convertedComponents.dayOfWeek]
+        //not sure if abs is ok here but for negative years it is not working        
+        const absDayOfWeek = Math.abs(convertedComponents.dayOfWeek);
+        const dayOfWeek = calendar.days.values[absDayOfWeek % calendar.days.values.length];
         entry.monthShort = calendar.translate(month.abbreviation);
         entry.weekdayShort = calendar.translate(dayOfWeek.abbreviation);
         entry.weekDayLong = calendar.translate(dayOfWeek.name);
         entry.from.monthLong = calendar.translate(month.name);
-        entry.categoryName = game.i18n.localize(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
+        entry.categoryName = _loc(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
         entry.color = DSACalendarEntry.CATEGORY_COLORS[entry.category];
         entry.enriched = await foundry.applications.ux.TextEditor.enrichHTML(entry.content, { secrets: game.user.isGM });
     }
-
     #recalculateDay(date) {
         if (!date || !date.from?.dayOfMonth) return;
-
         const monthChange = date.from.month;
         date.from.dayOfMonth = Math.clamp(date.from.dayOfMonth, 1, game.time.calendar.months.values[monthChange].days + 1);
         const dayOfMonth = date.from.dayOfMonth - 1;
         let dayOffset = 0;
-
         for (let m = 0; m < monthChange; m++) {
             dayOffset += game.time.calendar.months.values[m].days;
         }
-
         date.from.day = dayOffset + dayOfMonth;
-
         if (date.to?.dayOfMonth)
             date.to.dayOfMonth = Math.clamp(date.to.dayOfMonth, date.from.dayOfMonth, game.time.calendar.months.values[date.from.month].days + 1);
     }

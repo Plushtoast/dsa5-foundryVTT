@@ -29,7 +29,7 @@ export default class ForeignFieldEditor extends FormAppv2 {
 
   get title() {
     const actor = game.actors.get(this.actorId);
-    return `${actor.name} - ${game.i18n.localize(this.fieldname)}`;
+    return `${actor.name} - ${_loc(this.fieldname)}`;
   }
 
   async _updateObject(event, formData) {

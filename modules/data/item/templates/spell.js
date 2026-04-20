@@ -74,7 +74,7 @@ export default class SpellTemplate extends DSADataModel {
     item.LZ = Number(item.system.castingTime.modified) || 0;
     if (item.LZ > 1) {
       const progress = item.system.castingTime.progress / item.LZ;
-      item.title = game.i18n.format('SPELL.loading', {
+      item.title = _loc('SPELL.loading', {
         status: `${item.system.castingTime.progress}/${item.LZ}`,
       });
       item.progress = `${item.system.castingTime.progress}/${item.LZ}`;

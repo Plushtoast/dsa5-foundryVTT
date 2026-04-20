@@ -1,0 +1,7 @@
+<div class='form-fields gap0px dsaMessageMode'>
+  <label class='checkbox' data-tooltip='CHAT.MODES.public'><input type='radio' name='messageMode' value='public' {{checked (or (eq messageMode 'public') (eq messageMode 'publicroll') (eq messageMode 'roll'))}} /><i class='fas fa-globe'></i></label>
+  <label class='checkbox' data-tooltip='CHAT.MODES.ic'><input type='radio' name='messageMode' value='ic' {{checked (eq messageMode 'ic')}} /><i class='fas fa-hat-wizard'></i></label>
+  <label class='checkbox' data-tooltip='CHAT.MODES.gm'><input type='radio' name='messageMode' value='gm' {{checked (or (eq messageMode 'gm') (eq messageMode 'gmroll'))}} /><i class='fas fa-user-secret'></i></label>
+  <label class='checkbox' data-tooltip='CHAT.MODES.blind'><input type='radio' name='messageMode' value='blind' {{checked (or (eq messageMode 'blind') (eq messageMode 'blindroll'))}} /><i class='fas fa-eye-slash'></i></label>
+  <label class='checkbox' data-tooltip='CHAT.MODES.self'><input type='radio' name='messageMode' value='self' {{checked (or (eq messageMode 'self') (eq messageMode 'selfroll'))}} /><i class='fas fa-user'></i></label>
+</div>

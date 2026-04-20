@@ -1,0 +1,49 @@
+<div class="adventurePoints">
+    {{#if actorHeader}}
+    <div class="row-section table-title">
+        <div class="col full">
+            <div class="flexrow">
+                <img class="flex0" src="{{actorHeader.img}}" alt="{{actorHeader.name}}" style="width: 48px; height: 48px;" />
+                <div class="flexcol">
+                    <strong>
+                        {{{actorHeader.link}}}
+                    </strong>
+                    {{#if actorHeader.subtitle}}
+                    <span class="muted" style="font-weight: normal;">{{actorHeader.subtitle}}</span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+    <div class="row-section table-title">
+        <div class="col fourty">
+            {{localize 'Description'}}
+        </div>
+        <div class="col third center">
+            {{localize 'attributeChange'}}
+        </div>
+        <div class="col ten center">
+            {{localize 'cost'}}
+        </div>
+        <div class="col five center">
+            {{localize 'Total'}}
+        </div>
+    </div>
+    {{#each rows}}
+        <div class="row-section">
+            <div class="col fourty">
+                <p>{{{descriptionHtml}}}</p>
+            </div>
+            <div class="col third center">
+                {{{changeHtml}}}
+            </div>
+            <div class="col ten center">
+                <p>{{cost}}</p>
+            </div>
+            <div class="col five center">
+                <p>{{total}}</p>
+            </div>
+        </div>
+    {{/each}}
+</div>

@@ -1,10 +1,15 @@
 import { TrapState } from "../../chatmessage/trap_state.js";
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
+import { DSARegionBehaviorBase } from './base.js';
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField } = foundry.data.fields;
 
-export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBehaviorType {
+export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static REGION_TYPE = 'DSATrap'
     static LOCALIZATION_PREFIXES = ["REGIONBEHAVIOR_DSATrap"];
+
+    static events = {
+        [CONST.REGION_EVENTS.TOKEN_EXIT]: this.#onTokenExit,
+    };
 
     static PRIMITIV_TRAP = 0;
     static EINFACH_TRAP = 1;
@@ -86,8 +91,15 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
             ...this.sharedSchema(),
             disarmed: new BooleanField({ required: true, initial: false }),
             charges: new NumberField({ required: true, initial: 0 }),
-            remainingCharges: new NumberField({ required: true, initial: 0 })
+            remainingCharges: new NumberField({ required: true, initial: 0 }),
+            removeOnExit: new BooleanField({ initial: false }),
         }
+    }
+
+    static async #onTokenExit(event) {
+        if (!event.user.isSelf) return;
+        const { token } = event.data;
+        if (this.removeOnExit) await this.removeEffects(token);
     }
 
     async _handleRegionEvent(regionEvent) {
@@ -110,11 +122,6 @@ export class DSATrapRegionBehavior extends foundry.data.regionBehaviors.RegionBe
 
         const trapState = new TrapState(this.parent, token, region, name)
         trapState.toMessage();
-    }
-
-    async playSound() {
-        if (!this.sound) return
-        foundry.audio.AudioHelper.play({ src: this.sound, loop: false }, true);
     }
 
     async toItem() {

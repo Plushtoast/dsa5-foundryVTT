@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry13%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
+![Version](https://img.shields.io/github/v/tag/Plushtoast/dsa5-foundryVTT?label=Version&style=flat-square&color=2577a1) ![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FPlushtoast%2Fdsa5-foundryVTT%2Ffoundry14%2Fsystem.json&label=Foundry%20Core%20Compatible%20Version&query=$.compatibility.verified&style=flat-square&color=ff6400)
 
 # Official Das Schwarze Auge/The Dark Eye system for Foundry
 ![](https://repository-images.githubusercontent.com/311655339/4d523800-55a9-11eb-9e2e-6bbc2b71d8a4)
@@ -13,7 +13,7 @@ In the FVTT Game Systems Menu, click Install System and enter the Manifest URL:
 
 
 ```
-https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry13/system.json
+https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry14/system.json
 ```
 
 ## Roadmap
@@ -114,6 +114,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2644/dsa5-aventurische-ruestkammer-ii-fuer-foundry-vtt" title="Aventurische Rüstkammer II">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp" alt="Aventurische Rüstkammer II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/4088" title="Kaiser Retos Waffenkammer">
+        <img src="https://www.f-shop.de/media/image/28/f3/35/ESD048_0_0999.jpg" alt="Kaiser Retos Waffenkammer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
@@ -156,6 +159,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/detail/index/sArticle/4659" target="_blank" title="Verborgen in der Tiefe">
         <img src="https://www.f-shop.de/media/image/80/7a/72/a4_cover_verbogenindtiefe_vtt.jpg" alt="Verborgen in der Tiefe" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5094/dsa5-geschuppte-tyrannen-fuer-foundry-vtt" target="_blank" title="Geschuppte Tyrannen">
+        <img src="https://www.f-shop.de/media/image/b8/5d/1b/foundry_cover_geschuppe_ty.jpg" alt="Geschuppte Tyrannen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <h2>Abenteuer</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Einführungsabenteuer">
         <img src="https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp" alt="Einführungsabenteuer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -180,6 +186,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2317/dsa5-kampagne-das-geheimnis-des-drachenritters-fuer-foundry" title="Das Geheimnis des Drachenritters">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-drachenritter/icons/journal/cover.webp" alt="Das Geheimnis des Drachenritters" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/5255/dsa5-die-hexe-vom-schattenwasser-fuer-foundry-vtt">
+        <img src="https://www.f-shop.de/media/image/32/g0/62/a4_cover_vtt_hexe_vom_schattenwasser_exclusive_f-shop-1.jpg" alt="Die Hexe vom Schattenwasser" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/2685/dsa5-labyrinth-der-intrigen-fuer-foundry-vtt" title="Labyrinth der Intrigen">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-labyrinthofintrigues/icons/journal/coverde.webp" alt="Labyrinth der Intrigen" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
@@ -233,6 +242,12 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/4520/dsa5-gestade-des-gottwals-fuer-foundry-vtt" target="_blank" title="Gestade des Gottwals">
         <img src="https://www.f-shop.de/media/image/f5/93/ba/foundry_cover_thorwal.jpg" alt="Gestade des Gottwals" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5014/dsa5-der-wolfsfrost-regionalspielhilfe-fuer-foundry-vtt" target="_blank" title="Der Wolfsfrost">
+        <img src="https://www.f-shop.de/media/image/82/1e/1e/ESD059_0.jpg" alt="Der Wolfsfrost" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5027/dsa5-die-echsensuempfe-regionalspielhilfe-fuer-foundry-vtt" target="_blank" title="Die Echsensümpfe">
+        <img src="https://www.f-shop.de/media/image/74/64/b9/a4_cover_echsensuempfe_vtt.jpg" alt="Die Echsensümpfe" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
 </div>
 <br>
 <h2>English Modules</h2>
@@ -258,8 +273,14 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2152/tde5-aventuria-bestiary-for-foundry" title="Aventurian Bestiary">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp" alt="Aventurian Bestiary" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:210px;">
     </a>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2329/tde5-aventurian-bestiary-2-for-foundry-vtt" title="Aventurian Armory">
+        <img src="https://www.ulissesf-shop.com/media/image/cd/c5/93/ESD1011_0.jpg" alt="Aventurian Bestiary II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>    
     <a href="https://www.ulissesf-shop.com/virtual-tabletops/2153/tde5-aventuria-armory-for-foundry" title="Aventurian Armory">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp" alt="Aventurian Armory" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
+    <a href="https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2330/tde5-aventurian-armory-2-for-foundry-vtt" title="Aventurian Bestiary">
+        <img src="https://www.ulissesf-shop.com/media/image/91/05/67/ESD1012_0.jpg" alt="Aventurian Armory II" style="text-align: center; margin-right: 5px; margin-bottom: 5px; width:210px;">
     </a>
     <h2>Adventures</h2>
     <a href="https://foundryvtt.com/packages/dsa5-introduction" title="Introduction adventure">

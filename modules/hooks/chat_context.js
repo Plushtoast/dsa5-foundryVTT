@@ -1,6 +1,9 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
+
+import PostRollBuffs from '../system/rolls/postroll-buffs.js';
+import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -12,6 +15,10 @@ const getMessageFromLi = (li) => game.messages.get(li.dataset.messageId);
 
 const getActorFromMessage = (message) => {
   return message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
+};
+
+const getActorFromRollMessage = (message) => {
+  return DSA5_Utility.getSpeaker(message.speaker) || getActorFromMessage(message);
 };
 
 const hasOwnership = (actor) => actor?.isOwner || game.user.isGM;
@@ -51,7 +58,7 @@ export const applyDamage = async (li, mode, factor = 1) => {
     message,
     'damageApplied',
     /hideAnchor">/,
-    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${localize('damageApplied')}"></i>`
+    `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${_loc('damageApplied')}"></i>`
   );
 };
 
@@ -121,7 +128,7 @@ class ConditionChecker {
 
     if (ROLLABLE_TYPES.includes(rollType)) rollType = 'char';
 
-    const schipSkill = localize(`SCHIPSKILLS.${rollType}${mode}`);
+    const schipSkill = _loc(`SCHIPSKILLS.${rollType}${mode}`);
     return !!actor.items.getName(schipSkill);
   }
 
@@ -152,7 +159,7 @@ class ConditionChecker {
 
     const { talentedRerollUsed } = message.flags.data;
     const sourceName = message.flags.data.preData.source.name;
-    const aptitudeName = `${localize('LocalizedIDs.aptitude')} (${sourceName})`;
+    const aptitudeName = `${_loc('LocalizedIDs.aptitude')} (${sourceName})`;
 
     return !talentedRerollUsed && !!actor.items.find(item => item.name === aptitudeName);
   }
@@ -212,6 +219,14 @@ class ConditionChecker {
       message.isContentVisible &&
       canvas.tokens?.controlled.length > 0 &&
       !!li.querySelector('.dice-roll');
+  }
+
+  static canApplyDepletableBuffs(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromRollMessage(message);
+    if (!actor || !hasOwnership(actor) || !message?.flags?.data) return false;
+
+    return PostRollBuffs.getMatches(message, actor).length > 0;
   }
 }
 
@@ -273,7 +288,7 @@ class ActionHandler {
     const manaApplied = await actor.applyMana(calculatedSpellModifiers.finalcost, payType);
 
     if (maintain && maintain !== '0' && manaApplied && cardData.postData.successLevel > 0) {
-      await ActionHandler.handleMaintainEffect(actor, maintain, cardData.preData.source.name, payType);
+      await MaintainedEffects.createForMessage(message.id, actor, maintain, cardData.preData.source.name, payType);
     }
 
     await updateMessageWithCheckmark(
@@ -282,66 +297,6 @@ class ActionHandler {
       /<span class="costCheck">/,
       '<span class="costCheck"><i class="fas fa-check" style="float:right"></i>'
     );
-  }
-
-  static async handleMaintainEffect(actor, maintain, name, payType) {
-    try {
-      const cost = maintain.match(/^\d{1,3}/)?.[0];
-      if (!cost) return;
-
-      let duration = maintain.replace(/^\d{1,3}/, '').match(/\d{1,3}/);
-      duration = duration ? Number(duration[0]) || 1 : 1;
-
-      const effect = ActionHandler.createMaintainEffect(name, maintain, cost, payType);
-      const seconds = ActionHandler.calculateDuration(maintain, duration);
-
-      if (seconds) {
-        effect.duration.seconds = seconds;
-        effect.duration.rounds = seconds / 5;
-      }
-
-      await actor.addCondition(effect);
-    } catch (error) {
-      console.error(`Could not parse duration '${maintain}' of '${name}'`, error);
-    }
-  }
-
-  static createMaintainEffect(name, maintain, cost, payType) {
-    return {
-      name: `${name} (${localize('maintainCost')})`,
-      img: 'icons/svg/daze.svg',
-      flags: {
-        dsa5: {
-          description: maintain,
-          maintain: cost,
-          payType,
-        },
-      },
-      changes: [],
-      duration: {},
-    };
-  }
-
-  static calculateDuration(maintain, duration) {
-    const timeUnits = [
-      { key: 'DSAREGEXmaintain.seconds', seconds: 1 },
-      { key: 'DSAREGEXmaintain.combatRounds', seconds: 5 },
-      { key: 'DSAREGEXmaintain.minutes', seconds: 60 },
-      { key: 'DSAREGEXmaintain.hours', seconds: 3600 },
-      { key: 'DSAREGEXmaintain.days', seconds: 3600 * 24 },
-      { key: 'DSAREGEXmaintain.weeks', seconds: 3600 * 24 * 7 },
-      { key: 'DSAREGEXmaintain.months', seconds: 3600 * 24 * 30 },
-      { key: 'DSAREGEXmaintain.years', seconds: 3600 * 24 * 350 },
-    ];
-
-    for (const unit of timeUnits) {
-      const regex = new RegExp(localize(unit.key), 'gi');
-      if (regex.test(maintain)) {
-        return duration * unit.seconds;
-      }
-    }
-
-    return null;
   }
 
   static async applyHealing(li) {
@@ -362,115 +317,134 @@ class ActionHandler {
     const { postData } = message.flags.data;
     await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
   }
+
+  static async applyDepletableBuffs(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromRollMessage(message);
+    if (!actor || !hasOwnership(actor) || !message?.flags?.data) return;
+
+    const matches = PostRollBuffs.getMatches(message, actor);
+    if (matches.length === 0) return;
+
+    new PostRollBuffPicker(message, matches, async (chosen) => {
+      await PostRollBuffs.applyMatches(message, chosen);
+    }).render(true);
+  }
 }
 
 const createContextOptions = () => {
   const applyDamageLabel = () => {
-    return localize(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
+    return _loc(game.combat?.isBrawling ? 'CHATCONTEXT.ApplyDamagePP' : 'CHATCONTEXT.ApplyDamage');
   };
 
   const baseOptions = [
     {
-      name: 'CHATCONTEXT.hideData',
+      label: 'CHATCONTEXT.hideData',
       icon: '<i class="fas fa-eye"></i>',
-      condition: (li) => ConditionChecker.canToggleDataVisibility(li, true),
-      callback: ActionHandler.showHideData,
+      visible: (li) => ConditionChecker.canToggleDataVisibility(li, true),
+      onClick: ActionHandler.showHideData,
     },
     {
-      name: 'CHATCONTEXT.showData',
+      label: 'CHATCONTEXT.showData',
       icon: '<i class="fas fa-eye"></i>',
-      condition: (li) => ConditionChecker.canToggleDataVisibility(li, false),
-      callback: ActionHandler.showHideData,
+      visible: (li) => ConditionChecker.canToggleDataVisibility(li, false),
+      onClick: ActionHandler.showHideData,
     },
     {
-      name: 'regenerate',
+      label: 'regenerate',
       icon: '<i class="fas fa-user-plus"></i>',
-      condition: ConditionChecker.canHeal,
-      callback: ActionHandler.applyHealing,
+      visible: ConditionChecker.canHeal,
+      onClick: ActionHandler.applyHealing,
     },
     {
-      name: 'CHATCONTEXT.ApplyMana',
+      label: 'CHATCONTEXT.ApplyMana',
       icon: '<i class="fas fa-user-minus"></i>',
-      condition: ConditionChecker.canCostMana,
-      callback: ActionHandler.payMana,
+      visible: ConditionChecker.canCostMana,
+      onClick: ActionHandler.payMana,
     },
     {
-      name: applyDamageLabel(),
+      label: applyDamageLabel(),
       icon: '<i class="fas fa-user-minus"></i>',
-      condition: ConditionChecker.canHurt,
-      callback: (li) => applyDamage(li, 'value'),
+      visible: ConditionChecker.canHurt,
+      onClick: (li) => applyDamage(li, 'value'),
     },
     {
-      name: 'CHATCONTEXT.ApplyDamageSP',
+      label: 'CHATCONTEXT.ApplyDamageSP',
       icon: '<i class="fas fa-user-minus"></i>',
-      condition: ConditionChecker.canHurtSP,
-      callback: (li) => applyDamage(li, 'sp'),
+      visible: ConditionChecker.canHurtSP,
+      onClick: (li) => applyDamage(li, 'sp'),
     },
     {
-      name: applyDamageLabel(),
+      label: applyDamageLabel(),
       icon: '<i class="fas fa-user-minus"></i>',
-      condition: ConditionChecker.canApplyDefaultRolls,
-      callback: (li) => ActionHandler.applyChatCardDamage(li, 'value'),
+      visible: ConditionChecker.canApplyDefaultRolls,
+      onClick: (li) => ActionHandler.applyChatCardDamage(li, 'value'),
     },
     {
-      name: 'CHATCONTEXT.ApplyDamageSP',
+      label: 'CHATCONTEXT.ApplyDamageSP',
       icon: '<i class="fas fa-user-minus"></i>',
-      condition: ConditionChecker.canApplyDefaultRolls,
-      callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp'),
+      visible: ConditionChecker.canApplyDefaultRolls,
+      onClick: (li) => ActionHandler.applyChatCardDamage(li, 'sp'),
     },
     {
-      name: 'CHATCONTEXT.Reroll',
+      label: 'CHATCONTEXT.Reroll',
       icon: '<i class="fas fa-dice"></i>',
-      condition: ConditionChecker.canReroll,
-      callback: (li) => ActionHandler.useFate(li, 'reroll'),
+      visible: ConditionChecker.canReroll,
+      onClick: (li) => ActionHandler.useFate(li, 'reroll'),
     },
     {
-      name: 'CHATCONTEXT.RerollGroup',
+      label: 'CHATCONTEXT.RerollGroup',
       icon: '<i class="fas fa-dice"></i>',
-      condition: (li) => ConditionChecker.canReroll(li, true),
-      callback: (li) => ActionHandler.useFate(li, 'reroll', 1),
+      visible: (li) => ConditionChecker.canReroll(li, true),
+      onClick: (li) => ActionHandler.useFate(li, 'reroll', 1),
     },
     {
-      name: 'CHATCONTEXT.talentedReroll',
+      label: 'CHATCONTEXT.talentedReroll',
       icon: '<i class="fas fa-dice"></i>',
-      condition: ConditionChecker.isTalented,
-      callback: (li) => ActionHandler.useFate(li, 'isTalented'),
+      visible: ConditionChecker.isTalented,
+      onClick: (li) => ActionHandler.useFate(li, 'isTalented'),
     },
     {
-      name: 'CHATCONTEXT.AddQS',
+      label: 'CHATCONTEXT.AddQS',
       icon: '<i class="fas fa-plus-square"></i>',
-      condition: ConditionChecker.canIncreaseQS,
-      callback: (li) => ActionHandler.useFate(li, 'addQS'),
+      visible: ConditionChecker.canIncreaseQS,
+      onClick: (li) => ActionHandler.useFate(li, 'addQS'),
     },
     {
-      name: 'CHATCONTEXT.AddQSGroup',
+      label: 'CHATCONTEXT.AddQSGroup',
       icon: '<i class="fas fa-plus-square"></i>',
-      condition: (li) => ConditionChecker.canIncreaseQS(li, true),
-      callback: (li) => ActionHandler.useFate(li, 'addQS', 1),
+      visible: (li) => ConditionChecker.canIncreaseQS(li, true),
+      onClick: (li) => ActionHandler.useFate(li, 'addQS', 1),
     },
     {
-      name: 'CHATCONTEXT.rerollDamage',
+      label: 'CHATCONTEXT.rerollDamage',
       icon: '<i class="fas fa-dice"></i>',
-      condition: ConditionChecker.canRerollDamage,
-      callback: (li) => ActionHandler.useFate(li, 'rerollDamage'),
+      visible: ConditionChecker.canRerollDamage,
+      onClick: (li) => ActionHandler.useFate(li, 'rerollDamage'),
     },
     {
-      name: 'CHATCONTEXT.rerollDamageGroup',
+      label: 'CHATCONTEXT.rerollDamageGroup',
       icon: '<i class="fas fa-dice"></i>',
-      condition: (li) => ConditionChecker.canRerollDamage(li, true),
-      callback: (li) => ActionHandler.useFate(li, 'rerollDamage', 1),
+      visible: (li) => ConditionChecker.canRerollDamage(li, true),
+      onClick: (li) => ActionHandler.useFate(li, 'rerollDamage', 1),
     },
     {
-      name: 'CHATCONTEXT.improveFate',
+      label: 'CHATCONTEXT.improveFate',
       icon: '<i class="fas fa-plus-square"></i>',
-      condition: ConditionChecker.canImproveRoll,
-      callback: (li) => ActionHandler.useFate(li, 'Improve'),
+      visible: ConditionChecker.canImproveRoll,
+      onClick: (li) => ActionHandler.useFate(li, 'Improve'),
     },
     {
-      name: 'CHATCONTEXT.improveFateGroup',
+      label: 'CHATCONTEXT.improveFateGroup',
       icon: '<i class="fas fa-plus-square"></i>',
-      condition: (li) => ConditionChecker.canImproveRoll(li, true),
-      callback: (li) => ActionHandler.useFate(li, 'Improve', 1),
+      visible: (li) => ConditionChecker.canImproveRoll(li, true),
+      onClick: (li) => ActionHandler.useFate(li, 'Improve', 1),
+    },
+    {
+      label: 'CHATCONTEXT.applyDepletableBuffs',
+      icon: '<i class="fas fa-wand-magic-sparkles"></i>',
+      visible: ConditionChecker.canApplyDepletableBuffs,
+      onClick: ActionHandler.applyDepletableBuffs,
     },
   ];
 
@@ -485,28 +459,28 @@ const createContextOptions = () => {
 
 const createDoubleDamageOptions = (applyDamageLabel) => [
   {
-    name: `${applyDamageLabel()} x2`,
+    label: `${applyDamageLabel()} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
-    condition: ConditionChecker.canHurt,
-    callback: (li) => applyDamage(li, 'value', 2),
+    visible: ConditionChecker.canHurt,
+    onClick: (li) => applyDamage(li, 'value', 2),
   },
   {
-    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    label: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
-    condition: ConditionChecker.canHurtSP,
-    callback: (li) => applyDamage(li, 'sp', 2),
+    visible: ConditionChecker.canHurtSP,
+    onClick: (li) => applyDamage(li, 'sp', 2),
   },
   {
-    name: `${applyDamageLabel()} x2`,
+    label: `${applyDamageLabel()} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
-    condition: ConditionChecker.canApplyDefaultRolls,
-    callback: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
+    visible: ConditionChecker.canApplyDefaultRolls,
+    onClick: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
   },
   {
-    name: `${localize('CHATCONTEXT.ApplyDamageSP')} x2`,
+    label: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
-    condition: ConditionChecker.canApplyDefaultRolls,
-    callback: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
+    visible: ConditionChecker.canApplyDefaultRolls,
+    onClick: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
   },
 ];
 
@@ -514,12 +488,12 @@ export function chatContext() {
   Hooks.once('getNotificationChatMessageContextOptions', (app, options, c) => {
     options.push(...createContextOptions());
   });
-  
+
   Hooks.on('getChatMessageContextOptions', (app, options, c) => {
     options.push(...createContextOptions());
 
     if(ActionHandler.notification_context_menu_initialized) return;
-      
+
     ActionHandler.notification_context_menu_initialized = true;    
     app._createContextMenu(app._getEntryContextOptions, ".message[data-message-id]", {
       hookName: "getNotificationChatMessageContextOptions",

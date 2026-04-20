@@ -1,0 +1,31 @@
+<section class="tab scrollable {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}"
+    data-application-part="actions">
+    <div class="row-section wrap margin-top">
+        <div class="col row-section skills table-title lineheight">
+            <div class="col ten"></div>
+            <div class="col eighty">{{localize 'SHEET.onUseActions'}}</div>
+            <div class="col ten flexrow flexAlignEnd">
+                {{#if canEditMacros}}
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="addOnUseAction"
+                    data-tooltip="SHEET.addOnUseAction"></button>
+                {{/if}}
+            </div>
+        </div>
+        {{#each onUseActions as |action|}}
+        <div class="row-section col skills statusEffect margin-top lineheight" data-on-use-action-id="{{action.id}}">
+            <div class="col ten">
+                <img src="{{action.img}}" data-tooltip="{{action.name}}" />
+            </div>
+            <div class="col seventy">
+                <span>{{action.name}}</span>
+            </div>
+            <div class="col five flexrow flexAlignEnd">
+                {{#if canEditMacros}}
+                <button type="button" class="icon dsadesignbutton noBorder fa fa-edit" data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"></button>
+                <button type="button" class="icon dsadesignbutton noBorder fa fa-trash" data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"></button>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</section>

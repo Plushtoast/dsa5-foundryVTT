@@ -1,0 +1,46 @@
+<div class="dsa5 roll-request-card">
+  <p class="flexrow flexAlignCenter gap5px" style="margin:0 0 0.5rem;">
+    {{#if skillIcon}}
+      <img src="{{skillIcon}}" alt="{{skillName}}" style="width:24px;height:24px;object-fit:cover;border:1px solid var(--border-color);border-radius:3px;flex:0 0 24px;">
+    {{/if}}
+    <b>{{skillName}}</b>{{#if modifierLabel}} ({{modifierLabel}}){{/if}}
+  </p>
+
+  {{#if recipients.length}}
+    {{#each recipients}}
+      <div class="flexrow flexAlignCenter roll-request-row tableOdd gap5px" data-actor-id="{{actorId}}" data-status="{{status}}">
+        <div class="flexcol" style="flex:1;overflow:hidden;">
+          <b class="ellipsis">{{actorName}}</b>
+          {{#if designatedUserName}}
+            <div class="very-small ellipsis">{{designatedUserName}}</div>
+          {{/if}}
+        </div>
+        <div class="flexrow flexAlignEnd gap2px" style="flex:0 0 auto;">
+          {{#if resultLabel}}
+            <span class="very-small">{{resultLabel}}</span>
+          {{/if}}
+          <span class="icon noBorder roll-request-indicator {{colorClass}}" data-tooltip="{{label}}" aria-label="{{label}}">
+            <i class="fas {{icon}}"></i>
+          </span>
+          {{#if canRoll}}
+            <button type="button" class="roll-request-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize "ROLLREQUEST.rollAction"}}" aria-label="{{localize "ROLLREQUEST.rollAction"}}"></button>
+          {{/if}}
+          {{#if canGMRoll}}
+            <button type="button" class="roll-request-action icon fas fa-dice roll-request-gm" data-action="rollOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}"></button>
+          {{/if}}
+          {{#if canGMAction}}
+            <button type="button" class="roll-request-menu icon fas fa-ellipsis-vertical roll-request-gm" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.more"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.more"}}"></button>
+          {{/if}}
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <p class="very-small">{{localize "DSAQUERIES.NOTIFICATIONS.noActors"}}</p>
+  {{/if}}
+
+  {{#unless finalized}}
+    <div class="roll-request-gm flexrow gap5px margin-top">
+      <button type="button" class="roll-request-action" data-action="finalize" data-tooltip="{{localize "DSAQUERIES.COMMANDS.finalize"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.finalize"}}"><i class="fas fa-check"></i></button>
+    </div>
+  {{/unless}}
+</div>

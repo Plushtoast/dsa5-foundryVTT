@@ -1,6 +1,6 @@
 <form id="document-create" autocomplete="off">
-    <div class="flexcol">
-        <div class="flex0">
+    <div class="flexcol gap10px">
+        <div class="flex0 flexcol gap10px">
             <div class="form-group">
                 <label>{{localize "Name"}}</label>
                 <div class="form-fields">
@@ -17,21 +17,33 @@
                 </div>
             </div>
             {{/if}}
+            <div class="flexrow gap5px">            
+                <button type="submit" class="default">{{title}}</button>
+                <button type="button" data-action="cancel">{{localize "Cancel"}}</button>
+            </div>
+            {{#if hasTypes}}
+            <div class="form-group">
+                <label>{{localize "Book.search"}}</label>
+                <div class="form-fields">
+                    <input type="search" class="search-input item-create-dialog__search" placeholder="{{searchPlaceholder}}">
+                </div>
+            </div>
+            {{/if}}
         </div>
-        <div class="flex1 scrollable dsa-card-list" style="max-height: 330px;">
+        <div class="flex1 scrollable dsa-card-list item-create-dialog__type-list" style="max-height: 330px;">
             {{#if hasTypes}}
             <ul>
                 {{#each types}}
-                <li {{~#if hint}} data-tooltip="{{ hint }}" {{/if}}>
+                <li class="item-create-dialog__type" data-search="{{searchText}}" {{~#if hint}} data-tooltip="{{ hint }}" {{/if}}>
                     <label>
                         <img src="{{ img }}" alt="{{ label }}" width="36" height="36">
                         <span class="ellipsis">{{ label }}</span>
-                        <input type="radio" name="type" value="{{ value }}" required {{checked (eq value ../type)}} {{
-                            disabled disabled }}>
+                        <input type="radio" name="type" value="{{ value }}" required {{checked selected}} {{disabled disabled}}>
                     </label>
                 </li>
                 {{/each}}
             </ul>
+            <p class="hint item-create-dialog__empty" hidden>...</p>
             {{/if}}
         </div>
         <div class="flex0">

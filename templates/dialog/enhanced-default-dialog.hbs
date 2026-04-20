@@ -39,28 +39,10 @@
 </div>
 {{/if}}
 <div class="talent-test-modifier-row form-group">
-    <label>{{localize "DIALOG.RollMode"}}</label>
-    <div class="form-fields gap0px dsaRollMode">
-        <label class="checkbox" data-tooltip="CHAT.RollPublic"><input type="radio" name="rollMode" value="publicroll" {{checked (eq rollMode "publicroll")}}><i class="fas fa-globe"></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollPrivate"><input type="radio" name="rollMode" value="gmroll" {{checked (eq rollMode "gmroll")}}><i class="fas fa-user-secret"></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollBlind"><input type="radio" name="rollMode" value="blindroll" {{checked (eq rollMode "blindroll")}}><i class="fas fa-eye-slash"></i></label>
-        <label class="checkbox" data-tooltip="CHAT.RollSelf"><input type="radio" name="rollMode" value="selfroll" {{checked (eq rollMode "selfroll")}}><i class="fas fa-user"></i></label>
-    </div>
+    <label>{{localize "DIALOG.MessageMode"}}</label>
+    {{> systems/dsa5/templates/dialog/parts/message-mode.hbs messageMode=messageMode}}
 </div>
-{{#if hasSituationalModifiers}}
-<div class="modifiers form-group" style="flex-grow: 1;">
-    <label>{{localize "DIALOG.SituationalModifiers"}}</label>
-    <div class="form-fields height100">
-        <select name="situationalModifiers" multiple class="height100">
-            {{#each situationalModifiers as |mod t|}}
-            <option data-tooltip="{{situationalTooltip mod}}" data-type="{{mod.type}}" {{#if mod.armorPen}}data-armor-pen="{{mod.armorPen}}"{{/if}} value="{{mod.value}}" {{#if mod.selected}}selected{{/if}} data-consumable-id="{{mod.consumableId}}">
-            {{localize mod.name}} [{{mod.value}} {{mod.type}}]
-            </option>
-            {{/each}}
-        </select>
-    </div>
-</div>
-{{/if}}
+{{> systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs}}
 {{#if visionOptions}}
 <div class='form-group'>
   <label>{{localize 'sight'}}</label>

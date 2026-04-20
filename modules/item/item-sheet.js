@@ -10,21 +10,20 @@ import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ItemSheetObfuscation } from './mixins/obfuscatemixin.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
-import RequestRoll from '../system/rolls/request-roll.js';
+import GroupCheck from '../system/rolls/group-check.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
-import { localize } from '../system/helpers/localizer.js';
-import { DragMixin } from '../actor/mixins/drag_mixin.js';
+
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
-export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2))) {
+export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2)) {
   _processFormData(event, form, formData) {
-    const data = formData.object;
+    const data = super._processFormData(event, form, formData);
     const overrides = foundry.utils.flattenObject(this.item.overrides || {});
-    Object.keys(overrides).forEach((v) => delete data[v]);
-    return foundry.utils.expandObject(data);
+    Object.keys(overrides).forEach((v) => foundry.utils.deleteProperty(data, v));
+    return data;
   }
 
   static TABS = {
@@ -50,10 +49,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       showItemHead: function () {
         this.item.postItem();
       },
-      headerOnUseEffect: function () {
-        const onUse = new OnUseEffect(this.item);
-        onUse.executeOnUseEffect();
-      },
+      addOnUseAction: this.addOnUseAction,
+      editOnUseAction: this.editOnUseAction,
+      deleteOnUseAction: this.deleteOnUseAction,
       rolleffect: function () {
         this.setupEffect();
       },
@@ -62,9 +60,17 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
     ownerActions: {
       _advanceStep: this.advanceWrapper,
       _refundStep: this.advanceWrapper,
+      headerOnUseEffect: {
+        handler: async function (ev) {
+          const onUse = new OnUseEffect(this.item);
+          await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+        },
+        buttons: [0, 2],
+      },
       statusAdd: function () {
         DSA5StatusEffects.createCustomEffect(this.item, '', this.item.name);
       },
+      enhancementAdd: this.addEnhancementEffect,
       conditionEdit: this.editCondition,
       conditionToggle: this.toggleCondition,
     },
@@ -74,7 +80,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
         label: 'SHEET.onUseEffect',
         action: 'headerOnUseEffect',
         visible: function () {
-          return this.actor && OnUseEffect.getOnUseEffect(this.item);
+          return this.actor && OnUseEffect.hasOnUseEffect(this.item);
         },
       },
       {
@@ -140,6 +146,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       { sheetClass: SkillSheet, types: ['skill'] },
       { sheetClass: TraitSheet, types: ['trait'] },
       { sheetClass: EffectWrapperSheet, types: ['effectwrapper'] },
+      { sheetClass: ItempackageSheet, types: ['itempackage'] },
     ];
     sheets.forEach(({ sheetClass, types }) => {
       foundry.documents.collections.Items.registerSheet('dsa5', sheetClass, { makeDefault: true, types });
@@ -201,7 +208,22 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
   static toggleCondition(ev, target) {
     const condKey = $(target).parents('.statusEffect').attr('data-id');
     const ef = this.item.effects.get(condKey);
+    if (this.isEffectDisabledBySetting(ef)) {
+      ui.notifications.info(_loc('DSASETTINGS.enableWeaponAdvantagesHint'));
+      return;
+    }
     ef.update({ disabled: !ef.disabled });
+  }
+
+  isEffectDisabledBySetting(effect) {
+    return !!(effect?.system?.equipmentAdvantage && !game.settings.get('dsa5', 'enableWeaponAdvantages'));
+  }
+
+  _decorateSheetEffect(effect) {
+    const disabledBySetting = this.isEffectDisabledBySetting(effect);
+    effect.disabledBySetting = disabledBySetting;
+    effect.sheetDisabled = effect.disabled || disabledBySetting;
+    return effect;
   }
 
   #lockOverrides(html) {
@@ -269,7 +291,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
 
     data.isOwned = this.actor;
     data.editable = this.isEditable;
-    data.systemFields = this.document.system.schema?.fields;
+    data.systemFields = this.document.system.schema.fields;
 
     if (data.isOwned) {
       data.canAdvance = this.actor.canAdvance && this._advancable();
@@ -278,23 +300,58 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
       if (!this.isEditable && customPrice) data.customPrice = customPrice;
     }
 
-    data.conditions = this.item.effects;
-
-    if (!game.user.isGM)
-      data.conditions = data.conditions.filter((e) => {
-        return !e.getFlag('dsa5', 'hidePlayers');
-      });
-
     data.enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
     data.armorAndWeaponDamage = game.settings.get('dsa5', 'armorAndWeaponDamage');
     data.isGM = game.user.isGM;
     data.enrichedDescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'description.value'), { secrets: this.item.isOwner });
     data.enrichedGmdescription = await TextEditor.enrichHTML(getProperty(this.item.system, 'gmdescription.value'), { secrets: this.item.isOwner });
-    data.canOnUseEffect = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
+    data.canOnUseEffect = this.isEditable && this.item.system.implementsOnUseEffect && (game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'));
+    data.canEditMacros = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
+    data.onUseActions = OnUseEffect.getOnUseActions(this.item);
 
-    await this.item.system.getSheetData?.(data);
+    await this.item.system.getSheetData(data);
+
+    const allEffects = Array.from(data.conditions || this.item.effects)
+      .filter((effect) => game.user.isGM || !effect.system?.visibility?.hidePlayers);
+
+    data.conditions = allEffects
+      .filter((effect) => effect.type !== 'enhancement')
+      .map((effect) => this._decorateSheetEffect(effect));
+
+    data.enhancementEffects = allEffects
+      .filter((effect) => effect.type === 'enhancement')
+      .map((effect) => this._decorateSheetEffect(effect));
+
+    data.supportsEnhancements = !!CONFIG.Item.dataModels[this.item.type]?.ENHANCEMENT_SLOT_LIMITS;
+
+    data.transferedConditions = Array.from(data.transferedConditions || []).map((effect) => this._decorateSheetEffect(effect));
 
     return data;
+  }
+
+  static async addOnUseAction() {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
+    await this.item.system.createOnUseAction();
+  }
+
+  static async addEnhancementEffect() {
+    const effects = await this.item.createEmbeddedDocuments('ActiveEffect', [{
+      name: _loc('TYPES.ActiveEffect.enhancement'),
+      type: 'enhancement',
+      img: 'systems/dsa5/icons/talents/Metallbearbeitung.webp',
+      'system.targetType': this.item.type,
+    }]);
+    effects[0]?.sheet?.render(true);
+  }
+
+  static async editOnUseAction(_event, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
+    await this.item.system.editOnUseAction(target.dataset.id);
+  }
+
+  static async deleteOnUseAction(_event, target) {
+    if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
+    await this.item.system.removeOnUseAction(target.dataset.id);
   }
 
   _advancable() {
@@ -302,19 +359,23 @@ export default class ItemSheetdsa5 extends AppV2Mixin(DragMixin(foundry.applicat
   }
 
   async _handleDrop(dragData) {
+    if (!this.item.system.implementsOnUseEffect) return;
     if (!(game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro'))) return;
 
+    let code;
     if (dragData.type == 'Macro') {
       const item = await fromUuid(dragData.uuid);
       if (!item) return;
       if (!item.pack) return ui.notifications.info('DSAError.onlyCompendiumSpells', { format: { element: '"Macro"' }, localize: true });
 
-      const code = `this.callMacro("${item.pack}", "${item.name}")`
-      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+      code = `this.callMacro("${item.pack}", "${item.name}")`;
     } else if (dragData.type == 'DSALight') {
-      const code = `game.dsa5.apps.LightDialog.applyVisionOrLight(true, "${dragData.key}", actor.getActiveTokens(), item.name)`
-      await this.item.update({ 'flags.dsa5.onUseEffect': code });
+      code = `game.dsa5.apps.LightDialog.applyVisionOrLight(true, "${dragData.key}", actor.getActiveTokens(), item.name)`;
     }
+
+    if (!code) return;
+
+    await this.item.system.addOnUseAction({ macro: code });
   }
 
   async _onDrop(event) {
@@ -345,7 +406,6 @@ class WithEffectsSheet extends ItemSheetdsa5 {
     },
   };
 }
-
 
 const AdvancableSkill = (superclass) =>
   class extends superclass {
@@ -384,7 +444,7 @@ const AdvancableSkill = (superclass) =>
     }
 
     _checkMaximumItemAdvancement(newValue) {
-      const maxBonus = AdvantageRulesDSA5.vantageStep(this.actor, `${localize(this.advanceSkill)} (${this.item.name})`, false);
+      const maxBonus = AdvantageRulesDSA5.vantageStep(this.actor, `${_loc(this.advanceSkill)} (${this.item.name})`, false);
       const max = this._maxAllowedAdvancement(maxBonus);
       const result = newValue <= max;
       if (!result)
@@ -449,6 +509,10 @@ class NoEffectsEquipmentSheet extends ItemSheetdsa5 {
     },
   };
 
+  async _onDropActiveEffect() {
+    return null;
+  }
+
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     delete tabs.effects;
@@ -473,10 +537,54 @@ class NoEffectsSheet extends ItemSheetdsa5 {
     },
   };
 
+  async _onDropActiveEffect() {
+    return null;
+  }
+
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     delete tabs.effects;
     return tabs;
+  }
+}
+
+class ItempackageSheet extends NoEffectsSheet {
+  static DEFAULT_OPTIONS = {
+    position: {
+      width: 600,
+    },
+    actions: {
+      addPackageItem: this.#addPackageItem,
+      deletePackageItem: this.#deletePackageItem,
+      showPackageContents: this.#showPackageContents,
+    },
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.packageItems = this.item.system.items;
+    data.itemFields = this.item.system.schema.fields.items.element.fields;
+    data.equipmentCategories = Object.fromEntries([...DSA5.equipmentCategories].map(c => [c, _loc(`TYPES.Item.${c}`)]));
+    return data;
+  }
+
+  static #addPackageItem() {
+    this.item.system.addItem();
+  }
+
+  static #deletePackageItem(_event, target) {
+    this.item.system.removeItem(target.dataset.key);
+  }
+
+  static #showPackageContents() {
+    this.item.system.showContents();
+  }
+
+  async _handleDrop(dragData) {
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (!DSA5.equipmentCategories.has(typeClass)) return;
+
+    this.item.system.addItem(item.name, typeClass, 1, 0, item.system?.price?.value ?? 0);
   }
 }
 
@@ -544,7 +652,66 @@ class CombatSkillSheet extends AdvancableSkill(LocalizerSheet) {
   }
 }
 
-class SkillSheet extends AdvancableSkill(LocalizerSheet) { }
+class SkillSheet extends AdvancableSkill(LocalizerSheet) {
+  static PARTS = {
+    ...LocalizerSheet.PARTS,
+    applications: {
+      template: 'systems/dsa5/templates/items/item-skill-applications.hbs',
+      scrollable: [''],
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    ownerActions: {
+      applicationToggle: this._toggleApplication,
+      applicationEdit: this._editApplication,
+      applicationDelete: this._deleteApplication,
+    },
+  };
+
+  static TABS = {
+    sheet: {
+      tabs: [
+        { id: 'description', label: 'Description' },
+        { id: 'details', label: 'Details' },
+        { id: 'applications', label: 'TYPES.Item.application' },
+        { id: 'effects', label: 'statuseffects' },
+      ],
+      initial: 'description',
+    },
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.applications = [];
+
+    if (data.isOwned && this.actor) {
+      const skillName = String(this.item.name || '').trim().toLowerCase();
+      data.applications = this.actor.items.filter((x) => x.type == 'application' && String(x.system.skill || '').trim().toLowerCase() == skillName);
+    }
+
+    return data;
+  }
+
+  static async _deleteApplication(ev, target) {
+    const itemId = this._getItemId(target);
+    const item = this.actor.items.find((x) => x.id == itemId);
+    if (!item) return;
+
+    await this.actor.sheet._itemDeleteDialog(item);
+  }
+
+  static _editApplication(ev, target) {
+    const itemId = this._getItemId(target);
+    this.actor.items.get(itemId)?.sheet.render(true);
+  }
+
+  static _toggleApplication(ev, target) {
+    const elem = $(target);
+    elem.find('i').toggleClass('fa-chevron-down fa-chevron-up');
+    elem.closest('.item').find('.expandDetails:first').toggleClass('shown');
+  }
+}
 
 class AggregatedTestSheet extends ItemSheetdsa5 {
   static TABS = {
@@ -581,7 +748,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   static DEFAULT_OPTIONS = {
     actions: {
       postAsGroupCheck: AggregatedTestSheet.postAsGroupCheck,
-      buildItem: AggregatedTestSheet.postFinishedItem,
+      buildItem: AggregatedTestSheet._postFinishedItemWrapper,
     },
     majorButtons: [
       {
@@ -623,10 +790,14 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
       rollOptions,
     };
 
-    RequestRoll.showGCMessage(rollOptions[0].target, 0, data);
+    GroupCheck.showGCMessage(rollOptions[0].target, 0, data);
   }
 
-  static async postFinishedItem() {
+  static async _postFinishedItemWrapper(event, target) {
+    await this.postFinishedItem();
+  }
+
+  async postFinishedItem() {
     if (!this.actor) return;
 
     const resultItem = this.item.getFlag('dsa5', 'embeddedItem');
@@ -651,7 +822,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   }
 
   async dropCreation(dragData) {
-    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined);
+    const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined);
     if (!DSA5.equipmentCategories.has(typeClass)) return;
 
     this.item.setFlag('dsa5', 'embeddedItem', item);
@@ -679,6 +850,7 @@ class Enchantable extends ItemSheetdsa5 {
       enchRoll: this._enchRoll,
       enchDelete: this._enchDelete,
       enchShow: this._enchShow,
+      enchExtDelete: this._enchExtDelete,
       poisonTogglePermanent: this._poisonTogglePermanent,
       poisonDelete: this._deletePoison,
       poisonShow: this._poisonShow,
@@ -686,8 +858,8 @@ class Enchantable extends ItemSheetdsa5 {
   };
 
   static _togglePermanent(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
-    for (let ench of enchantments) {
+    const { id, enchantments } = this.enchantMentId(target);
+    for (const ench of enchantments) {
       if (ench.id == id) {
         ench.permanent = !ench.permanent;
         break;
@@ -697,26 +869,38 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   static _toggleCharge(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.toggleChargedState(id, enchantments);
   }
 
   static _enchRoll(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.rollEnchantment(id, enchantments);
   }
 
   static _enchDelete(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
+    const { id, enchantments } = this.enchantMentId(target);
     this.deleteEnchantment(id, enchantments);
   }
 
   static async _enchShow(ev, target) {
-    let { id, enchantments } = this.enchantMentId(target);
-    let enchantment = enchantments.find((x) => x.id == id);
-    let item = await this.getSpell(enchantment);
+    const { id, enchantments } = this.enchantMentId(target);
+    const enchantment = enchantments.find((x) => x.id == id);
+    const item = await this.getSpell(enchantment);
 
     if (item) item.sheet.render(true);
+  }
+
+  static _enchExtDelete(ev, target) {
+    const enchEl = $(target).parents('.statusEffect');
+    const enchId = enchEl.attr('data-id');
+    const extIdx = Number($(target).closest('[data-ext-idx]').attr('data-ext-idx'));
+    const enchantments = this.item.getFlag('dsa5', 'enchantments');
+    const enchantment = enchantments.find((x) => x.id == enchId);
+    if (enchantment?.extensions) {
+      enchantment.extensions.splice(extIdx, 1);
+      this.item.update({ flags: { dsa5: { enchantments } } });
+    }
   }
 
   static _poisonTogglePermanent(ev, target) {
@@ -744,11 +928,11 @@ class Enchantable extends ItemSheetdsa5 {
     const html = $(this.element);
 
     html.find('.ench-fw').on('change', (ev) => {
-      let { id, enchantments } = this.enchantMentId(ev.currentTarget);
-      let fw = Number(ev.currentTarget.value);
+      const { id, enchantments } = this.enchantMentId(ev.currentTarget);
+      const fw = Number(ev.currentTarget.value);
       if (!fw) return;
 
-      for (let ench of enchantments) {
+      for (const ench of enchantments) {
         if (ench.id == id) {
           ench.fw = fw;
           break;
@@ -787,22 +971,25 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   async _handleDrop(dragData) {
-    if (this.isEnchantable) await this._enchant([dragData]);
+    if (this.isEnchantable) {
+      await this._enchant([dragData]);
+      await this._enchantExtension(dragData);
+    }
     if (this.isPoisonable) await this._poison(dragData);
     await super._handleDrop(dragData);
   }
 
   async _enchant(dragDataArray) {
-    const enchantments = this.item.getFlag('dsa5', 'enchantments') || [];
+    const enchantments = duplicate(this.item.getFlag('dsa5', 'enchantments') || []);
     if (enchantments.length + dragDataArray.length > 7)
       return ui.notifications.error('DSAError.tooManyEnchants', {
         localize: true,
       });
 
-    for (let dragData of dragDataArray) {
-      const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
+    for (const dragData of dragDataArray) {
+      const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined, false);
       if (['spell', 'liturgy', 'ceremony', 'ritual'].includes(typeClass)) {
-        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: localize('TYPES.Item.spell') }, localize: true });
+        if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: _loc('TYPES.Item.spell') }, localize: true });
 
         const enchantment = {
           name: item.name,
@@ -824,8 +1011,38 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
+  async _enchantExtension(dragData) {
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (typeClass !== 'spellextension') return;
+    if (!item.pack) return ui.notifications.error('DSAError.onlyCompendiumSpells', { format: { element: _loc('TYPES.Item.spellextension') }, localize: true });
+
+    const enchantments = duplicate(this.item.getFlag('dsa5', 'enchantments') || []);
+    const spellTypes = item.system.category === 'liturgy' || item.system.category === 'ceremony'
+      ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
+    const enchantment = enchantments.find((e) => e.name === item.system.source && spellTypes.includes(this._enchantmentCategory(e)));
+    if (!enchantment) {
+      return ui.notifications.error('DSAError.noEnchantmentForExtension', { localize: true });
+    }
+    if (enchantment.fw < item.system.talentValue) {
+      return ui.notifications.error('DSAError.talentValueTooLow', { localize: true });
+    }
+    if (!enchantment.extensions) enchantment.extensions = [];
+    if (enchantment.extensions.some((e) => e.name === item.name)) return;
+
+    enchantment.extensions.push({
+      name: item.name,
+      pack: item.pack,
+      itemId: item.id,
+    });
+    await this.item.update({ flags: { dsa5: { enchantments } } });
+  }
+
+  _enchantmentCategory(enchantment) {
+    return enchantment.talisman ? 'liturgy' : 'spell';
+  }
+
   async _poison(dragData) {
-    const { item, typeClass, selfTarget } = await itemFromDrop(dragData, undefined, false);
+    const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined, false);
     if (typeClass == 'poison') {
       const poison = {
         name: item.name,
@@ -834,14 +1051,14 @@ class Enchantable extends ItemSheetdsa5 {
         permanent: false,
         actorId: dragData.actorId,
       };
-      let update = { flags: { dsa5: { poison } } };
+      const update = { flags: { dsa5: { poison } } };
       if (this.item.actor) {
         if (this.item.actor.uuid != item.actor?.uuid) {
           const proceed = await foundry.applications.api.DialogV2.confirm({
             window: {
-              title: game.i18n.format('WIZARD.addItem', { item: item.name }),
+              title: _loc('WIZARD.addItem', { item: item.name }),
             },
-            content: `<p>${localize('DSAError.poisonNeedsToBeInActor')}</p><p>${localize('POISON.addNow')}</p>`,
+            content: `<p>${_loc('DSAError.poisonNeedsToBeInActor')}</p><p>${_loc('POISON.addNow')}</p>`,
             rejectClose: false,
             modal: true,
           });
@@ -857,7 +1074,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   toggleChargedState(id, enchantments) {
-    for (let ench of enchantments) {
+    for (const ench of enchantments) {
       if (ench.id == id) {
         ench.charged = ench.talisman && ench.permanent ? true : !ench.charged;
         break;
@@ -875,9 +1092,13 @@ class Enchantable extends ItemSheetdsa5 {
     if (item) {
       item = item.toObject();
       item.system.talentValue.value = enchantment.fw;
-      const actor = DSA5_Utility.emptyActor(14, this.item.name);
-      actor.setupSpell(item, {}, 'emptyActor').then(async (setupData) => {
-        const infoMsg = game.i18n.format('CHATNOTIFICATION.enchantmentUsed', {
+      const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
+      const options = {};
+      if (enchantment.extensions?.length) {
+        options.enchantmentExtensions = await this._resolveEnchantmentExtensions(enchantment.extensions);
+      }
+      actor.setupSpell(item, options, 'emptyActor').then(async (setupData) => {
+        const infoMsg = _loc('CHATNOTIFICATION.enchantmentUsed', {
           item: this.item.name,
           spell: item.name,
         });
@@ -892,12 +1113,32 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
+  async _resolveEnchantmentExtensions(extensions) {
+    const resolved = [];
+    for (const ext of extensions) {
+      const pack = game.packs.get(ext.pack);
+      if (!pack) continue;
+      let item = await pack.getDocument(ext.itemId);
+      if (!item) {
+        const idx = pack.index.getName(ext.name);
+        if (idx) item = await pack.getDocument(idx._id);
+      }
+      if (item) {
+        const mapped = item;
+        mapped.shortName = item.name.split(' - ').length > 1 ? item.name.split(' - ')[1] : item.name;
+        mapped.descr = $(item.system.description.value).text() || '';
+        resolved.push(mapped);
+      }
+    }
+    return resolved;
+  }
+
   static _deletePoison(ev, target) {
-    this.item.update({ [`flags.dsa5.-=poison`]: null });
+    this.item.update({ 'flags.dsa5.poison': _del });
   }
 
   deleteEnchantment(id, enchantments) {
-    let enchantment = enchantments.findIndex((x) => x.id == id);
+    const enchantment = enchantments.findIndex((x) => x.id == id);
     enchantments.splice(enchantment, 1);
     this.item.update({ flags: { dsa5: { enchantments } } });
   }
@@ -920,7 +1161,7 @@ class Enchantable extends ItemSheetdsa5 {
       itemLibrary.findCompendiumItem;
       const cats = enchantment.talisman ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
 
-      for (let cat of cats) {
+      for (const cat of cats) {
         item = await game.dsa5.itemLibrary.findCompendiumItem(enchantment.name, cat);
         item = item.find((x) => x.name == enchantment.name && x.type == cat && x.system);
 
@@ -939,7 +1180,7 @@ class Enchantable extends ItemSheetdsa5 {
   enchantMentId(target) {
     return {
       id: $(target).parents('.statusEffect').attr('data-id'),
-      enchantments: this.item.getFlag('dsa5', 'enchantments'),
+      enchantments: duplicate(this.item.getFlag('dsa5', 'enchantments') || []),
     };
   }
 
@@ -963,7 +1204,7 @@ class Enchantable extends ItemSheetdsa5 {
     if (enchantments.some((x) => !x.talisman)) enchantmentLabel.push('enchantment');
     if (enchantments.some((x) => x.talisman)) enchantmentLabel.push('talisman');
 
-    return enchantmentLabel.map((x) => localize(x)).join('/');
+    return enchantmentLabel.map((x) => _loc(x)).join('/');
   }
 
   async _prepareContext(_options) {
@@ -1086,10 +1327,10 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
   }
 
   async breakOverflow(data, parent) {
-    let elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.hbs', data));
+    const elm = $(await renderTemplate('systems/dsa5/templates/items/baghover.hbs', data));
 
-    let top = parent.offset().top + 52;
-    let left = parent.offset().left - 75;
+    const top = parent.offset().top + 52;
+    const left = parent.offset().left - 75;
     elm.appendTo($('body'));
     elm.css({
       position: 'absolute',
@@ -1108,7 +1349,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     const slots = html.find('.slot');
     slots.on('mouseenter', async (ev) => {
       const item = $(ev.currentTarget);
-      let elm = await this.breakOverflow(
+      const elm = await this.breakOverflow(
         {
           name: ev.currentTarget.dataset.name,
           weight: ev.currentTarget.dataset.weight,
@@ -1124,8 +1365,8 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     });
 
     slots.on('mousedown', async (ev) => {
-      let itemId = ev.currentTarget.dataset.itemId;
-      let item = this.actor.items.get(itemId);
+      const itemId = ev.currentTarget.dataset.itemId;
+      const item = this.actor.items.get(itemId);
 
       if (ev.button == 0) item.sheet.render(true);
       else if (ev.button == 2) {
@@ -1183,7 +1424,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   };
 }
 
-class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
+class PlantSheet extends ItemSheetObfuscation(EffectsEquipmentSheet) {
   static PARTS = {
     header: super.PARTS.header,
     stat: {
@@ -1191,7 +1432,36 @@ class PlantSheet extends ItemSheetObfuscation(NoEffectsEquipmentSheet) {
     },
     tabs: super.PARTS.tabs,
     description: super.PARTS.description,
+    effects: super.PARTS.effects,
   };
+
+  static DEFAULT_OPTIONS = {
+    actions: {
+      consumeItem: function () {
+        this.setupEffect();
+      },
+    },
+    majorButtons: [
+      {
+        label: 'SHEET.ConsumeItem',
+        icon: 'fas fa-dice-d20',
+        action: 'consumeItem',
+        visible: function () {
+          return this.actor;
+        },
+      },
+    ],
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.noActiveEffects = true;
+    return data;
+  }
+
+  setupEffect() {
+    this.item.setupEffect();
+  }
 }
 
 class PatronSheet extends NoEffectsSheet { }
@@ -1210,9 +1480,9 @@ class MagicalSignSheet extends NoEffectsSheet {
 
     const actor = this.actor;
     const sign = this.item.system.chatDataToString();
-    const skill = actor.items.find((x) => x.type == 'skill' && x.name == localize('LocalizedIDs.artisticAbility'));
+    const skill = actor.items.find((x) => x.type == 'skill' && x.name == _loc('LocalizedIDs.artisticAbility'));
     const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign}<span class="costCheck"></span></p>`;
-    const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${localize('TYPES.Item.magicalsign')})` }, undefined);
+    const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${_loc('TYPES.Item.magicalsign')})` }, undefined);
     const res = await actor.basicTest(setupData, { suppressMessage: true });
     res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true };
     await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage);
@@ -1263,7 +1533,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
 
   static async deleteAttack(event, target) {
     this.tabGroups.alternateAttacks = 'baseAttack';
-    await this.item.update({ [`flags.dsa5.alternateAttacks.-=${target.dataset.key}`]: null });
+    await this.item.update({ [`flags.dsa5.alternateAttacks.${target.dataset.key}`]: _del });
   }
 
   static async addAttackSheet() {
@@ -1274,7 +1544,7 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
         dsa5: {
           alternateAttacks: {
             [attackName]: {
-              name: localize('CHAR.ATTACK'),
+              name: _loc('CHAR.ATTACK'),
             },
           },
         },
@@ -1285,13 +1555,13 @@ class WeaponSheetDSA5 extends ItemSheetObfuscation(Enchantable) {
 
 class RangeweaponSheet extends WeaponSheetDSA5 {
   get isPoisonable() {
-    return localize(`LocalizedCTs.${this.item.system.combatskill.value}`) == 'Throwing Weapons';
+    return _loc(`LocalizedCTs.${this.item.system.combatskill.value}`) == 'Throwing Weapons';
   }
 }
 
 class BlessingSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
+    return this.actor && !OnUseEffect.hasOnUseEffect(this.item);
   }
 
   async setupEffect() {
@@ -1400,7 +1670,7 @@ class DiseaseSheetDSA5 extends WithEffectsSheet {
 
 class MagictrickSheetDSA5 extends MacroOnlyEffectsSheet {
   get hasRollEffect() {
-    return this.actor && !foundry.utils.getProperty(this.item, 'flags.dsa5.onUseEffect');
+    return this.actor && !OnUseEffect.hasOnUseEffect(this.item);
   }
 
   async setupEffect() {
@@ -1422,7 +1692,7 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
 
   async _prepareContext(_options) {
     const context = await super._prepareContext(_options);
-    context.isBrawling = localize(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
+    context.isBrawling = _loc(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
     return context;
   }
 }
@@ -1492,7 +1762,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
           .replace(/\(a-z äöü-\)/gi, '')
           .split(',')
           .map((x) => x.trim())) {
-          if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${localize('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
+          if (SpecialabilityRulesDSA5.hasAbility(this.actor, `${_loc('LocalizedIDs.propertyKnowledge')} (${feature})`, false)) {
             focusValue = this.maxByAttr(maxBonus);
             break;
           }
@@ -1500,7 +1770,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
         break;
       case 'liturgy':
       case 'ceremony':
-        const aspect = new RegExp(`^${localize('LocalizedIDs.aspectKnowledge')}`);
+        const aspect = new RegExp(`^${_loc('LocalizedIDs.aspectKnowledge')}`);
         if (
           this.actor.items
             .filter((x) => x.type == 'specialability' && aspect.test(x.name))
@@ -1574,7 +1844,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   }
 
   static _editExtension(ev, target) {
-    let itemId = this._getItemId(target);
+    const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     item.sheet.render(true);
   }
@@ -1582,29 +1852,17 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
   static async _deleteExtension(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.find((x) => x.id == itemId);
-    const message = game.i18n.format('DIALOG.DeleteItemDetail', {
-      item: item.name,
-    });
-    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
-    const proceed = await foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: 'DIALOG.deleteConfirmation',
-      },
-      content,
-      rejectClose: false,
-      modal: true,
-    });
-    if (proceed) {
-      this._cleverDeleteItem(itemId);
-      $(target).closest('.item').remove();
-    }
+    if (!item) return;
+
+    await this.actor.sheet._itemDeleteDialog(item);
   }
 
   async _cleverDeleteItem(itemId) {
-    let item = this.actor.items.find((x) => x.id == itemId);
-    await this.actor._updateAPs(-1 * item.system.APValue.value, {}, { render: false });
+    const item = this.actor.items.find((x) => x.id == itemId);
+    const xpCost = (Number(item.system.APValue.value) || 0) * -1;
+    await this.actor._updateAPs(xpCost, {}, { render: false });
     await this.actor.deleteEmbeddedDocuments('Item', [itemId]);
-    await APTracker.track(this.actor, { type: 'item', item, state: -1 }, apCost);
+    await APTracker.track(this.actor, { type: 'item', item, state: -1 }, xpCost);
   }
 }
 

@@ -8,14 +8,14 @@
             {{/if}}
         </div>
         <div class="combat-item-name three col">
-            <a data-action="itemEdit">{{item.name}}</a>
+            <a data-action="itemEdit" class="gTooltip" data-category="rangeweaponDetails" data-id="{{item._id}}" data-subweapon="{{isSub}}">{{item.name}}</a>
         </div>
 
         <div class="combat-item-skill col five center small onlyMultiColumn">
             {{localize item.system.combatskill.value}}
         </div>
 
-        <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
+        <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-mod="attack">
             <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
         </div>
         <div class="combat-item-damage col ten center">
@@ -42,7 +42,7 @@
                     <option>-</option>  
                 </select>
                 {{/if}}
-                {{#if (ne item.LZ 0)}}
+                {{#if (and (ne item.LZ 0) (not (gt item.system.aimTime.progress 0)))}}
                 <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress-dsa5 blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -54,10 +54,22 @@
                         <div class="progress-value">{{item.progress}}</div>
                     </div>
                 </a> {{/if}}
+
+                {{#if (gt item.system.aimTime.progress 0)}}
+                <div class="progress-dsa5 blue" data-tooltip="{{item.aimTitle}}">
+                    <span class="progress-left" style="--transformLeft:{{item.aimTransformLeft}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <span class="progress-right" style="--transformRight:{{item.aimTransformRight}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <div class="progress-value">{{item.aimProgress}}</div>
+                </div>
+                {{/if}}
             </div>
             {{else}}
             <div class="no-ammo">
-                - {{#if (ne item.LZ 0)}}
+                - {{#if (and (ne item.LZ 0) (not (gt item.system.aimTime.progress 0)))}}
                 <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress-dsa5 blue">
                         <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
@@ -69,22 +81,54 @@
                         <div class="progress-value">{{item.progress}}</div>
                     </div>
                 </a> {{/if}}
+
+                {{#if (gt item.system.aimTime.progress 0)}}
+                <div class="progress-dsa5 blue" data-tooltip="{{item.aimTitle}}">
+                    <span class="progress-left" style="--transformLeft:{{item.aimTransformLeft}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <span class="progress-right" style="--transformRight:{{item.aimTransformRight}}">
+                        <span class="progress-bar"></span>
+                    </span>
+                    <div class="progress-value">{{item.aimProgress}}</div>
+                </div>
+                {{/if}}
             </div>
             {{/if}}
         </div>
-        <div class="col zerofive very-small center onlyMultiColumn flexrow very-small">
-            <button type="button" data-action="itemDropdown" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button> 
-            {{#if item.ammoMax}}
-            <button type="button" data-action="item-swapMag" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button> 
-            {{/if}}
-        </div>
-    </div>
-    <div class="row-section lineheight expandDetails {{item.detailed}}">
-        <div class="col">
-            <ul>
-                <li><b>{{localize "reach"}}</b>: {{item.calculatedRange}}</li>
-                <li><b>{{localize "reloadTime"}}</b>: {{item.LZ}} ({{item.system.reloadTime.progress}})</li>
-            </ul>
+        <div class="combat-item-grip col ten center small">
+            <div class="combatGripControls flexrow flexAlignCenter">
+                {{#if item.ammoMax}}
+                <button type="button" data-action="item-swapMag" class="icon fas autoFlex fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.swapMag"></button>
+                {{/if}}
+
+                <div class="combatGripHands flexrow flexAlignCenter {{ifThen item.system.worn.requiresBothHands 'oneButton' 'twoButtons'}}">
+                    {{#if item.system.worn.requiresBothHands}}
+                    <button type="button"
+                        class="combatHandButton dsadesignbutton very-small active"
+                        data-tooltip="wrongGrip.twoHanded">
+                        <i class="fas fa-hands-helping"></i>
+                    </button>
+                    {{else}}
+                    <button type="button"
+                        data-action="swapWeaponHandSlot"
+                        data-hand="main"
+                        class="combatHandButton dsadesignbutton very-small {{ifThen (not item.system.worn.offHand) 'active' ''}}"
+                        data-tooltip="mainHand">
+                        <i class="fas fa-hand-paper"></i>
+                    </button>
+                    <button type="button"
+                        data-action="swapWeaponHandSlot"
+                        data-hand="offhand"
+                        class="combatHandButton dsadesignbutton very-small {{ifThen item.system.worn.offHand 'active' ''}}"
+                        data-tooltip="offHand">
+                        <i class="fas fa-hand-paper combatHandIconOffhand"></i>
+                    </button>
+                    {{/if}}
+                </div>
+
+                <button type="button" data-action="weaponContextMenu" class="noBorder combatGripMenu combatHandButton dsadesignbutton very-small onlyMultiColumn" data-tooltip="SHEET.EditItem"><i class="fas fa-ellipsis-vertical"></i></button>
+            </div>
         </div>
     </div>
 </div>

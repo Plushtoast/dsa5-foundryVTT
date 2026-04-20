@@ -1,13 +1,16 @@
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
-import DSA5Payment from '../system/helpers/payment.js';
+import DSA5Payment from '../system/payment/payment.js';
+import PaymentRequestService from '../system/queries/payment-requests.js';
+import RollRequestService from '../system/queries/roll-request.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import { TrapState } from '../chatmessage/trap_state.js';
+import ItempackageData from '../data/item/itempackage.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
@@ -18,6 +21,8 @@ export default function () {
     OpposedDsa5.chatListeners(html);
     DiceDSA5.chatListeners(html);
     DSA5Payment.chatListeners(html);
+    PaymentRequestService.chatListeners(html);
+    RollRequestService.chatListeners(html);
     TrapState.chatListeners(html);
 
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
@@ -25,10 +30,10 @@ export default function () {
     game.dsa5.autoComplete.chatListeners(html);
 
     DSA5ChatListeners.chatListeners(html);
+    ItempackageData.chatListeners(html);
   });
 
   Hooks.on('renderChatInput', applyNotificationListeners);
-
 
   function applyNotificationListeners(app, html, context) {
     if (context.previousParent.id != 'chat-notifications') return;
@@ -38,7 +43,10 @@ export default function () {
     OpposedDsa5.chatListeners(chatNotifications);
     DiceDSA5.chatListeners(chatNotifications);
     DSA5Payment.chatListeners(chatNotifications);
+    PaymentRequestService.chatListeners(chatNotifications);
+    RollRequestService.chatListeners(chatNotifications);
     DSA5ChatListeners.chatListeners(chatNotifications);
+    ItempackageData.chatListeners(chatNotifications);
 
     Hooks.call('dsa5ApplyNotificationListeners', chatNotifications);
     Hooks.off('renderChatInput', applyNotificationListeners);
@@ -47,6 +55,20 @@ export default function () {
   Hooks.on('chatInput', (event, inputOptions) => {
     return game.dsa5.autoComplete._navigateQuickFind(event);
   })
+
+  Hooks.on('updateChatMessage', (message, changed) => {
+    if (!getProperty(message, 'flags.dsa5.queryRequest')) return;
+    if (!('timestamp' in changed)) return;
+
+    const log = ui.chat?.element?.querySelector('.chat-log');
+    if (!log) return;
+
+    const li = log.querySelector(`.message[data-message-id="${message.id}"]`);
+    if (!li || li === log.lastElementChild) return;
+
+    log.append(li);
+    if (ui.chat.isAtBottom) ui.chat.scrollBottom();
+  });
 
   Hooks.on('renderChatMessageHTML', (app, html, msg) => {
     html = $(html);
@@ -80,9 +102,12 @@ export default function () {
       if (hiddenForMe) {
         html.find('.payButton').remove();
       }
+      html.find('.payment-request-gm').remove();
     } else {
       html.find('.chat-button-player').remove();
     }
+
+    RollRequestService.handleRenderMessage(msg, html);
     if (game.settings.get('dsa5', 'expandChatModifierlist')) {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });
@@ -97,17 +122,22 @@ export default function () {
   });
 
   Hooks.on('chatMessage', (html, content, msg) => {
-    let cmd = content.match(/^\/(pay|getPaid|help$|conditions$|tables)/);
-    cmd = cmd ? cmd[0] : '';
+    const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
+    let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages)(?:\s|$)/i);
+    cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {
-      case '/pay':
-        if (game.user.isGM) DSA5Payment.createPayChatMessage(content);
-        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+      case '/pay': {
+        const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
+        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'pay', amount: moneyString, description });
+        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
-      case '/getPaid':
-        if (game.user.isGM) DSA5Payment.createGetPaidChatMessage(content);
-        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), content);
+      }
+      case '/getPaid': {
+        const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
+        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'getPaid', amount: moneyString, description });
+        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
+      }
       case '/help':
         DSA5ChatListeners.getHelp();
         return false;
@@ -117,6 +147,9 @@ export default function () {
       case '/tables':
         DSA5ChatListeners.showTables();
         return false;
+      case '/packages':
+        ItempackageData.postPackagesChatCard();
+        return false;
     }
   });
 
@@ -124,9 +157,9 @@ export default function () {
     if (getProperty(doc, 'flags.core.initiativeRoll')) {
       const rolls = doc.rolls[0].terms;
       const basnum = `${rolls[0].number}`.split('.')[0];
-      const tooltip = `${localize('baseValue')}: ${basnum}, ${localize('randomValue')}: ${rolls.at(-3).values[0]}")}`;
+      const tooltip = `${_loc('baseValue')}: ${basnum}, ${_loc('randomValue')}: ${rolls.at(-3).values[0]}")}`;
       const dies = [];
-      for (let term of rolls) {
+      for (const term of rolls) {
         if (term.faces && term.faces == 6) {
           for (let i = 0; i < term.number; i++) {
             dies.push(`<span class="die-damage d${term.faces}">${term.results[i].result}</span>`);
@@ -135,10 +168,10 @@ export default function () {
       }
       const content = `<div>
                 <div class="card-content hide-option roll-result">
-                    <b>${localize('Roll')}</b>: ${dies.join('')}
+                    <b>${_loc('Roll')}</b>: ${dies.join('')}
                 </div>
                 <div class="card-content" data-tooltip="${tooltip}">
-                    <b>${localize('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
+                    <b>${_loc('initiative')}</b>: ${Math.floor(doc.rolls[0]._total * 100) / 100}
                 </div>
             </div>`;
 
@@ -153,9 +186,9 @@ export default function () {
 
 function embeddedDragStart(ev) {
   const messageId = $(ev.currentTarget).parents('.message').attr('data-message-id');
-  let message = game.messages.get(messageId);
+  const message = game.messages.get(messageId);
   const item = message.getFlag('dsa5', 'embeddedItem');
-  let dataTransfer = {
+  const dataTransfer = {
     type: 'Item',
     data: item,
   };

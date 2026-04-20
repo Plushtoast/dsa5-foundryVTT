@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
@@ -12,7 +13,7 @@ import { ItemFactory } from '../../item/item-factory.js';
 const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;
 
-export default class ConsumableData extends ItemDataModel.mixin(AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
+export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       equipmentType: new SchemaField({

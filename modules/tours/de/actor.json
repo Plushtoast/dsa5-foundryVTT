@@ -2,6 +2,7 @@
     "title": "Heldendokument",
     "module": "dsa5",
     "id": "tdeActor",
+    "description": "Ein Überblick über die Funktionen des Heldendokuments.",
     "canBeResumed": false,
     "display": true,
     "preCommand": "const actor = game.actors.find(x => true);if(!actor) return ui.notifications.warn(\"Mindestens ein Akteur muss verfügbar sein\");this.app=actor.sheet;",

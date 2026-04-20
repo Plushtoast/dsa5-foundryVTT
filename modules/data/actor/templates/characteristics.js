@@ -3,7 +3,7 @@ import { DSADataModel } from "../../abstract.js";
 const { SchemaField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class CharacteristicsTemplate extends DSADataModel {
-  
+
     static defineSchema() {
         return {
             characteristics: new SchemaField({

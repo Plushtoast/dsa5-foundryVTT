@@ -81,7 +81,7 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate, 
       skill.system.attack.value = modifiedTalentValue + Math.max(0, Math.floor((attackChar - 8) / 3)) + attack;
     }
 
-    skill.cost = game.i18n.format('advancementCost', {
+    skill.cost = _loc('advancementCost', {
       cost: DSA5_Utility._calculateAdvCost(skill.system.talentValue.value, skill.system.StF.value),
     });
     return skill;

@@ -1,0 +1,242 @@
+.hotbar-sort-manager {
+  height: 100%;
+  padding: 20px;
+
+  .sort-group-toggle {
+    border: 2px solid transparent;
+
+    transition: all 0.15s;
+
+    &.inactive {
+      opacity: 0.25;
+      filter: grayscale(100%);
+    }
+
+    $group-colors: (
+      body: #4f6d65,
+      social: #85302e,
+      knowledge: #4b6585,
+      trade: #cda25e,
+      nature: #535829,
+    );
+
+    @each $type, $color in $group-colors {
+      &.#{$type} {
+        border-color: $color;
+        color: $color;
+        background: rgba($color, 0.12);
+      }
+    }
+
+    .sort-btn.highlight {
+      color: darkred;
+    }
+  }
+
+  .sort-manager-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+
+  .sort-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 4px;
+    align-content: flex-start;
+  }
+
+  .sort-card {
+    aspect-ratio: 1 / 1.1;
+    border: 1px solid rgba(63, 49, 40, 0.5);
+    border-radius: 4px;
+    gap: 1px;
+    padding: 2px;
+    cursor: grab;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.15s;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: var(--hover-color, darkred);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    &.sort-hidden {
+      opacity: 0.3;
+
+      .sort-card-name {
+        text-decoration: line-through;
+      }
+    }
+
+    &.dragging {
+      opacity: 0.25;
+      transform: scale(0.92);
+    }
+
+    &.drag-over-left {
+      box-shadow: -3px 0 0 0 darkred;
+    }
+
+    &.drag-over-right {
+      box-shadow: 3px 0 0 0 darkred;
+    }
+
+    &.dsahidden {
+      display: none;
+    }
+
+    $skill-colors: (
+      body: #4f6d65,
+      social: #85302e,
+      knowledge: #4b6585,
+      trade: #cda25e,
+      nature: #535829,
+    );
+
+    @each $type, $color in $skill-colors {
+      &.#{$type} {
+        border-left: 5px solid $color;
+      }
+    }
+  }
+
+  .sort-card-btn {
+    opacity: 0.25;
+    transition: opacity 0.15s;
+    color: #fff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9);
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &.fav-btn.active {
+      opacity: 1;
+      color: #c8a63a;
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  .sort-card-img-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  .sort-card-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 3px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .sort-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    pointer-events: none;
+
+    .sort-card-btn {
+      pointer-events: auto;
+    }
+  }
+
+  .sort-card-tw {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 2em;
+    color: #fff;
+    text-shadow:
+      0 0 3px rgba(0, 0, 0, 0.9),
+      0 1px 2px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+  }
+
+  .sort-card-name {
+    text-align: center;
+    max-width: 100%;
+    line-height: 1.2;
+  }
+
+  .sort-save-btn {
+    &[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  .hotbar-sort-manager-avatar {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+    gap: 10px;
+
+    .avatar-hint {
+      font-size: 0.85em;
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    .avatar-source-btn {
+      &.active {
+        background: rgba(63, 49, 40, 0.15);
+        border-color: var(--hover-color, darkred);
+        font-weight: bold;
+      }
+    }
+
+    .avatar-preview-area {
+      gap: 6px;
+
+      .avatar-preview {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid rgba(63, 49, 40, 0.5);
+        background: #111;
+        flex-shrink: 0;
+
+        &.interactive {
+          cursor: grab;
+
+          &:active {
+            cursor: grabbing;
+          }
+        }
+
+        .avatar-preview-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          pointer-events: none;
+          user-select: none;
+        }
+      }
+    }
+
+    .avatar-offset-controls {
+      padding: 0 10px;
+
+      label {
+        min-width: 40px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .sort-manager-footer {
+    padding-top: 6px;
+    border-top: 1px solid rgba(63, 49, 40, 0.3);
+    flex-shrink: 0;
+  }
+}

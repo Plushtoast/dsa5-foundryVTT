@@ -3,6 +3,12 @@ const { renderTemplate } = foundry.applications.handlebars;
 export default class DidYouKnow {
   static fadeOut = true;
 
+  static async getRandomTip() {
+    const lang = game.i18n.lang;
+    const json = await foundry.utils.fetchJsonWithTimeout(`systems/dsa5/lazy/didyouknow/${lang}.json`);
+    return json.data?.[Math.floor(Math.random() * json.data.length)] ?? '';
+  }
+
   static async stopFade(ev) {
     ev.stopPropagation();
     ev.preventDefault();
@@ -32,16 +38,14 @@ export default class DidYouKnow {
   static async showOneMessage(timeout = 8000) {
     if (game.settings.get('dsa5', 'disableDidYouKnow')) return;
 
-    fetch(`systems/dsa5/lazy/didyouknow/${game.i18n.lang}.json`)
-      .then(async (r) => r.json())
-      .then(async (json) => {
-        const msg = json.data[Math.floor(Math.random() * json.data.length)];
-        const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.hbs', { msg, fadeOut: DidYouKnow.fadeOut });
-        $('body').append(didYouKnow);
-        this.onRender();
-        setTimeout(function () {
-          if (DidYouKnow.fadeOut) $('.didYouKnow').fadeOut(1000, () => $('.didYouKnow').remove());
-        }, timeout);
-      });
+    const msg = await this.getRandomTip();
+    if (!msg) return;
+
+    const didYouKnow = await renderTemplate('systems/dsa5/templates/system/didyouknow.hbs', { msg, fadeOut: DidYouKnow.fadeOut });
+    $('body').append(didYouKnow);
+    this.onRender();
+    setTimeout(function () {
+      if (DidYouKnow.fadeOut) $('.didYouKnow').fadeOut(1000, () => $('.didYouKnow').remove());
+    }, timeout);
   }
 }

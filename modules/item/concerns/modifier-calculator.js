@@ -72,7 +72,7 @@ export class ModifierCalculator {
      */
     static parseEffect(effect, actor) {
         const itemModifiers = {};
-        const speedRegex = new RegExp(game.i18n.localize('CHARAbbrev.GS'), 'gi');
+        const speedRegex = new RegExp(_loc('CHARAbbrev.GS'), 'gi');
         const valuePatterns = ITEM_CONSTANTS.VALUE_PATTERNS;
 
         const modifiers = effect.split(/[,;]/).map(x => x.trim()).filter(Boolean);
@@ -151,45 +151,4 @@ export class ModifierCalculator {
         });
     }
 
-    static _parseModifiers(html) {
-        const situationalModifiers = html
-            .find('[name="situationalModifiers"] option:selected')
-            .map(function () {
-                const val = this.value;
-                const data = {
-                    name: this.textContent.trim().split('[')[0],
-                    value: isNaN(val) ? val : Number(val),
-                    type: this.dataset.type,
-                };
-
-                if (data.type === 'dmg') {
-                    data.damageBonus = data.value;
-                    data.value = 0;
-                }
-
-                if (this.dataset.specAbId) data.specAbId = this.dataset.specAbId;
-                if (this.dataset.armorPen) data.armorPen = this.dataset.armorPen;
-
-                return data;
-            })
-            .get();
-
-        const focusRuleModifiers = html
-            .find('.focusMods input')
-            .map(function () {
-                return {
-                    name: game.i18n.localize(this.name),
-                    value: Number(this.value),
-                };
-            })
-            .get();
-
-        const manualModifier = {
-            name: game.i18n.localize('manual'),
-            value: Number(html.find('[name="testModifier"]').val()),
-            type: '',
-        };
-
-        return [...situationalModifiers, ...focusRuleModifiers, manualModifier];
-    }
 }

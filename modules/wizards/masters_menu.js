@@ -1,15 +1,19 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DSA5Payment from '../system/helpers/payment.js';
+import PaymentRequestService from '../system/queries/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
-import { delay, slist, tabSlider } from '../system/helpers/view_helper.js';
+import { slist, tabSlider } from '../system/helpers/view_helper.js';
 import PlayerMenu from './player_menu.js';
-import RequestRoll from '../system/rolls/request-roll.js';
 import DialogShared from '../dialog/dialog-shared.js';
+import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
+import ChatCommandService from '../system/sidebar/chat_command_service.js';
+import RollRequestService from '../system/queries/roll-request.js';
+import GroupActorSheet from '../actor/group-sheet.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
-import { localize, format } from '../system/helpers/localizer.js';
+import { DICE_CONSTANTS } from '../config/dice-constants.js';
+
 const { hasProperty, expandObject, mergeObject, duplicate, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -113,8 +117,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   constructor(app) {
     super(app);
     this.heros = [];
-    this.lastSkill = `${localize('LocalizedIDs.perception')}|skill`;
+    this.lastSkill = `${_loc('LocalizedIDs.perception')}|skill`;
     this.randomCreation = [];
+    this._darknessAnimationIntervalId = null;
 
     if (game.user.isGM) {
       Hooks.on('updateActor', async (document, data, options, userId) => {
@@ -130,44 +135,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
           this.render();
         }
       });
-      Hooks.on('updateScene', (document, data, options, userId) => {
-        const properties = ['environment.darknessLevel'];
-        if (
-          game.canvas.id == document.id &&
-          properties.reduce((a, b) => {
-            return a || hasProperty(data, b);
-          }, false)
-        ) {
-          if (game.dsa5.apps.LightDialog) {
-            if (options.animateDarkness) {
-              const interval = 50;
-              const duration = options.animateDarkness;
-              const limit = duration / interval;
-              let count = 0;
-
-              const intervalId = setInterval(() => {
-                game.dsa5.apps.LightDialog.onDarknessChange()
-
-                count++;
-                if (count >= limit) {
-                  clearInterval(intervalId);
-                }
-              }, interval);
-            } else {
-              game.dsa5.apps.LightDialog.onDarknessChange();
-            }
-          }
-
-          const hotbarDarkness = ui.hotbar.element.querySelector('[name="vSliderDarkness"]');
-          if (hotbarDarkness) {
-            ui.hotbar.updateDarknessSlider(data.environment.darknessLevel);
-          }
-
-          if (!this.rendered) return;
-
-          this.element.querySelector('.updateDarkness').value = data.environment.darknessLevel;
-        }
-      });
+      Hooks.on('updateScene', (document, data, options) => this._onSceneDarknessUpdate(document, data, options));
       Hooks.on('canvasInit', () => {
         if (!this.rendered) return;
 
@@ -187,7 +155,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const selected = game.settings.get('dsa5', 'selectedActors');
     const tracked = game.settings.get('dsa5', 'trackedActors');
     const final = {};
-    for (let key of Object.keys(selected)) {
+    for (const key of Object.keys(selected)) {
       if (tracked.actors?.includes(key)) final[key] = selected[key];
     }
     return final;
@@ -220,22 +188,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.getExp(this.selectedIDs());
   }
 
-  static _getExp(ev, target) {
-    ev.stopPropagation();
-    this.getExp([this.getID(target)]);
-  }
-
   static _getPaidAll(ev, target) {
     this.doPayment(this.selectedIDs(), false);
   }
 
   static _payAll(ev, target) {
     this.doPayment(this.selectedIDs(), true);
-  }
-
-  static _getPaid(ev, target) {
-    ev.stopPropagation();
-    this.doPayment([this.getID(target)], false);
   }
 
   static async _actorItem(ev, target) {
@@ -245,18 +203,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     document.sheet.render(true);
   }
 
-  static _pay(ev, target) {
-    ev.stopPropagation();
-    this.doPayment([this.getID(target)], true);
-  }
-
   static _rollAll(ev, target) {
     this.rollAbility(this.selectedIDs());
-  }
-
-  static _rollChar(ev, target) {
-    ev.stopPropagation();
-    this.rollAbility([this.getID(target)]);
   }
 
   static _expandHero(ev, target) {
@@ -267,6 +215,85 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   static _heroLink(ev, target) {
     ev.stopPropagation();
     game.actors.get(this.getID(target)).sheet.render(true);
+  }
+
+  static _heroActions(ev, target) {
+    ev.stopPropagation();
+    ev.preventDefault();
+    const actorId = this.getID(target);
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+
+    const menuItems = [
+      {
+        label: _loc('CHAT.MODES.blind'),
+        icon: '<i class="fas fa-dice"></i>',
+        onClick: () => this.rollAbility([actorId]),
+      },
+      {
+        label: _loc('PAYMENT.wage'),
+        icon: '<i class="fas fa-piggy-bank"></i>',
+        onClick: () => this.doPayment([actorId], false),
+      },
+      {
+        label: _loc('MASTER.payTT'),
+        icon: '<i class="fas fa-coins"></i>',
+        onClick: () => this.doPayment([actorId], true),
+      },
+      {
+        label: _loc('MASTER.awardXP'),
+        icon: '<i class="fas fa-trophy"></i>',
+        onClick: () => this.getExp([actorId]),
+      },
+      {
+        label: _loc('SHEET.DeleteItem'),
+        icon: '<i class="fas fa-times"></i>',
+        onClick: () => this._deleteHeroById(actorId),
+      },
+    ];
+
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
+    menu.render(target, { animate: true });
+  }
+
+  static _headerActions(ev, target) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    const menuItems = [
+      {
+        label: _loc('CHAT.MODES.blind'),
+        icon: '<i class="fas fa-dice"></i>',
+        onClick: () => this.rollAbility(this.selectedIDs()),
+      },
+      {
+        label: _loc('PAYMENT.wage'),
+        icon: '<i class="fas fa-piggy-bank"></i>',
+        onClick: () => this.doPayment(this.selectedIDs(), false),
+      },
+      {
+        label: _loc('MASTER.payTT'),
+        icon: '<i class="fas fa-coins"></i>',
+        onClick: () => this.doPayment(this.selectedIDs(), true),
+      },
+      {
+        label: _loc('MASTER.awardXP'),
+        icon: '<i class="fas fa-trophy"></i>',
+        onClick: () => this.getExp(this.selectedIDs()),
+      },
+      {
+        label: _loc('HELP.groupcheck'),
+        icon: '<i class="fas fa-users-cog"></i>',
+        onClick: () => this.doGroupCheck(),
+      },
+    ];
+
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
+    menu.render(target, { animate: true });
+  }
+
+  static async _openPartySheet() {
+    await GroupActorSheet.openPartySheet();
   }
 
   async _onRender(context, options) {
@@ -290,25 +317,6 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     });
     html.find('.selectAll').on('change', (ev) => this._selectAll(ev, html));
     html.find('.heroSelector').on('click', (ev) => ev.stopPropagation());
-    let deletehand = (ev) => this._deleteHero(ev);
-    html.find('.hero').on('mouseenter', (ev) => {
-      if (ev.currentTarget.getElementsByClassName('hovermenu').length == 0) {
-        let div = document.createElement('div');
-        div.classList.add('hovermenu');
-        let del = document.createElement('i');
-        del.classList.add('fas', 'fa-times');
-        del.dataset.tooltip = 'SHEET.DeleteItem';
-        del.addEventListener('click', deletehand, false);
-        div.appendChild(del);
-        ev.currentTarget.appendChild(div);
-      }
-    });
-    html.find('.hero').on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
-      if (!e || e.parentNode == this || e == this) return;
-
-      ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
-    });
     html.find('.editFolder').on('change', async (ev) => this._editFolder(ev));
     html.find('.changeSetting').on('change', async (ev) => {
       await game.settings.set('dsa5', ev.currentTarget.name, ev.currentTarget.checked);
@@ -326,14 +334,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       game.settings.set('dsa5', 'attackFromBehindAngle', Number(ev.currentTarget.value));
     });
 
-    for (let elem of this.randomCreation) {
+    for (const elem of this.randomCreation) {
       elem.activateListeners(html);
     }
     slist(html, '.heros', this.updateHeroOrder.bind(this), '.hero');
     html.find('.hero').on('dragstart', (event) => {
       event.stopPropagation();
       const a = event.currentTarget;
-      let dragData = { type: 'Actor', uuid: a.dataset.uuid };
+      const dragData = { type: 'Actor', uuid: a.dataset.uuid };
       event.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
     });
 
@@ -354,26 +362,13 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     } else {
       ids = this.selectedIDs();
     }
-    let dragData = { type: 'GroupDrop', ids };
+    const dragData = { type: 'GroupDrop', ids };
     ev.originalEvent.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 
-  async _selectAll(ev, html) {
-    ev.stopPropagation();
-    let selector = '.heroSelector';
-    if (ev.currentTarget.dataset.folder) selector = `[data-id="${ev.currentTarget.dataset.folder}"] .heroSelector`;
-
-    const allHeros = html.find(selector);
-    allHeros.prop('checked', $(ev.currentTarget).is(':checked'));
-    allHeros.on('change');
-  }
-
-  async _deleteHero(ev) {
-    ev.stopPropagation();
-    ev.preventDefault();
-    const toRemove = $(ev.currentTarget).closest('.hero').attr('data-id');
+  async _deleteHeroById(actorId) {
     const actors = game.settings.get('dsa5', 'trackedActors').actors || [];
-    const index = actors.indexOf(toRemove);
+    const index = actors.indexOf(actorId);
     if (index > -1) {
       actors.splice(index, 1);
       await this.setTrackedHeros(actors);
@@ -383,7 +378,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
   async updateHeroOrder(target) {
     const actors = [];
-    for (let elem of target.querySelectorAll('.hero')) {
+    for (const elem of target.querySelectorAll('.hero')) {
       actors.push(elem.dataset.id);
     }
     await this.setTrackedHeros(actors);
@@ -397,6 +392,60 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
   async updateDarkness(ev) {
     if (canvas.scene) canvas.scene.update({ 'environment.darknessLevel': Number(ev.currentTarget.value) }, { animateDarkness: 2000 });
+  }
+
+  _onSceneDarknessUpdate(document, data, options) {
+    if (document !== canvas.scene || !hasProperty(data, 'environment.darknessLevel')) return;
+
+    const targetDarkness = Number(data.environment.darknessLevel);
+    if (!Number.isFinite(targetDarkness)) return;
+
+    this._syncDarknessControls(targetDarkness);
+    this._triggerDarknessChangeUpdates(options.animateDarkness);
+  }
+
+  _triggerDarknessChangeUpdates(animateDarkness) {
+    if (!game.dsa5.apps.LightDialog) return;
+
+    if (this._darknessAnimationIntervalId) {
+      clearInterval(this._darknessAnimationIntervalId);
+      this._darknessAnimationIntervalId = null;
+    }
+
+    if (!animateDarkness) {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+      return;
+    }
+
+    const interval = 50;
+    const duration = typeof animateDarkness === 'number' ? animateDarkness : 0;
+    const limit = Math.ceil(duration / interval);
+
+    if (limit <= 1) {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+      return;
+    }
+
+    let count = 0;
+    this._darknessAnimationIntervalId = setInterval(() => {
+      game.dsa5.apps.LightDialog.onDarknessChange();
+
+      count++;
+      if (count >= limit) {
+        clearInterval(this._darknessAnimationIntervalId);
+        this._darknessAnimationIntervalId = null;
+      }
+    }, interval);
+  }
+
+  _syncDarknessControls(darknessLevel) {
+    if (!Number.isFinite(darknessLevel)) return;
+
+    ui.hotbar?.updateDarknessSlider(darknessLevel);
+
+    if (!this.rendered) return;
+
+    this.element.querySelector('.updateDarkness').value = darknessLevel;
   }
 
   async updateSightThreshold(ev) {
@@ -441,7 +490,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
     settings.folders.push({
       id: randomID(),
-      name: localize('FOLDER.ExportNewFolder'),
+      name: _loc('FOLDER.ExportNewFolder'),
       content: [],
     });
     await game.settings.set('dsa5', 'masterSettings', settings);
@@ -499,20 +548,20 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _randomPlayer(ev, target) {
-    const heros = $(this.element).find('.hero');
     const result = await this.rollRandomPlayer(ev.button == 2);
 
-    $(target).find('i').addClass('fa-spin');
-    heros.removeClass('victim');
+    const icon = target.querySelector('i') || target;
+    icon.classList.add('fa-spin');
+    this.element.querySelectorAll('.hero').forEach((el) => el.classList.remove('victim'));
 
     setTimeout(() => {
-      $(this.element).find(`.hero[data-id="${result}"]`).addClass('victim');
-      $(target).find('i').removeClass('fa-spin');
+      this.element.querySelector(`.hero[data-id="${result}"]`)?.classList.add('victim');
+      icon.classList.remove('fa-spin');
     }, 500);
   }
 
   async rollRandomPlayer(withMisfortune) {
-    let probabilities = {};
+    const probabilities = {};
     let counter = 1;
     const selected = this.getSelectedActors();
     const anythingselected = Object.values(selected).filter((x) => x).length != 0;
@@ -542,26 +591,28 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async doPayment(ids, pay, amount = 0) {
-    const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
+    const preselected = new Set(ids);
+    const actors = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: preselected.has(a.id) }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
-      tracked,
-      text: localize(
-        format(pay ? 'MASTER.payText' : 'MASTER.getPaidText', {
-          heros: localize('MASTER.theGroup'),
-        }),
-      ),
+      description: '',
+      text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = (dlg) => {
-      const number = dlg.find('.input-text').val();
-      if (!isNaN(number)) {
-        const actors = [];
-        dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)));
-        for (let hero of actors) DSA5Payment.handlePayAction(undefined, pay, number, hero);
-      }
-    };
-    this.buildDialog(localize(pay ? 'MASTER.payTT' : 'PAYMENT.payButton'), template, callback);
+
+    ActorPickerDialog.open({
+      actors,
+      title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
+      header,
+      showSourceToggle: true,
+      callback: ({ actorIds, form }) => {
+        const number = form.querySelector('.input-text')?.value;
+        const description = form.querySelector('[name="description"]')?.value;
+        if (!isNaN(number)) {
+          const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
+        }
+      },
+    });
   }
 
   async getPaid(ids) {
@@ -569,29 +620,30 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   async getExp(ids, amount = 0) {
-    const tracked = await this.getTrackedHeros();
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-ap-award.hbs', {
-      selected: ids,
-      tracked,
+    const preselected = new Set(ids);
+    const actors = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: preselected.has(a.id) }));
+    const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
-      text: localize(
-        format('MASTER.awardXPText', {
-          heros: localize('MASTER.theGroup'),
-        }),
-      ),
+      text: _loc('MASTER.awardXPText', { heros: _loc('MASTER.theGroup') }),
     });
-    const callback = async (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const familiarXP = Math.max(1, Math.round(number * 0.25));
-      const petXP = Math.max(1, Math.round(number * 0.1));
-      const heros = [];
-      const familiars = [];
-      const pets = [];
-      const actors = [];
-      dlg.find('.heroSelector:checked').each((i, elem) => actors.push(game.actors.get(elem.value)));
 
-      if (!isNaN(number)) {
-        for (const actor of actors) {
+    ActorPickerDialog.open({
+      actors,
+      title: 'MASTER.awardXP',
+      header,
+      showSourceToggle: true,
+      callback: async ({ actorIds, form }) => {
+        const number = Number(form.querySelector('.input-text')?.value);
+        if (isNaN(number)) return;
+
+        const familiarXP = Math.max(1, Math.round(number * 0.25));
+        const petXP = Math.max(1, Math.round(number * 0.1));
+        const heros = [];
+        const familiars = [];
+        const pets = [];
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+
+        for (const actor of selected) {
           let xpBonus = number;
           if (actor.system.isFamiliar) {
             xpBonus = familiarXP;
@@ -610,21 +662,21 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         const message = [];
         if (heros.length > 0)
           message.push(
-            format('MASTER.xpMessage', {
+            _loc('MASTER.xpMessage', {
               heros: this.getNames(heros),
               number,
             }),
           );
         if (familiars.length > 0)
           message.push(
-            format('MASTER.xpMessage', {
+            _loc('MASTER.xpMessage', {
               heros: this.getNames(familiars),
               number: familiarXP,
             }),
           );
         if (pets.length > 0)
           message.push(
-            format('MASTER.xpMessage', {
+            _loc('MASTER.xpMessage', {
               heros: this.getNames(pets),
               number: petXP,
             }),
@@ -633,9 +685,8 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         if (message.length > 0) await ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${message.join('</p><p>')}</p>`));
 
         if (this.rendered) this.render(true);
-      }
-    };
-    this.buildDialog(localize('MASTER.awardXP'), template, callback);
+      },
+    });
   }
 
   getNames(actors) {
@@ -700,7 +751,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   selectedIDs() {
-    let ids = [];
+    const ids = [];
     const selected = this.getSelectedActors();
     for (const [key, value] of Object.entries(selected)) {
       if (value && game.actors.has(key)) ids.push(key);
@@ -715,16 +766,16 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
 
     const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
       amount,
-      text: localize(format('MASTER.doGroupCheck', { skill })),
+      text: _loc('MASTER.doGroupCheck', { skill }),
     });
     const callback = (dlg) => {
       const number = Number(dlg.find('.input-text').val());
       const [skill, type] = this.lastSkill.split('|');
       if (type != 'skill') return;
 
-      RequestRoll.showGCMessage(skill, number);
+      ChatCommandService.groupCheck(skill, number);
     };
-    this.buildDialog(localize('HELP.groupcheck'), template, callback);
+    this.buildDialog(_loc('HELP.groupcheck'), template, callback);
   }
 
   async rollRequest(amount = 0) {
@@ -733,18 +784,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const skillRollCategories = ['attribute', 'skill', 'regeneration'];
     if (!skillRollCategories.includes(type)) return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount,
-      text: localize(format('MASTER.doRequestRoll', { skill })),
-    });
-    const callback = (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const [skill, type] = this.lastSkill.split('|');
-      if (!skillRollCategories.includes(type)) return;
-
-      RequestRoll.showRQMessage(skill, number);
-    };
-    this.buildDialog(localize('HELP.request'), template, callback);
+    RollRequestService.requestRoll(skill, amount);
   }
 
   rollAbility(actorIds) {
@@ -765,29 +805,21 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   rollRegeneration(actorIds) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
-      actor.setupRegeneration('regenerate', { rollMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, null, 'regeneration', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 
   rollAttribute(actorIds, name) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
-    let characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => localize(game.dsa5.config.characteristics[key]) == name);
     for (const actor of actors) {
-      actor.setupCharacteristic(characteristic, { rollMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, name, 'attribute', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 
   rollSkill(actorIds, name) {
     const actors = game.actors.filter((x) => actorIds.includes(x.id));
     for (const actor of actors) {
-      let skill = actor.items.find((x) => x.name == name && x.type == 'skill');
-      actor.setupSkill(skill, { rollMode: 'blindroll', subtitle: ` (${actor.name})` }, undefined).then((setupData) => {
-        actor.basicTest(setupData);
-      });
+      ChatCommandService.executeAbilityRoll(actor, name, 'skill', undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.BLIND, subtitle: ` (${actor.name})` });
     }
   }
 
@@ -811,24 +843,19 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       addGlobalMod: this._addGlobalMod,
       removeGlobalMod: this._removeGlobalMod,
       editGlobalMod: this._editGlobalMod,
-      rollChar: this._rollChar,
-      rollAll: this._rollAll,
-      pay: this._pay,
+      heroActions: this._heroActions,
       actorItem: this._actorItem,
-      getPaid: this._getPaid,
       resetSightThresholds: this._resetSightThresholds,
-      payAll: this._payAll,
-      getPaidAll: this._getPaidAll,
-      exp: this._getExp,
-      expAll: this._expAll,
       requestRoll: this._requestRoll,
       addGroupSchip: this._changeGroupSchipCount,
       groupschip: this._changeGroupSchip,
       addFolder: this._createFolder,
+      headerActions: this._headerActions,
       heroschip: this._heroschip,
       groupcheck: this._groupCheck,
       expandHero: this._expandHero,
       randomPlayer: { handler: this._randomPlayer, buttons: [0, 2] },
+      openPartySheet: this._openPartySheet,
     }
   };
 
@@ -888,7 +915,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const regex = / \[[a-zA-Zäöü\d-]+\]/;
     const visions = [1, 2, 3, 4].map((x) => {
       return {
-        label: localize(`VisionDisruption.step${x}`).replace(regex, ''),
+        label: _loc(`VisionDisruption.step${x}`).replace(regex, ''),
         value: thresholds[x - 1],
       };
     });
@@ -909,12 +936,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       x.content = new Set(x.content);
       return x;
     });
-    for (let hero of this.heros) {
-      let newHero = duplicate(hero);
+    for (const hero of this.heros) {
+      const newHero = duplicate(hero);
       const disadvantages = [];
       const advantages = [];
       const purse = [];
-      for (let x of hero.items) {
+      for (const x of hero.items) {
         switch (x.type) {
           case 'disadvantage':
             disadvantages.push({ name: x.name, uuid: x.uuid });
@@ -968,10 +995,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         .concat(
           Object.values(game.dsa5.config.characteristics)
             .map((x) => {
-              return { name: localize(x), type: 'attribute' };
+              return { name: _loc(x), type: 'attribute' };
             })
             .concat({
-              name: localize('regenerate'),
+              name: _loc('regenerate'),
               type: 'regeneration',
             }),
         )

@@ -16,9 +16,11 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import Riding from '../system/automation/riding.js';
 import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
-import { RangeSelectDialog } from '../hooks/itemDrop.js';
-import DSA5Payment from '../system/helpers/payment.js';
-import { TradeOptions } from './trade.js';
+import { RangeSelectDialog, transferBagWithContents } from '../hooks/itemDrop.js';
+import DSA5Payment from '../system/payment/payment.js';
+import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
+import { Trade } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
@@ -27,7 +29,11 @@ import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
-import { localize, format } from '../system/helpers/localizer.js';
+import { DICE_CONSTANTS } from '../config/dice-constants.js';
+import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
+import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
+import CompanionHandler from './companions/companion-handler-class.js';
+import ItempackageData from '../data/item/itempackage.js';
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -40,6 +46,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     { key: 'enrichedBiography', path: 'details.biography.value' },
   ];
 
+  static SHEET_PART = {
+    template: 'systems/dsa5/templates/actors/actorv2/sheet.hbs',
+    root: true,
+  };
+
   #talentSearch;
   #gearSearch;
   #conditionSearch;
@@ -49,21 +60,48 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async render(options = {}, _options = {}) {
-    this._saveCollapsed();
-    const result = await super.render(options, _options);
-    this._setCollapsed();
-
-    if (this.currentFocus) {
-      $(this.element)
-        .find('[data-item-id="' + this.currentFocus + '"] input')
-        .trigger('focus')
-        .trigger('select');
-      this.currentFocus = null;
+    if (this.element) {
+      this.openDetails = Array.from(this.element.querySelectorAll('.expandDetails.shown'), el => el.closest('.item')?.dataset.itemId).filter(Boolean);
     }
-    return result;
+    return await super.render(options, _options);
+  }
+
+  _preSyncPartState(partId, newElement, priorElement, state) {
+    super._preSyncPartState(partId, newElement, priorElement, state);
+
+    const focus = priorElement.querySelector(':focus');
+    const itemRow = focus?.closest('[data-item-id]');
+    if (itemRow) state.focusItemId = itemRow.dataset.itemId;
+
+    state.collapsedBoxes = Array.from(priorElement.querySelectorAll('.ch-collapse i'), el => el.getAttribute('class'));
+    state.openDetails = Array.from(priorElement.querySelectorAll('.expandDetails.shown'), el => el.closest('.item')?.dataset.itemId).filter(Boolean);
+  }
+
+  _syncPartState(partId, newElement, priorElement, state) {
+    super._syncPartState(partId, newElement, priorElement, state);
+
+    if (state.focusItemId) {
+      const input = newElement.querySelector(`[data-item-id="${state.focusItemId}"] input`);
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
+
+    if (state.collapsedBoxes?.length) {
+      const boxes = newElement.querySelectorAll('.ch-collapse i');
+      for (let i = 0; i < boxes.length; i++) {
+        if (!state.collapsedBoxes[i]) continue;
+        boxes[i].setAttribute('class', state.collapsedBoxes[i]);
+        if (state.collapsedBoxes[i].includes('fa-angle-down')) {
+          boxes[i].closest('.groupbox')?.querySelector('.row-section:nth-child(2)')?.style.setProperty('display', 'none');
+        }
+      }
+    }
   }
 
   static LIMITEDPARTS = {
+    sheet: this.SHEET_PART,
     header: {
       template: 'systems/dsa5/templates/actors/limited/npc-limited-header.hbs',
     },
@@ -87,6 +125,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static PARTS = {
+    sheet: this.SHEET_PART,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/parts/actor-header.hbs'],
@@ -120,6 +159,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
       scrollable: [''],
     },
+    companion: {
+      template: 'systems/dsa5/templates/actors/companions/actor-companion.hbs',
+      scrollable: [''],
+      templates: [
+        'systems/dsa5/templates/actors/parts/horse.hbs',
+        'systems/dsa5/templates/actors/companions/companion-card.hbs',
+        'systems/dsa5/templates/actors/parts/member-card-header.hbs',
+      ],
+    },
     status: {
       template: 'systems/dsa5/templates/actors/parts/status_effects.hbs',
       scrollable: [''],
@@ -139,6 +187,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     actions: {
       itemCreate: this._onItemCreate,
       playerview: this._togglePlayerview,
+      addToPersonae: this._addToPersonae,
       actorConfig: this._configActor,
       library: this._openLibrary,
       locksheet: this._changeAdvanceLock,
@@ -151,7 +200,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemEdit: this._itemEdit,
       chValue: this._chValue,
       itemContextMenu: this._itemContextMenu,
+      weaponContextMenu: this._weaponContextMenu,
       statusContextMenu: this.#statusContextMenu,
+      bulkInventoryContextMenu: this._bulkInventoryContextMenu,
       chStatus: this._chStatus,
       filterTalents: this._filterTalents,
       chRegenerate: this._chRegenerate,
@@ -161,9 +212,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       chRollCombat: this._chRollCombat,
       collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
-      showApplication: { handler: this._showApplication, buttons: [0, 2] },
       conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
       rollAnySkill: this._rollAnySkill,
+      ...CompanionHandler.getSheetActions(),
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
@@ -177,6 +228,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
       traditionDelete: this._deleteTraditionArtifact,
       swapWeaponHand: this._swapWeaponHand,
+      swapWeaponHandSlot: this._swapWeaponHandSlot,
+      toggleWeaponOffHand: this._toggleWeaponOffHand,
+      toggleIgnoreWeaponHandLimits: this._toggleIgnoreWeaponHandLimits,
       selectTraditionartifact: this._selectTraditionArtifact,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
@@ -184,7 +238,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       advanceWrapper: this._advanceWrapper,
       addSpeedCategory: this._addSpeedCategory,
       onUseItem: { handler: this._onMacroUseItem, buttons: [0, 2] },
+      onUseEffect: { handler: this._onMacroUseEffect, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
+      unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
+      ...CompanionHandler.getOwnerSheetActions(),
     },
     form: {
       submitOnChange: true,
@@ -216,6 +273,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       contentClasses: ['standard-form'],
       controls: [
         {
+          action: 'addToPersonae',
+          label: 'PERSONAE.addActor',
+          icon: 'fas fa-address-book',
+          visible: function () {
+            return game.user.isGM;
+          },
+        },
+        {
           action: 'actorConfig',
           label: 'Migrakel.Migration',
           icon: 'fas fa-link',
@@ -242,6 +307,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         { id: 'main', label: 'attributes', img: 'systems/dsa5/icons/categories/DSA-Auge.webp' },
         { id: 'inventory', label: 'TYPES.Item.equipment', img: 'systems/dsa5/icons/categories/Equipment.webp' },
         { id: 'status', label: 'status', img: 'systems/dsa5/icons/categories/ability_ceremonial.webp' },
+        { id: 'companion', label: 'COMPANIONS.Companion', icon: 'fas fa-paw' },
         { id: 'notes', label: 'Notes', img: 'systems/dsa5/icons/categories/Ability_Language.webp' },
       ],
       initial: 'skills',
@@ -259,44 +325,38 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return super._configureRenderParts(options);
   }
 
-  _saveCollapsed() {
-    if (this.element === null) return;
-
-    const html = $(this.element);
-    this.collapsedBoxes = [];
-    this.openDetails = [];
-    const boxes = html.find('.ch-collapse i');
-    for (let box of boxes) {
-      this.collapsedBoxes.push($(box).attr('class'));
-    }
-    for (const detail of html.find('.expandDetails.shown')) {
-      this.openDetails.push($(detail).closest('.item').attr('data-item-id'));
-    }
-  }
-
-  _setCollapsed() {
-    const html = $(this.element);
-    if (!this.collapsedBoxes) return;
-
-    const boxes = html.find('.ch-collapse i');
-    for (let i = 0; i < boxes.length; i++) {
-      $(boxes[i]).attr('class', this.collapsedBoxes[i]);
-      if (this.collapsedBoxes[i] && this.collapsedBoxes[i].indexOf('fa-angle-down') != -1) $(boxes[i]).closest('.groupbox').find('.row-section:nth-child(2)').hide();
-    }
-  }
-
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
     if (!this.actor.system.isMage) delete tabs.magic;
     if (!this.actor.system.isPriest) delete tabs.religion;
+    CompanionHandler.prepareTabVisibility(this.actor, tabs);
 
     this.cleanTabs(tabs);
     return tabs;
   }
 
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) await this.prepareCompanionTab(context);
+    return context;
+  }
+
+  async prepareCompanionTab(context) {
+    await CompanionHandler.prepareCompanionPartContext(this, context);
+  }
+
+  _attachPartListeners(partId, element, options) {
+    super._attachPartListeners(partId, element, options);
+    if (partId === CompanionHandler.COMPANION_TAB_ID) this.attachCompanionTabListeners(element);
+  }
+
+  attachCompanionTabListeners(element) {
+    CompanionHandler.attachCompanionPartListeners(this, element);
+  }
+
   cleanTabs(tabs) {
     if (this.constructor.LIMITEDPARTS && this.showLimited()) {
-      for (let key of Object.keys(tabs)) {
+      for (const key of Object.keys(tabs)) {
         if (!['main', 'notes'].includes(key)) {
           delete tabs[key];
         }
@@ -313,22 +373,46 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
-  static _itemContextMenu(event, target) {
+  #dispatchContextMenu(target, event, options = {}) {
+    if (!target) return;
+
     event.preventDefault();
     event.stopPropagation();
-    const { clientX, clientY } = event;
-    target.closest("[data-item-id]").querySelector('.withContext').dispatchEvent(new PointerEvent("contextmenu", {
-      view: window, bubbles: true, cancelable: true, clientX, clientY
-    }));
+
+    target.dispatchEvent(
+      new PointerEvent('contextmenu', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        ...options,
+      }),
+    );
+  }
+
+  static _itemContextMenu(event, target) {
+    const contextTarget = target.closest('[data-item-id]')?.querySelector('.withContext');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _bulkInventoryContextMenu(event, target) {
+    const contextTarget = target.closest('.inventory-bulk-actions-menu');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _weaponContextMenu(event, target) {
+    const contextTarget = target.closest('.combat-weapon') || target.closest('[data-item-id]')?.querySelector('.combat-weapon');
+    this.#dispatchContextMenu(contextTarget, event);
+  }
+
+  static _unequippedWeaponMenu(event, target) {
+    this.#dispatchContextMenu(target, event, { button: 2, buttons: 2, });
   }
 
   static #statusContextMenu(event, target) {
-    event.preventDefault();
-    event.stopPropagation();
-    const { clientX, clientY } = event;
-    target.closest("[data-id]").querySelector('.effectConfig').dispatchEvent(new PointerEvent("contextmenu", {
-      view: window, bubbles: true, cancelable: true, clientX, clientY
-    }));
+    const contextTarget = target.closest('[data-id]')?.querySelector('.effectConfig');
+    this.#dispatchContextMenu(contextTarget, event);
   }
 
   async _prepareContext(options) {
@@ -384,55 +468,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     items[0].sheet.render(true);
   }
 
-  static _handleAggregatedProbe(ev, target) {
+  static async _handleAggregatedProbe(ev, target) {
     const itemId = this._getItemId(target);
-    let aggregated = this.actor.items.get(itemId).toObject();
-    const attr = aggregated.system.talent[`value${target.dataset.which}`];
-    let skill = this.actor.items.find((i) => i.name == attr && i.type == 'skill');
-    let infoMsg = `<h3 class="center"><b>${localize('TYPES.Item.aggregatedTest')}</b></h3>`;
-    if (aggregated.system.usedTestCount.value >= aggregated.system.allowedTestCount.value) {
-      infoMsg += `${localize('Aggregated.noMoreAllowed')}`;
-      ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-    } else {
-      const options = {
-        moreModifiers: [
-          {
-            name: localize('failedTests'),
-            value: -1 * aggregated.system.previousFailedTests.value,
-            selected: true,
-          },
-          {
-            name: localize('Modifier'),
-            value: aggregated.system.baseModifier,
-            selected: true,
-          },
-        ],
-      };
-      this.actor.setupSkill(skill, options, this.getTokenId())
-        .then((setupData) => {
-          this.actor.basicTest(setupData).then((res) => {
-            if (res.result.successLevel > 0) {
-              aggregated.system.cummulatedQS.value = res.result.qualityStep + aggregated.system.cummulatedQS.value;
-              aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value);
-            } else {
-              aggregated.system.previousFailedTests.value += 1;
-            }
-            aggregated.system.usedTestCount.value += 1;
-            this.actor.updateEmbeddedDocuments('Item', [aggregated]).then(() => {
-              const updated = this.actor.items.get(itemId);
-              updated.postItem();
+    const aggregated = this.actor.items.get(itemId);
+    if (!aggregated) return;
 
-              if (aggregated.system.cummulatedQS.value >= 10) {
-                updated.sheet.postFinishedItem();
-              }
-            });
-          });
-        });
-    }
+    await aggregated.rollAggregatedProbe(target.dataset.which, this.getTokenId());
   }
 
   async consumeItem(item) {
-    const title = localize('SHEET.ConsumeItem') + ': ' + item.name;
+    const title = _loc('SHEET.ConsumeItem') + ': ' + item.name;
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
         title,
@@ -565,6 +610,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     game.dsa5.itemLibrary.render(true);
   }
 
+  static async _addToPersonae() {
+    await PersonaeDramatis.addActorToPersonae(this.actor);
+  }
+
   static async _configActor(ev, target) {
     new DialogActorConfig(this.actor, {}).render(true);
   }
@@ -602,6 +651,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     this.render(true)
   }
 
+  static async _toggleIgnoreWeaponHandLimits() {
+    const current = !!getProperty(this.actor, 'system.config.ignoreWeaponHandLimits');
+    await this.actor.update({ 'system.config.ignoreWeaponHandLimits': !current });
+  }
+
   showLimited() {
     return (!game.user.isGM && this.actor.limited) || this.playerViewEnabled();
   }
@@ -615,25 +669,71 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const item = this.actor.items.get(itemId);
     const SKModifier = this.actor.system.status.soulpower.max * -1;
     const ZKModifier = this.actor.system.status.toughness.max * -1;
-    const setupData = await item.setupEffect(undefined, { rollMode: 'gmroll', manualResistance: { SKModifier, ZKModifier } });
+    const setupData = await item.setupEffect(undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.GM, manualResistance: { SKModifier, ZKModifier } });
     const result = await item.itemTest(setupData);
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }
 
   static _swapWeaponHand(ev, target) {
-    this.swapWeaponHand(target);
+    return this.swapWeaponHand(target);
+  }
+
+  static async _swapWeaponHandSlot(ev, target) {
+    await this.swapWeaponHandSlot(target);
+  }
+
+  static async _toggleWeaponOffHand(ev, target) {
+    await this.toggleWeaponOffHand(target);
+  }
+
+  async toggleWeaponOffHand(target, item = undefined) {
+    const itemId = item?.id || this._getItemId(target);
+    item = item || this.actor.items.get(itemId);
+    if (!item || item.type !== 'meleeweapon') return;
+
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
+
+    await this.actor.toggleWeaponOffHand(item.id);
+
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+    }
+  }
+
+  async swapWeaponHandSlot(target, item = undefined) {
+    const actualTarget = target && typeof target.closest === 'function' ? target : target?.parentElement || target;
+    const itemId = item?.id || this._getItemId(actualTarget);
+    item = item || this.actor.items.get(itemId);
+
+    if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
+
+    const clickedHand = actualTarget?.dataset?.hand || actualTarget?.closest?.('[data-hand]')?.dataset?.hand;
+    const wasEquipped = !!item.system.worn.value;
+    const wasOffHand = !!item.system.worn.offHand;
+
+    await this.actor.handleWeaponHandSlotClick(item.id, clickedHand);
+
+    // Only play offhand-change sound when this was a hand-toggle on an already equipped weapon.
+    if (wasEquipped) {
+      const updated = this.actor.items.get(item.id);
+      if (updated && wasOffHand !== !!updated.system.worn.offHand) DSA5SoundEffect.playEquipmentWearStatusChange(updated);
+    }
   }
 
   async swapWeaponHand(target, item = undefined) {
-    const itemId = item?.id || this._getItemId(target);
+    const actualTarget = target && typeof target.closest === 'function' ? target : target?.parentElement || target;
+    const itemId = item?.id || this._getItemId(actualTarget);
     item = item || this.actor.items.get(itemId);
 
-    item.system.swapNumberWeaponHands();
+    await item.system.swapNumberWeaponHands();
   }
 
   static async _skillSelect(ev, target) {
     const itemId = this._getItemId(target);
-    let skill = this.actor.items.get(itemId);
+    const skill = this.actor.items.get(itemId);
 
     if (ev.button == 0) {
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
@@ -652,7 +752,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _statusCreate(ev, target) {
-    let menu = $(target).siblings('.statusEffectMenu').find('ul');
+    const menu = $(target).siblings('.statusEffectMenu').find('ul');
     menu.fadeIn('fast', () => {
       menu.find('input').trigger('focus');
     });
@@ -674,23 +774,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _rollAnySkill(ev, target) {
     const { name, ch1, ch2, ch3 } = target.dataset;
     const attributes = { system: { characteristic1: { value: ch1 }, characteristic2: { value: ch2 }, characteristic3: { value: ch3 } } };
-    this.actor.rollAnySkill(localize(name), this.getTokenId(), attributes);
+    this.actor.rollAnySkill(_loc(name), this.getTokenId(), attributes);
   }
 
   static _itemEdit(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     item.sheet.render(true);
-  }
-
-  static _showApplication(ev, target) {
-    if (ev.button == 2) {
-      this._deleteItem(ev.currentTarget);
-    } else {
-      const itemId = this._getItemId(target);
-      const item = this.actor.items.get(itemId);
-      item.sheet.render(true);
-    }
   }
 
   static async _chValue(ev, target) {
@@ -746,7 +836,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
     const lz = Number(item.system.castingTime.modified);
-    let update = {
+    const update = {
       _id: itemId
     }
     if (ev.button == 0) update['system.castingTime.progress'] = Math.min(item.system.castingTime.progress + 1, lz);
@@ -767,7 +857,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (ev.button == 0) {
       const lz = item.type == 'trait' ? item.system.reloadTime.value : Actordsa5.calcLZ(item, this.actor);
       update['system.reloadTime.progress'] = Math.min(item.system.reloadTime.progress + 1, lz);
-    } else if (ev.button == 2) update['system.reloadTime.progress'] = 0;
+    } else if (ev.button == 2) {
+      update['system.reloadTime.progress'] = 0;
+      update['system.aimTime.progress'] = 0;
+    }
 
     await this.actor.updateEmbeddedDocuments('Item', [update]);
   }
@@ -776,16 +869,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.swapMag(this._getItemId(target));
   }
 
-  static _itemToggle(ev, target) {
+  static async _itemToggle(ev, target) {
     const itemId = this._getItemId(target);
     const item = this.actor.items.get(itemId);
 
     switch (item.type) {
-      case 'armor':
       case 'rangeweapon':
       case 'meleeweapon':
+        await this.actor.equipWeaponToHand(itemId, { hand: 'auto', equip: !item.system.worn.value });
+        DSA5SoundEffect.playEquipmentWearStatusChange(item);
+        break;
+      case 'armor':
       case 'equipment':
-        this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
+        await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.worn.value': !item.system.worn.value }]);
         DSA5SoundEffect.playEquipmentWearStatusChange(item);
         break;
     }
@@ -822,7 +918,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static _quantityClick(ev, target) {
     const itemId = this._getItemId(target);
-    let item = this.actor.items.get(itemId);
+    const item = this.actor.items.get(itemId);
     const update = { _id: itemId, system: { quantity: { value: item.system.quantity.value } } };
     RuleChaos.increment(ev, update, 'system.quantity.value', 0);
     this.actor.updateEmbeddedDocuments('Item', [update]);
@@ -853,34 +949,22 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       jQuery: false,
       fixed: true
     });
+
+    new foundry.applications.ux.ContextMenu(this.element, '.unequipped-weapon-menu', [], {
+      onOpen: this._onUnequippedWeaponContext.bind(this),
+      jQuery: false,
+      fixed: true
+    });
     new foundry.applications.ux.ContextMenu(this.element, '.effectConfig', [], {
       onOpen: this._onStatusEffectContext.bind(this),
       jQuery: false,
       fixed: true
     });
-
-    if (game.settings.get("dsa5", "tabsOutsideSheet")) this.#verticalSheetDomSetup(html);
-  }
-
-  #verticalSheetDomSetup(html) {
-    let mainContent = this.element.querySelector(".main-content");
-    if (!mainContent) {
-      mainContent = document.createElement("div");
-      mainContent.classList.add("main-content");
-      mainContent.dataset.containerId = "main";
-      const tabs = this.element.querySelector(".tabs");
-      if (!tabs) this.element.querySelector('.window-content').append(mainContent);
-      else tabs.after(mainContent);
-    }
-    if (mainContent) {
-      const sheetBody = document.createElement("div");
-      sheetBody.classList.add("sheet-body");
-      mainContent.after(sheetBody);
-      sheetBody.replaceChildren(mainContent);
-      const tabs = html.find('.window-content .tab')
-      mainContent.append(...tabs);
-    }
-    this.element.classList.add("vertical-tabs");
+    new foundry.applications.ux.ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
+      onOpen: this._onBulkInventoryContext.bind(this),
+      jQuery: false,
+      fixed: true,
+    });
   }
 
   static _collapseHeader(ev, target) {
@@ -928,7 +1012,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!fct) return;
 
     const cost = fct(isAnimal);
-    ev.currentTarget.dataset.tooltip = format(cost.key, cost);
+    ev.currentTarget.dataset.tooltip = _loc(cost.key, cost);
     game.tooltip.activate(ev.currentTarget)
   }
 
@@ -936,6 +1020,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await super._onRender(context, options);
 
     const html = $(this.element);
+    this.element.classList.toggle('vertical-tabs', game.settings.get('dsa5', 'tabsOutsideSheet'));
     const posthand = (ev) => {
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };
@@ -947,7 +1032,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     tabSlider(html);
 
     const autoSizings = html.find('.autosizing input')
-    for (let el of autoSizings) {
+    for (const el of autoSizings) {
       const chars = (el.value.length || el.placeholder.length) + 1;
       el.setAttribute('style', `width: ${chars}ch;`);
     }
@@ -964,9 +1049,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
     html.find('[data-action="advanceWrapper"]').on('mouseenter', this._onHoverCost.bind(this));
     html.find('.chat-condition').on('click', (ev) => DSA5ChatListeners.postStatus(ev.currentTarget.dataset.id));
-    html.find('.money-change, .skill-advances').on('focusin', (ev) => {
-      this.currentFocus = ev.currentTarget.closest('[data-item-id]').dataset.itemId;
-    });
+
 
     const deletehand = (ev) => this._deleteItem(ev.currentTarget);
 
@@ -989,7 +1072,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     html.find('.cards .item').on('mouseleave', (ev) => {
-      let e = ev.toElement || ev.relatedTarget;
+      const e = ev.toElement || ev.relatedTarget;
       if (!e || e.parentNode == this || e == this) return;
 
       ev.currentTarget.querySelectorAll('.hovermenu').forEach((e) => e.remove());
@@ -999,7 +1082,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     html.find('.actorDrag').each(function (i, cond) {
       cond.setAttribute('draggable', true);
       cond.addEventListener('dragstart', (ev) => {
-        let dataTransfer = {
+        const dataTransfer = {
           type: 'Actor',
           uuid,
         };
@@ -1089,16 +1172,83 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     Hooks.call('dsa5.getItemContextOptions', item, ui.context.menuItems);
   }
 
+  _onBulkInventoryContext(_target) {
+    ui.context.menuItems = this._getBulkInventoryContextOptions();
+  }
+
   static _addSpeedCategory(ev, target) {
     new SpeedSelector(this.actor).render(true);
   }
 
   _onWeaponItemContext(target) {
-    const item = this.actor.items.get(target.dataset.itemId);
+    const itemId = target.dataset.itemId || target.closest('[data-item-id]')?.dataset?.itemId;
+    const item = this.actor.items.get(itemId);
 
-    if (!item || item?.type != 'meleeweapon') return;
-    ui.context.menuItems = this._getWeaponItemContextOptions(item);
+    if (!item) return;
+
+    if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
+      ui.context.menuItems = this._getWeaponItemContextOptions(item);
+    } else if (item.type === 'trait') {
+      ui.context.menuItems = this._getWeaponTraitContextOptions(item);
+    } else {
+      return;
+    }
     Hooks.call('dsa5.getWeaponItemContextOptions', item, ui.context.menuItems);
+  }
+
+  _onUnequippedWeaponContext(target) {
+    const weaponType = target?.dataset?.weaponType;
+    if (!['meleeweapon', 'rangeweapon'].includes(weaponType)) return;
+
+    ui.context.menuItems = this._getUnequippedWeaponContextOptions(weaponType);
+    Hooks.call('dsa5.getUnequippedWeaponContextOptions', weaponType, ui.context.menuItems);
+  }
+
+  _getUnequippedWeaponContextOptions(weaponType) {
+    const equipLabel = _loc('SHEET.EquipItem');
+    const icon = weaponType === 'rangeweapon' ? "<i class='fas fa-bullseye'></i>" : "<i class='fas fa-sword'></i>";
+
+    const unequipped = this.actor.items
+      .filter(i => i.type === weaponType && i.system?.worn && !i.system.worn.value)
+      .slice(0, 10);
+
+    if (!unequipped.length) {
+      return [
+        {
+          label: _loc('SHEET.NoUnequippedWeapons'),
+          icon: "<i class='fas fa-minus'></i>",
+          onClick: () => {},
+        },
+      ];
+    }
+
+    return unequipped.map(w => ({
+      label: `${equipLabel}: ${w.name}`,
+      icon,
+      onClick: () => this.actor.equipWeaponToHand(w.id, { hand: 'auto', equip: true }),
+    }));
+  }
+
+  _getWeaponTraitContextOptions(item) {
+    return [
+      {
+        label: 'SHEET.EditItem',
+        icon: "<i class='fas fa-edit'></i>",
+        onClick: () => item.sheet.render(true),
+      },
+      {
+        label: 'SHEET.Dropdown',
+        icon: "<i class='fas fa-chevron-down'></i>",
+        onClick: () => {
+          $(this.element).find(`[data-item-id="${item.id}"] .expandDetails:first`).toggleClass('shown');
+        },
+      },
+      {
+        label: 'SHEET.PostItem',
+        icon: "<i class='fas fa-comment fa-fw'></i>",
+        onClick: () => item.postItem(),
+      },
+    ];
   }
 
   _onStatusEffectContext(target) {
@@ -1114,24 +1264,39 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getStatusEffectContextOptions(effect, item) {
-    return [
+    const options = [];
+
+    if (OnUseEffect.hasOnUseEffect(effect)) {
+      options.push({
+        label: 'SHEET.onUseEffect',
+        icon: "<i class='fas fa-dice-six'></i>",
+        onClick: () => {
+          const onUse = new OnUseEffect(effect);
+          onUse.executeOnUseEffect();
+        }
+      });
+    }
+
+    options.push(
       {
-        name: 'SHEET.EditItem',
+        label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit'></i>",
-        callback: () => effect.sheet.render(true)
+        onClick: () => effect.sheet.render(true)
       },
       {
-        name: effect.disabled ? 'SHEET.activate' : 'SHEET.deactivate',
+        label: effect.disabled ? 'SHEET.activate' : 'SHEET.deactivate',
         icon: effect.disabled ? "<i class='far fa-circle'></i>" : "<i class='far fa-check-circle'></i>",
-        callback: () => effect.update({ 'disabled': !effect.disabled })
+        onClick: () => effect.update({ 'disabled': !effect.disabled })
       },
       {
-        name: 'source',
+        label: 'source',
         icon: "<i class='fas fa-info'></i>",
-        condition: item,
-        callback: () => item.sheet.render(true)
+        visible: !!item,
+        onClick: () => item.sheet.render(true)
       }
-    ]
+    );
+
+    return options;
   }
 
   _getWeaponItemContextOptions(item) {
@@ -1141,83 +1306,212 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       options.push(...item.system.getContextOptions());
     }
 
+    if (item.type === 'meleeweapon') {
+      options.push({
+        label: 'offHand',
+        icon: "<i class='fas fa-shield-halved'></i>",
+        onClick: () => {
+          if (RuleChaos.isWieldedTwohanded(item)) return;
+          const desiredHand = item.system.worn.offHand ? 'main' : 'offhand';
+          if (item.system.worn.value && this.actor.swapWeaponHandSlot) this.actor.swapWeaponHandSlot(item.id, desiredHand);
+          else this.actor.equipWeaponToHand(item.id, { hand: desiredHand, equip: true });
+        },
+      });
+    }
+
     options.push({
-      name: 'SHEET.PostItem',
+      label: 'SHEET.PostItem',
       icon: "<i class='fas fa-comment fa-fw'></i>",
-      callback: () => item.postItem(),
+      onClick: () => item.postItem(),
     });
 
     return options;
   }
 
+  _getBulkInventoryContextOptions() {
+    const hasItems = InventoryBulkActionHelper.hasInventoryItems(this.actor, { includeEquipped: true });
+
+    if (!hasItems) {
+      return [
+        {
+          label: 'INVENTORYBULK.noItems',
+          icon: "<i class='fas fa-box-open fa-fw'></i>",
+          onClick: () => {},
+        },
+      ];
+    }
+
+    return [
+      {
+        label: 'INVENTORYBULK.delete',
+        icon: "<i class='fas fa-trash fa-fw'></i>",
+        onClick: () => this._bulkDeleteInventory(),
+      },
+      {
+        label: 'INVENTORYBULK.dropGround',
+        icon: "<i class='fas fa-arrow-down-to-line fa-fw'></i>",
+        visible: () => InventoryBulkActionHelper.canDropInventoryToGround(this.actor),
+        onClick: () => this._bulkDropInventory(false),
+      },
+      {
+        label: 'INVENTORYBULK.dropBag',
+        icon: "<i class='fas fa-box-archive fa-fw'></i>",
+        onClick: () => this._bulkDropInventory(true),
+      },
+    ];
+  }
+
+  async _confirmBulkInventoryAction(messageKey, formatData = {}) {
+    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', {
+      message: game.i18n.format(messageKey, formatData),
+    });
+
+    return await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: 'INVENTORYBULK.title',
+      },
+      content,
+      rejectClose: false,
+      modal: true,
+    });
+  }
+
+  async _bulkDeleteInventory() {
+    const proceed = await this._confirmBulkInventoryAction('INVENTORYBULK.deleteConfirm', { name: this.actor.name });
+    if (!proceed) return;
+
+    await InventoryBulkActionHelper.deleteInventory(this.actor, { includeEquipped: true });
+  }
+
+  async _bulkDropInventory(useBag) {
+    if (!useBag && !InventoryBulkActionHelper.canDropInventoryToGround(this.actor)) {
+      ui.notifications.error('INVENTORYBULK.requiresToken', { localize: true });
+      return;
+    }
+
+    const proceed = await this._confirmBulkInventoryAction(
+      useBag ? 'INVENTORYBULK.dropBagConfirm' : 'INVENTORYBULK.dropGroundConfirm',
+      { name: this.actor.name },
+    );
+    if (!proceed) return;
+
+    const movedItems = useBag
+      ? await InventoryBulkActionHelper.moveInventoryToBag(this.actor, { includeEquipped: true })
+      : await InventoryBulkActionHelper.dropInventoryToGround(this.actor, { includeEquipped: true });
+
+    if (!useBag && movedItems < 0) {
+      ui.notifications.error('INVENTORYBULK.requiresToken', { localize: true });
+    }
+  }
+
   _getItemContextOptions(item) {
     const options = [
       {
-        name: 'SHEET.EditItem',
+        label: 'SHEET.EditItem',
         icon: "<i class='fas fa-edit fa-fw'></i>",
-        callback: () => item.sheet.render(true),
+        onClick: () => item.sheet.render(true),
       },
       {
-        name: 'SHEET.PostItem',
+        label: 'SHEET.PostItem',
         icon: "<i class='fas fa-comment fa-fw'></i>",
-        callback: () => item.postItem(),
+        onClick: () => item.postItem(),
       },
       {
-        name: 'SHEET.DuplicateItem',
+        label: 'SHEET.DuplicateItem',
         icon: "<i class='fas fa-copy fa-fw'></i>",
-        callback: () => this.handleItemCopy(item.toObject(), item.type),
+        onClick: () => this.handleItemCopy(item.toObject(), item.type),
       },
       {
-        name: 'SHEET.ConsumeItem',
+        label: 'SHEET.ConsumeItem',
         icon: "<i class='fas fa-wine-bottle fa-fw'></i>",
-        condition: () => item.type == 'consumable',
-        callback: () => this.consumeItem(item),
+        visible: () => ['consumable', 'plant'].includes(item.type),
+        onClick: () => this.consumeItem(item),
       },
       {
-        name: 'SHEET.onUseEffect',
+        label: 'SHEET.onUseEffect',
         icon: "<i class='fas fa-dice-six fa-fw'></i>",
-        condition: () => getProperty(item, 'flags.dsa5.onUseEffect'),
-        callback: () => new OnUseEffect(item).executeOnUseEffect(),
+        visible: () => OnUseEffect.hasOnUseEffect(item),
+        onClick: () => new OnUseEffect(item).executeOnUseEffect(),
       },
       {
-        name: 'SHEET.DeleteItem',
+        label: 'SHEET.DeleteItem',
         icon: "<i class='fas fa-trash fa-fw'></i>",
-        callback: () => this._itemDeleteDialog(item),
+        onClick: () => this._itemDeleteDialog(item),
       },
       {
-        name: 'MERCHANT.exchange',
+        label: 'MERCHANT.exchange',
         icon: "<i class='fas fa-coins'></i>",
-        condition: () => DSA5.equipmentCategories.has(item.type),
-        callback: () => this._startTrade(item),
+        visible: () => DSA5.equipmentCategories.has(item.type),
+        onClick: () => this._startTrade(item),
       },
       {
-        name: 'SHEET.changeMoney',
+        label: 'SHEET.changeMoney',
         icon: "<i class='fas fa-coins'></i>",
-        condition: () => item.type == 'money',
-        callback: () => DSA5Payment._replaceMoney(this.actor),
+        visible: () => item.type == 'money',
+        onClick: () => DSA5Payment._replaceMoney(this.actor),
       },
     ];
 
     if (hasProperty(item, 'system.worn.wearable') || ['meleeweapon', 'rangeweapon', 'armor'].includes(item.type)) {
       options.push({
-        name: 'SHEET.EquipItem',
+        label: 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => item.update({ 'system.worn.value': !item.system.worn.value }),
+        onClick: async () => {
+          if (['meleeweapon', 'rangeweapon'].includes(item.type)) {
+            await this.actor.equipWeaponToHand(item.id, { hand: 'auto', equip: !item.system.worn.value });
+            return;
+          }
+
+          await item.update({ 'system.worn.value': !item.system.worn.value });
+        },
       });
     }
     if (Number(getProperty(item, 'system.quantity.value')) > 1) {
       options.push({
-        name: 'SHEET.SplitItem',
+        label: 'SHEET.SplitItem',
         icon: "<i class='fas fa-arrows-split-up-and-left fa-fw'></i>",
-        callback: () => this._splitItem(item),
+        onClick: () => this._splitItem(item),
+      });
+    }
+
+    if (DSA5.equipmentCategories.has(item.type)) {
+      const actor = this.actor;
+      options.push({
+        label: 'GROUP.passToGroup',
+        icon: "<i class='fas fa-arrow-right-to-bracket fa-fw'></i>",
+        visible: () => {
+          const partyUuid = game.settings.get('dsa5', 'primaryParty');
+          if (!partyUuid) return false;
+          const party = fromUuidSync(partyUuid);
+          if (!party?.system?.actors) return false;
+          return party.system.actors.has(actor);
+        },
+        onClick: () => {
+          import('./group-sheet.js').then((m) => m.default.passItemToGroup(actor, item));
+        },
       });
     }
 
     return options;
   }
 
-  async _startTrade(item) {
-    new TradeOptions(this.actor).render(true);
+  async _startTrade(_item) {
+    const actors = ActorPickerDialog.buildActorPickerData({
+      actors: game.actors.filter((actor) => actor.hasPlayerOwner && actor.id !== this.actor.id),
+    });
+    const [targetId] = await ActorPickerDialog.open({
+      actors,
+      title: 'MERCHANT.exchange',
+      selectionMode: 'single',
+    });
+    if (!targetId) return;
+
+    const target = game.actors.get(targetId);
+    if (!target) return;
+
+    const sourceSpeaker = RollDialogBuilder.buildSpeaker(this.actor, this.actor.token?.id);
+    const targetSpeaker = RollDialogBuilder.buildSpeaker(target, target.token?.id);
+    new Trade(sourceSpeaker, targetSpeaker).startTrade();
   }
 
   _splitItem(item) {
@@ -1240,7 +1534,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       'SHEET.SplitItem',
       callback,
       {
-        name: format('MERCHANT.splitItem', { name: item.name }),
+        name: _loc('MERCHANT.splitItem', { name: item.name }),
         count: item.system.quantity.value - 1,
         max: item.system.quantity.value - 1,
       }
@@ -1250,7 +1544,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   _bindKeepFieldsEnabled(html) {
     if (!this.isEditable) {
       const keepFields = html.find('.keepFieldsEnabled');
-      for (let k of keepFields) {
+      for (const k of keepFields) {
         const attr = k.dataset.attr;
         const name = k.dataset.name;
         $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
@@ -1271,7 +1565,15 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static async _onMacroUseItem(ev, target) {
     const item = this.actor.items.get(this._getItemId(target));
     const onUse = new OnUseEffect(item);
-    await onUse.executeOnUseEffect();
+    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
+  }
+
+  static async _onMacroUseEffect(ev, target) {
+    const effect = await fromUuid(target.dataset.uuid);
+    if (!effect) return;
+
+    const onUse = new OnUseEffect(effect);
+    await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
   }
 
   static async _payAeSpecialAbilityCost(ev, target) {
@@ -1282,13 +1584,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!paid) return;
 
-    const msg = format('CHATNOTIFICATION.paysTraditionAbility', {
+    const msg = _loc('CHATNOTIFICATION.paysTraditionAbility', {
       name: this.actor.name,
       ability: item.name,
       cost,
     });
     if (ev.button == 2) {
-      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'gmroll'));
+      ChatMessage.create(DSA5_Utility.chatDataSetup(msg, DICE_CONSTANTS.CHAT_MODES.GM));
     } else {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
@@ -1361,7 +1663,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         continue;
       }
 
-      const title = localize(entry.querySelector('button').dataset.tooltip) || '';
+      const title = _loc(entry.querySelector('button').dataset.tooltip) || '';
       const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
@@ -1374,7 +1676,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _itemDeleteDialog(item) {
-    const message = format('DIALOG.DeleteItemDetail', { item: item.name, });
+    const message = _loc('DIALOG.DeleteItemDetail', { item: item.name, });
     const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
@@ -1397,7 +1699,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (!this.isEditable) return;
 
     const itemId = this._getItemId(target);
-    let item = this.actor.items.get(itemId);
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
     this._itemDeleteDialog(item);
   }
 
@@ -1442,7 +1745,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _getItemId(target) {
-    return target.closest('[data-item-id]').getAttribute('data-item-id');
+    const el = target?.closest?.('[data-item-id]');
+    return el?.getAttribute('data-item-id') || target?.dataset?.itemId;
   }
 
   _getItemDataset(target) {
@@ -1450,8 +1754,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addMoney(item) {
-    let money = duplicate(this.actor.items.filter((i) => i.type == 'money'));
-    let moneyItem = money.find((i) => i.name == item.name);
+    const money = duplicate(this.actor.items.filter((i) => i.type == 'money'));
+    const moneyItem = money.find((i) => i.name == item.name);
 
     if (moneyItem) {
       moneyItem.system.quantity.value += item.system.quantity.value;
@@ -1496,13 +1800,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _handleSpellExtension(item) {
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) {
       item = duplicate(item);
-      let spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
+      const spell = this.actor.items.find((i) => i.type == item.system.category && i.name == item.system.source);
       if (!spell) {
         ui.notifications.error(
-          format('DSAError.noSpellForExtension', {
+          _loc('DSAError.noSpellForExtension', {
             name: item.system.source,
             category: DSA5_Utility.categoryLocalization(item.system.category),
             extension: item.name,
@@ -1515,7 +1819,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           });
           return;
         }
-        let apCost = item.system.APValue.value;
+        const apCost = item.system.APValue.value;
         if (await this.actor.checkEnoughXP(apCost)) {
           await this._updateAPs(apCost, {}, { render: false });
           const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
@@ -1526,7 +1830,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addSpellOrLiturgy(item) {
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     let apCost;
     item = duplicate(item);
     if (!res) {
@@ -1535,7 +1839,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         case 'liturgy':
         case 'ceremony':
         case 'ritual':
-          apCost = DSA5_Utility._calculateAdvCost(0, item.system.StF.value, 0);
+          apCost = 0;
+          for (let i = 0; i <= (Number(item.system.talentValue.value) || 0); i++) {
+            apCost += DSA5_Utility._calculateAdvCost(i, item.system.StF.value, 0);
+          }
           break;
         case 'blessing':
         case 'magictrick':
@@ -1558,7 +1865,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _addLoot(item) {
     item = duplicate(item);
-    let res = this.actor.items.find((i) => ItemFactory.areEquals(item, i));
+    const res = this.actor.items.find((i) => ItemFactory.areEquals(item, i));
     if (!res) {
       if (this.tabGroups.sheet == 'combat' && item.system.worn) item.system.worn.value = true;
 
@@ -1588,7 +1895,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _addFullPack(item) {
-    let docs = await game.packs.get(item.name).getDocuments();
+    const docs = await game.packs.get(item.name).getDocuments();
     let newAppls = docs.filter((x) => !this.actor.items.find((y) => y.type == x.type && y.name == x.name));
     if (item.onlyType) newAppls = newAppls.filter((x) => x.type == item.onlyType);
 
@@ -1599,37 +1906,37 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async creatureDrop(item) {
-    if (game.dsa5.config.hooks.shapeshift) {
-      new foundry.applications.api.DialogV2({
-        window: {
-          title: localize('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+    new foundry.applications.api.DialogV2({
+      window: {
+        title: _loc('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
+      },
+      content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
+      buttons: [
+        {
+          action: 'companion',
+          icon: 'fas fa-handshake',
+          label: 'SHEET.AnimalCompanion',
+          callback: () => {
+            CompanionHandler.setCompanion(this, item.uuid);
+          },
         },
-        content: `<p>${localize('DIALOG.whichFunction') + ': ' + item.name}</p>`,
-        buttons: [
-          {
-            action: 'shapeshift',
-            icon: 'fas fa-paw',
-            label: 'CONDITION.shapeshift',
-            callback: () => {
-              const shapeshift = game.dsa5.config.hooks.shapeshift;
-              shapeshift.setShapeshift(this.actor, item);
-              shapeshift.render(true);
-            },
+        {
+          action: 'shapeshift',
+          icon: 'fas fa-paw',
+          label: 'CONDITION.shapeshift',
+          callback: () => game.dsa5.apps.ShapeshiftingAPI.open({ sourceActor: this.actor, targetActor: item }),
+        },
+        {
+          action: 'horse',
+          icon: 'fas fa-horse',
+          label: 'RIDING.horse',
+          default: true,
+          callback: () => {
+            Riding.setHorse(this.actor, item, this.token);
           },
-          {
-            action: 'horse',
-            icon: 'fas fa-horse',
-            label: 'RIDING.horse',
-            default: true,
-            callback: () => {
-              Riding.setHorse(this.actor, item, this.token);
-            },
-          },
-        ],
-      }).render(true);
-    } else {
-      Riding.setHorse(this.actor, item, this.token);
-    }
+        },
+      ],
+    }).render(true);
   }
 
   async _manageDragItems(item, typeClass) {
@@ -1675,6 +1982,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       case 'spellextension':
         await this._handleSpellExtension(item);
         break;
+      case 'itempackage':
+        await this._addItemPackage(item);
+        break;
       case 'creature':
         this.creatureDrop(item);
         break;
@@ -1690,19 +2000,18 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         break;
       case 'npc':
         ui.notifications.error(
-          format('DSAError.canNotBeAdded', {
+          'DSAError.canNotBeAdded',
+          { localize: true, format: {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type, 'Actor'),
-          }),
-        );
+          }});
         break
       default:
         ui.notifications.error(
-          format('DSAError.canNotBeAdded', {
+          'DSAError.canNotBeAdded', { localize: true, format: {
             item: item.name,
             category: DSA5_Utility.categoryLocalization(item.type),
-          }),
-        );
+          }});
     }
   }
 
@@ -1716,48 +2025,27 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     );
   }
 
-  async _handleLookup(item) {
-    let lookup = await DSA5_Utility.findAnyItem(item.items);
-    if (lookup) {
-      for (let thing of item.items) {
-        if (thing.count) {
-          let elem = lookup.find((x) => x.name == thing.name && x.type == thing.type);
-          if (elem) {
-            elem.system.quantity.value = thing.count;
-            if (thing.qs && thing.type == 'consumable') elem.system.QL = thing.qs;
-          } else {
-            ui.notifications.warn(
-              format('DSAError.notFound', {
-                category: thing.type,
-                name: thing.name,
-              }),
-            );
-          }
-        }
-      }
-      //we should improve that so it stacks items
-      await this.actor.createEmbeddedDocuments('Item', lookup);
-      //for (let thing of lookup) {
-      //    await this._manageDragItems(thing, thing.type)
-      //}
+  async _addItemPackage(item) {
+    const resolved = await ItempackageData.resolvePackage(item);
+    if (resolved.length) {
+      await this.actor.createEmbeddedDocuments('Item', resolved);
     } else {
       ui.notifications.error(
-        format('DSAError.notFound', {
-          category: thing.type,
-          name: thing.name,
-        }),
-      );
+        'DSAError.notFound', { localize: true, format: {
+          category: 'itempackage',
+          name: item.name,
+        }});
     }
   }
 
   async _handleApplication(item) {
     item = duplicate(item);
-    let res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
     if (!res) await this.actor.createEmbeddedDocuments('Item', [item]);
   }
 
   async _handleRemoveSourceOnDrop(item) {
-    let sourceActor = item.parent;
+    const sourceActor = item.parent;
 
     if (sourceActor && sourceActor.isOwner) await sourceActor.deleteEmbeddedDocuments('Item', [item._id]);
   }
@@ -1784,6 +2072,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _onDropItem(event, item) {
+    if (item.type === 'itempackage') {
+      await this._addItemPackage(item);
+      return;
+    }
+
     const itemData = item.toObject();
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
@@ -1831,18 +2124,32 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
         if (price && !(await DSA5Payment.payMoney(this.actor, price, true, false))) return;
 
+        const amount = Number(itemData.system?.quantity?.value) || 1;
+        await MoneyTracker.track(this.actor, { type: 'buy', name: itemData.name, amount }, Number(price) * -1);
+
         tinyNotification(
-          format('PAYMENT.pay', {
+          _loc('PAYMENT.pay', {
             actor: this.actor.name,
             amount: price,
           }),
         );
         DSA5SoundEffect.playMoneySound();
       }
-      await this._onDropItemCreate(itemData);
+
+      const sourceActor = item.parent;
+      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      if (isBagWithContents) {
+        await transferBagWithContents(sourceActor, this.actor, itemData);
+      } else {
+        await this._onDropItemCreate(itemData);
+      }
     }
 
-    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) await this._handleRemoveSourceOnDrop(item);
+    if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) {
+      const sourceActor = item.parent;
+      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      if (!isBagWithContents) await this._handleRemoveSourceOnDrop(item);
+    }
   }
 
   _itemHasPrice(data) {

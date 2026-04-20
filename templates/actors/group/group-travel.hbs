@@ -1,0 +1,113 @@
+<div class='tab scrollable {{tabs.travel.cssClass}}' data-tab='travel' data-group='{{tabs.travel.group}}'>
+  <div class="groupbox">
+    <legend class="table-title lineheight">{{localize 'GROUP.speedPerMode'}}</legend>
+
+    <div class="group-speed-table">
+      <div class="row-section tableOdd group-speed-header">
+        <div class="col two"></div>
+        <div class="col ten center"><b>{{localize 'value'}}</b></div>
+        <div class="col ten center"><b>{{localize 'ABBR.modifiers'}}</b></div>
+        <div class="col ten center"><b>{{localize 'GROUP.schritt'}}</b></div>
+        <div class="col ten center"><b>{{localize 'GROUP.meilenPerHour'}}</b></div>
+        <div class="col zerofive"></div>
+      </div>
+
+      {{#each travelSpeeds as |spd mode|}}
+        <div class="row-section tableOdd group-speed-row">
+          <div class="col two flexrow">
+            <div>
+              <i class="fas {{spd.icon}}"></i>
+              {{#if spd.locationName}}
+                {{spd.locationName}} ({{localize (concat 'locationTypes.' mode)}})
+              {{else}}
+                {{localize (concat 'locationTypes.' mode)}}
+              {{/if}}
+            </div>
+          </div>
+          <div class="col ten flexrow flexAlignCenter center">
+            {{#if spd.locationName}}
+              <span>{{spd.locationSpeed}}</span>
+            {{else if (eq mode 'foot')}}
+              <span>{{spd.initial}}</span>
+            {{else}}
+              <input type="number" name="system.travel.speed.{{mode}}.initial" value="{{spd.initial}}" class="number-input" />
+            {{/if}}
+          </div>
+          <div class="col ten flexrow center">
+            <input type="number" name="system.travel.speed.{{mode}}.modifier" value="{{spd.modifier}}" class="number-input" />
+          </div>
+          <div class="col ten flexrow center"><b>{{spd.max}}</b></div>
+          <div class="col ten flexrow center"><span>{{numberFormat spd.meilen decimals=1}}</span></div>
+          <div class="col zerofive flexrow center">
+            {{#if spd.locationName}}
+              <button type="button" class="icon fas fa-xmark noBorder dsadesignbutton" data-action="resetTravelMode" data-mode="{{mode}}" data-tooltip="{{localize 'Reset'}}"></button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+     <div class="row-section tableOdd group-speed-row">
+      <div class="col two flexrow">
+        <label>{{localize 'GROUP.forcedMarch'}}</label>
+      </div>
+      <div class="col ten flexrow">
+        <input type="number" name="system.travel.forcedMarchPercent" value="{{travel.forcedMarchPercent}}" min="0" class="number-input" />
+      </div>
+      <div class="col ten flexrow center">
+        <span>%</span>
+      </div>
+      <div class="col ten"></div>
+      <div class="col ten"></div>
+      <div class="col zerofive"></div>
+    </div>
+  </div>
+
+  <div class="groupbox">
+    <legend class="table-title lineheight">{{localize 'GROUP.travelMode'}}</legend>
+
+    <div class="group-travel-modes">
+      {{#each locations as |loc|}}
+        <div class="row-section tableOdd group-travel-mode" data-location-key="{{loc.key}}">
+          <div class="col ten flexrow">
+            <img src="{{loc.img}}" width="20" height="20" />
+          </div>
+          <div class="col two flexrow">
+            <a data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>
+          </div>
+          <div class="col five flexrow">
+            <span>{{loc.speed}} {{localize 'GROUP.schritt'}}</span>
+          </div>
+          <div class="col fifteen flexrow">
+            <div class="split-button">
+              {{#each @root.vehicleTypes as |vt key|}}
+                <button type="button" class="ui-control" data-action="setLocationType"
+                        data-location-key="{{loc.key}}" data-type="{{key}}"
+                        aria-pressed="{{#if (eq key loc.type)}}true{{else}}false{{/if}}"
+                        data-tooltip="{{localize vt.label}}">
+                  <i class="fas {{vt.icon}}"></i>
+                </button>
+              {{/each}}
+            </div>
+          </div>
+          <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-eye noBorder dsadesignbutton" data-action="openLocationSheet" data-location-key="{{loc.key}}"></button>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  {{#if hasCampHelpers}}
+  <div class="groupbox">
+    <legend class="table-title lineheight">{{localize 'GROUP.camp'}}</legend>
+    <div class="group-helpers-container" data-section="travel-camp">
+      {{#each helpers.travel-camp as |helper|}}
+        <button type="button" data-action="groupHelperAction" data-group-helper="{{@key}}" class="group-helper-btn">
+          {{#if helper.icon}}<i class="{{helper.icon}}"></i>{{/if}} {{localize helper.label}}
+        </button>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+</div>

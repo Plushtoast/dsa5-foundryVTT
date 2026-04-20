@@ -1,0 +1,45 @@
+<div class="adventurePoints scrollable">
+    {{#if actorHeader}}
+    <div class="row-section table-title">
+        <div class="col full">
+            <div class="flexrow">
+                <img class="flex0" src="{{actorHeader.img}}" alt="{{actorHeader.name}}" style="width: 48px; height: 48px;" />
+                <div class="flexcol">
+                    <strong>
+                        {{{actorHeader.link}}}
+                    </strong>
+                    {{#if actorHeader.subtitle}}
+                    <span class="muted" style="font-weight: normal;">{{actorHeader.subtitle}}</span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+    {{#each editRows}}
+        <fieldset class="row-section">
+            <legend class="flexrow">
+                <span>{{key}}</span>
+                <button type="button" class="icon" data-action="deleteEntry" data-key="{{key}}" aria-label="{{localize 'DIALOG.deleteConfirmation'}}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </legend>
+            <div class="flexrow">
+                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='TRACKER.FIELDS.ap.entries.type.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.attr value=attr name=(concat 'system.entries.' key '.attr') label='TRACKER.FIELDS.ap.entries.attr.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemUuid value=itemUuid name=(concat 'system.entries.' key '.itemUuid') label='TRACKER.FIELDS.ap.entries.itemUuid.label' localize=true classes='col'}}
+            </div>
+            <div class="flexrow">
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemType value=itemType name=(concat 'system.entries.' key '.itemType') label='TRACKER.FIELDS.ap.entries.itemType.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.itemName value=itemName name=(concat 'system.entries.' key '.itemName') label='TRACKER.FIELDS.ap.entries.itemName.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.state value=state name=(concat 'system.entries.' key '.state') label='TRACKER.FIELDS.ap.entries.state.label' localize=true classes='col'}}
+            </div>
+            <div class="flexrow">
+                {{formGroup ../document.system.schema.fields.entries.element.fields.previous value=previous name=(concat 'system.entries.' key '.previous') label='TRACKER.FIELDS.ap.entries.previous.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.next value=next name=(concat 'system.entries.' key '.next') label='TRACKER.FIELDS.ap.entries.next.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label='TRACKER.FIELDS.ap.entries.cost.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label='TRACKER.FIELDS.ap.entries.total.label' localize=true classes='col'}}
+            </div>
+        </fieldset>
+    {{/each}}
+</div>
