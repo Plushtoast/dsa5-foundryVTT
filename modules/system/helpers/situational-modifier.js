@@ -1,4 +1,4 @@
-//**
+/**
  * @typedef {Object} SituationalModifierRef
  * @property {string|null} uuid - Foundry UUID for fromUuid resolution
  * @property {string|null} id - Actor-local _id for items.get / effects.get
