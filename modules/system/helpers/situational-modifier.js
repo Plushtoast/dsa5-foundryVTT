@@ -1,4 +1,4 @@
-/**
+//**
  * @typedef {Object} SituationalModifierRef
  * @property {string|null} uuid - Foundry UUID for fromUuid resolution
  * @property {string|null} id - Actor-local _id for items.get / effects.get
@@ -22,7 +22,7 @@
 
 export class SituationalModifier {
   /** @type {string[]} Optional data keys copied from input when present. */
-  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source'];
+  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source', 'consumableId'];
 
   /** @param {SituationalModifierData} data */
   constructor(data = {}) {
