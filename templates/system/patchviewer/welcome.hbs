@@ -1,0 +1,144 @@
+<div class='tab scrollable welcome-page {{tabs.welcome.cssClass}}' data-tab='welcome' data-group='{{tabs.welcome.group}}'>
+
+  {{!-- Banner hero --}}
+  <div class='welcome-banner'>
+    <img class='welcome-banner__image' src='systems/dsa5/icons/backgrounds/dsa5_github_banner.jpg' alt='' />
+    <div class='welcome-banner__overlay'>
+      <h1>{{localize 'DSA5.welcomeApp.title'}}</h1>
+      <p>{{localize 'DSA5.welcomeApp.intro'}}</p>
+      <div class='welcome-banner__actions'>
+        <a data-action='startTour'><i class='fa-solid fa-compass'></i> {{localize 'DSA5.welcomeApp.quickStart.startTour'}}</a>
+        <a data-action='openGameManual'><i class='fa-solid fa-book-open'></i> {{localize 'DSA5.welcomeApp.gameManual'}}</a>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Getting Started + VTTom/Links column --}}
+  <div class='welcome-twin-row'>
+    <div class='welcome-section welcome-getting-started'>
+      <h2><i class='fa-solid fa-rocket'></i> {{localize 'DSA5.welcomeApp.gettingStarted.title'}}</h2>
+      <p>{{localize 'DSA5.welcomeApp.gettingStarted.subtitle'}}</p>
+      <ol class='welcome-checklist'>
+        {{#each gettingStartedSteps}}
+        <li><i class='{{this.icon}}'></i> {{this.text}}</li>
+        {{/each}}
+      </ol>
+    </div>
+    <div class='welcome-twin-row__right'>
+      {{#if vttom.isLink}}
+      <a class='welcome-section welcome-vttom' href='{{vttom.href}}' target='_blank' rel='noopener'>
+        <img class='welcome-vttom__avatar' src='{{vttom.image}}' alt='{{vttom.title}}' />
+        <div class='welcome-vttom__body'>
+          <h2><i class='{{vttom.titleIcon}}'></i> {{vttom.title}}</h2>
+          <p>{{vttom.desc}}</p>
+          <span class='welcome-vttom__cta'><i class='{{vttom.ctaIcon}}'></i> {{vttom.cta}}</span>
+        </div>
+      </a>
+      {{else}}
+      <div class='welcome-section welcome-vttom welcome-vttom--static'>
+        <img class='welcome-vttom__avatar' src='{{vttom.image}}' alt='{{vttom.title}}' />
+        <div class='welcome-vttom__body'>
+          <h2><i class='{{vttom.titleIcon}}'></i> {{vttom.title}}</h2>
+          <p>{{vttom.desc}}</p>
+          <span class='welcome-vttom__cta welcome-vttom__cta--muted'><i class='{{vttom.ctaIcon}}'></i> {{vttom.cta}}</span>
+        </div>
+      </div>
+      {{/if}}
+      <div class='welcome-section welcome-links'>
+        <h2><i class='fa-solid fa-link'></i> {{localize 'DSA5.welcomeApp.links.title'}}</h2>
+        <div class='modules-hero__links'>
+          {{#each welcomeLinks}}
+          <a href='{{this.href}}' target='_blank' rel='noopener'><i class='{{this.icon}}'></i> {{this.label}}</a>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Quick Reference / Starter Hints --}}
+  <div class='welcome-section welcome-hints'>
+    <h2><i class='fa-solid fa-lightbulb'></i> {{localize 'DSA5.welcomeApp.hints.title'}}</h2>
+    <p>{{localize 'DSA5.welcomeApp.hints.subtitle'}}</p>
+    <div class='welcome-hints__grid'>
+      {{#each starterHints}}
+      <div class='welcome-hints__card{{#if this.action}} welcome-hints__card--clickable{{/if}}'{{#if this.action}} data-action='{{this.action}}'{{/if}}>
+        <div class='welcome-hints__icon'>
+          {{#if this.shortcut}}<kbd>{{this.shortcut}}</kbd>{{else}}<i class='{{this.icon}}'></i>{{/if}}
+        </div>
+        <div class='welcome-hints__body'>
+          <strong>{{this.title}}</strong>
+          <small>{{this.desc}}</small>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  {{!-- Recommended beginner modules — carousel --}}
+  <div class='welcome-section welcome-beginner-modules'>
+    <h2><i class='fa-solid fa-box-open'></i> {{localize 'DSA5.welcomeApp.beginnerModules.title'}}</h2>
+    <p>{{localize 'DSA5.welcomeApp.beginnerModules.subtitle'}}</p>
+    <div class='welcome-carousel' data-carousel data-interval='7000'>
+      <div class='welcome-carousel__viewport'>
+        <div class='welcome-carousel__track'>
+        {{#each moduleCards}}
+        <div class='welcome-carousel__slide'>
+          {{#if this.action}}
+          <a class='welcome-module-card' data-action='{{this.action}}' data-tab='{{this.actionTab}}'>
+            {{#if this.icon}}<i class='{{this.icon}}'></i>{{/if}}
+            <strong>{{this.title}}</strong>
+            <small>{{this.desc}}</small>
+          </a>
+          {{else}}
+          <a class='welcome-module-card{{#if this.free}} welcome-module-card--free{{/if}}' href='{{this.href}}' target='_blank' rel='noopener'>
+            {{#if this.free}}<span class='welcome-module-card__badge'>{{this.freeLabel}}</span>{{/if}}
+            {{#if this.image}}<img class='welcome-module-card__cover' src='{{this.image}}' alt='' loading='lazy' />{{/if}}
+            {{#if this.category}}<span class='welcome-module-card__category'>{{this.category}}</span>{{/if}}
+            <strong>{{this.title}}</strong>
+            <small>{{this.desc}}</small>
+          </a>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+      </div>
+      <div class='welcome-carousel__nav'>
+        <button class='welcome-carousel__arrow' data-action='carouselPrev' type='button'><i class='fa-solid fa-chevron-left'></i></button>
+        <div class='welcome-carousel__dots'></div>
+        <button class='welcome-carousel__arrow' data-action='carouselNext' type='button'><i class='fa-solid fa-chevron-right'></i></button>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Video boxes — carousel --}}
+  <div class='welcome-section'>
+    <h2><i class='fa-brands fa-youtube'></i> {{localize 'DSA5.welcomeApp.videos.title'}}</h2>
+    <div class='welcome-carousel' data-carousel data-interval='8000'>
+      <div class='welcome-carousel__viewport'>
+        <div class='welcome-carousel__track'>
+        {{#each videoGuides}}
+        <div class='welcome-carousel__slide'>
+          <a class='welcome-video-card' href='{{this.url}}' target='_blank' rel='noopener'>
+            <div class='welcome-video-card__thumb'>
+              <img src='{{this.thumb}}' alt='{{this.title}}' loading='lazy' />
+              <i class='fa-solid fa-play-circle'></i>
+            </div>
+            <strong>{{this.title}}</strong>
+            <small>{{this.desc}}</small>
+          </a>
+        </div>
+        {{/each}}
+        </div>
+      </div>
+      <div class='welcome-carousel__nav'>
+        <button class='welcome-carousel__arrow' data-action='carouselPrev' type='button'><i class='fa-solid fa-chevron-left'></i></button>
+        <div class='welcome-carousel__dots'></div>
+        <button class='welcome-carousel__arrow' data-action='carouselNext' type='button'><i class='fa-solid fa-chevron-right'></i></button>
+      </div>
+    </div>
+  </div>
+
+  {{#each welcomeParts}}
+    {{{this}}}
+  {{/each}}
+</div>

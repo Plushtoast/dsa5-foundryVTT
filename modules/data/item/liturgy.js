@@ -6,8 +6,6 @@ import AoeTemplate from './templates/aoe.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import SkillTemplate from './templates/skill.js';
 
-const {} = foundry.data.fields;
-
 export default class LiturgyData extends ItemDataModel.mixin(AoeTemplate, DescriptionTemplate, SpellTemplate, SkillTemplate, BasicSpellTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {});

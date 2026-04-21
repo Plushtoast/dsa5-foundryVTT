@@ -11,7 +11,7 @@ export default class RuleChaos {
     let multipleDefense = -3;
 
     if (
-      (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == game.i18n.localize('LocalizedIDs.wrestle')) &&
+      (item.type == 'dodge' || getProperty(item, 'system.combatskill.value') == _loc('LocalizedIDs.wrestle')) &&
       SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.masterfulDodge')
     )
       multipleDefense = -2;
@@ -26,7 +26,7 @@ export default class RuleChaos {
   static async bleedingMessage(actor) {
     await ChatMessage.create(
       DSA5_Utility.chatDataSetup(
-        game.i18n.format('CHATNOTIFICATION.applyBleeding', {
+        _loc('CHATNOTIFICATION.applyBleeding', {
           actor: actor.name,
           actorId: actor.id,
           tokenId: actor.token ? actor.token.id : '',
@@ -36,7 +36,7 @@ export default class RuleChaos {
   }
 
   static isShield(item) {
-    return game.i18n.localize('LocalizedIDs.Shields') == getProperty(item, 'system.combatskill.value');
+    return _loc('LocalizedIDs.Shields') == getProperty(item, 'system.combatskill.value');
   }
 
   static _getFunctionData(ev) {
@@ -99,7 +99,7 @@ export default class RuleChaos {
     source.system.AsPCost.value = Number(source.system.AsPCost.value) || source.system.AsPCost.value;
   }
 
-  static isYieldedTwohanded(item) {
+  static isWieldedTwohanded(item) {
     if (!item || !item.system) return false;
     if (item.type == 'trait') return false;
 
@@ -110,66 +110,70 @@ export default class RuleChaos {
 
   static obfuscateDropData(item, obfuscations) {
     if (obfuscations) {
-      for (let section of obfuscations) mergeObject(item, { system: { obfuscation: { [section]: true } } });
+      for (const section of obfuscations) mergeObject(item, { system: { obfuscation: { [section]: true } } });
     }
   }
 
-  static _buildDuration(rounds) {
-    const update = {
-      duration: {
-        startTime: game.time.worldTime,
-        rounds: rounds,
-        seconds: rounds * 5,
-      },
+  static _buildDuration(value, units = 'rounds') {
+    return {
+      duration: { value, units },
+      start: ActiveEffect.getEffectStart(),
     };
-    if (game.combat) {
-      mergeObject(update, {
-        duration: {
-          combat: game.combat.id,
-          startRound: game.combat.round,
-          startTurn: game.combat.turn,
-        },
-      });
-    }
-    return update;
   }
 
   static async calcBleeding(ev) {
     const { data, actor } = RuleChaos._getFunctionData(ev);
     if (!actor) return;
 
-    const skill = actor.items.find((i) => i.name == game.i18n.localize('LocalizedIDs.selfControl') && i.type == 'skill');
-    actor.setupSkill(skill, {}, data.token).then(async (setupData) => {
+    const skill = actor.items.find((i) => i.name == _loc('LocalizedIDs.selfControl') && i.type == 'skill');
+    const options = {
+      postFunction: {
+        functionName: 'game.dsa5.apps.RuleChaos.postCalcBleeding',
+        speaker: { actor: actor.id, token: data.token, scene: canvas.scene ? canvas.scene.id : null },
+      },
+    };
+    actor.setupSkill(skill, options, data.token).then(async (setupData) => {
       const result = await actor.basicTest(setupData);
-
-      if (result.result.successLevel < 2) {
-        const qs = result.result.qualityStep || 0;
-        let duration = 7;
-        if (result.result.successLevel == 1) {
-          duration -= Number(qs);
-        } else if (result.successLevel < 1) {
-          duration += duration;
-        }
-        const existing = actor.hasCondition('bleeding');
-        const durationUpdate = RuleChaos._buildDuration(duration);
-
-        if (existing) {
-          const remaining = game.combat ? (existing.data.duration.startRound || 1) + existing.data.duration.rounds - game.combat.round : existing.data.duration.rounds;
-          if (duration > remaining) await existing.update(durationUpdate);
-        } else {
-          const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));
-          mergeObject(bleeding, durationUpdate);
-          await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
-          await ChatMessage.create(
-            DSA5_Utility.chatDataSetup(
-              game.i18n.format('CHATNOTIFICATION.gotBleeding', {
-                actor: actor.name,
-              }),
-            ),
-          );
-        }
-      }
+      await RuleChaos.applyBleedingResult(result.result, actor);
     });
+  }
+
+  static async applyBleedingResult(rollResult, actor) {
+    if (rollResult.successLevel >= 2) {
+      const existing = actor.hasCondition('bleeding');
+      if (existing) await actor.removeCondition('bleeding');
+      return;
+    }
+
+    const qs = rollResult.qualityStep || 0;
+    let duration = 7;
+    if (rollResult.successLevel == 1) {
+      duration -= Number(qs);
+    } else if (rollResult.successLevel < 1) {
+      duration += duration;
+    }
+    const existing = actor.hasCondition('bleeding');
+    const durationUpdate = RuleChaos._buildDuration(duration);
+
+    if (existing) {
+      await existing.update(durationUpdate);
+    } else {
+      const bleeding = duplicate(CONFIG.statusEffects.find((x) => x.id == 'bleeding'));
+      mergeObject(bleeding, durationUpdate);
+      await DSA5StatusEffects.addCondition(actor, bleeding, 1, false, true);
+      await ChatMessage.create(
+        DSA5_Utility.chatDataSetup(
+          _loc('CHATNOTIFICATION.gotBleeding', { actor: actor.name }),
+        ),
+      );
+    }
+  }
+
+  static async postCalcBleeding(postFunction, result) {
+    const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
+    if (!actor) return;
+
+    await RuleChaos.applyBleedingResult(result.result, actor);
   }
 
   static increment(ev, item, path, limit = undefined) {
@@ -182,7 +186,7 @@ export default class RuleChaos {
   }
 
   static magicalImprovement(actor, creationData) {
-    for (let item of actor.items) {
+    for (const item of actor.items) {
       if (['ritual', 'spell'].includes(item.type)) {
         item.system.talentValue.value += 4;
       }

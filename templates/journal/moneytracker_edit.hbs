@@ -1,0 +1,38 @@
+<div class="adventurePoints scrollable">
+    {{#if actorHeader}}
+    <div class="row-section table-title">
+        <div class="col full">
+            <div class="flexrow">
+                <img class="flex0" src="{{actorHeader.img}}" alt="{{actorHeader.name}}" style="width: 48px; height: 48px;" />
+                <div class="flexcol">
+                    <strong>
+                        {{{actorHeader.link}}}
+                    </strong>
+                    {{#if actorHeader.subtitle}}
+                    <span class="muted" style="font-weight: normal;">{{actorHeader.subtitle}}</span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+    {{#each editRows}}
+        <fieldset class="row-section">
+            <legend class="flexrow">
+                <span>{{key}}</span>
+                <button type="button" class="icon" data-action="deleteEntry" data-key="{{key}}" aria-label="{{localize 'DIALOG.deleteConfirmation'}}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </legend>
+            <div class="flexrow">
+                {{formGroup ../document.system.schema.fields.entries.element.fields.type value=type name=(concat 'system.entries.' key '.type') label='TRACKER.FIELDS.money.entries.type.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.name value=name name=(concat 'system.entries.' key '.name') label='TRACKER.FIELDS.money.entries.name.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.amount value=amount name=(concat 'system.entries.' key '.amount') label='TRACKER.FIELDS.money.entries.amount.label' localize=true classes='col'}}
+            </div>
+            <div class="flexrow">
+                {{formGroup ../document.system.schema.fields.entries.element.fields.cost value=cost name=(concat 'system.entries.' key '.cost') label='TRACKER.FIELDS.money.entries.cost.label' localize=true classes='col'}}
+                {{formGroup ../document.system.schema.fields.entries.element.fields.total value=total name=(concat 'system.entries.' key '.total') label='TRACKER.FIELDS.money.entries.total.label' localize=true classes='col'}}
+            </div>
+        </fieldset>
+    {{/each}}
+</div>

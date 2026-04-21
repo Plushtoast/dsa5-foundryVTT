@@ -61,7 +61,7 @@ export default class DSA5Dialog extends DialogShared {
 
     const html = $(this.element)
     html.find('.dieButton').on('click', (ev) => {
-      let elem = $(ev.currentTarget);
+      const elem = $(ev.currentTarget);
       if (ev.currentTarget.dataset.single == 'true') {
         elem.closest('.dialog-content').find('.dieButton').removeClass('dieSelected');
       }

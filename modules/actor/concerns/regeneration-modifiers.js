@@ -5,7 +5,6 @@ export class RegenerationModifiers {
 
         for(const attr of attrs) {
             const mods = actor.system.status.regeneration[`${attr}Conditional`];
-
             modifiers.push(...mods.map(f => ({
               name: f.target || f.source,
               value: f.value,

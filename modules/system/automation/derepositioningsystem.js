@@ -1,5 +1,5 @@
 import AdvantageRulesDSA5 from '../rules/advantage-rules-dsa5.js';
-import { localize } from '../helpers/localizer.js';
+
 const { getProperty } = foundry.utils;
 
 export default class DPS {
@@ -32,7 +32,7 @@ export default class DPS {
   }
 
   static inDistance(toToken) {
-    for (let token of canvas.scene.tokens) {
+    for (const token of canvas.scene.tokens) {
       if (token.isOwner && DPS.rangeFinder(toToken, token.object).tileDistance <= 2) return true;
     }
     return false;
@@ -122,12 +122,12 @@ export default class DPS {
     if (!DPS.isEnabled || !tokenSource) return 1;
 
     let maxDist = {};
-    for (let target of game.user.targets) {
+    for (const target of game.user.targets) {
       const dist = DPS.rangeFinder(tokenSource, target);
       if ((maxDist.distanceSum || 0) < dist.distanceSum) maxDist = dist;
     }
 
-    if (maxDist.unit == localize('gridUnits')) {
+    if (maxDist.unit == _loc('gridUnits')) {
       const rangeMultiplier = currentAmmo?.system?.rangeMultiplier || 1;
       const rangeBands = rangeweapon.system.reach.value.split('/').map((x) => Number(x) * rangeMultiplier);
       let index = 0;
@@ -158,14 +158,15 @@ export default class DPS {
 Hooks.on('renderSceneConfig', (app, html, msg) => {
   const sceneFlag = getProperty(app.document, 'flags.dsa5.enableDPS');
   const dpsSelector = `<div class="form-group dpsSelector">
-        <label data-tooltip="DSASETTINGS.enableDPSHint">${localize('DSASETTINGS.enableDPS')}</label>
+        <label>${_loc('DSASETTINGS.enableDPS')}</label>
         <div class="form-fields">
           <select name="flags.dsa5.enableDPS">
-            <option value="" ${sceneFlag == '' ? 'selected' : ''}>${localize('globalConfig')}</option>
-            <option value="2" ${sceneFlag == '2' ? 'selected' : ''}>${localize('yes')}</option>
-            <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${localize('no')}</option>
+            <option value="" ${sceneFlag == '' ? 'selected' : ''}>${_loc('globalConfig')}</option>
+            <option value="2" ${sceneFlag == '2' ? 'selected' : ''}>${_loc('yes')}</option>
+            <option value="1" ${sceneFlag == '1' ? 'selected' : ''}>${_loc('no')}</option>
           </select>
         </div>
+        <p class="hint">${_loc('DSASETTINGS.enableDPSHint')}</p>
     </div>`;
   $(html).find('.tab[data-tab="grid"]').append(dpsSelector);
 });

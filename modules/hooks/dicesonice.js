@@ -136,7 +136,7 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
     game.settings.registerMenu('dsa5', 'dicesonicesettings', {
       name: 'DiceSoNiceSettings',
       label: 'DiceSoNice Settings',
-      hint: game.i18n.localize('DSASETTINGS.dicesonicesettings'),
+      hint: _loc('DSASETTINGS.dicesonicesettings'),
       type: DiceSoNiceForm,
       restricted: false,
     });
@@ -210,7 +210,7 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
 
   static collectPreloads(loadSelf = true) {
     let payload = new Set();
-    for (let attr of DiceSoNiceCustomization.attrs) {
+    for (const attr of DiceSoNiceCustomization.attrs) {
       payload.add(game.settings.get('dsa5', `dice3d_system_${attr}`));
     }
     payload = Array.from(payload);

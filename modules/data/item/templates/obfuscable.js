@@ -3,7 +3,7 @@ import { DSADataModel } from "../../abstract.js";
 const { SchemaField, BooleanField } = foundry.data.fields;
 
 export default class ObfuscableTemplate extends DSADataModel {
-  
+
     static defineSchema() {
         return {
             obfuscation: new SchemaField({

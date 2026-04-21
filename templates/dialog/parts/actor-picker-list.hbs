@@ -1,0 +1,7 @@
+<div class='query-actor-picker' data-selection-mode='{{selectionMode}}'>
+  <ul class='dsa-card-list query-actor-list scrollable'>
+    {{#each actors as |actor|}}
+      {{> systems/dsa5/templates/dialog/parts/actor-picker-row.hbs actor=actor selectionMode=../selectionMode}}
+    {{/each}}
+  </ul>
+</div>

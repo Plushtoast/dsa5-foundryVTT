@@ -47,6 +47,21 @@
             <a class='ench' data-action='enchDelete'><i class='fas fa-trash'></i></a>
           </div>
         </div>
+        {{#if item.extensions}}
+          {{#each item.extensions as |ext j|}}
+            <div class='row-section col skills statusEffect' data-id='{{item.id}}' data-ext-idx='{{j}}'>
+              <div class='col five center'>
+                <i class='fas fa-puzzle-piece' data-tooltip='{{localize "spellextension"}}'></i>
+              </div>
+              <div class='col seventy'>
+                {{ext.name}}
+              </div>
+              <div class='col ten center'>
+                <a class='ench' data-action='enchExtDelete'><i class='fas fa-trash'></i></a>
+              </div>
+            </div>
+          {{/each}}
+        {{/if}}
       {{/each}}
     </div>
   {{/if}}

@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import EncumbranceTemplate from './templates/encumbrance.js';
@@ -9,7 +10,9 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       region: new StringField({ initial: '', label: 'PLANT.region' }),
@@ -51,7 +54,7 @@ export default class ArmorData extends ItemDataModel.mixin(DescriptionTemplate, 
   }
 
   static chatData(data, name) {
-    let properties = [
+    const properties = [
       { key: 'protection', val: data.protection.value },
       { key: 'encumbrance', val: data.encumbrance.value },
     ];

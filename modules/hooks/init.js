@@ -13,6 +13,8 @@ import * as migrateWorld from '../system/maintenance/migrator.js';
 import * as initScene from './scene.js';
 import * as initKeybindings from './keybindings.js';
 import * as rollExtensions from '../system/rolls/dsarolls.js';
+import '../system/helpers/situational-modifiers-widget.js';
+import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -23,9 +25,11 @@ import BookWizard from '../wizards/adventure_wizard.js';
 import MastersMenu from '../wizards/masters_menu.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
+import DSAEnhancementEffectConfig from '../status/enhancement_effect_config.js';
 import CreatureMerchantSheetDSA5 from '../actor/creature-merchant-sheet.js';
 import CharacterMerchantSheetDSA5 from '../actor/character-merchant-sheet.js';
+import GroupActorSheet from '../actor/group-sheet.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
@@ -34,10 +38,14 @@ import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
-import { localize } from '../system/helpers/localizer.js';
+
 import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
 import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet.js';
+import { DSAQuestLogEntrySheet } from '../journal/dsaquestlogentry_sheet.js';
+import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
+import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
 const { mergeObject } = foundry.utils;
+const { DocumentSheetConfig } = foundry.applications.apps;
 
 export default function () {
   initHandleBars.default();
@@ -54,6 +62,7 @@ export default function () {
   initScene.default();
   rollExtensions.default();
   setActorDelta();
+  registerMagicalActionHooks();
 }
 
 Hooks.once('init', () => {
@@ -89,6 +98,8 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/experienceBox.hbs',
     'systems/dsa5/templates/actors/parts/temperature.hbs',
     'systems/dsa5/templates/actors/parts/temperatureSmall.hbs',
+    'systems/dsa5/templates/dialog/parts/actor-picker-row.hbs',
+    'systems/dsa5/templates/dialog/parts/actor-picker-list.hbs',
     'systems/dsa5/templates/items/browse/actor.hbs',
     'systems/dsa5/templates/items/browse/garadan.hbs',
     'systems/dsa5/templates/items/browse/culture.hbs',
@@ -96,6 +107,12 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/browse/career.hbs',
     'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
+    'systems/dsa5/templates/dialog/parts/message-mode.hbs',
+    'systems/dsa5/templates/chat/payment/batch-request.hbs',
+    'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
+    'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
+    'systems/dsa5/templates/system/hud/companion-hotbar.hbs',
+    'systems/dsa5/templates/actors/parts/member-card-header.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
@@ -107,6 +124,7 @@ Hooks.once('init', () => {
     { sheetClass: MerchantSheetDSA5, types: ['npc'] },
     { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
     { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
+    { sheetClass: GroupActorSheet, types: ['group'], makeDefault: true },
   ];
 
   actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
@@ -115,20 +133,25 @@ Hooks.once('init', () => {
 
   const journalSheets = [
     { sheetClass: DSAPersonaeEntrySheet, types: ['dsapersonaedramatis'], makeDefault: true },
-    { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true }
+    { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true },
+    { sheetClass: DSAQuestLogEntrySheet, types: ['dsaquestlog'], makeDefault: true },
+    { sheetClass: DSAAPTrackerEntrySheet, types: ['dsaaptracker'], makeDefault: true },
+    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true }
   ];
 
   journalSheets.forEach(({ sheetClass, types, makeDefault }) => {
-    foundry.applications.apps.DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', sheetClass, { types, makeDefault });
+    DocumentSheetConfig.registerSheet(JournalEntryPage, 'dsa5', sheetClass, { types, makeDefault });
   });
 
-  foundry.applications.apps.DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
-  foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { makeDefault: true });
+  DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
+  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { types: ['base'], makeDefault: true });
+  DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAEnhancementEffectConfig, { types: ['enhancement'], makeDefault: true });
 
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 
   ItemSheetdsa5.setupSheets();
 
+  DSA5.baseStyles = { ...DSA5.styles };
   Hooks.call('registerDSAstyle', DSA5.styles);
 
   DSAWorldCalendar.prepare();
@@ -226,7 +249,7 @@ const showWrongLanguageDialog = (forceLanguage) => {
     window: {
       title: 'DSASETTINGS.forceLanguage',
     },
-    content: `<p>${game.i18n.format('DSAError.wrongLanguage', { lang: forceLanguage })}</p>`,
+    content: `<p>${_loc('DSAError.wrongLanguage', { lang: forceLanguage })}</p>`,
     buttons: [
       {
         action: 'ok',
@@ -248,23 +271,24 @@ const showWrongLanguageDialog = (forceLanguage) => {
 
 function setupKnownEquipmentModifiers() {
   game.dsa5.config.knownShortcuts = {
-    [localize('CHARAbbrev.INI').toLowerCase()]: ['status', 'initiative', 'gearmodifier'],
-    [localize('CHARAbbrev.GS').toLowerCase()]: ['status', 'speed', 'gearmodifier'],
-    [localize('CHARAbbrev.AsP').toLowerCase()]: ['status', 'astralenergy', 'gearmodifier'],
-    [localize('CHARAbbrev.LeP').toLowerCase()]: ['status', 'wounds', 'gearmodifier'],
-    [localize('CHARAbbrev.KaP').toLowerCase()]: ['status', 'karmaenergy', 'gearmodifier'],
-    [localize('CHARAbbrev.AW').toLowerCase()]: ['status', 'dodge', 'gearmodifier'],
-    [localize('CHARAbbrev.SK').toLowerCase()]: ['status', 'soulpower', 'gearmodifier'],
-    [localize('CHARAbbrev.ZK').toLowerCase()]: ['status', 'toughness', 'gearmodifier'],
-    [localize('CHARAbbrev.FtP').toLowerCase()]: ['status', 'fatePoints', 'gearmodifier'],
+    [_loc('CHARAbbrev.INI').toLowerCase()]: ['status', 'initiative', 'gearmodifier'],
+    [_loc('CHARAbbrev.GS').toLowerCase()]: ['status', 'speed', 'gearmodifier'],
+    [_loc('CHARAbbrev.AsP').toLowerCase()]: ['status', 'astralenergy', 'gearmodifier'],
+    [_loc('CHARAbbrev.LeP').toLowerCase()]: ['status', 'wounds', 'gearmodifier'],
+    [_loc('CHARAbbrev.KaP').toLowerCase()]: ['status', 'karmaenergy', 'gearmodifier'],
+    [_loc('CHARAbbrev.AW').toLowerCase()]: ['status', 'dodge', 'gearmodifier'],
+    [_loc('CHARAbbrev.SK').toLowerCase()]: ['status', 'soulpower', 'gearmodifier'],
+    [_loc('CHARAbbrev.ZK').toLowerCase()]: ['status', 'toughness', 'gearmodifier'],
+    [_loc('CHARAbbrev.FtP').toLowerCase()]: ['status', 'fatePoints', 'gearmodifier'],
   };
   for (const k of Object.keys(DSA5.characteristics)) {
-    game.dsa5.config.knownShortcuts[localize(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
+    game.dsa5.config.knownShortcuts[_loc(`CHARAbbrev.${k.toUpperCase()}`).toLowerCase()] = ['characteristics', k.toLowerCase(), 'gearmodifier'];
   }
 }
 
 class DaylightIlluminationShader extends foundry.canvas.rendering.shaders.AdaptiveIlluminationShader {
-  static fragmentShader = `
+  static _createFragmentShader() {
+    return `
     ${this.SHADER_HEADER}
     ${this.PERCEIVED_BRIGHTNESS}
 
@@ -273,10 +297,11 @@ class DaylightIlluminationShader extends foundry.canvas.rendering.shaders.Adapti
         ${this.TRANSITION}
 
         // Darkness
-        framebufferColor = max(framebufferColor, colorBackground);
+        finalColor = max(finalColor, computedBackgroundColor);
         // Elevation
         finalColor = mix(finalColor, max(finalColor, smoothstep( 0.1, 1.0, finalColor ) * 10.0), 1.0) * depth;
         // Final
         gl_FragColor = vec4(finalColor, 1.0);
       }`;
+  }
 }

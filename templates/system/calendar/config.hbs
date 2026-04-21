@@ -3,31 +3,7 @@
         {{> systems/dsa5/templates/system/dsatabs.hbs tabs=configTabs}}
     </div>
 
-    <div class='tab scrollable innerscroll standard-form {{configTabs.personae_config.cssClass}}' data-tab='personae_config' data-group='{{configTabs.personae_config.group}}'>
-        <fieldset>
-                <legend>{{localize 'PERSONAE.ImportantPersons'}}</legend>
-                <div class="form-group">
-                    <label>{{localize 'PERSONAE.journals.label'}}</label>
-                    <div class="form-fields">
-                        <div class="journalPickerContainer"></div>
-                        <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarActors"></button>
-                    </div>
-                    <p class="hint">{{{localize 'PERSONAE.journals.hint'}}}</p>
-                </div>
-                <div class="row-section wrap">
-                    {{#if calendarActors.activated.length }}
-                        {{#each calendarActors.activated}}
-                            <a class="smallBoxItem" data-action="removeJournal" data-setting="calendarActors" data-uuid="{{uuid}}">{{name}}</a>
-                        {{/each}}
-                    {{else}}
-                        <div class="smallBoxItem">-</div>
-                    {{/if}}
-                </div>
-                
-        </fieldset>
-    </div>
-
-    <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
+    <div class='tab scrollable innerscroll standard-form {{configTabs.general_config.cssClass}}' data-tab='general_config' data-group='{{configTabs.general_config.group}}'>
         <div class="form-group fullScreenMaxWidth">
             <label>{{localize calendarSetting.name}}</label>
             <div class="form-fields">
@@ -38,25 +14,63 @@
             <p class="hint">{{localize calendarSetting.hint}}</p>
         </div>
 
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="dsacalendar.events"
+            label="dsacalendar.journals.label"
+            hint="dsacalendar.journals.hint"
+            setting="calendarJournals"
+            journals=calendarJournals}}
+
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="PERSONAE.ImportantPersons"
+            label="PERSONAE.journals.label"
+            hint="PERSONAE.journals.hint"
+            setting="calendarActors"
+            journals=calendarActors}}
+
+        {{> "systems/dsa5/templates/system/calendar/journal-setting-fieldset.hbs"
+            title="DSAQUESTLOG.title"
+            label="DSAQUESTLOG.journals.label"
+            hint="DSAQUESTLOG.journals.hint"
+            setting="questlogJournals"
+            journals=questlogJournals}}
+
         <fieldset>
-            <legend>{{localize 'dsacalendar.events'}}</legend>
+            <legend>{{localize 'CALENDAR.DSA.featureVisibility.label'}}</legend>
+            <p class="hint">{{localize 'CALENDAR.DSA.featureVisibility.hint'}}</p>
             <div class="form-group">
-                <label>{{localize 'dsacalendar.journals.label'}}</label>
-                <div class="form-fields">
-                    <div class="journalPickerContainer"></div>
-                    <button type="button" class="icon fas fa-plus" data-action="addJournal" data-setting="calendarJournals"></button>
-                </div>
-                <p class="hint">{{{localize 'dsacalendar.journals.hint'}}}</p>
+                <label for="{{rootId}}-fv-calendar">{{localize 'CALENDAR.DSA.calendar'}}</label>
+                <input id="{{rootId}}-fv-calendar" type="checkbox" name="calendar" class="settingChange" data-setting-name="calendarFeatureVisibility" {{checked featureVisibility.calendar}}>
             </div>
-            <div class="row-section wrap">
-                {{#if calendarJournals.activated.length }}
-                    {{#each calendarJournals.activated}}
-                        <a class="smallBoxItem" data-action="removeJournal" data-uuid="{{uuid}}" data-setting="calendarJournals">{{name}}</a>
-                    {{/each}}
-                {{else}}
-                    <div class="smallBoxItem">-</div>
-                {{/if}}
-            </div>                
+            <div class="form-group">
+                <label for="{{rootId}}-fv-events">{{localize 'CALENDAR.DSA.events'}}</label>
+                <input id="{{rootId}}-fv-events" type="checkbox" name="events" class="settingChange" data-setting-name="calendarFeatureVisibility" {{checked featureVisibility.events}}>
+            </div>
+            <div class="form-group">
+                <label for="{{rootId}}-fv-personae">{{localize 'PERSONAE.title'}}</label>
+                <input id="{{rootId}}-fv-personae" type="checkbox" name="personae" class="settingChange" data-setting-name="calendarFeatureVisibility" {{checked featureVisibility.personae}}>
+            </div>
+            <div class="form-group">
+                <label for="{{rootId}}-fv-questlog">{{localize 'DSAQUESTLOG.title'}}</label>
+                <input id="{{rootId}}-fv-questlog" type="checkbox" name="questlog" class="settingChange" data-setting-name="calendarFeatureVisibility" {{checked featureVisibility.questlog}}>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
+        <fieldset>
+            <legend>{{localize 'CALENDAR.DSA.playerDateVisibility.label'}}</legend>
+            <p class="hint">{{localize 'CALENDAR.DSA.playerDateVisibility.hint'}}</p>
+            <div class="form-group">
+                <label for="{{rootId}}-pdv">{{localize 'CALENDAR.DSA.playerDateVisibility.mode'}}</label>
+                <div class="form-fields">
+                    <select id="{{rootId}}-pdv" class="directSettingChange" data-setting-name="calendarPlayerDateVisibility">
+                        <option value="exact" {{#if (eq playerDateVisibility 'exact')}}selected{{/if}}>{{localize 'CALENDAR.DSA.playerDateVisibility.exact'}}</option>
+                        <option value="rough-time" {{#if (eq playerDateVisibility 'rough-time')}}selected{{/if}}>{{localize 'CALENDAR.DSA.playerDateVisibility.roughTime'}}</option>
+                        <option value="date-only" {{#if (eq playerDateVisibility 'date-only')}}selected{{/if}}>{{localize 'CALENDAR.DSA.playerDateVisibility.dateOnly'}}</option>
+                    </select>
+                </div>
+            </div>
         </fieldset>
 
         <fieldset>

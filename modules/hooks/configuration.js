@@ -10,14 +10,14 @@ const { NEEDS_MIGRATION_VERSION } = DSA5;
 export function setupConfiguration() {
   const moneyChoices = () => {
     const moneyChoices = {};
-    for (let pack of game.packs) {
+    for (const pack of game.packs) {
       if (pack.metadata.type == 'Item' && pack.index.some((x) => x.type == 'money')) moneyChoices[pack.metadata.id] = pack.metadata.id;
     }
     return moneyChoices;
   };
   const styles = duplicate(DSA5.styles);
-  for (let key of Object.keys(styles)) {
-    styles[key] = game.i18n.localize(styles[key]);
+  for (const key of Object.keys(styles)) {
+    styles[key] = _loc(styles[key]);
   }
   const settings = {
     tabsOutsideSheet: {
@@ -130,7 +130,6 @@ export function setupConfiguration() {
     },
     migrationVersion: {
       name: 'migrationVersion',
-      hint: 'migrationVersion',
       scope: 'world',
       config: false,
       default: NEEDS_MIGRATION_VERSION - 1,
@@ -138,7 +137,6 @@ export function setupConfiguration() {
     },
     journalFontSizeIndex: {
       name: 'journalFontSizeIndex',
-      hint: 'journalFontSizeIndex',
       scope: 'client',
       config: false,
       default: 5,
@@ -146,15 +144,20 @@ export function setupConfiguration() {
     },
     firstTimeStart: {
       name: 'firstTimeStart',
-      hint: 'firstTimeStart',
       scope: 'world',
       config: false,
       default: false,
       type: Boolean,
     },
+    welcomeAppDismissedVersion: {
+      name: 'welcomeAppDismissedVersion',
+      scope: 'client',
+      config: false,
+      default: 0,
+      type: Number,
+    },
     defaultConfigFinished: {
       name: 'defaultConfigFinished',
-      hint: 'defaultConfigFinished',
       scope: 'world',
       config: false,
       default: false,
@@ -170,7 +173,6 @@ export function setupConfiguration() {
     },
     tokenizerSetup: {
       name: 'tokenizerSetup',
-      hint: 'tokenizerSetup',
       scope: 'world',
       config: false,
       default: false,
@@ -178,7 +180,6 @@ export function setupConfiguration() {
     },
     diceSetup: {
       name: 'diceSetup',
-      hint: 'diceSetup',
       scope: 'world',
       config: false,
       default: false,
@@ -431,6 +432,34 @@ export function setupConfiguration() {
       },
       type: Object,
     },
+    questlogJournals: {
+      name: 'DSASETTINGS.questlogJournals',
+      scope: 'world',
+      config: false,
+      default: {
+        activated: []
+      },
+      type: Object,
+    },
+    calendarFeatureVisibility: {
+      name: 'DSASETTINGS.calendarFeatureVisibility',
+      scope: 'world',
+      config: false,
+      default: {
+        calendar: true,
+        events: true,
+        personae: true,
+        questlog: true,
+      },
+      type: Object,
+    },
+    calendarPlayerDateVisibility: {
+      name: 'DSASETTINGS.calendarPlayerDateVisibility',
+      scope: 'world',
+      config: false,
+      default: 'exact',
+      type: String,
+    },
     moneyKompendium: {
       name: 'DSASETTINGS.moneyKompendium',
       hint: 'DSASETTINGS.moneyKompendiumHint',
@@ -504,6 +533,17 @@ export function setupConfiguration() {
       config: false,
       default: true,
       type: Boolean,
+      onChange: () => {
+        ui.hotbar.render(true);
+      },
+    },
+    hotbarSortMode: {
+      name: 'DSA5HOTBARCONFIG.sortMode',
+      hint: 'DSA5HOTBARCONFIG.sortModeHint',
+      scope: 'client',
+      config: false,
+      default: 'groupAlpha',
+      type: String,
       onChange: () => {
         ui.hotbar.render(true);
       },
@@ -751,6 +791,14 @@ export function setupConfiguration() {
       default: true,
       type: Boolean,
     },
+    magischeHandlungen: {
+      name: 'DSASETTINGS.magischeHandlungen',
+      hint: 'DSASETTINGS.magischeHandlungenHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
     indexDescription: {
       name: 'DSASETTINGS.indexDescription',
       scope: 'client',
@@ -786,7 +834,7 @@ export function setupConfiguration() {
       hint: 'DSASETTINGS.merchantNotificationHint',
       scope: 'world',
       config: true,
-      default: '0',
+      default: '2',
       type: String,
       choices: {
         0: 'no',
@@ -831,6 +879,13 @@ export function setupConfiguration() {
       config: false,
       default: {},
       type: Object,
+    },
+    primaryParty: {
+      name: 'primaryParty',
+      scope: 'world',
+      config: false,
+      default: '',
+      type: String,
     }
   };
   for (const [key, value] of Object.entries(settings)) {
@@ -877,7 +932,7 @@ const exportSetting = (form) => {
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;
 
-    let keys = key[0].split('.');
+    const keys = key[0].split('.');
     const scope = keys.shift();
     const setting = keys.join('.');
 
@@ -896,7 +951,7 @@ const importSettings = async (form) => {
     const availableKeys = Array.from(game.settings.settings).map((x) => x[0]);
     for (const key of Object.keys(json)) {
       if (availableKeys.includes(key)) {
-        let keys = key.split('.');
+        const keys = key.split('.');
         const scope = keys.shift();
         const setting = keys.join('.');
         await game.settings.set(scope, setting, json[key]);

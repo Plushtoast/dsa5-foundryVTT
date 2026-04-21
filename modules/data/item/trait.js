@@ -1,12 +1,13 @@
 import APValueTemplate from './templates/apvalue.js';
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import DSA5 from '../../config/config-dsa5.js';
 import RangeweaponData from './rangeweapon.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
-export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, APValueTemplate) {
+export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       traitType: new SchemaField({
@@ -27,6 +28,9 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
         value: new StringField({ initial: '', label: 'reloadTime' }),
         progress: new NumberField({ initial: 0 }),
       }),
+      aimTime: new SchemaField({
+        progress: new NumberField({ initial: 0 }),
+      }),
       AsPCost: new SchemaField({
         value: new StringField({ initial: '' }),
       }),
@@ -45,6 +49,10 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
       }),
       distribution: new StringField({ initial: '', label: 'distribution' }),
     });
+  }
+
+  get effectMultiplier() {
+    return Number(this.step?.value) || 1;
   }
 
   async getSheetData(data) {
@@ -122,6 +130,7 @@ export default class TraitData extends ItemDataModel.mixin(DescriptionTemplate, 
     item.attack = Number(item.system.at.value);
     item.LZ = Number(item.system.reloadTime.value);
     if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
+    RangeweaponData.buildAimProgress(item);
 
     return this._parseDmg(item, actorData);
   }

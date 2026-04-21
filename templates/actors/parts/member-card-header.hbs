@@ -1,0 +1,46 @@
+{{!-- Shared member card header: avatar, name, healthbars, context menu --}}
+<div class="col flexrow gap10px member-card">
+    <div class="member-card-avatar" data-action="memberCardLink">
+        <img src="{{img}}" alt="{{name}}" />
+    </div>
+    <div class="flex1">
+        <h3 class="ellipsis">
+            <a data-action="memberCardLink" class="noBorder">{{name}}</a>
+            {{> @partial-block}}
+        </h3>
+        <div class="member-card-bars flexrow regenContainer">
+            <div class="healthbar bar-wounds barLeft {{#unless isMage}}{{#unless isPriest}}{{#unless regenAction}}solo{{/unless}}{{/unless}}{{/unless}}" data-tooltip="wounds">
+                <div class="bar decolorizeFilter LeP"
+                    style="--a: {{status.wounds.value}}; --b: {{status.wounds.max}};">
+                </div>
+                <div class="barLabel">{{status.wounds.value}} / {{status.wounds.max}}</div>
+            </div>
+            {{#if regenAction}}
+            <button type="button" data-action="{{regenAction}}" data-uuid="{{uuid}}"
+                class="fas fa-moon icon item dsadesignbutton noBorder" data-tooltip="regenerate"></button>
+            {{/if}}
+            {{#if isPriest}}
+            <div class="healthbar bar-karmaenergy barRight {{#if isMage}}middle{{/if}}" data-tooltip="karmaenergy">
+                <div class="bar decolorizeFilter KaP"
+                    style="--a: {{status.karmaenergy.value}}; --b: {{status.karmaenergy.max}};">
+                </div>
+                <div class="barLabel">{{status.karmaenergy.value}} / {{status.karmaenergy.max}}</div>
+            </div>
+            {{/if}}
+            {{#if isMage}}
+            <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
+                <div class="bar decolorizeFilter AsP"
+                    style="--a: {{status.astralenergy.value}}; --b: {{status.astralenergy.max}};">
+                </div>
+                <div class="barLabel">{{status.astralenergy.value}} / {{status.astralenergy.max}}</div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+    <div class="flex0">
+        {{#if showContextMenu}}
+        <button type="button" class="icon fas fa-ellipsis-vertical noBorder dsadesignbutton"
+            data-action="memberContextMenu" data-tooltip="JOURNAL.ActionShow"></button>
+        {{/if}}
+    </div>
+</div>

@@ -1,13 +1,13 @@
 <div class="persona-detail-view">
     <div class="persona-detail-header">
         <div class="persona-detail-image">
-            <img src="{{img}}" alt="{{actor.name}}" />
+            <img src="{{img}}" alt="{{name}}" />
             {{#if garadanClass}}
             <div class="persona-status garjourn {{garadanClass}}" data-tooltip="GARADAN.{{garadan}}"></div>
             {{/if}}
         </div>
         <div class="persona-detail-title">
-            <h1 class="persona-detail-name">{{actor.name}}</h1>
+            <h1 class="persona-detail-name">{{name}}</h1>
             <p class="persona-detail-subtitle">{{faction}}</p>
             {{#each preparedTags}}
             <span class="persona-detail-type">{{this}}</span>

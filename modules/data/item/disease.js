@@ -1,11 +1,12 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 
 const { NumberField, StringField, SchemaField } = foundry.data.fields;
 
-export default class DiseaseData extends ItemDataModel.mixin(DescriptionTemplate) {
+export default class DiseaseData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({

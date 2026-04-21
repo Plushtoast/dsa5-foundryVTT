@@ -65,8 +65,8 @@ export default class DSA5SoundEffect {
     const effectFile = game.settings.get('dsa5', 'soundConfig');
     if (effectFile) {
       try {
-        let file = await fetch(effectFile);
-        let json = await file.json();
+        const file = await fetch(effectFile);
+        const json = await file.json();
         this.sounds = json;
         console.log('DSA5 | Sound Config Loaded');
       } catch (exception) {
@@ -155,10 +155,10 @@ export default class DSA5SoundEffect {
   }
 
   static async playEquipmentWearStatusChange(item, soundToEveryone = false) {
-    let soundOptions = DSA5SoundEffect.soundPaths[item.type] || DSA5SoundEffect.soundPaths.default;
+    const soundOptions = DSA5SoundEffect.soundPaths[item.type] || DSA5SoundEffect.soundPaths.default;
 
     if( soundOptions.length === 0) return;
-      
+
     const soundPath = soundOptions[Math.floor(Math.random() * soundOptions.length)];
     await this.playSoundPath(soundPath, soundToEveryone, 0.5);    
   }

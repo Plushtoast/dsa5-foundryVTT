@@ -1,0 +1,21 @@
+<li
+  class='query-actor-row{{#if actor.isActiveCharacter}} user-character{{/if}}{{#if actor.preselected}} selected{{/if}}'
+  data-actor-id='{{actor.id}}'
+  data-actor-name='{{actor.name}}'
+  data-actor-meta='{{actor.meta}}'
+>
+  <label>
+    <img src='{{actor.img}}' alt='{{actor.name}}' width='36' height='36' />
+    <span class='flexcol'>
+      <span class='ellipsis'>{{actor.name}}</span>
+      {{#if actor.meta}}
+        <span class='very-small ellipsis'>{{actor.meta}}</span>
+      {{/if}}
+    </span>
+    {{#if (eq selectionMode "single")}}
+      <input type='radio' class='query-actor-selector' name='queryActor' value='{{actor.id}}' {{#if actor.preselected}}checked{{/if}} />
+    {{else}}
+      <input type='checkbox' class='query-actor-selector' name='queryActor' value='{{actor.id}}' {{#if actor.preselected}}checked{{/if}} />
+    {{/if}}
+  </label>
+</li>

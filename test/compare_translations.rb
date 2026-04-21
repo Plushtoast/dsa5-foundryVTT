@@ -6,6 +6,7 @@ require 'json'
 def compareKeys
     langs = ["de", "en"]
     langDependentKeys = ["Combatskilldescr", "Racedescr","ReverseSpellRanges", "SKILLdescr", "LocalizedSkills", "LocalizedCTs", "LocalizedSpecies"]
+    allowedKeyDifferencePrefixes = ["DSA5.welcomeApp.videos."]
     showTBD = false
 
     json = {}
@@ -17,9 +18,11 @@ def compareKeys
     langs.each do |lang|
         notInLang = json[ref].keys - json[lang].keys
         notInLang.reject!{|e| e =~ /^(#{langDependentKeys.join("|")})/}
+        notInLang.reject!{|e| allowedKeyDifferencePrefixes.any? { |prefix| e.start_with?(prefix) }}
         puts "Keys not in #{lang} translation:\n#{notInLang.join("\n")}\n\n\n" if notInLang.any?
         notInRef = json[lang].keys - json[ref].keys
         notInRef.reject!{|e| e =~ /^(#{langDependentKeys.join("|")})/}
+        notInRef.reject!{|e| allowedKeyDifferencePrefixes.any? { |prefix| e.start_with?(prefix) }}
         puts "Keys of lang #{lang} not in reference #{ref} translation:\n#{notInRef.join("\n")}\n\n\n" if notInRef.any?
     end
 

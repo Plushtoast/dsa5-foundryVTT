@@ -9,8 +9,9 @@ import DSAIniTracker from '../combat/dsa-ini-tracker.js';
 import DSATour from '../tours/dsa_tour.js';
 import { initImagePopoutTochat } from './imagepopouttochat.js';
 import { connectSocket } from './socket.js';
-import { DSAAura } from '../system/automation/aura.js';
 import registerGameManual from '../journal/game_manual.js';
+import { showWelcomeApp } from '../system/maintenance/migrator.js';
+import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 
 export default function () {
   Hooks.on('ready', async () => {
@@ -39,7 +40,7 @@ export default function () {
     DSAIniTracker.connectHooks();
     const hook = (dat) => {
       if (dat.tabName == 'settings') {
-        DSATour.travelAgency();
+        DSATour.ensureRegistered();
         Hooks.off('changeSidebarTab', hook);
       }
     };
@@ -47,11 +48,21 @@ export default function () {
 
     setEnrichers();
     initImagePopoutTochat();
-    DSAAura.bindAuraHooks();
 
     registerGameManual();
 
     if (game.settings.get('dsa5', 'calendar') !== 'none') game.dsa5.apps.CalendarWidget.render(true);
+
+    showWelcomeApp();
+
+    game.dsa5.config.hooks.shapeshift = new ShapeshiftWizard()
+
+    Hooks.on("deleteActorActiveEffect", (actor, effect) => {
+      if (effect.flags.dsa5 && effect.statuses.has("shapeshift")) {
+        game.dsa5.config.hooks.shapeshift.restoreShape(actor, effect)
+        return false
+      }
+    })
 
     Hooks.call('DSA5ready', game.dsa5);
   });

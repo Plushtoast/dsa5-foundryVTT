@@ -1,10 +1,11 @@
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
-import { localize } from '../system/helpers/localizer.js';
+
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 
 export default function () {
@@ -13,59 +14,8 @@ export default function () {
 
     const actor = effect.parent;
     if (actor && actor.documentName == 'Actor') {
-      if (getProperty(effect, 'flags.dsa5.maintain')) {
-        const effectsToRemove = [effect._id];
-        const searchEffect = effect.name.replace('(' + localize('maintainCost') + ')', '').trim();
-        const relatedEffects = actor.effects.filter((x) => x.name.startsWith(searchEffect) && !x.origin && x.id != effect._id);
-        let content = `<p>${game.i18n.format('DIALOG.updateMaintainSpell', { actor: actor.name })}</p>`;
-        if (relatedEffects) {
-          content += `<p>${localize('DIALOG.dependentMaintainEffects')}</p>`;
-          content += relatedEffects
-            .map(
-              (x) =>
-                `<div class="form-group"><label for="rel${x.id}">${x.name}</label><div class="form-fields"><input class="effectRemoveSelector" checked type="checkbox" value="${x.id}" id="rel${x.id}" name="rel${x.id}"/></div></div>`,
-            )
-            .join('');
-        }
-        new foundry.applications.api.DialogV2({
-          window: {
-            title: effect.name,
-          },
-          content,
-          buttons: [
-            {
-              action: 'yes',
-              icon: 'fa fa-check',
-              label: 'HELP.pay',
-              default: true,
-              callback: async () => {
-                const paid = await actor.applyMana(Number(getProperty(effect, 'flags.dsa5.maintain')), getProperty(effect, 'flags.dsa5.payType'));
-                if (paid) {
-                  const duration = {
-                    startTime: game.time.worldTime,
-                  };
-                  if (game.combat) {
-                    duration.startRound = game.combat.round;
-                    duration.startTurn = game.combat.turn;
-                  }
-                  actor.updateEmbeddedDocuments('ActiveEffect', [{ _id: effect._id, duration }]);
-                }
-              },
-            },
-            {
-              action: 'delete',
-              icon: 'fas fa-trash',
-              label: 'delete',
-              callback: (event, button, dialog) => {
-                for (let it of button.form.elements) {
-                  if (it.classList.contains('effectRemoveSelector')) effectsToRemove.push(it.value);
-                }
-                actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove, { noHook: true, butOnRemove: true });
-
-              },
-            },
-          ],
-        }).render(true);
+      if (MaintainedEffects.isMaintained(effect)) {
+        void MaintainedEffects.promptDelete(effect);
         return false;
       }
     }
@@ -83,6 +33,15 @@ export default function () {
         DSAActiveEffectConfig.onEffectRemove(actor, effect);
       }
     }
+
+    // Delete associated region when a zone-tracking AE expires
+    const regionId = effect.flags?.dsa5?.regionId;
+    const sceneId = effect.flags?.dsa5?.sceneId;
+    if (regionId && !options.fromRegionDelete) {
+      const scene = game.scenes.get(sceneId) || canvas.scene;
+      scene?.deleteEmbeddedDocuments('Region', [regionId]).catch(() => {});
+    }
+
     if (options.noHook) return;
 
     const actor = effect.parent;
@@ -95,6 +54,19 @@ export default function () {
         actor.markDead(false);
       }
       DSAActiveEffectConfig.onEffectRemove(actor, effect);
+    }
+  });
+
+  // Reverse cleanup: delete tracking AE when a region is deleted by GM
+  Hooks.on('deleteRegion', (region, options) => {
+    if (!DSA5_Utility.isActiveGM()) return;
+    const actorId = region.flags?.dsa5?.trackingActorId;
+    const aeId = region.flags?.dsa5?.trackingAEId;
+    if (actorId && aeId) {
+      const actor = game.actors.get(actorId);
+      if (actor?.effects.has(aeId)) {
+        actor.deleteEmbeddedDocuments('ActiveEffect', [aeId], { fromRegionDelete: true }).catch(() => {});
+      }
     }
   });
 
@@ -145,7 +117,7 @@ export default function () {
   });
 
   function checkIniChange(effect) {
-    if (game.combat && effect.changes.some((x) => /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(x.key))) {
+    if (game.combat && effect.system.changes.some((x) => /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(x.key))) {
       const actorId = effect.parent.id;
       const combatant = game.combat.combatants.find((x) => x.actor.id == actorId);
       if (combatant) combatant.recalcInitiative();
@@ -155,7 +127,7 @@ export default function () {
   const notifyFadingEffect = async (effect, options) => {
     if (!effect.parent) return;
 
-    const target = getProperty(effect, 'flags.dsa5.removeMessage');
+    const target = effect.system.removeMessage;
 
     if (!((game.settings.get('dsa5', 'notifyOnFadingEffects') && effect.parent.documentName == 'Actor') || target)) return;
 
@@ -178,7 +150,7 @@ export default function () {
 
     ChatMessage.create(
       DSA5_Utility.chatDataSetup(
-        game.i18n.format('CHATNOTIFICATION.fadingEffect', {
+        _loc('CHATNOTIFICATION.fadingEffect', {
           effect: effect.name,
           actor: effect.parent.link,
         }),
@@ -204,13 +176,13 @@ export default function () {
     if (!actor || actor.documentName != 'Actor') return;
 
     const efKeys = /^system\.condition\./;
-    for (let ef of effect.changes || []) {
-      if (efKeys.test(ef.key) && ef.mode == 2) {
+    for (const ef of effect.system?.changes || []) {
+      if (efKeys.test(ef.key) && ef.type === 'add') {
         toCheck[ef.key.split('.')[2]] = Number(ef.value);
       }
     }
 
-    for (let key of Object.keys(toCheck)) {
+    for (const key of Object.keys(toCheck)) {
       if (actor.system.condition[key] >= 4) {
         if (key == 'inpain') await actor.initResistPainRoll(effect);
         else if (['encumbered', 'stunned', 'feared', 'confused', 'trance'].includes(key)) await actor.addCondition('incapacitated');
@@ -228,7 +200,7 @@ export default function () {
       ) {
         await actor.addCondition('bloodrush');
         const msg = DSA5_Utility.replaceConditions(
-          `${game.i18n.format('CHATNOTIFICATION.gainsBloodrush', {
+          `${_loc('CHATNOTIFICATION.gainsBloodrush', {
             character: '<b>' + actor.name + '</b>',
           })}`,
         );
@@ -251,7 +223,7 @@ export default function () {
       const meleeweapons = [];
       const shields = [];
       const rangeweapons = [];
-      for (let itm of token.actor.items) {
+      for (const itm of token.actor.items) {
         if (itm.type == 'meleeweapon' && itm.system.worn.value) RuleChaos.isShield(itm) ? shields.push(itm) : meleeweapons.push(itm);
         else if (itm.type == 'rangeweapon' && itm.system.worn.value) rangeweapons.push(itm);
       }
@@ -263,12 +235,12 @@ export default function () {
         if (!RuleChaos.regex2h.test(weapon.name) && shields.length) {
           shieldId = shields[Math.floor(Math.random() * shields.length)]._id;
         }
-        for (let itm of meleeweapons) {
+        for (const itm of meleeweapons) {
           if (itm._id == wornId) continue;
 
           updates.push({ _id: itm._id, system: { worn: { value: false } } });
         }
-        for (let itm of shields) {
+        for (const itm of shields) {
           if (itm._id == shieldId) continue;
 
           updates.push({ _id: itm._id, system: { worn: { value: false } } });
@@ -276,7 +248,7 @@ export default function () {
       }
       if (rangeweapons.length) {
         const weaponid = rangeweapons[Math.floor(Math.random() * rangeweapons.length)]._id;
-        for (let itm of rangeweapons) {
+        for (const itm of rangeweapons) {
           if (itm._id == weaponid) continue;
 
           updates.push({ _id: itm._id, system: { worn: { value: false } } });
@@ -296,8 +268,8 @@ export default function () {
     const setting = Number(game.settings.get('dsa5', 'obfuscateTokenNames'));
     if (setting == 0 || getProperty(actor, 'merchant.merchantType') == 'loot') return;
 
-    let sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
-    let name = localize('unknown');
+    const sameActorTokens = canvas.scene.tokens.filter((x) => x.actor && x.actor.id === actor.id);
+    let name = _loc('unknown');
     if ([2, 4].includes(setting)) {
       const tokenId = token.id || token._id;
       if (!tokenId) return;
@@ -308,7 +280,7 @@ export default function () {
 
     if (sameActorTokens.length > 0 && setting < 3) {
       let max = sameActorTokens.length;
-      for (let x of sameActorTokens) {
+      for (const x of sameActorTokens) {
         const match = x.name.match(/\d+$/);
         if (match && Number(match[0]) > max) max = Number(match[0]);
       }
@@ -330,13 +302,8 @@ export default function () {
     const movementAnimationPromise = token.object?.movementAnimationPromise || Promise.resolve();
 
     movementAnimationPromise.then(() => {
-      token.object?.drawAuras();
       if (game.dsa5.apps.LightDialog) game.dsa5.apps.LightDialog.onTokenMove(token, data, options, prePosition);
     });
-  });
-
-  Hooks.on('preDeleteToken', (token) => {
-    DSAAura.onDeleteToken(token);
   });
 
   Hooks.on('deleteToken', (token) => {
@@ -345,9 +312,6 @@ export default function () {
   });
 
   Hooks.on('canvasReady', (canvas) => {
-    for (let token of canvas.scene.tokens) {
-      token.object?.drawAuras();
-    }
     game.canvas.scene.askForNameTemporaryDisabled = false;
   });
 
@@ -355,7 +319,7 @@ export default function () {
     const actor = token.actor;
     if (!actor) return;
 
-    let modify = {};
+    const modify = {};
     if (getProperty(actor, 'system.merchant.merchantType') == 'loot') {
       mergeObject(modify, { displayBars: 0 });
     } else if (getProperty(actor, 'system.config.autoBar')) {
@@ -384,7 +348,7 @@ export default function () {
     obfuscateName(token, {});
     randomWeaponSelection(token);
     Riding.createTokenHook(token, options, id);
-    token.object?.drawAuras();
+    if (token.object) DSAAura.ensureEmanations(token.object);
   });
 
   Hooks.on('hoverToken', (token, hovered) => {
@@ -448,7 +412,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
 
   static async getDialog(tokenObject, setting) {
     new AskForNameDialog({
-      content: `<div class="form-group"><label for="name">${localize('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
+      content: `<div class="form-group"><label for="name">${_loc('DSASETTINGS.rename')}</label><div class="form-fields"><input name="name" type="text" value="${tokenObject.actor.name}"/></div></div>`,
       buttons: [
         {
           action: 'yes',
@@ -459,10 +423,10 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
             const tokenId = tokenObject.id || tokenObject._id;
             let name = button.form.elements.name.value;
             if (setting == 2) {
-              let sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
+              const sameActorTokens = canvas.scene.tokens.filter((x) => x.name === name);
               if (sameActorTokens.length > 0) {
                 let max = sameActorTokens.length;
-                for (let x of sameActorTokens) {
+                for (const x of sameActorTokens) {
                   const match = x.name.match(/\d+$/);
                   if (match && Number(match[0]) > max) max = Number(match[0]);
                 }
@@ -480,7 +444,7 @@ class AskForNameDialog extends foundry.applications.api.DialogV2 {
           callback: async () => {
             const tokenId = tokenObject.id || tokenObject._id;
             const token = canvas.scene.tokens.get(tokenId);
-            await token.update({ name: localize('unknown') });
+            await token.update({ name: _loc('unknown') });
           },
         },
         {

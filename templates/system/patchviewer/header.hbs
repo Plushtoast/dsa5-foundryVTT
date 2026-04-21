@@ -1,8 +1,11 @@
-<div class='row-section table-title'>
-  <div class='col eighty'>
-    <h1 style='border:none;text-decoration:none;line-height:90px'>{{{patchName}}}</h1>
-  </div>
-  <div class='col five'>
-    <img style='margin:0;float:right;height:90px' src='systems/dsa5/lazy/patchimages/UlissesDigital.png' />
+<div class='welcome-app-header'>
+  <div class='welcome-app-header__bar'>
+    <img class='welcome-app-header__logo' src='systems/dsa5/lazy/patchimages/UlissesDigital.png' />
+    <i class='welcome-app-header__icon'></i>
+    <span class='welcome-app-header__version'>{{{patchName}}}</span>
+    <label class='welcome-app-header__dismiss'>
+      <input type='checkbox' data-action='toggleDismiss' {{#if isDismissed}}checked{{/if}} />
+      {{localize 'DSA5.welcomeApp.dontShowAgain'}}
+    </label>
   </div>
 </div>

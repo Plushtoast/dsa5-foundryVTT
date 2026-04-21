@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
@@ -8,19 +9,20 @@ import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
+export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
   static COMBAT_SKILL_TYPES = {
     BASEMANEUVER: 0,
     SPECIALMANEUVER: 1,
     COMBATSTYLE: 2,
-    COMBATSTYLE_EXTENDED_BASE: 8,
-    COMBATSTYLE_EXTENDED: 6,    
-    COMBATSTYLE_EXTENDED_PASSIVE: 7,
+    COMBATSTYLE_EXTENDED_BASE: 8, // combatstyle that count as basemaneuver
+    COMBATSTYLE_EXTENDED: 6,  // combatstyle that count as specialmaneuver
+    COMBATSTYLE_EXTENDED_PASSIVE: 7, // effects always apply
     PASSIVE: 3,
     GENERAL: 4,
     BRAWLING: 5,
   };
 
+  //
   static APPLIES_COMBAT_EFFECT = new Set([
     this.COMBAT_SKILL_TYPES.COMBATSTYLE, 
     this.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE,
@@ -34,7 +36,14 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
     });
     return categories;
   })();
-  
+
+  static styleSFCategories = new Set(['magicalStyle', 'clericalStyle', 'generalStyle']);
+  static advancedSFCategories ={
+    extGeneral: 'SpecCategory.generalStyle', 
+    extClericalStyle: 'SpecCategory.clericalStyle', 
+    extMagical: 'SpecCategory.magicalStyle'
+  }
+
   static specialAbilityCategories = {
     Combat: 'SpecCategory.Combat',
     command: 'SpecCategory.command',
@@ -113,7 +122,23 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
       duration: new SchemaField({
         value: new StringField({ initial: '', label: 'duration' }),
       }),
+      advancedSF: new StringField({ initial: ''}),
+      styleSF: new StringField({ initial: ''}),
     });
+  }
+
+  get hasAdvancedSF() {
+    if(SpecialabilityData.styleSFCategories.has(this.category.value) || (this.category.value === 'Combat' && this.category.sub === SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE)) return 'SPECIALABILITYadvancedSF.' + this.category.value;
+
+    return false;
+  }
+
+  get hasStyleSF() {
+    const extendedCombatStyles = [SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_BASE, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED, SpecialabilityData.COMBAT_SKILL_TYPES.COMBATSTYLE_EXTENDED_PASSIVE];   
+
+    if (this.category.value === 'Combat' && extendedCombatStyles.includes(this.category.sub)) return `SpecCategory.extCombat`;
+
+    return SpecialabilityData.advancedSFCategories[this.category.value];
   }
 
   static _migrateData(source) {
@@ -150,6 +175,10 @@ export default class SpecialabilityData extends ItemDataModel.mixin(DescriptionT
 
     const cost = Number(foundry.utils.getProperty(item, 'system.AsPCost'));
     if (cost) item.AEpayable = true;
+  }
+
+  get effectMultiplier() {
+    return Number(this.step?.value) || 1;
   }
 
   advanceCost() {

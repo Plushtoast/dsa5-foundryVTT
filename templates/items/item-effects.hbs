@@ -14,9 +14,9 @@
             </div>
         </div>
         {{#each conditions as |item i|}}
-        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}" {{{ifThen item.sheetDisabled 'style="opacity:0.5;"' ''}}} {{{ifThen item.disabledBySetting "data-tooltip=\"DSASETTINGS.enableWeaponAdvantagesHint\"" item.disabledBySetting ''}}}>
             <div class="col ten">
-                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
+                <img src="{{item.img}}" />
             </div>
             <div class="col seventy">
                 <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{successEffect item ../document}}</a>
@@ -24,7 +24,9 @@
 
             <div class="col five right">
                 <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> 
-                {{#if item.disabled}}
+                {{#if item.disabledBySetting}}
+                <a class="condition-toggle"><i class="fas fa-ban"></i></a>
+                {{else if item.disabled}}
                 <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a>
                 {{else}}
                 <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a>
@@ -33,28 +35,87 @@
         </div>
         {{/each}} 
         {{#each transferedConditions as |item i|}}
-        <div class="row-section col skills statusEffect" data-id="{{item._id}}">
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}" {{{ifThen item.sheetDisabled 'style="opacity:0.5;"' ''}}} {{{ifThen item.disabledBySetting "data-tooltip=\"DSASETTINGS.enableWeaponAdvantagesHint\"" item.disabledBySetting ''}}}>
             <div class="col ten">
-                <img {{ifThen item.disabled 'style="opacity:0.5;"' ''}} src="{{item.img}}" />
+                <img src="{{item.img}}" />
             </div>
             <div class="col seventy">
                 <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
             </div>
             <div class="col five right">
-                <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a> {{#if item.disabled}}
-                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> {{else}}
-                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> {{/if}}
+                <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a>
+                {{#if item.disabledBySetting}}
+                <a class="condition-toggle"><i class="fas fa-ban"></i></a> 
+                {{else if item.disabled}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a> 
+                {{else}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a> 
+                {{/if}}
             </div>
         </div>
         {{/each}}
     </div>
     {{/unless}}
+    {{#if supportsEnhancements}}
+    <div class="row-section wrap margin-top">
+        <div class="col row-section skills table-title lineheight">
+            <div class="col ten"></div>
+            <div class="col eighty">
+                {{localize "TYPES.ActiveEffect.enhancement"}}
+            </div>
+            <div class="col ten flexrow">
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="enhancementAdd" data-tooltip="CONDITION.add"></button>
+            </div>
+        </div>
+        {{#each enhancementEffects as |item i|}}
+        <div class="row-section col skills statusEffect" data-id="{{item._id}}" {{{ifThen item.sheetDisabled 'style="opacity:0.5;"' ''}}}>
+            <div class="col ten">
+                <img src="{{item.img}}" />
+            </div>
+            <div class="col seventy">
+                <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+            </div>
+            <div class="col five right">
+                <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a>
+                {{#if item.disabled}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.activate"><i class="far fa-circle"></i></a>
+                {{else}}
+                <a data-action="conditionToggle" class="condition-toggle" data-tooltip="SHEET.deactivate"><i class="far fa-check-circle"></i></a>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
     {{#if canOnUseEffect}}
-    <div class="form-group full-height" style="margin-top:40px;">
-        <label>{{localize 'ActiveEffects.advancedFunctions.onUseEffect'}}</label>
-        <div class="form-fields height100">
-            <code-mirror language="javascript" indent="2" name="flags.dsa5.onUseEffect" data-tooltip="ActiveEffects.placeholder.onUseEffect">{{~document.flags.dsa5.onUseEffect~}}</code-mirror>
-        </div>        
+    <div class="row-section wrap margin-top">
+        <div class="col row-section skills table-title lineheight">
+            <div class="col ten"></div>
+            <div class="col eighty">{{localize 'SHEET.onUseActions'}}</div>
+            <div class="col ten flexrow">
+                {{#if canEditMacros}}
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="addOnUseAction" data-tooltip="SHEET.addOnUseAction"></button>
+                {{/if}}
+            </div>
+        </div>
+        {{#each onUseActions as |action|}}
+        <div class="row-section col skills statusEffect margin-top" data-on-use-action-id="{{action.id}}">
+            <div class="col ten">
+                <img src="{{action.img}}" data-tooltip="{{action.name}}" />
+            </div>
+            <div class="col seventy">
+                <span>{{action.name}}</span>
+            </div>
+            {{#if ../canEditMacros}}
+            <div class="col ten right">
+                <a data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"><i class="fa fa-edit"></i></a>
+            </div>
+            <div class="col ten right">
+                <a data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"><i class="fa fa-trash"></i></a>
+            </div>
+            {{/if}}
+        </div>
+        {{/each}}
     </div>
     {{/if}}
 </div>

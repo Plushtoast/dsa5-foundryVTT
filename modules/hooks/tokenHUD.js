@@ -1,19 +1,20 @@
 import Riding from '../system/automation/riding.js';
 import { TokenHoverHud } from './actor.js';
+import TokenScatter from '../animation/token-scatter.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 function addThirdBarToHUD(html, actor, app) {
   if (actor.system.isPriest && actor.system.isMage) {
-    let currentKaP = actor.system.status.karmaenergy.value;
-    let attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`;
+    const currentKaP = actor.system.status.karmaenergy.value;
+    const attrBar = `<div class="attribute bar3"><input type="text" name="system.status.karmaenergy.value" value="${currentKaP}"></div>`;
     html.find('.col.middle').prepend(attrBar);
     html.find('.bar3 input').on('change', async (ev) => {
       const input = ev.currentTarget;
       let strVal = input.value.trim();
-      let isDelta = strVal.startsWith('+') || strVal.startsWith('-');
+      const isDelta = strVal.startsWith('+') || strVal.startsWith('-');
       if (strVal.startsWith('=')) strVal = strVal.slice(1);
-      let value = Number(strVal);
+      const value = Number(strVal);
       const current = input.name.split('.').reduce((o, i) => o[i], actor);
       await actor.update({
         [input.name]: isDelta ? current + value : value,
@@ -124,7 +125,7 @@ async function splitSwarm(actor, token) {
 async function combineSwarm(actor, token) {
   let swarmSum = 0;
   let lepSum = 0;
-  for (let token of canvas.tokens.controlled) {
+  for (const token of canvas.tokens.controlled) {
     swarmSum += Number(token.actor.system.swarm?.count) || 1;
     lepSum += Number(token.actor.system.status.wounds.value);
   }
@@ -137,6 +138,35 @@ async function combineSwarm(actor, token) {
     }),
   );
   await canvas.scene.deleteEmbeddedDocuments('Token', tokensToRemove);
+}
+
+function groupButtons(app, html) {
+  if (!game.user.isGM) return;
+
+  const actor = app.object.actor;
+  if (actor?.type !== 'group') return;
+
+  const token = app.object.document;
+  const deployed = token.flags?.dsa5?.memberTokenIds?.length > 0;
+
+  if (deployed) {
+    html.find('.col.left').prepend(
+      `<button type="button" class="control-icon" data-action="groupReform" data-tooltip="GROUP.reform"><i class="fas fa-compress-arrows-alt" width="36" height="36"></i></button>`
+    );
+    html.find('.control-icon[data-action="groupReform"]').on('click', () => {
+      TokenScatter.reform(token);
+    });
+  } else {
+    const members = [...(actor.system.actors || [])];
+    if (members.length > 0) {
+      html.find('.col.left').prepend(
+        `<button type="button" class="control-icon" data-action="groupDeploy" data-tooltip="GROUP.deploy"><i class="fas fa-expand-arrows-alt" width="36" height="36"></i></button>`
+      );
+      html.find('.control-icon[data-action="groupDeploy"]').on('click', () => {
+        TokenScatter.deploy(token, members);
+      });
+    }
+  }
 }
 
 function setTokenSpeedIndicator(actor, html, data) {
@@ -160,6 +190,7 @@ export default function () {
     if (actor) {
       addThirdBarToHUD(html, actor, app);
       swarmButtons(app, html, data);
+      groupButtons(app, html);
 
       game.dsa5.apps.LightDialog?.lightHud(html, actor, data);
     }
@@ -185,9 +216,9 @@ export default function () {
       const anchor = html.find(anchorSelector).closest('.form-group');
       const elem = $(`
         <div class="form-group">
-          <label>${game.i18n.localize(labelKey)}</label>
+          <label>${_loc(labelKey)}</label>
           <input type="checkbox" class="config-checkbox" ${value ? 'checked' : ''}>
-          <p class="hint">${game.i18n.localize(hintKey)}</p>
+          <p class="hint">${_loc(hintKey)}</p>
         </div>
       `);
       anchor.after(elem);

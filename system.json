@@ -2,8 +2,8 @@
     "id": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
-    "version": "7.3.5",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/7.3.5/dsa5-foundryVTT-7.3.5.zip",
+    "version": "8.0.0",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/8.0.0/dsa5-foundryVTT-8.0.0.zip",
     "authors": [
         {
             "name": "Plushtoast"
@@ -22,11 +22,7 @@
         "styles/css/select2.min.css",
         "styles/css/dsa5.css"
     ],
-    "relationships": {
-		"recommends": [
-			{ "id": "times-up", "type": "module" }
-		]
-	},
+    "relationships": {},
     "packs": [
         {
             "name": "skills",
@@ -119,12 +115,12 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-        "minimum": "13",
-        "verified": "13",
-        "maximum": "13"
+        "minimum": "14",
+        "verified": "14",
+        "maximum": "14"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
-    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry13/system.json",
+    "manifest": "https://raw.githubusercontent.com/Plushtoast/dsa5-foundryVTT/foundry14/system.json",
     "packFolders": [
         {
             "name": "DSA5/TDE5",
@@ -146,6 +142,11 @@
             "dsacalendar": {
                 "htmlFields": [ "calendarentries.*.content" ]
             },
+            "dsaaptracker": {},
+            "dsamoneytracker": {},
+            "dsaquestlog": {
+                "htmlFields": [ "quests.*.details", "quests.*.gmNotes" ]
+            },
             "dsapersonaedramatis": {
                 "htmlFields": [ "personae.*.description", "personae.*.notes" ],
                 "filePathFields": {
@@ -162,7 +163,9 @@
                     "description",
                     "gmdescription"
                 ]
-            }
+            },
+            "DSAAura": {},
+            "DSAZone": {}
         },
         "Combatant": {
             "dsacombatant": {}
@@ -195,16 +198,28 @@
                     "details.notes.value",
                     "details.biography.value"
                 ]
+            },
+            "group": {
+                "htmlFields": [
+                    "details.biography",
+                    "details.notes"
+                ]
             }
         },
         "Item": {
             "equipment": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "armor": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -217,12 +232,18 @@
                 ]
             },
             "rangeweapon": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "meleeweapon": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -241,12 +262,18 @@
                 ]
             },
             "specialability": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "advantage": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -259,6 +286,9 @@
                 ]
             },
             "trait": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -303,12 +333,18 @@
                 ]
             },
             "blessing": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "magictrick": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -341,12 +377,18 @@
                 ]
             },
             "disease": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "consumable": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value",
@@ -372,6 +414,9 @@
                 ]
             },
             "plant": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value",
@@ -412,18 +457,27 @@
                 ]
             },
             "essence": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "imprint": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
                 ]
             },
             "book": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "gmdescription.value"
@@ -437,6 +491,19 @@
                     "description.value",
                     "gmdescription.value"
                 ]
+            },
+            "itempackage": {
+                "htmlFields": [
+                    "description.value",
+                    "gmdescription.value"
+                ]
+            }
+        },
+        "ActiveEffect": {
+            "enhancement": {
+                "filePathFields": {
+                    "onUseActions.*.img": ["IMAGE"]
+                }
             }
         }
     },

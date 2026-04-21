@@ -8,13 +8,20 @@ export default class JournalTracker {
     static async track(actor, description, cost) {
         if (game.settings.get('dsa5', this.config.permission) && actor.hasPlayerOwner) {
             let journal = game.journal.find((e) => foundry.utils.getProperty(e.flags, `dsa5.${this.config.flagName}`) == actor.id);
+            const hasActiveGM = game.users?.some((user) => user.active && user.isGM);
+            const canCreateJournal = game.user?.can?.('JOURNAL_CREATE');
 
-            if (game.user.isGM || journal?.isOwner) {
+            if (game.user.isGM || journal?.isOwner || (!hasActiveGM && canCreateJournal)) {
                 if (!journal) journal = await this.createJournal(actor);
+                else await this.updateJournalName(actor);
 
                 const page = await this.getPage(journal);
                 await this.addEntry(page, actor, description, cost);
             } else {
+                if (!hasActiveGM) {
+                    ui.notifications?.warn(_loc('TRACKER.requiresGM'));
+                    return;
+                }
                 const payload = {
                     actorId: actor.id,
                     cost,
@@ -46,7 +53,7 @@ export default class JournalTracker {
     }
 
     static async createJournal(actor) {
-        const folder = await DSA5_Utility.getFolderForType('JournalEntry', null, game.i18n.localize(this.config.journalName));
+        const folder = await DSA5_Utility.getFolderForType('JournalEntry', null, _loc(this.config.journalName));
 
         let journal = game.journal.find((e) => foundry.utils.getProperty(e.flags, `dsa5.${this.config.flagName}`) == actor.id);
 
@@ -65,21 +72,31 @@ export default class JournalTracker {
         return journal;
     }
 
+    static async updateJournalName(actor) {
+        const journal = game.journal.find((e) => foundry.utils.getProperty(e.flags, `dsa5.${this.config.flagName}`) == actor.id);
+        if (!journal) return;
+        if (journal.name === actor.name) return;
+        if (game.user.isGM || journal.isOwner) {
+            await journal.update({ name: actor.name });
+        }
+    }
+
     static async getPage(journal) {
         const name = new Date().toLocaleDateString(game.i18n.lang);
-        let page = journal.pages.find((x) => x.name == name);
+        let page = journal.pages.find((x) => x.name == name && x.type === this.config.pageType);
 
         if (!page) {
+            let pageName = name;
+            if (journal.pages.some((x) => x.name === pageName)) {
+                pageName = `${name} (${_loc(this.config.journalName)})`;
+            }
             page = (
                 await journal.createEmbeddedDocuments('JournalEntryPage', [
                     {
-                        name: name,
-                        type: 'text',
-                        text: {
-                            format: 1,
-                            content: `<div><div class="adventurePoints">
-                        ${this.startRow()}
-                    </div></div>`,
+                        name: pageName,
+                        type: this.config.pageType,
+                        system: {
+                            entries: {},
                         },
                     },
                 ])
@@ -89,23 +106,12 @@ export default class JournalTracker {
     }
 
     static async addEntry(page, actor, description, cost) {
-        const row = await this._prepareRow(description, cost, actor);
-
-        const html = $(page.text.content);
-        html.find('.adventurePoints').append(row);
-
-        await page.update({ 'text.content': html.prop('outerHTML') });
+        const entry = await this._prepareEntryData(description, cost, actor);
+        const key = foundry.utils.randomID();
+        await page.update({ [`system.entries.${key}`]: entry });
     }
 
-    static getRow() {
-        throw new Error('Method not implemented');
-    }
-
-    static startRow() {
-        throw new Error('Method not implemented');
-    }
-
-    static async _prepareRow(description, cost, actor) {
+    static async _prepareEntryData(description, cost, actor) {
         throw new Error('Method not implemented');
     }
 }

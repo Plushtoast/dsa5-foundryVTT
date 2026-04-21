@@ -43,10 +43,12 @@
                     </select>
                 </div>
             </div>
+            {{#if showRightClothes}}
             <div class="form-group">
                 <label>{{localize "RITUALMODIFIER.rightClothes"}}</label>
                 <input type="checkbox" id="rightClothes" name="rightClothes" value="1">
             </div>
+            {{/if}}
             <div class="form-group">
                 <label>{{localize "RITUALMODIFIER.rightEquipment"}}</label>
                 <input type="checkbox" id="rightEquipment" name="rightEquipment" value="1">

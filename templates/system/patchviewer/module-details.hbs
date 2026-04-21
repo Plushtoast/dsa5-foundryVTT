@@ -1,0 +1,188 @@
+<section class='module-details columnFlex scrollable'>
+    {{#if missingDetails}}
+    <div class='groupbox paddingBox center'>
+        <h2>{{localize 'DSA5.patchViewer.moduleDetails.unavailableTitle'}}</h2>
+        <p>{{localize 'DSA5.patchViewer.moduleDetails.unavailableText'}}</p>
+    </div>
+    {{else}}
+    <section class='groupbox paddingBox flexcol'>
+        <div class="row-section gap10px">
+
+            <div class='module-card__body col four center position-relative'>
+                {{#if module.available}}
+                <ul class='module-card__badges'>
+                    <li>{{localize 'DSA5.patchViewer.modules.owned'}}</li>
+                    {{#each module.badges}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                {{else if module.badges.length}}
+                <ul class='module-card__badges'>
+                    {{#each module.badges}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                {{/if}}
+                <div class='module-card__cover'>
+                    <img src='{{module.image.src}}' alt='{{module.label}}' />
+                </div>
+            </div>
+            <div class='col sixty'>
+                <h3>{{module.label}}</h3>
+                {{#if module.description}}
+                <div class='groupbox paddingBox'>
+                    <p>{{module.description}}</p>
+                </div>
+                {{/if}}
+                {{#if module.tags.length}}
+                <p class='small'>
+                    <strong>{{localize 'DSA5.patchViewer.moduleDetails.tagsLabel'}}:</strong>
+                    {{#each module.tags}}
+                    <span>{{this}}</span>{{#unless @last}}, {{/unless}}
+                    {{/each}}
+                </p>
+                {{/if}}
+                <div class='flexrow gap5px'>
+                    {{#if module.href}}
+                    <a class='module-card__cta' href='{{module.href}}' target='_blank' rel='noopener'>{{localize
+                        'DSA5.patchViewer.moduleDetails.storeLink'}}</a>
+                    {{/if}}
+                </div>
+                {{#if module.id}}
+                <p class='small'><strong>ID:</strong> {{module.id}}</p>
+                {{/if}}
+            </div>
+        </div>
+
+        {{#if overallStats}}
+        <div class='row-section table-title lineheight'>
+            <div class='col'>{{localize 'DSA5.patchViewer.moduleDetails.overallAutomation'}}</div>
+            <div class='col sixty flexrow flexAlignCenter'>
+                <div class='healthbar module-details__automation-healthbar' style='--a: {{overallStats.barValue}}; --b: 100;'
+                    data-tooltip='{{overallStats.tooltip}}'>
+                    <div class='bar decolorizeFilter KaP'></div>
+                    <div class='barLabel'>{{overallStats.label}}</div>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </section>
+
+    <div class='flexrow gap10px modules-layout module-details__layout'>
+        <aside class='modules-toc darkbox module-details__sidebar'>
+            <div class='modules-toc__search'>
+                <input type='search' placeholder='{{localize "Book.search"}}' />
+            </div>
+            {{#if categoryTabs.length}}
+            <h3>{{localize 'DSA5.patchViewer.modules.tocTitle'}}</h3>
+            <nav>
+                {{#each categoryTabs}}
+                <button type='button' class='modules-toc__link {{cssClass}}' data-action='switchCategoryTab'
+                    data-group='categories' data-tab='{{id}}'>{{label}}</button>
+                {{/each}}
+            </nav>
+            {{/if}}
+        </aside>
+
+        <div class='modules-content module-details__content'>
+            {{#if details.specialFeatures.length}}
+            <section class='groupbox paddingBox'>
+                <h2>{{localize 'DSA5.patchViewer.moduleDetails.specialFeatures'}}</h2>
+                <ul class='dsalist'>
+                    {{#each details.specialFeatures}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+            </section>
+            {{/if}}
+
+            <div class='groupbox paddingBox'>
+                <p>{{localize 'DSA5.patchViewer.moduleDetails.note'}}</p>
+            </div>
+
+            <div class='module-details__categories'>
+                {{#each categories}}
+                <section
+                    class='groupbox paddingBox module-details__category {{#if (eq tabId ../activeCategoryId)}}active{{/if}}'
+                    data-tab='{{tabId}}'>
+            <div class='row-section table-title lineheight'>
+                <div class='col'>{{displayLabelWithCount}}</div>
+                {{#if automationTracked}}
+                <div class='col sixty flexrow flexAlignCenter'>
+                    <div class='healthbar module-details__automation-healthbar' style='--a: {{stats.barValue}}; --b: 100;'
+                        data-tooltip='{{stats.tooltip}}'>
+                        <div class='bar decolorizeFilter KaP'></div>
+                        <div class='barLabel'>{{stats.label}}</div>
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+            <div class='module-details__entry-list'>
+                {{#each entryGroups}}
+                <div class='module-details__group' data-search='{{searchText}}'>
+                    <div class='col item module-details__entry gap5px flexcol {{#if entry.isClickable}}searchableAbility{{/if}}'
+                        data-search='{{entry.searchText}}' {{#if
+                        entry.clickCategory}}data-category='{{entry.clickCategory}}' {{/if}} {{#if
+                        entry.documentGroup}}data-document-group='{{entry.documentGroup}}' {{/if}}>
+                        <div class='row-section skills '>
+                            <div class="col flexcol">
+                                <div class="row-section lineheight">
+                                    <div class='equipment-item-image col ten image'>
+                                        {{#if entry.icon}}
+                                        <div class='image' style="background-image: url('{{entry.icon}}')"></div>
+                                        {{/if}}
+                                    </div>
+                                    <div class='col'>
+                                        {{#if entry.isClickable}}
+                                        <a data-action='searchableAbility'>{{entry.displayName}}</a>
+                                        {{else}}
+                                        <span>{{entry.displayName}}</span>
+                                        {{/if}}
+                                    </div>
+                                    {{#if ../automationTracked}}
+                                    <div class='col ten center flexrow'>
+                                        <div class='headerbadgeflex' data-tooltip='{{entry.automationTooltip}}'>
+                                            <span class='headerbadge {{entry.automationBadgeClass}}'>
+                                                <i class='fa-solid {{entry.automationIconClass}}'
+                                                    aria-hidden='true'></i>
+                                                {{entry.automationLabel}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                                {{#if variants.length}}
+                                <div class='row-section wrap cards gap5px'>
+                                    {{#each variants}}
+                                    <div class='item flexrow gap5px module-details__variant {{#if isClickable}}searchableAbility{{/if}}'
+                                        data-search='{{searchText}}' {{#if
+                                        clickCategory}}data-category='{{clickCategory}}' {{/if}} {{#if
+                                        documentGroup}}data-document-group='{{documentGroup}}' {{/if}}>
+                                        {{#if isClickable}}
+                                        <a data-action='searchableAbility'>{{variantDisplayName}}</a>
+                                        {{else}}
+                                        <span>{{variantDisplayName}}</span>
+                                        {{/if}}
+                                    </div>
+                                    {{/each}}
+                                </div>
+                                {{/if}}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                {{/each}}
+            </div>
+            <div class='groupbox paddingBox center module-details__empty' hidden>
+                <p>{{localize 'DSA5.patchViewer.moduleDetails.searchEmpty'}}</p>
+            </div>
+                </section>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    {{/if}}
+</section>

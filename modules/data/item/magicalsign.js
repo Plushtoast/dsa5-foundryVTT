@@ -22,7 +22,7 @@ export default class MagicalsignData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static chatData(data, name) {
-    let res = [{ key: 'AsPCost', val: data.asp }];
+    const res = [{ key: 'AsPCost', val: data.asp }];
     if (data.category == 2) res.push({ key: 'feature', val: data.feature });
 
     return res;

@@ -8,11 +8,10 @@ function getCurrentMonthImage() {
     const monthIndex = date.getMonth();      
     const shiftedIndex = (monthIndex + 6) % 12;
     return DSAWorldCalendar.monthImage(shiftedIndex);
-  } else {
-    const gameMonth = game.time.calendar.timeToComponents(game.time.worldTime).month;
-    return DSAWorldCalendar.monthImage(gameMonth);
   }
-  
+
+  const gameMonth = game.time.calendar.timeToComponents(game.time.worldTime).month;
+  return DSAWorldCalendar.monthImage(gameMonth);
 }
 
 Hooks.on('renderGamePause', (app, html, data, options) => {

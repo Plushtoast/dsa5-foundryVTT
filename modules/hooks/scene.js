@@ -1,11 +1,14 @@
-const { getProperty, mergeObject } = foundry.utils;
+const { getProperty } = foundry.utils;
 
 export default function () {
   Hooks.on('preCreateScene', function (doc, createData, options, userId) {
-    if (!createData.grid?.units) doc.updateSource({ grid: { units: game.i18n.localize('gridUnits') } });
+    if (!createData.grid?.units) {
+      doc.updateSource({ grid: { units: _loc('gridUnits') } });
+    }
 
-    if (!createData.backgroundColor) {
-      doc.updateSource({ backgroundColor: '#000000' });
+    const firstLevel = doc.levels.contents[0];
+    if (firstLevel && !createData.backgroundColor && !createData.levels) {
+      firstLevel.updateSource({ background: { color: '#000000' } });
     }
 
     if (!doc.pack && !options.dsaInit && createData.notes?.some((x) => getProperty(x, 'flags.dsa5.initName'))) {
@@ -13,7 +16,7 @@ export default function () {
         window: {
           title: 'DIALOG.warning',
         },
-        content: `<p>${createData.name}</p><p>${game.i18n.localize('DSAError.mapsViaJournalbrowser')}</p>`,
+        content: `<p>${createData.name}</p><p>${_loc('DSAError.mapsViaJournalbrowser')}</p>`,
         buttons: [
           {
             action: 'yes',
@@ -53,38 +56,5 @@ export default function () {
       }).render(true);
       return false;
     }
-  });
-
-  Hooks.on('preCreateActiveEffect', function (doc, createData, options, userId) {
-    if (doc.parent.documentName != 'Actor') return;
-
-    let update = {
-      duration: {
-        startTime: game.time.worldTime,
-      },
-    };
-
-    if (createData.flags?.dsa5?.onDelayed) {
-      mergeObject(update, {
-        duration: { seconds: createData.flags.dsa5.onDelayed },
-        system: {
-          delayed: true,
-          originalDuration: createData.duration,
-        },
-      });
-    }
-
-    if (!game.combat) {
-      doc.updateSource(update);
-      return;
-    }
-
-    update.duration.combat = game.combat.id;
-    update.duration.startRound = game.combat.round;
-    update.duration.startTurn = game.combat.turn;
-    if (!doc.duration.rounds && doc.duration.seconds) {
-      update.duration.rounds = doc.duration.seconds / 5;
-    }
-    doc.updateSource(update);
   });
 }

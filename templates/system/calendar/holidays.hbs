@@ -7,6 +7,9 @@
                     <div class="flexrow">
                         <button type="button" data-action="openMoreSearch" class="crossedButton toggleOn icon fas fa-caret-down"></button>
                         <input type="search" class="calendarSearch" placeholder="{{localize 'Library.search'}}">
+                        {{#if isGM}}
+                        <button type="button" data-action="createEvent" data-tooltip="dsacalendar.createEvent" class="icon fas fa-plus"></button>
+                        {{/if}}
                         {{#each dayCategories}}
                         <button type="button" data-action="filterCategory" data-filter-type="category" data-filter="{{key}}" data-tooltip="{{name}}" class="crossedButton toggleOn icon {{icon}}" style="color: {{this.color}};"></button>
                         {{/each}}

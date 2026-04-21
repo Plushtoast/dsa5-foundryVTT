@@ -1,9 +1,10 @@
 import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 import { ChatMessageState } from "./chatmessage_state.js";
-import { localize, format } from "../system/helpers/localizer.js";
+
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
-import RequestRoll from "../system/rolls/request-roll.js";
+import GroupCheck from "../system/rolls/group-check.js";
 import { ITEM_CONSTANTS } from "../config/item-constants.js";
+import { DICE_CONSTANTS } from "../config/dice-constants.js";
 const { renderTemplate } = foundry.applications.handlebars;
 const { DAMAGE } = ITEM_CONSTANTS.COMBAT_MODES;
 
@@ -24,7 +25,7 @@ export class TrapState extends ChatMessageState {
             trapName: this.behavior.name
         });
 
-        const chatData = DSA5_Utility.chatDataSetup(content, 'selfroll', false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
+        const chatData = DSA5_Utility.chatDataSetup(content, DICE_CONSTANTS.CHAT_MODES.SELF, false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
 
         chatData.flags = {
             dsa5: {
@@ -100,7 +101,7 @@ export class TrapState extends ChatMessageState {
 
     async _handleSearch(event) {
         const { token, region, message, behavior } = this;
-        const skill = localize('LocalizedIDs.perception');
+        const skill = _loc('LocalizedIDs.perception');
         const customLabel = undefined
         const options = this.#requestRollOptions(message, token);
         Object.assign(options.datasetOptions, {
@@ -122,7 +123,7 @@ export class TrapState extends ChatMessageState {
                     label: 'REGIONBEHAVIOR_DSATrap.search',
                     default: true,
                     callback: (event, button, dialog) => {
-                        RequestRoll.showRQMessage(skill, behavior.system.stealth + 1, customLabel, options);
+                        GroupCheck.showRQMessage(skill, behavior.system.stealth + 1, customLabel, options);
                     },
                 },
                 {
@@ -130,7 +131,7 @@ export class TrapState extends ChatMessageState {
                     icon: 'fa fa-eye',
                     label: 'REGIONBEHAVIOR_DSATrap.notice',
                     callback: (event, button, dialog) => {
-                        RequestRoll.showRQMessage(skill, behavior.system.stealth, customLabel, options);
+                        GroupCheck.showRQMessage(skill, behavior.system.stealth, customLabel, options);
                     },
                 }
             ]
@@ -183,11 +184,11 @@ export class TrapState extends ChatMessageState {
 
     async _handleDisarm(event) {
         const { token, region, message, behavior } = this;
-        const skill = localize('LocalizedIDs.lockpick');
+        const skill = _loc('LocalizedIDs.lockpick');
         const customLabel = undefined;
         const options = this.#requestRollOptions(message, token);
         const duration = [1, 5, 5][behavior.system.complexity];
-        options.otherMessage = `<b>${game.i18n.format('REGIONBEHAVIOR_DSATrap.disarmMessage', {
+        options.otherMessage = `<b>${_loc('REGIONBEHAVIOR_DSATrap.disarmMessage', {
             duration
         })}</b>`;
 
@@ -196,9 +197,9 @@ export class TrapState extends ChatMessageState {
         });
 
         if (behavior.system.complexity > 1) {
-            RequestRoll.showGCMessage(skill, behavior.system.difficulty, {}, options);
-        } else {
-            RequestRoll.showRQMessage(skill, behavior.system.difficulty, customLabel, options);
+            GroupCheck.showGCMessage(skill, behavior.system.difficulty, {}, options);
+          } else {
+            GroupCheck.showRQMessage(skill, behavior.system.difficulty, customLabel, options);
         }
     }
 
@@ -207,7 +208,7 @@ export class TrapState extends ChatMessageState {
         if (!game.user.isGM) return;
 
         if (behavior.system.disarmed) {
-            ui.notifications.warn(localize("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
+            ui.notifications.warn(_loc("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
             return;
         }
 
@@ -249,13 +250,13 @@ export class TrapState extends ChatMessageState {
         const rollString = await roll.render();
         const msg = `
             <div>
-            <p>${format("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
+            <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
             <p>${description}</p>
             ${rollString}
             </div>
         `
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-        DiceDSA5._addRollDiceSoNice({ rollMode: game.settings.get("core", "rollMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
+        DiceDSA5._addRollDiceSoNice({ messageMode: game.settings.get("core", "messageMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
 
         if (behavior.system.charges > 0) behavior.update({ 'system.remainingCharges': behavior.system.remainingCharges - 1 });
     }

@@ -1,9 +1,11 @@
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5 from '../config/config-dsa5.js';
 import CreatureType from '../system/automation/creature-type.js';
-import { localize } from '../system/helpers/localizer.js';
+import MaintainedEffects from '../system/maintenance/maintained-effects.js';
+import OnUseEffect from '../system/automation/onUseEffects.js';
+
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
-const { duplicate, getProperty, expandObject, hasProperty } = foundry.utils;
+const { duplicate, getProperty, expandObject } = foundry.utils;
 
 export default class DSA5StatusEffects {
   static bindButtons(html) {
@@ -26,36 +28,34 @@ export default class DSA5StatusEffects {
   }
 
   static lockedCondition() {
-    const lock = localize('MERCHANT.locked');
+    const lock = _loc('MERCHANT.locked');
     return {
       id: 'locked',
       name: lock,
       img: 'icons/svg/padlock.svg',
-      flags: {
-        dsa5: {
-          noEffect: true,
+      description: lock,
+      system: {
+        visibility: {
           hidePlayers: true,
-          description: lock,
         },
       },
     };
   }
 
   static async createCustomEffect(owner, description = '', name) {
-    name = name || localize('CONDITION.custom');
+    name = name || _loc('CONDITION.custom');
     if (description == '') description = name;
 
     const effect = await owner.addCondition({
       name,
-      icon: 'icons/svg/aura.svg',
+      img: 'icons/svg/aura.svg',
       origin: owner.uuid,
-      flags: {
-        dsa5: {
-          description,
-        },
-      },
+      description,
     });
-    effect[0]?.sheet.render(true);
+    const sheet = effect[0]?.sheet;
+
+    if (sheet) await sheet.render(true);
+    else if(typeof effect === 'string') ui.notifications.error(effect);
   }
 
   static async prepareActiveEffects(target, data) {
@@ -68,21 +68,22 @@ export default class DSA5StatusEffects {
     const isGM = game.user.isGM;
 
     for (const cnd of target.allApplicableEffects()) {
-      if (!isGM && cnd.getFlag('dsa5', 'hidePlayers')) continue;
+      if (cnd.type === 'enhancement') continue;
+      if (!isGM && cnd.system.visibility.hidePlayers) continue;
       if (cnd.notApplicable) continue;
 
       const condition = cnd.toObject();
 
       if (cnd.parent?.documentName != 'Item') {
-        const dsa5flags = getProperty(cnd, 'flags.dsa5') || {};
-        condition.boolean = dsa5flags.value == null;
+        const conditionData = cnd.system.condition;
+        condition.boolean = conditionData.value == null;
 
         const statusesId = cnd.statuses ? [...cnd.statuses][0] : null;
         if (statusesId) {
-          condition.value = dsa5flags.value;
-          condition.editable = dsa5flags.max;
+          condition.value = conditionData.value;
+          condition.editable = conditionData.max;
           condition.descriptor = statusesId;
-          condition.manual = dsa5flags.manual;
+          condition.manual = conditionData.manual;
         }
         await DSA5StatusEffects.enrichSheetEffect(condition, cnd);
         data.conditions.push(condition);
@@ -93,6 +94,7 @@ export default class DSA5StatusEffects {
           name: cnd.parent?.name,
           id: cnd.parent?.id,
         };
+        await DSA5StatusEffects.enrichSheetEffect(condition, cnd);
         data.transferedConditions.push(condition);
       }
     }
@@ -107,7 +109,7 @@ export default class DSA5StatusEffects {
       data.cumulativeConditions.push({
         img: ef.img,
         id: key,
-        name: localize(ef.name),
+        name: _loc(ef.name),
         value: val,
       });
     }
@@ -116,19 +118,14 @@ export default class DSA5StatusEffects {
   static async enrichSheetEffect(effectData, sourceEffect) {
     effectData.pips = [];
 
-    if (sourceEffect.duration.type === 'seconds') {
-      let timeRemaining;
-
-      if (game.time.calendar instanceof game.dsa5.apps.WorldCalendar) {
-        timeRemaining = await game.time.calendar.format(sourceEffect.duration.remaining, 'formatRemaining');
-      }
-
+    const duration = sourceEffect.duration;
+    if (typeof duration.value === 'number' && Number.isFinite(duration.remaining) && duration.remaining > 0 && duration.label) {
+      const condition = sourceEffect.system?.condition;
+      const isDecayable = condition?.max != null && condition?.value != null && condition.value > 1;
+      const icon = isDecayable ? 'fa-arrow-down' : 'fa-clock';
+      const prefix = isDecayable ? '−1 ' : '';
       effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${timeRemaining}`
-      });
-    } else if (sourceEffect.duration.type !== 'none') {
-      effectData.pips.push({
-        content: `<i class="fas fa-clock"></i> ${sourceEffect.duration.label}`
+        content: `<i class="fas ${icon}"></i> ${prefix}${duration.label}`
       });
     }
 
@@ -139,33 +136,44 @@ export default class DSA5StatusEffects {
       effectData.pips.push({
         category: 'systemEffect',
         id: status,
-        content: localize(systemEffect.name)
+        content: _loc(systemEffect.name)
       });
     }
 
-    if (sourceEffect.system.delayed) {
+    const delayedData = sourceEffect.system?.delayed;
+    const isDelayed = !!delayedData?.enabled;
+    if (isDelayed) {
       effectData.pips.push({
         content: `<i data-tooltip="ActiveEffects.onDelayed" class="grayIcon fas fa-hourglass-half"></i>`
       });
     }
 
-    if (sourceEffect.flags?.dsa5?.maintain) {
+    const { cost, payType } = MaintainedEffects.getMetadata(sourceEffect);
+    if (cost != null && payType) {
       effectData.pips.push({
-        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${sourceEffect.flags?.dsa5?.maintain} ${localize(`CHARAbbrev.${sourceEffect.flags?.dsa5?.payType}`)}`
+        content: `<i data-tooltip="maintainCost" class="fas fa-sync"></i> ${cost} ${_loc(`CHARAbbrev.${payType}`)}`
+      });
+    }
+
+    if (OnUseEffect.hasOnUseEffect(sourceEffect)) {
+      effectData.pips.push({
+        action: 'onUseEffect',
+        uuid: sourceEffect.uuid,
+        content: `<i data-tooltip="SHEET.onUseEffect" class="fas fa-dice-six"></i>`
       });
     }
   }
 
   static async addCondition(target, effect, value = 1, absolute = false, auto = true) {
-    if (!target.isOwner) return 'Not owned';
-    if (target.inCompendium) return 'Can not add in compendium';
+    if (!target.isOwner) return _loc('DSAError.elementNotOwned');
+    if (target.inCompendium) return _loc('DSAError.canNotEditInCompendium');
     if (absolute && value < 1) return this.removeCondition(target, effect, value, auto, absolute);
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return 'No Effect Found';
+    if (!effect) return _loc('DSAError.noEffectFound');
 
-    let existing = this.hasCondition(target, effect.id);
+    const existing = this.hasCondition(target, effect.id);
 
-    if (existing && existing.flags.dsa5.value == null) return existing;
+    if (existing && existing.system.condition.value == null) return existing;
     else if (existing) return await DSA5StatusEffects.updateEffect(target, existing, value, absolute, auto, effect);
 
     return await DSA5StatusEffects.createEffect(target, effect, value, auto);
@@ -181,13 +189,13 @@ export default class DSA5StatusEffects {
   }
 
   static async removeCondition(target, effect, value = 1, auto = true, absolute = false) {
-    if (!target.isOwner) return 'Not owned';
+    if (!target.isOwner) return _loc('DSAError.elementNotOwned');
     if (typeof effect === 'string') effect = duplicate(CONFIG.statusEffects.find((e) => e.id == effect));
-    if (!effect) return 'No Effect Found';
+    if (!effect) return _loc('DSAError.noEffectFound');
 
-    let existing = this.hasCondition(target, effect.id);
+    const existing = this.hasCondition(target, effect.id);
 
-    if (existing && existing.flags.dsa5.value == null) {
+    if (existing && existing.system.condition.value == null) {
       if (target.token) target = target.token.actor;
       const res = await target.deleteEmbeddedDocuments('ActiveEffect', [existing.id]);
       //Hooks.call("deleteActorActiveEffect", target, existing)
@@ -196,23 +204,23 @@ export default class DSA5StatusEffects {
   }
 
   static immuneToEffect(target, effect, silent = true) {
-    if (!effect.id || !hasProperty(effect, 'flags.dsa5.max')) return;
+    if (!effect.id || effect.system.condition.max == null) return;
 
     const immunities = getProperty(target, 'system.immunities') || [];
     let res;
     if (immunities.includes(effect.id)) {
       res = {
         name: target.name,
-        condition: localize(`CONDITION.${effect.id}`),
+        condition: _loc(`CONDITION.${effect.id}`),
       };
     }
     if (!res && target.documentName == 'Actor') {
       const types = CreatureType.detectCreatureType(target);
-      for (let type of types) {
+      for (const type of types) {
         if (type.ignoredCondition(effect.id)) {
           res = {
             name: `${target.name} (${type.getName()})`,
-            condition: localize(`CONDITION.${effect.id}`),
+            condition: _loc(`CONDITION.${effect.id}`),
           };
           break;
         }
@@ -220,7 +228,7 @@ export default class DSA5StatusEffects {
     }
     if (!res || !(ui.notifications && !silent)) return;
 
-    const msg = game.i18n.format('DSAError.conditionInvalidToCreature', {
+    const msg = _loc('DSAError.conditionInvalidToCreature', {
       name: res.name,
       condition: res.condition,
     });
@@ -247,19 +255,27 @@ export default class DSA5StatusEffects {
 
   static async createEffect(actor, effect, value, auto) {
     //const immune = this.immuneToEffect(actor, effect)
-    effect.name = localize(effect.name);
+    effect.name = _loc(effect.name);
     this.immuneToEffect(actor, effect, false);
     //if (immune) return immune
 
-    if (auto) {
-      effect.flags.dsa5.auto = Math.min(effect.flags.dsa5.max, value);
-      effect.flags.dsa5.manual = 0;
-    } else {
-      effect.flags.dsa5.manual = Math.min(effect.flags.dsa5.max, value);
-      effect.flags.dsa5.auto = 0;
-    }
+    effect.system ??= {};
+    effect.system.condition ??= {};
+    const conditionData = effect.system.condition;
 
-    effect.flags.dsa5.value = Math.min(4, effect.flags.dsa5.manual + effect.flags.dsa5.auto);
+    // Stack math only applies to cumulative conditions that define a max level.
+    if (conditionData.max != null) {
+      const max = Number(conditionData.max ?? 4);
+      if (auto) {
+        conditionData.auto = Math.min(max, value);
+        conditionData.manual = 0;
+      } else {
+        conditionData.manual = Math.min(max, value);
+        conditionData.auto = 0;
+      }
+
+      conditionData.value = Math.min(4, Number(conditionData.manual || 0) + Number(conditionData.auto || 0));
+    }
 
     if (effect.id) effect.statuses = [effect.id];
 
@@ -269,24 +285,26 @@ export default class DSA5StatusEffects {
 
     (game.dsa5.config.statusEffectClasses[effect.id] || DSA5StatusEffects).levelDependentEffects(effect, update);
 
-    let result = await actor.createEmbeddedDocuments('ActiveEffect', [update]);
+    const result = await actor.createEmbeddedDocuments('ActiveEffect', [update]);
     delete effect.id;
     return result;
   }
 
   static async removeEffect(actor, existing, value, absolute, autoMode) {
-    const auto = autoMode ? (absolute ? value : Math.max(0, existing.flags.dsa5.auto - value)) : existing.flags.dsa5.auto;
-    const manual = autoMode ? existing.flags.dsa5.manual : absolute ? value : existing.flags.dsa5.manual - value;
+    const existingData = existing.system.condition;
+    const max = Number(existingData.max ?? 4);
+    const auto = autoMode ? (absolute ? value : Math.max(0, Number(existingData.auto || 0) - value)) : Number(existingData.auto || 0);
+    const manual = autoMode ? Number(existingData.manual || 0) : absolute ? value : Number(existingData.manual || 0) - value;
     const update = {
-      flags: {
-        dsa5: {
+      system: {
+        condition: {
           auto,
           manual,
-          value: Math.max(0, Math.min(existing.flags.dsa5.max, manual + auto)),
+          value: Math.max(0, Math.min(max, manual + auto)),
         },
       },
     };
-    if (update.flags.dsa5.auto < 1 && update.flags.dsa5.manual == 0) return await actor.deleteEmbeddedDocuments('ActiveEffect', [existing.id]);
+    if (update.system.condition.auto < 1 && update.system.condition.manual == 0) return await actor.deleteEmbeddedDocuments('ActiveEffect', [existing.id]);
     else {
       (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update);
       return await existing.update(update);
@@ -299,28 +317,30 @@ export default class DSA5StatusEffects {
     //const immune = this.immuneToEffect(actor, existing, true)
     this.immuneToEffect(actor, existing, true);
     //if (immune) return immune
+    const existingData = existing.system.condition;
+    const max = Number(existingData.max ?? 4);
     let delta, newValue;
     let update;
     if (auto) {
-      newValue = Math.min(existing.flags.dsa5.max, absolute ? value : existing.flags.dsa5.auto + value);
-      delta = newValue - existing.flags.dsa5.auto;
+      newValue = Math.min(max, absolute ? value : Number(existingData.auto || 0) + value);
+      delta = newValue - Number(existingData.auto || 0);
       update = {
-        flags: { dsa5: { auto: newValue, manual: existing.flags.dsa5.manual } },
+        system: { condition: { auto: newValue, manual: Number(existingData.manual || 0) } },
       };
     } else {
-      newValue = absolute ? value : existing.flags.dsa5.manual + value;
-      delta = newValue - existing.flags.dsa5.manual;
+      newValue = absolute ? value : Number(existingData.manual || 0) + value;
+      delta = newValue - Number(existingData.manual || 0);
       update = {
-        flags: { dsa5: { manual: newValue, auto: existing.flags.dsa5.auto } },
+        system: { condition: { manual: newValue, auto: Number(existingData.auto || 0) } },
       };
     }
 
     if (delta == 0) return existing;
 
-    update.flags.dsa5.value = Math.max(0, Math.min(existing.flags.dsa5.max, update.flags.dsa5.manual + update.flags.dsa5.auto));
+    update.system.condition.value = Math.max(0, Math.min(max, update.system.condition.manual + update.system.condition.auto));
     if (newEffect.duration) {
       update.duration = newEffect.duration;
-      update.duration.startTime = game.time.worldTime;
+      update.start = { time: game.time.worldTime };
     }
 
     (game.dsa5.config.statusEffectClasses[[...existing.statuses][0]] || DSA5StatusEffects).levelDependentEffects(existing, update);
@@ -330,7 +350,7 @@ export default class DSA5StatusEffects {
   }
 
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (effect.flags.dsa5.value == null || item.type == 'regenerate') return 0;
+    if (effect.system.condition.value == null || item.type == 'regenerate') return 0;
 
     return DSA5StatusEffects.clampedCondition(actor, effect);
   }
@@ -339,7 +359,7 @@ export default class DSA5StatusEffects {
     const statusesId = [...effect.statuses][0];
     if (!statusesId) return 0;
 
-    const max = Number(effect.flags.dsa5.max);
+    const max = Number(effect.system.condition.max);
     const mod = Math.clamp(actor.system.condition[statusesId] || 0, 0, max) * -1;
     const resist = this.resistantToEffect(actor, statusesId);
     const threshold = this.thresholdToEffect(actor, statusesId) * -1;
@@ -350,7 +370,7 @@ export default class DSA5StatusEffects {
 
   static ModifierIsSelected(item, options = {}, actor, coreID) {
     const types = CreatureType.detectCreatureType(actor);
-    for (let type of types) {
+    for (const type of types) {
        if (type.ignoredCondition(coreID)) {
           return false;
        }
@@ -363,18 +383,18 @@ export default class DSA5StatusEffects {
   }
 
   static getRollModifiers(actor, item, options = {}) {
-    const source = localize('status') + '/' + localize('condition');
+    const source = _loc('status') + '/' + _loc('condition');
     const result = [];
     const finishedCoreIds = [];
 
-    for (let [key, val] of Object.entries(actor.system.condition)) {
+    for (const [key, val] of Object.entries(actor.system.condition)) {
       if (val) {
         const ef = duplicate(DSA5.statusEffects.find((x) => x.id == key));
 
         if (!ef) continue;
 
         const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects;
-        ef.flags.dsa5.value = val;
+        ef.system.condition.value = val;
 
         ef.statuses = [key];
         const value = effectClass.calculateRollModifier(ef, actor, item, options);
@@ -383,7 +403,7 @@ export default class DSA5StatusEffects {
 
         if (value != 0) {
           result.push({
-            name: localize(ef.name),
+            name: _loc(ef.name),
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, key),
             source,
@@ -394,6 +414,11 @@ export default class DSA5StatusEffects {
 
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
+      const charges = ef.system?.charges;
+      if (charges) {
+        const value = Number(charges.value);
+        if (Number.isFinite(value) && value <= 0) continue;
+      }
 
       for (const coreId of [...ef.statuses]) {
         if (finishedCoreIds.includes(coreId)) continue;
@@ -407,6 +432,7 @@ export default class DSA5StatusEffects {
             value,
             selected: effectClass.ModifierIsSelected(item, options, actor, coreId),
             source,
+            ref: { uuid: ef.uuid, id: ef.id },
           });
         }
       }
@@ -430,7 +456,7 @@ export default class DSA5StatusEffects {
         name: ef.name,
         value: ef.value,
         selected: true,
-        source: localize('MASTER.globalMods'),
+        source: _loc('MASTER.globalMods'),
       });
     }
     return result;
@@ -461,7 +487,7 @@ class ProneEffect extends DSA5StatusEffects {
 
 class RaptureEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const regex = new RegExp(`${localize('TYPES.ITEM.combatskill')} `, 'gi');
+    const regex = new RegExp(`${_loc('TYPES.Item.combatskill')} `, 'gi');
     const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
     if (
       (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
@@ -481,7 +507,7 @@ class RaptureEffect extends DSA5StatusEffects {
 class DeafEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    return item.type == 'skill' && item.name == localize('LocalizedIDs.perception') ? -3 : 0;
+    return item.type == 'skill' && item.name == _loc('LocalizedIDs.perception') ? -3 : 0;
   }
 }
 
@@ -494,7 +520,7 @@ class FixatedEffect extends DSA5StatusEffects {
 class BloodrushEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill') return item.name == localize('LocalizedIDs.featOfStrength') ? 2 : 0;
+    if (item.type == 'skill') return item.name == _loc('LocalizedIDs.featOfStrength') ? 2 : 0;
 
     return options.mode == 'attack' ? 4 : 0;
   }
@@ -512,21 +538,22 @@ class PainEffect extends DSA5StatusEffects {
 class TranceEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    switch (Number(this.clampedCondition(actor, effect))) {
-      case -2:
-        const regex = new RegExp(`${localize('TYPES.Item.combatskill')} `, 'gi');
-        const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
-        if (
-          (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
-          (['rangeweapon', 'meleeweapon'].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) ||
-          ['ceremony', 'liturgy'].includes(item.type)
-        ) {
-          return -2;
-        }
-        break;
-      case -3:
-        return -3;
+    const condition = Number(this.clampedCondition(actor, effect));
+
+    if (condition >= -1) return 0;
+    if (condition <= -3) return -3;
+
+    if (condition == -2) {
+      const regex = new RegExp(`${_loc('TYPES.Item.combatskill')} `, 'gi');
+      const happyTalents = actor.system.happyTalents.value.split(/;|,/).map((x) => x.replace(regex, '').trim());
+      const isFavored =
+        (happyTalents.includes(item.name) && ['skill', 'combatskill'].includes(item.type)) ||
+        (['rangeweapon', 'meleeweapon'].includes(item.type) && happyTalents.includes(item.system.combatskill.value)) ||
+        ['ceremony', 'liturgy'].includes(item.type);
+
+      return isFavored ? 0 : -2;
     }
+
     return 0;
   }
 }
@@ -534,7 +561,7 @@ class TranceEffect extends DSA5StatusEffects {
 class DrunkenEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.gambling')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }
@@ -543,7 +570,7 @@ class DrunkenEffect extends DSA5StatusEffects {
 class BurningEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
     if (item.type == 'regenerate') return 0;
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.bodyControl')) return Math.clamp(this.clampedCondition(actor, effect) + 1, -2, 0);
 
     return 0;
   }
@@ -558,7 +585,7 @@ class ArousalEffect extends DSA5StatusEffects {
 
 class SikaryanlossEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.willpower')) return (this.clampedCondition(actor, effect) + 1) * 2;
     else if (item.type == 'regenerate') return this.clampedCondition(actor, effect);
 
     return 0;
@@ -567,7 +594,7 @@ class SikaryanlossEffect extends DSA5StatusEffects {
 
 class DesireEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    if (item.type == 'skill' && item.name == localize('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
+    if (item.type == 'skill' && item.name == _loc('LocalizedIDs.willpower')) return Math.clamp(this.clampedCondition(actor, effect), -3, 0);
 
     return 0;
   }
@@ -591,7 +618,7 @@ class SunkenEffect extends DSA5StatusEffects {
 
 class HungerEffect extends DSA5StatusEffects {
   static calculateRollModifier(effect, actor, item, options = {}) {
-    const stat = Math.clamp(effect.flags.dsa5.value, 0, 4);
+    const stat = Math.clamp(effect.system.condition.value || 0, 0, 4);
     if (item.type == 'regenerate') return Math.pow(2, stat - 1) * -1;
 
     return 0;
@@ -604,58 +631,64 @@ class ThirstEffect extends DSA5StatusEffects {
   }
 
   static levelDependentEffects(existing, update) {
-    update.changes = {
+    const stackValue = update.system?.condition?.value || 0;
+    update.system ??= {};
+    update.system.changes = {
       1: [],
-      2: [{ key: 'system.condition.stunned', mode: 2, value: 1 / 2 }],
-      3: [{ key: 'system.condition.stunned', mode: 2, value: 2 / 3 }],
-      4: [{ key: 'system.condition.stunned', mode: 2, value: 3 / 4 }],
-    }[update.flags.dsa5.value];
+      2: [{ key: 'system.condition.stunned', type: 'add', value: 1 / 2 }],
+      3: [{ key: 'system.condition.stunned', type: 'add', value: 2 / 3 }],
+      4: [{ key: 'system.condition.stunned', type: 'add', value: 3 / 4 }],
+    }[stackValue];
   }
 }
 
 class HeatEffect extends DSA5StatusEffects {
   static levelDependentEffects(existing, update) {
-    update.changes = {
+    const stackValue = update.system?.condition?.value || 0;
+    update.system ??= {};
+    update.system.changes = {
       1: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
       ],
       2: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 / 2 },
       ],
       3: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 2 / 3 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 2 / 3 },
       ],
       4: [
-        { key: 'system.condition.stunned', mode: 2, value: 1 },
-        { key: 'system.condition.confused', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.stunned', type: 'add', value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 / 2 },
       ],
-    }[update.flags.dsa5.value];
+    }[stackValue];
   }
 }
 
 class ColdEffect extends DSA5StatusEffects {
   static levelDependentEffects(existing, update) {
-    update.changes = {
+    const stackValue = update.system?.condition?.value || 0;
+    update.system ??= {};
+    update.system.changes = {
       1: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 },
       ],
       2: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 / 2 },
       ],
       3: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 2 / 3 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 2 / 3 },
       ],
       4: [
-        { key: 'system.condition.confused', mode: 2, value: 1 },
-        { key: 'system.condition.paralysed', mode: 2, value: 1 / 2 },
+        { key: 'system.condition.confused', type: 'add', value: 1 },
+        { key: 'system.condition.paralysed', type: 'add', value: 1 / 2 },
       ],
-    }[update.flags.dsa5.value];
+    }[stackValue];
   }
 }
 

@@ -3,7 +3,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import CreatureType from './creature-type.js';
 import DiceDSA5 from '../rolls/dice-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import { localize, format } from '../helpers/localizer.js';
+
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -56,21 +56,20 @@ export default class EquipmentDamage {
   static breakingTest(item) {
     if (!item)
       return ui.notifications.warn(
-        format('DSAError.notFound', {
+        'DSAError.notFound', { localize: true, format: {
           category: '',
-          name: localize('TYPES.Item.equipment'),
-        }),
-      );
+          name: _loc('TYPES.Item.equipment'),
+        }});
     if (item.system.structure.max <= 0) return ui.notifications.warn('DSAError.noBreakingStructure', { format: { name: item.name }, localize: true });
 
     let breakingResistance = 0;
     let category;
     if (item.type == 'armor') {
-      category = localize(`ARMORSUBCATEGORIES.${item.system.subcategory}`);
+      category = _loc(`ARMORSUBCATEGORIES.${item.system.subcategory}`);
       breakingResistance = item.system.structure.breakPointRating || DSA5.armorSubcategories[item.system.subcategory];
     } else {
       category = item.system.combatskill.value;
-      breakingResistance = item.system.structure.breakPointRating || DSA5.weaponStabilities[localize(`LocalizedCTs.${category}`)];
+      breakingResistance = item.system.structure.breakPointRating || DSA5.weaponStabilities[_loc(`LocalizedCTs.${category}`)];
     }
     if (!breakingResistance) {
       ui.notifications.error('DSAError.noBreakingResistance', { format: { item: item.name }, localize: true });
@@ -80,12 +79,12 @@ export default class EquipmentDamage {
     let magicalWarning = '';
     const attributes = getProperty(item, 'effect.attributes') || '';
 
-    if (new RegExp(`${CreatureType.magical}`, 'i').test(attributes)) magicalWarning = `${format('WEAPON.attributeWarning', { domain: CreatureType.clerical })}<br/>`;
-    else if (new RegExp(`${CreatureType.clerical}`, 'i').test(attributes)) magicalWarning = `${format('WEAPON.attributeWarning', { domain: CreatureType.magical })}<br/>`;
+    if (new RegExp(`${CreatureType.magical}`, 'i').test(attributes)) magicalWarning = `${_loc('WEAPON.attributeWarning', { domain: CreatureType.clerical })}<br/>`;
+    else if (new RegExp(`${CreatureType.clerical}`, 'i').test(attributes)) magicalWarning = `${_loc('WEAPON.attributeWarning', { domain: CreatureType.magical })}<br/>`;
 
     new DialogShared({
       window: { title: 'DSASETTINGS.armorAndWeaponDamage' },
-      content: `${magicalWarning}<label for="threshold">${format('WEAR.check', {
+      content: `${magicalWarning}<label for="threshold">${_loc('WEAR.check', {
         category,
       })}</label>: <input class="quantity-click" style="width:80px" dtype="number" name="threshold" type="number" value="${breakingResistance}"/>`,
       buttons: [
@@ -121,8 +120,8 @@ export default class EquipmentDamage {
   }
 
   static async resolveBreakingTest(item, threshold, category) {
-    const roll = await DiceDSA5.manualRolls(await new Roll('1d20').evaluate(), format('WEAR.check', { category }));
-    await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'rollMode'));
+    const roll = await DiceDSA5.manualRolls(await new Roll('1d20').evaluate(), _loc('WEAR.check', { category }));
+    await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'messageMode'));
     const damage = roll.total > threshold ? 1 : 0;
     await this.applyDamageLevelToItem(item, damage);
     const wear = EquipmentDamage.calculateWear(item);
@@ -132,7 +131,7 @@ export default class EquipmentDamage {
       threshold,
       category,
       roll,
-      result: localize(`WEAR.${item.type}.${wear}`),
+      result: _loc(`WEAR.${item.type}.${wear}`),
     });
     ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
   }
@@ -141,7 +140,7 @@ export default class EquipmentDamage {
     if (game.settings.get('dsa5', 'armorAndWeaponDamage')) {
       const wear = this.calculateWear(item);
       return {
-        msg: localize(`WEAR.${item.type}.${wear}`),
+        msg: _loc(`WEAR.${item.type}.${wear}`),
         css: `gearD damaged${wear}`,
       };
     }

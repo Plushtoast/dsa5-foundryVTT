@@ -1,0 +1,58 @@
+<div class="tab scrollable hotbar-sort-manager-avatar flexcol {{tabs.avatar.cssClass}}" data-tab="avatar" data-group="{{tabs.avatar.group}}">
+    <p class="avatar-hint"><i class="fas fa-info-circle"></i> {{localize "DSA5HOTBARCONFIG.avatarTabHint"}}</p>
+    <div class="flexrow gap10px">
+        <button type="button" class="avatar-source-btn flex1 {{#if (eq avatar.source 'token')}}active{{/if}}"
+                data-action="setAvatarSource" data-source="token">
+            <i class="fas fa-user-circle"></i> {{localize "DSA5HOTBARCONFIG.avatarToken"}}
+        </button>
+        <button type="button" class="avatar-source-btn flex1 {{#if (eq avatar.source 'portrait')}}active{{/if}}"
+                data-action="setAvatarSource" data-source="portrait">
+            <i class="fas fa-portrait"></i> {{localize "DSA5HOTBARCONFIG.avatarPortrait"}}
+        </button>
+    </div>
+
+    <div class="avatar-preview-area flexcol flexAlignCenter">
+        <div class="avatar-preview {{#if (eq avatar.source 'portrait')}}interactive{{/if}}">
+            <img class="avatar-preview-img" src="{{previewImg}}" draggable="false" />
+        </div>
+        {{#if (eq avatar.source 'portrait')}}
+        <span class="avatar-hint">
+            <i class="fas fa-arrows-alt"></i> {{localize "DSA5HOTBARCONFIG.avatarDragHint"}}
+        </span>
+        {{/if}}
+    </div>
+
+    {{#if (eq avatar.source 'portrait')}}
+    <div class="avatar-offset-controls flexcol gap4px">
+        <div class="flexrow flexAlignCenter gap4px">
+            <label class="flex0">X</label>
+            <input type="range" class="flex1" data-prop="offsetX"
+                   min="-100" max="100" value="{{avatar.offsetX}}" />
+        </div>
+        <div class="flexrow flexAlignCenter gap4px">
+            <label class="flex0">Y</label>
+            <input type="range" class="flex1" data-prop="offsetY"
+                   min="-100" max="100" value="{{avatar.offsetY}}" />
+        </div>
+        <div class="flexrow flexAlignCenter gap4px">
+            <label class="flex0">{{localize "DSA5HOTBARCONFIG.avatarZoom"}}</label>
+            <input type="range" class="flex1" data-prop="zoom"
+                   min="50" max="300" value="{{avatar.zoom}}" />
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="sort-manager-footer flexrow flexAlignCenter">
+        <button type="button" class="sort-save-btn" data-action="saveAvatar" {{#unless isAvatarDirty}}disabled{{/unless}}>
+            <i class="fas fa-save"></i> {{localize "DSA5HOTBARCONFIG.save"}}
+        </button>
+        <div class="flex1"></div>
+        {{#if (eq avatar.source 'portrait')}}
+        <button type="button" class="dsadesignbutton noBorder icon fas fa-undo" data-action="resetAvatar" data-tooltip="DSA5HOTBARCONFIG.avatarReset">
+        </button>
+        {{/if}}
+        <button type="button" class="sort-btn dsadesignbutton noBorder icon fas fa-trash" data-action="resetAll"
+            data-tooltip="{{localize 'DSA5HOTBARCONFIG.resetAll'}}">
+        </button>
+    </div>
+</div>

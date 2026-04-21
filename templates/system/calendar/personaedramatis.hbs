@@ -1,16 +1,5 @@
 <div class='tab scrollable standard-form {{tabs.personae.cssClass}}' data-tab='personae' data-group='{{tabs.personae.group}}'>
     <div class="fullScreenPadded dark-theme personae-container">
-        <div class="personae-header">
-            <h2 class="section-title"></h2>
-            {{#if isGM}}
-            <div class="personae-controls">
-                <button type="button" class="add-persona" data-action="newPersona">
-                    <i class="fas fa-plus"></i> {{localize "PERSONAE.Add"}}
-                </button>
-            </div>
-            {{/if}}
-        </div>
-
         <div class="personae-two-column">
             <div class="personae-list-column">
                 <div class="personae-list-header">
@@ -22,9 +11,14 @@
                             {{localize "PERSONAE.bestiary"}}
                         </button>
                     </div>
-                    <div class="list-search">
-                        <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
-                        <i class="fas fa-search"></i>
+                    <div class="personae-list-toolbar flexrow">
+                        <div class="list-search flex1">
+                            <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
+                            <i class="fas fa-search"></i>
+                        </div>
+                        {{#if isGM}}
+                        <button type="button" class="icon fas fa-plus list-add-button" data-action="newPersona" data-tooltip="{{localize 'PERSONAE.Add'}}"></button>
+                        {{/if}}
                     </div>
                 </div>
                 
@@ -35,10 +29,10 @@
                         <div class="faction-group">
                             <div class="faction-header">
                                 <h4 class="faction-name">{{factionGroup.faction}}</h4>
-                                <span class="faction-count">({{factionGroup.members.length}})</span>
+                                <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanClass}}
@@ -54,6 +48,12 @@
                                         <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
                                         {{/unless}}
                                     </div>
+                                    {{else}}
+                                        {{#unless persona.visible}}
+                                        <div class="persona-list-meta">
+                                            <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        </div>
+                                        {{/unless}}
                                     {{/if}}
                                 </div>
                                 <div class="persona-list-status">
@@ -83,15 +83,12 @@
                         <div class="faction-group">
                             <div class="faction-header">
                                 <h4 class="faction-name">{{factionGroup.faction}}</h4>
-                                <span class="faction-count">({{factionGroup.members.length}})</span>
+                                <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
-                                    {{#if garadanClass}}
-                                    <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
-                                    {{/if}}
                                 </div>
                                 <div class="persona-list-info">
                                     <h5 class="persona-list-name">{{name}}</h5>
@@ -102,6 +99,12 @@
                                         <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
                                         {{/unless}}
                                     </div>
+                                    {{else}}
+                                        {{#unless persona.visible}}
+                                        <div class="persona-list-meta">
+                                            <span class="persona-type persona-hidden"><i class="fas fa-eye-slash"></i></span>
+                                        </div>
+                                        {{/unless}}
                                     {{/if}}
                                 </div>
                                 <div class="persona-list-status">

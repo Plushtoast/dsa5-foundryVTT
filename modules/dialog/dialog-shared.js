@@ -1,11 +1,43 @@
 import RuleChaos from '../system/rules/rule_chaos.js';
+import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+import { ValueWidget } from '../system/helpers/valuewidget.js';
+
 import { AddTargetDialog } from './addTargetDialog.js';
+import { RollDialogExtensions } from './roll-dialog-extensions.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogShared extends foundry.applications.api.DialogV2 {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
+
+  static debounceRefreshOpenDialogTargets = foundry.utils.debounce(() => {
+    for (const app of foundry.applications.instances.values()) {
+      if (app instanceof DialogShared) {
+        void app.handleTargetTokenChange();
+      }
+    }
+  }, 20);
+
+  initializeWidgets(html) {
+    html.find('.vwidget').each((i, elem) => {
+      if (!elem.querySelector('.vw-controls')) new ValueWidget(elem);
+    });
+
+    html.find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
+      elem.setContext({
+        actor: DSA5_Utility.getSpeaker(this.dialogData?.speaker),
+      });
+
+      const modifiers = this.dialogData?.renderData?.[SituationalModifiersWidget.NAME];
+      if (modifiers !== undefined) {
+        elem.setModifiers(foundry.utils.duplicate(modifiers));
+      }
+    });
+  }
+
+  getSituationalModifiersWidget(root = this.element) {
+    return SituationalModifiersWidget.getWidget(root);
+  }
 
   recallSettings(speaker, source, mode, renderData) {
     this.recallData = game.dsa5.memory.recall(speaker, source, mode);
@@ -21,14 +53,14 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   setRollButtonWarning() {
     if (this.dialogData.mode !== 'attack') return '';
 
-    const noTarget = localize('DIALOG.noTarget');
+    const noTarget = _loc('DIALOG.noTarget');
     return `<span class="missingTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`;
   }
 
   setMultipleTargetsWarning() {
     if (this.dialogData.mode !== 'attack') return '';
 
-    const noTarget = localize('DIALOG.multipleTarget');
+    const noTarget = _loc('DIALOG.multipleTarget');
     return `<span class="multipleTarget"><i class="fas fa-exclamation-circle"></i> ${noTarget}</span>`;
   }
 
@@ -44,7 +76,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async updateRollButton(targets, multiplier = 1) {
-    let rollTag = this.renderRollValueDie(multiplier) + localize('Roll');
+    let rollTag = this.renderRollValueDie(multiplier) + _loc('Roll');
 
     if (targets.length === 0) {
       rollTag += this.setRollButtonWarning();
@@ -115,7 +147,7 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
       if (probability <= 1) break;
 
       const formattedProbability = `${probability}`.padStart(2, '0');
-      possibilities.push(`${localize('CHARAbbrev.QS')} ${qs}: ${formattedProbability}%`);
+      possibilities.push(`${_loc('CHARAbbrev.QS')} ${qs}: ${formattedProbability}%`);
     }
 
     $(this.element)
@@ -124,24 +156,62 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   readTargets() {
-    return Array.from(game.user.targets)
-      .filter(target => target.actor)
-      .map(target => ({
+    const targets = [];
+    for (const target of game.user.targets) {
+      if (!target.actor) continue;
+
+      targets.push({
         name: target.actor.name,
         img: target.actor.img,
         id: target.id
-      }));
+      });
+    }
+    return targets;
   }
 
   compareTargets(html, targets) {
     const newTargets = this.readTargets();
+    const changed = JSON.stringify(targets) !== JSON.stringify(newTargets);
 
-    if (JSON.stringify(targets) === JSON.stringify(newTargets)) {
-      return targets;
+    if (!changed) {
+      return {
+        changed,
+        targets,
+      };
     }
 
-    this.updateTargets(html, newTargets);
-    return newTargets;
+    void this.updateTargets(html, newTargets);
+    return {
+      changed,
+      targets: newTargets,
+    };
+  }
+
+  initializeTargetTracking() {
+    this.currentTargets = this.readTargets();
+    return this.currentTargets;
+  }
+
+  async handleTargetTokenChange() {
+    if (!this.element?.isConnected) return false;
+
+    const html = $(this.element);
+    const result = this.compareTargets(html, this.currentTargets ?? this.readTargets());
+    this.currentTargets = result.targets;
+
+    if (result.changed) {
+      await this.onTargetTokenChange(html, result.targets, result);
+    }
+
+    return result.changed;
+  }
+
+  async onTargetTokenChange(_html, _targets, _result) {}
+
+  static registerTargetTokenHook() {
+    Hooks.on('targetToken', () => {
+      this.debounceRefreshOpenDialogTargets();
+    });
   }
 
   async _onRender(context, options) {
@@ -149,22 +219,30 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
 
     const html = $(this.element);
 
+    this.initializeWidgets(html);
     await this.prepareFormRecall($(this.element));
     html.find('.quantity-click').on('mousedown', (ev) => RuleChaos.quantityClick(ev));
-    html.find('.modifiers option').on('mousedown', (ev) => {
-      ev.preventDefault();
-      $(ev.currentTarget).prop('selected', !$(ev.currentTarget).prop('selected'));
-      return false;
-    });
     html.on('click', '.rollTarget', (ev) => this.removeTarget(ev));
     html.on('click', '.addTarget', (ev) => this.addTarget(ev));
     html.find('.window-content form').addClass('scrollable');
 
     this.rotateToTarget();
+
+    // Ability/extension burger menu (hidden by default)
+    await RollDialogExtensions.bindBurgerMenu(this);
+    this.initializeTargetTracking();
   }
 
   async addTarget(ev) {
     (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true);
+  }
+
+  _tearDown(options) {
+    this.currentTargets = null;
+    $(this.element).find(SituationalModifiersWidget.SELECTOR).each((i, elem) => {
+      elem[SituationalModifiersWidget.INSTANCE_KEY]?.destroy();
+    });
+    return super._tearDown(options);
   }
 
   async prepareFormRecall(html) {
@@ -177,6 +255,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
           elem.addClass('active').attr('data-step', spec.step);
           elem.find('.step').text(DialogShared.roman[spec.step]);
         }
+      } else if (key === 'situationalModifiers') {
+        this.getSituationalModifiersWidget(html)?.applyRememberedSelection(value);
       } else {
         const elem = html.find(`[name="${key}"]`);
 

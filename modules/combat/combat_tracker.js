@@ -2,7 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
-import { localize } from '../system/helpers/localizer.js';
+
 const { getProperty } = foundry.utils;
 
 export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatTracker {
@@ -57,16 +57,20 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     const isAllowedToSeeEffects = game.user.isGM || (combatant.actor && combatant.actor.testUserPermission(game.user, 'OBSERVER')) || !game.settings.get('dsa5', 'hideEffects');
     turn.defenseCount = combatant.system.defenseCount;
     turn.actionCount = Number(getProperty(combatant, 'actor.system.actionCount.value')) || 0;
-    turn.actionCounts = `${turn.actionCount} ${localize('actionCount')}`;
+    turn.actionCounts = `${turn.actionCount} ${_loc('actionCount')}`;
     turn.roundInitiative = combatant.system.roundInitiative;
 
     let remainders = [];
+    let aiming = [];
     if (combatant.actor) {
       for (const x of combatant.actor.items) {
-        if (x.type == 'rangeweapon' && x.system.worn.value && x.system.reloadTime.progress > 0) {
+        const isWornRangeWeapon = x.type == 'rangeweapon' && x.system.worn.value;
+        const lz = isWornRangeWeapon ? Actordsa5.calcLZ(x, combatant.actor) : 0;
+
+        if (isWornRangeWeapon && x.system.reloadTime.progress > 0) {
           const wpn = {
             name: x.name,
-            remaining: Actordsa5.calcLZ(x, combatant.actor) - x.system.reloadTime.progress,
+            remaining: lz - x.system.reloadTime.progress,
           };
           if (wpn.remaining > 0) remainders.push(wpn);
         } else if (['spell', 'liturgy'].includes(x.type) && x.system.castingTime.modified > 0) {
@@ -76,19 +80,40 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
           };
           if (wpn.remaining > 0) remainders.push(wpn);
         }
+
+        if (isWornRangeWeapon) {
+          const aimProgress = Number(x.system?.aimTime?.progress) || 0;
+          if (aimProgress > 0) {
+            const loaded = lz === 0 || (Number(x.system.reloadTime?.progress) || 0) >= lz;
+            if (loaded) {
+              aiming.push({
+                name: x.name,
+                progress: Math.clamp(aimProgress, 0, 2),
+                status: `${aimProgress}/2`,
+              });
+            }
+          }
+        }
       }
     }
     remainders = remainders.sort((a, b) => a.remaining - b.remaining);
 
-    if (remainders.length > 0) {
-      turn.ongoings = `${localize('COMBATTRACKER.ongoing')}<br>${remainders.map((x) => `${x.name} - ${x.remaining}`).join('<br>')}`;
+    aiming = aiming.sort((a, b) => b.progress - a.progress);
 
-      turn.ongoing = remainders[0].remaining;
+    const ongoingLines = [];
+    if (remainders.length > 0) ongoingLines.push(...remainders.map((x) => `${x.name} - ${x.remaining}`));
+    if (aiming.length > 0) ongoingLines.push(...aiming.map((x) => `${x.name} - ${_loc('WEAPON.aim')} ${x.status}`));
+
+    if (ongoingLines.length > 0) {
+      turn.ongoings = `${_loc('COMBATTRACKER.ongoing')}<br>${ongoingLines.join('<br>')}`;
+
+      if (remainders.length > 0) turn.ongoing = remainders[0].remaining;
+      else if (aiming.length > 0) turn.ongoing = aiming[0].progress;
     }
     const effects = [];
     for (const e of combatant.actor?.temporaryEffects || []) {
       if (e.statuses.has('defeated')) turn.defeated = true;
-      else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.getFlag('dsa5', 'hidePlayers')) && !e.getFlag('dsa5', 'hideOnToken')) {
+      else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.system?.visibility?.hidePlayers) && !e.system?.visibility?.hideOnToken) {
         effects.push({ img: e.img, name: e.name });
       }
     }
@@ -160,7 +185,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     const targetCombatant = game.combat.combatants.get(targetId);
 
     const roundInitiative = targetCombatant.properInitiative;
-    let update = {};
+    const update = {};
     if (event.ctrlKey) {
       update.initiative = roundInitiative + 0.00001;
       update.system = {
@@ -246,7 +271,7 @@ Hooks.on('preDeleteCombat', (combat, options, user) => {
 
 Hooks.on('updateCombatant', (combatant, change, user) => {
   if (!DSA5_Utility.isActiveGM()) return;
-  
+
   if (change.initiative) {
     const baseRoll = combatant.getFlag('dsa5', 'baseRoll');
     if (!baseRoll) {
@@ -255,7 +280,7 @@ Hooks.on('updateCombatant', (combatant, change, user) => {
       combatant.setFlag('dsa5', 'baseRoll', roll);
     }
   } else if ('initiative' in change && change.initiative == null) {
-    combatant.update({ [`flags.dsa5.-=baseRoll`]: null });
+    combatant.update({ 'flags.dsa5.baseRoll': _del });
   }
 });
 
@@ -271,7 +296,7 @@ class RepeatingEffectsHelper {
   static async startOfRound(combat) {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    for (let turn of combat.turns) {
+    for (const turn of combat.turns) {
       if (!turn.defeated) {
         if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
         if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
@@ -292,8 +317,8 @@ class RepeatingEffectsHelper {
 
       const damageRoll = await new Roll(effectvalues).evaluate();
       const damage = await damageRoll.render();
-      const type = localize(damageRoll.total > 0 ? 'CHATNOTIFICATION.regenerates' : 'CHATNOTIFICATION.getsHurt');
-      const applyDamage = `${this.buildActorName(turn)} ${type} ${localize(attr)} ${damage}`;
+      const type = _loc(damageRoll.total > 0 ? 'CHATNOTIFICATION.regenerates' : 'CHATNOTIFICATION.getsHurt');
+      const applyDamage = `${this.buildActorName(turn)} ${type} ${_loc(attr)} ${damage}`;
 
       await this.sendEventMessage(applyDamage, combat, turn);
       if (attr == 'wounds') await turn.actor.applyDamage(damageRoll.total * -1);
@@ -304,7 +329,7 @@ class RepeatingEffectsHelper {
   static async applyBleeding(turn, combat) {
     if (turn.actor.system.status.wounds.value < 1) return;
 
-    const msg = game.i18n.format('CHATNOTIFICATION.bleeding', {
+    const msg = _loc('CHATNOTIFICATION.bleeding', {
       actor: this.buildActorName(turn),
     });
     await this.sendEventMessage(msg, combat, turn);
@@ -319,7 +344,7 @@ class RepeatingEffectsHelper {
     const die = { 0: '1', 1: '1d3', 2: '1d6', 3: '2d6' }[step - protection] || '1';
     const damageRoll = await new Roll(die).evaluate();
     const damage = await damageRoll.render();
-    const msg = game.i18n.format(`CHATNOTIFICATION.burning.${step}`, {
+    const msg = _loc(`CHATNOTIFICATION.burning.${step}`, {
       actor: this.buildActorName(turn),
       damage,
     });

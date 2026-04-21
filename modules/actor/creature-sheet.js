@@ -2,6 +2,7 @@ import ActorSheetDsa5 from './actor-sheet.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
+import CompanionHandler from './companions/companion-handler-class.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
@@ -9,6 +10,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   };
 
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
@@ -35,6 +37,10 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
+    companion: {
+      template: 'systems/dsa5/templates/actors/companions/actor-owner.hbs',
+      scrollable: [''],
+    },
     status: super.PARTS.status,
     notes: {
       template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
@@ -42,7 +48,9 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     }
   }
 
+
   static LIMITEDPARTS = {
+    sheet: super.PARTS.sheet,
     limited: {
       template: 'systems/dsa5/templates/actors/limited/creature-limited.hbs',
     }
@@ -81,6 +89,14 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     if (itemData.type == 'trait') return this._addTrait(itemData);
 
     return super._onDropItemCreate(itemData);
+  }
+
+  async prepareCompanionTab(context) {
+    await CompanionHandler.prepareOwnerPartContext(this, context);
+  }
+
+  attachCompanionTabListeners(element) {
+    CompanionHandler.attachOwnerPartListeners(this, element);
   }
 
   async _onRender(context, options) {

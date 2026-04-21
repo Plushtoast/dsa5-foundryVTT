@@ -268,6 +268,79 @@
       }
     }
 
+    .action-pips {
+      gap: 4px;
+      justify-content: center;
+      align-items: center;
+      padding: 2px 0;
+      z-index: 1;
+
+      .pip {
+        width: 12px;
+        height: 12px;
+        flex: 0 0 12px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color);
+        transition: background-color 0.2s;
+
+        &.base-action {
+          background: var(--active-color);
+
+          &.depleted {
+            background: #555;
+            opacity: 0.5;
+          }
+
+          &.overuse {
+            background: #e24a4a;
+            opacity: 1;
+          }
+        }
+
+        &.free-action {
+          background: #6ecf6e;
+          cursor: var(--cursor-pointer);
+
+          &.depleted {
+            background: #555;
+            opacity: 0.5;
+          }
+
+          &:hover {
+            box-shadow: 0 0 6px rgba(110, 207, 110, 0.6);
+          }
+        }
+
+        &.movement-pip {
+          width: 40px;
+          flex: 0 0 40px;
+          border-radius: 6px;
+          background: linear-gradient(
+            to right,
+            #e2a64a var(--move-pct),
+            #555 var(--move-pct)
+          );
+
+          &.exceeded {
+            background: linear-gradient(
+              to right,
+              #e24a4a var(--move-pct),
+              #555 var(--move-pct)
+            );
+          }
+
+          &.costs-action:not(.exceeded) {
+            background: linear-gradient(
+              to right,
+              #e2a64a var(--move-pct),
+              #555 var(--move-pct)
+            );
+            border-color: #e2a64a;
+          }
+        }
+      }
+    }
+
     .weapon {
       width: 44px;
       height: 44px;
@@ -348,7 +421,7 @@
     list-style: none;
   }
 
-  li .fa {
+  li .fa, li .fas, li .far, li .fab {
     font-size: 30px;
     line-height: 45px;
     text-align: center;

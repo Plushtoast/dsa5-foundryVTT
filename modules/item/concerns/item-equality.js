@@ -24,7 +24,7 @@ export class ItemEquality {
    */
   static checkMoneyEquality(item1, item2) {
     return item1.type === item2.type && 
-           game.i18n.localize(item1.name) === game.i18n.localize(item2.name) && 
+           _loc(item1.name) === _loc(item2.name) && 
            item1.system.description?.value === item2.system.description?.value;
   }
 

@@ -1,6 +1,32 @@
 
 <div class="content row-section columnFlex" style="max-height: 100%;margin:1rem;">
 
+    {{#if selfTrade}}
+    <div class="row-section">
+        <div class="col two row-section">
+            <div class="col ten"></div>
+            <div class="col fourty flexrow flexAlignCenter">
+                <img src="{{tradeFriend.img}}" style="object-fit: contain;height: 50px;max-width:40%;border:none;" />
+            </div>
+            <div class="col ten"></div>
+        </div>
+        <div class="col two row-section">
+            <div class="col ten"></div>
+            <div class="col fourty flexrow flexAlignCenter">
+                <img src="{{document.img}}" style="object-fit: contain;height: 50px;max-width:40%;border:none;" />
+            </div>
+            <div class="col ten"></div>
+        </div>
+    </div>
+    <div class="row-section">
+        <div class="col two center">
+            <h3 class="center">&zwnj;{{tradeFriend.name}}</h3>
+        </div>
+        <div class="col two center">
+            <h3 class="center">{{#if document.token.name}}{{document.token.name}}{{else}}{{document.name}}{{/if}}</h3>
+        </div>
+    </div>
+    {{else}}
     <div class="row-section">
         <div class="col third row-section">
 
@@ -33,9 +59,11 @@
             <h3 class="center">{{#if document.token.name}}{{document.token.name}}{{else}}{{document.name}}{{/if}}</h3>
         </div>
     </div>
+    {{/if}}
     {{> systems/dsa5/templates/actors/parts/gearSearch.hbs}}
     <div style="flex:1;overflow:hidden;height:100%;" class="row-section">
-        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
+        {{!-- Source inventory --}}
+        <div class="col {{colClass}} scrollable thinscroll" style="--scroll-margin: 0px;">
             {{#each inventory.inventory as |section sid|}} {{#if section.show}}
             <div class="groupbox">
                 <div class="row-section table-title">
@@ -76,13 +104,16 @@
             {{/if}} {{/each}}
         </div>
 
-        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
+        {{!-- Source offer --}}
+        <div class="col {{colClass}} scrollable thinscroll" style="--scroll-margin: 0px;">
 
             <div class="groupbox">
+                {{#unless selfTrade}}
                 <div class="row-section lineheight center">
                     <div style="cursor: pointer;" class="col specAbs button acceptTrade {{#if tradeData.offerAccepted}}green{{/if}}"><i class="fas fa-handshake"></i>{{localize 'MERCHANT.accept'}}</div>
                 </div>
                 <hr/>
+                {{/unless}}
                 <div class="row-section table-title">
                     <div class="col eight"></div>
                     <div class="col">
@@ -121,13 +152,17 @@
             </div>
 
         </div>
-        <div class="col third scrollable thinscroll" style="--scroll-margin: 0px;">
+
+        {{!-- Target offer --}}
+        <div class="col {{colClass}} scrollable thinscroll" style="--scroll-margin: 0px;">
 
             <div class="groupbox">
+                {{#unless selfTrade}}
                 <div class="row-section lineheight center">
                     <div class="button col specAbs {{#if tradeData.offeredAccepted}}green{{/if}}" style="cursor:default;"><i class="fas fa-handshake"></i>{{localize 'MERCHANT.accept'}}</div>
                 </div>
                 <hr/>
+                {{/unless}}
                 <div class="row-section table-title">
                     <div class="col eight"></div>
                     <div class="col">
@@ -136,6 +171,8 @@
 
                     <div class="col eight center">
                         <span data-tooltip="quantity">#</span>
+                    </div>
+                    <div class="col eight center">
                     </div>
                 </div>
                 <div class="row-section wrap rowtable inventory">
@@ -154,6 +191,9 @@
                                 {{item.system.quantity.value}}
                             </div>
                             <div class="col eight center">
+                                {{#if ../selfTrade}}
+                                <a class="tradeTarget" data-item-id="{{item._id}}" data-stop-trade="true" data-tooltip="MERCHANT.exchange"><i class="fas fa-trash"></i></a>
+                                {{/if}}
                             </div>
                         </div>
                     </div>
@@ -162,5 +202,58 @@
             </div>
 
         </div>
+
+        {{!-- Target inventory (self-trade only) --}}
+        {{#if selfTrade}}
+        <div class="col four scrollable thinscroll" style="--scroll-margin: 0px;">
+            {{#each targetInventory.inventory as |section sid|}} {{#if section.show}}
+            <div class="groupbox">
+                <div class="row-section table-title">
+                    <div class="col eight"></div>
+                    <div class="col">
+                        <b>{{localize (concat "Equipment." @key)}}</b>
+                    </div>
+
+                    <div class="col eight center">
+                        <span data-tooltip="quantity">#</span>
+                    </div>
+                    <div class="col eight center">
+                    </div>
+                </div>
+                <div class="row-section wrap rowtable inventory">
+                    {{#each section.items as |item i|}}
+                    <div class="col item" data-item-id="{{item._id}}">
+                        <div class="row-section">
+                            <div class="col eight image {{item.enchantClass}}">
+                                <div class="image" style="background-image: url('{{item.img}}')">
+
+                                </div>
+                            </div>
+                            <div class="col equipment-item-name">
+                                <a data-action="itemExternalEdit" data-item-id="{{item._id}}">{{item.name}}</a>
+                            </div>
+                            <div class="col eight center">
+                                {{item.system.quantity.value}}
+                            </div>
+                            <div class="col eight center">
+                                <a class="tradeTarget" data-item-id="{{item._id}}" data-tooltip="MERCHANT.exchange"><i class="fas fa-exchange"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}} {{/each}}
+        </div>
+        {{/if}}
     </div>
+
+    {{!-- Complete Trade button (self-trade only) --}}
+    {{#if selfTrade}}
+    <div class="row-section" style="margin-top: 0.5rem;">
+        <div class="col center">
+            <div style="cursor: pointer;" class="col specAbs button completeSelfTrade"><i class="fas fa-handshake"></i> {{localize 'MERCHANT.completeTrade'}}</div>
+        </div>
+    </div>
+    {{/if}}
 </div>

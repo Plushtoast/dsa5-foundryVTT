@@ -2,6 +2,7 @@
     "title": "DSA spezifische Tools",
     "module": "dsa5",
     "id": "tdeTools",
+    "description": "Ein Überblick über die DSA spezifischen Tools und Menüs für Spielleiter und Spieler.",
     "canBeResumed": true,
     "display": true,
     "steps": [

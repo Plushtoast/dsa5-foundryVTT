@@ -13,7 +13,7 @@
           },
           "description": "The Dark Eye is an award winning fantasy role-playing game with a rich history and uniqulely detailed world. Discover the Middle Kingdom, weakened by many wars, the exotic lands of the Tulamids, the steaming jungles of the south or the dark lands of shadow.",
           "badges": [
-            "Bestseller"
+            "Bestseller", "Beginners"
           ]
         },
         {
@@ -24,7 +24,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-magic-1/icons/journals/coveren.webp"
           },
           "description": "Magic of Aventuria is a rules expansion module for TDE5 dedicated to the Aventurian varieties of magic. Each magical tradition described is presented in detail, along with its rituals, spells and peculiarities.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-godsofaventuria",
@@ -34,7 +34,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-godsofaventuria/icons/journals/coveren.webp"
           },
           "description": "The Gods are everywhere. Few people in Aventuria have not personally witnessed a Blessed Ones wondrous powers and, most Aventurians believe in the gods without question.",
-          "badges": []
+          "badges": ["Bestseller"]
         },
         {
           "id": "dsa5-compendium",
@@ -44,7 +44,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-compendium/icons/journal/coveren.webp"
           },
           "description": "The Aventurian Compendium gives you numerous new options for combat and powerful fighting styles known only to the best warriors and swordmasters. But not only warriors get their money's worth, all hero types can benefit from the expansion rules.",
-          "badges": []
+          "badges": ["Bestseller"]
         }
       ]
     },
@@ -74,6 +74,16 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-bestiary/icons/journal/coveren.webp"
           },
           "description": "In the forests, swamps and jungles of Aventuria fearsome creatures lurk considering heroes to be their prey. With their venom, razor-sharp claws or sheer size, these beasts pose a deadly threat to anyone who gets too close.",
+          "badges": ["Bestseller"]
+        },
+        {
+          "id": "dsa5-bestiary2",
+          "label": "Aventurian Bestiary II",
+          "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2329/tde5-aventurian-bestiary-2-for-foundry-vtt",
+          "image": {
+            "src": "https://www.ulissesf-shop.com/media/image/cd/c5/93/ESD1011_0.jpg"
+          },
+          "description": "The Aventurian Bestiary II module for Foundry VTT presents over 100 threatening creatures, dangerous animals, and supernatural entities including demons, chimeras, and dragons—all fully described with complete stat blocks, full-color illustrations, and ready-to-use tokens for your adventures.",
           "badges": []
         },
         {
@@ -84,6 +94,16 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coveren.webp"
           },
           "description": "No warrior can do without his weapons, no thief without his burglary tools and no magician without his books. The Aventuria Armory contains descriptions of over 100 useful items of equipment, weapons and armor for traveling heroes and supplements the rules…",
+          "badges": []
+        },
+        {
+          "id": "dsa5-armory2",
+          "label": "Aventurian Armory II",
+          "href": "https://www.ulissesf-shop.com/the-dark-eye/virtual-tabletops/2330/tde5-aventurian-armory-2-for-foundry-vtt",
+          "image": {
+            "src": "https://www.ulissesf-shop.com/media/image/91/05/67/ESD1012_0.jpg"
+          },
+          "description": "The Aventurian Armory II contains over 150 descriptions, illustrations, and entries for new equipment, weapons, armor, and helmets for adventurers. In addition, the module includes features for hit zone armor protection ..",
           "badges": []
         }
       ]
@@ -132,6 +152,16 @@
     {
       "name": "Regional supplements",
       "items": [
+        {
+          "id": "dsa5-atlas",
+          "label": "Magna Carta Aventurica",
+          "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/5142/dsa5-magna-carta-aventurica-fuer-foundry-vtt",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/c0/9d/59/magna_carta_aventurica_cover_vtt-Kopie.jpg"
+          },
+            "description": "Traveling through Aventuria is more than just getting from “A to B”: routes must be found, stages planned, and time and weather kept in mind. Magna Carta Aventurica makes exactly that a playable part of your adventures. Instead of flipping through maps and doing calculations…",
+          "badges": ["New"]
+        },
         {
           "id": "dsa5-warringkingdoms",
           "label": "The Warring Kingdoms",

@@ -1,12 +1,12 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-import DSAActiveEffectConfig from '../status/active_effects.js';
+import DSAActiveEffectConfig from '../status/active_effect_config.js';
 import CreatureType from '../system/automation/creature-type.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import CombatskillData from '../data/item/combatskill.js';
-import { localize } from '../system/helpers/localizer.js';
 import TraitData from '../data/item/trait.js';
+import DSATables from './dsatables.js';
 const { getProperty, duplicate, mergeObject } = foundry.utils;
 
 export default class TableEffects {
@@ -33,15 +33,15 @@ export default class TableEffects {
         source = options.source ? speaker.items.get(options.source) : undefined;
       } else targets = Array.from(game.user.targets).map((x) => x.actor);
 
-      for (let method of methods) {
+      for (const method of methods) {
         const ef = getProperty(hasEffect, method);
         if (ef) {
           const result = await TableEffects[method](ef, mode, targets, source, id, message);
           if (!result) console.warn(`Table effect for <${method} not working yet`, ef, mode, targets, source);
         }
       }
-      const tt = game.i18n.format('ActiveEffects.appliedEffect', {
-        source: localize('table'),
+      const tt = _loc('ActiveEffects.appliedEffect', {
+        source: _loc('table'),
         target: targets.map((x) => x.name).join(', '),
       });
       await message.update({
@@ -67,7 +67,11 @@ export default class TableEffects {
       const attributes = getProperty(source, 'system.effect.attributes') || '';
       const regex = new RegExp(`(${CreatureType.magical}|${CreatureType.clerical})`, 'i');
       const isMagical = regex.test(attributes);
-      if (isMagical) await source.update({ 'system.worn.value': false });
+      if (isMagical) {
+        const actor = source.actor || source.parent;
+        if (actor) await actor.equipWeaponToHand(source.id, { equip: false });
+        else await source.update({ 'system.worn.value': false, 'system.worn.offHand': false });
+      }
       else await EquipmentDamage.absoluteDamageLevelToItem(source, args);
 
       return true;
@@ -76,11 +80,13 @@ export default class TableEffects {
 
   static async gearLost(args, mode, targets, source) {
     if (source && ['meleeweapon', 'rangeweapon'].includes(source.type)) {
-      await source.update({ 'system.worn.value': false });
+      const actor = source.actor || source.parent;
+      if (actor) await actor.equipWeaponToHand(source.id, { equip: false });
+      else await source.update({ 'system.worn.value': false, 'system.worn.offHand': false });
       if (args.distance) {
         const roll = await new Roll(args.distance).evaluate();
         const renderedRoll = await roll.render();
-        const msg = game.i18n.format('WEAPON.dropped', {
+        const msg = _loc('WEAPON.dropped', {
           distance: roll.total,
         });
         ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${msg}</p>${renderedRoll}`));
@@ -90,7 +96,7 @@ export default class TableEffects {
   }
 
   static async resistEffect(args, mode, targets, source, id) {
-    for (let target of targets) {
+    for (const target of targets) {
       const resistRolls = [
         {
           skill: args.roll,
@@ -123,7 +129,7 @@ export default class TableEffects {
   }
 
   static async malus(args, mode, targets, source) {
-    for (let malus of args) {
+    for (const malus of args) {
       const { hasTargets, finalTargets } = this.evaluateTargetArg(malus, targets);
       const alternateEffect = !hasTargets && malus.noTarget;
       const systemEffect = alternateEffect ? malus.noTarget.systemEffect : malus.systemEffect;
@@ -136,7 +142,7 @@ export default class TableEffects {
         const baseEffect = CONFIG.statusEffects.find((x) => x.id == systemEffect);
 
         if (!changes) {
-          changes = duplicate(baseEffect.changes || []);
+          changes = duplicate(baseEffect.system?.changes || []);
           const baseChange = changes.find((x) => x.key == `system.condition.${systemEffect}`);
           if (baseChange) {
             baseChange.value = systemEffectLevel;
@@ -144,20 +150,20 @@ export default class TableEffects {
         }
         let ef;
         if (changes) {
-          const lbl = localize(`CONDITION.${systemEffect}`) + ' - ' + localize('botchCritEffect');
+          const lbl = _loc(`CONDITION.${systemEffect}`) + ' - ' + _loc('botchCritEffect');
           ef = OnUseEffect.effectBaseDummy(lbl, changes, duration || {});
           ef.icon = baseEffect.icon;
         } else {
           //todo add duration
           ef = systemEffect;
         }
-
-        for (let target of finalTargets) {
+        await DSATables.finalizeEffect(ef);
+        for (const target of finalTargets) {
           await target.addCondition(ef);
         }
         return true;
       } else if (changes) {
-        const ef = OnUseEffect.effectBaseDummy(localize('botchCritEffect'), changes || [], duration || {});
+        const ef = OnUseEffect.effectBaseDummy(_loc('botchCritEffect'), changes || [], duration || {});
 
         mergeObject(ef, {
           flags: {
@@ -167,8 +173,8 @@ export default class TableEffects {
             },
           },
         });
-
-        for (let target of finalTargets) {
+        await DSATables.finalizeEffect(ef);
+        for (const target of finalTargets) {
           await target.addCondition(ef);
         }
         return true;
@@ -182,8 +188,7 @@ export default class TableEffects {
   static async selfAttack(args, mode, targets, source) {
     const { hasTargets, finalTargets } = this.evaluateTargetArg(args, targets);
 
-    if (source) {
-    }
+    //if (source) { }
   }
 
   static async selfDamage(args, mode, targets, source) {
@@ -191,7 +196,7 @@ export default class TableEffects {
 
     if (source) {
       const obj = DSA5_Utility.toObjectIfPossible(source);
-      for (let actor of finalTargets) {
+      for (const actor of finalTargets) {
         const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
         let preparedItem;
 
@@ -210,7 +215,7 @@ export default class TableEffects {
       }
       return true;
     } else {
-      for (let actor of finalTargets) {
+      for (const actor of finalTargets) {
         const roll = await new Roll('1d6').evaluate();
 
         await actor.applyDamage(Math.round(roll.total));

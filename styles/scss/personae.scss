@@ -69,6 +69,11 @@
   background: linear-gradient(90deg, var(--dsadesign1) 0%, var(--personae-gold-alpha-3) 100%);
   border-bottom: 1px solid var(--border-color);
 
+  .list-add-button {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+  }
+
   .list-type-switch {
     display: flex;
     margin-bottom: 0.75rem;
@@ -383,13 +388,34 @@
       height: 100px;
       margin-right: 1.5rem;
       position: relative;
+      overflow: visible;
 
       img {
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        max-width: none;
+        max-height: none;
         object-fit: cover;
+        background-color: transparent;
         border-radius: 50%;
         border: 3px solid var(--sheet-border);
+        transition: var(--personae-transition);
+      }
+
+      &:hover img {
+        width: min(460px, 60vw);
+        height: min(460px, 60vw);
+        object-fit: contain;
+        background-color: var(--bg-color);
+        border-radius: var(--personae-radius);
+        z-index: 10;
+      }
+
+      &:hover .persona-status {
+        z-index: 11;
       }
 
       .persona-status {
@@ -468,6 +494,115 @@
       word-wrap: break-word;
     }
   }
+}
+
+.questlog-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.questlog-detail-aside {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.questlog-timeline-column {
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.questlog-timeline-badge {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  width: max-content;
+
+  i {
+    width: 0.9rem;
+    text-align: center;
+  }
+}
+
+.questlog-badge {
+  &.questlog-badge-secondary,
+  &.questlog-badge-owner,
+  &.questlog-badge-group {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &.questlog-badge-audience-2 {
+    background: rgba(150, 20, 20, 0.18);
+  }
+}
+
+.questlog-list {
+  .questlog-summary {
+    margin-top: 0.35rem;
+    opacity: 0.8;
+    line-height: 1.35;
+  }
+}
+
+.questlog-objective-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.questlog-objective-card,
+.questlog-link-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  margin: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+
+  &.is-done {
+    opacity: 0.8;
+  }
+}
+
+.questlog-objective-main {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.questlog-objective-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1.4;
+}
+
+.questlog-objective-icon {
+  color: var(--dsadesign1);
+}
+
+.questlog-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.quest-group .faction-header {
+  font-family: var(--boldFont);
 }
 
 /* Dark Theme */

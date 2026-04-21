@@ -1,4 +1,5 @@
 import DescriptionTemplate from './templates/description.js';
+import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
@@ -12,15 +13,17 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
-import { localize } from '../../system/helpers/localizer.js';
+
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
+
+const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-
-export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
   static NOT_TWO_HANDED_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons']);
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
 
   static defineSchema() {
     const guideValues = foundry.utils.duplicate(DSA5.characteristics);
@@ -78,32 +81,33 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
     data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
     data.isShield = RuleChaos.isShield(data.document);
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.weaponStabilities[localize(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
     foundry.utils.mergeObject(data, this.getGripInfo());
-    if (this.actor) {
-      const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
-      data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
-      data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(localize(`LocalizedCTs.${data.document.system.combatskill.value}`));
-    }
+    
+    if (!this.actor) return;
+      
+    const combatSkill = this.actor.items.find((x) => x.type == 'combatskill' && x.name == data.document.system.combatskill.value);
+    data.canBeOffHand = combatSkill && !combatSkill.system.weapontype.twoHanded && data.document.system.worn.value;
+    data.canBeWrongGrip = !['Daggers', 'Fencing Weapons'].includes(_loc(`LocalizedCTs.${data.document.system.combatskill.value}`));    
   }
 
   getGripInfo() {
     const twoHanded = RuleChaos.regex2h.test(this.parent.name);
     let wrongGripHint = '';
     if (!twoHanded) {
-      wrongGripHint = 'wrongGrip.yieldTwo';
+      wrongGripHint = 'wrongGrip.wieldTwo';
     } else {
-      const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
+      const localizedCT = _loc(`LocalizedCTs.${this.combatskill.value}`);
       switch (localizedCT) {
         case 'Two-Handed Impact Weapons':
         case 'Two-Handed Swords':
-          const reg = new RegExp(localize('wrongGrip.wrongGripBastardRegex'));
-          if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.yieldOneBastard';
-          else wrongGripHint = 'wrongGrip.yieldOneSwordBlunt';
+          const reg = new RegExp(_loc('wrongGrip.wrongGripBastardRegex'));
+          if (reg.test(this.parent.name)) wrongGripHint = 'wrongGrip.wieldOneBastard';
+          else wrongGripHint = 'wrongGrip.wieldOneSwordBlunt';
 
           break;
         default:
-          wrongGripHint = 'wrongGrip.yieldOnePolearms';
+          wrongGripHint = 'wrongGrip.wieldOnePolearms';
       }
     }
 
@@ -115,7 +119,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static chatData(data, name) {
-    let res = [
+    const res = [
       { key: 'damage', val: data.damage.value },
       { key: 'atmod', val: data.atmod.value },
       { key: 'pamod', val: data.pamod.value },
@@ -139,51 +143,70 @@ export default class MeleeweaponData extends ItemDataModel.mixin(DescriptionTemp
 
   getContextOptions() {
     const options = [];
-    const localizedCT = localize(`LocalizedCTs.${this.combatskill.value}`);
+    const localizedCT = _loc(`LocalizedCTs.${this.combatskill.value}`);
     if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localizedCT)) {
       options.push({
-        name: RuleChaos.isYieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
+        label: RuleChaos.isWieldedTwohanded(this.parent) ? `wrongGrip.oneHanded` : `wrongGrip.twoHanded`,
         icon: "<i class='fas fa-comment fa-hand'></i>",
-        callback: () => this.swapNumberWeaponHands(),
+        onClick: () => this.swapNumberWeaponHands(),
       });
     }
 
     const hasWeaponThrow = MeleeweaponData.THROWABLE_WEAPON_TYPES.has(localizedCT) && SpecialabilityRulesDSA5.hasAbility(this.parent.actor, 'LocalizedIDs.weaponThrow');
-    const throwLabel = `${localize('TYPES.Item.rangeweapon')} ${localize('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${localize('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
+    const throwLabel = `${_loc('TYPES.Item.rangeweapon')} ${_loc('CHARAbbrev.AT')} -${hasWeaponThrow ? 4 : 8} ${_loc('CHARAbbrev.RW')} ${DSA5.meleeAsRangeReach[localizedCT]}`;
     options.push(
       {
-        name: throwLabel,
+        label: throwLabel,
         icon: "<i class='fas fa-trowel'></i>",
-        callback: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
+        onClick: () => this.parent.actor.throwMelee(this.parent, this.parent.actor.token?.id),
       },
       {
-        name: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
+        label: this.worn.value ? 'SHEET.UnEquipItem' : 'SHEET.EquipItem',
         icon: "<i class='fas fa-shield-alt fa-fw'></i>",
-        callback: () => this.reEquipItem(),
+        onClick: () => this.reEquipItem(),
       },
     );
     return options;
   }
 
   async swapNumberWeaponHands() {
-    if (!MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(localize(`LocalizedCTs.${this.combatskill.value}`))) {
-      await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
-      this.itemEquippedMessage();
-    }
+    if (MeleeweaponData.NOT_TWO_HANDED_WEAPON_TYPES.has(_loc(`LocalizedCTs.${this.combatskill.value}`))) return;
+      
+    await this.parent.update({ 'system.worn.wrongGrip': !this.worn.wrongGrip });
+    this.itemEquippedMessage();
   }
 
   async reEquipItem() {
     const newValue = !this.worn.value;
+
+    if (this.parent?.actor) {
+      await this.parent.actor.equipWeaponToHand(this.parent.id, { hand: 'auto', equip: newValue });
+      return;
+    }
+
     await this.parent.update({ 'system.worn.value': newValue });
     this.itemEquippedMessage();
   }
 
   itemEquippedMessage() {
     DSA5SoundEffect.playEquipmentWearStatusChange(this.parent);
-    const yielded = RuleChaos.isYieldedTwohanded(this.parent);
+    const wielded = RuleChaos.isWieldedTwohanded(this.parent);
     if (this.parent.actor && game.combat) {
-      const texts = [{ value: game.i18n.format(yielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
+      const texts = [{ value: _loc(wielded ? 'wrongGrip.twoHandedWeapon' : 'wrongGrip.oneHandedWeapon', { weapon: this.parent.name }) }];
       this.parent.actor.tokenScrollingText(texts);
     }
+  }
+
+  async _preUpdate(changed, options, user) {
+    // If a melee weapon switches into 2H mode, its offHand flag must be cleared.
+    // (Offhand is only meaningful for 1H weapons.)
+    const wrongGrip = getProperty(changed, 'system.worn.wrongGrip');
+    if (typeof wrongGrip === 'boolean') {
+      const baseTwoHanded = RuleChaos.regex2h.test(this.parent.name);
+      const willBeTwoHanded = (baseTwoHanded && !wrongGrip) || (!baseTwoHanded && wrongGrip);
+      if (willBeTwoHanded) setProperty(changed, 'system.worn.offHand', false);
+    }
+
+    await super._preUpdate(changed, options, user);
   }
 }
