@@ -64,7 +64,7 @@ export class ActorDataModel extends DSADataModel {
       carryModifier: 0,
       aspModifier: 0,
       kapModifier: 0,
-      vulnerabilities: [],
+      vulnerabilities: { combatskill: [] },
       resistances: {
         effects: [],
       },
