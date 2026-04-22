@@ -30,48 +30,22 @@
     {{/if}}
     {{/"systems/dsa5/templates/actors/parts/member-card-header.hbs"}}
 
-    {{!-- Attribute --}}
-    <div class="flexrow attributesHeader companion-attributes-header">
-        <div class="col flexcol">
-            <div class="flexrow charBtns">
-                <div class="col flexrow companion-attributes-row">
-                    {{#each this.system.characteristics as |char key|}}
-                    <div class="center flexrow attribibcard companion-attrib-card">
-                        <div>
-                            <div class="d20 die-{{key}} companion-attrib-val">{{char.value}}</div>
-                        </div>
-                        <div class="companion-attrib-lbl">{{key}}</div>
-                    </div>
-                    {{/each}}
-                </div>
-            </div>
-        </div>
-    </div>
-
     {{!-- Effekte --}}
-    <div class="companion-details companion-details-wrapper">
-        <div class="row-section companion-effects-row">
-            <div class="col flexrow regenContainer fourty companion-effects-container">
-                <div class="healthbar bar-wounds barLeft companion-effects-placeholder"></div>
-                <div class="companion-effects-list-wrapper">
-                    {{#if this.prepareCompanion.hasEffects}}
-                    <ul class="companion-effects-list">
-                        {{#each this.prepareCompanion.effects}}
-                        <li class="companion-effect-icon dsadesignbutton button" data-action="companionEffect"
-                            data-effect-id="{{this.id}}" data-tooltip="{{this.name}}">
-                            <div class="companion-effect-img" style="background-image:url('{{this.img}}');"></div>
-                            {{#if this.value}}
-                            <div class="companion-effect-badge">
-                                {{this.value}}
-                            </div>
-                            {{/if}}
-                        </li>
-                        {{/each}}
-                    </ul>
+    <div class="companion-details companion-details-wrapper">        
+        <div class="flexrow flexAlignCenter">
+            {{#if this.prepareCompanion.hasEffects}}
+                {{#each this.prepareCompanion.effects}}
+                <button type="button" class="companion-effect-icon dsadesignbutton noBorder" data-action="companionEffect"
+                    data-effect-id="{{this.id}}" data-tooltip="{{this.name}}">
+                    <div class="companion-effect-img" style="background-image:url('{{this.img}}');"></div>
+                    {{#if this.value}}
+                    <div class="companion-effect-badge">
+                        {{this.value}}
+                    </div>
                     {{/if}}
-                </div>
-            </div>
-            <div class="col fourty companion-spacer-hidden"></div>
+                </button>
+                {{/each}}
+            {{/if}}
         </div>
     </div>
 
@@ -150,41 +124,33 @@
             </div>
 
             {{!-- RECHTE SEITE: Icons (35x35) --}}
-            <div class="companion-right-icons">
+            <div class="flexcol gap5px">
 
                 {{!-- Obere Reihe --}}
-                <div class="companion-right-icons-row">
-                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn"
+                <div class="flexrow flexAlignCenter gap5px">
+                    <button type="button" class="dsadesignbutton noBorder icon fa-solid fa-book-bookmark"
                         data-action="openSkillSelection" data-tooltip="COMPANIONS.SkillSelection.label">
-                        <i class="fa-solid fa-book-bookmark companion-icon-black-18"></i>
                     </button>
 
-                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn"
+                    <button type="button" class="dsadesignbutton noBorder icon {{#if this.prepareCompanion.isHotbarControlled}}fa-solid{{else}}fa-regular{{/if}} fa-eye"
                         data-action="toggleHotbarControl" data-tooltip="{{localize 'COMPANIONS.controlViaHotbar'}}">
-                        <i
-                            class="{{#if this.prepareCompanion.isHotbarControlled}}fa-solid{{else}}fa-regular{{/if}} fa-eye companion-icon-black-18"></i>
                     </button>
                 </div>
 
                 {{!-- Untere Reihe (Knochen / Pferd) --}}
-                <div
-                    class="companion-right-icons-row bottom {{#if this.prepareCompanion.isMountPossible}}mount-possible{{/if}}">
+                <div class="flexrow flexAlignCenter">
                     {{#if this.prepareCompanion.isTrainable}}
-                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn"
+                    <button type="button" class="icon fa-solid fa-bone dsadesignbutton noBorder"
                         data-action="trainCompanion" data-tooltip="{{localize 'COMPANIONS.train'}}">
-                        <i class="fa-solid fa-bone companion-icon-black-18"></i>
                     </button>
 
                     {{#if this.prepareCompanion.isMountPossible}}
-                    <button type="button" class="dsadesignbutton noBorder companion-icon-btn" data-action="toggleMount"
+                    <button type="button" class="dsadesignbutton noBorder icon fa-solid fa-horse  {{#if this.prepareCompanion.isMountActive}}fa-rotate-180{{/if}}" data-action="toggleMount"
                         data-tooltip="{{#if this.prepareCompanion.isMountActive}}{{localize 'COMPANIONS.removeMount'}}{{else}}{{localize 'COMPANIONS.useAsMount'}}{{/if}}">
-                        <i
-                            class="fa-solid fa-horse companion-icon-black-18 {{#if this.prepareCompanion.isMountActive}}fa-rotate-180{{/if}}"></i>
                     </button>
                     {{/if}}
                     {{/if}}
                 </div>
-
             </div>
         </div>
         {{else}}

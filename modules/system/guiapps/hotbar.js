@@ -12,6 +12,7 @@ import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
+import GroupActorSheet from '../../actor/group-sheet.js';
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -42,6 +43,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       categoryFilter: this.#filterCategory,
       weapon: this.#onRollWeapon,
       collapseBar: this.#onCollapse,
+      openPartySheet: this.#openPartySheet,
       toggleFreeAction: this.#onToggleFreeAction,
       quickButton: { handler: this.#quickButton, buttons: [0, 2] },
       companionClick: this.#companionClick,
@@ -420,6 +422,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.element.classList.toggle('collapsedBar');
   }
 
+  static async #openPartySheet() {
+    await GroupActorSheet.openPartySheet();
+  }
+
   static #onToggleFreeAction(ev, target) {
     if (!game.combat || !this.actor) return;
 
@@ -767,6 +773,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     context.collapseBar = this.collapseBar;
     context.editMode = this.editMode ? 'wiggle-animation' : '';
+    context.showPartyButton = game.user.isGM || !!game.settings.get('dsa5', 'primaryParty');
     const actor = this.actor;
 
     const groups = { skills: {}, attacks: [], functions: [] };

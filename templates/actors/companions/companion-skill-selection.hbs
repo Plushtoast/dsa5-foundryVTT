@@ -12,7 +12,7 @@
         <legend class="table-title lineheight">{{localize cat.label}}</legend>
         <div class="skill-selection-grid">
             {{#each cat.items as |item|}}
-            <div class="slot primary skill-drag companion-slot skill-selection-drag-slot" draggable="true" data-action="openItemSheet" data-item-id="{{item.id}}" data-tooltip="{{item.name}} ({{localize 'COMPANIONS.SkillSelection.OpenItemSheet'}})" style="background: url('{{item.img}}') center/cover;"></div>
+            <div class="slot primary skill-drag companion-slot cursor-drag" draggable="true" data-action="openItemSheet" data-item-id="{{item.id}}" data-tooltip="{{item.name}} ({{localize 'COMPANIONS.SkillSelection.OpenItemSheet'}})" style="background: url('{{item.img}}') center/cover;"></div>
             {{/each}}
         </div>
         {{/if}}
