@@ -1,7 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import DiceDSA5 from '../system/rolls/dice-dsa5.js';
-import { localize } from '../system/helpers/localizer.js';
+import { FateRolls } from '../actor/concerns/faterolls.js';
 import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
@@ -301,7 +300,7 @@ class ActionHandler {
 
   static masterAttackFailure(li) {
     const message = getMessageFromLi(li);
-    DiceDSA5.masterAttackFailure(message);
+    FateRolls.masterAttackFailure(message);
   }
 
   static async applyChatCardDamage(li, mode, factor = 1) {
@@ -393,7 +392,7 @@ const masterAttackOption = {
         if (can) {
             const cost = ConditionChecker.getMasterAttackCost(li);
             // Dynamischer Name: Kann unterschiedliche Kosten anzeigen
-            masterAttackOption.name = `${game.i18n.localize("CHATCONTEXT.masterAttackFailure")} (${cost} Meisterschip)`;
+            masterAttackOption.name = `${_loc("CHATCONTEXT.masterAttackFailure")} (${cost} ${_loc("CHARAbbrev.masterFatePoints")})`;
         }
         return can;
     },
