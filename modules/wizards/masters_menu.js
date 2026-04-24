@@ -496,7 +496,16 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _changeMasterSchipCount(ev, target) {
-    await game.dsa5.apps.gameMasterMenu.changeMasterSchipCount(Number(target.dataset.value));
+    await this.changeMasterSchipCount(Number(target.dataset.value));
+  }
+
+  static async _changeMasterSchip(ev, target) {
+    let val = Number(target.getAttribute('data-val'));
+    if (val == 1 && $(target).closest('.col').find('.fullSchip').length == 1) val = 0;
+
+    const schipSetting = this.getMasterSchipSetting();
+    schipSetting[0] = val;
+    await game.settings.set('dsa5', 'masterschips', schipSetting.join('/'));
   }
 
   static async _changeMasterSchip(ev, target) {
