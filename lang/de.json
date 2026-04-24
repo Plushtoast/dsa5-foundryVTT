@@ -1625,6 +1625,10 @@
                     "label": "Akteurbeschreibung anzeigen",
                     "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden."
                 },
+                "showGaradanGMOnly": {
+                    "label": "Garadan nur SL",
+                    "hint": "Wenn aktiviert, sehen nur Spielleitungen die Garadan-Figur in Dramatis Personae und im Kalender."
+                },
                 "socialContact": {
                     "label": "Einstellungsstufen",
                     "level": {

@@ -110,6 +110,12 @@ export class PersonaeDramatis {
                         juuid: parentUuid,
                         dramatisKey: key
                     };
+                    const actor = entry.actor_uuid ? fromUuidSync(entry.actor_uuid) : null;
+                    personaEntry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
+                    if (entry.type === 0 && DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM })) {
+                        personaEntry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[personaEntry.garadan] || '';
+                    }
+                    personaEntry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
                     personaeData[entry.type].push(personaEntry);
                     if (PersonaeDramatis.#lastSelectedActor &&
                         pageUuid === PersonaeDramatis.#lastSelectedActor.pageUuid &&
@@ -220,6 +226,7 @@ export class PersonaeDramatis {
     static async #prepareActorDetailData(entry, page, key, isGM) {
         const heros = await DSAPersonaEntry.getHeros();
         await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
+        entry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(entry, { isGM });
         const tabs = PersonaeDramatis.prepareTabs(entry);
         return {
             ...entry,

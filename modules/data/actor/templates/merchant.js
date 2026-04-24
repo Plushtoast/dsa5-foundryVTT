@@ -6,6 +6,7 @@ const { SchemaField, NumberField, StringField, ObjectField, BooleanField } = fou
 
 export default class MerchantTemplate extends DSADataModel {
   static GARADAN_CHOICES = {
+    0: '-',
     1: 'GARADAN.1',
     2: 'GARADAN.2',
     3: 'GARADAN.3',
@@ -29,9 +30,8 @@ export default class MerchantTemplate extends DSADataModel {
           sellingFactor: new ObjectField(),
         }),
         garadan: new NumberField({
-          initial: 1,
+          initial: 0,
           label: 'Garadan',
-          required: true,
           choices: MerchantTemplate.GARADAN_CHOICES,
         }),
       }),

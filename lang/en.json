@@ -1595,6 +1595,10 @@
                     "label": "Show actor description",
                     "hint": "The actor's description will be displayed in the Bestiary. If disabled, a custom text can be created in this entry instead."
                 },
+                "showGaradanGMOnly": {
+                    "label": "Garadan only GM",
+                    "hint": "When enabled, only GMs can see the Garadan figure in Dramatis Personae and the calendar."
+                },
                 "socialContact": {
                     "label": "Social Contact Levels",
                     "level": {

@@ -2,7 +2,9 @@
     <div class="garadanborder garadanb columnFlex row-section">
         <div class="row-section innersection col">
             <div class="col five flexAlignCenter row-section">
+                {{#if document.system.merchant.garadan}}
                 <div class="garadanicon" style="background-image:url(systems/dsa5/icons/Garadan{{document.system.merchant.garadan}}.webp)"></div>
+                {{/if}}
             </div>
             <div class="col eighty flexAlignCenter">
                 <h2>{{document.name}}</h2>

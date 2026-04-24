@@ -25,6 +25,7 @@
 
   {{#if (eq elem.type 0)}}
   {{formGroup document.system.schema.fields.personae.element.fields.garadan value=elem.garadan localize=true name=(concat 'system.personae.' key '.garadan')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.showGaradanGMOnly value=elem.showGaradanGMOnly localize=true name=(concat 'system.personae.' key '.showGaradanGMOnly')}}
   {{/if}}
 
   <div class='form-group'>
