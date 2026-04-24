@@ -217,7 +217,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     game.actors.get(this.getID(target)).sheet.render(true);
   }
 
-  static _heroActions(ev, target) {
+  static async _heroActions(ev, target) {
     ev.stopPropagation();
     ev.preventDefault();
     const actorId = this.getID(target);
@@ -253,10 +253,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     ];
 
     const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
-    menu.render(target, { animate: true });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
   }
 
-  static _headerActions(ev, target) {
+  static async _headerActions(ev, target) {
     ev.stopPropagation();
     ev.preventDefault();
 
@@ -289,7 +291,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     ];
 
     const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
-    menu.render(target, { animate: true });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
   }
 
   static async _openPartySheet() {
