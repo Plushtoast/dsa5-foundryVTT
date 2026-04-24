@@ -4,10 +4,11 @@ import DiceDSA5 from '../../system/rolls/dice-dsa5.js';
 import { MAX_POST_ROLL_REROLL_DICE } from '../../system/rolls/postroll-buffs.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 const { renderTemplate } = foundry.applications.handlebars;
+
 /**
  * FateRolls class handles fate point mechanics for DSA5 rolls
  * Provides methods for rerolling damage, talented rerolls, fate rerolls, 
- * quality step additions, and roll improvements
+ * quality step additions, roll improvements, and master attack failures
  */
 export class FateRolls {
     static FLAGS = {
@@ -21,6 +22,7 @@ export class FateRolls {
     static DICE_COLOR_BLACK = 'black';
     static IMPROVEMENT_VALUE = 2;
     static MULTI_DIE_ROLL_TYPES = ['spell', 'liturgy', 'ceremony', 'ritual', 'skill'];
+
     /**
      * Rerolls damage dice using fate points
      * @param {Object} actor - The actor performing the reroll
@@ -48,6 +50,7 @@ export class FateRolls {
         await message.update({ [`flags.data.${this.FLAGS.FATE_DAMAGE_REROLL}`]: true });
         await this.#reduceSchips(actor, schipsource);
     }
+
     /**
      * Handles talented rerolls where players can reroll dice and take the better result
      * @param {Object} actor - The actor performing the reroll
@@ -187,6 +190,7 @@ export class FateRolls {
         });
         dialog.render(true);
     }
+
     /**
      * Handles fate rerolls with optional Phex tradition rules
      * @param {Object} actor - The actor performing the reroll
@@ -246,6 +250,7 @@ export class FateRolls {
         });
         dialog.render(true);
     }
+
     /**
      * Adds a quality step to a successful roll using fate points
      * @param {Object} actor - The actor performing the action
@@ -272,6 +277,7 @@ export class FateRolls {
         await message.update({ [`flags.data.${this.FLAGS.FATE_ADD_QS}`]: true });
         await this.#reduceSchips(actor, schipsource);
     }
+
     /**
      * Improves a roll by reducing dice results using fate points
      * @param {Object} actor - The actor performing the improvement
@@ -292,6 +298,76 @@ export class FateRolls {
             await this.#handleSingleDieImprovement(actor, newTestData, message, data, cardOptions, schipsource);
         }
     }
+
+    /**
+     * Master specific action: Forces a player's successful attack to fail using Master Schips
+     * @param {Object} message - The chat message of the attack roll
+     */
+    static async masterAttackFailure(message) {
+        const data = message.flags.data;
+        
+        let successLevel = data.postData.successLevel;
+        if (successLevel === undefined) {
+            successLevel = data.postData.result?.successLevel;
+        }
+        
+        let isCrit = (successLevel > 2) || data.postData.result?.critical;
+
+        const cost = isCrit ? 2 : 1;
+        
+        const setting = game.settings.get("dsa5", "masterschips").split("/");
+        let currentSchips = Number(setting[0]);
+        
+        if (currentSchips < cost) {
+            ui.notifications.warn("DSAError.NotEnoughFate", { localize: true });
+            return;
+        }
+
+        currentSchips -= cost;
+        setting[0] = currentSchips;
+        await game.settings.set("dsa5", "masterschips", setting.join("/"));
+
+        const infoMsg = `<h3 class="center"><b>${game.i18n.localize('CHATFATE.fatepointUsed')}</b></h3>
+            ${game.i18n.localize('CHATNOTIFICATION.masterAttackFailure')}<br>
+            <b>${game.i18n.localize('CHARAbbrev.masterFatePoints')}</b>: ${currentSchips}`;
+
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+
+        const newTestData = foundry.utils.duplicate(data);
+        const failureText = game.i18n.localize("Failure"); 
+
+        newTestData.postData.successLevel = -1;
+        newTestData.postData.success = false;
+        newTestData.postData.description = failureText;
+        newTestData.postData.critical = false;
+        newTestData.postData.halfDefense = false;
+
+        if (newTestData.postData.result) {
+            newTestData.postData.result.successLevel = -1;
+            newTestData.postData.result.success = false;
+            newTestData.postData.result.critical = false;
+            newTestData.postData.result.description = failureText;
+        }
+        
+        if(newTestData.postData.result?.characteristics) {
+            newTestData.postData.result.characteristics.forEach(c => c.success = false);
+        }
+
+        const renderData = {
+            testData: newTestData.postData,
+            preData: newTestData.preData,
+            hideData: newTestData.hideData,
+            hideDamage: newTestData.hideDamage
+        };
+
+        const html = await renderTemplate(data.template, renderData);
+        
+        await message.update({
+            content: html,
+            "flags.data": newTestData
+        });
+    }
+
     /**
      * Main entry point for using fate points on rolls
      * @param {Object} actor - The actor using fate points
@@ -310,6 +386,7 @@ export class FateRolls {
             await actor[`fate${type}`](infoMsg, cardOptions, newTestData, message, data, schipsource);
         }
     }
+
     /**
      * Resets target selection and message state
      * @param {Object} data - Roll data containing target and message information
@@ -325,6 +402,7 @@ export class FateRolls {
             cardOptions.startMessagesList = startMessagesList;
         }
     }
+
     /**
      * Reduces fate points (schips) from the appropriate source
      * @param {Object} actor - The actor spending fate points
@@ -341,6 +419,7 @@ export class FateRolls {
         }
         this.#throwCoin();
     }
+
     /**
      * Reduces group fate points (schips)
      * Handles both GM and player contexts via socket communication
@@ -360,6 +439,7 @@ export class FateRolls {
             });
         }
     }
+
     /**
      * Prepares card options for post-roll actions
      * @param {Object} message - The chat message containing roll data
@@ -384,6 +464,7 @@ export class FateRolls {
         });
         return cardOptions;
     }
+
     /**
      * Extracts selected dice indices from dialog form
      * @param {jQuery} $form - The dialog form element
@@ -442,6 +523,7 @@ export class FateRolls {
         testData.roll.editRollAtIndex(changes);
         return { newRoll, changedRolls, changes };
     }
+
     /**
      * Gets fate point information based on source
      * @param {Object} actor - The actor
@@ -463,6 +545,7 @@ export class FateRolls {
             };
         }
     }
+
     static #buildSchipIconRow(actor, schipsource, remaining, tooltipText) {
         const safeRemaining = Math.max(0, Number(remaining) || 0);
         let schipList = [];
@@ -482,6 +565,7 @@ export class FateRolls {
             .join('');
         return `<div class="row-schips flexrow flexAlignCenter stackedSchips" data-tooltip="${foundry.utils.escapeHTML(tooltipText)}">${icons}</div>`;
     }
+
     /**
      * Builds formatted info message for fate point usage
      * @param {Object} actor - The actor using fate points
@@ -499,6 +583,7 @@ export class FateRolls {
                     ${schipsRow}
                 </div>`;
     }
+
     /**
      * Handles improvement for multi-die roll types (spells, liturgies, etc.)
      * @param {Object} actor - The actor performing improvement
@@ -552,6 +637,7 @@ export class FateRolls {
         });
         dialog.render(true);
     }
+
     /**
      * Handles improvement for single-die roll types
      * @param {Object} actor - The actor performing improvement
@@ -576,6 +662,7 @@ export class FateRolls {
         await message.update({ [`flags.data.${this.FLAGS.FATE_IMPROVED}`]: true });
         await this.#reduceSchips(actor, schipsource);
     }
+
     /**
      * Perform a coin toss by rolling a single "1DC" die and display the result with Dice So Nice.
      *

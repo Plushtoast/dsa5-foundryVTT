@@ -103,4 +103,15 @@
     .dmargin0 {
         margin: 0;
     }
+
+    .underlined-header {
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        font-family: 'Modesto Condensed', sans-serif;
+        font-size: 1.2em;
+    }
+    
+    .cursor-drag {
+        cursor: grab;
+    }
 }

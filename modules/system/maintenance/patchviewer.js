@@ -25,6 +25,7 @@ export class PatchViewer extends DefaultAppv2 {
     }
 
     static DEFAULT_OPTIONS = {
+        id: 'dsa5-patch-viewer',
         classes: ['dsa5', 'largeDialog', 'patches'],
         position: {
             width: 960,
