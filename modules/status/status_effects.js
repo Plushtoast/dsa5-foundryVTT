@@ -204,7 +204,7 @@ export default class DSA5StatusEffects {
   }
 
   static immuneToEffect(target, effect, silent = true) {
-    if (!effect.id || effect.system.condition.max == null) return;
+    if (!effect.id || effect.system?.condition?.max == null) return;
 
     const immunities = getProperty(target, 'system.immunities') || [];
     let res;
@@ -256,11 +256,11 @@ export default class DSA5StatusEffects {
   static async createEffect(actor, effect, value, auto) {
     //const immune = this.immuneToEffect(actor, effect)
     effect.name = _loc(effect.name);
+    effect.system ??= {};
+    effect.system.condition ??= {};
     this.immuneToEffect(actor, effect, false);
     //if (immune) return immune
 
-    effect.system ??= {};
-    effect.system.condition ??= {};
     const conditionData = effect.system.condition;
 
     // Stack math only applies to cumulative conditions that define a max level.
