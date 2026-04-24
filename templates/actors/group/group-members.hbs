@@ -68,6 +68,7 @@
         {{/if}}
         {{/if}}
       </div>
+      {{#if hero.canViewPrivateDetails}}
       <div class="flexrow col">
         <div class='col flex0 flexrow gap10px flexAlignEnd'>
           {{#each hero.coins as |coin|}}
@@ -81,7 +82,9 @@
           </div>
         </div>
       </div>
+      {{/if}}
     </div>
+    {{#if hero.canViewPrivateDetails}}
     <div class='row-section wrap col'>
       {{#if hero.vantages.length}}
       <div class='col row-section wrap cards'>
@@ -93,6 +96,7 @@
       </div>
       {{/if}}
     </div>
+    {{/if}}
   </div>
   {{/each}}
   <div class="droparea">

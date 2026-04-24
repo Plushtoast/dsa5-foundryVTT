@@ -466,16 +466,19 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       const s = actor.system;
       const vantages = [];
       const purse = [];
+      const canViewPrivateDetails = game.user.isGM || actor.isOwner;
 
-      for (const item of actor.items) {
-        switch (item.type) {
-          case 'advantage':
-          case 'disadvantage':
-            vantages.push({ name: item.name, uuid: item.uuid, step: item.system.step?.value, max: item.system.max?.value });
-            break;
-          case 'money':
-            purse.push(item);
-            break;
+      if (canViewPrivateDetails) {
+        for (const item of actor.items) {
+          switch (item.type) {
+            case 'advantage':
+            case 'disadvantage':
+              vantages.push({ name: item.name, uuid: item.uuid, step: item.system.step?.value, max: item.system.max?.value });
+              break;
+            case 'money':
+              purse.push(item);
+              break;
+          }
         }
       }
 
@@ -490,6 +493,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         type: actor.type,
         ownerName: owner?.name ?? null,
         ownerColor: owner?.color ?? null,
+        canViewPrivateDetails,
         schips: actor.schipshtml?.() || [],
         coins: purse
           .sort((a, b) => b.system.price.value - a.system.price.value)
