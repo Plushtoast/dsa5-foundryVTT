@@ -90,6 +90,22 @@ export class DSADataModel extends foundry.abstract.TypeDataModel {
     }
   }
 
+  static #collectDescriptors(target, stopAt, skip = new Set()) {
+    const descriptors = new Map();
+    let current = target;
+
+    while (current && current !== stopAt) {
+      for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(current))) {
+        if (skip.has(key) || descriptors.has(key)) continue;
+        descriptors.set(key, descriptor);
+      }
+
+      current = Object.getPrototypeOf(current);
+    }
+
+    return descriptors;
+  }
+
   static mixin(...templates) {
     for (const template of templates) {
       if (!(template.prototype instanceof DSADataModel)) {
@@ -105,13 +121,12 @@ export class DSADataModel extends foundry.abstract.TypeDataModel {
     });
 
     for (const template of templates) {
-      for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(template))) {
+      for (const [key, descriptor] of DSADataModel.#collectDescriptors(template, DSADataModel, this._immiscible)) {
         if (this._immiscible.has(key)) continue;
         Object.defineProperty(Base, key, descriptor);
       }
 
-      for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(template.prototype))) {
-        if (['constructor'].includes(key)) continue;
+      for (const [key, descriptor] of DSADataModel.#collectDescriptors(template.prototype, DSADataModel.prototype, new Set(['constructor']))) {
         Object.defineProperty(Base.prototype, key, descriptor);
       }
     }
