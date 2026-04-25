@@ -1,5 +1,5 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import RuleChaos from '../system/rules/rule_chaos.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
 
 export default class DSA5Combatant extends Combatant {
   constructor(data, context) {
@@ -32,7 +32,7 @@ export default class DSA5Combatant extends Combatant {
     };
 
     if (unarm) {
-      const items = this.actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && !RuleChaos.improvisedWeapon.test(x.name));
+      const items = this.actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && !MeleeweaponData.isImprovisedWeapon(x));
       if (items.length) {
         actorChange.items = items.map((x) => {
           return { _id: x.id, 'system.worn.value': false };

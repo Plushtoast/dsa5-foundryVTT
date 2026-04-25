@@ -13,6 +13,7 @@ import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import GroupCheck from '../system/rolls/group-check.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1693,6 +1694,18 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
   async _prepareContext(_options) {
     const context = await super._prepareContext(_options);
     context.isBrawling = _loc(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
+    context.showImprovisedToggle = MeleeweaponData.hasImprovisedName(this.item.name);
+    if (context.alternateAttacks) {
+      context.alternateAttacks = Object.fromEntries(
+        Object.entries(context.alternateAttacks).map(([key, attack]) => [
+          key,
+          {
+            ...attack,
+            showImprovisedToggle: MeleeweaponData.hasImprovisedName(attack.name || this.item.name),
+          },
+        ]),
+      );
+    }
     return context;
   }
 }

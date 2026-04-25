@@ -495,9 +495,22 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         ownerColor: owner?.color ?? null,
         canViewPrivateDetails,
         schips: actor.schipshtml?.() || [],
-        coins: purse
-          .sort((a, b) => b.system.price.value - a.system.price.value)
-          .map((x) => ({ name: x.name, img: x.img, quantity: x.system.quantity.value })),
+        prepare: {
+          money: {
+            coins: purse
+              .sort((a, b) => b.system.price.value - a.system.price.value)
+              .map((x) => ({
+                _id: x.id,
+                name: x.name,
+                img: x.img,
+                system: {
+                  quantity: {
+                    value: x.system.quantity.value,
+                  },
+                },
+              })),
+          },
+        },
         system: {
           status: {
             wounds: { value: s.status?.wounds?.value ?? 0, max: s.status?.wounds?.max ?? 0 },

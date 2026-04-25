@@ -17,7 +17,7 @@ export default function () {
       {
         icon: '<i class="fas fa-info-circle"></i>',
         label: _loc('DSA5Wiki'),
-        link: `https://github.com/Plushtoast/dsa5-foundryVTT/wiki${game.i18n.lang == 'de' ? '/de-Home' : ''}`,
+        link: 'https://plushtoast.github.io/dsa5-foundryVTT-wiki/',
       },
       {
         icon: '<div></div>',

@@ -22,6 +22,7 @@ import { applyDamage } from '../../hooks/chat_context.js';
 import DSATriggers from '../automation/triggers.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import CombatskillData from '../../data/item/combatskill.js';
+import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 
@@ -300,7 +301,7 @@ export default class DiceDSA5 {
     const sceneStress = DICE_CONSTANTS.DIFFICULTY.CHALLENGING;
 
     if (typeof testData.source.toObject === 'function') {
-      testData.source = testData.source.toObject(false);
+      testData.source = DSA5_Utility.toObjectIfPossible(testData.source);
     }
 
     const actor = this.#actorFromTestData(testData);
@@ -550,7 +551,7 @@ export default class DiceDSA5 {
    * @param {Function} adjustBotch 
    */
   static #adjustForImprovisedWeapon(testData, actor, adjustBotch) {
-    if (!RuleChaos.improvisedWeapon.test(testData.source.name)) return;
+    if (!MeleeweaponData.isImprovisedWeapon(testData.source)) return;
 
     if (!SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.improvisedWeaponMaster')) {
       adjustBotch();

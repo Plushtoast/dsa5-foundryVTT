@@ -6,7 +6,6 @@ import DSA5 from '../../config/config-dsa5.js';
 import DSAStringField from '../fields/dsa_string_field.js';
 import AoeTemplate from './templates/aoe.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
-import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import { ItemFactory } from '../../item/item-factory.js';
 

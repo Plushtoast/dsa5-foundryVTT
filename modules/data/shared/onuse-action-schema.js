@@ -4,7 +4,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 export function onUseActionField() {
   return new SchemaField({
     name: new StringField({ initial: '', label: 'SHEET.onUseActionName' }),
-    img: new FilePathField({ initial: '', categories: ['IMAGE'], label: 'SHEET.onUseActionImage' }),
+    img: new FilePathField({ initial: '', categories: ['IMAGE'], blank: true, label: 'SHEET.onUseActionImage' }),
     macro: new StringField({ initial: '' }),
   });
 }
