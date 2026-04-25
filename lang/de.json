@@ -2169,6 +2169,20 @@
         "chooseSupportSkill": "Wähle die Unterstützungsfertigkeit.",
         "noSupportSkill": "Dieser Charakter hat weder Singen noch Musizieren."
     },
+    "COMMON_KNOWLEDGE": {
+        "applied": "Allgemeinwissen wurde verwendet.",
+        "tooDifficult": "Die Probe ist zu schwer."
+    },
+    "PRACTICAL_APPLICATION": {
+        "alreadyApplied": "Praxisbezug ist bereits ausgewählt.",
+        "description": "In einer passenden Situation darf der Held vor einer Talentprobe den Versuch wagen, sein theoretisches Wissen praktisch einzusetzen. Dabei legt er zunächst eine Probe auf ein passendes Wissenstalent ab.",
+        "instruction": "Du kannst Erleichterungen in Höhe von {qs} auf die Teilproben festlegen.",
+        "limit": "Maximal 2 pro Attribut.",
+        "maxPoints": "Es sind maximal {qs} Punkte verteilbar."
+    },
+    "BURGER_MENU": {
+        "menuLabel": "{abilityName} anwenden"
+    },
     "LocalizedAbilityModifiers": {
         "at": "at",
         "pa": "pa",
@@ -2176,6 +2190,8 @@
         "dm": "vm"
     },
     "LocalizedIDs": {
+        "commonKnowledge": "Allgemeinwissen",
+        "practicalApplication": "Praxisbezug",
         "zoologyDomesticated": "Tierkunde (domestizierte Tiere)",
         "zoologyWild": "Tierkunde (Wildtiere)",
         "Zoology": "Tierkunde",

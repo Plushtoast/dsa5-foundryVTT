@@ -188,7 +188,8 @@ Hooks.once('init', () => {
     config: DSA5,
     ITEM_CONSTANTS,
     TestSuite,
-    memory: new RollMemory()
+    memory: new RollMemory(),
+    dsa5HookRegistry: new Set(),
   };
 
   CONFIG.Actor.documentClass = Actordsa5;

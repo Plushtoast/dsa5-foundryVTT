@@ -2495,7 +2495,23 @@
         "chooseSupportSkill": "Choose the support skill.",
         "noSupportSkill": "This character has neither Singing nor Music."
     },
+    "COMMON_KNOWLEDGE": {
+        "applied": "Common Knowledge was used.",
+        "tooDifficult": "The test is too difficult."
+    },
+    "PRACTICAL_APPLICATION": {
+        "alreadyApplied": "Practical Application is already selected.",
+        "description": "In a suitable situation, the hero may attempt to apply theoretical knowledge practically before a skill check. To do so, first make a check on a suitable knowledge skill.",
+        "instruction": "You can distribute bonuses totaling {qs} to the partial attribute checks.",
+        "limit": "Maximum 2 per attribute.",
+        "maxPoints": "A maximum of {qs} points can be distributed."
+    },
+    "BURGER_MENU": {
+        "menuLabel": "Apply {abilityName}"
+    },
     "LocalizedIDs": {
+        "commonKnowledge": "Common Knowledge",
+        "practicalApplication": "Practical Application",
         "zoologyDomesticated": "Animal Lore (Domesticated Animals)",
         "zoologyWild": "Animal Lore (Wild Animals)",
         "Zoology": "Animal Lore",

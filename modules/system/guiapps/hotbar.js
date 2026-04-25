@@ -532,7 +532,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
         case 'trait':
           if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-            groups.attacks.push(this.tokenHotbar?._traitEntry(x, actor.system));
+            const traitEntry = this.tokenHotbar?._traitEntry(x, actor.system);
+            if (traitEntry) groups.attacks.push(traitEntry);
           }
           break;
         case 'consumable':

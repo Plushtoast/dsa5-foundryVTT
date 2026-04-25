@@ -14,6 +14,7 @@ import * as initScene from './scene.js';
 import * as initKeybindings from './keybindings.js';
 import * as rollExtensions from '../system/rolls/dsarolls.js';
 import '../system/helpers/situational-modifiers-widget.js';
+import { BurgerMenuRegistry } from '../item/burgermenus/burger-menu-registry.js';
 import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
@@ -62,6 +63,7 @@ export default function () {
   initScene.default();
   rollExtensions.default();
   setActorDelta();
+  BurgerMenuRegistry.registerHooks();
   registerMagicalActionHooks();
 }
 
