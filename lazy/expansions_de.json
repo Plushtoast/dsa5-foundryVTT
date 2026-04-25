@@ -104,7 +104,7 @@
           ]
         },
         {
-          "id": "dsa5-aventurian-tavers",
+          "id": "dsa5-aventurian-taverns",
           "label": "Aventurische Tavernen",
           "href": "https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/abenteuer-module/3028/dsa5-aventurische-tavernen-fuer-foundry-vtt",
           "image": {
@@ -186,6 +186,16 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory/icons/journals/coverde.webp"
           },
           "description": "Kein Krieger kommt ohne seine Waffen, kein Dieb ohne sein Einbruchswerkzeug und kein Magier ohne seine Bücher aus. Die Aventurische Rüstkammer enthält Beschreibungen von über 100 nützlichen Ausrüstungsgegenständen, Waffen und Rüstungen für reisende Helden und…",
+          "badges": []
+        },
+        {
+          "id": "dsa5-retosarmory",
+          "label": "Kaiser Retos Waffenkammer",
+          "href": "https://www.f-shop.de/detail/index/sArticle/4088",
+          "image": {
+            "src": "https://www.f-shop.de/media/image/28/f3/35/ESD048_0_0999.jpg"
+          },
+          "description": "Vollends in Foundry integriert: Das Kaiserlich Garethische Museum für Waffenkunde, nach seinem Stifter meist Kaiser Retos Waffenkammer genannt, ist ein Ort, der Heldenherzen höher schlagen lässt: Immerhin ist das Gebäude voller von einzigartigen Waffen und Rüstungen, …",
           "badges": []
         },
         {

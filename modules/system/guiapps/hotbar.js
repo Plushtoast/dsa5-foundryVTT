@@ -512,7 +512,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
         case 'trait':
           if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-            groups.attacks.push(this.tokenHotbar?._traitEntry(x, actor.system));
+            const traitEntry = this.tokenHotbar?._traitEntry(x, actor.system);
+            if (traitEntry) groups.attacks.push(traitEntry);
           }
           break;
         case 'consumable':
@@ -535,15 +536,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         this.#pushSkill(groups, x.type, this.tokenHotbar?._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
       }
       if (x.getFlag('dsa5', 'enchantments')) {
-        if (!groups.skills.enchantment) groups.skills.enchantment = [];
         for (let enchantment of x.getFlag('dsa5', 'enchantments')) {
-          groups.skills.enchantment.push(this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
+          this.#pushSkill(groups, 'enchantment', this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
         }
       }
     }
   }
 
   #pushSkill(groups, key, entry) {
+    if (!entry) return;
     if (!groups.skills[key]) groups.skills[key] = [];
     groups.skills[key].push(entry);
   }

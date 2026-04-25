@@ -114,6 +114,9 @@ If you want to discuss TDE for foundry or need some assistance you can also join
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2644/dsa5-aventurische-ruestkammer-ii-fuer-foundry-vtt" title="Aventurische Rüstkammer II">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-armory2/icons/journals/coverde.webp" alt="Aventurische Rüstkammer II" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
+    <a href="https://www.f-shop.de/detail/index/sArticle/4088" title="Kaiser Retos Waffenkammer">
+        <img src="https://www.f-shop.de/media/image/28/f3/35/ESD048_0_0999.jpg" alt="Kaiser Retos Waffenkammer" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
+    </a>
     <a href="https://www.f-shop.de/virtual-tabletops/das-schwarze-auge-vtt/regel-module/2936/dsa5-aventurisches-transmutarium-fuer-foundry-vtt">
         <img src="https://ulisses-digital.de/R20/dsa5/modules/dsa5-transmutarium/icons/journal/coverde.webp" alt="Aventurisches Transmutarium" style="margin-right: 5px; margin-bottom: 5px; text-align:center; width:210px;">
     </a>
