@@ -1777,7 +1777,7 @@ a.img-entity-link {
 
 .dsajournal .heading.h3 a:before {
   content: '\f0da';
-  font-family: 'Font Awesome 6 Pro';
+  font-family: 'Font Awesome 7 Pro';
   font-weight: 900;
   color: darkred;
   position: relative;
@@ -1837,7 +1837,7 @@ a.img-entity-link {
 .dsaDraggedOver {
   &:before {
     content: '\e4bd';
-    font-family: 'Font Awesome 6 Pro';
+    font-family: 'Font Awesome 7 Pro';
     inset: 0;
     text-align: center;
     font-size: 8em;
@@ -4085,7 +4085,7 @@ select.noAppearance {
 }
 
 .tokenHotbarInner>ul>li.effect>div:before {
-  font-family: 'Font Awesome 6 Pro';
+  font-family: 'Font Awesome 7 Pro';
   font-weight: 900;
   content: '\f067';
 }
@@ -5476,6 +5476,7 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('theme-dark.scss');
 @include meta.load-css('vslider.scss');
 @include meta.load-css('vwidget.scss');
+@include meta.load-css('card.scss');
 @include meta.load-css('card-list.scss');
 @include meta.load-css('immersive/immersive.scss');
 @include meta.load-css('legacy/legacy.scss');

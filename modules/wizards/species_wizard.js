@@ -109,7 +109,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     const apCost = Number(parent.find('.apCost').text());
     if (!this._validateInput(parent, app) || !(await this.actor.checkEnoughXP(apCost)) || (await this.alreadyAdded(this.actor.system.details.species.value, 'species'))) {
       parent.find('button.ok i').toggleClass('fa-check fa-spinner fa-spin');
-      return;
+      return false;
     }
 
     const update = {
@@ -148,6 +148,7 @@ export default class SpeciesWizard extends WizardDSA5 {
     await APTracker.track(this.actor, { type: 'item', item: this.species, state: 1 }, apCost);
 
     this.finalizeUpdate();
+    return true;
   }
 
   enrichAttributeRequirements(attributeRequirements) {

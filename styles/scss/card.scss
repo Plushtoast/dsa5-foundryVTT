@@ -1,0 +1,46 @@
+.dsa5 {
+  .dsa-card-panel {
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid rgba(88, 67, 45, 0.28);
+    border-radius: 2px;
+    background:
+      linear-gradient(180deg, rgba(255, 251, 244, 0.96) 0%, rgba(248, 240, 226, 0.92) 100%),
+      rgba(255, 255, 255, 0.7);
+    box-shadow: 0 8px 22px rgba(57, 37, 17, 0.08);
+  }
+
+  .dsa-card-panel__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    &--split {
+      flex-direction: row;
+      align-items: start;
+      gap: 16px;
+    }
+  }
+
+  .dsa-card-panel__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(83, 57, 30, 0.72);
+  }
+
+  .dsa-card-panel__copy {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: rgba(65, 48, 33, 0.82);
+  }
+}
