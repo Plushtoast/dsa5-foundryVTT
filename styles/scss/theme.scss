@@ -114,4 +114,107 @@
     .cursor-drag {
         cursor: grab;
     }
+
+    $dsa-spacing-scale: (
+        0: 0,
+        1: 4px,
+        2: 8px,
+        3: 12px,
+        4: 16px,
+        5: 20px,
+        6: 24px,
+    );
+
+    @mixin dsa-space-utility($prefix, $property, $value) {
+        .#{$prefix} {
+            #{$property}: $value !important;
+        }
+    }
+
+    @each $step, $space in $dsa-spacing-scale {
+        @include dsa-space-utility('dsam-#{$step}', margin, $space);
+        @include dsa-space-utility('dsap-#{$step}', padding, $space);
+
+        .dsamx-#{$step},
+        .dsalmx-#{$step} {
+            margin-left: $space !important;
+            margin-right: $space !important;
+        }
+
+        .dsamy-#{$step},
+        .dsalmy-#{$step} {
+            margin-top: $space !important;
+            margin-bottom: $space !important;
+        }
+
+        .dsamt-#{$step},
+        .dsalmt-#{$step} {
+            margin-top: $space !important;
+        }
+
+        .dsamb-#{$step},
+        .dsalmb-#{$step} {
+            margin-bottom: $space !important;
+        }
+
+        .dsaml-#{$step},
+        .dsalml-#{$step} {
+            margin-left: $space !important;
+        }
+
+        .dsamr-#{$step},
+        .dsalmr-#{$step} {
+            margin-right: $space !important;
+        }
+
+        .dsapx-#{$step},
+        .dsalpx-#{$step} {
+            padding-left: $space !important;
+            padding-right: $space !important;
+        }
+
+        .dsapy-#{$step},
+        .dsalpy-#{$step} {
+            padding-top: $space !important;
+            padding-bottom: $space !important;
+        }
+
+        .dsapt-#{$step},
+        .dsalpt-#{$step} {
+            padding-top: $space !important;
+        }
+
+        .dsapb-#{$step},
+        .dsalpb-#{$step} {
+            padding-bottom: $space !important;
+        }
+
+        .dsapl-#{$step},
+        .dsalpl-#{$step} {
+            padding-left: $space !important;
+        }
+
+        .dsapr-#{$step},
+        .dsalpr-#{$step} {
+            padding-right: $space !important;
+        }
+    }
+
+    .dsams-auto,
+    .dsalms-auto {
+        margin-left: auto !important;
+    }
+
+    .dsamr-auto,
+    .dsalmr-auto,
+    .dsame-auto,
+    .dsalme-auto {
+        margin-right: auto !important;
+    }
+
+    .dsamx-auto,
+    .dsalmx-auto {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 }
