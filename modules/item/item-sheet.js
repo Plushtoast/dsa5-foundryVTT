@@ -1762,7 +1762,89 @@ class ItemSpeciesDSA5 extends NoEffectsSheet {
       width: 530,
       height: 570,
     },
+    actions: {
+      rollGeneratorEntry: this.rollGeneratorEntry,
+    },
+    ownerActions: {
+      addGeneratorEntry: this.addGeneratorEntry,
+      deleteGeneratorEntry: this.deleteGeneratorEntry,
+    },
   };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const systemClass = this.item.system.constructor;
+    const generatorFieldConfigs = [
+      {
+        field: 'furSkinColor',
+        label: systemClass.getGeneratorLabel('furSkinColor'),
+        isTextarea: true,
+        placeholder: '1d6\n1-2=dunkelbraun\n3-4=hellbraun\n5=weiss\n6=schwarz',
+      },
+      {
+        field: 'eyeColor',
+        label: systemClass.getGeneratorLabel('eyeColor'),
+        isTextarea: true,
+        placeholder: '1d20\n1-2=schwarzbraun\n3-4=graublau\n5-8=saphirblau',
+      },
+      {
+        field: 'bodyHeight',
+        label: systemClass.getGeneratorLabel('bodyHeight'),
+        unit: systemClass.getGeneratorUnit('bodyHeight'),
+        isTextarea: false,
+        placeholder: '168 + 2d20',
+      },
+      {
+        field: 'weight',
+        label: systemClass.getGeneratorLabel('weight'),
+        unit: systemClass.getGeneratorUnit('weight'),
+        isTextarea: false,
+        placeholder: '@bodyheight - 110 - 2d6',
+      },
+    ];
+
+    data.generatorFields = generatorFieldConfigs.map((config) => ({
+      ...config,
+      entries: this.item.system.getGeneratorEntries(config.field),
+    }));
+    return data;
+  }
+
+  static async addGeneratorEntry(_event, target) {
+    const field = target.dataset.field;
+    if (!field) return;
+
+    await this.item.system.addGeneratorEntry(field);
+  }
+
+  static async deleteGeneratorEntry(_event, target) {
+    const { field, key } = target.dataset;
+    if (!field || !key) return;
+
+    await this.item.system.removeGeneratorEntry(field, key);
+  }
+
+  static async rollGeneratorEntry(_event, target) {
+    const { field, key } = target.dataset;
+    if (!field || !key) return;
+
+    try {
+      const result = field === 'weight'
+        ? await this.rollWeightEntry(key)
+        : await this.item.system.rollNamedGeneratorEntry(field, key);
+
+      const label = this.item.system.constructor.getGeneratorLabel(field);
+      const suffix = result.total != null && result.formula ? ` (${result.formula} = ${result.total})` : '';
+      ui.notifications.info(`${label} - ${result.display}${suffix}`);
+    } catch (error) {
+      ui.notifications.warn(error.message);
+    }
+  }
+
+  static async rollWeightEntry(entryId) {
+    const { result } = await this.item.system.rollWeightEntryWithDependencies(entryId);
+    return result;
+  }
 }
 
 class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {

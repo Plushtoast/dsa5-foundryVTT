@@ -2140,6 +2140,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       const isBagWithContents = sourceActor && item.system.isBagWithContents;
       if (isBagWithContents) {
         await transferBagWithContents(sourceActor, this.actor, itemData);
+      } else if (item.type === 'species') {
+        await this._manageDragItems(item, item.type);
       } else {
         await this._onDropItemCreate(itemData);
       }

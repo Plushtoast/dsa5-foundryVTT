@@ -621,6 +621,18 @@
     "dsa5.ActorSheetdsa5Creature": "DSA5 - Kreatur",
     "dsa5.ActorSheetdsa5NPC": "DSA5 - NSC",
     "dsa5.DSACharBuilder": "DSA5 - Heldenerschaffung",
+    "SPECIES_GENERATOR": {
+        "empty": "Keine Generatoreinträge konfiguriert.",
+        "emptyEntry": "Der Generatoreintrag ist leer.",
+        "invalidFormula": "Die Generatorformel ist keine gültige Würfelformel.",
+        "invalidTableFormula": "Die Generatortabellenformel ist keine gültige Würfelformel.",
+        "missingRows": "Der Generatortabelleneintrag muss mindestens eine Bereichszeile enthalten.",
+        "invalidRow": "Ungültige Generatortabellenzeile: {line}",
+        "missingResult": "Der Generatortabellenzeile fehlt ein Ergebnis: {line}",
+        "invalidRange": "Die Generatortabellenzeile hat einen ungültigen Bereich: {line}",
+        "rollNoResult": "Der Tabellenwurf hat keinem konfigurierten Ergebnis entsprochen.",
+        "missingBodyHeight": "Keine passende Größenformel für {name} konfiguriert."
+    },
     "temperature": {
         "heatProtection": "Hitzeschutz",
         "coldProtection": "Kälteschutz"

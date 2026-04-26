@@ -18,4 +18,91 @@
   {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
   {{formGroup systemFields.recommendedCultures.fields.value value=document.system.recommendedCultures.value localize=true classes='full-height' elementType='textarea' tooltip='TT.commaSeparated'}}
 
+  {{#each generatorFields as |generator|}}
+    <fieldset>
+      <legend class='row-section flexrow'>
+        <span>{{generator.label}}</span>
+        <button
+          type='button'
+          class='button icons fas fa-plus dsadesignbutton noBorder flex0'
+          data-action='addGeneratorEntry'
+          data-field='{{generator.field}}'
+          data-tooltip='DOCUMENT.Create'
+        ></button>
+      </legend>
+
+      {{#if generator.entries.length}}
+        <div class='row-section'>
+          <label class='col third'>{{localize 'Name'}}</label>
+          <label class='col'>{{localize 'Description'}}</label>
+          <div class='flex0 row-section'></div>
+        </div>
+
+        {{#each generator.entries as |entry|}}
+          <div class='row-section' data-key='{{entry.id}}'>
+            <div class='col third'>
+              <div class='form-fields'>
+                <input
+                  type='text'
+                  name='{{concat "system.generators." generator.field "." entry.id ".name"}}'
+                  value='{{entry.rawName}}'
+                  placeholder='{{@root.document.name}}'
+                />
+              </div>
+            </div>
+            <div class='col'>
+              <div class='form-fields'>
+                {{#if generator.isTextarea}}
+                  <textarea
+                    name='{{concat "system.generators." generator.field "." entry.id ".value"}}'
+                    rows='4'
+                    placeholder='{{generator.placeholder}}'
+                  >{{entry.value}}</textarea>
+                {{else}}
+                  <input
+                    type='text'
+                    name='{{concat "system.generators." generator.field "." entry.id ".value"}}'
+                    value='{{entry.value}}'
+                    placeholder='{{generator.placeholder}}'
+                  />
+                {{/if}}
+              </div>
+              {{#unless entry.rollable}}
+                <small>{{entry.error}}</small>
+              {{/unless}}
+            </div>
+            <div class='flex0 row-section'>
+              {{#if entry.rollable}}
+                <button
+                  type='button'
+                  class='icon dsadesignbutton noBorder fas fa-dice-d20 flex0'
+                  data-action='rollGeneratorEntry'
+                  data-field='{{generator.field}}'
+                  data-key='{{entry.id}}'
+                  data-tooltip='SHEET.RollEffect'
+                ></button>
+              {{else}}
+                <button
+                  type='button'
+                  class='icon dsadesignbutton noBorder fas fa-exclamation-triangle flex0'
+                  data-tooltip='{{entry.error}}'
+                ></button>
+              {{/if}}
+              <button
+                type='button'
+                class='icon dsadesignbutton noBorder fas fa-trash flex0'
+                data-action='deleteGeneratorEntry'
+                data-field='{{generator.field}}'
+                data-key='{{entry.id}}'
+                data-tooltip='delete'
+              ></button>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p>{{localize 'SPECIES_GENERATOR.empty'}}</p>
+      {{/if}}
+    </fieldset>
+  {{/each}}
+
 </div>

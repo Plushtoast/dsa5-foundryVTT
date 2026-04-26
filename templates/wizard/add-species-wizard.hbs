@@ -72,6 +72,69 @@
                     <hr /> 
                 {{/each}} 
                 {{/if}}
+
+                {{#if generatorsToChose}}
+                <h2>{{localize 'personalDetails'}}</h2>
+                {{#each generatorFields as |generatorField|}}
+                <div class="groupbox species-generator-field" data-field="{{generatorField.field}}">
+                    <legend class="table-title lineheight">{{generatorField.label}}</legend>
+                    <div class="row-section wrap">
+                        {{#each generatorField.entries as |entry|}}
+                        <div class="col">
+                            <div class="row-section">
+                               
+                                <div class="col ten">
+                                    {{#if ../hasMultipleEntries}}
+                                    <input
+                                        type="radio"
+                                        class="species-generator-choice"
+                                        name="selectedGenerator.{{../field}}"
+                                        value="{{entry.id}}"
+                                        data-field="{{../field}}"
+                                        {{#if entry.selected}}checked{{/if}}
+                                    />
+                                    {{/if}}
+                                </div>
+                                <div class="col sixty">
+                                    <b>{{entry.name}}</b>
+                                    {{#if entry.outcomeDisplay}}
+                                    <div><small>{{entry.outcomeDisplay}}</small></div>
+                                    {{/if}}
+                                    {{#unless entry.rollable}}
+                                    <div><small>{{entry.error}}</small></div>
+                                    {{/unless}}
+                                </div>
+                                <div class="col third">
+                                    <div class="form-fields">
+                                        <input
+                                            type="text"
+                                            class="species-generator-result"
+                                            data-field="{{../field}}"
+                                            data-entry="{{entry.id}}"
+                                            value="{{entry.resultDisplay}}"
+                                            placeholder="-"
+                                            readonly
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div class="col ten">
+                                    {{#if entry.rollable}}
+                                    <button
+                                        type="button"
+                                        class="icon fas fa-dice-d20 noBorder dsadesignbutton species-generator-roll"
+                                        data-field="{{../field}}"
+                                        data-entry="{{entry.id}}"
+                                    ></button>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/each}}
+                {{/if}}
             </div>
             {{/if}}
         </div>

@@ -755,6 +755,18 @@
     "dsa5.ActorSheetdsa5Creature": "TDE5 - Creature",
     "dsa5.ActorSheetdsa5NPC": "TDE5 - NPC",
     "dsa5.DSACharBuilder": "TDE5 - Character Creation",
+    "SPECIES_GENERATOR": {
+        "empty": "No generator entries configured.",
+        "emptyEntry": "Generator entry is empty.",
+        "invalidFormula": "Generator formula is not a valid roll formula.",
+        "invalidTableFormula": "Generator table formula is not a valid roll formula.",
+        "missingRows": "Generator table entry must contain at least one range row.",
+        "invalidRow": "Invalid generator table row: {line}",
+        "missingResult": "Generator table row is missing a result: {line}",
+        "invalidRange": "Generator table row has an invalid range: {line}",
+        "rollNoResult": "Generator table roll did not match any configured row.",
+        "missingBodyHeight": "No matching body height entry configured for {name}."
+    },
     "CALENDAR": {
         "DSA": {
             "Monday": "Windday",
