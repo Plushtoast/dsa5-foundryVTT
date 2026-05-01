@@ -4293,6 +4293,23 @@ select.noAppearance {
   }
 }
 
+.smallBoxItem[data-action] {
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--dsadesign1);
+    border-color: var(--dsadesign1);
+    color: white;
+    text-shadow: none;
+
+    i {
+      opacity: 1;
+    }
+  }
+}
+
 .emphasize {
   color: white;
   background-color: darkred;
@@ -4838,6 +4855,20 @@ input[type='checkbox'].autoCheckbox {
     width: 26px;
     float: left;
     border: none;
+  }
+}
+
+.on-use-action-picker {
+  .reactClick {
+    align-items: center;
+    width: 100%;
+    min-height: 34px;
+    text-align: left;
+  }
+
+  img {
+    height: 26px;
+    object-fit: contain;
   }
 }
 

@@ -112,7 +112,7 @@
 
             </div>
         </div>
-        <div class="row-section  wrap">
+        <div class="row-section wrap">
 
             <div class="col morph row-section skills table-title">
                 <div class="col ten">
@@ -189,7 +189,7 @@
             </div>
         </div>
 
-        <div class="row-section  wrap">
+        <div class="row-section wrap">
 
             <div class="col morph row-section skills table-title">
                 <div class="col ten">
@@ -199,7 +199,10 @@
                     {{localize "condition"}}
                 </div>
 
-                <div class="col five center">
+                <div class="col ten center">
+
+                </div>
+                <div class="col ten center">
                     {{localize 'source'}}
                 </div>
                 <div class="actor-status-action col ten">
@@ -214,7 +217,10 @@
                     {{localize "condition"}}
                 </div>
 
-                <div class="col five center">
+                <div class="col ten center">
+
+                </div>
+                <div class="col ten center">
                     {{localize 'source'}}
                 </div>
                 <div class="actor-status-action col ten">
@@ -222,8 +228,8 @@
                 </div>
             </div>
             {{#each transferedConditions as |item i|}}
-            <div class="row-section morph skills col statusEffect" data-item-id="{{item.parent.id}}" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}"{{/if}} {{{ifThen item.disabled 'style="opacity:0.5;"' ''}}}>
-                <div class="status-img col ten effectConfig">
+            <div class="row-section col morph skills" data-item-id="{{item.parent.id}}" data-origin="{{item.uuid}}" data-id="{{item._id}}" {{#if item.descriptor}}data-descriptor="{{item.descriptor}}"{{/if}} {{{ifThen item.disabled 'style="opacity:0.5;"' ''}}}>
+                <div class="status-img col ten flexcol flexAlignCenter statusEffect effectConfig">
                     <img src="{{item.img}}" />
                 </div>
                 <div class="col sixty flexcol">
@@ -236,7 +242,10 @@
                         {{/each}}
                     </small>
                 </div>
-                <div class="col five center">
+                <div class="col ten center">
+
+                </div>
+                <div class="col ten flexrow">
                     <a data-action="conditionEdit" class="condition-edit" data-uuid="{{item.parent.uuid}}"><i class="fas fa-info" data-tooltip="{{item.parent.name}}"></i></a>
                 </div>
                 <div class="actor-status-action col ten right flexrow">

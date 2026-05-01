@@ -20,7 +20,7 @@
                 <span>{{action.name}}</span>
             </div>
             <div class="col five flexrow flexAlignEnd">
-                {{#if canEditMacros}}
+                {{#if ../canEditMacros}}
                 <button type="button" class="icon dsadesignbutton noBorder fa fa-edit" data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"></button>
                 <button type="button" class="icon dsadesignbutton noBorder fa fa-trash" data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"></button>
                 {{/if}}
