@@ -117,6 +117,16 @@ export class GlobalToolTipHandler {
 
     static async _handleOnUseTooltip(data, actor) {
         const item = actor?.items.get(data.id);
+        if (!item) {
+            if (data.subfunction !== 'onUseEffect') return {};
+
+            const effect = actor?.effects.get(data.id) || (data.id?.includes('.') ? await fromUuid(data.id) : null);
+            if (!effect) return {};
+
+            const description = game.i18n.has(effect.description) ? _loc(effect.description) : effect.description;
+            return { description };
+        }
+
         let description;
         switch (item.type) {
             case 'specialability':

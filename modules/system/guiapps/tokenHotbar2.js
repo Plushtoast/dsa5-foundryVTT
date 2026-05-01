@@ -4,7 +4,6 @@ import Riding from '../automation/riding.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { tinyNotification } from '../helpers/view_helper.js';
-import DSA5Payment from '../payment/payment.js';
 import PaymentRequestService from '../queries/payment-requests.js';
 import { Trade } from '../../actor/trade.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
@@ -17,7 +16,7 @@ import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
-const { getProperty, mergeObject, duplicate } = foundry.utils;
+const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class TokenHotbar2 extends DefaultAppv2 {
@@ -415,7 +414,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       const onUse = new OnUseEffect(item);
       return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
     }
-    const effect = actor.effects.get(id);
+    const effect = actor.effects.get(id) || (id?.includes('.') ? await fromUuid(id) : null);
     if (effect) {
       const onUse = new OnUseEffect(effect);
       return onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));
@@ -648,9 +647,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
       onUse = onUsages.pop();
 
-      for (const ef of actor.effects) {
+      for (const ef of actor.allApplicableEffects()) {
+        if (ef.notApplicable || (!game.user.isGM && ef.system?.visibility?.hidePlayers)) continue;
         if (OnUseEffect.hasOnUseEffect(ef)) {
-          onUsages.push(this._actionEntry(ef, 'onUse', { subfunction: 'onUseEffect' }));
+          onUsages.push(this._actionEntry(ef, 'onUse', { id: ef.uuid, subfunction: 'onUseEffect' }));
         }
       }
       if (!onUse && onUsages.length) onUse = onUsages.pop();

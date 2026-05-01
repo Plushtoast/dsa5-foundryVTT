@@ -13,7 +13,7 @@ import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 import GroupActorSheet from '../../actor/group-sheet.js';
-const { getProperty, mergeObject } = foundry.utils;
+const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static BASEBARHEIGHT = 45;
@@ -23,6 +23,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
     skillgm: 'systems/dsa5/icons/categories/Skill.webp',
     enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
+    effect: 'icons/svg/aura.svg',
   };
   static WEAPON_POSITIONS = [
     "left:calc(50% - 74px);top:75px;",
@@ -36,6 +37,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     gm: 'gmMenu',
     skillgm: 'TYPES.Item.skill',
     enchantment: 'enchantment',
+    effect: 'statuseffects',
   };
 
   static DEFAULT_OPTIONS = {
@@ -562,6 +564,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       }
     }
+
+    for (const effect of actor.allApplicableEffects()) {
+      if (effect.notApplicable || (!game.user.isGM && effect.system?.visibility?.hidePlayers)) continue;
+      if (OnUseEffect.hasOnUseEffect(effect)) {
+        this.#pushSkill(groups, 'effect', this.tokenHotbar?._actionEntry(effect, 'onUse', { id: effect.uuid, subfunction: 'onUseEffect' }));
+      }
+    }
   }
 
   #pushSkill(groups, key, entry) {
@@ -1077,7 +1086,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       positionIndex += this.#addHumanoidWeapon(positions, humanoidWeapons, positionIndex);
     }
 
-    positionIndex += this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
+    this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
 
     //TODO add weapon editing later
     /*if (this.editMode && false) {
