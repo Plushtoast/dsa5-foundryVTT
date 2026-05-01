@@ -288,6 +288,7 @@ export default class OnUseEffect {
         amount,
         actors: actors.map((x) => x.id),
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedConditionAddActor',
         payload,
@@ -295,8 +296,12 @@ export default class OnUseEffect {
     }
   }
 
+  get suppressInfoMessage() {
+    return !!(this.currentOnUseArgs?.suppressInfoMessage || this.currentOnUseArgs?.regionEvent);
+  }
+
   async createInfoMessage(data, names, added = true) {
-    if (names.length) {
+    if (names.length && !this.suppressInfoMessage) {
       const format = added ? 'ActiveEffects.appliedEffect' : 'ActiveEffects.removedEffect';
       const infoMsg = _loc(format, {
         source: data.name,
@@ -326,6 +331,7 @@ export default class OnUseEffect {
         targets,
         amount
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedRemoveCondition',
         payload,
@@ -379,6 +385,7 @@ export default class OnUseEffect {
         data,
         targets,
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedConditionAdd',
         payload,

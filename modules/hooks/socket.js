@@ -150,6 +150,7 @@ export function connectSocket() {
       case 'socketedConditionAddActor':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
           onUse.socketedConditionAddActor(
             data.payload.actors.map((x) => game.actors.get(x)),
             data.payload.data,
@@ -163,12 +164,14 @@ export function connectSocket() {
       case 'socketedConditionAdd':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
           onUse.socketedConditionAdd(data.payload.targets, data.payload.data);
         });
         break;
       case 'socketedRemoveCondition':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
           onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId, data.payload.amount);
         });
         break;
