@@ -139,6 +139,8 @@ export class DSARegionTemplate {
     return {
       name: item.name,
       color: game.user.color,
+      levels: [canvas.level.id],
+      visibility: target.showZone !== false ? CONST.REGION_VISIBILITY.ALWAYS : CONST.REGION_VISIBILITY.NONE,
       restriction: { enabled: true },
       shapes: [shape],
       behaviors: [{

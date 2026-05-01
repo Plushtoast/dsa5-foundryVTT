@@ -5,6 +5,7 @@
     {{formInput systemFields.target.fields.type value=document.system.target.type localize=true blank='-'}}
   </div>
 </div>
+{{formGroup systemFields.target.fields.showZone value=document.system.target.showZone localize=true}}
 {{#if (eq document.system.target.type 'line')}}
   {{formGroup systemFields.target.fields.width value=document.system.target.width localize=true}}
 {{/if}}
