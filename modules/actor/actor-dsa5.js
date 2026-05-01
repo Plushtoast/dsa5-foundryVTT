@@ -473,7 +473,7 @@ export default class Actordsa5 extends Actor {
 
   _onDeleteDescendantDocuments(...args) {
     super._onDeleteDescendantDocuments(...args);
-    if (args[1] == 'effects') this.#syncEmanations();
+    if (args[1] == 'effects') this.#syncEmanations(args[2]);
     this.#renderCompanionOwnerSheets();
   }
 
@@ -494,9 +494,9 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  #syncEmanations() {
+  #syncEmanations(deletedEffects = []) {
     for (const token of this.getActiveTokens()) {
-      DSAAura.ensureEmanations(token);
+      DSAAura.ensureEmanations(token, { deletedEffects });
     }
   }
 

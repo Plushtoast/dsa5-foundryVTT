@@ -81,6 +81,8 @@ export default class OnUseEffect {
     const result = {};
     if (documents?.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const previousArgs = this.currentOnUseArgs;
+      this.currentOnUseArgs = args;
       try {
         args.result = result;
         const fn = new AsyncFunction('args', 'actor', 'item', 'effect', documents[0].command);
@@ -98,6 +100,8 @@ export default class OnUseEffect {
           console.error(err);
           result.error = true;
         }
+      } finally {
+        this.currentOnUseArgs = previousArgs;
       }
     } else {
       ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
@@ -261,7 +265,7 @@ export default class OnUseEffect {
     return OnUseEffect.effectBaseDummy(name, changes, duration);
   }
 
-  async socketedConditionAddActor(actors, data) {
+  async socketedConditionAddActor(actors, data, amount = 1) {
     if (game.user.isGM) {
       const systemCon = typeof data === 'string';
       if (systemCon) {
@@ -271,7 +275,7 @@ export default class OnUseEffect {
 
       const names = [];
       for (const actor of actors) {
-        if (systemCon) await actor.addCondition(data, 1, false, false);
+        if (systemCon) await actor.addCondition(data, amount, false, false);
         else await actor.addCondition(data);
 
         names.push(actor.name);
@@ -281,6 +285,7 @@ export default class OnUseEffect {
       const payload = {
         id: this.item.uuid,
         data,
+        amount,
         actors: actors.map((x) => x.id),
       };
       game.socket.emit('system.dsa5', {
@@ -319,6 +324,7 @@ export default class OnUseEffect {
         id: this.item.uuid,
         coreId,
         targets,
+        amount
       };
       game.socket.emit('system.dsa5', {
         type: 'socketedRemoveCondition',

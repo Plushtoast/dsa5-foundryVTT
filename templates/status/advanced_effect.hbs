@@ -41,6 +41,8 @@
     {{/if}}
     {{formGroup document.system.schema.fields.removeMessage value=document.system.removeMessage
     label="DSASETTINGS.notifyOnFadingEffects" localize=true choices=messageReceivers}}
+    {{formGroup document.system.schema.fields.macroArgs.fields.sourceItemUuid value=document.system.macroArgs.sourceItemUuid
+    label="ActiveEffects.sourceItemUuid" localize=true}}
 
     <div class="form-group">
         <label>{{localize 'charges'}}</label>

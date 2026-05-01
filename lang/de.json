@@ -2032,6 +2032,7 @@
         "onSuccess": "Bei Erfolg",
         "onFailure": "Bei Misserfolg",
         "onDelayed": "Verzögerter Start",
+        "sourceItemUuid": "Ursprungs-Gegenstands-UUID",
         "custom": "Sondereffekt",
         "creature": "Akteurlink (z.b. dsa5-core.corebestiary.Gotongi)",
         "resistRoll": "Widerstandsprobe",
@@ -2060,7 +2061,8 @@
             "conditionValue": "Stufe oder Wert für den ausgewählten Status.",
             "macro": "JavaScript-Makro, das für die ausgewählte erweiterte Funktion ausgeführt wird.",
             "creatureLinks": "Akteur-Links oder Kompendiums-IDs für Beschwörungs- oder Gestaltwandeleffekte.",
-            "onRemove": "JavaScript-Makro, das beim Entfernen dieses Effekts ausgeführt wird."
+            "onRemove": "JavaScript-Makro, das beim Entfernen dieses Effekts ausgeführt wird.",
+            "sourceItemUuid": "UUID des Ursprungs-Gegenstands, bleibt bei rekursivem Makro-Wiedereintritt erhalten (z. B. für akteurbasierte Aura-Makros)."
         },
         "placeholder": {
             "macros": "Macros können auf diese Variablen zugreifen:<br>actor - Der anvisierte Akteur<br>testData - All Daten für die aktuelle Probe<br>source - Die Quelle des Macros<br>options - Zusätzlicher Ausführungskontext; regionbasierte Effekte liefern options.regionEvent mit dem aktuellen Auslöser",

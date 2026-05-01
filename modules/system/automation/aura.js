@@ -8,9 +8,11 @@ export class DSAAura {
    * Creates missing emanation regions and removes orphaned ones.
    * @param {Token} token - The token placeable
    */
-  static async ensureEmanations(token) {
+  static async ensureEmanations(token, options = {}) {
     if (!token.actor) return;
     if (!DSA5_Utility.isActiveGM()) return;
+
+    const deletedAuraEffects = DSAAura.deletedAuraEffectMap(options.deletedEffects);
 
     const expectedAuras = token.actor.auras || [];
     const existingRegions = canvas.scene.regions.filter(
@@ -60,9 +62,42 @@ export class DSAAura {
     }
 
     // Remove orphaned emanation regions
+    for (const region of existingByUuid.values()) {
+      const effect = deletedAuraEffects.get(region.flags.dsa5.auraEffectUuid);
+      if (effect) await DSAAura.cleanupRegionTargets(region, effect);
+    }
+
     const toDelete = Array.from(existingByUuid.values()).map(r => r.id);
     if (toDelete.length) {
       await canvas.scene.deleteEmbeddedDocuments('Region', toDelete);
+    }
+  }
+
+  static deletedAuraEffectMap(effects = []) {
+    return new Map(
+      effects
+        .filter(effect => effect?.system?.aura?.isAura && effect.uuid)
+        .map(effect => [effect.uuid, effect])
+    );
+  }
+
+  static async cleanupRegionTargets(region, effect) {
+    const user = game.user;
+    for (const behavior of region.behaviors) {
+      if (behavior.disabled || behavior.type !== 'DSAAura') continue;
+      if (behavior.system?.effectUuid !== effect.uuid) continue;
+
+      for (const token of region.tokens) {
+        const deleted = !region.parent.tokens.has(token.id);
+        if (deleted) continue;
+
+        await behavior._handleRegionEvent({
+          name: CONST.REGION_EVENTS.TOKEN_EXIT,
+          data: { token, movement: null, effect },
+          region,
+          user,
+        });
+      }
     }
   }
 

@@ -153,6 +153,7 @@ export function connectSocket() {
           onUse.socketedConditionAddActor(
             data.payload.actors.map((x) => game.actors.get(x)),
             data.payload.data,
+            data.payload.amount,
           );
         });
         break;
@@ -168,7 +169,7 @@ export function connectSocket() {
       case 'socketedRemoveCondition':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
-          onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId);
+          onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId, data.payload.amount);
         });
         break;
       case 'socketedActorTransformation':

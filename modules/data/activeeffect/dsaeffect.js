@@ -58,6 +58,7 @@ export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.d
       creatureLinks: new StringField({ hint: 'ActiveEffects.hints.creatureLinks' }), // was args4
       onDelayed: new StringField({ hint: 'ActiveEffects.hints.onDelayed' }),
       onRemove: new StringField({ hint: 'ActiveEffects.hints.onRemove' }),
+      sourceItemUuid: new StringField({ hint: 'ActiveEffects.hints.sourceItemUuid' }),
     });
     schema.delayed = new SchemaField({
       enabled: new BooleanField({ initial: false }),

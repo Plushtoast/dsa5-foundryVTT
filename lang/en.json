@@ -2380,6 +2380,7 @@
         "onSuccess": "On success",
         "onFailure": "On failure",
         "onDelayed": "Delayed start",
+        "sourceItemUuid": "Source item UUID",
         "creature": "Actorlink (e.g. dsa5-core.coreenbestiary.Gotongi)",
         "resistRoll": "Resist check",
         "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
@@ -2407,7 +2408,8 @@
             "conditionValue": "Step or value applied for the selected status effect.",
             "macro": "JavaScript macro executed for the selected advanced function.",
             "creatureLinks": "Actor links or compendium ids used for conjuration or shapeshift effects.",
-            "onRemove": "JavaScript macro executed when this effect is removed."
+            "onRemove": "JavaScript macro executed when this effect is removed.",
+            "sourceItemUuid": "UUID of the originating item, preserved across recursive macro re-entry (e.g. for actor-owned aura macros)."
         },
         "placeholder": {
             "macros": "Macros have access to the following variables:<br>actor - The targeted actor<br>testData - All data for the current check<br>source - The source of the macro<br>options - Additional execution context; region-based effects expose options.regionEvent with the current trigger",

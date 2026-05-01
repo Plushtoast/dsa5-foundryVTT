@@ -25,14 +25,18 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     if (documents.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'args', documents[0].command);
+      const that = new OnUseEffect(item);
+      const previousArgs = that.currentOnUseArgs;
+      that.currentOnUseArgs = args;
       try {
         args.result = result;
-        const that = new OnUseEffect(item);
         await fn.call(that, actor, item, item, qs, args);
       } catch (err) {
         ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);
         result.error = true;
+      } finally {
+        that.currentOnUseArgs = previousArgs;
       }
     } else {
       ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
@@ -287,6 +291,25 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             },
             isWeapon,
           });
+        } else if (document.parent?.documentName === 'Actor') {
+          const effectConfigs = {
+            hasSpellEffects: true,
+            hasDamageTransformation: false,
+            hasArmorTransformation: false,
+            hasTriggerEffects: false,
+            hasSuccessEffects: false,
+          };
+          const advancedFunctions = DSAActiveEffectConfig.buildAdvancedFunctions(effectConfigs);
+          const advancedFunctionChoices = advancedFunctions.reduce((obj, e) => {
+            obj[e.index] = e.name;
+            return obj;
+          }, {});
+          mergeObject(partContext, {
+            advancedFunctions,
+            advancedFunctionChoices,
+            effectConfigs,
+            macroIndexes: DSAActiveEffectConfig.macroIndexes,
+          });
         }
 
         mergeObject(partContext, {
@@ -373,6 +396,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
 
       const specStep = Number(effectSystem.specStep) || 0;
       try {
+        const advancedFunctionIndexes = DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES;
         const customEf = Number(effectSystem.advancedFunction);
         const qs = Math.min(testData?.qualityStep || 0, 6);
         const resistRoll = effectSystem.resistRoll;
@@ -417,7 +441,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
 
           if (customEf) {
             switch (customEf) {
-              case 1: //Systemeffekt
+              case advancedFunctionIndexes.SYSTEM_EFFECT:
                 {
                   let value = `${effectSystem.macroArgs.conditionValue}` || '1';
                   if (/,/.test(value)) {
@@ -431,12 +455,13 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                     name: `${source.name} (${effectName})`,
                     duration: ef.duration,
                   };
+                  if (origin) effectData.origin = origin;
                   if (onDelayed) mergeObject(effectData, delayedData);
 
                   await actor.addTimedCondition(effectId, value, false, false, effectData);
                 }
                 break;
-              case 2: //Macro
+              case advancedFunctionIndexes.MACRO:
                 if (!game.user.can('MACRO_SCRIPT')) {
                   ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
                 } else {
@@ -495,7 +520,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                   }
                 }
                 break;
-              case 3: // Creature Link
+              case advancedFunctionIndexes.CREATURE:
                 {
                   const links = (effectSystem.macroArgs.creatureLinks || '').split(',').filter(Boolean);
                   const creatures = links
