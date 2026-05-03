@@ -988,7 +988,23 @@ export default class Actordsa5 extends Actor {
     return false;
   }
 
-  setupWeapon(item, mode, options, tokenId) {
+  _withDefaultOppose(options = {}, mode) {
+    if (options.oppose || !['parry', 'dodge'].includes(mode)) return options;
+
+    const opposeFlag = this.flags.oppose;
+    if (!opposeFlag?.startMessageId || !opposeFlag?.messageId) return options;
+
+    return {
+      ...options,
+      oppose: {
+        startMessageId: opposeFlag.startMessageId,
+        attackMessageId: opposeFlag.messageId,
+      },
+    };
+  }
+
+  setupWeapon(item, mode, options = {}, tokenId) {
+    options = this._withDefaultOppose(options, mode);
     options['mode'] = mode;
     return ItemFactory.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
@@ -1034,6 +1050,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupWeaponless(statusId, options = {}, tokenId) {
+    options = this._withDefaultOppose(options, statusId);
     const attributes = [];
     if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(_loc('magical'));
     if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(_loc('blessed'));
@@ -1322,6 +1339,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupDodge(options = {}, tokenId) {
+    options = this._withDefaultOppose(options, 'dodge');
     const statusId = 'dodge';
     const testData = {
       source: {

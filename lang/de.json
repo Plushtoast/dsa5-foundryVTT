@@ -1542,6 +1542,7 @@
     "TYPES.Actor.group": "Gruppe",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
+    "TYPES.RegionBehavior.DSAZone": "Zone (DSA)",
     "TYPES.JournalEntryPage.dsacalendar": "Kalendereintrag",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",

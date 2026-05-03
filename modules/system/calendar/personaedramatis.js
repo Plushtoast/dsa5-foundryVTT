@@ -149,7 +149,7 @@ export class PersonaeDramatis {
 
     _groupByFaction(personaeArray) {
         if (!Array.isArray(personaeArray) || personaeArray.length === 0) return [];
-        const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+        const collator = new Intl.Collator(game.i18n?.lang, { sensitivity: 'base', numeric: true });
         const unknownFaction = _loc("PERSONAE.UnknownFaction");
         const groups = new Map();
         for (const persona of personaeArray) {

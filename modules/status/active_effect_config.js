@@ -492,7 +492,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                     );
                     const macroCallResults = [];
                     const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
-                      const macroArgs = args || {};
+                      const macroArgs = mergeObject(
+                        {
+                          regionEvent: options.regionEvent,
+                          messageMode: options.messageMode,
+                        },
+                        args || {},
+                        { inplace: false },
+                      );
                       if (options.maintenance.parentEffectUuid) {
                         macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
                       }
@@ -680,12 +687,12 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             },
           },
         );
-        if (effectApplied) {
+        if (effectApplied && ((!options.suppressInfoMessage && !options.regionEvent) || msg)) {
           const appliedEffect = _loc('ActiveEffects.appliedEffect', {
             target: actor.token?.name || actor.name,
             source: effectNames.join(', '),
           });
-          const infoMsg = `${appliedEffect}${msg || ''}`;
+          const infoMsg = options.suppressInfoMessage || options.regionEvent ? msg : `${appliedEffect}${msg || ''}`;
           await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         }
         if (resistRolls.length) {

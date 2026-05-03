@@ -80,7 +80,7 @@ export function connectSocket() {
         {
           const scene = game.scenes.get(data.payload.scene);
           const token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
-          token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
+          token.actor.update(OpposedDsa5.opposeUpdateData(data.payload.opposeFlag));
         }
         break;
       case 'addEffect':
@@ -119,7 +119,7 @@ export function connectSocket() {
         if (game.combat) game.combat.nextRound();
         break;
       case 'clearOpposed':
-        OpposedDsa5.clearOpposed(game.actors.get(data.payload.actorId));
+        OpposedDsa5.clearOpposed(game.actors.get(data.payload.actorId), data.payload.startMessageId ? { startMessageId: data.payload.startMessageId } : null);
         break;
       case 'updateDefenseCount':
         if (game.combat) game.combat.updateDefenseCount(data.payload.speaker);

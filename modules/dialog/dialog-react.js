@@ -51,6 +51,15 @@ export default class DialogReactDSA5 extends Select2Dialog {
   }
 
   static callbackResult(selection, message, ev) {}
+
+  static opposeOptions(message) {
+    return {
+      oppose: {
+        startMessageId: message.id,
+        attackMessageId: message.flags.unopposeData.attackMessageId,
+      },
+    };
+  }
 }
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
@@ -79,7 +88,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     } else {
       const skill = actor.items.find((i) => i.name == text && i.type == 'skill');
       if (skill) {
-        actor.setupSkill(skill, {}, tokenId).then((setupData) => {
+        actor.setupSkill(skill, DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
           actor.basicTest(setupData);
         });
       }
@@ -412,11 +421,11 @@ export class ReactToAttackDialog extends ActAttackDialog {
     if ('doNothing' == text) {
       OpposedDsa5.resolveUndefended(message);
     } else if ('dodge' == text) {
-      actor.setupDodge({}, tokenId).then((setupData) => {
+      actor.setupDodge(DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
     } else if ('parryWeaponless' == text) {
-      actor.setupWeaponless('parry', {}, tokenId).then((setupData) => {
+      actor.setupWeaponless('parry', DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
     } else {
@@ -425,7 +434,7 @@ export class ReactToAttackDialog extends ActAttackDialog {
         return types.includes(x.type) && x.name == text;
       });
       if (result) {
-        actor.setupWeapon(result, 'parry', {}, tokenId).then((setupData) => {
+        actor.setupWeapon(result, 'parry', DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
           actor.basicTest(setupData);
         });
       }

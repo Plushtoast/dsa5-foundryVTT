@@ -42,7 +42,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         if (!!a.pinToTop !== !!b.pinToTop) return a.pinToTop ? -1 : 1;
         const statusOrder = DSAQuestLogEntry.STATUS_SORT_ORDER[a.status] - DSAQuestLogEntry.STATUS_SORT_ORDER[b.status];
         if (statusOrder) return statusOrder;
-        return (a.title || '').localeCompare(b.title || '', game.i18n?.lang || undefined, { sensitivity: 'base' });
+        return (a.title || '').localeCompare(b.title || '', game.i18n?.lang, { sensitivity: 'base' });
     }
 
     async _prepareEntries(context, _options) {

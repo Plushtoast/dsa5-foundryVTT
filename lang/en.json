@@ -1983,6 +1983,7 @@
     "TYPES.Actor.group": "Group",
     "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
     "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
+    "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",
     "TYPES.JournalEntryPage.dsacalendar": "Calendar Entry",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "TYPES.JournalEntryPage.dsaquestlog": "Quest",

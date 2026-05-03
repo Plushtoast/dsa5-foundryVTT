@@ -69,7 +69,7 @@ export class QuestLogFeature {
     }
 
     static #groupQuests(quests) {
-        const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+        const collator = new Intl.Collator(game.i18n?.lang, { sensitivity: 'base', numeric: true });
         const groups = new Map();
         for (const quest of quests) {
             const key = quest.groupLabel || _loc('DSAQUESTLOG.ungrouped');
@@ -82,7 +82,7 @@ export class QuestLogFeature {
                 if (!!a.pinToTop !== !!b.pinToTop) return a.pinToTop ? -1 : 1;
                 const statusOrder = DSAQuestLogEntry.STATUS_SORT_ORDER[a.status] - DSAQuestLogEntry.STATUS_SORT_ORDER[b.status];
                 if (statusOrder) return statusOrder;
-                return (a.title || '').localeCompare(b.title || '', game.i18n?.lang || undefined, { sensitivity: 'base' });
+                return (a.title || '').localeCompare(b.title || '', game.i18n?.lang, { sensitivity: 'base' });
             });
         }
 

@@ -55,6 +55,7 @@ import DSAEnhancementEffectConfig from './status/enhancement_effect_config.js';
 import APTracker from './system/orwell/ap-tracker.js';
 import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
+import ZoneAttack from './system/automation/zone-attack.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels, ActiveEffectDataModels } from './data/models.js';
@@ -115,6 +116,7 @@ Hooks.once('init', () => {
       DSAActiveEffectConfig,
       DSAEnhancementEffectConfig,
       OnUseEffect,
+      ZoneAttack,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,
@@ -221,6 +223,7 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.typeIcons.DSAAura = 'fas fa-circle-radiation';
   CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSAZone = 'fas fa-bullseye';
+  DSAZoneRegionBehavior.registerHooks();
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
   CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;
@@ -228,6 +231,7 @@ Hooks.once('init', () => {
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
   //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true
+  ZoneAttack.registerHooks();
 
   CONFIG.fontDefinitions["Gentium Basic"] = {
     editor: true,

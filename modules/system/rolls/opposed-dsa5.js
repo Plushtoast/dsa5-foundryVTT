@@ -104,10 +104,11 @@ export default class OpposedDsa5 {
 
     const testResult = message.flags.data.postData;
     const preData = message.flags.data.preData;
+    const opposeFlag = OpposedDsa5.getOpposeFlag(actor, preData);
 
-    if (actor.flags.oppose) {
+    if (opposeFlag) {
       // DEFEND - Actor is responding to an attack
-      OpposedDsa5.answerOpposedTest(actor, message, testResult, preData);
+      OpposedDsa5.answerOpposedTest(actor, message, testResult, preData, opposeFlag);
     } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage && !message.flags.data.startMessagesList) {
       // ATTACK - Actor is initiating an attack against targets
       OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
@@ -125,6 +126,31 @@ export default class OpposedDsa5 {
       await this.showDamage(message);
       await this.showSpellWithoutTarget(message);
     }
+  }
+
+  static getOpposeFlag(actor, preData) {
+    const opposeContext = getProperty(preData, 'extra.options.oppose') || getProperty(preData, 'extra.oppose');
+    if (!opposeContext) return null;
+
+    const startMessageId = opposeContext.startMessageId;
+    const attackMessageId = opposeContext.attackMessageId;
+    const storedFlag = startMessageId ? getProperty(actor, `flags.opposes.${startMessageId}`) : null;
+    if (storedFlag) return storedFlag;
+    if (!attackMessageId || !startMessageId) return null;
+
+    const attackMessage = game.messages.get(attackMessageId);
+    if (!attackMessage) return null;
+    return {
+      speaker: attackMessage.speaker,
+      messageId: attackMessageId,
+      startMessageId,
+    };
+  }
+
+  static opposeUpdateData(opposeFlag) {
+    const update = { 'flags.oppose': opposeFlag };
+    if (opposeFlag?.startMessageId) update[`flags.opposes.${opposeFlag.startMessageId}`] = opposeFlag;
+    return update;
   }
 
   /**
@@ -159,18 +185,18 @@ export default class OpposedDsa5 {
    * @param {Object} preData - Pre-test data from the defender
    * @returns {Promise<void>}
    */
-  static async answerOpposedTest(actor, message, testResult, preData) {
-    const attackMessage = game.messages.get(actor.flags.oppose.messageId);
+  static async answerOpposedTest(actor, message, testResult, preData, opposeFlag) {
+    const attackMessage = game.messages.get(opposeFlag.messageId);
     if (!attackMessage) {
       ui.notifications.error('DSAError.staleData', { localize: true });
-      await OpposedDsa5.clearOpposed(actor);
+      await OpposedDsa5.clearOpposed(actor, opposeFlag);
       return OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     }
     const attacker = {
-      speaker: actor.flags.oppose.speaker,
+      speaker: opposeFlag.speaker,
       testResult: attackMessage.flags.data.postData,
       messageId: attackMessage.id,
-      img: DSA5_Utility.getSpeaker(actor.flags.oppose.speaker)?.img,
+      img: DSA5_Utility.getSpeaker(opposeFlag.speaker)?.img,
     };
     attacker.testResult.source = attackMessage.flags.data.preData.source;
 
@@ -195,11 +221,11 @@ export default class OpposedDsa5 {
 
     await this.completeOpposedProcess(attacker, defender, {
       target: true,
-      startMessageId: actor.flags.oppose.startMessageId,
+      startMessageId: opposeFlag.startMessageId,
       whisper: message.whisper,
       blind: message.blind,
     });
-    await OpposedDsa5.clearOpposed(actor);
+    await OpposedDsa5.clearOpposed(actor, opposeFlag);
   }
 
   static async _gmAction(type, payload, gmCallback) {
@@ -271,7 +297,7 @@ export default class OpposedDsa5 {
             target: target.id,
             scene: target.scene?.id || canvas.scene?.id,
             opposeFlag,
-          }, () => target.actor.update({ 'flags.oppose': opposeFlag }));
+          }, () => target.actor.update(OpposedDsa5.opposeUpdateData(opposeFlag)));
           startMessagesList.push(startMessage.id);
           if (attackOfOpportunity) {
             await OpposedDsa5.resolveUndefended(startMessage, _loc('OPPOSED.attackOfOpportunity'));
@@ -505,8 +531,22 @@ export default class OpposedDsa5 {
    * @param {Actor} actor - The actor to clear opposed flags from
    * @returns {Promise<void>}
    */
-  static async clearOpposed(actor) {
-    await this._gmAction('clearOpposed', { actorId: actor.id }, () => actor.update({ 'flags.oppose': _del }));
+  static async clearOpposed(actor, opposeFlag = null) {
+    await this._gmAction('clearOpposed', { actorId: actor.id, startMessageId: opposeFlag?.startMessageId }, () => {
+      const update = opposeFlag?.startMessageId
+        ? OpposedDsa5.clearOpposeUpdateData(actor, opposeFlag.startMessageId)
+        : { 'flags.oppose': _del, 'flags.opposes': _del };
+      return actor.update(update);
+    });
+  }
+
+  static clearOpposeUpdateData(actor, startMessageId) {
+    const update = { [`flags.opposes.${startMessageId}`]: _del };
+    if (actor.flags.oppose?.startMessageId === startMessageId) {
+      const remaining = Object.entries(actor.flags.opposes || {}).filter(([id]) => id !== startMessageId).at(-1);
+      update['flags.oppose'] = remaining ? remaining[1] : _del;
+    }
+    return update;
   }
 
   /**
@@ -1073,7 +1113,7 @@ export default class OpposedDsa5 {
         },
       },
     };
-    await this.clearOpposed(target.actor);
+    await this.clearOpposed(target.actor, { startMessageId: startMessage.id });
 
     await this.completeOpposedProcess(attacker, defender, {
       target: true,
