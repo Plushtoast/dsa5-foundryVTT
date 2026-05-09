@@ -340,6 +340,7 @@ export const MerchantSheetMixin = (superclass) =>
         price = `${totalPrice}`;
 
         const noNeedToPay = this.noNeedToPay(target, source, price);
+        const shouldTrackMoney = !this.isLootTransfer(target, source);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
         if (hasPaid) {
           if (getProperty(item.system, 'worn.value')) item.system.worn.value = false;
@@ -355,8 +356,10 @@ export const MerchantSheetMixin = (superclass) =>
             await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res);
             await this.selfDestruction(source);
 
-            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
-            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
+            if (shouldTrackMoney) {
+              await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
+              await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
+            }
           } else {
             let res;
             if (isBagWithContents) {
@@ -367,8 +370,10 @@ export const MerchantSheetMixin = (superclass) =>
             }
             await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res);
 
-            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
-            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice * -1);
+            if (shouldTrackMoney) {
+              await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
+              await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice * -1);
+            }
           }
         }
       }
@@ -387,6 +392,10 @@ export const MerchantSheetMixin = (superclass) =>
 
     static isTemporaryToken(target) {
       return target.system.merchant.merchantType == 'loot' && target.system.merchant.temporary;
+    }
+
+    static isLootTransfer(target, source) {
+      return target.system.merchant.merchantType == 'loot' || source.system.merchant.merchantType == 'loot';
     }
 
     static async selfDestruction(target) {
