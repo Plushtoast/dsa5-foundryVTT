@@ -21,6 +21,7 @@ import CreatureType from '../automation/creature-type.js';
 import { applyDamage } from '../../hooks/chat_context.js';
 import DSATriggers from '../automation/triggers.js';
 import RuleChaos from '../rules/rule_chaos.js';
+import SpellPreferenceRule from '../rules/spell-preference-rule.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
@@ -1738,6 +1739,12 @@ export default class DiceDSA5 {
         value: actor.system[globalMod.val] + (await this._situationalModifiers(testData, feature)),
       },
     );
+    if (!isClerical && res.successLevel > 0 && SpellPreferenceRule.hasPreference(actor, testData.source)) {
+      costModifiers.push({
+        name: _loc('spellpreferences'),
+        value: -1,
+      });
+    }
     costModifiers = costModifiers.filter((x) => x.value != 0);
     res.preData.calculatedSpellModifiers.description = costModifiers.map((x) => `${x.name} ${x.value}`).join('\n');
     res.preData.calculatedSpellModifiers.finalcost = Math.max(

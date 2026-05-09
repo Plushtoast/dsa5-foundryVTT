@@ -286,6 +286,14 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    enableWitchSpellPreferences: {
+      name: 'DSASETTINGS.enableWitchSpellPreferences',
+      hint: 'DSASETTINGS.enableWitchSpellPreferencesHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
     playerCanEditSpellMacro: {
       name: 'DSASETTINGS.playerCanEditSpellMacro',
       hint: 'DSASETTINGS.playerCanEditSpellMacroHint',

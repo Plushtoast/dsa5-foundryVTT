@@ -368,6 +368,7 @@ export default class EffectDropdownBuilder {
         const feature = _loc('feature');
         const damage = _loc('damage');
         const foreign = _loc('DSASETTINGS.enableForeignSpellModifer');
+        const spellPreferences = _loc('spellpreferences');
         const spell = _loc('TYPES.Item.spell');
         const ritual = _loc('TYPES.Item.ritual');
         const liturgy = _loc('TYPES.Item.liturgy');
@@ -399,6 +400,7 @@ export default class EffectDropdownBuilder {
                     { name: `${advanced} - ${AsPCost}`, val: 'system.skillModifiers.conditional.AsPCost', type: 'custom', ph: descriptor },
                     { name: `${feature} - ${KaPCost}`, val: 'system.skillModifiers.feature.KaPCost', type: 'custom', ph: featureHint },
                     { name: `${advanced} - ${KaPCost}`, val: 'system.skillModifiers.conditional.KaPCost', type: 'custom', ph: descriptor },
+                    { name: spellPreferences, val: 'system.spellpreferences.value', type: 'override', ph: `${spell} 1, ${spell} 2` },
                 ],
             },
         ];
