@@ -1927,7 +1927,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
     if (data.isOwned) {
       data.extensions = this.actor.items.filter((x) => {
         return x.type == 'spellextension' && x.system.source == this.item.name && this.item.type == x.system.category;
-      });
+      }).sort((a, b) => (Number(a.system.talentValue) || 0) - (Number(b.system.talentValue) || 0) || a.name.localeCompare(b.name, game.i18n.lang));
     }
     return data;
   }
