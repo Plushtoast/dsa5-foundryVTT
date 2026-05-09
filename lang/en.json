@@ -2535,12 +2535,19 @@
         "limit": "Maximum 2 per attribute.",
         "maxPoints": "A maximum of {qs} points can be distributed."
     },
-    "VISION_DEITY": {
-        "alreadyUsed": "{name} has already used Vision of the Deity within the last 24 hours.",
+    "VISIONS": {
+        "alreadyUsed": "{name} has already used {vision} within the last 24 hours.",
         "noFate": "{name} does not have enough Fate Points.",
-        "noSkill": "{name} does not have the skill \"Religions\".",
-        "testFailed": "{name} failed the \"Religions\" skill test.",
+        "noSkill": "{name} does not have the skill \"{skill}\".",
+        "testFailed": "{name} failed the \"{skill}\" skill test.",
+        "autoRollFailed": "Could not automatically trigger the regeneration roll."
+    },
+    "VISION_DEITY": {
         "gained": "You can reroll {anzahl} tests until the next regeneration phase and choose the better result, but only for actions in line with your deity."
+    },
+    "VISION_FAITH": {
+        "gained": "{name} gains from the vision: Willpower +{wp}, SP +{sk} (for 12 hours).",
+        "noBonus": "{name} gains no additional bonuses (QS {qs})."
     },
     "BURGER_MENU": {
         "menuLabel": "Apply {abilityName}"
@@ -2549,6 +2556,7 @@
         "commonKnowledge": "Common Knowledge",
         "practicalApplication": "Practical Application",
         "visionOfTheDeity": "Vision of the Deity",
+        "visionOfTrueFaith": "Vision of True Faith",
         "religions": "Religions",
         "zoologyDomesticated": "Animal Lore (Domesticated Animals)",
         "zoologyWild": "Animal Lore (Wild Animals)",

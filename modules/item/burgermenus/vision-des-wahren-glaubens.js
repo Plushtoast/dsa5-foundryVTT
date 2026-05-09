@@ -1,12 +1,12 @@
-import PostRollBuffs from '../../system/rolls/postroll-buffs.js';
 import { RollDialogBurgerMenuRule } from './base-burger-menu-rule.js';
 
-const VISION_DEITY_COOLDOWN_SECONDS = 24 * 60 * 60;
-const VISION_DEITY_LAST_USED_FLAG = 'visionDeityLastUsed';
+const VISION_FAITH_COOLDOWN_SECONDS = 24 * 60 * 60;
+const VISION_FAITH_DURATION_SECONDS = 12 * 60 * 60;
+const VISION_FAITH_LAST_USED_FLAG = 'visionFaithLastUsed';
 
-class VisionOfTheDeityBurgerMenu extends RollDialogBurgerMenuRule {
+class VisionOfTrueFaithBurgerMenu extends RollDialogBurgerMenuRule {
     constructor() {
-        super({ abilityNameKey: 'LocalizedIDs.visionOfTheDeity' });
+        super({ abilityNameKey: 'LocalizedIDs.visionOfTrueFaith' });
     }
 
     matches(dialogState) {
@@ -45,8 +45,8 @@ class VisionOfTheDeityBurgerMenu extends RollDialogBurgerMenuRule {
         }
 
         await actor.update({ 'system.status.fatePoints.value': currentFate - 1 });
-        await actor.setFlag('dsa5', VISION_DEITY_LAST_USED_FLAG, game.time.worldTime ?? 0);
-        this.clickRollButton(dialogState);
+        await actor.setFlag('dsa5', VISION_FAITH_LAST_USED_FLAG, game.time.worldTime ?? 0);
+        if (!this.clickRollButton(dialogState)) ui.notifications.warn(_loc('VISIONS.autoRollFailed'));
 
         const setupData = await actor.setupSkill(skill, {}, dialogState.speaker?.token ?? actor.sheet?.getTokenId?.());
         if (!setupData) return;
@@ -57,10 +57,15 @@ class VisionOfTheDeityBurgerMenu extends RollDialogBurgerMenuRule {
 
         if (testResult?.successLevel > 0) {
             const qualityStep = testResult.qs ?? testResult.qualityStep ?? 1;
-            const charges = Math.ceil(qualityStep / 2);
+            const bonuses = this.#getBonuses(qualityStep);
+            const effectData = this.#buildEffectData(actor, bonuses);
 
-            await actor.createEmbeddedDocuments('ActiveEffect', [this.#buildEffectData(actor, charges)]);
-            ui.notifications.info(game.i18n.format('VISION_DEITY.gained', { anzahl: charges }));
+            if (effectData.system.changes.length > 0) {
+                await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+                ui.notifications.info(game.i18n.format('VISION_FAITH.gained', { name: actor.name, wp: bonuses.willpower, sk: bonuses.soulpower }));
+            } else {
+                ui.notifications.info(game.i18n.format('VISION_FAITH.noBonus', { qs: qualityStep, name: actor.name }));
+            }
         } else {
             ui.notifications.warn(this.#formatVisionMessage('testFailed', actor));
         }
@@ -84,43 +89,58 @@ class VisionOfTheDeityBurgerMenu extends RollDialogBurgerMenuRule {
     }
 
     #isOnCooldown(actor) {
-        const lastUsed = Number(actor.getFlag('dsa5', VISION_DEITY_LAST_USED_FLAG));
+        const lastUsed = Number(actor.getFlag('dsa5', VISION_FAITH_LAST_USED_FLAG));
         const currentTime = Number(game.time.worldTime ?? 0);
 
-        return Number.isFinite(lastUsed) && Number.isFinite(currentTime) && currentTime - lastUsed < VISION_DEITY_COOLDOWN_SECONDS;
+        return Number.isFinite(lastUsed) && Number.isFinite(currentTime) && currentTime - lastUsed < VISION_FAITH_COOLDOWN_SECONDS;
     }
 
-    #buildEffectData(actor, charges) {
+    #getBonuses(qualityStep) {
         return {
+            willpower: [1, 2, 4, 5].filter(threshold => qualityStep >= threshold).length,
+            soulpower: [3, 6].filter(threshold => qualityStep >= threshold).length,
+        };
+    }
+
+    #buildEffectData(actor, bonuses) {
+        const effectData = {
             name: this.abilityName,
             icon: 'icons/svg/aura.svg',
             origin: actor.uuid,
             duration: {
-                value: VISION_DEITY_COOLDOWN_SECONDS,
+                value: VISION_FAITH_DURATION_SECONDS,
                 units: 'seconds',
             },
             system: {
-                changes: [
-                    {
-                        key: PostRollBuffs.POST_ROLL_KEYS.REROLL,
-                        type: 'custom',
-                        value: 'any 3',
-                    },
-                ],
-                charges: {
-                    value: charges,
-                    max: charges,
-                },
+                changes: [],
             },
         };
+
+        if (bonuses.willpower > 0) {
+            effectData.system.changes.push({
+                key: 'system.skillModifiers.step',
+                type: 'custom',
+                value: `${_loc('LocalizedIDs.willpower')} ${bonuses.willpower}`,
+            });
+        }
+
+        if (bonuses.soulpower > 0) {
+            effectData.system.changes.push({
+                key: 'system.status.soulpower.modifier',
+                type: 'add',
+                value: bonuses.soulpower,
+            });
+        }
+
+        return effectData;
     }
 }
 
-export function registerVisionOfTheDeityHooks() {
-    const visionOfTheDeityBurgerMenu = new VisionOfTheDeityBurgerMenu();
+export function registerVisionOfTrueFaithHooks() {
+    const visionOfTrueFaithBurgerMenu = new VisionOfTrueFaithBurgerMenu();
 
     Hooks.on('dsa5.getRollDialogContextOptions', (dialogState, menuItems) => {
-        if (!visionOfTheDeityBurgerMenu.matches(dialogState)) return;
-        menuItems.push(...visionOfTheDeityBurgerMenu.getBurgerMenuItems(dialogState));
+        if (!visionOfTrueFaithBurgerMenu.matches(dialogState)) return;
+        menuItems.push(...visionOfTrueFaithBurgerMenu.getBurgerMenuItems(dialogState));
     });
 }

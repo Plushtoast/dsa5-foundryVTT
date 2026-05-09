@@ -2209,12 +2209,19 @@
         "limit": "Maximal 2 pro Attribut.",
         "maxPoints": "Es sind maximal {qs} Punkte verteilbar."
     },
-    "VISION_DEITY": {
-        "alreadyUsed": "{name} hat Vision der Gottheit in den letzten 24 Stunden bereits eingesetzt.",
+    "VISIONS": {
+        "alreadyUsed": "{name} hat {vision} in den letzten 24 Stunden bereits eingesetzt.",
         "noFate": "{name} verfügt nicht über genügend Schicksalspunkte.",
-        "noSkill": "{name} hat keine Fertigkeit \"Götter & Kulte\".",
-        "testFailed": "{name} hat die Probe auf \"Götter & Kulte\" nicht bestanden.",
+        "noSkill": "{name} hat keine Fertigkeit \"{skill}\".",
+        "testFailed": "{name} hat die Probe auf \"{skill}\" nicht bestanden.",
+        "autoRollFailed": "Konnte die Regenerationsprobe nicht automatisch auslösen."
+    },
+    "VISION_DEITY": {
         "gained": "Du kannst bis zur nächsten Regenerationsphase {anzahl} Proben noch einmal würfeln und dich für das bessere Ergebnis entscheiden, aber nur für Taten im Sinne deiner Gottheit."
+    },
+    "VISION_FAITH": {
+        "gained": "{name} erhält durch die Vision: Willenskraft +{wp}, SK +{sk} (für 12 Stunden).",
+        "noBonus": "{name} erhält keine zusätzlichen Boni (QS {qs})."
     },
     "BURGER_MENU": {
         "menuLabel": "{abilityName} anwenden"
@@ -2229,6 +2236,7 @@
         "commonKnowledge": "Allgemeinwissen",
         "practicalApplication": "Praxisbezug",
         "visionOfTheDeity": "Vision der Gottheit",
+        "visionOfTrueFaith": "Vision des Wahren Glaubens",
         "religions": "Götter & Kulte",
         "zoologyDomesticated": "Tierkunde (domestizierte Tiere)",
         "zoologyWild": "Tierkunde (Wildtiere)",
