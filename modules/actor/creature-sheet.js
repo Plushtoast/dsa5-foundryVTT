@@ -61,6 +61,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     { key: 'enrichedBehaviour', path: 'behaviour.value' },
     { key: 'enrichedFlight', path: 'flight.value' },
     { key: 'enrichedSpecialrules', path: 'specialRules.value' },
+    { key: 'enrichedOwnerdescription', path: 'details.notes.ownerdescription' },
   ];
 
   async _cleverDeleteItem(itemId) {
