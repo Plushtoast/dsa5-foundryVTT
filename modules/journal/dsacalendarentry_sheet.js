@@ -57,9 +57,7 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
 
     static buildTOC(html, { includeElement = true } = {}) {
         const cls = JournalEntryPage.implementation;
-        const root = { level: 0, children: [
-            { level: 3, text: 'dummy', slug: 'dummy', children: [] }
-        ] };
+        const root = { level: 0, children: [] };
         const stack = [root];
         const searchHeadings = container => {
             if (container.classList.contains("event-card__body")) {

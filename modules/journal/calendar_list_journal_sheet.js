@@ -1,6 +1,8 @@
 export default class CalendarListJournalSheet extends foundry.applications.sheets.journal.JournalEntryPageHandlebarsSheet {
     #search;
 
+    static #pageTitleTOCPlaceholderSlug = '__dsa5-custom-journal-page-title';
+
     static settingName = null;
 
     static DEFAULT_OPTIONS = {
@@ -60,7 +62,7 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
             options.search = null;
         }
         this.#search.bind(this.element);
-        if (this.options.includeTOC) this.toc = this.constructor.buildTOC(this.element);
+        if (this.options.includeTOC) this.toc = this.#buildTOC();
 
         if (this.isView) return;
 
@@ -117,6 +119,22 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
     _tearDown(options) {
         super._tearDown(options);
         this.#search?.unbind();
+    }
+
+    #buildTOC() {
+        const toc = this.constructor.buildTOC(this.element);
+        if (!this.isView || !this.page.title.show || !Object.keys(toc).length) return toc;
+
+        return {
+            [CalendarListJournalSheet.#pageTitleTOCPlaceholderSlug]: {
+                text: this.page.name,
+                level: this.page.title.level,
+                slug: CalendarListJournalSheet.#pageTitleTOCPlaceholderSlug,
+                children: [],
+                order: -1,
+            },
+            ...toc,
+        };
     }
 
     async _prepareEntries(_context, _options) {
