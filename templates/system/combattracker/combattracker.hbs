@@ -26,11 +26,11 @@
             <div class="combatant-controls">
                 {{#if @root.user.isGM}}
                 <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
-                        data-action="toggleHidden" data-tooltip="COMBATANT.ToggleVis"
-                        aria-label="{{ localize "COMBATANT.ToggleVis" }}"></button>
+                    data-action="toggleHidden" data-tooltip
+                    aria-label="{{ localize (ifThen hidden "COMBATANT.Show" "COMBATANT.Hide") }}"></button>
                 <button type="button" class="inline-control combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
-                        data-action="toggleDefeated" data-tooltip="COMBATANT.ToggleDead"
-                        aria-label="{{ localize "COMBATANT.ToggleDead" }}"></button>
+                    data-action="toggleDefeated" data-tooltip
+                    aria-label="{{ localize (ifThen isDefeated "COMBATANT.UnmarkDefeated" "COMBATANT.MarkDefeated") }}"></button>
                 {{/if}}
                 {{#if canPing}}
                 <button type="button" class="inline-control combatant-control icon fa-solid fa-bullseye-arrow"

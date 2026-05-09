@@ -1922,9 +1922,8 @@ export default class Actordsa5 extends Actor {
     // active means force add
 
     if (overlay) {
-      if (active) return false;
-
-      this.removeCondition(statusId, 1, false);
+      if (active) return await this.addCondition(statusId, 1, false, false);
+      if (active === false || existing) return await this.removeCondition(statusId, 1, false);
     } else {
       if (!existing || Number.isNumeric(existing.system?.condition?.value)) {
 

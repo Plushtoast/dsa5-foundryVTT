@@ -111,8 +111,9 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       else if (aiming.length > 0) turn.ongoing = aiming[0].progress;
     }
     const effects = [];
+    const defeatedStatus = CONFIG.specialStatusEffects.DEFEATED;
     for (const e of combatant.actor?.temporaryEffects || []) {
-      if (e.statuses.has('defeated')) turn.defeated = true;
+      if (e.statuses.has(defeatedStatus) || e.statuses.has('defeated')) turn.isDefeated = true;
       else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.system?.visibility?.hidePlayers) && !e.system?.visibility?.hideOnToken) {
         effects.push({ img: e.img, name: e.name });
       }
