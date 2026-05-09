@@ -1533,6 +1533,19 @@
         "journalName": "Journal name",
         "targetCreationFailed": "The target could not be created."
     },
+    "SAVANT": {
+        "name": "Savant",
+        "botchRescue": "Do you want to turn the Botch into a Failure? (10 AE)",
+        "selectTalent": "Select the Savant talent",
+        "selectTalentHint": "This choice is permanent. You can change it later via the Active Effect on the tradition.",
+        "reroll": "Reroll",
+        "addFP": "Add Skill Points (SP)",
+        "improveRoll": "Improve Roll",
+        "descTitle": "Master Skill Options:",
+        "descOpt1": "Upon a successful check on their Master Skill, Savants can spend AE to improve the result. For every 5 AE spent, 1 SP can be gained (up to a maximum total of 18 SP).",
+        "descOpt2": "During a Cumulative Check on the Master Skill, a Savant can reroll up to three d20s for a single roll, functioning like the Fate Point application Reroll. This costs 4 AE. This only applies to one of the possible rolls of a Cumulative Check. For a new interval, AE must be spent again to achieve the same effect.",
+        "descOpt3": "The Savant can lower the result of a 1d20 roll during a partial check on their Master Skill by 1 to achieve a better result. This requires spending 2 AE. However, this alteration cannot be used to achieve a Critical Success (a double or triple 1) or to prevent a Botch."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "copyActorDescription": "Copy actor description from original actor",
@@ -2594,6 +2607,7 @@
         "restrictedSenseSight": "Restricted Sense (Sight)",
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
+        "traditionSavant": "Tradition (Savant)",
         "traditionWitch": "Tradition (Witch)",
         "braniborian": "Braniborians",
         "traditionKor": "Tradition (Church of Kor)",

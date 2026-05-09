@@ -92,7 +92,7 @@ export class FateRolls {
                                 return;
                             }
                         }
-                        const { newRoll, changedRolls, changes } = await this.#processReroll(
+                        const { changedRolls } = await this.#processReroll(
                             diesToReroll,
                             newTestData,
                             'CHATCONTEXT.talentedReroll',
@@ -221,7 +221,7 @@ export class FateRolls {
                         const isPhex = actor.items.some(item =>
                             item.type === 'specialability' && item.name === phexTradition
                         );
-                        const { newRoll, changedRolls, changes } = await this.#processReroll(
+                        const { changedRolls } = await this.#processReroll(
                             diesToReroll,
                             newTestData,
                             'CHATCONTEXT.Reroll',
@@ -402,6 +402,10 @@ export class FateRolls {
         return Math.clamp(Number(value) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
     }
 
+    static async processSelectedReroll(diceIndices, testData, { rollContext, useMinimum = false, actor = null, isPhex = false } = {}) {
+        return this.#processReroll(diceIndices, testData, rollContext, useMinimum, actor, isPhex);
+    }
+
     /**
      * Processes reroll logic for dice, handling roll creation and result calculation
      * @param {number[]} diceIndices - Indices of dice to reroll
@@ -422,7 +426,7 @@ export class FateRolls {
             await new Roll(rollFormulas.join('+')).evaluate(),
             rollContext
         );
-        await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode);
+        await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'rollMode'));
         const changedRolls = [];
         const changes = [];
         testData.roll = Roll.fromData(testData.roll);

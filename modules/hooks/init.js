@@ -16,6 +16,7 @@ import * as rollExtensions from '../system/rolls/dsarolls.js';
 import '../system/helpers/situational-modifiers-widget.js';
 import { BurgerMenuRegistry } from '../item/burgermenus/burger-menu-registry.js';
 import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
+import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -65,6 +66,7 @@ export default function () {
   setActorDelta();
   BurgerMenuRegistry.registerHooks();
   registerMagicalActionHooks();
+  SavantDSA5.registerHooks();
 }
 
 Hooks.once('init', () => {

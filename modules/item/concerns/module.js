@@ -4,6 +4,7 @@ import { ItemEquality } from "./item-equality.js";
 import { MiracleModifiers } from "./miracle-modifiers.js";
 import { ModifierCalculator } from "./modifier-calculator.js";
 import { ResistanceTests } from "./resistance-tests.js";
+import { SavantDSA5 } from "./savant-dsa5.js";
 import { SpellModifiers } from "./spell-modifiers.js";
 
 const ITEMCONCERNS = {
@@ -13,6 +14,7 @@ const ITEMCONCERNS = {
     MiracleModifiers,
     ModifierCalculator,
     ResistanceTests,
+    SavantDSA5,
     SpellModifiers
 };
 
