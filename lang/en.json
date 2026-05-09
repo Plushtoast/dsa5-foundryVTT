@@ -2535,12 +2535,21 @@
         "limit": "Maximum 2 per attribute.",
         "maxPoints": "A maximum of {qs} points can be distributed."
     },
+    "VISION_DEITY": {
+        "alreadyUsed": "{name} has already used Vision of the Deity within the last 24 hours.",
+        "noFate": "{name} does not have enough Fate Points.",
+        "noSkill": "{name} does not have the skill \"Religions\".",
+        "testFailed": "{name} failed the \"Religions\" skill test.",
+        "gained": "You can reroll {anzahl} tests until the next regeneration phase and choose the better result, but only for actions in line with your deity."
+    },
     "BURGER_MENU": {
         "menuLabel": "Apply {abilityName}"
     },
     "LocalizedIDs": {
         "commonKnowledge": "Common Knowledge",
         "practicalApplication": "Practical Application",
+        "visionOfTheDeity": "Vision of the Deity",
+        "religions": "Religions",
         "zoologyDomesticated": "Animal Lore (Domesticated Animals)",
         "zoologyWild": "Animal Lore (Wild Animals)",
         "Zoology": "Animal Lore",

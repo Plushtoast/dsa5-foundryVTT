@@ -2209,6 +2209,13 @@
         "limit": "Maximal 2 pro Attribut.",
         "maxPoints": "Es sind maximal {qs} Punkte verteilbar."
     },
+    "VISION_DEITY": {
+        "alreadyUsed": "{name} hat Vision der Gottheit in den letzten 24 Stunden bereits eingesetzt.",
+        "noFate": "{name} verfügt nicht über genügend Schicksalspunkte.",
+        "noSkill": "{name} hat keine Fertigkeit \"Götter & Kulte\".",
+        "testFailed": "{name} hat die Probe auf \"Götter & Kulte\" nicht bestanden.",
+        "gained": "Du kannst bis zur nächsten Regenerationsphase {anzahl} Proben noch einmal würfeln und dich für das bessere Ergebnis entscheiden, aber nur für Taten im Sinne deiner Gottheit."
+    },
     "BURGER_MENU": {
         "menuLabel": "{abilityName} anwenden"
     },
@@ -2221,6 +2228,8 @@
     "LocalizedIDs": {
         "commonKnowledge": "Allgemeinwissen",
         "practicalApplication": "Praxisbezug",
+        "visionOfTheDeity": "Vision der Gottheit",
+        "religions": "Götter & Kulte",
         "zoologyDomesticated": "Tierkunde (domestizierte Tiere)",
         "zoologyWild": "Tierkunde (Wildtiere)",
         "Zoology": "Tierkunde",
