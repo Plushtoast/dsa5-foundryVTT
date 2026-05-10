@@ -2,7 +2,7 @@ import { PatchViewer } from './patchviewer.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 
-const INBETA = false;
+const INBETA = true;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
 
 async function fetchPatchNotes() {
@@ -148,8 +148,8 @@ export default function migrateWorld() {
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
     if (INBETA) {
-      const version = 13
-      const msg = `<p>The currently advised foundry vtt version for DSA/TDE is v${version - 1}. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
+      const version = 14;
+      const msg = `<p>Foundry v${version} support for DSA/TDE will soon be ready while we are finalizing the testing phase. Please use this beta to test the newest features and provide feedback.</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord.</p><p>Thank you for all your feedback.</p>`;
       betaWarning(version, msg);
     }
 

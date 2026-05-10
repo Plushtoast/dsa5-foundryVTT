@@ -11,6 +11,9 @@
     "leftClick": "Left-<i class=\"fas fa-computer-mouse\"></i>",
     "rightClick": "Right-<i class=\"fas fa-computer-mouse\"></i>",
     "dropWithContents": "Drop bag with contents?",
+    "SOCKET": {
+        "actorFromData": "Create Actor"
+    },
     "CHAR": {
         "MU": "Courage",
         "KL": "Sagacity",

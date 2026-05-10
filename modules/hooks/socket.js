@@ -191,6 +191,26 @@ export function connectSocket() {
           await DSARegionTemplate.createTrackedRegion(scene, actor, data.payload.regionData, data.payload.trackingEffectData);
         }
         break;
+      case 'actorFromData':
+        {
+          const user = game.users.get(data.payload.userId);
+          const actorName = foundry.utils.escapeHTML(data.payload.creatureData?.name ?? 'Actor');
+          const requesterName = foundry.utils.escapeHTML(user?.name ?? 'A player');
+          const reason = data.payload.reason ? `<p>${foundry.utils.escapeHTML(data.payload.reason)}</p>` : '';
+          const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+              title: 'SOCKET.actorFromData',
+            },
+            content: `${reason}<p>${requesterName} requests creating <b>${actorName}</b>.</p>`,
+            rejectClose: false,
+            modal: true,
+          });
+          if (!proceed) break;
+
+          const actor = await Actor.create(data.payload.creatureData);
+          if (actor && user) ui.notifications.info(`${actor.name} created for ${user.name}.`);
+        }
+        break;
       case 'itemDrop':
         {
           const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;

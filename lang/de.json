@@ -6,6 +6,9 @@
     "Attribute-difficult": "Schwierig (-2)",
     "Attribute-hard": "Sehr schwierig (-4)",
     "Attribute-vhard": "Extrem schwierig (-6)",
+    "SOCKET": {
+        "actorFromData": "Akteur erstellen"
+    },
     "RIDING": {
         "unmount": "Absitzen",
         "mount": "Aufsitzen",
