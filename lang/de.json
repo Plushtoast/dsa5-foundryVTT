@@ -1573,12 +1573,20 @@
         "selectTalent": "Wähle das Meistertalent aus",
         "selectTalentHint": "Diese Auswahl ist dauerhaft. Du kannst sie später über den Aktiven Effekt auf der Tradition ändern.",
         "reroll": "Neu Würfeln",
-        "addFP": "Talentpunkte hinzugewinnen",
+        "addFP": "Fertigkeitspunkte hinzugewinnen",
         "improveRoll": "Wurf verbessern",
         "descTitle": "Optionen für das Meistertalent:",
         "descOpt1": "Bei einer gelungenen Probe auf ihr Meistertalent können Meistertalentierte AsP einsetzen, um das Ergebnis zu verbessern. Pro 5 AsP kann 1 FP hinzugewonnen werden (bis zu einem Maximum von insgesamt 18 FP).",
         "descOpt2": "Ein Meistertalentierter kann bei einer Sammelprobe auf das Meistertalent bei einem einzigen Durchgang bis zu drei W20 neu würfeln, so wie unter dem Schicksalspunkte-Einsatz Neuer Wurf angegeben. Dies kostet 4 AsP. Dies gilt nur für den Wurf einer der möglichen Würfe von Sammelproben. Bei einem neuen Intervall müssen erneut AsP eingesetzt werden, um den gleichen Effekt zu erzielen.",
         "descOpt3": "Der Meistertalentierte kann das Ergebnis eines 1W20-Wurfs bei einer Teilprobe auf sein Meistertalent um 1 senken, um somit ein besseres Ergebnis zu erzielen. Dazu muss er 2 AsP ausgeben. Er darf jedoch keine solche Änderung vornehmen, um einen Kritischen Erfolg (also eine Doppel- oder Dreifach-1) zu erzielen oder einen Patzer zu verhindern."
+    },
+    "MAGICAL_ALCHEMIST": {
+        "name": "Zauberalchimist",
+        "analysisModifier": "Elixieranalyse +{bonus} ({cost} AsP)",
+        "descTitle": "Optionen des Zauberalchimisten:",
+        "descOpt1": "Bei einer gelungenen Probe auf Alchimie können Zauberalchimisten AsP einsetzen, um das Ergebnis zu verbessern. Pro 5 AsP kann 1 FP hinzugewonnen werden (bis zu einem Maximum von insgesamt 18 FP).",
+        "descOpt2": "Ein Zauberalchimist kann bei einer Erfolgsprobe auf Alchimie bis zu drei W20 neu würfeln, so wie unter dem Schicksalspunkte-Einsatz Neuer Wurf angegeben. Dies kostet 4 AsP.",
+        "descOpt3": "Der Zauberalchimist kann das Ergebnis eines 1W20-Wurfs bei einer Teilprobe auf Alchimie um 1 senken, um somit ein besseres Ergebnis zu erzielen. Dazu muss er 2 AsP ausgeben. Er darf jedoch keine solche Änderung vornehmen, um einen Kritischen Erfolg (also eine Doppel- oder Dreifach-1) zu erzielen oder einen Patzer zu verhindern."
     },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
@@ -2296,6 +2304,7 @@
         "restrictedSenseSight": "Eingeschränkter Sinn (Sicht)",
         "magicalRestriction": "Magische Einschränkung",
         "magicalAttunement": "Magische Einstimmung",
+        "traditionMagicalAlchemist": "Tradition (Zauberalchimisten)",
         "traditionSavant": "Tradition (Meistertalentierte)",
         "traditionWitch": "Tradition (Hexen)",
         "traditionKor": "Tradition (Korkirche)",

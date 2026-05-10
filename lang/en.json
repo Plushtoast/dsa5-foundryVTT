@@ -1547,6 +1547,14 @@
         "descOpt2": "During a Cumulative Check on the Master Skill, a Savant can reroll up to three d20s for a single roll, functioning like the Fate Point application Reroll. This costs 4 AE. This only applies to one of the possible rolls of a Cumulative Check. For a new interval, AE must be spent again to achieve the same effect.",
         "descOpt3": "The Savant can lower the result of a 1d20 roll during a partial check on their Master Skill by 1 to achieve a better result. This requires spending 2 AE. However, this alteration cannot be used to achieve a Critical Success (a double or triple 1) or to prevent a Botch."
     },
+    "MAGICAL_ALCHEMIST": {
+        "name": "Magical Alchemist",
+        "analysisModifier": "Elixir analysis +{bonus} ({cost} AE)",
+        "descTitle": "Magical Alchemist Options:",
+        "descOpt1": "Upon a successful Alchemy check, Magical Alchemists can spend AE to improve the result. For every 5 AE spent, 1 SP can be gained (up to a maximum total of 18 SP).",
+        "descOpt2": "A Magical Alchemist can reroll up to three d20s on a successful Alchemy check, functioning like the Fate Point application Reroll. This costs 4 AE.",
+        "descOpt3": "The Magical Alchemist can lower the result of a 1d20 roll during an Alchemy partial check by 1 to achieve a better result. This requires spending 2 AE. However, this alteration cannot be used to achieve a Critical Success (a double or triple 1) or to prevent a Botch."
+    },
     "PERSONAE": {
         "title": "Dramatis Personae / Bestiarium",
         "copyActorDescription": "Copy actor description from original actor",
@@ -2625,6 +2633,7 @@
         "restrictedSenseSight": "Restricted Sense (Sight)",
         "magicalRestriction": "Magical Restriction",
         "magicalAttunement": "Magical Attunement",
+        "traditionMagicalAlchemist": "Tradition (Magical Alchemist)",
         "traditionSavant": "Tradition (Savant)",
         "traditionWitch": "Tradition (Witch)",
         "braniborian": "Braniborians",

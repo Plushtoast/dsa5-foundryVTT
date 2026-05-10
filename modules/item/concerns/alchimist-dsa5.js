@@ -3,9 +3,8 @@ import { FateRolls } from '../../actor/concerns/faterolls.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 
 const { ApplicationV2, DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
-const { getProperty } = foundry.utils;
 
-export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
+export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
     static COSTS = Object.freeze({
         reroll: 4,
         addFP: 5,
@@ -13,11 +12,15 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         rescue: 10,
     });
 
+    static USED_FLAG = 'magicalAlchemistUsed';
+
+    static ANALYSIS_COST_OPTION = 'magicalAlchemistAnalysisCost';
+
     static DEFAULT_OPTIONS = {
-        id: 'savant-app',
+        id: 'magical-alchemist-app',
         classes: ['dsa5'],
         window: {
-            title: 'SAVANT.name',
+            title: 'MAGICAL_ALCHEMIST.name',
             resizable: true,
         },
         position: { width: 450, height: 'auto' },
@@ -31,7 +34,7 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static PARTS = {
         main: {
-            template: 'systems/dsa5/templates/dialog/rules/savant-dialog.hbs',
+            template: 'systems/dsa5/templates/dialog/rules/alchimist-dialog.hbs',
             templates: ['systems/dsa5/templates/system/dsatabs.hbs'],
         },
     };
@@ -63,11 +66,11 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
     static getAvailableTabs(data) {
         const tabs = [];
         const successLevel = data?.postData?.successLevel;
-        const postFunction = getProperty(data, 'preData.extra.options.postFunction');
-        const isCumulativeCheck = Boolean(postFunction?.cummulative || postFunction?.aggregatedItemId);
 
-        if (isCumulativeCheck && successLevel >= -1) tabs.push('reroll');
-        if (successLevel > 0) tabs.push('addFP');
+        if (successLevel > 0) {
+            tabs.push('reroll');
+            tabs.push('addFP');
+        }
         if (successLevel >= -1) tabs.push('improve');
 
         return tabs;
@@ -161,7 +164,7 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     _getActionLabel() {
-        return _loc('SAVANT.name');
+        return _loc('MAGICAL_ALCHEMIST.name');
     }
 
     _getModifierName(actionLabel) {
@@ -339,14 +342,14 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         await this.dsaActor[data.postData.postFunction]({ testData: data.preData, cardOptions: data }, { rerenderMessage: this.message });
-        await this.message.update({ 'flags.dsa5.savantUsed': true });
+        await this.message.update({ [`flags.dsa5.${this.constructor.USED_FLAG}`]: true });
 
         this.close();
     }
 
-    static canUseSavant(message) {
+    static canUseMagicalAlchemist(message) {
         const data = message?.flags?.data;
-        if (!data || data.postData?.rollType !== 'talent' || message.flags.dsa5?.savantUsed) return false;
+        if (!data || data.postData?.rollType !== 'talent' || message.flags.dsa5?.[this.USED_FLAG]) return false;
         if (data.postData.successLevel === -3) return false;
 
         const actor = DSA5_Utility.getSpeaker(message.speaker)
@@ -354,19 +357,89 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!(actor?.isOwner || game.user.isGM)) return false;
 
         const sourceName = data.preData?.source?.name || data.postData?.source?.name;
-        if (!sourceName) return false;
+        if (sourceName !== _loc('LocalizedIDs.alchemy')) return false;
 
-        const savantTalent = actor.getFlag('dsa5', 'savant');
-        if (savantTalent) return savantTalent === sourceName && (data.postData.successLevel === -2 || this.getAvailableTabs(data).length > 0);
-
-        const traditionName = _loc('LocalizedIDs.traditionSavant');
-        const savantTradition = actor.items.find((item) => item.type === 'specialability' && item.name === traditionName);
-        if (!savantTradition) return false;
+        const traditionName = _loc('LocalizedIDs.traditionMagicalAlchemist');
+        const alchemistTradition = actor.items.find((item) => item.type === 'specialability' && item.name === traditionName);
+        if (!alchemistTradition) return false;
 
         return data.postData.successLevel === -2 || this.getAvailableTabs(data).length > 0;
     }
 
-    static async handleSavant(message) {
+    static canUseAnalysisModifier(dialogState) {
+        const actor = dialogState?.actor;
+        if (!(actor?.isOwner || game.user.isGM)) return false;
+        if (dialogState?.source?.type !== 'skill' || dialogState.source.name !== _loc('LocalizedIDs.alchemy')) return false;
+
+        const traditionName = _loc('LocalizedIDs.traditionMagicalAlchemist');
+        return actor.items.some((item) => item.type === 'specialability' && item.name === traditionName);
+    }
+
+    static getAnalysisModifierItems(dialogState) {
+        return [1, 2].map((bonus) => {
+            const cost = bonus * 4;
+            return {
+                label: game.i18n.format('MAGICAL_ALCHEMIST.analysisModifier', { bonus, cost }),
+                icon: '<i class="fas fa-flask"></i>',
+                onClick: async () => this.applyAnalysisModifier(dialogState, bonus, cost),
+            };
+        });
+    }
+
+    static applyAnalysisModifier(dialogState, bonus, cost) {
+        const { actor, dialog } = dialogState;
+        if ((Number(actor.system.status.astralenergy.value) || 0) < cost) {
+            ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
+            return;
+        }
+
+        const widget = dialog?.getSituationalModifiersWidget?.();
+        if (!widget) return;
+
+        const label = _loc('MAGICAL_ALCHEMIST.name');
+        const modifier = {
+            name: label,
+            value: bonus,
+            selected: true,
+            source: _loc('LocalizedIDs.traditionMagicalAlchemist'),
+        };
+        const modifiers = widget.getModifiers();
+        const updated = modifiers.some((existing) => existing.name === label)
+            ? modifiers.map((existing) => existing.name === label ? { ...existing, ...modifier } : existing)
+            : [...modifiers, modifier];
+        widget.setModifiers(updated);
+
+        dialogState.testData.extra.options[this.ANALYSIS_COST_OPTION] = cost;
+        dialog?.element?.querySelector?.('form')?.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    static consumeAnalysisCost(chatOptions, testData, rerenderMessage) {
+        if (rerenderMessage) return;
+
+        const cost = Number(testData?.preData?.extra?.options?.[this.ANALYSIS_COST_OPTION]) || 0;
+        if (cost <= 0) return;
+
+        const modifierName = _loc('MAGICAL_ALCHEMIST.name');
+        const selectedModifier = testData.preData.situationalModifiers?.find((modifier) => modifier.name === modifierName);
+        if (!selectedModifier || Number(selectedModifier.value) !== cost / 4) return;
+
+        const actor = DSA5_Utility.getSpeaker(testData.preData.extra.speaker);
+        if (!actor) return;
+
+        if ((Number(actor.system.status.astralenergy.value) || 0) < cost) {
+            ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
+            return;
+        }
+
+        foundry.utils.mergeObject(chatOptions, { flags: { dsa5: { [this.USED_FLAG]: true } } });
+        const actionLabel = _loc('MAGICAL_ALCHEMIST.analysisModifier', { bonus: selectedModifier.value, cost });
+        const content = `<h5 class="center"><b>${_loc('MAGICAL_ALCHEMIST.name')}</b></h5>
+            <p><b>${foundry.utils.escapeHTML(actor.name)}</b>: ${actionLabel} (${_loc('cost')}: ${cost} ${_loc('AsP')})</p>`;
+        ChatMessage.create(DSA5_Utility.chatDataSetup(content));
+        actor.update({ 'system.status.astralenergy.value': actor.system.status.astralenergy.value - cost });
+    }
+
+    static async handleMagicalAlchemist(message) {
         const data = message.flags.data;
         const actor = DSA5_Utility.getSpeaker(message.speaker)
             || (message.speaker?.actor ? game.actors.get(message.speaker.actor) : null);
@@ -374,60 +447,11 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!roll || !actor) return;
 
         const sourceName = data.preData?.source?.name || data.postData?.source?.name;
-        if (!sourceName) return;
+        if (sourceName !== _loc('LocalizedIDs.alchemy')) return;
 
-        let savantTalent = actor.getFlag('dsa5', 'savant');
-        if (!savantTalent) {
-            const traditionName = _loc('LocalizedIDs.traditionSavant');
-            const savantTradition = actor.items.find((item) => item.type === 'specialability' && item.name === traditionName);
-            if (!savantTradition) return;
-
-            const skills = actor.items
-                .filter((item) => item.type === 'skill')
-                .sort((left, right) => left.name.localeCompare(right.name, game.i18n.lang));
-            if (!skills.length) return;
-
-            const options = skills.map((item) => `<option value="${item.id}"${item.name === sourceName ? ' selected' : ''}>${foundry.utils.escapeHTML(item.name)}</option>`).join('');
-            const content = `<form><div class="form-group"><label class="small nobr">${_loc('SAVANT.selectTalent')}</label><select name="skillId">${options}</select></div><p class="small">${_loc('SAVANT.selectTalentHint')}</p></form>`;
-            const selectedSkillId = await DialogV2.prompt({
-                window: { title: 'SAVANT.name' },
-                content,
-                ok: {
-                    label: _loc('confirm'),
-                    callback: (event, button) => button.form.elements.skillId.value,
-                },
-            });
-            if (!selectedSkillId) return;
-
-            const selectedSkill = actor.items.get(selectedSkillId);
-            if (!selectedSkill) return;
-
-            savantTalent = selectedSkill.name;
-            const effectData = {
-                name: _loc('SAVANT.name'),
-                img: savantTradition.img,
-                transfer: true,
-                duration: {},
-                changes: [{
-                    key: 'flags.dsa5.savant',
-                    type: 'override',
-                    value: savantTalent,
-                }],
-                flags: {
-                    dsa5: {
-                        description: _loc('SAVANT.name'),
-                        hideOnToken: true,
-                        hidePlayers: false,
-                    },
-                },
-            };
-
-            const existingEffect = savantTradition.effects.find((effect) => effect.changes.some((change) => change.key === 'flags.dsa5.savant'));
-            if (existingEffect) await existingEffect.update(effectData);
-            else await savantTradition.createEmbeddedDocuments('ActiveEffect', [effectData]);
-        }
-
-        if (savantTalent !== sourceName) return;
+        const traditionName = _loc('LocalizedIDs.traditionMagicalAlchemist');
+        const alchemistTradition = actor.items.find((item) => item.type === 'specialability' && item.name === traditionName);
+        if (!alchemistTradition) return;
 
         if (data.postData.successLevel === -2) return this._rescueBotch(message, actor);
         if (this.getAvailableTabs(data).length > 0) return new this(message, actor, roll).render(true);
@@ -440,7 +464,7 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         const confirmed = await DialogV2.confirm({
-            window: { title: 'SAVANT.name' },
+            window: { title: 'MAGICAL_ALCHEMIST.name' },
             content: `<p>${_loc('SAVANT.botchRescue')}</p>`,
             modal: true
         });
@@ -451,7 +475,7 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
             const updateData = {
                 'flags.data.postData.successLevel': -1,
                 'flags.data.postData.description': failureLabel,
-                'flags.dsa5.savantUsed': true,
+                [`flags.dsa5.${this.USED_FLAG}`]: true,
                 'content': message.content.replace(/Patzer|Botch/g, failureLabel)
             };
             await message.update(updateData);
@@ -467,13 +491,22 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
     static registerHooks() {
         Hooks.on('getChatMessageContextOptions', (app, options, c) => {
             options.push({
-                label: 'SAVANT.name',
-                icon: '<img src="systems/dsa5/icons/traditionen/magiedilettanten.webp" class="dsa5-chat-context-icon">',
-                visible: (li) => this.canUseSavant(game.messages.get(li.dataset.messageId)),
-                onClick: (_event, li) => this.handleSavant(game.messages.get(li.dataset.messageId))
+                label: 'MAGICAL_ALCHEMIST.name',
+                icon: '<img src="systems/dsa5/icons/traditionen/zauberalchimisten.webp" class="dsa5-chat-context-icon">',
+                visible: (li) => this.canUseMagicalAlchemist(game.messages.get(li.dataset.messageId)),
+                onClick: (_event, li) => this.handleMagicalAlchemist(game.messages.get(li.dataset.messageId))
             });
+        });
+
+        Hooks.on('dsa5.getRollDialogContextOptions', (dialogState, menuItems) => {
+            if (!this.canUseAnalysisModifier(dialogState)) return;
+            menuItems.push(...this.getAnalysisModifierItems(dialogState));
+        });
+
+        Hooks.on('postProcessDSARoll', (chatOptions, testData, rerenderMessage) => {
+            this.consumeAnalysisCost(chatOptions, testData, rerenderMessage);
         });
     }
 }
 
-export default SavantDSA5;
+export default MagicalAlchemistDSA5;
