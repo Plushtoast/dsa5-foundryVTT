@@ -1,6 +1,4 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import RuleChaos from '../rules/rule_chaos.js';
-import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -248,15 +246,13 @@ export default class OnUseEffect {
     return {
       name,
       icon: 'icons/svg/aura.svg',
+      description: name,
       system: {
         changes,
       },
       duration,
       flags: {
-        dsa5: {
-          value: null,
-          description: name,
-        },
+        dsa5: {},
       },
     };
   }
@@ -266,6 +262,8 @@ export default class OnUseEffect {
   }
 
   async socketedConditionAddActor(actors, data, amount = 1) {
+    data = this.withRegionOrigin(data);
+
     if (game.user.isGM) {
       const systemCon = typeof data === 'string';
       if (systemCon) {
@@ -276,7 +274,7 @@ export default class OnUseEffect {
       const names = [];
       for (const actor of actors) {
         if (systemCon) await actor.addCondition(data, amount, false, false);
-        else await actor.addCondition(data);
+        else await actor.addCondition(data, amount);
 
         names.push(actor.name);
       }
@@ -285,8 +283,8 @@ export default class OnUseEffect {
       const payload = {
         id: this.item.uuid,
         data,
-        amount,
         actors: actors.map((x) => x.id),
+        amount,
       };
       if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
@@ -294,6 +292,27 @@ export default class OnUseEffect {
         payload,
       });
     }
+  }
+
+  withRegionOrigin(data) {
+    const regionOrigin = this.currentOnUseArgs?.regionEvent?.behaviorUuid;
+    if (!regionOrigin) return data;
+
+    if (typeof data === 'string') {
+      const condition = CONFIG.statusEffects.find((effect) => effect.id === data);
+      if (!condition) return data;
+
+      const result = duplicate(condition);
+      result.name = _loc(result.name);
+      result.origin = regionOrigin;
+      return result;
+    }
+
+    if (typeof data !== 'object' || !data || data.origin) return data;
+
+    const result = duplicate(data);
+    result.origin = regionOrigin;
+    return result;
   }
 
   get suppressInfoMessage() {
@@ -329,7 +348,7 @@ export default class OnUseEffect {
         id: this.item.uuid,
         coreId,
         targets,
-        amount
+        amount,
       };
       if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {

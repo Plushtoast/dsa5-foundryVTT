@@ -17,9 +17,10 @@ import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
+import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
 
 export function connectSocket() {
-  game.socket.on('system.dsa5', (data) => {
+  game.socket.on('system.dsa5', async (data) => {
     switch (data.type) {
       case 'brawlStart':
         DSA5Combat.brawlStart(2000, false);
@@ -181,6 +182,15 @@ export function connectSocket() {
           onUse.socketedActorTransformation(data.payload.targets, data.payload.update);
         });
         break;
+      case 'createRegionWithTrackingEffect':
+        {
+          const scene = game.scenes.get(data.payload.sceneId);
+          const actor = game.actors.get(data.payload.actorId);
+          if (!scene || !actor) break;
+
+          await DSARegionTemplate.createTrackedRegion(scene, actor, data.payload.regionData, data.payload.trackingEffectData);
+        }
+        break;
       case 'itemDrop':
         {
           const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
@@ -211,6 +221,9 @@ export function connectSocket() {
         break;
       case 'summonCreatureMacro':
         SummoningExecutor.execute(data.payload);
+        break;
+      case 'despawnSummonedTokens':
+        SummoningExecutor.despawn(data.payload.tokenIds, data.payload.sceneId);
         break;
       default:
         console.warn(`Unhandled socket data type ${data.type}`);

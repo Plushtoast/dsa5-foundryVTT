@@ -1,3 +1,32 @@
+<h1 id="news-8-1-0">News 8.1.0</h1>
+
+<h2 id="major-enhancements-8-1-0">Major Enhancements</h2>
+
+<h3 id="hero-creation-overhaul">Hero Creation Overhaul</h3>
+<p>The hero creation flow has been reorganized into a more spacious and consistent builder experience. The main builder view, step sidebar, contextual help, and the species/culture/career confirmation wizards now use stacked card panels so they read as one coherent interface at the standard character builder window width.</p>
+<p>A reusable card-layout theme in the DSA5 system styles now provides the shared panel, page, stack, callout, content, and action composition patterns used by these hero creation surfaces, so the same layout language can be reused consistently in other interfaces.</p>
+<p>The archetype browser now has more usable space on normal sheet sizes because it no longer has to compete with the experience selector in a side-by-side split. The core character builder also received smaller workflow and UI refinements that make the creation process easier to follow.</p>
+<p>Species and NPC generation now support automatic appearance rolls for eye color, hair or fur color, height, and weight. Species wizards surface these configured generators directly in the confirmation step with per-entry rolls, stored visible results, explicit selection controls for species with multiple named variants, and automatic transfer of accepted rolled values into the actor's personal details. Species item chat cards also summarize the configured generator definitions.</p>
+
+<h2 id="improvements-8-1-0">Improvements</h2>
+<ul class="dsalist">
+<li><strong>Witch Spell Preferences</strong>: The optional Focus Rule I for witch sisterhood spell preferences can now be enabled as a world setting. Active effects can supply comma-separated preferred spell names through the dynamic key <code>system.spellpreferences.value</code>. Matching spells automatically grant one extra spell modification and reduce successful AsP costs by 1 to a minimum of 1, while actors with spell preferences suffer a -4 penalty on foreign spells.</li>
+<li>Active Effect on-use actions now appear in the hotbars alongside item on-use actions, including actions from transferred effects.</li>
+<li>Aura macros created from actor-owned spell effects can now preserve their originating item identity and re-enter the same packed macro from aura Region enter and exit events, allowing reusable macros to handle bearer setup, target application, and cleanup through one consistent flow.</li>
+<li>Area templates can now be configured to keep their placed zone visible or hidden when a Region is dropped.</li>
+<li>Spell Regions now forward zone enter, exit, movement, and round events to their macros by default, including in-zone movement action counts during combat. This enables Pandaemonium to apply its speed penalty on placement and resolve its attack table once per movement action or from round-start triggers.</li>
+<li>The Magna Carta Atlas now relies on the Foundry 14 primary party group actor and its placed token for travel and route planning. Atlas locations also expose stable <code>Atlas.&lt;id&gt;</code> UUIDs that can be resolved through Foundry's <code>fromUuid</code> and used in UUID links.</li>
+<li><strong>Dramatis Personae Garadan Controls</strong>: Dramatis Personae entries now support GM-only Garadan visibility while using an empty Garadan selection as the default way to hide the icon entirely. Creature-based actors that are reassigned from Bestiary entries to Dramatis Personae now render their Garadan badge correctly in the calendar as well. Garadan assignment is also mirrored with linked character, NPC, and creature actors, whose Garadan field is now optional instead of defaulting to a preselected figure.</li>
+<li><strong>Improvised Weapon Control</strong>: Melee weapons whose names use the improvised-weapon suffix can now explicitly opt out on their item sheets, including alternate attack variants.</li>
+<li><strong>Practical Application Burger Menu</strong>: Practical Application is now wired into skill roll burger menus, prompts for an appropriate knowledge-skill roll, and applies the resulting partial-check bonus distribution directly through the situational modifier widget.</li>
+<li><strong>Vision of the Deity Burger Menu</strong>: Heroes with Vision of the Deity can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive charged post-roll rerolls for actions aligned with their deity.</li>
+<li><strong>Vision of True Faith Burger Menu</strong>: Heroes with Vision of True Faith can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive the cumulative Willpower and Spirit bonuses for 12 hours.</li>
+<li><strong>Savant Chat Action</strong>: Savant-enabled talent rolls now add a dedicated chat context action that can rescue botches, reroll selected dice, add skill points, or improve individual d20 results directly from the original test card. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. On first use, actors with the generic Savant tradition are prompted to choose their Savant talent, which is then persisted on the tradition as a transferred active effect.</li>
+<li><strong>Magical Alchemist Automation</strong>: Magical Alchemists now receive a dedicated chat context action on Alchemy test cards, allowing them to spend Astral Energy to rescue double-20 botches, reroll selected dice, add skill points, or improve a single d20 result. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. Alchemy roll dialogs also offer the elixir-analysis modifier for +1/+2 relief at the matching Astral Energy cost.</li>
+<li>New <a href="https://plushtoast.github.io/dsa5-foundryVTT-wiki/">wiki</a> location including more information on automated elements.</li>
+<li>The Magna Carta can now hide locations from the eyes of players.</li>
+</ul>
+
 <h1 id="major-enhancements">Major Enhancements</h1>
 
 <h2 id="shapeshifting">Built-in Shapeshifting with Animated Token Transitions</h2>
