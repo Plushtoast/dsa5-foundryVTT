@@ -39,6 +39,19 @@ export class DSAAura {
       const radius = Number(effect.system?.aura?.auraRadius);
       if (!radius) continue;
 
+      const configuredBehaviors = effect.system.aura.regionBehaviors;
+      const behaviors = [
+        ...Object.values(configuredBehaviors ?? {}).filter(foundry.utils.isPlainObject),
+        {
+          type: 'DSAAura',
+          system: {
+            effectUuid: auraUuid,
+            disposition: effect.system.aura.disposition ?? DSAActiveEffectDataModel.DISPOSITION_ALL,
+            ignoreWalls: !!effect.system.aura.ignoreWalls,
+          },
+        },
+      ];
+
       await foundry.documents.RegionDocument.createTokenEmanation(
         token.document,
         radius,
@@ -47,14 +60,7 @@ export class DSAAura {
           color: effect.system.aura.borderColor || game.user.color,
           visibility: effect.system.aura.hidden ? CONST.REGION_VISIBILITY.NONE : CONST.REGION_VISIBILITY.ALWAYS,
           restriction: { enabled: !effect.system.aura.ignoreWalls },
-          behaviors: [{
-            type: 'DSAAura',
-            system: {
-              effectUuid: auraUuid,
-              disposition: effect.system.aura.disposition ?? DSAActiveEffectDataModel.DISPOSITION_ALL,
-              ignoreWalls: !!effect.system.aura.ignoreWalls,
-            },
-          }],
+          behaviors,
           flags: { dsa5: { auraEffectUuid: auraUuid } },
         },
         { gridBased: false, excludeToken: !!effect.system.aura.excludeSelf }

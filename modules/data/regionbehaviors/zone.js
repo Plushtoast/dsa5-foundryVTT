@@ -162,16 +162,23 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
     if (!token?.actor) return;
 
     const regionEvent = this.#buildZoneRegionEvent(event);
+    const hasMovement = !!event.data.movement;
 
     switch (event.name) {
       case CONST.REGION_EVENTS.TOKEN_ENTER:
+        if (hasMovement) return;
         await this.#onEnter(event, regionEvent);
         break;
       case CONST.REGION_EVENTS.TOKEN_EXIT:
+        if (hasMovement) return;
         await this.#onExit(event, regionEvent);
         break;
       case CONST.REGION_EVENTS.TOKEN_MOVE_IN:
+        await this.#onEnter(event, regionEvent);
+        break;
       case CONST.REGION_EVENTS.TOKEN_MOVE_OUT:
+        await this.#onExit(event, regionEvent);
+        break;
       case CONST.REGION_EVENTS.TOKEN_MOVE_WITHIN:
         await this.#onMovement(event, regionEvent);
         break;

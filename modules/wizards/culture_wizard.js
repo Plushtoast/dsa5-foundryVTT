@@ -29,14 +29,13 @@ export default class CultureWizard extends WizardDSA5 {
   wizardListeners(html) {
     super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
-      const parent = $(ev.currentTarget).closest('.content');
-      let apCost = Number(parent.attr('data-cost'));
+      const parent = this._getAPCostContainer(ev.currentTarget);
+      const costOf = this._apCostFrom.bind(this);
+      let apCost = this._apCostFrom(parent);
       parent.find('.optional:checked').each(function () {
-        apCost += Number($(this).attr('data-cost'));
+        apCost += costOf(this);
       });
-      const elem = parent.find('.apCost');
-      elem.text(apCost);
-      WizardDSA5.flashElem(elem, 'emphasize2');
+      this._updateAPCost(parent, apCost);
     });
   }
 

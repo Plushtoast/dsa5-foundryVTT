@@ -79,6 +79,7 @@ export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.d
       disposition: new NumberField({ initial: this.DISPOSITION_ALL, choices: this.DISPOSITION_CHOICES, hint: 'ActiveEffects.hints.disposition' }),
       excludeSelf: new BooleanField({ initial: true, hint: 'ActiveEffects.hints.excludeSelf' }),
       ignoreWalls: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.ignoreWalls' }),
+      regionBehaviors: new ObjectField(),
     });
     schema.charges = new SchemaField({
       value: new NumberField({ nullable: true, initial: null }),

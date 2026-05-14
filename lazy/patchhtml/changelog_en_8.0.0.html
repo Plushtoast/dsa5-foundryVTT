@@ -1,41 +1,18 @@
-<h1 id="news-8-1-0">News 8.1.0</h1>
-
-<h2 id="major-enhancements-8-1-0">Major Enhancements</h2>
+<h1 id="major-enhancements">Major Enhancements</h1>
 
 <h3 id="hero-creation-overhaul">Hero Creation Overhaul</h3>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/charbuilder.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>The hero creation flow has been reorganized into a more spacious and consistent builder experience. The main builder view, step sidebar, contextual help, and the species/culture/career confirmation wizards now use stacked card panels so they read as one coherent interface at the standard character builder window width.</p>
 <p>A reusable card-layout theme in the DSA5 system styles now provides the shared panel, page, stack, callout, content, and action composition patterns used by these hero creation surfaces, so the same layout language can be reused consistently in other interfaces.</p>
 <p>The archetype browser now has more usable space on normal sheet sizes because it no longer has to compete with the experience selector in a side-by-side split. The core character builder also received smaller workflow and UI refinements that make the creation process easier to follow.</p>
-<p>Species and NPC generation now support automatic appearance rolls for eye color, hair or fur color, height, and weight. Species wizards surface these configured generators directly in the confirmation step with per-entry rolls, stored visible results, explicit selection controls for species with multiple named variants, and automatic transfer of accepted rolled values into the actor's personal details. Species item chat cards also summarize the configured generator definitions.</p>
-
-<h2 id="improvements-8-1-0">Improvements</h2>
-<ul class="dsalist">
-<li><strong>Witch Spell Preferences</strong>: The optional Focus Rule I for witch sisterhood spell preferences can now be enabled as a world setting. Active effects can supply comma-separated preferred spell names through the dynamic key <code>system.spellpreferences.value</code>. Matching spells automatically grant one extra spell modification and reduce successful AsP costs by 1 to a minimum of 1, while actors with spell preferences suffer a -4 penalty on foreign spells.</li>
-<li>Active Effect on-use actions now appear in the hotbars alongside item on-use actions, including actions from transferred effects.</li>
-<li>Aura macros created from actor-owned spell effects can now preserve their originating item identity and re-enter the same packed macro from aura Region enter and exit events, allowing reusable macros to handle bearer setup, target application, and cleanup through one consistent flow.</li>
-<li>Area templates can now be configured to keep their placed zone visible or hidden when a Region is dropped.</li>
-<li>Spell Regions now forward zone enter, exit, movement, and round events to their macros by default, including in-zone movement action counts during combat. This enables Pandaemonium to apply its speed penalty on placement and resolve its attack table once per movement action or from round-start triggers.</li>
-<li>The Magna Carta Atlas now relies on the Foundry 14 primary party group actor and its placed token for travel and route planning. Atlas locations also expose stable <code>Atlas.&lt;id&gt;</code> UUIDs that can be resolved through Foundry's <code>fromUuid</code> and used in UUID links.</li>
-<li><strong>Dramatis Personae Garadan Controls</strong>: Dramatis Personae entries now support GM-only Garadan visibility while using an empty Garadan selection as the default way to hide the icon entirely. Creature-based actors that are reassigned from Bestiary entries to Dramatis Personae now render their Garadan badge correctly in the calendar as well. Garadan assignment is also mirrored with linked character, NPC, and creature actors, whose Garadan field is now optional instead of defaulting to a preselected figure.</li>
-<li><strong>Improvised Weapon Control</strong>: Melee weapons whose names use the improvised-weapon suffix can now explicitly opt out on their item sheets, including alternate attack variants.</li>
-<li><strong>Practical Application Burger Menu</strong>: Practical Application is now wired into skill roll burger menus, prompts for an appropriate knowledge-skill roll, and applies the resulting partial-check bonus distribution directly through the situational modifier widget.</li>
-<li><strong>Vision of the Deity Burger Menu</strong>: Heroes with Vision of the Deity can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive charged post-roll rerolls for actions aligned with their deity.</li>
-<li><strong>Vision of True Faith Burger Menu</strong>: Heroes with Vision of True Faith can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive the cumulative Willpower and Spirit bonuses for 12 hours.</li>
-<li><strong>Savant Chat Action</strong>: Savant-enabled talent rolls now add a dedicated chat context action that can rescue botches, reroll selected dice, add skill points, or improve individual d20 results directly from the original test card. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. On first use, actors with the generic Savant tradition are prompted to choose their Savant talent, which is then persisted on the tradition as a transferred active effect.</li>
-<li><strong>Magical Alchemist Automation</strong>: Magical Alchemists now receive a dedicated chat context action on Alchemy test cards, allowing them to spend Astral Energy to rescue double-20 botches, reroll selected dice, add skill points, or improve a single d20 result. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. Alchemy roll dialogs also offer the elixir-analysis modifier for +1/+2 relief at the matching Astral Energy cost.</li>
-<li>New <a href="https://plushtoast.github.io/dsa5-foundryVTT-wiki/">wiki</a> location including more information on automated elements.</li>
-<li>The Magna Carta can now hide locations from the eyes of players.</li>
-</ul>
-
-<h1 id="major-enhancements">Major Enhancements</h1>
+<p>Species traits such as hair or fur color, eye color, height, and weight can now be rolled according to the information on the species.</p>
+<div style="clear:both"></div>
 
 <h2 id="shapeshifting">Built-in Shapeshifting with Animated Token Transitions</h2>
 <p>The shapeshifting wizard is now a built-in system feature and no longer requires an addon module to be installed. Dropping a creature onto a character sheet always offers the shapeshift option alongside the mount and new companion option.</p>
 <p>When a shapeshift or shape restoration occurs, the affected token now plays an animated morph transition using the native Foundry v14 <code>TextureTransitionFilter</code>. If the token texture changes, a smooth morph effect bridges the old and new appearance; if the texture stays the same, a swirl animation signals the transformation visually.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/shapeshifting.webp" style="width:100%"/>
-
 <h2 id="payment-requests">Native Payment Requests And Shared Transaction Summaries</h2>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/payment.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>Payment requests created by GMs can now be bundled into a single shared chat card instead of sending separate prompts for every actor.</p>
 <p>The new flow uses Foundry's native query system instead of a custom socket-based request transport. This means the system can directly hand the payment decision to the designated owning user of each actor and collect the results back into one shared overview card.</p>
 <p>Highlights of the new flow:</p>
@@ -48,10 +25,10 @@
 <li>The payment dialog from the chat helper menu, group sheet, and masters menu now shares a single consolidated layout with actor selection and an optional description field.</li>
 </ul>
 <p>This upgrade makes payment handling much easier to follow in multiplayer sessions and aligns the implementation with the current Foundry API.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/payment-requests.webp" style="width:100%"/>
+<div style="clear:both"></div>
 
 <h2 id="roll-requests">Query-Based Roll Requests</h2>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/proben.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>GM roll requests for skills, attributes, and regeneration now use the same Foundry query system as payment requests instead of the legacy clickable chat-link flow.</p>
 <p>When a GM triggers a roll request from the masters menu, group sheet, <code>/rq</code> chat command, or a journal enricher, a unified dialog now opens with a searchable skill dropdown prefilled with the originating skill, a modifier input, and actor checkboxes to select which heroes should receive the request.</p>
 <p>Highlights of the new flow:</p>
@@ -63,10 +40,10 @@
 <li>A fallback roll button on each row lets players or the GM trigger the roll manually from the card.</li>
 <li>Row actions are automatically hidden for users who have already completed their roll.</li>
 </ul>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/roll-requests.webp" style="width:100%"/>
+<div style="clear:both"></div>
 
 <h2 id="questlog">Calendar-Integrated Adventure Questlog</h2>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>The calendar/campaign manager now includes a dedicated questlog tab for long-running adventure and campaign tracking, turning the existing calendar surface into a central place for events, dramatis personae, and overarching objectives.</p>
 <p>Questlog entries are stored in dedicated <code>dsaquestlog</code> journal pages and can be registered per journal in the same way as calendar events and Dramatis Personae. Each quest can hold structured summaries, detailed notes, GM-only information, multi-step objectives, and in-world timeline information.</p>
 <p>Highlights of the new questlog flow:</p>
@@ -78,35 +55,28 @@
 <li>GMs and players can use the same calendar surface to follow the current state of the adventure instead of splitting information across separate tools.</li>
 </ul>
 <p>This upgrade establishes the questlog as a major campaign-management feature rather than a simple notes list and extends the calendar picker into a broader narrative control center.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="width:100%"/>
+<div style="clear:both"></div>
 
 <h2 id="scene-regions">Scene Regions Replace Measured Templates</h2>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/regionen.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>Area-of-effect spells and auras now use the native Foundry v14 Scene Region system instead of custom MeasuredTemplate overlays. This brings significant improvements to both spell placement and aura management.</p>
 <p>Spell templates placed from chat cards now use <code>canvas.regions.placeRegion()</code> for interactive placement with live green/red range feedback. Instant-duration spells create ephemeral regions that acquire targets and then disappear; maintained spells create persisted regions that remain visible on the scene until their tracking effect expires. Persistent spell zones automatically include a <code>DSAZoneRegionBehavior</code> that re-applies spell effects when a token enters the zone or at the start of each combat round, supporting recurring damage and ongoing zone effects.</p>
 <p>All spell regions and aura emanations now enforce wall restriction by default, so area effects respect walls and other movement barriers on the scene.</p>
 <p>The ring shape type is now available as an area target option alongside sphere, cone, cube, and line.</p>
 <p>Token auras now use the Region Emanation API (<code>RegionDocument.createTokenEmanation()</code>), which means emanation regions automatically follow token movement without any manual redrawing. Aura effects are applied and removed via native <code>TOKEN_ENTER</code> and <code>TOKEN_EXIT</code> region events through a new <code>DSAAuraRegionBehavior</code> region behavior type, completely replacing the old distance-polling and manual scene-token iteration. Aura effect application now uses the full advanced effect pipeline, supporting resist rolls, system conditions, macros, delayed effects, and creature links.</p>
 <p>The shared <code>DSARegionBehaviorBase</code> base class provides reusable <code>applyEffects()</code>, <code>removeEffects()</code>, <code>validDisposition()</code>, and <code>playSound()</code> methods for all region behavior types, including the existing trap behavior which has been refactored to use the same foundation.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/scene-regions.webp" style="width:100%"/>
+<div style="clear:both"></div>
 
 <h2 id="group-actor">Group Actor</h2>
+<img src="systems/dsa5/lazy/patchimages/8.0.0/gruppensheet.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>A new "Group" actor type lets GMs and players manage an adventuring party or any collection of characters as a single entity. The group sheet aggregates member stats, skills, inventory, travel, and notes into five dedicated tabs.</p>
 <p><strong>Members tab</strong> mirrors the GameMasterMenu hero display with portrait, schips, LeP/AsP/KaP bars, expandable details (coin icons, clickable advantages/disadvantages, experience), and bulk action buttons for roll requests, payments, and AP awards. Payment and AP award dialogs use the same hero-selection flow as the GameMasterMenu, including familiar and pet XP scaling. Drag and drop actors onto the sheet to add them; groups cannot contain other groups.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/group-members.webp" style="width:100%"/>
 <p><strong>Skills tab</strong> shows the best skill value per talent across all members. Each skill row offers one-click group checks and roll requests. Skills are grouped by their talent category; a tooltip on each skill row lists all members and their values.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/group-skills.webp" style="width:100%"/>
 <p><strong>Inventory tab</strong> uses merchant/loot actors as storage locations. Location pills switch between them; dropping a merchant or loot actor onto the sheet links it as a location. A button creates a new loot actor and links it automatically. Item drops to the group sheet are forwarded to the active location.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/group-inventory.webp" style="width:100%"/>
 <p><strong>Travel tab</strong> calculates effective overland speed from location-based travel modes (on foot, vehicle, river vessel, sea vessel), modifiers, and configurable forced march percentage. Walking speed is automatically derived from the slowest group member. Speed is shown in both Yard and Meilen (1 Meile = 1000 Yard). Depot locations (vehicles, ships) can be assigned exclusively to a travel mode; when assigned, the location actor's speed replaces the mode's default value and the location name appears on the speed row. A forced march percentage can be set to increase all mode speeds. The active travel mode is selected on the speed table; effective speed is displayed with a full breakdown.</p>
-<!-- TODO: replace placeholder -->
-<img src="systems/dsa5/lazy/patchimages/8.0.0/group-travel.webp" style="width:100%"/>
 <p><strong>Notes tab</strong> provides two rich-text fields (biography and notes) and a button to create a calendar event directly in the calendar system.</p>
 <p>The group actor also exposes a <strong>GroupAPI</strong> extension registry that modules can use to add camp helpers, travel utilities, or other custom actions to the group sheet. A <strong>primaryParty</strong> world setting marks one group as the active party; the GameMasterMenu shows an "Open Party Sheet" button when a primary party is configured. The <strong>TokenScatter</strong> utility class provides deploy (scatter member tokens from group token) and reform (converge and delete member tokens) canvas animations.</p>
+<div style="clear:both"></div>
 
 <h1 id="improvements">Improvements</h1>
 <ul class="dsalist">
@@ -147,6 +117,21 @@
 <li><strong>Alternative Calendar Support</strong>: The calendar system now supports alternative calendars registered by modules, including the Novadi calendar and the Thorwal calendar.</li>
 <li><strong>Magical Action Rule Enforcement</strong>: Spells and rituals with a magical action type now automatically enforce the corresponding rule restrictions in the roll dialog.</li>
 <li><strong>Equipment Packages As First-Class Items</strong>: Equipment packages are now a dedicated <code>itempackage</code> item type. The <code>/packages</code> chat command lists all available equipment packages from all active compendia.</li>
+<li><strong>Witch Spell Preferences</strong>: <img src="systems/dsa5/lazy/patchimages/8.0.0/hexevomschattenwasser.webp" style="float:right; width:260px; max-width:40%; height:auto; margin:0 0 0.5rem 1rem; border-radius:4px;"/>The optional Focus Rule I for witch sisterhood spell preferences can now be enabled as a world setting. Active effects can supply comma-separated preferred spell names through the dynamic key <code>system.spellpreferences.value</code>. Matching spells automatically grant one extra spell modification and reduce successful AsP costs by 1 to a minimum of 1, while actors with spell preferences suffer a -4 penalty on foreign spells.<span style="display:block; clear:both"></span></li>
+<li>Active Effect on-use actions now appear in the hotbars alongside item on-use actions, including actions from transferred effects.</li>
+<li>Aura macros created from actor-owned spell effects can now preserve their originating item identity and re-enter the same packed macro from aura Region enter and exit events, allowing reusable macros to handle bearer setup, target application, and cleanup through one consistent flow.</li>
+<li>Area templates can now be configured to keep their placed zone visible or hidden when a Region is dropped.</li>
+<li>Spell Regions now forward zone enter, exit, movement, and round events to their macros by default, including in-zone movement action counts during combat. This enables Pandaemonium to apply its speed penalty on placement and resolve its attack table once per movement action or from round-start triggers.</li>
+<li>The Magna Carta Atlas now relies on the Foundry 14 primary party group actor and its placed token for travel and route planning. Atlas locations also expose stable <code>Atlas.&lt;id&gt;</code> UUIDs that can be resolved through Foundry's <code>fromUuid</code> and used in UUID links. The Atlas also gained a new Herbarium layer containing all herb regions from the huge source table, providing them as automated input for plant searches in the Herbarium. Huge thanks to Wero for this Sisyphean task.</li>
+<li><strong>Dramatis Personae Garadan Controls</strong>: Dramatis Personae entries now support GM-only Garadan visibility while using an empty Garadan selection as the default way to hide the icon entirely. Creature-based actors that are reassigned from Bestiary entries to Dramatis Personae now render their Garadan badge correctly in the calendar as well. Garadan assignment is also mirrored with linked character, NPC, and creature actors, whose Garadan field is now optional instead of defaulting to a preselected figure.</li>
+<li><strong>Improvised Weapon Control</strong>: Melee weapons whose names use the improvised-weapon suffix can now explicitly opt out on their item sheets, including alternate attack variants.</li>
+<li><strong>Practical Application Burger Menu</strong>: Practical Application is now wired into skill roll burger menus, prompts for an appropriate knowledge-skill roll, and applies the resulting partial-check bonus distribution directly through the situational modifier widget.</li>
+<li><strong>Vision of the Deity Burger Menu</strong>: Heroes with Vision of the Deity can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive charged post-roll rerolls for actions aligned with their deity.</li>
+<li><strong>Vision of True Faith Burger Menu</strong>: Heroes with Vision of True Faith can now trigger the rule from regeneration roll dialogs, spend the required Fate Point, roll Religions, and receive the cumulative Willpower and Spirit bonuses for 12 hours.</li>
+<li><strong>Savant Chat Action</strong>: Savant-enabled talent rolls now add a dedicated chat context action that can rescue botches, reroll selected dice, add skill points, or improve individual d20 results directly from the original test card. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. On first use, actors with the generic Savant tradition are prompted to choose their Savant talent, which is then persisted on the tradition as a transferred active effect.</li>
+<li><strong>Magical Alchemist Automation</strong>: Magical Alchemists now receive a dedicated chat context action on Alchemy test cards, allowing them to spend Astral Energy to rescue double-20 botches, reroll selected dice, add skill points, or improve a single d20 result. Modified rolls are listed on the rerendered card as situational modifiers and post a separate usage note. Alchemy roll dialogs also offer the elixir-analysis modifier for +1/+2 relief at the matching Astral Energy cost.</li>
+<li>New <a href="https://plushtoast.github.io/dsa5-foundryVTT-wiki/">wiki</a> location including more information on automated elements.</li>
+<li>The Magna Carta can now hide locations from the eyes of players.</li>
 </ul>
 
 <h2 id="module-updates">Module Updates</h2>

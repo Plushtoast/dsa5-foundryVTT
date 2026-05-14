@@ -47,20 +47,21 @@ export default class CareerWizard extends WizardDSA5 {
   wizardListeners(html) {
     super.wizardListeners(html);
     html.find('.optional').on('change', (ev) => {
-      const parent = $(ev.currentTarget).closest('.content');
+      const parent = this._getAPCostContainer(ev.currentTarget);
       if ($(ev.currentTarget).hasClass('exclusiveTricks')) {
-        const maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit'));
+        const maxSelections = Number(parent.find('.maxTricks').attr('data-spelltricklimit')) || 0;
         if (parent.find('.exclusiveTricks:checked').length > maxSelections) {
           ev.currentTarget.checked = false;
           WizardDSA5.flashElem(parent.find('.maxTricks'));
           return;
         }
       }
-      let apCost = Number(parent.attr('data-cost'));
+      const costOf = this._apCostFrom.bind(this);
+      let apCost = this._apCostFrom(parent);
       const mins = {};
       parent.find('.optional:checked').each(function () {
         //get name attribute
-        const optionalCost = Number($(this).attr('data-cost'));
+        const optionalCost = costOf(this);
         const name = $(this).attr('name');
         let found = false;
 
@@ -80,11 +81,9 @@ export default class CareerWizard extends WizardDSA5 {
         apCost += min;
       }
       parent.find('.attributes:checked').each(function () {
-        apCost += Number($(this).attr('data-cost'));
+        apCost += costOf(this);
       });
-      const elem = parent.find('.apCost');
-      elem.text(apCost);
-      WizardDSA5.flashElem(elem, 'emphasize2');
+      this._updateAPCost(parent, apCost);
     });
   }
 

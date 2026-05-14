@@ -23,9 +23,7 @@ export function setEnrichers() {
   };
   const modRegex = /(-|\+)?\d+/;
   const payRegex = /(-|\+)?\d+(\.\d+)?/;
-  const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/;
   const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
-  const replaceRegex2 = /[[]]/g;
   const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
     Pay: _loc('PAYMENT.payButton'),
@@ -51,7 +49,7 @@ export function setEnrichers() {
         const mod = Number(str.match(modRegex)[0]);
         const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
-        const skill = str.replace(mod, '').replace(optionRegex, '').match(replaceRegex)[0].replace(replaceRegex2, '').trim();
+        const skill = str.match(innerRegex)[1].replace(mod, '').replace(optionRegex, '').trim();
         let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]{}]/g, '') : skill;
 
         if (json.attrs) {

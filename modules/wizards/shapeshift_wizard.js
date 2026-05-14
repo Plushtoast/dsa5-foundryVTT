@@ -462,7 +462,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
         if (!actor || !shapeshift) return;
 
-        ShapeshiftWizard.finalizeRestoreShape(actor, shapeshift, true)
+        await ShapeshiftWizard.finalizeRestoreShape(actor, shapeshift, true)
     }
 
 
@@ -478,9 +478,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         if (proportionSettings.wounds) currentHp = Math.max(1, Math.round(original.system.status.wounds.max * actor.system.status.wounds.value / actor.system.status.wounds.max))
 
         if (actor.isToken) {
-            const delta = mergeObject(actor.flags.dsa5.originalDelta, {
+            const delta = mergeObject(deepClone(actor.flags?.dsa5?.originalDelta ?? {}), {
                 "system.status.wounds.value": currentHp,
             });
+            delta.effects = (delta.effects ?? []).filter(effect => effect._id !== shapeshift.id && !effect.statuses?.includes?.('shapeshift'));
 
             const tokenData = {
                 x: actor.token.x,
@@ -496,7 +497,6 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             await actor.token.delete()
             await actor.sheet.close()
             if (!remote) createdToken.actor.sheet.render(true)
-            await createdToken.actor.deleteEmbeddedDocuments("ActiveEffect", [shapeshift._id], { noHook: true })
             return
         }
 

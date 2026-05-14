@@ -2718,6 +2718,7 @@
         "requestTitleGetPaid": "Zahlung auszahlen",
         "requestPromptPay": "{actor} soll {amount} bezahlen.",
         "requestPromptGetPaid": "{actor} soll {amount} erhalten.",
+        "amount": "Betrag",
         "summaryMerchantTitle": "Handel",
         "summaryTradeTitle": "Tausch",
         "received": "erhalten"
@@ -3399,6 +3400,8 @@
         "ownershipShared": "Besitz mit allen Spielern geteilt.",
         "openGroupSheet": "Gruppenblatt",
         "tradeWithDepot": "Handel mit Depot",
+        "deploy": "Mitglieder aufstellen",
+        "reform": "Gruppe sammeln",
         "primaryPartyPrompt": "Es ist noch keine Hauptgruppe festgelegt. Wähle ein vorhandenes Gruppenblatt aus oder erstelle ein neues und lege es direkt als Hauptgruppe fest.",
         "primaryPartySelect": "Vorhandenes Gruppenblatt",
         "useExistingGroup": "Ausgewählte Gruppe verwenden",

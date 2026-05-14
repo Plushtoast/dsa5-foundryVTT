@@ -5,6 +5,7 @@ import PaymentRequestService from '../system/queries/payment-requests.js';
 import RollRequestService from '../system/queries/roll-request.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
+import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
@@ -128,13 +129,13 @@ export default function () {
     switch (cmd) {
       case '/pay': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'pay', amount: moneyString, description });
+        if (game.user.isGM) ChatCommandService.openPaymentDialog('pay', { amount: moneyString, description });
         else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }
-      case '/getPaid': {
+      case '/getpaid': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'getPaid', amount: moneyString, description });
+        if (game.user.isGM) ChatCommandService.openPaymentDialog('getPaid', { amount: moneyString, description });
         else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }
