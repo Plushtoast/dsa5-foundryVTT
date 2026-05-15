@@ -601,7 +601,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
   }
 
-  async openDocumentSheet(documentOrUuid, { currentKey = null, close = true } = {}) {
+  async openDocumentSheet(documentOrUuid, { currentKey = null, pageId = null, close = true } = {}) {
     const document = typeof documentOrUuid === 'string' ? await fromUuid(documentOrUuid) : documentOrUuid;
     if (!document?.sheet?.render) return null;
 
@@ -609,6 +609,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     if (currentKey) {
       document.sheet.render({ force: true, currentKey });
+    } else if (pageId) {
+      document.sheet.render(true, { pageId });
     } else {
       document.sheet.render(true);
     }

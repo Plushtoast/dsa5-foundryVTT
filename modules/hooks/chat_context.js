@@ -11,7 +11,9 @@ const ROLLABLE_TYPES = ['skill', 'spell', 'liturgy', 'ritual', 'ceremony'];
 const STAT_TYPES = ['LeP', 'KaP', 'AsP'];
 const MANA_TYPES = ['ritual', 'spell'];
 
-const getMessageFromLi = (li) => game.messages.get(li.dataset.messageId);
+const getMessageFromLi = (li) => game.messages.get(li?.dataset?.messageId);
+
+const chatMessageAction = (handler) => (_event, li) => handler(li);
 
 const getActorFromMessage = (message) => {
   return message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
@@ -342,109 +344,109 @@ const createContextOptions = () => {
       label: 'CHATCONTEXT.hideData',
       icon: '<i class="fas fa-eye"></i>',
       visible: (li) => ConditionChecker.canToggleDataVisibility(li, true),
-      onClick: ActionHandler.showHideData,
+      onClick: chatMessageAction(ActionHandler.showHideData),
     },
     {
       label: 'CHATCONTEXT.showData',
       icon: '<i class="fas fa-eye"></i>',
       visible: (li) => ConditionChecker.canToggleDataVisibility(li, false),
-      onClick: ActionHandler.showHideData,
+      onClick: chatMessageAction(ActionHandler.showHideData),
     },
     {
       label: 'regenerate',
       icon: '<i class="fas fa-user-plus"></i>',
       visible: ConditionChecker.canHeal,
-      onClick: ActionHandler.applyHealing,
+      onClick: chatMessageAction(ActionHandler.applyHealing),
     },
     {
       label: 'CHATCONTEXT.ApplyMana',
       icon: '<i class="fas fa-user-minus"></i>',
       visible: ConditionChecker.canCostMana,
-      onClick: ActionHandler.payMana,
+      onClick: chatMessageAction(ActionHandler.payMana),
     },
     {
       label: applyDamageLabel(),
       icon: '<i class="fas fa-user-minus"></i>',
       visible: ConditionChecker.canHurt,
-      onClick: (li) => applyDamage(li, 'value'),
+      onClick: chatMessageAction((li) => applyDamage(li, 'value')),
     },
     {
       label: 'CHATCONTEXT.ApplyDamageSP',
       icon: '<i class="fas fa-user-minus"></i>',
       visible: ConditionChecker.canHurtSP,
-      onClick: (li) => applyDamage(li, 'sp'),
+      onClick: chatMessageAction((li) => applyDamage(li, 'sp')),
     },
     {
       label: applyDamageLabel(),
       icon: '<i class="fas fa-user-minus"></i>',
       visible: ConditionChecker.canApplyDefaultRolls,
-      onClick: (li) => ActionHandler.applyChatCardDamage(li, 'value'),
+      onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'value')),
     },
     {
       label: 'CHATCONTEXT.ApplyDamageSP',
       icon: '<i class="fas fa-user-minus"></i>',
       visible: ConditionChecker.canApplyDefaultRolls,
-      onClick: (li) => ActionHandler.applyChatCardDamage(li, 'sp'),
+      onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'sp')),
     },
     {
       label: 'CHATCONTEXT.Reroll',
       icon: '<i class="fas fa-dice"></i>',
       visible: ConditionChecker.canReroll,
-      onClick: (li) => ActionHandler.useFate(li, 'reroll'),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'reroll')),
     },
     {
       label: 'CHATCONTEXT.RerollGroup',
       icon: '<i class="fas fa-dice"></i>',
       visible: (li) => ConditionChecker.canReroll(li, true),
-      onClick: (li) => ActionHandler.useFate(li, 'reroll', 1),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'reroll', 1)),
     },
     {
       label: 'CHATCONTEXT.talentedReroll',
       icon: '<i class="fas fa-dice"></i>',
       visible: ConditionChecker.isTalented,
-      onClick: (li) => ActionHandler.useFate(li, 'isTalented'),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'isTalented')),
     },
     {
       label: 'CHATCONTEXT.AddQS',
       icon: '<i class="fas fa-plus-square"></i>',
       visible: ConditionChecker.canIncreaseQS,
-      onClick: (li) => ActionHandler.useFate(li, 'addQS'),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'addQS')),
     },
     {
       label: 'CHATCONTEXT.AddQSGroup',
       icon: '<i class="fas fa-plus-square"></i>',
       visible: (li) => ConditionChecker.canIncreaseQS(li, true),
-      onClick: (li) => ActionHandler.useFate(li, 'addQS', 1),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'addQS', 1)),
     },
     {
       label: 'CHATCONTEXT.rerollDamage',
       icon: '<i class="fas fa-dice"></i>',
       visible: ConditionChecker.canRerollDamage,
-      onClick: (li) => ActionHandler.useFate(li, 'rerollDamage'),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'rerollDamage')),
     },
     {
       label: 'CHATCONTEXT.rerollDamageGroup',
       icon: '<i class="fas fa-dice"></i>',
       visible: (li) => ConditionChecker.canRerollDamage(li, true),
-      onClick: (li) => ActionHandler.useFate(li, 'rerollDamage', 1),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'rerollDamage', 1)),
     },
     {
       label: 'CHATCONTEXT.improveFate',
       icon: '<i class="fas fa-plus-square"></i>',
       visible: ConditionChecker.canImproveRoll,
-      onClick: (li) => ActionHandler.useFate(li, 'Improve'),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'Improve')),
     },
     {
       label: 'CHATCONTEXT.improveFateGroup',
       icon: '<i class="fas fa-plus-square"></i>',
       visible: (li) => ConditionChecker.canImproveRoll(li, true),
-      onClick: (li) => ActionHandler.useFate(li, 'Improve', 1),
+      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'Improve', 1)),
     },
     {
       label: 'CHATCONTEXT.applyDepletableBuffs',
       icon: '<i class="fas fa-wand-magic-sparkles"></i>',
       visible: ConditionChecker.canApplyDepletableBuffs,
-      onClick: ActionHandler.applyDepletableBuffs,
+      onClick: chatMessageAction(ActionHandler.applyDepletableBuffs),
     },
   ];
 
@@ -462,25 +464,25 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     label: `${applyDamageLabel()} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     visible: ConditionChecker.canHurt,
-    onClick: (li) => applyDamage(li, 'value', 2),
+    onClick: chatMessageAction((li) => applyDamage(li, 'value', 2)),
   },
   {
     label: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     visible: ConditionChecker.canHurtSP,
-    onClick: (li) => applyDamage(li, 'sp', 2),
+    onClick: chatMessageAction((li) => applyDamage(li, 'sp', 2)),
   },
   {
     label: `${applyDamageLabel()} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     visible: ConditionChecker.canApplyDefaultRolls,
-    onClick: (li) => ActionHandler.applyChatCardDamage(li, 'value', 2),
+    onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'value', 2)),
   },
   {
     label: `${_loc('CHATCONTEXT.ApplyDamageSP')} x2`,
     icon: '<i class="fas fa-user-minus"></i>',
     visible: ConditionChecker.canApplyDefaultRolls,
-    onClick: (li) => ActionHandler.applyChatCardDamage(li, 'sp', 2),
+    onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'sp', 2)),
   },
 ];
 

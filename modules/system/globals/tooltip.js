@@ -45,6 +45,9 @@ export class GlobalToolTipHandler {
             case 'rangeweaponDetails':
                 description = await GlobalToolTipHandler._rangeweaponDetailsTooltip(data, actor);
                 break;
+            case 'spellDetails':
+                description = await GlobalToolTipHandler._spellDetailsTooltip(data, actor);
+                break;
             default:
                 return;
         }
@@ -192,6 +195,13 @@ export class GlobalToolTipHandler {
             LZ,
             reloadProgress: resolved.system.reloadTime.progress,
         });
+    }
+
+    static async _spellDetailsTooltip(data, actor) {
+        const item = actor?.items.get(data.id);
+        if (!item) return;
+
+        return await renderTemplate('systems/dsa5/templates/tooltips/spell_details.hbs', { item });
     }
 
     static async _handleEnchantmentTooltip(data, actor) {

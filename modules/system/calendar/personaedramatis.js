@@ -53,6 +53,10 @@ export class PersonaeDramatis {
 
     static async addActorToPersonae(actor) {
         if (!game.user.isGM || !actor) return;
+        if (!DSAPersonaEntry.isValidActor(actor)) {
+            ui.notifications.warn('PERSONAE.actorTypeNotAllowed', { localize: true });
+            return;
+        }
 
         const existing = this.#findExistingPersona(actor.uuid);
         if (existing) {

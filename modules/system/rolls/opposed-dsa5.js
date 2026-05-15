@@ -650,7 +650,7 @@ export default class OpposedDsa5 {
    */
   static async finishOpposedTestHookAsync(attacker, defender, opposedResult, options) { }
 
-  /*
+  // required for hitzones
   static async rerenderOpposedResultMessage(resultMessage) {
     if (!resultMessage) return;
 
@@ -674,7 +674,6 @@ export default class OpposedDsa5 {
       rerenderMessage: resultMessage,
     });
   }
-  */
 
   static getOpposedDefender(opposedMeta = {}) {
     if (opposedMeta.defenderMessageId) {

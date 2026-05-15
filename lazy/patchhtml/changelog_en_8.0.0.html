@@ -2,15 +2,17 @@
 
 <h3 id="hero-creation-overhaul">Hero Creation Overhaul</h3>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/charbuilder.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
-<p>The hero creation flow has been reorganized into a more spacious and consistent builder experience. The main builder view, step sidebar, contextual help, and the species/culture/career confirmation wizards now use stacked card panels so they read as one coherent interface at the standard character builder window width.</p>
-<p>A reusable card-layout theme in the DSA5 system styles now provides the shared panel, page, stack, callout, content, and action composition patterns used by these hero creation surfaces, so the same layout language can be reused consistently in other interfaces.</p>
-<p>The archetype browser now has more usable space on normal sheet sizes because it no longer has to compete with the experience selector in a side-by-side split. The core character builder also received smaller workflow and UI refinements that make the creation process easier to follow.</p>
+<p>Hero creation has been revised again so that archetypes are shown to players and can serve as inspiration or templates.</p>
+<p>In addition, the layout has been visually improved and now offers several layout options to make browsing careers, cultures, and species more comfortable.</p>
+<p>Additional search and filter options should help during character creation.</p>
 <p>Species traits such as hair or fur color, eye color, height, and weight can now be rolled according to the information on the species.</p>
+<p>All in all, this should make hero creation more pleasant and faster.</p>
+<p>This is also a foundation for a larger change we are planning with it.</p>
 <div style="clear:both"></div>
 
-<h2 id="shapeshifting">Built-in Shapeshifting with Animated Token Transitions</h2>
-<p>The shapeshifting wizard is now a built-in system feature and no longer requires an addon module to be installed. Dropping a creature onto a character sheet always offers the shapeshift option alongside the mount and new companion option.</p>
-<p>When a shapeshift or shape restoration occurs, the affected token now plays an animated morph transition using the native Foundry v14 <code>TextureTransitionFilter</code>. If the token texture changes, a smooth morph effect bridges the old and new appearance; if the texture stays the same, a swirl animation signals the transformation visually.</p>
+<h2 id="shapeshifting">Integrated Shapeshifting with Animated Token Transitions</h2>
+<p>The shapeshifting wizard is now a built-in system feature and no longer requires an addon module. When dragging a creature onto a hero sheet, the shapeshifting option is always offered alongside the mount and the new companion option.</p>
+<p>During shapeshifting or shape restoration, the affected token now shows an animated morph transition using the native Foundry v14 <code>TextureTransitionFilter</code>. If the token texture changes, a smooth morph effect fades between the old and new appearance; if the texture stays the same, a swirl animation visually signals the transformation.</p>
 <h2 id="payment-requests">Native Payment Requests And Shared Transaction Summaries</h2>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/payment.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>Payment requests created by GMs can now be bundled into a single shared chat card instead of sending separate prompts for every actor.</p>
@@ -46,25 +48,24 @@
 <img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>The calendar/campaign manager now includes a dedicated questlog tab for long-running adventure and campaign tracking, turning the existing calendar surface into a central place for events, dramatis personae, and overarching objectives.</p>
 <p>Questlog entries are stored in dedicated <code>dsaquestlog</code> journal pages and can be registered per journal in the same way as calendar events and Dramatis Personae. Each quest can hold structured summaries, detailed notes, GM-only information, multi-step objectives, and in-world timeline information.</p>
-<p>Highlights of the new questlog flow:</p>
+<p>Highlights of the new questlog:</p>
 <ul class="dsalist">
-<li>Adventure journals can expose questlog pages directly inside the calendar picker.</li>
-<li>Quest entries support objective tracking for multi-session story arcs.</li>
+<li>Questlog pages are displayed directly in the calendar/campaign manager.</li>
+<li>Quest entries support objective tracking so nobody forgets what the adventure is about.</li>
 <li>Timeline metadata such as start, target, and completion dates can be stored directly on the quest.</li>
-<li>Quest entries can link back to calendar events and Dramatis Personae entries using stable embedded entry references.</li>
+<li>Quest entries can refer to calendar events and Dramatis Personae entries.</li>
 <li>GMs and players can use the same calendar surface to follow the current state of the adventure instead of splitting information across separate tools.</li>
 </ul>
-<p>This upgrade establishes the questlog as a major campaign-management feature rather than a simple notes list and extends the calendar picker into a broader narrative control center.</p>
+<p>This upgrade establishes the questlog as a major campaign-management feature rather than a simple notes list and expands the calendar into a broader narrative control center.</p>
 <div style="clear:both"></div>
 
 <h2 id="scene-regions">Scene Regions Replace Measured Templates</h2>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/regionen.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
-<p>Area-of-effect spells and auras now use the native Foundry v14 Scene Region system instead of custom MeasuredTemplate overlays. This brings significant improvements to both spell placement and aura management.</p>
-<p>Spell templates placed from chat cards now use <code>canvas.regions.placeRegion()</code> for interactive placement with live green/red range feedback. Instant-duration spells create ephemeral regions that acquire targets and then disappear; maintained spells create persisted regions that remain visible on the scene until their tracking effect expires. Persistent spell zones automatically include a <code>DSAZoneRegionBehavior</code> that re-applies spell effects when a token enters the zone or at the start of each combat round, supporting recurring damage and ongoing zone effects.</p>
+<p>Spells that affect areas (such as Ignisphaero) and spells with auras now use the new Foundry V14 region templates instead of the old MeasuredTemplates. This brings noticeable improvements to spell placement and aura management.</p>
+<p>The templates can now be placed on the canvas and apply their effects to all targets inside the zone. This also makes it possible to execute aura macros and other complex effects on actors. Spells such as Pandaemonium can now, for example, attack targets in their area of influence each round.</p>
+<p>This also allows auras and area spells to use Foundry's own region behaviors, such as darkening regions.</p>
 <p>All spell regions and aura emanations now enforce wall restriction by default, so area effects respect walls and other movement barriers on the scene.</p>
-<p>The ring shape type is now available as an area target option alongside sphere, cone, cube, and line.</p>
-<p>Token auras now use the Region Emanation API (<code>RegionDocument.createTokenEmanation()</code>), which means emanation regions automatically follow token movement without any manual redrawing. Aura effects are applied and removed via native <code>TOKEN_ENTER</code> and <code>TOKEN_EXIT</code> region events through a new <code>DSAAuraRegionBehavior</code> region behavior type, completely replacing the old distance-polling and manual scene-token iteration. Aura effect application now uses the full advanced effect pipeline, supporting resist rolls, system conditions, macros, delayed effects, and creature links.</p>
-<p>The shared <code>DSARegionBehaviorBase</code> base class provides reusable <code>applyEffects()</code>, <code>removeEffects()</code>, <code>validDisposition()</code>, and <code>playSound()</code> methods for all region behavior types, including the existing trap behavior which has been refactored to use the same foundation.</p>
+<p>The ring shape is now available as an area target option alongside sphere, cone, cube, and line.</p>
 <div style="clear:both"></div>
 
 <h2 id="group-actor">Group Actor</h2>
@@ -80,24 +81,21 @@
 
 <h1 id="improvements">Improvements</h1>
 <ul class="dsalist">
-<li><strong>Item Enhancement Effects</strong>: A new <code>enhancement</code> ActiveEffect type allows permanent item modifications such as materials, creation techniques, and improvements to be represented as data-driven effects on equipment items. Enhancement effects carry a reduced schema (enhancement type, slot cost, crafting roll modifier, crafting time multiplier, craft skill, material cost, special attributes, on-use actions) and apply their changes directly to the parent item's attributes during <code>prepareDerivedData()</code>. They are excluded from actor-level effect application and never transfer to the owning actor. Each equipment item type defines slot limits per enhancement category, enforced via a pre-create hook that also validates change keys against a <code>system.*</code> prefix whitelist. The enhancement type dropdown is filtered per target item type so only categories with available slots are offered. A dedicated <code>DSAEnhancementEffectConfig</code> sheet provides a streamlined four-tab UI (description, details, changes, actions) with the shared wizard/expert dropdown infrastructure. Custom apply logic handles dice-string damage arithmetic (e.g. <code>"1d6+2"</code> → <code>"1d6+4"</code>), slash-separated range multipliers, zone armor protection replication, and special attribute flags (magic, rust-resistant, etc.) that are merged into the item's effect attributes. A compendium helper (<code>DSA5_Utility.getEnhancementEffects()</code>) enables indexed lookups of enhancement AEs from compendium packs by target type and enhancement type. The compendium module's crafting calculator now dynamically loads enhancement effects from the compendium instead of using static modifier tables, making the system fully data-driven and extensible.</li>
+<li><strong>Item Enhancement Effects</strong>: A new <code>enhancement</code> ActiveEffect type makes it possible to transfer permanent item modifications such as materials, crafting techniques, and improvements onto equipment items as effects. These new effects are available, for example, through the Compendium I forge or the related Active Effects compendium. In principle, they allow items to be modified with effects just as actors could be modified before, while also fulfilling specific rule restrictions such as the production rules in this case.</li>
 <li>Hit zones can now be edited directly on opposed result cards, with damage, zone armor, and wound-resistance buttons updating in place.</li>
-<li>A new public <code>ShapeshiftingAPI</code> now lets macros and modules open the built-in shapeshifting wizard with resolved source/target actors and preset-backed radio defaults.</li>
-<li>The Active Effect configuration's Changes tab now defaults to a wizard mode that groups effect keys by category (Attributes, Combat, Skills, Magic &amp; Faith, Regeneration, Conditions, Protection &amp; Defense, Weapon/Armor) and hides technical fields behind an expert toggle. The categories are presented as optgroups inside a searchable dropdown; selecting an effect auto-fills the key, type, intended phase, and example value. An expert mode toggle in the tab header restores the full column layout at any time.</li>
-<li>Advanced effect macros triggered through DSA aura regions and spell template regions now receive a normalized <code>options.regionEvent</code> payload.</li>
-<li>Payment request handling now relies on package-prefixed native queries such as <code>dsa5.paymentRequest</code> and <code>dsa5.transactionSummary</code>.</li>
-<li>GMs can now create calendar events directly from the master hotbar and from the calendar picker's Events tab.</li>
-<li>Actor directory entries and actor sheet window controls now include a GM action to add an actor directly to Dramatis Personae.</li>
-<li>The primary party group sheet can now be opened directly with the <code>Shift+C</code> keybinding.</li>
-<li>Social-conflict skill dialogs for Persuasion, Seduction, and Fast-Talk now add a Personae-based Social Contact modifier automatically.</li>
-<li>The item creation flow now uses a dedicated application dialog instead of an inline prompt with a built-in search field.</li>
-<li>On-use item macros now live in the item system data as reusable on-use actions instead of a single legacy flag string. Items can define multiple named action entries with their own icon and macro.</li>
-<li>On-use action dialogs now expose their image row as a real image file picker.</li>
-<li>On-use actions are now also available on Active Effects. Effects with on-use actions display a badge on the actor's status tab and can be activated from the status effect context menu or the token hotbar. Active effects can also be dropped onto the macro hotbar to create a quick-access macro.</li>
-<li>On-use actions now support a temporary GM-only activation via right-click.</li>
-<li>Character inventory sheets now include bulk inventory actions for deleting all inventory items, dropping them onto the current scene as loot, or packing everything into a dropped bag.</li>
-<li>Trading an item from the actor sheet now opens the shared searchable actor picker instead of the old bespoke trade-target list.</li>
-<li>ProseMirror editors now include a localized DSA Styles dropdown for quickly wrapping selected content in Master Box, Paper Note, Quote Block, and DSA List containers.</li>
+<li>A new public <code>ShapeshiftingAPI</code> now lets macros and modules open the built-in shapeshifting wizard with resolved source/target actors and preset defaults. Presets can define the attribute, status, and skill origin before the user confirms the transformation.</li>
+<li>The Active Effect configuration's Changes tab now defaults to a wizard mode that groups effect keys by category (Attributes, Combat, Skills, Magic &amp; Faith, Regeneration, Conditions, Protection &amp; Defense, Weapon/Armor) and hides technical fields (type, phase, priority, raw key) behind an expert toggle. The categories are presented as optgroups inside a searchable dropdown; selecting an effect auto-fills the key, type, intended phase, and example value. Characteristic entries now also expose direct final-phase characteristic value modifiers for cases where derived attributes should not be recalculated. The advanced tabs now surface field hints directly in the UI so custom functions, aura settings, charges, and related advanced options explain themselves without leaving the sheet. An expert mode toggle in the tab header restores the full column layout at any time.</li>
+<li>GMs can now create calendar events directly from the GM hotbar and from the calendar picker's Events tab. The picker action is GM-only, closes the picker before opening the creation dialogs, and uses the existing target selection pattern for existing pages, new pages, or new journals.</li>
+<li>The context menu on actor sheets now includes a GM action to add an actor directly to Dramatis Personae. The flow checks for duplicates, allows adding to an existing Personae page or creating a new page or journal, and automatically registers the chosen journal in <code>calendarActors</code>.</li>
+<li>The primary party group sheet can now be opened directly with the <code>G</code> keybinding. If no primary party has been configured yet, GMs are prompted to assign an existing group sheet or create a new one and set it as the default immediately.</li>
+<li>Social-conflict skill dialogs for Persuasion, Seduction, and Fast-Talk now add a Personae-based Social Contact modifier automatically. When exactly one target is selected, the dialog looks up the target's Dramatis Personae relation for the active party, converts relation levels <code>1..9</code> into a modifier from <code>-4</code> to <code>+4</code>, and keeps the modifier in sync if the target changes while the dialog is open. When no unique target or no matching Personae entry exists, the modifier remains available with a default value of <code>0</code>.</li>
+<li>The dialog for creating items is now a bit more useful and prettier.</li>
+<li>Items can now contain actions. These replace the previous OnUse effects and work equivalently, while allowing multiple actions to be defined.</li>
+<li>Actions are now also available on Active Effects. The Advanced tab of every Active Effect configuration shows the same action list as items. Effects with actions display a badge on the actor's status tab and can be activated from the status effect context menu or the token hotbar. Active Effects can also be dropped onto the macro hotbar to create a quick-access macro.</li>
+<li>Actions now support temporary GM-only activation via right-click. This should send result messages only directly to the GM instead of making them publicly visible.</li>
+<li>Character inventory sheets now include bulk inventory actions for deleting all inventory items, dropping them onto the current scene as loot, or packing them into a dropped bag.</li>
+<li>Trading an item from the actor sheet now opens the shared searchable actor picker. The trade flow uses a dedicated single-select mode in the picker and limits the target list to player-owned actors, matching the previous trade scope with a clearer UI.</li>
+<li>ProseMirror editors now include a localized DSA Styles dropdown for quickly wrapping selected content in Master Box, Paper Note, Quote Block, and DSA List containers without switching to HTML source mode.</li>
 <li>Ranged weapons in the combat tab now show reach and reload details in an HTML tooltip on the weapon name instead of an expandable detail row.</li>
 <li>The <code>@Info</code> journal enricher now allows players to roll knowledge checks directly. Players see a skill roll button; rolling sends a query to the GM who can approve/adjust which QS information to share.</li>
 <li>GMs can now control which calendar features (calendar, events, personae, questlog) are visible to players via a new feature visibility setting.</li>

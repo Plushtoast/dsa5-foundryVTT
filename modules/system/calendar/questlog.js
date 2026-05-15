@@ -163,7 +163,20 @@ export class QuestLogFeature {
     }
 
     static async openReference({ uuid, entryKey = null }) {
-        await QuestLogFeature.#parent.openDocumentSheet(uuid, { currentKey: entryKey });
+        const document = await fromUuid(uuid);
+        if (!document) return;
+
+        if (document.documentName === 'JournalEntryPage') {
+            await QuestLogFeature.#parent.openDocumentSheet(document.parent, { pageId: document.id });
+            return;
+        }
+
+        if (document.documentName === 'JournalEntry') {
+            await QuestLogFeature.#parent.openDocumentSheet(document);
+            return;
+        }
+
+        await QuestLogFeature.#parent.openDocumentSheet(document, { currentKey: entryKey });
     }
 
     onRenderListeners() {

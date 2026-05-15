@@ -2,15 +2,17 @@
 
 <h3 id="ueberarbeitete-heldenerstellung">Überarbeitete Heldenerstellung</h3>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/charbuilder.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
-<p>Die Heldenerstellung wurde zu einem großzügigeren und konsistenteren Baukasten-Erlebnis umgebaut. Die Hauptansicht des Builders, die Schritt-Seitenleiste, kontextuelle Hilfen und die Bestätigungsassistenten für Spezies, Kultur und Profession nutzen jetzt gestapelte Kartenflächen, sodass sie bei der Standardbreite des Charakter-Builders wie eine zusammenhängende Oberfläche wirken.</p>
-<p>Ein wiederverwendbares Kartenlayout-Thema in den DSA5-Systemstilen stellt nun gemeinsame Muster für Panels, Seiten, Stapel, Hinweise, Inhalte und Aktionsbereiche bereit, die von diesen Heldenerstellungs-Oberflächen genutzt werden. Damit kann dieselbe Layoutsprache auch in anderen Oberflächen konsistent wiederverwendet werden.</p>
-<p>Der Archetypen-Browser hat bei normalen Bogengrößen jetzt mehr nutzbaren Platz, weil er sich den Raum nicht mehr in einer seitlichen Aufteilung mit der Erfahrungsgrad-Auswahl teilen muss. Außerdem hat der Charakter-Builder im Core-Modul kleinere Ablauf- und UI-Verbesserungen erhalten, durch die der Erstellungsprozess leichter nachzuvollziehen ist.</p>
+<p>Die Heldenerstellung wurde nochmal überarbeitet, so dass Archetypen dem Spieler angezeigt werden und ihm als Inspiration oder Vorlage dienen können.</p>
+<p>Darüber hinaus wurde das Layout optisch verbessert und gewährt nun verschiedene Layout-Optionen um Professionen, Kulturen und Spezies angenehmer durchstöbern zu können.</p>
+<p>Zusätzliche Such- und Filteroptionen sollten hierbei bei der Charaktererschaffung helfen.</p>
 <p>Spezies-Eigenschaften wie Haar- oder Fellfarbe, Augenfarbe, Größe und Gewicht können jetzt anhand der Angaben auf der Spezies ausgewürfelt werden.</p>
+<p>Alles in allem sollte dies die Heldenerstellung angenehmer gestalten und beschleunigen.</p>
+<p>Dies is auch ein Grundstein für eine größere Änderung die wir damit planen.</p>
 <div style="clear:both"></div>
 
-<h2 id="gestaltwandlung">Eingebaute Gestaltwandlung mit animierten Token-Übergängen</h2>
-<p>Der Gestaltwandlungs-Assistent ist jetzt eine eingebaute Systemfunktion und benötigt kein Zusatzmodul mehr. Das Fallenlassen einer Kreatur auf einen Heldenbogen bietet immer die Gestaltwandlungs-Option neben der Reittier- und der neuen Begleiter-Option an.</p>
-<p>Wenn eine Gestaltwandlung oder Rückverwandlung stattfindet, zeigt der betroffene Token jetzt einen animierten Morph-Übergang mit dem nativen Foundry v14 <code>TextureTransitionFilter</code>. Wenn sich die Token-Textur ändert, blendet ein sanfter Morph-Effekt zwischen altem und neuem Aussehen über; bleibt die Textur gleich, signalisiert eine Wirbel-Animation die Verwandlung visuell.</p>
+<h2 id="gestaltwandlung">Integrierte Gestaltwandlung mit animierten Token-Übergängen</h2>
+<p>Der Gestaltwandlungs-Assistent ist nun ein eingebautes Systemfeature und benötigt kein Addon-Modul mehr. Beim Ziehen einer Kreatur auf einen Heldenbogen wird stets die Gestaltwandlungsoption neben der Reittier- und der neuen Begleiter-Option angeboten.</p>
+<p>Bei einer Gestaltwandlung oder Rückverwandlung zeigt der betroffene Token jetzt einen animierten Morph-Übergang mit dem nativen Foundry-v14-<code>TextureTransitionFilter</code>. Ändert sich die Token-Textur, blendet ein sanfter Morph-Effekt zwischen altem und neuem Erscheinungsbild über; bleibt die Textur gleich, signalisiert eine Wirbel-Animation die Verwandlung visuell.</p>
 <h2 id="zahlungsanfragen">Native Zahlungsanfragen und gemeinsame Transaktionsübersichten</h2>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/payment.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
 <p>Von der Spielleitung erstellte Zahlungsanfragen können jetzt in einer einzigen gemeinsamen Chat-Karte gebündelt werden, anstatt separate Aufforderungen für jeden Akteur zu senden.</p>
@@ -44,26 +46,26 @@
 
 <h2 id="questlog">Kalenderintegriertes Questlog für Abenteuer</h2>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/questlog.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
-<p>Der Kalender-/Kampagnenmanager enthält jetzt einen eigenen Questlog-Reiter für die langfristige Verfolgung von Abenteuern und Kampagnen und macht die bestehende Kalenderoberfläche zu einer zentralen Anlaufstelle für Ereignisse, Dramatis Personae und übergreifende Ziele.</p>
-<p>Questlog-Einträge werden in dedizierten <code>dsaquestlog</code>-Journalseiten gespeichert und können pro Journal registriert werden, genau wie Kalenderereignisse und Dramatis Personae. Jeder Questeintrag kann strukturierte Zusammenfassungen, detaillierte Notizen, SL-exklusive Informationen, mehrstufige Ziele und spielweltinterne Zeitinformationen enthalten.</p>
-<p>Highlights des neuen Questlog-Ablaufs:</p>
+<p>Der Kalender-/Kampagnenmanager enthält jetzt einen eigenen Questlog-Reiter für langfristige Abenteuer- und Kampagnenverwaltung und macht die bestehende Kalenderoberfläche zu einer zentralen Anlaufstelle für Ereignisse, Dramatis Personae und übergeordnete Ziele.</p>
+<p>Questlog-Einträge werden in eigenen <code>dsaquestlog</code>-Journalseiten gespeichert und können pro Journal auf die gleiche Weise registriert werden wie Kalenderereignisse und Dramatis Personae. Jeder Questeintrag kann strukturierte Zusammenfassungen, detaillierte Notizen, SL-exklusive Informationen, mehrstufige Ziele und spielweltinterne Zeitinformationen enthalten.</p>
+<p>Highlights des neuen Questlogs:</p>
 <ul class="dsalist">
-<li>Abenteuer-Journale können Questlog-Seiten direkt im Kalender-Picker anbieten.</li>
-<li>Quest-Einträge unterstützen Zielverfolgung für sitzungsübergreifende Handlungsstränge.</li>
-<li>Zeitleisten-Metadaten wie Start-, Ziel- und Abschlussdaten können direkt am Quest gespeichert werden.</li>
-<li>Quest-Einträge können auf Kalenderereignisse und Dramatis-Personae-Einträge über stabile eingebettete Eintragsreferenzen zurückverlinken.</li>
-<li>Spielleitung und Spieler können dieselbe Kalenderoberfläche nutzen, um den aktuellen Abenteuerstand zu verfolgen.</li>
+<li>Questlog-Seiten werden direkt im Kalender/Kampagnenmanager angezeigt.</li>
+<li>Quest-Einträge unterstützen Zielverfolgung, damit keiner vergisst worum es geht.</li>
+<li>Zeitleisten-Metadaten wie Start-, Ziel- und Abschlussdatum können direkt am Quest gespeichert werden.</li>
+<li>Quest-Einträge können auf Kalenderereignisse und Dramatis-Personae-Einträge verweisen.</li>
+<li>Spielleitung und Spieler können dieselbe Kalenderoberfläche nutzen, um dem aktuellen Abenteuerstand zu folgen, statt Informationen auf verschiedene Werkzeuge zu verteilen.</li>
 </ul>
-<p>Dieses Upgrade etabliert das Questlog als bedeutendes Kampagnenmanagement-Feature und erweitert den Kalender-Picker zu einer umfassenderen narrativen Schaltzentrale.</p>
+<p>Dieses Upgrade etabliert das Questlog als bedeutendes Kampagnenmanagement-Feature statt einer einfachen Notizliste und erweitert den Kalender zu einem umfassenderen narrativen Steuerungszentrum.</p>
 <div style="clear:both"></div>
 
-<h2 id="szenenregionen">Szenenregionen ersetzen Maßschablonen</h2>
+<h2 id="szenenregionen">Szenenregionen ersetzen Schablonen</h2>
 <img src="systems/dsa5/lazy/patchimages/8.0.0/regionen.webp" style="float:right; width:320px; max-width:45%; height:auto; margin:0 0 0.75rem 1rem; border-radius:4px;"/>
-<p>Flächenzauber und Auren nutzen jetzt das native Foundry v14 Szenenregionen-System anstelle eigener MeasuredTemplate-Overlays. Das bringt spürbare Verbesserungen sowohl bei der Zauberplatzierung als auch bei der Aurenverwaltung.</p>
-<p>Zauberschablonen, die von Chat-Karten platziert werden, nutzen jetzt <code>canvas.regions.placeRegion()</code> für interaktive Platzierung mit Echtzeit-Grün-/Rot-Reichweiten-Feedback. Sofortwirkungszauber erzeugen kurzlebige Regionen, die Ziele erfassen und dann verschwinden; aufrechterhaltene Zauber erzeugen persistente Regionen, die auf der Szene sichtbar bleiben, bis ihr Tracking-Effekt abläuft. Persistente Zauberzonen beinhalten automatisch ein <code>DSAZoneRegionBehavior</code>, das Zaubereffekte erneut anwendet, wenn ein Token die Zone betritt oder zu Beginn jeder Kampfrunde.</p>
-<p>Alle Zauberregionen und Aura-Emanationen erzwingen jetzt standardmäßig Wandbeschränkungen, sodass Flächeneffekte Wände und andere Bewegungsbarrieren auf der Szene respektieren.</p>
-<p>Die Ringform ist jetzt als Flächenzieloption neben Kugel, Kegel, Würfel und Linie verfügbar.</p>
-<p>Token-Auren nutzen jetzt die Region-Emanation-API (<code>RegionDocument.createTokenEmanation()</code>), sodass Emanationsregionen automatisch der Token-Bewegung folgen. Die Anwendung von Aura-Effekten nutzt jetzt die volle erweiterte Effekt-Pipeline inklusive Widerstandswürfen, Systemzuständen, Makros, verzögerten Effekten und Kreaturverknüpfungen.</p>
+<p>Zauber die auf Flächen wirken (Ignisphaero) und Zauber mit Auren benutzen nun die neuen Foundry-V14 Region-Templates, statt den alten MeasuredTemplates. Das bringt spürbare Verbesserungen bei Zauberplatzierung und Aura-Verwaltung.</p>
+<p>Die Schablonen können nun auf dem Canvas abgelegt werden und übertragen ihre Wirkung auf alle in der Zone befindlichen Ziele. Dies erlaubt nun auch das Ausführen von Aura-Makros und anderer komplizierter Effekte auf Akteure. Zauber wie Pandaemonium können nun z.B. pro Runde Ziele in ihrem Einflussgebiet angreifen.</p>
+<p>Die Auren und Flächenzauber können so zusätzlich auch das Foundry-eigene Regionsverhaltung (wie z.b. Regionen abdunkeln) nutzen.</p>
+<p>Alle Zauberregionen und Aura-Emanationen erzwingen jetzt standardmäßig Wandbeschränkungen, sodass Flächeneffekte Wände und andere Bewegungsbarrieren auf der Szene berücksichtigen.</p>
+<p>Die Ringform ist jetzt als Flächenziel-Option neben Kugel, Kegel, Würfel und Linie verfügbar.</p>
 <div style="clear:both"></div>
 
 <h2 id="gruppenakteur">Gruppenakteur</h2>
@@ -79,24 +81,21 @@
 
 <h1 id="verbesserungen">Verbesserungen</h1>
 <ul class="dsalist">
-<li><strong>Gegenstandsverbesserungs-Effekte</strong>: Ein neuer <code>enhancement</code> ActiveEffect-Typ erlaubt permanente Gegenstandsmodifikationen wie Materialien, Herstellungstechniken und Verbesserungen als datengetriebene Effekte auf Ausrüstungsgegenständen. Verbesserungseffekte tragen ein reduziertes Schema (Verbesserungstyp, Slot-Kosten, Herstellungsprobe-Modifikator, Herstellungszeit-Multiplikator, Handwerkstalent, Materialkosten, Spezialattribute, Nutzungsaktionen) und wenden ihre Änderungen direkt auf die Attribute des Elterngegenstands während <code>prepareDerivedData()</code> an. Ein dediziertes <code>DSAEnhancementEffectConfig</code>-Sheet bietet eine schlanke Vier-Reiter-Oberfläche mit der gemeinsamen Assistenten-/Experten-Dropdown-Infrastruktur.</li>
-<li>Trefferzonen können jetzt direkt auf vergleichenden Ergebniskarten bearbeitet werden, wobei Schaden, Zonenpanzerung und Wundwiderstands-Buttons sich an Ort und Stelle aktualisieren.</li>
-<li>Eine neue öffentliche <code>ShapeshiftingAPI</code> ermöglicht es Makros und Modulen, den Gestaltwandlungs-Assistenten mit aufgelösten Akteuren und voreingestellten Standardwerten zu öffnen.</li>
-<li>Der Änderungen-Reiter der Aktiven-Effekt-Konfiguration wechselt jetzt standardmäßig in einen Assistenten-Modus, der Effektschlüssel nach Kategorie gruppiert und technische Felder hinter einem Experten-Toggle verbirgt.</li>
-<li>Erweiterte Effekt-Makros, die über DSA-Aura-Regionen und Zauberschablonen-Regionen ausgelöst werden, erhalten jetzt ein normalisiertes <code>options.regionEvent</code>-Payload.</li>
-<li>Die Handhabung von Zahlungsanfragen basiert jetzt auf paketpräfixierten nativen Queries wie <code>dsa5.paymentRequest</code> und <code>dsa5.transactionSummary</code>.</li>
-<li>Die Spielleitung kann jetzt Kalenderereignisse direkt über die SL-Hotbar und den Kalender-Picker erstellen.</li>
-<li>Verzeichniseinträge und Fensteraktionen auf Akteurbögen enthalten jetzt eine SL-Aktion zum direkten Hinzufügen eines Akteurs zu Dramatis Personae.</li>
-<li>Der Gruppenbogen der Primärgruppe kann jetzt direkt mit <code>Shift+C</code> geöffnet werden.</li>
-<li>Talentdialoge für soziale Konflikte bei Überreden, Betören und Bekehren &amp; Überzeugen fügen jetzt automatisch einen Personae-basierten Sozialkontakt-Modifikator hinzu.</li>
-<li>Der Gegenstandserstellungs-Ablauf nutzt jetzt einen eigenen Anwendungsdialog mit integriertem Suchfeld.</li>
-<li>Nutzungs-Makros auf Gegenständen leben jetzt in den Systemdaten als wiederverwendbare Nutzungsaktionen. Gegenstände können mehrere benannte Aktionseinträge mit eigenem Icon und Makro definieren.</li>
-<li>Nutzungsaktions-Dialoge zeigen ihre Bildzeile jetzt als echten Bilddatei-Picker an.</li>
-<li>Nutzungsaktionen sind jetzt auch auf Aktiven Effekten verfügbar. Effekte mit Nutzungsaktionen zeigen ein Badge auf dem Status-Reiter und können über das Kontextmenü oder die Token-Hotbar aktiviert werden.</li>
-<li>Nutzungsaktionen unterstützen jetzt eine temporäre SL-exklusive Aktivierung per Rechtsklick.</li>
-<li>Helden-Inventar-Sheets enthalten jetzt Massen-Inventaraktionen zum Löschen, Ablegen als Beute oder Einpacken in eine Tasche.</li>
-<li>Das Handeln eines Gegenstands öffnet jetzt den gemeinsamen durchsuchbaren Akteur-Picker statt der alten Handelsziel-Liste.</li>
-<li>ProseMirror-Editoren enthalten jetzt ein lokalisiertes DSA-Styles-Dropdown für Meisterinfo-Box, Papiernotiz, Zitatblock und DSA-Listen-Container.</li>
+<li><strong>Gegenstandsverbesserungs-Effekte</strong>: Ein neuer <code>enhancement</code>-ActiveEffect-Typ ermöglicht permanente Gegenstandsmodifikationen wie Materialien, Herstellungstechniken und Verbesserungen als Effekte auf Ausrüstungsgegenstände zu übertragen. Diese neuen Effekte sind z.B. über die Schmiede aus dem Kompendium I oder dem dazugehörigen ActiveEffects Kompendium verfügbar. Prinzipiell erlauben sie es so Gegenstände mit Effekten zu modifizieren, wie es zuvor auch mit Akteuren möglich war und dabei bestimmte Regelbeschränkungen zu erfüllen, wie in diesem Fall die Produktionsregeln.</li>
+<li>Trefferzonen können jetzt direkt auf Vergleichsproben-Ergebniskarten bearbeitet werden, wobei Schaden, Zonenrüstung und Wundresistenz-Buttons vor Ort aktualisiert werden.</li>
+<li>Eine neue öffentliche <code>ShapeshiftingAPI</code> ermöglicht es Makros und Modulen, den integrierten Gestaltwandlungs-Assistenten mit aufgelösten Quell-/Zielakteuren und voreingestellten Standardwerten zu öffnen. Voreinstellungen können die Attribut-, Status- und Talentherkunft definieren, bevor der Nutzer die Verwandlung bestätigt.</li>
+<li>Der Änderungen-Reiter der ActiveEffects-Konfiguration wechselt jetzt standardmäßig in einen Assistenten-Modus, der Effektschlüssel nach Kategorie gruppiert (Eigenschaften, Kampf, Talente, Magie &amp; Glaube, Regeneration, Zustände, Schutz &amp; Verteidigung, Waffe/Rüstung) und technische Felder (Typ, Phase, Priorität, Rohschlüssel) hinter einem Experten-Toggle verbirgt. Die Kategorien werden als Optgroups in einem durchsuchbaren Dropdown präsentiert; die Auswahl eines Effekts füllt automatisch Schlüssel, Typ, vorgesehene Phase und Beispielwert aus. Eigenschaftseinträge bieten jetzt auch direkte Final-Phase-Eigenschaftswert-Modifikatoren für Fälle, in denen abgeleitete Attribute nicht neu berechnet werden sollen. Die erweiterten Reiter zeigen Feldhinweise jetzt direkt in der Oberfläche an, sodass benutzerdefinierte Funktionen, Aura-Einstellungen, Ladungen und verwandte erweiterte Optionen sich selbst erklären, ohne das Sheet verlassen zu müssen. Ein Experten-Modus-Toggle im Reiter-Header stellt jederzeit das vollständige Spaltenlayout wieder her.</li>
+<li>Die Spielleitung kann jetzt Kalenderereignisse direkt über die Spielleiter-Hotbar und den Ereignisse-Reiter des Kalender-Pickers erstellen. Die Picker-Aktion ist SL-exklusiv, schließt den Picker vor dem Öffnen der Erstellungsdialoge, nutzt das bestehende Zielauswahl-Muster für vorhandene Seiten, neue Seiten oder neue Journale.</li>
+<li>Das Kontextmenü auf Akteurbögen enthält jetzt eine SL-Aktion zum direkten Hinzufügen eines Akteurs zu Dramatis Personae. Der Ablauf prüft auf Duplikate, ermöglicht das Hinzufügen zu einer bestehenden Personae-Seite oder das Erstellen einer neuen Seite oder eines neuen Journals, registriert das gewählte Journal automatisch in <code>calendarActors</code>.</li>
+<li>Der Gruppenbogen der Primärgruppe kann jetzt direkt mit der Tastenkombination <code>G</code> geöffnet werden. Wenn noch keine Primärgruppe konfiguriert wurde, wird die Spielleitung aufgefordert, einen bestehenden Gruppenbogen zuzuweisen oder einen neuen zu erstellen und sofort als Standard festzulegen.</li>
+<li>Talentdialoge für soziale Konflikte bei Überreden, Betören und Bekehren &amp; Überzeugen fügen jetzt automatisch einen Personae-basierten Sozialkontakt-Modifikator hinzu. Wenn genau ein Ziel ausgewählt ist, sucht der Dialog den Dramatis-Personae-Beziehungseintrag des Ziels für die aktive Gruppe, konvertiert Beziehungsstufen <code>1..9</code> in einen Modifikator von <code>-4</code> bis <code>+4</code> und hält den Modifikator synchron, wenn sich das Ziel ändert, während der Dialog geöffnet ist. Wenn kein eindeutiges Ziel oder kein passender Personae-Eintrag existiert, bleibt der Modifikator mit Standardwert <code>0</code> verfügbar.</li>
+<li>Der Dialog für das Erstellen von Gegenständen ist jetzt etwas nützlicher und hübscher.</li>
+<li>Gegenstände können nun Aktionen beinhalten. Diese ersetzen die vorherigen OnUse Effekts und funktionieren gleichwertig, ermöglichen es jedoch mehrere Aktionen zu definieren.</li>
+<li>Aktionen sind jetzt auch auf Aktiven Effekten verfügbar. Der Erweitert-Reiter jeder Aktiven-Effekt-Konfiguration zeigt dieselbe Aktionsliste wie bei Gegenständen. Effekte mit Aktionen zeigen ein Badge auf dem Status-Reiter des Akteurs und können über das Statuseffekt-Kontextmenü oder die Token-Hotbar aktiviert werden. Aktive Effekte können auch auf die Makro-Hotbar gezogen werden, um ein Schnellzugriffs-Makro zu erstellen.</li>
+<li>Aktionen unterstützen jetzt eine temporäre SL-exklusive Aktivierung per Rechtsklick. Dadurch sollten Ergebnis-Nachrichten nur direkt an den Spielleiter geschickt werden, statt öffentlich sichtbar zu sein.</li>
+<li>Helden-Inventar-Sheets enthalten jetzt Massen-Inventaraktionen zum Löschen aller Inventargegenstände, Ablegen auf der aktuellen Szene als Beute oder Einpacken in eine abgelegte Tasche.</li>
+<li>Das Handeln eines Gegenstands vom Akteur-Sheet öffnet jetzt den gemeinsamen durchsuchbaren Akteur-Picker. Der Handelsablauf nutzt einen eigenen Einzelauswahl-Modus im Picker und beschränkt die Zielliste auf spielerbesessene Akteure, passend zum bisherigen Handelsumfang mit klarerer Oberfläche.</li>
+<li>ProseMirror-Editoren enthalten jetzt ein lokalisiertes DSA-Styles-Dropdown zum schnellen Einwickeln ausgewählter Inhalte in Meisterinformations-Box, Papiernotiz, Zitatblock und DSA-Listen-Container ohne in den HTML-Quellmodus zu wechseln.</li>
 <li>Fernkampfwaffen zeigen Reichweite und Nachlade-Details jetzt in einem HTML-Tooltip auf dem Waffennamen.</li>
 <li>Der <code>@Info</code>-Journal-Enricher ermöglicht Spielern jetzt direkte Wissensproben mit SL-Genehmigungsablauf.</li>
 <li>Die Spielleitung kann jetzt über eine Feature-Sichtbarkeitseinstellung steuern, welche Kalenderfunktionen für Spieler sichtbar sind.</li>

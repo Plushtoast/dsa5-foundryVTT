@@ -277,7 +277,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           label: 'PERSONAE.addActor',
           icon: 'fas fa-address-book',
           visible: function () {
-            return game.user.isGM;
+            return game.user.isGM && this.actor.type !== 'group';
           },
         },
         {

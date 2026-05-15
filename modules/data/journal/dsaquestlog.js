@@ -2,6 +2,16 @@ import { JournalListDataModel } from './journallistdatamodel.js';
 
 const { TextEditor } = foundry.applications.ux;
 
+class JournalReferenceUUIDField extends foundry.data.fields.DocumentUUIDField {
+    static VALID_TYPES = new Set(['JournalEntry', 'JournalEntryPage']);
+
+    _validateType(value, options = {}) {
+        super._validateType(value, options);
+        const parsed = foundry.utils.parseUuid(value, { relative: options.model });
+        if (!this.constructor.VALID_TYPES.has(parsed?.type)) throw new Error('must reference a Journal Entry or Journal Entry Page');
+    }
+}
+
 export class DSAQuestLogEntry extends JournalListDataModel {
     static SETTING_NAME = 'questlogJournals';
     static HOTBAR_ID = 'createQuest';
@@ -44,7 +54,6 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             BooleanField,
             ArrayField,
             HTMLField,
-            DocumentUUIDField,
         } = foundry.data.fields;
 
         const dateField = () => new SchemaField({
@@ -77,7 +86,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                     visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.objectives.visible.label' }),
                 })),
                 linkedPages: new TypedObjectField(new SchemaField({
-                    uuid: new DocumentUUIDField({ type: 'JournalEntryPage', label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.label', hint: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint' }),
+                    uuid: new JournalReferenceUUIDField({ label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.label', hint: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint' }),
                 })),
             })),
         };
@@ -182,14 +191,17 @@ export class DSAQuestLogEntry extends JournalListDataModel {
 
     static async resolvePageReference(linkKey, reference) {
         const uuid = this.#referenceUuid(reference);
-        const page = uuid ? await fromUuid(uuid) : null;
+        const document = uuid ? await fromUuid(uuid) : null;
+        const isPage = document?.documentName === 'JournalEntryPage';
+        const isJournal = document?.documentName === 'JournalEntry';
+        const journal = isPage ? document.parent : document;
 
         return {
             linkKey,
             uuid,
-            label: page?.name || _loc('DSAQUESTLOG.missingLink'),
-            subtitle: page?.parent?.name || '',
-            missing: !page,
+            label: document?.name || _loc('DSAQUESTLOG.missingLink'),
+            subtitle: isPage ? journal?.name || '' : '',
+            missing: !document || (!isPage && !isJournal),
         };
     }
 

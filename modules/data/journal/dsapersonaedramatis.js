@@ -76,12 +76,16 @@ export class DSAPersonaEntry extends JournalListDataModel {
     static createEntryData(options = {}) {
         const { actor, ...overrides } = options;
         const entry = { ...overrides };
-        if (actor) {
+        if (this.isValidActor(actor)) {
             entry.name = actor.name;
             entry.type = actor.type === 'creature' ? 1 : 0;
             entry.actor_uuid = actor.uuid;
         }
         return entry;
+    }
+
+    static isValidActor(actor) {
+        return !!actor && actor.type !== 'group';
     }
 
     async _preUpdate(changed, options, user) {
