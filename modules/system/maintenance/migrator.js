@@ -2,7 +2,7 @@ import { PatchViewer } from './patchviewer.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 
-const INBETA = true;
+const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
 
 async function fetchPatchNotes() {
