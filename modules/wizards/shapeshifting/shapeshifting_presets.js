@@ -65,5 +65,9 @@ export const SHAPESHIFTING_PRESETS = {
 };
 
 export function getShapeshiftingPreset(preset = 'default', overrides = {}) {
-  return mergeObject(deepClone(SHAPESHIFTING_PRESETS[preset] || SHAPESHIFTING_PRESETS.default), overrides || {});
+  const defaultPreset = deepClone(SHAPESHIFTING_PRESETS.default);
+  if (preset != 'default' && SHAPESHIFTING_PRESETS[preset]) {
+    return mergeObject(defaultPreset, mergeObject(deepClone(SHAPESHIFTING_PRESETS[preset]), overrides || {}));
+  }
+  return mergeObject(defaultPreset, overrides || {});
 }

@@ -260,6 +260,23 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         }
     }
 
+    static _sceneTokenDocument(token) {
+        return token?.document ?? token;
+    }
+
+    static _activeTokenDocuments(actor) {
+        const documents = actor.getActiveTokens(true).map(token => this._sceneTokenDocument(token)).filter(token => token?.id);
+        if (documents.length || !canvas.scene) return documents;
+
+        return canvas.scene.tokens.filter(token => token.actorId === actor.id || token.actor?.id === actor.id);
+    }
+
+    static async _deleteShapeshiftEffect(shapeshift, ...actors) {
+        const parent = shapeshift.parent?.documentName === 'Actor' ? shapeshift.parent : null;
+        const owner = [parent, ...actors].find(actor => actor?.effects?.has(shapeshift.id));
+        if (owner) await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+    }
+
     static async finish_shapeshift(source, target, data, sourceProperties, remote = false) {
         const proportionalLeP = !!data.calculateLeP
         const proportionSettings = {
@@ -400,7 +417,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
         const actor = await game.dsa5.entities.Actordsa5.create(targetData, { renderSheet: !remote })
 
-        const tokens = source.getActiveTokens(true)
+        const tokens = ShapeshiftWizard._activeTokenDocuments(source)
 
         if (canvas.scene) {
             for (const token of tokens) {
@@ -500,17 +517,17 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             return
         }
 
-        await original.deleteEmbeddedDocuments("ActiveEffect", [shapeshift._id], { noHook: true })
+        await ShapeshiftWizard._deleteShapeshiftEffect(shapeshift, original, actor)
 
         if (shapeshift.flags.dsa5.originalActor == actor.id) return;
 
         await original.update({ "system.status.wounds.value": currentHp })
 
         if (canvas.ready) {
-            const tokens = actor.getActiveTokens(true);
+            const tokens = ShapeshiftWizard._activeTokenDocuments(actor);
 
             for (const token of tokens) {
-                const tokenData = deepClone(original.prototypeToken);
+                const tokenData = original.prototypeToken.toObject();
                 tokenData._id = token.id;
                 tokenData.actorId = original.id;
                 await canvas.scene.updateEmbeddedDocuments("Token", [tokenData]);

@@ -139,10 +139,10 @@ export default class ItempackageData extends ItemDataModel.mixin(DescriptionTemp
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
-  static async _showPackageByUuid(uuid, whispers) {
+  static async _showPackageByUuid(uuid, _whispers) {
     const item = await fromUuid(uuid);
     if (!item) return;
-    await item.system.showContents(whispers);
+    await item.sheet.render({ force: true, tab: { sheet: 'details' } });
   }
 
   static chatListeners(html) {

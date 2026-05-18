@@ -107,7 +107,7 @@ export class SummoningExecutor {
     if (creatureUuid) {
       try {
         const doc = await fromUuid(creatureUuid);
-        if (doc) return doc;
+        if (doc?.documentName === "Actor") return this._ensureWorldActor(doc, config);
       } catch { /* fall through to name search */ }
     }
 
@@ -137,6 +137,21 @@ export class SummoningExecutor {
     }
 
     return null;
+  }
+
+  static async _ensureWorldActor(actor, config) {
+    if (!actor.inCompendium && !actor.pack) return actor;
+
+    const existing = game.actors.find(x => x.getFlag('core', 'sourceId') === actor.uuid) || game.actors.find(x => x.name === actor.name);
+    if (existing) return existing;
+
+    const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+    const obj = actor.toObject();
+    obj.folder = folder.id;
+    obj.flags ??= {};
+    obj.flags.core ??= {};
+    obj.flags.core.sourceId ??= actor.uuid;
+    return Actor.create(obj);
   }
 
   static async _buildTokenDocument(creature, summoner, position, config, scene) {

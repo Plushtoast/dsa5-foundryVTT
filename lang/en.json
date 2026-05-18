@@ -1733,6 +1733,7 @@
   },
   "ITEMPACKAGE": {
     "addItem": "Add Item",
+    "chatDragHint": "Drag a package onto an actor sheet to add its contents.",
     "content": "Package Content",
     "dropHint": "Drop equipment items here to add them to the package.",
     "items": "Package Items",

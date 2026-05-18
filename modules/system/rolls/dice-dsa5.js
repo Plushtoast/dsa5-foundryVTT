@@ -2398,12 +2398,18 @@ export default class DiceDSA5 {
     if (elem.hasClass('locked')) return;
 
     elem.addClass('locked');
-    elem.prepend('<i class="fas fa-spinner fa-spin"></i>');
-    await callback(ev, elem);
-    setTimeout(() => {
-      elem.removeClass('locked');
-      elem.find('i').remove();
-    }, 2000);
+    const icons = elem.children('i');
+    icons.hide();
+    elem.prepend('<i class="fas fa-spinner fa-spin lock-spinner"></i>');
+    try {
+      await callback(ev, elem);
+    } finally {
+      setTimeout(() => {
+        elem.removeClass('locked');
+        elem.children('i.lock-spinner').remove();
+        icons.show();
+      }, 2000);
+    }
   }
 
   static async chatListeners(html) {

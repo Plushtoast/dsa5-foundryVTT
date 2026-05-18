@@ -1732,6 +1732,7 @@
     },
     "ITEMPACKAGE": {
         "addItem": "Gegenstand hinzufügen",
+        "chatDragHint": "Ziehe ein Paket auf einen Akteursbogen, um seine Inhalte hinzuzufügen.",
         "content": "Paketinhalt",
         "dropHint": "Ausrüstungsgegenstände hierher ziehen, um sie zum Paket hinzuzufügen.",
         "items": "Paketinhalte",
