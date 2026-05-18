@@ -232,7 +232,8 @@ export class DSAPersonaEntry extends JournalListDataModel {
     }
 
     static resolveGaradan(entry = {}, actor = null) {
-        const value = Number(actor?.system?.merchant?.garadan ?? entry.garadan ?? 0);
+        const entryValue = Number(entry.garadan);
+        const value = entry.garadan === undefined ? Number(actor?.system?.merchant?.garadan ?? 0) : entryValue;
         return Number.isFinite(value) && value > 0 ? value : 0;
     }
 
