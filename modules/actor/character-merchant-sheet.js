@@ -3,6 +3,7 @@ import ActorSheetdsa5Character from './character-sheet.js';
 
 export default class CharacterMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Character) {
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: super.PARTS.header,
     tabs: super.PARTS.tabs,
     main: {
@@ -18,6 +19,7 @@ export default class CharacterMerchantSheetDSA5 extends MerchantSheetMixin(Actor
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: super.PARTS.notes,
   }

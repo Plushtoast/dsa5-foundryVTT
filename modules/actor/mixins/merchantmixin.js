@@ -58,6 +58,7 @@ export const MerchantSheetMixin = (superclass) =>
         scrollable: [''],
         templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs', 'systems/dsa5/templates/actors/parts/containerContent.hbs', 'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs'],
       },
+      companion: super.PARTS.companion,
       status: super.PARTS.status,
       notes: super.PARTS.notes,
     };

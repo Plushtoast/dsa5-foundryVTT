@@ -51,8 +51,17 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
   static LIMITEDPARTS = {
     sheet: super.PARTS.sheet,
-    limited: {
+    header: {
+      template: 'systems/dsa5/templates/actors/limited/creature-limited-header.hbs',
+    },
+    tabs: super.PARTS.tabs,
+    main: {
       template: 'systems/dsa5/templates/actors/limited/creature-limited.hbs',
+      scrollable: [''],
+    },
+    notes: {
+      template: 'systems/dsa5/templates/actors/actor-notes.hbs',
+      scrollable: [''],
     }
   }
 

@@ -3,6 +3,7 @@ import ActorSheetdsa5Creature from './creature-sheet.js';
 
 export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Creature) {
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
@@ -21,6 +22,7 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
       scrollable: [''],
       templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
     },
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: {
       template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
