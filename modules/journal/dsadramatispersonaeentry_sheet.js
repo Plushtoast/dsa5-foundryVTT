@@ -48,9 +48,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
             const entry = context.sortedEntries[key];
             const actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
             entry.garadan = this.isView ? DSAPersonaEntry.resolveGaradan(entry, actor) : DSAPersonaEntry.resolveGaradan(entry);
-            if (entry.type === 0) {
-                entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
-            }
+            entry.garadanClass = DSAPersonaEntry.shouldShowGaradan(entry, { isGM: context.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
 
             if (this.isView) {
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);

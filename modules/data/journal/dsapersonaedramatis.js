@@ -80,6 +80,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.name = actor.name;
             entry.type = actor.type === 'creature' ? 1 : 0;
             entry.actor_uuid = actor.uuid;
+            if (this.supportsGaradan(entry)) entry.garadan = this.resolveGaradan(entry, actor);
         }
         return entry;
     }
@@ -131,13 +132,16 @@ export class DSAPersonaEntry extends JournalListDataModel {
         for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
             if (!entry || entry.garadan === undefined) continue;
 
-            const actorUuid = entry.actor_uuid ?? this.personae?.[key]?.actor_uuid;
+            const persona = { ...this.personae?.[key], ...entry };
+            if (!DSAPersonaEntry.supportsGaradan(persona)) continue;
+
+            const actorUuid = persona.actor_uuid;
             if (!actorUuid) continue;
 
             const actor = await fromUuid(actorUuid);
             if (!actor) continue;
 
-            const garadan = DSAPersonaEntry.resolveGaradan(entry);
+            const garadan = DSAPersonaEntry.resolveGaradan(persona);
             const current = DSAPersonaEntry.resolveGaradan({ garadan: actor.system.merchant?.garadan });
             if (garadan === current) continue;
 
@@ -179,10 +183,10 @@ export class DSAPersonaEntry extends JournalListDataModel {
         entry.isGM = game.user.isGM;
         const isCreature = entry.actor.type === "creature";
         entry.garadan = this.resolveGaradan(entry, entry.actor);
+        entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
         if (isCreature) {
             if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
         } else {
-            entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
             if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
             if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
             if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
@@ -232,12 +236,18 @@ export class DSAPersonaEntry extends JournalListDataModel {
     }
 
     static resolveGaradan(entry = {}, actor = null) {
+        if (!this.supportsGaradan(entry)) return 0;
         const entryValue = Number(entry.garadan);
         const value = entry.garadan === undefined ? Number(actor?.system?.merchant?.garadan ?? 0) : entryValue;
         return Number.isFinite(value) && value > 0 ? value : 0;
     }
 
+    static supportsGaradan(entry = {}) {
+        return Number(entry.type) !== 1;
+    }
+
     static shouldShowGaradan(entry = {}, { isGM = false } = {}) {
+        if (!this.supportsGaradan(entry)) return false;
         if (!this.resolveGaradan(entry)) return false;
         if (!isGM && entry.showGaradanGMOnly !== false) return false;
         return true;

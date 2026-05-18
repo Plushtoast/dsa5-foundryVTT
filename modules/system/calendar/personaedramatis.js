@@ -116,7 +116,7 @@ export class PersonaeDramatis {
                     };
                     const actor = entry.actor_uuid ? fromUuidSync(entry.actor_uuid) : null;
                     personaEntry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
-                    if (entry.type === 0 && DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM })) {
+                    if (DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM })) {
                         personaEntry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[personaEntry.garadan] || '';
                     }
                     personaEntry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
@@ -177,11 +177,11 @@ export class PersonaeDramatis {
     }
 
     static async #entryFromTarget(target) {
-        const { personaUuid, personaDramatisKey } = target.closest('[data-persona-uuid]')?.dataset;
-        if (!personaUuid) return;
+        const { personaUuid, personaDramatisKey } = target.closest('[data-persona-uuid]')?.dataset ?? {};
+        if (!personaUuid) return {};
 
         const page = await fromUuid(personaUuid);
-        if (!page) return;
+        if (!page) return {};
 
         return { entry: page?.system.personae?.[personaDramatisKey], page, personaDramatisKey };
     }
