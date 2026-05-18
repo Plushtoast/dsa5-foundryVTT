@@ -138,6 +138,8 @@ export const MerchantSheetMixin = (superclass) =>
             tabs.inventory.active = true;
             tabs.inventory.cssClass = 'active';
           }
+        } else {
+          super.cleanTabs(tabs);
         }
       } else {
         super.cleanTabs(tabs);
