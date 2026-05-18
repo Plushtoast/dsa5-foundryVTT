@@ -2926,12 +2926,20 @@
         "noSourceActor": "Für die Gestaltwandlung wurde kein Quellakteur übergeben.",
         "noTargetActor": "Für die Gestaltwandlung wurde kein Zielakteur übergeben.",
         "options": "Optionen",
+        "Presets": {
+            "default": "Standard",
+            "lepTarget": "Ziel-LeP",
+            "sourceOnly": "Nur Urgestalt",
+            "targetOnly": "Nur Zielgestalt"
+        },
         "requestToGm": "Anfrage zum Bestätigen an den Spielleiter gesendet.",
+        "sourceShape": "Urgestalt",
         "takeLiturgies": "Liturgien/Zeremonien übernehmen",
         "takeSkills": "Kampftalente übernehmen",
         "takeSpecAbs": "Sonderfertigkeiten übernehmen",
         "takeSpells": "Zauber/Rituale übernehmen",
         "takeVantages": "Vor-/Nachteile übernehmen",
+        "targetShape": "Zielgestalt",
         "title": "Gestaltwandlung",
         "userRequest": "{name} möchte {source} in {target} verwandeln. Bitte bestätigen."
     },

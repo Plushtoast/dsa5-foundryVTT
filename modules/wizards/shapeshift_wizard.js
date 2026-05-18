@@ -1,3 +1,5 @@
+import { getShapeshiftingPreset, SHAPESHIFTING_PRESET_KEYS } from './shapeshifting/shapeshifting_presets.js'
+
 const { mergeObject, getProperty, setProperty, deepClone } = foundry.utils
 
 export default class ShapeshiftWizard extends foundry.applications.api.HandlebarsApplicationMixin(
@@ -24,6 +26,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         actions: {
             cancel: function () { this.close() },
             ok: this._shapeshift,
+            applyPreset: this._applyPreset,
         }
     };
 
@@ -31,6 +34,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         return {
             main: {
                 template: 'systems/dsa5/templates/wizard/shapeshiftwizard.hbs',
+                scrollable: [''],
             }
         }
     }
@@ -101,6 +105,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             takeSpecAbs: !!formState.checkboxes.takeSpecAbs,
             takeSpells: !!formState.checkboxes.takeSpells,
             takeLiturgies: !!formState.checkboxes.takeLiturgies,
+            presets: SHAPESHIFTING_PRESET_KEYS.map(key => ({
+                key,
+                label: `Shapeshift.Presets.${key}`,
+            })),
             characteristics_mental: ["mu", "kl", "in", "ch"],
             characteristics_physical: ["ff", "ge", "ko", "kk"],
             status: [{
@@ -137,6 +145,11 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             selected: formState.radios[`system.characteristics.${label}`] !== 'target'
         }))
         return data
+    }
+
+    static async _applyPreset(ev, target) {
+        this.formPreset = getShapeshiftingPreset(target.dataset.preset)
+        await this.render({ force: true })
     }
 
     static shapeshiftEffect(proportional, source) {

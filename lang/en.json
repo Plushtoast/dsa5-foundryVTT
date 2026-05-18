@@ -2927,12 +2927,20 @@
     "noSourceActor": "No source actor was provided for shapeshifting.",
     "noTargetActor": "No target actor was provided for shapeshifting.",
     "options": "Options",
+    "Presets": {
+      "default": "Default",
+      "lepTarget": "Target LP",
+      "sourceOnly": "Original only",
+      "targetOnly": "Target only"
+    },
     "requestToGm": "Request to confirm shapeshift sent to GM.",
+    "sourceShape": "Original form",
     "takeLiturgies": "Keep Liturgies/Ceremonies",
     "takeSkills": "Keep combat techniques",
     "takeSpecAbs": "Keep Special Abilities",
     "takeSpells": "Keep Spells/Rituals",
     "takeVantages": "Keep Dis-/Advantages",
+    "targetShape": "Target form",
     "title": "Shapeshift",
     "userRequest": "{name} wants to shapeshift {source} into {target}. Please confirm."
   },

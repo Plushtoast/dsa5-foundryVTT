@@ -56,6 +56,11 @@ export const SHAPESHIFTING_PRESETS = {
       keepItems: false,
     },
   },
+  lepTarget: {
+    radios: {
+      'system.status.wounds': 'target',
+    },
+  },
   sourceOnly: {
     radios: buildUniformRadioPreset('source'),
   },
@@ -63,6 +68,8 @@ export const SHAPESHIFTING_PRESETS = {
     radios: buildUniformRadioPreset('target'),
   },
 };
+
+export const SHAPESHIFTING_PRESET_KEYS = Object.keys(SHAPESHIFTING_PRESETS);
 
 export function getShapeshiftingPreset(preset = 'default', overrides = {}) {
   const defaultPreset = deepClone(SHAPESHIFTING_PRESETS.default);
