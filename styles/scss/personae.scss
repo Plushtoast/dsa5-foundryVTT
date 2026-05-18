@@ -573,6 +573,10 @@
   &.is-done {
     opacity: 0.8;
   }
+
+  &.invisible {
+    opacity: 0.5;
+  }
 }
 
 .questlog-objective-main {
