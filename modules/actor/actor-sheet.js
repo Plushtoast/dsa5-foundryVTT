@@ -66,6 +66,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return await super.render(options, _options);
   }
 
+  _replaceHTML(result, content, options) {
+    // Foundry restores root-part scroll before <template> placeholders receive their child parts, which clamps .sheet-body to 0.
+    const sheetBodyScrollTop = content.querySelector('.sheet-body')?.scrollTop;
+    super._replaceHTML(result, content, options);
+    if (sheetBodyScrollTop) content.querySelector('.sheet-body')?.scrollTo({ top: sheetBodyScrollTop });
+  }
+
   _preSyncPartState(partId, newElement, priorElement, state) {
     super._preSyncPartState(partId, newElement, priorElement, state);
 
