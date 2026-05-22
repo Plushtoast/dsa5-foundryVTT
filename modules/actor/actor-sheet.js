@@ -16,7 +16,7 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import Riding from '../system/automation/riding.js';
 import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
-import { RangeSelectDialog, transferBagWithContents } from '../hooks/itemDrop.js';
+import { RangeSelectDialog, fetchBagItems, transferBagWithContents } from '../hooks/itemDrop.js';
 import DSA5Payment from '../system/payment/payment.js';
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
@@ -2144,7 +2144,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
 
       const sourceActor = item.parent;
-      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      const isBagWithContents = sourceActor && this.constructor.isSourceBagWithContents(item, sourceActor);
       if (isBagWithContents) {
         await transferBagWithContents(sourceActor, this.actor, itemData);
       } else if (item.type === 'species') {
@@ -2156,9 +2156,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) {
       const sourceActor = item.parent;
-      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      const isBagWithContents = sourceActor && this.constructor.isSourceBagWithContents(item, sourceActor);
       if (!isBagWithContents) await this._handleRemoveSourceOnDrop(item);
     }
+  }
+
+  static isSourceBagWithContents(item, sourceActor) {
+    return item.type === 'equipment' && getProperty(item, 'system.equipmentType.value') === 'bags' && fetchBagItems(item, sourceActor).length > 0;
   }
 
   _itemHasPrice(data) {

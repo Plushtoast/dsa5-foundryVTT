@@ -215,7 +215,7 @@ export function connectSocket() {
         {
           const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
-            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
+            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.isBag } });
           });
         }
         break;

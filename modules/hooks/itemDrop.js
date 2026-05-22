@@ -4,6 +4,10 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
+function itemId(itemData) {
+  return itemData?._id || itemData?.id;
+}
+
 export const dropToGround = async (sourceActor, item, data, formOptions) => {
   const amount = formOptions.count.value;
   const isBag = formOptions.isBag?.value;
@@ -23,14 +27,18 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
 
     const newItem = item.toObject();
     newItem.system.quantity.value = amount;
+    newItem.system.parent_id = '';
     RuleChaos.obfuscateDropData(newItem, data.tabsinvisible);
 
     if (getProperty(newItem, 'system.worn.value')) newItem.system.worn.value = false;
 
     let bagItems = [];
     if (isBag) {
-      bagItems = fetchBagItems(item, sourceActor).map((i) => i.toObject());
-      items.push(...bagItems);
+      bagItems = fetchBagItems(item, sourceActor).map((i) => {
+        const itemData = i.toObject();
+        if (getProperty(itemData, 'system.worn.value')) itemData.system.worn.value = false;
+        return itemData;
+      });
     }
 
     const actor = {
@@ -47,7 +55,7 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
         height: 0.4,
       },
       ownership,
-      items: [...items, newItem],
+      items: [...items, newItem, ...bagItems],
       flags: { core: { sheetClass: 'dsa5.MerchantSheetDSA5' } },
       folder,
       system: {
@@ -89,7 +97,7 @@ export const dropToGround = async (sourceActor, item, data, formOptions) => {
       sourceActorId: sourceActor?.id,
       data,
       amount,
-      isBag
+      isBag,
     };
     game.socket.emit('system.dsa5', {
       type: 'itemDrop',
@@ -128,14 +136,14 @@ function collectBagContentsGrouped(bagItemData, sourceActor) {
         if (!childrenByDepth.has(depth)) childrenByDepth.set(depth, []);
         childrenByDepth.get(depth).push(obj);
         if (i.system.isBagWithContents) {
-          collect(i.id, depth + 1);
+          collect(itemId(i), depth + 1);
         }
       }
     }
     return children;
   }
 
-  collect(bagItemData._id || bagItemData.id, 1);
+  collect(itemId(bagItemData), 1);
   return childrenByDepth;
 }
 
@@ -159,12 +167,12 @@ export async function transferBagWithContents(sourceActor, targetActor, bagItemD
 
   // Create the bag itself on the target
   const bagCopy = duplicate(bagItemData);
-  bagCopy.system.parent_id = bagCopy.system.parent_id || '';
+  bagCopy.system.parent_id = '';
   if (bagCopy.system.worn?.value) bagCopy.system.worn.value = false;
   delete bagCopy._id;
 
   const [createdBag] = await targetActor.createEmbeddedDocuments('Item', [bagCopy], { render: false });
-  idMap.set(bagItemData._id || bagItemData.id, createdBag.id);
+  idMap.set(itemId(bagItemData), createdBag.id);
 
   // Create children depth by depth so parent bags exist before their children
   const depths = [...childrenByDepth.keys()].sort((a, b) => a - b);
@@ -182,12 +190,12 @@ export async function transferBagWithContents(sourceActor, targetActor, bagItemD
     const created = await targetActor.createEmbeddedDocuments('Item', copies, { render: false });
     // Record new IDs for any sub-bags at this depth
     for (let idx = 0; idx < items.length; idx++) {
-      idMap.set(items[idx]._id, created[idx].id);
+      idMap.set(itemId(items[idx]), created[idx].id);
     }
   }
 
   // Delete bag + all children from source
-  const deleteIds = [bagItemData._id || bagItemData.id, ...allChildren.map((c) => c._id)].filter(Boolean);
+  const deleteIds = [itemId(bagItemData), ...allChildren.map((c) => itemId(c))].filter(Boolean);
   const existingIds = deleteIds.filter((id) => sourceActor.items.has(id));
   if (existingIds.length > 0) {
     await sourceActor.deleteEmbeddedDocuments('Item', existingIds, { render: false });

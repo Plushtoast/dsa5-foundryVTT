@@ -280,12 +280,18 @@ export const MerchantSheetMixin = (superclass) =>
 
     async buyItem(dataset) {
       DSA5SoundEffect.playMoneySound();
-      await this.transferItem(this.actor, this.getTradeFriend(), dataset, true);
+      const tradeFriend = this.getTradeFriend();
+      if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
+
+      await this.transferItem(this.actor, tradeFriend, dataset, true);
     }
 
     async sellItem(dataset) {
       DSA5SoundEffect.playMoneySound();
-      await this.transferItem(this.getTradeFriend(), this.actor, dataset, false);
+      const tradeFriend = this.getTradeFriend();
+      if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
+
+      await this.transferItem(tradeFriend, this.actor, dataset, false);
     }
 
     static _tradeWrapper(ev, target) {
@@ -485,7 +491,8 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     getTradeFriend() {
-      return this.otherTradeFriend || game.user.character;
+      const controlledActor = canvas?.tokens?.controlled?.length === 1 ? canvas.tokens.controlled[0].actor : undefined;
+      return this.otherTradeFriend || game.user.character || controlledActor;
     }
 
     async _manageDragItems(item, typeClass) {
