@@ -60,6 +60,10 @@ export class ItemDataModel extends DSADataModel {
       .join('');
   }
 
+  get detail_name() {
+    return this.parent.name;
+  }
+
   /**
    * Helper function to format a chat line
    * @param {Object} options - Line data options
@@ -273,13 +277,18 @@ export class ItemDataModel extends DSADataModel {
     return item;
   }
 
+
+  get detailsObfuscated() {
+    return foundry.utils.getProperty(this, "obfuscation.details");
+  }
+
   /**
    * Convert chat data to a formatted string
    * @param {string} [name=''] - The item name
    * @returns {string} Formatted HTML string of chat data
    */
   chatDataToString(name = '') {
-    const detailsObfuscated = foundry.utils.getProperty(this, "obfuscation.details");
+    const detailsObfuscated = this.detailsObfuscated;
 
     if (detailsObfuscated) return '';
 

@@ -1628,6 +1628,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
       consumeItem: function () {
         this.setupEffect();
       },
+      toggleQL: this.#toggleQLEdit,
     },
     majorButtons: [
       {
@@ -1643,6 +1644,10 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
   setupEffect() {
     this.item.setupEffect();
+  }
+
+  static #toggleQLEdit(ev, target) {
+    this.element.querySelectorAll('.ql-edit').forEach(el => el.classList.toggle('dsahidden'));
   }
 }
 

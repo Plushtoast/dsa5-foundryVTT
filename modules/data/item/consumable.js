@@ -13,6 +13,12 @@ const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields
 const { TextEditor } = foundry.applications.ux;
 
 export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
+  get detail_name() {
+    if (this.detailsObfuscated && !game.user.isGM) return super.detail_name;
+
+    return `${super.detail_name} (${_loc('CHARAbbrev.QS')} ${this.QL})`;
+  }
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       equipmentType: new SchemaField({
@@ -29,9 +35,12 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
   }
 
   async getSheetData(data) {
+    const availableSteps = data.document.system.QLList.split('\n');
     data.calculatedPrice = ItemFactory.getSubClass(data.document.type).consumablePrice(data.document);
-    data.availableSteps = Object.fromEntries(data.document.system.QLList.split('\n').map((_, i) => [i + 1, i + 1]));
+    data.availableSteps = Object.fromEntries(availableSteps.map((_, i) => [i + 1, i + 1]));
     data.enrichedIngredients = await TextEditor.enrichHTML(data.document.system.ingredients, { secrets: data.document.isOwner });
+    data.currentStep = availableSteps[data.document.system.QL - 1] || '';
+    data.detail_name = this.detail_name;
   }
 
   static chatData(data, name) {
@@ -45,6 +54,7 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
     item.system.preparedWeight = this.parent.system.preparedWeight;
+    item.name = this.parent.system.detail_name;
     this.constructor._prepareConsumable(item);
     return item;
   }
