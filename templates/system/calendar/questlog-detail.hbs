@@ -60,6 +60,8 @@
                                 </div>
                             </div>
                             {{#if ../isGM}}
+                                <button type='button' class='icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleVisibility"}}' data-action='toggleObjectiveVisibility' data-quest-uuid='{{../uuid}}' data-quest-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
+                                </button>
                                 <button type='button' class='icon fas {{ifThen done "fa-arrow-rotate-left" "fa-check"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleObjectiveDone"}}' data-action='toggleQuestObjectiveDone' data-quest-uuid='{{../uuid}}' data-quest-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
                                 </button>
                             {{/if}}

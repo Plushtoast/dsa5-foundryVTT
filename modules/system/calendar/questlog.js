@@ -21,6 +21,7 @@ export class QuestLogFeature {
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
+        toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
     };
 
     async _preparePartContext(context, _options) {
@@ -154,6 +155,16 @@ export class QuestLogFeature {
         if (!page || !objective) return;
 
         await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.done`]: !objective.done });
+    }
+
+    static async toggleObjectiveVisibility(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, objectiveKey } = target.dataset;
+        const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
+        if (!page || !objective) return;
+
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.visible`]: !objective.visible });
     }
 
     static async openQuestReference(event, target) {
