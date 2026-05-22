@@ -65,6 +65,7 @@ export default class InformationQueryService {
     const dialogData = {
       actorName: payload.actorName,
       playerName: payload.playerName,
+      itemLink: await item.toAnchor().outerHTML,
       skillName: payload.skillName,
       rolledQS: payload.rolledQS,
       qsEntries,
@@ -82,8 +83,12 @@ export default class InformationQueryService {
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
           title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${item.name}`,
+          resizable: true,
         },
         content,
+        position: {
+          width: 600,
+        },
         buttons: [
           {
             action: 'approve',
@@ -156,7 +161,7 @@ export default class InformationQueryService {
     }
   }
 
-  static async createInformationQuery(result, uuid, item) {
+  static async createInformationQuery(result, uuid, item, { actor, skill } = {}) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
       ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
@@ -166,12 +171,12 @@ export default class InformationQueryService {
     const payload = {
       itemUuid: uuid,
       itemName: item.name,
-      skillName: result.result.speaker ? result.source?.name || '' : '',
+      skillName: skill?.name || item.system.skill || '',
       rolledQS: result.result.qualityStep || 0,
       successLevel: result.result.successLevel || 0,
       playerId: game.user.id,
       playerName: game.user.name,
-      actorName: result.result.speaker?.alias || '',
+      actorName: actor?.name || result.result.speaker?.alias || '',
     };
 
     const state = {
@@ -237,7 +242,7 @@ export default class InformationQueryService {
     setupData.testData.opposable = false;
     const result = await actor.basicTest(setupData);
 
-    await this.createInformationQuery(result, uuid, item);
+    await this.createInformationQuery(result, uuid, item, { actor, skill });
   }
 
   static async informationRequestRoll(ev) {

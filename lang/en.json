@@ -1230,6 +1230,7 @@
     "INFORMATIONREQUEST": {
       "approved": "Approved",
       "knowledgeCheck": "Knowledge Check",
+      "playerRolledFor": "A player rolled on a journal information entry:",
       "pending": "Awaiting GM approval...",
       "rejected": "Rejected"
     },

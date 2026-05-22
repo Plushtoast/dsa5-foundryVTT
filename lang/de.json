@@ -1229,6 +1229,7 @@
         "INFORMATIONREQUEST": {
             "approved": "Genehmigt",
             "knowledgeCheck": "Wissensprobe",
+            "playerRolledFor": "Ein Spieler hat auf einen Journaleintrag mit Informationen gewürfelt:",
             "pending": "Warte auf SL-Genehmigung...",
             "rejected": "Abgelehnt"
         },

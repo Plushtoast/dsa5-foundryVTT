@@ -326,7 +326,7 @@ export class CombatSystem {
         }
         const finalMountedOptions = {};
         for (const key of Object.keys(mountedOptions)) {
-            finalMountedOptions[`${_loc('mountedRangeOptions.' + key)} (${mountedOptions[key]})`] = mountedOptions[key];
+            finalMountedOptions[`${_loc('mountedRangeOptions.' + key)} [${mountedOptions[key]}]`] = mountedOptions[key];
         }
         CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.ATTACK, situationalModifiers);
         mergeObject(data, {

@@ -89,8 +89,7 @@ export function setEnrichers() {
         if (!game.user.isGM) {
           const templ = await renderTemplate('systems/dsa5/templates/items/infopreview-player.hbs', {
             uuid,
-            skill: document.system.skill,
-            modifier: document.system.modifier,
+            document
           });
           return $(templ)[0];
         }
