@@ -12,6 +12,7 @@ import RollRequestService from '../system/queries/roll-request.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
+const { escapeHTML } = foundry.utils;
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -546,12 +547,36 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   _prepareGroupSkillsData() {
     const groupSkills = this.actor.system.groupSkills;
-    const skills = Object.values(groupSkills).sort((a, b) => a.name.localeCompare(b.name));
-    for (const skill of skills) {
+    return Object.values(groupSkills).sort((a, b) => a.name.localeCompare(b.name)).map((skill) => {
       const all = [skill.best, ...skill.others].sort((a, b) => b.value - a.value);
-      skill.tooltipHtml = `<table><tbody>${all.map((e) => `<tr><td>${e.actor.name}</td><td style="text-align:right;padding-left:8px"><b>${e.value}</b></td></tr>`).join('')}</tbody></table>`;
-    }
-    return skills;
+      const visible = all.filter((entry) => this.constructor.canViewActorSkillValues(entry.actor));
+      const values = visible.map((entry) => entry.value);
+      const tooltipHtml = `<table><tbody>${all.map((entry) => {
+        const canViewValue = this.constructor.canViewActorSkillValues(entry.actor);
+        const value = canViewValue ? `<b>${entry.value}</b>` : '?';
+        return `<tr><td>${escapeHTML(entry.actor.name)}</td><td style="text-align:right;padding-left:8px">${value}</td></tr>`;
+      }).join('')}</tbody></table>`;
+
+      return {
+        name: skill.name,
+        icon: skill.icon,
+        category: skill.category,
+        valueDisplay: this.constructor.groupSkillValueDisplay(values),
+        tooltipHtml,
+      };
+    });
+  }
+
+  static groupSkillValueDisplay(values) {
+    if (!values.length) return '?';
+
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    return min === max ? `${max}` : `${min}/${max}`;
+  }
+
+  static canViewActorSkillValues(actor) {
+    return game.user.isGM || actor.testUserPermission(game.user, 'OBSERVER');
   }
 
   _groupSkillsByCategory(skills) {
