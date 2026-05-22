@@ -7,9 +7,9 @@
             {{else}}
             <img class="sender-image" src="{{message.flags.img.src}}" /> 
             {{/if}}
-            <h4 class="message-sender with-image" data-tooltip="{{{alias}}}">{{alias}}</h4>
+            <h4 class="message-sender with-image ellipsis" data-tooltip="{{{alias}}}">{{alias}}</h4>
         {{else}}
-            <h4 class="message-sender" data-tooltip="{{{alias}}}">{{alias}}</h4>
+            <h4 class="message-sender ellipsis" data-tooltip="{{{alias}}}">{{alias}}</h4>
         {{/if}}
         <span class="message-metadata">
             <time class="message-timestamp ellipsis nobr">{{timeSince message.timestamp}}</time>

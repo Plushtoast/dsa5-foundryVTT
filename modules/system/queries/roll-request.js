@@ -1,6 +1,7 @@
 import QueryOrchestrator from './query-orchestrator.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -10,6 +11,7 @@ export default class RollRequestService {
   static FLAG_KEY = 'rollRequest';
   static TEMPLATE = 'systems/dsa5/templates/chat/roll/roll-request.hbs';
   static DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/roll-request-dialog.hbs';
+  static PRIVATE_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.BLIND, DICE_CONSTANTS.CHAT_MODES.SELF]);
 
   static register() {
     QueryOrchestrator.registerQuery(this.QUERY_TYPE, {
@@ -103,12 +105,16 @@ export default class RollRequestService {
     const skillIcon = this.getRequestedIcon(state.category, state.name);
 
     const recipients = state.recipients.map((entry) => {
-      const resultLabel = this.buildResultLabel(entry, state.category);
+      const privateResult = this.isPrivateResult(entry);
+      const resultLabel = privateResult ? '' : this.buildResultLabel(entry, state.category);
+      const statusStyle = privateResult
+        ? { icon: 'fa-check', colorClass: 'icon-gray', label: _loc('DSAQUERIES.STATUS.accepted') }
+        : QueryOrchestrator.statusStyle(entry.status);
       return {
         ...entry,
         actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
-        ...QueryOrchestrator.statusStyle(entry.status),
+        ...statusStyle,
         resultLabel,
         canRoll: !finalized && entry.status === 'pending',
         canGMRoll: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
@@ -125,6 +131,10 @@ export default class RollRequestService {
       modifierLabel,
       recipients,
     };
+  }
+
+  static isPrivateResult(entry) {
+    return QueryOrchestrator.TERMINAL_STATES.has(entry.status) && this.PRIVATE_MESSAGE_MODES.has(entry.resultDetails?.messageMode);
   }
 
   static getRequestedIcon(category, name) {
@@ -260,6 +270,7 @@ export default class RollRequestService {
         qualityStep: result.result?.qualityStep || 0,
         successLevel,
         messageId: result.result?.messageId,
+        messageMode: result.cardOptions?.messageMode || result.result?.messageMode,
         LeP: result.result?.LeP,
         AsP: result.result?.AsP,
         KaP: result.result?.KaP,
@@ -351,6 +362,19 @@ export default class RollRequestService {
       html.find('.roll-request-gm').remove();
     }
 
+    html.find('.roll-request-row').each((_, element) => {
+      const row = $(element);
+      const entry = rollRequest.recipients?.find((recipient) => recipient.actorId === row.attr('data-actor-id'));
+      if (!entry || !this.isPrivateResult(entry)) return;
+
+      if (!game.user.isGM) {
+        this.hidePrivateResult(row);
+        return;
+      }
+
+      this.revealPrivateResult(row, entry, rollRequest.category);
+    });
+
     if (!game.user.isGM) {
       html.find('.roll-request-row').each(function () {
         const row = $(this);
@@ -360,6 +384,32 @@ export default class RollRequestService {
         }
       });
     }
+  }
+
+  static hidePrivateResult(row) {
+    row.find('.roll-request-result-label').remove();
+    const indicator = row.find('.roll-request-indicator');
+    indicator.removeClass((_, className) => (className.match(/\bicon-\S+/g) || []).join(' '));
+    indicator.addClass('icon-gray').attr('data-tooltip', _loc('DSAQUERIES.STATUS.accepted')).attr('aria-label', _loc('DSAQUERIES.STATUS.accepted'));
+    indicator.find('i').attr('class', 'fas fa-check');
+  }
+
+  static revealPrivateResult(row, entry, category) {
+    const statusStyle = QueryOrchestrator.statusStyle(entry.status);
+    const indicator = row.find('.roll-request-indicator');
+    indicator.removeClass((_, className) => (className.match(/\bicon-\S+/g) || []).join(' '));
+    indicator.addClass(statusStyle.colorClass).attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
+    indicator.find('i').attr('class', `fas ${statusStyle.icon}`);
+
+    const resultLabel = this.buildResultLabel(entry, category);
+    if (!resultLabel) return;
+
+    let label = row.find('.roll-request-result-label');
+    if (!label.length) {
+      label = $('<span class="very-small roll-request-result-label"></span>');
+      indicator.before(label);
+    }
+    label.text(resultLabel);
   }
 
   static chatListeners(html) {
