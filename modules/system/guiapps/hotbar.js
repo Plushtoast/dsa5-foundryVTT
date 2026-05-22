@@ -589,7 +589,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (sortMode === 'custom') {
       this.#sortSkillList(groups.skills.skill);
       this.#sortSkillList(groups.skills.skillgm);
-      this.#applySavedOrdering(groups);
     } else {
       for (const key of Object.keys(groups.skills)) {
         const list = groups.skills[key];
@@ -612,6 +611,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       }
     }
+
+    this.#applySavedOrdering(groups);
   }
 
   #applyHotbarFilters(groups) {
@@ -620,6 +621,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const hidden = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHidden') || [];
     const hiddenGroups = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHiddenGroups') || [];
     const favorites = this.actor.prototypeToken.getFlag('dsa5', 'hotbarFavorites') || [];
+    const savedOrder = this.actor.prototypeToken.getFlag('dsa5', 'hotbarControls') || {};
 
     if (hiddenGroups.length > 0 && groups.skills.skill) {
       groups.skills.skill = groups.skills.skill.filter((item) => !hiddenGroups.includes(item.addClass));
@@ -632,9 +634,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     }
 
-    if (favorites.length > 0 && game.settings.get('dsa5', 'hotbarSortMode') !== 'custom') {
+    if (favorites.length > 0) {
       for (const key of Object.keys(groups.skills)) {
         if (!groups.skills[key]) continue;
+        if (savedOrder[key]?.length) continue;
+
         const favs = groups.skills[key].filter((item) => favorites.includes(item.id));
         const rest = groups.skills[key].filter((item) => !favorites.includes(item.id));
         groups.skills[key] = [...favs, ...rest];
