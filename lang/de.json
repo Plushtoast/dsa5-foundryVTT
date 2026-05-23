@@ -1256,6 +1256,144 @@
             "unowned": "Kein Besitzer"
         }
     },
+    "DSACITYDETAILS": {
+        "Add": "Eintrag hinzufügen",
+        "CreateDetail": "Stadtdetail erstellen",
+        "Duplicate": "Eintrag duplizieren",
+        "FIELDS": {
+            "details": {
+                "description": {
+                    "label": "Beschreibung"
+                },
+                "gmNotes": {
+                    "label": "SL-Notizen"
+                },
+                "img": {
+                    "label": "Bild"
+                },
+                "kind": {
+                    "label": "Abschnitt"
+                },
+                "name": {
+                    "label": "Name"
+                },
+                "priceRowIndex": {
+                    "label": "Preis"
+                },
+                "qualityRowIndex": {
+                    "label": "Qualität"
+                },
+                "typeText": {
+                    "label": "Typ"
+                },
+                "visible": {
+                    "label": "Sichtbar"
+                }
+            }
+        },
+        "KIND": {
+            "crafts": "Handwerk",
+            "healers": "Heilkundige",
+            "inns": "Herbergen / Hotels",
+            "merchants": "Händler",
+            "services": "Dienstleistungen",
+            "taverns": "Kneipen / Schenken",
+            "temples": "Tempel",
+            "travellers": "Durchfahrende"
+        },
+        "Name": "Stadtdetails",
+        "PRICE": {
+            "0": "sehr billig (70%)",
+            "1": "billig (85%)",
+            "2": "durchschnittlich (100%)",
+            "3": "teuer (120%)",
+            "4": "sehr teuer (150%)",
+            "5": "Wucher (400%)"
+        },
+        "QUALITY": {
+            "0": "QS 6: außergewöhnlich / nobel / besonders sortiert",
+            "1": "QS 5: sehr gut / gepflegt / gut sortiert",
+            "2": "QS 4: solide / sauber / normal",
+            "3": "QS 3: einfach / ordentlich",
+            "4": "QS 2: mäßig / schlicht / fraglich",
+            "5": "QS 1: schlecht / schmierig / unsauber"
+        },
+        "QUALITY_BY_KIND": {
+            "crafts": {
+                "0": "QS 6: außergewöhnlich",
+                "1": "QS 5: sehr gut",
+                "2": "QS 4: solide",
+                "3": "QS 3: einfach",
+                "4": "QS 2: mäßig",
+                "5": "QS 1: schlecht"
+            },
+            "healers": {
+                "0": "QS 6: außergewöhnlich",
+                "1": "QS 5: sehr gut",
+                "2": "QS 4: solide",
+                "3": "QS 3: einfach",
+                "4": "QS 2: mäßig",
+                "5": "QS 1: schlecht"
+            },
+            "inns": {
+                "0": "QS 6: nobel",
+                "1": "QS 5: gut, sauber",
+                "2": "QS 4: solide, sauber",
+                "3": "QS 3: einfach, fraglich",
+                "4": "QS 2: schlicht, fraglich",
+                "5": "QS 1: schlicht, unsauber"
+            },
+            "merchants": {
+                "0": "QS 6: besonders sortiert, gut",
+                "1": "QS 5: gut sortiert, sehr gut",
+                "2": "QS 4: normal sortiert, solide",
+                "3": "QS 3: einfach sortiert, mäßig",
+                "4": "QS 2: mäßig sortiert, schlicht",
+                "5": "QS 1: schlecht sortiert, schlicht"
+            },
+            "services": {
+                "0": "QS 6: außergewöhnlich",
+                "1": "QS 5: sehr gut",
+                "2": "QS 4: solide",
+                "3": "QS 3: einfach",
+                "4": "QS 2: mäßig",
+                "5": "QS 1: schlecht"
+            },
+            "taverns": {
+                "0": "QS 6: nobel",
+                "1": "QS 5: gepflegt",
+                "2": "QS 4: sauber",
+                "3": "QS 3: einfach",
+                "4": "QS 2: schäbig",
+                "5": "QS 1: schmierig"
+            },
+            "temples": {
+                "0": "QS 6: außergewöhnlich / nobel",
+                "1": "QS 5: sehr gut / gepflegt",
+                "2": "QS 4: solide / sauber",
+                "3": "QS 3: einfach / ordentlich",
+                "4": "QS 2: mäßig / fraglich",
+                "5": "QS 1: schlecht / unsauber"
+            },
+            "travellers": {
+                "0": "QS 6: außergewöhnlich / nobel",
+                "1": "QS 5: sehr gut / gepflegt",
+                "2": "QS 4: solide / sauber",
+                "3": "QS 3: einfach / ordentlich",
+                "4": "QS 2: mäßig / fraglich",
+                "5": "QS 1: schlecht / unsauber"
+            }
+        },
+        "SelectDetail": "Stadtdetail auswählen",
+        "SelectDetailHint": "Wähle links einen Eintrag aus, um ihn zu bearbeiten.",
+        "category": "Kategorie",
+        "empty": "Keine Stadtdetails vorhanden.",
+        "newEntryPlaceholder": "Neues Stadtdetail",
+        "price": "Preis",
+        "quality": "Qualität",
+        "qualityAndPrice": "Qualität und Preis",
+        "typeText": "Typ"
+    },
     "DSAQUESTLOG": {
         "AUDIENCE": {
             "0": "Gruppe",

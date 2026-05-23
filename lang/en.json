@@ -1257,6 +1257,144 @@
       "unowned": "No Owner"
     }
   },
+  "DSACITYDETAILS": {
+    "Add": "Add entry",
+    "CreateDetail": "Create city detail",
+    "Duplicate": "Duplicate entry",
+    "FIELDS": {
+      "details": {
+        "description": {
+          "label": "Description"
+        },
+        "gmNotes": {
+          "label": "GM Notes"
+        },
+        "img": {
+          "label": "Image"
+        },
+        "kind": {
+          "label": "Section"
+        },
+        "name": {
+          "label": "Name"
+        },
+        "priceRowIndex": {
+          "label": "Price"
+        },
+        "qualityRowIndex": {
+          "label": "Quality"
+        },
+        "typeText": {
+          "label": "Type"
+        },
+        "visible": {
+          "label": "Visible"
+        }
+      }
+    },
+    "KIND": {
+      "crafts": "Crafts",
+      "healers": "Healers",
+      "inns": "Inns / Hotels",
+      "merchants": "Merchants",
+      "services": "Services",
+      "taverns": "Taverns",
+      "temples": "Temples",
+      "travellers": "Travellers"
+    },
+    "Name": "City Details",
+    "PRICE": {
+      "0": "very cheap (70%)",
+      "1": "cheap (85%)",
+      "2": "average (100%)",
+      "3": "expensive (120%)",
+      "4": "very expensive (150%)",
+      "5": "usury (400%)"
+    },
+    "QUALITY": {
+      "0": "QS 6: exceptional / noble / special stock",
+      "1": "QS 5: very good / well kept / well stocked",
+      "2": "QS 4: solid / clean / normal",
+      "3": "QS 3: simple / decent",
+      "4": "QS 2: modest / plain / questionable",
+      "5": "QS 1: poor / grimy / squalid"
+    },
+    "QUALITY_BY_KIND": {
+      "crafts": {
+        "0": "QS 6: exceptional",
+        "1": "QS 5: very good",
+        "2": "QS 4: solid",
+        "3": "QS 3: simple",
+        "4": "QS 2: mediocre",
+        "5": "QS 1: poor"
+      },
+      "healers": {
+        "0": "QS 6: exceptional",
+        "1": "QS 5: very good",
+        "2": "QS 4: solid",
+        "3": "QS 3: simple",
+        "4": "QS 2: mediocre",
+        "5": "QS 1: poor"
+      },
+      "inns": {
+        "0": "QS 6: noble",
+        "1": "QS 5: good, clean",
+        "2": "QS 4: solid, clean",
+        "3": "QS 3: simple, questionable",
+        "4": "QS 2: plain, questionable",
+        "5": "QS 1: plain, squalid"
+      },
+      "merchants": {
+        "0": "QS 6: special stock, good",
+        "1": "QS 5: well stocked, very good",
+        "2": "QS 4: normal stock, solid",
+        "3": "QS 3: simple stock, mediocre",
+        "4": "QS 2: mediocre stock, plain",
+        "5": "QS 1: poor stock, plain"
+      },
+      "services": {
+        "0": "QS 6: exceptional",
+        "1": "QS 5: very good",
+        "2": "QS 4: solid",
+        "3": "QS 3: simple",
+        "4": "QS 2: mediocre",
+        "5": "QS 1: poor"
+      },
+      "taverns": {
+        "0": "QS 6: noble",
+        "1": "QS 5: well kept",
+        "2": "QS 4: clean",
+        "3": "QS 3: simple",
+        "4": "QS 2: shabby",
+        "5": "QS 1: grimy"
+      },
+      "temples": {
+        "0": "QS 6: exceptional / noble",
+        "1": "QS 5: very good / well kept",
+        "2": "QS 4: solid / clean",
+        "3": "QS 3: simple / decent",
+        "4": "QS 2: modest / questionable",
+        "5": "QS 1: poor / squalid"
+      },
+      "travellers": {
+        "0": "QS 6: exceptional / noble",
+        "1": "QS 5: very good / well kept",
+        "2": "QS 4: solid / clean",
+        "3": "QS 3: simple / decent",
+        "4": "QS 2: modest / questionable",
+        "5": "QS 1: poor / squalid"
+      }
+    },
+    "SelectDetail": "Select city detail",
+    "SelectDetailHint": "Select an entry on the left to edit it.",
+    "category": "Category",
+    "empty": "No city details available.",
+    "newEntryPlaceholder": "New City Detail",
+    "price": "Price",
+    "quality": "Quality",
+    "qualityAndPrice": "Quality and price",
+    "typeText": "Type"
+  },
   "DSAQUESTLOG": {
     "AUDIENCE": {
       "0": "Party",

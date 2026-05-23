@@ -152,6 +152,12 @@
                 "filePathFields": {
                     "personae.*.img": ["IMAGE"]
                 }
+            },
+            "citydetails": {
+                "htmlFields": [ "details.*.description", "details.*.gmNotes" ],
+                "filePathFields": {
+                    "details.*.img": ["IMAGE"]
+                }
             }
         },
         "RegionBehavior": {

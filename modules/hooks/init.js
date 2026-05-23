@@ -47,6 +47,7 @@ import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet
 import { DSAQuestLogEntrySheet } from '../journal/dsaquestlogentry_sheet.js';
 import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
 import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
+import { DSACityDetailsEntrySheet } from '../journal/dsacitydetailsentry_sheet.js';
 const { mergeObject } = foundry.utils;
 const { DocumentSheetConfig } = foundry.applications.apps;
 
@@ -142,7 +143,8 @@ Hooks.once('init', () => {
     { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true },
     { sheetClass: DSAQuestLogEntrySheet, types: ['dsaquestlog'], makeDefault: true },
     { sheetClass: DSAAPTrackerEntrySheet, types: ['dsaaptracker'], makeDefault: true },
-    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true }
+    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true },
+    { sheetClass: DSACityDetailsEntrySheet, types: ['citydetails'], makeDefault: true }
   ];
 
   journalSheets.forEach(({ sheetClass, types, makeDefault }) => {

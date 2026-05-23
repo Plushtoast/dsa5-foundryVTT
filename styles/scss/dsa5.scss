@@ -5504,6 +5504,7 @@ input[type='checkbox'].autoCheckbox {
 
 @include meta.load-css('theme.scss');
 @include meta.load-css('personae.scss');
+@include meta.load-css('citydetails.scss');
 @include meta.load-css('patchviewer.scss');
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');

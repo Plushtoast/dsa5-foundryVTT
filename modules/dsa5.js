@@ -77,6 +77,7 @@ import TokenScatter from './animation/token-scatter.js';
 import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
+import { DSACityDetailsEntry } from './data/journal/dsacitydetails.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
 import { ITEM_CONSTANTS } from './config/item-constants.js';
@@ -188,7 +189,8 @@ Hooks.once('init', () => {
         dsapersonaedramatis: DSAPersonaEntry,
         dsaquestlog: DSAQuestLogEntry,
         dsaaptracker: DSAAPTrackerEntry,
-        dsamoneytracker: DSAMoneyTrackerEntry
+        dsamoneytracker: DSAMoneyTrackerEntry,
+        citydetails: DSACityDetailsEntry
       }
     },
     config: DSA5,
@@ -229,6 +231,7 @@ Hooks.once('init', () => {
   CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;
   CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
+  CONFIG.JournalEntryPage.dataModels.citydetails = DSACityDetailsEntry;
   //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true
   ZoneAttack.registerHooks();
