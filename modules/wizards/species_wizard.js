@@ -67,6 +67,15 @@ export default class SpeciesWizard extends WizardDSA5 {
         button.prop('disabled', false);
       }
     });
+
+    html.find('[data-action="selectGeneratorRow"]').on('click', (ev) => {
+      const row = $(ev.currentTarget).closest('.row-section');
+      // activate radio button
+      const radio = row.find('.species-generator-choice');
+      if (radio.length && !radio.prop('checked')) {
+        radio.prop('checked', true).trigger('change');
+      }
+    });
   }
 
   _generatorConfigs() {
@@ -109,7 +118,7 @@ export default class SpeciesWizard extends WizardDSA5 {
         delete this.selectedGeneratorEntries[config.field];
       }
 
-      if (!this.selectedGeneratorEntries[config.field] && entries.length === 1) {
+      if (!this.selectedGeneratorEntries[config.field] && entries.length > 0) {
         this._setSelectedGeneratorEntry(config.field, entries[0].id);
       }
     }
@@ -117,6 +126,8 @@ export default class SpeciesWizard extends WizardDSA5 {
 
   _setSelectedGeneratorEntry(field, entryId = '') {
     if (!field) return;
+
+    entryId ||= this.species?.system?.getGeneratorEntries(field)?.[0]?.id || '';
 
     if (entryId) {
       this.selectedGeneratorEntries[field] = entryId;

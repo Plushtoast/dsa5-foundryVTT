@@ -251,7 +251,7 @@ export default class SpeciesData extends ItemDataModel.mixin(DescriptionTemplate
   static getGeneratorUnit(field) {
     switch (field) {
       case 'bodyHeight':
-        return 'Halbfinger';
+        return _loc('Halbfinger');
       case 'weight':
         return _loc('stone');
       default:

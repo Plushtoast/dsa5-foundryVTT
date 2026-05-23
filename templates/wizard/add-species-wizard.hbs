@@ -95,8 +95,8 @@
                                     />
                                     {{/if}}
                                 </div>
-                                <div class="col sixty">
-                                    <b>{{entry.name}}</b>
+                                <div class="col sixty" data-action="selectGeneratorRow">
+                                    {{#if ../hasMultipleEntries}}<b>{{entry.name}}</b>{{/if}}
                                     {{#if entry.outcomeDisplay}}
                                     <div><small>{{entry.outcomeDisplay}}</small></div>
                                     {{/if}}
