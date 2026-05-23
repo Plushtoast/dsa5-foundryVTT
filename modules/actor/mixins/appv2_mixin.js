@@ -5,6 +5,12 @@ export const AppV2Mixin = (superclass) =>
       majorButtons: [],
     };
 
+    static clearDragHighlights() {
+      document.querySelectorAll('.window-content.dsaDraggedOver').forEach((el) => {
+        el.classList.remove('dsaDraggedOver');
+      });
+    }
+
     async _renderFrame(options) {
       const frame = await super._renderFrame(options);
       if (!this.hasFrame) return frame;
@@ -19,6 +25,16 @@ export const AppV2Mixin = (superclass) =>
         this.window.title.insertAdjacentHTML('beforebegin', button);
       }
       return frame;
+    }
+
+    async _onRender(context, options) {
+      this.constructor.clearDragHighlights();
+      await super._onRender(context, options);
+    }
+
+    _tearDown(options) {
+      this.constructor.clearDragHighlights();
+      return super._tearDown(options);
     }
 
     _onClickAction(event, target) {
@@ -39,9 +55,7 @@ export const AppV2Mixin = (superclass) =>
     }
 
     async _onDrop(event) {
-      document.querySelectorAll('.window-content').forEach((el) => {
-        el.classList.remove('dsaDraggedOver');
-      });
+      this.constructor.clearDragHighlights();
       super._onDrop(event);
     }
 
@@ -56,18 +70,14 @@ export const AppV2Mixin = (superclass) =>
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         const isInBorder = x < padding || x > rect.width - padding || y < padding || y > rect.height - padding;
-        document.querySelectorAll('.window-content').forEach((el) => {
-          el.classList.remove('dsaDraggedOver');
-        });
+        this.constructor.clearDragHighlights();
         if (isInBorder) {
           hovered.classList.remove('dsaDraggedOver');
         } else {
           hovered.classList.add('dsaDraggedOver');
         }
       } else {
-        document.querySelectorAll('.window-content').forEach((el) => {
-          el.classList.remove('dsaDraggedOver');
-        });
+        this.constructor.clearDragHighlights();
       }
     }
   };
