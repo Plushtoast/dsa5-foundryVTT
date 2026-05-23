@@ -389,9 +389,10 @@ export default class DSA5StatusEffects {
 
     for (const [key, val] of Object.entries(actor.system.condition)) {
       if (val) {
-        const ef = duplicate(DSA5.statusEffects.find((x) => x.id == key));
+        const statusEffect = DSA5.statusEffects.find((x) => x.id == key);
+        if (!statusEffect) continue;
 
-        if (!ef) continue;
+        const ef = duplicate(statusEffect);
 
         const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects;
         ef.system.condition.value = val;
