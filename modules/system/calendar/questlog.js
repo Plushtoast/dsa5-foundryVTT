@@ -3,6 +3,7 @@ import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 export class QuestLogFeature {
     static #parent;
     static #lastSelectedQuest = null;
+    static #collapsedGroups = new Set();
 
     #search;
 
@@ -22,6 +23,7 @@ export class QuestLogFeature {
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
         toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
+        toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
     };
 
     async _preparePartContext(context, _options) {
@@ -89,7 +91,19 @@ export class QuestLogFeature {
 
         return Array.from(groups.entries())
             .sort(([left], [right]) => collator.compare(left, right))
-            .map(([group, questsInGroup]) => ({ group, quests: questsInGroup }));
+            .map(([group, questsInGroup]) => ({ group, quests: questsInGroup, isCollapsed: QuestLogFeature.#collapsedGroups.has(group) }));
+    }
+
+    static toggleQuestGroup(event, target) {
+        const group = target.closest('.faction-group');
+        const key = group?.dataset.groupKey;
+        if (!group || !key) return;
+
+        const collapsed = !group.classList.contains('collapsed');
+        group.classList.toggle('collapsed', collapsed);
+        target.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) QuestLogFeature.#collapsedGroups.add(key);
+        else QuestLogFeature.#collapsedGroups.delete(key);
     }
 
     static updateSelectionUI(clickedElement) {

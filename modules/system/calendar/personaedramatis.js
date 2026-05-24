@@ -4,6 +4,7 @@ export class PersonaeDramatis {
     static #parent;
     static #lastActiveListType = '0';
     static #lastSelectedActor = null;
+    static #collapsedGroups = new Set();
     #search;
 
     constructor(parent) {
@@ -37,6 +38,7 @@ export class PersonaeDramatis {
         toggleVisibility: PersonaeDramatis.toggleVisibility,
         switchList: PersonaeDramatis.switchList,
         newPersona: PersonaeDramatis.newPersona,
+        togglePersonaGroup: PersonaeDramatis.togglePersonaGroup,
     }
 
     static #findExistingPersona(actorUuid) {
@@ -173,7 +175,24 @@ export class PersonaeDramatis {
             if (fb === unknownFaction) return -1;
             return collator.compare(fa, fb);
         });
-        return sortedEntries.map(([faction, members]) => ({ faction, members }));
+        return sortedEntries.map(([faction, members]) => ({
+            faction,
+            members,
+            collapseKey: `${members[0]?.type ?? ''}:${faction}`,
+            isCollapsed: PersonaeDramatis.#collapsedGroups.has(`${members[0]?.type ?? ''}:${faction}`),
+        }));
+    }
+
+    static togglePersonaGroup(event, target) {
+        const group = target.closest('.faction-group');
+        const key = group?.dataset.groupKey;
+        if (!group || !key) return;
+
+        const collapsed = !group.classList.contains('collapsed');
+        group.classList.toggle('collapsed', collapsed);
+        target.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) PersonaeDramatis.#collapsedGroups.add(key);
+        else PersonaeDramatis.#collapsedGroups.delete(key);
     }
 
     static async #entryFromTarget(target) {

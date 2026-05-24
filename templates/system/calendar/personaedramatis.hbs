@@ -26,11 +26,15 @@
                     <!-- Personae Dramatis List -->
                     <div class="list-content{{#unless (eq lastActiveListType '0')}} hidden{{/unless}}" data-list-type="0">
                         {{#each personae.personae0 as |factionGroup|}}
-                        <div class="faction-group">
-                            <div class="faction-header">
-                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                        <div class="faction-group{{ifThen factionGroup.isCollapsed ' collapsed' ''}}" data-group-key="{{factionGroup.collapseKey}}">
+                            <div class="faction-header" data-action="togglePersonaGroup" role="button" tabindex="0" aria-expanded="{{ifThen factionGroup.isCollapsed 'false' 'true'}}">
+                                <div class="faction-title flexrow flexAlignCenter">
+                                    <i class="fas fa-chevron-down faction-collapse-indicator flex0"></i>
+                                    <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                </div>
                                 <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
+                            <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
                             <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
                                 <div class="persona-list-image">
@@ -61,6 +65,7 @@
                                 </div>
                             </div>
                             {{/each}}
+                            </div>
                         </div>
                         {{else}}
                         <div class="no-personae-list">
@@ -80,11 +85,15 @@
                     <!-- Beasts List -->
                     <div class="list-content{{#unless (eq lastActiveListType '1')}} hidden{{/unless}}" data-list-type="1">
                         {{#each personae.personae1 as |factionGroup|}}
-                        <div class="faction-group">
-                            <div class="faction-header">
-                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                        <div class="faction-group{{ifThen factionGroup.isCollapsed ' collapsed' ''}}" data-group-key="{{factionGroup.collapseKey}}">
+                            <div class="faction-header" data-action="togglePersonaGroup" role="button" tabindex="0" aria-expanded="{{ifThen factionGroup.isCollapsed 'false' 'true'}}">
+                                <div class="faction-title flexrow flexAlignCenter">
+                                    <i class="flex0 fas fa-chevron-down faction-collapse-indicator"></i>
+                                    <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                </div>
                                 <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
+                            <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
                             <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
                                 <div class="persona-list-image">
@@ -112,6 +121,7 @@
                                 </div>
                             </div>
                             {{/each}}
+                            </div>
                         </div>
                         {{else}}
                         <div class="no-personae-list">

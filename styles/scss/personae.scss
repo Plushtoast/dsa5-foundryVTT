@@ -172,6 +172,18 @@
     background: var(--personae-gold-alpha-1);
     border-left: 4px solid var(--dsadesign1);
     margin-bottom: 0.25rem;
+    cursor: pointer;
+
+    .faction-title {
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .faction-collapse-indicator {
+      color: var(--dsadesign1);
+      font-size: 0.8rem;
+      transition: var(--personae-transition);
+    }
 
     .faction-name {
       margin: 0;
@@ -188,6 +200,16 @@
       border-radius: 12px;
       font-size: 0.8rem;
       font-weight: normal;
+    }
+  }
+
+  &.collapsed {
+    .faction-body {
+      display: none;
+    }
+
+    .faction-collapse-indicator {
+      transform: rotate(-90deg);
     }
   }
 }
