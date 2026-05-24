@@ -1,0 +1,18 @@
+<form class="scrollable">
+  <p>{{hint}}</p>
+  {{#each groups}}
+    <details open>
+      <summary><b>{{label}}</b> ({{count}})</summary>
+      <ul>
+        {{#each entries}}
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" name="migrakelItems" value="{{id}}" checked>
+              {{name}}
+            </label>
+          </li>
+        {{/each}}
+      </ul>
+    </details>
+  {{/each}}
+</form>
