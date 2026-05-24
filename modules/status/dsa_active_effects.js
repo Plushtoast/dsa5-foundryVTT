@@ -472,11 +472,6 @@ export default class DSAActiveEffect extends ActiveEffect {
       if (system?.source !== undefined) delete system.source;
     }
 
-    if (source.system?.description) {
-      if (!source.description) source.description = source.system.description;
-      delete source.system.description;
-    }
-
     if (!source.flags?.dsa5) return super.migrateData(source);
 
     const flags = source.flags.dsa5;
