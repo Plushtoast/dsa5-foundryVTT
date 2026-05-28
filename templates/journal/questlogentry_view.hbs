@@ -47,7 +47,7 @@
             <h3 class='section-title'>{{localize 'DSAQUESTLOG.objectives'}} <span class='small'>{{quest.progressText}}</span></h3>
             <div class='questlog-objective-list'>
               {{#each quest.preparedObjectives}}
-                <div class='questlog-objective-card{{ifThen done " is-done" ""}} flexrow'>
+                <div class='questlog-objective-card{{ifThen done " is-done" ""}}{{ifThen visible "" " invisible"}} flexrow'>
                   <div class='questlog-objective-main'>
                     <div class='questlog-objective-line'>
                       <span class='questlog-objective-icon'><i class='fas {{ifThen done "fa-check-circle" "fa-circle"}}'></i></span>
@@ -55,6 +55,8 @@
                     </div>
                   </div>
                   {{#if @root.isGM}}
+                    <button type='button' class='icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleVisibility"}}' data-action='toggleObjectiveVisibility' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
+                    </button>
                     <button type='button' class='icon fas {{ifThen done "fa-arrow-rotate-left" "fa-check"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.toggleObjectiveDone"}}' data-action='toggleObjectiveDone' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'>
                     </button>
                   {{/if}}
