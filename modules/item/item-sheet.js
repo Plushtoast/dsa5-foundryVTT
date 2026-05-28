@@ -1569,7 +1569,7 @@ class BlessingSheetDSA5 extends MacroOnlyEffectsSheet {
     if (this.actor.system.status.karmaenergy.value < 1)
       return ui.notifications.error('DSAError.NotEnoughKaP', { localize: true, });
 
-    await this.actor.update({ 'system.status.karmaenergy.value': (this.actor.system.status.karmaenergy.value -= 1), });
+    await this.actor.update({ 'system.status.karmaenergy.value': this.actor.system.status.karmaenergy.value - 1, });
     const cantrip = this.item.system.chatDataToString();
     const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
       item: this.item,

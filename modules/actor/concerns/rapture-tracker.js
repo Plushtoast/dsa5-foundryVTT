@@ -18,22 +18,24 @@ export class RaptureTracker {
       const cutoff = now - this.KAP_WINDOW;
 
       let tracker = this.findTracker(actor);
+      let history;
 
       if (!tracker) {
-        const history = [{ time: now, amount: kapSpent }];
-        await actor.createEmbeddedDocuments('ActiveEffect', [
+        history = [{ time: now, amount: kapSpent }];
+        const [createdTracker] = await actor.createEmbeddedDocuments('ActiveEffect', [
           {
             name: game.i18n.localize('RAPTURE.kapTracker'),
             description: game.i18n.localize('RAPTURE.kapTrackerDescription'),
             img: 'icons/svg/ice-aura.svg',
+            system: { visibility: { hideOnToken: true } },
             start: { time: now },
             duration: { value: this.KAP_WINDOW, units: 'seconds' },
             flags: { dsa5: { [FLAG_KEY]: true, [HISTORY_FLAG]: history } },
           },
         ]);
-        tracker = this.findTracker(actor);
+        tracker = createdTracker;
       } else {
-        const history = (tracker.getFlag('dsa5', HISTORY_FLAG) ?? [])
+        history = (tracker.getFlag('dsa5', HISTORY_FLAG) ?? [])
           .filter((e) => e.time > cutoff)
           .concat({ time: now, amount: kapSpent });
 
@@ -44,15 +46,17 @@ export class RaptureTracker {
           'start.time': now,
           'duration.value': expiresIn,
           'duration.units': 'seconds',
+          'system.visibility.hideOnToken': true,
           [`flags.dsa5.${HISTORY_FLAG}`]: history,
         });
       }
 
       if (!tracker) return;
 
-      const history = (tracker.getFlag('dsa5', HISTORY_FLAG) ?? []).filter((e) => e.time > cutoff);
       const windowTotal = history.reduce((sum, e) => sum + e.amount, 0);
       const targetLevel = Math.min(this.MAX_RAPTURE, Math.floor(windowTotal / this.KAP_PER_LEVEL));
+      if (targetLevel < 1) return;
+
       const currentRapture = actor.system.condition?.raptured ?? 0;
 
       if (targetLevel > currentRapture) {
