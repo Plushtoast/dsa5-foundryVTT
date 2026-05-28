@@ -196,25 +196,25 @@ export class PersonaeDramatis {
     }
 
     static async #entryFromTarget(target) {
-        const { personaUuid, personaDramatisKey } = target.closest('[data-persona-uuid]')?.dataset ?? {};
+        const { personaUuid, key } = target.closest('[data-persona-uuid]')?.dataset ?? {};
         if (!personaUuid) return {};
 
         const page = await fromUuid(personaUuid);
         if (!page) return {};
 
-        return { entry: page?.system.personae?.[personaDramatisKey], page, personaDramatisKey };
+        return { entry: page?.system.personae?.[key], page, key };
     }
 
     static async selectActor(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
         PersonaeDramatis.#lastSelectedActor = {
             pageUuid: page.uuid,
-            dramatisKey: personaDramatisKey
+            dramatisKey: key
         };
         PersonaeDramatis.updateSelectionUI(target);
-        PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey, target);
+        PersonaeDramatis.displayActorDetails(entry, page, key, target);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -303,18 +303,18 @@ export class PersonaeDramatis {
         section.querySelector('.relationship-label').textContent = _loc(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
         target.className = target.className.replace(/level-\d+/g, '');
         target.classList.add(`level-${newValue}`);
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!page) return;
 
         const contactId = target.dataset.contactUuid.replaceAll('.', '_');
-        await page.update({ [`system.personae.${personaDramatisKey}.socialContact.${contactId}.level`]: newValue });
+        await page.update({ [`system.personae.${key}.socialContact.${contactId}.level`]: newValue });
     }
 
     static async editActor(event, target, options = {}) {
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-        if (!personaDramatisKey || !page) return;
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
+        if (!key || !page) return;
 
-        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: personaDramatisKey, close: !options.stay });
+        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: key, close: !options.stay });
     }
 
     static async showSheet(event, target, options = {}) {
@@ -329,10 +329,10 @@ export class PersonaeDramatis {
     }
 
     static async toggleVisibility(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
-        await page.update({ [`system.personae.${personaDramatisKey}.visible`]: !entry.visible });
+        await page.update({ [`system.personae.${key}.visible`]: !entry.visible });
         const i = target.querySelector('i');
         i.classList.toggle('fa-eye', !entry.visible);
         i.classList.toggle('fa-eye-slash', entry.visible);

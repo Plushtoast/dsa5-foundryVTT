@@ -16,7 +16,7 @@
         {{#if isGM}}
         <div class="persona-detail-actions">
             <button type="button" class="detail-action-btn edit-btn" data-tooltip="SHEET.EditItem"
-                data-action="editActor" data-persona-uuid="{{uuid}}" data-persona-dramatis-key="{{dramatisKey}}">
+                data-action="editActor" data-persona-uuid="{{uuid}}" data-key="{{dramatisKey}}">
                 <i class="fas fa-edit"></i>
             </button>
             <button type="button" class="detail-action-btn sheet-btn"
@@ -26,7 +26,7 @@
             </button>
             <button type="button" class="detail-action-btn delete-btn"
                 data-tooltip="PERSONAE.FIELDS.personae.visible.label" data-action="toggleVisibility"
-                data-persona-uuid="{{uuid}}" data-persona-dramatis-key="{{dramatisKey}}">
+                data-persona-uuid="{{uuid}}" data-key="{{dramatisKey}}">
                 <i class="fas fa-eye{{ifThen visible '' '-slash'}}"></i>
             </button>
         </div>
@@ -85,7 +85,7 @@
                 {{#if noTabs}}<h3 class="section-title">{{localize 'PERSONAE.FIELDS.personae.socialContact.label'}}</h3>{{/if}}
                 <div class="section-content">
                     {{#each contacts}}
-                    <div class="persona-list-item" data-persona-uuid="{{../uuid}}" data-persona-dramatis-key="{{../dramatisKey}}">
+                    <div class="persona-list-item" data-persona-uuid="{{../uuid}}" data-key="{{../dramatisKey}}">
                         <div class="persona-list-image">
                             <img src="{{img}}" alt="{{name}}" />
                         </div>
