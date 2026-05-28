@@ -11,7 +11,7 @@ export default class RollRequestService {
   static FLAG_KEY = 'rollRequest';
   static TEMPLATE = 'systems/dsa5/templates/chat/roll/roll-request.hbs';
   static DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/roll-request-dialog.hbs';
-  static PRIVATE_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.BLIND, DICE_CONSTANTS.CHAT_MODES.SELF]);
+  static PUBLIC_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.PUBLIC, DICE_CONSTANTS.CHAT_MODES.IC]);
 
   static register() {
     QueryOrchestrator.registerQuery(this.QUERY_TYPE, {
@@ -49,6 +49,7 @@ export default class RollRequestService {
     const header = await renderTemplate(this.DIALOG_TEMPLATE, {
       skills: skillOptions,
       modifier,
+      messageMode: game.settings.get('core', 'messageMode'),
     });
 
     ActorPickerDialog.open({
@@ -61,12 +62,14 @@ export default class RollRequestService {
         const skillValue = $form.find('[name="skill"]').val();
         const [selectedName, selectedType] = skillValue.split('|');
         const selectedModifier = Number($form.find('[name="modifier"]').val()) || 0;
+        const messageMode = $form.find('[name="messageMode"]:checked').val() || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
 
         const actors = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
         this.createRequest({
           category: selectedType,
           name: selectedName,
           modifier: selectedModifier,
+          messageMode,
           actors,
           label: selectedName !== name ? undefined : label,
         });
@@ -74,7 +77,7 @@ export default class RollRequestService {
     });
   }
 
-  static async createRequest({ category, name, modifier = 0, actors = [], label = undefined }) {
+  static async createRequest({ category, name, modifier = 0, messageMode = DICE_CONSTANTS.CHAT_MODES.PUBLIC, actors = [], label = undefined }) {
     const recipients = await QueryOrchestrator.buildRecipients(actors);
 
     const state = {
@@ -82,6 +85,7 @@ export default class RollRequestService {
       name,
       label,
       modifier,
+      messageMode,
       finalized: false,
       recipients,
     };
@@ -105,11 +109,8 @@ export default class RollRequestService {
     const skillIcon = this.getRequestedIcon(state.category, state.name);
 
     const recipients = state.recipients.map((entry) => {
-      const privateResult = this.isPrivateResult(entry);
-      const resultLabel = privateResult ? '' : this.buildResultLabel(entry, state.category);
-      const statusStyle = privateResult
-        ? { icon: 'fa-check', colorClass: 'icon-gray', label: _loc('DSAQUERIES.STATUS.accepted') }
-        : QueryOrchestrator.statusStyle(entry.status);
+      const resultLabel = this.buildResultLabel(entry, state.category);
+      const statusStyle = QueryOrchestrator.statusStyle(entry.status);
       return {
         ...entry,
         actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
@@ -133,8 +134,18 @@ export default class RollRequestService {
     };
   }
 
-  static isPrivateResult(entry) {
-    return QueryOrchestrator.TERMINAL_STATES.has(entry.status) && this.PRIVATE_MESSAGE_MODES.has(entry.resultDetails?.messageMode);
+  static resultMessageMode(entry, state = {}) {
+    return entry.resultDetails?.messageMode || state.messageMode || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
+  }
+
+  static canUserSeeResult(entry, state = {}) {
+    if (!entry.resultDetails) return false;
+    if (game.user.isGM) return true;
+
+    const messageMode = this.resultMessageMode(entry, state);
+    if (this.PUBLIC_MESSAGE_MODES.has(messageMode)) return true;
+    if ([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.SELF].includes(messageMode)) return game.actors.get(entry.actorId)?.isOwner;
+    return false;
   }
 
   static getRequestedIcon(category, name) {
@@ -185,6 +196,7 @@ export default class RollRequestService {
           category: state.category,
           name: state.name,
           modifier: state.modifier,
+          messageMode: state.messageMode,
         },
       );
 
@@ -213,7 +225,7 @@ export default class RollRequestService {
     }
 
     try {
-      const options = { modifier: payload.modifier };
+      const options = { modifier: payload.modifier, messageMode: payload.messageMode };
       let setupData;
 
       switch (payload.category) {
@@ -249,19 +261,21 @@ export default class RollRequestService {
         return { userId: game.user.id, status: 'cancelled' };
       }
 
-      return this.buildResultPayload(payload.category, result);
+      return this.buildResultPayload(payload.category, result, payload.messageMode);
     } catch {
       return { userId: game.user.id, status: 'cancelled' };
     }
   }
 
-  static buildResultPayload(category, result) {
+  static buildResultPayload(category, result, messageMode = undefined) {
     const successLevel = result.result?.successLevel || 0;
     const isCrit = successLevel > 1;
     const isBotch = successLevel < -1;
     const isSuccess = successLevel > 0;
 
     const status = category === 'regeneration' ? 'success' : isCrit ? 'critical' : isBotch ? 'botch' : isSuccess ? 'success' : 'failure';
+
+    const resultMessageMode = result.cardOptions?.messageMode || result.result?.messageMode || messageMode || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
 
     return {
       userId: game.user.id,
@@ -270,7 +284,7 @@ export default class RollRequestService {
         qualityStep: result.result?.qualityStep || 0,
         successLevel,
         messageId: result.result?.messageId,
-        messageMode: result.cardOptions?.messageMode || result.result?.messageMode,
+        messageMode: resultMessageMode,
         LeP: result.result?.LeP,
         AsP: result.result?.AsP,
         KaP: result.result?.KaP,
@@ -311,6 +325,7 @@ export default class RollRequestService {
       category: state.category,
       name: state.name,
       modifier: state.modifier,
+      messageMode: state.messageMode,
     });
 
     await QueryOrchestrator.handleResult({
@@ -349,6 +364,7 @@ export default class RollRequestService {
       category: state.category,
       name: state.name,
       modifier: state.modifier,
+      messageMode: state.messageMode,
     });
 
     await QueryOrchestrator.handleResult({ messageId, actorId, result });
@@ -365,14 +381,14 @@ export default class RollRequestService {
     html.find('.roll-request-row').each((_, element) => {
       const row = $(element);
       const entry = rollRequest.recipients?.find((recipient) => recipient.actorId === row.attr('data-actor-id'));
-      if (!entry || !this.isPrivateResult(entry)) return;
+      if (!entry?.resultDetails) return;
 
-      if (!game.user.isGM) {
-        this.hidePrivateResult(row);
+      if (this.canUserSeeResult(entry, rollRequest)) {
+        this.revealPrivateResult(row, entry, rollRequest.category);
         return;
       }
 
-      this.revealPrivateResult(row, entry, rollRequest.category);
+      this.hidePrivateResult(row);
     });
 
     if (!game.user.isGM) {
@@ -387,7 +403,12 @@ export default class RollRequestService {
   }
 
   static hidePrivateResult(row) {
-    row.find('.roll-request-result-label').remove();
+    let label = row.find('.roll-request-result-label');
+    if (!label.length) {
+      label = $('<span class="very-small roll-request-result-label"></span>');
+      row.find('.roll-request-indicator').before(label);
+    }
+    label.text('?');
     const indicator = row.find('.roll-request-indicator');
     indicator.removeClass((_, className) => (className.match(/\bicon-\S+/g) || []).join(' '));
     indicator.addClass('icon-gray').attr('data-tooltip', _loc('DSAQUERIES.STATUS.accepted')).attr('aria-label', _loc('DSAQUERIES.STATUS.accepted'));

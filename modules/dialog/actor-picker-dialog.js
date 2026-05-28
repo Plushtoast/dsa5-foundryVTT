@@ -274,6 +274,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       window: { title, resizable: true },
       content,
       classes: ['dsa5'],
+      position: {
+        width: 400,
+      },
       buttons: [
         {
           action: 'confirm',
