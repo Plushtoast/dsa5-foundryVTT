@@ -1963,7 +1963,8 @@
                 "targetCategory.value": "Lebewesen..."
             },
             "specialability": {
-                "distribution": "Animisten..."
+                "distribution": "Animisten...",
+                "requirements.value": "Steinbearbeitung..."
             },
             "spell": {
                 "distribution.value": "Hexen...",

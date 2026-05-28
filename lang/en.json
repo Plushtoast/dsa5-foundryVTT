@@ -1964,7 +1964,8 @@
         "targetCategory.value": "Living creatures..."
       },
       "specialability": {
-        "distribution": "Witch..."
+        "distribution": "Witch...",
+        "requirements.value": "Earthencraft..."
       },
       "spell": {
         "distribution.value": "Witch...",

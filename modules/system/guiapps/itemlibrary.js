@@ -1211,6 +1211,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${_loc('Library.buildingIndex')}</div>`);
       loading.appendTo(target.find('.searchResult'));
     } catch (e) {
+      // nothing going on here
     }
   }
 
@@ -1230,6 +1231,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       if (typeof effectiveCategory === 'string') this.setBGImage([], effectiveCategory);
       target.find('.loader').remove();
     } catch (e) {
+      // nothing going on here
     }
   }
 }
