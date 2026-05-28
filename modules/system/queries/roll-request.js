@@ -168,10 +168,10 @@ export default class RollRequestService {
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
     if (!state?.recipients) return;
 
-    for (const recipient of state.recipients) {
-      if (!recipient.designatedUserId || recipient.status !== 'pending') continue;
+    await Promise.all(state.recipients.map(async (recipient) => {
+      if (!recipient.designatedUserId || recipient.status !== 'pending') return;
       await this.dispatchRecipientQuery(messageId, recipient.actorId, recipient.designatedUserId, state);
-    }
+    }));
   }
 
   static async dispatchRecipientQuery(messageId, actorId, userId, state) {

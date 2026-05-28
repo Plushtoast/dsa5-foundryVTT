@@ -103,7 +103,8 @@ export function connectSocket() {
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
+        if (data.payload.update) await GroupCheck.updateGCResult(data.payload.messageId, data.payload.update);
+        else await GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTrackerId':
         APTracker.receiveSocketEvent(data);
