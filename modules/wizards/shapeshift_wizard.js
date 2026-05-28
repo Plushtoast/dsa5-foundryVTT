@@ -286,8 +286,12 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
     static async _deleteShapeshiftEffect(shapeshift, ...actors) {
         const parent = shapeshift.parent?.documentName === 'Actor' ? shapeshift.parent : null;
-        const owner = [parent, ...actors].find(actor => actor?.effects?.has(shapeshift.id));
-        if (owner) await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+        const owners = [parent, ...actors].filter((actor, index, candidates) => {
+            return actor?.effects?.has(shapeshift.id) && candidates.findIndex(candidate => candidate?.uuid === actor.uuid) === index;
+        });
+        for (const owner of owners) {
+            await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+        }
     }
 
     static async finish_shapeshift(source, target, data, sourceProperties, remote = false) {

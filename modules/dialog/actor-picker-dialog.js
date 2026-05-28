@@ -152,6 +152,10 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     ActorPickerDialog.#bindSearchFilter(this.element);
     ActorPickerDialog.#bindActorRowEvents(this.element);
     this.#bindDropEvents();
+
+    const form = this.element.querySelector('form');
+    form.style.overflowY = 'hidden';
+    form.querySelector('.dialog-content').classList.add('scrollable');
   }
 
   static #onActorSearchFilter(_event, query, rgx, html) {
