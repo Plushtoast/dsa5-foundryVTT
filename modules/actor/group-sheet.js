@@ -664,6 +664,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #addLocation(event, target) {
+    if (!game.user.isGM) return;
     const defaultName = `${this.actor.name} — ${_loc('GROUP.inventory')}`;
     const content = `<form>
       <p class="hint">${_loc('GROUP.depotHint')}</p>
@@ -686,6 +687,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static #removeLocation(event, target) {
+    if (!game.user.isGM) return;
     const key = target.closest('[data-location-key]')?.dataset.locationKey;
     if (key) this.actor.system.removeLocation(key);
   }
@@ -752,11 +754,13 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #groupPayment(event, target) {
+    if (!game.user.isGM) return;
     const actors = [...this.actor.system.actors];
     GroupActorSheet.doGroupPayment(actors, true);
   }
 
   static async doGroupPayment(actors, pay, amount = 0) {
+    if (!game.user.isGM) return;
     const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
     const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
@@ -1018,6 +1022,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #groupGetPaid(event, target) {
+    if (!game.user.isGM) return;
     const actors = [...this.actor.system.actors];
     GroupActorSheet.doGroupPayment(actors, false);
   }
