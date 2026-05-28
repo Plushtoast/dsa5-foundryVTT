@@ -407,8 +407,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       items: loc.actor.items
         .filter((i) => DSA5.equipmentCategories.has(i.type))
         .map((i) => {
-          i.calculatedPrice = DSA5_Utility.itemPrice(i);
-          return i;
+          const item = i.system.prepareEmbeddedItemSheet();
+          item.uuid = i.uuid;
+          item.calculatedPrice = DSA5_Utility.itemPrice(i);
+          return item;
         }),
       coins: loc.actor.items
         .filter((i) => i.type === 'money')
