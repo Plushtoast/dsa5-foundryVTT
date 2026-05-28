@@ -3,6 +3,23 @@ const ICON_SUMMON = 'fa-bell';
 const POSITION_STYLE = 'left:calc(50% + 40px);top:1px;';
 
 export default class CompanionHotbar {
+  static ROLLABLE_CATEGORIES = {
+    skill: { label: 'TYPES.Item.skill', setup: 'setupSkill' },
+    spell: { label: 'TYPES.Item.spell', setup: 'setupSpell' },
+    ritual: { label: 'TYPES.Item.ritual', setup: 'setupSpell' },
+    liturgy: { label: 'TYPES.Item.liturgy', setup: 'setupSpell' },
+    ceremony: { label: 'TYPES.Item.ceremony', setup: 'setupSpell' },
+  };
+
+  static async executeHotbarRoll(actor, item, tokenId) {
+    const config = this.ROLLABLE_CATEGORIES[item.type];
+    if (!config) return false;
+
+    const setupData = await actor[config.setup](item, {}, tokenId);
+    await actor.basicTest(setupData);
+    return true;
+  }
+
   /**
    * Resolve the companion relationship for the current hotbar actor.
    * @param {Actor} actor - The hotbar's active actor
