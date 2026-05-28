@@ -1419,16 +1419,19 @@
                 },
                 "linkedPages": {
                     "uuid": {
-                        "hint": "Verknüpfe die UUID einer Journalseite.",
-                        "label": "UUID der Journalseite"
+                        "hint": "Verknüpfe eine beliebige Dokument-UUID.",
+                        "label": "Dokument-UUID"
+                    },
+                    "visible": {
+                        "label": "Für Spieler sichtbar"
                     }
                 },
                 "location": {
                     "label": "Ort"
                 },
                 "objectives": {
-                    "done": {
-                        "label": "Erledigt"
+                    "status": {
+                        "label": "Status"
                     },
                     "text": {
                         "label": "Ziel"
@@ -1473,11 +1476,13 @@
         },
         "STATUS": {
             "0": "Offen",
-            "1": "Beendet"
+            "1": "Beendet",
+            "2": "Fehlgeschlagen"
         },
         "SelectQuest": "Auftrag auswählen",
         "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
-        "addLinkedPage": "Verknüpfte Seite hinzufügen",
+        "addLinkedDocument": "Verknüpftes Dokument hinzufügen",
+        "addLinkedPage": "Verknüpftes Dokument hinzufügen",
         "addObjective": "Ziel hinzufügen",
         "completionDate": "Beendet",
         "createQuest": "Auftrag erstellen",
@@ -1488,13 +1493,18 @@
             "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)",
             "label": "Auftrags-Journale"
         },
-        "linkedPages": "Verknüpfte Seiten",
+        "linkedDocuments": "Verknüpfte Dokumente",
+        "linkedPages": "Verknüpfte Dokumente",
         "missingLink": "Fehlt",
         "newEntryPlaceholder": "Neuer Auftrag",
         "newObjectivePlaceholder": "Neues Ziel",
-        "noLinkedPages": "Keine verknüpften Seiten.",
+        "noLinkedDocuments": "Keine verknüpften Dokumente.",
+        "noLinkedPages": "Keine verknüpften Dokumente.",
         "noObjectives": "Noch keine Ziele.",
         "objectives": "Ziele",
+        "objectiveStateDone": "Als fehlgeschlagen markieren",
+        "objectiveStateFailed": "Als offen markieren",
+        "objectiveStateOpen": "Als erledigt markieren",
         "playerOwners": "Zugewiesene Spieler",
         "showInQuestlog": "In Aufträgen anzeigen",
         "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
@@ -1504,9 +1514,11 @@
         "targetDate": "Ziel",
         "timeline": "Zeitverlauf",
         "title": "Aufträge",
+        "toggleLinkedDocumentVisibility": "Dokumentsichtbarkeit umschalten",
         "toggleObjectiveDone": "Zielabschluss umschalten",
         "toggleVisibility": "Spielersichtbarkeit umschalten",
-        "ungrouped": "Unsortiert"
+        "ungrouped": "Unsortiert",
+        "unknownDocumentType": "Dokument"
     },
     "DSAREGEX": {
         "combatRounds": "( )?(in )?(Kampfrunde(n)?|KR(s)?)",

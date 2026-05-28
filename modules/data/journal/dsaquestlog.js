@@ -2,16 +2,6 @@ import { JournalListDataModel } from './journallistdatamodel.js';
 
 const { TextEditor } = foundry.applications.ux;
 
-class JournalReferenceUUIDField extends foundry.data.fields.DocumentUUIDField {
-    static VALID_TYPES = new Set(['JournalEntry', 'JournalEntryPage']);
-
-    _validateType(value, options = {}) {
-        super._validateType(value, options);
-        const parsed = foundry.utils.parseUuid(value, { relative: options.model });
-        if (!this.constructor.VALID_TYPES.has(parsed?.type)) throw new Error('must reference a Journal Entry or Journal Entry Page');
-    }
-}
-
 export class DSAQuestLogEntry extends JournalListDataModel {
     static SETTING_NAME = 'questlogJournals';
     static HOTBAR_ID = 'createQuest';
@@ -32,6 +22,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     static STATUS_CHOICES = {
         0: 'DSAQUESTLOG.STATUS.0',
         1: 'DSAQUESTLOG.STATUS.1',
+        2: 'DSAQUESTLOG.STATUS.2',
     };
 
     static PRIORITY_CHOICES = {
@@ -54,6 +45,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             BooleanField,
             ArrayField,
             HTMLField,
+            DocumentUUIDField,
         } = foundry.data.fields;
 
         const dateField = () => new SchemaField({
@@ -82,14 +74,27 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 completionDate: dateField(),
                 objectives: new TypedObjectField(new SchemaField({
                     text: new StringField({ required: true, initial: '', label: 'DSAQUESTLOG.FIELDS.quests.objectives.text.label' }),
-                    done: new BooleanField({ initial: false, label: 'DSAQUESTLOG.FIELDS.quests.objectives.done.label' }),
+                    status: new NumberField({ required: true, initial: 0, choices: DSAQuestLogEntry.STATUS_CHOICES, label: 'DSAQUESTLOG.FIELDS.quests.objectives.status.label' }),
                     visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.objectives.visible.label' }),
                 })),
                 linkedPages: new TypedObjectField(new SchemaField({
-                    uuid: new JournalReferenceUUIDField({ label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.label', hint: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint' }),
+                    uuid: new DocumentUUIDField({ required: false, blank: true, label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.label', hint: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint' }),
+                    visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.visible.label' }),
                 })),
             })),
         };
+    }
+
+    static _migrateData(source) {
+        super._migrateData(source);
+
+        for (const quest of Object.values(source.quests || {})) {
+            for (const objective of Object.values(quest?.objectives || {})) {
+                if (!objective || ('status' in objective) || !('done' in objective)) continue;
+                objective.status = objective.done ? 1 : 0;
+                delete objective.done;
+            }
+        }
     }
 
     static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
@@ -129,8 +134,9 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             .map(([objectiveKey, objective]) => ({
                 objectiveKey,
                 ...objective,
+                ...this.prepareObjectiveState(objective),
             }));
-        entry.doneObjectives = entry.preparedObjectives.filter(objective => objective.done).length;
+        entry.doneObjectives = entry.preparedObjectives.filter(objective => objective.status === 1).length;
         entry.totalObjectives = entry.preparedObjectives.length;
         entry.progressText = `${entry.doneObjectives}/${entry.totalObjectives}`;
         entry.startDateLabel = this.formatDate(entry.startDate);
@@ -141,11 +147,12 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             { icon: 'fa-bullseye', tooltip: 'DSAQUESTLOG.targetDate', value: entry.targetDateLabel },
             { icon: 'fa-flag-checkered', tooltip: 'DSAQUESTLOG.completionDate', value: entry.completionDateLabel },
         ].filter(x => x.value);
-        entry.preparedLinkedPages = (await Promise.all(Object.entries(entry.linkedPages || {})
-            .filter(([, reference]) => this.#referenceUuid(reference))
+        entry.preparedLinkedDocuments = (await Promise.all(Object.entries(entry.linkedPages || {})
+            .filter(([, reference]) => this.#referenceUuid(reference) && (reference.visible !== false || game.user.isGM))
             .map(([linkKey, reference]) => {
-                return this.resolvePageReference(linkKey, reference);
-            }))).filter(Boolean);
+                return this.resolveDocumentReference(linkKey, reference);
+            }))).filter(Boolean).sort(this.#sortDocumentReferences);
+        entry.preparedLinkedPages = entry.preparedLinkedDocuments;
         entry.uuid = page?.uuid;
         entry.questKey = key;
         return entry;
@@ -185,23 +192,47 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         return badges;
     }
 
-    static createPageReference(uuid = '') {
-        return { uuid };
+    static prepareObjectiveState(objective) {
+        const status = this.#numericValue(objective.status, 0);
+        if (status === 2) return { done: false, failed: true, state: 'failed', stateIcon: 'fa-times-circle', stateTooltip: 'DSAQUESTLOG.objectiveStateFailed' };
+        if (status === 1) {
+            return { done: true, failed: false, state: 'done', stateIcon: 'fa-check-circle', stateTooltip: 'DSAQUESTLOG.objectiveStateDone' };
+        }
+        return { done: false, failed: false, state: 'open', stateIcon: 'fa-circle', stateTooltip: 'DSAQUESTLOG.objectiveStateOpen' };
     }
 
-    static async resolvePageReference(linkKey, reference) {
+    static nextObjectiveState(objective) {
+        const status = this.#numericValue(objective.status, 0);
+        if (status === 2) return 0;
+        if (status === 1) return 2;
+        return 1;
+    }
+
+    static createDocumentReference(uuid = '') {
+        return { uuid, visible: true };
+    }
+
+    static createPageReference(uuid = '') {
+        return this.createDocumentReference(uuid);
+    }
+
+    static async resolveDocumentReference(linkKey, reference) {
         const uuid = this.#referenceUuid(reference);
         const document = uuid ? await fromUuid(uuid) : null;
-        const isPage = document?.documentName === 'JournalEntryPage';
-        const isJournal = document?.documentName === 'JournalEntry';
-        const journal = isPage ? document.parent : document;
+        const parsed = foundry.utils.parseUuid(uuid);
+        const documentType = document?.documentName || parsed?.type || '';
+        const documentTypeLabel = this.#documentTypeLabel(documentType);
+        const parentName = document?.parent?.name || '';
 
         return {
             linkKey,
             uuid,
             label: document?.name || _loc('DSAQUESTLOG.missingLink'),
-            subtitle: isPage ? journal?.name || '' : '',
-            missing: !document || (!isPage && !isJournal),
+            subtitle: parentName,
+            documentType,
+            documentTypeLabel,
+            visible: reference.visible !== false,
+            missing: !document,
         };
     }
 
@@ -222,5 +253,17 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     static #referenceUuid(reference) {
         if (!reference) return '';
         return reference.uuid || reference.pageUuid || '';
+    }
+
+    static #documentTypeLabel(documentType) {
+        if (!documentType) return _loc('DSAQUESTLOG.unknownDocumentType');
+        const label = CONFIG[documentType]?.documentClass?.metadata?.label || documentType;
+        return game.i18n.has(label) ? _loc(label) : label;
+    }
+
+    static #sortDocumentReferences(a, b) {
+        const typeSort = a.documentTypeLabel.localeCompare(b.documentTypeLabel, game.i18n?.lang, { sensitivity: 'base' });
+        if (typeSort) return typeSort;
+        return a.label.localeCompare(b.label, game.i18n?.lang, { sensitivity: 'base' });
     }
 }

@@ -12,8 +12,11 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             toggleObjectiveDone: this.#toggleObjectiveDone,
             toggleObjectiveVisibility: this.#toggleObjectiveVisibility,
             togglePlayerOwner: this.#togglePlayerOwner,
-            addLinkedPage: this.#addLinkedPage,
-            removeLinkedPage: this.#removeLinkedPage,
+            addLinkedDocument: this.#addLinkedDocument,
+            removeLinkedDocument: this.#removeLinkedDocument,
+            openLinkedDocument: this.#openLinkedDocument,
+            toggleLinkedDocumentVisibility: this.#toggleLinkedDocumentVisibility,
+            toggleObjectiveState: this.#toggleObjectiveState,
         },
         position: {
             width: 1080,
@@ -60,7 +63,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
 
         const objectives = Object.values(entry.objectives || {}).filter(objective => objective && (objective.visible || game.user.isGM));
         entry.totalObjectives = objectives.length;
-        entry.doneObjectives = objectives.filter(objective => objective.done).length;
+        entry.doneObjectives = objectives.filter(objective => objective.status === 1).length;
         entry.progressText = `${entry.doneObjectives}/${entry.totalObjectives}`;
     }
 
@@ -152,10 +155,12 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             .map(([objectiveKey, objective]) => ({
                 objectiveKey,
                 ...objective,
+                ...DSAQuestLogEntry.prepareObjectiveState(objective),
             }));
-        const linkedPageEntries = Object.entries(quest.linkedPages || {}).map(([linkKey, link]) => ({
+        const linkedDocumentEntries = Object.entries(quest.linkedPages || {}).map(([linkKey, link]) => ({
             linkKey,
             uuid: link?.uuid || link?.pageUuid || '',
+            visible: link?.visible !== false,
         }));
 
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/questlogentry_edit_detail.hbs', {
@@ -166,7 +171,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             availableMonths,
             availablePlayers,
             objectiveEntries,
-            linkedPageEntries,
+            linkedDocumentEntries,
             yearSuffix,
         });
     }
@@ -184,7 +189,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         await this.document.update({
             [`system.quests.${questKey}.objectives.${objectiveKey}`]: {
                 text: _loc('DSAQUESTLOG.newObjectivePlaceholder'),
-                done: false,
+                status: 0,
                 visible: true,
             },
         });
@@ -199,7 +204,9 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         const { key, objectiveKey } = target.dataset;
         const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
         if (!objective) return;
-        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.done`]: !objective.done });
+
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
     }
 
     static async #toggleObjectiveVisibility(event, target) {
@@ -207,6 +214,15 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
         if (!objective) return;
         await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.visible`]: !objective.visible });
+    }
+
+    static async #toggleObjectiveState(event, target) {
+        const { key, objectiveKey } = target.dataset;
+        const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
+        if (!objective) return;
+
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
     }
 
     static async #togglePlayerOwner(event, target) {
@@ -228,14 +244,30 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         await this.document.update(update);
     }
 
-    static async #addLinkedPage(event, target) {
+    static async #addLinkedDocument(event, target) {
         const questKey = target.dataset.key;
         const linkKey = foundry.utils.randomID();
-        await this.document.update({ [`system.quests.${questKey}.linkedPages.${linkKey}`]: DSAQuestLogEntry.createPageReference() });
+        await this.document.update({ [`system.quests.${questKey}.linkedPages.${linkKey}`]: DSAQuestLogEntry.createDocumentReference() });
     }
 
-    static async #removeLinkedPage(event, target) {
+    static async #removeLinkedDocument(event, target) {
         const { key, linkKey } = target.dataset;
         await this.document.update({ [`system.quests.${key}.linkedPages.${linkKey}`]: _del });
+    }
+
+    static async #openLinkedDocument(event, target) {
+        const document = await fromUuid(target.dataset.uuid);
+        if (!document) return;
+        if (document.documentName === 'JournalEntryPage') return document.parent?.sheet?.render(true, { pageId: document.id });
+
+        document.sheet?.render(true);
+    }
+
+    static async #toggleLinkedDocumentVisibility(event, target) {
+        const { key, linkKey } = target.dataset;
+        const reference = this.document.system.quests[key]?.linkedPages?.[linkKey];
+        if (!reference) return;
+
+        await this.document.update({ [`system.quests.${key}.linkedPages.${linkKey}.visible`]: reference.visible === false });
     }
 }

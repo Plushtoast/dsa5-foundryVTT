@@ -5448,6 +5448,10 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+.dsaflex-no-wrap {
+    flex-wrap: nowrap;
+}
+
 .fullScreenApp {
   position: fixed;
   top: 0;

@@ -555,6 +555,27 @@
 }
 
 .questlog-badge {
+  border: 0;
+  line-height: 1.2;
+
+  &.questlog-document-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+
+  &.questlog-document-badge.invisible {
+    opacity: 0.8;
+  }
+
+  &.questlog-document-badge.missing {
+    opacity: 0.8;
+  }
+
   &.questlog-badge-secondary,
   &.questlog-badge-owner,
   &.questlog-badge-group {
@@ -564,6 +585,39 @@
   &.questlog-badge-audience-2 {
     background: rgba(150, 20, 20, 0.18);
   }
+}
+
+.questlog-document-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.questlog-document-open,
+.questlog-document-toggle {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  min-height: 0;
+}
+
+.questlog-document-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+}
+
+.questlog-document-toggle {
+  align-self: stretch;
+  padding: 0.25rem 0.65rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.questlog-document-type {
+  opacity: 0.9;
+  font-weight: bold;
 }
 
 .questlog-list {
@@ -594,6 +648,10 @@
 
   &.is-done {
     opacity: 0.8;
+  }
+
+  &.is-failed {
+    border-color: rgba(150, 20, 20, 0.45);
   }
 
   &.invisible {

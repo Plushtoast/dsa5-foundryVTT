@@ -1420,16 +1420,19 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Link a journal entry page UUID.",
-            "label": "Page UUID"
+            "hint": "Link any document UUID.",
+            "label": "Document UUID"
+          },
+          "visible": {
+            "label": "Visible to Players"
           }
         },
         "location": {
           "label": "Location"
         },
         "objectives": {
-          "done": {
-            "label": "Completed"
+          "status": {
+            "label": "Status"
           },
           "text": {
             "label": "Objective"
@@ -1474,11 +1477,13 @@
     },
     "STATUS": {
       "0": "Open",
-      "1": "Ended"
+      "1": "Ended",
+      "2": "Failed"
     },
     "SelectQuest": "Choose a quest",
     "SelectQuestHint": "Show objectives, notes, and related references for the current adventure.",
-    "addLinkedPage": "Add linked page",
+    "addLinkedDocument": "Add linked document",
+    "addLinkedPage": "Add linked document",
     "addObjective": "Add objective",
     "completionDate": "Ended",
     "createQuest": "Create quest entry",
@@ -1489,13 +1494,18 @@
       "hint": "Select journals with quest entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)",
       "label": "Quest Journals"
     },
-    "linkedPages": "Linked Pages",
+    "linkedDocuments": "Linked Documents",
+    "linkedPages": "Linked Documents",
     "missingLink": "Missing",
     "newEntryPlaceholder": "New Quest",
     "newObjectivePlaceholder": "New Objective",
-    "noLinkedPages": "No linked pages.",
+    "noLinkedDocuments": "No linked documents.",
+    "noLinkedPages": "No linked documents.",
     "noObjectives": "No objectives yet.",
     "objectives": "Objectives",
+    "objectiveStateDone": "Mark failed",
+    "objectiveStateFailed": "Mark not done",
+    "objectiveStateOpen": "Mark completed",
     "playerOwners": "Assigned players",
     "showInQuestlog": "Show in quests",
     "showInQuestlogHint": "The quest entries will be available in the quests tab of the calendar picker according to their visibility.",
@@ -1505,8 +1515,10 @@
     "targetDate": "Target",
     "timeline": "Timeline",
     "title": "Quests",
+    "toggleLinkedDocumentVisibility": "Toggle document visibility",
     "toggleObjectiveDone": "Toggle objective completion",
     "toggleVisibility": "Toggle player visibility",
+    "unknownDocumentType": "Document",
     "ungrouped": "Unsorted"
   },
   "DSAREGEX": {
