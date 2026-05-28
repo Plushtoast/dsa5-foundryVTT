@@ -4,6 +4,8 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import DSABaseEffectConfig from './base_effect_config.js';
+import ActiveEffectScopedRules from './active_effect_scoped_rules.js';
+import { tabSlider } from '../system/helpers/view_helper.js';
 
 const { mergeObject, getProperty, duplicate, isPlainObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -84,6 +86,10 @@ Hooks.once('i18nInit', () => {
 });
 
 export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5']
+  }
+
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
   static macroIndexes = [
     DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
@@ -127,7 +133,15 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     details: super.PARTS.details,
     duration: foundry.applications.sheets.ActiveEffectConfig.PARTS.duration,
     changes: super.PARTS.changes,
-    advanced: { template: 'systems/dsa5/templates/status/advanced_effect.hbs' },
+    advanced: {
+      template: 'systems/dsa5/templates/status/advanced_effect.hbs',
+      templates: [
+        'systems/dsa5/templates/system/dsatabs.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-aura.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-automation.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-config.hbs',
+      ],
+    },
     actions: super.PARTS.actions,
     footer: super.PARTS.footer,
   };
@@ -143,6 +157,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
       ],
       initial: 'details',
       labelPrefix: 'EFFECT.TABS',
+    },
+    advanced: {
+      tabs: [
+        { id: 'config', icon: 'fa-solid fa-sliders', label: 'ActiveEffects.advancedTabs.config' },
+        { id: 'aura', icon: 'fa-solid fa-person-rays', label: 'ActiveEffects.advancedTabs.aura' },
+        { id: 'automation', icon: 'fa-solid fa-gears', label: 'ActiveEffects.advancedTabs.automation' },
+      ],
+      initial: 'config',
     },
   };
 
@@ -250,6 +272,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     const document = this.document;
     switch (partId) {
       case 'advanced': {
+        const advancedTabs = this._prepareTabs('advanced');
         const isItemEffect = document.parent?.documentName === 'Item';
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
           obj[e] = `ActiveEffects.messageReceivers.${e}`;
@@ -313,8 +336,10 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
         }
 
         mergeObject(partContext, {
+          advancedTabs,
           isItemEffect,
           messageReceivers,
+          scopedRuleSummaries: ActiveEffectScopedRules.summaries(document),
           config: this.getConfig(),
         });
         break;
@@ -327,6 +352,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     await super._onRender(context, options);
 
     const html = $(this.element);
+    tabSlider(html);
     html.find('[name="system.advancedFunction"]').on('change', (ev) => {
       const effect = this.document;
       effect.system.advancedFunction = Number($(ev.currentTarget).val());
@@ -341,7 +367,6 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     });
     html.find('[name="system.aura.isAura"]').on('change', (ev) => {
       html.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
-      html.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
     if (this.document.statuses.size && game.i18n.has(this.document.description)) {
       html.find('[data-tab="details"] .editor').replaceWith(`<p>${_loc(this.document.description)}</p>`);

@@ -1,7 +1,7 @@
 import DSATriggers from '../../system/automation/triggers.js';
 import { onUseActionsField, OnUseActionMixin } from '../shared/onuse-action-schema.js';
 
-const { ArrayField, BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField } = foundry.data.fields;
+const { ArrayField, BooleanField, ColorField, NumberField, StringField, SchemaField, ObjectField, TypedObjectField } = foundry.data.fields;
 
 export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.data.ActiveEffectTypeDataModel) {
   static ADVANTAGE_TYPES = {
@@ -13,6 +13,16 @@ export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.d
     0: '-',
     1: 'ActiveEffects.onSuccess',
     2: 'ActiveEffects.onFailure',
+  };
+  static SCOPED_RULE_KEYS = {
+    modifier: 'ActiveEffects.scopedRuleTypes.modifier',
+    restriction: 'ActiveEffects.scopedRuleTypes.restriction',
+  };
+  static SCOPED_RULE_SCOPES = {
+    self: 'ActiveEffects.scopedRuleScopes.self',
+    againstTarget: 'ActiveEffects.scopedRuleScopes.againstTarget',
+    incomingAttack: 'ActiveEffects.scopedRuleScopes.incomingAttack',
+    allOpponents: 'ActiveEffects.scopedRuleScopes.allOpponents',
   };
   static ADVANCED_FUNCTION_INDEXES = {
     NONE: 0,
@@ -46,6 +56,26 @@ export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.d
     },
     { [this.DISPOSITION_ALL]: 'all' },
   );
+
+  static afterUseField() {
+    return new SchemaField({
+      name: new StringField({ initial: '' }),
+      changes: new ArrayField(new ObjectField(), { initial: [] }),
+      duration: new ObjectField({ initial: {} }),
+    });
+  }
+
+  static scopedRuleField() {
+    return new SchemaField({
+      key: new StringField({ initial: 'modifier', choices: this.SCOPED_RULE_KEYS }),
+      scope: new StringField({ initial: 'self', choices: this.SCOPED_RULE_SCOPES }),
+      identifiers: new ArrayField(new StringField({ required: true }), { initial: [] }),
+      categories: new ArrayField(new StringField({ required: true }), { initial: [] }),
+      value: new ObjectField({ initial: {} }),
+      data: new ObjectField({ initial: {} }),
+      target: new ObjectField({ initial: {} }),
+    });
+  }
 
   static defineSchema() {
     const schema = super.defineSchema();
@@ -101,10 +131,34 @@ export default class DSAActiveEffectDataModel extends OnUseActionMixin(foundry.d
       hideOnToken: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.hideOnToken' }),
       hidePlayers: new BooleanField({ initial: false, hint: 'ActiveEffects.hints.hidePlayers' }),
     });
+    schema.useLifecycle = new SchemaField({
+      afterUse: new TypedObjectField(this.afterUseField()),
+    });
+    schema.scopedRules = new TypedObjectField(this.scopedRuleField(), { hint: 'ActiveEffects.hints.scopedRules' });
     schema.removeMessage = new StringField({ hint: 'ActiveEffects.hints.removeMessage' });
     schema.resistRoll = new StringField({ hint: 'ActiveEffects.hints.resistRoll' });
     schema.successEffect = new NumberField({ initial: 0, choices: this.SUCCESS_EFFECT_TYPES, hint: 'ActiveEffects.hints.successEffect' });
     schema.onUseActions = onUseActionsField();
     return schema;
+  }
+
+  async addAfterUse({ name = '', changes = [], duration = {} } = {}) {
+    const id = foundry.utils.randomID();
+    await this.parent.update({
+      [`system.useLifecycle.afterUse.${id}`]: { name, changes, duration },
+    });
+    return id;
+  }
+
+  async removeAfterUse(id) {
+    if (!id) return;
+    await this.parent.update({ [`system.useLifecycle.afterUse.${id}`]: _del });
+  }
+
+  async updateAfterUse(id, { name = '', changes = [], duration = {} } = {}) {
+    if (!id) return;
+    await this.parent.update({
+      [`system.useLifecycle.afterUse.${id}`]: { name, changes, duration },
+    });
   }
 }

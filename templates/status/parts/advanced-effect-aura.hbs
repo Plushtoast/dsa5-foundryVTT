@@ -1,0 +1,19 @@
+<div class="tab standard-form {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{formGroup document.system.schema.fields.aura.fields.isAura value=document.system.aura.isAura
+    label="ActiveEffects.isAura" localize=true}}
+
+    <div class="auraDetails{{#unless document.system.aura.isAura}} dsahidden{{/unless}}">
+        {{formGroup document.system.schema.fields.aura.fields.disposition value=document.system.aura.disposition
+        label="ActiveEffects.disposition" localize=true}}
+        {{formGroup document.system.schema.fields.aura.fields.auraRadius value=document.system.aura.auraRadius
+        label="ActiveEffects.radius" localize=true}}
+        {{formGroup document.system.schema.fields.aura.fields.borderColor value=document.system.aura.borderColor
+        label="ActiveEffects.auraColor" localize=true}}
+        {{formGroup document.system.schema.fields.aura.fields.hidden value=document.system.aura.hidden
+        label="ActiveEffects.auraHidden" localize=true}}
+        {{formGroup document.system.schema.fields.aura.fields.excludeSelf value=document.system.aura.excludeSelf
+        label="ActiveEffects.excludeSelf" localize=true}}
+        {{formGroup document.system.schema.fields.aura.fields.ignoreWalls value=document.system.aura.ignoreWalls
+        label="ActiveEffects.ignoreWalls" localize=true}}
+    </div>
+</div>

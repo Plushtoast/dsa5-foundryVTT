@@ -245,6 +245,7 @@ export default class EffectDropdownBuilder {
         const PA = _loc('CHARAbbrev.PA');
         const damage = _loc('CHARAbbrev.damage');
         const defenseMalus = _loc('MODS.defenseMalus');
+        const compensation = _loc('MODS.compensation');
 
         const subgroups = [
             {
@@ -281,6 +282,7 @@ export default class EffectDropdownBuilder {
                     { name: `${combatskill} - ${AT}`, val: 'system.skillModifiers.combat.attack', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${PA}`, val: 'system.skillModifiers.combat.parry', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${_loc('KTW')}`, val: 'system.skillModifiers.combat.step', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${compensation}`, val: 'system.skillModifiers.combat.CMP', type: 'custom', ph: `${csdemo}, * 1, attack:* 1, maneuver:* 1` },
                     { name: `${combatskill} - ${damage}`, val: 'system.skillModifiers.combat.damage', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${_loc('damageThreshold')}`, val: 'system.skillModifiers.combat.damageThreshold', type: 'custom', ph: csdemo },
                 ],

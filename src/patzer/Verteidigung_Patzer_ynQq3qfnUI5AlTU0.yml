@@ -1,0 +1,246 @@
+name: Verteidigung-Patzer
+img: systems/dsa5/icons/dice/d20mu.svg
+description: >-
+  Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden:
+
+  Ist der Kämpfer unbewaffnet, wird auf das Wurfergebnis 5 addiert, sollte es
+  unter 7 bleiben.
+results:
+  - _id: cWg4hhULa2t8clAr
+    type: text
+    text: >-
+      Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu
+      Boden.
+    weight: 1
+    range:
+      - 2
+      - 2
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 4
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.cWg4hhULa2t8clAr'
+  - _id: tIKaoYDSkqMBjvpm
+    type: text
+    text: >-
+      Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare
+      Waffen fallen zu Boden.
+    weight: 1
+    range:
+      - 3
+      - 3
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 3
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.tIKaoYDSkqMBjvpm'
+  - _id: txSHKVkr1xbLR7XU
+    type: text
+    text: >-
+      Die Waffe ist beschädigt worden. Alle Proben auf Attacke und Parade sind
+      um 2 erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu
+      Boden.
+    weight: 1
+    range:
+      - 4
+      - 4
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 2
+        weaponRepairPenalty:
+          value: -2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.txSHKVkr1xbLR7XU'
+  - _id: 9OMCCXCFiEgq0alB
+    type: text
+    text: Die Waffe ist zu Boden gefallen.
+    weight: 1
+    range:
+      - 5
+      - 5
+    drawn: false
+    flags:
+      dsa5:
+        gearLost:
+          distance: 0
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.9OMCCXCFiEgq0alB'
+  - _id: A0TRFdWwU2MYytem
+    type: text
+    text: >-
+      Die Waffe des Helden ist in einem Baum, einer Holzwand, dem Boden oder
+      Ähnlichem stecken geblieben. Um sie zu befreien, ist 1 Aktion und eine um
+      1 erschwerte Probe auf Kraftakt (Ziehen &amp; Zerren) notwendig.
+    weight: 1
+    range:
+      - 6
+      - 6
+    drawn: false
+    flags:
+      dsa5:
+        resistEffect:
+          roll: Kraftakt
+          modifier: -1
+          fail:
+            description: Die Waffe bleibt stecken.
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.A0TRFdWwU2MYytem'
+  - _id: yrboAegh9Ju1dGC7
+    type: text
+    text: >-
+      Der Held stolpert und stürzt, wenn seinem Spieler nicht eine um 2
+      erschwerte Probe auf Körperbeherrschung (Balance) gelingt. Sollte er das
+      nicht schaffen, erhält der Held den Status Liegend.
+    weight: 1
+    range:
+      - 7
+      - 7
+    drawn: false
+    flags:
+      dsa5:
+        resistEffect:
+          roll: Körperbeherrschung
+          modifier: -2
+          fail:
+            description: Der Held stürzt zu Boden
+            systemEffect: prone
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.yrboAegh9Ju1dGC7'
+  - _id: bPjOYHCVL3eKHvCt
+    type: text
+    text: Der Held stolpert, seine nächste Handlung ist um 2 erschwert.
+    weight: 1
+    range:
+      - 8
+      - 8
+    drawn: false
+    flags:
+      dsa5:
+        nextAction:
+          modifier: -2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.bPjOYHCVL3eKHvCt'
+  - _id: Fo25J2SPOodMWl5C
+    type: text
+    text: Der Held erhält für 3 Kampfrunden eine Stufe Schmerz.
+    weight: 1
+    range:
+      - 9
+      - 9
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: inpain
+            level: 1
+            duration:
+              seconds: '15'
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.Fo25J2SPOodMWl5C'
+  - _id: mFhcXmAA9Pcq4XAg
+    type: text
+    text: >-
+      Der Held hat sich im Eifer des Gefechts den Kopf gestoßen. Er erhält für
+      eine Stunde eine Stufe Betäubung.
+    weight: 1
+    range:
+      - 10
+      - 10
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: stunned
+            level: 1
+            duration:
+              seconds: '3600'
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.mFhcXmAA9Pcq4XAg'
+  - _id: J8wdZ3JSDCEoKsCW
+    type: text
+    text: >-
+      Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden seiner
+      Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt. Bei
+      unbewaffneten Kämpfern wird 1W6 TP angenommen.
+    weight: 1
+    range:
+      - 11
+      - 11
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.J8wdZ3JSDCEoKsCW'
+  - _id: 0TejvR31LVkvzmzp
+    type: text
+    text: >-
+      Ein schwerer Eigentreffer des Helden. Der Schaden seiner Waffe wird unter
+      Einbeziehung des Schadensbonus ausgewürfelt und dann verdoppelt. Bei
+      unbewaffneten Kämpfern wird 1W6 TP angenommen.
+    weight: 1
+    range:
+      - 12
+      - 12
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!ynQq3qfnUI5AlTU0.0TejvR31LVkvzmzp'
+formula: 2d6
+replacement: true
+displayRoll: true
+flags:
+  core:
+    sourceId: RollTable.s3YHPkVNXwfPzxy7
+  exportSource:
+    world: test
+    system: dsa5
+    coreVersion: '10.288'
+    systemVersion: 4.0.7
+_stats:
+  systemId: dsa5
+  systemVersion: 5.1.6
+  coreVersion: '12.324'
+  createdTime: 1665945269418
+  modifiedTime: 1698587334102
+  lastModifiedBy: QyX7i6OmJHdBqzAc
+  compendiumSource: RollTable.s3YHPkVNXwfPzxy7
+  duplicateSource: null
+folder: null
+sort: 600000
+ownership:
+  default: 0
+  pNUQttixG5UW3qgm: 3
+_id: ynQq3qfnUI5AlTU0
+_key: '!tables!ynQq3qfnUI5AlTU0'

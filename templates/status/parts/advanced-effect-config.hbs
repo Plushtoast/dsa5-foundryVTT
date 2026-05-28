@@ -1,0 +1,53 @@
+<div class="tab standard-form {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{formGroup document.system.schema.fields.visibility.fields.hideOnToken value=document.system.visibility.hideOnToken
+    label="ActiveEffects.hideOnToken" localize=true}}
+    {{formGroup document.system.schema.fields.visibility.fields.hidePlayers value=document.system.visibility.hidePlayers
+    label="ActiveEffects.hidePlayers" localize=true}}
+
+    {{#if isItemEffect}}
+    {{#if effectConfigs.hasSuccessEffects}}
+    {{formGroup document.system.schema.fields.successEffect value=document.system.successEffect
+    label="ActiveEffects.apply" localize=true}}
+    {{formGroup document.system.schema.fields.macroArgs.fields.onDelayed value=document.system.macroArgs.onDelayed
+    label="ActiveEffects.onDelayed" localize=true units="ActiveEffects.dialog.seconds"}}
+    {{/if}}
+    {{#if isWeapon}}
+    {{formGroup document.system.schema.fields.applyToOwner value=document.system.applyToOwner
+    label="ActiveEffects.applyToOwner" localize=true}}
+    {{/if}}
+    {{#if (and canWeaponAdvantages enableWeaponAdvantages)}}
+    {{formGroup document.system.schema.fields.equipmentAdvantage value=document.system.equipmentAdvantage
+    label="DSASETTINGS.enableWeaponAdvantages" localize=true choices=equipmentAdvantageOptions}}
+    {{/if}}
+    {{/if}}
+    {{formGroup document.system.schema.fields.removeMessage value=document.system.removeMessage
+    label="DSASETTINGS.notifyOnFadingEffects" localize=true choices=messageReceivers}}
+    {{formGroup document.system.schema.fields.macroArgs.fields.sourceItemUuid value=document.system.macroArgs.sourceItemUuid
+    label="ActiveEffects.sourceItemUuid" localize=true}}
+
+    {{#if scopedRuleSummaries}}
+    <div class="form-group stacked">
+        <label>{{localize 'ActiveEffects.scopedRules'}}</label>
+        <div class="form-fields">
+            <ul>
+                {{#each scopedRuleSummaries}}
+                <li>{{localize label}}: <code>{{identifiers}}</code></li>
+                {{/each}}
+            </ul>
+        </div>
+        <p class="hint">{{localize document.system.schema.fields.scopedRules.hint}}</p>
+    </div>
+    {{/if}}
+
+    <div class="form-group">
+        <label>{{localize 'charges'}}</label>
+        <div class="form-fields">
+            {{formInput document.system.schema.fields.charges.fields.value value=document.system.charges.value min=0
+            step=1}}
+            <span class="sep">/</span>
+            {{formInput document.system.schema.fields.charges.fields.max value=document.system.charges.max min=0 step=1
+            placeholder=(localize 'max')}}
+        </div>
+        <p class="hint">{{localize document.system.schema.fields.charges.hint}}</p>
+    </div>
+</div>

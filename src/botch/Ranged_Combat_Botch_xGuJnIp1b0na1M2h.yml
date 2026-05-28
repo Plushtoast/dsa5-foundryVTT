@@ -1,0 +1,235 @@
+name: Ranged Combat-Botch
+img: systems/dsa5/icons/dice/d20mu.svg
+description: >-
+  Optionally, instead of always suffering 1D6+2 DP for a botch, you can roll on
+  this table.
+results:
+  - _id: cWg4hhULa2t8clAr
+    type: text
+    text: >-
+      The weapon is irreparably destroyed. If the weapon is unbreakable, it
+      falls to the ground.
+    weight: 1
+    range:
+      - 2
+      - 2
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 4
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.cWg4hhULa2t8clAr'
+  - _id: tIKaoYDSkqMBjvpm
+    type: text
+    text: >-
+      You cannot use the weapon until it is repaired. If the weapon is
+      unbreakable, it falls to the ground.
+    weight: 1
+    range:
+      - 3
+      - 3
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 3
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.tIKaoYDSkqMBjvpm'
+  - _id: txSHKVkr1xbLR7XU
+    type: text
+    text: >-
+      The weapon is damaged. All checks against ranged combat suffer a penalty
+      of 4 until the weapon is repaired. If the weapon is unbreakable, it falls
+      to the ground.
+    weight: 1
+    range:
+      - 4
+      - 4
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 2
+        weaponRepairPenalty:
+          value: -4
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.txSHKVkr1xbLR7XU'
+  - _id: 9OMCCXCFiEgq0alB
+    type: text
+    text: The weapon falls to the ground.
+    weight: 1
+    range:
+      - 5
+      - 5
+    drawn: false
+    flags:
+      dsa5:
+        gearLost:
+          distance: 0
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.9OMCCXCFiEgq0alB'
+  - _id: A0TRFdWwU2MYytem
+    type: text
+    text: >-
+      Hits a friend or an innocent bystander, determined randomly. If no such
+      target is near, you hurt Yourself. The weapon inflicts normal damage,
+      including the usual damage bonus.
+    weight: 1
+    range:
+      - 6
+      - 6
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: victim
+          multiplier: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.A0TRFdWwU2MYytem'
+  - _id: yrboAegh9Ju1dGC7
+    type: text
+    text: >-
+      The shot misses in a spectacular way and hits an object (shoots down a
+      shop sign, breaks a window, or some such thing).
+    weight: 1
+    range:
+      - 7
+      - 7
+    drawn: false
+    flags:
+      dsa5:
+        weaponDelay:
+          actions: 2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.yrboAegh9Ju1dGC7'
+  - _id: bPjOYHCVL3eKHvCt
+    type: text
+    text: >-
+      The hero experiences a sudden back spasm and suffers a level of the
+      condition Pain for the next 3 combat rounds.
+    weight: 1
+    range:
+      - 8
+      - 8
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: inpain
+            level: 1
+            duration:
+              seconds: 15
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.bPjOYHCVL3eKHvCt'
+  - _id: Fo25J2SPOodMWl5C
+    type: text
+    text: Take two complete combat rounds to make your weapon usable again.
+    weight: 1
+    range:
+      - 9
+      - 9
+    drawn: false
+    flags:
+      dsa5:
+        scopedRestriction:
+          scope: self
+          restrictions:
+            - defense
+          duration:
+            rounds: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.Fo25J2SPOodMWl5C'
+  - _id: mFhcXmAA9Pcq4XAg
+    type: text
+    text: >-
+      You are concentrating too hard on aiming or are otherwise occupied with
+      the weapon and cannot make defenses until your next action.
+    weight: 1
+    range:
+      - 10
+      - 10
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.mFhcXmAA9Pcq4XAg'
+  - _id: J8wdZ3JSDCEoKsCW
+    type: text
+    text: >-
+      You injure yourself and suffer damage. Take the weapon’s normal damage,
+      including the damage bonus.
+    weight: 1
+    range:
+      - 11
+      - 11
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.J8wdZ3JSDCEoKsCW'
+  - _id: 0TejvR31LVkvzmzp
+    type: text
+    text: >-
+      You injure yourself badly and suffer damage. Roll the weapon’s normal
+      damage, including the damage bonus, and double the result.
+    weight: 1
+    range:
+      - 12
+      - 12
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!xGuJnIp1b0na1M2h.0TejvR31LVkvzmzp'
+formula: 2d6
+replacement: true
+displayRoll: true
+flags:
+  core:
+    sourceId: RollTable.s3YHPkVNXwfPzxy7
+  exportSource:
+    world: test
+    system: dsa5
+    coreVersion: '10.288'
+    systemVersion: 4.0.7
+_stats:
+  systemId: dsa5
+  systemVersion: 5.1.6
+  coreVersion: '12.324'
+  createdTime: 1665955420616
+  modifiedTime: 1698587376782
+  lastModifiedBy: QyX7i6OmJHdBqzAc
+  compendiumSource: RollTable.s3YHPkVNXwfPzxy7
+  duplicateSource: null
+folder: null
+sort: 600000
+ownership:
+  default: 0
+  pNUQttixG5UW3qgm: 3
+_id: xGuJnIp1b0na1M2h
+_key: '!tables!xGuJnIp1b0na1M2h'

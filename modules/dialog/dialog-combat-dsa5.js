@@ -15,6 +15,7 @@ import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import SpecialabilityData from '../data/item/specialability.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+import ActiveEffectScopedRules from '../status/active_effect_scoped_rules.js';
 const { mergeObject, duplicate, getProperty } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -212,6 +213,19 @@ export default class DSA5CombatDialog extends DialogShared {
       const subcategory = Number(dataset.category);
       const cTypes = SpecialabilityData.COMBAT_SKILL_TYPES;
 
+      if (!this.#allowsOpportunityManeuver(subcategory, cTypes)) {
+        ui.notifications.error('DSAError.opposedAttackNoSpecAbs', { localize: true });
+        return;
+      }
+
+      const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+      const target = ActiveEffectScopedRules.targetFor(actor, this.dialogData.mode);
+      const restrictions = ActiveEffectScopedRules.restrictions({ actor, mode: this.dialogData.mode, target });
+      if (ActiveEffectScopedRules.maneuverRestricted(restrictions, subcategory)) {
+        ui.notifications.error('DSAError.opposedAttackNoSpecAbs', { localize: true });
+        return;
+      }
+
       if (ev.button == 0) {
         step = Math.min(maxStep, step + 1);
         if (game.settings.get('dsa5', 'limitCombatSpecAbs')) {
@@ -251,6 +265,19 @@ export default class DSA5CombatDialog extends DialogShared {
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
     html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
+  }
+
+  #allowsOpportunityManeuver(subcategory, cTypes) {
+    const opportunityAttackManeuvers = this.dialogData.renderData.opportunityAttackManeuvers;
+    if (!opportunityAttackManeuvers) return true;
+
+    const allowBasic = opportunityAttackManeuvers.allowBasic === true;
+    const allowSpecial = opportunityAttackManeuvers.allowSpecial === true;
+    const basicCategories = [cTypes.BASEMANEUVER, cTypes.COMBATSTYLE_EXTENDED_BASE];
+    const specialCategories = [cTypes.SPECIALMANEUVER, cTypes.COMBATSTYLE_EXTENDED];
+    if (basicCategories.includes(subcategory)) return allowBasic || allowSpecial;
+    if (specialCategories.includes(subcategory)) return allowSpecial;
+    return true;
   }
 
   checkCounterAttack(ev) {
@@ -745,7 +772,11 @@ export default class DSA5CombatDialog extends DialogShared {
     testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize;
     testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
+    const specAbModifiers = Itemdsa5.getSpecAbModifiers(html, mode);
+    const scopedTarget = ActiveEffectScopedRules.targetFor(actor, mode);
+    const scopedModifiers = ActiveEffectScopedRules.combatModifiers({ actor, mode, source: testData.source, target: scopedTarget, html });
 
+    const defenseCountModifier = ActiveEffectScopedRules.defenseCountModifier(actor, multipleDefenseValue, data.defenseCount);
     const modifiers = [
       ModifierCalculator.parseValueType(_loc('sight'), data.vision || 0),
       {
@@ -759,8 +790,9 @@ export default class DSA5CombatDialog extends DialogShared {
         step: 1,
       },
       {
-        name: _loc('defenseCount', { malus: multipleDefenseValue }),
-        value: (Number(data.defenseCount) || 0) * multipleDefenseValue,
+        name: _loc('defenseCount', { malus: defenseCountModifier.value }),
+        value: (Number(data.defenseCount) || 0) * defenseCountModifier.value,
+        ref: defenseCountModifier.ref,
       },
       {
         name: _loc('MODS.wrongHand'),
@@ -786,7 +818,8 @@ export default class DSA5CombatDialog extends DialogShared {
         name: _loc('MODS.doubleAttack'),
         value: Number(data.doubleAttack) || 0,
       },
-      ...Itemdsa5.getSpecAbModifiers(html, mode),
+      ...specAbModifiers,
+      ...scopedModifiers,
       ...this.assassinationModifiers(testData, data),
       ...this.combatInWaterModifiers(testData, data, html, actor)
     ];
@@ -816,6 +849,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const shooterMovement = Number(data.shooterMovement) || 0;
     const mountedOptions = Number(data.mountedOptions) || 0;
     const aim = Math.min(Number(data.aim) || 0, 4);
+    const specAbModifiers = Itemdsa5.getSpecAbModifiers(html, 'attack');
 
     const modifiers = [
       {
@@ -861,7 +895,8 @@ export default class DSA5CombatDialog extends DialogShared {
         value: Number(rangeMod.attack) || 0,
         damageBonus: Number(rangeMod.damage) || 0,
       },
-      ...Itemdsa5.getSpecAbModifiers(html, 'attack'),
+      ...specAbModifiers,
+      ...ActiveEffectScopedRules.combatModifiers({ actor, mode: 'attack', source: testData.source, target: game.user.targets.first()?.actor, html }),
       ...this.assassinationModifiersRanged(testData, data),
       ...this.combatInWaterModifiers(testData, data, html, actor)
     ];
@@ -970,6 +1005,19 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
     const buttons = DSA5Dialog.getRollButtons(testData, dialogOptions, resolve, reject);
+    for (const rollButton of buttons.filter((button) => ['rollButton', 'cheat'].includes(button.action))) {
+      const callback = rollButton.callback;
+      rollButton.callback = (event, button, dialog) => {
+        const html = $(button.form);
+        const violation = ActiveEffectScopedRules.dialogRestrictionViolation(testData, html);
+        if (violation) {
+          ui.notifications.error(violation, { localize: true });
+          return;
+        }
+
+        return callback(event, button, dialog);
+      };
+    }
     if (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) {
       const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
       const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, actor);

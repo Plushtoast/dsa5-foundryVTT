@@ -1,4 +1,5 @@
 import DSA5 from '../config/config-dsa5.js';
+import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 
@@ -13,6 +14,8 @@ export default class DSATables {
       scene: dataset.scene,
     };
     options.source = dataset.source;
+    options.table = dataset.table;
+    options.tableContext = DSATables.#decodeBotchContext(dataset.context);
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
     const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
@@ -60,31 +63,47 @@ export default class DSATables {
   static async buildEffects(tableResult, hasEffect) {
     const effects = [];
     if (hasEffect && hasEffect.resistEffect) {
-      const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail];
+      const failEffects = DSATables.#normalizeFailEffects(hasEffect.resistEffect.fail);
       for (const fail of failEffects) {
-        const ef = OnUseEffect.effectBaseDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || {});
+        const ef = OnUseEffect.effectBaseDummy(fail.description || _loc('botchCritEffect'), hasEffect.resistEffect.changes || [], fail.duration || hasEffect.resistEffect.duration || {});
+        ef._id = 'botchEffect';
         if (fail.systemEffect) {
-          //todo add duration
           mergeObject(ef, {
-            _id: 'botchEffect',
-            flags: {
-              dsa5: {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.SYSTEM_EFFECT,
+              macroArgs: {
+                conditionId: fail.systemEffect,
+                conditionValue: `${fail.level || 1}`,
+              },
+              visibility: {
                 hideOnToken: false,
                 hidePlayers: false,
-                advancedFunction: 2,
-                args3: `await actor.addCondition("${fail.systemEffect}", ${fail.level || 1});`,
+              },
+            },
+          });
+        } else if (fail.damage) {
+          mergeObject(ef, {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
+              macroArgs: {
+                macro: DSATables.#damageMacro(fail.damage),
+              },
+              visibility: {
+                hideOnToken: false,
+                hidePlayers: false,
               },
             },
           });
         } else if (fail.command) {
           mergeObject(ef, {
-            _id: 'botchEffect',
-            flags: {
-              dsa5: {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
+              macroArgs: {
+                macro: fail.command,
+              },
+              visibility: {
                 hideOnToken: false,
                 hidePlayers: false,
-                advancedFunction: 2,
-                args3: fail.command,
               },
             },
           });
@@ -94,6 +113,15 @@ export default class DSATables {
       }
     }
     return effects;
+  }
+
+  static #normalizeFailEffects(failEffects) {
+    if (!failEffects) return [];
+    return (Array.isArray(failEffects) ? failEffects : [failEffects]).filter(Boolean);
+  }
+
+  static #damageMacro(formula) {
+    return `await actor.applyDamage(${JSON.stringify(formula)}, { msg: 'fallingDamage' });`;
   }
 
   static async finalizeEffect(ef) {
@@ -117,7 +145,7 @@ export default class DSATables {
   }
 
   static #prepareRollString(rollBase) {
-    return `${rollBase}`.replaceAll(/wW/g, 'd')
+    return `${rollBase}`.replaceAll(/[wW]/g, 'd')
   }
 
   static async getRollTable(packName, name, options = {}) {
@@ -140,7 +168,50 @@ export default class DSATables {
     const title = _loc(`TABLENAMES.${table}`);
     const speaker = testData.extra.speaker;
     const source = testData.source._id;
-    return `, <a class="roll-button botch-roll" data-table="${table}" data-weaponless="${weaponless}" data-source="${source}" data-token="${speaker.token}" data-actor="${speaker.actor}" data-scene="${speaker.scene}"><i class="fas fa-dice"></i>${title}</a>`;
+    const context = encodeURIComponent(JSON.stringify(DSATables.#buildBotchContext(testData, table)));
+    return `, <a class="roll-button botch-roll" data-table="${table}" data-weaponless="${weaponless}" data-source="${source}" data-token="${speaker.token}" data-actor="${speaker.actor}" data-scene="${speaker.scene}" data-context="${context}"><i class="fas fa-dice"></i>${title}</a>`;
+  }
+
+  static #buildBotchContext(testData, table) {
+    return {
+      table,
+      speaker: testData.extra.speaker,
+      targets: Array.from(game.user.targets).map((target) => DSATables.#speakerFromToken(target)).filter(Boolean),
+      attacker: DSATables.#speakerFromMessage(testData.attackerMessage),
+      defenders: DSATables.#speakersFromMessages(testData.defenderMessage),
+      attackerMessage: testData.attackerMessage,
+      defenderMessage: testData.defenderMessage,
+      isOpposedTest: testData.isOpposedTest,
+    };
+  }
+
+  static #decodeBotchContext(context) {
+    if (!context) return {};
+    try {
+      return JSON.parse(decodeURIComponent(context));
+    } catch (exception) {
+      console.warn('Could not parse table effect context', context, exception);
+      return {};
+    }
+  }
+
+  static #speakerFromToken(target) {
+    if (!target?.actor) return undefined;
+    return {
+      token: target.id,
+      actor: target.actor.id,
+      scene: target.scene?.id || canvas.scene?.id,
+    };
+  }
+
+  static #speakerFromMessage(messageId) {
+    const message = messageId ? game.messages.get(messageId) : undefined;
+    return getProperty(message, 'flags.data.preData.extra.speaker') || message?.speaker;
+  }
+
+  static #speakersFromMessages(messageIds) {
+    const ids = messageIds ? Array.from(messageIds instanceof Set ? messageIds : Array.isArray(messageIds) ? messageIds : [messageIds]) : [];
+    return ids.map((messageId) => DSATables.#speakerFromMessage(messageId)).filter(Boolean);
   }
 
   static async defaultBotch() {

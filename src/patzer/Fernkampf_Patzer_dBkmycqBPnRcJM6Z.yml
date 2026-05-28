@@ -1,0 +1,235 @@
+name: Fernkampf-Patzer
+img: systems/dsa5/icons/dice/d20mu.svg
+description: Anstatt 1W6+2 SP bei einem Patzer, kann auch diese Tabelle benutzt werden.
+results:
+  - _id: cWg4hhULa2t8clAr
+    type: text
+    text: >-
+      Die Waffe ist unwiederbringlich zerstört. Unzerstörbare Waffen fallen zu
+      Boden.
+    weight: 1
+    range:
+      - 2
+      - 2
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 4
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.cWg4hhULa2t8clAr'
+  - _id: tIKaoYDSkqMBjvpm
+    type: text
+    text: >-
+      Die Waffe ist nicht mehr einsetzbar, bis sie repariert wird. Unzerstörbare
+      Waffen fallen zu Boden.
+    weight: 1
+    range:
+      - 3
+      - 3
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 3
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.tIKaoYDSkqMBjvpm'
+  - _id: txSHKVkr1xbLR7XU
+    type: text
+    text: >-
+      Die Waffe ist beschädigt worden. Alle Proben auf Fernkampf sind um 4
+      erschwert, bis sie repariert wird. Unzerstörbare Waffen fallen zu Boden.
+    weight: 1
+    range:
+      - 4
+      - 4
+    drawn: false
+    flags:
+      dsa5:
+        gearDamaged: 2
+        weaponRepairPenalty:
+          value: -4
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.txSHKVkr1xbLR7XU'
+  - _id: 9OMCCXCFiEgq0alB
+    type: text
+    text: Die Waffe ist zu Boden gefallen.
+    weight: 1
+    range:
+      - 5
+      - 5
+    drawn: false
+    flags:
+      dsa5:
+        gearLost:
+          distance: 0
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.9OMCCXCFiEgq0alB'
+  - _id: A0TRFdWwU2MYytem
+    type: text
+    text: >-
+      Das Geschoss trifft aus Versehen einen Freund oder einen am Kampf
+      Unbeteiligten. Ist kein solches Ziel in der Nähe, trifft der Held sich
+      selbst. Der Schaden der Waffe wird unter Einbeziehung des Schadensbonus
+      ausgewürfelt.
+    weight: 1
+    range:
+      - 6
+      - 6
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: victim
+          multiplier: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.A0TRFdWwU2MYytem'
+  - _id: yrboAegh9Ju1dGC7
+    type: text
+    text: >-
+      Der spektakuläre Fehlschuss trifft ein Objekt (Ladenschild
+      heruntergeschossen, Glasfenster zu Bruch gegangen etc.).
+    weight: 1
+    range:
+      - 7
+      - 7
+    drawn: false
+    flags:
+      dsa5:
+        weaponDelay:
+          actions: 2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.yrboAegh9Ju1dGC7'
+  - _id: bPjOYHCVL3eKHvCt
+    type: text
+    text: >-
+      Der Held hat Rückenschmerzen und erleidet für die nächsten 3 Kampfrunden
+      eine Stufe Schmerz.
+    weight: 1
+    range:
+      - 8
+      - 8
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: inpain
+            level: 1
+            duration:
+              seconds: 15
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.bPjOYHCVL3eKHvCt'
+  - _id: Fo25J2SPOodMWl5C
+    type: text
+    text: >-
+      Der Held benötigt 2 komplette Kampfrunden, um die Waffe wieder
+      einsatzbereit zu machen.
+    weight: 1
+    range:
+      - 9
+      - 9
+    drawn: false
+    flags:
+      dsa5:
+        scopedRestriction:
+          scope: self
+          restrictions:
+            - defense
+          duration:
+            rounds: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.Fo25J2SPOodMWl5C'
+  - _id: mFhcXmAA9Pcq4XAg
+    type: text
+    text: >-
+      Der Held ist mit Zielen oder mit seiner Waffe beschäftigt. Bis zu seiner
+      nächsten Aktion kann er keine Verteidigungen ausführen.
+    weight: 1
+    range:
+      - 10
+      - 10
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.mFhcXmAA9Pcq4XAg'
+  - _id: J8wdZ3JSDCEoKsCW
+    type: text
+    text: >-
+      Der Held hat sich selbst verletzt und erleidet Schaden. Der Schaden der
+      Waffe wird unter Einbeziehung des Schadensbonus ausgewürfelt.
+    weight: 1
+    range:
+      - 11
+      - 11
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.J8wdZ3JSDCEoKsCW'
+  - _id: 0TejvR31LVkvzmzp
+    type: text
+    text: >-
+      Ein schwerer Eigentreffer. Der Schaden der Waffe wird unter Einbeziehung
+      des Schadensbonus ausgewürfelt und dann verdoppelt.
+    weight: 1
+    range:
+      - 12
+      - 12
+    drawn: false
+    flags:
+      dsa5:
+        selfDamage:
+          target: self
+          multiplier: 2
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!dBkmycqBPnRcJM6Z.0TejvR31LVkvzmzp'
+formula: 2d6
+replacement: true
+displayRoll: true
+flags:
+  core:
+    sourceId: RollTable.s3YHPkVNXwfPzxy7
+  exportSource:
+    world: test
+    system: dsa5
+    coreVersion: '10.288'
+    systemVersion: 4.0.7
+_stats:
+  systemId: dsa5
+  systemVersion: 5.1.6
+  coreVersion: '12.324'
+  createdTime: 1665945269376
+  modifiedTime: 1698587334102
+  lastModifiedBy: QyX7i6OmJHdBqzAc
+  compendiumSource: RollTable.s3YHPkVNXwfPzxy7
+  duplicateSource: null
+folder: null
+sort: 300000
+ownership:
+  default: 0
+  pNUQttixG5UW3qgm: 3
+_id: dBkmycqBPnRcJM6Z
+_key: '!tables!dBkmycqBPnRcJM6Z'

@@ -1,0 +1,225 @@
+name: Liturgien-/Zeremonien-Patzer
+img: systems/dsa5/icons/dice/d20mu.svg
+description: >-
+  Karmale Patzer sind meist unangenehm, teilweise sogar ausgesprochen
+  gefährlich.
+results:
+  - _id: cWg4hhULa2t8clAr
+    type: text
+    text: >-
+      Im Umkreis von 2D6 Metern gehen brennbare Materialien in Flammen auf
+      (außer Lebewesen und die Kleidung des Geweihten).
+    weight: 1
+    range:
+      - 2
+      - 2
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: burning
+            level: 1
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.cWg4hhULa2t8clAr'
+  - _id: tIKaoYDSkqMBjvpm
+    type: text
+    text: >-
+      Die gewirkte Liturgie/Zeremonie hat einen gegenteiligen Effekt. Ein Bann
+      des Lichts erzeugt Licht, ein Heilsegen fügt dem Ziel Schaden zu usw.
+    weight: 1
+    range:
+      - 3
+      - 3
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.tIKaoYDSkqMBjvpm'
+  - _id: txSHKVkr1xbLR7XU
+    type: text
+    text: >-
+      Das Ziel der Liturgie/Zeremonie ändert sich zufällig nach Wahl des
+      Meisters.
+    weight: 1
+    range:
+      - 4
+      - 4
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.txSHKVkr1xbLR7XU'
+  - _id: 9OMCCXCFiEgq0alB
+    type: text
+    text: Der Geweihte hat für 1D6 Tag(e) nachts seltsame Visionen und Alpträume.
+    weight: 1
+    range:
+      - 5
+      - 5
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.9OMCCXCFiEgq0alB'
+  - _id: A0TRFdWwU2MYytem
+    type: text
+    text: >-
+      Durch einen Blick in die Sphären ist der Geweihte so eingeschüchtert, dass
+      er einen Tag lang 3 Stufen Furcht erhält.
+    weight: 1
+    range:
+      - 6
+      - 6
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: feared
+            level: 3
+            duration:
+              seconds: 86400
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.A0TRFdWwU2MYytem'
+  - _id: yrboAegh9Ju1dGC7
+    type: text
+    text: >-
+      Der Geweihte verliert für 1D6 Tag(e) die Fähigkeit, auf seinen KE-Vorrat
+      zuzugreifen.
+    weight: 1
+    range:
+      - 7
+      - 7
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.yrboAegh9Ju1dGC7'
+  - _id: bPjOYHCVL3eKHvCt
+    type: text
+    text: Der Geweihte erhält für einen Tag 4 Stufen Entrückung.
+    weight: 1
+    range:
+      - 8
+      - 8
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: raptured
+            level: 4
+            duration:
+              seconds: 86400
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.bPjOYHCVL3eKHvCt'
+  - _id: Fo25J2SPOodMWl5C
+    type: text
+    text: >-
+      Der Geweihte ist für einen Tag lang verwirrt und redet unverständliches
+      Zeug, an das er sich später nicht mehr erinnert. Er erhält 3 Stufen
+      Verwirrung.
+    weight: 1
+    range:
+      - 9
+      - 9
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: confused
+            level: 3
+            duration:
+              seconds: 86400
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.Fo25J2SPOodMWl5C'
+  - _id: mFhcXmAA9Pcq4XAg
+    type: text
+    text: Der Geweihte erhält für 1D6 Tag(e) den Zustand Stumm.
+    weight: 1
+    range:
+      - 10
+      - 10
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: mute
+            level: 1
+            duration:
+              seconds: 1d6*86400
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.mFhcXmAA9Pcq4XAg'
+  - _id: J8wdZ3JSDCEoKsCW
+    type: text
+    text: Für einen Tag erhält der Geweihte ein Stigma.
+    weight: 1
+    range:
+      - 11
+      - 11
+    drawn: false
+    flags: {}
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.J8wdZ3JSDCEoKsCW'
+  - _id: 0TejvR31LVkvzmzp
+    type: text
+    text: >-
+      Der Geweihte verwurzelt mit dem Boden und kann seine Füße für 1W6 Minuten
+      nicht bewegen. Er erhält währenddessen den Status Fixiert.
+    weight: 1
+    range:
+      - 12
+      - 12
+    drawn: false
+    flags:
+      dsa5:
+        malus:
+          - systemEffect: fixated
+            level: 1
+            duration:
+              seconds: 1d6*60
+    img: systems/dsa5/icons/dice/d20mu.svg
+    documentCollection: ''
+    documentId: null
+    _key: '!tables.results!nbN47h4y2C4zKopy.0TejvR31LVkvzmzp'
+formula: 2d6
+replacement: true
+displayRoll: true
+flags:
+  core:
+    sourceId: RollTable.s3YHPkVNXwfPzxy7
+  exportSource:
+    world: test
+    system: dsa5
+    coreVersion: '10.288'
+    systemVersion: 4.0.7
+_stats:
+  systemId: dsa5
+  systemVersion: 5.1.6
+  coreVersion: '12.324'
+  createdTime: 1665945269402
+  modifiedTime: 1698587334102
+  lastModifiedBy: QyX7i6OmJHdBqzAc
+  compendiumSource: RollTable.s3YHPkVNXwfPzxy7
+  duplicateSource: null
+folder: null
+sort: 500000
+ownership:
+  default: 0
+  pNUQttixG5UW3qgm: 3
+_id: nbN47h4y2C4zKopy
+_key: '!tables!nbN47h4y2C4zKopy'

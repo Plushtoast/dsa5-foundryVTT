@@ -18,6 +18,7 @@ import { BurgerMenuRegistry } from '../item/burgermenus/burger-menu-registry.js'
 import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
 import { MagicalAlchemistDSA5 } from '../item/concerns/alchimist-dsa5.js';
 import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
+import TableEffectActiveEffects from '../tables/tableEffectActiveEffects.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -70,6 +71,7 @@ export default function () {
   registerMagicalActionHooks();
   MagicalAlchemistDSA5.registerHooks();
   SavantDSA5.registerHooks();
+  TableEffectActiveEffects.registerHooks();
 }
 
 Hooks.once('init', () => {

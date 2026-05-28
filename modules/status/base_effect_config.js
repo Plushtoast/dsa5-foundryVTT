@@ -1,4 +1,5 @@
 import OnUseEffect from '../system/automation/onUseEffects.js';
+import AfterUseEffectConfig from './after_use_effect_config.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
 
 const { mergeObject } = foundry.utils;
@@ -20,6 +21,9 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
       addOnUseAction: this.#addOnUseAction,
       editOnUseAction: this.#editOnUseAction,
       deleteOnUseAction: this.#deleteOnUseAction,
+      addAfterUse: this.#addAfterUse,
+      editAfterUse: this.#editAfterUse,
+      deleteAfterUse: this.#deleteAfterUse,
     },
   };
 
@@ -27,7 +31,11 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
     header: super.PARTS.header,
     tabs: super.PARTS.tabs,
     details: super.PARTS.details,
-    changes: { template: 'systems/dsa5/templates/status/changes.hbs', scrollable: [''] },
+    changes: {
+      template: 'systems/dsa5/templates/status/changes.hbs',
+      templates: ['systems/dsa5/templates/status/parts/change-list-advanced.hbs'],
+      scrollable: [''],
+    },
     actions: { template: 'systems/dsa5/templates/status/onuse-actions-tab.hbs' },
     footer: super.PARTS.footer,
   };
@@ -76,6 +84,26 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
     await this.document.system.removeOnUseAction(target.dataset.id);
   }
 
+  static async #addAfterUse() {
+    const followup = await AfterUseEffectConfig.wait(this.document);
+    if (!followup) return;
+    await this.document.system.addAfterUse(followup);
+  }
+
+  static async #editAfterUse(ev, target) {
+    const id = target.dataset.id;
+    const followup = this.document.system.useLifecycle?.afterUse?.[id];
+    if (!followup) return;
+
+    const update = await AfterUseEffectConfig.wait(this.document, followup);
+    if (!update) return;
+    await this.document.system.updateAfterUse(id, update);
+  }
+
+  static async #deleteAfterUse(ev, target) {
+    await this.document.system.removeAfterUse(target.dataset.id);
+  }
+
   _ensureValidWizardMode() {
     if (this.wizardMode && !EffectDropdownBuilder.supportsWizardChanges(this.document, this.document.system.changes)) {
       this.wizardMode = false;
@@ -85,9 +113,15 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
     return this.wizardMode;
   }
 
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.tabs ??= this._prepareTabs('sheet');
+    return context;
+  }
+
   async _preparePartContext(partId, context) {
     const partContext = await super._preparePartContext(partId, context);
-    if (partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
+    if (partContext.tabs && partId in partContext.tabs) partContext.tab = partContext.tabs[partId];
     const document = this.document;
     switch (partId) {
       case 'changes': {
@@ -115,8 +149,9 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
       }
       case 'actions': {
         const onUseActions = OnUseEffect.getOnUseActions(this.document);
+        const afterUse = Object.entries(document.system.useLifecycle?.afterUse || {}).map(([id, followup]) => ({ id, ...followup }));
         const canEditMacros = game.user.isGM || game.settings.get('dsa5', 'playerCanEditSpellMacro');
-        mergeObject(partContext, { onUseActions, canEditMacros });
+        mergeObject(partContext, { onUseActions, afterUse, canEditMacros });
         break;
       }
     }
