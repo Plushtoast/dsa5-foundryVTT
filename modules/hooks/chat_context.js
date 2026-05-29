@@ -25,6 +25,18 @@ const getActorFromRollMessage = (message) => {
 
 const hasOwnership = (actor) => actor?.isOwner || game.user.isGM;
 
+const getChatCardDamage = (message) => getProperty(message, 'flags.data.postData.chatCardDamage');
+
+const hasChatCardDamage = (message) => Number.isNumeric(getChatCardDamage(message));
+
+const getChatCardDamageTargets = (message) => {
+  const controlledActors = (canvas.tokens?.controlled || []).map(token => token.actor).filter(Boolean);
+  if (controlledActors.length > 0) return controlledActors;
+
+  const actor = getActorFromRollMessage(message);
+  return actor ? [actor] : [];
+};
+
 const updateMessageWithCheckmark = async (message, flagPath, contentPattern, replacement) => {
   const update = {
     [`flags.data.${flagPath}`]: true,
@@ -47,6 +59,11 @@ const updateMessageWithCheckmark = async (message, flagPath, contentPattern, rep
 export const applyDamage = async (li, mode, factor = 1) => {
   const message = getMessageFromLi(li);
   const cardData = message.flags.opposeData;
+
+  if (!cardData && hasChatCardDamage(message)) {
+    return ActionHandler.applyChatCardDamage(li, mode, factor);
+  }
+
   const defenderSpeaker = cardData?.speakerDefend;
   const actor = DSA5_Utility.getSpeaker(defenderSpeaker);
 
@@ -216,11 +233,12 @@ class ConditionChecker {
 
   static canApplyDefaultRolls(li) {
     const message = getMessageFromLi(li);
+    const hasRollDamage = message?.isRoll && !!li.querySelector('.dice-roll');
+    const hasTargets = hasChatCardDamage(message) ? getChatCardDamageTargets(message).some(hasOwnership) : canvas.tokens?.controlled.length > 0;
 
-    return message?.isRoll &&
-      message.isContentVisible &&
-      canvas.tokens?.controlled.length > 0 &&
-      !!li.querySelector('.dice-roll');
+    return message?.isContentVisible &&
+      hasTargets &&
+      (hasChatCardDamage(message) || hasRollDamage);
   }
 
   static canApplyDepletableBuffs(li) {
@@ -260,12 +278,13 @@ class ActionHandler {
 
   static async applyChatCardDamage(li, mode, factor = 1) {
     const message = getMessageFromLi(li);
-    const roll = message.rolls[0];
+    const roll = message.rolls?.[0];
+    const chatCardDamage = getChatCardDamage(message);
+    const rollTotal = Number.isNumeric(chatCardDamage) ? chatCardDamage : roll?.total;
 
     return Promise.all(
-      canvas.tokens.controlled.map(token => {
-        const { actor } = token;
-        const baseDamage = mode === 'sp' ? roll.total : roll.total - Actordsa5.armorValue(actor).armor;
+      getChatCardDamageTargets(message).map(actor => {
+        const baseDamage = mode === 'sp' ? rollTotal : rollTotal - Actordsa5.armorValue(actor).armor;
         const damage = Math.max(0, Math.round(baseDamage * factor));
         return actor.applyDamage(damage);
       })

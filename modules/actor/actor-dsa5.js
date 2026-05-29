@@ -1277,7 +1277,9 @@ export default class Actordsa5 extends Actor {
     const fallingDamage = await actor.basicTest(setupData, {
       suppressMessage: true,
     });
+    fallingDamage.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', fallingDamage);
+    result.result.chatCardDamage = fallingDamage.result.damage;
 
     if (!result.result.other) result.result.other = [];
 
