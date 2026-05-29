@@ -1803,6 +1803,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!dragData) return;
 
+    this.constructor.dragHighlightData = dragData;
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 

@@ -2818,6 +2818,7 @@
         "Dropdown": "Details",
         "DuplicateItem": "Duplizieren",
         "EditItem": "Editieren",
+        "DropMoveFromSourceHint": "Alt halten: verschieben und vom Quellakteur löschen",
         "EquipItem": "Ausrüsten",
         "EquipItemOffHand": "Ausrüsten (Nebenhand)",
         "IgnoreWeaponHandLimits": "Handbeschränkung ignorieren",

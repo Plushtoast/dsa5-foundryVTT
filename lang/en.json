@@ -2819,6 +2819,7 @@
     "Dropdown": "Details",
     "DuplicateItem": "Duplicate",
     "EditItem": "Edit",
+    "DropMoveFromSourceHint": "Hold Alt to move and delete from source actor",
     "EquipItem": "Equip",
     "EquipItemOffHand": "Equip (Off-Hand)",
     "IgnoreWeaponHandLimits": "Ignore hand limits",
