@@ -1,11 +1,13 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
 import { JournalEntryTargetHelper } from "./journalentrytargethelper.js";
+import ListKeyboardNavigation from "./list_keyboard_navigation.js";
 export class PersonaeDramatis {
     static #parent;
     static #lastActiveListType = '0';
     static #lastSelectedActor = null;
     static #collapsedGroups = new Set();
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         PersonaeDramatis.#parent = parent;
@@ -271,6 +273,15 @@ export class PersonaeDramatis {
         PersonaeDramatis.#setupDetailListeners(container);
     }
 
+    static #visibleListItems() {
+        const list = PersonaeDramatis.#parent.element.querySelector('.tab[data-tab="personae"].active .personae-list');
+        const activeList = list?.dataset.activeList || '0';
+        const activeContent = list?.querySelector(`.list-content[data-list-type="${activeList}"]:not(.hidden)`);
+        if (!activeContent) return [];
+
+        return Array.from(activeContent.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
+    }
+
     static #notesChanged(event) {
         const target = event.target;
         const newValue = target.value;
@@ -436,6 +447,14 @@ export class PersonaeDramatis {
             }
         });
         PersonaeDramatis.#setupDetailListeners(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: PersonaeDramatis.#parent,
+            tabId: 'personae',
+            getItems: () => PersonaeDramatis.#visibleListItems(),
+            selectItem: (event, item) => PersonaeDramatis.selectActor(event, item),
+            detailTabsSelector: '.tab[data-tab="personae"].active .persona-details-container nav.tabs [data-group][data-tab]',
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     #onSearchFilter(_event, query, rgx, html) {
@@ -466,5 +485,6 @@ export class PersonaeDramatis {
 
     _tearDown(options) {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 }

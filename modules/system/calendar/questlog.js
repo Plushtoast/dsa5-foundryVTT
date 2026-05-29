@@ -1,4 +1,5 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
+import ListKeyboardNavigation from './list_keyboard_navigation.js';
 
 export class QuestLogFeature {
     static #parent;
@@ -6,6 +7,7 @@ export class QuestLogFeature {
     static #collapsedGroups = new Set();
 
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         QuestLogFeature.#parent = parent;
@@ -141,6 +143,13 @@ export class QuestLogFeature {
         container.innerHTML = detailHTML;
     }
 
+    static #visibleQuestItems() {
+        const list = QuestLogFeature.#parent.element.querySelector('.tab[data-tab="questlog"].active .questlog-list');
+        if (!list) return [];
+
+        return Array.from(list.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
+    }
+
     static async newQuest() {
         await DSAQuestLogEntry.startCreation(QuestLogFeature.#parent, QuestLogFeature.#parent?.actualTimeComponents?.() ?? game.time.calendar.timeToComponents(game.time.worldTime));
     }
@@ -235,10 +244,18 @@ export class QuestLogFeature {
             callback: this.#onSearchFilter.bind(this),
         });
         this.#search.bind(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: QuestLogFeature.#parent,
+            tabId: 'questlog',
+            getItems: () => QuestLogFeature.#visibleQuestItems(),
+            selectItem: (event, item) => QuestLogFeature.selectQuest(event, item),
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     _tearDown() {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 
     #onSearchFilter(_event, query, rgx, html) {

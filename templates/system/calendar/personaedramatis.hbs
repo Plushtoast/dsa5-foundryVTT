@@ -36,7 +36,7 @@
                             </div>
                             <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanVisible}}
@@ -95,7 +95,7 @@
                             </div>
                             <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
                                 <div class="persona-list-image">
                                     <img src="{{img}}" alt="{{name}}" />
                                 </div>
