@@ -4,7 +4,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 
 export default class DSA5Payment {
   static async executePayment(actor, mode, moneyString, options = {}) {
-    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent } = options;
+    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent, track = !silent } = options;
 
     if (!actor) {
       return {
@@ -16,7 +16,7 @@ export default class DSA5Payment {
 
     if (mode === 'pay') {
       const canPay = await DSA5Payment.canPay(actor, moneyString, notifyOnFailure);
-      if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, silent);
+      if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, track);
 
       if (showChatMessage && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
 
@@ -33,7 +33,7 @@ export default class DSA5Payment {
     }
 
     const actorsMoney = this._actorsMoney(actor);
-    await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, silent);
+    await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, track);
     const msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
     if (showChatMessage) {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
@@ -259,7 +259,7 @@ export default class DSA5Payment {
     await DSA5Payment._updateMoney(actor, DSA5Payment._actorsMoney(actor).money, money.sum);
   }
 
-  static async _updateMoney(actor, money, newSum, render = true, silent = false) {
+  static async _updateMoney(actor, money, newSum, render = true, track = true) {
     const coins = await DSA5Payment._moneyToCoins(newSum, money);
     const update = [];
     let oldSum = 0;
@@ -275,7 +275,7 @@ export default class DSA5Payment {
     }
 
     await actor.updateEmbeddedDocuments('Item', update, { render });
-    if (!silent) await MoneyTracker.track(actor, { type: 'payment', previous: oldSum, next: newSum }, newSum - oldSum);
+    if (track) await MoneyTracker.track(actor, { type: 'payment', previous: oldSum, next: newSum }, newSum - oldSum);
   }
 
   static async _moneyToString(money) {

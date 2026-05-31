@@ -134,6 +134,7 @@ export default class PaymentRequestService {
       render: true,
       showChatMessage: false,
       notifyOnFailure: payload.mode === 'pay',
+      track: true,
     });
 
     return {
@@ -188,6 +189,7 @@ export default class PaymentRequestService {
       render: true,
       showChatMessage: false,
       notifyOnFailure: false,
+      track: true,
     });
 
     await QueryOrchestrator.handleResult({
