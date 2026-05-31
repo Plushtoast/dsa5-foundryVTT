@@ -28,7 +28,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   static async openPartySheet() {
     const party = await this.#resolvePrimaryParty();
-    party?.sheet?.render(true);
+
+    DSA5_Utility.renderToggle(party?.sheet);
   }
 
   static async #resolvePrimaryParty() {

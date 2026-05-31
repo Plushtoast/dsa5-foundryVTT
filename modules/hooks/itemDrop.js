@@ -232,25 +232,22 @@ const handleItemDrop = async (canvas, data) => {
 };
 
 const handleGroupDrop = async (canvas, data) => {
-  let x = data.x;
-  let y = data.y;
-  let count = 0;
-  const gridSize = canvas.grid.size;
-  const rowLength = Math.ceil(Math.sqrt(data.ids.length));
-  for (const id of data.ids) {
-    const actor = game.actors.get(id);
-    if (!actor) continue;
+  const scene = canvas.scene;
+  const ids = data.ids?.filter((id) => game.actors.has(id)) || [];
+  if (!scene || !ids.length) return;
 
-    const td = await actor.getTokenDocument({ x, y, hidden: false });
-    td.constructor.create(td, { parent: canvas.scene });
-    if (rowLength % count == 0 && count > 0) {
-      y += gridSize;
-      x = data.x;
-    } else {
-      x += gridSize;
-    }
-    count++;
+  const gridSize = scene.grid.size || canvas.grid?.size || canvas.dimensions?.size || 0;
+  const rowLength = Math.ceil(Math.sqrt(ids.length));
+  const tokens = [];
+  for (const [index, id] of ids.entries()) {
+    const actor = game.actors.get(id);
+    const x = data.x + (index % rowLength) * gridSize;
+    const y = data.y + Math.floor(index / rowLength) * gridSize;
+    const tokenDocument = await actor.getTokenDocument({ x, y, hidden: false }, { parent: scene });
+    tokens.push(tokenDocument.toObject?.() ?? tokenDocument);
   }
+
+  await scene.createEmbeddedDocuments('Token', tokens);
 };
 
 export const connectHook = () => {
