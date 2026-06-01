@@ -522,6 +522,7 @@ export default class Actordsa5 extends Actor {
 
   schipshtml() {
     const schips = [];
+    if (this.type == 'group') return schips;
     for (let i = 1; i <= this.system.status.fatePoints.max; i++) {
       schips.push({
         value: i,

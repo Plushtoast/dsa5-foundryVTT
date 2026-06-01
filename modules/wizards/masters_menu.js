@@ -963,6 +963,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         uuid: hero.uuid,
         selected: selected[hero.id],
         schips: hero.schipshtml(),
+        type: hero.type,
         purse: purse
           .sort((a, b) => b.system.price.value - a.system.price.value)
           .map((x) => `<span data-tooltip="${x.name}">${x.system.quantity.value}</span>`)
@@ -971,9 +972,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         disadvantages,
         system: {
           status: {
-            wounds: { max: hero.system.status.wounds.max },
-            astralenergy: { max: hero.system.status.astralenergy.max },
-            karmaenergy: { max: hero.system.status.karmaenergy.max },
+            wounds: { max: hero.system.status?.wounds?.max },
+            astralenergy: { max: hero.system.status?.astralenergy?.max },
+            karmaenergy: { max: hero.system.status?.karmaenergy?.max },
           },
           isMage: hero.system.isMage,
           isPriest: hero.system.isPriest,
