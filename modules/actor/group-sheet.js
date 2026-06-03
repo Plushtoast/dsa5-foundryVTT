@@ -705,7 +705,16 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     const key = target.closest('[data-location-key]')?.dataset.locationKey ?? target.dataset.locationKey;
     if (!key) return;
     const loc = this.actor.system.locations[key];
-    if (loc) this.actor.update({ [`system.locations.${key}.locked`]: !loc.locked });
+    if (!loc) return;
+    const locked = !loc.locked;
+    this.actor.update({ [`system.locations.${key}.locked`]: locked });
+    const actor = this.actor.system.locationActors.get(key);
+    if (actor?.isMerchant()) {
+      actor.update({
+        'system.merchant.locked': locked,
+        'system.merchant.hidePlayer': locked,
+      });
+    }
   }
 
   static #setLocationType(event, target) {
