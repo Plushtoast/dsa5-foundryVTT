@@ -226,6 +226,16 @@ export default class RollRequestService {
 
     try {
       const options = { modifier: payload.modifier, messageMode: payload.messageMode };
+      if (payload.messageId) {
+        options.postFunction = {
+          functionName: 'game.dsa5.queries.RollRequestService.postRollRequestResult',
+          requestMessageId: payload.messageId,
+          actorId: payload.actorId,
+          category: payload.category,
+          messageMode: payload.messageMode,
+          ...(payload.byGM ? { byGM: true } : {}),
+        };
+      }
       let setupData;
 
       switch (payload.category) {
@@ -292,6 +302,19 @@ export default class RollRequestService {
     };
   }
 
+  static async postRollRequestResult(postFunction, payload) {
+    if (!postFunction?.requestMessageId) return;
+
+    const result = RollRequestService.buildResultPayload(postFunction.category, payload, postFunction.messageMode);
+    if (postFunction.byGM) result.resultDetails = { ...result.resultDetails, byGM: true };
+
+    await QueryOrchestrator.handleResult({
+      messageId: postFunction.requestMessageId,
+      actorId: postFunction.actorId,
+      result,
+    });
+  }
+
   static async resendToActor(messageId, actorId) {
     const message = game.messages.get(messageId);
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
@@ -321,11 +344,13 @@ export default class RollRequestService {
     if (!state?.category) return;
 
     const result = await this.handleQuery({
+      messageId,
       actorId,
       category: state.category,
       name: state.name,
       modifier: state.modifier,
       messageMode: state.messageMode,
+      byGM: true,
     });
 
     await QueryOrchestrator.handleResult({
@@ -360,6 +385,7 @@ export default class RollRequestService {
     if (!state?.category) return;
 
     const result = await this.handleQuery({
+      messageId,
       actorId,
       category: state.category,
       name: state.name,

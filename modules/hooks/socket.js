@@ -18,6 +18,7 @@ import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
+import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
@@ -89,6 +90,9 @@ export function connectSocket() {
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
+        break;
+      case 'queryResult':
+        await QueryOrchestrator.handleResult(data.payload);
         break;
       case 'deleteEffectsByUuid':
         MaintainedEffects.deleteByUuid(data.payload?.uuids || []);

@@ -140,6 +140,14 @@ export default class QueryOrchestrator {
   }
 
   static async handleResult({ messageId, actorId, result }) {
+    if (!game.user.isGM) {
+      game.socket.emit('system.dsa5', {
+        type: 'queryResult',
+        payload: { messageId, actorId, result },
+      });
+      return;
+    }
+
     await this.enqueueMessageUpdate(messageId, async (state) => {
       const recipient = state.recipients.find((entry) => entry.actorId === actorId);
       if (!recipient || state.finalized) return state;
