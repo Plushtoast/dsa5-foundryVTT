@@ -1312,77 +1312,77 @@
       "5": "usury (400%)"
     },
     "QUALITY": {
-      "0": "QS 6: exceptional / noble / special stock",
-      "1": "QS 5: very good / well kept / well stocked",
-      "2": "QS 4: solid / clean / normal",
-      "3": "QS 3: simple / decent",
-      "4": "QS 2: modest / plain / questionable",
-      "5": "QS 1: poor / grimy / squalid"
+      "5": "exceptional / noble / special stock",
+      "4": "very good / well kept / well stocked",
+      "3": "solid / clean / normal",
+      "2": "simple / decent",
+      "1": "modest / plain / questionable",
+      "0": "poor / grimy / squalid"
     },
     "QUALITY_BY_KIND": {
       "crafts": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "healers": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "inns": {
-        "0": "QS 6: noble",
-        "1": "QS 5: good, clean",
-        "2": "QS 4: solid, clean",
-        "3": "QS 3: simple, questionable",
-        "4": "QS 2: plain, questionable",
-        "5": "QS 1: plain, squalid"
+        "0": "noble",
+        "1": "good, clean",
+        "2": "solid, clean",
+        "3": "simple, questionable",
+        "4": "plain, questionable",
+        "5": "plain, squalid"
       },
       "merchants": {
-        "0": "QS 6: special stock, good",
-        "1": "QS 5: well stocked, very good",
-        "2": "QS 4: normal stock, solid",
-        "3": "QS 3: simple stock, mediocre",
-        "4": "QS 2: mediocre stock, plain",
-        "5": "QS 1: poor stock, plain"
+        "0": "special stock, good",
+        "1": "well stocked, very good",
+        "2": "normal stock, solid",
+        "3": "simple stock, mediocre",
+        "4": "mediocre stock, plain",
+        "5": "poor stock, plain"
       },
       "services": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "taverns": {
-        "0": "QS 6: noble",
-        "1": "QS 5: well kept",
-        "2": "QS 4: clean",
-        "3": "QS 3: simple",
-        "4": "QS 2: shabby",
-        "5": "QS 1: grimy"
+        "0": "noble",
+        "1": "well kept",
+        "2": "clean",
+        "3": "simple",
+        "4": "shabby",
+        "5": "grimy"
       },
       "temples": {
-        "0": "QS 6: exceptional / noble",
-        "1": "QS 5: very good / well kept",
-        "2": "QS 4: solid / clean",
-        "3": "QS 3: simple / decent",
-        "4": "QS 2: modest / questionable",
-        "5": "QS 1: poor / squalid"
+        "0": "exceptional / noble",
+        "1": "very good / well kept",
+        "2": "solid / clean",
+        "3": "simple / decent",
+        "4": "modest / questionable",
+        "5": "poor / squalid"
       },
       "travellers": {
-        "0": "QS 6: exceptional / noble",
-        "1": "QS 5: very good / well kept",
-        "2": "QS 4: solid / clean",
-        "3": "QS 3: simple / decent",
-        "4": "QS 2: modest / questionable",
-        "5": "QS 1: poor / squalid"
+        "0": "exceptional / noble",
+        "1": "very good / well kept",
+        "2": "solid / clean",
+        "3": "simple / decent",
+        "4": "modest / questionable",
+        "5": "poor / squalid"
       }
     },
     "SelectDetail": "Select city detail",
@@ -3316,6 +3316,7 @@
   "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
   "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
   "TYPES.JournalEntryPage.dsaquestlog": "Quest",
+    "TYPES.JournalEntryPage.citydetails": "City Details",
   "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
   "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
   "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",

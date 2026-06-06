@@ -19,7 +19,7 @@
               {{#if detail.img}}
                 <img src='{{detail.img}}' alt='{{detail.name}}' />
               {{else}}
-                {{> systems/dsa5/templates/journal/citydetailsentry_icon.hbs}}
+                <i class='fas fa-dungeon'></i>
               {{/if}}
             </div>
             <div class='persona-list-info citydetails-list-info'>
@@ -38,7 +38,7 @@
         {{#unless sortedEntries.length}}
           <div class='no-personae-list'>
             <div class='empty-state-small'>
-              {{> systems/dsa5/templates/journal/citydetailsentry_icon.hbs}}
+              <i class='fas fa-dungeon'></i>
               <p>{{localize 'DSACITYDETAILS.empty'}}</p>
               {{#if ../isGM}}
                 <button type='button' class='flexrow add-persona-small' data-action='addEntry'>
@@ -58,7 +58,7 @@
         {{else}}
           <div class='no-selection'>
             <div class='no-selection-content'>
-              {{> systems/dsa5/templates/journal/citydetailsentry_icon.hbs}}
+              <i class='fas fa-dungeon'></i>
               <h3>{{localize 'DSACITYDETAILS.SelectDetail'}}</h3>
               <p>{{localize 'DSACITYDETAILS.SelectDetailHint'}}</p>
             </div>

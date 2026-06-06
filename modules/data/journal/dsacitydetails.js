@@ -22,12 +22,12 @@ export class DSACityDetailsEntry extends JournalListDataModel {
     };
 
     static QUALITY_CHOICES = {
-        0: 'DSACITYDETAILS.QUALITY.0',
-        1: 'DSACITYDETAILS.QUALITY.1',
-        2: 'DSACITYDETAILS.QUALITY.2',
-        3: 'DSACITYDETAILS.QUALITY.3',
-        4: 'DSACITYDETAILS.QUALITY.4',
         5: 'DSACITYDETAILS.QUALITY.5',
+        4: 'DSACITYDETAILS.QUALITY.4',
+        3: 'DSACITYDETAILS.QUALITY.3',
+        2: 'DSACITYDETAILS.QUALITY.2',
+        1: 'DSACITYDETAILS.QUALITY.1',
+        0: 'DSACITYDETAILS.QUALITY.0',
     };
 
     static QUALITY_KIND_KEYS = {
@@ -50,8 +50,6 @@ export class DSACityDetailsEntry extends JournalListDataModel {
         5: 'DSACITYDETAILS.PRICE.5',
     };
 
-    static QUALITY_QS_BY_ROW = [6, 5, 4, 3, 2, 1];
-    static PRICE_QS_BY_ROW = [1, 2, 3, 4, 5, 6];
     static PRICE_PERCENT_BY_ROW = [70, 85, 100, 120, 150, 400];
 
     static defineSchema() {
@@ -96,8 +94,8 @@ export class DSACityDetailsEntry extends JournalListDataModel {
         entry.preparedGMNotes = await TextEditor.enrichHTML(entry.gmNotes || '', { secrets: game.user.isGM });
         entry.hasImage = !!entry.img;
         entry.hasTypeText = !!entry.typeText?.trim();
-        entry.qualityQS = this.QUALITY_QS_BY_ROW[entry.qualityRowIndex] ?? null;
-        entry.priceQS = this.PRICE_QS_BY_ROW[entry.priceRowIndex] ?? null;
+        entry.qualityQS = entry.qualityRowIndex ? 6 - entry.qualityRowIndex : null;
+        entry.priceQS = entry.priceRowIndex ? 1 + entry.priceRowIndex : null;
         entry.pricePercent = this.PRICE_PERCENT_BY_ROW[entry.priceRowIndex] ?? 100;
         entry.qualityText = entry.qualityQS === null ? '' : this.resolveQualityLabel(entry.kind, entry.qualityRowIndex);
         entry.priceText = _loc(this.PRICE_CHOICES[entry.priceRowIndex] || this.PRICE_CHOICES[2]);

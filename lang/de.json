@@ -1311,77 +1311,77 @@
             "5": "Wucher (400%)"
         },
         "QUALITY": {
-            "0": "QS 6: außergewöhnlich / nobel / besonders sortiert",
-            "1": "QS 5: sehr gut / gepflegt / gut sortiert",
-            "2": "QS 4: solide / sauber / normal",
-            "3": "QS 3: einfach / ordentlich",
-            "4": "QS 2: mäßig / schlicht / fraglich",
-            "5": "QS 1: schlecht / schmierig / unsauber"
+            "0": "außergewöhnlich / nobel / besonders sortiert",
+            "1": "sehr gut / gepflegt / gut sortiert",
+            "2": "solide / sauber / normal",
+            "3": "einfach / ordentlich",
+            "4": "mäßig / schlicht / fraglich",
+            "5": "schlecht / schmierig / unsauber"
         },
         "QUALITY_BY_KIND": {
             "crafts": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "healers": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "inns": {
-                "0": "QS 6: nobel",
-                "1": "QS 5: gut, sauber",
-                "2": "QS 4: solide, sauber",
-                "3": "QS 3: einfach, fraglich",
-                "4": "QS 2: schlicht, fraglich",
-                "5": "QS 1: schlicht, unsauber"
+                "0": "nobel",
+                "1": "gut, sauber",
+                "2": "solide, sauber",
+                "3": "einfach, fraglich",
+                "4": "schlicht, fraglich",
+                "5": "schlicht, unsauber"
             },
             "merchants": {
-                "0": "QS 6: besonders sortiert, gut",
-                "1": "QS 5: gut sortiert, sehr gut",
-                "2": "QS 4: normal sortiert, solide",
-                "3": "QS 3: einfach sortiert, mäßig",
-                "4": "QS 2: mäßig sortiert, schlicht",
-                "5": "QS 1: schlecht sortiert, schlicht"
+                "0": "besonders sortiert, gut",
+                "1": "gut sortiert, sehr gut",
+                "2": "normal sortiert, solide",
+                "3": "einfach sortiert, mäßig",
+                "4": "mäßig sortiert, schlicht",
+                "5": "schlecht sortiert, schlicht"
             },
             "services": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "taverns": {
-                "0": "QS 6: nobel",
-                "1": "QS 5: gepflegt",
-                "2": "QS 4: sauber",
-                "3": "QS 3: einfach",
-                "4": "QS 2: schäbig",
-                "5": "QS 1: schmierig"
+                "0": "nobel",
+                "1": "gepflegt",
+                "2": "sauber",
+                "3": "einfach",
+                "4": "schäbig",
+                "5": "schmierig"
             },
             "temples": {
-                "0": "QS 6: außergewöhnlich / nobel",
-                "1": "QS 5: sehr gut / gepflegt",
-                "2": "QS 4: solide / sauber",
-                "3": "QS 3: einfach / ordentlich",
-                "4": "QS 2: mäßig / fraglich",
-                "5": "QS 1: schlecht / unsauber"
+                "0": "außergewöhnlich / nobel",
+                "1": "sehr gut / gepflegt",
+                "2": "solide / sauber",
+                "3": "einfach / ordentlich",
+                "4": "mäßig / fraglich",
+                "5": "schlecht / unsauber"
             },
             "travellers": {
-                "0": "QS 6: außergewöhnlich / nobel",
-                "1": "QS 5: sehr gut / gepflegt",
-                "2": "QS 4: solide / sauber",
-                "3": "QS 3: einfach / ordentlich",
-                "4": "QS 2: mäßig / fraglich",
-                "5": "QS 1: schlecht / unsauber"
+                "0": "außergewöhnlich / nobel",
+                "1": "sehr gut / gepflegt",
+                "2": "solide / sauber",
+                "3": "einfach / ordentlich",
+                "4": "mäßig / fraglich",
+                "5": "schlecht / unsauber"
             }
         },
         "SelectDetail": "Stadtdetail auswählen",
@@ -3315,6 +3315,7 @@
     "TYPES.JournalEntryPage.dsamoneytracker": "Geld-Tracker",
     "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
     "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
+    "TYPES.JournalEntryPage.citydetails": "Stadtbeschreibung",
     "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.RegionBehavior.DSAZone": "Zone (DSA)",
