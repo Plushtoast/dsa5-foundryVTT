@@ -120,10 +120,11 @@ export class PersonaeDramatis {
                     };
                     const actor = entry.actor_uuid ? fromUuidSync(entry.actor_uuid) : null;
                     personaEntry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
-                    if (DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM })) {
+                    const shouldShowGaradan = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
+                    if (shouldShowGaradan) {
                         personaEntry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[personaEntry.garadan] || '';
                     }
-                    personaEntry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
+                    personaEntry.garadanVisible = shouldShowGaradan;
                     personaeData[entry.type].push(personaEntry);
                     if (PersonaeDramatis.#lastSelectedActor &&
                         pageUuid === PersonaeDramatis.#lastSelectedActor.pageUuid &&

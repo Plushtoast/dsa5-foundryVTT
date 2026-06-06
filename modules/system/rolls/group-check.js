@@ -25,6 +25,8 @@ export default class GroupCheck {
         break;
       default:
         const skill = actor.items.find((i) => i.name == name && i.type == category);
+        if (!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: name }, localize: true });
+        
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
           const result = await actor.basicTest(setupData);
           await GroupCheck.editGroupCheckRoll(messageId, result, name, category);
