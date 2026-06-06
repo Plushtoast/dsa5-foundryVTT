@@ -797,9 +797,6 @@ export default class Actordsa5 extends Actor {
 
     money.coins = money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
 
-    specAbs.magical.push(...specAbs.pact);
-    specAbs.clerical.push(...specAbs.ceremonial);
-
     for (const traditionAbility of specAbs.staff) {
       const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
       if (artifact) {
